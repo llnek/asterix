@@ -1,1 +1,1 @@
-# cocos2dx
+# asterix
