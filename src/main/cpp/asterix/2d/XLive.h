@@ -9,31 +9,27 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __BOOT_H__
-#define  __BOOT_H__
+#ifndef  __XLIVE_H__
+#define  __XLIVE_H__
 
 #include "cocos2d.h"
 #include "asterix.h"
-#include "L10N.h"
-
-
 NS_AX_BEGIN
 
-class Boot {
+class ZL_DLLEXPORT XLive : public cocos2d::Sprite {
+
+private:
+  CC_DISALLOW_COPY_AND_ASSIGN(XLive)
 
 public:
 
-  virtual cocos2d::Scene*  startWith() ;
-  virtual void init();
-  virtual ~Boot();
-  Boot();
+  void initEx(const std::string& frame);
 
-private:
+  virtual ~XLive();
+  XLive();
 
-  CC_DISALLOW_COPY_AND_ASSIGN(Boot)
-  void preLaunch();
-  void initAudio();
-  L10NCache l10n;
+
+  CREATE_FUNC(XLive)
 };
 
 NS_AX_END
