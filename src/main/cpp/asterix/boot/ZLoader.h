@@ -9,30 +9,28 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef __L10N_H__
-#define __L10N_H__
+#ifndef  __ZLOADER_H__
+#define  __ZLOADER_H__
 
-#include "asterix.h"
 #include "cocos2d.h"
-
+#include "asterix.h"
 NS_AX_BEGIN
 
-class L10NCache {
+class ZL_DLLEXPORT ZLoader : public cocos2d::Scene {
 
 public:
 
-  const std::string& getStr(const std::string& key, const std::string& dft);
-  void purge();
-  void init();
+  void initWithResources();
 
-  virtual ~L10NCache();
-  L10NCache();
+  virtual void onEnter();
+  virtual ~ZLoader();
+  ZLoader();
 
 private:
-  std::map<std::string, std::string> _cache;
-  CC_DISALLOW_COPY_AND_ASSIGN(L10NCache)
+  CC_DISALLOW_COPY_AND_ASSIGN(ZLoader)
+  void startLoad(float delta);
 };
 
 NS_AX_END
-
 #endif
+

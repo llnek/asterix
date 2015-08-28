@@ -12,17 +12,39 @@
 #ifndef __ASTERIX_H__
 #define __ASTERIX_H__
 
+#include <string>
+
+
+#if !defined(ZL_DLLEXPORT)
+
+# if defined(WIN32) || defined(_WIN32)
+#   define ZL_DLLEXPORT  __declspec(dllexport)
+# else
+#   define ZL_DLLEXPORT
+# endif
+
+#endif
+
+#if !defined(ZL_DLLIMPORT)
+
+# if defined(WIN32) || defined(_WIN32)
+#   define ZL_DLLIMPORT  __declspec(dllimport)
+# else
+#   define ZL_DLLIMPORT
+# endif
+
+#endif
+
+
 #if !defined(TCHAR)
+
 #	if defined(_UNICODE)
 #   define	TCHAR	wchar_t
 #	else
 #		define	TCHAR	char
 #	endif
+
 #endif
-
-#define PCTSTR  const TCHAR*
-#define PSTR    TCHAR*
-
 
 enum class Locale {
   ENGLISH = 0,
@@ -49,17 +71,16 @@ enum class Locale {
 
 
 #ifdef __cplusplus
-#	define AX_BEGIN    namespace asterix {
-#	define AX_END      }
-#	define USE_AX      using namespace asterix
-#	define NS_AX       ::asterix
+# define USING_NS_AX    using namespace asterix
+# define NS_AX          ::asterix
+#	define NS_AX_BEGIN    namespace asterix {
+#	define NS_AX_END      }
 #else
-# define AX_BEGIN
-# define AX_END
-# define USE_AX
+# define NS_AX_BEGIN
+# define NS_AX_END
+# define USING_NS_AX
 # define NS_AX
 #endif
-
 
 
 

@@ -9,30 +9,33 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef __L10N_H__
-#define __L10N_H__
+#ifndef  __BOOT_H__
+#define  __BOOT_H__
 
-#include "asterix.h"
 #include "cocos2d.h"
+#include "asterix.h"
+#include "L10N.h"
+
 
 NS_AX_BEGIN
 
-class L10NCache {
+class Boot {
 
 public:
 
-  const std::string& getStr(const std::string& key, const std::string& dft);
-  void purge();
+  virtual ~Boot();
+  Boot();
+
   void init();
 
-  virtual ~L10NCache();
-  L10NCache();
-
 private:
-  std::map<std::string, std::string> _cache;
-  CC_DISALLOW_COPY_AND_ASSIGN(L10NCache)
+
+  CC_DISALLOW_COPY_AND_ASSIGN(Boot)
+  void preLaunch();
+  void initAudio();
+  L10NCache l10n;
 };
 
 NS_AX_END
-
 #endif
+
