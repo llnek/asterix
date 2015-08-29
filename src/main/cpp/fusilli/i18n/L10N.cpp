@@ -9,30 +9,41 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef __L10N_H__
-#define __L10N_H__
+#include <string>
+#include <map>
+#include "L10N.h"
 
-#include "asterix.h"
-#include "cocos2d.h"
+NS_FI_BEGIN
 
-NS_AX_BEGIN
+void L10NCache::purge() {
+  _cache.clear();
+}
 
-class L10NCache {
+void L10NCache::init() {
+  purge();
+}
 
-public:
+//Application::getInstance()->getCurrentLanguage();
+const std::string& L10NCache::getStr(const std::string& key,
+                              const std::string& dft) {
+  auto it= _cache.find(key);
+  std::string rc;
+  if (it != _cache.end()) {
+    rc= it->second;
+  } else {
+    rc= dft;
+  }
+  return rc;
+}
 
-  const std::string& getStr(const std::string& key, const std::string& dft);
-  void purge();
-  void init();
+L10NCache::~L10NCache() {
 
-  virtual ~L10NCache();
-  L10NCache();
+}
 
-private:
-  std::map<std::string, std::string> _cache;
-  CC_DISALLOW_COPY_AND_ASSIGN(L10NCache)
-};
+L10NCache::L10NCache() {
 
-NS_AX_END
+}
 
-#endif
+NS_FI_END
+
+

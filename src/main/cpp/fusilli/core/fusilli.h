@@ -9,28 +9,28 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef __ASTERIX_H__
-#define __ASTERIX_H__
+#if !defined(FUSILLI_H)
+#define FUSILLI_H
 
 #include <string>
 
 
-#if !defined(ZL_DLLEXPORT)
+#if !defined(FI_DLLEXPORT)
 
 # if defined(WIN32) || defined(_WIN32)
-#   define ZL_DLLEXPORT  __declspec(dllexport)
+#   define FI_DLLEXPORT  __declspec(dllexport)
 # else
-#   define ZL_DLLEXPORT
+#   define FI_DLLEXPORT
 # endif
 
 #endif
 
-#if !defined(ZL_DLLIMPORT)
+#if !defined(FI_DLLIMPORT)
 
 # if defined(WIN32) || defined(_WIN32)
-#   define ZL_DLLIMPORT  __declspec(dllimport)
+#   define FI_DLLIMPORT  __declspec(dllimport)
 # else
-#   define ZL_DLLIMPORT
+#   define FI_DLLIMPORT
 # endif
 
 #endif
@@ -38,11 +38,11 @@
 
 #if !defined(TCHAR)
 
-#	if defined(_UNICODE)
-#   define	TCHAR	wchar_t
-#	else
-#		define	TCHAR	char
-#	endif
+#  if defined(_UNICODE)
+#   define  TCHAR  wchar_t
+#  else
+#    define  TCHAR  char
+#  endif
 
 #endif
 
@@ -69,21 +69,31 @@ enum class Locale {
 };
 
 
-
 #ifdef __cplusplus
-# define USING_NS_AX    using namespace asterix
-# define NS_AX          ::asterix
-#	define NS_AX_BEGIN    namespace asterix {
-#	define NS_AX_END      }
+# define USING_NS_FI    using namespace fusilli
+# define NS_FI          ::fusilli
+# define NS_FI_BEGIN    namespace fusilli {
+# define NS_FI_END      }
 #else
-# define NS_AX_BEGIN
-# define NS_AX_END
-# define USING_NS_AX
-# define NS_AX
+# define NS_FI_BEGIN
+# define NS_FI_END
+# define USING_NS_FI
+# define NS_FI
 #endif
 
+#define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
+#define mc_free_mem(mem)  { if (mem) free(mem); mem = nullptr; }
+#define mc_free_ptr(ptr)  mc_free_mem(ptr)
+#define mc_free_str(pc)   mc_free_mem(pc)
+#define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }
+#define mc_del_arr(arr)   { delete[] arr; arr = nullptr; }
+#define mc_bool_str(b)    ((b) ? "true" : "false")
+#define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
 
 
+#define DISALLOW_COPY_AND_ASSIGN(T) \
+  T(const T&) = delete; \
+  T&operator =(const T&) = delete;
 
 
 

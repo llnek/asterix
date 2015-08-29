@@ -9,39 +9,31 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include <string>
-#include <map>
-#include "L10N.h"
+#if !defined(__L10N_H__)
+#define __L10N_H__
 
-NS_AX_BEGIN
+#include "fusilli.h"
+#include "cocos2d.h"
 
-void L10NCache::purge() {
-  _cache.clear();
-}
+NS_FI_BEGIN
 
-void L10NCache::init() {
-  purge();
-}
+class L10NCache {
 
-//Application::getInstance()->getCurrentLanguage();
-const std::string& L10NCache::getStr(const std::string& key,
-                              const std::string& dft) {
-  auto it= _cache.find(key);
-  std::string rc;
-  if (it != _cache.end()) {
-    rc= it->second;
-  } else {
-    rc= dft;
-  }
-  return rc;
-}
+public:
 
-L10NCache::~L10NCache() {
+  const std::string& getStr(const std::string& key, const std::string& dft);
+  void purge();
+  void init();
 
-}
+  virtual ~L10NCache();
+  L10NCache();
 
-L10NCache::L10NCache() {
+private:
+  std::map<std::string, std::string> _cache;
+  DISALLOW_COPY_AND_ASSIGN(L10NCache)
+};
 
-}
+NS_FI_END
 
-NS_AX_END
+#endif
+
