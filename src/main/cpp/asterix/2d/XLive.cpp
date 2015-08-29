@@ -18,7 +18,7 @@ NS_AX_BEGIN
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLive::initEx(const std::string& frame) {
+void XLive::reify(__Dictionary* options) {
   initWithSpriteFrameName(frame);
 }
 
