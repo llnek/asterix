@@ -9,9 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(FUSILLI_H)
-#define FUSILLI_H
+#if !defined(__FUSILLI_H__)
+#define __FUSILLI_H__
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 
 
@@ -81,8 +83,8 @@ enum class Locale {
 # define NS_FI
 #endif
 
+#define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
 #define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
-#define mc_free_mem(mem)  { if (mem) free(mem); mem = nullptr; }
 #define mc_free_ptr(ptr)  mc_free_mem(ptr)
 #define mc_free_str(pc)   mc_free_mem(pc)
 #define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }
@@ -90,6 +92,8 @@ enum class Locale {
 #define mc_bool_str(b)    ((b) ? "true" : "false")
 #define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
 
+#define mc_pcast(classname, expr) ((##classname *) (expr))
+#define mc_rcast(classname, expr) ((##classname &) (expr))
 
 #define DISALLOW_COPY_AND_ASSIGN(T) \
   T(const T&) = delete; \
