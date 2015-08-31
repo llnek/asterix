@@ -9,44 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__DICTHLP_H__)
-#define __DICTHLP_H__
-
-#include "fusilli.h"
+#include "XSceneFactory.h"
 NS_FI_BEGIN
+USING_NS_CC;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct FI_DLLEXPORT Tassoc {
-#define ASSOC_BAD  2104
-#define ASSOC_VOID  2105
-#define ASSOC_LONG  2106
-#define ASSOC_REAL  2107
-
-  std::string    m_key;
-  int      m_dataType;
-  Tassoc*    m_next;
-  size_t    m_hash;
-  union {
-    void*    pv;
-    long    ln;
-    double    db;
-  } m_value;
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct FI_DLLEXPORT Tpool {
-  static Tpool*   Create(Tpool*& head, size_t nMax);
-  static void  FreeDataChain( Tpool*&);
-
-  void*  Data()  { return m_data; }
-
-  Tpool*     m_next;
-  void*    m_data;
-};
-
 
 NS_FI_END
-#endif

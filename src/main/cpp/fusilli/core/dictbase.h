@@ -12,8 +12,41 @@
 #if !defined(__DICTBASE_H__)
 #define __DICTBASE_H__
 
-#include "dicthlp.h"
+#include "fusilli.h"
 NS_FI_BEGIN
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct FI_DLLEXPORT Tassoc {
+#define ASSOC_BAD  2104
+#define ASSOC_VOID  2105
+#define ASSOC_LONG  2106
+#define ASSOC_REAL  2107
+
+  std::string  m_key;
+  int m_dataType;
+  Tassoc* m_next;
+  size_t m_hash;
+  union {
+    void*    pv;
+    long    ln;
+    double    db;
+  } m_value;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct FI_DLLEXPORT Tpool {
+  static Tpool* Create(Tpool*& head, size_t nMax);
+  static void FreeDataChain(Tpool*&);
+
+  void* Data()  { return m_data; }
+
+  Tpool* m_next;
+  void* m_data;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class FI_DLLEXPORT DictBase {
@@ -60,10 +93,10 @@ protected:
   size_t GetHashTableSize() const;
   size_t HashKey(const std::string& key) const;
 
-  Tassoc*  GetAssocAt(const std::string&, size_t&, bool = true) const;
   Tassoc*  NewAssoc();
   void     FreeAssoc(Tassoc*);
 
+  Tassoc*  GetAssocAt(const std::string&, size_t&) const;
   Tassoc*    GetAssocAt(const std::string&) const;
   Tassoc*    RemoveAssocAt(const std::string&);
 };

@@ -21,7 +21,7 @@ template <class APtrType>
 class FI_DLLEXPORT Dict : public DictBase {
 public:
 
-  Dict( int nType = DICT_CLSPTR)
+  Dict(int nType = DICT_CLSPTR)
     : DictBase(nType) {
   }
 

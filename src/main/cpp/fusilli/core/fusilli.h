@@ -12,6 +12,7 @@
 #if !defined(__FUSILLI_H__)
 #define __FUSILLI_H__
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>

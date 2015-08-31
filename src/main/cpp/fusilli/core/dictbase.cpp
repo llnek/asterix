@@ -9,10 +9,35 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "dicthlp.h"
 #include "dictbase.h"
 NS_FI_BEGIN
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Tpool::FreeDataChain(Tpool*& head) {
+  Tpool*  p = head;
+  Tpool*  pn;
+
+  while (p != nullptr) {
+    pn = p->m_next;
+    mc_free_ptr(p->m_data);
+    mc_free_ptr(p);
+    p = pn;
+  }
+
+  head = nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Tpool* Tpool::Create(Tpool*& head, size_t nMax) {
+  Tpool* p = (Tpool*) ::malloc(sizeof(Tpool));
+  p->m_data = ::calloc(nMax, sizeof(Tassoc));
+  p->m_next = head;
+  head = p;
+  return p;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -23,14 +48,14 @@ DictBase::~DictBase() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-DictBase::DictBase( int ptr) {
-  m_anchor = (Tassoc*) malloc(sizeof(Tassoc));
+DictBase::DictBase(int ptr) {
+  m_anchor = (Tassoc*) ::malloc(sizeof(Tassoc));
   m_hashTableSize   = 17;  // default size
   m_hashTable   = nullptr;
   m_ptrType    = ptr;
   m_count     = 0;
-  m_freeList     = nullptr;
-  m_blocks     = nullptr;
+  m_freeList = nullptr;
+  m_blocks = nullptr;
   m_blockSize   = 10;
 }
 
@@ -55,20 +80,19 @@ void DictBase::InitHashTable(size_t nHashSize) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void DictBase::RemoveAll( bool bDeepDelete) {
-  if (m_hashTable) {
+void DictBase::RemoveAll(bool bDeepDelete) {
+  if (m_hashTable != nullptr) {
     for (size_t nHash = 0; nHash < m_hashTableSize; ++nHash) {
-      for (Tassoc* pa = m_hashTable[nHash]; pa; pa = pa->m_next) {
+      for (auto pa = m_hashTable[nHash]; pa; pa = pa->m_next) {
         if (bDeepDelete &&
             ASSOC_VOID == pa->m_dataType) {
           DeleteElement(pa->m_value.pv);
-          }
         }
       }
     }
     mc_free_ptr(m_hashTable);
   }
-  Tpool::FreeDataChain( m_blocks);
+  Tpool::FreeDataChain(m_blocks);
   m_freeList = nullptr;
   m_count   = 0;
   m_blocks   = nullptr;
@@ -82,7 +106,7 @@ Tassoc* DictBase::NewAssoc() {
   if (m_freeList == nullptr) {
     // add another block
     // chain them into free list
-    Tpool* newBlock = Tpool::Create( m_blocks, m_blockSize);
+    Tpool* newBlock = Tpool::Create(m_blocks, m_blockSize);
     pa = (Tassoc*) newBlock->Data();
     // free in reverse order to make it easier to debug
     pa += m_blockSize - 1;
@@ -102,7 +126,7 @@ Tassoc* DictBase::NewAssoc() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void DictBase::FreeAssoc( Tassoc* pa) {
+void DictBase::FreeAssoc(Tassoc* pa) {
 
   pa->m_next   = m_freeList;
   m_freeList   = pa;
@@ -121,12 +145,25 @@ Tassoc* DictBase::GetAssocAt(const std::string& key, size_t& nHash ) const {
 
   nHash = HashKey(key) % m_hashTableSize;
 
-  for (Tassoc* pa = m_hashTable[nHash]; pa; pa = pa->m_next) {
+  for (auto pa = m_hashTable[nHash]; pa; pa = pa->m_next) {
     if ( 0 == key.compare(pa->m_key)) {
       return pa;
     }
   }
 
+  return nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Tassoc* DictBase::GetAssocAt(const std::string& key) const {
+  if (m_hashTable && m_hashTableSize > 0) {
+    for (size_t i = 0; i < m_hashTableSize; ++i) {
+      for (auto pa = m_hashTable[i]; pa; pa = pa->m_next) {
+        if (0 == key.compare(pa->m_key)) { return pa; }
+      }
+    }
+  }
   return nullptr;
 }
 
@@ -148,10 +185,10 @@ bool DictBase::Lookup1(const std::string& key, Tassoc*& value) const {
 //////////////////////////////////////////////////////////////////////////////
 //
 Tassoc* DictBase::operator[](const std::string& key) {
-  size_t   nHash;
-  Tassoc*   pa;
+  size_t nHash;
+  auto pa= GetAssocAt(key, nHash);
 
-  if ((pa = GetAssocAt(key, nHash)) == nullptr) {
+  if (pa == nullptr) {
     if (m_hashTable == nullptr) {
       InitHashTable(m_hashTableSize);
     }
@@ -173,10 +210,10 @@ Tassoc* DictBase::operator[](const std::string& key) {
 bool DictBase::RemoveKey(const std::string& key) {
   if ( m_hashTable == nullptr) { return false; }
 
-  Tassoc**   ppaPrev = &m_hashTable[HashKey(key) % m_hashTableSize];
-  Tassoc*   pa;
+  auto hk = HashKey(key) % m_hashTableSize;
+  auto ppaPrev = &m_hashTable[hk];
 
-  for ( pa = *ppaPrev; pa; pa = pa->m_next) {
+  for (auto pa = *ppaPrev; pa; pa = pa->m_next) {
     if (0 == key.compare(pa->m_key)) {
       // remove it
       *ppaPrev = pa->m_next;  // remove from list
@@ -192,11 +229,11 @@ bool DictBase::RemoveKey(const std::string& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void DictBase::GetNextAssoc_(void*& pos, std::string& key, Tassoc*& value) const {
-  Tassoc*   paRet = (Tassoc*) pos;
+  auto paRet = (Tassoc*) pos;
 
   if (paRet == m_anchor) {
-    for (size_t nBucket = 0; nBucket < m_hashTableSize; ++nBucket) {
-      if ((paRet = m_hashTable[nBucket]) != nullptr) {
+    for (size_t b = 0; b < m_hashTableSize; ++b) {
+      if ((paRet = m_hashTable[b]) != nullptr) {
         break;
       }
     }
@@ -206,8 +243,8 @@ void DictBase::GetNextAssoc_(void*& pos, std::string& key, Tassoc*& value) const
   Tassoc* paNext;
   if ((paNext = paRet->m_next) == nullptr) {
     // go to next bucket
-    for (auto nBucket = paRet->m_hash + 1; nBucket < m_hashTableSize; ++nBucket) {
-      if ((paNext = m_hashTable[nBucket]) != nullptr) { break; }
+    for (auto b = paRet->m_hash + 1; b < m_hashTableSize; ++b) {
+      if ((paNext = m_hashTable[b]) != nullptr) { break; }
     }
   }
 
@@ -231,7 +268,7 @@ size_t DictBase::GetHashTableSize() const {
 //////////////////////////////////////////////////////////////////////////////
 //
 void DictBase::SetAt_(const std::string& key, void* value) {
-  Tassoc* pa = (*this)[key];
+  auto pa = (*this)[key];
   pa->m_dataType   = ASSOC_VOID;
   pa->m_value.pv  = value;
 }
@@ -239,7 +276,7 @@ void DictBase::SetAt_(const std::string& key, void* value) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void DictBase::SetAt_(const std::string& key, long value) {
-  Tassoc* pa = (*this)[key];
+  auto pa = (*this)[key];
   pa->m_dataType   = ASSOC_LONG;
   pa->m_value.ln  = value;
 }
@@ -247,33 +284,19 @@ void DictBase::SetAt_(const std::string& key, long value) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void DictBase::SetAt_(const std::string& key, double value) {
-  Tassoc* pa = (*this)[key];
+  auto pa = (*this)[key];
   pa->m_dataType   = ASSOC_REAL;
   pa->m_value.db  = value;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Tassoc* DictBase::GetAssocAt(const std::string& key) const {
-  if ( m_hashTable && m_hashTableSize > 0) {
-    for ( size_t i = 0; i < m_hashTableSize; ++i) {
-      for (Tassoc* pa = m_hashTable[i]; pa; pa = pa->m_next) {
-        if ( 0 == key.compare(pa->m_key)) { return pa; }
-      }
-    }
-  }
-  return nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 Tassoc* DictBase::RemoveAssocAt(const std::string& key) {
-  for ( size_t i = 0; i < m_hashTableSize; ++i) {
-    Tassoc**  ppaPrev = &m_hashTable[i];
-    Tassoc*    pa;
+  for (size_t i = 0; i < m_hashTableSize; ++i) {
+    auto  ppaPrev = &m_hashTable[i];
 
-    for ( pa = *ppaPrev; pa; pa = pa->m_next) {
-      if ( 0 == key.compare(pa->m_key)) {
+    for (auto pa = *ppaPrev; pa; pa = pa->m_next) {
+      if (0 == key.compare(pa->m_key)) {
         *ppaPrev = pa->m_next;
         return pa;
       }
@@ -282,6 +305,7 @@ Tassoc* DictBase::RemoveAssocAt(const std::string& key) {
   }
   return nullptr;
 }
+
 
 
 
