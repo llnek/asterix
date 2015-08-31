@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "XLayer.h"
+using namespace std;
 USING_NS_CC;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,54 +73,45 @@ void XLayer::addAudioIcon(Dictionary* options) {
     on->setScale(static_cast<Float*>(scale)->getValue());
   }
 
-  Vector<MenuItem*> v= {on,off};
+  Vector<MenuItem*> items= {on,off};
   auto audio = MenuItemToggle::createWithCallback(
-      CC_CALLBACK_1(XLayer::audioCallback, this),
-      v);
+      CC_CALLBACK_1(XLayer::audioCallback, this), items);
 
+  auto anchor = options->objectForKey("anchor");
+  if (scale != nullptr) {
+    audio->setAnchorPoint(* static_cast<Vec2*>(anchor));
+  }
 
+  //xcfg.sound.open ? 0 : 1
+  audio->setSelectedIndex(1);
 
-    if (!!options.anchor) {
-      audio.setAnchorPoint(options.anchor);
-    }
+  auto menu= Menu::create(audio);
+  auto pos = options->objectForKey("pos");
+  if (pos != nullptr) {
+    menu->setPosition(* static_cast<Vec2*>(pos));
+  }
 
-    audio.setSelectedIndex(xcfg.sound.open ? 0 : 1);
-    menu= new cc.Menu(audio);
-    menu.setPosition(options.pos);
-
-    this.addItem(menu);
+  addItem(menu);
 }
 
-  /**
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method onQuit
-   * @protected
-   */
-  onQuit() {
-    let ss= sh.protos[xcfg.game.start],
-    yn= sh.protos[sh.ptypes.yn],
-    dir = cc.director;
+void XLayer::onQuit() {
+//    let ss= sh.protos[xcfg.game.start],
+//    yn= sh.protos[sh.ptypes.yn],
+//    dir = cc.director;
+//
+//    dir.pushScene( yn.reify({
+//      onback() {
+//        dir.popScene();
+//      },
+//      yes() {
+//        //sh.sfxPlay('game_quit');
+//        dir.popToRootScene();
+//        ccsx.runScene(ss.reify());
+//      }
+//    }));
+}
 
-    dir.pushScene( yn.reify({
-      onback() {
-        dir.popScene();
-      },
-      yes() {
-        //sh.sfxPlay('game_quit');
-        dir.popToRootScene();
-        ccsx.runScene(ss.reify());
-      }
-    }));
-  },
-
-  /**
-   * Center an image chosen from this atlas.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method centerAtlasImage
-   * @param {String} frame
-   * @param {Object} atlas
-   */
-  centerAtlasImage(frame,atlas) {
+void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
     let bg= new cc.Sprite(frame),
     cw = ccsx.center();
     bg.setPosition(cw);
@@ -128,7 +120,7 @@ void XLayer::addAudioIcon(Dictionary* options) {
     } else {
       this.addItem(bg);
     }
-  },
+}
 
   /**
    * Center an image.

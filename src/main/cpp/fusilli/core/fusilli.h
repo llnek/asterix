@@ -18,33 +18,31 @@
 #include <string>
 
 
-#if !defined(FI_DLLEXPORT)
+#if defined(WIN32) || defined(_WIN32)
 
-# if defined(WIN32) || defined(_WIN32)
-#   define FI_DLLEXPORT  __declspec(dllexport)
-# else
-#   define FI_DLLEXPORT
-# endif
-
+#if defined(MS_STATIC)
+#define MS_DLL
+#else
+#if defined(_USRDLL)
+#define MS_DLL     __declspec(dllexport)
+#else         /* use a DLL library */
+#define MS_DLL    __declspec(dllimport)
 #endif
-
-#if !defined(FI_DLLIMPORT)
-
-# if defined(WIN32) || defined(_WIN32)
-#   define FI_DLLIMPORT  __declspec(dllimport)
-# else
-#   define FI_DLLIMPORT
-# endif
-
 #endif
 
 
-#if !defined(TCHAR)
+#else
+#define MS_DLL
+#endif
+
+
+
+#if !defined(TChar)
 
 #  if defined(_UNICODE)
-#   define  TCHAR  wchar_t
+#   define  TChar  wchar_t
 #  else
-#    define  TCHAR  char
+#    define  TChar  char
 #  endif
 
 #endif
