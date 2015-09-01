@@ -12,15 +12,15 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
+#include "../core/fusilli.h"
 #include "2d/CCLayer.h"
-#include "fusilli.h"
-NS_FI_BEGIN
 USING_NS_CC;
+NS_FI_BEGIN
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class FI_DLLEXPORT XLayer : public cocos2d::Layer {
+class CC_DLL XLayer : public cocos2d::Layer {
 
 public:
 
