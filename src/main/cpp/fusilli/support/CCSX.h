@@ -12,48 +12,69 @@
 #if !defined(__CCSX_H__)
 #define __CCSX_H__
 
+#include "../core/fusilli.h"
 #include "cocos2d.h"
-#include "fusilli.h"
 USING_NS_STD;
 USING_NS_CC;
 NS_FI_BEGIN
 
-class CC_DLL  CCSX {
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Box4 {
+  Box4(float t, float r, float b, float l)
+    : top(t), right(r), bottom(b), left(l)
+  {}
+  ~Box4()
+  {}
+  Box4(const Box4& b) {
+    top=b.top;
+    right=b.right;
+    bottom=b.bottom;
+    left=b.left;
+  }
+  Box4& operator=(const Box4& b) {
+    top=b.top;
+    right=b.right;
+    bottom=b.bottom;
+    left=b.left;
+  }
+  float top;
+  float right;
+  float bottom;
+  float left;
+};
+
+class Entity;
+class CC_DLL CCSX {
 
   bool PointInBox(const Rect& box, float x,  float y);
-  const Color3& White();
-  const Color3& Black();
+  const Color3B& White();
+  const Color3B& Black();
 
-  bool Collide(Entity* a, Entity* b);
   bool Collide0(Sprite* spriteA, Sprite* spriteB);
+  bool Collide(Entity* a, Entity* b);
 
   void SetDevRes(bool landscape, float w, float h, ResolutionPolicy pcy);
 
   bool IsPortrait();
-
   bool OutOfBound(Entity* ent, const Rect& B);
 
-  bool UndoTimer(par, tm);
-
-  Action* CreateTimer(par, tm);
-
-  bool TimerDone(t);
+  Action* CreateTimer(Node*, float millis);
+  bool UndoTimer(Node*, Action*);
+  bool TimerDone(Action*);
 
   Sprite* CreateSprite(const string& frameName);
 
-  Box4 bbox4(Sprite* sprite);
+  Box4 BBox4B4(Entity* ent);
+  Box4 BBox4(Sprite* sprite);
 
   void RunScene(Scene* ns, float delay);
-
-  bool isTransitioning();
+  bool IsTransitioning();
 
   Size CSize(const string& frame);
 
-  Tuple<> HalfHW(Sprite* sprite);
-
-  Rect& BBox(Sprite* sprite);
-
-  Box4& BBox4B4(Entity* ent);
+  Vec2 HalfHW(Sprite* sprite);
+  Rect BBox(Sprite* sprite);
 
   float GetScaledHeight(Sprite* sprite);
 

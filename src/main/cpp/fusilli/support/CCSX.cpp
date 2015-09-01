@@ -391,10 +391,7 @@ float CCSX::ScreenWidth() { return Screen().width; }
    * @return {Object} cc.rect
    */
 Rect CCSX::VisRect() {
-  const vr= cc.view.getViewPortRect(),
-  vo = cc.view.getVisibleOrigin(),
-  wz= cc.view.getVisibleSize();
-  return Rect(vo.x, vo.y, wz.width, wz.height);
+  return Director::getInstance().getOpenGLView().getVisibleRect();
 }
 
   /**
@@ -403,14 +400,12 @@ Rect CCSX::VisRect() {
    * @return {Object} rectangle box.
    */
 Box4 CCSX::VisBox() {
-  const vr= cc.view.getViewPortRect(),
-  vo = cc.view.getVisibleOrigin(),
-  wz= cc.view.getVisibleSize();
+  auto vr = Director::getInstance().getOpenGLView().getVisibleRect();
   return Box4(
-    vo.y + wz.height,
-    vo.x + wz.width,
-    vo.y,
-    vo.x
+    vr.y + vr.height,
+    vr.x + vr.width,
+    vr.y,
+    vr.x
   );
 }
 
@@ -419,20 +414,19 @@ Box4 CCSX::VisBox() {
    * @method
    * @return {cc.Size}
    */
-  screen() {
-    return cc.sys.isNative ? cc.view.getFrameSize()
-                           : cc.director.getWinSize();
-  },
+const Size& CCSX::Screen() {
+  return Director::getInstance().getOpenGLView().getFrameSize();
+}
 
   /**
    * Get the actual screen center.
    * @method
    * @return {cc.Point}
    */
-  scenter() {
-    const sz = this.screen();
-    return cc.p(sz.width * 0.5, sz.height * 0.5);
-  },
+Vec2 CCSX::SCenter() {
+  auto sz = this.screen();
+  return Vec2(sz.width * 0.5, sz.height * 0.5);
+}
 
   /**
    * Get the center of this box.
@@ -440,10 +434,10 @@ Box4 CCSX::VisBox() {
    * @param {Object} box
    * @return {cc.Point}
    */
-  vboxMID(box) {
-    return cc.p(box.left + (box.right-box.left) * 0.5,
-                box.bottom + (box.top-box.bottom) * 0.5);
-  },
+Vec2 CCSX::VBoxMID(const Box4& box) {
+  return Vec2(box.left + (box.right-box.left) * 0.5,
+              box.bottom + (box.top-box.bottom) * 0.5);
+}
 
   /**
    * Test if this box is hitting boundaries.
@@ -458,55 +452,45 @@ Box4 CCSX::VisBox() {
    * @param {Object} vel velocity for [x,y]
    * @return {Object}
    */
-  traceEnclosure(dt,bbox,rect,vel) {
-    let sz= rect.height * 0.5,
-    sw= rect.width * 0.5,
-    vx= vel.x,
-    vy= vel.y,
-    y = rect.y + dt * vel.y,
-    x = rect.x + dt * vel.x,
-    hit=false;
+TraceResult CCSX::TraceEnclosure(float dt, const Box4& bbox, const Rect& rect, const Vec2& vel) {
+  auto sz= rect.size.height * 0.5;
+  auto sw= rect.size.width * 0.5;
+  auto vx= vel.x;
+  auto vy= vel.y;
+  auto y = rect.origin.y + dt * vel.y;
+  auto x = rect.origin.x + dt * vel.x;
+  auto hit=false;
 
-    if (y + sz > bbox.top) {
-      //hitting top wall
-      y = bbox.top - sz;
-      vy = - vy;
-      hit=true;
-    }
-    else
-    if (y - sz < bbox.bottom) {
-      //hitting bottom wall
-      y = bbox.bottom + sz;
-      vy = - vy;
-      hit=true;
-    }
+  if (y + sz > bbox.top) {
+    //hitting top wall
+    y = bbox.top - sz;
+    vy = -vy;
+    hit=true;
+  }
+  else
+  if (y - sz < bbox.bottom) {
+    //hitting bottom wall
+    y = bbox.bottom + sz;
+    vy = -vy;
+    hit=true;
+  }
 
-    if (x + sw > bbox.right) {
-      //hitting right wall
-      x = bbox.right - sw;
-      vx = - vx;
-      hit=true;
-    }
-    else
-    if (x - sw < bbox.left) {
-      //hitting left wall
-      x = bbox.left + sw;
-      vx = - vx;
-      hit=true;
-    }
+  if (x + sw > bbox.right) {
+    //hitting right wall
+    x = bbox.right - sw;
+    vx = -vx;
+    hit=true;
+  }
+  else
+  if (x - sw < bbox.left) {
+    //hitting left wall
+    x = bbox.left + sw;
+    vx = -vx;
+    hit=true;
+  }
 
-    return hit ? {
-        hit: true,
-        x: x,
-        y: y,
-        vx: vx,
-        vy: vy
-      } : {
-        hit: false,
-        x: x,
-        y: y
-      };
-  },
+  return TraceResult(hit, x, y, vx, vy);
+}
 
   /**
    * Get the sprite from the frame cache using
@@ -515,198 +499,183 @@ Box4 CCSX::VisBox() {
    * @param {String} frameid
    * @return {cc.Sprite}
    */
-  getSprite(frameid) {
-    return cc.spriteFrameCache.getSpriteFrame(frameid);
-  },
+Sprite* CCSX::GetSprite(const string& frameid) {
+  return SpriteFrameCache::getInstance().getSpriteFrame(frameid);
+}
 
   /**
    * @method hasKeyPad
    * @return {Boolean}
    */
-  hasKeyPad() {
-    return !!cc.sys.capabilities['keyboard'] && !cc.sys.isNative;
-  },
+bool CCSX::HasKeyPad() {
+  return false;
+}
 
   /**
    * @method onKeyPolls
    */
-  onKeyPolls(kb) {
-    if (!this.hasKeyPad()) {return;}
-    cc.eventManager.addListener({
-      onKeyPressed(key, e) {
-        kb[key]=true;
-      },
-      onKeyReleased(key, e) {
-        kb[key]=false;
-      },
-      event: cc.EventListener.KEYBOARD
-    }, sh.main);
-  },
+void CCSX::OnKeyPolls(kb) {
+}
 
   /**
    * @method onKeys
    */
-  onKeys(bus) {
-    if (!this.hasKeyPad()) {return;}
-    cc.eventManager.addListener({
-      onKeyPressed(key, e) {
-        bus.fire('/key/down', {group: 'key', key: key, event: e});
-      },
-      onKeyReleased(key, e) {
-        bus.fire('/key/up', {group: 'key', key: key, event: e});
-      },
-      event: cc.EventListener.KEYBOARD
-    }, sh.main);
-  },
+void CCSX::OnKeys(bus) {
+  if (!this.hasKeyPad()) {return;}
+  cc.eventManager.addListener({
+    onKeyPressed(key, e) {
+      bus.fire('/key/down', {group: 'key', key: key, event: e});
+    },
+    onKeyReleased(key, e) {
+      bus.fire('/key/up', {group: 'key', key: key, event: e});
+    },
+    event: cc.EventListener.KEYBOARD
+  }, sh.main);
+}
 
   /**
    * @method hasMouse
    * @return {Boolean}
    */
-  hasMouse() {
-    return !!cc.sys.capabilities['mouse'];
-  },
+bool CCSX::HasMouse() {
+  return false;
+}
 
-  onMouse(bus) {
-    if (!this.hasMouse()) {return;}
-    cc.eventManager.addListener({
-      onMouseMove(e) {
-        if (e.getButton() === cc.EventMouse.BUTTON_LEFT) {
-          bus.fire('/mouse/move', {group:'mouse',
-                   loc: e.getLocation(),
-                   delta: e.getDelta(),
-                   event: e});
-        }
-      },
-      onMouseDown(e) {
-        bus.fire('/mouse/down', {group:'mouse',
-                 loc: e.getLocation(),
-                 event: e});
-      },
-      onMouseUp(e) {
-        bus.fire('/mouse/up', {group:'mouse',
-                 loc: e.getLocation(),
-                 event: e});
-      },
-      event: cc.EventListener.MOUSE
-    }, sh.main);
+void CCSX::OnMouse(bus) {
+if (!this.hasMouse()) {return;}
+cc.eventManager.addListener({
+  onMouseMove(e) {
+    if (e.getButton() === cc.EventMouse.BUTTON_LEFT) {
+      bus.fire('/mouse/move', {group:'mouse',
+               loc: e.getLocation(),
+               delta: e.getDelta(),
+               event: e});
+    }
   },
+  onMouseDown(e) {
+    bus.fire('/mouse/down', {group:'mouse',
+             loc: e.getLocation(),
+             event: e});
+  },
+  onMouseUp(e) {
+    bus.fire('/mouse/up', {group:'mouse',
+             loc: e.getLocation(),
+             event: e});
+  },
+  event: cc.EventListener.MOUSE
+  }, sh.main);
+}
 
   /**
    * @method hasTouch
    * @return {Boolean}
    */
-  hasTouch() {
-    return !!cc.sys.capabilities['touches'];
-  },
+bool CCSX::HasTouch() {
+  return !!cc.sys.capabilities['touches'];
+}
 
-  onTouchAll(bus) {
-    if (!this.hasTouch()) {return;}
-    cc.eventManager.addListener({
-      event: cc.EventListener.TOUCH_ALL_AT_ONCE,
-      prevTouchId: -1,
-      onTouchesBegan(ts,e) { return true; },
-      onTouchesEnded(ts,e) {
-        bus.fire('/touch/all/end', {group:'touch',
-                   event: e,
-                   loc: ts[0].getLocation()});
-      },
-      onTouchesMoved(ts,e) {
-        const id = ts[0].id;
-        if (this.prevTouchId != id) {
-          this.prevTouchId = id;
-        } else {
-          bus.fire('/touch/all/move', {group:'touch',
-                   event: e,
-                   delta: ts[0].getDelta()});
-        }
-      }
-    }, sh.main);
-  },
-
-  onTouchOne(bus) {
-    if (!this.hasTouch()) {return;}
-    cc.eventManager.addListener({
-      event: cc.EventListener.TOUCH_ONE_BY_ONE,
-      swallowTouches: true,
-      onTouchBegan(t,e) { return true; },
-      onTouchMoved(t,e) {
-        bus.fire('/touch/one/move', {group:'touch',
+void CCSX::OnTouchAll(bus) {
+  if (!this.hasTouch()) {return;}
+  cc.eventManager.addListener({
+    event: cc.EventListener.TOUCH_ALL_AT_ONCE,
+    prevTouchId: -1,
+    onTouchesBegan(ts,e) { return true; },
+    onTouchesEnded(ts,e) {
+      bus.fire('/touch/all/end', {group:'touch',
                  event: e,
-                 delta: t.getDelta(),
-                 loc: t.getLocation()});
-      },
-      onTouchEnded(t,e) {
-        bus.fire('/touch/one/end', {group:'touch',
+                 loc: ts[0].getLocation()});
+    },
+    onTouchesMoved(ts,e) {
+      const id = ts[0].id;
+      if (this.prevTouchId != id) {
+        this.prevTouchId = id;
+      } else {
+        bus.fire('/touch/all/move', {group:'touch',
                  event: e,
-                 loc: t.getLocation()});
+                 delta: ts[0].getDelta()});
       }
-    }, sh.main);
-  },
+    }
+  }, sh.main);
+}
 
-  /**
-   * @property {Object} acs Anchor Points
-   */
-  acs : {
-    Center: cc.p(0.5, 0.5),
-    Top: cc.p(0.5, 1),
-    TopRight: cc.p(1, 1),
-    Right: cc.p(1, 0.5),
-    BottomRight: cc.p(1, 0),
-    Bottom: cc.p(0.5, 0),
-    BottomLeft: cc.p(0, 0),
-    Left: cc.p(0, 0.5),
-    TopLeft: cc.p(0, 1)
-  },
+void CCSX::OnTouchOne(bus) {
+  if (!this.hasTouch()) {return;}
+  cc.eventManager.addListener({
+    event: cc.EventListener.TOUCH_ONE_BY_ONE,
+    swallowTouches: true,
+    onTouchBegan(t,e) { return true; },
+    onTouchMoved(t,e) {
+      bus.fire('/touch/one/move', {group:'touch',
+               event: e,
+               delta: t.getDelta(),
+               loc: t.getLocation()});
+    },
+    onTouchEnded(t,e) {
+      bus.fire('/touch/one/end', {group:'touch',
+               event: e,
+               loc: t.getLocation()});
+    }
+  }, sh.main);
+}
+
+Vec2 CCSX::AncCenter() { return Vec2(0.5, 0.5); }
+Vec2 CCSX::AncTop() { return Vec2(0.5, 1); }
+Vec2 CCSX::AncTopRight() { return Vec2(1, 1); }
+Vec2 CCSX::AncRight() { return Vec2(1, 0.5); }
+Vec2 CCSX::AncBottomRight() { return Vec2(1, 0); }
+Vec2 CCSX::AncBottom() { return Vec2(0.5, 0); }
+Vec2 CCSX::AncBottomLeft() { return Vec2(0, 0); }
+Vec2 CCSX::AncLeft() { return Vec2(0, 0.5); }
+Vec2 CCSX::AncTopLeft() { return Vec2(0, 1); }
 
   /**
    * not used for now.
    * @private
    */
-  resolveElastic(obj1,obj2) {
-    let pos2 = obj2.sprite.getPosition(),
-    pos1= obj1.sprite.getPosition(),
-    sz2= obj2.sprite.getContentSize(),
-    sz1= obj1.sprite.getContentSize(),
-    hh1= sz1.height * 0.5,
-    hw1= sz1.width * 0.5,
-    x = pos1.x,
-    y= pos1.y,
-    bx2 = this.bbox4(obj2.sprite),
-    bx1 = this.bbox4(obj1.sprite);
+void CCSX::ResolveElastic(Entity* obj1, Entity* obj2) {
+  let pos2 = obj2.sprite.getPosition(),
+  pos1= obj1.sprite.getPosition(),
+  sz2= obj2.sprite.getContentSize(),
+  sz1= obj1.sprite.getContentSize(),
+  hh1= sz1.height * 0.5,
+  hw1= sz1.width * 0.5,
+  x = pos1.x,
+  y= pos1.y,
+  bx2 = this.bbox4(obj2.sprite),
+  bx1 = this.bbox4(obj1.sprite);
 
-    // coming from right
-    if (bx1.left < bx2.right && bx2.right < bx1.right) {
-      obj1.vel.x = Math.abs(obj1.vel.x);
-      obj2.vel.x = - Math.abs(obj2.vel.x);
-      x= this.getRight(obj2.sprite) + hw1;
-    }
-    else
-    // coming from left
-    if (bx1.right > bx2.left && bx1.left < bx2.left) {
-      obj1.vel.x = - Math.abs(obj1.vel.x);
-      obj2.vel.x = Math.abs(obj2.vel.x);
-      x= this.getLeft(obj2.sprite) - hw1;
-    }
-    else
-    // coming from top
-    if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
-      obj1.vel.y = Math.abs(obj1.vel.y);
-      obj2.vel.y = - Math.abs(obj2.vel.y);
-      y= this.getTop(obj2.sprite) + hh1;
-    }
-    else
-    // coming from bottom
-    if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
-      obj1.vel.y = - Math.abs(obj1.vel.y);
-      obj2.vel.y = Math.abs(obj2.vel.y);
-      y= this.getBottom(obj2.sprite) - hh1;
-    }
-    else {
-      return;
-    }
-    obj1.updatePosition(x,y);
-  },
+  // coming from right
+  if (bx1.left < bx2.right && bx2.right < bx1.right) {
+    obj1.vel.x = Math.abs(obj1.vel.x);
+    obj2.vel.x = - Math.abs(obj2.vel.x);
+    x= this.getRight(obj2.sprite) + hw1;
+  }
+  else
+  // coming from left
+  if (bx1.right > bx2.left && bx1.left < bx2.left) {
+    obj1.vel.x = - Math.abs(obj1.vel.x);
+    obj2.vel.x = Math.abs(obj2.vel.x);
+    x= this.getLeft(obj2.sprite) - hw1;
+  }
+  else
+  // coming from top
+  if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
+    obj1.vel.y = Math.abs(obj1.vel.y);
+    obj2.vel.y = - Math.abs(obj2.vel.y);
+    y= this.getTop(obj2.sprite) + hh1;
+  }
+  else
+  // coming from bottom
+  if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
+    obj1.vel.y = - Math.abs(obj1.vel.y);
+    obj2.vel.y = Math.abs(obj2.vel.y);
+    y= this.getBottom(obj2.sprite) - hh1;
+  }
+  else {
+    return;
+  }
+  obj1.updatePosition(x,y);
+}
 
   /**
    * Create a text menu containing this set of items.
@@ -720,24 +689,24 @@ Box4 CCSX::VisBox() {
    * @param {Number} scale
    * @return {cc.Menu}
    */
-  tmenu(items,scale) {
-    let menu= new cc.Menu(),
-    mi,
-    t=0,
-    obj;
+Menu* CCSX::TMenu(Array* items, float scale) {
+  auto menu= Menu::create();
+  Dictionary* obj;
+  int t=0;
 
-    for (let n=0; n < items.length; ++n) {
-      obj= items[n];
-      mi= new cc.MenuItemLabel(new cc.LabelBMFont(obj.text,
-                                                  obj.fontPath),
-                               obj.selector || obj.cb,
-                               obj.target);
-      mi.setOpacity(255 * 0.9);
-      mi.setScale(scale || 1);
-      mi.setTag(++t);
-    }
-    return menu;
-  },
+  for (auto it = items->begin(); it != items->end(); ++it) {
+    obj = static_cast<Dictionary*>(*it);
+    mi= new cc.MenuItemLabel(new cc.LabelBMFont(obj.text,
+                                                obj.fontPath),
+                             obj.selector || obj.cb,
+                             obj.target);
+    mi->setOpacity(255 * 0.9);
+    mi->setScale(scale);
+    mi->setTag(++t);
+    menu->addChild(mi);
+  }
+  return menu;
+}
 
   /**
    * Make a text label menu containing one single button.
@@ -745,14 +714,15 @@ Box4 CCSX::VisBox() {
    * @param {Object} options
    * @return {cc.Menu}
    */
-  tmenu1(options) {
-    let menu = this.tmenu(options);
-    if (options.anchor) { menu.setAnchorPoint(options.anchor); }
-    if (options.pos) { menu.setPosition(options.pos); }
-    if (options.visible === false) { menu.setVisible(false); }
-    menu.alignItemsVertically();
-    return menu;
-  },
+Menu* CCSX::TMenu1(Dictionary* options) {
+  auto arr= Array::createWithObject(options);
+  auto menu = TMenu(arr);
+  if (options.anchor) { menu.setAnchorPoint(options.anchor); }
+  if (options.pos) { menu.setPosition(options.pos); }
+  if (options.visible === false) { menu.setVisible(false); }
+  menu->alignItemsVertically();
+  return menu;
+}
 
   /**
    * Create a vertically aligned menu with graphic buttons.
@@ -761,17 +731,16 @@ Box4 CCSX::VisBox() {
    * @param {Object} options
    * @return {cc.Menu}
    */
-  vmenu(items, options) {
-    const hint=options || {},
-    m= this.pmenu(true,
-                  items,
-                  hint.scale,
-                  hint.padding);
-    if (!!hint.pos) {
-      m.setPosition(hint.pos);
-    }
-    return m;
-  },
+Menu* CCSX::VMenu(Array* items, Dictionary* options) {
+  auto m= PMenu(true,
+                items,
+                hint.scale,
+                hint.padding);
+  if (!!hint.pos) {
+    m.setPosition(hint.pos);
+  }
+  return m;
+}
 
   /**
    * Create a horizontally aligned menu with graphic buttons.
@@ -780,17 +749,16 @@ Box4 CCSX::VisBox() {
    * @param {Object} options
    * @return {cc.Menu}
    */
-  hmenu(items, options) {
-    const hint= options || {},
-    m= this.pmenu(false,
-                  items,
-                  hint.scale,
-                  hint.padding);
-    if (!!hint.pos) {
-      m.setPosition(hint.pos);
-    }
-    return m;
-  },
+Menu* CCSX::HMenu(Array* items, Dictionary* options) {
+  auto m= PMenu(false,
+                items,
+                hint.scale,
+                hint.padding);
+  if (!!hint.pos) {
+    m.setPosition(hint.pos);
+  }
+  return m;
+}
 
   /**
    * Create a menu with graphic buttons.
@@ -801,34 +769,34 @@ Box4 CCSX::VisBox() {
    * @param {Number} padding
    * @return {cc.Menu}
    */
-  pmenu(vertical, items, scale, padding) {
-    let menu = new cc.Menu(),
-    obj,
-    mi,
-    t=0;
+Menu* CCSX::PMenu(bool vertical,  Array* items, float scale, float padding) {
+  auto menu = Menu::create();
+  MenuItemSprite* mi;
+  Dictionary* obj;
+  int t=0;
 
-    for (let n=0; n < items.length; ++n) {
-      obj=items[n];
-      mi= new cc.MenuItemSprite(new cc.Sprite(obj.nnn),
-                                new cc.Sprite(obj.sss || obj.nnn),
-                                new cc.Sprite(obj.ddd || obj.nnn),
-                                obj.selector || obj.cb,
-                                obj.target);
-      if (!!obj.color) { mi.setColor(obj.color); }
-      if (!!scale) { mi.setScale(scale); }
-      mi.setTag(++t);
-      menu.addChild(mi);
-    }
+  for (auto it = items->begin(); it != items->end(); ++it) {
+    obj= static_cast<Dictionary*>(*it);
+    mi= new cc.MenuItemSprite(new cc.Sprite(obj.nnn),
+                              new cc.Sprite(obj.sss || obj.nnn),
+                              new cc.Sprite(obj.ddd || obj.nnn),
+                              obj.selector || obj.cb,
+                              obj.target);
+    if (!!obj.color) { mi.setColor(obj.color); }
+    if (!!scale) { mi.setScale(scale); }
+    mi->setTag(++t);
+    menu->addChild(mi);
+  }
 
-    padding = padding || 10;
-    if (!vertical) {
-      menu.alignItemsHorizontallyWithPadding(padding);
-    } else {
-      menu.alignItemsVerticallyWithPadding(padding);
-    }
+  padding = padding || 10;
+  if (!vertical) {
+    menu->alignItemsHorizontallyWithPadding(padding);
+  } else {
+    menu->alignItemsVerticallyWithPadding(padding);
+  }
 
-    return menu;
-  },
+  return menu;
+}
 
   /**
    * Create a single button menu.
@@ -836,13 +804,14 @@ Box4 CCSX::VisBox() {
    * @param {Object} options
    * @return {cc.Menu}
    */
-  pmenu1(options) {
-    const menu = this.pmenu(true, [options]);
-    if (options.anchor) { menu.setAnchorPoint(options.anchor); }
-    if (options.pos) { menu.setPosition(options.pos); }
-    if (options.visible === false) { menu.setVisible(false); }
-    return menu;
-  },
+Menu CCSX::PMenu1(Dictionary* options) {
+  auto arr= Array::createWithObject(options);
+  auto menu = PMenu(true, arr);
+  if (options.anchor) { menu.setAnchorPoint(options.anchor); }
+  if (options.pos) { menu.setPosition(options.pos); }
+  if (options.visible === false) { menu.setVisible(false); }
+  return menu;
+}
 
   /**
    * Create a Label.
@@ -850,16 +819,28 @@ Box4 CCSX::VisBox() {
    * @param {Object} options
    * @return {cc.LabelBMFont}
    */
-  bmfLabel(options) {
-    let f= new cc.LabelBMFont(options.text, options.fontPath);
-    if (options.color) { f.setColor(options.color); }
-    if (options.pos) { f.setPosition(options.pos); }
-    if (options.anchor) { f.setAnchorPoint(options.anchor); }
-    if (options.visible === false) { f.setVisible(false); }
-    f.setScale( options.scale || 1);
-    f.setOpacity(0.9*255);
-    return f;
+Label* xxx(Dictionary* options) {
+  String* text = DictValue(options, "text",text);
+  String* fnt= DictValue(options, "font", fnt);
+  auto f= LabelBMFont::create(text->getCString(), fnt->getCString());
+  if (options.color) { f.setColor(options.color); }
+  if (options.pos) { f.setPosition(options.pos); }
+  if (options.anchor) { f.setAnchorPoint(options.anchor); }
+  if (options.visible === false) { f.setVisible(false); }
+  f->setScale( options.scale || 1);
+  f->setOpacity(0.9*255);
+  return f;
+}
+
+template<typename T>
+T* DictValue(Dictionary* d, const string& key, T*& dummy) {
+  auto v= d->objectForKey(key);
+  if (v != nullptr) {
+    return static_cast<T*>(v);
+  } else {
+    return nullptr;
   }
+}
 
 
 

@@ -71,11 +71,13 @@ enum class Locale {
 
 
 #ifdef __cplusplus
-# define USING_NS_FI    using namespace fusilli
+# define USING_NS_STD using namespace std;
+# define USING_NS_FI    using namespace fusilli;
 # define NS_FI          ::fusilli
 # define NS_FI_BEGIN    namespace fusilli {
 # define NS_FI_END      }
 #else
+# define USING_NS_STD
 # define NS_FI_BEGIN
 # define NS_FI_END
 # define USING_NS_FI
@@ -94,7 +96,7 @@ enum class Locale {
 #define mc_pcast(classname, expr) ((##classname *) (expr))
 #define mc_rcast(classname, expr) ((##classname &) (expr))
 
-#define DISALLOW_COPY_AND_ASSIGN(T) \
+#define NO_COPY_AND_ASSIGN(T) \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;
 
