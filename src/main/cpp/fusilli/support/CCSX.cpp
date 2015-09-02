@@ -68,7 +68,7 @@ void CCSX::SetDevRes(bool landscape, float x, float y, ResolutionPolicy pcy) {
   if (landscape) {
     v->setDesignResolutionSize(x, y, pcy);
   } else {
-    v->setDesignResolutionSize(y, w, pcy);
+    v->setDesignResolutionSize(y, x, pcy);
   }
 }
 
@@ -83,6 +83,10 @@ bool CCSX::OutOfBound(Entity* ent, const Box4& B) {
   } else {
     return false;
   }
+}
+
+bool CCSX::OutOfBound(const Box4& ent, const Box4& B) {
+    return false;
 }
 
 void CCSX::UndoTimer(Action* tm) {
@@ -114,13 +118,13 @@ Sprite* CCSX::CreateSprite(const string& name) {
   return Sprite::createWithSpriteFrameName(name);
 }
 
-Box4 CCSX::BBox4(Sprite* s) {
+const Box4 CCSX::BBox4(Sprite* s) {
   return Box4(
     GetTop(s),
     GetRight(s),
     GetBottom(s),
     GetLeft(s)
-  };
+  );
 }
 
   /**
@@ -143,14 +147,14 @@ bool CCSX::IsTransitioning() {
    * @param {String} frame
    * @return {cc.Size}
    */
-const Size& CSize(const string& frame) {
+const Size CCSX::CSize(const string& frame) {
   return CreateSprite(frame)->getContentSize();
 }
 
   /**
    * Calculate halves of width and height of this sprite.
    */
-Size CCSX::HalfHW(Sprite* s) {
+const Size CCSX::HalfHW(Sprite* s) {
   auto z= s->getContentSize();
   return Size(z.width * 0.5, z.height * 0.5);
 }
@@ -161,7 +165,7 @@ Size CCSX::HalfHW(Sprite* s) {
    * @param {cc.Sprite} sprite
    * @return {cc.rect} rect
    */
-Rect CCSX::BBox(Sprite* s) {
+const Rect CCSX::BBox(Sprite* s) {
   return Rect(GetLeft(s),
                  GetBottom(s),
                  GetWidth(s),
@@ -174,7 +178,7 @@ Rect CCSX::BBox(Sprite* s) {
    * @param {Object} ent
    * @return {Object} box
    */
-Box4 CCSX::BBox4B4(Entity* ent) {
+const Box4 CCSX::BBox4B4(Entity* ent) {
   return Box4(
     GetLastTop(ent),
     GetLastRight(ent),
@@ -198,91 +202,63 @@ float CCSX::GetWidth(Sprite* s) {
   return s->getContentSize().width;
 }
 
-float CCSX::GetLeft(Sprite* s) {
+static float GetXXX(Sprite* s, float px, float bound) {
   auto w= s->getContentSize().width;
   auto a= s->getAnchorPoint().x;
-  auto p= s->getPosition().x;
-  auto c= AncLeft().x;
-  return p + (c - a) * w;
+  return px + (bound - a) * w ;
+}
+
+static float GetYYY(Sprite* s, float py, float bound) {
+  auto h= s->getContentSize().height;
+  auto a= s->getAnchorPoint().y;
+  return py + (bound - a) * h ;
+}
+
+float CCSX::GetLeft(Sprite* s) {
+  return GetXXX(s, s->getPosition().x, AncLeft().x);
 }
 
 float CCSX::GetRight(Sprite* s) {
-  auto w= s->getContentSize().width;
-  auto a= s->getAnchorPoint().x;
-  auto p= s->getPosition().x;
-  auto c= AncRight().x;
-  return p + (c - a) * w ;
-}
-
-float CCSX::GetTop(Sprite* s) {
-  auto h= s->getContentSize().height;
-  auto a= s->getAnchorPoint().y;
-  auto p= s->getPosition().y;
-  auto c= AncTop().y;
-  return p + (c - a) * h ;
+  return GetXXX(s, s->getPosition().x, AncRight().x);
 }
 
 float CCSX::GetBottom(Sprite* s) {
-  auto h= s->getContentSize().height;
-  auto a= s->getAnchorPoint().y;
-  auto p= s->getPosition().y;
-  auto c= AncBottom().y;
-  return p + (c - a) * h ;
+  return GetYYY(s, s->getPosition().y, AncBottom().y);
 }
 
-  /**
-   * Maybe get the previous left pos.
-   * @method
-   * @param {Object} ent
-   * @return {Number}
-   */
+float CCSX::GetTop(Sprite* s) {
+  return GetYYY(s, s->getPosition().y, AncTop().y);
+}
+
 float CCSX::GetLastLeft(Entity* ent) {
   if ( ent->lastPos != nullptr) {
-    return ent->lastPos.x - GetWidth(ent->sprite) * 0.5;
+    return GetXXX(ent->sprite, ent->lastPos->x, AncLeft().x);
   } else {
-    return GetLeft(ent);
+    return GetLeft(ent->sprite);
   }
 }
 
-  /**
-   * Maybe get the previous right pos.
-   * @method
-   * @param {Object} ent
-   * @return {Number}
-   */
 float CCSX::GetLastRight(Entity* ent) {
   if ( ent->lastPos != nullptr) {
-    return ent->lastPos.x + GetWidth(ent->sprite) * 0.5;
+    return GetXXX(ent->sprite, ent->lastPos->x, AncRight().x);
   } else {
-    return GetRight(ent);
+    return GetRight(ent->sprite);
   }
 }
 
-  /**
-   * Maybe get the previous top pos.
-   * @method
-   * @param {Object} ent
-   * @return {Number}
-   */
 float CCSX::GetLastTop(Entity* ent) {
   if (ent->lastPos != nullptr) {
-    return ent->lastPos.y + GetHeight(ent->sprite) * 0.5;
+    return GetYYY(ent->sprite, ent->lastPos->y, AncTop().y);
   } else {
-    return GetTop(ent);
+    return GetTop(ent->sprite);
   }
 }
 
-  /**
-   * Maybe get the previous bottom pos.
-   * @method
-   * @param {Object} ent
-   * @return {Number}
-   */
-float CCSX::GetLastBottom(ent) {
+float CCSX::GetLastBottom(Entity* ent) {
   if (ent->lastPos != nullptr) {
-    return ent->lastPos.y - GetHeight(ent->sprite) * 0.5;
+    return GetYYY(ent->sprite, ent->lastPos->y, AncBottom().y);
   } else {
-    return GetBottom(ent);
+    return GetBottom(ent->sprite);
   }
 }
 
@@ -305,9 +281,10 @@ float CCSX::CenterY() { return Center().y; }
    * @method
    * @return {cc.Point}
    */
-Vec2 CCSX::Center() {
+const Vec2 CCSX::Center() {
   auto rc = VisRect();
-  return Vec2( rc.x + rc.width * 0.5, rc.y + rc.height * 0.5);
+  return Vec2( rc.origin.x + rc.size.width * 0.5,
+      rc.origin.y + rc.size.height * 0.5);
 }
 
   /**
@@ -329,8 +306,8 @@ float CCSX::ScreenWidth() { return Screen().width; }
    * @method
    * @return {Object} cc.rect
    */
-Rect CCSX::VisRect() {
-  return Director::getInstance().getOpenGLView().getVisibleRect();
+const Rect CCSX::VisRect() {
+  return Director::getInstance()->getOpenGLView()->getVisibleRect();
 }
 
   /**
@@ -338,13 +315,13 @@ Rect CCSX::VisRect() {
    * @method
    * @return {Object} rectangle box.
    */
-Box4 CCSX::VisBox() {
-  auto vr = Director::getInstance().getOpenGLView().getVisibleRect();
+const Box4 CCSX::VisBox() {
+  auto vr = Director::getInstance()->getOpenGLView()->getVisibleRect();
   return Box4(
-    vr.y + vr.height,
-    vr.x + vr.width,
-    vr.y,
-    vr.x
+    vr.origin.y + vr.size.height,
+    vr.origin.x + vr.size.width,
+    vr.origin.y,
+    vr.origin.x
   );
 }
 
@@ -353,8 +330,8 @@ Box4 CCSX::VisBox() {
    * @method
    * @return {cc.Size}
    */
-const Size& CCSX::Screen() {
-  return Director::getInstance().getOpenGLView().getFrameSize();
+const Size CCSX::Screen() {
+  return Director::getInstance()->getOpenGLView()->getFrameSize();
 }
 
   /**
@@ -362,8 +339,8 @@ const Size& CCSX::Screen() {
    * @method
    * @return {cc.Point}
    */
-Vec2 CCSX::SCenter() {
-  auto sz = this.screen();
+const Vec2 CCSX::SCenter() {
+  auto sz = Screen();
   return Vec2(sz.width * 0.5, sz.height * 0.5);
 }
 
@@ -373,7 +350,7 @@ Vec2 CCSX::SCenter() {
    * @param {Object} box
    * @return {cc.Point}
    */
-Vec2 CCSX::VBoxMID(const Box4& box) {
+const Vec2 CCSX::VBoxMID(const Box4& box) {
   return Vec2(box.left + (box.right-box.left) * 0.5,
               box.bottom + (box.top-box.bottom) * 0.5);
 }
@@ -391,13 +368,15 @@ Vec2 CCSX::VBoxMID(const Box4& box) {
    * @param {Object} vel velocity for [x,y]
    * @return {Object}
    */
-TraceResult CCSX::TraceEnclosure(float dt, const Box4& bbox, const Rect& rect, const Vec2& vel) {
+bool CCSX::TraceEnclosure(float dt, const Box4& bbox,
+    const Rect& rect, const Vec2& vel,
+    Vec2& outPos, Vec2& outVel) {
+  auto y = rect.origin.y + dt * vel.y;
+  auto x = rect.origin.x + dt * vel.x;
   auto sz= rect.size.height * 0.5;
   auto sw= rect.size.width * 0.5;
   auto vx= vel.x;
   auto vy= vel.y;
-  auto y = rect.origin.y + dt * vel.y;
-  auto x = rect.origin.x + dt * vel.x;
   auto hit=false;
 
   if (y + sz > bbox.top) {
@@ -428,7 +407,12 @@ TraceResult CCSX::TraceEnclosure(float dt, const Box4& bbox, const Rect& rect, c
     hit=true;
   }
 
-  return TraceResult(hit, x, y, vx, vy);
+  outPos.x=x;
+  outPos.y=y;
+  outVel.x=vx;
+  outVel.y=vy;
+
+  return hit;
 }
 
   /**
@@ -439,7 +423,7 @@ TraceResult CCSX::TraceEnclosure(float dt, const Box4& bbox, const Rect& rect, c
    * @return {cc.Sprite}
    */
 Sprite* CCSX::GetSprite(const string& frameid) {
-  return SpriteFrameCache::getInstance().getSpriteFrame(frameid);
+  return SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 
   /**
@@ -453,14 +437,15 @@ bool CCSX::HasKeyPad() {
   /**
    * @method onKeyPolls
    */
-void CCSX::OnKeyPolls(kb) {
+void CCSX::OnKeyPolls() {
 }
 
   /**
    * @method onKeys
    */
-void CCSX::OnKeys(bus) {
-  if (!this.hasKeyPad()) {return;}
+void CCSX::OnKeys() {
+  if (!HasKeyPad()) {return;}
+  /*
   cc.eventManager.addListener({
     onKeyPressed(key, e) {
       bus.fire('/key/down', {group: 'key', key: key, event: e});
@@ -470,6 +455,7 @@ void CCSX::OnKeys(bus) {
     },
     event: cc.EventListener.KEYBOARD
   }, sh.main);
+  */
 }
 
   /**
@@ -480,8 +466,9 @@ bool CCSX::HasMouse() {
   return false;
 }
 
-void CCSX::OnMouse(bus) {
-if (!this.hasMouse()) {return;}
+void CCSX::OnMouse() {
+if (!HasMouse()) {return;}
+/*
 cc.eventManager.addListener({
   onMouseMove(e) {
     if (e.getButton() === cc.EventMouse.BUTTON_LEFT) {
@@ -503,6 +490,7 @@ cc.eventManager.addListener({
   },
   event: cc.EventListener.MOUSE
   }, sh.main);
+  */
 }
 
   /**
@@ -510,11 +498,12 @@ cc.eventManager.addListener({
    * @return {Boolean}
    */
 bool CCSX::HasTouch() {
-  return !!cc.sys.capabilities['touches'];
+  return false; //!!cc.sys.capabilities['touches'];
 }
 
-void CCSX::OnTouchAll(bus) {
-  if (!this.hasTouch()) {return;}
+void CCSX::OnTouchAll() {
+  if (!HasTouch()) {return;}
+  /*
   cc.eventManager.addListener({
     event: cc.EventListener.TOUCH_ALL_AT_ONCE,
     prevTouchId: -1,
@@ -535,10 +524,12 @@ void CCSX::OnTouchAll(bus) {
       }
     }
   }, sh.main);
+  */
 }
 
-void CCSX::OnTouchOne(bus) {
-  if (!this.hasTouch()) {return;}
+void CCSX::OnTouchOne() {
+  if (!HasTouch()) {return;}
+  /*
   cc.eventManager.addListener({
     event: cc.EventListener.TOUCH_ONE_BY_ONE,
     swallowTouches: true,
@@ -555,233 +546,67 @@ void CCSX::OnTouchOne(bus) {
                loc: t.getLocation()});
     }
   }, sh.main);
+  */
 }
 
-Vec2 CCSX::AncCenter() { return Vec2(0.5, 0.5); }
-Vec2 CCSX::AncTop() { return Vec2(0.5, 1); }
-Vec2 CCSX::AncTopRight() { return Vec2(1, 1); }
-Vec2 CCSX::AncRight() { return Vec2(1, 0.5); }
-Vec2 CCSX::AncBottomRight() { return Vec2(1, 0); }
-Vec2 CCSX::AncBottom() { return Vec2(0.5, 0); }
-Vec2 CCSX::AncBottomLeft() { return Vec2(0, 0); }
-Vec2 CCSX::AncLeft() { return Vec2(0, 0.5); }
-Vec2 CCSX::AncTopLeft() { return Vec2(0, 1); }
+const Vec2 CCSX::AncCenter() { return Vec2(0.5, 0.5); }
+const Vec2 CCSX::AncTop() { return Vec2(0.5, 1); }
+const Vec2 CCSX::AncTopRight() { return Vec2(1, 1); }
+const Vec2 CCSX::AncRight() { return Vec2(1, 0.5); }
+const Vec2 CCSX::AncBottomRight() { return Vec2(1, 0); }
+const Vec2 CCSX::AncBottom() { return Vec2(0.5, 0); }
+const Vec2 CCSX::AncBottomLeft() { return Vec2(0, 0); }
+const Vec2 CCSX::AncLeft() { return Vec2(0, 0.5); }
+const Vec2 CCSX::AncTopLeft() { return Vec2(0, 1); }
 
   /**
    * not used for now.
    * @private
    */
 void CCSX::ResolveElastic(Entity* obj1, Entity* obj2) {
-  let pos2 = obj2.sprite.getPosition(),
-  pos1= obj1.sprite.getPosition(),
-  sz2= obj2.sprite.getContentSize(),
-  sz1= obj1.sprite.getContentSize(),
-  hh1= sz1.height * 0.5,
-  hw1= sz1.width * 0.5,
-  x = pos1.x,
-  y= pos1.y,
-  bx2 = this.bbox4(obj2.sprite),
-  bx1 = this.bbox4(obj1.sprite);
+  auto pos2 = obj2->sprite->getPosition();
+  auto pos1= obj1->sprite->getPosition();
+  auto sz2= obj2->sprite->getContentSize();
+  auto sz1= obj1->sprite->getContentSize();
+  auto hh1= sz1.height * 0.5;
+  auto hw1= sz1.width * 0.5;
+  auto x = pos1.x;
+  auto y= pos1.y;
+  auto bx2 = BBox4(obj2->sprite);
+  auto bx1 = BBox4(obj1->sprite);
 
   // coming from right
   if (bx1.left < bx2.right && bx2.right < bx1.right) {
-    obj1.vel.x = Math.abs(obj1.vel.x);
-    obj2.vel.x = - Math.abs(obj2.vel.x);
-    x= this.getRight(obj2.sprite) + hw1;
+    obj2->vel.x = - abs(obj2->vel.x);
+    obj1->vel.x = abs(obj1->vel.x);
+    x= GetRight(obj2->sprite) + hw1;
   }
   else
   // coming from left
   if (bx1.right > bx2.left && bx1.left < bx2.left) {
-    obj1.vel.x = - Math.abs(obj1.vel.x);
-    obj2.vel.x = Math.abs(obj2.vel.x);
-    x= this.getLeft(obj2.sprite) - hw1;
+    obj1->vel.x = - abs(obj1->vel.x);
+    obj2->vel.x = abs(obj2->vel.x);
+    x= GetLeft(obj2->sprite) - hw1;
   }
   else
   // coming from top
   if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
-    obj1.vel.y = Math.abs(obj1.vel.y);
-    obj2.vel.y = - Math.abs(obj2.vel.y);
-    y= this.getTop(obj2.sprite) + hh1;
+    obj2->vel.y = - abs(obj2->vel.y);
+    obj1->vel.y = abs(obj1->vel.y);
+    y= GetTop(obj2->sprite) + hh1;
   }
   else
   // coming from bottom
   if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
-    obj1.vel.y = - Math.abs(obj1.vel.y);
-    obj2.vel.y = Math.abs(obj2.vel.y);
-    y= this.getBottom(obj2.sprite) - hh1;
+    obj1->vel.y = - abs(obj1->vel.y);
+    obj2->vel.y = abs(obj2->vel.y);
+    y= GetBottom(obj2->sprite) - hh1;
   }
   else {
     return;
   }
-  obj1.updatePosition(x,y);
+  obj1->updatePosition(x,y);
 }
-
-  /**
-   * Create a text menu containing this set of items.
-   *
-   * Each item has the form {:text
-   * :fontPath
-   * :cb
-   * :target}
-   * @method
-   * @param {Array} items
-   * @param {Number} scale
-   * @return {cc.Menu}
-   */
-Menu* CCSX::TMenu(Array* items, float scale) {
-  auto menu= Menu::create();
-  Dictionary* obj;
-  int t=0;
-
-  for (auto it = items->begin(); it != items->end(); ++it) {
-    obj = static_cast<Dictionary*>(*it);
-    mi= new cc.MenuItemLabel(new cc.LabelBMFont(obj.text,
-                                                obj.fontPath),
-                             obj.selector || obj.cb,
-                             obj.target);
-    mi->setOpacity(255 * 0.9);
-    mi->setScale(scale);
-    mi->setTag(++t);
-    menu->addChild(mi);
-  }
-  return menu;
-}
-
-  /**
-   * Make a text label menu containing one single button.
-   * @method
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-Menu* CCSX::TMenu1(Dictionary* options) {
-  auto arr= Array::createWithObject(options);
-  auto menu = TMenu(arr);
-  if (options.anchor) { menu.setAnchorPoint(options.anchor); }
-  if (options.pos) { menu.setPosition(options.pos); }
-  if (options.visible === false) { menu.setVisible(false); }
-  menu->alignItemsVertically();
-  return menu;
-}
-
-  /**
-   * Create a vertically aligned menu with graphic buttons.
-   * @method
-   * @param {Array} items
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-Menu* CCSX::VMenu(Array* items, Dictionary* options) {
-  auto m= PMenu(true,
-                items,
-                hint.scale,
-                hint.padding);
-  if (!!hint.pos) {
-    m.setPosition(hint.pos);
-  }
-  return m;
-}
-
-  /**
-   * Create a horizontally aligned menu with graphic buttons.
-   * @method
-   * @param {Array} items
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-Menu* CCSX::HMenu(Array* items, Dictionary* options) {
-  auto m= PMenu(false,
-                items,
-                hint.scale,
-                hint.padding);
-  if (!!hint.pos) {
-    m.setPosition(hint.pos);
-  }
-  return m;
-}
-
-  /**
-   * Create a menu with graphic buttons.
-   * @method
-   * @param {Boolean} vertical
-   * @param {Array} items
-   * @param {Number} scale
-   * @param {Number} padding
-   * @return {cc.Menu}
-   */
-Menu* CCSX::PMenu(bool vertical,  Array* items, float scale, float padding) {
-  auto menu = Menu::create();
-  MenuItemSprite* mi;
-  Dictionary* obj;
-  int t=0;
-
-  for (auto it = items->begin(); it != items->end(); ++it) {
-    obj= static_cast<Dictionary*>(*it);
-    mi= new cc.MenuItemSprite(new cc.Sprite(obj.nnn),
-                              new cc.Sprite(obj.sss || obj.nnn),
-                              new cc.Sprite(obj.ddd || obj.nnn),
-                              obj.selector || obj.cb,
-                              obj.target);
-    if (!!obj.color) { mi.setColor(obj.color); }
-    if (!!scale) { mi.setScale(scale); }
-    mi->setTag(++t);
-    menu->addChild(mi);
-  }
-
-  padding = padding || 10;
-  if (!vertical) {
-    menu->alignItemsHorizontallyWithPadding(padding);
-  } else {
-    menu->alignItemsVerticallyWithPadding(padding);
-  }
-
-  return menu;
-}
-
-  /**
-   * Create a single button menu.
-   * @method
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-Menu CCSX::PMenu1(Dictionary* options) {
-  auto arr= Array::createWithObject(options);
-  auto menu = PMenu(true, arr);
-  if (options.anchor) { menu.setAnchorPoint(options.anchor); }
-  if (options.pos) { menu.setPosition(options.pos); }
-  if (options.visible === false) { menu.setVisible(false); }
-  return menu;
-}
-
-  /**
-   * Create a Label.
-   * @method
-   * @param {Object} options
-   * @return {cc.LabelBMFont}
-   */
-Label* xxx(Dictionary* options) {
-  String* text = DictValue(options, "text",text);
-  String* fnt= DictValue(options, "font", fnt);
-  auto f= LabelBMFont::create(text->getCString(), fnt->getCString());
-  if (options.color) { f.setColor(options.color); }
-  if (options.pos) { f.setPosition(options.pos); }
-  if (options.anchor) { f.setAnchorPoint(options.anchor); }
-  if (options.visible === false) { f.setVisible(false); }
-  f->setScale( options.scale || 1);
-  f->setOpacity(0.9*255);
-  return f;
-}
-
-template<typename T>
-T* DictValue(Dictionary* d, const string& key, T*& dummy) {
-  auto v= d->objectForKey(key);
-  if (v != nullptr) {
-    return static_cast<T*>(v);
-  } else {
-    return nullptr;
-  }
-}
-
-
 
 
 NS_FI_END

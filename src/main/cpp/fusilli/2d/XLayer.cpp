@@ -11,21 +11,19 @@
 
 #include "cocos2d.h"
 #include "XLayer.h"
-using namespace std;
+USING_NS_STD;
 USING_NS_CC;
-
-//////////////////////////////////////////////////////////////////////////////
-//
 NS_FI_BEGIN
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const std::string& XLayer::rtti() {
+const string& XLayer::RTTI() {
   return m_type;
 }
 
-SpriteBatchNode* XLayer::regoAtlas(const std::string& name,
-    int z, int tag) {
+//////////////////////////////////////////////////////////////////////////////
+//
+SpriteBatchNode* XLayer::RegoAtlas(const string& name, int z, int tag) {
   auto a= SpriteBatchNode::createWithTexture(
       TextureCache::getInstance()->addImage(name));
   if (tag == -911) {
@@ -40,11 +38,9 @@ SpriteBatchNode* XLayer::regoAtlas(const std::string& name,
   return a;
 }
 
-void XLayer::setup() {}
+void XLayer::Setup() {}
 
-void XLayer::pkInput() {}
-
-void XLayer::audioCallback(Ref* sender) {
+void XLayer::AudioCallback(Ref* sender) {
   auto t = static_cast<MenuItemToggle*>(sender);
   if (t->getSelectedIndex() == 0) {
     //sh.toggleSfx(true);
@@ -53,48 +49,33 @@ void XLayer::audioCallback(Ref* sender) {
   }
 }
 
-void XLayer::addAudioIcon(Dictionary* options) {
-  auto off= MenuItemSprite::create(Sprite::create("#sound_off.png"),
+void XLayer::CreateAudioIcons(MenuItem*& off, MenuItem*& on) {
+  off= MenuItemSprite::create(Sprite::create("#sound_off.png"),
                                    Sprite::create("#sound_off.png"),
                                    Sprite::create("#sound_off.png"));
 
-  auto on= MenuItemSprite::create(Sprite::create("#sound_on.png"),
+  on= MenuItemSprite::create(Sprite::create("#sound_on.png"),
                               Sprite::create("#sound_on.png"),
                               Sprite::create("#sound_on.png"));
-  auto wb = 0;//CCSX::vbox();
-  auto color = options->objectForKey("color");
-  if (color != nullptr) {
-    off->setColor(* static_cast<Color3B*>(color));
-    on->setColor(* static_cast<Color3B*>(color));
-  }
-  auto scale = options->objectForKey("scale");
-  if (scale != nullptr) {
-    off->setScale(static_cast<Float*>(scale)->getValue());
-    on->setScale(static_cast<Float*>(scale)->getValue());
-  }
+}
+
+void XLayer::AddAudioIcons(MenuItem* off, MenuItem* on,
+    const Vec2& anchor, const Vec2& pos) {
 
   Vector<MenuItem*> items= {on,off};
   auto audio = MenuItemToggle::createWithCallback(
-      CC_CALLBACK_1(XLayer::audioCallback, this), items);
+      CC_CALLBACK_1(XLayer::AudioCallback, this), items);
 
-  auto anchor = options->objectForKey("anchor");
-  if (scale != nullptr) {
-    audio->setAnchorPoint(* static_cast<Vec2*>(anchor));
-  }
-
+  audio->setAnchorPoint(anchor);
   //xcfg.sound.open ? 0 : 1
   audio->setSelectedIndex(1);
 
   auto menu= Menu::create(audio);
-  auto pos = options->objectForKey("pos");
-  if (pos != nullptr) {
-    menu->setPosition(* static_cast<Vec2*>(pos));
-  }
-
+  menu->setPosition(pos);
   addItem(menu);
 }
 
-void XLayer::onQuit() {
+void XLayer::OnQuit() {
 //    let ss= sh.protos[xcfg.game.start],
 //    yn= sh.protos[sh.ptypes.yn],
 //    dir = cc.director;

@@ -12,15 +12,25 @@
 #if !defined(__CCSX_H__)
 #define __CCSX_H__
 
-#include "../core/fusilli.h"
+#include "../support/Primitives.h"
+#include "../2d/Entity.h"
 #include "cocos2d.h"
 USING_NS_STD;
 USING_NS_CC;
 NS_FI_BEGIN
 
+template<typename T>
+T* DictValue(Dictionary* d, const string& key, T*& dummy) {
+  auto v= d->objectForKey(key);
+  if (v != nullptr) {
+    return static_cast<T*>(v);
+  } else {
+    return nullptr;
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
-class Entity;
 class CC_DLL CCSX {
 
   bool PointInBox(const Box4& box, float x,  float y);
@@ -34,23 +44,24 @@ class CC_DLL CCSX {
 
   bool IsPortrait();
   bool OutOfBound(Entity* ent, const Box4& B);
+  bool OutOfBound(const Box4& src, const Box4& B);
 
   Action* CreateTimer(Node*, float millis);
-  bool UndoTimer(Action*);
+  void UndoTimer(Action*);
   bool TimerDone(Action*);
 
   Sprite* CreateSprite(const string& frameName);
 
-  Box4 BBox4B4(Entity* ent);
-  Box4 BBox4(Sprite* sprite);
+  const Box4 BBox4B4(Entity* ent);
+  const Box4 BBox4(Sprite* sprite);
 
   void RunScene(Scene* ns, float delay);
   bool IsTransitioning();
 
-  Size CSize(const string& frame);
+  const Size CSize(const string& frame);
 
-  Size HalfHW(Sprite* sprite);
-  Rect BBox(Sprite* sprite);
+  const Size HalfHW(Sprite* sprite);
+  const Rect BBox(Sprite* sprite);
 
   float GetScaledHeight(Sprite* sprite);
 
@@ -80,21 +91,23 @@ class CC_DLL CCSX {
 
   float CenterY();
 
-  Vec2& Center();
+  const Vec2 Center();
 
   float ScreenHeight();
 
   float ScreenWidth();
 
-  Rect VRect();
-  Box4 VBox();
+  const Rect VisRect();
+  const Box4 VisBox();
 
-  Size Screen();
-  Vec2 SCenter();
+  const Size Screen();
+  const Vec2 SCenter();
 
-  Vec2 VBoxMID(const Box4& );
+  const Vec2 VBoxMID(const Box4& );
 
-  TraceResult TraceEnclosure(float dt, const Box4& bbox, const Rect& rect, const Vec2& vel);
+  bool TraceEnclosure(float dt, const Box4& bbox,
+      const Rect& rect, const Vec2& vel,
+      Vec2& outPos, Vec2& outVel);
 
   /**
    * Get the sprite from the frame cache using
@@ -104,100 +117,31 @@ class CC_DLL CCSX {
 
   bool HasKeyPad();
 
-  void OnKeyPolls(kb);
+  void OnKeyPolls();
 
-  void OnKeys(bus);
+  void OnKeys();
 
   bool HasMouse();
 
-  void OnMouse(bus);
+  void OnMouse();
 
   bool HasTouch();
 
-  void OnTouchAll(bus);
+  void OnTouchAll();
 
-  void OnTouchOne(bus);
-
-  /*
-    Center: cc.p(0.5, 0.5),
-    Top: cc.p(0.5, 1),
-    TopRight: cc.p(1, 1),
-    Right: cc.p(1, 0.5),
-    BottomRight: cc.p(1, 0),
-    Bottom: cc.p(0.5, 0),
-    BottomLeft: cc.p(0, 0),
-    Left: cc.p(0, 0.5),
-    TopLeft: cc.p(0, 1)
-*/
+  void OnTouchOne();
 
   void ResolveElastic(Entity* obj1, Entity* obj2);
 
-  /**
-   * Create a text menu containing this set of items.
-   *
-   * Each item has the form {:text
-   * :fontPath
-   * :cb
-   * :target}
-   * @method
-   * @param {Array} items
-   * @param {Number} scale
-   * @return {cc.Menu}
-   */
-  Menu* TMenu(const Vector& items, float scale = 1);
-
-  /**
-   * Make a text label menu containing one single button.
-   * @method
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-  Menu* TMenu1(Dictionary* options);
-
-  /**
-   * Create a vertically aligned menu with graphic buttons.
-   * @method
-   * @param {Array} items
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-  Menu* VMenu(const Vector& items, Dictionary* options);
-
-  /**
-   * Create a horizontally aligned menu with graphic buttons.
-   * @method
-   * @param {Array} items
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-  Menu* HMenu(const Vector& items, Dictionary* options);
-
-  /**
-   * Create a menu with graphic buttons.
-   * @method
-   * @param {Boolean} vertical
-   * @param {Array} items
-   * @param {Number} scale
-   * @param {Number} padding
-   * @return {cc.Menu}
-   */
-  Menu* PMenu(bool vertical, const Vector& items, float scale, float padding);
-
-  /**
-   * Create a single button menu.
-   * @method
-   * @param {Object} options
-   * @return {cc.Menu}
-   */
-  Menu* PMenu1(Dictionary* options);
-
-  /**
-   * Create a Label.
-   * @method
-   * @param {Object} options
-   * @return {cc.LabelBMFont}
-   */
-  Label* BmfLabel(Dictionary* options);
+  const Vec2 AncCenter();
+  const Vec2 AncTop();
+  const Vec2 AncTopRight();
+  const Vec2 AncRight();
+  const Vec2 AncBottomRight();
+  const Vec2 AncBottom();
+  const Vec2 AncBottomLeft();
+  const Vec2 AncLeft();
+  const Vec2 AncTopLeft();
 
 };
 

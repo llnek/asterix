@@ -12,11 +12,13 @@
 #if !defined(__PRIMITIVES_H__)
 #define __PRIMITIVES_H__
 
+#include "../core/fusilli.h"
 #include "base/CCRef.h"
 #include "base/CCConsole.h"
 #include "base/CCDataVisitor.h"
 #include "platform/CCCommon.h"
-NS_CC_BEGIN
+USING_NS_CC;
+NS_FI_BEGIN
 
 
 
@@ -37,6 +39,7 @@ struct CC_DLL Box4 {
     right=b.right;
     bottom=b.bottom;
     left=b.left;
+    return *this;
   }
   float top;
   float right;
@@ -64,7 +67,7 @@ public:
     CCLOGINFO("deallocing ~Val2: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
+  virtual void acceptVisitor(DataVisitor &visitor) { }
 
   virtual Val2* clone() const override {
     return Val2::create(_x,_y);
@@ -95,7 +98,7 @@ public:
     CCLOGINFO("deallocing ~C3B: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
+  virtual void acceptVisitor(DataVisitor &visitor) {  }
 
   virtual C3B* clone() const override {
     return C3B::create(_c);
@@ -124,7 +127,7 @@ public:
     CCLOGINFO("deallocing ~C4B: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
+  virtual void acceptVisitor(DataVisitor &visitor) {  }
 
   virtual C4B* clone() const override {
     return C4B::create(_c);
@@ -140,5 +143,5 @@ private:
 
 
 
-NS_CC_END
+NS_FI_END
 #endif
