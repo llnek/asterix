@@ -63,34 +63,20 @@ bool CCSX::Collide0(Sprite* a, Sprite* b) {
   }
 }
 
-  /**
-   * Set device resolution, policy and orientation.
-   * @method
-   * @param {Boolean} landscape
-   * @param {Number} w
-   * @param {Number} h
-   * @param {Number} pcy
-   */
-void CCSX::SetDR(bool landscape, float w, float h, ResolutionPolicy pcy) {
+void CCSX::SetDevRes(bool landscape, float x, float y, ResolutionPolicy pcy) {
+  auto v= Director::getInstance()->getOpenGLView();
   if (landscape) {
-    cc.view.setDesignResolutionSize(w, h, pcy);
+    v->setDesignResolutionSize(x, y, pcy);
   } else {
-    cc.view.setDesignResolutionSize(h, w, pcy);
+    v->setDesignResolutionSize(y, w, pcy);
   }
 }
 
 bool CCSX::IsPortrait() {
-  auto s=this.screen();
+  auto s=Screen();
   return s.height > s.width;
 }
 
-  /**
-   * Test if this entity is out of bound.
-   * @method
-   * @param {Object} ent
-   * @param {Object} B
-   * @return {Boolean}
-   */
 bool CCSX::OutOfBound(Entity* ent, const Box4& B) {
   if (ent != nullptr && ent->sprite != nullptr) {
     return OutOfBound(BBox4(ent->sprite), B);
@@ -99,13 +85,6 @@ bool CCSX::OutOfBound(Entity* ent, const Box4& B) {
   }
 }
 
-  /**
-   * Maybe release this timer.
-   * @method
-   * @param {Object} par
-   * @param {Object} tm
-   * @return null
-   */
 void CCSX::UndoTimer(Action* tm) {
   if (tm != nullptr) { tm->release(); }
 }
@@ -121,12 +100,6 @@ Action* CCSX::CreateTimer(Node* par, float tm) {
   return par->runAction(DelayTime::create(tm));
 }
 
-  /**
-   * Test if this timer is done.
-   * @method
-   * @param {Object} t
-   * @return {Boolean}
-   */
 bool CCSX::TimerDone(Action* t) {
   return (t != nullptr) ? t->isDone() : false;
 }
@@ -141,12 +114,6 @@ Sprite* CCSX::CreateSprite(const string& name) {
   return Sprite::createWithSpriteFrameName(name);
 }
 
-  /**
-   * Create a 4 point rectangle from this sprite.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Object} rect
-   */
 Box4 CCSX::BBox4(Sprite* s) {
   return Box4(
     GetTop(s),
@@ -165,14 +132,9 @@ void CCSX::RunScene(Scene* ns, float delay) {
   Director::getInstance()->replaceScene(TransitionCrossFade::create(delay, ns));
 }
 
-  /**
-   * @method isTransitioning
-   * @return {Boolean}
-   */
 bool CCSX::IsTransitioning() {
-  auto s= Director::getInstance()->getRunningScene();
-  auto t= s ? dynamic_cast<TransitionScene*>(s) : nullptr;
-  return t != nullptr;
+  return dynamic_cast<TransitionScene*>(
+    Director::getInstance()->getRunningScene()) != nullptr;
 }
 
   /**
@@ -187,9 +149,6 @@ const Size& CSize(const string& frame) {
 
   /**
    * Calculate halves of width and height of this sprite.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Array} [x, y]
    */
 Size CCSX::HalfHW(Sprite* s) {
   auto z= s->getContentSize();
@@ -223,12 +182,6 @@ Box4 CCSX::BBox4B4(Entity* ent) {
     GetLastLeft(ent));
 }
 
-  /**
-   * Get the scaled height.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Number}
-   */
 float CCSX::GetScaledHeight(Sprite* s) {
   return s->getContentSize().height * s->getScaleY();
 }
@@ -241,54 +194,40 @@ float CCSX::GetScaledWidth(Sprite* s) {
   return s->getContentSize().width * s->getScaleX();
 }
 
-  /**
-   * Get the width.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Number}
-   */
 float CCSX::GetWidth(Sprite* s) {
   return s->getContentSize().width;
 }
 
-  /**
-   * Get the left pos.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Number}
-   */
 float CCSX::GetLeft(Sprite* s) {
-  return s->getPosition().x - GetWidth(s) * 0.5;
+  auto w= s->getContentSize().width;
+  auto a= s->getAnchorPoint().x;
+  auto p= s->getPosition().x;
+  auto c= AncLeft().x;
+  return p + (c - a) * w;
 }
 
-  /**
-   * Get the right pos.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Number}
-   */
 float CCSX::GetRight(Sprite* s) {
-  return s->getPosition().x + GetWidth(s) * 0.5;
+  auto w= s->getContentSize().width;
+  auto a= s->getAnchorPoint().x;
+  auto p= s->getPosition().x;
+  auto c= AncRight().x;
+  return p + (c - a) * w ;
 }
 
-  /**
-   * Get the top pos.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Number}
-   */
 float CCSX::GetTop(Sprite* s) {
-  return s->getPosition().y + GetHeight(s) * 0.5;
+  auto h= s->getContentSize().height;
+  auto a= s->getAnchorPoint().y;
+  auto p= s->getPosition().y;
+  auto c= AncTop().y;
+  return p + (c - a) * h ;
 }
 
-  /**
-   * Get the bottom pos.
-   * @method
-   * @param {cc.Sprite} sprite
-   * @return {Number}
-   */
 float CCSX::GetBottom(Sprite* s) {
-  return s->getPosition().y - GetHeight(s) * 0.5;
+  auto h= s->getContentSize().height;
+  auto a= s->getAnchorPoint().y;
+  auto p= s->getPosition().y;
+  auto c= AncBottom().y;
+  return p + (c - a) * h ;
 }
 
   /**
