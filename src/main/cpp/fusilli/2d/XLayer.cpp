@@ -38,8 +38,12 @@ SpriteBatchNode* XLayer::RegoAtlas(const string& name, int z, int tag) {
   return a;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XLayer::Setup() {}
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XLayer::AudioCallback(Ref* sender) {
   auto t = static_cast<MenuItemToggle*>(sender);
   if (t->getSelectedIndex() == 0) {
@@ -49,16 +53,21 @@ void XLayer::AudioCallback(Ref* sender) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XLayer::CreateAudioIcons(MenuItem*& off, MenuItem*& on) {
-  off= MenuItemSprite::create(Sprite::create("#sound_off.png"),
-                                   Sprite::create("#sound_off.png"),
-                                   Sprite::create("#sound_off.png"));
-
-  on= MenuItemSprite::create(Sprite::create("#sound_on.png"),
-                              Sprite::create("#sound_on.png"),
-                              Sprite::create("#sound_on.png"));
+  auto n="#sound_off.png";
+  off= MenuItemSprite::create(Sprite::create(n),
+                              Sprite::create(n),
+                              Sprite::create(n));
+  n="#sound_on.png";
+  on= MenuItemSprite::create(Sprite::create(n),
+                             Sprite::create(n),
+                             Sprite::create(n));
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XLayer::AddAudioIcons(MenuItem* off, MenuItem* on,
     const Vec2& anchor, const Vec2& pos) {
 
@@ -92,26 +101,24 @@ void XLayer::OnQuit() {
 //    }));
 }
 
-void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
-    let bg= new cc.Sprite(frame),
-    cw = ccsx.center();
-    bg.setPosition(cw);
-    if (!!atlas) {
-      this.addAtlasItem(atlas, bg);
-    } else {
-      this.addItem(bg);
-    }
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLayer::CenterAtlasImage(const string& frame, const string& atlas) {
+  auto bg= Sprite::create(frame);
+  auto cw = CCSX::Center();
+  bg.setPosition(cw);
+  if (atlas.length() > 0) {
+    AddAtlasItem(atlas, bg);
+  } else {
+    AddItem(bg);
+  }
 }
 
-  /**
-   * Center an image.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method centerImage
-   * @param {String} frame
-   */
-  centerImage(frame) {
-    this.centerAtlasImage(frame);
-  },
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLayer::CenterImage(const string& frame) {
+  CenterAtlasImage(frame);
+}
 
   /**
    * Add an image chosen from this atlas.
@@ -121,15 +128,17 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {cc.Point} pos
    * @param {String} atlas
    */
-  addAtlasFrame(frame,pos, atlas) {
-    let tt= new cc.Sprite(frame);
-    tt.setPosition(pos);
-    if (!!atlas) {
-      this.addAtlasItem(atlas, tt);
-    } else {
-      this.addItem(tt);
-    }
-  },
+void XLayer::AddAtlasFrame(const string& frame,
+                           const Vec2& pos,
+                           const string& atlas) {
+  auto tt= Sprite::(frame);
+  tt.setPosition(pos);
+  if (atlas.length() > 0) {
+    AddAtlasItem(atlas, tt);
+  } else {
+    AddItem(tt);
+  }
+}
 
   /**
    * Add an image.
@@ -138,9 +147,9 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {String} frame
    * @param {cc.Point} pos
    */
-  addFrame(frame,pos) {
-    this.addAtlasFrame(frame, pos);
-  },
+void XLayer::AddFrame(const string& frame, const Vec2& pos) {
+  AddAtlasFrame(frame, pos);
+}
 
   /**
    * Get the atlas.
@@ -149,9 +158,9 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {String} name
    * @return {cc.SpriteBatchNode}
    */
-  getAtlas(name) {
-    return this.atlases[name || ""];
-  },
+SpriteBatchNode* XLayer::GetAtlas(const string& name) {
+  return static_cast<SpriteBatchNode*>(m_atlases.objectForKey(name));
+}
 
   /**
    * Remove all children from this atlas.
@@ -160,10 +169,10 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {String} atlas
    * @param {Boolean} c
    */
-  removeAtlasAll(atlas, c) {
-    const a=this.getAtlas(atlas);
-    if (!!a) { a.removeAllChildren(c || true); }
-  },
+void XLayer::RemoveAtlasAll(const string& atlas, bool c) {
+  auto a=GetAtlas(atlas);
+  if (a != nullptr) { a->removeAllChildren(c); }
+}
 
   /**
    * Remove child from this atlas.
@@ -173,11 +182,11 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {String} n - child
    * @param {Boolean} c
    */
-  removeAtlasItem(atlas, n,c) {
-    if (!!n) {
-      n.removeFromParent(c);
-    }
-  },
+void XLayer::RemoveAtlasItem(Node* n, bool c) {
+  if (n != nullptr) {
+    n->removeFromParent(c);
+  }
+}
 
   /**
    * Remove all children.
@@ -185,9 +194,9 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @method removeAll
    * @param {Boolean} c
    */
-  removeAll(c) {
-    this.removeAllChildren(c);
-  },
+void XLayer::RemoveAll(bool c) {
+  RemoveAllChildren(c);
+}
 
   /**
    * Remove a child.
@@ -196,11 +205,11 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {Object} n
    * @param {Boolean} c
    */
-  removeItem(n,c) {
-    if (!!n) {
-      n.removeFromParent(c);
-    }
-  },
+void XLayer::RemoveItem(Node* n, bool c) {
+  if (n != nullptr) {
+    n->removeFromParent(c);
+  }
+}
 
   /**
    * Add a child to this atlas.
@@ -211,26 +220,18 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {Number} zx
    * @param {Number} tag
    */
-  addAtlasItem(atlas, n, zx, tag) {
-    let p= this.getAtlas(atlas),
-    pzx = zx,
-    ptag = tag;
+void XLayer::AddAtlasItem(const string& atlas, Node* n, int zx, int tag) {
+  auto ptag = tag == -911 ? ++m_lastTag : tag;
+  auto pzx = zx == -911 ? m_lastZix : zx;
+  auto p= GetAtlas(atlas);
 
-    if (! sjs.echt(pzx)) {
-      pzx = this.lastZix;
-    }
+  if (dynamic_cast<SpriteBatchNode*>(p) != nullptr &&
+      dynamic_cast<Sprite*>(n) != nullptr) {
+    n->setBatchNode(p);
+  }
 
-    if (! sjs.echt(ptag)) {
-      ptag = ++this.lastTag;
-    }
-
-    if (p instanceof cc.SpriteBatchNode &&
-        n instanceof cc.Sprite) {
-      n.setBatchNode(p);
-    }
-
-    p.addChild(n, pzx, ptag);
-  },
+  if (p != nullptr) { p->addChild(n, pzx, ptag);  }
+}
 
   /**
    * Add a child.
@@ -240,74 +241,63 @@ void XLayer::centerAtlasImage(const string& frame,const string& atlas) {
    * @param {Number} zx
    * @param {Number} tag
    */
-  addItem(n,zx,tag) {
-    let pzx = zx,
-    ptag = tag;
+void XLayer::AddItem(Node* n, int zx, int tag) {
+  auto ptag = tag == -911 ? ++m_lastTag : tag;
+  auto pzx = zx == -911 ? m_lastZix : zx;
 
-    if (! sjs.echt(pzx)) {
-      pzx = this.lastZix;
-    }
+  AddChild(n, pzx, ptag);
+}
 
-    if (! sjs.echt(ptag)) {
-      ptag = ++this.lastTag;
-    }
 
-    this.addChild(n, pzx, ptag);
-  },
   /**
    * @memberof module:zotohlab/asx/scenes~XLayer
    * @method incIndexZ
    * @param {cc.Scene} par
    */
-  incIndexZ() {
-    ++this.lastZix;
-  },
+void XLayer::IncIndexZ() {
+  ++m_lastZix;
+}
+
+
   /**
    * Remember the parent scene object.
    * @memberof module:zotohlab/asx/scenes~XLayer
    * @method setParentScene
    * @param {cc.Scene} par
    */
-  setParentScene(par) {
-    this.ptScene=par;
-  },
+void XLayer::SetParentScene(Scene* par) {
+  m_ptScene=par;
+}
 
   /**
    * @memberof module:zotohlab/asx/scenes~XLayer
    * @method scene
    * @return {cc.Scene}
    */
-  scene() {
-    return ptScene;
-  },
+Scene* XLayer::Scene() {
+  return m_ptScene;
+}
 
-  /**
-   * Init.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method init
-   */
-  init() {
-    this._super();
-    this.setup();
-  },
 
   /**
    * @memberof module:zotohlab/asx/scenes~XLayer
    * @method ctor
    * @param {Object} options
    */
-  ctor(options) {
-    this.options = options || {};
-    this._super();
-    this.lastTag= 0;
-    this.lastZix= 0;
-    this.atlases= {};
-  }
 
-});
+XLayer::XLayer() {
+  m_lastTag= 0;
+  m_lastZix= 0;
+}
 
 
+MenuItem* XLayer::CreateMenuButton(const string& n, const string& s,
+    const string& d, cb) {
+  return MenuItemSprite::create(Sprite::create(n),
+                                Sprite::create(s),
+                                Sprite::create(d),
+                                cb);
+}
 
-NS_AX_END
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+NS_FI_END
