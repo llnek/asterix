@@ -9,43 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "XMenuLayer.h"
-USING_NS_CC;
+#if !defined(__SPLASH_H__)
+#define __SPLASH_H__
 
-//////////////////////////////////////////////////////////////////////////////
-//
+#include "../../fusilli/core/fusilli.h"
+#include "../../fusilli/2d/XScene.h"
 NS_FI_BEGIN
 
 
-Menu* XMenuLayer::MkBackQuit(bool vert, MenuItem* b, MenuItem* q) {
-  auto sz= b->getContentSize();
-  auto padding = 10;
-  auto menu= Menu::create();
-  menu->addChild(b);
-  menu->addChild(q);
-
-  if (!vert) {
-    menu->alignItemsHorizontallyWithPadding(padding);
-  } else {
-    menu->alignItemsVerticallyWithPadding(padding);
-  }
-
-  return menu;
+class CC_DLL SplashLayer : public XLayer {
+  virtual void Setup();
 }
 
-void XMenuLayer::MkAudio() {
-  AddAudioIcon();
+
+class CC_DLL Splash : public XScene {
+  virtual void Setup();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-XMenuLayer::~XMenuLayer() {
 
-}
-
-XMenuLayer::XMenuLayer() {
-
-}
 
 
 NS_FI_END
+#endif
+

@@ -168,20 +168,21 @@ void XHUDLayer::EnableReplay() {
    * @param {cc.Menu} menu
    * @param {Object} where
    */
-void XHUDLayer::AddMenuIcon(Menu* menu, where) {
-  let c= menu.getChildByTag(1),
-  hh = ccsx.getScaledHeight(c) * 0.5,
-  hw = ccsx.getScaledWidth(c) * 0.5,
-  wz= ccsx.vbox(),
-  x,y;
+void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
+  auto hh = CCSX::GetScaledHeight(b) * 0.5,
+  auto hw = CCSX::GetScaledWidth(b) * 0.5,
+  auto menu= Menu::create();
+  auto wz= CCSX::VisBox();
+  menu->addChild(b);
+  float x, y;
 
-  if (where === ccsx.acs.Bottom) {
+  if (where.y == Anchor::Bottom.y) {
     y = wz.bottom + csts.TILE  + hh;
   } else {
     y = wz.top - csts.TILE - hh;
   }
-  menu.setPosition(wz.right - csts.TILE - hw, y);
-  this.addItem(menu);
+  menu->setPosition(wz.right - csts.TILE - hw, y);
+  AddItem(menu);
 }
 
   /**
@@ -191,21 +192,23 @@ void XHUDLayer::AddMenuIcon(Menu* menu, where) {
    * @param {cc.Menu} menu
    * @param {Object} where
    */
-void XHUDLayer::AddReplayIcon(Menu* menu, where) {
-  let c= menu.getChildByTag(1),
-  hh = ccsx.getScaledHeight(c) * 0.5,
-  hw = ccsx.getScaledWidth(c) * 0.5,
-  wz= ccsx.vbox(),
-  x, y;
+void XHUDLayer::AddReplayIcon(MenuItem* b, const Vec2& where) {
+  auto hh = CCSX::GetScaledHeight(c) * 0.5;
+  auto hw = CCSX::GetScaledWidth(c) * 0.5;
+  auto menu= Menu::create();
+  auto wz= CCSX::VisBox();
+  float x, y;
 
-  if (where === ccsx.acs.Bottom) {
+  menu->addChild(b);
+
+  if (where.y == Anchor::Bottom.y) {
     y = wz.bottom + csts.TILE  + hh;
   } else {
     y = wz.top - csts.TILE  - hh;
   }
-  menu.setPosition(wz.left + csts.TILE + hw, y);
-  this.replayBtn=menu;
-  this.addItem(menu);
+  menu->setPosition(wz.left + csts.TILE + hw, y);
+  m_replayBtn=menu;
+  AddItem(menu);
 }
 
 

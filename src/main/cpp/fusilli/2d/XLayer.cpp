@@ -81,7 +81,7 @@ void XLayer::AddAudioIcons(MenuItem* off, MenuItem* on,
 
   auto menu= Menu::create(audio);
   menu->setPosition(pos);
-  addItem(menu);
+  AddItem(menu);
 }
 
 void XLayer::OnQuit() {
