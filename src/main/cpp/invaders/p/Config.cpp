@@ -10,96 +10,230 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Config.h"
+USING_NS_CC;
 NS_FI_BEGIN
 
+//////////////////////////////////////////////////////////////////////////////
+//
+static XConfig* singleton;
 
-const sjs= sh.skarojs,
-/** @alias module:p/config */
-xbox = sjs.merge( xcfg, {
+//////////////////////////////////////////////////////////////////////////////
+//
+static void init_assets(Dictionary* dict) {
 
-  appKey: "d39bf198-518a-4de7-88a0-5e28c88571b0",
+  Dictionary* d;
 
-  appid: 'invaders',
-  color: 'red',
+  d= Dictionary::create();
+  d->setObject("res/l10n/en/images.png", "lang-pics");
+  d->setObject("res/pics/images.png", "game-pics");
+  dict->setObject(d, "atlases");
 
-  resolution: {
-    policy: cc.ResolutionPolicy.FIXED_HEIGHT,
-    resSize: [0,0]
-  },
+  d= Dictionary::create();
+  dict->setObject(d, "tiles");
 
-  csts: {
-    //GRID_W: 40,
-    //GRID_H: 60,
+  d= Dictionary::create();
+  d->setObject("res/pics/bg.png", "gui.mmenus.menu.bg");
+  d->setObject("res/pics/bg.png", "game.bg");
+  dict->setObject(d, "images");
 
-    P_MS: 'missiles',
-    P_BS: 'bombs',
-    P_ES: 'explosions',
-    P_LMS: 'live-missiles',
-    P_LBS: 'live-bombs',
+  d= Dictionary::create();
+  d->setObject("res/sfx/MineExplosion", "game_end");
+  d->setObject("res/sfx/Death", "game_quit");
+  d->setObject("res/sfx/missile", "ship-missile");
+  d->setObject("res/sfx/march", "bugs-march");
+  d->setObject("res/sfx/explode", "xxx-explode");
+  dict->setObject(d, "sounds");
 
-    COLS: 6,
-    ROWS: 7,
-    CELLS: 42,
+  d= Dictionary::create();
+  d->setObject("res/font/en/SmallTypeWriting", "font.SmallTypeWriting");
+  d->setObject("res/font/en/AutoMission", "font.AutoMission");
+  d->setObject("res/font/en/Subito", "font.Subito");
+  d->setObject("res/font/en/CoffeeBuzzed", "font.CoffeeBuzzed");
+  dict->setObject(d, "fonts");
 
-    LEFT : 2,
-    TOP: 6,
-    OFF_X : 4,
-    OFF_Y : 2
-  },
+}
 
-  assets: {
-    atlases: {
-      'lang-pics' : 'res/{{appid}}/l10n/{{lang}}/images',
-      'game-pics' : 'res/{{appid}}/pics/images'
-    },
-    tiles: {
-    },
-    images: {
-      'gui.mmenus.menu.bg' : 'res/{{appid}}/pics/bg.png',
-      'game.bg' : 'res/{{appid}}/pics/bg.png'
-    },
-    sounds: {
-      'game_end' : 'res/cocos2d/sfx/MineExplosion',
-      'game_quit' : 'res/cocos2d/sfx/Death',
-      'ship-missile' : 'res/{{appid}}/sfx/missile',
-      'bugs-march' : 'res/{{appid}}/sfx/march',
-      'xxx-explode' : 'res/{{appid}}/sfx/explode'
-    },
-    fonts: {
-      'font.SmallTypeWriting' : [ 'res/cocos2d/fon/{{lang}}', 'SmallTypeWriting.png', 'SmallTypeWriting.fnt' ],
-      'font.AutoMission' : [ 'res/cocos2d/fon/{{lang}}', 'AutoMission.png', 'AutoMission.fnt' ],
-      'font.Subito' : [ 'res/cocos2d/fon/{{lang}}', 'Subito.png', 'Subito.fnt' ],
-      'font.CoffeeBuzzed' : [ 'res/cocos2d/fon/{{lang}}', 'CoffeeBuzzed.png', 'CoffeeBuzzed.fnt' ]
-    }
-  },
+//////////////////////////////////////////////////////////////////////////////
+//
+static void init_csts(Dictionary* d) {
 
-  game: {
-    sd: {width:320, height:480 }
-  },
+  d->setObject("live-missiles", "P_LMS");
+  d->setObject("missiles", "P_MS");
+  d->setObject("bombs", "P_BS");
+  d->setObject("explosions", "P_ES");
+  d->setObject("live-bombs", "P_LBS");
 
-  levels: {
-    "1" : {
-      'tiles' : {
-      },
-      'images' : {
-      },
-      'sprites' : {
-      }
-    }
-  },
+  d->setObject(6, "COLS");
+  d->setObject(7, "ROWS");
+  d->setObject(42, "CELLS");
 
-  handleResolution(rs) {
-    //for default font, we use 48pt
-    this.game.scale = 52/256 * rs.width /320;
-  },
+  d->setObject(2, "LEFT");
+  d->setObject(6, "TOP");
+  d->setObject(4, "OFF_X");
+  d->setObject(2, "OFF_Y");
+}
 
-  runOnce() {
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('game-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('lang-pics'));
+//////////////////////////////////////////////////////////////////////////////
+//
+static void init_levels(Dictionary* dict) {
+
+  auto d2= Dictionary::create();
+  Dictionary* d3;
+  auto d= Dictionary::create();
+  dict->setObject(d, "levels");
+  d->setObject(d2, "1");
+
+  d3= Dictionary::create();
+  d2->setObject(d3, "tiles");
+
+  d3= Dictionary::create();
+  d2->setObject(d3, "images");
+
+  d3= Dictionary::create();
+  d2->setObject(d3, "cfg");
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+static const string getXXX(const string& group, const string& key) {
+  auto d= static_cast<Dictionary*>(m_dict->objectForKey(group));
+  auto r= static_cast<String*>(d->objectForKey(key));
+  return r != nullptr ? r->getCString() : "";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string Config::GetAppKey() {
+  return "d39bf198-518a-4de7-88a0-5e28c88571b0";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string Config::AppId() {
+  return "invaders";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string Config::GetColor() {
+  return "red";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+ResolutionPolicy Config::GetResolution() {
+  return ResolutionPolicy::FIXED_HEIGHT;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Config::~Config() {
+  m_dict->release();
+  singleton=nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Config::Config() {
+  m_dict = Dictionary::create();
+  m_scale=1;
+  init_assets();
+  init_csts();
+  init_levels();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Ref* Config::GetCst(const string& key) {
+  m_dict->objectForKey(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string Config::GetAtlas(const string& key) {
+  return getXXX("atlases", key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string GetFont(const string& key) {
+  return getXXX("fonts", key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string GetTile(const string& key) {
+  return getXXX("tiles", key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string GetImage(const string& key) {
+  return getXXX("images", key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const string GetSound(const string& key) {
+  return getXXX("sounds", key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Dictionary* Config::GetLevel(const string& n) {
+  auto d= static_cast<Dictionary*>(m_dict->objectForKey("levels"));
+  auto r= static_cast<Dictionary*>(d->objectForKey(n));
+  return r;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Dictionary* Config::GetLevelCfg(const string& n) {
+  auto d= static_cast<Dictionary*>(m_dict->objectForKey("levels"));
+  auto r= static_cast<Dictionary*>(d->objectForKey(n));
+  if (r != nullptr) {
+    return static_cast<Dictionary*>(r->objectForKey("cfg"));
+  } else {
+    return nullptr;
   }
+}
 
-});
+//////////////////////////////////////////////////////////////////////////////
+//
+const Size Config::GetGameSize() {
+  return Size(320, 480);
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::GetScale() {
+  return m_scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::HandleResolution(const Size& rs) {
+  //for default font, we use 48pt
+  m_scale = 52/256 * rs.width /320;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::RunOnce() {
+  auto c= SpriteFrameCache::getInstance();
+  c->addSpriteFrames( GetAtlas("game-pics"));
+  c->addSpriteFrames( GetAtlas("lang-pics"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+XConfig* Config::getInstance() {
+  if (singleton == nullptr) {
+    singleton= new Config();
+  }
+  return singleton;
+}
 
 
 

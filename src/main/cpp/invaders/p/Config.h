@@ -9,96 +9,50 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-
+#include "fusilli/support/XConfig.h"
+USING_NS_CC;
 NS_FI_BEGIN
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Config : public XConfig {
+public:
 
-class CC_DLL Config {
+  static XConfig* getInstance();
 
-  const string GetAppKey() { return "d39bf198-518a-4de7-88a0-5e28c88571b0"; }
+  virtual const string GetAppKey() override;
 
-  const string AppId() { return "invaders"; }
+  virtual const string AppId() override;
 
-  const string GetColor() { return "red"; }
+  virtual const string GetColor() override;
 
-  Resolution GetResolution() {
-    return Resolution(
-    ResolutionPolicy::FIXED_HEIGHT,
-    Size(0,0));
-  }
+  virtual ResolutionPolicy GetPolicy() override;
 
-  csts: {
-    //GRID_W: 40,
-    //GRID_H: 60,
+  virtual Ref* GetCst(const string& csts) override;
 
-    P_MS: 'missiles',
-    P_BS: 'bombs',
-    P_ES: 'explosions',
-    P_LMS: 'live-missiles',
-    P_LBS: 'live-bombs',
+  virtual const string GetAtlas(const string& key) override;
+  virtual const string GetFont(const string& key) override;
+  virtual const string GetTile(const string& key) override;
+  virtual const string GetImage(const string& key) override;
+  virtual const string GetSound(const string& key) override;
 
-    COLS: 6,
-    ROWS: 7,
-    CELLS: 42,
+  virtual void HandleResolution(const Size& rs) override;
 
-    LEFT : 2,
-    TOP: 6,
-    OFF_X : 4,
-    OFF_Y : 2
-  },
+  virtual Dictionary* GetLevelCfg(const string& n) override;
+  virtual Dictionary* GetLevel(const string& n) override;
 
-  assets: {
-    atlases: {
-      'lang-pics' : 'res/{{appid}}/l10n/{{lang}}/images',
-      'game-pics' : 'res/{{appid}}/pics/images'
-    },
-    tiles: {
-    },
-    images: {
-      'gui.mmenus.menu.bg' : 'res/{{appid}}/pics/bg.png',
-      'game.bg' : 'res/{{appid}}/pics/bg.png'
-    },
-    sounds: {
-      'game_end' : 'res/cocos2d/sfx/MineExplosion',
-      'game_quit' : 'res/cocos2d/sfx/Death',
-      'ship-missile' : 'res/{{appid}}/sfx/missile',
-      'bugs-march' : 'res/{{appid}}/sfx/march',
-      'xxx-explode' : 'res/{{appid}}/sfx/explode'
-    },
-    fonts: {
-      'font.SmallTypeWriting' : [ 'res/cocos2d/fon/{{lang}}', 'SmallTypeWriting.png', 'SmallTypeWriting.fnt' ],
-      'font.AutoMission' : [ 'res/cocos2d/fon/{{lang}}', 'AutoMission.png', 'AutoMission.fnt' ],
-      'font.Subito' : [ 'res/cocos2d/fon/{{lang}}', 'Subito.png', 'Subito.fnt' ],
-      'font.CoffeeBuzzed' : [ 'res/cocos2d/fon/{{lang}}', 'CoffeeBuzzed.png', 'CoffeeBuzzed.fnt' ]
-    }
-  },
+  virtual const Size GetGameSize() override;
+  virtual float GetScale() override;
 
-  game: {
-    sd: {width:320, height:480 }
-  },
+  virtual void RunOnce() override;
 
-  levels: {
-    "1" : {
-      'tiles' : {
-      },
-      'images' : {
-      },
-      'sprites' : {
-      }
-    }
-  },
-
-  handleResolution(rs) {
-    //for default font, we use 48pt
-    this.game.scale = 52/256 * rs.width /320;
-  },
-
-  runOnce() {
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('game-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('lang-pics'));
-  }
-
-});
+private:
+  DISALLOW_COPY_AND_ASSIGN(Config)
+  virtual ~Config();
+  Config();
+  Dictionary* m_dict;
+  float m_scale;
+};
 
 
 
