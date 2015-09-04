@@ -1,29 +1,22 @@
-/**
- * Ash-js engine
- *
- */
-define([
-    'ash-core/componentmatchingfamily',
-    'ash-core/entitylist',
-    'ash-core/systemlist',
-    'signals',
-    'brejep/dictionary',
-    'brejep/class'
-], function (ComponentMatchingFamily, EntityList, SystemList, signals, Dictionary, Class) {
-    'use strict';
 
-    var Engine = Class.extend({
-        familyClass: ComponentMatchingFamily,
-        families: null,
-        entityList: null,
-        systemList: null,
-        updating: false,
-        updateComplete: new signals.Signal(),
 
-        constructor: function () {
-            this.entityList = new EntityList(),
-            this.systemList = new SystemList();
-            this.families = new Dictionary();
+#include "Engine.h"
+
+
+Engine::~Engine() {
+  this->families->release();
+}
+
+Engine::Engine() {
+  this->families = Dictionary::create();
+  this->families->retain();
+  this->entityList = new EntityList();
+  this->systemList = new SystemList();
+  this->updating= false;
+  //this->familyClass= ComponentMatchingFamily;
+  //this->updateComplete= new signals.Signal();
+}
+
 
             this.__defineGetter__('entities', function() {
                 var tmpEntities = [];
