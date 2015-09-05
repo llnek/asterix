@@ -11,22 +11,28 @@
 
 #if !defined(__NODEPOOL_H__)
 #define __NODEPOOL_H__
-NS_BEGIN(Ash)
+
+#include <map>
+#include "Ash.h"
+NS_USING(std)
+NS_BEGIN(ash)
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL NodePool {
 public:
+  map<COMType,string> *components ;
+  NodeMask nodeClass;
   Node* tail;
   Node* cacheTail;
-  nodeClass;
-  components ;
 
-  NodePool(nodeClass, components);
+  NodePool(const NodeMask& nodeClass, map<COMType,string>* );
+  virtual ~NodePool();
 
-  Get();
+  Node* Get();
 
-  Dispose(Node* node );
+  void Dispose(Node* node );
 
   void Cache(Node* );
 
@@ -35,6 +41,6 @@ public:
 };
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif
 

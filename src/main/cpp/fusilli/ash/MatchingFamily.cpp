@@ -9,114 +9,113 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "NodeList.h"
+#include "Engine.h"
 #include "MatchingFamily.h"
+NS_USING(std)
+NS_BEGIN(ash)
 
-MatchingFamily::MatchingFamily(nodeClass, Engine* engine) {
-  this->nodeClass = nodeClass;
-  this->engine = engine;
-  this->nodes = new NodeList();
-  this->entities = Dictionary::create();
-  this->entities->retain();
-  this->components = Dictionary::create();
-  this->components->retain();
 
-  this->nodePool = new NodePool( this.nodeClass, this.components );
-  this->nodePool->Dispose( this->nodePool->Gget() );
-
-  auto nodeClassPrototype = this->nodeClass->prototype;
-
-  for(var property in nodeClassPrototype) {
-      ///TODO - tidy this up...
-      if(nodeClassPrototype.hasOwnProperty(property) &&
-          property != "types" &&
-          property != "next" &&
-          property != "previous" &&
-          property != "constructor" &&
-          property != "super" &&
-          property != "extend" &&
-          property != "entity") {
-          var componentObject = nodeClassPrototype.types[property];
-          this.components.add(componentObject, property);
-      }
-  }
+//////////////////////////////////////////////////////////////////////////////
+//
+MatchingFamily::~MatchingFamily() {
+  delete nodePool;
+  delete nodes;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+MatchingFamily::MatchingFamily(const NodeMask& m, Engine* engine) {
+  nodes = new NodeList();
+  nodeClass = m;
+  this->engine = engine;
+
+  nodePool = new NodePool(nodeClass, components);
+  nodePool->Dispose(nodePool->Get() );
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void MatchingFamily::NewEntity(Entity* e) {
   AddIfMatch(e);
 }
 
-void MatchingFamily::ComponentAddedToEntity(Entity* e, componentClass) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void MatchingFamily::AddedTo(Entity* e, const COMType& z) {
   AddIfMatch(e);
 }
 
-void MatchingFamily::ComponentRemovedFromEntity(Entity* e, componentClass) {
-  if (this->components->Has(componentClass)) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void MatchingFamily::RemovedFrom(Entity* e, const COMType& z) {
+  if (components.find(z) != components.end()) {
     RemoveIfMatch(e);
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void MatchingFamily::RemoveEntity(Entity* e) {
   RemoveIfMatch(e);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void MatchingFamily::CleanUp() {
   for (auto node = nodes->head; node != nullptr; node = node->next) {
-    entities->Remove(node->entity);
+    entities.Remove(node->entity);
   }
-  nodes->RemoveAll();
+  nodes.RemoveAll();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void MatchingFamily::AddIfMatch(Entity* e) {
-  if (entities->Has(e)) { return; }
-  DictElement* pe;
-  bool ok=true;
-  CCDICT_FOREACH(components, pe) {
-    if (ok) {
-      const string compClass= pe->getStrKey();
-      if (!e->Has(compClass)) { ok=false; }
+  if (entities.Has(e)) { return; }
+  for (auto it = components.begin(); it != components.end(); ++it) {
+    if (!e->Has(it->first)) {
+      return;
     }
   }
-  if (!ok) {return;}
-
   auto node = nodePool->Get();
   node->entity = e;
-  pe=nullptr;
-  CCDICT_FOREACH(components, pe) {
-    const string compClass= pe->getStrKey();
-    const string compName= static_cast<String*>(pe->getObject())->getCString();
-    node->setObject(e->Get(compClass), compName);
-  };
-  entities->Add(e, node);
-  //e->componentRemoved.add(this.componentRemovedFromEntity, this);
+  for (auto it = components.begin(); it != components.end(); ++it) {
+    const COMType compClass= it->first;
+    const string compName= it->second;
+    node->Add(compName, e->Get(compClass));
+  }
+  entities.Add(e, node);
+  e->componentRemoved.Add(&MatchingFamily::RemovedFrom, this);
   nodes->Add(node);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void MatchingFamily::RemoveIfMatch(Entity* e) {
-    var entities = this.entities,
-        nodes = this.nodes,
-        engine = this.engine,
-        nodePool = this.nodePool;
-
-  if (entities->Has(e)) {
-    auto node = entities->Retrieve(e);
-    //e->componentRemoved.remove(this.componentRemovedFromEntity, this);
-    entities->Remove(e);
+  auto it= entities.find(e);
+  if (it != entities.end()) {
+    auto node = it->second;
+    e->componentRemoved.Remove(&MatchingFamily::RemovedFrom, this);
+    entities.erase(it);
     nodes->Remove(node);
     if (engine->updating) {
-      nodePool->cache(node);
-      //engine->UpdateComplete.add(this.releaseNodePoolCache, this);
+      nodePool->Cache(node);
+      engine->UpdateComplete.Add(&MatchingFamily::ReleaseNodePoolCache, this);
     } else {
       nodePool->Dispose(node);
     }
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void MatchingFamily::ReleaseNodePoolCache() {
-  //engine->UpdateComplete.remove(this.releaseNodePoolCache);
+  engine->UpdateComplete.Remove(&MatchingFamily::ReleaseNodePoolCache);
   nodePool->ReleaseCache();
 }
 
 
 
-NS_END(Ash)
+NS_END(ash)
 

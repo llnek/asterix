@@ -9,58 +9,77 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "Component.h"
 #include "Entity.h"
+NS_USING(std)
+NS_BEGIN(ash)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity::~Entity() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 Entity::Entity() {
-  components = Dictionary::create();
-  components->retain();
   previous = nullptr;
   next= nullptr;
-  //this.componentAdded = new signals.Signal();
-  //this.componentRemoved = new signals.Signal();
 }
 
-void Entity::Add(component) {
-  auto componentClass = component->ClassId();
-  if (components->objectForKey(componentClass) != nullptr) {
-    Remove(componentClass);
+//////////////////////////////////////////////////////////////////////////////
+//
+void Entity::Add(Component* component) {
+  auto z = component->ClassId();
+  auto it= components.find(z);
+  if (it != components.end()) {
+    delete Remove(z);
   }
-  components->setObject(component, componentClass);
-  //this.componentAdded.dispatch( this, componentClass );
+  components.insert(pair<ComponentClass,Component*>(z,component));
+  componentAdded.Dispatch(this, z);
 }
 
-void Entity::Remove(componentClass) {
-  auto component = components->Retrieve(componentClass);
-  if (component != nullptr) {
-    components->Remove(componentClass);
-    //componentRemoved.dispatch( this, componentClass );
+//////////////////////////////////////////////////////////////////////////////
+//
+Component* Entity::Remove(const ComponentClass& z) {
+  auto it = components.find(z);
+  Component* rc= nullptr;
+
+  if (it != components.end()) {
+    rc= it->second;
+    components.erase(it);
+    componentRemoved.Dispatch( this, z);
   }
-  return component;
+  return rc;
 }
 
-void Entity::Get(const string& componentClass) {
-  return components->Retrieve(componentClass);
-}
-
-        /**
-         * Get all components from the entity.
-         * @return {Array} Contains all the components on the entity
-         */
-void Entity::GetAll() {
-  Array* arr= Array::create();
-  DictElement* pe;
-  CCDICT_FOREACH(components, pe) {
-    arr->addObject(pe->getObject());
+//////////////////////////////////////////////////////////////////////////////
+//
+Component* Entity::Get(const ComponentClass& z) {
+  auto it=  components.find(z);
+  Component* c= nullptr;
+  if (it != components.end()) {
+     c= it->second;
   }
-  return arr;
+  return c;
 }
 
-bool Entity::Has(const string& componentClass) {
-  return components->Has(componentClass);
+//////////////////////////////////////////////////////////////////////////////
+//
+const vector<Component*> Entity::GetAll() {
+  vector<Component*> v;
+  for (auto it = components.begin(); it != components.end(); ++it) {
+    v.push_back(it->second);
+  }
+  return v;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Entity::Has(const ComponentClass& z) {
+  return components.find(z) != components.end();
 }
 
 
-
-NS_END(Ash)
+NS_END(ash)
 
 

@@ -10,7 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "EntityList.h"
-NS_BEGIN(Ash)
+NS_USING(std)
+NS_BEGIN(ash)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,7 +46,7 @@ void EntityList::Remove(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void EntityList::RemoveAll() {
-  while(head != nullptr) {
+  while (head != nullptr) {
     auto e= head;
     head = head->next;
     e->previous = nullptr;
@@ -54,7 +55,14 @@ void EntityList::RemoveAll() {
   tail = nullptr;
 }
 
+const vector<Entity*> EntityList::List() {
+  vector<Entity*> v;
+  for (auto p= head; p != nullptr; p=p->next) {
+    v.push_back(p);
+  }
+  return v;
+}
 
 
 
-NS_END(Ash)
+NS_END(ash)

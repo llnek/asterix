@@ -11,29 +11,42 @@
 
 #if !defined(__ENTITY_H__)
 #define __ENTITY_H__
-NS_BEGIN(Ash)
 
+#include <vector>
+#include <map>
+#include "Ash.h"
+NS_USING(std)
+NS_BEGIN(ash)
+
+class Component;
+class Entity;
+class Signal;
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Entity {
 public:
+
+  map<ComponentClass,Component*> components;
   Entity* previous;
   Entity* next;
-  Dictionary* components;
 
-  Entity::Entity();
+  Signal componentRemoved;
+  Signal componentAdded;
 
-  void Add(component, componentClass );
+  virtual ~Entity();
+  Entity();
 
-  void Remove( componentClass ) ;
+  Component* Remove(const ComponentClass& ) ;
+  void Add(Component* );
 
-  Get(componentClass);
-
-  GetAll();
-
-  Has(componentClass);
+  Component* Get(const ComponentClass& );
+  const vector<Component*> GetAll();
+  bool Has(const ComponentClass&);
 
 };
 
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif

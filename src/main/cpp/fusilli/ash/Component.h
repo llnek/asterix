@@ -9,30 +9,34 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITYLIST_H__)
-#define __ENTITYLIST_H__
+#if !defined(__COMPONENT_H__)
+#define __COMPONENT_H__
 
-#include "Entity.h"
-NS_USING(std)
+#include "Ash.h"
+#include <vector>
+#include <map>
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EntityList {
+class CC_DLL Component {
+
+private:
+
+
 public:
-  Entity* head;
-  Entity* tail;
 
-  const vector<Entity*> List();
+  virtual ~Component();
+  Component();
 
-  virtual ~EntityList();
-  EntityList();
+  const ComponentClass ClassId();
 
-  void Remove(Entity* );
-  void Add(Entity* );
-  void RemoveAll() ;
 };
+
+
 
 
 NS_END(ash)
 #endif
+
+

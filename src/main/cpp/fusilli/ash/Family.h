@@ -11,29 +11,36 @@
 
 #if !defined(__FAMILY_H__)
 #define __FAMILY_H__
-NS_BEGIN(Ash)
 
+#include "Ash.h"
+NS_USING(std)
+NS_BEGIN(ash)
 
+class NodeList;
+class Entity;
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Family {
 public:
-  nodes;
 
-  Family(nodeObject, Engine*);
+  virtual void NewEntity(Entity*) = 0;
 
-  NewEntity(Entity*);
+  void RemoveEntity(Entity*) = 0;
 
-  RemoveEntity(Entity*);
+  void RemovedFrom(Entity*, const COMType&) = 0;
+  void AddedTo(Entity*, const COMType&) = 0;
 
-  ComponentAddedToEntity(Entity*, componentClass);
+  void CleanUp() = 0;
 
-  ComponentRemovedFromEntity(Entity*, componentClass);
+  virtual NodeList* GetNodeList() = 0;
 
-  CleanUp();
+private:
 
 };
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif
 
 

@@ -12,28 +12,40 @@
 #if !defined(__MATCHINGFAMILY_H__)
 #define __MATCHINGFAMILY_H__
 
+#include "Ash.h"
+NS_USING(std)
+NS_BEGIN(ash)
+
+class NodePool;
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL MatchingFamily : public Family {
 
-  MatchingFamily(nodeClass, Engine*);
+  MatchingFamily(const NodeMask&, Engine*);
+  virtual ~MatchingFamily();
 
-  void NewEntity(Entity*);
+  virtual void NewEntity(Entity*) override;
 
-  void ComponentAddedToEntity(Entity*, componentClass);
+  virtual void RemovedFrom(Entity*, const COMType&) override;
+  virtual void AddedTo(Entity*,  const COMType&) override;
 
-  void ComponentRemovedFromEntity(Entity*, componentClass);
+  virtual void RemoveEntity(Entity*) override;
 
-  void RemoveEntity(Entity*);
+  virtual void CleanUp() override;
 
-  void CleanUp();
+private:
+
+  map<> entities;
+  map<> components;
+  NodePool* nodePool;
 
   void AddIfMatch(Entity*);
-
   void RemoveIfMatch(Entity*);
-
   void ReleaseNodePoolCache();
 
 };
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif

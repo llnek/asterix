@@ -9,36 +9,60 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "NodeList.h"
+#include "Engine.h"
 #include "Family.h"
-NS_BEGIN(Ash)
+NS_USING(std)
+NS_BEGIN(ash)
 
-Family::Family(nodeObject, Engine* engine) {
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Family::Family(const NodeMask& m, Engine* engine) {
 }
 
-Family::GetNodeList() {
+//////////////////////////////////////////////////////////////////////////////
+//
+Family::~Family() {
+  delete nodes;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+NodeList* Family::GetNodeList() {
   return nodes;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Family::NewEntity(Entity* e) {
   throw std::exception("should be overriden");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Family::RemoveEntity(Entity* e) {
   throw std::exception("should be overriden");
 }
 
-void Family::ComponentAddedToEntity(Entity* e, componentClass) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void Family::ComponentAddedToEntity(Entity* e, const ComponentClass& z) {
   throw std::exception("should be overriden");
 }
 
-void Family::ComponentRemovedFromEntity(Entity* e, componentClass) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void Family::ComponentRemovedFromEntity(Entity* e, const ComponentClass& z) {
   throw std::exception("should be overriden");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Family::CleanUp() {
   throw std::exception("should be overriden");
 }
 
 
 
-NS_END(Ash)
+NS_END(ash)

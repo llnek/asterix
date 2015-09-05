@@ -9,18 +9,27 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "Node.h"
 #include "NodePool.h"
-NS_BEGIN(Ash)
+NS_USING(std)
+NS_BEGIN(ash)
 
 
-
-NodePool::NodePool(nodeClass, components) {
+//////////////////////////////////////////////////////////////////////////////
+//
+NodePool::NodePool(const NodeMask& nodeClass, map<COMType, string> *components) {
   this->components = components;
   this->nodeClass= nodeClass;
   cacheTail= nullptr;
   tail= nullptr;
 }
+//////////////////////////////////////////////////////////////////////////////
+//
+NodePool::~NodePool() {
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
 Node* NodePool::Get() {
   if (tail != nullptr) {
     auto node = tail;
@@ -32,11 +41,11 @@ Node* NodePool::Get() {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodePool::Dispose(Node* node ) {
-  DictElement* pe;
-  CCDICT_FOREACH(components, pe) {
-    const string n= static_cast<String*>(pe->getObject())->getCString();
-    node->RemoveField(n);
+  for (auto it = components.begin(); it != components.end(); ++it) {
+    node->RemoveField(it->second);
   }
   node->entity = nullptr;
   node->next = nullptr;
@@ -44,11 +53,15 @@ void NodePool::Dispose(Node* node ) {
   tail = node;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodePool::Cache(Node* node) {
   node->previous = cacheTail;
   cacheTail = node;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodePool::ReleaseCache() {
   while (cacheTail != nullptr) {
     auto node = cacheTail;
@@ -60,5 +73,5 @@ void NodePool::ReleaseCache() {
 
 
 
-NS_END(Ash)
+NS_END(ash)
 

@@ -9,30 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITYLIST_H__)
-#define __ENTITYLIST_H__
+#if !defined(__ASH_H__)
+#define __ASH_H__
 
-#include "Entity.h"
+#define NS_USING(nsp)  using namespace nsp;
+#define NS_BEGIN(nsp) namespace nsp {
+#define NS_END(nsp) }
+#define CC_DLL
 NS_USING(std)
 NS_BEGIN(ash)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL EntityList {
-public:
-  Entity* head;
-  Entity* tail;
 
-  const vector<Entity*> List();
+typedef string SystemType;
+typedef string COMType;
+typedef string NodeMask;
 
-  virtual ~EntityList();
-  EntityList();
 
-  void Remove(Entity* );
-  void Add(Entity* );
-  void RemoveAll() ;
-};
+
 
 
 NS_END(ash)
 #endif
+
+

@@ -12,16 +12,18 @@
 #if !defined(__ENGINE_H__)
 #define __ENGINE_H__
 
+#include "Ash.h"
 #include <vector>
 #include <map>
 NS_BEGIN(ash)
 
-
 class EntityList;
 class SystemList;
-class Dictionary;
+class NodeList;
+class System;
 class Signal;
-class NodeMask;
+class Family;
+class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -29,7 +31,7 @@ class CC_DLL Engine {
 
 private:
 
-  map<NodeMask*,Family*> families;
+  map<NodeMask,Family*> families;
   EntityList entityList;
   SystemList systemList;
   bool updating;
@@ -37,30 +39,24 @@ private:
 
 public:
 
+  void ComponentAdded(Entity*, const ComponentClass& );
+
   virtual ~Engine();
   Engine();
 
   const vector<Entity*> GetEntities();
   const vector<Entity*> GetSystems();
 
-  void AddEntity(Entity* );
-
   void RemoveEntity(Entity* );
-
+  void AddEntity(Entity* );
   void RemoveAllEntities() ;
 
-  void ComponentAdded(Entity*, const string& componentClass);
+  NodeList*  GetNodeList(const NodeMask& );
+  void ReleaseNodeList(const NodeMask& );
 
-  NodeList*  GetNodeList(Node* nodeObject);
-
-  void ReleaseNodeList(Node* nodeObject );
-
-  void AddSystem(System* );
-
-  System* GetSystem(const string& type );
-
+  System* GetSystem(const SystemType& );
   void RemoveSystem (System* );
-
+  void AddSystem(System* );
   void RemoveAllSystems();
 
   void Update(float time);
@@ -70,7 +66,7 @@ public:
 
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif
 
 
