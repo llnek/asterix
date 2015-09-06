@@ -12,28 +12,32 @@
 #if !defined(__NODELIST_H__)
 #define __NODELIST_H__
 
-NS_BEGIN(Ash)
+#include "Ash.h"
+NS_BEGIN(ash)
+
+class Node;
+
 
 class CC_DLL NodeList {
 public:
   Node* head;
   Node* tail;
-  //this.nodeAdded = new signals.Signal();
-  //this.nodeRemoved = new signals.Signal();
 
+  const NodeType GetType();
+
+  void RemoveEntity(Entity* );
   void Add(Node* );
   void Remove(Node* );
   void RemoveAll();
   bool IsEmpty();
 
 private:
-  void Swap(Node* n1, Node* n2);
-  void InsertionSort(sortFunction);
-  void MergeSort(sortFunction );
-  Node* Merge(Node* head1, Node* head2, sortFunction );
+
 };
 
-NS_END(Ash)
+
+
+NS_END(ash)
 #endif
 
 

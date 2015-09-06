@@ -20,30 +20,31 @@ NS_BEGIN(ash)
 
 class Component;
 class Entity;
-class Signal;
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Entity {
 public:
 
-  map<ComponentClass,Component*> components;
   Entity* previous;
   Entity* next;
-
-  Signal componentRemoved;
-  Signal componentAdded;
 
   virtual ~Entity();
   Entity();
 
-  Component* Remove(const ComponentClass& ) ;
-  void Add(Component* );
+  Component* Remove(const COMType&);
+  void Add(Component*);
 
-  Component* Get(const ComponentClass& );
+  Component* Get(const COMType& );
+  bool Has(const COMType&);
+
   const vector<Component*> GetAll();
-  bool Has(const ComponentClass&);
 
+private:
+
+  map<string,Component*> components;
+
+  DISALLOW_COPYASSIGN(Entity)
 };
 
 

@@ -11,7 +11,10 @@
 
 #if !defined(__SYSTEMLIST_H__)
 #define __SYSTEMLIST_H__
-NS_BEGIN(Ash)
+
+#include "Ash.h"
+NS_BEGIN(ash)
+
 
 class CC_DLL SystemList {
 public:
@@ -27,11 +30,14 @@ public:
 
   void RemoveAll();
 
-  System* Get(const string& type );
+  System* Get(const SystemType& type );
 
 };
 
-NS_END(Ash)
+
+
+
+NS_END(ash)
 #endif
 
 

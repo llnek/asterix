@@ -11,28 +11,40 @@
 
 #if !defined(__SYSTEM_H__)
 #define __SYSTEM_H__
-NS_BEGIN(Ash)
+
+#include "Ash.h"
+NS_BEGIN(ash)
 
 
 class CC_DLL System {
 public:
   System* previous;
   System* next;
-  int priority;
 
+  System(int priority);
   virtual ~System();
-  System();
-
-  void AddToEngine(Engine*);
 
   void RemoveFromEngine(Engine*);
-
+  void AddToEngine(Engine*);
   void Update(float time);
+  bool Is(const SystemType& );
 
-  bool Is(type);
+  virtual const SystemType TypeId() = 0;
+  int Priority() { return priority; }
 
+  bool IsActive() { return active; }
+  void Restart();
+  void Suspend();
+
+private:
+
+  DISALLOW_COPYASSIGN(System)
+  System();
+
+  int priority;
+  bool active;
 };
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif

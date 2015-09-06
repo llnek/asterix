@@ -10,51 +10,62 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Node.h"
-NS_BEGIN(Ash)
+NS_BEGIN(ash)
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
+Node::Node(const map<string,COMType>& schema)
+  : Node() {
+  for (auto it = schema.begin(); it != schema.end(); ++it) {
+    types.insert(pair<COMType,string>(it->second,it->first));
+  }
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
 Node::Node() {
   entity = nullptr;
   previous= nullptr;
   next= nullptr;
 }
 
-Node::RemoveField(const string& field) {
-
-  props->removeObject(field);
-}
-    /**
-    * A simpler way to create a node.
-    *
-    * Example: creating a node for component classes Point &amp; energy:
-    *
-    * var PlayerNode = Ash.Node.create({
-    *   point: Point,
-    *   energy: Energy
-    * });
-    *
-    * This is the simpler version from:
-    *
-    * var PlayerNode = Ash.Node.extend({
-    *   point: null,
-    *   energy: null,
-    *
-    *   types: {
-    *     point: Point,
-    *     energy: Energy
-    *   }
-    * });
-    */
-Node* Node::Add(const string& field, component) {
-  types->setObject(component->ClassId(), field);
-  props->setObject(component, field);
-  return this;
+bool Node::BelongsTo(Entity* e) {
+  return entity == e;
 }
 
+bool Node::BindEntity(Entity* e) {
+  if (entity != nullptr ||
+      entity == e) {
+    return false;
+  }
+  values.clear();
+  for (auto it= types.begin(); it != types.end(); ++it) {
+    auto f= it->second;
+    auto t= it->first;
+    auto c= e->GetComponent(t);
+    if (c != nullptr) {
+      values.insert(pair<string,Component*>(f,c));
+    } else {
+      values.clear();
+    }
+  }
+  return values.size() > 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Component* Node::GetField(const string& field) {
+  auto it = values.find(field);
+  if (it != values.end()) {
+    return it->second;
+  } else {
+    return nullptr;
+  }
+}
 
 
 
 
-NS_END(Ash)
+NS_END(ash)
 

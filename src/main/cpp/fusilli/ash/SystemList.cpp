@@ -10,13 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "SystemList.h"
-NS_BEGIN(Ash)
+NS_BEGIN(ash)
 
-SystemList::SystemList(int priority) {
-  this->priority= priority;
-  head= nullptr;
-  tail= nullptr;
-}
+
 
 void SystemList::Add(System* system ) {
   if (!head ) {
@@ -24,7 +20,7 @@ void SystemList::Add(System* system ) {
     system->next = system->previous = nullptr;
   } else {
     for (auto node = tail; node != nullptr; node = node->previous ) {
-      if (node->priority <= system->priority ) {
+      if (node->Priority() <= system->Priority() ) {
         break;
       }
     }
@@ -73,7 +69,7 @@ void SystemList::RemoveAll() {
 }
 
 
-System* SystemList::Get(const string& type ) {
+System* SystemList::Get(const SystemType& type ) {
   for (auto system = head; system != nullptr; system = system->next ) {
     if (system->Is( type ) ) {
       return system;
@@ -83,7 +79,19 @@ System* SystemList::Get(const string& type ) {
 }
 
 
+SystemList::~SystemList() {
+  while (head != nullptr) {
+    auto s= head;
+    head = head->next;
+    delete s;
+  }
+}
 
-NS_END(Ash)
+SystemList::SystemList() {
+  head= nullptr;
+  tail= nullptr;
+}
+
+NS_END(ash)
 
 

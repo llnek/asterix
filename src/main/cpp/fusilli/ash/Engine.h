@@ -21,8 +21,6 @@ class EntityList;
 class SystemList;
 class NodeList;
 class System;
-class Signal;
-class Family;
 class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,33 +29,30 @@ class CC_DLL Engine {
 
 private:
 
-  map<NodeMask,Family*> families;
+  vector<NodeList*> nodeLists;
   EntityList entityList;
   SystemList systemList;
   bool updating;
-  Signal updateComplete;
 
 public:
-
-  void ComponentAdded(Entity*, const ComponentClass& );
 
   virtual ~Engine();
   Engine();
 
   const vector<Entity*> GetEntities();
-  const vector<Entity*> GetSystems();
+  const vector<System*> GetSystems();
 
   void RemoveEntity(Entity* );
   void AddEntity(Entity* );
-  void RemoveAllEntities() ;
+  void RemoveEntities() ;
 
-  NodeList*  GetNodeList(const NodeMask& );
-  void ReleaseNodeList(const NodeMask& );
+  NodeList*  GetNodeList(const NodeType& );
+  void ReleaseNodeList(const NodeType& );
 
   System* GetSystem(const SystemType& );
   void RemoveSystem (System* );
   void AddSystem(System* );
-  void RemoveAllSystems();
+  void RemoveSystems();
 
   void Update(float time);
 

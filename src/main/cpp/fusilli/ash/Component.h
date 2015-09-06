@@ -13,23 +13,17 @@
 #define __COMPONENT_H__
 
 #include "Ash.h"
-#include <vector>
-#include <map>
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Component {
-
-private:
-
-
 public:
 
-  virtual ~Component();
-  Component();
+  virtual const COMType TypeId() = 0;
 
-  const ComponentClass ClassId();
+
+
 
 };
 

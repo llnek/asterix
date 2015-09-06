@@ -28,33 +28,31 @@ Entity::Entity() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Add(Component* component) {
-  auto z = component->ClassId();
+void Entity::Add(Component* c) {
+  auto z = c->TypeId();
   auto it= components.find(z);
   if (it != components.end()) {
     delete Remove(z);
   }
-  components.insert(pair<ComponentClass,Component*>(z,component));
-  componentAdded.Dispatch(this, z);
+  components.insert(pair<COMType,Component*>(z,c));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Entity::Remove(const ComponentClass& z) {
+Component* Entity::Remove(const COMType& z) {
   auto it = components.find(z);
   Component* rc= nullptr;
 
   if (it != components.end()) {
     rc= it->second;
     components.erase(it);
-    componentRemoved.Dispatch( this, z);
   }
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Entity::Get(const ComponentClass& z) {
+Component* Entity::Get(const COMType& z) {
   auto it=  components.find(z);
   Component* c= nullptr;
   if (it != components.end()) {
@@ -75,7 +73,7 @@ const vector<Component*> Entity::GetAll() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Entity::Has(const ComponentClass& z) {
+bool Entity::Has(const COMType& z) {
   return components.find(z) != components.end();
 }
 

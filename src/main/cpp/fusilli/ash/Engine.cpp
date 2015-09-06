@@ -12,8 +12,6 @@
 #include "Engine.h"
 #include "Entity.h"
 #include "System.h"
-#include "Family.h"
-
 NS_USING(std)
 NS_BEGIN(ash)
 
@@ -52,33 +50,27 @@ const vector<Entity*> Engine::GetEntities() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const vector<Entity*> Engine::GetSystems() {
+const vector<System*> Engine::GetSystems() {
   return systemList.List();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::AddEntity(Entity* e) {
-  e->componentAdded.Add(&Engine::ComponentAdded, this);
   entityList.Add(e);
-  for (auto it = families.begin(); it != families.end(); ++it) {
-    it->second->NewEntity(e);
-  }
+  OnAddEntity(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::RemoveEntity(Entity* e) {
-  for (auto it = families.begin(); it != families.end(); ++it) {
-    it->second->RemoveEntity(e);
-  }
   entityList.Remove(e);
-  e->componentAdded.Remove(&Engine::ComponentAdded, this );
+  OnRemoveEntity(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveAllEntities() {
+void Engine::RemoveEntities() {
   while (entityList.head != nullptr) {
     RemoveEntity(entityList.head);
   }
@@ -86,47 +78,58 @@ void Engine::RemoveAllEntities() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::ComponentAdded(Entity* e, const ComponentClass& ccs) {
-  for (auto it = families.begin(); it != families.end(); ++it) {
-    it->second->ComponentAddedToEntity(e, ccs);
+void Engine::OnRemoveEntity(Entity* e) {
+  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+    auto nl= *it;
+    nl->RemoveEntity(e);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Engine::GetNodeList(const ModeMask& nodeType) {
-  auto it = families.find(nodeType);
-  Family* fam;
-  if (it != families.end()) {
-    fam = it->second;
-  } else {
-    fam = NewFamily(nodeType);
+void Engine::OnAddEntity(Entity* e) {
+  auto rego = NodeRegistry::GetInstance();
+  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+    auto nl= *it;
+    auto n= rego->CreateNode(nl->GetType());
+    if (n->BindEntity(e)) {
+      nl->Add(n);
+    } else {
+      delete n;
+    }
   }
-  return fam->nodes;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Family* Engine::NewFamily(const NodeMask& nodeType) {
-  auto fam= new MatchingFamily(nodeType, this);
-  families.insert(pair<NodeMask,Family*>(nodeType, fam));
-  for (auto e = entityList.head; e != nullptr; e = e->next) {
-    fam->NewEntity(e);
+NodeList* Engine::GetNodeList(const NodeType& nodeType) {
+  auto rego = NodeRegistry::GetInstance();
+  auto nl = new NodeList();
+  Node* n= nullptr;
+  for (auto e= entityList.head; e != nullptr; e=e->next) {
+    if (n==nullptr) {
+      n= rego->CreateNode(nodeType);
+    }
+    if (n->BindEntity(e)) {
+      nl->Add(n);
+      n=nullptr;
+    }
   }
-  return fam;
+  nodeLists.push_back(nl);
+  return nl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::ReleaseNodeList(const NodeMask& nodeType) {
-  auto it = families.find(nodeType);
-  Family* fam;
-  if (it != families.end()) {
-    fam = it->second;
-    fam->CleanUp();
-    families.erase(it);
-    delete fam;
+void Engine::ReleaseNodeList(NodeList*& nl) {
+  for (auto it=nodeLists.begin(); it != nodeLists.end(); ++it) {
+    if (nl == *it) {
+      nodeLists.erase(it);
+      break;
+    }
   }
+  delete nl;
+  nl=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -151,7 +154,7 @@ void Engine::RemoveSystem(System* s ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveAllSystems() {
+void Engine::RemoveSystems() {
   while (systemList.head ) {
     RemoveSystem(systemList.head);
   }
@@ -162,10 +165,11 @@ void Engine::RemoveAllSystems() {
 void Engine::Update(float time) {
   updating = true;
   for (auto s= systemList.head; s != nullptr; s= s->next) {
-    s->Update(time);
+    if (s->IsActive()) {
+      s->Update(time);
+    }
   }
   updating = false;
-  updateComplete.Dispatch();
 }
 
 

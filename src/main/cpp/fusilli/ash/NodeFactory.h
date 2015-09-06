@@ -9,49 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Entity.h"
+#if !defined(__NODEFACTORY_H__)
+#define __NODEFACTORY_H__
+
+#include "Ash.h"
+NS_USING(std)
 NS_BEGIN(ash)
 
+class Node;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-System::System(int p) {
-  previous = nullptr;
-  next = nullptr;
-  priority= p;
-  active=true;
-}
+class CC_DLL NodeFactory {
+public:
 
-void System::Restart() {
-  active=true;
-}
+  virtual Node* CreateNode() = 0;
 
-void System::Suspend() {
-  active=false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void System::AddToEngine(Engine* e) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void System::RemoveFromEngine(Engine* e) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void System::Update(float time) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool System::Is(const SystemType& type) {
-  return type == TypeId();
-}
-
-
+};
 
 
 NS_END(ash)
+#endif
+
+

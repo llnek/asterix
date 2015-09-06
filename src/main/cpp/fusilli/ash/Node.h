@@ -11,23 +11,41 @@
 
 #if !defined(__NODE_H__)
 #define __NODE_H__
-NS_BEGIN(Ash)
 
+#include <vector>
+#include <map>
+#include "Ash.h"
+NS_BEGIN(ash)
 
+class Entity;
 
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Node {
 public:
-  Dictionary* types;
-  Dictionary* props;
-  Entity* entity;
+
   Node* previous;
   Node* next;
 
+  Node(const map<string,COMType>& schema);
   virtual ~Node();
+
+  Component* GetField(const string& field);
+  Entity* GetEntity() { return entity; }
+  bool BindEntity(Entity* e);
+  bool BelongsTo(Entity* e);
+
+private:
+
+  DISALLOW_COPYASSIGN(Node)
   Node();
+
+  map<string,Component*> values;
+  map<COMType,string> types;
+  Entity* entity;
 };
 
 
 
-NS_END(Ash)
+NS_END(ash)
 #endif

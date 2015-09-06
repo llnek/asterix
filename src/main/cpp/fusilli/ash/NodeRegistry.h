@@ -9,49 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Entity.h"
+#if !defined(__NODEREGISTRY_H__)
+#define __NODEREGISTRY_H__
+
+#include <vector>
+#include <map>
+#include "NodeFactory.h"
+NS_USING(std)
 NS_BEGIN(ash)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-System::System(int p) {
-  previous = nullptr;
-  next = nullptr;
-  priority= p;
-  active=true;
-}
+class CC_DLL NodeRegistry {
+public:
 
-void System::Restart() {
-  active=true;
-}
+  static NodeRegistry* GetInstance();
 
-void System::Suspend() {
-  active=false;
-}
+  void Register(const NodeType&, NodeFactory*);
+  void Deregister(const NodeType&);
+  Node* CreateNode(const NodeType&);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void System::AddToEngine(Engine* e) {
-}
+private:
+  map<NodeType,NodeFactory*> regos;
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void System::RemoveFromEngine(Engine* e) {
-}
+  ~NodeRegistry();
+  NodeRegistry();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void System::Update(float time) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool System::Is(const SystemType& type) {
-  return type == TypeId();
-}
-
-
+  DISALLOW_COPYASSIGN(NodeRegistry)
+};
 
 
 NS_END(ash)
+#endif
+
+

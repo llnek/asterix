@@ -9,46 +9,62 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Entity.h"
+#include "NodeRegistry.h"
+NS_USING(std)
 NS_BEGIN(ash)
 
+static NodeRegistry* _singleton;
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-System::System(int p) {
-  previous = nullptr;
-  next = nullptr;
-  priority= p;
-  active=true;
-}
-
-void System::Restart() {
-  active=true;
-}
-
-void System::Suspend() {
-  active=false;
+NodeRegistry* NodeRegistry::GetInstance() {
+  if (_singleton == nullptr) {
+    _singleton= new NodeRegistry();
+  }
+  return _singleton;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void System::AddToEngine(Engine* e) {
+NodeRegistry::~NodeRegistry() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void System::RemoveFromEngine(Engine* e) {
+NodeRegistry::NodeRegistry() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void System::Update(float time) {
+void NodeRegistry::Register(const NodeType& t, NodeFactory* f) {
+  Deregister(t);
+  regos.insert(pair<NodeType,NodeFactory*>(t,f));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool System::Is(const SystemType& type) {
-  return type == TypeId();
+void NodeRegistry::Deregister(const NodeType& t) {
+  auto it= regos.find(t);
+  if (it != regos.end()) {
+    auto v= it->second;
+    regos.erase(it);
+    delete v;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Node* NodeRegistry::CreateNode(const NodeType& t) {
+  auto it=regos.find(t);
+  Node* rc= nullptr;
+  if (it != regos.end()) {
+    auto f= it->second;
+    rc= f.CreateNode();
+  }
+  return rc;
 }
 
 
