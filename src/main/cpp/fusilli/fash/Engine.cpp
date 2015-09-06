@@ -56,17 +56,9 @@ const vector<System*> Engine::GetSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::AddEntity(const string& group, Entity* e) {
-  auto it= groups.find(group);
-  EntityList* el;
-  if (it != groups.end()) {
-    el = it->second;
-  } else {
-    el= new EntityList();
-    groups.insert(pair<string,EntityList*>(group, el));
-  }
-  e->BelongsTo(group);
-  el->Add(e);
+void Engine::AddEntity(Entity* e) {
+  entityList.Add(e);
+  e->BelongsTo(this);
   OnAddEntity(e);
 }
 
@@ -82,10 +74,6 @@ void Engine::NotifyModify(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::RemoveEntity(Entity* e) {
-
-  for (auto it= groups.begin(); it != groups.end(); ++it) {
-    auto g= it->second;
-  }
   entityList.Remove(e);
   e->MarkDelete();
   dirty=true;

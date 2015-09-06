@@ -9,38 +9,42 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODELIST_H__)
-#define __NODELIST_H__
+#if !defined(__SYSTEM_H__)
+#define __SYSTEM_H__
 
 #include "Ash.h"
 NS_BEGIN(ash)
 
-class Node;
 
-
-class CC_DLL NodeList {
+class CC_DLL System {
 public:
-  Node* head;
-  Node* tail;
+  System* previous;
+  System* next;
 
-  const NodeType GetType() { return nType; }
+  System(int priority);
+  virtual ~System();
 
-  bool ContainsEntity(Entity*);
-  bool ComplyWith(Entity*);
-  void RemoveEntity(Entity* );
+  void RemoveFromEngine(Engine*);
+  void AddToEngine(Engine*);
+  void Update(float time);
+  bool Is(const SystemType& );
 
-  void Add(Node* );
-  void Remove(Node* );
-  void RemoveAll();
-  bool IsEmpty();
+  virtual const SystemType TypeId() = 0;
+  int Priority() { return priority; }
+
+  bool IsActive() { return active; }
+  void Restart();
+  void Suspend();
 
 private:
-  NodeType nType;
-};
 
+  DISALLOW_COPYASSIGN(System)
+  System();
+
+  int priority;
+  bool active;
+};
 
 
 NS_END(ash)
 #endif
-
-

@@ -30,21 +30,28 @@ class CC_DLL Engine {
 private:
 
   vector<NodeList*> nodeLists;
-  EntityList entityList;
+  vector<Entity*> freeList;
+  vector<Entity*> modList;
+
+  map<string,EntityList*> groups;
   SystemList systemList;
   bool updating;
+  bool dirty;
 
 public:
 
   virtual ~Engine();
   Engine();
 
-  const vector<Entity*> GetEntities();
+  const vector<Entity*> GetEntities(const string& group);
   const vector<System*> GetSystems();
 
+  void AddEntity(const string& group, Entity* );
+  void NotifyModify(Entity*);
   void RemoveEntity(Entity* );
-  void AddEntity(Entity* );
-  void RemoveEntities() ;
+
+  void RemoveEntities(const string& group) ;
+  void RemoveEntities();
 
   NodeList*  GetNodeList(const NodeType& );
   void ReleaseNodeList(const NodeType& );

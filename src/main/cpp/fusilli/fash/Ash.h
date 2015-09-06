@@ -9,34 +9,30 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODELIST_H__)
-#define __NODELIST_H__
+#if !defined(__ASH_H__)
+#define __ASH_H__
 
-#include "Ash.h"
+#include <string>
+
+#define NS_USING(nsp)  using namespace nsp;
+#define NS_BEGIN(nsp) namespace nsp {
+#define NS_END(nsp) }
+#define CC_DLL
+
+#define DISALLOW_COPYASSIGN(T) \
+  T(const T&) = delete; \
+  T&operator =(const T&) = delete;
+
+
+NS_USING(std)
 NS_BEGIN(ash)
 
-class Node;
+
+typedef string SystemType;
+typedef string COMType;
+typedef string NodeType;
 
 
-class CC_DLL NodeList {
-public:
-  Node* head;
-  Node* tail;
-
-  const NodeType GetType() { return nType; }
-
-  bool ContainsEntity(Entity*);
-  bool ComplyWith(Entity*);
-  void RemoveEntity(Entity* );
-
-  void Add(Node* );
-  void Remove(Node* );
-  void RemoveAll();
-  bool IsEmpty();
-
-private:
-  NodeType nType;
-};
 
 
 

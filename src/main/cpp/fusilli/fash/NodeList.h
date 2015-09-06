@@ -9,38 +9,38 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODEPOOL_H__)
-#define __NODEPOOL_H__
+#if !defined(__NODELIST_H__)
+#define __NODELIST_H__
 
-#include <map>
 #include "Ash.h"
-NS_USING(std)
 NS_BEGIN(ash)
 
+class Node;
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL NodePool {
+
+class CC_DLL NodeList {
 public:
-  map<COMType,string> *components ;
-  NodeMask nodeClass;
+  Node* head;
   Node* tail;
-  Node* cacheTail;
 
-  NodePool(const NodeMask& nodeClass, map<COMType,string>* );
-  virtual ~NodePool();
+  const NodeType GetType() { return nType; }
 
-  Node* Get();
+  bool ContainsEntity(Entity*);
+  bool ComplyWith(Entity*);
+  void RemoveEntity(Entity* );
 
-  void Dispose(Node* node );
+  void Add(Node* );
+  void Remove(Node* );
+  void RemoveAll();
+  bool IsEmpty();
 
-  void Cache(Node* );
-
-  void ReleaseCache();
-
+private:
+  NodeType nType;
 };
+
 
 
 NS_END(ash)
 #endif
+
 

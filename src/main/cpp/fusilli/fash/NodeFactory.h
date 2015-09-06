@@ -9,35 +9,23 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODELIST_H__)
-#define __NODELIST_H__
+#if !defined(__NODEFACTORY_H__)
+#define __NODEFACTORY_H__
 
 #include "Ash.h"
+NS_USING(std)
 NS_BEGIN(ash)
 
 class Node;
 
-
-class CC_DLL NodeList {
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL NodeFactory {
 public:
-  Node* head;
-  Node* tail;
 
-  const NodeType GetType() { return nType; }
+  virtual Node* CreateNode() = 0;
 
-  bool ContainsEntity(Entity*);
-  bool ComplyWith(Entity*);
-  void RemoveEntity(Entity* );
-
-  void Add(Node* );
-  void Remove(Node* );
-  void RemoveAll();
-  bool IsEmpty();
-
-private:
-  NodeType nType;
 };
-
 
 
 NS_END(ash)

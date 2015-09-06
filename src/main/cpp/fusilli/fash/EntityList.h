@@ -9,38 +9,30 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__FAMILY_H__)
-#define __FAMILY_H__
+#if !defined(__ENTITYLIST_H__)
+#define __ENTITYLIST_H__
 
-#include "Ash.h"
+#include "Entity.h"
 NS_USING(std)
 NS_BEGIN(ash)
 
-class NodeList;
-class Entity;
-
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Family {
+class CC_DLL EntityList {
 public:
+  Entity* head;
+  Entity* tail;
 
-  virtual void NewEntity(Entity*) = 0;
+  const vector<Entity*> List();
 
-  void RemoveEntity(Entity*) = 0;
+  virtual ~EntityList();
+  EntityList();
 
-  void RemovedFrom(Entity*, const COMType&) = 0;
-  void AddedTo(Entity*, const COMType&) = 0;
-
-  void CleanUp() = 0;
-
-  virtual NodeList* GetNodeList() = 0;
-
-private:
-
+  void Remove(Entity* );
+  void Add(Entity* );
+  void RemoveAll() ;
 };
 
 
 NS_END(ash)
 #endif
-
-

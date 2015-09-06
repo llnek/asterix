@@ -9,35 +9,34 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODELIST_H__)
-#define __NODELIST_H__
+#if !defined(__NODEREGISTRY_H__)
+#define __NODEREGISTRY_H__
 
-#include "Ash.h"
+#include <vector>
+#include <map>
+#include "NodeFactory.h"
+NS_USING(std)
 NS_BEGIN(ash)
 
-class Node;
-
-
-class CC_DLL NodeList {
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL NodeRegistry {
 public:
-  Node* head;
-  Node* tail;
 
-  const NodeType GetType() { return nType; }
+  static NodeRegistry* GetInstance();
 
-  bool ContainsEntity(Entity*);
-  bool ComplyWith(Entity*);
-  void RemoveEntity(Entity* );
-
-  void Add(Node* );
-  void Remove(Node* );
-  void RemoveAll();
-  bool IsEmpty();
+  void Register(const NodeType&, NodeFactory*);
+  void Deregister(const NodeType&);
+  Node* CreateNode(const NodeType&);
 
 private:
-  NodeType nType;
-};
+  map<NodeType,NodeFactory*> regos;
 
+  ~NodeRegistry();
+  NodeRegistry();
+
+  DISALLOW_COPYASSIGN(NodeRegistry)
+};
 
 
 NS_END(ash)

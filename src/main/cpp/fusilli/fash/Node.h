@@ -9,38 +9,43 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODELIST_H__)
-#define __NODELIST_H__
+#if !defined(__NODE_H__)
+#define __NODE_H__
 
+#include <vector>
+#include <map>
 #include "Ash.h"
 NS_BEGIN(ash)
 
-class Node;
+class Entity;
 
-
-class CC_DLL NodeList {
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Node {
 public:
-  Node* head;
-  Node* tail;
 
-  const NodeType GetType() { return nType; }
+  Node* previous;
+  Node* next;
 
-  bool ContainsEntity(Entity*);
-  bool ComplyWith(Entity*);
-  void RemoveEntity(Entity* );
+  Node(const map<string,COMType>& schema);
+  virtual ~Node();
 
-  void Add(Node* );
-  void Remove(Node* );
-  void RemoveAll();
-  bool IsEmpty();
+  Component* GetField(const string& field);
+  Entity* GetEntity() { return entity; }
+  bool BindEntity(Entity* e);
+  bool BelongsTo(Entity* e);
 
 private:
-  NodeType nType;
+
+  DISALLOW_COPYASSIGN(Node)
+  Node();
+
+  map<string,Component*> values;
+  map<COMType,string> types;
+  Entity* entity;
 };
 
 
 
 NS_END(ash)
 #endif
-
-

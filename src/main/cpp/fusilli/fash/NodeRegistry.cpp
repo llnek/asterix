@@ -9,59 +9,64 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "NodeList.h"
-#include "Engine.h"
-#include "Family.h"
+#include "NodeRegistry.h"
 NS_USING(std)
 NS_BEGIN(ash)
 
+static NodeRegistry* _singleton;
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Family::Family(const NodeMask& m, Engine* engine) {
+NodeRegistry* NodeRegistry::GetInstance() {
+  if (_singleton == nullptr) {
+    _singleton= new NodeRegistry();
+  }
+  return _singleton;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Family::~Family() {
-  delete nodes;
+NodeRegistry::~NodeRegistry() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Family::GetNodeList() {
-  return nodes;
+NodeRegistry::NodeRegistry() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Family::NewEntity(Entity* e) {
-  throw std::exception("should be overriden");
+void NodeRegistry::Register(const NodeType& t, NodeFactory* f) {
+  Deregister(t);
+  regos.insert(pair<NodeType,NodeFactory*>(t,f));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Family::RemoveEntity(Entity* e) {
-  throw std::exception("should be overriden");
+void NodeRegistry::Deregister(const NodeType& t) {
+  auto it= regos.find(t);
+  if (it != regos.end()) {
+    auto v= it->second;
+    regos.erase(it);
+    delete v;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Family::ComponentAddedToEntity(Entity* e, const ComponentClass& z) {
-  throw std::exception("should be overriden");
+Node* NodeRegistry::CreateNode(const NodeType& t) {
+  auto it=regos.find(t);
+  Node* rc= nullptr;
+  if (it != regos.end()) {
+    auto f= it->second;
+    rc= f.CreateNode();
+  }
+  return rc;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Family::ComponentRemovedFromEntity(Entity* e, const ComponentClass& z) {
-  throw std::exception("should be overriden");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Family::CleanUp() {
-  throw std::exception("should be overriden");
-}
 
 
 

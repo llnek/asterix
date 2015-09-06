@@ -9,69 +9,49 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Node.h"
-#include "NodePool.h"
-NS_USING(std)
+#include "Entity.h"
 NS_BEGIN(ash)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodePool::NodePool(const NodeMask& nodeClass, map<COMType, string> *components) {
-  this->components = components;
-  this->nodeClass= nodeClass;
-  cacheTail= nullptr;
-  tail= nullptr;
+System::System(int p) {
+  previous = nullptr;
+  next = nullptr;
+  priority= p;
+  active=true;
 }
-//////////////////////////////////////////////////////////////////////////////
-//
-NodePool::~NodePool() {
+
+void System::Restart() {
+  active=true;
+}
+
+void System::Suspend() {
+  active=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* NodePool::Get() {
-  if (tail != nullptr) {
-    auto node = tail;
-    tail = tail->previous;
-    node->previous = nullptr;
-    return node;
-  } else {
-    return new this.nodeClass();
-  }
+void System::AddToEngine(Engine* e) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodePool::Dispose(Node* node ) {
-  for (auto it = components.begin(); it != components.end(); ++it) {
-    node->RemoveField(it->second);
-  }
-  node->entity = nullptr;
-  node->next = nullptr;
-  node->previous = tail;
-  tail = node;
+void System::RemoveFromEngine(Engine* e) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodePool::Cache(Node* node) {
-  node->previous = cacheTail;
-  cacheTail = node;
+void System::Update(float time) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodePool::ReleaseCache() {
-  while (cacheTail != nullptr) {
-    auto node = cacheTail;
-    cacheTail = node->previous;
-    Dispose(node);
-  }
+bool System::Is(const SystemType& type) {
+  return type == TypeId();
 }
 
 
 
 
 NS_END(ash)
-

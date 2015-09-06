@@ -9,51 +9,64 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITY_H__)
-#define __ENTITY_H__
+#if !defined(__ENGINE_H__)
+#define __ENGINE_H__
 
+#include "Ash.h"
 #include <vector>
 #include <map>
-#include "Ash.h"
-NS_USING(std)
 NS_BEGIN(ash)
 
-class Component;
+class EntityList;
+class SystemList;
+class NodeList;
+class System;
 class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Entity {
-public:
-
-  Entity* previous;
-  Entity* next;
-
-  virtual ~Entity();
-  Entity(Engine*);
-
-  Component* Remove(const COMType&);
-  void Add(Component*);
-
-  Component* Get(const COMType& );
-  bool Has(const COMType&);
-
-  void BelongsTo(const string& group);
-  const string& GroupId();
-
-  const vector<Component*> GetAll();
+class CC_DLL Engine {
 
 private:
 
-  map<string,Component*> components;
-  string group;
-  Engine* engine;
+  vector<NodeList*> nodeLists;
+  vector<Entity*> freeList;
+  vector<Entity*> modList
 
-  DISALLOW_COPYASSIGN(Entity)
-  Entity();
+  EntityList entityList;
+  SystemList systemList;
+  bool updating;
+  bool dirty;
+
+public:
+
+  virtual ~Engine();
+  Engine();
+
+  const vector<Entity*> GetEntities();
+  const vector<System*> GetSystems();
+
+  void NotifyModify(Entity*);
+  void RemoveEntity(Entity* );
+  void AddEntity(Entity* );
+  void RemoveEntities() ;
+
+  NodeList*  GetNodeList(const NodeType& );
+  void ReleaseNodeList(const NodeType& );
+
+  System* GetSystem(const SystemType& );
+  void RemoveSystem (System* );
+  void AddSystem(System* );
+  void RemoveSystems();
+
+  void Update(float time);
+
 };
+
 
 
 
 NS_END(ash)
 #endif
+
+
