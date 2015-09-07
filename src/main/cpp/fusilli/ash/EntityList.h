@@ -25,12 +25,16 @@ public:
 
   const vector<Entity*> List();
 
-  virtual ~EntityList();
-  EntityList();
-
   void Remove(Entity* );
   void Add(Entity* );
   void RemoveAll() ;
+
+private:
+  virtual ~EntityList();
+  EntityList();
+
+  DISALLOW_COPYASSIGN(EntityList)
+  friend class Engine;
 };
 
 

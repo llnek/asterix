@@ -34,18 +34,29 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
+  for (auto it= groups.begin(); it != groups.end(); ++it) {
+    delete it->second;
+  }
+  groups.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::Engine() {
   updating= false;
+  dirty=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const vector<Entity*> Engine::GetEntities() {
-  return entityList.List();
+const vector<Entity*> Engine::GetEntities(const string& group) {
+  auto it=groups.find(group);
+  vector<Entity*> v;
+  if (it != groups.end()) {
+    return it->second->List();
+  } else {
+    return v;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,20 +67,23 @@ const vector<System*> Engine::GetSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::AddEntity(const string& group, Entity* e) {
+Entity* Engine::CreateEntity(const string& group) {
   auto it= groups.find(group);
+  auto e= new Entity(this, group);
   EntityList* el;
   if (it != groups.end()) {
-    el = it->second;
+    el= it->second;
   } else {
     el= new EntityList();
-    groups.insert(pair<string,EntityList*>(group, el));
+    groups.insert(pair<string,EntityList*>(group,el));
   }
-  e->BelongsTo(group);
   el->Add(e);
-  OnAddEntity(e);
+  addList.push_back(e);
+  return e;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Engine::NotifyModify(Entity* e) {
   bool fnd=false;
   for (auto it= modList.begin(); it != modList.end(); ++it) {
@@ -79,24 +93,34 @@ void Engine::NotifyModify(Entity* e) {
     modList.push_back(e);
   }
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::RemoveEntity(Entity* e) {
-
-  for (auto it= groups.begin(); it != groups.end(); ++it) {
-    auto g= it->second;
+  auto it = groups.find(e->GroupId());
+  if (it != groups.end()) {
+    RemoveEntity(it->second,e);
   }
-  entityList.Remove(e);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Engine::RemoveEntity(EntityList* el, Entity* e) {
   e->MarkDelete();
+  el->Remove(e);
   dirty=true;
   freeList.push_back(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntities() {
-  while (entityList.head != nullptr) {
-    RemoveEntity(entityList.head);
+void Engine::RemoveEntities(const string& group) {
+  auto it = groups.find(group);
+  if (it != groups.end()) {
+    auto el=it->second;
+    while (el->head != nullptr) {
+      RemoveEntity(el, el->head);
+    }
   }
 }
 
@@ -126,20 +150,24 @@ void Engine::OnAddEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Engine::GetNodeList(const NodeType& nodeType) {
+NodeList* Engine::GetNodeList(const string& group, const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
   auto nl = new NodeList();
-  Node* n= nullptr;
-  for (auto e= entityList.head; e != nullptr; e=e->next) {
-    if (n==nullptr) {
-      n= rego->CreateNode(nodeType);
+  auto it= groups.find(group);
+  if (it != groups.end()) {
+    auto el= it->second;
+    Node* n= nullptr;
+    for (auto e= el->head; e != nullptr; e=e->next) {
+      if (n==nullptr) {
+        n= rego->CreateNode(nodeType);
+      }
+      if (n->BindEntity(e)) {
+        nl->Add(n);
+        n=nullptr;
+      }
     }
-    if (n->BindEntity(e)) {
-      nl->Add(n);
-      n=nullptr;
-    }
+    nodeLists.push_back(nl);
   }
-  nodeLists.push_back(nl);
   return nl;
 }
 
@@ -206,8 +234,8 @@ void Engine::OnModifyEntity(Entity* e) {
     auto nl = *it;
     auto t = nl->GetType();
     Node* n;
-    if (nl->Contains(e)) {
-      if (!nl->ComplyWith(e)) {
+    if (nl->ContainsEntity(e)) {
+      if (!nl->IsCompatible(e)) {
         nl->RemoveEntity(e);
       }
     } else {
@@ -228,13 +256,32 @@ void Engine::HouseKeeping() {
     OnRemoveEntity(e);
     delete e;
   }
+  for (auto it= addList.begin(); it != addList.end(); ++it) {
+    auto e = *it;
+    OnAddEntity(e);
+  }
   for (auto it= modList.begin(); it != modList.end(); ++it) {
     auto e= *it;
     OnModifyEntity(e);
   }
   freeList.clear();
   modList.clear();
+  addList.clear();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 NS_END(ash)

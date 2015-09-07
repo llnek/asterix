@@ -24,7 +24,9 @@ public:
 
 
 
-
+  virtual ~Component();
+  Component();
+  DISALLOW_COPYASSIGN(Component)
 };
 
 

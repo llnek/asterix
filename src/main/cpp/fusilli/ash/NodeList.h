@@ -17,7 +17,8 @@ NS_BEGIN(ash)
 
 class Node;
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL NodeList {
 public:
   Node* head;
@@ -25,8 +26,8 @@ public:
 
   const NodeType GetType() { return nType; }
 
-  bool ContainsEntity(Entity*);
-  bool ComplyWith(Entity*);
+  bool ContainsWithin(Entity*);
+  bool IsCompatible(Entity*);
   void RemoveEntity(Entity* );
 
   void Add(Node* );

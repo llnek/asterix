@@ -30,11 +30,10 @@ public:
   Node(const map<string,COMType>& schema);
   virtual ~Node();
 
-  Component* GetField(const string& field);
+  Component* Get(const string& field);
   Entity* GetEntity() { return entity; }
   bool BindEntity(Entity* e);
-  bool BelongsTo(Entity* e);
-
+  bool BelongsTo(Entity*);
 private:
 
   DISALLOW_COPYASSIGN(Node)

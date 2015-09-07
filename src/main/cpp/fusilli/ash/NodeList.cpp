@@ -13,15 +13,20 @@
 NS_BEGIN(ash)
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 NodeList::~NodeList() {
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 NodeList::NodeList() {
   head = nullptr;
   tail = nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodeList::Add(Node* n) {
   if ( !head ) {
     head = tail = n;
@@ -32,6 +37,8 @@ void NodeList::Add(Node* n) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodeList::Remove(Node* node) {
   if (head == node ) {
     head = head->next;
@@ -47,6 +54,8 @@ void NodeList::Remove(Node* node) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodeList::RemoveAll() {
   while (head != nullptr) {
     auto node = head;
@@ -57,10 +66,14 @@ void NodeList::RemoveAll() {
   tail = nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 bool NodeList::IsEmpty() {
   return head == nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void NodeList::RemoveEntity(Entity* e) {
   Node* p = head;
   while (p != nullptr) {
@@ -74,6 +87,8 @@ void NodeList::RemoveEntity(Entity* e) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 bool NodeList::ContainsWithin(Entity* e) {
   for (auto p= head; p != nullptr; p = p->next) {
     if (p->BelongsTo(e)) { return true; }
@@ -81,14 +96,17 @@ bool NodeList::ContainsWithin(Entity* e) {
   return false;
 }
 
-bool NodeList::CompliesWith(Entity* e) {
+//////////////////////////////////////////////////////////////////////////////
+//
+bool NodeList::IsCompatible(Entity* e) {
   auto rego = NodeRegistry::GetInstance();
-  auto n = rego->CreateNode(nType)
+  auto n = rego->CreateNode(nType);
   auto ok= n->BindEntity(e);
   delete n;
   if (! ok)  {
     RemoveEntity(e);
   }
+  return ok;
 }
 
 

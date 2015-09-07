@@ -13,13 +13,15 @@
 NS_BEGIN(ash)
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 void SystemList::Add(System* system ) {
   if (!head ) {
     head = tail = system;
     system->next = system->previous = nullptr;
   } else {
-    for (auto node = tail; node != nullptr; node = node->previous ) {
+    System* node;
+    for (node = tail; node != nullptr; node = node->previous ) {
       if (node->Priority() <= system->Priority() ) {
         break;
       }
@@ -42,6 +44,7 @@ void SystemList::Add(System* system ) {
     }
   }
 }
+
 
 void SystemList::Remove(System* system ) {
   if (head == system ) {

@@ -24,7 +24,7 @@ class CC_DLL NodeFactory {
 public:
 
   virtual Node* CreateNode() = 0;
-
+  virtual ~NodeFactory() {}
 };
 
 

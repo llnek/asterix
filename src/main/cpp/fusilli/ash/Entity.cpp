@@ -21,33 +21,35 @@ Entity::~Entity() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(Engine* e) {
+Entity::Entity(const string& group, Engine* e) : Entity() {
+  engine=e;
+  this->group=group;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity::Entity() {
   previous = nullptr;
   next= nullptr;
-  engine=e;
+  dead=false;
+  engine=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Entity::Add(Component* c) {
   auto z = c->TypeId();
-  auto it= components.find(z);
-  if (it != components.end()) {
-    delete Remove(z);
+  if (Has(z)) {
+    throw "cannot reassign component";
   }
   components.insert(pair<COMType,Component*>(z,c));
-  if (engine != nullptr) {
-    engine->NotifyNodify(this);
-  }
+  engine->NotifyModify(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::BelongsTo(const string& group) {
-  if (this->group.length() > 0) {
-    throw exception("entity is already assigned to group");
-  }
-  this->group= group;
+void Entity::MarkDelete() {
+  dead=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,9 +62,7 @@ Component* Entity::Remove(const COMType& z) {
     rc= it->second;
     components.erase(it);
   }
-  if (engine != nullptr) {
-    engine->NotifyNodify(this);
-  }
+  engine->NotifyModify(this);
   return rc;
 }
 

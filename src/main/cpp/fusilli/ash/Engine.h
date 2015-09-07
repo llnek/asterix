@@ -29,11 +29,18 @@ class CC_DLL Engine {
 
 private:
 
+  void RemoveEntity(EntityList* el, Entity* e);
+  void OnModifyEntity(Entity* e);
+  void OnRemoveEntity(Entity* e);
+  void OnAddEntity(Entity* e);
+  void HouseKeeping();
+
+  map<string,EntityList*> groups;
   vector<NodeList*> nodeLists;
   vector<Entity*> freeList;
   vector<Entity*> modList;
+  vector<Entity*> addList;
 
-  map<string,EntityList*> groups;
   SystemList systemList;
   bool updating;
   bool dirty;
@@ -46,15 +53,13 @@ public:
   const vector<Entity*> GetEntities(const string& group);
   const vector<System*> GetSystems();
 
-  void AddEntity(const string& group, Entity* );
+  Entity* CreateEntity(const string& group);
   void NotifyModify(Entity*);
   void RemoveEntity(Entity* );
+  void RemoveEntities() ;
 
-  void RemoveEntities(const string& group) ;
-  void RemoveEntities();
-
-  NodeList*  GetNodeList(const NodeType& );
-  void ReleaseNodeList(const NodeType& );
+  NodeList*  GetNodeList(const string& group, const NodeType& );
+  void ReleaseNodeList(NodeList*& );
 
   System* GetSystem(const SystemType& );
   void RemoveSystem (System* );

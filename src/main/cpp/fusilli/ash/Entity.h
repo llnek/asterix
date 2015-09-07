@@ -30,7 +30,6 @@ public:
   Entity* next;
 
   virtual ~Entity();
-  Entity(Engine*);
 
   Component* Remove(const COMType&);
   void Add(Component*);
@@ -38,8 +37,8 @@ public:
   Component* Get(const COMType& );
   bool Has(const COMType&);
 
-  void BelongsTo(const string& group);
-  const string& GroupId();
+  void MarkDelete();
+  bool IsOk() { return !dead; };
 
   const vector<Component*> GetAll();
 
@@ -48,8 +47,9 @@ private:
   map<string,Component*> components;
   string group;
   Engine* engine;
-
+  bool dead;
   DISALLOW_COPYASSIGN(Entity)
+  Entity(const string& group, Engine*);
   Entity();
 };
 

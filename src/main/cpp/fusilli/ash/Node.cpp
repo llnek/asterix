@@ -30,32 +30,37 @@ Node::Node() {
   next= nullptr;
 }
 
-bool Node::BelongsTo(Entity* e) {
-  return entity == e;
-}
-
 bool Node::BindEntity(Entity* e) {
   if (entity != nullptr ||
-      entity == e) {
+      e == nullptr ||
+      !e->IsOk() ) {
     return false;
   }
   values.clear();
   for (auto it= types.begin(); it != types.end(); ++it) {
     auto f= it->second;
     auto t= it->first;
-    auto c= e->GetComponent(t);
+    auto c= e->Get(t);
     if (c != nullptr) {
       values.insert(pair<string,Component*>(f,c));
     } else {
       values.clear();
+      break;
     }
   }
   return values.size() > 0;
 }
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::GetField(const string& field) {
+bool Node::BelongsTo(Entity* e) {
+  return entity == e;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Component* Node::Get(const string& field) {
   auto it = values.find(field);
   if (it != values.end()) {
     return it->second;

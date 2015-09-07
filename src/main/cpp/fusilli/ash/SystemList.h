@@ -15,7 +15,8 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL SystemList {
 public:
   System* head;
@@ -31,7 +32,7 @@ public:
   void RemoveAll();
 
   System* Get(const SystemType& type );
-
+  const vector<System*> List();
 };
 
 
