@@ -12,28 +12,31 @@
 #if !defined(__L10N_H__)
 #define __L10N_H__
 
-#include "fusilli.h"
-#include "cocos2d.h"
+#include "core/fusilli.h"
+NS_USING(std)
+NS_BEGIN(fusilli)
 
-NS_FI_BEGIN
 
-class L10NCache {
-
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL L10NCache {
 public:
 
-  const std::string& getStr(const std::string& key, const std::string& dft);
-  void purge();
-  void init();
+  const string GetStr(const string& key, const string& dft);
+  void Purge();
+  void Init();
 
   virtual ~L10NCache();
   L10NCache();
 
 private:
-  std::map<std::string, std::string> _cache;
-  DISALLOW_COPY_AND_ASSIGN(L10NCache)
+  DISALLOW_COPYASSIGN(L10NCache)
+  map<string, string> _cache;
 };
 
-NS_FI_END
 
+
+
+NS_END(fusilli)
 #endif
 

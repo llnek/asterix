@@ -10,6 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "cobjs.h"
+NS_USING(fusilli)
+NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -60,16 +62,15 @@ Cannon::Cannon(float coolDownWindow) {
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 Explosion::Explosion(Sprite* s) : ComObj(s) {
   frameTime= 0.1;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Explosion::Inflate(options) {
-    const frames = [ccsx.getSprite('boom_0.png'),
-                    ccsx.getSprite('boom_1.png'),
-                    ccsx.getSprite('boom_2.png'),
-                    ccsx.getSprite('boom_3.png') ],
-  auto anim= Animation::create();//frames, this.frameTime);
+  auto anim= Animation::create();
   anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_0.png"));
   anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_1.png"));
   anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_2.png"));
@@ -78,137 +79,44 @@ void Explosion::Inflate(options) {
 
   sprite->setPosition(options.x, options.y);
   status=true;
-  sprite->runAction(new cc.Sequence(new cc.Animate(anim),
-      new cc.CallFunc(() => {
-        sjs.loggr.debug('explosion done.!');
-        this.deflate();
-      }, this)
-    ));
+  sprite->runAction(
+    Sequence::createWithTwoActions(Animate::create(anim),
+    CallFunc::create([this]() { this->Deflate(); })));
 }
 
-/**
- * @property {Explosion} Explosion
- */
-xbox.Explosion = Explosion;
+//////////////////////////////////////////////////////////////////////////////
+Looper::Looper(int count) {
+  timers= null; //sjs.makeArray(count,null);
+}
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Looper
- */
-const Looper = sh.Ashley.casDef({
-
-  /**
-   * @memberof module:n/cobjs~Looper
-   * @method constructor
-   * @param {Number} count
-   */
-  constructor(count) {
-    this.timers=sjs.makeArray(count,null);
-  }
-});
-/**
- * @property {Looper} Looper
- */
-xbox.Looper= Looper;
+//
+Missile::Missile(Sprite* s) : ComObj(s) {
+  auto wz= CCSZ::VisRect();
+  this->x = 0;
+  this->y = 150 * wz.height / 480;
+}
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Missile
- */
-const Missile = sh.Ashley.compDef({
-
-  /**
-   * @memberof module:n/cobjs~Missile
-   * @method constructor
-   * @param {cc.Sprite} sprite
-   */
-  constructor(sprite) {
-    const wz= ccsx.vrect();
-    this.ctor(sprite);
-    this.vel= {
-      x: 0,
-      y: 150 * wz.height / 480
-    };
-  }
-});
-/**
- * @property {Missile} Missile
- */
-xbox.Missile= Missile;
+//
+Motion::Motion() {
+  right = false;
+  left = false;
+}
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Motion
- */
-const Motion = sh.Ashley.casDef({
-
-  /**
-   * @memberof module:n/cobjs~Motion
-   * @method constructor
-   */
-  constructor() {
-    this.right = false;
-    this.left = false;
-  }
-});
-/**
- * @property {Motion} Motion
- */
-xbox.Motion= Motion;
+//
+Ship::Ship(Sprite* s,frames) : ComObj(s) {
+  this.frames=frames;
+}
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Ship
- */
-const Ship = sh.Ashley.compDef({
-
-  /**
-   * @memberof module:n/cobjs~Ship
-   * @method constructor
-   * @param {cc.Sprite} sprite
-   * @param {Array} frames
-   */
-  constructor(sprite,frames) {
-    this.ctor(sprite);
-    this.frames=frames;
-  }
-});
-/**
- * @property {Ship} Ship
- */
-xbox.Ship = Ship;
-
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class Velocity
- */
-const Velocity = sh.Ashley.casDef({
-
-  /**
-   * @memberof module:n/cobjs~Velocity
-   * @method constructor
-   * @param {Number} vx
-   * @param {Number} vy
-   */
-  constructor(vx,vy) {
-    this.vel = {
-      x: vx || 0,
-      y: vy || 0
-    };
-  }
-});
-/**
- * @property {Velocity} Velocity
- */
-xbox.Velocity= Velocity;
+//
+Velocity::Velocity(float vx, float vy) {
+  x = vx;
+  y= vy;
+}
 
 
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(invaders)
 

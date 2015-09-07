@@ -9,17 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __XPOOL_H__
-#define  __XPOOL_H__
+#if !defined(__XPOOL_H__)
+#define __XPOOL_H__
 
-#include "../core/fusilli.h"
+#include "core/fusilli.h"
 #include "cocos2d.h"
-NS_FI_BEGIN
+NS_BEGIN(fusilli)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL XPool {
 
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(XPool)
+  DISALLOW_COPYASSIGN(XPool)
 
 public:
 
@@ -30,6 +32,10 @@ public:
   CREATE_FUNC(XPool)
 };
 
-NS_FI_END
+
+
+
+
+NS_END(fusilli)
 #endif
 

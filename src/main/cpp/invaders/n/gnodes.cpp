@@ -9,54 +9,41 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include <map>
-#include "L10N.h"
-NS_USING(std)
-NS_BEGIN(fusilli)
+#include "NodeFactory.h"
+#include "Node.h"
+#include "cobjs.h"
+NS_USING(fusilli)
+NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void L10NCache::Purge() {
-  _cache.clear();
+Node* AlienMotionNode::CreateNode() {
+  map<string,COMType> s;
+  s.insert(pair<string,COMType>("aliens", "fusilli/AlienSquad"));
+  s.insert(pair<string,COMType>("looper", "fusilli/Looper"));
+  return new Node(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void L10NCache::Init() {
-  Purge();
+Node* CannonCtrlNode::CreateNode() {
+  map<string,COMType> s;
+  s.insert(pair<string,COMType>("looper", "fusilli/Looper"));
+  s.insert(pair<string,COMType>("cannon", "fusilli/Cannon"));
+  s.insert(pair<string,COMType>("ship", "fusilli/Ship"));
+  return new Node(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//Application::getInstance()->getCurrentLanguage();
-const string& L10NCache::GetStr(const string& key, const string& dft) {
-  auto it= _cache.find(key);
-  string rc;
-  if (it != _cache.end()) {
-    rc= it->second;
-  } else {
-    rc= dft;
-  }
-  return rc;
+Node* ShipMotionNode::CreateNode() {
+  map<string,COMType> s;
+  s.insert(pair<string,COMType>("velocity", "fusilli/Velocity"));
+  s.insert(pair<string,COMType>("motion", "fusilli/Motion"));
+  s.insert(pair<string,COMType>("ship", "fusilli/Ship"));
+  return new Node(s);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-L10NCache::~L10NCache() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-L10NCache::L10NCache() {
-
-}
-
-
-
-
-
-NS_END(fusilli)
-
+NS_END(invaders)
 
 

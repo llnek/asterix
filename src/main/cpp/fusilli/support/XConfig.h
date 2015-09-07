@@ -9,12 +9,16 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "../core/fusilli.h"
-USING_NS_CC;
-NS_FI_BEGIN
+#include "core/fusilli.h"
+NS_USING(std)
+NS_BEGIN(fusilli)
 
 
-class CC_DLL Config : public XConfig {
+//////////////////////////////////////////////////////////////////////////////
+//
+class Ref;
+
+class CC_DLL XConfig {
 
   virtual const string GetAppKey() = 0;
 
@@ -51,5 +55,6 @@ class CC_DLL Config : public XConfig {
 
 
 
-NS_FI_END
+NS_END(fusilli)
+#endif
 

@@ -10,20 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Component.h"
+NS_USING(fusilli)
+NS_BEGIN(invaders)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL AlienSquad : public Component {
-public:
-
-  AlienSquad(const vector<Alien>& aliens, int step);
-  virtual ~AlienSquad();
-
-private:
-
-  DISALLOW_COPYASSIGN(AlienSquad)
-  AlienSquad();
-};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -34,9 +23,20 @@ public:
   virtual ~Alien();
 
 private:
-  DISALLOW_COPYASSIGN(Alien)
-  Alien();
+  DISALLOW_COPYASSIGNDFT(Alien)
+  int rank;
+};
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL AlienSquad : public Component {
+public:
+
+  AlienSquad(const vector<Alien>& aliens, int step);
+  virtual ~AlienSquad();
+
+private:
+  DISALLOW_COPYASSIGNDFT(AlienSquad)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,8 +48,9 @@ public:
   Bomb(Sprite*);
 
 private:
-  DISALLOW_COPYASSIGN(Bomb)
-  Bomb();
+  DISALLOW_COPYASSIGNDFT(Bomb)
+  float x;
+  float y;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -67,166 +68,78 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Explosion
- */
-const Explosion = sh.Ashley.compDef({
+//
+class CC_DLL Explosion : public ComObj {
+public:
 
-  /**
-   * @memberof module:n/cobjs~Explosion
-   * @method constructor
-   * @param {cc.Sprite}
-   */
-  constructor(sprite) {
-    this.ctor(sprite);
-    this.frameTime= 0.1;
-  },
+  virtual ~Explosion();
+  Explosion(Sprite* );
 
-  /**
-   * @protected
-   */
-  inflate(options) {
-    const frames = [ccsx.getSprite('boom_0.png'),
-                    ccsx.getSprite('boom_1.png'),
-                    ccsx.getSprite('boom_2.png'),
-                    ccsx.getSprite('boom_3.png') ],
-    anim= new cc.Animation(frames, this.frameTime);
+  virtual void Inflate(Dictionary* dict) override;
 
-    this.sprite.setPosition(options.x, options.y);
-    this.status=true;
-
-    this.sprite.runAction(new cc.Sequence(new cc.Animate(anim),
-      new cc.CallFunc(() => {
-        sjs.loggr.debug('explosion done.!');
-        this.deflate();
-      }, this)
-    ));
-  }
-
-});
-/**
- * @property {Explosion} Explosion
- */
-xbox.Explosion = Explosion;
+private:
+  DISALLOW_COPYASSIGN(Explosion)
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Looper
- */
-const Looper = sh.Ashley.casDef({
+//
+class CC_DLL Looper : public Component {
+public:
 
-  /**
-   * @memberof module:n/cobjs~Looper
-   * @method constructor
-   * @param {Number} count
-   */
-  constructor(count) {
-    this.timers=sjs.makeArray(count,null);
-  }
-});
-/**
- * @property {Looper} Looper
- */
-xbox.Looper= Looper;
+  virtual ~Looper();
+  Looper(int count);
+
+private:
+  DISALLOW_COPYASSIGNDFT(Looper);
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Missile
- */
-const Missile = sh.Ashley.compDef({
-
-  /**
-   * @memberof module:n/cobjs~Missile
-   * @method constructor
-   * @param {cc.Sprite} sprite
-   */
-  constructor(sprite) {
-    const wz= ccsx.vrect();
-    this.ctor(sprite);
-    this.vel= {
-      x: 0,
-      y: 150 * wz.height / 480
-    };
-  }
-});
-/**
- * @property {Missile} Missile
- */
-xbox.Missile= Missile;
+//
+class CC_DLL Missile : public ComObj {
+public:
+  virtual ~Missile();
+  Missile(Sprite*);
+private:
+  DISALLOW_COPYASSIGNDFT(Missile)
+  float x;
+  float y;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Motion
- */
-const Motion = sh.Ashley.casDef({
-
-  /**
-   * @memberof module:n/cobjs~Motion
-   * @method constructor
-   */
-  constructor() {
-    this.right = false;
-    this.left = false;
-  }
-});
-/**
- * @property {Motion} Motion
- */
-xbox.Motion= Motion;
+//
+class CC_DLL Motion : public Component {
+public:
+  virtual ~Motion();
+  Motion();
+private:
+  DISALLOW_COPYASSIGN(Motion)
+  bool right;
+  bool left;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Ship
- */
-const Ship = sh.Ashley.compDef({
-
-  /**
-   * @memberof module:n/cobjs~Ship
-   * @method constructor
-   * @param {cc.Sprite} sprite
-   * @param {Array} frames
-   */
-  constructor(sprite,frames) {
-    this.ctor(sprite);
-    this.frames=frames;
-  }
-});
-/**
- * @property {Ship} Ship
- */
-xbox.Ship = Ship;
+//
+class CC_DLL Ship : public ComObj {
+public:
+  virtual ~Ship();
+  Ship(Sprite*,frames);
+private:
+  DISALLOW_COPYASSIGNDFT(Ship)
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Velocity
- */
-const Velocity = sh.Ashley.casDef({
-
-  /**
-   * @memberof module:n/cobjs~Velocity
-   * @method constructor
-   * @param {Number} vx
-   * @param {Number} vy
-   */
-  constructor(vx,vy) {
-    this.vel = {
-      x: vx || 0,
-      y: vy || 0
-    };
-  }
-});
-/**
- * @property {Velocity} Velocity
- */
-xbox.Velocity= Velocity;
+//
+class CC_DLL Velocity : public Component {
+public:
+  virtual ~Velocity();
+  Velocity(float vx, float vy);
+private:
+  DISALLOW_COPYASSIGNDFT(Velocity)
+  float x;
+  float y;
+};
 
 
 
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(invaders)
 

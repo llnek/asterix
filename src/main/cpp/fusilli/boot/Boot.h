@@ -9,33 +9,46 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __BOOT_H__
-#define  __BOOT_H__
+#if !defined(__BOOT_H__)
+#define __BOOT_H__
 
 #include "cocos2d.h"
-#include "asterix.h"
+#include "fusilli.h"
 #include "L10N.h"
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
-
-NS_AX_BEGIN
-
-class Boot {
-
+//////////////////////////////////////////////////////////////////////////////
+//
+class XSceneFactory;
+class CC_DLL Boot {
 public:
 
-  virtual cocos2d::Scene*  startWith() ;
-  virtual void init();
+  Boot(XSceneFactory*);
   virtual ~Boot();
-  Boot();
+
+  Scene* StartWith();
+  void Init();
 
 private:
 
-  CC_DISALLOW_COPY_AND_ASSIGN(Boot)
-  void preLaunch();
-  void initAudio();
+  DISALLOW_COPYASSIGNDFT(Boot)
+  void PreLaunch();
+  void InitAudio();
   L10NCache l10n;
+  XSceneFactory* factory;
 };
 
-NS_AX_END
+
+
+
+
+
+
+
+
+
+
+NS_END(fusilli)
 #endif
 

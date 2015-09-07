@@ -9,54 +9,52 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include <map>
-#include "L10N.h"
-NS_USING(std)
-NS_BEGIN(fusilli)
+#include "NodeFactory.h"
+#include "Node.h"
+#include "cobjs.h"
+NS_USING(fusilli)
+NS_BEGIN(invaders)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void L10NCache::Purge() {
-  _cache.clear();
-}
+class CC_DLL AlienNotionNode : public NodeFactory {
+public:
+  virtual Node* CreateNode() override;
+  virtual ~AlienMotionNode();
+  AlienMotionNode();
+private:
+  DISALLOW_COPYASSIGN(AlienMotionNode)
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void L10NCache::Init() {
-  Purge();
-}
+class CC_DLL CannonCtrlNode : public NodeFactory {
+public:
+
+  virtual Node* CreateNode() override;
+  virtual ~CannonCtrlNode();
+  CannonCtrlNode();
+
+private:
+  DISALLOW_COPYASSIGN(CannonCtrlNode)
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//Application::getInstance()->getCurrentLanguage();
-const string& L10NCache::GetStr(const string& key, const string& dft) {
-  auto it= _cache.find(key);
-  string rc;
-  if (it != _cache.end()) {
-    rc= it->second;
-  } else {
-    rc= dft;
-  }
-  return rc;
-}
+class CC_DLL ShipMotionNode : public NodeFactory {
+public:
 
-//////////////////////////////////////////////////////////////////////////////
-//
-L10NCache::~L10NCache() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-L10NCache::L10NCache() {
-
+  virtual Node* CreateNode() override;
+  virtual ~ShipMotionNode();
+  ShipMotionNode();
+private:
+  DISALLOW_COPYASSIGN(ShipMotionNode)
 }
 
 
 
-
-
-NS_END(fusilli)
-
+NS_END(invaders)
 
 

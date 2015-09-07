@@ -12,16 +12,17 @@
 #if !defined(__PRIMITIVES_H__)
 #define __PRIMITIVES_H__
 
-#include "../core/fusilli.h"
+#include "core/fusilli.h"
 #include "base/CCRef.h"
 #include "base/CCConsole.h"
 #include "base/CCDataVisitor.h"
 #include "platform/CCCommon.h"
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Box4 {
   Box4(float t, float r, float b, float l)
     : top(t), right(r), bottom(b), left(l)
@@ -47,7 +48,8 @@ struct CC_DLL Box4 {
   float left;
 };
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Val2 : public Ref, public Clonable {
 public:
 
@@ -78,7 +80,8 @@ private:
   float _y;
 };
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL C3B : public Ref, public Clonable {
 public:
 
@@ -108,6 +111,8 @@ private:
   Color3B _c;
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL C4B : public Ref, public Clonable {
 public:
 
@@ -143,5 +148,5 @@ private:
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif

@@ -10,23 +10,21 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Boot.h"
-#include "L10N.h"
-
-USING_NS_CC;
-
-//////////////////////////////////////////////////////////////////////////////
-//
-NS_AX_BEGIN
-
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Boot::preLaunch() {
+static Size designResolutionSize = Size(480, 320);
+static Size smallResolutionSize = Size(480, 320);
+static Size mediumResolutionSize = Size(1024, 768);
+static Size largeResolutionSize = Size(2048, 1536);
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Boot::PreLaunch() {
 
   auto director = Director::getInstance();
   auto glview = director->getOpenGLView();
@@ -50,30 +48,42 @@ void Boot::preLaunch() {
     director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
   }
 
-  initAudio();
+  InitAudio();
 }
 
-void Boot::initAudio() {
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Boot::InitAudio() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Boot::init() {
-
-  preLaunch();
-  l10n.init();
+void Boot::Init() {
+  PreLaunch();
+  l10n.Init();
 }
 
-Boot::~Boot() {
-
-}
-
-Boot::Boot() {
-
-}
-
-
-NS_AX_END
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+Boot::~Boot() {
+  mc_del_ptr(factory);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Boot::Boot(XSceneFactory* fac) {
+  factory= fac;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Scene* Boot::StartWith() {
+  return factory->CreateScene();
+}
+
+
+
+
+NS_END(fusilli)
+

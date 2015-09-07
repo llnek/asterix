@@ -10,13 +10,13 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XPool.h"
-USING_NS_CC;
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_FI_BEGIN
-
-
   /**
    * Pre-populate a bunch of objects in the pool.
    * @memberof module:zotohlab/asx/pool~XPool
@@ -27,7 +27,7 @@ NS_FI_BEGIN
 void XPool::PreSet(ctor, count) {
   for (auto n=0; n < count; ++n) {
     auto rc= ctor(this);
-    if (rc != nullptr) {
+    if (NNP(rc)) {
       m_pool->addObject(rc);
     }
   }
@@ -58,7 +58,7 @@ Entity* XPool::Select(filter) {
    */
 Entity* XPool::GetAndSet() {
   auto rc= Get();
-  if (rc != nullptr) {
+  if (NNP(rc)) {
     rc->status=true;
   }
   return rc;

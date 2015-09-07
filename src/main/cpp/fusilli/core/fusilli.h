@@ -17,7 +17,8 @@
 #include <stdlib.h>
 #include <string>
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 #if defined(WIN32) || defined(_WIN32)
 
 #if defined(MS_STATIC)
@@ -36,7 +37,8 @@
 #endif
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 #if !defined(TChar)
 
 #  if defined(_UNICODE)
@@ -46,6 +48,60 @@
 #  endif
 
 #endif
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+#ifdef __cplusplus
+  #define NS_USING(nsp)  using namespace nsp;
+  #define NS_BEGIN(nsp)  namespace nsp {
+  #define NS_END(nsp)    }
+#else
+  #define NS_USING(nsp)
+  #define NS_BEGIN(nsp)
+  #define NS_END(nsp)
+#endif
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+#define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
+#define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
+#define mc_free_ptr(ptr)  mc_free_mem(ptr)
+#define mc_free_str(pc)   mc_free_mem(pc)
+#define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }
+#define mc_del_arr(arr)   { delete[] arr; arr = nullptr; }
+#define mc_bool_str(b)    ((b) ? "true" : "false")
+#define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
+
+#define mc_pcast(classname, expr) (##classname *) expr
+#define mc_rcast(classname, expr) (##classname &) expr
+
+//////////////////////////////////////////////////////////////////////////////
+//
+#define DCAST(type,expr) dynamic_cast<type>(expr)
+#define SCAST(type,expr) static_cast<type>(expr)
+#define NNP(p) p != nullptr
+#define ENP(p) p == nullptr
+
+//////////////////////////////////////////////////////////////////////////////
+//
+#define DISALLOW_COPYASSIGNDFT(T) \
+  T() = delete;
+  T(const T&) = delete; \
+  T&operator =(const T&) = delete;
+
+//////////////////////////////////////////////////////////////////////////////
+//
+#define DISALLOW_COPYASSIGN(T) \
+  T(const T&) = delete; \
+  T&operator =(const T&) = delete;
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+NS_BEGIN(fusilli)
+
 
 enum class Locale {
   ENGLISH = 0,
@@ -70,44 +126,7 @@ enum class Locale {
 };
 
 
-#ifdef __cplusplus
-# define USING_NS_STD using namespace std;
-# define USING_NS_FI    using namespace fusilli;
-# define NS_FI          ::fusilli
-# define NS_FI_BEGIN    namespace fusilli {
-# define NS_FI_END      }
-#else
-# define USING_NS_STD
-# define NS_FI_BEGIN
-# define NS_FI_END
-# define USING_NS_FI
-# define NS_FI
+NS_END(fusilli)
 #endif
 
-#define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
-#define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
-#define mc_free_ptr(ptr)  mc_free_mem(ptr)
-#define mc_free_str(pc)   mc_free_mem(pc)
-#define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }
-#define mc_del_arr(arr)   { delete[] arr; arr = nullptr; }
-#define mc_bool_str(b)    ((b) ? "true" : "false")
-#define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
-
-#define mc_pcast(classname, expr) ((##classname *) (expr))
-#define mc_rcast(classname, expr) ((##classname &) (expr))
-
-#define DCAST(type,expr) dynamic_cast<type>(expr)
-#define SCAST(type,expr) static_cast<type>(expr)
-#define NNP(p) p != nullptr
-#define ENP(p) p == nullptr
-
-#define NO_COPY_AND_ASSIGN(T) \
-  T(const T&) = delete; \
-  T&operator =(const T&) = delete;
-
-
-
-
-
-#endif
 

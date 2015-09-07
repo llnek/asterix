@@ -36,12 +36,12 @@ public:
   bool BelongsTo(Entity*);
 private:
 
-  DISALLOW_COPYASSIGN(Node)
-  Node();
+  DISALLOW_COPYASSIGNDFT(Node)
 
   map<string,Component*> values;
   map<COMType,string> types;
   Entity* entity;
+
 };
 
 
