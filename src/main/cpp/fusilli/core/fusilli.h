@@ -96,6 +96,11 @@ enum class Locale {
 #define mc_pcast(classname, expr) ((##classname *) (expr))
 #define mc_rcast(classname, expr) ((##classname &) (expr))
 
+#define DCAST(type,expr) dynamic_cast<type>(expr)
+#define SCAST(type,expr) static_cast<type>(expr)
+#define NNP(p) p != nullptr
+#define ENP(p) p == nullptr
+
 #define NO_COPY_AND_ASSIGN(T) \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;

@@ -422,7 +422,7 @@ bool CCSX::TraceEnclosure(float dt, const Box4& bbox,
    * @param {String} frameid
    * @return {cc.Sprite}
    */
-Sprite* CCSX::GetSprite(const string& frameid) {
+SpriteFrame* CCSX::GetSpriteFrame(const string& frameid) {
   return SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 

@@ -25,7 +25,11 @@ public:
 
 
   virtual ~Component();
+
+protected:
   Component();
+
+private:
   DISALLOW_COPYASSIGN(Component)
 };
 

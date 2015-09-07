@@ -113,7 +113,7 @@ class CC_DLL CCSX {
    * Get the sprite from the frame cache using
    * its id (e.g. #ship).
    */
-  Sprite* GetSprite(const string& frameid);
+  SpriteFrame* GetSpriteFrame(const string& frameid);
 
   bool HasKeyPad();
 
