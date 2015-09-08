@@ -9,13 +9,18 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __APP_DELEGATE_H__
-#define  __APP_DELEGATE_H__
+#if !defined(__APP_H__)
+#define __APP_H__
 
 #include "cocos2d.h"
-#include "asterix.h"
+#include "fusilli.h"
+NS_USING(cocos2d)
+NS_USING(fusilli)
 
-class ZL_DLLEXPORT AppDelegate : private cocos2d::Application {
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL App : public Application {
 
 public:
 
@@ -40,10 +45,17 @@ public:
 
   virtual void initGLContextAttrs();
 
-  virtual ~AppDelegate();
-  AppDelegate();
+  virtual Scene* GetStartScene() = 0;
 
+  virtual ~App();
+
+protected:
+  App();
 };
+
+
+
+
 
 #endif
 

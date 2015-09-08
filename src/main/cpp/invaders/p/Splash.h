@@ -12,23 +12,34 @@
 #if !defined(__SPLASH_H__)
 #define __SPLASH_H__
 
-#include "../../fusilli/core/fusilli.h"
-#include "../../fusilli/2d/XScene.h"
-NS_FI_BEGIN
+#include "2d/XScene.h"
+NS_BEGIN(fusilli)
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL SplashLayer : public XLayer {
-  virtual void Setup();
+public:
+  virtual SplashLayer();
+  SplashLayer();
+private:
+  DISALLOW_COPYASSIGN(SplashLayer)
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Splash : public XScene {
-  virtual void Setup();
+public:
+  virtual void CreateLayers() override;
+  virtual ~Splash();
+  Splash();
+private:
+  DISALLOW_COPYASSIGN(Splash)
 }
 
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 

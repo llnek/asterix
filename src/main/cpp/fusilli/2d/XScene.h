@@ -14,37 +14,34 @@
 
 #include "2d/CCScene.h"
 #include "fusilli.h"
-NS_FI_BEGIN
-USING_NS_CC;
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class FI_DLLEXPORT XScene : public cocos2d::Scene {
+class CC_DLL XScene : public Scene {
 
 public:
 
-  XScene(Array* layers, Dictionary* options);
-  XScene();
-  virtual ~XScene();
   virtual bool init() override;
+  virtual ~XScene();
 
   CREATE_FUNC(XScene)
 
+protected:
+
+  virtual void CreateLayers() = 0;
+  XScene();
+
 private:
 
-  void createLayers();
-  void getLayers();
-  void onmsg();
-
-  Dictionary* m_options;
-  Array* m_layers;
-
-  CC_DISALLOW_COPY_AND_ASSIGN(XScene)
+  DISALLOW_COPYASSIGN(XScene)
 };
 
 
 
 
-NS_FI_END
+
+NS_END(fusilli)
 #endif
 

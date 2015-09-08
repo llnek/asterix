@@ -10,9 +10,11 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Menu.h"
-NS_FI_BEGIN
+NS_BEGIN(fusilli)
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void MenuLayer::Title() {
   auto wb= CCSX::VisBox();
   auto cw= CCSX::Center();
@@ -22,9 +24,12 @@ void MenuLayer::Title() {
   AddItem(lb);
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 void MenuLayer::Setup() {
-  CenterImage("gui.mmenus.menu.bg");
+  auto cfg = Config::GetInstance();
+  auto img = cfg->GetImage("gui.mmenus.menu.bg");
+  CenterImage(img);
   Title();
   auto color= Color3B(94,49,120);
   auto cw = CCSX::Center();
@@ -66,15 +71,39 @@ void MenuLayer::OnPlay() {
   CCSX::RunScene(g);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+MenuLayer::~MenuLayer() {
+}
 
-void MainMenu::Setup() {
+//////////////////////////////////////////////////////////////////////////////
+//
+MenuLayer::MenuLayer() {
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void MainMenu::CreateLayers() {
   auto m = MenuLayer::create();
-  m.Setup();
   addChild(m);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu::~MainMenu() {
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu::MainMenu() {
 }
 
 
 
 
-NS_FI_END
+
+NS_END(fusilli)
 

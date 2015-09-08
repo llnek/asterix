@@ -9,10 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "AppDelegate.h"
+#include "App.h"
+NS_USING(cocos2d)
+NS_USING(fusilli)
 
-USING_NS_CC;
-USING_NS_AX;
 
 //////////////////////////////////////////////////////////////////////////////
 // If you want to use packages manager to install more packages,
@@ -23,19 +23,19 @@ static int register_all_packages() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
+App::App() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::~AppDelegate()
+App::~App()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //if you want a different context,just modify the value of glContextAttrs
 //it will takes effect on all platforms
-void AppDelegate::initGLContextAttrs() {
+void App::initGLContextAttrs() {
 
   //set OpenGL context attributions,now can only set six attributions:
   //red,green,blue,alpha,depth,stencil
@@ -45,7 +45,7 @@ void AppDelegate::initGLContextAttrs() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool AppDelegate::applicationDidFinishLaunching() {
+bool App::applicationDidFinishLaunching() {
 
   auto director = Director::getInstance();
   auto glview = director->getOpenGLView();
@@ -60,11 +60,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
   register_all_packages();
 
-  // create a scene. it's an autorelease object
-  auto scene = b.startWith();
-
   // run
-  director->runWithScene(scene);
+  director->runWithScene( GetStartScene() );
 
   return true;
 }
@@ -72,7 +69,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 //////////////////////////////////////////////////////////////////////////////
 // This function will be called when the app is inactive
 // When comes a phone call,it's be invoked too
-void AppDelegate::applicationDidEnterBackground() {
+void App::applicationDidEnterBackground() {
 
   Director::getInstance()->stopAnimation();
   // if you use SimpleAudioEngine, it must be pause
@@ -81,7 +78,7 @@ void AppDelegate::applicationDidEnterBackground() {
 
 //////////////////////////////////////////////////////////////////////////////
 // this function will be called when the app is active again
-void AppDelegate::applicationWillEnterForeground() {
+void App::applicationWillEnterForeground() {
 
   Director::getInstance()->startAnimation();
   // if you use SimpleAudioEngine, it must resume here

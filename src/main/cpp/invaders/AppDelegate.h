@@ -9,39 +9,31 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MENU_H__)
-#define __MENU_H__
+#if !defined(__APP_DELEGATE_H__)
+#define __APP_DELEGATE_H__
 
-#include "2d/XScene.h"
-NS_BEGIN(fusilli)
+#include "cocos2d.h"
+#include "fusilli.h"
+#include "App.h"
+NS_USING(cocos2d)
+NS_USING(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MenuLayer : public XMenuLayer {
+class CC_DLL AppDelegate : public App {
+
 public:
-  virtual ~MenuLayer();
-  MenuLayer();
-  virtual void init() override;
-  CREATE_FUNC(MenuLayer)
-private:
-  DISALLOW_COPYASSIGN(MenuLayer)
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL MainMenu : public XScene {
-public:
-  virtual void CreateLayers() override;
-  virtual ~MainMenu();
-  MainMenu();
-  CREATE_FUNC(MainMenu)
-private:
-  DISALLOW_COPYASSIGN(MainMenu)
-}
+  virtual ~AppDelegate();
+  AppDelegate();
+
+  virtual Scene* GetStartScene();
+};
 
 
 
-NS_END(fusilli)
+
+
 #endif
 

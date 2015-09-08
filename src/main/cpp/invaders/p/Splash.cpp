@@ -10,16 +10,21 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Splash.h"
-NS_FI_BEGIN
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::Setup() {
-  CenterImage("game.bg");
+void SplashLayer::init() {
+  auto cfg = Config::GetInstance();
+  auto img= cfg->GetImage("game.bg");
+  CenterImage(img);
   Title();
   Btns();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 void SplashLayer::OnPlay(Node* b) {
 
   CCSX::RunScene( MainMenu::create());
@@ -30,12 +35,16 @@ void SplashLayer::OnPlay(Node* b) {
 
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 void SplashLayer::Title() {
   auto cw= CCSX::Center();
   auto wb= CCSX::VisBox();
   AddFrame("#title.png", Vec2(cw.x, wb.top * 0.9));
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 void SplashLayer::Btns() {
   auto cw= CCSX::Center();
   auto wb= CCSX::VisBox();
@@ -49,13 +58,14 @@ void SplashLayer::Btns() {
 }
 
 
-void Splash::Setup() {
-
-  auto s= SplashLayer::create();
-  s.Setup();
-  addChild(s);
-
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::CreateLayers() {
+  addChild( SplashLayer::create());
 }
 
-NS_FI_END
+
+
+
+NS_END(fusilli)
 

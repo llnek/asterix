@@ -10,25 +10,33 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XScene.h"
-NS_FI_BEGIN
-USING_NS_CC;
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XScene::getLayers() {
-  return this.layers;
+XScene::~XScene() {
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+XScene::XScene() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 bool XScene::init() {
-  if (CCScene::init()) {
-    createLayers();
+  if (Scene::init()) {
+    CreateLayers();
     return true;
   } else {
     return false;
   }
 }
 
-void XScene::createLayers() {
+//////////////////////////////////////////////////////////////////////////////
+//
+void XScene::CreateLayers() {
   //hold off init'ing game layer, leave that as last
   Layer* glptr = nullptr;
 
@@ -65,23 +73,6 @@ void XScene::onmsg() {
   //this.ebus.on(topic, cb);
 }
 
-XScene::~XScene() {
-}
-
-XScene::XScene()
-: m_options(nullptr),
-  m_layers(nullptr) {
-}
-
-XScene::XScene(CCArray* layers, CCDictionary* options) {
-
-  m_options = options;
-  options->retain();
-
-  m_layers= layers;
-  layers->retain();
-
-};
 
 
-NS_FI_END
+NS_END(fusilli)
