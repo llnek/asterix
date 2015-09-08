@@ -12,7 +12,7 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
-#include "../core/fusilli.h"
+#include "core/fusilli.h"
 #include "2d/CCLayer.h"
 USING_NS_CC;
 NS_FI_BEGIN

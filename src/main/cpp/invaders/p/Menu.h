@@ -12,36 +12,50 @@
 #if !defined(__MENU_H__)
 #define __MENU_H__
 
+#include "2d/XMenuLayer.h"
 #include "2d/XScene.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MenuLayer : public XMenuLayer {
 public:
+
+  virtual void OnInit() override;
+  void OnBack(Ref*);
+  void OnQuit(Ref*);
+
   virtual ~MenuLayer();
   MenuLayer();
-  virtual void init() override;
+
   CREATE_FUNC(MenuLayer)
+
 private:
   DISALLOW_COPYASSIGN(MenuLayer)
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainMenu : public XScene {
 public:
-  virtual void CreateLayers() override;
+  static MainMenu* CreateWithBackAction(FiniteTimeAction* );
+
+  virtual void OnInit() override;
+
   virtual ~MainMenu();
   MainMenu();
-  CREATE_FUNC(MainMenu)
+
+  void OnBackAction();
+  void OnQuitAction();
+
 private:
   DISALLOW_COPYASSIGN(MainMenu)
-}
+};
 
 
 
-NS_END(fusilli)
+
+NS_END(invaders)
 #endif
 

@@ -47,7 +47,7 @@ public:
   virtual void RunOnce() override;
 
 private:
-  DISALLOW_COPY_AND_ASSIGN(Config)
+  DISALLOW_COPYASSIGN(Config)
   virtual ~Config();
   Config();
   Dictionary* m_dict;

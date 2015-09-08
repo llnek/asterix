@@ -63,9 +63,10 @@ static void init_csts(Dictionary* d) {
   d->setObject("explosions", "P_ES");
   d->setObject("live-bombs", "P_LBS");
 
+  d->setObject(42, "CELLS");
+  d->setObject(8, "TILE");
   d->setObject(6, "COLS");
   d->setObject(7, "ROWS");
-  d->setObject(42, "CELLS");
 
   d->setObject(2, "LEFT");
   d->setObject(6, "TOP");
