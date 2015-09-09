@@ -9,15 +9,17 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XConfig.h"
 #include "AppDelegate.h"
 #include "Splash.h"
 NS_USING(cocos2d)
 NS_USING(fusilli)
-
+NS_USING(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
+  XConfig::SetInstance(new Config());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -29,6 +31,8 @@ AppDelegate::~AppDelegate()
 //////////////////////////////////////////////////////////////////////////////
 //
 Scene* AppDelegate::GetStartScene() {
-  return Splash::create();
+  auto s= Splash::create();
+  s->Realize();
+  return s;
 }
 

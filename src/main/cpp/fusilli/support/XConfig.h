@@ -10,6 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/fusilli.h"
+#include "cocos2d.h"
+NS_USING(cocos2d)
 NS_USING(std)
 NS_BEGIN(fusilli)
 
@@ -22,35 +24,53 @@ class CC_DLL XConfig {
 
 public:
 
+  static void SetInstance(XConfig*);
+  static XConfig* GetInstance();
+
   virtual const string GetAppKey() = 0;
-
   virtual const string AppId() = 0;
-
   virtual const string GetColor() = 0;
-
   virtual ResolutionPolicy GetPolicy() = 0;
-
-  virtual Ref* GetCst(const string& csts) = 0;
-
-  virtual const string GetAtlas(const string& key) = 0;
-  virtual const string GetFont(const string& key) = 0;
-  virtual const string GetTile(const string& key) = 0;
-  virtual const string GetImage(const string& key) = 0;
-  virtual const string GetSound(const string& key) = 0;
-
-  virtual void HandleResolution(const Size& rs) = 0;
-
-  virtual Dictionary* GetLevelCfg(const string& n) = 0;
-  virtual Dictionary* GetLevel(const string& n) = 0;
-
   virtual const Size GetGameSize() = 0;
-  virtual float GetScale() = 0;
 
-  virtual void RunOnce() = 0;
 
-  virtual ~XConfig() {};
+  virtual const string GetAtlas(const string& key);
+  virtual const string GetFont(const string& key);
+  virtual const string GetTile(const string& key);
+  virtual const string GetImage(const string& key);
+  virtual const string GetSound(const string& key);
+
+  virtual void HandleResolution(const Size& rs);
+  virtual Ref* GetCst(const string& cst);
+
+  virtual Dictionary* GetLevelCfg(const string& n);
+  virtual Dictionary* GetLevel(const string& n);
+
+  virtual float GetScale();
+  virtual void RunOnce();
+
+  virtual ~XConfig();
+
+protected:
+
+  static const string ATLASES= "atlases";
+  static const string LEVELS= "levels";
+  static const string FONTS= "fonts";
+  static const string TILES= "tiles";
+  static const string IMAGES= "images";
+  static const string SOUNDS= "sounds";
+  static const string CSTS= "csts";
+  static const string CFG= "cfg";
+
+  Dictionary* GetFragment(const string& key);
+
+  Dictionary* dict;
+  XConfig();
+
 private:
-  DISALLOW_COPYASSIGNDFT(XConfig)
+
+  DISALLOW_COPYASSIGN(XConfig)
+
 };
 
 
