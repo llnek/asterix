@@ -12,8 +12,8 @@
 #if !defined(__APP_H__)
 #define __APP_H__
 
-#include "cocos2d.h"
 #include "fusilli.h"
+#include "cocos2d.h"
 NS_USING(cocos2d)
 NS_USING(fusilli)
 
@@ -50,7 +50,13 @@ public:
   virtual ~App();
 
 protected:
+
   App();
+
+private:
+
+  DISALLOW_COPYASSIGN(App)
+
 };
 
 

@@ -25,52 +25,19 @@ XScene::XScene() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XScene::init() {
-  if (Scene::init()) {
-    CreateLayers();
-    return true;
+XLayer* XScene::GetLayer(const string& id) {
+  auto it = layers.find(id);
+  if (it != layers.end()) {
+    return it->second;
   } else {
-    return false;
+    return nullptr;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XScene::CreateLayers() {
-  //hold off init'ing game layer, leave that as last
-  Layer* glptr = nullptr;
-
-  for (auto it = m_layers->begin(); it != m_layers->end(); ++it ) {
-    dynamic_cast<XGameLayer*>(*it);
-  }
-    rc = R.any((proto) => {
-      obj= new (proto)(this.options);
-      if ( obj instanceof XGameLayer ) {
-        glptr = obj;
-      }
-      else
-      if (obj instanceof XLayer) {
-        obj.init();
-      }
-
-      if (obj instanceof XLayer) {
-        obj.setParentScene(this);
-      }
-
-      this.layers[ obj.rtti() ] = obj;
-      this.addChild(obj);
-      return false;
-    }, a);
-
-    if (a.length > 0 && rc===false ) {
-      if (!!glptr) {
-        glptr.init();
-      }
-    }
-}
-
-void XScene::onmsg() {
-  //this.ebus.on(topic, cb);
+void SetLayer(XLayer* y) {
+   layers.insert(pair<string,XLayer*>(y->Moniker(), y));
 }
 
 

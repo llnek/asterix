@@ -10,9 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "CCSX.h"
-USING_NS_STD;
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -24,11 +25,11 @@ bool CCSX::PointInBox(const Box4& box, float x, float y) {
     y >= box.bottom && y <= box.top;
 }
 
-const Color3B& CCSX::White() {
+const Color3B CCSX::White() {
   return Color3B::WHITE;
 }
 
-const Color3B& CCSX::Black() {
+const Color3B CCSX::Black() {
   return Color3B::BLACK;
 }
 
@@ -609,6 +610,6 @@ void CCSX::ResolveElastic(Entity* obj1, Entity* obj2) {
 }
 
 
-NS_FI_END
+NS_END(fusilli)
 
 

@@ -12,10 +12,17 @@
 #if !defined(__XGAMELAYER_H__)
 #define __XGAMELAYER_H__
 
+#include "deprecated/CCDictionary.h"
 #include "XLayer.h"
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
 
+enum class GameMode {
+  TWO_PLAY,
+  ONE_PLAY,
+  NET_PLAY
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -23,22 +30,48 @@ class CC_DLL XGameLayer : public XLayer {
 
 public:
 
+  virtual const string Moniker() { return "GAME"; }
+  virtual void PKInput() override;
+
   virtual ~XGameLayer();
   XGameLayer();
 
-  virtual const string& RTTI() { return "HUD"; }
+  Dictionary* GetLCfg();
+  bool KeyPoll(int key);
+
+  void InitEngine();
+
+  virtual void update(float) override;
+  virtual bool IsOperational() = 0;
+
+  const map<int,bool> Keys();
+
+  XLayer* GetBackgd(const string&);
+  XLayer* GetHUD();
+
+  const Box4 GetEnclosureBox();
+  void NewGame(const GameMode m);
 
   CREATE_FUNC(XGameLayer)
 
+protected:
+
+  void SetGameMode(const GameMode m);
+
+  map<int,bool> keyboard;
+  int level;
+  void* actor;
+  GameMode mode;
+
 private:
 
-  CC_DISALLOW_COPY_AND_ASSIGN(XGameLayer)
+  DISALLOW_COPYASSIGN(XGameLayer)
 };
 
 
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 

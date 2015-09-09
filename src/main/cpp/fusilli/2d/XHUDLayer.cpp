@@ -10,20 +10,23 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XHUDLayer.h"
-USING_NS_CC;
+#include "XConfig.h"
+#include "CCSX.h"
+NS_BEGIN(fusilli)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-NS_FI_BEGIN
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XHUDLayer::~XHUDLayer() {
-
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 XHUDLayer::XHUDLayer() {
-
+  scoreLabel = nullptr;
+  lives= nullptr;
+  score= 0;
+  replayBtn = nullptr;
 }
 
   /**
@@ -32,6 +35,8 @@ XHUDLayer::XHUDLayer() {
    * @method removeIcon
    * @param {Object} icon
    */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::RemoveIcon(Node* icon) {
   RemoveAtlasItem(HudAtlas(), icon);
 }
@@ -44,144 +49,98 @@ void XHUDLayer::RemoveIcon(Node* icon) {
    * @param {Number} z
    * @param {Number} idx
    */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::AddIcon(Node* icon, int z, int idx) {
   AddAtlasItem(HudAtlas(), icon, z, idx);
 }
 
-void XHUDLayer::HudAtlas() {
-  return m_atlasId;
+//////////////////////////////////////////////////////////////////////////////
+//
+void XHUDLayer::Realize() {
+  InitAtlases();
+  InitIcons();
+  InitLabels();
+  InitCtrlBtns();
 }
 
-  /**
-   * @protected
-   */
-void XHUDLayer::Setup() {
-  this.atlasId = this.options.hudAtlas || 'game-pics';
-  this.scoreLabel = null;
-  this.lives= null;
-  this.score= 0;
-  this.replayBtn = null;
-
-  this.initAtlases();
-  this.initIcons();
-  this.initLabels();
-  this.initCtrlBtns();
-}
-
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::InitAtlases() {}
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::InitIcons() {}
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::InitLabels() {}
 
-  /**
-   * @protected
-   */
-void XHUDLayer::InitCtrlBtns() {
-  let opts = this.options.i_replay;
+//////////////////////////////////////////////////////////////////////////////
+//
+void XHUDLayer::InitCtrlBtns() {}
 
-  if (!!opts) {
-    this.addReplayIcon(ccsx.pmenu1(opts), opts.where);
-  }
-
-  opts= this.options.i_menu;
-  if (!!opts) {
-    this.addMenuIcon(ccsx.pmenu1(opts), opts.where);
-  }
-}
-
-  /**
-   * Get the score.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method getScore
-   * @return {Number}
-   */
-float XHUDLayer::GetScore() { return m_score; }
-
-  /**
-   * Reset the HUD as a new game.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method resetAsNew
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::ResetAsNew() {
   Reset();
 }
 
-  /**
-   * Reset the HUD.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method reset
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::Reset() {
-  this.disableReplay();
-  this.score= 0;
-  if (this.lives) {
-    this.lives.resurrect();
+  DisableReplay();
+  score= 0;
+  if (NNP(lives)) {
+    lives->Resurrect();
   }
 }
 
-  /**
-   * Reduce x amount of lives.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method reduceLives
-   * @param {Number} x
-   * @return {Boolean} - true if no more lives.
-   */
-void XHUDLayer::ReduceLives(x) {
-  this.lives.reduce(x);
-  return this.lives.isDead();
+//////////////////////////////////////////////////////////////////////////////
+//
+bool XHUDLayer::ReduceLives(int x) {
+  lives->Reduce(x);
+  return lives->IsDead();
 }
 
-  /**
-   * Update the score.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method updateScore
-   * @param {Number}
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::UpdateScore(float num) {
-  this.score += num;
-  this.scoreLabel.setString(Number(this.score).toString());
+  score += num;
+  scoreLabel->setString(to_string((int)score));
 }
 
-  /**
-   * Disable the replay button.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method disableReplay
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::DisableReplay() {
-  this.replayBtn.setVisible(false);
+  replayBtn->setVisible(false);
 }
 
-  /**
-   * Enable the replay button.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method enableReplay
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::EnableReplay() {
-  this.replayBtn.setVisible(true);
+  replayBtn->setVisible(true);
 }
 
-  /**
-   * Add the main menu icon.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method addMenuItem
-   * @param {cc.Menu} menu
-   * @param {Object} where
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
   auto hh = CCSX::GetScaledHeight(b) * 0.5,
   auto hw = CCSX::GetScaledWidth(b) * 0.5,
+  auto cfg = Config::GetInstance();
   auto menu= Menu::create();
   auto wz= CCSX::VisBox();
-  menu->addChild(b);
+  auto tile= SCAST(Integer*,cfg->GetCst("TILE"))->getValue();
   float x, y;
 
+  menu->addChild(b);
+
   if (where.y == Anchor::Bottom.y) {
-    y = wz.bottom + csts.TILE  + hh;
+    y = wz.bottom + tile  + hh;
   } else {
-    y = wz.top - csts.TILE - hh;
+    y = wz.top - tile - hh;
   }
-  menu->setPosition(wz.right - csts.TILE - hw, y);
+  menu->setPosition(wz.right - tile - hw, y);
   AddItem(menu);
 }
 
@@ -192,22 +151,26 @@ void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
    * @param {cc.Menu} menu
    * @param {Object} where
    */
+//////////////////////////////////////////////////////////////////////////////
+//
 void XHUDLayer::AddReplayIcon(MenuItem* b, const Vec2& where) {
   auto hh = CCSX::GetScaledHeight(c) * 0.5;
   auto hw = CCSX::GetScaledWidth(c) * 0.5;
+  auto cfg = Config::GetInstance();
   auto menu= Menu::create();
   auto wz= CCSX::VisBox();
+  auto tile= SCAST(Integer*,cfg->GetCst("TILE"))->getValue();
   float x, y;
 
   menu->addChild(b);
 
   if (where.y == Anchor::Bottom.y) {
-    y = wz.bottom + csts.TILE  + hh;
+    y = wz.bottom + tile  + hh;
   } else {
-    y = wz.top - csts.TILE  - hh;
+    y = wz.top - tile  - hh;
   }
-  menu->setPosition(wz.left + csts.TILE + hw, y);
-  m_replayBtn=menu;
+  menu->setPosition(wz.left + tile + hw, y);
+  replayBtn=menu;
   AddItem(menu);
 }
 
@@ -219,4 +182,5 @@ void XHUDLayer::AddReplayIcon(MenuItem* b, const Vec2& where) {
 
 
 
-NS_FI_END
+NS_END(fusilli)
+

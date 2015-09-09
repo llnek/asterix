@@ -28,8 +28,7 @@ App::App() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-App::~App()
-{
+App::~App() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +55,6 @@ bool App::applicationDidFinishLaunching() {
   }
 
   auto b = Boot();
-  b.init();
 
   register_all_packages();
 
@@ -84,4 +82,5 @@ void App::applicationWillEnterForeground() {
   // if you use SimpleAudioEngine, it must resume here
   // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
+
 

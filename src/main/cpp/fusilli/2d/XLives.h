@@ -9,25 +9,43 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __XLIVES_H__
-#define  __XLIVES_H__
+#if !defined(__XLIVES_H__)
+#define __XLIVES_H__
 
+#include "2d/XHUDLayer.h"
 #include "cocos2d.h"
-#include "asterix.h"
-NS_AX_BEGIN
+#include <vector>
+NS_BEGIN(fusilli)
 
-class ZL_DLLEXPORT XLives {
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL XLives {
 
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(XLives)
+
+  DISALLOW_COPYASSIGN(XLives)
+  int curLives;
+  int dir;
+  Vec2 lifeSize;
+  Vec2 topLeft;
+  XHUDLayer* hud;
+  vector<Node*> icons;
 
 public:
 
   virtual ~XLives();
   XLives();
 
+  int GetLives() { return curLives; }
+  void Reduce(int c);
+  bool IsDead();
+  void Reset();
+  void Resurrect();
+  void DrawLives();
+  void Create();
+
 };
 
-NS_AX_END
+NS_END(fusilli)
 #endif
 

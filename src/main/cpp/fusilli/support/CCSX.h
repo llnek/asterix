@@ -12,17 +12,20 @@
 #if !defined(__CCSX_H__)
 #define __CCSX_H__
 
-#include "../support/Primitives.h"
-#include "../2d/Entity.h"
+#include "support/Primitives.h"
+#include "ash/Component.h"
 #include "cocos2d.h"
-USING_NS_STD;
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
 template<typename T>
 T* DictValue(Dictionary* d, const string& key, T*& dummy) {
   auto v= d->objectForKey(key);
-  if (v != nullptr) {
+  if (NNP(v)) {
     return static_cast<T*>(v);
   } else {
     return nullptr;
@@ -34,8 +37,8 @@ T* DictValue(Dictionary* d, const string& key, T*& dummy) {
 class CC_DLL CCSX {
 
   bool PointInBox(const Box4& box, float x,  float y);
-  const Color3B& White();
-  const Color3B& Black();
+  const Color3B White();
+  const Color3B Black();
 
   bool Collide0(Sprite* spriteA, Sprite* spriteB);
   bool Collide(Entity* a, Entity* b);
@@ -148,6 +151,6 @@ class CC_DLL CCSX {
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 

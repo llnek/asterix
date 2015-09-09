@@ -13,6 +13,7 @@
 #define __L10N_H__
 
 #include "core/fusilli.h"
+#include <map>
 NS_USING(std)
 NS_BEGIN(fusilli)
 

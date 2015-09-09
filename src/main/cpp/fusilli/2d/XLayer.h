@@ -12,84 +12,81 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
+#include <stdint.h>
 #include "core/fusilli.h"
 #include "2d/CCLayer.h"
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XLayer : public cocos2d::Layer {
+class CC_DLL XLayer : public Layer {
 
 public:
 
-  const std::string& rtti();
+  MenuItem* CreateMenuBtn(const string& n,
+      const string& s, const string& d);
 
-  SpriteBatchNode* regoAtlas(const std::string& name, int z, int tag);
+  SpriteBatchNode* RegoAtlas(const string& name,
+      int z= INT32_MIN, int tag = INT32_MIN);
 
-  void setup();
+  virtual const string& Moniker() = 0;
 
-  void pkInput();
+  virtual void Realize();
 
-  void addAudioIcon(Dictionary* options);
+  virtual void PKInput();
 
-  void onQuit();
+  virtual void AddAudioIcon(Dictionary* options);
 
-  void centerAtlasImage(const std::string& frame,
-      const std::string& atlas);
+  virtual void CenterAtlasImage(const string& atlas, const string& frame);
 
-  void centerImage(const std::string& frame);
+  virtual void CenterImage(const string& frame);
 
-  void addAtlasFrame(const std::string& frame,
-      const Vec2& pos, const std::string& atlas);
+  virtual void AddAtlasFrame(const string& atlas,
+      const Vec2& pos, const string& frame);
 
-  void addFrame(const std::string& frame, const Vec2& pos);
+  virtual void AddFrame(const string& frame, const Vec2& pos);
 
-  SpriteBatchNode* getAtlas(const std::string& name);
+  virtual SpriteBatchNode* GetAtlas(const string& name);
 
-  void removeAtlasAll(const std::string& atlas, bool c) ;
+  virtual void RemoveAtlasAll(const string& atlas, bool c=true) ;
 
-  void removeAtlasItem(const std::string& atlas, Node* n, bool c);
+  virtual void RemoveAtlasItem(const string& atlas, Node* n, bool c=true);
 
-  void removeAll(bool c);
+  virtual void RemoveAll(bool c= true);
 
-  void removeItem(Node* n, bool c);
+  virtual void RemoveItem(Node* n, bool c=true);
 
-  void addAtlasItem(const std::string& atlas, Node* n, int zx, int tag);
+  virtual void AddAtlasItem(const string& atlas, Node* n, int zx = INT32_MIN, int tag = INT32_MIN);
 
-  void addItem(Node* n, int zx, int tag);
+  virtual void AddItem(Node* n, int zx = INT32_MIN, int tag = INT32_MIN);
 
-  int incIndexZ();
+  virtual int IncIndexZ();
 
-  void setParentScene(Scene* par);
+  Scene* GetScene();
 
-  Scene* scene();
+  //virtual bool init() override;
 
-  virtual bool init();
-
-  XLayer(Dictionary* options);
-  XLayer();
   virtual ~XLayer();
+  XLayer();
 
   CREATE_FUNC(XLayer)
 
 private:
 
-  void audioCallback(Ref*);
+  map<string,x> atlases;
+  int lastTag;
+  int lastZix;
 
-  Dictionary m_atlases;
-  std::string m_type;
-  int m_lastTag;
-  int m_lastZix;
-
-  CC_DISALLOW_COPY_AND_ASSIGN(XLayer)
+  DISALLOW_COPYASSIGN(XLayer)
 };
 
 
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 

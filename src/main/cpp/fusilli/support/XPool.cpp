@@ -132,4 +132,5 @@ XPool::XPool() {
 }
 
 
-NS_FI_END
+
+NS_END(fusilli)

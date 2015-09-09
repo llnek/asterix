@@ -13,8 +13,8 @@
 #define __XHUDLAYER_H__
 
 #include "XLayer.h"
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -23,22 +23,52 @@ class CC_DLL XHUDLayer : public XLayer {
 
 public:
 
+  virtual const string Moniker() { return "HUD"; }
+  virtual const string HudAtlas() = 0;
+
   virtual ~XHUDLayer();
   XHUDLayer();
 
-  virtual const string& RTTI() { return "HUD"; }
+  float GetScore() { return score; }
 
   CREATE_FUNC(XHUDLayer)
 
+protected:
+
+  void AddIcon(Node* icon, int z = INT32_MIN, int tag = INT32_MIN);
+  void RemoveIcon(Node*);
+  virtual void InitAtlases();
+  virtual void InitIcons();
+  virtual void InitLabels();
+  virtual void InitCtrlBtns();
+
+  virtual void ResetAsNew();
+  virtual void Reset();
+
+  bool ReduceLives(int );
+  void DisableReplay();
+  void EnableReplay();
+  void UpdateScore(float num);
+
+  void AddReplayIcon(MenuItem*, const Vec2& where);
+  void AddMenuIcon(MenuItem*, const Vec2& where);
+
+
+  MenuItem* replayBtn;
+  Label* scoreLabel;
+  XLives* lives;
+  float score;
+
 private:
 
-  CC_DISALLOW_COPY_AND_ASSIGN(XHUDLayer)
+  DISALLOW_COPYASSIGN(XHUDLayer)
+
 };
 
 
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 

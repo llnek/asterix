@@ -20,6 +20,8 @@ class Ref;
 
 class CC_DLL XConfig {
 
+public:
+
   virtual const string GetAppKey() = 0;
 
   virtual const string AppId() = 0;
@@ -46,6 +48,9 @@ class CC_DLL XConfig {
 
   virtual void RunOnce() = 0;
 
+  virtual ~XConfig() {};
+private:
+  DISALLOW_COPYASSIGNDFT(XConfig)
 };
 
 

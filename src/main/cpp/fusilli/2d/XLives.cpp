@@ -10,81 +10,90 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XLives.h"
-USING_NS_CC;
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_AX_BEGIN
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XLives::reduce(int x) {
-  for (int n=0; n < x; ++n) {
-    this.hud.removeIcon(this.icons.pop());
+void XLives::Reduce(int x) {
+  while (x > 0) {
+    if (icons.size() > 0) {
+      auto it= icons.front();
+      hud->RemoveIcon( *it );
+      icons.erase(it);
+    }
+    --x;
+    --curLives;
   }
-  _curLives -= x;
 }
 
-bool XLives::isDead() {
-  return _curLives < 0;
+//////////////////////////////////////////////////////////////////////////////
+//
+bool XLives::IsDead() {
+  return curLives < 0;
 }
 
-int XLives::getLives() {
-  return _curLives;
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLives::Reset() {
+  for (auto it= icons.begin(); it != icons.end(); ++it) {
+    hud->RemoveIcon(*it);
+  }
+  curLives = totalLives;
+  icons.clear();
 }
 
-void XLives::reset() {
-  R.forEach((z) => { this.hud.removeIcon(z); }, this.icons);
-  _curLives = this.options.totalLives;
-  _icons=[];
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLives::Resurrect() {
+  Reset();
+  DrawLives();
 }
 
-void XLives::resurrect() {
-  reset();
-  drawLives();
-}
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLives::DrawLives() {
+  auto y= topLeft.y - lifeSize.height * 0.5;
+  auto x= topLeft.x + lifeSize.width * 0.5;
+  auto gap=2;
 
-void XLives::drawLives() {
-  let y= this.topLeft.y - this.lifeSize.height * 0.5,
-  x= this.topLeft.x + this.lifeSize.width * 0.5,
-  gap=2;
-
-  for (let n = 0; n < this.curLives; ++n) {
-    let v= new XLive(x,y,this.options);
-    this.hud.addIcon(v);
-    this.icons.push(v);
-    if (this.options.dir> 0) {
-      x += this.lifeSize.width + gap;
+  for (int n = 0; n < curLives; ++n) {
+    auto v= new XLive(x,y);
+    hud->AddIcon(v);
+    icons.push_back(v);
+    if (this->dir> 0) {
+      x += lifeSize.width + gap;
     } else {
-      x -= this.lifeSize.width - gap;
+      x -= lifeSize.width - gap;
     }
   }
 }
 
-void XLives::create() {
-  const dummy = new XLive(0,0,this.options);
-  this.lifeSize = { width: ccsx.getScaledWidth(dummy),
-                    height: ccsx.getScaledHeight(dummy) } ;
-  this.drawLives();
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLives::Create() {
+  XLive dummy;
+  lifeSize = Size(CCSX::GetScaledWidth(dummy),
+                  CCSX::GetScaledHeight(dummy));
+  DrawLives();
 }
 
-XLives::XLives(hud, x, y, options) {
-  this.options = options || {};
-  _topLeft= cc.p(x,y);
-  _icons= [];
-  _hud= hud;
-  _curLives= -1;
-  _reset();
-  if (! sjs.echt(this.options.dir)) {
-    this.options.dir= 1;
-  }
+//////////////////////////////////////////////////////////////////////////////
+//
+XLives::XLives(XHUDLayer* hud, float x, float y, int dir) {
+  topLeft= Vec2(x,y);
+  this->hud= hud;
+  curLives= -1;
+  Reset();
+  this->dir=dir;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 XLives::~XLives() {
 }
 
 
 
-NS_AX_END
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(fusilli)

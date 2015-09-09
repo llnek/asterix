@@ -12,38 +12,28 @@
 #if !defined(__BOOT_H__)
 #define __BOOT_H__
 
+#include "core/fusilli.h"
+#include "i18n/L10N.h"
 #include "cocos2d.h"
-#include "fusilli.h"
-#include "L10N.h"
 NS_USING(cocos2d)
 NS_BEGIN(fusilli)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
-class XSceneFactory;
 class CC_DLL Boot {
 public:
 
-  Boot(XSceneFactory*);
   virtual ~Boot();
-
-  Scene* StartWith();
-  void Init();
+  Boot();
 
 private:
 
-  DISALLOW_COPYASSIGNDFT(Boot)
+  DISALLOW_COPYASSIGN(Boot)
   void PreLaunch();
   void InitAudio();
   L10NCache l10n;
-  XSceneFactory* factory;
 };
-
-
-
-
-
-
 
 
 

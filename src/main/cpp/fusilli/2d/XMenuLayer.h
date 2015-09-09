@@ -13,8 +13,8 @@
 #define __XMENULAYER_H__
 
 #include "XLayer.h"
-USING_NS_CC;
-NS_FI_BEGIN
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,19 +26,20 @@ public:
   virtual ~XMenuLayer();
   XMenuLayer();
 
-  virtual const string& RTTI();
+  Menu* MkBackQuit(MenuItem* b, MenuItem* q, bool vert = false);
+  void MkAudio();
 
   CREATE_FUNC(XMenuLayer)
 
 private:
 
-  CC_DISALLOW_COPY_AND_ASSIGN(XMenuLayer)
+  DISALLOW_COPYASSIGN(XMenuLayer)
 };
 
 
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 

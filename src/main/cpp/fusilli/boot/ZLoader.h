@@ -9,28 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __ZLOADER_H__
-#define  __ZLOADER_H__
+#if !defined(__ZLOADER_H__)
+#define __ZLOADER_H__
 
 #include "cocos2d.h"
-#include "asterix.h"
-NS_AX_BEGIN
+#include "fusilli.h"
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
-class ZL_DLLEXPORT ZLoader : public cocos2d::Scene {
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL ZLoader : public Scene {
 
 public:
 
   void initWithResources();
 
-  virtual void onEnter();
+  virtual void onEnter() override;
   virtual ~ZLoader();
   ZLoader();
 
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(ZLoader)
+
+  DISALLOW_COPYASSIGN(ZLoader)
   void startLoad(float delta);
+
 };
 
-NS_AX_END
+
+
+
+
+NS_END(fusilli)
 #endif
 

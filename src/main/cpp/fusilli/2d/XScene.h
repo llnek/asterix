@@ -13,8 +13,10 @@
 #define __XSCENE_H__
 
 #include "2d/CCScene.h"
-#include "fusilli.h"
+#include "XLayer.h"
+#include <map>
 NS_USING(cocos2d)
+NS_USING(std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -23,18 +25,19 @@ class CC_DLL XScene : public Scene {
 
 public:
 
-  virtual bool init() override;
   virtual ~XScene();
+  XScene();
+
+  Layer* GetLayer(const string&);
+  void SetLayer(XLayer*);
 
   CREATE_FUNC(XScene)
 
 protected:
 
-  virtual void CreateLayers() = 0;
-  XScene();
+  map<string,XLayer*> layers;
 
 private:
-
   DISALLOW_COPYASSIGN(XScene)
 };
 

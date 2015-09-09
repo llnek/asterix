@@ -10,10 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XSceneFactory.h"
-NS_FI_BEGIN
-USING_NS_CC;
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 
-NS_FI_END
+NS_END(fusilli)

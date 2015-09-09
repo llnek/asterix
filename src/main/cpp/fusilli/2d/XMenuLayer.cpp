@@ -10,13 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XMenuLayer.h"
-USING_NS_CC;
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_FI_BEGIN
-
-
 Menu* XMenuLayer::MkBackQuit(bool vert, MenuItem* b, MenuItem* q) {
   auto sz= b->getContentSize();
   auto padding = 10;
@@ -29,10 +26,11 @@ Menu* XMenuLayer::MkBackQuit(bool vert, MenuItem* b, MenuItem* q) {
   } else {
     menu->alignItemsVerticallyWithPadding(padding);
   }
-
   return menu;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XMenuLayer::MkAudio() {
   AddAudioIcon();
 }
@@ -43,9 +41,11 @@ XMenuLayer::~XMenuLayer() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 XMenuLayer::XMenuLayer() {
 
 }
 
 
-NS_FI_END
+NS_END(fusilli)

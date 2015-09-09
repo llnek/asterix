@@ -12,17 +12,16 @@
 #if !defined(__XSCENEFACTORY_H__)
 #define __XSCENEFACTORY_H__
 
-#include "deprecated/CCDictionary.h"
-#include "deprecated/CCArray.h"
 #include "fusilli.h"
-NS_FI_BEGIN
-USING_NS_CC;
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
 
 
 
-NS_FI_END
+NS_END(fusilli)
 #endif
 
