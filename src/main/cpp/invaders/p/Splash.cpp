@@ -15,7 +15,7 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::init() {
+XLayer* SplashLayer::Realize() {
   auto cfg = Config::GetInstance();
   auto img= cfg->GetImage("game.bg");
   CenterImage(img);
@@ -26,13 +26,13 @@ void SplashLayer::init() {
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::OnPlay(Node* b) {
+  auto f= []() {
+    CCSX::RunScene(XConfig::GetInstance()->StartWith());
+  }
+  auto a= CallFunc::create(f);
+  auto m = MainMenu::CreateWithBackAction(a);
 
-  CCSX::RunScene( MainMenu::create());
-  /*
-  mm.reify({
-    onback() { ccsx.runScene( ss.reify() ); }
-  }));*/
-
+  CCSX::RunScene( m->Realize());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,11 +57,11 @@ void SplashLayer::Btns() {
   AddItem(menu);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::CreateLayers() {
-  addChild( SplashLayer::create());
+XScene* Splash::Realize() {
+  AddLayer(SplashLayer::create()->Realize());
+  return this;
 }
 
 

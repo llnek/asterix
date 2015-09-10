@@ -9,167 +9,127 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/scenes
- * @requires s/sysobjs
- * @requires p/hud
- * @module p/game
- */
-
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import sobjs from 's/sysobjs';
-import huds from 'p/hud';
+#include "Game.h"
+NS_USING(cocos2d)
+NS_USING(std)
+NS_USING(fusilli)
+NS_BEGIN(invaders)
 
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////
-/** * @class BackLayer */
-BackLayer = scenes.XLayer.extend({
-  setup() {
-    this.centerImage(sh.getImage('game.bg'));
-  },
-  rtti() { return 'BackLayer'; }
-}),
+//
+void GameLayer::PKInput() {
+  CCSX::OnKeyPolls(this->keyboard);
+}
+
 //////////////////////////////////////////////////////////////////////////
-/** * @class GameLayer */
-GameLayer = scenes.XGameLayer.extend({
-  /**
-   * @method pkInput
-   * @protected
-   */
-  pkInput() {
-    ccsx.onKeyPolls(this.keyboard);
-  },
-  /**
-   * @method reset
-   * @protected
-   */
-  reset(newFlag) {
-    if (!sjs.isempty(this.atlases)) {
-      sjs.eachObj( v => { v.removeAllChildren(); }, this.atlases);
-    } else {
-      this.regoAtlas('game-pics');
-      this.regoAtlas('lang-pics');
-    }
-    this.getHUD().reset();
-  },
-  /**
-   * @method operational
-   * @protected
-   */
-  operational() {
-    return this.options.running;
-  },
-  /**
-   * @method replay
-   */
-  replay() {
-    this.play(false);
-  },
-  /**
-   * @method play
-   */
-  play(newFlag) {
-
-    this.initEngine(sobjs.systems, sobjs.entityFactory);
-    this.reset(newFlag);
-
-    this.options.running = true;
-  },
-  /**
-   * @method spawnPlayer
-   * @private
-   */
-  spawnPlayer() {
-    sh.factory.bornShip();
-  },
-  /**
-   * @method onPlayerKilled
-   * @private
-   */
-  onPlayerKilled(msg) {
-    sh.sfxPlay('xxx-explode');
-    if ( this.getHUD().reduceLives(1)) {
-      this.onDone();
-    } else {
-      this.spawnPlayer();
-    }
-  },
-  /**
-   * @method onNewGame
-   * @private
-   */
-  onNewGame(mode) {
-    //sh.sfxPlay('start_game');
-    this.setGameMode(mode);
-    this.play(true);
-  },
-  /**
-   * @method onEarnScore
-   * @private
-   */
-  onEarnScore(msg) {
-    this.getHUD().updateScore( msg.score);
-  },
-  /**
-   * @method onDone
-   * @private
-   */
-  onDone() {
-    this.options.running=false;
-    this.reset();
-    this.getHUD().enableReplay();
+//
+void GameLayer::Reset(bool newFlag) {
+  if (atlases.empty()) {
+    RegoAtlas("game-pics");
+    RegoAtlas("lang-pics");
+  }
+  else
+  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
+    it->second->removeAllChildren();
   }
 
-});
-
-/** @alias module:p/game */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.game,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    const scene = new scenes.XSceneFactory([
-      BackLayer,
-      GameLayer,
-      huds.HUDLayer ]).reify(options);
-
-    scene.onmsg('/game/players/earnscore',  msg => {
-      sh.main.onEarnScore(msg);
-    }).
-    onmsg('/hud/showmenu', msg => {
-      scenes.showMenu();
-    }).
-    onmsg('/hud/replay', msg => {
-      sh.main.replay();
-    }).
-    onmsg('/game/players/killed',  msg => {
-      sh.main.onPlayerKilled(msg);
-    });
-
-    return scene;
+  if (newFlag) {
+    GetHUD()->ResetAsNew();
+  } else {
+    GetHUD()->Reset();
   }
-};
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool GameLayer::IsOperational() {
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool GameLayer::Replay() {
+  Play(false);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::Play(bool newFlag) {
+  InitEngine();
+  Reset(newFlag);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::SpawnPlayer() {
+  sh.factory.bornShip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::OnPlayerKilled() {
+  CCSX::SfxPlay("xxx-explode");
+  if (GetHUD()->ReduceLives(1)) {
+    OnDone();
+  } else {
+    SpawnPlayer();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::OnNewGame(const GameMode mode) {
+  //sh.sfxPlay('start_game');
+  SetGameMode(mode);
+  Play(true);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::OnEarnScore(float score) {
+  GetHUD()->UpdateScore(score);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::OnDone() {
+  running=false;
+  Reset();
+  GetHUD()->EnableReplay();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+MainGame::~MainGame() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+MainGame::MainGame() {
+  running = false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+XScene* MainGame::Realize() {
+  auto y = BGLayer::create();
+  auto g = GameLayer::create();
+
+  AddLayer(y)->Realize();
+  AddLayer(g);
+
+  y = HUDLayer::create();
+  AddLayer(y)->Realize();
+
+  // realize game layer last
+  g->Realize();
+
+  CCSX::Main = g;
+  return this;
+}
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(invaders)
 

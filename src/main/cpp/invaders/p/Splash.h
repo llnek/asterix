@@ -21,18 +21,22 @@ NS_BEGIN(fusilli)
 class CC_DLL SplashLayer : public XLayer {
 public:
   virtual SplashLayer();
-  SplashLayer();
+  virtual Layer* Realize() override;
+  CREATE_FUNC(SplashLayer)
+
 private:
   DISALLOW_COPYASSIGN(SplashLayer)
+  SplashLayer();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Splash : public XScene {
 public:
-  virtual void CreateLayers() override;
+  virtual XScene* Realize() override;
   virtual ~Splash();
   Splash();
+  CREATE_FUNC(Splash)
 private:
   DISALLOW_COPYASSIGN(Splash)
 }

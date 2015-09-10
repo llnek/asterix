@@ -40,9 +40,16 @@ ResolutionPolicy Config::GetResolution() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+Scene* Config::StartWith() {
+  return Splash::create()->Realize();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 Config::Config() {
   InitAssets();
   InitCsts();
+  InitPools();
   scale=1;
 }
 
@@ -124,7 +131,17 @@ void Config::InitCsts() {
   d->setObject(2, "OFF_Y");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::InitPools() {
+  auto d = GetFragment(POOLS);
 
-NS_END(fusilli)
+  d->setObject(new XPool(), "missiles");
+  d->setObject(new XPool(), "bombs");
+  d->setObject(new XPool(), "explosions");
+
+}
+
+NS_END(invaders)
 
 

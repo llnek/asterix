@@ -54,12 +54,13 @@ bool App::applicationDidFinishLaunching() {
     director->setOpenGLView(glview);
   }
 
+  auto cfg = XConfig::GetInstance();
   auto b = Boot();
 
   register_all_packages();
 
   // run
-  director->runWithScene( GetStartScene() );
+  director->runWithScene( cfg->StartWith());
 
   return true;
 }

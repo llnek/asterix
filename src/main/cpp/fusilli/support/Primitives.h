@@ -23,6 +23,18 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+template<typename T>
+T* DictVal(Dictionary* d, const string& key) {
+  auto v= d->objectForKey(key);
+  if (NNP(v)) {
+    return static_cast<T*>(v);
+  } else {
+    return nullptr;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Box4 {
   Box4(float t, float r, float b, float l)
     : top(t), right(r), bottom(b), left(l)
@@ -79,6 +91,39 @@ private:
   float _x;
   float _y;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Size2 : public Ref, public Clonable {
+public:
+
+  static Size2* create(float w, float h) {
+    Size2* pRet = new Size2(w,h);
+    pRet->autorelease();
+    return pRet;
+  }
+
+  Size2(float w, float h)
+  : _w(w), _h(h)
+  {}
+
+  Size getValue() const {return Size(_w,_h); }
+
+  virtual ~Size2() {
+    CCLOGINFO("deallocing ~Size2: %p", this);
+  }
+
+  virtual void acceptVisitor(DataVisitor &visitor) { }
+
+  virtual Size2* clone() const override {
+    return Size2::create(_w,_h);
+  }
+
+private:
+  float _w;
+  float _h;
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

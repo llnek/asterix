@@ -16,11 +16,11 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::Title() {
-  auto cfg = Config::GetInstance();
+  auto cfg = XConfig::GetInstance();
   auto wb= CCSX::VisBox();
   auto cw= CCSX::Center();
   auto lb= CreateBMFLabel(cw.x, wb.top * 0.9,
-                          "font.JellyBelly",
+                          cfg->GetFont("font.JellyBelly"),
                           "some text");
   lb->setScale(cfg->GetScale());
   lb->setColor(CCSX::WHITE);
@@ -29,8 +29,8 @@ void MenuLayer::Title() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnInit() {
-  auto cfg = Config::GetInstance();
+XLayer* MenuLayer::Realize() {
+  auto cfg = XConfig::GetInstance();
   auto tile = SCAST(Integer*, cfg->GetCst("TILE"));
   auto img = cfg->GetImage("gui.mmenus.menu.bg");
   CenterImage(img);
@@ -76,21 +76,21 @@ void MenuLayer::OnInit() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay() {
-  auto g= MainGame::create();
+  auto g= MainGame::create()->Realize();
   CCSX::RunScene(g);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MenuLayer::OnBack(Ref* r) {
-  auto p = SCAST(Menu*, getParent());
+  auto p = SCAST(MainMenu*, getParent());
   p->OnBackAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MenuLayer::OnQuit(Ref* r) {
-  auto p = SCAST(Menu*, getParent());
+  auto p = SCAST(MainMenu*, getParent());
   p->OnQuitAction();
 }
 
@@ -119,9 +119,8 @@ void MainMenu::OnBackAction(Ref* s) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::OnInit() {
-  auto m = MenuLayer::create();
-  addChild(m);
+XScene* MainMenu::Realize() {
+  return AddLayer(MenuLayer::create())->Realize();
 }
 
 //////////////////////////////////////////////////////////////////////////////

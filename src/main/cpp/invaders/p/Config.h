@@ -29,6 +29,8 @@ public:
   virtual float GetScale() override;
   virtual void RunOnce() override;
 
+  virtual Scene* StartWith() override;
+
   virtual ~Config();
   Config();
 

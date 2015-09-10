@@ -9,43 +9,38 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XSCENE_H__)
-#define __XSCENE_H__
+#include "ash/Ash.h"
+NS_USING(ash)
+NS_BEGIN(invaders)
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-#include <map>
-NS_USING(cocos2d)
-NS_USING(std)
-NS_BEGIN(fusilli)
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public Scene {
-
+class CC_DLL Stager : public System {
 public:
 
-  virtual XScene* Realize();
-  virtual ~XScene();
+  virtual ~Stager();
+  Stager(options);
 
-  Layer* GetLayer(const string&);
-  void AddLayer(XLayer*);
+  virtual void RemoveFromEngine(Engine*) override;
 
-protected:
+  virtual void AddToEngine(Engine*) override;
 
-  map<string,XLayer*> layers;
-  XScene();
+  void InitAlienSize();
 
-  void OnQuitAction();
+  void InitShipSize();
 
-private:
-  DISALLOW_COPYASSIGN(XScene)
+  virtual void Update(float dt);
+
+  void OnceOnly();
+
+  void Fire(t, evt);
+
+  virtual int Priority() override { return PreUpdate; }
+
 };
 
 
 
-
-
-NS_END(fusilli)
-#endif
+NS_END(invaders)
 

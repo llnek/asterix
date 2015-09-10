@@ -37,7 +37,7 @@ SpriteBatchNode* XLayer::RegoAtlas(const string& name, int z, int tag) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::Realize() {}
+XLayer* XLayer::Realize() { return this; }
 
 void XLayer::PKInput() {}
 

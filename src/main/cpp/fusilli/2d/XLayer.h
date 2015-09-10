@@ -34,7 +34,7 @@ public:
 
   virtual const string& Moniker() = 0;
 
-  virtual void Realize();
+  virtual XLayer* Realize();
 
   virtual void PKInput();
 

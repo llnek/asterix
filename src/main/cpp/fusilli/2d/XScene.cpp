@@ -36,10 +36,23 @@ XLayer* XScene::GetLayer(const string& id) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SetLayer(XLayer* y) {
-   layers.insert(pair<string,XLayer*>(y->Moniker(), y));
+void AddLayer(XLayer* y) {
+ layers.insert(pair<string,XLayer*>(y->Moniker(), y));
+ addChild(y);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+XScene* XScene::Realize() {
+   return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XScene::OnQuitAction() {
+  CCSX::RunScene(
+    XConfig::GetInstance()->StartWith());
+}
 
 
 NS_END(fusilli)

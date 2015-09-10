@@ -28,7 +28,8 @@ public:
   virtual ~AppDelegate();
   AppDelegate();
 
-  virtual Scene* GetStartScene();
+private:
+  DISALLOW_COPYASSIGN(AppDelegate)
 };
 
 

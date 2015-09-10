@@ -14,16 +14,20 @@ NS_USING(std)
 NS_USING(fusilli)
 NS_BEGIN(invaders)
 
+
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BackLayer : public XLayer {
+class CC_DLL BGLayer : public XLayer {
 public:
-  virtual ~BackLayer();
-  BackLayer();
-  virtual void Setup();
-  virtual const string Moniker() { return 'BackLayer'; }
+  virtual XLayer* Realize() {
+    CenterImage(XConfig::GetInstance()->GetImage("game.bg"));
+    return this;
+  }
+  virtual ~BGLayer();
+  BGLayer();
+  virtual const string Moniker() { return "BackLayer"; }
 private:
-  DISALLOW_COPYASSIGN(BackLayer)
+  DISALLOW_COPYASSIGN(BGLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,10 +35,10 @@ private:
 class CC_DLL GameLayer : public XGameLayer {
 public:
 
-  virtual void pkInput() override;
+  virtual void PKInput() override;
 
   virtual void Reset(bool newFlag) override;
-  virtual bool Operational() override;
+  virtual bool IsOperational() override;
   virtual void Replay() override;
   virtual void Play(bool newFlag);
 
@@ -51,27 +55,17 @@ private:
   DISALLOW_COPYASSIGN(GameLayer)
 };
 
-  reify(options) {
-    const scene = new scenes.XSceneFactory([
-      BackLayer,
-      GameLayer,
-      huds.HUDLayer ]).reify(options);
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MainGame : public XScene {
+public:
+  virtual XScene* Realize() override;
+  virtual ~MainGame();
+  MainGame();
 
-    scene.onmsg('/game/players/earnscore',  msg => {
-      sh.main.onEarnScore(msg);
-    }).
-    onmsg('/hud/showmenu', msg => {
-      scenes.showMenu();
-    }).
-    onmsg('/hud/replay', msg => {
-      sh.main.replay();
-    }).
-    onmsg('/game/players/killed',  msg => {
-      sh.main.onPlayerKilled(msg);
-    });
-
-    return scene;
-  }
+private:
+  DISALLOW_COPYASSIGN(MainGame)
+};
 
 
 NS_END(invaders)

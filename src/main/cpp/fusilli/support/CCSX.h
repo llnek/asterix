@@ -20,17 +20,8 @@ NS_USING(std)
 NS_BEGIN(fusilli)
 
 
-//////////////////////////////////////////////////////////////////////////////
-//
-template<typename T>
-T* DictValue(Dictionary* d, const string& key, T*& dummy) {
-  auto v= d->objectForKey(key);
-  if (NNP(v)) {
-    return static_cast<T*>(v);
-  } else {
-    return nullptr;
-  }
-}
+#define HHZ(z) z.height * 0.5
+#define HWZ(z) z.width * 0.5
 
 //////////////////////////////////////////////////////////////////////////////
 //

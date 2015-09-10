@@ -9,43 +9,36 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XSCENE_H__)
-#define __XSCENE_H__
+#include "ash/Ash.h"
+NS_USING(ash)
+NS_BEGIN(invaders)
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-#include <map>
-NS_USING(cocos2d)
-NS_USING(std)
-NS_BEGIN(fusilli)
 
-//////////////////////////////////////////////////////////////////////////////
+enum class Rank {
+
+};
+
+//////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public Scene {
-
+class CC_DLL Factory {
 public:
-
-  virtual XScene* Realize();
-  virtual ~XScene();
-
-  Layer* GetLayer(const string&);
-  void AddLayer(XLayer*);
-
-protected:
-
-  map<string,XLayer*> layers;
-  XScene();
-
-  void OnQuitAction();
+  virtual ~Factory();
+  Factory(Engine* e, options);
+  void CreateMissiles(int count= 36);
+  void CreateExplosions(int count = 24);
+  void CreateBombs(int count = 24);
+  const Size CalcImgSize(const string& img);
+  GetRankInfo(const Rank r);
+  void FillSquad(XPool* pool);
+  void CreateAliens();
+  void BornShip();
+  void CreateShip();
 
 private:
-  DISALLOW_COPYASSIGN(XScene)
+
+  DISALLOW_COPYASSIGNDFT(Factory)
+
 };
 
 
-
-
-
-NS_END(fusilli)
-#endif
-
+NS_END(invaders)

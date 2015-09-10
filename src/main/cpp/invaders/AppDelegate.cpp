@@ -28,11 +28,4 @@ AppDelegate::~AppDelegate()
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Scene* AppDelegate::GetStartScene() {
-  auto s= Splash::create();
-  s->Realize();
-  return s;
-}
 
