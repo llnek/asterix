@@ -9,70 +9,48 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires n/gnodes
- * @module s/resolve
- */
+#include "Resolve.h"
+NS_USING(ash)
+NS_BEGIN(invaders)
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import gnodes from 'n/gnodes';
-
-
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////
-/** * @class Resolve */
-Resolve = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.aliens= undef;
-    this.ships= undef;
-    this.engine=undef;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.aliens= engine.getNodeList(gnodes.AlienMotionNode);
-    this.ships= engine.getNodeList(gnodes.ShipMotionNode);
-    this.engine=engine;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const aliens= this.aliens.head,
-    ship = this.ships.head;
+//
+Resolve::Resolve(options)
+  : state(options) {
+}
 
-    this.checkMissiles();
-    this.checkBombs();
-    this.checkAliens(aliens);
-    this.checkShip(ship);
-  },
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve;:RemoveFromEngine(Engine* e) {
+  aliens= nullptr;
+  ships= nullptr;
+  engine=nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::AddToEngine(Engine* e) {
+  aliens= e->GetNodeList(AlienMotionNode::TypeId());
+  ships= e->GetNodeList(ShipMotionNode::TypeId());
+  engine=e;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::Update(float dt) {
+  auto enemies = aliens->head;
+  auto ship = ships->head;
+
+  CheckMissiles();
+  CheckBombs();
+  CheckAliens(enemies);
+  CheckShip(ship);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+
+
   /**
    * @method checkMissiles
    * @private
