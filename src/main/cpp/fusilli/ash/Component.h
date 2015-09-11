@@ -12,27 +12,28 @@
 #if !defined(__COMPONENT_H__)
 #define __COMPONENT_H__
 
+#include "platform/CCCommon.h"
+#include "core/fusilli.h"
 #include "Ash.h"
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Component {
-public:
-
-  virtual const COMType TypeId() = 0;
-
-
-
-  virtual ~Component();
-
 protected:
+
   Component();
 
 private:
-  DISALLOW_COPYASSIGN(Component)
-};
 
+  DISALLOW_COPYASSIGN(Component)
+
+public:
+
+  virtual const COMType TypeId() = 0;
+  virtual ~Component();
+
+};
 
 
 

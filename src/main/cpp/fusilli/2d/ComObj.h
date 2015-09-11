@@ -9,175 +9,49 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Component.h"
+#include "deprecated/CCDictionary.h"
+#include "2d/CCSprite.h"
+#include "ash/Component.h"
+NS_USING(ash)
+NS_BEGIN(fusilli)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL ComObj : public Component {
-  /**
-   * Take damage, reduce health.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method hurt
-   * @param {Number} damage
-   * @param {Object} from
-   */
-  hurt(damage, from) {
-    this.HP -= sjs.isnum(damage) ? damage : 1;
-  },
+private:
 
-  /**
-   * Reborn from the dead - take from the pool.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method inflate
-   * @param {Object} options
-   */
-  inflate(options) {
-    options= options || {};
-    if (!!this.sprite) {
-      if (sjs.hasKey(options, 'x') &&
-          sjs.hasKey(options, 'y')) {
-        this.sprite.setPosition(options.x,
-                                options.y);
-      }
-      if (sjs.hasKey(options, 'deg')) {
-        this.sprite.setRotation(options.deg);
-      }
-      if (sjs.hasKey(options, 'scale')) {
-        this.sprite.setScale(options.scale);
-      }
-      this.sprite.setVisible(true);
-    }
-    this.HP= this.origHP;
-    this.status=true;
-  },
+public:
+  Sprite sprite;
+  bool status;
+  Vec2 lastPos;
 
-  /**
-   * Die and ready to be recycled.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method deflate
-   */
-  deflate() {
-    if (!!this.sprite) {
-      this.sprite.unscheduleAllCallbacks();
-      this.sprite.stopAllActions();
-      this.sprite.setVisible(false);
-    }
-    this.status=false;
-  },
+  void Hurt(float damage);
 
-  /**
-   * Get Sprite's height.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method height
-   * @return {Number}
-   */
-  height() {
-    if (!!this.sprite) {
-      return this.sprite.getContentSize().height;
-    }
-  },
+  void Inflate(Dictionary* options);
+  void Inflate(float x, float y);
 
-  /**
-   * Get Sprite's width.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method width
-   * @return {Number}
-   */
-  width() {
-    if (!!this.sprite) {
-      return this.sprite.getContentSize().width;
-    }
-  },
+  void Deflate();
 
-  /**
-   * Set Sprite's position.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method setPos
-   * @param {Number} x
-   * @param {Number} y
-   */
-  setPos(x,y) {
-    if (!!this.sprite) {
-      this.sprite.setPosition(x,y);
-    }
-  },
+  float Height();
+  float Width();
 
-  /**
-   * Get the Sprite's position.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method pos
-   * @return {cc.Point}
-   */
-  pos() {
-    if (!!this.sprite) {
-      return this.sprite.getPosition();
-    }
-  },
+  void SetPos(float x, float y);
 
-  /**
-   * Get the Sprite's size.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method size
-   * @return {cc.Size}
-   */
-  size() {
-    if (!!this.sprite) {
-      return this.sprite.getContentSize();
-    }
-  },
+  const Vec2 Pos();
 
-  /**
-   * Get the tag value.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method rtti
-   * @return {String}
-   */
-  rtti() { return this._name; },
+  const Size CSize();
 
-  /**
-   * Set tag value.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method rego
-   * @param {String} n
-   */
-  rego(n) { this._name = n; },
-
-  /**
-   * Get the Sprite's tag value.
-   * @memberof module:zotohlab/asterix~ComObj
-   * @method pid
-   * @return {Number}
-   */
-  pid() {
-    if (!!this.sprite) { return this.sprite.getTag(); }
-  },
+  int Pid();
 
   /**
    * @private
    */
-  ctor(sprite, health, score) {
-    this._name= ["co" , ++SEED].join(':');
-    this.origHP = health || 1;
-    this.sprite = sprite;
-    this.HP = this.origHP;
-    this.value = score || 0;
-    this.status=false;
-  }
-},
+  ComObj(Sprite*, float health, float score);
+  ComObj(Sprite*);
 
-/**
- * @extends module:zotohlab/asterix~ComObj
- * @class SimpleComp
- */
-SimpleComp = Ash.Class.extend(sjs.mergeEx(ComObj, {
+  virtual ~ComObj();
+}
 
-  /**
-   * @memberof module:zotohlab/asterix~SimpleComp
-   * @method constructor
-   * @param {cc.Sprite}
-   */
-  constructor(sprite) {
-    this.ctor(sprite);
-  }
-})),
-
+NS_END(fusilli)
+#endif
 
