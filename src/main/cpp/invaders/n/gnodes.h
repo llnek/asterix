@@ -19,38 +19,54 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AlienNotionNode : public NodeFactory {
+private:
+  DISALLOW_COPYASSIGN(AlienMotionNode)
+
 public:
+
+  static const NodeType TypeId();
+
   virtual Node* CreateNode() override;
   virtual ~AlienMotionNode();
   AlienMotionNode();
-private:
-  DISALLOW_COPYASSIGN(AlienMotionNode)
+
+  DEFCREATE_FUNC(AlienNotionNode)
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL CannonCtrlNode : public NodeFactory {
+private:
+  DISALLOW_COPYASSIGN(CannonCtrlNode)
+
 public:
+
+  static const NodeType TypeId();
 
   virtual Node* CreateNode() override;
   virtual ~CannonCtrlNode();
   CannonCtrlNode();
 
-private:
-  DISALLOW_COPYASSIGN(CannonCtrlNode)
+  DEFCREATE_FUNC(CannonCtrlNode)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL ShipMotionNode : public NodeFactory {
+private:
+  DISALLOW_COPYASSIGN(ShipMotionNode)
+
 public:
+
+  static const NodeType TypeId();
 
   virtual Node* CreateNode() override;
   virtual ~ShipMotionNode();
   ShipMotionNode();
-private:
-  DISALLOW_COPYASSIGN(ShipMotionNode)
+
+  DEFCREATE_FUNC(ShipMotionNode)
 }
 
 

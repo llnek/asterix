@@ -13,7 +13,7 @@
 #define __CCSX_H__
 
 #include "support/Primitives.h"
-#include "ash/Component.h"
+#include "2d/ComObj.h"
 #include "cocos2d.h"
 NS_USING(cocos2d)
 NS_USING(std)
@@ -26,80 +26,84 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL CCSX {
+private:
+  static void ResolveElastic(ComObj* obj1, ComObj* obj2);
 
-  bool PointInBox(const Box4& box, float x,  float y);
-  const Color3B White();
-  const Color3B Black();
+public:
+  static bool PointInBox(const Box4& box, float x,  float y);
+  //static const Color3B White();
+  //static const Color3B Black();
 
-  bool Collide0(Sprite* spriteA, Sprite* spriteB);
-  bool Collide(Entity* a, Entity* b);
+  static bool Collide0(Sprite* spriteA, Sprite* spriteB);
+  static bool Collide(ComObj* a, ComObj* b);
 
-  void SetDevRes(bool landscape, float x, float y, ResolutionPolicy pcy);
+  static void SetDevRes(bool landscape, float x, float y,
+      ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
-  bool IsPortrait();
-  bool OutOfBound(Entity* ent, const Box4& B);
-  bool OutOfBound(const Box4& src, const Box4& B);
+  static bool IsPortrait();
+  static bool OutOfBound(ComObj* ent, const Box4& B);
+  static bool OutOfBound(const Box4& src, const Box4& B);
 
-  Action* CreateTimer(Node*, float millis);
-  void UndoTimer(Action*);
-  bool TimerDone(Action*);
+  static Action* CreateTimer(Node*, float millis);
+  static void UndoTimer(Action*);
+  static bool TimerDone(Action*);
 
-  Sprite* CreateSprite(const string& frameName);
+  static Sprite* CreateSprite(const string& frameName);
 
-  const Box4 BBox4B4(Entity* ent);
-  const Box4 BBox4(Sprite* sprite);
+  static const Box4 BBox4B4(ComObj* ent);
+  static const Box4 BBox4(Sprite* sprite);
 
-  void RunScene(Scene* ns, float delay);
-  bool IsTransitioning();
+  static void RunScene(Scene* ns, float delay);
+  static bool IsTransitioning();
 
-  const Size CSize(const string& frame);
+  static const Size CSize(const string& frame);
 
-  const Size HalfHW(Sprite* sprite);
-  const Rect BBox(Sprite* sprite);
+  static const Size HalfHW(Sprite* sprite);
+  static const Rect BBox(Sprite* sprite);
 
-  float GetScaledHeight(Sprite* sprite);
+  static float GetScaledHeight(Sprite* sprite);
 
-  float GetHeight(Sprite* sprite);
+  static float GetHeight(Sprite* sprite);
 
-  float GetScaledWidth(Sprite* sprite);
+  static float GetScaledWidth(Sprite* sprite);
 
-  float GetWidth(Sprite* sprite);
+  static float GetWidth(Sprite* sprite);
 
-  float GetLeft(Sprite* );
+  static float GetLeft(Sprite* );
 
-  float GetRight(Sprite*);
+  static float GetRight(Sprite*);
 
-  float GetTop(Sprite*);
+  static float GetTop(Sprite*);
 
-  float GetBottom(Sprite*);
+  static float GetBottom(Sprite*);
 
-  float GetLastLeft(Entity* ent);
+  static float GetLastLeft(ComObj* ent);
 
-  float GetLastRight(Entity*);
+  static float GetLastRight(ComObj*);
 
-  float GetLastTop(Entity*);
+  static float GetLastTop(ComObj*);
 
-  float GetLastBottom(Entity*);
+  static float GetLastBottom(ComObj*);
 
-  float CenterX();
+  static float CenterX();
 
-  float CenterY();
+  static float CenterY();
 
-  const Vec2 Center();
+  static const Vec2 Center();
 
-  float ScreenHeight();
+  static float ScreenHeight();
 
-  float ScreenWidth();
+  static float ScreenWidth();
 
-  const Rect VisRect();
-  const Box4 VisBox();
+  static const Rect VisRect();
+  static const Box4 VisBox();
 
-  const Size Screen();
-  const Vec2 SCenter();
+  static const Size Screen();
+  static const Vec2 SCenter();
 
-  const Vec2 VBoxMID(const Box4& );
+  static const Vec2 VBoxMID(const Box4& );
 
-  bool TraceEnclosure(float dt, const Box4& bbox,
+  static bool TraceEnclosure(float dt, const Box4& bbox,
       const Rect& rect, const Vec2& vel,
       Vec2& outPos, Vec2& outVel);
 
@@ -107,35 +111,33 @@ class CC_DLL CCSX {
    * Get the sprite from the frame cache using
    * its id (e.g. #ship).
    */
-  SpriteFrame* GetSpriteFrame(const string& frameid);
+  static SpriteFrame* GetSpriteFrame(const string& frameid);
 
-  bool HasKeyPad();
+  static bool HasKeyPad();
 
-  void OnKeyPolls();
+  static void OnKeyPolls();
 
-  void OnKeys();
+  static void OnKeys();
 
-  bool HasMouse();
+  static bool HasMouse();
 
-  void OnMouse();
+  static void OnMouse();
 
-  bool HasTouch();
+  static bool HasTouch();
 
-  void OnTouchAll();
+  static void OnTouchAll();
 
-  void OnTouchOne();
+  static void OnTouchOne();
 
-  void ResolveElastic(Entity* obj1, Entity* obj2);
-
-  const Vec2 AncCenter();
-  const Vec2 AncTop();
-  const Vec2 AncTopRight();
-  const Vec2 AncRight();
-  const Vec2 AncBottomRight();
-  const Vec2 AncBottom();
-  const Vec2 AncBottomLeft();
-  const Vec2 AncLeft();
-  const Vec2 AncTopLeft();
+  static const Vec2 AnchorC();
+  static const Vec2 AnchorTL();
+  static const Vec2 AnchorT();
+  static const Vec2 AnchorTR();
+  static const Vec2 AnchorR();
+  static const Vec2 AnchorL();
+  static const Vec2 AnchorBR();
+  static const Vec2 AnchorB();
+  static const Vec2 AnchorBL();
 
 };
 

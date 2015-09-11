@@ -49,96 +49,71 @@ bool Resolve::Update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+void Resolve::CheckMissiles() {
+  auto cfg = XConfig::GetInstance();
+  auto mss = cfg->GetPool("missiles");
+  auto ht = CCSX::VisRect().height;
+  auto c = mss->elements();
 
-
-  /**
-   * @method checkMissiles
-   * @private
-   */
-  checkMissiles() {
-    const mss = sh.pools.Missiles,
-    ht = ccsx.vrect().height;
-
-    mss.iter( m => {
-      if (m.status) {
-        if (m.pos().y >= ht ||
-            m.HP <= 0) {
-          m.deflate();
-        }
+  for (auto it = c.begin(); it != c.end(); ++it) {
+    auto m = *it;
+    if (m->status) {
+      if (m->Pos().y >= ht ||
+          m->health <= 0) {
+        m->Deflate();
       }
-    });
-  },
-  /**
-   * @method checkBombs
-   * @private
-   */
-  checkBombs() {
-    const bbs = sh.pools.Bombs,
-    bt = 0;
-
-    bbs.iter( b => {
-      if (b.status) {
-        if (b.pos().y <= bt ||
-            b.HP <= 0) {
-          b.deflate();
-        }
-      }
-    });
-  },
-  /**
-   * @method checkAliens
-   * @private
-   */
-  checkAliens(node) {
-    const sqad= node.aliens;
-
-    R.forEach( en => {
-      if (en.status) {
-        if (en.HP <= 0) {
-          sh.fire('/game/players/earnscore', {
-            score: en.value });
-          en.deflate();
-        }
-      }
-    }, sqad.aliens.pool);
-  },
-  /**
-   * @method checkShip
-   * @private
-   */
-  checkShip(node) {
-    const ship = node.ship;
-
-    if (ship.status &&
-        ship.HP <= 0) {
-      ship.deflate();
-      sh.fire('/game/players/killed');
     }
   }
+}
 
-}, {
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::CheckBombs() {
+  auto cfg = XConfig::GetInstance();
+  auto bbs = cfg->GetPool("bombs");
+  auto c = bbs->elements();
+  int bt = 0;
 
-/**
- * @memberof module:s/resolve~Resolve
- * @property {Number} Priority
- */
-Priority: xcfg.ftypes.Resolve
-});
+  for (auto it = c.begin(); it != c.end(); ++it) {
+    auto b = *it;
+    if (b->status) {
+      if (b->health <= 0 ||
+          b->Pos().y <= bt) {
+        b->Deflate();
+      }
+    }
+  }
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::CheckAliens(Node* node) {
+  auto sqad= node->aliens;
+  auto c= sqad->aliens->pool->elements();
 
-/** @alias module:s/resolve */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Resolve}  Resolve
-   */
-  Resolve : Resolve
+  for (auto it = c.begin(); it != c.end(); ++it) {
+    auto en= *it;
+    if (en->status) {
+      if (en->health <= 0) {
+        MainGame::Get()->EarnScore(en->value);
+        en->Deflate();
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::CheckShip(Node* node) {
+  auto ship = node->ship;
+
+  if (ship->status &&
+      ship->health <= 0) {
+    ship->Deflate();
+    MainGame::Get()->PlayerKilled();
+  }
 }
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(invaders)
 

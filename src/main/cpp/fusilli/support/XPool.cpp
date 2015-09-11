@@ -9,54 +9,38 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "2d/ComObj.h"
 #include "XPool.h"
-NS_USING(cocos2d)
 NS_USING(std)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
-//
-  /**
-   * Pre-populate a bunch of objects in the pool.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method preSet
-   * @param {Function} ctor object constructor
-   * @param {Number} count
-   */
-void XPool::PreSet(ctor, count) {
-  for (auto n=0; n < count; ++n) {
+// Pre-populate a bunch of objects in the pool
+void XPool::PreSet(ComObj* (*ctor)(XPool*), int count) {
+  for (int n=0; n < count; ++n) {
     auto rc= ctor(this);
     if (NNP(rc)) {
-      m_pool->addObject(rc);
+      objs.push_back(rc);
     }
   }
 }
 
-  /**
-   * Find an object by applying this filter.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method select
-   * @param {Function} filter
-   * @return {Object} the selected one
-   */
-Entity* XPool::Select(filter) {
-  for (auto it = m_pool->begin(); it != m_pool->end(); ++it) {
-    auto rc = static_cast<Entity*>(*it);
-    if ( filter(rc)) {
-      return rc;
+//////////////////////////////////////////////////////////////////////////
+// Find an object by applying this filter
+ComObj* XPool::Select(bool (*filter)(ComObj*)) {
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    auto e = *it;
+    if (filter(e)) {
+      return e;
     }
   }
   return nullptr;
 }
 
-  /**
-   * Get an object from the pool and set it's status to true.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method getAndSet
-   * @return {Object}
-   */
-Entity* XPool::GetAndSet() {
+//////////////////////////////////////////////////////////////////////////
+// Get an object from the pool and set it's status to true
+ComObj* XPool::GetAndSet() {
   auto rc= Get();
   if (NNP(rc)) {
     rc->status=true;
@@ -64,71 +48,56 @@ Entity* XPool::GetAndSet() {
   return rc;
 }
 
-  /**
-   * Get an object from the pool.  More like a peek.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method get
-   * @return {Object}
-   */
-Entity* XPool::Get() {
-  for (auto it = m_pool->begin(); it != m_pool->end(); ++it) {
-    auto e= static_cast<Entity*>(*it);
+//////////////////////////////////////////////////////////////////////////
+// Get an object from the pool.  More like a peek
+ComObj* XPool::Get() {
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    auto e= *it;
     if (! e->status) { return e; }
   }
   return nullptr;
 }
 
-  /**
-   * Get the count of active objects.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method actives
-   * @return {Number}
-   */
-int XPool::Actives() {
+//////////////////////////////////////////////////////////////////////////
+// Get the count of active objects
+int XPool::CountActives() {
   auto c=0;
-  for (auto it = m_pool->begin(); it != m_pool->end(); ++it) {
-    if (static_cast<Entity*>(*it)->status) {
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    if ((*it)->status) {
       ++c;
     }
   }
   return c;
 }
 
-int XPool::Size() { return m_pool->count(); }
-
-  /**
-   * Like map, but with no output.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method iter
-   * @param {Function} func
-   * @param {Object} target if null, use the pool
-   */
-void XPool::Foreach(func, target) {
-  if (target == nullptr) { target = this; }
-  for (auto it = m_pool->begin(); it != m_poo->end(); ++it) {
-    func.call(target, static_cast<Entity*>(*it));
+//////////////////////////////////////////////////////////////////////////
+//
+void XPool::Foreach(void (*func)(ComObj*)) {
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    func(*it);
   }
 }
 
-  /**
-   * Hibernate (status off) all objects in the pool.
-   * @memberof module:zotohlab/asx/pool~XPool
-   * @method deflate
-   */
+//////////////////////////////////////////////////////////////////////////
+// Hibernate (status off) all objects in the pool
 void XPool::Reset() {
-  for (auto it = m_pool->begin(); it != m_poo->end(); ++it) {
-    static_cast<Entity*>(*it)->deflate();
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    (*it)->Deflate();
   }
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+//
 XPool::~XPool() {
-  m_pool->release();
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    delete *it;
+  }
+  objs.clear();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 XPool::XPool() {
-  m_pool = Array::create();
-  m_pool->retain();
 }
 
 

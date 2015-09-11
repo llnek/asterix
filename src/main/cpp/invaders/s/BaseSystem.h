@@ -9,48 +9,28 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XPOOL_H__)
-#define __XPOOL_H__
+#include "ash/Ash.h"
+#include "cocos2d.h"
+NS_USING(cocos2d)
+NS_USING(ash)
+NS_BEGIN(invaders)
 
-#include "platform/CCCommon.h"
-#include "core/fusilli.h"
-#include <vector>
-NS_USING(std)
-NS_BEGIN(fusilli)
 
-class ComObj;
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XPool {
+class CC_DLL BaseSystem : public ash::System {
+protected:
+  Dictionary* state;
+  Factory* factory;
+
+  BaseSystem();
 
 private:
-  DISALLOW_COPYASSIGN(XPool)
-  vector<ComObj*> objs;
+  DISALLOW_COPYASSIGN(BaseSystem)
 
 public:
-
-  const vector<ComObj*>& Elements() { return objs; }
-  void PreSet(ComObj* (*ctor)(XPool*), int count);
-  ComObj* Select(bool (*filter)(ComObj*));
-
-  ComObj* GetAndSet();
-  ComObj* Get();
-  int CountActives();
-  int Size() { return (int)objs.size(); }
-  void Foreach(void (*func)(ComObj*));
-  void Reset();
-
-  virtual ~XPool();
-  XPool();
-
-
-  DEFCREATE_FUNC(XPool)
+  virtual ~BaseSystem();
 };
 
 
-
-
-
-NS_END(fusilli)
-#endif
-
+NS_END(invaders)

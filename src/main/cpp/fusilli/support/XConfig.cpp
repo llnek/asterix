@@ -9,7 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "XConfig.h"
+#include "support/XConfig.h"
+NS_USING(std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -18,8 +19,10 @@ static XConfig* singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static const string getXXX(Dictionary* d, const string& key ) {
-  auto r= SCAST(String*,d->objectForKey(key));
+static const string getXXX(Dictionary* d,
+    const string& key ) {
+
+  auto r= DictVal<String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
 
@@ -39,6 +42,10 @@ XConfig* XConfig::GetInstance() {
 //
 XConfig::~XConfig() {
   dict->release();
+  for (auto it=pools.begin(); it != pools.end(); ++it) {
+    delete it->second;
+  }
+  pools.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,6 +97,25 @@ const string XConfig::GetImage(const string& key) {
 //
 const string XConfig::GetSound(const string& key) {
   return getXXX(GetFragment(SOUNDS), key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+XPool* XConfig::GetPool(const string& key) {
+  auto it = pools.find(key);
+  if (it != pools.end()) {
+    return it->second;
+  } else {
+    return nullptr;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+XPool* XConfig::AddPool(const string& key) {
+  auto p = XPool::Create();
+  pools.insert(pair<string,XPool*>(key, p));
+  return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////

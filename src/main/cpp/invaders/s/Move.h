@@ -9,32 +9,39 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__APP_DELEGATE_H__)
-#define __APP_DELEGATE_H__
-
-#include "core/fusilli.h"
-#include "cocos2d.h"
-#include "boot/App.h"
-NS_USING(cocos2d)
-NS_USING(fusilli)
+#include "ash/Ash.h"
+NS_USING(ash)
+NS_BEGIN(invaders)
 
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AppDelegate : public App {
-private:
-  DISALLOW_COPYASSIGN(AppDelegate)
-
+class CC_DLL Move : public System {
 public:
 
-  virtual ~AppDelegate();
-  AppDelegate();
+  virtual ~Move();
+  Move(options);
 
+  virtual void RemoveFromEngine(Engine*);
+  virtual void AddToEngine(Engine*);
+  virtual bool Update(float dt);
+
+  void ProcessShipMotions(Node*, float dt);
+  void clamp(ComObj* ship);
+  void MoveBombs(float dt);
+  void MoveMissiles(float dt);
+
+  virtual int Priority() override { return Move; }
+
+private:
+  DISALLOW_COPYASSIGN(Move)
+  Move() {}
 };
 
 
 
 
+NS_END(invaders)
 
-#endif
+
 

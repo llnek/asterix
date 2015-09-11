@@ -26,6 +26,12 @@ Node* AlienMotionNode::CreateNode() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const NodeType AlienMotionNode::TypeId() {
+  return "invaders/AlienMotionNode";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 Node* CannonCtrlNode::CreateNode() {
   map<string,COMType> s;
   s.insert(pair<string,COMType>("looper", "fusilli/Looper"));
@@ -36,12 +42,24 @@ Node* CannonCtrlNode::CreateNode() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const NodeType CannonCtrlNode::TypeId() {
+  return "invaders/CannonCtrlNode";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 Node* ShipMotionNode::CreateNode() {
   map<string,COMType> s;
   s.insert(pair<string,COMType>("velocity", "fusilli/Velocity"));
   s.insert(pair<string,COMType>("motion", "fusilli/Motion"));
   s.insert(pair<string,COMType>("ship", "fusilli/Ship"));
   return new Node(s);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const NodeType ShipMotionNode::TypeId() {
+  return "invaders/ShipMotionNode";
 }
 
 NS_END(invaders)

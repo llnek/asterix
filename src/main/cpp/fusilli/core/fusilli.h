@@ -21,19 +21,19 @@
 //
 #if defined(WIN32) || defined(_WIN32)
 
-#if defined(MS_STATIC)
-#define MS_DLL
+#if defined(FU_STATIC)
+#define FU_DLL
 #else
 #if defined(_USRDLL)
-#define MS_DLL     __declspec(dllexport)
+#define FU_DLL     __declspec(dllexport)
 #else         /* use a DLL library */
-#define MS_DLL    __declspec(dllimport)
+#define FU_DLL    __declspec(dllimport)
 #endif
 #endif
 
 
 #else
-#define MS_DLL
+#define FU_DLL
 #endif
 
 
@@ -74,8 +74,8 @@
 #define mc_bool_str(b)    ((b) ? "true" : "false")
 #define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
 
-#define mc_pcast(classname, expr) (##classname *) expr
-#define mc_rcast(classname, expr) (##classname &) expr
+#define mc_pcast(classname, expr) (##classname*) expr
+#define mc_rcast(classname, expr) (##classname&) expr
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -96,6 +96,10 @@
 #define DISALLOW_COPYASSIGN(T) \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;
+
+//////////////////////////////////////////////////////////////////////////////
+//
+#define DEFCREATE_FUNC(T) static T* Create() { return new(std::nothrow) T(); }
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -9,16 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "ash/NodeRegistry.h"
 #include "support/XConfig.h"
+#include "n/gnodes.h"
+#include "p/Splash.h"
+#include "p/Config.h"
 #include "AppDelegate.h"
-#include "Splash.h"
 NS_USING(cocos2d)
 NS_USING(fusilli)
 NS_USING(invaders)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
+  auto r= NodeRegistry::GetInstance();
+
+  r->Register(ShipMotionNode::TypeId(), ShipMotionNode::Create());
+  r->Register(CannonCtrlNode::TypeId(), CannonCtrlNode::Create());
+  r->Register(AlienNotionNode::TypeId(), AlienNotionNode::Create());
+
   XConfig::SetInstance(new Config());
 }
 
