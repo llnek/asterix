@@ -85,7 +85,7 @@ bool CCSX::OutOfBound(ComObj* ent, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool CCSX::OutOfBound(const Box4& ent, const Box4& B) {
+bool CCSX::OutOfBound(const Box4& a, const Box4& B) {
   return a.left > B.right    ||
          a.top < B.bottom  ||
          a.right < B.left      ||
@@ -132,12 +132,13 @@ const Box4 CCSX::BBox4(Sprite* s) {
 //////////////////////////////////////////////////////////////////////////
 //
 void CCSX::RunScene(Scene* ns, float delay) {
-  auto d= Director::getInstance();
-  if (trans) {
-    d->replaceScene(TransitionCrossFade::create(delay, ns));
-  } else {
-    d->replaceScene(ns);
-  }
+  Director::getInstance()->replaceScene(TransitionCrossFade::create(delay, ns));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void CCSX::RunScene(Scene* ns) {
+  Director::getInstance()->replaceScene(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -578,35 +579,35 @@ void CCSX::ResolveElastic(ComObj* obj1, ComObj* obj2) {
 
   // coming from right
   if (bx1.left < bx2.right && bx2.right < bx1.right) {
-    obj2->vel.x = - abs(obj2->vel.x);
-    obj1->vel.x = abs(obj1->vel.x);
+    obj2->vel.x = - fabs(obj2->vel.x);
+    obj1->vel.x = fabs(obj1->vel.x);
     x= GetRight(obj2->sprite) + hw1;
   }
   else
   // coming from left
   if (bx1.right > bx2.left && bx1.left < bx2.left) {
-    obj1->vel.x = - abs(obj1->vel.x);
-    obj2->vel.x = abs(obj2->vel.x);
+    obj1->vel.x = - fabs( obj1->vel.x);
+    obj2->vel.x = fabs(obj2->vel.x);
     x= GetLeft(obj2->sprite) - hw1;
   }
   else
   // coming from top
   if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
-    obj2->vel.y = - abs(obj2->vel.y);
-    obj1->vel.y = abs(obj1->vel.y);
+    obj2->vel.y = - fabs(obj2->vel.y);
+    obj1->vel.y = fabs(obj1->vel.y);
     y= GetTop(obj2->sprite) + hh1;
   }
   else
   // coming from bottom
   if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
-    obj1->vel.y = - abs(obj1->vel.y);
-    obj2->vel.y = abs(obj2->vel.y);
+    obj1->vel.y = - fabs(obj1->vel.y);
+    obj2->vel.y = fabs(obj2->vel.y);
     y= GetBottom(obj2->sprite) - hh1;
   }
   else {
     return;
   }
-  obj1->updatePosition(x,y);
+  obj1->UpdatePosition(x,y);
 }
 
 

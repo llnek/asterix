@@ -9,18 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "cocos2d.h"
+#include "support/XConfig.h"
+#include "YesNo.h"
 #include "XLayer.h"
-NS_USING(cocos2d)
 NS_USING(std)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-SpriteBatchNode* XLayer::RegoAtlas(const string& name, int z, int tag) {
-  auto cfg = Config::GetInstance();
-  auto img= cfg->GetImage(name);
+SpriteBatchNode* XLayer::RegoAtlas(const string& name,
+    int z, int tag) {
+
+  auto img = XConfig::GetInstance()->GetImage(name);
   auto a= SpriteBatchNode::createWithTexture(
       TextureCache::getInstance()->addImage(img));
   if (tag == INT32_MIN) {
@@ -30,7 +31,7 @@ SpriteBatchNode* XLayer::RegoAtlas(const string& name, int z, int tag) {
     z = lastZix;
   }
   addChild(a, z, tag);
-  atlases.insert(pair<string,Node*>(name,a));
+  atlases.insert(pair<string,SpriteBatchNode*>(name,a));
   a->retain(); // for the map
   return a;
 }
@@ -39,16 +40,19 @@ SpriteBatchNode* XLayer::RegoAtlas(const string& name, int z, int tag) {
 //
 XLayer* XLayer::Realize() { return this; }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void XLayer::PKInput() {}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::AudioCallback(Ref* sender) {
   auto t = SCAST(MenuItemToggle*,sender);
+  auto cfg = XConfig::GetInstance();
   if (t->getSelectedIndex() == 0) {
-    //sh.toggleSfx(true);
+    cfg->ToggleAudio(true);
   } else {
-    //sh.toggleSfx(false);
+    cfg->ToggleAudio(false);
   }
 }
 
@@ -70,38 +74,43 @@ void XLayer::CreateAudioIcons(MenuItem*& off, MenuItem*& on) {
 void XLayer::AddAudioIcons(MenuItem* off, MenuItem* on,
     const Vec2& anchor, const Vec2& pos) {
 
+  auto cfg = XConfig::GetInstance();
   Vector<MenuItem*> items= {on,off};
-  auto audio = MenuItemToggle::createWithCallback(
+  MenuItemToggle* audio = MenuItemToggle::createWithCallback(
       CC_CALLBACK_1(XLayer::AudioCallback, this), items);
   audio->setAnchorPoint(anchor);
-  //xcfg.sound.open ? 0 : 1
-  audio->setSelectedIndex(1);
+  audio->setSelectedIndex( cfg->HasAudio() ? 0 : 1);
   //
   auto menu= Menu::create(audio);
   menu->setPosition(pos);
   AddItem(menu);
 }
 
-//void XLayer::OnQuit() {
-//    let ss= sh.protos[xcfg.game.start],
-//    yn= sh.protos[sh.ptypes.yn],
-//    dir = cc.director;
+//////////////////////////////////////////////////////////////////////////////
 //
-//    dir.pushScene( yn.reify({
-//      onback() {
-//        dir.popScene();
-//      },
-//      yes() {
-//        //sh.sfxPlay('game_quit');
-//        dir.popToRootScene();
-//        ccsx.runScene(ss.reify());
-//      }
-//    }));
-//}
+void XLayer::OnQuitAction(Ref* rr) {
+  auto yes = CallFunc::create([]() {});
+  auto no = CallFunc::create([](){});
+  Scene* s= YesNo::CreateWithActions(yes, no);
+  Director::getInstance()->pushScene(s);
+  /*
+    dir.pushScene( yn.reify({
+      onback() {
+        dir.popScene();
+      },
+      yes() {
+        //sh.sfxPlay('game_quit');
+        dir.popToRootScene();
+        ccsx.runScene(ss.reify());
+      }
+    */
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::CenterAtlasImage(const string& atlas, const string& frame) {
+void XLayer::CenterAtlasImage(const string& atlas,
+    const string& frame) {
+
   AddAtlasFrame(atlas, CCSX::Center(), frame);
 }
 
@@ -111,147 +120,93 @@ void XLayer::CenterImage(const string& frame) {
   AddFrame(frame, CCSX::Center());
 }
 
-  /**
-   * Add an image chosen from this atlas.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method addAtlasFrame
-   * @param {String} frame
-   * @param {cc.Point} pos
-   * @param {String} atlas
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Add an image chosen from this atlas
 //
 void XLayer::AddAtlasFrame(const string& atlas,
                            const Vec2& pos,
                            const string& frame) {
-  auto tt= Sprite::(frame);
+  auto tt= Sprite::create(frame);
   tt->setPosition(pos);
   AddAtlasItem(atlas, tt);
 }
 
-  /**
-   * Add an image.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method addFrame
-   * @param {String} frame
-   * @param {cc.Point} pos
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Add an image
 //
 void XLayer::AddFrame(const string& frame, const Vec2& pos) {
-  auto tt= Sprite::(frame);
+  auto tt= Sprite::create(frame);
   tt->setPosition(pos);
-  AddItem(frame);
+  AddItem(tt);
 }
 
-  /**
-   * Get the atlas.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method getAtlas
-   * @param {String} name
-   * @return {cc.SpriteBatchNode}
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Get the atlas
 //
 SpriteBatchNode* XLayer::GetAtlas(const string& name) {
   auto it= atlases.find(name);
   if (it != atlases.end()) {
-    return SCAST(SpriteBatchNode*, it->second);
+    return it->second;
   } else {
     return nullptr;
   }
 }
 
-  /**
-   * Remove all children from this atlas.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method removeAtlasAll
-   * @param {String} atlas
-   * @param {Boolean} c
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Remove all children from this atlas
 //
-void XLayer::RemoveAtlasAll(const string& atlas, bool c) {
+void XLayer::RemoveAtlasAll(const string& atlas) {
   auto a=GetAtlas(atlas);
-  if (NNP(a)) { a->removeAllChildren(c); }
+  if (NNP(a)) { a->removeAllChildren(); }
 }
 
-  /**
-   * Remove child from this atlas.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method removeAtlasItem
-   * @param {String} atlas
-   * @param {String} n - child
-   * @param {Boolean} c
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Remove child from this atlas
 //
-void XLayer::RemoveAtlasItem(Node* n, bool c) {
+void XLayer::RemoveAtlasItem(const string& atlas, Node* n) {
   if (NNP(n)) {
-    n->removeFromParent(c);
+    n->removeFromParent();
   }
 }
 
-  /**
-   * Remove all children.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method removeAll
-   * @param {Boolean} c
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Remove all children
 //
 void XLayer::RemoveAll(bool c) {
-  RemoveAllChildren(c);
+  this->removeAllChildren();
 }
 
-  /**
-   * Remove a child.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method removeItem
-   * @param {Object} n
-   * @param {Boolean} c
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Remove a child
 //
-void XLayer::RemoveItem(Node* n, bool c) {
+void XLayer::RemoveItem(Node* n) {
   if (NNP(n)) {
-    n->removeFromParent(c);
+    n->removeFromParent();
   }
 }
 
-  /**
-   * Add a child to this atlas.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method addAtlasItem
-   * @param {String} atlas
-   * @param {Object} n
-   * @param {Number} zx
-   * @param {Number} tag
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Add a child to this atlas
 //
-void XLayer::AddAtlasItem(const string& atlas, Node* n, int zx, int tag) {
+void XLayer::AddAtlasItem(const string& atlas,
+    Node* n, int zx, int tag) {
+
   auto ptag = tag == INT32_MIN ? ++lastTag : tag;
   auto pzx = zx == INT32_MIN ? lastZix : zx;
   auto p= GetAtlas(atlas);
+  auto ss = DCAST(Sprite*,n);
 
   if (DCAST(SpriteBatchNode*,p) != nullptr &&
-      DCAST(Sprite*,n) != nullptr) {
-    n->setBatchNode(p);
+      NNP(ss)) {
+    ss->setBatchNode(p);
   }
 
   if (NNP(p)) { p->addChild(n, pzx, ptag);  }
 }
 
-  /**
-   * Add a child.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method addChild
-   * @param {Object} n - child
-   * @param {Number} zx
-   * @param {Number} tag
-   */
+
 //////////////////////////////////////////////////////////////////////////////
+// Add a child
 //
 void XLayer::AddItem(Node* n, int zx, int tag) {
   auto ptag = tag == INT32_MIN ? ++lastTag : tag;
@@ -259,37 +214,19 @@ void XLayer::AddItem(Node* n, int zx, int tag) {
   addChild(n, pzx, ptag);
 }
 
-
-  /**
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method incIndexZ
-   * @param {cc.Scene} par
-   */
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::IncIndexZ() {
-  ++lastZix;
+int XLayer::IncIndexZ() {
+  return ++lastZix;
 }
 
-
-  /**
-   * Remember the parent scene object.
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method setParentScene
-   * @param {cc.Scene} par
-   */
 //////////////////////////////////////////////////////////////////////////////
+// Remember the parent scene object
 //
-Scene* XLayer::GeScene() {
+Scene* XLayer::GetScene() {
   return SCAST(Scene*,getParent());
 }
 
-
-  /**
-   * @memberof module:zotohlab/asx/scenes~XLayer
-   * @method ctor
-   * @param {Object} options
-   */
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::XLayer() {
@@ -308,8 +245,10 @@ XLayer::~XLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MenuItem* XLayer::CreateMenuBtn(const string& n, const string& s,
+MenuItem* XLayer::CreateMenuBtn(const string& n,
+    const string& s,
     const string& d) {
+
   return MenuItemSprite::create(Sprite::create(n),
                                 Sprite::create(s),
                                 Sprite::create(d));

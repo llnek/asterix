@@ -12,14 +12,19 @@
 #if !defined(__ZLOADER_H__)
 #define __ZLOADER_H__
 
-#include "cocos2d.h"
-#include "fusilli.h"
+#include "platform/CCCommon.h"
+#include "core/fusilli.h"
 NS_USING(cocos2d)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL ZLoader : public Scene {
+private:
+
+  DISALLOW_COPYASSIGN(ZLoader)
+  void startLoad(float delta);
+
 
 public:
 
@@ -28,11 +33,6 @@ public:
   virtual void onEnter() override;
   virtual ~ZLoader();
   ZLoader();
-
-private:
-
-  DISALLOW_COPYASSIGN(ZLoader)
-  void startLoad(float delta);
 
 };
 

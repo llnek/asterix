@@ -12,15 +12,22 @@
 #if !defined(__APP_H__)
 #define __APP_H__
 
-#include "fusilli.h"
-#include "cocos2d.h"
+#include "platform/CCCommon.h"
+#include "core/fusilli.h"
 NS_USING(cocos2d)
-NS_USING(fusilli)
+NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL App : public Application {
+protected:
+
+  App();
+
+private:
+
+  DISALLOW_COPYASSIGN(App)
 
 public:
 
@@ -49,19 +56,11 @@ public:
 
   virtual ~App();
 
-protected:
-
-  App();
-
-private:
-
-  DISALLOW_COPYASSIGN(App)
-
 };
 
 
 
 
-
+NS_END(fusilli)
 #endif
 

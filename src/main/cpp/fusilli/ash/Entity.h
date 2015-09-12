@@ -23,7 +23,18 @@ class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Entity {
+class FS_DLL Entity {
+private:
+
+  map<string,Component*> components;
+  Engine* engine;
+  string group;
+  bool dead;
+  DISALLOW_COPYASSIGN(Entity)
+
+  Entity(const string& group, Engine*);
+  Entity();
+
 public:
 
   Entity* previous;
@@ -37,20 +48,13 @@ public:
   Component* Get(const COMType& );
   bool Has(const COMType&);
 
+  const string GroupId() { return group; }
+
   void MarkDelete();
   bool IsOk() { return !dead; };
 
   const vector<Component*> GetAll();
 
-private:
-
-  map<string,Component*> components;
-  string group;
-  Engine* engine;
-  bool dead;
-  DISALLOW_COPYASSIGN(Entity)
-  Entity(const string& group, Engine*);
-  Entity();
 };
 
 

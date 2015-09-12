@@ -12,10 +12,10 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
-#include <stdint.h>
+#include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include "2d/CCLayer.h"
-NS_USING(cocos2d)
+#include <stdint.h>
 NS_USING(std)
 NS_BEGIN(fusilli)
 
@@ -23,16 +23,36 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLayer : public Layer {
+protected:
+
+  void CreateAudioIcons(MenuItem*& off, MenuItem*& on);
+  void AudioCallback(Ref* sender);
+  void AddAudioIcons(MenuItem* off, MenuItem* on,
+      const Vec2& anchor, const Vec2& pos);
+  void OnQuitAction(Ref*);
+
+private:
+
+  map<string,SpriteBatchNode*> atlases;
+  int lastTag;
+  int lastZix;
+
+  DISALLOW_COPYASSIGN(XLayer)
 
 public:
 
-  MenuItem* CreateMenuBtn(const string& n,
+  virtual const string Moniker() = 0;
+
+  MenuItem*
+    CreateMenuBtn(
+      const string& n,
       const string& s, const string& d);
 
-  SpriteBatchNode* RegoAtlas(const string& name,
-      int z= INT32_MIN, int tag = INT32_MIN);
-
-  virtual const string& Moniker() = 0;
+  SpriteBatchNode*
+    RegoAtlas(
+      const string& name,
+      int z= INT32_MIN,
+      int tag = INT32_MIN);
 
   virtual XLayer* Realize();
 
@@ -40,24 +60,28 @@ public:
 
   virtual void AddAudioIcon(Dictionary* options);
 
-  virtual void CenterAtlasImage(const string& atlas, const string& frame);
+  virtual void CenterAtlasImage
+    (const string& atlas, const string& frame);
 
   virtual void CenterImage(const string& frame);
 
-  virtual void AddAtlasFrame(const string& atlas,
+  virtual void AddAtlasFrame
+    (const string& atlas,
       const Vec2& pos, const string& frame);
 
-  virtual void AddFrame(const string& frame, const Vec2& pos);
+  virtual void AddFrame
+    (const string& frame, const Vec2& pos);
 
-  virtual SpriteBatchNode* GetAtlas(const string& name);
+  virtual SpriteBatchNode*
+    GetAtlas(const string& name);
 
-  virtual void RemoveAtlasAll(const string& atlas, bool c=true) ;
+  virtual void RemoveAtlasAll(const string& atlas) ;
 
-  virtual void RemoveAtlasItem(const string& atlas, Node* n, bool c=true);
+  virtual void RemoveAtlasItem(const string& atlas, Node* n);
 
   virtual void RemoveAll(bool c= true);
 
-  virtual void RemoveItem(Node* n, bool c=true);
+  virtual void RemoveItem(Node* n);
 
   virtual void AddAtlasItem(const string& atlas, Node* n, int zx = INT32_MIN, int tag = INT32_MIN);
 
@@ -72,15 +96,6 @@ public:
   virtual ~XLayer();
   XLayer();
 
-  CREATE_FUNC(XLayer)
-
-private:
-
-  map<string,x> atlases;
-  int lastTag;
-  int lastZix;
-
-  DISALLOW_COPYASSIGN(XLayer)
 };
 
 

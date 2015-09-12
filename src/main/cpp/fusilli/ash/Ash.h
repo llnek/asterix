@@ -12,16 +12,8 @@
 #if !defined(__ASH_H__)
 #define __ASH_H__
 
+#include "core/fusilli.h"
 #include <string>
-
-#define NS_USING(nsp)  using namespace nsp;
-#define NS_BEGIN(nsp) namespace nsp {
-#define NS_END(nsp) }
-#define CC_DLL
-
-#define DISALLOW_COPYASSIGN(T) \
-  T(const T&) = delete; \
-  T&operator =(const T&) = delete;
 
 
 NS_USING(std)

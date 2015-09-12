@@ -12,30 +12,33 @@
 #if !defined(__NODEREGISTRY_H__)
 #define __NODEREGISTRY_H__
 
+#include "NodeFactory.h"
 #include <vector>
 #include <map>
-#include "NodeFactory.h"
 NS_USING(std)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NodeRegistry {
+class FS_DLL NodeRegistry {
+private:
+
+  map<NodeType,NodeFactory*> regos;
+
+  virtual ~NodeRegistry();
+  NodeRegistry();
+
+  DISALLOW_COPYASSIGN(NodeRegistry)
+
 public:
 
   static NodeRegistry* GetInstance();
 
-  void Register(const NodeType&, NodeFactory*);
   void Deregister(const NodeType&);
+  void Register(NodeFactory*);
+
   Node* CreateNode(const NodeType&);
 
-private:
-  map<NodeType,NodeFactory*> regos;
-
-  ~NodeRegistry();
-  NodeRegistry();
-
-  DISALLOW_COPYASSIGN(NodeRegistry)
 };
 
 

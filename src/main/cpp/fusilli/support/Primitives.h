@@ -18,6 +18,7 @@
 #include "base/CCDataVisitor.h"
 #include "platform/CCCommon.h"
 NS_USING(cocos2d)
+NS_USING(std)
 NS_BEGIN(fusilli)
 
 

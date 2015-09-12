@@ -20,11 +20,22 @@ class Node;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NodeFactory {
+class FS_DLL NodeFactory {
+protected:
+
+  NodeFactory() {}
+
+private:
+
+  DISALLOW_COPYASSIGN(NodeFactory)
+
 public:
+
+  static const NodeType TypeId();
 
   virtual Node* CreateNode() = 0;
   virtual ~NodeFactory() {}
+
 };
 
 

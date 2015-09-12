@@ -9,29 +9,40 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __XLIVE_H__
-#define  __XLIVE_H__
+#if !defined(__YESNO_H__)
+#define __YESNO_H__
 
-#include "cocos2d.h"
-#include "asterix.h"
-NS_AX_BEGIN
+#include "platform/CCCommon.h"
+NS_USING(cocos2d)
+NS_BEGIN(fusilli)
 
-class ZL_DLLEXPORT XLive : public cocos2d::Sprite {
-
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL YesNo : public XScene {
+friend class YesNoLayer;
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(XLive)
+
+  DISALLOW_COPYASSIGN(YesNo)
+  YesNo();
+
+  void SetActions(CallFunc*, CallFunc*);
+  void OnYes(Ref*);
+  void OnNo(Ref*);
+
+  CallFunc* yes;
+  CallFunc* no;
 
 public:
 
-  void initEx(const std::string& frame);
+  static YesNo* CreateWithActions(CallFunc* yes,
+      CallFunc* no);
+  static YesNo* CreateWithAction(CallFunc* no);
 
-  virtual ~XLive();
-  XLive();
-
-
-  CREATE_FUNC(XLive)
+  virtual XScene* Realize() override;
+  virtual ~YesNo();
 };
 
-NS_AX_END
+
+NS_END(fusilli)
 #endif
 

@@ -17,26 +17,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL System {
-public:
-  System* previous;
-  System* next;
-
-  System(int priority);
-  virtual ~System();
-
-  void RemoveFromEngine(Engine*);
-  void AddToEngine(Engine*);
-  void Update(float time);
-  bool Is(const SystemType& );
-
-  virtual const SystemType TypeId() = 0;
-  int Priority() { return priority; }
-
-  bool IsActive() { return active; }
-  void Restart();
-  void Suspend();
-
+class FS_DLL System {
 private:
 
   DISALLOW_COPYASSIGN(System)
@@ -44,6 +25,27 @@ private:
 
   int priority;
   bool active;
+
+public:
+
+  System* previous;
+  System* next;
+
+  System(int priority);
+  virtual ~System();
+
+  virtual void RemoveFromEngine(Engine*);
+  virtual void AddToEngine(Engine*);
+  virtual bool Update(float time);
+  bool Is(const SystemType& );
+
+  virtual const SystemType TypeId() = 0;
+
+  int Priority() { return priority; }
+  bool IsActive() { return active; }
+
+  void Restart();
+  void Suspend();
 };
 
 

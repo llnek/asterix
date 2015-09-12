@@ -12,9 +12,9 @@
 #if !defined(__ENGINE_H__)
 #define __ENGINE_H__
 
-#include "Ash.h"
 #include <vector>
 #include <map>
+#include "Ash.h"
 NS_BEGIN(ash)
 
 class EntityList;
@@ -25,8 +25,7 @@ class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Engine {
-
+class FS_DLL Engine {
 private:
 
   void RemoveEntity(EntityList* el, Entity* e);
@@ -56,7 +55,7 @@ public:
   Entity* CreateEntity(const string& group);
   void NotifyModify(Entity*);
   void RemoveEntity(Entity* );
-  void RemoveEntities() ;
+  void RemoveEntities(const string& group) ;
 
   NodeList*  GetNodeList(const string& group, const NodeType& );
   void ReleaseNodeList(NodeList*& );

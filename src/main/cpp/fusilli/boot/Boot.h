@@ -12,9 +12,9 @@
 #if !defined(__BOOT_H__)
 #define __BOOT_H__
 
+#include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include "i18n/L10N.h"
-#include "cocos2d.h"
 NS_USING(cocos2d)
 NS_BEGIN(fusilli)
 
@@ -22,17 +22,18 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Boot {
-public:
-
-  virtual ~Boot();
-  Boot();
-
 private:
 
   DISALLOW_COPYASSIGN(Boot)
   void PreLaunch();
   void InitAudio();
   L10NCache l10n;
+
+public:
+
+  virtual ~Boot();
+  Boot();
+
 };
 
 

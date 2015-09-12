@@ -54,6 +54,7 @@ public:
   static const Box4 BBox4(Sprite* sprite);
 
   static void RunScene(Scene* ns, float delay);
+  static void RunScene(Scene* ns);
   static bool IsTransitioning();
 
   static const Size CSize(const string& frame);

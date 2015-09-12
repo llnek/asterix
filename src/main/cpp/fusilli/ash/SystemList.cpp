@@ -21,7 +21,7 @@ void SystemList::Add(System* system ) {
     system->next = system->previous = nullptr;
   } else {
     System* node;
-    for (node = tail; node != nullptr; node = node->previous ) {
+    for (node = tail; NNP(node); node = node->previous ) {
       if (node->Priority() <= system->Priority() ) {
         break;
       }
@@ -45,7 +45,8 @@ void SystemList::Add(System* system ) {
   }
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 void SystemList::Remove(System* system ) {
   if (head == system ) {
     head = head->next;
@@ -56,13 +57,15 @@ void SystemList::Remove(System* system ) {
   if ( system->previous ) {
     system->previous->next = system->next;
   }
-  if ( system->next != nullptr) {
+  if (NNP(system->next)) {
     system->next->previous = system->previous;
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void SystemList::RemoveAll() {
-  while (head != nullptr) {
+  while (NNP(head)) {
     auto system = head;
     head = head->next;
     system->previous = nullptr;
@@ -71,29 +74,36 @@ void SystemList::RemoveAll() {
   tail = nullptr;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 System* SystemList::Get(const SystemType& type ) {
-  for (auto system = head; system != nullptr; system = system->next ) {
-    if (system->Is( type ) ) {
-      return system;
+  for (auto s= head; NNP(s); s= s->next ) {
+    if (s->Is( type ) ) {
+      return s;
     }
   }
   return nullptr;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 SystemList::~SystemList() {
-  while (head != nullptr) {
+  while (NNP(head)) {
     auto s= head;
     head = head->next;
     delete s;
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 SystemList::SystemList() {
   head= nullptr;
   tail= nullptr;
 }
+
+
+
 
 NS_END(ash)
 

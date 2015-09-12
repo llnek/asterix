@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Entity.h"
+#include "System.h"
 NS_BEGIN(ash)
 
 
@@ -53,7 +53,8 @@ void System::RemoveFromEngine(Engine* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void System::Update(float time) {
+bool System::Update(float time) {
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////

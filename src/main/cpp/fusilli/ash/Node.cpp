@@ -30,9 +30,11 @@ Node::Node() {
   next= nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 bool Node::BindEntity(Entity* e) {
-  if (entity != nullptr ||
-      e == nullptr ||
+  if (NNP(entity) ||
+      ENP(e) ||
       !e->IsOk() ) {
     return false;
   }
@@ -41,7 +43,7 @@ bool Node::BindEntity(Entity* e) {
     auto f= it->second;
     auto t= it->first;
     auto c= e->Get(t);
-    if (c != nullptr) {
+    if (NNP(c)) {
       values.insert(pair<string,Component*>(f,c));
     } else {
       values.clear();

@@ -20,7 +20,7 @@ static NodeRegistry* _singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeRegistry* NodeRegistry::GetInstance() {
-  if (_singleton == nullptr) {
+  if (ENP(_singleton)) {
     _singleton= new NodeRegistry();
   }
   return _singleton;
@@ -38,9 +38,9 @@ NodeRegistry::NodeRegistry() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeRegistry::Register(const NodeType& t, NodeFactory* f) {
-  Deregister(t);
-  regos.insert(pair<NodeType,NodeFactory*>(t,f));
+void NodeRegistry::Register(NodeFactory* f) {
+  Deregister(f->TypeId());
+  regos.insert(pair<NodeType,NodeFactory*>(f->TypeId(),f));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -14,6 +14,7 @@
 NS_USING(std)
 NS_BEGIN(ash)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity::~Entity() {
@@ -21,7 +22,8 @@ Entity::~Entity() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(const string& group, Engine* e) : Entity() {
+Entity::Entity(const string& group, Engine* e)
+  : Entity() {
   engine=e;
   this->group=group;
 }
@@ -72,7 +74,7 @@ Component* Entity::Get(const COMType& z) {
   auto it=  components.find(z);
   Component* c= nullptr;
   if (it != components.end()) {
-     c= it->second;
+    c= it->second;
   }
   return c;
 }

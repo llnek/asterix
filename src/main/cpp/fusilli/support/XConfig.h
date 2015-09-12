@@ -9,26 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__XCONFIG_H__)
+#define __XCONFIG_H__
+
 #include "platform/CCCommon.h"
 #include "support/XPool.h"
+#include "Primitives.h"
 #include <map>
+NS_USING(cocos2d)
 NS_USING(std)
 NS_BEGIN(fusilli)
 
 
-//////////////////////////////////////////////////////////////////////////////
-//
-template<typename T>
-T* CstVal(const string& key) {
-  auto r= XConfig::GetInstance()->GetCst(key);
-  if (NNP(r)) {
-    return static_cast<T*>(r);
-  } else {
-    return nullptr;
-  }
-}
 
-//////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XConfig {
 protected:
@@ -80,13 +73,29 @@ public:
   Ref* GetCst(const string& cst);
   XPool* GetPool(const string& n);
 
+  void ToggleAudio(bool s);
+  bool HasAudio();
+
   Dictionary* GetLevelCfg(const string& n);
   Dictionary* GetLevel(const string& n);
+
+  Dictionary* AddLevel(const string& n);
 
   virtual ~XConfig();
 
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T* CstVal(const string& key) {
+  auto r= XConfig::GetInstance()->GetCst(key);
+  if (NNP(r)) {
+    return static_cast<T*>(r);
+  } else {
+    return nullptr;
+  }
+}
 
 
 

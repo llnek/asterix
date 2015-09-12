@@ -12,12 +12,16 @@
 #if !defined(__SYSTEMLIST_H__)
 #define __SYSTEMLIST_H__
 
-#include "Ash.h"
+#include "System.h"
+#include <vector>
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SystemList {
+class FS_DLL SystemList {
+private:
+  DISALLOW_COPYASSIGN(SystemList)
+
 public:
   System* head;
   System* tail;
@@ -25,10 +29,8 @@ public:
   virtual ~SystemList();
   SystemList();
 
-  void Add(System* );
-
   void Remove(System* );
-
+  void Add(System* );
   void RemoveAll();
 
   System* Get(const SystemType& type );

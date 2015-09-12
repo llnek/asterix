@@ -21,7 +21,16 @@ class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Node {
+class FS_DLL Node {
+private:
+
+  DISALLOW_COPYASSIGN(Node)
+  Node();
+
+  map<string,Component*> values;
+  map<COMType,string> types;
+  Entity* entity;
+
 public:
 
   Node* previous;
@@ -34,13 +43,6 @@ public:
   Entity* GetEntity() { return entity; }
   bool BindEntity(Entity* e);
   bool BelongsTo(Entity*);
-private:
-
-  DISALLOW_COPYASSIGNDFT(Node)
-
-  map<string,Component*> values;
-  map<COMType,string> types;
-  Entity* entity;
 
 };
 

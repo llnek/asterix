@@ -9,7 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "audio/include/SimpleAudioEngine.h"
+#include "support/XConfig.h"
+#include "boot/Boot.h"
 #include "App.h"
+NS_USING(CocosDenshion)
 NS_USING(cocos2d)
 NS_USING(fusilli)
 
@@ -71,8 +75,7 @@ bool App::applicationDidFinishLaunching() {
 void App::applicationDidEnterBackground() {
 
   Director::getInstance()->stopAnimation();
-  // if you use SimpleAudioEngine, it must be pause
-  // SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+  SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -80,8 +83,7 @@ void App::applicationDidEnterBackground() {
 void App::applicationWillEnterForeground() {
 
   Director::getInstance()->startAnimation();
-  // if you use SimpleAudioEngine, it must resume here
-  // SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+  SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 
 

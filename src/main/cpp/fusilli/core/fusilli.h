@@ -21,19 +21,19 @@
 //
 #if defined(WIN32) || defined(_WIN32)
 
-#if defined(FU_STATIC)
-#define FU_DLL
+#if defined(FS_STATIC)
+#define FS_DLL
 #else
 #if defined(_USRDLL)
-#define FU_DLL     __declspec(dllexport)
+#define FS_DLL     __declspec(dllexport)
 #else         /* use a DLL library */
-#define FU_DLL    __declspec(dllimport)
+#define FS_DLL    __declspec(dllimport)
 #endif
 #endif
 
 
 #else
-#define FU_DLL
+#define FS_DLL
 #endif
 
 
@@ -87,7 +87,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 #define DISALLOW_COPYASSIGNDFT(T) \
-  T() = delete;
+  T() = delete; \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;
 

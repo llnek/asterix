@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "platform/CCStdC.h"
 #include "Boot.h"
 NS_BEGIN(fusilli)
 

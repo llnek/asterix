@@ -17,7 +17,7 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 void EntityList::Add(Entity* e ) {
-  if (head == nullptr ) {
+  if (ENP(head)) {
     head = tail = e;
   } else {
     tail->next = e;
@@ -46,7 +46,7 @@ void EntityList::Remove(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void EntityList::RemoveAll() {
-  while (head != nullptr) {
+  while (NNP(head)) {
     auto e= head;
     head = head->next;
     e->previous = nullptr;
@@ -59,7 +59,7 @@ void EntityList::RemoveAll() {
 //
 const vector<Entity*> EntityList::List() {
   vector<Entity*> v;
-  for (auto p= head; p != nullptr; p=p->next) {
+  for (auto p= head; NNP(p); p=p->next) {
     v.push_back(p);
   }
   return v;
@@ -68,7 +68,7 @@ const vector<Entity*> EntityList::List() {
 //////////////////////////////////////////////////////////////////////////////
 //
 EntityList::~EntityList() {
-  while (head != nullptr) {
+  while (NNP(head)) {
     auto e= head;
     head = head->next;
     delete e;

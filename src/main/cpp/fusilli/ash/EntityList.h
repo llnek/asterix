@@ -18,7 +18,14 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EntityList {
+class FS_DLL EntityList {
+private:
+  DISALLOW_COPYASSIGN(EntityList)
+  friend class Engine;
+
+  virtual ~EntityList();
+  EntityList();
+
 public:
   Entity* head;
   Entity* tail;
@@ -29,12 +36,6 @@ public:
   void Add(Entity* );
   void RemoveAll() ;
 
-private:
-  virtual ~EntityList();
-  EntityList();
-
-  DISALLOW_COPYASSIGN(EntityList)
-  friend class Engine;
 };
 
 

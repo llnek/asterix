@@ -19,7 +19,10 @@ class Node;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NodeList {
+class FS_DLL NodeList {
+private:
+  NodeType nType;
+
 public:
   Node* head;
   Node* tail;
@@ -35,8 +38,6 @@ public:
   void RemoveAll();
   bool IsEmpty();
 
-private:
-  NodeType nType;
 };
 
 

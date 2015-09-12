@@ -9,20 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "deprecated/CCDictionary.h"
+#if !defined(__COMOBJ_H__)
+#define __COMOBJ_H__
+
+
+#include "platform/CCCommon.h"
 #include "2d/CCSprite.h"
 #include "ash/Component.h"
+NS_USING(cocos2d)
 NS_USING(ash)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ComObj : public Component {
+class CC_DLL ComObj : public ash::Component {
 private:
 
 public:
-  Sprite sprite;
+  Sprite* sprite;
   bool status;
+  Vec2 vel;
   Vec2 lastPos;
 
   void Hurt(float damage);
@@ -43,6 +49,8 @@ public:
 
   int Pid();
 
+  void UpdatePosition(float x, float y);
+
   /**
    * @private
    */
@@ -50,7 +58,7 @@ public:
   ComObj(Sprite*);
 
   virtual ~ComObj();
-}
+};
 
 NS_END(fusilli)
 #endif
