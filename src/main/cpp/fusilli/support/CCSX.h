@@ -62,13 +62,13 @@ public:
   static const Size HalfHW(Sprite* sprite);
   static const Rect BBox(Sprite* sprite);
 
-  static float GetScaledHeight(Sprite* sprite);
+  static float GetScaledHeight(Node* sprite);
 
-  static float GetHeight(Sprite* sprite);
+  static float GetHeight(Node* sprite);
 
-  static float GetScaledWidth(Sprite* sprite);
+  static float GetScaledWidth(Node* sprite);
 
-  static float GetWidth(Sprite* sprite);
+  static float GetWidth(Node* sprite);
 
   static float GetLeft(Sprite* );
 

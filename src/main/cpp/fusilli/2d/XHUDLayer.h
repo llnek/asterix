@@ -23,6 +23,8 @@ class CC_DLL XHUDLayer : public XLayer {
 
 public:
 
+  virtual XLayer* Realize() override;
+
   virtual const string Moniker() { return "HUD"; }
   virtual const string HudAtlas() = 0;
 
@@ -30,8 +32,6 @@ public:
   XHUDLayer();
 
   float GetScore() { return score; }
-
-  CREATE_FUNC(XHUDLayer)
 
 protected:
 

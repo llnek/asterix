@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XScene.h"
-NS_USING(cocos2d)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -36,7 +35,7 @@ XLayer* XScene::GetLayer(const string& id) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AddLayer(XLayer* y) {
+void XScene::AddLayer(XLayer* y) {
  layers.insert(pair<string,XLayer*>(y->Moniker(), y));
  addChild(y);
 }

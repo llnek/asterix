@@ -9,29 +9,32 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __XLIVE_H__
-#define  __XLIVE_H__
+#if !defined(__XLIVE_H__)
+#define __XLIVE_H__
 
-#include "cocos2d.h"
-#include "asterix.h"
-NS_AX_BEGIN
+#include "core/fusilli.h"
+#include "2d/CCSprite.h"
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
 
-class ZL_DLLEXPORT XLive : public cocos2d::Sprite {
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL XLive : public Sprite {
 
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(XLive)
-
+  DISALLOW_COPYASSIGN(XLive)
+  CREATE_FUNC(XLive)
 public:
-
-  void initEx(const std::string& frame);
 
   virtual ~XLive();
   XLive();
 
-
-  CREATE_FUNC(XLive)
+  static XLive* Create(const string& frame);
 };
 
-NS_AX_END
+
+
+NS_END(fusilli)
 #endif
 

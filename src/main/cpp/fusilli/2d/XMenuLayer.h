@@ -20,20 +20,20 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XMenuLayer : public XLayer {
-
-public:
-
-  virtual ~XMenuLayer();
-  XMenuLayer();
+protected:
 
   Menu* MkBackQuit(MenuItem* b, MenuItem* q, bool vert = false);
   void MkAudio();
-
-  CREATE_FUNC(XMenuLayer)
+  XMenuLayer();
 
 private:
 
   DISALLOW_COPYASSIGN(XMenuLayer)
+
+public:
+
+  virtual ~XMenuLayer();
+
 };
 
 

@@ -186,25 +186,25 @@ const Box4 CCSX::BBox4B4(ComObj* ent) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetScaledHeight(Sprite* s) {
+float CCSX::GetScaledHeight(Node* s) {
   return s->getContentSize().height * s->getScaleY();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetHeight(Sprite* s) {
+float CCSX::GetHeight(Node* s) {
   return s->getContentSize().height;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetScaledWidth(Sprite* s) {
+float CCSX::GetScaledWidth(Node* s) {
   return s->getContentSize().width * s->getScaleX();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetWidth(Sprite* s) {
+float CCSX::GetWidth(Node* s) {
   return s->getContentSize().width;
 }
 

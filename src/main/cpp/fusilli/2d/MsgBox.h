@@ -9,29 +9,48 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __XLIVE_H__
-#define  __XLIVE_H__
+#if !defined(__MSGBOX_H__)
+#define __MSGBOX_H__
 
-#include "cocos2d.h"
-#include "asterix.h"
-NS_AX_BEGIN
+#include "platform/CCCommon.h"
+#include "2d/XScene.h"
+#include "core/fusilli.h"
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
 
-class ZL_DLLEXPORT XLive : public cocos2d::Sprite {
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MsgBox : public XScene {
+friend class MsgBoxLayer;
+protected:
+
+  const string& GetMsg() { return textMsg; }
+
+  void SetAction(CallFunc* cb);
+  void SetMsg(const string&);
+  void OnYes(Ref*);
+
+  string textMsg;
+  CallFunc* action;
 
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(XLive)
+  DISALLOW_COPYASSIGN(MsgBox)
+  MsgBox();
 
 public:
 
-  void initEx(const std::string& frame);
+  virtual XScene* Realize() override;
 
-  virtual ~XLive();
-  XLive();
+  static MsgBox* CreateWithAction(CallFunc* cb, const string& msg);
+  static MsgBox* CreateWithMsg(const string&);
+  virtual ~MsgBox();
 
-
-  CREATE_FUNC(XLive)
+  CREATE_FUNC(MsgBox)
 };
 
-NS_AX_END
+
+
+NS_END(fusilli)
 #endif
 

@@ -11,6 +11,7 @@
 
 #include "XLives.h"
 NS_USING(cocos2d)
+NS_USING(std)
 NS_BEGIN(fusilli)
 
 
@@ -19,7 +20,7 @@ NS_BEGIN(fusilli)
 void XLives::Reduce(int x) {
   while (x > 0) {
     if (icons.size() > 0) {
-      auto it= icons.front();
+      auto it= icons.begin();
       hud->RemoveIcon( *it );
       icons.erase(it);
     }
@@ -59,7 +60,8 @@ void XLives::DrawLives() {
   auto gap=2;
 
   for (int n = 0; n < curLives; ++n) {
-    auto v= new XLive(x,y);
+    auto v= XLive::Create(frameId);
+    v->setPosition(x,y);
     hud->AddIcon(v);
     icons.push_back(v);
     if (this->dir> 0) {
@@ -73,7 +75,8 @@ void XLives::DrawLives() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::Create() {
-  XLive dummy;
+  XLive* dummy = XLive::Create(frameId);
+  //autorelease, so is ok
   lifeSize = Size(CCSX::GetScaledWidth(dummy),
                   CCSX::GetScaledHeight(dummy));
   DrawLives();
@@ -81,10 +84,11 @@ void XLives::Create() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLives::XLives(XHUDLayer* hud, float x, float y, int dir) {
+XLives::XLives(XHUDLayer* hud, const string& frame, float x, float y, int dir)
+: XLives() {
   topLeft= Vec2(x,y);
+  frameId = frame;
   this->hud= hud;
-  curLives= -1;
   Reset();
   this->dir=dir;
 }
@@ -94,6 +98,14 @@ XLives::XLives(XHUDLayer* hud, float x, float y, int dir) {
 XLives::~XLives() {
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+XLives::XLives()
+: hud(nullptr),
+  curLives(-1),
+  totalLives(0),
+  dir(1) {
+}
 
 
 NS_END(fusilli)

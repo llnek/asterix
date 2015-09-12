@@ -14,7 +14,7 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Menu* XMenuLayer::MkBackQuit(bool vert, MenuItem* b, MenuItem* q) {
+Menu* XMenuLayer::MkBackQuit(MenuItem* b, MenuItem* q, bool vert) {
   auto sz= b->getContentSize();
   auto padding = 10;
   auto menu= Menu::create();

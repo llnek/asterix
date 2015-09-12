@@ -36,7 +36,7 @@ public:
 
   static YesNo* CreateWithActions(CallFunc* yes,
       CallFunc* no);
-  static YesNo* CreateWithAction(CallFunc* no);
+  static YesNo* Create();
 
   virtual XScene* Realize() override;
   virtual ~YesNo();

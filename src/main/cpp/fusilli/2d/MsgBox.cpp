@@ -9,58 +9,105 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XConfig.h"
+#include "support/CCSX.h"
+#include "2d/XLayer.h"
 #include "MsgBox.h"
-USING_NS_CC;
+NS_USING(cocos2d)
+NS_USING(std)
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_FI_BEGIN
+MsgBox* MsgBox::CreateWithAction(CallFunc* cb, const string& msg) {
+  auto m= MsgBox::create();
+  m->SetAction(cb);
+  m->SetMsg(msg);
+  m->Realize();
+  return m;
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+MsgBox* MsgBox::CreateWithMsg(const string& msg) {
+  auto cb= CallFunc::create([](){
+      Director::getInstance()->popScene();
+      });
+  return CreateWithAction(cb, msg);
+}
 
-MsgBox::Setup() {
-  auto qn= Label::createWithBMFont("font.OCR", "some-message");
+//////////////////////////////////////////////////////////////////////////
+//
+void MsgBox::SetAction(CallFunc* cb) {
+  action = cb;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void MsgBox::SetMsg(const string& msg) {
+  textMsg= msg;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void MsgBox::OnYes(Ref* rr) {
+ action->execute();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MsgBoxLayer : public XLayer {
+private:
+  DISALLOW_COPYASSIGN(MsgBoxLayer)
+  MsgBoxLayer();
+
+public:
+  virtual const string Moniker() { return "MsgBoxLayer"; }
+  virtual XLayer* Realize() override;
+  virtual ~MsgBoxLayer();
+  CREATE_FUNC(MsgBoxLayer)
+};
+
+//////////////////////////////////////////////////////////////////////////
+//
+XLayer* MsgBoxLayer::Realize() {
+  auto par = SCAST(MsgBox*, getParent());
+  auto cfg = XConfig::GetInstance();
+  auto fnt = cfg->GetFont("font.OCR");
+  auto qn= Label::createWithBMFont(fnt, par->GetMsg());
   auto cw= CCSX::Center();
   auto wz= CCSX::VisRect();
   auto wb = CCSX::VisBox();
 
   CenterImage("game.bg");
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(xcfg.game.scale * 0.25);
+  qn->setScale(cfg->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto b1= CreateMenuButton("#ok.png",
+  auto b1= CreateMenuBtn("#ok.png",
       "#ok.png",
-      "#ok.png",
-      CC_CALLBACK_1(MsgBox::OnYes, this));
+      "#ok.png");
+  b1->setTarget(par, CC_MENU_SELECTOR(MsgBox::OnYes));
   auto menu= Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+XScene* MsgBox::Realize() {
+   auto y = MsgBoxLayer::create();
+   y->Realize();
+   AddLayer(y);
+   return this;
 }
 
 
 
 
 
+NS_END(fusilli)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-NS_FI_END

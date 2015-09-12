@@ -75,9 +75,13 @@ YesNo* YesNo::CreateWithActions(CallFunc* y, CallFunc* n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::CreateWithAction(CallFunc* n) {
+YesNo* YesNo::Create() {
   CallFunc* y = CallFunc::create([](){
-    CCSX::RunScene(XConfig::GetInstance()->StartWith());
+      Director::getInstance()->popToRootScene();
+      CCSX::RunScene(XConfig::GetInstance()->StartWith());
+      });
+  CallFunc* n= CallFunc::create([]() {
+      Director::getInstance()->popScene();
       });
   return CreateWithActions(y,n);
 }

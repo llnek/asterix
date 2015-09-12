@@ -12,9 +12,10 @@
 #if !defined(__XLIVES_H__)
 #define __XLIVES_H__
 
+#include "platform/CCCommon.h"
 #include "2d/XHUDLayer.h"
-#include "cocos2d.h"
 #include <vector>
+NS_USING(cocos2d)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -24,17 +25,20 @@ class CC_DLL XLives {
 private:
 
   DISALLOW_COPYASSIGN(XLives)
+  XLives();
+  int totalLives;
   int curLives;
   int dir;
-  Vec2 lifeSize;
+  Size lifeSize;
   Vec2 topLeft;
   XHUDLayer* hud;
-  vector<Node*> icons;
+  string frameId;
+  vector<cocos2d::Node*> icons;
 
 public:
 
   virtual ~XLives();
-  XLives();
+  XLives(XHUDLayer*, const string& frame, float x, float y, int dir= 1);
 
   int GetLives() { return curLives; }
   void Reduce(int c);

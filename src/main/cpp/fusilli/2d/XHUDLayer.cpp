@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/CCSX.h"
 #include "XHUDLayer.h"
 #include "XConfig.h"
 #include "CCSX.h"
@@ -57,11 +58,12 @@ void XHUDLayer::AddIcon(Node* icon, int z, int idx) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::Realize() {
+XLayer* XHUDLayer::Realize() {
   InitAtlases();
   InitIcons();
   InitLabels();
   InitCtrlBtns();
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,9 +127,9 @@ void XHUDLayer::EnableReplay() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
-  auto hh = CCSX::GetScaledHeight(b) * 0.5,
-  auto hw = CCSX::GetScaledWidth(b) * 0.5,
-  auto cfg = Config::GetInstance();
+  auto hh = CCSX::GetScaledHeight(b) * 0.5;
+  auto hw = CCSX::GetScaledWidth(b) * 0.5;
+  auto cfg = XConfig::GetInstance();
   auto menu= Menu::create();
   auto wz= CCSX::VisBox();
   auto tile= SCAST(Integer*,cfg->GetCst("TILE"))->getValue();
@@ -135,7 +137,7 @@ void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
 
   menu->addChild(b);
 
-  if (where.y == Anchor::Bottom.y) {
+  if (where.y == CCSX::AnchorB().y) {
     y = wz.bottom + tile  + hh;
   } else {
     y = wz.top - tile - hh;
@@ -153,18 +155,18 @@ void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
    */
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddReplayIcon(MenuItem* b, const Vec2& where) {
+void XHUDLayer::AddReplayIcon(MenuItem* c, const Vec2& where) {
   auto hh = CCSX::GetScaledHeight(c) * 0.5;
   auto hw = CCSX::GetScaledWidth(c) * 0.5;
-  auto cfg = Config::GetInstance();
+  auto cfg = XConfig::GetInstance();
   auto menu= Menu::create();
   auto wz= CCSX::VisBox();
-  auto tile= SCAST(Integer*,cfg->GetCst("TILE"))->getValue();
+  auto tile= CstVal<Integer>("TILE")->getValue();
   float x, y;
 
-  menu->addChild(b);
+  menu->addChild(c);
 
-  if (where.y == Anchor::Bottom.y) {
+  if (where.y == CCSX::AnchorB().y) {
     y = wz.bottom + tile  + hh;
   } else {
     y = wz.top - tile  - hh;

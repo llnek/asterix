@@ -89,21 +89,8 @@ void XLayer::AddAudioIcons(MenuItem* off, MenuItem* on,
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::OnQuitAction(Ref* rr) {
-  auto yes = CallFunc::create([]() {});
-  auto no = CallFunc::create([](){});
-  Scene* s= YesNo::CreateWithActions(yes, no);
+  Scene* s= YesNo::Create()->Realize();
   Director::getInstance()->pushScene(s);
-  /*
-    dir.pushScene( yn.reify({
-      onback() {
-        dir.popScene();
-      },
-      yes() {
-        //sh.sfxPlay('game_quit');
-        dir.popToRootScene();
-        ccsx.runScene(ss.reify());
-      }
-    */
 }
 
 //////////////////////////////////////////////////////////////////////////////

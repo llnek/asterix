@@ -22,24 +22,24 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XScene : public Scene {
+protected:
+
+  map<string,XLayer*> layers;
+  XScene();
+
+  virtual void OnQuitAction();
+
+private:
+  DISALLOW_COPYASSIGN(XScene)
 
 public:
 
   virtual XScene* Realize();
   virtual ~XScene();
 
-  Layer* GetLayer(const string&);
+  XLayer* GetLayer(const string&);
   void AddLayer(XLayer*);
 
-protected:
-
-  map<string,XLayer*> layers;
-  XScene();
-
-  void OnQuitAction();
-
-private:
-  DISALLOW_COPYASSIGN(XScene)
 };
 
 
