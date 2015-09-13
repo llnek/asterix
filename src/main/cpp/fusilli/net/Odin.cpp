@@ -12,7 +12,9 @@
 #include "network/WebSocket.h"
 #include "base/ccUtils.h"
 #include "Odin.h"
-using s = namespace std;
+NS_ALIAS(ws, cocos2d::network::WebSocket)
+NS_ALIAS(n, cocos2d::network)
+
 NS_BEGIN(fusilli)
 
 
@@ -43,12 +45,13 @@ static Event mkJoinRequest (room,user,pwd) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event json_decode(const Event& e) {
+static Event json_decode(const ws::Data& e) {
+  assert(!e.isBinary);
   Event evt;
 
   try {
     evt= sjs.objectfy(e.data);
-  } catch (e) {
+  } catch (...) {
   }
 
   if (! sjs.hasKey(evt, 'type')) {
@@ -103,9 +106,6 @@ void WSockSS::CancelAll() {
 // Reset and clear everything
 //
 void WSockSS::Reset() {
-  this->onmessage= nullptr;
-  this->onerror= nullptr;
-  this->onclose= nullptr;
   handler= nullptr;
 }
 
@@ -132,41 +132,58 @@ void WSockSS::Disconnect() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+void WSockSS::onOpen(WebSocket* ws) {
+  // connection success
+  // send the play game request
+  state= Events::S_CONNECTED;
+  ws->send(GetPlayRequest());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void WSockSS::onMessage(WebSocket* ws, const Data& data) {
+  auto evt= json_decode(data);
+  switch (evt.type) {
+    case Events::MSG_NETWORK:
+    case Events::MSG_SESSION:
+      OnEvent(evt);
+    break;
+    default:
+      CCLOGWARN("unhandled server event: %d, code: %d", evt.type, evt.code);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void WSockSS::onClose(WebSocket* ws) {
+  CCLOG("websocket instance (%p) closed", ws);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void WSockSS::onError(WebSocket* ws, const ws::ErrorCode& error) {
+  CCLOG("websocket instance (%p) has error, code: %d", ws, error);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void WSockSS::OnEvent(const Event& evt) {
+  if (NNP(handler)) {
+    handler(evt);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
 void WSockSS::Connect(const string& url) {
-  auto ws= new WebSocket(url),
-
-  // connection success
-  // send the play game request
-  ws.onopen= () => {
-    me.state= evts.S_CONNECTED;
-    ws.send(me.getPlayRequest());
+  auto ws= new n::WebSocket(url),
+  if (!ws->init(*this, url)) {
+    mc_del_ptr(ws);
+  } else {
+    wss=ws;
   }
-
-  ws.onmessage= (e) => {
-    const evt= json_decode(e);
-    switch (evt.type) {
-      case evts.MSG_NETWORK:
-      case evts.MSG_SESSION:
-        me.onevent(evt);
-      break;
-      default:
-        sjs.loggr.warn("unhandled server event: " +
-                       evt.type +
-                       ", code = " +
-                       evt.code);
-    }
-  }
-
-  ws.onclose= (e) => {
-    sjs.loggr.debug("closing websocket.");
-  }
-
-  ws.onerror= (e) => {
-    sjs.loggr.debug("websocket error.\n" + e);
-  }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
