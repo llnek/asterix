@@ -12,9 +12,9 @@
 #if !defined(__JSON_H__)
 #define __JSON_H__
 
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "json/stringbuffer.h"
+#include "json/document.h"
+#include "json/writer.h"
 #include "core/fusilli.h"
 
 NS_USING(std)
@@ -28,7 +28,7 @@ namespace json {
   Document* Parse(const string& s) {
     auto doc= new Document();
     d->Parse(s.c_str());
-    return s;
+    return doc;
   }
 
   const string Stringify(Document* doc) {
