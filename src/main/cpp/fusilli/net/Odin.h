@@ -13,10 +13,11 @@
 #define __ODIN_H__
 
 #include "core/fusilli.h"
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-enum class Events {
+enum class CC_DLL Events {
 
   S_NOT_CONNECTED,
   S_CONNECTED,
@@ -63,50 +64,12 @@ enum class Events {
 };
 
 
-//////////////////////////////////////////////////////////////////////////////
-let mkEvent = (eventType, code, payload) => {
-  return {
-    timeStamp: sjs.now(),
-    type: eventType,
-    code: code,
-    source: payload
-  };
-}
-
-//////////////////////////////////////////////////////////////////////////////
-let mkPlayRequest = (game,user,pwd) => {
-  return mkEvent(evts.PLAYGAME_REQ, -1, [game, user, pwd]);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-let mkJoinRequest = (room,user,pwd) => {
-  return mkEvent(evts.JOINGAME_REQ, -1, [room, user, pwd]);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-let json_decode = e => {
-  let evt = {},
-  src;
-
-  try {
-    evt= sjs.objectfy(e.data);
-  } catch (e) {
-  }
-
-  if (! sjs.hasKey(evt, 'type')) {
-    evt.type= -1;
-  }
-  if (! sjs.hasKey(evt, 'code')) {
-    evt.code= -1;
-  }
-
-  if (sjs.hasKey(evt, 'source') &&
-      sjs.isstr(evt.source)) {
-    evt.source = sjs.objectfy(evt.source);
-  }
-
-  return evt;
-}
+struct CC_DLL Event {
+  long long timeStamp;
+  Events type;
+  int code;
+  string source;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //

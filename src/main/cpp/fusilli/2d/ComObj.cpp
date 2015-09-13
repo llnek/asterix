@@ -10,6 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ComObj.h"
+namspace poo = namespace std;
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -59,11 +62,10 @@ void ComObj::Deflate() {
 
 float ComObj::Height() {
   return NNP(sprite) ? sprite->getContentSize().height : 0;
-  }
 }
 
 float ComObj::Width() {
-  return NNP(sprite) ? sprite->.getContentSize().width : 0;
+  return NNP(sprite) ? sprite->getContentSize().width : 0;
 }
 
 void ComObj::SetPos(float x, float y) {
@@ -72,20 +74,12 @@ void ComObj::SetPos(float x, float y) {
   }
 }
 
-const Vec2 pos() {
+const Vec2 ComObj::Pos() {
   return NNP(sprite) ? sprite->getPosition() : Vec2(0,0);
 }
 
-const Size ComObj::Size() {
+const Size ComObj::CSize() {
   return NNP(sprite) ? sprite->getContentSize() : Size(0,0);
-}
-
-const string ComObj::RTTI() {
-  return _name;
-}
-
-void ComObj::Rego(const string& n) {
-  _name = n;
 }
 
 int ComObj::Pid() {
@@ -105,3 +99,4 @@ ComObj::ComObj(Sprite* sprite)
   : ComObj(sprite,1,0) {
 }
 
+NS_END(fusilli)
