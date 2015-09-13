@@ -11,10 +11,10 @@
 
 #include "network/WebSocket.h"
 #include "base/ccUtils.h"
+#include "support/JSON.h"
 #include "Odin.h"
 NS_ALIAS(ws, cocos2d::network::WebSocket)
 NS_ALIAS(n, cocos2d::network)
-
 NS_BEGIN(fusilli)
 
 
