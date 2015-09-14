@@ -61,6 +61,7 @@ public:
   virtual ResolutionPolicy GetPolicy() = 0;
   virtual const Size GetGameSize() = 0;
 
+  virtual const string GetWSUrl() = 0;
   virtual Scene* StartWith() = 0;
 
   const string GetAtlas(const string& key);

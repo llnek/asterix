@@ -15,8 +15,8 @@
 #include "platform/CCCommon.h"
 #include "2d/XScene.h"
 #include "core/fusilli.h"
-NS_USING(cocos2d)
-NS_USING(std)
+NS_ALIAS(cc,cocos2d)
+NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////
@@ -25,28 +25,30 @@ class CC_DLL MsgBox : public XScene {
 friend class MsgBoxLayer;
 protected:
 
-  const string& GetMsg() { return textMsg; }
+  const s::string& GetMsg() { return textMsg; }
 
-  void SetAction(CallFunc* cb);
-  void SetMsg(const string&);
-  void OnYes(Ref*);
+  void SetAction(cc::CallFunc* cb);
+  void SetMsg(const s::string&);
+  void OnYes(cc::Ref*);
 
-  string textMsg;
-  CallFunc* action;
+  cc::CallFunc* action;
+  s::string textMsg;
 
 private:
+
   DISALLOW_COPYASSIGN(MsgBox)
   MsgBox();
+
+  CREATE_FUNC(MsgBox)
 
 public:
 
   virtual XScene* Realize() override;
 
-  static MsgBox* CreateWithAction(CallFunc* cb, const string& msg);
-  static MsgBox* CreateWithMsg(const string&);
+  static MsgBox* CreateWithAction(cc::CallFunc*, const s::string&);
+  static MsgBox* CreateWithMsg(const s::string&);
   virtual ~MsgBox();
 
-  CREATE_FUNC(MsgBox)
 };
 
 

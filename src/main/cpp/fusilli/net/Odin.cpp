@@ -264,7 +264,7 @@ void WSockSS::Connect(const string& url) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const string& WSockSS::GetPlayRequest() {
+const string WSockSS::GetPlayRequest() {
   return Jsonfy( mkPlayRequest(game, user, passwd));
 }
 

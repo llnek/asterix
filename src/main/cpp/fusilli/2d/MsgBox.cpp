@@ -13,13 +13,12 @@
 #include "support/CCSX.h"
 #include "2d/XLayer.h"
 #include "MsgBox.h"
-NS_USING(cocos2d)
-NS_USING(std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithAction(CallFunc* cb, const string& msg) {
+MsgBox* MsgBox::CreateWithAction(cc::CallFunc* cb,
+    const s::string& msg) {
   auto m= MsgBox::create();
   m->SetAction(cb);
   m->SetMsg(msg);
@@ -29,28 +28,28 @@ MsgBox* MsgBox::CreateWithAction(CallFunc* cb, const string& msg) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithMsg(const string& msg) {
-  auto cb= CallFunc::create([](){
-      Director::getInstance()->popScene();
+MsgBox* MsgBox::CreateWithMsg(const s::string& msg) {
+  auto cb= cc::CallFunc::create([](){
+      cc::Director::getInstance()->popScene();
       });
   return CreateWithAction(cb, msg);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::SetAction(CallFunc* cb) {
+void MsgBox::SetAction(cc::CallFunc* cb) {
   action = cb;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::SetMsg(const string& msg) {
+void MsgBox::SetMsg(const s::string& msg) {
   textMsg= msg;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::OnYes(Ref* rr) {
+void MsgBox::OnYes(cc::Ref* rr) {
  action->execute();
 }
 
@@ -58,6 +57,7 @@ void MsgBox::OnYes(Ref* rr) {
 //
 class CC_DLL MsgBoxLayer : public XLayer {
 private:
+
   DISALLOW_COPYASSIGN(MsgBoxLayer)
   MsgBoxLayer();
 
@@ -74,7 +74,7 @@ XLayer* MsgBoxLayer::Realize() {
   auto par = SCAST(MsgBox*, getParent());
   auto cfg = XConfig::GetInstance();
   auto fnt = cfg->GetFont("font.OCR");
-  auto qn= Label::createWithBMFont(fnt, par->GetMsg());
+  auto qn= cc::Label::createWithBMFont(fnt, par->GetMsg());
   auto cw= CCSX::Center();
   auto wz= CCSX::VisRect();
   auto wb = CCSX::VisBox();
@@ -89,7 +89,7 @@ XLayer* MsgBoxLayer::Realize() {
       "#ok.png",
       "#ok.png");
   b1->setTarget(par, CC_MENU_SELECTOR(MsgBox::OnYes));
-  auto menu= Menu::create();
+  auto menu= cc::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
@@ -99,10 +99,10 @@ XLayer* MsgBoxLayer::Realize() {
 //////////////////////////////////////////////////////////////////////////
 //
 XScene* MsgBox::Realize() {
-   auto y = MsgBoxLayer::create();
-   y->Realize();
-   AddLayer(y);
-   return this;
+  auto y = MsgBoxLayer::create();
+  y->Realize();
+  AddLayer(y);
+  return this;
 }
 
 

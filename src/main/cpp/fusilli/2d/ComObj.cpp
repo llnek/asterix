@@ -10,19 +10,18 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ComObj.h"
-namspace poo = namespace std;
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Hurt(float damage) {
+void ComObj::Hurt(int damage) {
   health -= damage;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Inflate(Dictionary* options) {
+void ComObj::Inflate(cc::Dictionary* dict) {
 
   health = origHealth;
   status=true;
@@ -31,13 +30,13 @@ void ComObj::Inflate(Dictionary* options) {
     return;
   }
 
-  auto scale= SCAST(Float*, dict->objectForKey("scale"));
-  auto deg= SCAST(Float*, dict->objectForKey("deg"));
-  auto x= SCAST(Float*, dict->objectForKey("x"));
-  auto y= SCAST(Float*, dict->objectForKey("y"));
+  auto scale= SCAST(cc::Float*, dict->objectForKey("scale"));
+  auto deg= SCAST(cc::Float*, dict->objectForKey("deg"));
+  auto x= SCAST(cc::Float*, dict->objectForKey("x"));
+  auto y= SCAST(cc::Float*, dict->objectForKey("y"));
 
   if (NNP(x) && NNP(y)) {
-    sprite->setRotation(x->getValue(), y->getValue());
+    sprite->setPosition(x->getValue(), y->getValue());
   }
   if (NNP(deg)) {
     sprite->setRotation(deg->getValue());
@@ -51,6 +50,19 @@ void ComObj::Inflate(Dictionary* options) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void ComObj::Inflate(float x, float y) {
+
+  health = origHealth;
+  status=true;
+
+  if (NNP(sprite)) {
+    sprite->setPosition(x,y);
+    sprite->setVisible(true);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void ComObj::Deflate() {
   if (NNP(sprite)) {
     sprite->unscheduleAllCallbacks();
@@ -60,43 +72,60 @@ void ComObj::Deflate() {
   status=false;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 float ComObj::Height() {
   return NNP(sprite) ? sprite->getContentSize().height : 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 float ComObj::Width() {
   return NNP(sprite) ? sprite->getContentSize().width : 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void ComObj::SetPos(float x, float y) {
   if (NNP(sprite)) {
     sprite->setPosition(x,y);
   }
 }
 
-const Vec2 ComObj::Pos() {
-  return NNP(sprite) ? sprite->getPosition() : Vec2(0,0);
+//////////////////////////////////////////////////////////////////////////////
+//
+const cc::Vec2 ComObj::Pos() {
+  return NNP(sprite) ? sprite->getPosition() : cc::Vec2(0,0);
 }
 
-const Size ComObj::CSize() {
-  return NNP(sprite) ? sprite->getContentSize() : Size(0,0);
+//////////////////////////////////////////////////////////////////////////////
+//
+const cc::Size ComObj::CSize() {
+  return NNP(sprite) ? sprite->getContentSize() : cc::Size(0,0);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 int ComObj::Pid() {
   return NNP(sprite) ? sprite->getTag() : 0;
 }
 
-
-ComObj::ComObj(Sprite* sprite, float health, float score) {
+//////////////////////////////////////////////////////////////////////////////
+//
+ComObj::ComObj(cc::Sprite* sprite, int health, int score) {
   this->origHealth = health;
   this->sprite = sprite;
   this->health = health;
-  this->value = score;
+  this->score = score;
   status=false;
 }
 
-ComObj::ComObj(Sprite* sprite)
+//////////////////////////////////////////////////////////////////////////////
+//
+ComObj::ComObj(cc::Sprite* sprite)
   : ComObj(sprite,1,0) {
 }
 
+
 NS_END(fusilli)
+

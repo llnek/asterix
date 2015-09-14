@@ -9,177 +9,212 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XConfig.h"
+#include "ui/UITextField.h"
+#include "net/Odin.h"
 #include "Online.h"
-USING_NS_CC;
+NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_FI_BEGIN
+class CC_DLL OnlineLayer : public XLayer {
+private:
+  DISALLOW_COPYASSIGN(OnlineLayer)
+  void ShowWaitOthers();
+  OnlineLayer() {}
+public:
+  virtual const string Moniker() { return "OnlineLayer"; }
+  virtual XLayer* Realize() override;
+  virtual ~OnlineLayer();
+  CREATE_FUNC(OnlineLayer)
+};
 
-void Online::OnOnlineReq(const string& uid, const string& pwd) {
-  auto wsurl = "ws://network/blah";
-
-  if (uid.length == 0 ||
-      pwd.length == 0) { return; }
-
-  m_wss= ODIN::ReifySession(gameid, uid, pwd);
-  m_wss->ListenAll(this.onOdinEvent, this);
-  m_wss->Connect(wsurl);
+//////////////////////////////////////////////////////////////////////////////
+//
+Online* Online::Create(cc::CallFunc* yes, cc::CallFunc* no) {
+  auto s= Online::create();
+  s->SetActions(yes,no);
+  s->Realize();
+  return s;
 }
 
-/**
- * @method onOdinEvent
- * @private
- */
+//////////////////////////////////////////////////////////////////////////////
+//
+void Online::SetActions(cc::CallFunc* yes, cc::CallFunc* no) {
+  yes->retain();
+  no->retain();
+  this->yes= yes;
+  this->no = no;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+XScene* Online::Realize() {
+  auto y= OnlineLayer::create();
+  AddLayer(y);
+  y->Realize();
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Online::OnReq(const s::string& uid, const s::string& pwd) {
+  auto wsurl = XConfig::GetInstance()->GetWSUrl();
+
+  if (uid.length() == 0 ||
+      pwd.length() == 0) { return; }
+
+  wss= WSockSS::CreatePlayRequest(gameid, uid, pwd);
+  wss= wss->ListenAll([this](const Event& e) {
+      this->OnOdinEvent(e);
+      });
+  wss->Connect(wsurl);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Online::OnOdinEvent(const Event& evt) {
-  //sjs.loggr.debug(evt);
+  CCLOG("odin event = %p", evt);
   switch (evt.type) {
-    case MSG_NETWORK: OnNetworkEvent(evt); break;
-    case MSG_SESSION: OnSessionEvent(evt); break;
+    case MType::NETWORK: OnNetworkEvent(evt); break;
+    case MType::SESSION: OnSessionEvent(evt); break;
   }
 }
 
-/**
- * @method onNetworkEvent
- * @private
- */
+//////////////////////////////////////////////////////////////////////////////
+//
 void Online::OnNetworkEvent(const Event& evt) {
   switch (evt.code) {
-    case PLAYER_JOINED:
+    case EType::PLAYER_JOINED:
       //TODO
-      sjs.loggr.debug("another player joined room. " + evt.source.puid);
+      //CCLOG("another player joined room: ", evt.source.puid);
     break;
-    case START:
-      sjs.loggr.info("play room is ready, game can start.");
-      m_wss->CancelAll();
-      // flip to game scene
-      this.options.yes(this.wss, this.player, evt.source || {});
+    case EType::START:
+      CCLOG("play room is ready, game can start");
+      wss->CancelAll();
+      OnContinue();
     break;
   }
 }
 
-/**
- * @method onSessionEvent
- * @private
- */
+//////////////////////////////////////////////////////////////////////////////
+//
+void Online::OnContinue() {
+      // flip to game scene
+   //OnContinue(this.wss, this.player, evt.source);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Online::OnSessionEvent(const Event& evt) {
   switch (evt.code) {
-    case PLAYREQ_OK:
-      sjs.loggr.debug("player " +
-                      evt.source.pnum +
-                      ": request to play game was successful.");
-      this.player=evt.source.pnum;
+    case EType::PLAYREQ_OK:
+      //CCLOG("player %d: request to play game was successful",evt.source.pnum);
+      //player=evt.source.pnum;
       ShowWaitOthers();
     break;
   }
 }
 
-/**
- * @method onCancelPlay
- * @private
- */
-void Online::OnCancelPlay() {
+//////////////////////////////////////////////////////////////////////////////
+//
+void Online::OnCancel(cc::Ref* rr) {
   try {
-    m_wss->Close();
-  } catch (Throwable e) {}
-  m_wss=nullptr;
-  this.options.onback();
+    wss->Close();
+  } catch (...) {}
+  wss=nullptr;
+  this->no->execute();
 }
 
-/**
- * @method showWaitOthers
- * @private
- */
-void Online::ShowWaitOthers() {
-  auto qn= Label::createWithBMFont("font.OCR", "waiting...");
-  auto cw= CCSX.::Center();
+//////////////////////////////////////////////////////////////////////////////
+//
+void OnlineLayer::ShowWaitOthers() {
+  auto cfg= XConfig::GetInstance();
+  auto fnt= cfg->GetFont("font.OCR");
+  auto qn= cc::Label::createWithBMFont(fnt, "waiting...");
+  auto cw= CCSX::Center();
   auto wz= CCSX::VisRect();
   auto wb = CCSX::VisBox();
 
   RemoveAll();
 
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(xcfg.game.scale * 0.3);
+  qn->setScale(cfg->GetScale() * 0.3);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto b1= CreateMenuButton("#cancel.png",
+  auto b1= CreateMenuBtn("#cancel.png",
       "#cancel.png",
-      "#cancel.png",
-      CC_CALLBACK_1(Online::OnCancelPlay,this));
-  auto menu= Menu::create();
+      "#cancel.png");
+  b1->setTarget(getParent(), CC_MENU_SELECTOR(Online::OnCancel));
+  auto menu= cc::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
 }
 
-void Online::Setup() {
-  auto qn= Label::createWithBMFont("font.OCR", "Sign in");
-  auto cw= CCSX::Center();
+//////////////////////////////////////////////////////////////////////////////
+//
+XLayer* OnlineLayer::Realize() {
+  auto cfg = XConfig::GetInstance();
+  auto fnt= cfg->GetFont("font.OCR");
+  auto qn= cc::Label::createWithBMFont(fnt, "Sign in");
   auto wz= CCSX::VisRect();
+  auto cw= CCSX::Center();
   auto wb= CCSX::VisBox();
+  auto par= SCAST(Online*,getParent());
 
   CenterImage("game.bg");
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(xcfg.game.scale * 0.3);
+  qn->setScale(cfg->GetScale() * 0.3);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto bxz = Sprite::create("#ok.png")->getContentSize();
+  auto bxz = cc::Sprite::create("#ok.png")->getContentSize();
   // editbox for user
-  auto uid = TextField::create();
+  auto uid = cc::ui::TextField::create();
   uid->setMaxLengthEnabled(true);
   uid->setMaxLength(16);
   uid->setTouchEnabled(true);
-  uid->fontName = "Arial";
-  uid->fontSize = 18;
-  uid->placeHolder = "user id:";
+  uid->setFontName( "Arial");
+  uid->setFontSize( 18);
+  uid->setPlaceHolder( "user id:");
   uid->setPosition(cw.x, cw.y + bxz.height * 0.5 + 2);
   AddItem(uid);
 
   // editbox for password
-  auto pwd = TextField::create();
+  auto pwd = cc::ui::TextField::create();
   pwd->setPasswordEnabled(true);
   pwd->setPasswordStyleText("*");
   pwd->setTouchEnabled(true);
   pwd->setMaxLength(16);
-  pwd->fontName = "Arial";
-  pwd->fontSize = 18;
-  pwd->placeHolder = "password:";
+  pwd->setFontName( "Arial");
+  pwd->setFontSize( 18);
+  pwd->setPlaceHolder( "password:");
   pwd->setPosition(cw.x, cw.y - bxz.height * 0.5 - 2);
   AddItem(pwd);
 
-  auto b1= CreateMenuButton("#continue.png",
+  auto b1= CreateMenuBtn("#continue.png",
       "#continue.png",
-      "#continue.png",
-      CC_CALLBACK_1(Online::OnOnlineReq,this));
+      "#continue.png");
+  b1->setCallback([=](cc::Ref* r) {
+        par->OnReq(uid->getString(), pwd->getString());
+      });
 
-  auto b2= CreateMenuButton("#cancel.png",
+  auto b2= CreateMenuBtn("#cancel.png",
       "#cancel.png",
-      "#cancel.png",
-      CC_CALLBACK_1(Online::OnBack, this));
-  auto menu= Menu::create();
+      "#cancel.png");
+  b2->setTarget(par, Online::OnCancel);
+  auto menu= cc::Menu::create();
   menu->addChild(b1,1);
   menu->addChild(b2,2);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
+  return this;
 }
 
 
 
+NS_END(fusilli)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-NS_FI_END

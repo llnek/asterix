@@ -9,29 +9,48 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#ifndef  __XLIVE_H__
-#define  __XLIVE_H__
+#if !defined(__ONLINE_H__)
+#define __ONLINE_H__
 
-#include "cocos2d.h"
-#include "asterix.h"
-NS_AX_BEGIN
+#include "net/Odin.h"
 
-class ZL_DLLEXPORT XLive : public cocos2d::Sprite {
+NS_ALIAS(cc,cocos2d)
+NS_ALIAS(s,std)
+NS_BEGIN(fusilli)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Online : public XScene {
+friend class OnlineLayer;
+protected:
+
+  void SetActions(cc::CallFunc*, cc::CallFunc* );
+  void OnSessionEvent(const Event&);
+  void OnOdinEvent(const Event&);
+  void OnNetworkEvent(const Event&);
+  void OnReq(const s::string&, const s::string&);
+  void OnContinue();
+  void OnCancel(cc::Ref*);
+  Online();
 
 private:
-  CC_DISALLOW_COPY_AND_ASSIGN(XLive)
+
+  DISALLOW_COPYASSIGN(Online)
+  CREATE_FUNC(Online)
+  WSockSS* wss;
+  cc::CallFunc* yes;
+  cc::CallFunc* no;
 
 public:
 
-  void initEx(const std::string& frame);
+  static Online* Create(cc::CallFunc* yes, cc::CallFunc* no);
+  virtual XScene* Realize() override;
+  virtual ~Online();
 
-  virtual ~XLive();
-  XLive();
-
-
-  CREATE_FUNC(XLive)
 };
 
-NS_AX_END
+
+
+NS_END(fusilli)
 #endif
 

@@ -16,49 +16,48 @@
 #include "platform/CCCommon.h"
 #include "2d/CCSprite.h"
 #include "ash/Component.h"
-NS_USING(cocos2d)
-NS_USING(ash)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(a, ash)
+NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ComObj : public ash::Component {
+class CC_DLL ComObj : public a::Component {
 private:
-
+  DISALLOW_COPYASSIGN(ComObj)
 public:
-  Sprite* sprite;
+  cc::Sprite* sprite;
   bool status;
-  Vec2 vel;
-  Vec2 lastPos;
+  int origHealth;
+  int health;
+  int score;
+  cc::Vec2 vel;
+  cc::Vec2 lastPos;
 
-  void Hurt(float damage);
-
-  void Inflate(Dictionary* options);
+  void Inflate(cc::Dictionary* options);
   void Inflate(float x, float y);
-
   void Deflate();
+
+  void SetPos(float x, float y);
+  void Hurt(int damage);
+
+  const cc::Size CSize();
+  const cc::Vec2 Pos();
 
   float Height();
   float Width();
-
-  void SetPos(float x, float y);
-
-  const Vec2 Pos();
-
-  const Size CSize();
-
   int Pid();
 
   void UpdatePosition(float x, float y);
 
-  /**
-   * @private
-   */
-  ComObj(Sprite*, float health, float score);
-  ComObj(Sprite*);
+  ComObj(cc::Sprite*, int health, int score);
+  ComObj(cc::Sprite*);
 
   virtual ~ComObj();
 };
+
+
 
 NS_END(fusilli)
 #endif
