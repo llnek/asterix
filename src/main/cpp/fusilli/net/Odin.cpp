@@ -9,61 +9,71 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "network/WebSocket.h"
 #include "base/ccUtils.h"
 #include "support/JSON.h"
 #include "Odin.h"
-NS_ALIAS(ws, cocos2d::network::WebSocket)
+
 NS_ALIAS(n, cocos2d::network)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkEvent(Events eventType, int code,
-    const s::string& payload) {
-  return Event(
-    utils::getTimeInMilliseconds(),
-    eventType,
-    code,
-    payload);
+static Event mkEvent(MType eventType, EType code, js::Document* d) {
+  return Event(eventType, code, d);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkPlayRequest (game,user,pwd) {
-  return mkEvent(Events::PLAYGAME_REQ, -1,
-      [game, user, pwd]);
+static Event mkPlayRequest(const s::string& game,
+    const s::string& user,
+    const s::string& pwd) {
+  auto d = new js::Document();
+      //[game, user, pwd]);
+  return mkEvent(MType::SESSION, EType::PLAYGAME_REQ, d);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkJoinRequest (room,user,pwd) {
-  return mkEvent(Events::JOINGAME_REQ, -1,
-      [room, user, pwd]);
+static Event mkJoinRequest (const s::string& room,
+    const s::string& user,
+    const s::string& pwd) {
+  auto d = new js::Document();
+      //[room, user, pwd]);
+  return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event json_decode(const ws::Data& e) {
-  assert(!e.isBinary);
+static Event json_decode(const n::WebSocket::Data& e) {
+  js::Document doc;
   Event evt;
 
+  assert(!e.isBinary);
   try {
-    evt= sjs.objectfy(e.data);
+    doc.Parse(e.bytes);
   } catch (...) {
+    CCLOGERROR("failed to parse json: %s", e.bytes);
   }
 
-  if (! sjs.hasKey(evt, 'type')) {
-    evt.type= -1;
-  }
-  if (! sjs.hasKey(evt, 'code')) {
-    evt.code= -1;
-  }
-
-  if (sjs.hasKey(evt, 'source') &&
-      sjs.isstr(evt.source)) {
-    evt.source = sjs.objectfy(evt.source);
+  if (doc.IsObject()) {
+    if (doc.HasMember("type")) {
+      evt.type = d["type"];
+    }
+    if (doc.HasMember("code")) {
+      evt.code = SCAST(EType, d["code"]);
+    }
+    if (doc.HasMember("source")) {
+      auto v= doc["source"];
+      auto s = new js::Document();
+      try {
+        s->Parse(v);
+        evt.doco=s;
+      } catch (...) {
+        mc_del_ptr(s);
+      }
+    }
   }
 
   return evt;
@@ -71,49 +81,108 @@ static Event json_decode(const ws::Data& e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS::WSockSS(Dictionary* config)
-  : WSockSS() {
-  state= Events::S_NOT_CONNECTED;
-  options= config;
-  options->retain();
-  wss = null;
+Event::Event() {
+  timeStamp = cc::utils::getTimeInMilliseconds();
+  type= MType::SESSION;
+  code= EType::NICHTS;
+  doco= nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Event::~Event() {
+  mc_del_ptr(doco);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+WSockSS* WSockSS::CreatePlayRequest(const s::string& game,
+    const s::string& user, const s::string& pwd) {
+  auto w= new WSockSS();
+  w->game= game;
+  w->user= user;
+  w->passwd= pwd;
+  return w;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+WSockSS* WSockSS::CreateJoinRequest(const s::string& room,
+    const s::string& user, const s::string& pwd) {
+  auto w= new WSockSS();
+  w->room= room;
+  w->user= user;
+  w->passwd= pwd;
+  return w;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+WSockSS::WSockSS() {
+  state= EType::S_NOT_CONNECTED;
+  cbNetwork = cbSession = cbAll = nullptr;
+  wss = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 //
 void WSockSS::Send(const Event& evt) {
-  if (state == Events::S_CONNECTED &&
+  if (state == EType::S_CONNECTED &&
       NNP(wss)) {
-    wss->send( Jsonfy(evt));
+    wss->send( json::Jsonfy(evt));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void WSockSS::Listen(callback) {
-  handler= callback;
+void WSockSS::ListenAll(void (*cb)(const Event&)) {
+  cbAll= cb;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Listen to this message-type and event
+void WSockSS::Listen(MType t, void (*cb)(const Event&)) {
+  if (MType::SESSION == t) {
+    cbSession= cb;
+  }
+  if (MType::NETWORK == t) {
+    cbNetwork =cb;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Cancel and remove all subscribers
 //
 void WSockSS::CancelAll() {
-  handler= nullptr;
+  cbAll= nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Listen to this message-type and event
+void WSockSS::Cancel(MType t) {
+  if (MType::SESSION == t) {
+    cbSession= nullptr;
+  }
+  if (MType::NETWORK == t) {
+    cbNetwork =nullptr;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Reset and clear everything
 //
 void WSockSS::Reset() {
-  handler= nullptr;
+  cbNetwork = nullptr;
+  cbSession = nullptr;
+  cbAll = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Close the connection to the socket
 //
 void WSockSS::Close() {
-  state= Events::S_NOT_CONNECTED;
+  state= EType::S_NOT_CONNECTED;
   Reset();
   if (NNP(wss)) {
     try {
@@ -133,20 +202,20 @@ void WSockSS::Disconnect() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onOpen(WebSocket* ws) {
+void WSockSS::onOpen(n::WebSocket* ws) {
   // connection success
   // send the play game request
-  state= Events::S_CONNECTED;
+  state= EType::S_CONNECTED;
   ws->send(GetPlayRequest());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onMessage(WebSocket* ws, const Data& data) {
+void WSockSS::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
   auto evt= json_decode(data);
   switch (evt.type) {
-    case Events::MSG_NETWORK:
-    case Events::MSG_SESSION:
+    case MType::MSG_NETWORK:
+    case MType::MSG_SESSION:
       OnEvent(evt);
     break;
     default:
@@ -156,21 +225,28 @@ void WSockSS::onMessage(WebSocket* ws, const Data& data) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onClose(WebSocket* ws) {
+void WSockSS::onClose(n::WebSocket* ws) {
   CCLOG("websocket instance (%p) closed", ws);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onError(WebSocket* ws, const ws::ErrorCode& error) {
+void WSockSS::onError(n::WebSocket* ws, const n::WebSocket::ErrorCode& error) {
   CCLOG("websocket instance (%p) has error, code: %d", ws, error);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void WSockSS::OnEvent(const Event& evt) {
-  if (NNP(handler)) {
-    handler(evt);
+  switch (evt.type) {
+    case MType::NETWORK:
+      if (NNP(cbNetwork)) { cbNetwork(evt); }
+      if (NNP(cbAll)) { cbAll(evt); }
+      break;
+    case MType::SESSION:
+      if (NNP(cbSession)) { cbSession(evt); }
+      if (NNP(cbAll)) { cbAll(evt); }
+      break;
   }
 }
 
@@ -178,7 +254,7 @@ void WSockSS::OnEvent(const Event& evt) {
 // Connect to this url and request a websocket upgrade
 //
 void WSockSS::Connect(const string& url) {
-  auto ws= new n::WebSocket(url),
+  auto ws= new n::WebSocket(url);
   if (!ws->init(*this, url)) {
     mc_del_ptr(ws);
   } else {
@@ -188,11 +264,10 @@ void WSockSS::Connect(const string& url) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS::GetPlayRequest() {
-  return Jsonfy( mkPlayRequest(this.options.game,
-                                   this.options.user,
-                                   this.options.passwd));
+const string& WSockSS::GetPlayRequest() {
+  return Jsonfy( mkPlayRequest(game, user, passwd));
 }
+
 
 NS_END(fusilli)
 

@@ -16,7 +16,7 @@
 #include "json/document.h"
 #include "json/writer.h"
 #include "core/fusilli.h"
-
+NS_ALIAS(js, rapidjson)
 NS_USING(std)
 NS_BEGIN(fusilli)
 
@@ -25,14 +25,14 @@ NS_BEGIN(fusilli)
 //
 namespace json {
 
-  Document* Parse(const string& s) {
-    auto doc= new Document();
-    d->Parse(s.c_str());
+  js::Document* Parse(const string& s) {
+    auto doc= new js::Document();
+    doc->Parse(s.c_str());
     return doc;
   }
 
-  const string Stringify(Document* doc) {
-    StringBuffer buf;
+  const string Stringify(js::Document* doc) {
+    js::StringBuffer buf;
     Writer<StringBuffer> w(buf);
     doc->Accept(w);
     return buf.GetString();

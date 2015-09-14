@@ -12,20 +12,30 @@
 #if !defined(__ODIN_H__)
 #define __ODIN_H__
 
+#include "network/WebSocket.h"
+#include "json/rapidjson.h"
+#include "json/document.h"
 #include "core/fusilli.h"
+
+NS_ALIAS(n, cocos2d::network)
+NS_ALIAS(js, rapidjson)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-enum class CC_DLL Events {
+enum class CC_DLL MType {
+  NETWORK,
+  SESSION
+};
 
-  S_NOT_CONNECTED,
+enum class CC_DLL EType {
+
+  NICHTS = -1,
+
+  S_NOT_CONNECTED = 0,
   S_CONNECTED,
-
-  // Msg types
-
-  MSG_NETWORK,
-  MSG_SESSION,
 
   PLAYGAME_REQ,
   JOINGAME_REQ,
@@ -63,70 +73,70 @@ enum class CC_DLL Events {
 
 };
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Event {
+  Event(MType t, EType c, js::Document* payload) :
+  Event() {
+    doco=payload;
+    type=t;
+    code=c;
+  }
+  Event();
+  ~Event();
   long long timeStamp;
-  Events type;
-  int code;
-  string source;
+  MType type;
+  EType code;
+  js::Document* doco;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Session {
+class CC_DLL WSockSS : public ws::Delegate {
+protected:
+
+  const s::string GetPlayRequest();
+  void OnEvent(const Event&);
+  void Reset();
+  WSockSS();
+
+private:
+
+  DISALLOW_COPYASSIGN(WSockSS)
+
+  void (*cbSession)(const Event&);
+  void (*cbNetwork)(const Event&);
+  void (*cbAll)(const Event&);
+  n::WebSocket* wss;
+  s::string room;
+  s::string game;
+  s::string user;
+  s::string passwd;
 
 public:
 
-  void Connect(url);
+  static WSockSS* CreatePlayRequest(const s::string& game,
+      const s::string& user, const s::string& pwd);
 
-  Session(Dictionary* config);
-  virtual ~Session();
+  static WSockSS* CreateJoinRequest(const s::string& room,
+      const s::string& user, const s::string& pwd);
 
-  void Send(const Event& evt);
+  virtual ~WSockSS();
 
-  void Listen(messageType, event, callback, target);
-  void ListenAll(callback,target);
-  void CancelAll();
-  void Cancel(subid);
-  void Reset();
-
+  void Connect(const s::string& url);
   void Disconnect();
   void Close();
+  void Send(const Event&);
 
-  void OnNetworkMsg(evt);
+  void Listen(const MType, void (*cb)(const Event&));
+  void ListenAll(void (*cb)(const Event&));
+  void CancelAll();
+  void Cancel(const MType);
 
-  void OnSessionMsg(evt);
-
-  void WinSock(url);
-
-  const string GetPlayRequest();
-
-  void OnEvent(evt);
-        virtual void onOpen(WebSocket* ws) = 0;
-        /**
-         * This function to be called when data has appeared from the server for the client connection.
-         *
-         * @param ws The WebSocket object connected.
-         * @param data Data object for message.
-         */
-        virtual void onMessage(WebSocket* ws, const Data& data) = 0;
-        /**
-         * When the WebSocket object connected wants to close or the protocol won't get used at all and current _readyState is State::CLOSING,this function is to be called.
-         *
-         * @param ws The WebSocket object connected.
-         */
-        virtual void onClose(WebSocket* ws) = 0;
-        /**
-         * This function is to be called in the following cases:
-         * 1. client connection is failed.
-         * 2. the request client connection has been unable to complete a handshake with the remote server.
-         * 3. the protocol won't get used at all after this callback and current _readyState is State::CONNECTING.
-         * 4. when a socket descriptor needs to be removed from an external polling array. in is again the struct libwebsocket_pollargs containing the fd member to be removed. If you are using the internal polling loop, you can just ignore it and current _readyState is State::CONNECTING.
-         *
-         * @param ws The WebSocket object connected.
-         * @param error WebSocket::ErrorCode enum,would be ErrorCode::TIME_OUT or ErrorCode::CONNECTION_FAILURE.
-         */
-        virtual void onError(WebSocket* ws, const ErrorCode& error) = 0;
+  virtual void onOpen(n::WebSocket*) override;
+  virtual void onMessage(n::WebSocket*, const n::WebSocket::Data& ) override;
+  virtual void onClose(n::WebSocket* ) override;
+  virtual void onError(n::WebSocket* , const n::WebSocket::ErrorCode& ) override;
 
 };
 
