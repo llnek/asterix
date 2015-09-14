@@ -30,14 +30,16 @@ enum class CC_DLL MType {
   SESSION
 };
 
+enum class CC_DLL CType {
+  S_NOT_CONNECTED = 0,
+  S_CONNECTED
+};
+
 enum class CC_DLL EType {
 
   NICHTS = -1,
 
-  S_NOT_CONNECTED = 0,
-  S_CONNECTED,
-
-  PLAYGAME_REQ,
+  PLAYGAME_REQ = 0,
   JOINGAME_REQ,
 
   PLAYREQ_NOK,
@@ -92,7 +94,7 @@ struct CC_DLL Event {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL WSockSS : public ws::Delegate {
+class CC_DLL WSockSS : public n::WebSocket::Delegate {
 protected:
 
   const s::string GetPlayRequest();
@@ -112,6 +114,7 @@ private:
   s::string game;
   s::string user;
   s::string passwd;
+  CType state;
 
 public:
 

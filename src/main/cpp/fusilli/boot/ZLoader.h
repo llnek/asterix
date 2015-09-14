@@ -14,21 +14,21 @@
 
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
-NS_USING(cocos2d)
+NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ZLoader : public Scene {
+class CC_DLL ZLoader : public cc::Scene {
 private:
 
   DISALLOW_COPYASSIGN(ZLoader)
-  void startLoad(float delta);
+  void StartLoad(float delta);
 
 
 public:
 
-  void initWithResources();
+  void InitWithResources();
 
   virtual void onEnter() override;
   virtual ~ZLoader();

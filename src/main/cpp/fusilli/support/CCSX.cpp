@@ -10,8 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "CCSX.h"
-NS_USING(cocos2d)
-NS_USING(std)
 NS_BEGIN(fusilli)
 
 
@@ -47,7 +45,7 @@ bool CCSX::Collide(ComObj* a, ComObj* b) {
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
-bool CCSX::Collide0(Sprite* a, Sprite* b) {
+bool CCSX::Collide0(cc::Sprite* a, cc::Sprite* b) {
   if (NNP(a) && NNP(b)) {
     return BBox(a).intersectsRect( BBox(b));
   } else {
@@ -58,7 +56,7 @@ bool CCSX::Collide0(Sprite* a, Sprite* b) {
 //////////////////////////////////////////////////////////////////////////
 //
 void CCSX::SetDevRes(bool landscape, float x, float y, ResolutionPolicy pcy) {
-  auto v= Director::getInstance()->getOpenGLView();
+  auto v= cc::Director::getInstance()->getOpenGLView();
   if (landscape) {
     v->setDesignResolutionSize(x, y, pcy);
   } else {
@@ -94,33 +92,33 @@ bool CCSX::OutOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void CCSX::UndoTimer(Action* tm) {
+void CCSX::UndoTimer(cc::Action* tm) {
   if (NNP(tm)) { tm->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create a timer action
 //
-Action* CCSX::CreateTimer(Node* par, float tm) {
-  return par->runAction(DelayTime::create(tm));
+cc::Action* CCSX::CreateTimer(cc::Node* par, float tm) {
+  return par->runAction(cc::DelayTime::create(tm));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool CCSX::TimerDone(Action* t) {
+bool CCSX::TimerDone(cc::Action* t) {
   return NNP(t) ? t->isDone() : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create a sprite from its frame name
 //
-Sprite* CCSX::CreateSprite(const string& name) {
-  return Sprite::createWithSpriteFrameName(name);
+cc::Sprite* CCSX::CreateSprite(const s::string& name) {
+  return cc::Sprite::createWithSpriteFrameName(name);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Box4 CCSX::BBox4(Sprite* s) {
+const Box4 CCSX::BBox4(cc::Sprite* s) {
   return Box4(
     GetTop(s),
     GetRight(s),
@@ -131,43 +129,43 @@ const Box4 CCSX::BBox4(Sprite* s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void CCSX::RunScene(Scene* ns, float delay) {
-  Director::getInstance()->replaceScene(TransitionCrossFade::create(delay, ns));
+void CCSX::RunScene(cc::Scene* ns, float delay) {
+  cc::Director::getInstance()->replaceScene(cc::TransitionCrossFade::create(delay, ns));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void CCSX::RunScene(Scene* ns) {
-  Director::getInstance()->replaceScene(ns);
+void CCSX::RunScene(cc::Scene* ns) {
+  cc::Director::getInstance()->replaceScene(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool CCSX::IsTransitioning() {
-  return dynamic_cast<TransitionScene*>(
-    Director::getInstance()->getRunningScene()) != nullptr;
+  return dynamic_cast<cc::TransitionScene*>(
+    cc::Director::getInstance()->getRunningScene()) != nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const Size CCSX::CSize(const string& frame) {
+const cc::Size CCSX::CSize(const s::string& frame) {
   return CreateSprite(frame)->getContentSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const Size CCSX::HalfHW(Sprite* s) {
+const cc::Size CCSX::HalfHW(cc::Sprite* s) {
   auto z= s->getContentSize();
-  return Size(z.width * 0.5, z.height * 0.5);
+  return cc::Size(z.width * 0.5, z.height * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create a rectangle from this sprite
 //
-const Rect CCSX::BBox(Sprite* s) {
-  return Rect(GetLeft(s),
+const cc::Rect CCSX::BBox(cc::Sprite* s) {
+  return cc::Rect(GetLeft(s),
                  GetBottom(s),
                  GetWidth(s),
                  GetHeight(s));
@@ -186,31 +184,31 @@ const Box4 CCSX::BBox4B4(ComObj* ent) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetScaledHeight(Node* s) {
+float CCSX::GetScaledHeight(cc::Node* s) {
   return s->getContentSize().height * s->getScaleY();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetHeight(Node* s) {
+float CCSX::GetHeight(cc::Node* s) {
   return s->getContentSize().height;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetScaledWidth(Node* s) {
+float CCSX::GetScaledWidth(cc::Node* s) {
   return s->getContentSize().width * s->getScaleX();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetWidth(Node* s) {
+float CCSX::GetWidth(cc::Node* s) {
   return s->getContentSize().width;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-static float get_XXX(Sprite* s, float px, float bound) {
+static float get_XXX(cc::Node* s, float px, float bound) {
   auto w= s->getContentSize().width;
   auto a= s->getAnchorPoint().x;
   return px + (bound - a) * w ;
@@ -218,7 +216,7 @@ static float get_XXX(Sprite* s, float px, float bound) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-static float get_YYY(Sprite* s, float py, float bound) {
+static float get_YYY(cc::Node* s, float py, float bound) {
   auto h= s->getContentSize().height;
   auto a= s->getAnchorPoint().y;
   return py + (bound - a) * h ;
@@ -226,25 +224,25 @@ static float get_YYY(Sprite* s, float py, float bound) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetLeft(Sprite* s) {
+float CCSX::GetLeft(cc::Node* s) {
   return get_XXX(s, s->getPosition().x, AnchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetRight(Sprite* s) {
+float CCSX::GetRight(cc::Node* s) {
   return get_XXX(s, s->getPosition().x, AnchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetBottom(Sprite* s) {
+float CCSX::GetBottom(cc::Node* s) {
   return get_YYY(s, s->getPosition().y, AnchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float CCSX::GetTop(Sprite* s) {
+float CCSX::GetTop(cc::Node* s) {
   return get_YYY(s, s->getPosition().y, AnchorT().y);
 }
 
@@ -285,9 +283,9 @@ float CCSX::CenterY() { return Center().y; }
 //////////////////////////////////////////////////////////////////////////
 // Get the center of the visible screen
 //
-const Vec2 CCSX::Center() {
+const cc::Vec2 CCSX::Center() {
   auto rc = VisRect();
-  return Vec2( rc.origin.x + rc.size.width * 0.5,
+  return cc::Vec2( rc.origin.x + rc.size.width * 0.5,
       rc.origin.y + rc.size.height * 0.5);
 }
 
@@ -304,15 +302,15 @@ float CCSX::ScreenWidth() { return Screen().width; }
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen rectangle
 //
-const Rect CCSX::VisRect() {
-  return Director::getInstance()->getOpenGLView()->getVisibleRect();
+const cc::Rect CCSX::VisRect() {
+  return cc::Director::getInstance()->getOpenGLView()->getVisibleRect();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen box
 //
 const Box4 CCSX::VisBox() {
-  auto vr = Director::getInstance()->getOpenGLView()->getVisibleRect();
+  auto vr = cc::Director::getInstance()->getOpenGLView()->getVisibleRect();
   return Box4(
     vr.origin.y + vr.size.height,
     vr.origin.x + vr.size.width,
@@ -324,23 +322,23 @@ const Box4 CCSX::VisBox() {
 //////////////////////////////////////////////////////////////////////////
 // Get the actual window/frame size.
 //
-const Size CCSX::Screen() {
-  return Director::getInstance()->getOpenGLView()->getFrameSize();
+const cc::Size CCSX::Screen() {
+  return cc::Director::getInstance()->getOpenGLView()->getFrameSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the actual screen center.
 //
-const Vec2 CCSX::SCenter() {
+const cc::Vec2 CCSX::SCenter() {
   auto sz = Screen();
-  return Vec2(sz.width * 0.5, sz.height * 0.5);
+  return cc::Vec2(sz.width * 0.5, sz.height * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the center of this box.
 //
-const Vec2 CCSX::VBoxMID(const Box4& box) {
-  return Vec2(box.left + (box.right-box.left) * 0.5,
+const cc::Vec2 CCSX::VBoxMID(const Box4& box) {
+  return cc::Vec2(box.left + (box.right-box.left) * 0.5,
               box.bottom + (box.top-box.bottom) * 0.5);
 }
 
@@ -352,8 +350,8 @@ const Vec2 CCSX::VBoxMID(const Box4& box) {
 // are returned
 //
 bool CCSX::TraceEnclosure(float dt, const Box4& bbox,
-    const Rect& rect, const Vec2& vel,
-    Vec2& outPos, Vec2& outVel) {
+    const cc::Rect& rect, const cc::Vec2& vel,
+    cc::Vec2& outPos, cc::Vec2& outVel) {
   auto y = rect.origin.y + dt * vel.y;
   auto x = rect.origin.x + dt * vel.x;
   auto sz= rect.size.height * 0.5;
@@ -401,8 +399,8 @@ bool CCSX::TraceEnclosure(float dt, const Box4& bbox,
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-SpriteFrame* CCSX::GetSpriteFrame(const string& frameid) {
-  return SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
+cc::SpriteFrame* CCSX::GetSpriteFrame(const s::string& frameid) {
+  return cc::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -528,39 +526,39 @@ void CCSX::OnTouchOne() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorC() { return Vec2(0.5, 0.5); }
+const cc::Vec2 CCSX::AnchorC() { return cc::Vec2(0.5, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorT() { return Vec2(0.5, 1); }
+const cc::Vec2 CCSX::AnchorT() { return cc::Vec2(0.5, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorTR() { return Vec2(1, 1); }
+const cc::Vec2 CCSX::AnchorTR() { return cc::Vec2(1, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorR() { return Vec2(1, 0.5); }
+const cc::Vec2 CCSX::AnchorR() { return cc::Vec2(1, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorBR() { return Vec2(1, 0); }
+const cc::Vec2 CCSX::AnchorBR() { return cc::Vec2(1, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorB() { return Vec2(0.5, 0); }
+const cc::Vec2 CCSX::AnchorB() { return cc::Vec2(0.5, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorBL() { return Vec2(0, 0); }
+const cc::Vec2 CCSX::AnchorBL() { return cc::Vec2(0, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorL() { return Vec2(0, 0.5); }
+const cc::Vec2 CCSX::AnchorL() { return cc::Vec2(0, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Vec2 CCSX::AnchorTL() { return Vec2(0, 1); }
+const cc::Vec2 CCSX::AnchorTL() { return cc::Vec2(0, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 // not used for now.

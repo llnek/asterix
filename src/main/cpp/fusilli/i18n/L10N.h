@@ -15,7 +15,7 @@
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include <map>
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
@@ -24,7 +24,7 @@ NS_BEGIN(fusilli)
 class CC_DLL L10NCache {
 public:
 
-  const string GetStr(const string& key, const string& dft);
+  const s::string GetStr(const s::string& key, const s::string& dft);
   void Purge();
   void Init();
 
@@ -32,8 +32,10 @@ public:
   L10NCache();
 
 private:
+
+  map<s::string, s::string> _cache;
   DISALLOW_COPYASSIGN(L10NCache)
-  map<string, string> _cache;
+
 };
 
 

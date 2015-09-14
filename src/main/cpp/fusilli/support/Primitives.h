@@ -12,20 +12,20 @@
 #if !defined(__PRIMITIVES_H__)
 #define __PRIMITIVES_H__
 
+#include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include "base/CCRef.h"
 #include "base/CCConsole.h"
 #include "base/CCDataVisitor.h"
-#include "platform/CCCommon.h"
-NS_USING(cocos2d)
-NS_USING(std)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* DictVal(Dictionary* d, const string& key) {
+T* DictVal(cc::Dictionary* d, const s::string& key) {
   auto v= d->objectForKey(key);
   if (NNP(v)) {
     return static_cast<T*>(v);
@@ -63,7 +63,7 @@ struct CC_DLL Box4 {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Val2 : public Ref, public Clonable {
+class CC_DLL Val2 : public cc::Ref, public cc::Clonable {
 public:
 
   static Val2* create(float x, float y) {
@@ -76,13 +76,13 @@ public:
   : _x(x), _y(y)
   {}
 
-  Vec2 getValue() const {return Vec2(_x,_y); }
+  cc::Vec2 getValue() const {return cc::Vec2(_x,_y); }
 
   virtual ~Val2() {
     CCLOGINFO("deallocing ~Val2: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) { }
+  virtual void acceptVisitor(cc::DataVisitor &visitor) { }
 
   virtual Val2* clone() const override {
     return Val2::create(_x,_y);
@@ -95,7 +95,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Size2 : public Ref, public Clonable {
+class CC_DLL Size2 : public cc::Ref, public cc::Clonable {
 public:
 
   static Size2* create(float w, float h) {
@@ -108,13 +108,13 @@ public:
   : _w(w), _h(h)
   {}
 
-  Size getValue() const {return Size(_w,_h); }
+  cc::Size getValue() const {return cc::Size(_w,_h); }
 
   virtual ~Size2() {
     CCLOGINFO("deallocing ~Size2: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) { }
+  virtual void acceptVisitor(cc::DataVisitor &visitor) { }
 
   virtual Size2* clone() const override {
     return Size2::create(_w,_h);
@@ -128,64 +128,64 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL C3B : public Ref, public Clonable {
+class CC_DLL C3B : public cc::Ref, public cc::Clonable {
 public:
 
-  static C3B* create(const Color3B& c) {
+  static C3B* create(const cc::Color3B& c) {
     C3B* pRet = new C3B(c);
     pRet->autorelease();
     return pRet;
   }
 
-  C3B(const Color3B& c)
+  C3B(const cc::Color3B& c)
   : _c(c)
   {}
 
-  Color3B getValue() const {return Color3B(_c); }
+  cc::Color3B getValue() const {return cc::Color3B(_c); }
 
   virtual ~C3B() {
     CCLOGINFO("deallocing ~C3B: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) {  }
+  virtual void acceptVisitor(cc::DataVisitor &visitor) {  }
 
   virtual C3B* clone() const override {
     return C3B::create(_c);
   }
 
 private:
-  Color3B _c;
+  cc::Color3B _c;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL C4B : public Ref, public Clonable {
+class CC_DLL C4B : public cc::Ref, public cc::Clonable {
 public:
 
-  static C4B* create(const Color4B& c) {
+  static C4B* create(const cc::Color4B& c) {
     C4B* pRet = new C4B(c);
     pRet->autorelease();
     return pRet;
   }
 
-  C4B(const Color4B& c)
+  C4B(const cc::Color4B& c)
   : _c(c)
   {}
 
-  Color4B getValue() const {return Color4B(_c); }
+  cc::Color4B getValue() const {return cc::Color4B(_c); }
 
   virtual ~C4B() {
     CCLOGINFO("deallocing ~C4B: %p", this);
   }
 
-  virtual void acceptVisitor(DataVisitor &visitor) {  }
+  virtual void acceptVisitor(cc::DataVisitor &visitor) {  }
 
   virtual C4B* clone() const override {
     return C4B::create(_c);
   }
 
 private:
-  Color4B _c;
+  cc::Color4B _c;
 };
 
 
@@ -196,3 +196,4 @@ private:
 
 NS_END(fusilli)
 #endif
+

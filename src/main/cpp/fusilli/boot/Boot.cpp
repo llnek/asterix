@@ -15,16 +15,16 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Size designResolutionSize = Size(480, 320);
-static Size smallResolutionSize = Size(480, 320);
-static Size mediumResolutionSize = Size(1024, 768);
-static Size largeResolutionSize = Size(2048, 1536);
+static cc::Size designResolutionSize = cc::Size(480, 320);
+static cc::Size smallResolutionSize = cc::Size(480, 320);
+static cc::Size mediumResolutionSize = cc::Size(1024, 768);
+static cc::Size largeResolutionSize = cc::Size(2048, 1536);
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Boot::PreLaunch() {
 
-  auto director = Director::getInstance();
+  auto director = cc::Director::getInstance();
   auto glview = director->getOpenGLView();
 
   // turn on display FPS
@@ -35,7 +35,7 @@ void Boot::PreLaunch() {
 
   // set the design resolution
   glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
-  Size frameSize = glview->getFrameSize();
+  cc::Size frameSize = glview->getFrameSize();
 
   if (frameSize.height > mediumResolutionSize.height) {
     director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));

@@ -11,15 +11,14 @@
 
 #include "2d/ComObj.h"
 #include "XPool.h"
-NS_USING(std)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 // Pre-populate a bunch of objects in the pool
-void XPool::PreSet(ComObj* (*ctor)(XPool*), int count) {
+void XPool::PreSet(s::function<ComObj* (XPool*)> f, int count) {
   for (int n=0; n < count; ++n) {
-    auto rc= ctor(this);
+    auto rc= f(this);
     if (NNP(rc)) {
       objs.push_back(rc);
     }
@@ -28,10 +27,10 @@ void XPool::PreSet(ComObj* (*ctor)(XPool*), int count) {
 
 //////////////////////////////////////////////////////////////////////////
 // Find an object by applying this filter
-ComObj* XPool::Select(bool (*filter)(ComObj*)) {
+ComObj* XPool::Select(s::function<bool (ComObj*)> f) {
   for (auto it = objs.begin(); it != objs.end(); ++it) {
     auto e = *it;
-    if (filter(e)) {
+    if (f(e)) {
       return e;
     }
   }
@@ -72,9 +71,9 @@ int XPool::CountActives() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::Foreach(void (*func)(ComObj*)) {
+void XPool::Foreach(s::function<void (ComObj*)> f) {
   for (auto it = objs.begin(); it != objs.end(); ++it) {
-    func(*it);
+    f(*it);
   }
 }
 

@@ -13,9 +13,9 @@
 #include "support/XConfig.h"
 #include "boot/Boot.h"
 #include "App.h"
-NS_USING(CocosDenshion)
-NS_USING(cocos2d)
-NS_USING(fusilli)
+NS_ALIAS(den, CocosDenshion)
+NS_ALIAS(cc, cocos2d)
+NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,23 +43,23 @@ void App::initGLContextAttrs() {
   //set OpenGL context attributions,now can only set six attributions:
   //red,green,blue,alpha,depth,stencil
   GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
-  GLView::setGLContextAttrs(glContextAttrs);
+  cc::GLView::setGLContextAttrs(glContextAttrs);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool App::applicationDidFinishLaunching() {
 
-  auto director = Director::getInstance();
+  auto director = cc::Director::getInstance();
   auto glview = director->getOpenGLView();
 
   if (!glview) {
-    glview = GLViewImpl::create("My Game");
+    glview = cc::GLViewImpl::create("My Game");
     director->setOpenGLView(glview);
   }
 
   auto cfg = XConfig::GetInstance();
-  auto b = Boot();
+  Boot b;
 
   register_all_packages();
 
@@ -74,16 +74,17 @@ bool App::applicationDidFinishLaunching() {
 // When comes a phone call,it's be invoked too
 void App::applicationDidEnterBackground() {
 
-  Director::getInstance()->stopAnimation();
-  SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+  cc::Director::getInstance()->stopAnimation();
+  den::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // this function will be called when the app is active again
 void App::applicationWillEnterForeground() {
 
-  Director::getInstance()->startAnimation();
-  SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+  cc::Director::getInstance()->startAnimation();
+  den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 
+NS_END(fusilli)
 

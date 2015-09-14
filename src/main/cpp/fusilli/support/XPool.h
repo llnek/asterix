@@ -15,7 +15,7 @@
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include <vector>
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 class ComObj;
@@ -25,19 +25,19 @@ class CC_DLL XPool {
 
 private:
   DISALLOW_COPYASSIGN(XPool)
-  vector<ComObj*> objs;
+  s::vector<ComObj*> objs;
 
 public:
 
-  const vector<ComObj*>& Elements() { return objs; }
-  void PreSet(ComObj* (*ctor)(XPool*), int count);
-  ComObj* Select(bool (*filter)(ComObj*));
+  const s::vector<ComObj*>& Elements() { return objs; }
+  void PreSet(s::function<ComObj* (XPool*)>, int count);
+  ComObj* Select(s::function<bool (ComObj*)>);
 
   ComObj* GetAndSet();
   ComObj* Get();
   int CountActives();
   int Size() { return (int)objs.size(); }
-  void Foreach(void (*func)(ComObj*));
+  void Foreach(s::function<void(ComObj*)>);
   void Reset();
 
   virtual ~XPool();

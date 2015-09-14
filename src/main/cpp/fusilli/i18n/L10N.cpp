@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "L10N.h"
-NS_USING(std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -28,9 +27,9 @@ void L10NCache::Init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 //Application::getInstance()->getCurrentLanguage();
-const string L10NCache::GetStr(const string& key, const string& dft) {
+const s::string L10NCache::GetStr(const s::string& key, const s::string& dft) {
   auto it= _cache.find(key);
-  string rc;
+  s::string rc;
   if (it != _cache.end()) {
     rc= it->second;
   } else {

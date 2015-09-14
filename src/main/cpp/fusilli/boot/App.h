@@ -14,13 +14,13 @@
 
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
-NS_USING(cocos2d)
+NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL App : public Application {
+class CC_DLL App : public cc::Application {
 protected:
 
   App();
@@ -52,7 +52,7 @@ public:
 
   virtual void initGLContextAttrs();
 
-  virtual Scene* GetStartScene() = 0;
+  virtual cc::Scene* GetStartScene() = 0;
 
   virtual ~App();
 

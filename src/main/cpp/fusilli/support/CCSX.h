@@ -13,10 +13,10 @@
 #define __CCSX_H__
 
 #include "support/Primitives.h"
+#include "platform/CCCommon.h"
 #include "2d/ComObj.h"
-#include "cocos2d.h"
-NS_USING(cocos2d)
-NS_USING(std)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
@@ -34,7 +34,7 @@ public:
   //static const Color3B White();
   //static const Color3B Black();
 
-  static bool Collide0(Sprite* spriteA, Sprite* spriteB);
+  static bool Collide0(cc::Sprite* , cc::Sprite* );
   static bool Collide(ComObj* a, ComObj* b);
 
   static void SetDevRes(bool landscape, float x, float y,
@@ -44,41 +44,41 @@ public:
   static bool OutOfBound(ComObj* ent, const Box4& B);
   static bool OutOfBound(const Box4& src, const Box4& B);
 
-  static Action* CreateTimer(Node*, float millis);
-  static void UndoTimer(Action*);
-  static bool TimerDone(Action*);
+  static cc::Action* CreateTimer(cc::Node*, float millis);
+  static void UndoTimer(cc::Action*);
+  static bool TimerDone(cc::Action*);
 
-  static Sprite* CreateSprite(const string& frameName);
+  static cc::Sprite* CreateSprite(const s::string& frameName);
 
   static const Box4 BBox4B4(ComObj* ent);
-  static const Box4 BBox4(Sprite* sprite);
+  static const Box4 BBox4(cc::Sprite* );
 
-  static void RunScene(Scene* ns, float delay);
-  static void RunScene(Scene* ns);
+  static void RunScene(cc::Scene* ns, float delay);
+  static void RunScene(cc::Scene* ns);
   static bool IsTransitioning();
 
-  static const Size CSize(const string& frame);
+  static const cc::Size CSize(const s::string& frame);
 
-  static const Size HalfHW(Sprite* sprite);
-  static const Rect BBox(Sprite* sprite);
+  static const cc::Size HalfHW(cc::Sprite* );
+  static const cc::Rect BBox(cc::Sprite* );
 
-  static float GetScaledHeight(Node* sprite);
+  static float GetScaledHeight(cc::Node* );
 
-  static float GetHeight(Node* sprite);
+  static float GetHeight(cc::Node*);
 
-  static float GetScaledWidth(Node* sprite);
+  static float GetScaledWidth(cc::Node* );
 
-  static float GetWidth(Node* sprite);
+  static float GetWidth(cc::Node* );
 
-  static float GetLeft(Sprite* );
+  static float GetLeft(cc::Node* );
 
-  static float GetRight(Sprite*);
+  static float GetRight(cc::Node*);
 
-  static float GetTop(Sprite*);
+  static float GetTop(cc::Node*);
 
-  static float GetBottom(Sprite*);
+  static float GetBottom(cc::Node*);
 
-  static float GetLastLeft(ComObj* ent);
+  static float GetLastLeft(ComObj* );
 
   static float GetLastRight(ComObj*);
 
@@ -90,29 +90,29 @@ public:
 
   static float CenterY();
 
-  static const Vec2 Center();
+  static const cc::Vec2 Center();
 
   static float ScreenHeight();
 
   static float ScreenWidth();
 
-  static const Rect VisRect();
+  static const cc::Rect VisRect();
   static const Box4 VisBox();
 
-  static const Size Screen();
-  static const Vec2 SCenter();
+  static const cc::Size Screen();
+  static const cc::Vec2 SCenter();
 
-  static const Vec2 VBoxMID(const Box4& );
+  static const cc::Vec2 VBoxMID(const Box4& );
 
   static bool TraceEnclosure(float dt, const Box4& bbox,
-      const Rect& rect, const Vec2& vel,
-      Vec2& outPos, Vec2& outVel);
+      const cc::Rect& rect, const cc::Vec2& vel,
+      cc::Vec2& outPos, cc::Vec2& outVel);
 
   /**
    * Get the sprite from the frame cache using
    * its id (e.g. #ship).
    */
-  static SpriteFrame* GetSpriteFrame(const string& frameid);
+  static cc::SpriteFrame* GetSpriteFrame(const s::string& frameid);
 
   static bool HasKeyPad();
 
@@ -130,15 +130,15 @@ public:
 
   static void OnTouchOne();
 
-  static const Vec2 AnchorC();
-  static const Vec2 AnchorTL();
-  static const Vec2 AnchorT();
-  static const Vec2 AnchorTR();
-  static const Vec2 AnchorR();
-  static const Vec2 AnchorL();
-  static const Vec2 AnchorBR();
-  static const Vec2 AnchorB();
-  static const Vec2 AnchorBL();
+  static const cc::Vec2 AnchorC();
+  static const cc::Vec2 AnchorTL();
+  static const cc::Vec2 AnchorT();
+  static const cc::Vec2 AnchorTR();
+  static const cc::Vec2 AnchorR();
+  static const cc::Vec2 AnchorL();
+  static const cc::Vec2 AnchorBR();
+  static const cc::Vec2 AnchorB();
+  static const cc::Vec2 AnchorBL();
 
 };
 
@@ -147,4 +147,6 @@ public:
 
 NS_END(fusilli)
 #endif
+
+
 

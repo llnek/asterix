@@ -16,19 +16,19 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 void ZLoader::onEnter() {
-  Scene::onEnter();
-  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::startLoad), 0.3);
+  cc::Scene::onEnter();
+  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad), 0.3);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ZLoader::initWithResources() {
+void ZLoader::InitWithResources() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ZLoader::startLoad(float delta) {
-  this->unschedule(CC_SCHEDULE_SELECTOR(ZLoader::startLoad));
+void ZLoader::StartLoad(float delta) {
+  this->unschedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad));
 }
 
 //////////////////////////////////////////////////////////////////////////////

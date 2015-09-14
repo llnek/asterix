@@ -36,6 +36,7 @@ static Event mkPlayRequest(const s::string& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
+/*
 static Event mkJoinRequest (const s::string& room,
     const s::string& user,
     const s::string& pwd) {
@@ -43,6 +44,7 @@ static Event mkJoinRequest (const s::string& room,
       //[room, user, pwd]);
   return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -59,13 +61,13 @@ static Event json_decode(const n::WebSocket::Data& e) {
 
   if (doc.IsObject()) {
     if (doc.HasMember("type")) {
-      evt.type = d["type"];
+      evt.type = doc["type"];
     }
     if (doc.HasMember("code")) {
-      evt.code = SCAST(EType, d["code"]);
+      evt.code = SCAST(EType, doc["code"]);
     }
     if (doc.HasMember("source")) {
-      auto v= doc["source"];
+      auto v= doc["source"].GetString();
       auto s = new js::Document();
       try {
         s->Parse(v);
@@ -119,7 +121,7 @@ WSockSS* WSockSS::CreateJoinRequest(const s::string& room,
 //////////////////////////////////////////////////////////////////////////////
 //
 WSockSS::WSockSS() {
-  state= EType::S_NOT_CONNECTED;
+  state= CType::S_NOT_CONNECTED;
   cbNetwork = cbSession = cbAll = nullptr;
   wss = nullptr;
 }
@@ -130,7 +132,7 @@ WSockSS::WSockSS() {
 void WSockSS::Send(const Event& evt) {
   if (state == EType::S_CONNECTED &&
       NNP(wss)) {
-    wss->send( json::Jsonfy(evt));
+    wss->send( json::Stringify(evt));
   }
 }
 
@@ -214,8 +216,8 @@ void WSockSS::onOpen(n::WebSocket* ws) {
 void WSockSS::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
   auto evt= json_decode(data);
   switch (evt.type) {
-    case MType::MSG_NETWORK:
-    case MType::MSG_SESSION:
+    case MType::NETWORK:
+    case MType::SESSION:
       OnEvent(evt);
     break;
     default:
@@ -253,7 +255,7 @@ void WSockSS::OnEvent(const Event& evt) {
 //////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
-void WSockSS::Connect(const string& url) {
+void WSockSS::Connect(const s::string& url) {
   auto ws= new n::WebSocket(url);
   if (!ws->init(*this, url)) {
     mc_del_ptr(ws);
@@ -264,8 +266,8 @@ void WSockSS::Connect(const string& url) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const string WSockSS::GetPlayRequest() {
-  return Jsonfy( mkPlayRequest(game, user, passwd));
+const s::string WSockSS::GetPlayRequest() {
+  return json::Stringify( mkPlayRequest(game, user, passwd));
 }
 
 

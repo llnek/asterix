@@ -16,71 +16,71 @@
 #include "support/XPool.h"
 #include "Primitives.h"
 #include <map>
-NS_USING(cocos2d)
-NS_USING(std)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
-
+//////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XConfig {
 protected:
 
-  static const string ATLASES= "atlases";
-  static const string LEVELS= "levels";
-  static const string FONTS= "fonts";
-  static const string TILES= "tiles";
-  static const string IMAGES= "images";
-  static const string SOUNDS= "sounds";
-  static const string CSTS= "csts";
-  static const string CFG= "cfg";
+  static const s::string ATLASES= "atlases";
+  static const s::string LEVELS= "levels";
+  static const s::string FONTS= "fonts";
+  static const s::string TILES= "tiles";
+  static const s::string IMAGES= "images";
+  static const s::string SOUNDS= "sounds";
+  static const s::string CSTS= "csts";
+  static const s::string CFG= "cfg";
 
-  Dictionary* GetFragment(const string& key);
-  XPool* AddPool(const string& p);
+  cc::Dictionary* GetFragment(const s::string& key);
+  XPool* AddPool(const s::string& p);
 
-  Dictionary* dict;
+  cc::Dictionary* dict;
   XConfig();
 
 private:
 
+  s::map<s::string, XPool*> pools;
   DISALLOW_COPYASSIGN(XConfig)
-  map<string,XPool*> pools;
 
 public:
 
   static void SetInstance(XConfig*);
   static XConfig* GetInstance();
 
-  virtual void HandleResolution(const Size& rs);
+  virtual void HandleResolution(const cc::Size& );
   virtual float GetScale();
   virtual void RunOnce();
 
-  virtual const string GetAppKey() = 0;
-  virtual const string AppId() = 0;
-  virtual const string GetColor() = 0;
   virtual ResolutionPolicy GetPolicy() = 0;
-  virtual const Size GetGameSize() = 0;
+  virtual const s::string GetAppKey() = 0;
+  virtual const s::string AppId() = 0;
+  virtual const s::string GetColor() = 0;
+  virtual const cc::Size GetGameSize() = 0;
 
-  virtual const string GetWSUrl() = 0;
-  virtual Scene* StartWith() = 0;
+  virtual const s::string GetWSUrl() = 0;
+  virtual cc::Scene* StartWith() = 0;
 
-  const string GetAtlas(const string& key);
-  const string GetFont(const string& key);
-  const string GetTile(const string& key);
-  const string GetImage(const string& key);
-  const string GetSound(const string& key);
+  const s::string GetAtlas(const s::string& key);
+  const s::string GetFont(const s::string& key);
+  const s::string GetTile(const s::string& key);
+  const s::string GetImage(const s::string& key);
+  const s::string GetSound(const s::string& key);
 
 
-  Ref* GetCst(const string& cst);
-  XPool* GetPool(const string& n);
+  cc::Ref* GetCst(const s::string& cst);
+  XPool* GetPool(const s::string& n);
 
   void ToggleAudio(bool s);
   bool HasAudio();
 
-  Dictionary* GetLevelCfg(const string& n);
-  Dictionary* GetLevel(const string& n);
+  cc::Dictionary* GetLevelCfg(const s::string& n);
+  cc::Dictionary* GetLevel(const s::string& n);
 
-  Dictionary* AddLevel(const string& n);
+  cc::Dictionary* AddLevel(const s::string& n);
 
   virtual ~XConfig();
 
@@ -89,7 +89,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* CstVal(const string& key) {
+T* CstVal(const s::string& key) {
   auto r= XConfig::GetInstance()->GetCst(key);
   if (NNP(r)) {
     return static_cast<T*>(r);

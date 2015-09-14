@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 #include <string>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@
   #define NS_USING(nsp)  using namespace nsp;
   #define NS_BEGIN(nsp)  namespace nsp {
   #define NS_END(nsp)    }
-  #define NS_ALIAS(x,y)     namespace x = y;
+  #define NS_ALIAS(x,y)  namespace x = y;
 #else
   #define NS_USING(nsp)
   #define NS_BEGIN(nsp)
