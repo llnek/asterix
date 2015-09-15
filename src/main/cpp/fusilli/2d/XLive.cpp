@@ -10,13 +10,11 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XLive.h"
-NS_USING(cocos2d)
-NS_USING(std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLive* XLive::Create(const string& frame) {
+XLive* XLive::Create(const s::string& frame) {
   auto c = XLive::create();
   c->initWithSpriteFrameName(frame);
   return c;
@@ -31,5 +29,7 @@ XLive::~XLive() {
 //
 XLive::XLive() {
 }
+
+
 
 NS_END(fusilli)

@@ -14,7 +14,6 @@
 
 #include "2d/CCScene.h"
 #include "XLayer.h"
-#include <map>
 
 
 NS_ALIAS(cc, cocos2d)

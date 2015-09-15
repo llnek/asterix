@@ -95,7 +95,7 @@ bool XHUDLayer::ReduceLives(int x) {
 //
 void XHUDLayer::UpdateScore(int num) {
   score += num;
-  scoreLabel->setString(to_string(score));
+  scoreLabel->setString(s::to_string(score));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ void XHUDLayer::AddMenuIcon(cc::MenuItem* b,
 void XHUDLayer::AddReplayIcon(cc::MenuItem* c,
     const cc::Vec2& where) {
 
-  auto tile= CstVal<Integer>("TILE")->getValue();
+  auto tile= CstVal<cc::Integer>("TILE")->getValue();
   auto hh = CCSX::GetScaledHeight(c) * 0.5;
   auto hw = CCSX::GetScaledWidth(c) * 0.5;
   auto cfg = XConfig::GetInstance();

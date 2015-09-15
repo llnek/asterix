@@ -14,10 +14,12 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Menu* XMenuLayer::MkBackQuit(MenuItem* b, MenuItem* q, bool vert) {
+cc::Menu* XMenuLayer::MkBackQuit(cc::MenuItem* b,
+    cc::MenuItem* q, bool vert) {
+
   auto sz= b->getContentSize();
   auto padding = 10;
-  auto menu= Menu::create();
+  auto menu= cc::Menu::create();
   menu->addChild(b);
   menu->addChild(q);
 

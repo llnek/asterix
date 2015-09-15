@@ -13,7 +13,7 @@
 #define __XMENULAYER_H__
 
 #include "XLayer.h"
-NS_USING(cocos2d)
+NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)
 
 
@@ -22,7 +22,9 @@ NS_BEGIN(fusilli)
 class CC_DLL XMenuLayer : public XLayer {
 protected:
 
-  Menu* MkBackQuit(MenuItem* b, MenuItem* q, bool vert = false);
+  cc::Menu* MkBackQuit(cc::MenuItem* b,
+      cc::MenuItem* q, bool vert = false);
+
   void MkAudio();
   XMenuLayer();
 

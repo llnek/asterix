@@ -37,7 +37,8 @@ class CC_DLL XGameLayer : public XLayer {
 
 protected:
 
-  void SetGameMode(const GameMode m);
+  virtual void OnNewGame(const GameMode);
+  virtual void SetGameMode(const GameMode);
 
   static XGameLayer* _main;
   s::map<int,bool> keyboard;
@@ -52,7 +53,7 @@ private:
 
 public:
 
-  virtual const s::string Moniker() { return "GAME"; }
+  virtual int GetIID() { return 2; }
   virtual void PKInput() override;
 
   virtual ~XGameLayer();
@@ -72,8 +73,8 @@ public:
 
   const s::map<int,bool>& Keys();
 
-  XLayer* GetBackgd();
-  XLayer* GetHUD();
+  XLayer* GetBackgd(int tag= 1);
+  XLayer* GetHUD(int tag=3);
 
   const Box4 GetEnclosureBox();
   void NewGame(const GameMode m);

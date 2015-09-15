@@ -28,7 +28,7 @@ private:
   DISALLOW_COPYASSIGN(OnlineLayer)
 
 public:
-  virtual const s::string Moniker() { return "OnlineLayer"; }
+  virtual int GetIID() { return 1; }
   virtual XLayer* Realize() override;
   virtual ~OnlineLayer();
   CREATE_FUNC(OnlineLayer)
@@ -72,7 +72,7 @@ void Online::OnPlayReq(const s::string& uid, const s::string& pwd) {
       pwd.length() == 0) { return; }
 
   wss= WSockSS::CreatePlayRequest(game, uid, pwd);
-  wss= wss->ListenAll([this](const Event& e) {
+  wss->ListenAll([=](const Event& e) {
       this->OnOdinEvent(e);
       });
   wss->Connect(wsurl);
@@ -118,7 +118,7 @@ void Online::OnSessionEvent(const Event& evt) {
     case EType::PLAYREQ_OK:
       //CCLOG("player %d: request to play game was successful",evt.source.pnum);
       //player=evt.source.pnum;
-      SCAST(OnlineLayer*, GetLayer("OnlineLayer"))->ShowWaitOthers();
+      SCAST(OnlineLayer*, GetLayer(1))->ShowWaitOthers();
     break;
   }
 }
@@ -192,7 +192,7 @@ XLayer* OnlineLayer::Realize() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder( "user id:");
-  uid->setPosition(cw.x, cw.y + bxz.height * 0.5 + 2);
+  uid->setPosition(cc::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
   AddItem(uid);
 
   // editbox for password
@@ -204,7 +204,7 @@ XLayer* OnlineLayer::Realize() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( "password:");
-  pwd->setPosition(cw.x, cw.y - bxz.height * 0.5 - 2);
+  pwd->setPosition(cc::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
   AddItem(pwd);
 
   auto b1= CreateMenuBtn("#continue.png",
@@ -215,7 +215,7 @@ XLayer* OnlineLayer::Realize() {
 
   auto b2= CreateMenuBtn("#cancel.png",
       "#cancel.png", "#cancel.png");
-  b2->setTarget(par, Online::OnCancel);
+  b2->setTarget(par, CC_MENU_SELECTOR(Online::OnCancel));
   auto menu= cc::Menu::create();
   menu->addChild(b1,1);
   menu->addChild(b2,2);

@@ -15,30 +15,37 @@
 #include "platform/CCCommon.h"
 #include "2d/XHUDLayer.h"
 #include <vector>
-NS_USING(cocos2d)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLives {
+protected:
+
+  s::vector<cc::Node*> icons;
+  int totalLives;
+  int curLives;
+  int dir;
+  cc::Size lifeSize;
+  cc::Vec2 topLeft;
+  s::string frameId;
+  XHUDLayer* hud;
+
+  XLives();
 
 private:
 
   DISALLOW_COPYASSIGN(XLives)
-  XLives();
-  int totalLives;
-  int curLives;
-  int dir;
-  Size lifeSize;
-  Vec2 topLeft;
-  XHUDLayer* hud;
-  string frameId;
-  vector<cocos2d::Node*> icons;
 
 public:
 
+  static XLives* Create(XHUDLayer*,
+      const s::string& frame,
+      float x, float y, int dir= 1);
+
   virtual ~XLives();
-  XLives(XHUDLayer*, const string& frame, float x, float y, int dir= 1);
 
   int GetLives() { return curLives; }
   void Reduce(int c);
@@ -49,6 +56,10 @@ public:
   void Create();
 
 };
+
+
+
+
 
 NS_END(fusilli)
 #endif

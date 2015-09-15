@@ -14,27 +14,32 @@
 
 #include "core/fusilli.h"
 #include "2d/CCSprite.h"
-NS_USING(cocos2d)
-NS_USING(std)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XLive : public Sprite {
+class CC_DLL XLive : public cc::Sprite {
+protected:
 
-private:
-  DISALLOW_COPYASSIGN(XLive)
   CREATE_FUNC(XLive)
-public:
-
-  virtual ~XLive();
   XLive();
 
-  static XLive* Create(const string& frame);
+private:
+
+  DISALLOW_COPYASSIGN(XLive)
+
+public:
+
+  static XLive* Create(const s::string& frame);
+  virtual ~XLive();
+
 };
 
 
 
 NS_END(fusilli)
 #endif
+
 

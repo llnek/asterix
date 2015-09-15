@@ -42,7 +42,7 @@ void XLayer::PKInput() {}
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::AudioCallback(cc::Ref* sender) {
-  auto t = SCAST(cc::MenuItemToggle*,sender);
+  auto t = SCAST(cc::MenuItemToggle*, sender);
   auto cfg = XConfig::GetInstance();
   if (t->getSelectedIndex() == 0) {
     cfg->ToggleAudio(true);
@@ -71,10 +71,13 @@ void XLayer::AddAudioIcons(cc::MenuItem* off, cc::MenuItem* on,
 
   cc::Vector<cc::MenuItem*> items {on,off};
   auto cfg = XConfig::GetInstance();
-  cc::MenuItemToggle* audio = cc::MenuItemToggle::createWithCallback(
-      CC_CALLBACK_1(XLayer::AudioCallback, this), items);
-  audio->setAnchorPoint(anchor);
+
+  auto audio = cc::MenuItemToggle::createWithTarget(
+      this,
+      CC_MENU_SELECTOR(XLayer::AudioCallback), items);
+
   audio->setSelectedIndex( cfg->HasAudio() ? 0 : 1);
+  audio->setAnchorPoint(anchor);
   //
   auto menu= cc::Menu::create(audio);
   menu->setPosition(pos);
@@ -93,7 +96,7 @@ void XLayer::OnQuit(cc::Ref* rr) {
 void XLayer::CenterAtlasImage(const s::string& atlas,
     const s::string& frame) {
 
-  AddAtlasFrame(atlas, CCSX::Center(), frame);
+  AddAtlasFrame(atlas, frame, CCSX::Center());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -106,8 +109,8 @@ void XLayer::CenterImage(const s::string& frame) {
 // Add an image chosen from this atlas
 //
 void XLayer::AddAtlasFrame(const s::string& atlas,
-                           const cc::Vec2& pos,
-                           const s::string& frame) {
+                           const s::string& frame,
+                           const cc::Vec2& pos) {
   auto tt= cc::Sprite::create(frame);
   tt->setPosition(pos);
   AddAtlasItem(atlas, tt);
@@ -143,18 +146,9 @@ void XLayer::RemoveAtlasAll(const s::string& atlas) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Remove child from this atlas
-//
-void XLayer::RemoveAtlasItem(const s::string& atlas, cc::Node* n) {
-  if (NNP(n)) {
-    n->removeFromParent();
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // Remove all children
 //
-void XLayer::RemoveAll(bool c) {
+void XLayer::RemoveAll() {
   this->removeAllChildren();
 }
 
@@ -171,28 +165,25 @@ void XLayer::RemoveItem(cc::Node* n) {
 // Add a child to this atlas
 //
 void XLayer::AddAtlasItem(const s::string& atlas,
-    cc::Node* n, int zx, int tag) {
+    cc::Node* n, int* zx, int* tag) {
 
-  auto ptag = tag == INT32_MIN ? ++lastTag : tag;
-  auto pzx = zx == INT32_MIN ? lastZix : zx;
+  auto ptag = ENP(tag) ? ++lastTag : *tag;
+  auto pzx = ENP(zx) ? lastZix : *zx;
   auto p= GetAtlas(atlas);
-  auto ss = DCAST(cc::Sprite*,n);
+  auto ss = DCAST(cc::Sprite*, n);
 
-  if (DCAST(cc::SpriteBatchNode*,p) != nullptr &&
-      NNP(ss)) {
-    ss->setBatchNode(p);
+  if (NNP(p)) {
+    if (NNP(ss)) { ss->setBatchNode(p); }
+    p->addChild(n, pzx, ptag);
   }
-
-  if (NNP(p)) { p->addChild(n, pzx, ptag);  }
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 //
-void XLayer::AddItem(cc::Node* n, int zx, int tag) {
-  auto ptag = tag == INT32_MIN ? ++lastTag : tag;
-  auto pzx = zx == INT32_MIN ? lastZix : zx;
+void XLayer::AddItem(cc::Node* n, int* zx, int* tag) {
+  auto ptag = ENP(tag) ?  ++lastTag : *tag;
+  auto pzx = ENP(zx) ? lastZix : *zx;
   addChild(n, pzx, ptag);
 }
 
@@ -206,23 +197,30 @@ int XLayer::IncIndexZ() {
 // Remember the parent scene object
 //
 XScene* XLayer::GetScene() {
-  return SCAST(XScene*,getParent());
+  return SCAST(XScene*, getParent());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer::XLayer() {
-  lastTag= 0;
-  lastZix= 0;
+XLayer::XLayer()
+  : lastTag(0)
+  , lastZix(0) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::~XLayer() {
-  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
+  for (auto it= atlases.begin();
+      it != atlases.end(); ++it) {
     it->second->release();
   }
   atlases.clear();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+cc::MenuItem* XLayer::CreateMenuBtn(const s::string& n) {
+  return CreateMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -235,6 +233,7 @@ cc::MenuItem* XLayer::CreateMenuBtn(const s::string& n,
                                 cc::Sprite::create(s),
                                 cc::Sprite::create(d));
 }
+
 
 
 NS_END(fusilli)

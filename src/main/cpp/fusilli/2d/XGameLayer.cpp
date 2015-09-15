@@ -27,7 +27,7 @@ XGameLayer::~XGameLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::XGameLayer()
-: mode(ONE_PLAY)
+: mode(GameMode::ONE_PLAY)
 , level(1)
 , engine(nullptr)
 , actor(nullptr) {
@@ -44,7 +44,7 @@ void XGameLayer::PKInput() {
 //////////////////////////////////////////////////////////////////////////////
 //
 cc::Dictionary* XGameLayer::GetLCfg() {
-  return XConfig::GetInstance()->GetLevelCfg(to_string(level));
+  return XConfig::GetInstance()->GetLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ bool XGameLayer::KeyPoll(int key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::InitEngine(const s::vector<a::System*>& ss) {
-  engine = Engine::create();
+  engine = a::Engine::Create();
   for (auto it= ss.begin(); it != ss.end(); ++it) {
     engine->AddSystem(*it);
   }
@@ -98,16 +98,16 @@ XLayer* XGameLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XGameLayer::GetBackgd() {
+XLayer* XGameLayer::GetBackgd(int tag) {
   auto s = GetScene();
-  return s->GetLayer("BackLayer");
+  return s->GetLayer(tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XGameLayer::GetHUD() {
+XLayer* XGameLayer::GetHUD(int tag) {
   auto s= GetScene();
-  return s->GetLayer("HUD");
+  return s->GetLayer(tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////

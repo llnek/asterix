@@ -13,15 +13,19 @@
 #include "YesNo.h"
 NS_BEGIN(fusilli)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL YesNoLayer : public XLayer {
+
 private:
+
   DISALLOW_COPYASSIGN(YesNoLayer)
   YesNoLayer() {}
 
 public:
-  virtual const string Moniker() { return "YesNoLayer"; }
+
+  virtual int GetIID() override { return 1; }
   virtual XLayer* Realize() override;
   virtual ~YesNoLayer() {}
 
@@ -32,10 +36,12 @@ public:
 //
 XLayer* YesNoLayer::Realize() {
 
+  auto par = SCAST(YesNo*, getParent());
   auto cfg= XConfig::GetInstance();
+  auto msg= par->GetMsg();
   auto fnt= cfg->GetFont("font.OCR");
-  auto qn= Label::createWithBMFont(fnt, "quit?");
-  auto par = getParent();
+  auto qn= cc::Label::createWithBMFont(fnt, msg);
+
   auto cw= CCSX::Center();
   auto wz= CCSX::VisRect();
   auto wb= CCSX::VisBox();
@@ -47,15 +53,12 @@ XLayer* YesNoLayer::Realize() {
   CenterImage("game.bg");
   AddItem(qn);
 
-  auto b1= CreateMenuBtn("#continue.png",
-      "#continue.png",
-      "#continue.png");
+  auto b1= CreateMenuBtn("#continue.png");
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnYes));
-  auto b2= CreateMenuBtn("#cancel.png",
-      "#cancel.png",
-      "#cancel.png");
+  auto b2= CreateMenuBtn("#cancel.png");
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnNo));
-  auto menu= Menu::create();
+  auto menu= cc::Menu::create();
+
   menu->addChild(b1);
   menu->addChild(b2);
   menu->setPosition(cw);
@@ -66,29 +69,32 @@ XLayer* YesNoLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::CreateWithActions(CallFunc* y, CallFunc* n) {
+YesNo* YesNo::CreateWithActions(const s::string& msg,
+    cc::CallFunc* y, cc::CallFunc* n) {
+
   YesNo* yn = YesNo::create();
   yn->SetActions(y,n);
+  yn->SetMsg(msg);
   yn->Realize();
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::Create() {
-  CallFunc* y = CallFunc::create([](){
-      Director::getInstance()->popToRootScene();
+YesNo* YesNo::Create(const s::string& msg) {
+  cc::CallFunc* y = cc::CallFunc::create([](){
+      cc::Director::getInstance()->popToRootScene();
       CCSX::RunScene(XConfig::GetInstance()->StartWith());
       });
-  CallFunc* n= CallFunc::create([]() {
-      Director::getInstance()->popScene();
+  cc::CallFunc* n= cc::CallFunc::create([]() {
+      cc::Director::getInstance()->popScene();
       });
-  return CreateWithActions(y,n);
+  return CreateWithActions(msg, y,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void YesNo::SetActions(CallFunc* y, CallFunc* n) {
+void YesNo::SetActions(cc::CallFunc* y, cc::CallFunc* n) {
   yes = y;
   no = n;
 }
@@ -108,7 +114,9 @@ void YesNo::OnNo(Ref* rr) {
 //////////////////////////////////////////////////////////////////////////////
 //
 XScene* YesNo::Realize() {
-  AddLayer( YesNoLayer::create()->Realize());
+  auto y= YesNoLayer::create();
+  AddLayer(y);
+  y->Realize();
   return this;
 }
 

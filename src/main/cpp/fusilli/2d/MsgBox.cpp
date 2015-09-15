@@ -65,7 +65,7 @@ private:
   MsgBoxLayer();
 
 public:
-  virtual const string Moniker() { return "MsgBoxLayer"; }
+  virtual int GetIID() { return 1; }
   virtual XLayer* Realize() override;
   virtual ~MsgBoxLayer();
   CREATE_FUNC(MsgBoxLayer)

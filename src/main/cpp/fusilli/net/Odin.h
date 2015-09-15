@@ -131,8 +131,8 @@ public:
   void Close();
   void Send(const Event&);
 
-  void Listen(const MType, void (*cb)(const Event&));
-  void ListenAll(void (*cb)(const Event&));
+  void Listen(const MType, s::function<void (const Event&)>);
+  void ListenAll(s::function<void (const Event&)>);
   void CancelAll();
   void Cancel(const MType);
 

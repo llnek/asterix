@@ -10,8 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XLives.h"
-NS_USING(cocos2d)
-NS_USING(std)
 NS_BEGIN(fusilli)
 
 
@@ -55,16 +53,22 @@ void XLives::Resurrect() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::DrawLives() {
-  auto y= topLeft.y - lifeSize.height * 0.5;
-  auto x= topLeft.x + lifeSize.width * 0.5;
   auto gap=2;
+  float y;
+  float x;
 
   for (int n = 0; n < curLives; ++n) {
     auto v= XLive::Create(frameId);
+    if (n==0) {
+      lifeSize = cc::Size(CCSX::GetScaledWidth(v),
+                          CCSX::GetScaledHeight(v));
+      y= topLeft.y - lifeSize.height * 0.5;
+      x= topLeft.x + lifeSize.width * 0.5;
+    }
     v->setPosition(x,y);
     hud->AddIcon(v);
     icons.push_back(v);
-    if (this->dir> 0) {
+    if (this->dir > 0) {
       x += lifeSize.width + gap;
     } else {
       x -= lifeSize.width - gap;
@@ -74,23 +78,20 @@ void XLives::DrawLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::Create() {
-  XLive* dummy = XLive::Create(frameId);
-  //autorelease, so is ok
-  lifeSize = Size(CCSX::GetScaledWidth(dummy),
-                  CCSX::GetScaledHeight(dummy));
-  DrawLives();
-}
+XLives* XLives::Create(XHUDLayer* hud,
+    const s::string& frame,
+    float x, float y, int dir) {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-XLives::XLives(XHUDLayer* hud, const string& frame, float x, float y, int dir)
-: XLives() {
-  topLeft= Vec2(x,y);
-  frameId = frame;
-  this->hud= hud;
-  Reset();
-  this->dir=dir;
+  auto vs = new XLives();
+
+  vs->topLeft= cc::Vec2(x,y);
+  vs->frameId = frame;
+  vs->hud= hud;
+  vs->Reset();
+  vs->dir=dir;
+  vs->DrawLives();
+
+  return vs;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,11 +102,14 @@ XLives::~XLives() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLives::XLives()
-: hud(nullptr),
-  curLives(-1),
-  totalLives(0),
-  dir(1) {
+  : hud(nullptr)
+  , curLives(-1)
+  , totalLives(0)
+  , dir(1) {
+
 }
+
+
 
 
 NS_END(fusilli)

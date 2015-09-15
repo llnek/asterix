@@ -12,31 +12,40 @@
 #if !defined(__YESNO_H__)
 #define __YESNO_H__
 
+
 #include "platform/CCCommon.h"
-NS_USING(cocos2d)
+NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL YesNo : public XScene {
 friend class YesNoLayer;
+protected:
+
+  void SetActions(cc::CallFunc*, cc::CallFunc*);
+  void SetMsg(const s::string&);
+  const s::string& GetMsg() { return msg; }
+  void OnYes(cc::Ref*);
+  void OnNo(cc::Ref*);
+
+  YesNo();
+
+  cc::CallFunc* yes;
+  cc::CallFunc* no;
+  s::string msg;
+
 private:
 
   DISALLOW_COPYASSIGN(YesNo)
-  YesNo();
-
-  void SetActions(CallFunc*, CallFunc*);
-  void OnYes(Ref*);
-  void OnNo(Ref*);
-
-  CallFunc* yes;
-  CallFunc* no;
 
 public:
 
-  static YesNo* CreateWithActions(CallFunc* yes,
-      CallFunc* no);
-  static YesNo* Create();
+  static YesNo* CreateWithActions(const s::string& msg,
+      cc::CallFunc* yes, cc::CallFunc* no);
+
+  static YesNo* Create(const s::string& msg);
 
   virtual XScene* Realize() override;
   virtual ~YesNo();
