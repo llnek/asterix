@@ -20,11 +20,15 @@ NS_BEGIN(fusilli)
 //
 class CC_DLL OnlineLayer : public XLayer {
 private:
-  DISALLOW_COPYASSIGN(OnlineLayer)
+
+  void OnReq(const s::string&, const s::string&);
   void ShowWaitOthers();
   OnlineLayer() {}
+
+  DISALLOW_COPYASSIGN(OnlineLayer)
+
 public:
-  virtual const string Moniker() { return "OnlineLayer"; }
+  virtual const s::string Moniker() { return "OnlineLayer"; }
   virtual XLayer* Realize() override;
   virtual ~OnlineLayer();
   CREATE_FUNC(OnlineLayer)
@@ -59,13 +63,15 @@ XScene* Online::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnReq(const s::string& uid, const s::string& pwd) {
-  auto wsurl = XConfig::GetInstance()->GetWSUrl();
+void Online::OnPlayReq(const s::string& uid, const s::string& pwd) {
+  auto cfg = XConfig::GetInstance();
+  auto wsurl = cfg->GetWSUrl();
+  auto game = cfg->GetGameId();
 
   if (uid.length() == 0 ||
       pwd.length() == 0) { return; }
 
-  wss= WSockSS::CreatePlayRequest(gameid, uid, pwd);
+  wss= WSockSS::CreatePlayRequest(game, uid, pwd);
   wss= wss->ListenAll([this](const Event& e) {
       this->OnOdinEvent(e);
       });
@@ -112,7 +118,7 @@ void Online::OnSessionEvent(const Event& evt) {
     case EType::PLAYREQ_OK:
       //CCLOG("player %d: request to play game was successful",evt.source.pnum);
       //player=evt.source.pnum;
-      ShowWaitOthers();
+      SCAST(OnlineLayer*, GetLayer("OnlineLayer"))->ShowWaitOthers();
     break;
   }
 }
@@ -125,6 +131,13 @@ void Online::OnCancel(cc::Ref* rr) {
   } catch (...) {}
   wss=nullptr;
   this->no->execute();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void OnlineLayer::OnReq(const s::string& uid, const s::string& pwd) {
+  auto par = SCAST(Online*, getParent());
+  par->OnPlayReq(uid, pwd);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -145,8 +158,7 @@ void OnlineLayer::ShowWaitOthers() {
   AddItem(qn);
 
   auto b1= CreateMenuBtn("#cancel.png",
-      "#cancel.png",
-      "#cancel.png");
+      "#cancel.png", "#cancel.png");
   b1->setTarget(getParent(), CC_MENU_SELECTOR(Online::OnCancel));
   auto menu= cc::Menu::create();
   menu->addChild(b1);
@@ -196,15 +208,13 @@ XLayer* OnlineLayer::Realize() {
   AddItem(pwd);
 
   auto b1= CreateMenuBtn("#continue.png",
-      "#continue.png",
-      "#continue.png");
-  b1->setCallback([=](cc::Ref* r) {
-        par->OnReq(uid->getString(), pwd->getString());
+      "#continue.png", "#continue.png");
+  b1->setCallback([=](cc::Ref* rr) {
+        this->OnReq(uid->getString(), pwd->getString());
       });
 
   auto b2= CreateMenuBtn("#cancel.png",
-      "#cancel.png",
-      "#cancel.png");
+      "#cancel.png", "#cancel.png");
   b2->setTarget(par, Online::OnCancel);
   auto menu= cc::Menu::create();
   menu->addChild(b1,1);

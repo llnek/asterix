@@ -12,28 +12,33 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
+
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include "2d/CCLayer.h"
 #include <stdint.h>
-NS_USING(std)
+
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(a, ash)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XLayer : public Layer {
+class CC_DLL XLayer : public cc::Layer {
 protected:
 
-  void CreateAudioIcons(MenuItem*& off, MenuItem*& on);
-  void AudioCallback(Ref* sender);
-  void AddAudioIcons(MenuItem* off, MenuItem* on,
-      const Vec2& anchor, const Vec2& pos);
-  void OnQuitAction(Ref*);
+  void CreateAudioIcons(cc::MenuItem*& off, cc::MenuItem*& on);
+  void AudioCallback(cc::Ref* sender);
+  void AddAudioIcons(cc::MenuItem* off, cc::MenuItem* on,
+      const cc::Vec2& anchor, const cc::Vec2& pos);
+  virtual void OnQuit(cc::Ref*);
+  XLayer();
 
 private:
 
-  map<string,SpriteBatchNode*> atlases;
+  s::map<s::string, cc::SpriteBatchNode*> atlases;
   int lastTag;
   int lastZix;
 
@@ -41,60 +46,55 @@ private:
 
 public:
 
-  virtual const string Moniker() = 0;
+  // tag value
+  virtual int GetIID() = 0;
 
-  MenuItem*
+  cc::MenuItem* CreateMenuBtn( const s::string& n);
+
+  cc::MenuItem*
     CreateMenuBtn(
-      const string& n,
-      const string& s, const string& d);
+      const s::string& n,
+      const s::string& s, const s::string& d);
 
-  SpriteBatchNode*
-    RegoAtlas(
-      const string& name,
-      int z= INT32_MIN,
-      int tag = INT32_MIN);
+  cc::SpriteBatchNode*
+    RegoAtlas(const s::string& name,
+        int* z = nullptr, int* tag= nullptr);
 
   virtual XLayer* Realize();
 
   virtual void PKInput();
 
-  virtual void AddAudioIcon(Dictionary* options);
+  virtual void AddAudioIcon(cc::Dictionary* options);
 
   virtual void CenterAtlasImage
-    (const string& atlas, const string& frame);
+    (const s::string& atlas, const s::string& frame);
 
-  virtual void CenterImage(const string& frame);
+  virtual void CenterImage(const s::string& frame);
 
   virtual void AddAtlasFrame
-    (const string& atlas,
-      const Vec2& pos, const string& frame);
+    (const s::string& atlas,
+     const s::string& frame, const cc::Vec2& pos);
 
   virtual void AddFrame
-    (const string& frame, const Vec2& pos);
+    (const s::string& frame, const cc::Vec2& pos);
 
-  virtual SpriteBatchNode*
-    GetAtlas(const string& name);
+  virtual cc::SpriteBatchNode*
+    GetAtlas(const s::string& name);
 
-  virtual void RemoveAtlasAll(const string& atlas) ;
+  virtual void RemoveAtlasAll(const s::string& atlas) ;
+  virtual void RemoveAll();
 
-  virtual void RemoveAtlasItem(const string& atlas, Node* n);
+  virtual void RemoveItem(cc::Node* n);
 
-  virtual void RemoveAll(bool c= true);
+  virtual void AddAtlasItem(const s::string& atlas,
+      cc::Node* n, int* zx = nullptr, int* tag = nullptr);
+  virtual void AddItem(cc::Node* n,
+      int* zx = nullptr, int* tag = nullptr);
 
-  virtual void RemoveItem(Node* n);
-
-  virtual void AddAtlasItem(const string& atlas, Node* n, int zx = INT32_MIN, int tag = INT32_MIN);
-
-  virtual void AddItem(Node* n, int zx = INT32_MIN, int tag = INT32_MIN);
-
-  virtual int IncIndexZ();
-
-  Scene* GetScene();
-
-  //virtual bool init() override;
+  XScene* GetScene();
+  int IncIndexZ();
 
   virtual ~XLayer();
-  XLayer();
 
 };
 

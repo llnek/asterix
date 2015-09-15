@@ -15,6 +15,7 @@
 #include <vector>
 #include <map>
 #include "Ash.h"
+NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
 class EntityList;
@@ -34,30 +35,35 @@ private:
   void OnAddEntity(Entity* e);
   void HouseKeeping();
 
-  map<string,EntityList*> groups;
-  vector<NodeList*> nodeLists;
-  vector<Entity*> freeList;
-  vector<Entity*> modList;
-  vector<Entity*> addList;
+  s::map<s::string,EntityList*> groups;
+  s::vector<NodeList*> nodeLists;
+  s::vector<Entity*> freeList;
+  s::vector<Entity*> modList;
+  s::vector<Entity*> addList;
 
   SystemList systemList;
   bool updating;
   bool dirty;
 
-public:
-
-  virtual ~Engine();
   Engine();
 
-  const vector<Entity*> GetEntities(const string& group);
-  const vector<System*> GetSystems();
+  DISALLOW_COPYASSIGN(Engine)
 
-  Entity* CreateEntity(const string& group);
+public:
+
+  DEFCREATE_FUNC(Engine)
+
+  virtual ~Engine();
+
+  const s::vector<Entity*> GetEntities(const s::string& group);
+  const s::vector<System*> GetSystems();
+
+  Entity* CreateEntity(const s::string& group);
   void NotifyModify(Entity*);
   void RemoveEntity(Entity* );
-  void RemoveEntities(const string& group) ;
+  void RemoveEntities(const s::string& group) ;
 
-  NodeList*  GetNodeList(const string& group, const NodeType& );
+  NodeList*  GetNodeList(const s::string& group, const NodeType& );
   void ReleaseNodeList(NodeList*& );
 
   System* GetSystem(const SystemType& );

@@ -12,7 +12,7 @@
 #include "Engine.h"
 #include "Entity.h"
 #include "System.h"
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
   /*
@@ -34,11 +34,15 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
-  for (auto it= nodeLists.begin(); it != nodeLists.end(); ++it) {
+  for (auto it= nodeLists.begin();
+      it != nodeLists.end(); ++it) {
+    //free a nodelist
     delete *it;
   }
   nodeLists.clear();
-  for (auto it= groups.begin(); it != groups.end(); ++it) {
+  for (auto it= groups.begin();
+      it != groups.end(); ++it) {
+    //free a entitylist
     delete it->second;
   }
   groups.clear();
@@ -53,9 +57,10 @@ Engine::Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const vector<Entity*> Engine::GetEntities(const string& group) {
+const s::vector<Entity*>
+Engine::GetEntities(const s::string& group) {
   auto it=groups.find(group);
-  vector<Entity*> v;
+  s::vector<Entity*> v;
   if (it != groups.end()) {
     return it->second->List();
   } else {
@@ -65,21 +70,21 @@ const vector<Entity*> Engine::GetEntities(const string& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const vector<System*> Engine::GetSystems() {
+const s::vector<System*> Engine::GetSystems() {
   return systemList.List();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::CreateEntity(const string& group) {
-  auto e= new Entity(this, group);
+Entity* Engine::CreateEntity(const s::string& group) {
+  auto e= new Entity(group, this);
   auto it= groups.find(group);
   EntityList* el;
   if (it != groups.end()) {
     el= it->second;
   } else {
     el= new EntityList();
-    groups.insert(pair<string,EntityList*>(group,el));
+    groups.insert(pair<s::string,EntityList*>(group,el));
   }
   el->Add(e);
   addList.push_back(e);
@@ -90,7 +95,8 @@ Entity* Engine::CreateEntity(const string& group) {
 //
 void Engine::NotifyModify(Entity* e) {
   bool fnd=false;
-  for (auto it= modList.begin(); it != modList.end(); ++it) {
+  for (auto it= modList.begin();
+      it != modList.end(); ++it) {
     if (e == *it) { fnd=true; break; }
   }
   if (!fnd) {
@@ -118,7 +124,7 @@ void Engine::RemoveEntity(EntityList* el, Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntities(const string& group) {
+void Engine::RemoveEntities(const s::string& group) {
   auto it = groups.find(group);
   if (it != groups.end()) {
     auto el=it->second;
@@ -131,7 +137,8 @@ void Engine::RemoveEntities(const string& group) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::OnRemoveEntity(Entity* e) {
-  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+  for (auto it = nodeLists.begin();
+      it != nodeLists.end(); ++it) {
     auto nl= *it;
     nl->RemoveEntity(e);
   }
@@ -141,7 +148,8 @@ void Engine::OnRemoveEntity(Entity* e) {
 //
 void Engine::OnAddEntity(Entity* e) {
   auto rego = NodeRegistry::GetInstance();
-  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+  for (auto it = nodeLists.begin();
+      it != nodeLists.end(); ++it) {
     auto nl= *it;
     auto n= rego->CreateNode(nl->GetType());
     if (n->BindEntity(e)) {
@@ -154,7 +162,7 @@ void Engine::OnAddEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Engine::GetNodeList(const string& group, const NodeType& nodeType) {
+NodeList* Engine::GetNodeList(const s::string& group, const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
   auto it= groups.find(group);
   auto nl = new NodeList();
@@ -178,7 +186,8 @@ NodeList* Engine::GetNodeList(const string& group, const NodeType& nodeType) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::ReleaseNodeList(NodeList*& nl) {
-  for (auto it=nodeLists.begin(); it != nodeLists.end(); ++it) {
+  for (auto it=nodeLists.begin();
+      it != nodeLists.end(); ++it) {
     if (nl == *it) {
       nodeLists.erase(it);
       break;
@@ -222,7 +231,7 @@ void Engine::Update(float time) {
   updating = true;
   for (auto s= systemList.head; NNP(s); s= s->next) {
     if (s->IsActive()) {
-      s->Update(time);
+      if (! s->Update(time)) { break; }
     }
   }
   if (dirty) {
@@ -236,7 +245,8 @@ void Engine::Update(float time) {
 //
 void Engine::OnModifyEntity(Entity* e) {
   auto rego = NodeRegistry::GetInstance();
-  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+  for (auto it = nodeLists.begin();
+      it != nodeLists.end(); ++it) {
     auto nl = *it;
     auto t = nl->GetType();
     Node* n;
@@ -247,7 +257,7 @@ void Engine::OnModifyEntity(Entity* e) {
     } else {
       n= rego->CreateNode(t);
       if (n->BindEntity(e)) {
-         nl->Add(n);
+        nl->Add(n);
       } else {
         delete n;
       }
@@ -258,16 +268,19 @@ void Engine::OnModifyEntity(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::HouseKeeping() {
-  for (auto it= freeList.begin(); it != freeList.end(); ++it) {
+  for (auto it= freeList.begin();
+      it != freeList.end(); ++it) {
     auto e = *it;
     OnRemoveEntity(e);
     delete e;
   }
-  for (auto it= addList.begin(); it != addList.end(); ++it) {
+  for (auto it= addList.begin();
+      it != addList.end(); ++it) {
     auto e = *it;
     OnAddEntity(e);
   }
-  for (auto it= modList.begin(); it != modList.end(); ++it) {
+  for (auto it= modList.begin();
+      it != modList.end(); ++it) {
     auto e= *it;
     OnModifyEntity(e);
   }

@@ -14,9 +14,11 @@
 
 #include "net/Odin.h"
 
+
 NS_ALIAS(cc,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -28,7 +30,7 @@ protected:
   void OnSessionEvent(const Event&);
   void OnOdinEvent(const Event&);
   void OnNetworkEvent(const Event&);
-  void OnReq(const s::string&, const s::string&);
+  void OnPlayReq(const s::string&, const s::string&);
   void OnContinue();
   void OnCancel(cc::Ref*);
   Online();
@@ -37,6 +39,7 @@ private:
 
   DISALLOW_COPYASSIGN(Online)
   CREATE_FUNC(Online)
+
   WSockSS* wss;
   cc::CallFunc* yes;
   cc::CallFunc* no;

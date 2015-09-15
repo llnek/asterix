@@ -21,19 +21,25 @@ NS_ALIAS(a, ash)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL ComObj : public a::Component {
+
 private:
+
   DISALLOW_COPYASSIGN(ComObj)
+
 public:
+
   cc::Sprite* sprite;
   bool status;
   int origHealth;
   int health;
   int score;
-  cc::Vec2 vel;
+
   cc::Vec2 lastPos;
+  cc::Vec2 vel;
 
   void Inflate(cc::Dictionary* options);
   void Inflate(float x, float y);

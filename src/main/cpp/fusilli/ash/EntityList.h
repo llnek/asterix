@@ -13,24 +13,27 @@
 #define __ENTITYLIST_H__
 
 #include "Entity.h"
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL EntityList {
+friend class Engine;
 private:
+
   DISALLOW_COPYASSIGN(EntityList)
-  friend class Engine;
 
   virtual ~EntityList();
   EntityList();
 
 public:
+
   Entity* head;
   Entity* tail;
 
-  const vector<Entity*> List();
+  const s::vector<Entity*> List();
 
   void Remove(Entity* );
   void Add(Entity* );
@@ -41,3 +44,5 @@ public:
 
 NS_END(ash)
 #endif
+
+

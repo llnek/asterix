@@ -13,10 +13,16 @@
 #define __XGAMELAYER_H__
 
 #include "deprecated/CCDictionary.h"
+#include "ash/System.h"
+#include "ash/Engine.h"
 #include "XLayer.h"
-NS_USING(cocos2d)
-NS_USING(std)
+
+
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
+NS_ALIAS(a, ash)
 NS_BEGIN(fusilli)
+
 
 enum class GameMode {
   TWO_PLAY,
@@ -24,41 +30,18 @@ enum class GameMode {
   NET_PLAY
 };
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XGameLayer : public XLayer {
-
-public:
-
-  virtual const string Moniker() { return "GAME"; }
-  virtual void PKInput() override;
-
-  virtual ~XGameLayer();
-  XGameLayer();
-
-  Dictionary* GetLCfg();
-  bool KeyPoll(int key);
-
-  void InitEngine();
-
-  virtual void update(float) override;
-  virtual bool IsOperational() = 0;
-
-  const map<int,bool> Keys();
-
-  XLayer* GetBackgd(const string&);
-  XLayer* GetHUD();
-
-  const Box4 GetEnclosureBox();
-  void NewGame(const GameMode m);
-
-  CREATE_FUNC(XGameLayer)
 
 protected:
 
   void SetGameMode(const GameMode m);
 
-  map<int,bool> keyboard;
+  static XGameLayer* _main;
+  s::map<int,bool> keyboard;
+  a::Engine* engine;
   int level;
   void* actor;
   GameMode mode;
@@ -66,6 +49,35 @@ protected:
 private:
 
   DISALLOW_COPYASSIGN(XGameLayer)
+
+public:
+
+  virtual const s::string Moniker() { return "GAME"; }
+  virtual void PKInput() override;
+
+  virtual ~XGameLayer();
+  XGameLayer();
+
+  static XGameLayer* Get();
+
+  cc::Dictionary* GetLCfg();
+  bool KeyPoll(int key);
+
+  void InitEngine(const s::vector<a::System*>&);
+
+  virtual void update(float) override;
+  virtual XLayer* Realize() override;
+
+  virtual bool IsOperational() = 0;
+
+  const s::map<int,bool>& Keys();
+
+  XLayer* GetBackgd();
+  XLayer* GetHUD();
+
+  const Box4 GetEnclosureBox();
+  void NewGame(const GameMode m);
+
 };
 
 

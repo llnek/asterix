@@ -15,21 +15,24 @@
 #include "2d/CCScene.h"
 #include "XLayer.h"
 #include <map>
-NS_USING(cocos2d)
-NS_USING(std)
+
+
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, std)
 NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public Scene {
+class CC_DLL XScene : public cc::Scene {
+
 protected:
 
-  map<string,XLayer*> layers;
+  virtual void OnQuitAction();
   XScene();
 
-  virtual void OnQuitAction();
-
 private:
+
   DISALLOW_COPYASSIGN(XScene)
 
 public:
@@ -37,8 +40,8 @@ public:
   virtual XScene* Realize();
   virtual ~XScene();
 
-  XLayer* GetLayer(const string&);
-  void AddLayer(XLayer*);
+  void AddLayer(XLayer*, int z=0);
+  XLayer* GetLayer(int tag);
 
 };
 

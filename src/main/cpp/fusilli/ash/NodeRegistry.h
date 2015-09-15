@@ -15,7 +15,7 @@
 #include "NodeFactory.h"
 #include <vector>
 #include <map>
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ NS_BEGIN(ash)
 class FS_DLL NodeRegistry {
 private:
 
-  map<NodeType,NodeFactory*> regos;
+  s::map<NodeType,NodeFactory*> regos;
 
   virtual ~NodeRegistry();
   NodeRegistry();

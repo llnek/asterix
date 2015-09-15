@@ -13,7 +13,7 @@
 #define __NODEFACTORY_H__
 
 #include "Ash.h"
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 class Node;

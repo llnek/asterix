@@ -15,11 +15,13 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node::Node(const map<string,COMType>& schema)
-  : Node() {
-  for (auto it = schema.begin(); it != schema.end(); ++it) {
-    types.insert(pair<COMType,string>(it->second,it->first));
+Node* Node::Create(const s::map<s::string,COMType>& schema) {
+  auto node= new Node();
+  for (auto it = schema.begin();
+      it != schema.end(); ++it) {
+    node->types.insert(pair<COMType, s::string>(it->second,it->first));
   }
+  return node;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,7 +46,7 @@ bool Node::BindEntity(Entity* e) {
     auto t= it->first;
     auto c= e->Get(t);
     if (NNP(c)) {
-      values.insert(pair<string,Component*>(f,c));
+      values.insert(pair<s::string,Component*>(f,c));
     } else {
       values.clear();
       break;
@@ -62,7 +64,7 @@ bool Node::BelongsTo(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::Get(const string& field) {
+Component* Node::Get(const s::string& field) {
   auto it = values.find(field);
   if (it != values.end()) {
     return it->second;

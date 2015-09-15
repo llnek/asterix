@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "NodeRegistry.h"
-NS_USING(std)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,3 +69,4 @@ Node* NodeRegistry::CreateNode(const NodeType& t) {
 
 
 NS_END(ash)
+

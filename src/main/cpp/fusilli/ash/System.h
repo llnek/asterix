@@ -18,6 +18,10 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL System {
+protected:
+
+  System(int priority);
+
 private:
 
   DISALLOW_COPYASSIGN(System)
@@ -31,7 +35,6 @@ public:
   System* previous;
   System* next;
 
-  System(int priority);
   virtual ~System();
 
   virtual void RemoveFromEngine(Engine*);

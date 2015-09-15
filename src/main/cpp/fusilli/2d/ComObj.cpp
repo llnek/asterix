@@ -112,7 +112,8 @@ int ComObj::Pid() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(cc::Sprite* sprite, int health, int score) {
+ComObj::ComObj(cc::Sprite* sprite, int health, int score)
+  : ComObj(sprite) {
   this->origHealth = health;
   this->sprite = sprite;
   this->health = health;

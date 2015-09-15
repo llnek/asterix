@@ -11,21 +11,21 @@
 
 #include "Component.h"
 #include "Entity.h"
-NS_USING(std)
 NS_BEGIN(ash)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::~Entity() {
+Entity* Entity::Create(const s::string& group, Engine* e) {
+  auto ent= new Entity();
+  ent->group=group;
+  ent->engine= e;
+  return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(const string& group, Engine* e)
-  : Entity() {
-  engine=e;
-  this->group=group;
+Entity::~Entity() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,9 +81,10 @@ Component* Entity::Get(const COMType& z) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const vector<Component*> Entity::GetAll() {
-  vector<Component*> v;
-  for (auto it = components.begin(); it != components.end(); ++it) {
+const s::vector<Component*> Entity::GetAll() {
+  s::vector<Component*> v;
+  for (auto it = components.begin();
+      it != components.end(); ++it) {
     v.push_back(it->second);
   }
   return v;

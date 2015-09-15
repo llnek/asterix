@@ -14,15 +14,12 @@
 
 #include "core/fusilli.h"
 #include <string>
-
-
-NS_USING(std)
 NS_BEGIN(ash)
 
 
-typedef string SystemType;
-typedef string COMType;
-typedef string NodeType;
+typedef std::string SystemType;
+typedef s::string COMType;
+typedef s::string NodeType;
 
 
 

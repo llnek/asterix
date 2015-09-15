@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "EntityList.h"
-NS_USING(std)
 NS_BEGIN(ash)
 
 
@@ -57,8 +56,8 @@ void EntityList::RemoveAll() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const vector<Entity*> EntityList::List() {
-  vector<Entity*> v;
+const s::vector<Entity*> EntityList::List() {
+  s::vector<Entity*> v;
   for (auto p= head; NNP(p); p=p->next) {
     v.push_back(p);
   }

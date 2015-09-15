@@ -9,8 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "audio/include/SimpleAudioEngine.h"
+#include "ash/Engine.h"
+#include "support/XConfig.h"
+#include "support/CCSX.h"
 #include "XGameLayer.h"
+NS_ALIAS(den,CocosDenshion)
 NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -20,8 +26,11 @@ XGameLayer::~XGameLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XGameLayer::XGameLayer() {
-
+XGameLayer::XGameLayer()
+: mode(ONE_PLAY)
+, level(1)
+, engine(nullptr)
+, actor(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +43,7 @@ void XGameLayer::PKInput() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Dictionary* XGameLayer::GetLCfg() {
+cc::Dictionary* XGameLayer::GetLCfg() {
   return XConfig::GetInstance()->GetLevelCfg(to_string(level));
 }
 
@@ -51,23 +60,13 @@ bool XGameLayer::KeyPoll(int key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::InitEngine(syss, fact) {
-  engine = new Engine();
-  if (sjs.isfunc(fact)) {
-    fact(engine, this.options);
+void XGameLayer::InitEngine(const s::vector<a::System*>& ss) {
+  engine = Engine::create();
+  for (auto it= ss.begin(); it != ss.end(); ++it) {
+    engine->AddSystem(*it);
   }
-  R.forEach( z => {
-    this.engine.addSystem(new (z)(this.options), z.Priority);
-  }, R.filter( x => {
-    return sjs.isfunc(x);
-  }, syss));
 }
 
-  /**
-   * @memberof module:zotohlab/asx/scenes~XGameLayer
-   * @method getEnclosureBox
-   * @return {Object} rect box.
-   */
 //////////////////////////////////////////////////////////////////////////////
 //
 const Box4 XGameLayer::GetEnclosureBox() {
@@ -83,9 +82,9 @@ void XGameLayer::SetGameMode(const GameMode mode) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::NewGame(const GameMode mode) {
-  if (xcfg.sound.open) {
-    SimpleAudioEngine::getInstance()->stopAllEffects();
-    SimpleAudioEngine::getInstance()->stopMusic();
+  if (XConfig::GetInstance()->HasAudio()) {
+    den::SimpleAudioEngine::getInstance()->stopAllEffects();
+    den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
   }
   OnNewGame(mode);
   this->scheduleUpdate();
@@ -93,7 +92,7 @@ void XGameLayer::NewGame(const GameMode mode) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::Realize() {
+XLayer* XGameLayer::Realize() {
   NewGame(mode);
 }
 
@@ -114,33 +113,14 @@ XLayer* XGameLayer::GetHUD() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::update(float dt) {
-  if (IsOerational()  && NNP(engine)) {
+  if (IsOperational() && NNP(engine)) {
     engine->Update(dt);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const map<int,bool>& XGameLayer::Keys() { return keyboard; }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XGameLayer::~XGameLayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XGameLayer::XGameLayer() {
-  actor= nullptr;
-  level= 1;
-  //sh.main = this;
-}
-
-
-
-
-
-
+const s::map<int,bool>& XGameLayer::Keys() { return keyboard; }
 
 
 

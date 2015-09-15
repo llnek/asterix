@@ -15,10 +15,12 @@
 #include "MsgBox.h"
 NS_BEGIN(fusilli)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 MsgBox* MsgBox::CreateWithAction(cc::CallFunc* cb,
     const s::string& msg) {
+
   auto m= MsgBox::create();
   m->SetAction(cb);
   m->SetMsg(msg);
@@ -29,6 +31,7 @@ MsgBox* MsgBox::CreateWithAction(cc::CallFunc* cb,
 //////////////////////////////////////////////////////////////////////////////
 //
 MsgBox* MsgBox::CreateWithMsg(const s::string& msg) {
+
   auto cb= cc::CallFunc::create([](){
       cc::Director::getInstance()->popScene();
       });
@@ -73,8 +76,11 @@ public:
 XLayer* MsgBoxLayer::Realize() {
   auto par = SCAST(MsgBox*, getParent());
   auto cfg = XConfig::GetInstance();
+
   auto fnt = cfg->GetFont("font.OCR");
-  auto qn= cc::Label::createWithBMFont(fnt, par->GetMsg());
+  auto qn= cc::Label::createWithBMFont(
+      fnt, par->GetMsg());
+
   auto cw= CCSX::Center();
   auto wz= CCSX::VisRect();
   auto wb = CCSX::VisBox();
@@ -86,8 +92,7 @@ XLayer* MsgBoxLayer::Realize() {
   AddItem(qn);
 
   auto b1= CreateMenuBtn("#ok.png",
-      "#ok.png",
-      "#ok.png");
+      "#ok.png", "#ok.png");
   b1->setTarget(par, CC_MENU_SELECTOR(MsgBox::OnYes));
   auto menu= cc::Menu::create();
   menu->addChild(b1);
@@ -100,8 +105,8 @@ XLayer* MsgBoxLayer::Realize() {
 //
 XScene* MsgBox::Realize() {
   auto y = MsgBoxLayer::create();
-  y->Realize();
   AddLayer(y);
+  y->Realize();
   return this;
 }
 

@@ -12,12 +12,16 @@
 #if !defined(__MSGBOX_H__)
 #define __MSGBOX_H__
 
+
 #include "platform/CCCommon.h"
 #include "2d/XScene.h"
 #include "core/fusilli.h"
+
+
 NS_ALIAS(cc,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////
 //

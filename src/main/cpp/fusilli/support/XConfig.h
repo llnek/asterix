@@ -64,6 +64,9 @@ public:
   virtual const s::string GetWSUrl() = 0;
   virtual cc::Scene* StartWith() = 0;
 
+  virtual const s::string GetGameId() = 0;
+  virtual const s::string GetRoomId() = 0;
+
   const s::string GetAtlas(const s::string& key);
   const s::string GetFont(const s::string& key);
   const s::string GetTile(const s::string& key);

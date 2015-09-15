@@ -102,6 +102,12 @@ SystemList::SystemList() {
   tail= nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+SystemList* SystemList::Create() {
+  auto s= new SystemList();
+  return s;
+}
 
 
 

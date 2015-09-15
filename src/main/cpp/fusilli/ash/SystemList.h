@@ -14,27 +14,33 @@
 
 #include "System.h"
 #include <vector>
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL SystemList {
 private:
+
   DISALLOW_COPYASSIGN(SystemList)
+  SystemList();
 
 public:
+
+  static SystemList* Create();
+
   System* head;
   System* tail;
 
   virtual ~SystemList();
-  SystemList();
 
   void Remove(System* );
   void Add(System* );
   void RemoveAll();
 
   System* Get(const SystemType& type );
-  const vector<System*> List();
+  const s::vector<System*> List();
+
 };
 
 

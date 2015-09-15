@@ -13,7 +13,8 @@
 #define __XHUDLAYER_H__
 
 #include "XLayer.h"
-NS_USING(cocos2d)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
@@ -21,22 +22,14 @@ NS_BEGIN(fusilli)
 //
 class CC_DLL XHUDLayer : public XLayer {
 
-public:
-
-  virtual XLayer* Realize() override;
-
-  virtual const string Moniker() { return "HUD"; }
-  virtual const string HudAtlas() = 0;
-
-  virtual ~XHUDLayer();
-  XHUDLayer();
-
-  float GetScore() { return score; }
-
 protected:
 
-  void AddIcon(Node* icon, int z = INT32_MIN, int tag = INT32_MIN);
-  void RemoveIcon(Node*);
+  void AddIcon(cc::Node* icon,
+      int* z = nullptr, int* tag = nullptr);
+
+  XHUDLayer();
+
+  void RemoveIcon(cc::Node*);
   virtual void InitAtlases();
   virtual void InitIcons();
   virtual void InitLabels();
@@ -48,20 +41,27 @@ protected:
   bool ReduceLives(int );
   void DisableReplay();
   void EnableReplay();
-  void UpdateScore(float num);
+  void UpdateScore(int num);
 
-  void AddReplayIcon(MenuItem*, const Vec2& where);
-  void AddMenuIcon(MenuItem*, const Vec2& where);
+  void AddReplayIcon(cc::MenuItem*, const cc::Vec2& where);
+  void AddMenuIcon(cc::MenuItem*, const cc::Vec2& where);
 
-
-  MenuItem* replayBtn;
-  Label* scoreLabel;
+  cc::MenuItem* replayBtn;
+  cc::Label* scoreLabel;
   XLives* lives;
-  float score;
+  int score;
 
 private:
 
   DISALLOW_COPYASSIGN(XHUDLayer)
+
+public:
+
+  virtual const s::string HudAtlas() = 0;
+  virtual XLayer* Realize() override;
+  virtual ~XHUDLayer();
+
+  int GetScore() { return score; }
 
 };
 

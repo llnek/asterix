@@ -9,10 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XConfig.h"
 #include "support/CCSX.h"
 #include "XHUDLayer.h"
-#include "XConfig.h"
-#include "CCSX.h"
+
 NS_BEGIN(fusilli)
 
 
@@ -23,36 +23,22 @@ XHUDLayer::~XHUDLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XHUDLayer::XHUDLayer() {
-  scoreLabel = nullptr;
-  lives= nullptr;
-  score= 0;
-  replayBtn = nullptr;
+XHUDLayer::XHUDLayer()
+  : scoreLabel(nullptr)
+  , lives( nullptr)
+  , score(0)
+  , replayBtn(nullptr) {
 }
 
-  /**
-   * Remove this icon.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method removeIcon
-   * @param {Object} icon
-   */
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::RemoveIcon(Node* icon) {
-  RemoveAtlasItem(HudAtlas(), icon);
+void XHUDLayer::RemoveIcon(cc::Node* icon) {
+  RemoveItem(icon);
 }
 
-  /**
-   * Add an icon.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method addIcon
-   * @param {Object} icon
-   * @param {Number} z
-   * @param {Number} idx
-   */
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddIcon(Node* icon, int z, int idx) {
+void XHUDLayer::AddIcon(cc::Node* icon, int* z, int* idx) {
   AddAtlasItem(HudAtlas(), icon, z, idx);
 }
 
@@ -107,9 +93,9 @@ bool XHUDLayer::ReduceLives(int x) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::UpdateScore(float num) {
+void XHUDLayer::UpdateScore(int num) {
   score += num;
-  scoreLabel->setString(to_string((int)score));
+  scoreLabel->setString(to_string(score));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -126,13 +112,15 @@ void XHUDLayer::EnableReplay() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
+void XHUDLayer::AddMenuIcon(cc::MenuItem* b,
+    const cc::Vec2& where) {
+
+  auto tile= CstVal<cc::Integer>("TILE")->getValue();
   auto hh = CCSX::GetScaledHeight(b) * 0.5;
   auto hw = CCSX::GetScaledWidth(b) * 0.5;
   auto cfg = XConfig::GetInstance();
-  auto menu= Menu::create();
+  auto menu= cc::Menu::create();
   auto wz= CCSX::VisBox();
-  auto tile= SCAST(Integer*,cfg->GetCst("TILE"))->getValue();
   float x, y;
 
   menu->addChild(b);
@@ -146,22 +134,17 @@ void XHUDLayer::AddMenuIcon(MenuItem* b, const Vec2& where) {
   AddItem(menu);
 }
 
-  /**
-   * Add a replay icon.
-   * @memberof module:zotohlab/asx/scenes~XGameHUDLayer
-   * @method addReplayIcon
-   * @param {cc.Menu} menu
-   * @param {Object} where
-   */
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddReplayIcon(MenuItem* c, const Vec2& where) {
+void XHUDLayer::AddReplayIcon(cc::MenuItem* c,
+    const cc::Vec2& where) {
+
+  auto tile= CstVal<Integer>("TILE")->getValue();
   auto hh = CCSX::GetScaledHeight(c) * 0.5;
   auto hw = CCSX::GetScaledWidth(c) * 0.5;
   auto cfg = XConfig::GetInstance();
-  auto menu= Menu::create();
+  auto menu= cc::Menu::create();
   auto wz= CCSX::VisBox();
-  auto tile= CstVal<Integer>("TILE")->getValue();
   float x, y;
 
   menu->addChild(c);

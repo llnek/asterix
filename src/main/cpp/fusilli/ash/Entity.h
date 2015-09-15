@@ -15,7 +15,7 @@
 #include <vector>
 #include <map>
 #include "Ash.h"
-NS_USING(std)
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 class Component;
@@ -26,16 +26,18 @@ class Entity;
 class FS_DLL Entity {
 private:
 
-  map<string,Component*> components;
+  s::map<s::string,Component*> components;
   Engine* engine;
-  string group;
+  s::string group;
   bool dead;
-  DISALLOW_COPYASSIGN(Entity)
 
-  Entity(const string& group, Engine*);
   Entity();
 
+  DISALLOW_COPYASSIGN(Entity)
+
 public:
+
+  static Entity* Create(const s::string& group, Engine*);
 
   Entity* previous;
   Entity* next;
@@ -48,12 +50,12 @@ public:
   Component* Get(const COMType& );
   bool Has(const COMType&);
 
-  const string GroupId() { return group; }
+  const s::string GroupId() { return group; }
 
   void MarkDelete();
   bool IsOk() { return !dead; };
 
-  const vector<Component*> GetAll();
+  const s::vector<Component*> GetAll();
 
 };
 

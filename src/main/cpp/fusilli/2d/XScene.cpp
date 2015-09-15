@@ -24,20 +24,14 @@ XScene::XScene() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XScene::GetLayer(const string& id) {
-  auto it = layers.find(id);
-  if (it != layers.end()) {
-    return it->second;
-  } else {
-    return nullptr;
-  }
+XLayer* XScene::GetLayer(int tag) {
+  return DCAST(XLayer*, getChildByTag(tag));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XScene::AddLayer(XLayer* y) {
- layers.insert(pair<string,XLayer*>(y->Moniker(), y));
- addChild(y);
+void XScene::AddLayer(XLayer* y, int z) {
+ addChild(y, z, y->GetIID());
 }
 
 //////////////////////////////////////////////////////////////////////////////
