@@ -9,34 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "BaseSystem.h"
 #include "ash/Ash.h"
-NS_USING(ash)
+NS_ALIAS(f, fusilli)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide  : public System {
-public:
-
-  virtual ~Collide();
-  Collide(options);
-
-  virtual void RemoveFromEngine(Engine*) override;
-  virtual void AddToEngine(engine) override ;
-  virtual bool Update(float dt);
-
-  bool MaybeCollide(ComObj* a, ComObj* b);
-  void CheckMissilesBombs();
-  void CheckMissilesAliens(Node*);
-  void CheckShipBombs(Node*);
-  void CheckShipAliens(Node*, Node*);
-
-  virtual int Priority() override { return Collide; }
-
+class CC_DLL Collide  : public BaseSystem {
 private:
 
   DISALLOW_COPYASSIGN(Collide)
-  Collide() {}
+  Collide();
+
+public:
+
+  static Collide* Create(Factory*, cc::Dictionary*);
+  virtual ~Collide();
+
+  virtual void RemoveFromEngine(a::Engine*);
+  virtual void AddToEngine(a::Engine*);
+  virtual bool Update(float dt);
+
+  bool MaybeCollide(f::ComObj* a, f::ComObj* b);
+  void CheckMissilesBombs();
+  void CheckMissilesAliens(a::Node*);
+  void CheckShipBombs(a::Node*);
+  void CheckShipAliens(a::Node*, a::Node*);
+
+  virtual int Priority() { return Collide; }
 
 };
 

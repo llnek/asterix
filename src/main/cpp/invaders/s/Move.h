@@ -9,33 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "BaseSystem.h"
 #include "ash/Ash.h"
-NS_USING(ash)
+NS_ALIAS(f, fusilli)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public System {
+class CC_DLL Move : public BaseSystem {
+private:
+
+  DISALLOW_COPYASSIGN(Move)
+  Move();
+
 public:
 
+  static Move* Create(Factory*, cc::Dictionary* options);
   virtual ~Move();
-  Move(options);
 
-  virtual void RemoveFromEngine(Engine*);
-  virtual void AddToEngine(Engine*);
+  virtual void RemoveFromEngine(a::Engine*);
+  virtual void AddToEngine(a::Engine*);
   virtual bool Update(float dt);
 
-  void ProcessShipMotions(Node*, float dt);
-  void clamp(ComObj* ship);
+  void ProcessShipMotions(a::Node*, float dt);
+  void clamp(f::ComObj* ship);
   void MoveBombs(float dt);
   void MoveMissiles(float dt);
 
-  virtual int Priority() override { return Move; }
+  virtual int Priority() { return Move; }
 
-private:
-  DISALLOW_COPYASSIGN(Move)
-  Move() {}
 };
 
 

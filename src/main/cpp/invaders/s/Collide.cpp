@@ -10,18 +10,31 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Collide.h"
-NS_USING(ash)
 NS_BEGIN(invaders)
+
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide::Collide(options)
-  : state(options) {
+Collide* Collide::Create(Factory* f, cc::Dictionary* d) {
+  auto s = new Collide();
+  s->Set(f,d);
+  return s;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::RemoveFromEngine(Engine* e) {
+Collide::~Collide() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Collide::Collide() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Collide::RemoveFromEngine(a::Engine* e) {
   aliens= nullptr;
   ships= nullptr;
   engine=nullptr;
@@ -29,7 +42,7 @@ void Collide::RemoveFromEngine(Engine* e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::AddToEngine(Engine* e) {
+void Collide::AddToEngine(a::Engine* e) {
   aliens= e->GetNodeList(AlienMotionNode::TypeId());
   ships= e->GetNodeList(ShipMotionNode::TypeId);
   engine=e;
@@ -54,26 +67,25 @@ bool Collide::Update(float dt) {
       CheckShipAliens(enemies, ship);
     }
   }
+
+  return true;
 }
 
-  /**
-   * @method collide
-   * @private
-   */
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::MaybeCollide(ComObj* a, ComObj* b) {
-  return CCSX::Collide0(a->sprite, b->sprite);
+bool Collide::MaybeCollide(f::ComObj* a, f::ComObj* b) {
+  return cx::Collide0(a->sprite, b->sprite);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::CheckMissilesBombs() {
-  auto cfg = XConfig::GetInstance();
+
+  auto cfg = f::XConfig::GetInstance();
   auto mss = cfg->GetPool("missiles");
   auto bbs = cfg->GetPool("bombs");
-  auto m = mss->elements();
-  auto b= bbs->elements();
+  auto m = mss->Elements();
+  auto b= bbs->Elements();
 
   for (auto it = m.begin(); it != m.end(); ++it) {
     for (auto it2 = b.begin(); it2 != b.end(); ++it2) {
@@ -91,12 +103,13 @@ void Collide::CheckMissilesBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::CheckMissilesAliens(Node* node) {
-  auto cfg = XConfig::GetInstance();
+void Collide::CheckMissilesAliens(a::Node* node) {
+
+  auto cfg = f::XConfig::GetInstance();
   auto mss = cfg->GetPool("missiles");
   auto sqad= node->aliens,
-  auto c = sqad->aliens->pool->elements();
-  auto c2 = mss->elements();
+  auto c = sqad->Elements();
+  auto c2 = mss->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
     for (auto it2 = c2.begin(); it2 != c2.end(); ++it2) {
@@ -113,11 +126,11 @@ void Collide::CheckMissilesAliens(Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::CheckShipBombs(Node* node) {
-  auto cfg = XConfig::GetInstance();
+void Collide::CheckShipBombs(a::Node* node) {
+  auto cfg = f::XConfig::GetInstance();
   auto bbs= cfg->GetPool("bombs");
   auto ship= node->ship;
-  auto c= bbs->elements();
+  auto c= bbs->Elements();
 
   if (ship->status)
   for (auto it = c.begin(); it != c.end(); ++it) {
@@ -132,11 +145,12 @@ void Collide::CheckShipBombs(Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::CheckShipAliens(Node* anode, Node* snode) {
+void Collide::CheckShipAliens(a::Node* anode, a::Node* snode) {
+
   auto sqad= anode->aliens;
   auto ship = snode->ship;
-  auto sz= sqad->aliens->Size();
-  auto c = sqad->aliens->pool->elements();
+  auto sz= sqad->Size();
+  auto c = sqad->Elements();
 
   if (ship->status)
   for (auto it = c.begin(); it != c.end(); ++it) {

@@ -14,16 +14,23 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-BaseSystem::BaseSystem(Factory* f, Dictionary* d)
-  : factory(f),
-  state(d) {
-  d->retain();
+void BaseSystem::Set(Factory* f, cc::Dictionary* d) {
+  factory=f;
+  state=d;
+  state->retain();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+BaseSystem::BaseSystem() {
+  factory=nullptr;
+  state=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 BaseSystem::~BaseSystem() {
-  d->release();
+  state->release();
 }
 
 

@@ -9,34 +9,43 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "platform/CCCommon.h"
 #include "ash/Ash.h"
-NS_USING(ash)
+#include "BaseSystem.h"
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public System {
+class CC_DLL Stager : public BaseSystem {
+protected:
+
+  Stager();
+
+private:
+
+  DISALLOW_COPYASSIGN(Stager)
+
 public:
 
-  virtual ~Stager();
-  Stager(options);
+  static Stager* Create(Factory* f, cc::Dictionary* options);
 
-  virtual void RemoveFromEngine(Engine*) override;
+  virtual void RemoveFromEngine(a::Engine*);
 
-  virtual void AddToEngine(Engine*) override;
+  virtual void AddToEngine(a::Engine*);
 
   void InitAlienSize();
 
   void InitShipSize();
 
-  virtual void Update(float dt);
+  virtual bool Update(float dt);
 
   void OnceOnly();
 
-  void Fire(t, evt);
+  virtual int Priority() { return PreUpdate; }
 
-  virtual int Priority() override { return PreUpdate; }
+  virtual ~Stager();
 
 };
 

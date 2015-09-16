@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/Ash.h"
-NS_USING(ash)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 

@@ -9,31 +9,40 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "platform/CCCommon.h"
 #include "ash/Ash.h"
+#include "BaseSystem.h"
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public System {
+class CC_DLL Resolve : public BaseSystem {
+protected:
+
+  Resolve();
+
+private:
+
+  DISALLOW_COPYASSIGN(Resolve)
+
 public:
 
+  static Resolve* Create(Factory* f, cc::Dictionary* d);
   virtual ~Resolve();
-  Resolve(options);
 
-  virtual void RemoveFromEngine(Engine*) override;
-  virtual void AddToEngine(Engine*) override;
-  virtual bool Update(float dt) override;
+  virtual void RemoveFromEngine(a::Engine*);
+  virtual void AddToEngine(a::Engine*);
+  virtual bool Update(float dt);
 
   void CheckMissiles();
   void CheckBombs();
-  void CheckAliens(Node*);
-  void CheckShip(Node*);
+  void CheckAliens(a::Node*);
+  void CheckShip(a::Node*);
 
-  virtual int Priority() override { return Resolve; }
+  virtual int Priority() { return Resolve; }
 
-private:
-  DISALLOW_COPYASSIGN(Resolve)
-  Resolve() {}
 };
 
 

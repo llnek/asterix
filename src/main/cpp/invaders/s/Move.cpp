@@ -9,24 +9,40 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/CCSX.h"
+#include "2d/MainGame.h"
 #include "Move.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-Move::Move(options)
-  : state(options) {
+Move* Move::Create(Factory* f, cc::Dictionary* d) {
+  auto s = new Move();
+  s->Set(f,d);
+  return s;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::RemoveFromEngine(Engine* e) {
+Move::~Move() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Move::Move() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Move::RemoveFromEngine(a::Engine* e) {
   ships=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::AddToEngine(Engine* e) {
+void Move::AddToEngine(a::Engine* e) {
   ships = e->GetNodeList(ShipMotionNode::TypeId());
 }
 
@@ -34,7 +50,7 @@ void Move::AddToEngine(Engine* e) {
 //
 bool Move::Update(float dt) {
   auto node = ships->head;
-  if (MainGame::Get()->IsOperational()) {
+  if (f::MainGame::Self()->IsOperational()) {
     if (NNP(node)) {
       ProcessShipMotions(node, dt);
     }
@@ -45,7 +61,7 @@ bool Move::Update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::ProcessShipMotions(Node* node, float dt) {
+void Move::ProcessShipMotions(a::Node* node, float dt) {
   auto motion = node->motion;
   auto sv = node->velocity;
   auto ship= node->ship;
@@ -61,7 +77,7 @@ void Move::ProcessShipMotions(Node* node, float dt) {
     x = pos.x - dt * sv.vel.x;
   }
 
-  ship->setPos(x,y);
+  ship->SetPos(x,y);
   Clamp(ship);
 
   motion->right=false;
@@ -70,34 +86,35 @@ void Move::ProcessShipMotions(Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::Clamp(ComObj* ship) {
-  auto sz= ship->sprite->getContentSize();
-  auto cfg = XConfig::GetInstance();
-  auto tile= SCAST(Integer*, cfg->GetCst("TILE"))->getValue();
-  auto pos= ship->Pos();
-  auto wz = CCSX::VisRect();
+void Move::Clamp(f::ComObj* ship) {
 
-  if (CCSX::GetRight(ship->sprite) > wz.width - tile) {
-    ship->setPos(wz.width - tile - sz.width * 0.5, pos.y);
+  auto tile= CstVal<Integer>("TILE")->getValue();
+  auto sz= ship->sprite->getContentSize();
+  auto cfg = f::XConfig::GetInstance();
+  auto pos= ship->Pos();
+  auto wz = cx::VisRect();
+
+  if (cx::GetRight(ship->sprite) > wz.width - tile) {
+    ship->SetPos(wz.width - tile - sz.width * 0.5, pos.y);
   }
-  if (CCSX::GetLeft(ship->sprite) < tile) {
-    ship->setPos(tile + sz.width * 0.5, pos.y);
+  if (cx::GetLeft(ship->sprite) < tile) {
+    ship->SetPos(tile + sz.width * 0.5, pos.y);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::MoveBombs(float dt) {
-  auto cfg = XConfig::GetInstance();
+  auto cfg = f::XConfig::GetInstance();
   auto bbs= cfg->GetPool("bombs");
-  auto c= bbs->elements();
+  auto c= bbs->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {
     auto b = *it;
     if (b->status) {
       auto pos= b->Pos();
       auto y = pos.y + dt * b.vel.y;
-      b->setPos(pos.x, y);
+      b->SetPos(pos.x, y);
     }
   }
 }
@@ -105,17 +122,19 @@ void Move::MoveBombs(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::MoveMissiles(float dt) {
-  auto cfg = XConfig::GetInstance();
+  auto cfg = f::XConfig::GetInstance();
   auto bbs= cfg->GetPool("missiles");
-  auto c= mss->elements();
+  auto c= mss->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {
     auto m = *it;
     auto pos= m->Pos();
     auto y = pos.y + dt * m->vel.y;
-    m->setPos(pos.x, y);
+    m->SetPos(pos.x, y);
   }
 }
+
+
 
 NS_END(invaders)
 

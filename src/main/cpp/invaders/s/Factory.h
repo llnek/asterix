@@ -10,35 +10,53 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/Ash.h"
-NS_USING(ash)
+NS_ALIAS(f, fusilli)
+NS_ALIAS(s, std)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
+//////////////////////////////////////////////////////////////////////////
+//
 enum class Rank {
 
 };
 
+class a::Engine;
+class f::XPool;
+
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Factory {
+protected:
+
+  cc::Dictionary* state;
+  a::Engine engine;
+
+private:
+
+  DISALLOW_COPYASSIGN(Factory)
+  Factory();
+
 public:
-  virtual ~Factory();
-  Factory(Engine* e, options);
+
+  Factory(a::Engine* e, cc::Dictionary* options);
   void CreateMissiles(int count= 36);
   void CreateExplosions(int count = 24);
   void CreateBombs(int count = 24);
-  const Size CalcImgSize(const string& img);
+
+  const cc::Size CalcImgSize(const s::string& img);
   GetRankInfo(const Rank r);
-  void FillSquad(XPool* pool);
+
+  void FillSquad(f::XPool* );
   void CreateAliens();
   void BornShip();
   void CreateShip();
 
-private:
-
-  DISALLOW_COPYASSIGNDFT(Factory)
-
+  virtual ~Factory();
 };
 
 
 NS_END(invaders)
+
+

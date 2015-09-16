@@ -9,19 +9,24 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XConfig.h"
+#include "support/CCSX.h"
 #include "Resolve.h"
-NS_USING(ash)
+NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(options)
-  : state(options) {
+Resolve* Resolve::Create(Factory* f, cc::Dictionary* options) {
+  auto s = new Resolve();
+  s->Set(f, options);
+  return s;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve;:RemoveFromEngine(Engine* e) {
+void Resolve;:RemoveFromEngine(a::Engine* e) {
   aliens= nullptr;
   ships= nullptr;
   engine=nullptr;
@@ -29,7 +34,7 @@ void Resolve;:RemoveFromEngine(Engine* e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::AddToEngine(Engine* e) {
+void Resolve::AddToEngine(a::Engine* e) {
   aliens= e->GetNodeList(AlienMotionNode::TypeId());
   ships= e->GetNodeList(ShipMotionNode::TypeId());
   engine=e;
@@ -45,15 +50,17 @@ bool Resolve::Update(float dt) {
   CheckBombs();
   CheckAliens(enemies);
   CheckShip(ship);
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckMissiles() {
-  auto cfg = XConfig::GetInstance();
+  auto cfg = f::XConfig::GetInstance();
   auto mss = cfg->GetPool("missiles");
-  auto ht = CCSX::VisRect().height;
-  auto c = mss->elements();
+  auto ht = cx::VisRect().height;
+  auto c = mss->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
     auto m = *it;
@@ -69,9 +76,9 @@ void Resolve::CheckMissiles() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckBombs() {
-  auto cfg = XConfig::GetInstance();
+  auto cfg = f::XConfig::GetInstance();
   auto bbs = cfg->GetPool("bombs");
-  auto c = bbs->elements();
+  auto c = bbs->Elements();
   int bt = 0;
 
   for (auto it = c.begin(); it != c.end(); ++it) {
@@ -87,15 +94,15 @@ void Resolve::CheckBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckAliens(Node* node) {
+void Resolve::CheckAliens(a::Node* node) {
   auto sqad= node->aliens;
-  auto c= sqad->aliens->pool->elements();
+  auto c= sqad->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
     auto en= *it;
     if (en->status) {
       if (en->health <= 0) {
-        MainGame::Get()->EarnScore(en->value);
+        f::MainGame::Get()->EarnScore(en->value);
         en->Deflate();
       }
     }
@@ -104,13 +111,13 @@ void Resolve::CheckAliens(Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckShip(Node* node) {
+void Resolve::CheckShip(a::Node* node) {
   auto ship = node->ship;
 
   if (ship->status &&
       ship->health <= 0) {
     ship->Deflate();
-    MainGame::Get()->PlayerKilled();
+    f::MainGame::Get()->PlayerKilled();
   }
 }
 

@@ -9,24 +9,43 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XConfig.h"
+#include "support/CCSX.h"
+#include "support/XPool.h"
+#include "2d/MainGame.h"
+#include "ash/Engine.h"
 #include "Factory.h"
-NS_USING(ash)
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::Factory(Engine* e, options)
-  : engine(e),
-  state(options) {
+Factory::Factory(f::Engine* e, cc::Dictionary* options)
+  : engine(e)
+  , state(options) {
+  options->retain();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Factory::~Factory() {
+  state->release();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Factory::Factory() {
+  engine=nullptr;
+  state=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateMissiles(int count) {
-  auto p=XConfig::GetInstance()->GetPool("missiles");
-  auto cb= []() -> Component* {
-    auto sp = CCSX::CreateSprite("missile.png");
+  auto p= f::XConfig::GetInstance()->GetPool("missiles");
+  auto cb= []() -> a::Component* {
+    auto sp = cx::CreateSprite("missile.png");
     sp->setVisible(false);
     MainGame::Get()->AddAtlasItem("game-pics", sp);
     return new Missile(sp);
@@ -37,9 +56,9 @@ void Factory::CreateMissiles(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateExplosions(int count) {
-  auto p=XConfig::GetInstance()->GetPool("explosions");
-  auto cb= []() -> Component* {
-    const sp = CCSX::CreateSprite("boom_0.png");
+  auto p= f::XConfig::GetInstance()->GetPool("explosions");
+  auto cb= []() -> a::Component* {
+    const sp = cx::CreateSprite("boom_0.png");
     sp->setVisible(false);
     MainGame::Get()->AddAtlasItem("game-pics", sp);
     return new Explosion(sp);
@@ -50,9 +69,9 @@ void Factory::CreateExplosions(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateBombs(int count) {
-  auto p=XConfig::GetInstance()->GetPool("bombs");
-  auto cb= []() -> Component* {
-    const sp = CCSX::CreateSprite("bomb.png");
+  auto p= f::XConfig::GetInstance()->GetPool("bombs");
+  auto cb= []() -> a::Component* {
+    const sp = cx::CreateSprite("bomb.png");
     sp->setVisible(false);
     MainGame::Get()->AddAtlasItem("game-pics", sp);
     return new Bomb(sp);
@@ -62,18 +81,18 @@ void Factory::CreateBombs(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Size Factory::CalcImgSize(const string& img) {
-  return CCSX::CSize(img);
+const cc::Size Factory::CalcImgSize(const s::string& img) {
+  return cx::CSize(img);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Dictionary* Factory::GetRankInfo(const Rank r) {
-  auto d = Directory::create();
+cc::Dictionary* Factory::GetRankInfo(const Rank r) {
+  cc::Size z= CalcImgSize("purple_bug_0.png");
+  s::string s0 = "purple_bug_0.png";
+  s::string s1= "purple_bug_1.png";
   int v= 30;
-  Size z= CalcImgSize("purple_bug_0.png");
-  string s0 = "purple_bug_0.png";
-  string s1= "purple_bug_1.png";
+  auto d = cc::Directory::create();
 
   if (r < 3) {
     v= 100;
@@ -89,29 +108,31 @@ Dictionary* Factory::GetRankInfo(const Rank r) {
     z = CalcImgSize("green_bug_0.png");
   }
 
-  d->setObject(Size2::create(z.width, z.height), "size");
-  d->setObject(Integer::create(v), "value");
-  d->setObject(String::create(s0), "img0");
-  d->setObject(String::create(s1), "img1");
+  d->setObject(f::Size2::create(z.width, z.height), "size");
+  d->setObject(cc::Integer::create(v), "value");
+  d->setObject(cc::String::create(s0), "img0");
+  d->setObject(cc::String::create(s1), "img1");
 
   return d;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::FillSquad(XPool* pool) {
-  auto cfg = XConfig::GetInstance();
+void Factory::FillSquad(f::XPool* pool) {
+
+  int cells = CstVal<cc::Integer>("CELLS")->getValue();
+  int cols = CstVal<cc::Integer>("COLS")->getValue();
+  auto cfg = f::XConfig::GetInstance();
   auto info= GetRankInfo(0);
-  auto wz= CCSX::VisRect();
-  auto wb= CCSX::VisBox();
-  int cells = SCAST(cfg->GetCst("CELLS"),Integer*)->getValue();
-  int cols = SCAST(cfg->GetCst("COLS"),Integer*)->getValue();
+  auto wz= cx::VisRect();
+  auto wb= cx::VisBox();
+
+  cc::Sprite* aa;
+  cc::Size az;
   int v, row;
-  Size az;
-  Sprite* aa,
   float x,y;
 
-  az= DictVal<Size2>(info, "size")->getValue();
+  az= DictVal<f::Size2>(info, "size")->getValue();
   row=0;
   for (int n=0; n < cells; ++n) {
     if (n % cols == 0) {
@@ -120,17 +141,24 @@ void Factory::FillSquad(XPool* pool) {
       x = wb.left + (8/320 * wz.width) + HWZ(az);
       row += 1;
       info= GetRankInfo(row);
-      az= DictVal<Size2>(info, "size")->getValue();
+      az= DictVal<f::Size2>(info, "size")->getValue();
     }
-    aa = DictVal<String>(info, "img0")->getCString();
+    aa = DictVal<cc::String>(info, "img0")->getCString();
     aa->setPosition(x + HWZ(az), y - HHZ(az));
-    aa->runAction(RepeatForever::create(
-      Animate::create(Animation::create(
-          [ccsx.getSprite(info[1][0]),
-           ccsx.getSprite(info[1][1]) ], 1))));
+
+    Vector<SpriteFrame*> animFrames(2);
+    auto f1 = DictVal<cc::String>(info, "img0")->getCString();
+    auto f2 = DictVal<cc::String>(info, "img1")->getCString();
+    animFrames.pushBack( cx::CreateSprite(f1));
+    animFrames.pushBack( cx::CreateSprite(f2));
+
+    aa->runAction(cc::RepeatForever::create(
+      cc::Animate::create(
+        cc::Animation::createWithSpriteFrames( animFrames, 1))));
+
     MainGame::Get()->AddAtlasItem("game-pics", aa);
     x += az.width + (8/320 * wz.width);
-    v= DictVal<Integer>(info, "value")->getValue();
+    v= DictVal<cc::Integer>(info, "value")->getValue();
     aa= new Alien(aa, v, row);
     aa->status=true;
     pool->Add(aa);
@@ -140,9 +168,9 @@ void Factory::FillSquad(XPool* pool) {
 //////////////////////////////////////////////////////////////////////////
 //
 Entity* Factory::CreateAliens() {
-  auto stepx= DictVal<Size2>(state, "alienSize")->getValue().width /3;
-  auto cfg = XConfig::GetInstance();
+  auto stepx= DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
   auto ent= engine->CreateEntity("baddies");
+  auto cfg = f::XConfig::GetInstance();
   auto p = cfg->GetPool("aliens");
 
   FillSquad(p);
@@ -157,7 +185,8 @@ Entity* Factory::CreateAliens() {
 //
 void Factory::BornShip() {
   auto s= MainGame::Get()->GetPlayer();
-  auto d = Dictionary::create();
+  auto d = cc::Dictionary::create();
+
   if (NNP(s)) {
     s->Inflate(d);
   }
@@ -165,28 +194,32 @@ void Factory::BornShip() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Entity* Factory::CreateShip() {
-  auto s= CCSX::CreateSprite("ship_1.png");
+a::Entity* Factory::CreateShip() {
+
+  auto sz = DictVal<f::Size2>(state, "shipSize")->getValue();
   auto ent= engine->CreateEntity("goodies");
-  auto wz= CCSX::VisRect();
-  auto wb= CCSX::VisBox();
-  auto sz = DictVal<Size2>(state, "shipSize")->getValue();
+  auto s= cx::CreateSprite("ship_1.png");
+  auto wz= cx::VisRect();
+  auto wb= cx::VisBox();
   auto y = sz.height + wb.bottom + (5/60 * wz.height);
   auto x = wb.left + wz.width * 0.5;
-  auto options = Dictionary::create();
+  auto options = cc::Dictionary::create();
   Ship* ship;
 
-  MainGame::Get()->AddAtlasItem("game-pics", s);
-  options->setObject(Float::create(x), "x");
-  options->setObject(Float::create(y), "y");
+  f::MainGame::Get()->AddAtlasItem("game-pics", s);
+
+  options->setObject(cc::Float::create(x), "x");
+  options->setObject(cc::Float::create(y), "y");
+
   ship = new Ship(s, "ship_1.png", "ship_0.png");
   ship->Inflate(options);
-  ent->Add(ship);
 
   ent->Add(new Velocity(150,0));
   ent->Add(new Looper(1));
   ent->Add(new Cannon());
   ent->Add(new Motion());
+
+  ent->Add(ship);
 
   return ent;
 }
@@ -194,3 +227,5 @@ Entity* Factory::CreateShip() {
 
 
 NS_END(invaders)
+
+

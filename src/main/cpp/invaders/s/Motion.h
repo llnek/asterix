@@ -9,33 +9,39 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "BaseSystem.h"
 #include "ash/Ash.h"
-NS_USING(ash)
+NS_ALIAS(f, fusilli)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public System {
-public:
-
-  Motions(options);
-
-  virtual void RemoveFromEngine(Engine*) override;
-  virutal void AddToEngine(Engine*) override;
-  virtual void Update(float dt) override;
-
-  void ControlCannon(Node*, float dt);
-  void FireMissile(Node*, float dt);
-  void ScanInput(Node*, float dt);
-  void ProcessAlienMotions(Node*,float dt);
-
-  virtual int Priority() override { return Motion; }
-
+class CC_DLL Motions : public BaseSystem {
 private:
 
   DISALLOW_COPYASSIGN(Motions)
-  Motions() {}
+  Motions();
+
+public:
+
+  static Motions* Create(Factory*, cc::Dictionary*);
+  virtual ~Motions();
+
+  virtual void RemoveFromEngine(a::Engine*);
+  virutal void AddToEngine(a::Engine*);
+  virtual bool Update(float dt);
+
+  void ControlCannon(a::Node*, float dt);
+  void FireMissile(a::Node*, float dt);
+  void ScanInput(a::Node*, float dt);
+  void ProcessAlienMotions(a::Node*,float dt);
+
+  virtual int Priority() { return Motion; }
+
 };
+
 
 
 NS_END(invaders)

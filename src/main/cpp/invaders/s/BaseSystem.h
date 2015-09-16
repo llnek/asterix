@@ -9,28 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "platform/CCCommon.h"
 #include "ash/Ash.h"
-#include "cocos2d.h"
-NS_USING(cocos2d)
-NS_USING(ash)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BaseSystem : public ash::System {
+class CC_DLL BaseSystem : public a::System {
 protected:
-  Dictionary* state;
+  cc::Dictionary* state;
   Factory* factory;
 
+  void Set(Factory*, cc::Dictionary*);
   BaseSystem();
 
 private:
+
   DISALLOW_COPYASSIGN(BaseSystem)
 
 public:
+
   virtual ~BaseSystem();
+
 };
 
 
+
+
+
+
 NS_END(invaders)
+
+
