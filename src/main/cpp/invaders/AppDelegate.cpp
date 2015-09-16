@@ -12,24 +12,23 @@
 #include "ash/NodeRegistry.h"
 #include "support/XConfig.h"
 #include "n/gnodes.h"
-#include "p/Splash.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-NS_USING(cocos2d)
-NS_USING(fusilli)
-NS_USING(invaders)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(fs, fusilli)
+NS_ALIAS(p, invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-  auto r= NodeRegistry::GetInstance();
+  auto r= fs::NodeRegistry::GetInstance();
 
-  r->Register(ShipMotionNode::TypeId(), ShipMotionNode::Create());
-  r->Register(CannonCtrlNode::TypeId(), CannonCtrlNode::Create());
-  r->Register(AlienNotionNode::TypeId(), AlienNotionNode::Create());
+  r->Register( p::ShipMotionNode::Create());
+  r->Register( p::CannonCtrlNode::Create());
+  r->Register( p::AlienNotionNode::Create());
 
-  XConfig::SetInstance(new Config());
+  fs::XConfig::SetInstance(new p::Config());
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -10,36 +10,49 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "support/XConfig.h"
-NS_USING(fusilli)
+
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public XConfig {
-public:
+protected:
 
-  virtual const string GetAppKey() override;
-  virtual const string AppId() override;
-  virtual const string GetColor() override;
-  virtual ResolutionPolicy GetPolicy() override;
-
-  virtual void HandleResolution(const Size& rs) override;
-  virtual const Size GetGameSize() override;
-  virtual float GetScale() override;
-  virtual void RunOnce() override;
-
-  virtual Scene* StartWith() override;
-
-  virtual ~Config();
+  void InitAssets();
+  void InitCsts();
   Config();
+
+  float scale;
 
 private:
 
   DISALLOW_COPYASSIGN(Config)
-  void InitAssets();
-  void InitCsts();
-  float scale;
+
+public:
+
+  virtual void HandleResolution(const cc::Size& rs);
+
+  virtual ResolutionPolicy GetPolicy();
+  virtual const s::string GetAppKey();
+  virtual const s::string AppId();
+  virtual const s::string GetColor();
+  virtual const cc::Size GetGameSize();
+
+  virtual const s::string GetWSUrl();
+  virtual cc::Scene* StartWith();
+
+  virtual const s::string GetGameId();
+  virtual const s::string GetRoomId();
+
+  virtual float GetScale() ;
+  virtual void RunOnce() ;
+
+  virtual ~Config();
+
+  DEFCREATE_FUNC(Config)
 };
 
 

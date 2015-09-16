@@ -10,25 +10,24 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Config.h"
-NS_USING(fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const string Config::GetAppKey() {
+const s::string Config::GetAppKey() {
   return "d39bf198-518a-4de7-88a0-5e28c88571b0";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const string Config::AppId() {
+const s::string Config::AppId() {
   return "invaders";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const string Config::GetColor() {
+const s::string Config::GetColor() {
   return "red";
 }
 

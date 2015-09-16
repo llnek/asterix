@@ -13,16 +13,16 @@
 #define __APP_DELEGATE_H__
 
 #include "core/fusilli.h"
-#include "cocos2d.h"
 #include "boot/App.h"
-NS_USING(cocos2d)
-NS_USING(fusilli)
+NS_ALIAS(fs, fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AppDelegate : public App {
+class CC_DLL AppDelegate : public fs::App {
+
 private:
+
   DISALLOW_COPYASSIGN(AppDelegate)
 
 public:
