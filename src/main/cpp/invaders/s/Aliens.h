@@ -9,41 +9,45 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "BaseSystem.h"
 #include "ash/Ash.h"
+NS_ALAIS(cc, cocos2d)
+NS_ALIAS(f, fusilli)
 NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Aliens : public System {
-public:
-
-  virtual ~Aliens();
-  Aliens(options);
-
-  virtual void RemoveFromEngine(Engine*) override;
-  virtual void AddToEngine(Engine*) override;
-  virtual bool Update(float dt);
-  void ProcessMovement(Node*, float dt);
-  void ProcessBombs(Node*, float dt);
-  void CheckBomb(Node* sqad);
-  void DropBomb(float x, float y);
-  void MaybeShuffleAliens(Node* sqad);
-  void TestDirX(ComObj* b, int stepx);
-  void ShuffleOneAlien(ComObj* a, int stepx);
-  void ForwardOneAlien(ComObj* a, float delta);
-  void DoShuffle(Node* sqad);
-  void DoForward(Node* sqad);
-  float FindMinX(Node* sqad);
-  float FindMaxX(Node* sqad);
-
-  virtual int Priority() override { return Motion; }
-
+class CC_DLL Aliens : public BaseSystem {
 private:
 
   DISALLOW_COPYASSIGN(Aliens)
-  Aliens() {}
+  Aliens();
+
+
+public:
+
+  static Aliens* Create(Factory*, cc::Dictionary*);
+  virtual ~Aliens();
+
+  virtual void RemoveFromEngine(a::Engine*) override;
+  virtual void AddToEngine(a::Engine*) override;
+  virtual bool Update(float dt);
+  void ProcessMovement(a::Node*, float dt);
+  void ProcessBombs(a::Node*, float dt);
+  void CheckBomb(a::Node* sqad);
+  void DropBomb(float x, float y);
+  void MaybeShuffleAliens(a::Node* sqad);
+  void TestDirX(f::ComObj* b, int stepx);
+  void ShuffleOneAlien(f::ComObj* a, int stepx);
+  void ForwardOneAlien(f::ComObj* a, float delta);
+  void DoShuffle(a::Node* sqad);
+  void DoForward(a::Node* sqad);
+  float FindMinX(a::Node* sqad);
+  float FindMaxX(a::Node* sqad);
+
+  virtual int Priority() { return Motion; }
 
 };
 

@@ -43,6 +43,8 @@ public:
   XLayer* GetLayer(int tag);
 
   virtual bool IsOperational();
+  virtual void Pause() =0;
+  virtual void Resume() = 0;
 
 };
 

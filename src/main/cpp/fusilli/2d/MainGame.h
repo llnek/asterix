@@ -32,6 +32,8 @@ private:
 public:
 
   static XGameLayer* Get();
+  static XScene* Self();
+
   virtual ~MainGame();
 };
 

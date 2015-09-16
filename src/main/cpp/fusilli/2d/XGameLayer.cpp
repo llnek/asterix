@@ -60,11 +60,8 @@ bool XGameLayer::KeyPoll(int key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::InitEngine(const s::vector<a::System*>& ss) {
+void XGameLayer::InitEngine() {
   engine = a::Engine::Create();
-  for (auto it= ss.begin(); it != ss.end(); ++it) {
-    engine->AddSystem(*it);
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

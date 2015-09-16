@@ -64,7 +64,8 @@ public:
   cc::Dictionary* GetLCfg();
   bool KeyPoll(int key);
 
-  void InitEngine(const s::vector<a::System*>&);
+  virtual void InitEngine();
+  virtual void InitAsh() = 0;
 
   virtual void update(float) override;
   virtual XLayer* Realize() override;

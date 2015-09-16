@@ -52,9 +52,22 @@ bool GameLayer::Replay() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Play(bool newFlag) {
-  // create all the systems here
   InitEngine();
+  InitAsh();
   Reset(newFlag);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::InitAsh() {
+  options = cc::Dictionary::create();
+  factory = new Factory(engine, d);
+  engine->AddSystem(new Stager(factory, options));
+  engine->AddSystem(new Motion(factory, options));
+  engine->AddSystem(new Move(factory, options));
+  engine->AddSystem(new Aliens(factory, options));
+  engine->AddSystem(new Collide(factory, options));
+  engine->AddSystem(new Resolve(factory, options));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,9 +104,21 @@ void GameLayer::OnEarnScore(float score) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::OnDone() {
-  running=false;
+  SCAST(Game,getParent())->Pause();
   Reset();
   GetHUD()->EnableReplay();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::Resume() {
+  running= true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::Pause() {
+  running= false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -129,7 +154,7 @@ XScene* Game::Realize() {
   // realize game layer last
   g->Realize();
 
-  MainGame::Set(this);
+  f::MainGame::Set(this);
   return this;
 }
 
