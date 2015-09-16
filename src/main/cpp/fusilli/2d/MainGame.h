@@ -12,38 +12,27 @@
 #if !defined(__XSCENE_H__)
 #define __XSCENE_H__
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-
-
-NS_ALIAS(cc, cocos2d)
-NS_ALIAS(c, std)
+#include "XScene.h"
 NS_BEGIN(fusilli)
 
-
+class XGameLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public cc::Scene {
+class CC_DLL MainGame : public XScene {
 
 protected:
 
-  virtual void OnQuitAction();
-  XScene();
+  static void Set(MainGame*);
+  MainGame();
 
 private:
 
-  DISALLOW_COPYASSIGN(XScene)
+  DISALLOW_COPYASSIGN(MainGame)
 
 public:
 
-  virtual XScene* Realize();
-  virtual ~XScene();
-
-  void AddLayer(XLayer*, int z=0);
-  XLayer* GetLayer(int tag);
-
-  virtual bool IsOperational();
-
+  static XGameLayer* Get();
+  virtual ~MainGame();
 };
 
 

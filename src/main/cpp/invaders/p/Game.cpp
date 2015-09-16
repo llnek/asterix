@@ -10,28 +10,30 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Game.h"
-NS_USING(cocos2d)
-NS_USING(std)
-NS_USING(fusilli)
+NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
+NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::PKInput() {
-  CCSX::OnKeyPolls(this->keyboard);
+  cx::OnKeyPolls(this->keyboard);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Reset(bool newFlag) {
+
+  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
+    it->second->removeAllChildren();
+  }
+
   if (atlases.empty()) {
     RegoAtlas("game-pics");
     RegoAtlas("lang-pics");
-  }
-  else
-  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
-    it->second->removeAllChildren();
   }
 
   if (newFlag) {
@@ -43,12 +45,6 @@ void GameLayer::Reset(bool newFlag) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool GameLayer::IsOperational() {
-  return true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 bool GameLayer::Replay() {
   Play(false);
 }
@@ -56,6 +52,7 @@ bool GameLayer::Replay() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Play(bool newFlag) {
+  // create all the systems here
   InitEngine();
   Reset(newFlag);
 }
@@ -63,13 +60,13 @@ void GameLayer::Play(bool newFlag) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::SpawnPlayer() {
-  sh.factory.bornShip();
+  factory->bornShip();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::OnPlayerKilled() {
-  CCSX::SfxPlay("xxx-explode");
+  cx::SfxPlay("xxx-explode");
   if (GetHUD()->ReduceLives(1)) {
     OnDone();
   } else {
@@ -99,36 +96,45 @@ void GameLayer::OnDone() {
   GetHUD()->EnableReplay();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Game::IsOperational() {
+  return running;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
-MainGame::~MainGame() {
+Game::~Game() {
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-MainGame::MainGame() {
-  running = false;
+Game::Game()
+  : running(false) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-XScene* MainGame::Realize() {
-  auto y = BGLayer::create();
+XScene* Game::Realize() {
   auto g = GameLayer::create();
+  auto b = BGLayer::create();
+  auto h = HUDLayer::create();
 
-  AddLayer(y)->Realize();
-  AddLayer(g);
-
-  y = HUDLayer::create();
-  AddLayer(y)->Realize();
+  AddLayer(b, 1)->Realize();
+  AddLayer(g, 2);
+  AddLayer(h)->Realize();
 
   // realize game layer last
   g->Realize();
 
-  CCSX::Main = g;
+  MainGame::Set(this);
   return this;
 }
+
+
+
 
 
 NS_END(invaders)

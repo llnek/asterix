@@ -136,9 +136,9 @@ void Config::InitCsts() {
 void Config::InitPools() {
   auto d = GetFragment(POOLS);
 
-  d->setObject(new XPool(), "missiles");
-  d->setObject(new XPool(), "bombs");
-  d->setObject(new XPool(), "explosions");
+  d->setObject(f::XPool::Create(), "missiles");
+  d->setObject(f::XPool::Create(), "bombs");
+  d->setObject(f::XPool::Create(), "explosions");
 
 }
 
@@ -151,13 +151,13 @@ const s::string Config::GetWSUrl() {
 //////////////////////////////////////////////////////////////////////////
 //
 const s::string GetGameId() {
-
+  return "";
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 const s::string GetRoomId() {
-
+  return "";
 }
 
 

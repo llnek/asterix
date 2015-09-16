@@ -57,14 +57,20 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainGame : public XScene {
-public:
-  virtual XScene* Realize() override;
-  virtual ~MainGame();
-  MainGame();
+class CC_DLL Game : public MainGame {
+protected:
+
 
 private:
-  DISALLOW_COPYASSIGN(MainGame)
+
+  DISALLOW_COPYASSIGN(Game)
+
+public:
+
+  virtual XScene* Realize();
+  virtual ~Game();
+
+  static Game* Create();
 };
 
 

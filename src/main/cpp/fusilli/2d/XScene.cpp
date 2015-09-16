@@ -47,5 +47,13 @@ void XScene::OnQuitAction() {
     XConfig::GetInstance()->StartWith());
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool XScene::IsOperational() { return true; }
+
+
+
+
+
 
 NS_END(fusilli)

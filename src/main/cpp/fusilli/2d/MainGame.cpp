@@ -9,47 +9,35 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XSCENE_H__)
-#define __XSCENE_H__
-
-#include "2d/CCScene.h"
-#include "XLayer.h"
-
-
-NS_ALIAS(cc, cocos2d)
-NS_ALIAS(c, std)
+#include "MainGame.h"
 NS_BEGIN(fusilli)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public cc::Scene {
+MainGame::Set(MainGame* g) {
+  _main=g;
+}
 
-protected:
+//////////////////////////////////////////////////////////////////////////////
+//
+XGameLayer* MainGame::Get() {
+}
 
-  virtual void OnQuitAction();
-  XScene();
+//////////////////////////////////////////////////////////////////////////////
+//
+MainGame::~MainGame() {
 
-private:
+}
 
-  DISALLOW_COPYASSIGN(XScene)
+//////////////////////////////////////////////////////////////////////////////
+//
+MainGame::MainGame() {
 
-public:
-
-  virtual XScene* Realize();
-  virtual ~XScene();
-
-  void AddLayer(XLayer*, int z=0);
-  XLayer* GetLayer(int tag);
-
-  virtual bool IsOperational();
-
-};
+}
 
 
 
 
 
 NS_END(fusilli)
-#endif
 

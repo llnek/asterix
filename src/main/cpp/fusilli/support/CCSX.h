@@ -25,86 +25,86 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL CCSX {
-private:
-  static void ResolveElastic(ComObj* obj1, ComObj* obj2);
+namespace ccsx {
 
-public:
-  static bool PointInBox(const Box4& box, float x,  float y);
-  //static const Color3B White();
-  //static const Color3B Black();
+  void ResolveElastic(ComObj* obj1, ComObj* obj2);
 
-  static bool Collide0(cc::Sprite* , cc::Sprite* );
-  static bool Collide(ComObj* a, ComObj* b);
 
-  static void SetDevRes(bool landscape, float x, float y,
+  bool PointInBox(const Box4& box, float x,  float y);
+  //const Color3B White();
+  //const Color3B Black();
+
+  bool Collide0(cc::Sprite* , cc::Sprite* );
+  bool Collide(ComObj* a, ComObj* b);
+
+  void SetDevRes(bool landscape, float x, float y,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
-  static bool IsPortrait();
-  static bool OutOfBound(ComObj* ent, const Box4& B);
-  static bool OutOfBound(const Box4& src, const Box4& B);
+  bool IsPortrait();
+  bool OutOfBound(ComObj* ent, const Box4& B);
+  bool OutOfBound(const Box4& src, const Box4& B);
 
-  static cc::Action* CreateTimer(cc::Node*, float millis);
-  static void UndoTimer(cc::Action*);
-  static bool TimerDone(cc::Action*);
+  cc::Action* CreateTimer(cc::Node*, float millis);
+  void UndoTimer(cc::Action*);
+  bool TimerDone(cc::Action*);
 
-  static cc::Sprite* CreateSprite(const s::string& frameName);
+  cc::Sprite* CreateSprite(const s::string& frameName);
 
-  static const Box4 BBox4B4(ComObj* ent);
-  static const Box4 BBox4(cc::Sprite* );
+  const Box4 BBox4B4(ComObj* ent);
+  const Box4 BBox4(cc::Sprite* );
 
-  static void RunScene(cc::Scene* ns, float delay);
-  static void RunScene(cc::Scene* ns);
-  static bool IsTransitioning();
+  void RunScene(cc::Scene* ns, float delay);
+  void RunScene(cc::Scene* ns);
+  bool IsTransitioning();
 
-  static const cc::Size CSize(const s::string& frame);
+  const cc::Size CSize(const s::string& frame);
 
-  static const cc::Size HalfHW(cc::Sprite* );
-  static const cc::Rect BBox(cc::Sprite* );
+  const cc::Size HalfHW(cc::Sprite* );
+  const cc::Rect BBox(cc::Sprite* );
 
-  static float GetScaledHeight(cc::Node* );
+  float GetScaledHeight(cc::Node* );
 
-  static float GetHeight(cc::Node*);
+  float GetHeight(cc::Node*);
 
-  static float GetScaledWidth(cc::Node* );
+  float GetScaledWidth(cc::Node* );
 
-  static float GetWidth(cc::Node* );
+  float GetWidth(cc::Node* );
 
-  static float GetLeft(cc::Node* );
+  float GetLeft(cc::Node* );
 
-  static float GetRight(cc::Node*);
+  float GetRight(cc::Node*);
 
-  static float GetTop(cc::Node*);
+  float GetTop(cc::Node*);
 
-  static float GetBottom(cc::Node*);
+  float GetBottom(cc::Node*);
 
-  static float GetLastLeft(ComObj* );
+  float GetLastLeft(ComObj* );
 
-  static float GetLastRight(ComObj*);
+  float GetLastRight(ComObj*);
 
-  static float GetLastTop(ComObj*);
+  float GetLastTop(ComObj*);
 
-  static float GetLastBottom(ComObj*);
+  float GetLastBottom(ComObj*);
 
-  static float CenterX();
+  float CenterX();
 
-  static float CenterY();
+  float CenterY();
 
-  static const cc::Vec2 Center();
+  const cc::Vec2 Center();
 
-  static float ScreenHeight();
+  float ScreenHeight();
 
-  static float ScreenWidth();
+  float ScreenWidth();
 
-  static const cc::Rect VisRect();
-  static const Box4 VisBox();
+  const cc::Rect VisRect();
+  const Box4 VisBox();
 
-  static const cc::Size Screen();
-  static const cc::Vec2 SCenter();
+  const cc::Size Screen();
+  const cc::Vec2 SCenter();
 
-  static const cc::Vec2 VBoxMID(const Box4& );
+  const cc::Vec2 VBoxMID(const Box4& );
 
-  static bool TraceEnclosure(float dt, const Box4& bbox,
+  bool TraceEnclosure(float dt, const Box4& bbox,
       const cc::Rect& rect, const cc::Vec2& vel,
       cc::Vec2& outPos, cc::Vec2& outVel);
 
@@ -112,33 +112,33 @@ public:
    * Get the sprite from the frame cache using
    * its id (e.g. #ship).
    */
-  static cc::SpriteFrame* GetSpriteFrame(const s::string& frameid);
+  cc::SpriteFrame* GetSpriteFrame(const s::string& frameid);
 
-  static bool HasKeyPad();
+  bool HasKeyPad();
 
-  static void OnKeyPolls();
+  void OnKeyPolls();
 
-  static void OnKeys();
+  void OnKeys();
 
-  static bool HasMouse();
+  bool HasMouse();
 
-  static void OnMouse();
+  void OnMouse();
 
-  static bool HasTouch();
+  bool HasTouch();
 
-  static void OnTouchAll();
+  void OnTouchAll();
 
-  static void OnTouchOne();
+  void OnTouchOne();
 
-  static const cc::Vec2 AnchorC();
-  static const cc::Vec2 AnchorTL();
-  static const cc::Vec2 AnchorT();
-  static const cc::Vec2 AnchorTR();
-  static const cc::Vec2 AnchorR();
-  static const cc::Vec2 AnchorL();
-  static const cc::Vec2 AnchorBR();
-  static const cc::Vec2 AnchorB();
-  static const cc::Vec2 AnchorBL();
+  const cc::Vec2 AnchorC();
+  const cc::Vec2 AnchorTL();
+  const cc::Vec2 AnchorT();
+  const cc::Vec2 AnchorTR();
+  const cc::Vec2 AnchorR();
+  const cc::Vec2 AnchorL();
+  const cc::Vec2 AnchorBR();
+  const cc::Vec2 AnchorB();
+  const cc::Vec2 AnchorBL();
 
 };
 

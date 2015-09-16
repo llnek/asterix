@@ -69,8 +69,6 @@ public:
   virtual void update(float) override;
   virtual XLayer* Realize() override;
 
-  virtual bool IsOperational() = 0;
-
   const s::map<int,bool>& Keys();
 
   XLayer* GetBackgd(int tag= 1);
