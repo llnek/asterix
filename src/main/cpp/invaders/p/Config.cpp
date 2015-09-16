@@ -39,23 +39,25 @@ ResolutionPolicy Config::GetResolution() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Scene* Config::StartWith() {
-  return Splash::create()->Realize();
+cc::Scene* Config::StartWith() {
+  return Splash::Create();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Config::Config() {
+Config::Config()
+  : scale(1) {
+
   InitAssets();
   InitCsts();
   InitPools();
-  scale=1;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const Size Config::GetGameSize() {
-  return Size(320, 480);
+const cc::Size Config::GetGameSize() {
+  return cc::Size(320, 480);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,7 +68,7 @@ float Config::GetScale() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::HandleResolution(const Size& rs) {
+void Config::HandleResolution(const cc::Size& rs) {
   //for default font, we use 48pt
   scale = 52/256 * rs.width /320;
 }
@@ -74,11 +76,10 @@ void Config::HandleResolution(const Size& rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::RunOnce() {
-  auto c= SpriteFrameCache::getInstance();
+  auto c= cc::SpriteFrameCache::getInstance();
   c->addSpriteFrames( GetAtlas("game-pics"));
   c->addSpriteFrames( GetAtlas("lang-pics"));
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -140,6 +141,26 @@ void Config::InitPools() {
   d->setObject(new XPool(), "explosions");
 
 }
+
+//////////////////////////////////////////////////////////////////////////
+//
+const s::string Config::GetWSUrl() {
+  return "";
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+const s::string GetGameId() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+const s::string GetRoomId() {
+
+}
+
+
 
 NS_END(invaders)
 

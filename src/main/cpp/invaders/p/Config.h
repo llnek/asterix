@@ -44,6 +44,9 @@ public:
   virtual const s::string GetWSUrl();
   virtual cc::Scene* StartWith();
 
+  virtual void SetGameId(const s::string& );
+  virtual void SetRoomId(const s::string& );
+
   virtual const s::string GetGameId();
   virtual const s::string GetRoomId();
 
