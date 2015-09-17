@@ -25,14 +25,13 @@ private:
 
   s::map<NodeType,NodeFactory*> regos;
 
-  virtual ~NodeRegistry();
-  NodeRegistry();
-
   DISALLOW_COPYASSIGN(NodeRegistry)
+  NodeRegistry();
 
 public:
 
   static NodeRegistry* GetInstance();
+  virtual ~NodeRegistry();
 
   void Deregister(const NodeType&);
   void Register(NodeFactory*);

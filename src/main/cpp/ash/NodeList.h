@@ -20,14 +20,18 @@ class Node;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL NodeList {
+friend class Engine;
+protected:
+
 private:
+
   NodeType nType;
+  NodeList();
 
 public:
-  Node* head;
-  Node* tail;
 
   const NodeType GetType() { return nType; }
+  virtual ~NodeList();
 
   bool ContainsWithin(Entity*);
   bool IsCompatible(Entity*);
@@ -37,6 +41,9 @@ public:
   void Remove(Node* );
   void RemoveAll();
   bool IsEmpty();
+
+  Node* head;
+  Node* tail;
 
 };
 

@@ -20,6 +20,7 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL SystemList {
+friend class Engine;
 private:
 
   DISALLOW_COPYASSIGN(SystemList)
@@ -27,19 +28,17 @@ private:
 
 public:
 
-  static SystemList* Create();
-
-  System* head;
-  System* tail;
-
   virtual ~SystemList();
 
-  void Remove(System* );
+  void Release(System* );
   void Add(System* );
-  void RemoveAll();
+  void Clear();
 
   System* Get(const SystemType& type );
   const s::vector<System*> List();
+
+  System* head;
+  System* tail;
 
 };
 

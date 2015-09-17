@@ -16,7 +16,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Entity::Create(const s::string& group, Engine* e) {
+Entity* Entity::Create(const stdstr& group, Engine* e) {
   auto ent= new Entity();
   ent->group=group;
   ent->engine= e;
@@ -26,15 +26,20 @@ Entity* Entity::Create(const s::string& group, Engine* e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity::~Entity() {
+  for (auto it= parts.begin(); it != parts.end(); ++it) {
+    delete *it;
+  }
+  parts.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity() {
-  previous = nullptr;
-  next= nullptr;
-  dead=false;
-  engine=nullptr;
+Entity::Entity()
+  : previous(nullptr)
+  , next(nullptr)
+  , dead(false)
+  , engine(nullptr) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,7 +49,7 @@ void Entity::Add(Component* c) {
   if (Has(z)) {
     throw "cannot reassign component";
   }
-  components.insert(pair<COMType,Component*>(z,c));
+  parts.insert(pair<COMType,Component*>(z,c));
   engine->NotifyModify(this);
 }
 
@@ -56,24 +61,24 @@ void Entity::MarkDelete() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Entity::Remove(const COMType& z) {
-  auto it = components.find(z);
+void Entity::Remove(const COMType& z) {
+  auto it = parts.find(z);
   Component* rc= nullptr;
 
-  if (it != components.end()) {
+  if (it != parts.end()) {
     rc= it->second;
-    components.erase(it);
+    parts.erase(it);
   }
+  mc_del_ptr(rc);
   engine->NotifyModify(this);
-  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Component* Entity::Get(const COMType& z) {
-  auto it=  components.find(z);
+  auto it=  parts.find(z);
   Component* c= nullptr;
-  if (it != components.end()) {
+  if (it != parts.end()) {
     c= it->second;
   }
   return c;
@@ -83,8 +88,8 @@ Component* Entity::Get(const COMType& z) {
 //
 const s::vector<Component*> Entity::GetAll() {
   s::vector<Component*> v;
-  for (auto it = components.begin();
-      it != components.end(); ++it) {
+  for (auto it = parts.begin();
+      it != parts.end(); ++it) {
     v.push_back(it->second);
   }
   return v;
@@ -93,7 +98,7 @@ const s::vector<Component*> Entity::GetAll() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Entity::Has(const COMType& z) {
-  return components.find(z) != components.end();
+  return parts.find(z) != parts.end();
 }
 
 

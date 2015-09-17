@@ -30,14 +30,14 @@ private:
 
 public:
 
-  Entity* head;
-  Entity* tail;
-
   const s::vector<Entity*> List();
 
-  void Remove(Entity* );
+  void Release(Entity*);
   void Add(Entity* );
-  void RemoveAll() ;
+  void Clear() ;
+
+  Entity* head;
+  Entity* tail;
 
 };
 

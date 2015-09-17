@@ -20,9 +20,9 @@ NodeList::~NodeList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList::NodeList() {
-  head = nullptr;
-  tail = nullptr;
+NodeList::NodeList()
+  : head(nullptr)
+  , tail(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -75,14 +75,14 @@ bool NodeList::IsEmpty() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NodeList::RemoveEntity(Entity* e) {
-  Node* p = head;
-  while (NNP(p)) {
-    if (p->BelongsTo(e)) {
-      Remove(p);
-      delete p;
-      p=head;
+  Node* n = head;
+  while (NNP(n)) {
+    if (n->BelongsTo(e)) {
+      Remove(n);
+      delete n;
+      n=head;
     } else {
-      p = p->next;
+      n = n->next;
     }
   }
 }
@@ -90,8 +90,8 @@ void NodeList::RemoveEntity(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool NodeList::ContainsWithin(Entity* e) {
-  for (auto p= head; NNP(p); p = p->next) {
-    if (p->BelongsTo(e)) { return true; }
+  for (auto n= head; NNP(n); n = n->next) {
+    if (n->BelongsTo(e)) { return true; }
   }
   return false;
 }

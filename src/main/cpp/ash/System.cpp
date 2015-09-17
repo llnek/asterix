@@ -26,11 +26,12 @@ System::~System() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-System::System() {
-  previous = nullptr;
-  next = nullptr;
-  active=false;
-  priority=0;
+System::System()
+  : previous(nullptr)
+  , next(nullptr)
+  , active(false)
+  , priority(0) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,3 +72,5 @@ bool System::Is(const SystemType& type) {
 
 
 NS_END(ash)
+
+

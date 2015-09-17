@@ -14,21 +14,19 @@
 
 #include <vector>
 #include <map>
-#include "Ash.h"
+#include "Component.h"
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
-class Component;
-class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Entity {
 private:
 
-  s::map<s::string,Component*> components;
+  s::map<stdstr, Component*> parts;
   Engine* engine;
-  s::string group;
+  stdstr group;
   bool dead;
 
   Entity();
@@ -37,23 +35,23 @@ private:
 
 public:
 
-  static Entity* Create(const s::string& group, Engine*);
+  static Entity* Create(const stdstr& group, Engine*);
 
   Entity* previous;
   Entity* next;
 
   virtual ~Entity();
 
-  Component* Remove(const COMType&);
+  void Remove(const COMType&);
   void Add(Component*);
 
   Component* Get(const COMType& );
   bool Has(const COMType&);
 
-  const s::string GroupId() { return group; }
+  const stdstr GroupId() { return group; }
 
-  void MarkDelete();
   bool IsOk() { return !dead; };
+  void MarkDelete();
 
   const s::vector<Component*> GetAll();
 

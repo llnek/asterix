@@ -9,27 +9,32 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Component.h"
-NS_USING(fusilli)
+#include "2d/ComObj.h"
+NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Alien : public ComObj {
+class CC_DLL Alien : public f::ComObj {
+private:
+
+  DISALLOW_COPYASSIGN(Alien)
+  Alien();
+
+  int rank;
+
 public:
 
-  Alien(Sprite* sprite, float value, int rank);
+  Alien(cc::Sprite*, float value, int rank);
   virtual ~Alien();
 
-private:
-  DISALLOW_COPYASSIGNDFT(Alien)
-  int rank;
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AlienSquad : public Component {
+class CC_DLL AlienSquad : public a::Component {
 public:
 
   AlienSquad(const vector<Alien>& aliens, int step);
@@ -142,4 +147,5 @@ private:
 
 
 NS_END(invaders)
+
 

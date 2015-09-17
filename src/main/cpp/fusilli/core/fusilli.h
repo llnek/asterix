@@ -15,10 +15,9 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <string>
 
-typedef std::string stdtsr;
+typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //

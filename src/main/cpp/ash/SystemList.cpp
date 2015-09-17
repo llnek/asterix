@@ -47,7 +47,7 @@ void SystemList::Add(System* system ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SystemList::Remove(System* system ) {
+void SystemList::Release(System* system ) {
   if (head == system ) {
     head = head->next;
   }
@@ -64,7 +64,7 @@ void SystemList::Remove(System* system ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SystemList::RemoveAll() {
+void SystemList::Clear() {
   while (NNP(head)) {
     auto system = head;
     head = head->next;
@@ -97,17 +97,12 @@ SystemList::~SystemList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-SystemList::SystemList() {
-  head= nullptr;
-  tail= nullptr;
+SystemList::SystemList()
+  : head( nullptr)
+  , tail( nullptr) {
+
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-SystemList* SystemList::Create() {
-  auto s= new SystemList();
-  return s;
-}
 
 
 

@@ -14,11 +14,10 @@
 
 #include <vector>
 #include <map>
-#include "Ash.h"
+#include "Component.h"
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
-class Component;
 class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -29,22 +28,22 @@ private:
   DISALLOW_COPYASSIGN(Node)
   Node();
 
-  s::map<s::string,Component*> values;
-  s::map<COMType, s::string> types;
+  s::map<stdstr, Component*> values;
+  s::map<COMType, stdstr> types;
   Entity* entity;
 
 public:
 
-  Node* previous;
-  Node* next;
-
-  static Node* Create(const s::map<s::string,COMType>& schema);
+  static Node* Create(const s::map<stdstr, COMType>& );
   virtual ~Node();
 
-  Component* Get(const s::string& field);
   Entity* GetEntity() { return entity; }
-  bool BindEntity(Entity* e);
+  Component* Get(const stdstr& field);
+  bool BindEntity(Entity* );
   bool BelongsTo(Entity*);
+
+  Node* previous;
+  Node* next;
 
 };
 
@@ -52,3 +51,5 @@ public:
 
 NS_END(ash)
 #endif
+
+

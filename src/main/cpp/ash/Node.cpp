@@ -15,21 +15,27 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* Node::Create(const s::map<s::string,COMType>& schema) {
+Node* Node::Create(const s::map<stdstr, COMType>& s) {
   auto node= new Node();
-  for (auto it = schema.begin();
-      it != schema.end(); ++it) {
-    node->types.insert(pair<COMType, s::string>(it->second,it->first));
+  for (auto it = s.begin();
+      it != s.end(); ++it) {
+    node->types.insert(pair<COMType, stdstr>(it->second,it->first));
   }
   return node;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node::Node() {
-  entity = nullptr;
-  previous= nullptr;
-  next= nullptr;
+Node::~Node() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Node::Node()
+  : entity( nullptr)
+  , previous( nullptr)
+  , next( nullptr) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,7 +52,7 @@ bool Node::BindEntity(Entity* e) {
     auto t= it->first;
     auto c= e->Get(t);
     if (NNP(c)) {
-      values.insert(pair<s::string,Component*>(f,c));
+      values.insert(pair<stdstr, Component*>(f,c));
     } else {
       values.clear();
       break;
@@ -54,7 +60,6 @@ bool Node::BindEntity(Entity* e) {
   }
   return values.size() > 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -64,7 +69,7 @@ bool Node::BelongsTo(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::Get(const s::string& field) {
+Component* Node::Get(const stdstr& field) {
   auto it = values.find(field);
   if (it != values.end()) {
     return it->second;

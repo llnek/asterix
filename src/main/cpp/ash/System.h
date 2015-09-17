@@ -32,10 +32,6 @@ private:
 
 public:
 
-  System* previous;
-  System* next;
-
-  virtual ~System();
 
   virtual void RemoveFromEngine(Engine*);
   virtual void AddToEngine(Engine*);
@@ -49,8 +45,17 @@ public:
 
   void Restart();
   void Suspend();
+
+  virtual ~System();
+
+  System* previous;
+  System* next;
+
 };
 
 
 NS_END(ash)
 #endif
+
+
+

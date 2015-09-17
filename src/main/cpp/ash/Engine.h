@@ -14,15 +14,12 @@
 
 #include <vector>
 #include <map>
-#include "Ash.h"
+#include "SystemList.h"
+#include "EntityList.h"
+#include "NodeList.h"
+
 NS_ALIAS(s,std)
 NS_BEGIN(ash)
-
-class EntityList;
-class SystemList;
-class NodeList;
-class System;
-class Entity;
 
 //////////////////////////////////////////////////////////////////////////////
 //

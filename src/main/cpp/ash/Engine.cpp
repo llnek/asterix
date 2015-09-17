@@ -116,14 +116,14 @@ void Engine::RemoveEntity(Entity* e) {
 //
 void Engine::RemoveEntity(EntityList* el, Entity* e) {
   e->MarkDelete();
-  el->Remove(e);
+  el->Release(e);
   dirty=true;
   freeList.push_back(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntities(const s::string& group) {
+void Engine::RemoveEntities(const stdstr& group) {
   auto it = groups.find(group);
   if (it != groups.end()) {
     auto el=it->second;
@@ -161,7 +161,7 @@ void Engine::OnAddEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Engine::GetNodeList(const s::string& group, const NodeType& nodeType) {
+NodeList* Engine::GetNodeList(const stdstr& group, const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
   auto it= groups.find(group);
   auto nl = new NodeList();
@@ -212,8 +212,8 @@ System* Engine::GetSystem(const SystemType& type) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::RemoveSystem(System* s ) {
-  systemList.Remove(s);
-  s->RemoveFromEngine( this );
+  systemList.Release(s);
+  mc_del_ptr(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////

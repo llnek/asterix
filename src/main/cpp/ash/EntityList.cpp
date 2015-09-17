@@ -27,7 +27,7 @@ void EntityList::Add(Entity* e ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EntityList::Remove(Entity* e) {
+void EntityList::Release(Entity* e) {
   if (head == e) {
     head = head->next;
   }
@@ -44,7 +44,7 @@ void EntityList::Remove(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EntityList::RemoveAll() {
+void EntityList::Clear() {
   while (NNP(head)) {
     auto e= head;
     head = head->next;
@@ -76,9 +76,10 @@ EntityList::~EntityList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EntityList::EntityList() {
-  head=nullptr;
-  tail=nullptr;
+EntityList::EntityList()
+  : head(nullptr)
+  , tail(nullptr) {
+
 }
 
 
@@ -86,3 +87,5 @@ EntityList::EntityList() {
 
 
 NS_END(ash)
+
+
