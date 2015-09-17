@@ -14,10 +14,11 @@
 
 #include "core/fusilli.h"
 #include <string>
+NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 
-typedef std::string SystemType;
+typedef s::string SystemType;
 typedef s::string COMType;
 typedef s::string NodeType;
 

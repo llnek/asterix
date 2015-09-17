@@ -12,7 +12,6 @@
 #include "Engine.h"
 #include "Entity.h"
 #include "System.h"
-NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
   /*
@@ -50,15 +49,15 @@ Engine::~Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Engine::Engine() {
-  updating= false;
-  dirty=false;
+Engine::Engine()
+  : updating(false)
+  , dirty(false) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const s::vector<Entity*>
-Engine::GetEntities(const s::string& group) {
+Engine::GetEntities(const stdstr& group) {
   auto it=groups.find(group);
   s::vector<Entity*> v;
   if (it != groups.end()) {
@@ -76,15 +75,15 @@ const s::vector<System*> Engine::GetSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::CreateEntity(const s::string& group) {
-  auto e= new Entity(group, this);
+Entity* Engine::CreateEntity(const stdstr& group) {
+  auto e= Entity::Create(group, this);
   auto it= groups.find(group);
   EntityList* el;
   if (it != groups.end()) {
     el= it->second;
   } else {
     el= new EntityList();
-    groups.insert(pair<s::string,EntityList*>(group,el));
+    groups.insert(pair<stdstr, EntityList*>(group,el));
   }
   el->Add(e);
   addList.push_back(e);

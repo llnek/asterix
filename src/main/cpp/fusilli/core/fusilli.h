@@ -18,6 +18,8 @@
 #include <malloc.h>
 #include <string>
 
+typedef std::string stdtsr;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 #if defined(WIN32) || defined(_WIN32)

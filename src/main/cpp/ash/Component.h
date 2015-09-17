@@ -22,7 +22,7 @@ NS_BEGIN(ash)
 class CC_DLL Component {
 protected:
 
-  Component();
+  Component() {}
 
 private:
 
@@ -31,7 +31,7 @@ private:
 public:
 
   virtual const COMType TypeId() = 0;
-  virtual ~Component();
+  virtual ~Component() {}
 
 };
 

@@ -29,13 +29,13 @@ class Entity;
 class FS_DLL Engine {
 private:
 
-  void RemoveEntity(EntityList* el, Entity* e);
-  void OnModifyEntity(Entity* e);
-  void OnRemoveEntity(Entity* e);
-  void OnAddEntity(Entity* e);
+  void RemoveEntity(EntityList*, Entity*);
+  void OnModifyEntity(Entity*);
+  void OnRemoveEntity(Entity*);
+  void OnAddEntity(Entity*);
   void HouseKeeping();
 
-  s::map<s::string,EntityList*> groups;
+  s::map<stdstr, EntityList*> groups;
   s::vector<NodeList*> nodeLists;
   s::vector<Entity*> freeList;
   s::vector<Entity*> modList;
@@ -55,15 +55,15 @@ public:
 
   virtual ~Engine();
 
-  const s::vector<Entity*> GetEntities(const s::string& group);
+  const s::vector<Entity*> GetEntities(const stdstr& group);
   const s::vector<System*> GetSystems();
 
-  Entity* CreateEntity(const s::string& group);
+  Entity* CreateEntity(const stdstr& group);
   void NotifyModify(Entity*);
   void RemoveEntity(Entity* );
-  void RemoveEntities(const s::string& group) ;
+  void RemoveEntities(const stdstr& group) ;
 
-  NodeList*  GetNodeList(const s::string& group, const NodeType& );
+  NodeList* GetNodeList(const stdstr& group, const NodeType& );
   void ReleaseNodeList(NodeList*& );
 
   System* GetSystem(const SystemType& );
