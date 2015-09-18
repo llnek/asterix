@@ -13,7 +13,7 @@
 #define __XHUDLAYER_H__
 
 #include "XLayer.h"
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
@@ -24,12 +24,12 @@ class CC_DLL XHUDLayer : public XLayer {
 
 protected:
 
-  void AddIcon(cc::Node* icon,
+  void AddIcon(c::Node* icon,
       int* z = nullptr, int* tag = nullptr);
 
   XHUDLayer();
 
-  void RemoveIcon(cc::Node*);
+  void RemoveIcon(c::Node*);
   virtual void InitAtlases();
   virtual void InitIcons();
   virtual void InitLabels();
@@ -43,11 +43,11 @@ protected:
   void EnableReplay();
   void UpdateScore(int num);
 
-  void AddReplayIcon(cc::MenuItem*, const cc::Vec2& where);
-  void AddMenuIcon(cc::MenuItem*, const cc::Vec2& where);
+  void AddReplayIcon(c::MenuItem*, const c::Vec2& where);
+  void AddMenuIcon(c::MenuItem*, const c::Vec2& where);
 
-  cc::MenuItem* replayBtn;
-  cc::Label* scoreLabel;
+  c::MenuItem* replayBtn;
+  c::Label* scoreLabel;
   XLives* lives;
   int score;
 
@@ -57,8 +57,8 @@ private:
 
 public:
 
-  virtual const s::string HudAtlas() = 0;
-  virtual XLayer* Realize() override;
+  virtual const stdstr HudAtlas() = 0;
+  virtual XLayer* Realize() ;
   virtual ~XHUDLayer();
 
   int GetScore() { return score; }

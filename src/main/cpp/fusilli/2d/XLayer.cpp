@@ -9,24 +9,31 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "renderer/CCTextureCache.h"
+#include "2d/CCSpriteBatchNode.h"
+#include "2d/CCSprite.h"
+#include "2d/CCMenuItem.h"
+#include "2d/CCMenu.h"
 #include "support/XConfig.h"
+#include "support/CCSX.h"
 //#include "YesNo.h"
 #include "XLayer.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::SpriteBatchNode*
-XLayer::RegoAtlas(const s::string& name, int* z, int* tag) {
+c::SpriteBatchNode*
+XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
 
   auto img = XConfig::GetInstance()->GetImage(name);
-  auto a= cc::SpriteBatchNode::createWithTexture(
-      cc::TextureCache::getInstance()->addImage(img));
+  auto a= c::SpriteBatchNode::createWithTexture(
+      c::TextureCache::getInstance()->addImage(img));
   auto t = ENP(tag) ? ++lastTag : *tag;
   auto x = ENP(z) ? lastZix : *z;
   addChild(a, x,t);
-  atlases.insert(pair<s::string, cc::SpriteBatchNode*>(name,a));
+  atlases.insert(pair<stdstr, c::SpriteBatchNode*>(name,a));
   a->retain(); // for the map
   return a;
 }
@@ -41,8 +48,8 @@ void XLayer::PKInput() {}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::AudioCallback(cc::Ref* sender) {
-  auto t = SCAST(cc::MenuItemToggle*, sender);
+void XLayer::AudioCallback(c::Ref* sender) {
+  auto t = SCAST(c::MenuItemToggle*, sender);
   auto cfg = XConfig::GetInstance();
   if (t->getSelectedIndex() == 0) {
     cfg->ToggleAudio(true);
@@ -53,65 +60,61 @@ void XLayer::AudioCallback(cc::Ref* sender) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::CreateAudioIcons(cc::MenuItem*& off, cc::MenuItem*& on) {
+void XLayer::CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on) {
   auto n="#sound_off.png";
-  off= cc::MenuItemSprite::create(cc::Sprite::create(n),
-                              cc::Sprite::create(n),
-                              cc::Sprite::create(n));
+  off= CreateMenuBtn(n,n,n);
   n="#sound_on.png";
-  on= cc::MenuItemSprite::create(cc::Sprite::create(n),
-                             cc::Sprite::create(n),
-                             cc::Sprite::create(n));
+  on= CreateMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::AddAudioIcons(cc::MenuItem* off, cc::MenuItem* on,
-    const cc::Vec2& anchor, const cc::Vec2& pos) {
+void XLayer::AddAudioIcons(c::MenuItem* off, c::MenuItem* on,
+    const c::Vec2& anchor, const c::Vec2& pos) {
 
-  cc::Vector<cc::MenuItem*> items {on,off};
+  c::Vector<c::MenuItem*> items {on,off};
   auto cfg = XConfig::GetInstance();
 
-  auto audio = cc::MenuItemToggle::createWithTarget(
+  auto audio = c::MenuItemToggle::createWithTarget(
       this,
       CC_MENU_SELECTOR(XLayer::AudioCallback), items);
 
   audio->setSelectedIndex( cfg->HasAudio() ? 0 : 1);
   audio->setAnchorPoint(anchor);
   //
-  auto menu= cc::Menu::create(audio);
+  auto menu= c::Menu::create(audio);
   menu->setPosition(pos);
   AddItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::OnQuit(cc::Ref* rr) {
-  //cc::Scene* s= YesNo::Create()->Realize();
-  //cc::Director::getInstance()->pushScene(s);
+void XLayer::OnQuit(c::Ref* rr) {
+  //c::Scene* s= YesNo::Create()->Realize();
+  //c::Director::getInstance()->pushScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::CenterAtlasImage(const s::string& atlas,
-    const s::string& frame) {
+void XLayer::CenterAtlasImage(const stdstr& atlas,
+    const stdstr& frame) {
 
-  AddAtlasFrame(atlas, frame, CCSX::Center());
+  AddAtlasFrame(atlas, frame, cx::Center());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::CenterImage(const s::string& frame) {
-  AddFrame(frame, CCSX::Center());
+void XLayer::CenterImage(const stdstr& frame) {
+  AddFrame(frame, cx::Center());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add an image chosen from this atlas
 //
-void XLayer::AddAtlasFrame(const s::string& atlas,
-                           const s::string& frame,
-                           const cc::Vec2& pos) {
-  auto tt= cc::Sprite::create(frame);
+void XLayer::AddAtlasFrame(const stdstr& atlas,
+                           const stdstr& frame,
+                           const c::Vec2& pos) {
+  auto tt= cx::CreateSprite(frame);
   tt->setPosition(pos);
   AddAtlasItem(atlas, tt);
 }
@@ -119,8 +122,8 @@ void XLayer::AddAtlasFrame(const s::string& atlas,
 //////////////////////////////////////////////////////////////////////////////
 // Add an image
 //
-void XLayer::AddFrame(const s::string& frame, const cc::Vec2& pos) {
-  auto tt= cc::Sprite::create(frame);
+void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
+  auto tt= cx::CreateSprite(frame);
   tt->setPosition(pos);
   AddItem(tt);
 }
@@ -128,7 +131,7 @@ void XLayer::AddFrame(const s::string& frame, const cc::Vec2& pos) {
 //////////////////////////////////////////////////////////////////////////////
 // Get the atlas
 //
-cc::SpriteBatchNode* XLayer::GetAtlas(const s::string& name) {
+c::SpriteBatchNode* XLayer::GetAtlas(const stdstr& name) {
   auto it= atlases.find(name);
   if (it != atlases.end()) {
     return it->second;
@@ -140,7 +143,7 @@ cc::SpriteBatchNode* XLayer::GetAtlas(const s::string& name) {
 //////////////////////////////////////////////////////////////////////////////
 // Remove all children from this atlas
 //
-void XLayer::RemoveAtlasAll(const s::string& atlas) {
+void XLayer::RemoveAtlasAll(const stdstr& atlas) {
   auto a=GetAtlas(atlas);
   if (NNP(a)) { a->removeAllChildren(); }
 }
@@ -155,7 +158,7 @@ void XLayer::RemoveAll() {
 //////////////////////////////////////////////////////////////////////////////
 // Remove a child
 //
-void XLayer::RemoveItem(cc::Node* n) {
+void XLayer::RemoveItem(c::Node* n) {
   if (NNP(n)) {
     n->removeFromParent();
   }
@@ -164,13 +167,13 @@ void XLayer::RemoveItem(cc::Node* n) {
 //////////////////////////////////////////////////////////////////////////////
 // Add a child to this atlas
 //
-void XLayer::AddAtlasItem(const s::string& atlas,
-    cc::Node* n, int* zx, int* tag) {
+void XLayer::AddAtlasItem(const stdstr& atlas,
+    c::Node* n, int* zx, int* tag) {
 
   auto ptag = ENP(tag) ? ++lastTag : *tag;
   auto pzx = ENP(zx) ? lastZix : *zx;
   auto p= GetAtlas(atlas);
-  auto ss = DCAST(cc::Sprite*, n);
+  auto ss = DCAST(c::Sprite*, n);
 
   if (NNP(p)) {
     if (NNP(ss)) { ss->setBatchNode(p); }
@@ -181,7 +184,7 @@ void XLayer::AddAtlasItem(const s::string& atlas,
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 //
-void XLayer::AddItem(cc::Node* n, int* zx, int* tag) {
+void XLayer::AddItem(c::Node* n, int* zx, int* tag) {
   auto ptag = ENP(tag) ?  ++lastTag : *tag;
   auto pzx = ENP(zx) ? lastZix : *zx;
   addChild(n, pzx, ptag);
@@ -197,6 +200,7 @@ int XLayer::IncIndexZ() {
 // Remember the parent scene object
 //
 XScene* XLayer::GetScene() {
+  //return DCAST(XScene*, getParent());
   return SCAST(XScene*, getParent());
 }
 
@@ -219,19 +223,19 @@ XLayer::~XLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::MenuItem* XLayer::CreateMenuBtn(const s::string& n) {
+c::MenuItem* XLayer::CreateMenuBtn(const stdstr& n) {
   return CreateMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::MenuItem* XLayer::CreateMenuBtn(const s::string& n,
-    const s::string& s,
-    const s::string& d) {
+c::MenuItem* XLayer::CreateMenuBtn(const stdstr& n,
+    const stdstr& s,
+    const stdstr& d) {
 
-  return cc::MenuItemSprite::create(cc::Sprite::create(n),
-                                cc::Sprite::create(s),
-                                cc::Sprite::create(d));
+  return c::MenuItemSprite::create(cx::CreateSprite(n),
+                                cx::CreateSprite(s),
+                                cx::CreateSprite(d));
 }
 
 

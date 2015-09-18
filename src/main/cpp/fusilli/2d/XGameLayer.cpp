@@ -15,6 +15,7 @@
 #include "support/CCSX.h"
 #include "XGameLayer.h"
 NS_ALIAS(den,CocosDenshion)
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
@@ -43,7 +44,7 @@ void XGameLayer::PKInput() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XGameLayer::GetLCfg() {
+c::Dictionary* XGameLayer::GetLCfg() {
   return XConfig::GetInstance()->GetLevelCfg(s::to_string(level));
 }
 
@@ -67,7 +68,7 @@ void XGameLayer::InitEngine() {
 //////////////////////////////////////////////////////////////////////////////
 //
 const Box4 XGameLayer::GetEnclosureBox() {
-  return CCSX::VisBox();
+  return cx::VisBox();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -91,6 +92,7 @@ void XGameLayer::NewGame(const GameMode mode) {
 //
 XLayer* XGameLayer::Realize() {
   NewGame(mode);
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,7 +112,8 @@ XLayer* XGameLayer::GetHUD(int tag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::update(float dt) {
-  if (IsOperational() && NNP(engine)) {
+  if (GetScene()->IsOperational() &&
+      NNP(engine)) {
     engine->Update(dt);
   }
 }

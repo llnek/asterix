@@ -14,14 +14,15 @@
 
 #include "2d/CCScene.h"
 #include "XLayer.h"
-NS_ALIAS(cc, cocos2d)
+
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public cc::Scene {
+class CC_DLL XScene : public c::Scene {
 
 protected:
 
@@ -41,8 +42,8 @@ public:
   XLayer* GetLayer(int tag);
 
   virtual bool IsOperational();
-  virtual void Pause() =0;
-  virtual void Resume() = 0;
+  virtual void Pause() {}
+  virtual void Resume() {}
 
 };
 

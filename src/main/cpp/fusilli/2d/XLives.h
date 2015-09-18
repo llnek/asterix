@@ -15,7 +15,7 @@
 #include "platform/CCCommon.h"
 #include "2d/XHUDLayer.h"
 #include <vector>
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
@@ -24,13 +24,13 @@ NS_BEGIN(fusilli)
 class CC_DLL XLives {
 protected:
 
-  s::vector<cc::Node*> icons;
+  s::vector<c::Node*> icons;
   int totalLives;
   int curLives;
   int dir;
-  cc::Size lifeSize;
-  cc::Vec2 topLeft;
-  s::string frameId;
+  c::Size lifeSize;
+  c::Vec2 topLeft;
+  stdstr frameId;
   XHUDLayer* hud;
 
   XLives();
@@ -42,7 +42,7 @@ private:
 public:
 
   static XLives* Create(XHUDLayer*,
-      const s::string& frame,
+      const stdstr& frame,
       float x, float y, int dir= 1);
 
   virtual ~XLives();

@@ -14,7 +14,7 @@
 
 
 #include "platform/CCCommon.h"
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 
 
@@ -24,17 +24,17 @@ class CC_DLL YesNo : public XScene {
 friend class YesNoLayer;
 protected:
 
-  void SetActions(cc::CallFunc*, cc::CallFunc*);
-  void SetMsg(const s::string&);
-  const s::string& GetMsg() { return msg; }
-  void OnYes(cc::Ref*);
-  void OnNo(cc::Ref*);
+  void SetActions(c::CallFunc*, c::CallFunc*);
+  void SetMsg(const stdstr&);
+  const stdstr& GetMsg() { return msg; }
+  void OnYes(c::Ref*);
+  void OnNo(c::Ref*);
 
   YesNo();
 
-  cc::CallFunc* yes;
-  cc::CallFunc* no;
-  s::string msg;
+  c::CallFunc* yes;
+  c::CallFunc* no;
+  stdstr msg;
 
 private:
 
@@ -42,10 +42,10 @@ private:
 
 public:
 
-  static YesNo* CreateWithActions(const s::string& msg,
-      cc::CallFunc* yes, cc::CallFunc* no);
+  static YesNo* CreateWithActions(const stdstr& msg,
+      c::CallFunc* yes, c::CallFunc* no);
 
-  static YesNo* Create(const s::string& msg);
+  static YesNo* Create(const stdstr& msg);
 
   virtual XScene* Realize() override;
   virtual ~YesNo();

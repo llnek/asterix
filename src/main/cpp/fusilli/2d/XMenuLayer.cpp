@@ -9,17 +9,21 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "2d/CCMenuItem.h"
+#include "2d/CCMenu.h"
 #include "XMenuLayer.h"
 NS_BEGIN(fusilli)
 
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Menu* XMenuLayer::MkBackQuit(cc::MenuItem* b,
-    cc::MenuItem* q, bool vert) {
+c::Menu* XMenuLayer::MkBackQuit(c::MenuItem* b,
+    c::MenuItem* q, bool vert) {
 
   auto sz= b->getContentSize();
   auto padding = 10;
-  auto menu= cc::Menu::create();
+  auto menu= c::Menu::create();
   menu->addChild(b);
   menu->addChild(q);
 
@@ -51,3 +55,4 @@ XMenuLayer::XMenuLayer() {
 
 
 NS_END(fusilli)
+

@@ -14,7 +14,7 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLive* XLive::Create(const s::string& frame) {
+XLive* XLive::Create(const stdstr& frame) {
   auto c = XLive::create();
   c->initWithSpriteFrameName(frame);
   return c;

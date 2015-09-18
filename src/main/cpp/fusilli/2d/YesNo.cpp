@@ -11,6 +11,7 @@
 
 #include "support/CCSX.h"
 #include "YesNo.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
@@ -40,11 +41,11 @@ XLayer* YesNoLayer::Realize() {
   auto cfg= XConfig::GetInstance();
   auto msg= par->GetMsg();
   auto fnt= cfg->GetFont("font.OCR");
-  auto qn= cc::Label::createWithBMFont(fnt, msg);
+  auto qn= c::Label::createWithBMFont(fnt, msg);
 
-  auto cw= CCSX::Center();
-  auto wz= CCSX::VisRect();
-  auto wb= CCSX::VisBox();
+  auto cw= cx::Center();
+  auto wz= cx::VisRect();
+  auto wb= cx::VisBox();
 
   qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(cfg->GetScale() * 0.25);
@@ -57,7 +58,7 @@ XLayer* YesNoLayer::Realize() {
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnYes));
   auto b2= CreateMenuBtn("#cancel.png");
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnNo));
-  auto menu= cc::Menu::create();
+  auto menu= c::Menu::create();
 
   menu->addChild(b1);
   menu->addChild(b2);
@@ -69,8 +70,8 @@ XLayer* YesNoLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::CreateWithActions(const s::string& msg,
-    cc::CallFunc* y, cc::CallFunc* n) {
+YesNo* YesNo::CreateWithActions(const stdstr& msg,
+    c::CallFunc* y, c::CallFunc* n) {
 
   YesNo* yn = YesNo::create();
   yn->SetActions(y,n);
@@ -81,20 +82,20 @@ YesNo* YesNo::CreateWithActions(const s::string& msg,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::Create(const s::string& msg) {
-  cc::CallFunc* y = cc::CallFunc::create([](){
-      cc::Director::getInstance()->popToRootScene();
-      CCSX::RunScene(XConfig::GetInstance()->StartWith());
+YesNo* YesNo::Create(const stdstr& msg) {
+  c::CallFunc* y = c::CallFunc::create([](){
+      c::Director::getInstance()->popToRootScene();
+      cx::RunScene(XConfig::GetInstance()->StartWith());
       });
-  cc::CallFunc* n= cc::CallFunc::create([]() {
-      cc::Director::getInstance()->popScene();
+  c::CallFunc* n= c::CallFunc::create([]() {
+      c::Director::getInstance()->popScene();
       });
   return CreateWithActions(msg, y,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void YesNo::SetActions(cc::CallFunc* y, cc::CallFunc* n) {
+void YesNo::SetActions(c::CallFunc* y, c::CallFunc* n) {
   yes = y;
   no = n;
 }

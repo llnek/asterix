@@ -93,11 +93,13 @@ public:
 
 };
 
+NS_END(fusilli)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 T* CstVal(const stdstr& key) {
-  auto r= XConfig::GetInstance()->GetCst(key);
+  auto r= fusilli::XConfig::GetInstance()->GetCst(key);
   if (NNP(r)) {
     return static_cast<T*>(r);
   } else {
@@ -106,11 +108,5 @@ T* CstVal(const stdstr& key) {
 }
 
 
-
-
-
-
-
-NS_END(fusilli)
 #endif
 

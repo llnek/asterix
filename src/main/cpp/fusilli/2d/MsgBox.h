@@ -18,7 +18,7 @@
 #include "core/fusilli.h"
 
 
-NS_ALIAS(cc,cocos2d)
+NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
@@ -29,14 +29,14 @@ class CC_DLL MsgBox : public XScene {
 friend class MsgBoxLayer;
 protected:
 
-  const s::string& GetMsg() { return textMsg; }
+  const stdstr& GetMsg() { return textMsg; }
 
-  void SetAction(cc::CallFunc* cb);
-  void SetMsg(const s::string&);
-  void OnYes(cc::Ref*);
+  void SetAction(c::CallFunc* cb);
+  void SetMsg(const stdstr&);
+  void OnYes(c::Ref*);
 
-  cc::CallFunc* action;
-  s::string textMsg;
+  c::CallFunc* action;
+  stdstr textMsg;
 
 private:
 
@@ -49,8 +49,8 @@ public:
 
   virtual XScene* Realize() override;
 
-  static MsgBox* CreateWithAction(cc::CallFunc*, const s::string&);
-  static MsgBox* CreateWithMsg(const s::string&);
+  static MsgBox* CreateWithAction(c::CallFunc*, const stdstr&);
+  static MsgBox* CreateWithMsg(const stdstr&);
   virtual ~MsgBox();
 
 };

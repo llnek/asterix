@@ -10,9 +10,11 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "support/XConfig.h"
+#include "support/CCSX.h"
 #include "ui/UITextField.h"
 #include "net/Odin.h"
 #include "Online.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
@@ -21,7 +23,7 @@ NS_BEGIN(fusilli)
 class CC_DLL OnlineLayer : public XLayer {
 private:
 
-  void OnReq(const s::string&, const s::string&);
+  void OnReq(const stdstr&, const stdstr&);
   void ShowWaitOthers();
   OnlineLayer() {}
 
@@ -36,7 +38,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Online* Online::Create(cc::CallFunc* yes, cc::CallFunc* no) {
+Online* Online::Create(c::CallFunc* yes, c::CallFunc* no) {
   auto s= Online::create();
   s->SetActions(yes,no);
   s->Realize();
@@ -45,7 +47,7 @@ Online* Online::Create(cc::CallFunc* yes, cc::CallFunc* no) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::SetActions(cc::CallFunc* yes, cc::CallFunc* no) {
+void Online::SetActions(c::CallFunc* yes, c::CallFunc* no) {
   yes->retain();
   no->retain();
   this->yes= yes;
@@ -63,7 +65,7 @@ XScene* Online::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnPlayReq(const s::string& uid, const s::string& pwd) {
+void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
   auto cfg = XConfig::GetInstance();
   auto wsurl = cfg->GetWSUrl();
   auto game = cfg->GetGameId();
@@ -125,7 +127,7 @@ void Online::OnSessionEvent(const Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnCancel(cc::Ref* rr) {
+void Online::OnCancel(c::Ref* rr) {
   try {
     wss->Close();
   } catch (...) {}
@@ -135,7 +137,7 @@ void Online::OnCancel(cc::Ref* rr) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OnlineLayer::OnReq(const s::string& uid, const s::string& pwd) {
+void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
   auto par = SCAST(Online*, getParent());
   par->OnPlayReq(uid, pwd);
 }
@@ -145,10 +147,10 @@ void OnlineLayer::OnReq(const s::string& uid, const s::string& pwd) {
 void OnlineLayer::ShowWaitOthers() {
   auto cfg= XConfig::GetInstance();
   auto fnt= cfg->GetFont("font.OCR");
-  auto qn= cc::Label::createWithBMFont(fnt, "waiting...");
-  auto cw= CCSX::Center();
-  auto wz= CCSX::VisRect();
-  auto wb = CCSX::VisBox();
+  auto qn= c::Label::createWithBMFont(fnt, "waiting...");
+  auto cw= cx::Center();
+  auto wz= cx::VisRect();
+  auto wb = cx::VisBox();
 
   RemoveAll();
 
@@ -160,7 +162,7 @@ void OnlineLayer::ShowWaitOthers() {
   auto b1= CreateMenuBtn("#cancel.png",
       "#cancel.png", "#cancel.png");
   b1->setTarget(getParent(), CC_MENU_SELECTOR(Online::OnCancel));
-  auto menu= cc::Menu::create();
+  auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
@@ -171,10 +173,10 @@ void OnlineLayer::ShowWaitOthers() {
 XLayer* OnlineLayer::Realize() {
   auto cfg = XConfig::GetInstance();
   auto fnt= cfg->GetFont("font.OCR");
-  auto qn= cc::Label::createWithBMFont(fnt, "Sign in");
-  auto wz= CCSX::VisRect();
-  auto cw= CCSX::Center();
-  auto wb= CCSX::VisBox();
+  auto qn= c::Label::createWithBMFont(fnt, "Sign in");
+  auto wz= cx::VisRect();
+  auto cw= cx::Center();
+  auto wb= cx::VisBox();
   auto par= SCAST(Online*,getParent());
 
   CenterImage("game.bg");
@@ -183,20 +185,20 @@ XLayer* OnlineLayer::Realize() {
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto bxz = cc::Sprite::create("#ok.png")->getContentSize();
+  auto bxz = c::Sprite::create("#ok.png")->getContentSize();
   // editbox for user
-  auto uid = cc::ui::TextField::create();
+  auto uid = c::ui::TextField::create();
   uid->setMaxLengthEnabled(true);
   uid->setMaxLength(16);
   uid->setTouchEnabled(true);
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder( "user id:");
-  uid->setPosition(cc::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
+  uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
   AddItem(uid);
 
   // editbox for password
-  auto pwd = cc::ui::TextField::create();
+  auto pwd = c::ui::TextField::create();
   pwd->setPasswordEnabled(true);
   pwd->setPasswordStyleText("*");
   pwd->setTouchEnabled(true);
@@ -204,19 +206,19 @@ XLayer* OnlineLayer::Realize() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( "password:");
-  pwd->setPosition(cc::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
+  pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
   AddItem(pwd);
 
   auto b1= CreateMenuBtn("#continue.png",
       "#continue.png", "#continue.png");
-  b1->setCallback([=](cc::Ref* rr) {
+  b1->setCallback([=](c::Ref* rr) {
         this->OnReq(uid->getString(), pwd->getString());
       });
 
   auto b2= CreateMenuBtn("#cancel.png",
       "#cancel.png", "#cancel.png");
   b2->setTarget(par, CC_MENU_SELECTOR(Online::OnCancel));
-  auto menu= cc::Menu::create();
+  auto menu= c::Menu::create();
   menu->addChild(b1,1);
   menu->addChild(b2,2);
   menu->setPosition(cw.x, wb.top * 0.1);

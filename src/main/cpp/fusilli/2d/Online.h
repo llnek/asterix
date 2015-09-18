@@ -15,7 +15,7 @@
 #include "net/Odin.h"
 
 
-NS_ALIAS(cc,cocos2d)
+NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
@@ -26,13 +26,13 @@ class CC_DLL Online : public XScene {
 friend class OnlineLayer;
 protected:
 
-  void SetActions(cc::CallFunc*, cc::CallFunc* );
+  void SetActions(c::CallFunc*, c::CallFunc* );
   void OnSessionEvent(const Event&);
   void OnOdinEvent(const Event&);
   void OnNetworkEvent(const Event&);
-  void OnPlayReq(const s::string&, const s::string&);
+  void OnPlayReq(const stdstr&, const stdstr&);
   void OnContinue();
-  void OnCancel(cc::Ref*);
+  void OnCancel(c::Ref*);
   Online();
 
 private:
@@ -41,12 +41,12 @@ private:
   CREATE_FUNC(Online)
 
   WSockSS* wss;
-  cc::CallFunc* yes;
-  cc::CallFunc* no;
+  c::CallFunc* yes;
+  c::CallFunc* no;
 
 public:
 
-  static Online* Create(cc::CallFunc* yes, cc::CallFunc* no);
+  static Online* Create(c::CallFunc* yes, c::CallFunc* no);
   virtual XScene* Realize() override;
   virtual ~Online();
 

@@ -27,7 +27,8 @@ XScene::XScene() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* XScene::GetLayer(int tag) {
-  return DCAST(XLayer*, getChildByTag(tag));
+  //return DCAST(XLayer*, getChildByTag(tag));
+  return SCAST(XLayer*, getChildByTag(tag));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,8 +46,7 @@ XScene* XScene::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XScene::OnQuitAction() {
-  cx::RunScene(
-    XConfig::GetInstance()->StartWith());
+  cx::RunScene( XConfig::GetInstance()->StartWith());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,3 +59,5 @@ bool XScene::IsOperational() { return true; }
 
 
 NS_END(fusilli)
+
+

@@ -17,8 +17,7 @@
 #include "ash/Engine.h"
 #include "XLayer.h"
 
-
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_ALIAS(a, ash)
 NS_BEGIN(fusilli)
@@ -37,10 +36,9 @@ class CC_DLL XGameLayer : public XLayer {
 
 protected:
 
-  virtual void OnNewGame(const GameMode);
   virtual void SetGameMode(const GameMode);
+  virtual void OnNewGame(const GameMode);
 
-  static XGameLayer* _main;
   s::map<int,bool> keyboard;
   a::Engine* engine;
   int level;
@@ -54,21 +52,19 @@ private:
 public:
 
   virtual int GetIID() { return 2; }
-  virtual void PKInput() override;
+  virtual void PKInput();
 
   virtual ~XGameLayer();
   XGameLayer();
 
-  static XGameLayer* Get();
-
-  cc::Dictionary* GetLCfg();
+  c::Dictionary* GetLCfg();
   bool KeyPoll(int key);
 
   virtual void InitEngine();
   virtual void InitAsh() = 0;
 
-  virtual void update(float) override;
-  virtual XLayer* Realize() override;
+  virtual void update(float);
+  virtual XLayer* Realize();
 
   const s::map<int,bool>& Keys();
 

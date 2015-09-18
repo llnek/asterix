@@ -9,10 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "deprecated/CCInteger.h"
 #include "support/XConfig.h"
 #include "support/CCSX.h"
 #include "XHUDLayer.h"
-
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
@@ -32,13 +33,13 @@ XHUDLayer::XHUDLayer()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::RemoveIcon(cc::Node* icon) {
+void XHUDLayer::RemoveIcon(c::Node* icon) {
   RemoveItem(icon);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddIcon(cc::Node* icon, int* z, int* idx) {
+void XHUDLayer::AddIcon(c::Node* icon, int* z, int* idx) {
   AddAtlasItem(HudAtlas(), icon, z, idx);
 }
 
@@ -112,20 +113,20 @@ void XHUDLayer::EnableReplay() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddMenuIcon(cc::MenuItem* b,
-    const cc::Vec2& where) {
+void XHUDLayer::AddMenuIcon(c::MenuItem* b,
+    const c::Vec2& where) {
 
-  auto tile= CstVal<cc::Integer>("TILE")->getValue();
-  auto hh = CCSX::GetScaledHeight(b) * 0.5;
-  auto hw = CCSX::GetScaledWidth(b) * 0.5;
+  c::Integer* tile= CstVal<c::Integer>("TILE")->getValue();
+  auto hh = cx::GetScaledHeight(b) * 0.5;
+  auto hw = cx::GetScaledWidth(b) * 0.5;
   auto cfg = XConfig::GetInstance();
-  auto menu= cc::Menu::create();
-  auto wz= CCSX::VisBox();
+  auto menu= c::Menu::create();
+  auto wz= cx::VisBox();
   float x, y;
 
   menu->addChild(b);
 
-  if (where.y == CCSX::AnchorB().y) {
+  if (where.y == cx::AnchorB().y) {
     y = wz.bottom + tile  + hh;
   } else {
     y = wz.top - tile - hh;
@@ -136,20 +137,20 @@ void XHUDLayer::AddMenuIcon(cc::MenuItem* b,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddReplayIcon(cc::MenuItem* c,
-    const cc::Vec2& where) {
+void XHUDLayer::AddReplayIcon(c::MenuItem* c,
+    const c::Vec2& where) {
 
-  auto tile= CstVal<cc::Integer>("TILE")->getValue();
-  auto hh = CCSX::GetScaledHeight(c) * 0.5;
-  auto hw = CCSX::GetScaledWidth(c) * 0.5;
+  c::Integer* tile= CstVal<c::Integer>("TILE")->getValue();
+  auto hh = cx::GetScaledHeight(c) * 0.5;
+  auto hw = cx::GetScaledWidth(c) * 0.5;
   auto cfg = XConfig::GetInstance();
-  auto menu= cc::Menu::create();
-  auto wz= CCSX::VisBox();
+  auto menu= c::Menu::create();
+  auto wz= cx::VisBox();
   float x, y;
 
   menu->addChild(c);
 
-  if (where.y == CCSX::AnchorB().y) {
+  if (where.y == cx::AnchorB().y) {
     y = wz.bottom + tile  + hh;
   } else {
     y = wz.top - tile  - hh;

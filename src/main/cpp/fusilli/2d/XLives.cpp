@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XLives.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
@@ -60,8 +61,8 @@ void XLives::DrawLives() {
   for (int n = 0; n < curLives; ++n) {
     auto v= XLive::Create(frameId);
     if (n==0) {
-      lifeSize = cc::Size(CCSX::GetScaledWidth(v),
-                          CCSX::GetScaledHeight(v));
+      lifeSize = c::Size(cx::GetScaledWidth(v),
+                          cx::GetScaledHeight(v));
       y= topLeft.y - lifeSize.height * 0.5;
       x= topLeft.x + lifeSize.width * 0.5;
     }
@@ -79,12 +80,12 @@ void XLives::DrawLives() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLives* XLives::Create(XHUDLayer* hud,
-    const s::string& frame,
+    const stdstr& frame,
     float x, float y, int dir) {
 
   auto vs = new XLives();
 
-  vs->topLeft= cc::Vec2(x,y);
+  vs->topLeft= c::Vec2(x,y);
   vs->frameId = frame;
   vs->hud= hud;
   vs->Reset();

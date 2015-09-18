@@ -11,15 +11,18 @@
 
 #include "support/XConfig.h"
 #include "support/CCSX.h"
+#include "2d/CCMenuItem.h"
+#include "2d/CCMenu.h"
 #include "2d/XLayer.h"
 #include "MsgBox.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithAction(cc::CallFunc* cb,
-    const s::string& msg) {
+MsgBox* MsgBox::CreateWithAction(c::CallFunc* cb,
+    const stdstr& msg) {
 
   auto m= MsgBox::create();
   m->SetAction(cb);
@@ -30,29 +33,29 @@ MsgBox* MsgBox::CreateWithAction(cc::CallFunc* cb,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithMsg(const s::string& msg) {
+MsgBox* MsgBox::CreateWithMsg(const stdstr& msg) {
 
-  auto cb= cc::CallFunc::create([](){
-      cc::Director::getInstance()->popScene();
+  auto cb= c::CallFunc::create([](){
+      c::Director::getInstance()->popScene();
       });
   return CreateWithAction(cb, msg);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::SetAction(cc::CallFunc* cb) {
+void MsgBox::SetAction(c::CallFunc* cb) {
   action = cb;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::SetMsg(const s::string& msg) {
+void MsgBox::SetMsg(const stdstr& msg) {
   textMsg= msg;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::OnYes(cc::Ref* rr) {
+void MsgBox::OnYes(c::Ref* rr) {
  action->execute();
 }
 
@@ -78,12 +81,12 @@ XLayer* MsgBoxLayer::Realize() {
   auto cfg = XConfig::GetInstance();
 
   auto fnt = cfg->GetFont("font.OCR");
-  auto qn= cc::Label::createWithBMFont(
+  auto qn= c::Label::createWithBMFont(
       fnt, par->GetMsg());
 
-  auto cw= CCSX::Center();
-  auto wz= CCSX::VisRect();
-  auto wb = CCSX::VisBox();
+  auto cw= cx::Center();
+  auto wz= cx::VisRect();
+  auto wb = cx::VisBox();
 
   CenterImage("game.bg");
   qn->setPosition(cw.x, wb.top * 0.75);
@@ -94,7 +97,7 @@ XLayer* MsgBoxLayer::Realize() {
   auto b1= CreateMenuBtn("#ok.png",
       "#ok.png", "#ok.png");
   b1->setTarget(par, CC_MENU_SELECTOR(MsgBox::OnYes));
-  auto menu= cc::Menu::create();
+  auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);

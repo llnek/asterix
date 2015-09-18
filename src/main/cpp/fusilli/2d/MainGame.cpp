@@ -13,6 +13,10 @@
 #include "MainGame.h"
 NS_BEGIN(fusilli)
 
+
+static XScene* _singleton;
+static int _gameLayer;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void MainGame::Set(XScene* g, int gy) {

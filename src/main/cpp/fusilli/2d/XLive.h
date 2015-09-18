@@ -14,13 +14,13 @@
 
 #include "core/fusilli.h"
 #include "2d/CCSprite.h"
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XLive : public cc::Sprite {
+class CC_DLL XLive : public c::Sprite {
 protected:
 
   CREATE_FUNC(XLive)
@@ -32,7 +32,7 @@ private:
 
 public:
 
-  static XLive* Create(const s::string& frame);
+  static XLive* Create(const stdstr& frame);
   virtual ~XLive();
 
 };
