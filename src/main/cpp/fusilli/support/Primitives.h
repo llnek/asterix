@@ -13,10 +13,11 @@
 #define __PRIMITIVES_H__
 
 #include "platform/CCCommon.h"
-#include "core/fusilli.h"
-#include "base/CCRef.h"
-#include "base/CCConsole.h"
 #include "base/CCDataVisitor.h"
+#include "base/CCConsole.h"
+#include "base/CCRef.h"
+#include "core/fusilli.h"
+
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
@@ -25,7 +26,7 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* DictVal(cc::Dictionary* d, const s::string& key) {
+T* DictVal(cc::Dictionary* d, const stdstr& key) {
   auto v= d->objectForKey(key);
   if (NNP(v)) {
     return static_cast<T*>(v);
@@ -40,8 +41,7 @@ struct CC_DLL Box4 {
   Box4(float t, float r, float b, float l)
     : top(t), right(r), bottom(b), left(l)
   {}
-  ~Box4()
-  {}
+  ~Box4() {}
   Box4(const Box4& b) {
     top=b.top;
     right=b.right;

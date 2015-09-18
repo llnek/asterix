@@ -12,9 +12,10 @@
 #if !defined(__CCSX_H__)
 #define __CCSX_H__
 
-#include "support/Primitives.h"
 #include "platform/CCCommon.h"
+#include "support/Primitives.h"
 #include "2d/ComObj.h"
+
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
@@ -45,10 +46,10 @@ namespace ccsx {
   bool OutOfBound(const Box4& src, const Box4& B);
 
   cc::Action* CreateTimer(cc::Node*, float millis);
-  void UndoTimer(cc::Action*);
-  bool TimerDone(cc::Action*);
+  void UndoTimer(cc::ActionInterval*);
+  bool TimerDone(cc::ActionInterval*);
 
-  cc::Sprite* CreateSprite(const s::string& frameName);
+  cc::Sprite* CreateSprite(const stdstr& frameName);
 
   const Box4 BBox4B4(ComObj* ent);
   const Box4 BBox4(cc::Sprite* );
@@ -57,7 +58,7 @@ namespace ccsx {
   void RunScene(cc::Scene* ns);
   bool IsTransitioning();
 
-  const cc::Size CSize(const s::string& frame);
+  const cc::Size CSize(const stdstr& frame);
 
   const cc::Size HalfHW(cc::Sprite* );
   const cc::Rect BBox(cc::Sprite* );
@@ -112,7 +113,7 @@ namespace ccsx {
    * Get the sprite from the frame cache using
    * its id (e.g. #ship).
    */
-  cc::SpriteFrame* GetSpriteFrame(const s::string& frameid);
+  cc::SpriteFrame* GetSpriteFrame(const stdstr& frameid);
 
   bool HasKeyPad();
 

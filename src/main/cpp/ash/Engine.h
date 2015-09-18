@@ -12,11 +12,11 @@
 #if !defined(__ENGINE_H__)
 #define __ENGINE_H__
 
-#include <vector>
-#include <map>
 #include "SystemList.h"
 #include "EntityList.h"
 #include "NodeList.h"
+#include <vector>
+#include <map>
 
 NS_ALIAS(s,std)
 NS_BEGIN(ash)
@@ -64,8 +64,8 @@ public:
   void ReleaseNodeList(NodeList*& );
 
   System* GetSystem(const SystemType& );
+  void RegoSystem(System* );
   void RemoveSystem (System* );
-  void AddSystem(System* );
   void RemoveSystems();
 
   void Update(float time);

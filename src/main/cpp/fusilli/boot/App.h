@@ -11,9 +11,10 @@
 
 #if !defined(__APP_H__)
 #define __APP_H__
-
+#include "platform/CCApplication.h"
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
+
 NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)
 

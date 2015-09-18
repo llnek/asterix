@@ -9,6 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "deprecated/CCFloat.h"
+#include "support/Primitives.h"
 #include "ComObj.h"
 NS_BEGIN(fusilli)
 
@@ -21,7 +23,7 @@ void ComObj::Hurt(int damage) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Inflate(cc::Dictionary* dict) {
+void ComObj::Inflate(c::Dictionary* dict) {
 
   health = origHealth;
   status=true;
@@ -30,10 +32,10 @@ void ComObj::Inflate(cc::Dictionary* dict) {
     return;
   }
 
-  auto scale= SCAST(cc::Float*, dict->objectForKey("scale"));
-  auto deg= SCAST(cc::Float*, dict->objectForKey("deg"));
-  auto x= SCAST(cc::Float*, dict->objectForKey("x"));
-  auto y= SCAST(cc::Float*, dict->objectForKey("y"));
+  c::Float* scale= DictVal<c::Float>(dict,"scale");
+  c::Float* deg= DictVal<c::Float>(dict, "deg");
+  c::Float* x= DictVal<c::Float>(dict, "x");
+  c::Float* y= DictVal<c::Float>(dict, "y");
 
   if (NNP(x) && NNP(y)) {
     sprite->setPosition(x->getValue(), y->getValue());
@@ -94,14 +96,14 @@ void ComObj::SetPos(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 ComObj::Pos() {
-  return NNP(sprite) ? sprite->getPosition() : cc::Vec2(0,0);
+const c::Vec2 ComObj::Pos() {
+  return NNP(sprite) ? sprite->getPosition() : c::Vec2(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const cc::Size ComObj::CSize() {
-  return NNP(sprite) ? sprite->getContentSize() : cc::Size(0,0);
+const c::Size ComObj::CSize() {
+  return NNP(sprite) ? sprite->getContentSize() : c::Size(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -112,7 +114,7 @@ int ComObj::Pid() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(cc::Sprite* sprite, int health, int score)
+ComObj::ComObj(c::Sprite* sprite, int health, int score)
   : ComObj(sprite) {
   this->origHealth = health;
   this->sprite = sprite;
@@ -123,7 +125,7 @@ ComObj::ComObj(cc::Sprite* sprite, int health, int score)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(cc::Sprite* sprite)
+ComObj::ComObj(c::Sprite* sprite)
   : ComObj(sprite,1,0) {
 }
 

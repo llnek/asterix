@@ -9,14 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "2d/ComObj.h"
 #include "XPool.h"
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 // Pre-populate a bunch of objects in the pool
-void XPool::PreSet(s::function<ComObj* (XPool*)> f, int count) {
+void XPool::Preset(s::function<ComObj* (XPool*)> f, int count) {
   for (int n=0; n < count; ++n) {
     auto rc= f(this);
     if (NNP(rc)) {
@@ -38,7 +37,7 @@ ComObj* XPool::Select(s::function<bool (ComObj*)> f) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Get an object from the pool and set it's status to true
+// Get a free object from the pool and set it's status to true
 ComObj* XPool::GetAndSet() {
   auto rc= Get();
   if (NNP(rc)) {
@@ -48,7 +47,7 @@ ComObj* XPool::GetAndSet() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Get an object from the pool.  More like a peek
+// Get a free object from the pool.  More like a peek
 ComObj* XPool::Get() {
   for (auto it = objs.begin(); it != objs.end(); ++it) {
     auto e= *it;
@@ -89,7 +88,10 @@ void XPool::Reset() {
 //
 XPool::~XPool() {
   for (auto it = objs.begin(); it != objs.end(); ++it) {
-    delete *it;
+    auto c = *it;
+    if (! c->HasParent()) {
+      delete c;
+    }
   }
   objs.clear();
 }
@@ -102,3 +104,4 @@ XPool::XPool() {
 
 
 NS_END(fusilli)
+

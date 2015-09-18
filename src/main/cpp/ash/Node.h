@@ -12,14 +12,15 @@
 #if !defined(__NODE_H__)
 #define __NODE_H__
 
+#include "Component.h"
 #include <vector>
 #include <map>
-#include "Component.h"
+
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
-class Entity;
 
+class Entity;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Node {

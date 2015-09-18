@@ -12,36 +12,41 @@
 #if !defined(__XPOOL_H__)
 #define __XPOOL_H__
 
+#include "deprecated/CCDeprecated.h"
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
+#include "2d/ComObj.h"
 #include <vector>
+
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
-class ComObj;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XPool {
-
 private:
+
   DISALLOW_COPYASSIGN(XPool)
+  XPool();
+
   s::vector<ComObj*> objs;
 
 public:
 
   const s::vector<ComObj*>& Elements() { return objs; }
-  void PreSet(s::function<ComObj* (XPool*)>, int count);
+  void Preset(s::function<ComObj* (XPool*)>, int);
   ComObj* Select(s::function<bool (ComObj*)>);
 
   ComObj* GetAndSet();
   ComObj* Get();
-  int CountActives();
+
   int Size() { return (int)objs.size(); }
-  void Foreach(s::function<void(ComObj*)>);
+  int CountActives();
+
+  void Foreach(s::function<void (ComObj*)>);
   void Reset();
 
   virtual ~XPool();
-  XPool();
 
 
   DEFCREATE_FUNC(XPool)

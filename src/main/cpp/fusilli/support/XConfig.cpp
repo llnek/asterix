@@ -18,10 +18,8 @@ static XConfig* singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static const s::string getXXX(cc::Dictionary* d,
-    const s::string& key ) {
-
-  auto r= DictVal<cc::String>(d,key);
+static const stdstr getXXX(cc::Dictionary* d, const stdstr& key ) {
+  cc::String* r= DictVal<cc::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
 
@@ -64,43 +62,43 @@ XConfig::XConfig() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Ref* XConfig::GetCst(const s::string& key) {
+cc::Ref* XConfig::GetCst(const stdstr& key) {
   return GetFragment(CSTS)->objectForKey(key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string XConfig::GetAtlas(const s::string& key) {
+const stdstr XConfig::GetAtlas(const stdstr& key) {
   return getXXX(GetFragment(ATLASES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string XConfig::GetFont(const s::string& key) {
+const stdstr XConfig::GetFont(const stdstr& key) {
   return getXXX(GetFragment(FONTS), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string XConfig::GetTile(const s::string& key) {
+const stdstr XConfig::GetTile(const stdstr& key) {
   return getXXX(GetFragment(TILES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string XConfig::GetImage(const s::string& key) {
+const stdstr XConfig::GetImage(const stdstr& key) {
   return getXXX(GetFragment(IMAGES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string XConfig::GetSound(const s::string& key) {
+const stdstr XConfig::GetSound(const stdstr& key) {
   return getXXX(GetFragment(SOUNDS), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* XConfig::GetPool(const s::string& key) {
+XPool* XConfig::GetPool(const stdstr& key) {
   auto it = pools.find(key);
   if (it != pools.end()) {
     return it->second;
@@ -111,22 +109,22 @@ XPool* XConfig::GetPool(const s::string& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* XConfig::AddPool(const s::string& key) {
+XPool* XConfig::CreatePool(const stdstr& key) {
   auto p = XPool::Create();
-  pools.insert(pair<s::string, XPool*>(key, p));
+  pools.insert(pair<stdstr, XPool*>(key, p));
   return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XConfig::GetLevel(const s::string& n) {
+cc::Dictionary* XConfig::GetLevel(const stdstr& n) {
   auto d= GetFragment(LEVELS);
   return SCAST(cc::Dictionary*, d->objectForKey(n));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XConfig::GetLevelCfg(const s::string& n) {
+cc::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
   auto r= GetLevel(n);
   if (NNP(r)) {
     return SCAST(cc::Dictionary*, r->objectForKey(CFG));
@@ -137,7 +135,7 @@ cc::Dictionary* XConfig::GetLevelCfg(const s::string& n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XConfig::AddLevel(const s::string& level) {
+cc::Dictionary* XConfig::AddLevel(const stdstr& level) {
 
   auto d2= cc::Dictionary::create();
   GetFragment(LEVELS)->setObject(d2, level);
@@ -159,21 +157,6 @@ void XConfig::ToggleAudio(bool b) {
 bool XConfig::HasAudio() {
   return true;
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XConfig::HandleResolution(const cc::Size& rs) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XConfig::RunOnce() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-float XConfig::GetScale() { return 1; }
-
 
 
 NS_END(fusilli)

@@ -9,6 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "2d/CCSpriteFrameCache.h"
+#include "2d/CCActionInterval.h"
+#include "2d/CCTransition.h"
+#include "base/CCDirector.h"
 #include "CCSX.h"
 NS_BEGIN(fusilli)
 NS_BEGIN(ccsx)
@@ -92,7 +96,7 @@ bool OutOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UndoTimer(cc::Action* tm) {
+void UndoTimer(cc::ActionInterval* tm) {
   if (NNP(tm)) { tm->release(); }
 }
 
@@ -112,7 +116,7 @@ bool TimerDone(cc::Action* t) {
 //////////////////////////////////////////////////////////////////////////
 // Create a sprite from its frame name
 //
-cc::Sprite* CreateSprite(const s::string& name) {
+cc::Sprite* CreateSprite(const stdstr& name) {
   return cc::Sprite::createWithSpriteFrameName(name);
 }
 
@@ -149,7 +153,7 @@ bool IsTransitioning() {
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const cc::Size CSize(const s::string& frame) {
+const cc::Size CSize(const stdstr& frame) {
   return CreateSprite(frame)->getContentSize();
 }
 
@@ -399,7 +403,7 @@ bool TraceEnclosure(float dt, const Box4& bbox,
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-cc::SpriteFrame* GetSpriteFrame(const s::string& frameid) {
+cc::SpriteFrame* GetSpriteFrame(const stdstr& frameid) {
   return cc::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 

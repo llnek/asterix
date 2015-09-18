@@ -27,9 +27,9 @@ void L10NCache::Init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 //Application::getInstance()->getCurrentLanguage();
-const s::string L10NCache::GetStr(const s::string& key, const s::string& dft) {
+const stdstr L10NCache::GetStr(const stdstr& key, const stdstr& dft) {
   auto it= _cache.find(key);
-  s::string rc;
+  stdstr rc;
   if (it != _cache.end()) {
     rc= it->second;
   } else {

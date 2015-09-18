@@ -13,9 +13,11 @@
 #define __XCONFIG_H__
 
 #include "platform/CCCommon.h"
+#include "platform/CCGLView.h"
 #include "support/XPool.h"
 #include "Primitives.h"
 #include <map>
+
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
@@ -26,24 +28,24 @@ NS_BEGIN(fusilli)
 class CC_DLL XConfig {
 protected:
 
-  static const s::string ATLASES= "atlases";
-  static const s::string LEVELS= "levels";
-  static const s::string FONTS= "fonts";
-  static const s::string TILES= "tiles";
-  static const s::string IMAGES= "images";
-  static const s::string SOUNDS= "sounds";
-  static const s::string CSTS= "csts";
-  static const s::string CFG= "cfg";
+  static const stdstr ATLASES= "atlases";
+  static const stdstr LEVELS= "levels";
+  static const stdstr FONTS= "fonts";
+  static const stdstr TILES= "tiles";
+  static const stdstr IMAGES= "images";
+  static const stdstr SOUNDS= "sounds";
+  static const stdstr CSTS= "csts";
+  static const stdstr CFG= "cfg";
 
-  cc::Dictionary* GetFragment(const s::string& key);
-  XPool* AddPool(const s::string& p);
+  cc::Dictionary* GetFragment(const stdstr& key);
+  XPool* CreatePool(const stdstr& p);
 
+  s::map<stdstr, XPool*> pools;
   cc::Dictionary* dict;
   XConfig();
 
 private:
 
-  s::map<s::string, XPool*> pools;
   DISALLOW_COPYASSIGN(XConfig)
 
 public:
@@ -51,42 +53,41 @@ public:
   static void SetInstance(XConfig*);
   static XConfig* GetInstance();
 
-  virtual void HandleResolution(const cc::Size& );
-  virtual float GetScale();
-  virtual void RunOnce();
+  virtual void HandleResolution(const cc::Size& ) {}
+  virtual float GetScale() { return 1; }
+  virtual void RunOnce() {}
 
   virtual ResolutionPolicy GetPolicy() = 0;
-  virtual const s::string GetAppKey() = 0;
-  virtual const s::string AppId() = 0;
-  virtual const s::string GetColor() = 0;
+  virtual const stdstr GetAppKey() = 0;
+  virtual const stdstr AppId() = 0;
+  virtual const stdstr GetColor() = 0;
   virtual const cc::Size GetGameSize() = 0;
 
-  virtual const s::string GetWSUrl() = 0;
+  virtual const stdstr GetWSUrl() = 0;
   virtual cc::Scene* StartWith() = 0;
 
-  virtual void SetGameId(const s::string& ) = 0;
-  virtual void SetRoomId(const s::string& ) = 0;
+  virtual void SetGameId(const stdstr& ) = 0;
+  virtual void SetRoomId(const stdstr& ) = 0;
 
-  virtual const s::string GetGameId() = 0;
-  virtual const s::string GetRoomId() = 0;
+  virtual const stdstr GetGameId() = 0;
+  virtual const stdstr GetRoomId() = 0;
 
-  const s::string GetAtlas(const s::string& key);
-  const s::string GetFont(const s::string& key);
-  const s::string GetTile(const s::string& key);
-  const s::string GetImage(const s::string& key);
-  const s::string GetSound(const s::string& key);
+  const stdstr GetAtlas(const stdstr& key);
+  const stdstr GetFont(const stdstr& key);
+  const stdstr GetTile(const stdstr& key);
+  const stdstr GetImage(const stdstr& key);
+  const stdstr GetSound(const stdstr& key);
 
-
-  cc::Ref* GetCst(const s::string& cst);
-  XPool* GetPool(const s::string& n);
+  cc::Ref* GetCst(const stdstr& cst);
+  XPool* GetPool(const stdstr& n);
 
   void ToggleAudio(bool s);
   bool HasAudio();
 
-  cc::Dictionary* GetLevelCfg(const s::string& n);
-  cc::Dictionary* GetLevel(const s::string& n);
+  cc::Dictionary* GetLevelCfg(const stdstr& n);
+  cc::Dictionary* GetLevel(const stdstr& n);
 
-  cc::Dictionary* AddLevel(const s::string& n);
+  cc::Dictionary* AddLevel(const stdstr& n);
 
   virtual ~XConfig();
 
@@ -95,7 +96,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* CstVal(const s::string& key) {
+T* CstVal(const stdstr& key) {
   auto r= XConfig::GetInstance()->GetCst(key);
   if (NNP(r)) {
     return static_cast<T*>(r);

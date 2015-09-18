@@ -103,9 +103,6 @@ bool NodeList::IsCompatible(Entity* e) {
   auto n = rego->CreateNode(nType);
   auto ok= n->BindEntity(e);
   delete n;
-  if (! ok)  {
-    RemoveEntity(e);
-  }
   return ok;
 }
 

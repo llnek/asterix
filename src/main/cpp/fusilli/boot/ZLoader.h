@@ -23,14 +23,13 @@ class CC_DLL ZLoader : public cc::Scene {
 private:
 
   DISALLOW_COPYASSIGN(ZLoader)
-  void StartLoad(float delta);
-
+  void StartLoad(float);
 
 public:
 
   void InitWithResources();
 
-  virtual void onEnter() override;
+  virtual void onEnter() ;
   virtual ~ZLoader();
   ZLoader();
 

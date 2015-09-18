@@ -10,8 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Engine.h"
-#include "Entity.h"
-#include "System.h"
 NS_BEGIN(ash)
 
   /*
@@ -135,32 +133,6 @@ void Engine::RemoveEntities(const stdstr& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::OnRemoveEntity(Entity* e) {
-  for (auto it = nodeLists.begin();
-      it != nodeLists.end(); ++it) {
-    auto nl= *it;
-    nl->RemoveEntity(e);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Engine::OnAddEntity(Entity* e) {
-  auto rego = NodeRegistry::GetInstance();
-  for (auto it = nodeLists.begin();
-      it != nodeLists.end(); ++it) {
-    auto nl= *it;
-    auto n= rego->CreateNode(nl->GetType());
-    if (n->BindEntity(e)) {
-      nl->Add(n);
-    } else {
-      delete n;
-    }
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 NodeList* Engine::GetNodeList(const stdstr& group, const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
   auto it= groups.find(group);
@@ -198,7 +170,7 @@ void Engine::ReleaseNodeList(NodeList*& nl) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::AddSystem(System* s) {
+void Engine::RegoSystem(System* s) {
   s->AddToEngine( this );
   systemList.Add(s);
 }
@@ -213,6 +185,7 @@ System* Engine::GetSystem(const SystemType& type) {
 //
 void Engine::RemoveSystem(System* s ) {
   systemList.Release(s);
+  s->RemoveFromEngine(this);
   mc_del_ptr(s);
 }
 
@@ -241,7 +214,33 @@ void Engine::Update(float time) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// get rid of nodes bound to this entity
+void Engine::OnRemoveEntity(Entity* e) {
+  for (auto it = nodeLists.begin();
+      it != nodeLists.end(); ++it) {
+    auto nl= *it;
+    nl->RemoveEntity(e);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// sync existing nodes, add if necessary
+void Engine::OnAddEntity(Entity* e) {
+  auto rego = NodeRegistry::GetInstance();
+  for (auto it = nodeLists.begin();
+      it != nodeLists.end(); ++it) {
+    auto nl= *it;
+    auto n= rego->CreateNode(nl->GetType());
+    if (n->BindEntity(e)) {
+      nl->Add(n);
+    } else {
+      delete n;
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// sync changes
 void Engine::OnModifyEntity(Entity* e) {
   auto rego = NodeRegistry::GetInstance();
   for (auto it = nodeLists.begin();

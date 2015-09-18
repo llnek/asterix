@@ -54,6 +54,8 @@ bool Node::BindEntity(Entity* e) {
     if (NNP(c)) {
       values.insert(pair<stdstr, Component*>(f,c));
     } else {
+      // this entity is no good, doesn't have the right
+      // components
       values.clear();
       break;
     }

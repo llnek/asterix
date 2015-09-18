@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Component.h"
 #include "Entity.h"
 NS_BEGIN(ash)
 
@@ -44,12 +43,13 @@ Entity::Entity()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Add(Component* c) {
+void Entity::Rego(Component* c) {
   auto z = c->TypeId();
   if (Has(z)) {
     throw "cannot reassign component";
   }
   parts.insert(pair<COMType,Component*>(z,c));
+  c->par= this;
   engine->NotifyModify(this);
 }
 

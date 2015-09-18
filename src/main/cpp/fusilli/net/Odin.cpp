@@ -26,9 +26,9 @@ static Event mkEvent(MType eventType, EType code, js::Document* d) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkPlayRequest(const s::string& game,
-    const s::string& user,
-    const s::string& pwd) {
+static Event mkPlayRequest(const stdstr& game,
+    const stdstr& user,
+    const stdstr& pwd) {
   auto d = new js::Document();
       //[game, user, pwd]);
   return mkEvent(MType::SESSION, EType::PLAYGAME_REQ, d);
@@ -37,9 +37,9 @@ static Event mkPlayRequest(const s::string& game,
 //////////////////////////////////////////////////////////////////////////////
 //
 /*
-static Event mkJoinRequest (const s::string& room,
-    const s::string& user,
-    const s::string& pwd) {
+static Event mkJoinRequest (const stdstr& room,
+    const stdstr& user,
+    const stdstr& pwd) {
   auto d = new js::Document();
       //[room, user, pwd]);
   return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
@@ -98,8 +98,8 @@ Event::~Event() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS* WSockSS::CreatePlayRequest(const s::string& game,
-    const s::string& user, const s::string& pwd) {
+WSockSS* WSockSS::CreatePlayRequest(const stdstr& game,
+    const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->game= game;
   w->user= user;
@@ -109,8 +109,8 @@ WSockSS* WSockSS::CreatePlayRequest(const s::string& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS* WSockSS::CreateJoinRequest(const s::string& room,
-    const s::string& user, const s::string& pwd) {
+WSockSS* WSockSS::CreateJoinRequest(const stdstr& room,
+    const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->room= room;
   w->user= user;
@@ -138,13 +138,13 @@ void WSockSS::Send(const Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void WSockSS::ListenAll(void (*cb)(const Event&)) {
+void WSockSS::ListenAll(s::function<void (const Event&)> cb) {
   cbAll= cb;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void WSockSS::Listen(MType t, void (*cb)(const Event&)) {
+void WSockSS::Listen(MType t, s::function<void (const Event&)> cb) {
   if (MType::SESSION == t) {
     cbSession= cb;
   }
@@ -255,7 +255,7 @@ void WSockSS::OnEvent(const Event& evt) {
 //////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
-void WSockSS::Connect(const s::string& url) {
+void WSockSS::Connect(const stdstr& url) {
   auto ws= new n::WebSocket(url);
   if (!ws->init(*this, url)) {
     mc_del_ptr(ws);
@@ -266,7 +266,7 @@ void WSockSS::Connect(const s::string& url) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string WSockSS::GetPlayRequest() {
+const stdstr WSockSS::GetPlayRequest() {
   return json::Stringify( mkPlayRequest(game, user, passwd));
 }
 

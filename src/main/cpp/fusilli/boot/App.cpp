@@ -13,6 +13,7 @@
 #include "support/XConfig.h"
 #include "boot/Boot.h"
 #include "App.h"
+
 NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)

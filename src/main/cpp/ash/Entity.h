@@ -12,9 +12,10 @@
 #if !defined(__ENTITY_H__)
 #define __ENTITY_H__
 
+#include "Component.h"
 #include <vector>
 #include <map>
-#include "Component.h"
+
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
@@ -22,6 +23,7 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Entity {
+friend class Engine;
 private:
 
   s::map<stdstr, Component*> parts;
@@ -43,7 +45,7 @@ public:
   virtual ~Entity();
 
   void Remove(const COMType&);
-  void Add(Component*);
+  void Rego(Component*);
 
   Component* Get(const COMType& );
   bool Has(const COMType&);

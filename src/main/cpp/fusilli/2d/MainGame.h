@@ -9,27 +9,30 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XSCENE_H__)
-#define __XSCENE_H__
+#if !defined(__MAINGAME_H__)
+#define __MAINGAME_H__
 
+#include "platform/CCCommon.h"
+#include "core/fusilli.h"
 #include "XScene.h"
 NS_BEGIN(fusilli)
+
 
 class XGameLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainGame : public XScene {
+class CC_DLL MainGame {
 
 protected:
-
-  static void Set(MainGame*);
-  MainGame();
 
 private:
 
   DISALLOW_COPYASSIGN(MainGame)
+  MainGame();
 
 public:
+
+  static void Set(XScene*, int layer=2);
 
   static XGameLayer* Get();
   static XScene* Self();

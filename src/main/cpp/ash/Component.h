@@ -17,12 +17,16 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Component {
+friend class Entity;
 protected:
 
-  Component() {}
+  Component() { par=nullptr;}
+
+  Entity* par;
 
 private:
 
@@ -31,6 +35,7 @@ private:
 public:
 
   virtual const COMType TypeId() = 0;
+  bool HasParent() { return par; }
   virtual ~Component() {}
 
 };

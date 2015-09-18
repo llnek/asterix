@@ -23,6 +23,8 @@ NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class CC_DLL MType {
@@ -97,36 +99,37 @@ struct CC_DLL Event {
 class CC_DLL WSockSS : public n::WebSocket::Delegate {
 protected:
 
-  const s::string GetPlayRequest();
+  const stdstr GetPlayRequest();
   void OnEvent(const Event&);
   void Reset();
   WSockSS();
 
 private:
 
+  s::function<void (const Event&)> cbSession;
+  s::function<void (const Event&)> cbNetwork;
+  s::function<void (const Event&)> cbAll;
+
   DISALLOW_COPYASSIGN(WSockSS)
 
-  void (*cbSession)(const Event&);
-  void (*cbNetwork)(const Event&);
-  void (*cbAll)(const Event&);
   n::WebSocket* wss;
-  s::string room;
-  s::string game;
-  s::string user;
-  s::string passwd;
+  stdstr room;
+  stdstr game;
+  stdstr user;
+  stdstr passwd;
   CType state;
 
 public:
 
-  static WSockSS* CreatePlayRequest(const s::string& game,
-      const s::string& user, const s::string& pwd);
+  static WSockSS* CreatePlayRequest(const stdstr& game,
+      const stdstr& user, const stdstr& pwd);
 
-  static WSockSS* CreateJoinRequest(const s::string& room,
-      const s::string& user, const s::string& pwd);
+  static WSockSS* CreateJoinRequest(const stdstr& room,
+      const stdstr& user, const stdstr& pwd);
 
   virtual ~WSockSS();
 
-  void Connect(const s::string& url);
+  void Connect(const stdstr& url);
   void Disconnect();
   void Close();
   void Send(const Event&);
@@ -136,10 +139,14 @@ public:
   void CancelAll();
   void Cancel(const MType);
 
-  virtual void onOpen(n::WebSocket*) override;
-  virtual void onMessage(n::WebSocket*, const n::WebSocket::Data& ) override;
-  virtual void onClose(n::WebSocket* ) override;
-  virtual void onError(n::WebSocket* , const n::WebSocket::ErrorCode& ) override;
+  virtual void onClose(n::WebSocket* ) ;
+  virtual void onOpen(n::WebSocket*) ;
+
+  virtual void onMessage(n::WebSocket*,
+      const n::WebSocket::Data& ) ;
+
+  virtual void onError(n::WebSocket* ,
+      const n::WebSocket::ErrorCode& ) ;
 
 };
 
@@ -147,3 +154,5 @@ public:
 
 NS_END(fusilli)
 #endif
+
+

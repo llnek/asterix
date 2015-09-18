@@ -15,6 +15,7 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
+class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL System {
@@ -31,7 +32,6 @@ private:
   bool active;
 
 public:
-
 
   virtual void RemoveFromEngine(Engine*);
   virtual void AddToEngine(Engine*);

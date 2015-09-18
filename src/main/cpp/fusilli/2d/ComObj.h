@@ -12,11 +12,12 @@
 #if !defined(__COMOBJ_H__)
 #define __COMOBJ_H__
 
-
+#include "deprecated/CCDeprecated.h"
 #include "platform/CCCommon.h"
 #include "2d/CCSprite.h"
 #include "ash/Component.h"
-NS_ALIAS(cc, cocos2d)
+
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(a, ash)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
@@ -32,24 +33,24 @@ private:
 
 public:
 
-  cc::Sprite* sprite;
-  bool status;
+  c::Sprite* sprite;
   int origHealth;
+  bool status;
   int health;
   int score;
 
-  cc::Vec2 lastPos;
-  cc::Vec2 vel;
+  c::Vec2 lastPos;
+  c::Vec2 vel;
 
-  void Inflate(cc::Dictionary* options);
+  void Inflate(c::Dictionary* options);
   void Inflate(float x, float y);
   void Deflate();
 
   void SetPos(float x, float y);
   void Hurt(int damage);
 
-  const cc::Size CSize();
-  const cc::Vec2 Pos();
+  const c::Size CSize();
+  const c::Vec2 Pos();
 
   float Height();
   float Width();
@@ -57,8 +58,8 @@ public:
 
   void UpdatePosition(float x, float y);
 
-  ComObj(cc::Sprite*, int health, int score);
-  ComObj(cc::Sprite*);
+  ComObj(c::Sprite*, int health, int score);
+  ComObj(c::Sprite*);
 
   virtual ~ComObj();
 };

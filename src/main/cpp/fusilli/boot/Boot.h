@@ -15,6 +15,7 @@
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
 #include "i18n/L10N.h"
+
 NS_ALIAS(cc, cocos2d)
 NS_BEGIN(fusilli)
 
