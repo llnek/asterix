@@ -37,7 +37,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(XLives)
+  NO__COPYASSIGN(XLives)
 
 public:
 

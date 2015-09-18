@@ -25,7 +25,7 @@ NS_BEGIN(fusilli)
 class CC_DLL Boot {
 private:
 
-  DISALLOW_COPYASSIGN(Boot)
+  NO__COPYASSIGN(Boot)
   void PreLaunch();
   void InitAudio();
   L10NCache l10n;

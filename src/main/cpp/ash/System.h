@@ -25,7 +25,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(System)
+  NO__COPYASSIGN(System)
   System();
 
   int priority;

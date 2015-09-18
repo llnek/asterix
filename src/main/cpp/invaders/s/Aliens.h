@@ -10,40 +10,45 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "BaseSystem.h"
-#include "ash/Ash.h"
-NS_ALAIS(cc, cocos2d)
-NS_ALIAS(f, fusilli)
-NS_ALIAS(a, ash)
+NS_ALAIS(c, cocos2d)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Aliens : public BaseSystem {
+protected:
+  NodeList* aliens;
+
 private:
 
-  DISALLOW_COPYASSIGN(Aliens)
+  NO__COPYASSIGN(Aliens)
   Aliens();
-
 
 public:
 
-  static Aliens* Create(Factory*, cc::Dictionary*);
+  static Aliens* Create(Factory*, c::Dictionary*);
   virtual ~Aliens();
 
-  virtual void RemoveFromEngine(a::Engine*) override;
-  virtual void AddToEngine(a::Engine*) override;
+  virtual void RemoveFromEngine(a::Engine*);
+  virtual void AddToEngine(a::Engine*);
   virtual bool Update(float dt);
+
   void ProcessMovement(a::Node*, float dt);
   void ProcessBombs(a::Node*, float dt);
-  void CheckBomb(a::Node* sqad);
+
   void DropBomb(float x, float y);
+  void CheckBomb(a::Node* sqad);
+
   void MaybeShuffleAliens(a::Node* sqad);
   void TestDirX(f::ComObj* b, int stepx);
-  void ShuffleOneAlien(f::ComObj* a, int stepx);
+
   void ForwardOneAlien(f::ComObj* a, float delta);
+  void ShuffleOneAlien(f::ComObj* a, int stepx);
+
   void DoShuffle(a::Node* sqad);
   void DoForward(a::Node* sqad);
+
   float FindMinX(a::Node* sqad);
   float FindMaxX(a::Node* sqad);
 
@@ -53,4 +58,5 @@ public:
 
 
 NS_END(invaders)
+
 

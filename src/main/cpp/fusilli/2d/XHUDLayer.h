@@ -53,7 +53,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(XHUDLayer)
+  NO__COPYASSIGN(XHUDLayer)
 
 public:
 

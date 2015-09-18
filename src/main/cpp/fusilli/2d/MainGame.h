@@ -27,7 +27,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(MainGame)
+  NO__COPYASSIGN(MainGame)
   MainGame();
 
 public:

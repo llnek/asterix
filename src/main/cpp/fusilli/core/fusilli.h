@@ -90,14 +90,14 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define DISALLOW_COPYASSIGNDFT(T) \
+#define NO__COPYASSIGNDFT(T) \
   T() = delete; \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define DISALLOW_COPYASSIGN(T) \
+#define NO__COPYASSIGN(T) \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;
 

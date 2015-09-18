@@ -14,13 +14,13 @@
 #include "base/ccMacros.h"
 #include "Aliens.h"
 #include <math.h>
-
 NS_ALIAS(cx, fusilli::ccsx)
+NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Aliens* Aliens::Create(Factory* f, cc::Dictionary* d) {
+Aliens* Aliens::Create(Factory* f, c::Dictionary* d) {
   auto s = new Aliens();
   s->Set(f,d);
   return s;
@@ -33,7 +33,8 @@ Aliens::~Aliens() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Aliens::Aliens() {
+Aliens::Aliens()
+  : aliens(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,11 +68,12 @@ bool Aliens::Update(float dt) {
 void Aliens::ProcessMovement(a::Node* node, float dt) {
   auto lpr = node->looper;
   auto sqad= node.aliens;
-  auto tm= lpr->timers[0];
+  auto tm= lpr->timer0;
 
   if (cx::TimerDone(tm)) {
     MaybeShuffleAliens(sqad);
-    lpr->timers[0]=cx::UndoTimer(tm);
+    cx::UndoTimer(tm);
+    lpr->timer0 =nullptr;
   }
 }
 
@@ -80,11 +82,12 @@ void Aliens::ProcessMovement(a::Node* node, float dt) {
 void Aliens::ProcessBombs(a::Node* node, float dt) {
   auto lpr = node->looper;
   auto sqad= node.aliens;
-  auto tm= lpr->timers[1];
+  auto tm= lpr->timer1;
 
   if (cx::TimerDone(tm)) {
     CheckBomb(sqad);
-    lpr->timers[1]=cx::UndoTimer(tm);
+    cx::UndoTimer(tm);
+    lpr->timer1= nullptr;
   }
 }
 
@@ -93,7 +96,7 @@ void Aliens::ProcessBombs(a::Node* node, float dt) {
 void Aliens::CheckBomb(f::ComObj* sqad) {
   f::XPool* p= sqad->pool;
   auto sz = p->Size();
-  vector<int> rc;
+  s::vector<int> rc;
   int n;
 
   for (n=0; n < sz; ++n) {
@@ -103,7 +106,7 @@ void Aliens::CheckBomb(f::ComObj* sqad) {
   }
 
   if (rc.size() > 0) {
-    n = floor( cc::rand_0_1() * rc.size());
+    n = floor( c::rand_0_1() * rc.size());
     auto pos= p->Get(n)->sprite->getPosition();
     DropBomb(pos.x, pos.y-4);
   }

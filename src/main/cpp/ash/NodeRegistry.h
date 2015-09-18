@@ -26,7 +26,7 @@ private:
 
   s::map<NodeType,NodeFactory*> regos;
 
-  DISALLOW_COPYASSIGN(NodeRegistry)
+  NO__COPYASSIGN(NodeRegistry)
   NodeRegistry();
 
 public:

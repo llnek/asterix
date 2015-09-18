@@ -11,14 +11,15 @@
 
 #include "support/XConfig.h"
 #include "support/CCSX.h"
+#include "n/gnodes.h"
 #include "Resolve.h"
-NS_ALIAS(f, fusilli)
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve* Resolve::Create(Factory* f, cc::Dictionary* options) {
+Resolve* Resolve::Create(Factory* f, c::Dictionary* options) {
   auto s = new Resolve();
   s->Set(f, options);
   return s;
@@ -29,7 +30,6 @@ Resolve* Resolve::Create(Factory* f, cc::Dictionary* options) {
 void Resolve;:RemoveFromEngine(a::Engine* e) {
   aliens= nullptr;
   ships= nullptr;
-  engine=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,6 @@ void Resolve;:RemoveFromEngine(a::Engine* e) {
 void Resolve::AddToEngine(a::Engine* e) {
   aliens= e->GetNodeList(AlienMotionNode::TypeId());
   ships= e->GetNodeList(ShipMotionNode::TypeId());
-  engine=e;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,7 +94,7 @@ void Resolve::CheckBombs() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckAliens(a::Node* node) {
-  auto sqad= node->aliens;
+  auto sqad= NodeFld<>(node, "aliens");
   auto c= sqad->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
@@ -112,7 +111,7 @@ void Resolve::CheckAliens(a::Node* node) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckShip(a::Node* node) {
-  auto ship = node->ship;
+  auto ship = NodeFld<>(node, "ship");
 
   if (ship->status &&
       ship->health <= 0) {

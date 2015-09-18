@@ -23,7 +23,7 @@ class FS_DLL EntityList {
 friend class Engine;
 private:
 
-  DISALLOW_COPYASSIGN(EntityList)
+  NO__COPYASSIGN(EntityList)
 
   virtual ~EntityList();
   EntityList();

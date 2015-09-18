@@ -9,9 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "ash/Ash.h"
-NS_ALIAS(f, fusilli)
-NS_ALIAS(s, std)
+#include "support/XPool.h"
+#include "ash/Engine.h"
 NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
@@ -22,30 +21,27 @@ enum class Rank {
 
 };
 
-class a::Engine;
-class f::XPool;
-
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Factory {
 protected:
 
-  cc::Dictionary* state;
+  c::Dictionary* state;
   a::Engine engine;
 
 private:
 
-  DISALLOW_COPYASSIGN(Factory)
+  NO__COPYASSIGN(Factory)
   Factory();
 
 public:
 
-  Factory(a::Engine* e, cc::Dictionary* options);
+  Factory(a::Engine*, c::Dictionary* options);
   void CreateMissiles(int count= 36);
   void CreateExplosions(int count = 24);
   void CreateBombs(int count = 24);
 
-  const cc::Size CalcImgSize(const s::string& img);
+  const c::Size CalcImgSize(const stdstr& img);
   GetRankInfo(const Rank r);
 
   void FillSquad(f::XPool* );

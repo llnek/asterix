@@ -33,7 +33,7 @@ private:
 
   Entity();
 
-  DISALLOW_COPYASSIGN(Entity)
+  NO__COPYASSIGN(Entity)
 
 public:
 

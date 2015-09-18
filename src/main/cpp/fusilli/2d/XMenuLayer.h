@@ -30,7 +30,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(XMenuLayer)
+  NO__COPYASSIGN(XMenuLayer)
 
 public:
 

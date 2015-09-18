@@ -11,7 +11,7 @@
 
 #include "platform/CCCommon.h"
 #include "ash/Ash.h"
-NS_ALIAS(a, ash)
+NS_ALIAS(c, cocos2d)
 NS_BEGIN(invaders)
 
 
@@ -19,15 +19,15 @@ NS_BEGIN(invaders)
 //
 class CC_DLL BaseSystem : public a::System {
 protected:
-  cc::Dictionary* state;
+  c::Dictionary* state;
   Factory* factory;
 
-  void Set(Factory*, cc::Dictionary*);
+  void Set(Factory*, c::Dictionary*);
   BaseSystem();
 
 private:
 
-  DISALLOW_COPYASSIGN(BaseSystem)
+  NO__COPYASSIGN(BaseSystem)
 
 public:
 

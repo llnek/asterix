@@ -14,7 +14,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void BaseSystem::Set(Factory* f, cc::Dictionary* d) {
+void BaseSystem::Set(Factory* f, c::Dictionary* d) {
   factory=f;
   state=d;
   state->retain();
@@ -22,9 +22,9 @@ void BaseSystem::Set(Factory* f, cc::Dictionary* d) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-BaseSystem::BaseSystem() {
-  factory=nullptr;
-  state=nullptr;
+BaseSystem::BaseSystem()
+  : factory(nullptr)
+  , state(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,3 +35,5 @@ BaseSystem::~BaseSystem() {
 
 
 NS_END(invaders)
+
+

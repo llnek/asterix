@@ -40,7 +40,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(MsgBox)
+  NO__COPYASSIGN(MsgBox)
   MsgBox();
 
   CREATE_FUNC(MsgBox)

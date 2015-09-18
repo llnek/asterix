@@ -29,7 +29,7 @@ class CC_DLL ComObj : public a::Component {
 
 private:
 
-  DISALLOW_COPYASSIGN(ComObj)
+  NO__COPYASSIGN(ComObj)
 
 public:
 

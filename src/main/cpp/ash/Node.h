@@ -26,7 +26,7 @@ class Entity;
 class FS_DLL Node {
 private:
 
-  DISALLOW_COPYASSIGN(Node)
+  NO__COPYASSIGN(Node)
   Node();
 
   s::map<stdstr, Component*> values;
@@ -48,9 +48,21 @@ public:
 
 };
 
-
-
 NS_END(ash)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T* NodeFld(ash::Node* n, const stdstr& fld) {
+  auto v= n->Get(fld);
+  if (NNP(v)) {
+    return static_cast<T*>(v);
+  } else {
+    return nullptr;
+  }
+}
+
+
 #endif
 
 

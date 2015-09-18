@@ -14,26 +14,18 @@
 
 #include "core/fusilli.h"
 #include "boot/App.h"
-NS_ALIAS(fs, fusilli)
+NS_ALIAS(f, fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AppDelegate : public fs::App {
-
+class CC_DLL AppDelegate : public f::App {
 private:
-
-  DISALLOW_COPYASSIGN(AppDelegate)
-
+  NO__COPYASSIGN(AppDelegate)
 public:
-
   virtual ~AppDelegate();
   AppDelegate();
-
 };
-
-
-
 
 
 #endif

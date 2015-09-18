@@ -10,12 +10,12 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "cobjs.h"
-NS_USING(fusilli)
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AlienSquad::AlienSquad(const vector<>& aliens, int stepx)
+AlienSquad::AlienSquad(const s::vector<Alien>& aliens, int stepx)
   : AlienSquad() {
   this->aliens=aliens;
   this->stepx=step;
@@ -33,8 +33,8 @@ AlienSquad::~AlienSquad() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Alien::Alien(Sprite* sprite, float value, int rank)
-  : ComObj(sprite, 1, value) {
+Alien::Alien(c::Sprite* s, int value, int rank)
+  : ComObj(s, 1, value) {
   this->rank=rank;
 }
 
@@ -48,14 +48,26 @@ Alien::~Alien() () {
 Alien::Alien() () {
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
-Bomb::Bomb(Sprite* s) : ComObj(s) {
-  auto wz= CCSX::VisRect();
-  vel= Vec2(0, -50 * wz.height / 480);
+Bomb::Bomb(c::Sprite* s) : ComObj(s) {
+  auto wz= cx::VisRect();
+  this->vel= Vec2(0, -50 * wz.height / 480);
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+Bomb::~Bomb() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Bomb::Bomb() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 Cannon::Cannon(float coolDownWindow) {
   this->coolDownWindow= coolDownWindow;
   hasAmmo = true;
@@ -63,60 +75,136 @@ Cannon::Cannon(float coolDownWindow) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Explosion::Explosion(Sprite* s) : ComObj(s) {
-  frameTime= 0.1;
+Cannon::Cannon()
+  : coolDownWindow(0)
+  , hasAmmo(false) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Explosion::Inflate(options) {
-  auto anim= Animation::create();
-  anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_0.png"));
-  anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_1.png"));
-  anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_2.png"));
-  anim->addSpriteFrame(CCSX::GetSpriteFrame("boom_3.png"));
+Cannon::~Cannon() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Explosion::Explosion(c::Sprite* s) : ComObj(s) {
+  frameTime= 0.1;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Explosion::Explosion()
+  : frameTime(0) {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Explosion::~Explosion() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Explosion::Inflate(float x, float y) {
+  auto anim= c::Animation::create();
+  anim->addSpriteFrame(cx::GetSpriteFrame("boom_0.png"));
+  anim->addSpriteFrame(cx::GetSpriteFrame("boom_1.png"));
+  anim->addSpriteFrame(cx::GetSpriteFrame("boom_2.png"));
+  anim->addSpriteFrame(cx::GetSpriteFrame("boom_3.png"));
   anim->setDelayPerUnit(frameTime);
 
-  sprite->setPosition(options.x, options.y);
+  sprite->setPosition(x,y);
   status=true;
   sprite->runAction(
-    Sequence::createWithTwoActions(Animate::create(anim),
-    CallFunc::create([this]() { this->Deflate(); })));
+    c::Sequence::createWithTwoActions(c::Animate::create(anim),
+    c::CallFunc::create([=]() { this->Deflate(); })));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 Looper::Looper(int count) {
-  timers= null; //sjs.makeArray(count,null);
+  timers= nullptr; //sjs.makeArray(count,null);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Looper::Looper()
+  : timers(nullptr) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Looper::~Looper() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Missile::Missile(Sprite* s) : ComObj(s) {
-  auto wz= CCSZ::VisRect();
-  this->x = 0;
-  this->y = 150 * wz.height / 480;
+Missile::Missile(c::Sprite* s) : ComObj(s) {
+  auto wz= cx::VisRect();
+  this->vel= c::Vec2(0, 150 * wz.height / 480);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Motion::Motion() {
-  right = false;
-  left = false;
+Missile::Missile() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Ship::Ship(Sprite* s,frames) : ComObj(s) {
-  this.frames=frames;
+Missile::~Missile() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Motion::Motion()
+  : right(false)
+  , left(false) {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Motion::~Motion() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Ship::Ship(c::Sprite* s, const stdstr& f1, const stdstr& f2)
+  : ComObj(s) {
+  this->f1 = f1;
+  this->f2= f2;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Ship::Ship() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Ship::~Ship() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Velocity::Velocity(float vx, float vy) {
-  x = vx;
+  x= vx;
   y= vy;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+Velocity::Velocity()
+  : x(0)
+  , y(0) {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Velocity::~Velocity() {
+
+}
+
+
 
 NS_END(invaders)
+
 

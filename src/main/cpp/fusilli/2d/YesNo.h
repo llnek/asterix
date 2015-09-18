@@ -38,7 +38,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(YesNo)
+  NO__COPYASSIGN(YesNo)
 
 public:
 

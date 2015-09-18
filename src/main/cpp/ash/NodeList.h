@@ -26,6 +26,7 @@ protected:
 
 private:
 
+  NO__COPYASSIGN(NodeList)
   NodeType nType;
   NodeList();
 

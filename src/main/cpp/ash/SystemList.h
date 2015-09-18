@@ -24,7 +24,7 @@ class FS_DLL SystemList {
 friend class Engine;
 private:
 
-  DISALLOW_COPYASSIGN(SystemList)
+  NO__COPYASSIGN(SystemList)
   SystemList();
 
 public:

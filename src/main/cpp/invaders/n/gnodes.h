@@ -9,64 +9,62 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "NodeFactory.h"
-#include "Node.h"
+#include "ash/NodeFactory.h"
+#include "ash/Node.h"
 #include "cobjs.h"
-NS_USING(fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AlienNotionNode : public NodeFactory {
+class CC_DLL AlienMotionNode : public a::NodeFactory {
 private:
-  DISALLOW_COPYASSIGN(AlienMotionNode)
-
-public:
-
-  static const NodeType TypeId();
-
-  virtual Node* CreateNode() override;
-  virtual ~AlienMotionNode();
+  NO__COPYASSIGN(AlienMotionNode)
   AlienMotionNode();
 
-  DEFCREATE_FUNC(AlienNotionNode)
-};
+public:
 
+  static const a::NodeType TypeId();
+  DEFCREATE_FUNC(AlienMotionNode)
+
+  virtual a::Node* CreateNode() ;
+  virtual ~AlienMotionNode();
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL CannonCtrlNode : public NodeFactory {
+class CC_DLL CannonCtrlNode : public a::NodeFactory {
 private:
-  DISALLOW_COPYASSIGN(CannonCtrlNode)
-
-public:
-
-  static const NodeType TypeId();
-
-  virtual Node* CreateNode() override;
-  virtual ~CannonCtrlNode();
+  NO__COPYASSIGN(CannonCtrlNode)
   CannonCtrlNode();
 
+public:
+
+  static const a::NodeType TypeId();
   DEFCREATE_FUNC(CannonCtrlNode)
+
+  virtual a::Node* CreateNode();
+  virtual ~CannonCtrlNode();
+
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ShipMotionNode : public NodeFactory {
+class CC_DLL ShipMotionNode : public a::NodeFactory {
 private:
-  DISALLOW_COPYASSIGN(ShipMotionNode)
+  NO__COPYASSIGN(ShipMotionNode)
+  ShipMotionNode();
 
 public:
 
-  static const NodeType TypeId();
-
-  virtual Node* CreateNode() override;
-  virtual ~ShipMotionNode();
-  ShipMotionNode();
-
+  static const a::NodeType TypeId();
   DEFCREATE_FUNC(ShipMotionNode)
+
+  virtual a::Node* CreateNode();
+  virtual ~ShipMotionNode();
+
 }
 
 

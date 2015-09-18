@@ -14,27 +14,25 @@
 #include "n/gnodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-NS_ALIAS(cc, cocos2d)
-NS_ALIAS(fs, fusilli)
-NS_ALIAS(p, invaders)
+//NS_ALIAS(c, cocos2d)
+NS_ALIAS(g, invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-  auto r= fs::NodeRegistry::GetInstance();
+  auto r= a::NodeRegistry::GetInstance();
 
-  r->Register( p::ShipMotionNode::Create());
-  r->Register( p::CannonCtrlNode::Create());
-  r->Register( p::AlienNotionNode::Create());
+  r->Register( g::ShipMotionNode::Create());
+  r->Register( g::CannonCtrlNode::Create());
+  r->Register( g::AlienMotionNode::Create());
 
-  fs::XConfig::SetInstance(new p::Config());
+  f::XConfig::SetInstance(new g::Config());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::~AppDelegate()
-{
+AppDelegate::~AppDelegate() {
 }
 
 

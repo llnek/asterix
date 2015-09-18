@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "2d/ComObj.h"
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
@@ -19,14 +20,14 @@ NS_BEGIN(invaders)
 class CC_DLL Alien : public f::ComObj {
 private:
 
-  DISALLOW_COPYASSIGN(Alien)
+  NO__COPYASSIGN(Alien)
   Alien();
 
   int rank;
 
 public:
 
-  Alien(cc::Sprite*, float value, int rank);
+  Alien(c::Sprite*, int value, int rank);
   virtual ~Alien();
 
 };
@@ -35,113 +36,119 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AlienSquad : public a::Component {
+private:
+  NO__COPYASSIGN(AlienSquad)
+  AlienSquad();
 public:
 
-  AlienSquad(const vector<Alien>& aliens, int step);
+  AlienSquad(const s::vector<Alien>& aliens, int step);
   virtual ~AlienSquad();
-
-private:
-  DISALLOW_COPYASSIGNDFT(AlienSquad)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Bomb : public ComObj {
-public:
-
-  virtual ~Bomb();
-  Bomb(Sprite*);
-
+class CC_DLL Bomb : public f::ComObj {
 private:
-  DISALLOW_COPYASSIGNDFT(Bomb)
+  NO__COPYASSIGN(Bomb)
+  Bomb();
   float x;
   float y;
+public:
+
+  Bomb(c::Sprite*);
+  virtual ~Bomb();
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Cannon : public Component {
+class CC_DLL Cannon : public a::Component {
+private:
+  NO__COPYASSIGN(Cannon)
+  Cannon();
+  float coolDownWindow;
+  bool hasAmmo;
 public:
 
   Cannon(float coolDownWindow);
   virtual ~Cannon();
 
-private:
-
-  DISALLOW_COPYASSIGN(Cannon)
-  float coolDownWindow;
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Explosion : public ComObj {
+class CC_DLL Explosion : public f::ComObj {
+private:
+  NO__COPYASSIGN(Explosion)
+  Explosion();
 public:
 
+  virtual void Inflate(c::Dictionary* );
   virtual ~Explosion();
-  Explosion(Sprite* );
+  Explosion(c::Sprite* );
 
-  virtual void Inflate(Dictionary* dict) override;
-
-private:
-  DISALLOW_COPYASSIGN(Explosion)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Looper : public Component {
+class CC_DLL Looper : public a::Component {
+private:
+  NO__COPYASSIGNDFT(Looper);
+  Looper();
 public:
 
-  virtual ~Looper();
   Looper(int count);
+  virtual ~Looper();
 
-private:
-  DISALLOW_COPYASSIGNDFT(Looper);
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Missile : public ComObj {
-public:
-  virtual ~Missile();
-  Missile(Sprite*);
+class CC_DLL Missile : public f::ComObj {
 private:
-  DISALLOW_COPYASSIGNDFT(Missile)
+  NO__COPYASSIGN(Missile)
+  Missile();
   float x;
   float y;
+public:
+  Missile(c::Sprite*);
+  virtual ~Missile();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motion : public Component {
+class CC_DLL Motion : public a::Component {
+private:
+  NO__COPYASSIGN(Motion)
+  bool right;
+  bool left;
 public:
   virtual ~Motion();
   Motion();
-private:
-  DISALLOW_COPYASSIGN(Motion)
-  bool right;
-  bool left;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Ship : public ComObj {
+class CC_DLL Ship : public f::ComObj {
+private:
+  NO__COPYASSIGN(Ship)
+  Ship();
 public:
+  Ship(c::Sprite*, const stdstr&, const stdstr&);
   virtual ~Ship();
-  Ship(Sprite*,frames);
-private:
-  DISALLOW_COPYASSIGNDFT(Ship)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Velocity : public Component {
-public:
-  virtual ~Velocity();
-  Velocity(float vx, float vy);
+class CC_DLL Velocity : public a::Component {
 private:
-  DISALLOW_COPYASSIGNDFT(Velocity)
+  NO__COPYASSIGNDFT(Velocity)
+  Velocity();
   float x;
   float y;
+public:
+  Velocity(float vx, float vy);
+  virtual ~Velocity();
 };
 
 

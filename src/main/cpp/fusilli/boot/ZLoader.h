@@ -22,7 +22,7 @@ NS_BEGIN(fusilli)
 class CC_DLL ZLoader : public cc::Scene {
 private:
 
-  DISALLOW_COPYASSIGN(ZLoader)
+  NO__COPYASSIGN(ZLoader)
   void StartLoad(float);
 
 public:

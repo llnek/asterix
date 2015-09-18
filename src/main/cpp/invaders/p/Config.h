@@ -10,45 +10,44 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "support/XConfig.h"
-
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Config : public XConfig {
+class CC_DLL Config : public f::XConfig {
 protected:
 
   void InitAssets();
   void InitCsts();
-  Config();
 
   float scale;
 
 private:
 
-  DISALLOW_COPYASSIGN(Config)
+  NO__COPYASSIGN(Config)
+  Config();
 
 public:
 
-  virtual void HandleResolution(const cc::Size& rs);
+  virtual void HandleResolution(const c::Size& rs);
 
   virtual ResolutionPolicy GetPolicy();
-  virtual const s::string GetAppKey();
-  virtual const s::string AppId();
-  virtual const s::string GetColor();
-  virtual const cc::Size GetGameSize();
+  virtual const stdstr GetAppKey();
+  virtual const stdstr AppId();
+  virtual const stdstr GetColor();
+  virtual const c::Size GetGameSize();
 
-  virtual const s::string GetWSUrl();
-  virtual cc::Scene* StartWith();
+  virtual const stdstr GetWSUrl();
+  virtual c::Scene* StartWith();
 
-  virtual void SetGameId(const s::string& );
-  virtual void SetRoomId(const s::string& );
+  virtual void SetGameId(const stdstr& );
+  virtual void SetRoomId(const stdstr& );
 
-  virtual const s::string GetGameId();
-  virtual const s::string GetRoomId();
+  virtual const stdstr GetGameId();
+  virtual const stdstr GetRoomId();
 
   virtual float GetScale() ;
   virtual void RunOnce() ;

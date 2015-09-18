@@ -44,7 +44,7 @@ private:
 
   Engine();
 
-  DISALLOW_COPYASSIGN(Engine)
+  NO__COPYASSIGN(Engine)
 
 public:
 

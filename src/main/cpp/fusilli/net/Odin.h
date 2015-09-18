@@ -110,7 +110,7 @@ private:
   s::function<void (const Event&)> cbNetwork;
   s::function<void (const Event&)> cbAll;
 
-  DISALLOW_COPYASSIGN(WSockSS)
+  NO__COPYASSIGN(WSockSS)
 
   n::WebSocket* wss;
   stdstr room;

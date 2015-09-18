@@ -12,16 +12,16 @@
 #include "support/Primitives.h"
 #include "support/CCSX.h"
 #include "2d/MainGame.h"
+#include "n/gnodes.h"
 #include "Factory.h"
 #include "Stager.h"
 NS_ALIAS(cx, fusilli::ccsx)
-NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager* Stager::Create(Factory* f, cc::Dictionary* d) {
+Stager* Stager::Create(Factory* f, c::Dictionary* d) {
   auto s = new Stager();
   s->Set(f,d);
   return s;
@@ -81,7 +81,7 @@ bool Stager::Update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::OnceOnly() {
-  auto g = MainGame::Get();
+  auto g = f::MainGame::Get();
 
   InitAlienSize();
   InitShipSize();

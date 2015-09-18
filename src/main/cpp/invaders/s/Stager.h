@@ -9,10 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "platform/CCCommon.h"
-#include "ash/Ash.h"
 #include "BaseSystem.h"
-NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
@@ -20,27 +17,25 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Stager : public BaseSystem {
 protected:
-
-  Stager();
+  a::NodeList* ships;
+  bool inited;
 
 private:
 
-  DISALLOW_COPYASSIGN(Stager)
+  NO__COPYASSIGN(Stager)
+  Stager();
 
 public:
 
-  static Stager* Create(Factory* f, cc::Dictionary* options);
+  static Stager* Create(Factory*, c::Dictionary*);
 
   virtual void RemoveFromEngine(a::Engine*);
-
   virtual void AddToEngine(a::Engine*);
 
   void InitAlienSize();
-
   void InitShipSize();
 
   virtual bool Update(float dt);
-
   void OnceOnly();
 
   virtual int Priority() { return PreUpdate; }

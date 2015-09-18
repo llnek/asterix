@@ -10,9 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "BaseSystem.h"
-#include "ash/Ash.h"
-NS_ALIAS(f, fusilli)
-NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
@@ -21,12 +18,12 @@ NS_BEGIN(invaders)
 class CC_DLL Move : public BaseSystem {
 private:
 
-  DISALLOW_COPYASSIGN(Move)
+  NO__COPYASSIGN(Move)
   Move();
 
 public:
 
-  static Move* Create(Factory*, cc::Dictionary* options);
+  static Move* Create(Factory*, c::Dictionary* );
   virtual ~Move();
 
   virtual void RemoveFromEngine(a::Engine*);

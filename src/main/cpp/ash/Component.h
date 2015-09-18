@@ -30,7 +30,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(Component)
+  NO__COPYASSIGN(Component)
 
 public:
 

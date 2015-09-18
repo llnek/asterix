@@ -46,7 +46,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(XConfig)
+  NO__COPYASSIGN(XConfig)
 
 public:
 

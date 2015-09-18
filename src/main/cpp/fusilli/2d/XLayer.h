@@ -47,7 +47,7 @@ private:
   int lastTag;
   int lastZix;
 
-  DISALLOW_COPYASSIGN(XLayer)
+  NO__COPYASSIGN(XLayer)
 
 public:
 

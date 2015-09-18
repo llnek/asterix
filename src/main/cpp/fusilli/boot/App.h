@@ -28,7 +28,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(App)
+  NO__COPYASSIGN(App)
 
 public:
 

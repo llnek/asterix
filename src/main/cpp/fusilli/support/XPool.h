@@ -26,7 +26,7 @@ NS_BEGIN(fusilli)
 class CC_DLL XPool {
 private:
 
-  DISALLOW_COPYASSIGN(XPool)
+  NO__COPYASSIGN(XPool)
   XPool();
 
   s::vector<ComObj*> objs;
@@ -45,6 +45,7 @@ public:
 
   void Foreach(s::function<void (ComObj*)>);
   void Reset();
+  void Checkin(ComObj*);
 
   virtual ~XPool();
 

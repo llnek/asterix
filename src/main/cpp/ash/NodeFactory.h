@@ -27,7 +27,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(NodeFactory)
+  NO__COPYASSIGN(NodeFactory)
 
 public:
 

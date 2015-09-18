@@ -10,23 +10,23 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "BaseSystem.h"
-#include "ash/Ash.h"
-NS_ALIAS(f, fusilli)
-NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide  : public BaseSystem {
+class CC_DLL Collide : public BaseSystem {
+protected:
+  a::NodeList aliens;
+  a::NodeList ships;
 private:
 
-  DISALLOW_COPYASSIGN(Collide)
+  NO__COPYASSIGN(Collide)
   Collide();
 
 public:
 
-  static Collide* Create(Factory*, cc::Dictionary*);
+  static Collide* Create(Factory*, c::Dictionary*);
   virtual ~Collide();
 
   virtual void RemoveFromEngine(a::Engine*);

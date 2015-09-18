@@ -10,33 +10,35 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "BaseSystem.h"
-#include "ash/Ash.h"
-NS_ALIAS(f, fusilli)
-NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Motions : public BaseSystem {
+protected:
+  a::NodeList cannons;
+  a::NodeList ships;
+  a::NodeList aliens;
+
 private:
 
-  DISALLOW_COPYASSIGN(Motions)
+  NO__COPYASSIGN(Motions)
   Motions();
 
 public:
 
-  static Motions* Create(Factory*, cc::Dictionary*);
+  static Motions* Create(Factory*, c::Dictionary*);
   virtual ~Motions();
 
   virtual void RemoveFromEngine(a::Engine*);
   virutal void AddToEngine(a::Engine*);
   virtual bool Update(float dt);
 
+  void ProcessAlienMotions(a::Node*,float dt);
   void ControlCannon(a::Node*, float dt);
   void FireMissile(a::Node*, float dt);
   void ScanInput(a::Node*, float dt);
-  void ProcessAlienMotions(a::Node*,float dt);
 
   virtual int Priority() { return Motion; }
 

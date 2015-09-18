@@ -9,10 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "platform/CCCommon.h"
-#include "ash/Ash.h"
 #include "BaseSystem.h"
-NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 
@@ -20,16 +17,17 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Resolve : public BaseSystem {
 protected:
-
-  Resolve();
+  a::NodeList* aliens;
+  a::NodeList* ships;
 
 private:
 
-  DISALLOW_COPYASSIGN(Resolve)
+  NO__COPYASSIGN(Resolve)
+  Resolve();
 
 public:
 
-  static Resolve* Create(Factory* f, cc::Dictionary* d);
+  static Resolve* Create(Factory*, c::Dictionary*);
   virtual ~Resolve();
 
   virtual void RemoveFromEngine(a::Engine*);

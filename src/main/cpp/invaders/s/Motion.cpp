@@ -13,13 +13,13 @@
 #include "support/CCSX.h"
 #include "2d/MainGame.h"
 #include "Motion.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
-
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motions* Motions::Create(Factory* f, cc::Dictionary* d) {
+Motions* Motions::Create(Factory* f, c::Dictionary* d) {
   auto s = new Motions();
   s->Set(f,d);
   return s;
@@ -32,7 +32,10 @@ Motions::~Motions() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motions::Motions() {
+Motions::Motions()
+  : aliens(nullptr)
+  , ships(nullptr)
+  , cannons(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,13 +79,14 @@ void Motion::ControlCannon(a::Node* node, float dt) {
   auto gun = node->cannon;
   auto lpr= node->looper;
   auto ship=node->ship;
-  auto t= lpr->timers[0];
+  auto t= lpr->timer0;
 
   if (! gun->hasAmmo) {
     if (cx::TimerDone(t)) {
-      ship->sprite->setSpriteFrame(ship->frames[0]);
+      ship->sprite->setSpriteFrame(ship->frame0);
       gun->hasAmmo=true;
-      lpr->timers[0]=cx::UndoTimer(t);
+      cx::UndoTimer(t);
+      lpr->timer0=nullptr;
     }
   } else {
     if (f::MainGame::Get()->KeyPoll(cc.KEY.space)) {
@@ -109,12 +113,12 @@ void Motion::FireMissile(a::Node* node, float dt) {
     ent= p->Get();
   }
 
-  ent->InflateAt(pos.x, top+4);
+  ent->Inflate(pos.x, top+4);
 
-  lpr->timers[0] = cx::CreateTimer(
+  lpr->timer0 = cx::CreateTimer(
     f::MainGame::Get(), gun->coolDownWindow);
   gun->hasAmmo=false;
-  ship->sprite->setSpriteFrame(ship->frames[1]);
+  ship->sprite->setSpriteFrame(ship->frame1);
   //sh.sfxPlay('ship-missile');
 }
 
@@ -135,16 +139,18 @@ void Motion::ScanInput(a::Node* node, float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Motion::ProcessAlienMotions(a::Node* node, float dt) {
+  auto g= f::MainGame::Get();
   auto lpr = node->looper,
   auto sqad= node->aliens;
-  auto g= f::MainGame::Get();
 
-  if (ENP(lpr->timers[0])) {
-    lpr->timers[0]= cx::CreateTimer(g,1);
+  if (ENP(lpr->timer0)) {
+    lpr->timer0= nullptr;
+    cx::CreateTimer(g,1);
   }
 
-  if (ENP(lpr->timers[1])) {
-    lpr->timers[1]= cx::CreateTimer(g,2);
+  if (ENP(lpr->timer1)) {
+    lpr->timer1= nullptr;
+    cx::CreateTimer(g,2);
   }
 }
 

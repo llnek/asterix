@@ -9,58 +9,89 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "NodeFactory.h"
-#include "Node.h"
-#include "cobjs.h"
-NS_USING(fusilli)
+#include "gnodes.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* AlienMotionNode::CreateNode() {
-  map<string,COMType> s;
-  s.insert(pair<string,COMType>("aliens", "fusilli/AlienSquad"));
-  s.insert(pair<string,COMType>("looper", "fusilli/Looper"));
-  return new Node(s);
+a::Node* AlienMotionNode::CreateNode() {
+  s::map<stdstr,a::COMType> s;
+  s.insert(pair<stdstr,a::COMType>("aliens", "n/AlienSquad"));
+  s.insert(pair<stdstr,a::COMType>("looper", "n/Looper"));
+  return new a::Node(s);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+AlienMotionNode::AlienMotionNode() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+AlienMotionNode::~AlienMotionNode() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const NodeType AlienMotionNode::TypeId() {
-  return "invaders/AlienMotionNode";
+const a::NodeType AlienMotionNode::TypeId() {
+  return "n/AlienMotionNode";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* CannonCtrlNode::CreateNode() {
-  map<string,COMType> s;
-  s.insert(pair<string,COMType>("looper", "fusilli/Looper"));
-  s.insert(pair<string,COMType>("cannon", "fusilli/Cannon"));
-  s.insert(pair<string,COMType>("ship", "fusilli/Ship"));
-  return new Node(s);
+a::Node* CannonCtrlNode::CreateNode() {
+  s::map<stdtsr, a::COMType> s;
+  s.insert(pair<stdstr, a::COMType>("looper", "n/Looper"));
+  s.insert(pair<stdstr, a::COMType>("cannon", "n/Cannon"));
+  s.insert(pair<stdstr, a::COMType>("ship", "n/Ship"));
+  return new a::Node(s);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+CannonCtrlNode::CannonCtrlNode() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+CannonCtrlNode::~CannonCtrlNode() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const NodeType CannonCtrlNode::TypeId() {
-  return "invaders/CannonCtrlNode";
+const a::NodeType CannonCtrlNode::TypeId() {
+  return "n/CannonCtrlNode";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* ShipMotionNode::CreateNode() {
-  map<string,COMType> s;
-  s.insert(pair<string,COMType>("velocity", "fusilli/Velocity"));
-  s.insert(pair<string,COMType>("motion", "fusilli/Motion"));
-  s.insert(pair<string,COMType>("ship", "fusilli/Ship"));
-  return new Node(s);
+a::Node* ShipMotionNode::CreateNode() {
+  s::map<stdstr, a::COMType> s;
+  s.insert(pair<stdstr, a::COMType>("vel", "n/Velocity"));
+  s.insert(pair<stdstr, a::COMType>("motion", "n/Motion"));
+  s.insert(pair<stdstr, a::COMType>("ship", "n/Ship"));
+  return new a::Node(s);
 }
+
+//////////////////////////////////////////////////////////////////////////
+//
+ShipMotionNode::ShipMotionNode() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+ShipMotionNode::~ShipMotionNode() {
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const NodeType ShipMotionNode::TypeId() {
-  return "invaders/ShipMotionNode";
+const a::NodeType ShipMotionNode::TypeId() {
+  return "n/ShipMotionNode";
 }
+
+
 
 NS_END(invaders)
 

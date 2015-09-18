@@ -18,7 +18,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Move* Move::Create(Factory* f, cc::Dictionary* d) {
+Move* Move::Create(Factory* f, c::Dictionary* d) {
   auto s = new Move();
   s->Set(f,d);
   return s;
@@ -31,7 +31,8 @@ Move::~Move() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Move::Move() {
+Move::Move()
+  : ships(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,9 +63,9 @@ bool Move::Update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::ProcessShipMotions(a::Node* node, float dt) {
-  auto motion = node->motion;
-  auto sv = node->velocity;
-  auto ship= node->ship;
+  auto motion = node->Get("motion");
+  auto sv = node->Get("vel");
+  auto ship= node->Get("ship");
   auto pos = ship->Pos();
   auto x= Pos().x;
   auto y= Pos().y;

@@ -47,7 +47,7 @@ protected:
 
 private:
 
-  DISALLOW_COPYASSIGN(XGameLayer)
+  NO__COPYASSIGN(XGameLayer)
 
 public:
 

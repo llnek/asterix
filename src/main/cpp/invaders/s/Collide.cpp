@@ -16,7 +16,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide* Collide::Create(Factory* f, cc::Dictionary* d) {
+Collide* Collide::Create(Factory* f, c::Dictionary* d) {
   auto s = new Collide();
   s->Set(f,d);
   return s;
@@ -29,7 +29,9 @@ Collide::~Collide() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide::Collide() {
+Collide::Collide()
+  : aliens(nullptr)
+  , ships(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,7 +47,6 @@ void Collide::RemoveFromEngine(a::Engine* e) {
 void Collide::AddToEngine(a::Engine* e) {
   aliens= e->GetNodeList(AlienMotionNode::TypeId());
   ships= e->GetNodeList(ShipMotionNode::TypeId);
-  engine=e;
 }
 
 //////////////////////////////////////////////////////////////////////////
