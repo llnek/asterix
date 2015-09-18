@@ -30,6 +30,9 @@ private:
   DISALLOW_COPYASSIGN(MainGame)
   MainGame();
 
+  static XScene* _singleton;
+  static int _gameLayer;
+
 public:
 
   static void Set(XScene*, int layer=2);

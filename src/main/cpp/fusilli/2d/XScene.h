@@ -14,10 +14,8 @@
 
 #include "2d/CCScene.h"
 #include "XLayer.h"
-
-
 NS_ALIAS(cc, cocos2d)
-NS_ALIAS(c, std)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 

@@ -23,10 +23,10 @@ NS_ALIAS(a, ash)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
-class XScene;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLayer : public cc::Layer {
+friend class XScene;
 protected:
 
   void CreateAudioIcons(cc::MenuItem*& off, cc::MenuItem*& on);

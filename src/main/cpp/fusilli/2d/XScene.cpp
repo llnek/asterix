@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/CCSX.h"
 #include "XScene.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,7 +45,7 @@ XScene* XScene::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XScene::OnQuitAction() {
-  CCSX::RunScene(
+  cx::RunScene(
     XConfig::GetInstance()->StartWith());
 }
 

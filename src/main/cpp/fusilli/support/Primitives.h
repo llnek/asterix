@@ -17,11 +17,8 @@
 #include "base/CCConsole.h"
 #include "base/CCRef.h"
 #include "core/fusilli.h"
-
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
-NS_BEGIN(fusilli)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -35,6 +32,8 @@ T* DictVal(cc::Dictionary* d, const stdstr& key) {
   }
 }
 
+
+NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Box4 {
