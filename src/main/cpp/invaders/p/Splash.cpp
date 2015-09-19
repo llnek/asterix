@@ -9,9 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "2d/CCActionInstant.h"
+#include "support/CCSX.h"
+#include "2d/XLayer.h"
 #include "Menu.h"
 #include "Splash.h"
 NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,9 +70,9 @@ void SplashLayer::Title() {
 void SplashLayer::Btns() {
   auto cw= cx::Center();
   auto wb= cx::VisBox();
-  auto b1= CreateMenuBtn("#play.png");
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(SplashLayer::OnPlay));
+  auto b1= cx::CreateMenuBtn("#play.png");
+  b1->setTarget(getParent(),
+      CC_MENU_SELECTOR(Splash::OnPlay));
   auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition( cw.x, wb.top * 0.1);
@@ -77,7 +81,7 @@ void SplashLayer::Btns() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::OnPlay(c::Ref* b) {
+void Splash::OnPlay(c::Ref* b) {
   auto f= []() {
     cx::RunScene(f::XConfig::GetInstance()->StartWith());
   };

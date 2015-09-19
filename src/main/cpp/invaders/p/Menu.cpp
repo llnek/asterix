@@ -18,17 +18,20 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MenuLayer : public f::XMenuLayer {
+class CC_DLL MenuLayer : public f::XLayer {
 private:
   NO__COPYASSIGN(MenuLayer)
   MenuLayer();
+  void Title();
 
 public:
+  virtual XLayer* Realize();
 
   virtual int GetIID() { return 1; }
   virtual void OnInit();
   virtual ~MenuLayer();
 
+  void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
   void OnQuit(c::Ref*);
 
@@ -43,21 +46,6 @@ MenuLayer::~MenuLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 MenuLayer::MenuLayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void MenuLayer::Title() {
-  auto cfg = f::XConfig::GetInstance();
-  auto wb= cx::VisBox();
-  auto cw= cx::Center();
-  auto fp= cfg->GetFont("font.JellyBelly");
-  auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
-                          fp,
-                          "some text");
-  lb->setScale(cfg->GetScale());
-  lb->setColor(cx::WHITE);
-  AddItem(lb);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -79,11 +67,11 @@ f::XLayer* MenuLayer::Realize() {
                           fp,
                           "some text");
   lb->setScale(cfg->GetScale());
-  lb->setColor(cx::WHITE);
+  lb->setColor(cx::White());
   AddItem(lb);
 
   // play button
-  auto b1= CreateMenuBtn("#play.png");
+  auto b1= cx::CreateMenuBtn("#play.png");
   b1->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   auto menu= c::Menu::create();
@@ -92,13 +80,13 @@ f::XLayer* MenuLayer::Realize() {
   AddItem(menu);
 
   // back-quit button
-  auto b= CreateMenuBtn("#icon_back.png");
+  auto b= cx::CreateMenuBtn("#icon_back.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnBack));
-  auto q= CreateMenuBtn("#icon_quit.png");
+  auto q= cx::CreateMenuBtn("#icon_quit.png");
   q->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnQuit));
-  auto m2= MkBackQuit(false, b, q);
+  auto m2= cx::MkBackQuit(false, b, q);
   auto sz= b->getContentSize();
 
   m2->setPosition(wb.left + tile + sz.width * 1.1,
@@ -108,33 +96,33 @@ f::XLayer* MenuLayer::Realize() {
   // audio
   c::MenuItem* off;
   c::MenuItem* on;
-  CreateAudioIcons(on,off);
-  off->setColor(cx::WHITE);
-  on->setColor(cx::WHITE);
+  cx::CreateAudioIcons(on,off);
+  off->setColor(cx::White());
+  on->setColor(cx::White());
 
   AddAudioIcons(off, on,
       cx::AnchorBR(),
-      c::Vec2(wb.right - gap, wb.bottom + gap));
+      c::Vec2(wb.right - tile, wb.bottom + tile));
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnPlay() {
+void MenuLayer::OnPlay(c::Ref* r) {
 //  auto g= Game::create()->Realize();
 //  cx::RunScene(g);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MenuLayer::OnBack(c::Ref* r) {
+void MenuLayer::OnBack(c::Ref* r) {
   auto p = SCAST(MainMenu*, getParent());
   p->OnBackAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MenuLayer::OnQuit(c::Ref* r) {
+void MenuLayer::OnQuit(c::Ref* r) {
   auto p = SCAST(MainMenu*, getParent());
   p->OnQuitAction();
 }
@@ -149,7 +137,7 @@ MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::OnBackAction(c::Ref* s) {
+void MainMenu::OnBackAction() {
   backAction->execute();
 }
 

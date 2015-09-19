@@ -23,6 +23,7 @@ class CC_DLL Splash : public f::XScene {
 friend class SplashLayer;
 private:
   NO__COPYASSIGN(Splash)
+  void OnPlay(c::Ref*);
   Splash();
 
 public:
