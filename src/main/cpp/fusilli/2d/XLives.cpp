@@ -20,7 +20,7 @@ void XLives::Reduce(int x) {
   while (x > 0) {
     if (icons.size() > 0) {
       auto it= icons.begin();
-      hud->RemoveIcon( *it );
+      hud->RemoveItem( *it );
       icons.erase(it);
     }
     --x;
@@ -38,7 +38,7 @@ bool XLives::IsDead() {
 //
 void XLives::Reset() {
   for (auto it= icons.begin(); it != icons.end(); ++it) {
-    hud->RemoveIcon(*it);
+    hud->RemoveItem(*it);
   }
   curLives = totalLives;
   icons.clear();

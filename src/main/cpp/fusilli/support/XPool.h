@@ -45,6 +45,8 @@ public:
   int CountActives();
 
   void Foreach(s::function<void (ComObj*)>);
+  void ClearAll(bool del=true);
+
   void Reset();
   void Checkin(ComObj*);
 

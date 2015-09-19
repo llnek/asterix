@@ -65,7 +65,7 @@ public:
   virtual a::Node* CreateNode();
   virtual ~ShipMotionNode();
 
-}
+};
 
 
 

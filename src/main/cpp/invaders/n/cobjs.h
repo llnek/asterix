@@ -9,11 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__COBJS_H__)
+#define __COBJS_H__
+
+#include "2d/CCActionInterval.h"
+#include "support/XPool.h"
 #include "2d/ComObj.h"
-NS_ALIAS(c, cocos2d)
 NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -23,15 +26,13 @@ private:
   NO__COPYASSIGN(Alien)
   Alien();
 
-  int rank;
-
 public:
 
   Alien(c::Sprite*, int value, int rank);
   virtual ~Alien();
-
+  virtual const a::COMType TypeId() { return "n/Alien"; }
+  int rank;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -41,8 +42,12 @@ private:
   AlienSquad();
 public:
 
-  AlienSquad(const s::vector<Alien>& aliens, int step);
+  virtual const a::COMType TypeId() { return "n/AlienSquad"; }
+  AlienSquad(f::XPool* aliens, int step);
   virtual ~AlienSquad();
+
+  f::XPool* aliens;
+  int stepx;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,13 +56,15 @@ class CC_DLL Bomb : public f::ComObj {
 private:
   NO__COPYASSIGN(Bomb)
   Bomb();
-  float x;
-  float y;
 public:
+
+  virtual const a::COMType TypeId() { return "n/Bomb"; }
 
   Bomb(c::Sprite*);
   virtual ~Bomb();
 
+  float x;
+  float y;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,13 +72,15 @@ class CC_DLL Cannon : public a::Component {
 private:
   NO__COPYASSIGN(Cannon)
   Cannon();
-  float coolDownWindow;
-  bool hasAmmo;
 public:
+
+  virtual const a::COMType TypeId() { return "n/Cannon"; }
 
   Cannon(float coolDownWindow);
   virtual ~Cannon();
 
+  float coolDownWindow;
+  bool hasAmmo;
 };
 
 
@@ -83,22 +92,30 @@ private:
   Explosion();
 public:
 
+  virtual const a::COMType TypeId() { return "n/Explosion"; }
+
   virtual void Inflate(c::Dictionary* );
   virtual ~Explosion();
   Explosion(c::Sprite* );
 
+  float frameTime;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Looper : public a::Component {
 private:
-  NO__COPYASSIGNDFT(Looper);
+  NO__COPYASSIGN(Looper);
   Looper();
 public:
 
+  virtual const a::COMType TypeId() { return "n/Looper"; }
+
   Looper(int count);
   virtual ~Looper();
+
+  c::DelayTime* timer0;
+  c::DelayTime* timer1;
 
 };
 
@@ -108,11 +125,14 @@ class CC_DLL Missile : public f::ComObj {
 private:
   NO__COPYASSIGN(Missile)
   Missile();
-  float x;
-  float y;
 public:
+
+  virtual const a::COMType TypeId() { return "n/Missile"; }
+
   Missile(c::Sprite*);
   virtual ~Missile();
+  float x;
+  float y;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -120,11 +140,14 @@ public:
 class CC_DLL Motion : public a::Component {
 private:
   NO__COPYASSIGN(Motion)
-  bool right;
-  bool left;
 public:
+
+  virtual const a::COMType TypeId() { return "n/Motion"; }
+
   virtual ~Motion();
   Motion();
+  bool right;
+  bool left;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -134,25 +157,33 @@ private:
   NO__COPYASSIGN(Ship)
   Ship();
 public:
+
+  virtual const a::COMType TypeId() { return "n/Ship"; }
+
   Ship(c::Sprite*, const stdstr&, const stdstr&);
   virtual ~Ship();
+  stdstr frame0;
+  stdstr frame1;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Velocity : public a::Component {
 private:
-  NO__COPYASSIGNDFT(Velocity)
+  NO__COPYASSIGN(Velocity)
   Velocity();
-  float x;
-  float y;
 public:
+
+  virtual const a::COMType TypeId() { return "n/Velocity"; }
+
   Velocity(float vx, float vy);
   virtual ~Velocity();
+  float x;
+  float y;
 };
 
 
 
 NS_END(invaders)
-
+#endif
 

@@ -24,7 +24,6 @@ a::Node* AlienMotionNode::CreateNode() {
 //////////////////////////////////////////////////////////////////////////
 //
 AlienMotionNode::AlienMotionNode() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +40,7 @@ const a::NodeType AlienMotionNode::TypeId() {
 //////////////////////////////////////////////////////////////////////////////
 //
 a::Node* CannonCtrlNode::CreateNode() {
-  s::map<stdtsr, a::COMType> s;
+  s::map<stdstr, a::COMType> s;
   s.insert(pair<stdstr, a::COMType>("looper", "n/Looper"));
   s.insert(pair<stdstr, a::COMType>("cannon", "n/Cannon"));
   s.insert(pair<stdstr, a::COMType>("ship", "n/Ship"));

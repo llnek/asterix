@@ -28,18 +28,10 @@ XGameLayer::~XGameLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::XGameLayer()
-: mode(GameMode::ONE_PLAY)
-, level(1)
-, engine(nullptr)
-, actor(nullptr) {
-}
+  : mode(GMode::ONE)
+  , level(1)
+  , engine(nullptr) {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void XGameLayer::PKInput() {
-  //ccsx.onKeyPolls(this.keyboard);
-  //ccsx.onTouchOne(this.ebus);
-  //ccsx.onMouse(this.ebus);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,25 +53,13 @@ bool XGameLayer::KeyPoll(int key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::InitEngine() {
-  engine = a::Engine::Create();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 const Box4 XGameLayer::GetEnclosureBox() {
   return cx::VisBox();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::SetGameMode(const GameMode mode) {
-  this->mode= mode;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XGameLayer::NewGame(const GameMode mode) {
+void XGameLayer::NewGame(const GMode mode) {
   if (XConfig::GetInstance()->HasAudio()) {
     den::SimpleAudioEngine::getInstance()->stopAllEffects();
     den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();

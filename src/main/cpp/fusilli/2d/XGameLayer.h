@@ -22,13 +22,7 @@ NS_ALIAS(s, std)
 NS_ALIAS(a, ash)
 NS_BEGIN(fusilli)
 
-
-enum class GameMode {
-  TWO_PLAY,
-  ONE_PLAY,
-  NET_PLAY
-};
-
+enum class GMode { ONE, TWO, NET };
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -36,14 +30,15 @@ class CC_DLL XGameLayer : public XLayer {
 
 protected:
 
-  virtual void SetGameMode(const GameMode);
-  virtual void OnNewGame(const GameMode);
+  virtual void OnNewGame(const GMode);
+  virtual void SetMode(const GMode);
+  XGameLayer();
 
   s::map<int,bool> keyboard;
   a::Engine* engine;
+
+  GMode mode;
   int level;
-  void* actor;
-  GameMode mode;
 
 private:
 
@@ -51,28 +46,23 @@ private:
 
 public:
 
+  virtual const Box4 GetEnclosureBox();
   virtual int GetIID() { return 2; }
-  virtual void PKInput();
-
-  virtual ~XGameLayer();
-  XGameLayer();
-
-  c::Dictionary* GetLCfg();
-  bool KeyPoll(int key);
-
-  virtual void InitEngine();
-  virtual void InitAsh() = 0;
-
   virtual void update(float);
+
   virtual XLayer* Realize();
+  virtual ~XGameLayer();
 
   const s::map<int,bool>& Keys();
+  bool KeyPoll(int key);
+  c::Dictionary* GetLCfg();
+
 
   XLayer* GetBackgd(int tag= 1);
   XLayer* GetHUD(int tag=3);
 
-  const Box4 GetEnclosureBox();
-  void NewGame(const GameMode m);
+
+  void NewGame(const GMode);
 
 };
 

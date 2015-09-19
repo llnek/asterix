@@ -63,6 +63,16 @@ void XPool::Checkin(ComObj* c) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+//
+void XPool::ClearAll(bool del) {
+  if (del)
+  for (auto it = objs.begin(); it != objs.end(); ++it) {
+    delete *it;
+  }
+  objs.clear();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Get the count of active objects
 int XPool::CountActives() {
   auto c=0;
@@ -93,13 +103,7 @@ void XPool::Reset() {
 //////////////////////////////////////////////////////////////////////////
 //
 XPool::~XPool() {
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
-    auto c = *it;
-    if (! c->HasParent()) {
-      delete c;
-    }
-  }
-  objs.clear();
+  ClearAll(true);
 }
 
 //////////////////////////////////////////////////////////////////////////

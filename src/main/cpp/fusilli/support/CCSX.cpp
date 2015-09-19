@@ -11,12 +11,66 @@
 
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCActionInterval.h"
+#include "2d/CCMenuItem.h"
+#include "2d/CCMenu.h"
 #include "2d/CCLabel.h"
 #include "2d/CCTransition.h"
 #include "base/CCDirector.h"
 #include "CCSX.h"
 NS_BEGIN(fusilli)
 NS_BEGIN(ccsx)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Menu* MkBackQuit(c::MenuItem* b,
+    c::MenuItem* q, bool vert) {
+
+  auto sz= b->getContentSize();
+  auto padding = 10;
+  auto menu= c::Menu::create();
+  menu->addChild(b);
+  menu->addChild(q);
+
+  if (!vert) {
+    menu->alignItemsHorizontallyWithPadding(padding);
+  } else {
+    menu->alignItemsVerticallyWithPadding(padding);
+  }
+
+  return menu;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void MkAudio() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on) {
+  auto n="#sound_off.png";
+  off= CreateMenuBtn(n,n,n);
+  n="#sound_on.png";
+  on= CreateMenuBtn(n,n,n);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::MenuItem* CreateMenuBtn(const stdstr& n) {
+  return CreateMenuBtn(n,n,n);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::MenuItem* CreateMenuBtn(const stdstr& n,
+    const stdstr& s,
+    const stdstr& d) {
+
+  return c::MenuItemSprite::create(cx::CreateSprite(n),
+                                cx::CreateSprite(s),
+                                cx::CreateSprite(d));
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // Test if this point is inside this rectangle
@@ -163,7 +217,7 @@ bool IsTransitioning() {
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const cc::Size CSize(const stdstr& frame) {
+const cc::Size CalcSize(const stdstr& frame) {
   return CreateSprite(frame)->getContentSize();
 }
 

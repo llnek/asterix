@@ -12,6 +12,7 @@
 #if !defined(__XHUDLAYER_H__)
 #define __XHUDLAYER_H__
 
+#include "base/ccTypes.h"
 #include "XLayer.h"
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
@@ -21,35 +22,25 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XHUDLayer : public XLayer {
-
 protected:
-
-  void AddIcon(c::Node* icon,
-      int* z = nullptr, int* tag = nullptr);
-
-  XHUDLayer();
-
-  void RemoveIcon(c::Node*);
-  virtual void InitAtlases();
-  virtual void InitIcons();
-  virtual void InitLabels();
-  virtual void InitCtrlBtns();
-
-  virtual void ResetAsNew();
-  virtual void Reset();
-
-  bool ReduceLives(int );
-  void DisableReplay();
-  void EnableReplay();
-  void UpdateScore(int num);
 
   void AddReplayIcon(c::MenuItem*, const c::Vec2& where);
   void AddMenuIcon(c::MenuItem*, const c::Vec2& where);
+
+  virtual void AddIcon(c::Node*);
+
+  void UpdateScore(int num);
+  bool ReduceLives(int );
+
+  void DisableReplay();
+  void EnableReplay();
 
   c::MenuItem* replayBtn;
   c::Label* scoreLabel;
   XLives* lives;
   int score;
+
+  XHUDLayer();
 
 private:
 
@@ -57,11 +48,12 @@ private:
 
 public:
 
-  virtual const stdstr HudAtlas() = 0;
-  virtual XLayer* Realize() ;
-  virtual ~XHUDLayer();
-
   int GetScore() { return score; }
+
+  virtual void ResetAsNew();
+  virtual void Reset();
+
+  virtual ~XHUDLayer();
 
 };
 

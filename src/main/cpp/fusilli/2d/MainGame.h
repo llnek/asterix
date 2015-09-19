@@ -22,9 +22,6 @@ class XGameLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainGame {
-
-protected:
-
 private:
 
   NO__COPYASSIGN(MainGame)

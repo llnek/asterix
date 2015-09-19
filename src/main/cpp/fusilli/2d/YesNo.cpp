@@ -21,13 +21,13 @@ class CC_DLL YesNoLayer : public XLayer {
 
 private:
 
-  DISALLOW_COPYASSIGN(YesNoLayer)
+  NO__COPYASSIGN(YesNoLayer)
   YesNoLayer() {}
 
 public:
 
-  virtual int GetIID() override { return 1; }
-  virtual XLayer* Realize() override;
+  virtual int GetIID() { return 1; }
+  virtual XLayer* Realize();
   virtual ~YesNoLayer() {}
 
   CREATE_FUNC(YesNoLayer)
@@ -54,9 +54,9 @@ XLayer* YesNoLayer::Realize() {
   CenterImage("game.bg");
   AddItem(qn);
 
-  auto b1= CreateMenuBtn("#continue.png");
+  auto b1= cx::CreateMenuBtn("#continue.png");
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnYes));
-  auto b2= CreateMenuBtn("#cancel.png");
+  auto b2= cx::CreateMenuBtn("#cancel.png");
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnNo));
   auto menu= c::Menu::create();
 
@@ -98,6 +98,8 @@ YesNo* YesNo::Create(const stdstr& msg) {
 void YesNo::SetActions(c::CallFunc* y, c::CallFunc* n) {
   yes = y;
   no = n;
+  y->retain();
+  n->retain();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,7 +123,20 @@ XScene* YesNo::Realize() {
   return this;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+YesNo::YesNo()
+  : yes(nullptr)
+  , no(nullptr) {
 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+YesNo::~YesNo() {
+  yes->release();
+  no->release();
+}
 
 
 

@@ -31,6 +31,18 @@ namespace ccsx {
 
   void ResolveElastic(ComObj* obj1, ComObj* obj2);
 
+  void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
+
+  c::MenuItem* CreateMenuBtn(const stdstr& n);
+
+  c::MenuItem* CreateMenuBtn(
+      const stdstr& n,
+      const stdstr& s, const stdstr& d);
+
+  c::Menu* MkBackQuit(c::MenuItem* b,
+      c::MenuItem* q, bool vert = false);
+
+  void MkAudio();
 
   bool PointInBox(const Box4& box, float x,  float y);
   const c::Color3B White();
@@ -62,7 +74,7 @@ namespace ccsx {
   void RunScene(cc::Scene* ns);
   bool IsTransitioning();
 
-  const cc::Size CSize(const stdstr& frame);
+  const cc::Size CalcSize(const stdstr& frame);
 
   const cc::Size HalfHW(cc::Sprite* );
   const cc::Rect BBox(cc::Sprite* );

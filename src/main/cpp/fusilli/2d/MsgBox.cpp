@@ -45,6 +45,7 @@ MsgBox* MsgBox::CreateWithMsg(const stdstr& msg) {
 //
 void MsgBox::SetAction(c::CallFunc* cb) {
   action = cb;
+  cb->retain();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,15 +62,27 @@ void MsgBox::OnYes(c::Ref* rr) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+void MsgBox::~MsgBox() {
+ action->release();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void MsgBox::MsgBox()
+  : action(nullptr) {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL MsgBoxLayer : public XLayer {
 private:
 
-  DISALLOW_COPYASSIGN(MsgBoxLayer)
+  NO__COPYASSIGN(MsgBoxLayer)
   MsgBoxLayer();
 
 public:
   virtual int GetIID() { return 1; }
-  virtual XLayer* Realize() override;
+  virtual XLayer* Realize();
   virtual ~MsgBoxLayer();
   CREATE_FUNC(MsgBoxLayer)
 };
@@ -94,9 +107,9 @@ XLayer* MsgBoxLayer::Realize() {
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto b1= CreateMenuBtn("#ok.png",
-      "#ok.png", "#ok.png");
-  b1->setTarget(par, CC_MENU_SELECTOR(MsgBox::OnYes));
+  auto b1= cx::CreateMenuBtn("#ok.png");
+  b1->setTarget(par,
+      CC_MENU_SELECTOR(MsgBox::OnYes));
   auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);

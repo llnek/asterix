@@ -35,13 +35,13 @@ private:
 
 public:
 
-  virtual XScene* Realize();
-  virtual ~XScene();
-
   void AddLayer(XLayer*, int z=0);
   XLayer* GetLayer(int tag);
 
-  virtual bool IsOperational();
+  virtual XScene* Realize();
+  virtual ~XScene();
+
+  virtual bool IsOperational() { return true; }
   virtual void Pause() {}
   virtual void Resume() {}
 

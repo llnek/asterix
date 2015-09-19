@@ -47,7 +47,7 @@ public:
 
   static YesNo* Create(const stdstr& msg);
 
-  virtual XScene* Realize() override;
+  virtual XScene* Realize();
   virtual ~YesNo();
 };
 

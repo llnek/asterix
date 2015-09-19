@@ -12,7 +12,6 @@
 #include "support/XConfig.h"
 #include "support/CCSX.h"
 #include "ui/UITextField.h"
-#include "net/Odin.h"
 #include "Online.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
@@ -27,12 +26,13 @@ private:
   void ShowWaitOthers();
   OnlineLayer() {}
 
-  DISALLOW_COPYASSIGN(OnlineLayer)
+  NO__COPYASSIGN(OnlineLayer)
 
 public:
   virtual int GetIID() { return 1; }
-  virtual XLayer* Realize() override;
-  virtual ~OnlineLayer();
+  virtual XLayer* Realize();
+  virtual ~OnlineLayer() {}
+
   CREATE_FUNC(OnlineLayer)
 };
 
@@ -52,6 +52,21 @@ void Online::SetActions(c::CallFunc* yes, c::CallFunc* no) {
   no->retain();
   this->yes= yes;
   this->no = no;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Online::Online()
+  : yes(nullptr)
+  , wss(nullptr)
+  , no(nullptr) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Online::~Online() {
+   yes->release();
+   no->release();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,9 +174,9 @@ void OnlineLayer::ShowWaitOthers() {
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto b1= CreateMenuBtn("#cancel.png",
-      "#cancel.png", "#cancel.png");
-  b1->setTarget(getParent(), CC_MENU_SELECTOR(Online::OnCancel));
+  auto b1= cx::CreateMenuBtn("#cancel.png");
+  b1->setTarget(getParent(),
+      CC_MENU_SELECTOR(Online::OnCancel));
   auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
@@ -185,7 +200,7 @@ XLayer* OnlineLayer::Realize() {
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto bxz = c::Sprite::create("#ok.png")->getContentSize();
+  auto bxz = cx::CalcSize("#ok.png");
   // editbox for user
   auto uid = c::ui::TextField::create();
   uid->setMaxLengthEnabled(true);
@@ -209,14 +224,12 @@ XLayer* OnlineLayer::Realize() {
   pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
   AddItem(pwd);
 
-  auto b1= CreateMenuBtn("#continue.png",
-      "#continue.png", "#continue.png");
+  auto b1= cx::CreateMenuBtn("#continue.png");
   b1->setCallback([=](c::Ref* rr) {
         this->OnReq(uid->getString(), pwd->getString());
       });
 
-  auto b2= CreateMenuBtn("#cancel.png",
-      "#cancel.png", "#cancel.png");
+  auto b2= cx::CreateMenuBtn("#cancel.png");
   b2->setTarget(par, CC_MENU_SELECTOR(Online::OnCancel));
   auto menu= c::Menu::create();
   menu->addChild(b1,1);

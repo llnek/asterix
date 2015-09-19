@@ -34,7 +34,7 @@ XLayer* XScene::GetLayer(int tag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XScene::AddLayer(XLayer* y, int z) {
- addChild(y, z, y->GetIID());
+ this->addChild(y, z, y->GetIID());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,13 +48,6 @@ XScene* XScene::Realize() {
 void XScene::OnQuitAction() {
   cx::RunScene( XConfig::GetInstance()->StartWith());
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool XScene::IsOperational() { return true; }
-
-
-
 
 
 

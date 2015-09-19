@@ -47,10 +47,10 @@ private:
 
 public:
 
-  virtual XScene* Realize() override;
-
   static MsgBox* CreateWithAction(c::CallFunc*, const stdstr&);
   static MsgBox* CreateWithMsg(const stdstr&);
+
+  virtual XScene* Realize();
   virtual ~MsgBox();
 
 };

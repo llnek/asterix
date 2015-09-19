@@ -13,8 +13,7 @@
 #define __ONLINE_H__
 
 #include "net/Odin.h"
-
-
+#include "XScene.h"
 NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
@@ -47,7 +46,7 @@ private:
 public:
 
   static Online* Create(c::CallFunc* yes, c::CallFunc* no);
-  virtual XScene* Realize() override;
+  virtual XScene* Realize();
   virtual ~Online();
 
 };

@@ -17,14 +17,10 @@
 #include "core/fusilli.h"
 #include "2d/CCLayer.h"
 #include <stdint.h>
-
-
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(a, ash)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -32,82 +28,58 @@ class CC_DLL XLayer : public c::Layer {
 friend class XScene;
 protected:
 
-  void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void AudioCallback(c::Ref* sender);
-
-  void AddAudioIcons(c::MenuItem* off, c::MenuItem* on,
-      const c::Vec2& anchor, const c::Vec2& pos);
-
   virtual void OnQuit(c::Ref*);
   XLayer();
-
-private:
 
   s::map<stdstr, c::SpriteBatchNode*> atlases;
   int lastTag;
   int lastZix;
 
+private:
   NO__COPYASSIGN(XLayer)
 
 public:
 
-  c::MenuItem* CreateMenuBtn( const stdstr& n);
-
-  c::MenuItem*
-    CreateMenuBtn(
-      const stdstr& n,
-      const stdstr& s, const stdstr& d);
-
-  c::SpriteBatchNode*
-    RegoAtlas(const stdstr& name,
-        int* z = nullptr, int* tag= nullptr);
-
+  c::SpriteBatchNode* RegoAtlas(const stdstr& name, int* z = nullptr, int* tag= nullptr);
   virtual XLayer* Realize();
 
-  virtual void PKInput();
-
-  virtual void AddAudioIcon(c::Dictionary* options);
-
-  virtual void CenterAtlasImage
-    (const stdstr& atlas, const stdstr& frame);
-
-  virtual void CenterImage(const stdstr& frame);
-
-  virtual void AddAtlasFrame
-    (const stdstr& atlas,
-     const stdstr& frame, const c::Vec2& pos);
-
-  virtual void AddFrame
-    (const stdstr& frame, const c::Vec2& pos);
-
-  virtual c::SpriteBatchNode*
-    GetAtlas(const stdstr& name);
-
-  virtual void RemoveAtlasAll(const stdstr& atlas) ;
-  virtual void RemoveAll();
-
-  virtual void RemoveItem(c::Node* n);
+  virtual c::SpriteBatchNode* GetAtlas(const stdstr& name);
 
   virtual void AddAtlasItem(const stdstr& atlas,
       c::Node* n, int* zx = nullptr, int* tag = nullptr);
   virtual void AddItem(c::Node* n,
       int* zx = nullptr, int* tag = nullptr);
 
+  void AddAtlasFrame
+    (const stdstr& atlas,
+     const stdstr& frame, const c::Vec2& pos);
+
+  void AddFrame
+    (const stdstr& frame, const c::Vec2& pos);
+
+  void CenterAtlasImage(const stdstr& atlas, const stdstr& frame);
+  void CenterImage(const stdstr& frame);
+
+  void RemoveAtlasAll(const stdstr& atlas) ;
+  void RemoveAll();
+  void RemoveItem(c::Node* n);
+
+  void AddAudioIcons(c::MenuItem* off, c::MenuItem* on,
+      const c::Vec2& anchor,
+      const c::Vec2& pos);
+
   XScene* GetScene();
   int IncIndexZ();
 
   // tag value
   virtual int GetIID() = 0;
-
   virtual ~XLayer();
 
 };
 
 
 
-
-
 NS_END(fusilli)
 #endif
-
 

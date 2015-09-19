@@ -57,7 +57,7 @@ typedef std::string stdstr;
 #ifdef __cplusplus
   #define NS_USING(nsp)  using namespace nsp;
   #define NS_BEGIN(nsp)  namespace nsp {
-  #define NS_END(nsp)    }
+  #define NS_END(nsp)    };
   #define NS_ALIAS(x,y)  namespace x = y;
 #else
   #define NS_USING(nsp)
