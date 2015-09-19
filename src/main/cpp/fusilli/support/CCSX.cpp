@@ -11,6 +11,7 @@
 
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCActionInterval.h"
+#include "2d/CCLabel.h"
 #include "2d/CCTransition.h"
 #include "base/CCDirector.h"
 #include "CCSX.h"
@@ -26,16 +27,25 @@ bool PointInBox(const Box4& box, float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-/*
-const Color3B White() {
-  return Color3B::WHITE;
+const c::Color3B White() {
+  return c::Color3B::WHITE;
 }
 //////////////////////////////////////////////////////////////////////////
 //
-const Color3B Black() {
-  return Color3B::BLACK;
+const c::Color3B Black() {
+  return c::Color3B::BLACK;
 }
-*/
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Label* CreateBmfLabel(float x, float y,
+    const stdstr& fontPath, const stdstr& text) {
+
+  auto f= c::Label::createWithBMFont(fontPath, text);
+  f->setPosition(x,y);
+  f->setOpacity(0.9*255);
+  return f;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects

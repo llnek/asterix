@@ -12,13 +12,14 @@
 #if !defined(__XCONFIG_H__)
 #define __XCONFIG_H__
 
+#include "deprecated/CCDictionary.h"
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 #include "support/XPool.h"
 #include "Primitives.h"
 #include <map>
 
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
@@ -37,11 +38,11 @@ protected:
   static const stdstr CSTS= "csts";
   static const stdstr CFG= "cfg";
 
-  cc::Dictionary* GetFragment(const stdstr& key);
+  c::Dictionary* GetFragment(const stdstr& key);
   XPool* CreatePool(const stdstr& p);
 
   s::map<stdstr, XPool*> pools;
-  cc::Dictionary* dict;
+  c::Dictionary* dict;
   XConfig();
 
 private:
@@ -53,7 +54,7 @@ public:
   static void SetInstance(XConfig*);
   static XConfig* GetInstance();
 
-  virtual void HandleResolution(const cc::Size& ) {}
+  virtual void HandleResolution(const c::Size& ) {}
   virtual float GetScale() { return 1; }
   virtual void RunOnce() {}
 
@@ -61,10 +62,10 @@ public:
   virtual const stdstr GetAppKey() = 0;
   virtual const stdstr AppId() = 0;
   virtual const stdstr GetColor() = 0;
-  virtual const cc::Size GetGameSize() = 0;
+  virtual const c::Size GetGameSize() = 0;
 
   virtual const stdstr GetWSUrl() = 0;
-  virtual cc::Scene* StartWith() = 0;
+  virtual c::Scene* StartWith() = 0;
 
   virtual void SetGameId(const stdstr& ) = 0;
   virtual void SetRoomId(const stdstr& ) = 0;
@@ -78,16 +79,16 @@ public:
   const stdstr GetImage(const stdstr& key);
   const stdstr GetSound(const stdstr& key);
 
-  cc::Ref* GetCst(const stdstr& cst);
+  c::Ref* GetCst(const stdstr& cst);
   XPool* GetPool(const stdstr& n);
 
   void ToggleAudio(bool s);
   bool HasAudio();
 
-  cc::Dictionary* GetLevelCfg(const stdstr& n);
-  cc::Dictionary* GetLevel(const stdstr& n);
+  c::Dictionary* GetLevelCfg(const stdstr& n);
+  c::Dictionary* GetLevel(const stdstr& n);
 
-  cc::Dictionary* AddLevel(const stdstr& n);
+  c::Dictionary* AddLevel(const stdstr& n);
 
   virtual ~XConfig();
 

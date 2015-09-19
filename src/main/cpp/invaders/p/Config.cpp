@@ -9,25 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "support/XPool.h"
 #include "Config.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string Config::GetAppKey() {
+const stdstr Config::GetAppKey() {
   return "d39bf198-518a-4de7-88a0-5e28c88571b0";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string Config::AppId() {
+const stdstr Config::AppId() {
   return "invaders";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::string Config::GetColor() {
+const stdstr Config::GetColor() {
   return "red";
 }
 
@@ -39,7 +40,7 @@ ResolutionPolicy Config::GetResolution() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Scene* Config::StartWith() {
+c::Scene* Config::StartWith() {
   return Splash::Create();
 }
 
@@ -56,8 +57,8 @@ Config::Config()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const cc::Size Config::GetGameSize() {
-  return cc::Size(320, 480);
+const c::Size Config::GetGameSize() {
+  return c::Size(320, 480);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +69,7 @@ float Config::GetScale() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::HandleResolution(const cc::Size& rs) {
+void Config::HandleResolution(const c::Size& rs) {
   //for default font, we use 48pt
   scale = 52/256 * rs.width /320;
 }
@@ -76,9 +77,9 @@ void Config::HandleResolution(const cc::Size& rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::RunOnce() {
-  auto c= cc::SpriteFrameCache::getInstance();
-  c->addSpriteFrames( GetAtlas("game-pics"));
-  c->addSpriteFrames( GetAtlas("lang-pics"));
+  auto c= c::SpriteFrameCache::getInstance();
+  c->addSpriteFramesWithFile( GetAtlas("game-pics"));
+  c->addSpriteFramesWithFile( GetAtlas("lang-pics"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,11 +88,11 @@ void Config::InitAssets() {
 
   auto d = GetFragment(ATLASES);
 
-  d->setObject("res/l10n/en/images.png", "lang-pics");
-  d->setObject("res/pics/images.png", "game-pics");
+  d->setObject("res/l10n/en/images.plist", "lang-pics");
+  d->setObject("res/pics/images.plst", "game-pics");
 
   d= GetFragment(IMAGES);
-  d->setObject("res/pics/bg.png", "gui.mmenus.menu.bg");
+  d->setObject("res/pics/bg.png", "mmenus.bg");
   d->setObject("res/pics/bg.png", "game.bg");
 
   d= GetFragment(SOUNDS);
@@ -134,29 +135,28 @@ void Config::InitCsts() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::InitPools() {
-  auto d = GetFragment(POOLS);
+  c::Dictionary* d = GetFragment(POOLS);
 
-  d->setObject(f::XPool::Create(), "missiles");
-  d->setObject(f::XPool::Create(), "bombs");
-  d->setObject(f::XPool::Create(), "explosions");
-
+  d->setObject(f::XPool::create(), "missiles");
+  d->setObject(f::XPool::create(), "bombs");
+  d->setObject(f::XPool::create(), "explosions");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s::string Config::GetWSUrl() {
+const stdstr Config::GetWSUrl() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s::string GetGameId() {
+const stdstr GetGameId() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s::string GetRoomId() {
+const stdstr GetRoomId() {
   return "";
 }
 

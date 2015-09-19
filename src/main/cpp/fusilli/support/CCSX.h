@@ -13,6 +13,7 @@
 #define __CCSX_H__
 
 #include "platform/CCCommon.h"
+#include "base/ccTypes.h"
 #include "support/Primitives.h"
 #include "2d/ComObj.h"
 
@@ -32,8 +33,8 @@ namespace ccsx {
 
 
   bool PointInBox(const Box4& box, float x,  float y);
-  //const Color3B White();
-  //const Color3B Black();
+  const c::Color3B White();
+  const c::Color3B Black();
 
   bool Collide0(cc::Sprite* , cc::Sprite* );
   bool Collide(ComObj* a, ComObj* b);
@@ -48,6 +49,9 @@ namespace ccsx {
   cc::Action* CreateTimer(cc::Node*, float millis);
   void UndoTimer(cc::ActionInterval*);
   bool TimerDone(cc::ActionInterval*);
+
+  c::Label* CreateBmfLabel(float x, float y,
+    const stdstr& fontPath, const stdstr& text);
 
   cc::Sprite* CreateSprite(const stdstr& frameName);
 

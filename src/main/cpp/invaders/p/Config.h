@@ -18,17 +18,16 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
-protected:
-
-  void InitAssets();
-  void InitCsts();
-
-  float scale;
-
 private:
 
   NO__COPYASSIGN(Config)
   Config();
+
+  void InitAssets();
+  void InitCsts();
+  void InitPools();
+
+  float scale;
 
 public:
 

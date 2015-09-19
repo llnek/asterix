@@ -9,63 +9,95 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "Menu.h"
 #include "Splash.h"
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusilli::ccsx)
+NS_BEGIN(invaders)
 
-
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-XLayer* SplashLayer::Realize() {
-  auto cfg = Config::GetInstance();
-  auto img= cfg->GetImage("game.bg");
-  CenterImage(img);
-  Title();
-  Btns();
+class CC_DLL SplashLayer : public f::XLayer {
+private:
+  NO__COPYASSIGN(SplashLayer)
+  SplashLayer();
+  void Title();
+  void Btns();
+
+public:
+
+  virtual int GetIID() { return 1; }
+  virtual f::XLayer* Realize();
+  virtual ~SplashLayer();
+
+  CREATE_FUNC(SplashLayer)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+SplashLayer::~SplashLayer() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+SplashLayer::SplashLayer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::OnPlay(Node* b) {
-  auto f= []() {
-    CCSX::RunScene(XConfig::GetInstance()->StartWith());
-  }
-  auto a= CallFunc::create(f);
-  auto m = MainMenu::CreateWithBackAction(a);
-
-  CCSX::RunScene( m->Realize());
+f::XLayer* SplashLayer::Realize() {
+  auto cfg = f::XConfig::GetInstance();
+  auto fp= cfg->GetImage("game.bg");
+  CenterImage(fp);
+  Title();
+  Btns();
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Title() {
-  auto cw= CCSX::Center();
-  auto wb= CCSX::VisBox();
-  AddFrame("#title.png", Vec2(cw.x, wb.top * 0.9));
+  auto cw= cx::Center();
+  auto wb= cx::VisBox();
+  AddFrame("#title.png", c::Vec2(cw.x, wb.top * 0.9));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Btns() {
-  auto cw= CCSX::Center();
-  auto wb= CCSX::VisBox();
-  auto b1= CreateMenuBtn("#play.png",
-      "#play.png", "#play.png",
-      CC_CALLBACK_1(SplashLayer::OnPlay, this));
-  auto menu= Menu::create();
+  auto cw= cx::Center();
+  auto wb= cx::VisBox();
+  auto b1= CreateMenuBtn("#play.png");
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(SplashLayer::OnPlay));
+  auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition( cw.x, wb.top * 0.1);
   AddItem(menu);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void SplashLayer::OnPlay(c::Ref* b) {
+  auto f= []() {
+    cx::RunScene(f::XConfig::GetInstance()->StartWith());
+  };
+  auto a= c::CallFunc::create(f);
+  MainMenu* m = MainMenu::CreateWithBackAction(a);
+
+  cx::RunScene( m->Realize());
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
-XScene* Splash::Realize() {
-  AddLayer(SplashLayer::create()->Realize());
+f::XScene* Splash::Realize() {
+  auto y = SplashLayer::create();
+  AddLayer(y);
+  y->Realize();
   return this;
 }
 
 
 
 
-NS_END(fusilli)
+NS_END(invaders)
 

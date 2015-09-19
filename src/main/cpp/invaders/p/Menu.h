@@ -12,45 +12,33 @@
 #if !defined(__MENU_H__)
 #define __MENU_H__
 
+#include "2d/CCActionInstant.h"
 #include "2d/XMenuLayer.h"
 #include "2d/XScene.h"
+NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MenuLayer : public XMenuLayer {
-public:
-
-  virtual void OnInit() override;
-  void OnBack(Ref*);
-  void OnQuit(Ref*);
-
-  virtual ~MenuLayer();
-  MenuLayer();
-
-  CREATE_FUNC(MenuLayer)
-
+class CC_DLL MainMenu : public f::XScene {
+friend class MainMenuLayer;
 private:
-  DISALLOW_COPYASSIGN(MenuLayer)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL MainMenu : public XScene {
-public:
-  static MainMenu* CreateWithBackAction(FiniteTimeAction* );
-
-  virtual void OnInit() override;
-
-  virtual ~MainMenu();
+  NO__COPYASSIGN(MainMenu)
   MainMenu();
 
   void OnBackAction();
   void OnQuitAction();
 
-private:
-  DISALLOW_COPYASSIGN(MainMenu)
+  c::CallFunc* backAction;
+
+public:
+
+  static MainMenu* CreateWithBackAction(c::CallFunc* );
+  virtual f::XScene* Realize();
+  virtual void OnInit();
+
+  virtual ~MainMenu();
+
 };
 
 

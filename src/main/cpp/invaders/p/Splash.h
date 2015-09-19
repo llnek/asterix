@@ -13,37 +13,28 @@
 #define __SPLASH_H__
 
 #include "2d/XScene.h"
-NS_BEGIN(fusilli)
+NS_ALIAS(f,fusilli)
+NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SplashLayer : public XLayer {
-public:
-  virtual SplashLayer();
-  virtual Layer* Realize() override;
-  CREATE_FUNC(SplashLayer)
-
+class CC_DLL Splash : public f::XScene {
+friend class SplashLayer;
 private:
-  DISALLOW_COPYASSIGN(SplashLayer)
-  SplashLayer();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL Splash : public XScene {
-public:
-  virtual XScene* Realize() override;
-  virtual ~Splash();
+  NO__COPYASSIGN(Splash)
   Splash();
+
+public:
+  virtual f::XScene* Realize();
+  virtual ~Splash();
+
   CREATE_FUNC(Splash)
-private:
-  DISALLOW_COPYASSIGN(Splash)
-}
+};
 
 
 
 
-NS_END(fusilli)
+NS_END(invaders)
 #endif
 

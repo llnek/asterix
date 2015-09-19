@@ -9,90 +9,31 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "deprecated/CCInteger.h"
+#include "support/XConfig.h"
 #include "Menu.h"
+NS_ALIAS(cx,fusilli::ccsx)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::Title() {
-  auto cfg = XConfig::GetInstance();
-  auto wb= CCSX::VisBox();
-  auto cw= CCSX::Center();
-  auto lb= CreateBMFLabel(cw.x, wb.top * 0.9,
-                          cfg->GetFont("font.JellyBelly"),
-                          "some text");
-  lb->setScale(cfg->GetScale());
-  lb->setColor(CCSX::WHITE);
-  AddItem(lb);
-}
+class CC_DLL MenuLayer : public f::XMenuLayer {
+private:
+  NO__COPYASSIGN(MenuLayer)
+  MenuLayer();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer* MenuLayer::Realize() {
-  auto cfg = XConfig::GetInstance();
-  auto tile = SCAST(Integer*, cfg->GetCst("TILE"));
-  auto img = cfg->GetImage("gui.mmenus.menu.bg");
-  CenterImage(img);
-  Title();
-  auto color= Color3B(94,49,120);
-  auto cw = CCSX::Center();
-  auto wb = CCSX::VisBox();
+public:
 
-  // play button
-  auto b1= CreateMenuBtn("#play.png",
-      "#play.png", "#play.png",
-      CC_CALLBACK_1(MenuLayer::OnPlay, this));
-  auto menu= Menu::create();
-  menu->addChild(b1);
-  menu->setPosition(cw);
-  AddItem(menu);
+  virtual int GetIID() { return 1; }
+  virtual void OnInit();
+  virtual ~MenuLayer();
 
-  // back-quit button
-  auto b= CreateMenuBtn("#icon_back.png",
-      "#icon_back.png",
-      "#icon_back.png",
-      CC_CALLBACK_1(MenuLayer::OnBack, this));
-  auto q= CreateMenuBtn("#icon_quit.png",
-      "#icon_quit.png",
-      "#icon_quit.png",
-      CC_CALLBACK_1(MenuLayer::OnQuit, this));
-  auto m2= MkBackQuit(false, b, q);
-  auto sz= b->getContentSize();
-  auto gap = tile->getValue();
-  m2->setPosition(wb.left + gap + sz.width * 1.1,
-                  wb.bottom + gap + sz.height * 0.45);
-  AddItem(m2);
+  void OnBack(c::Ref*);
+  void OnQuit(c::Ref*);
 
-  MenuItem* off;
-  MenuItem* on;
-  CreateAudioIcons(on,off);
-  off->setColor(CCSX::WHITE);
-  on->setColor(CCSX::WHITE);
-  AddAudioIcons(off, on, Anchor::BottomRight,
-      Vec2(wb.right - gap, wb.bottom + gap));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void MenuLayer::OnPlay() {
-  auto g= MainGame::create()->Realize();
-  CCSX::RunScene(g);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MenuLayer::OnBack(Ref* r) {
-  auto p = SCAST(MainMenu*, getParent());
-  p->OnBackAction();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MenuLayer::OnQuit(Ref* r) {
-  auto p = SCAST(MainMenu*, getParent());
-  p->OnQuitAction();
-}
+  CREATE_FUNC(MenuLayer)
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -106,21 +47,119 @@ MenuLayer::MenuLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::CreateWithBackAction(FiniteTimeAction* back) {
-  backAction= back;
-  back->retain();
+void MenuLayer::Title() {
+  auto cfg = f::XConfig::GetInstance();
+  auto wb= cx::VisBox();
+  auto cw= cx::Center();
+  auto fp= cfg->GetFont("font.JellyBelly");
+  auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
+                          fp,
+                          "some text");
+  lb->setScale(cfg->GetScale());
+  lb->setColor(cx::WHITE);
+  AddItem(lb);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::OnBackAction(Ref* s) {
+f::XLayer* MenuLayer::Realize() {
+  auto tile = CstVal<c::Integer>("TILE")->getValue();
+  auto cfg = f::XConfig::GetInstance();
+  auto color= c::Color3B(94,49,120);
+  auto cw = cx::Center();
+  auto wb = cx::VisBox();
+
+  // background
+  auto fp = cfg->GetImage("mmenus.bg");
+  CenterImage(fp);
+
+  // title
+  fp= cfg->GetFont("font.JellyBelly");
+  auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
+                          fp,
+                          "some text");
+  lb->setScale(cfg->GetScale());
+  lb->setColor(cx::WHITE);
+  AddItem(lb);
+
+  // play button
+  auto b1= CreateMenuBtn("#play.png");
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(MenuLayer::OnPlay));
+  auto menu= c::Menu::create();
+  menu->addChild(b1);
+  menu->setPosition(cw);
+  AddItem(menu);
+
+  // back-quit button
+  auto b= CreateMenuBtn("#icon_back.png");
+  b->setTarget(this,
+      CC_MENU_SELECTOR(MenuLayer::OnBack));
+  auto q= CreateMenuBtn("#icon_quit.png");
+  q->setTarget(this,
+      CC_MENU_SELECTOR(MenuLayer::OnQuit));
+  auto m2= MkBackQuit(false, b, q);
+  auto sz= b->getContentSize();
+
+  m2->setPosition(wb.left + tile + sz.width * 1.1,
+                  wb.bottom + tile + sz.height * 0.45);
+  AddItem(m2);
+
+  // audio
+  c::MenuItem* off;
+  c::MenuItem* on;
+  CreateAudioIcons(on,off);
+  off->setColor(cx::WHITE);
+  on->setColor(cx::WHITE);
+
+  AddAudioIcons(off, on,
+      cx::AnchorBR(),
+      c::Vec2(wb.right - gap, wb.bottom + gap));
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void MenuLayer::OnPlay() {
+//  auto g= Game::create()->Realize();
+//  cx::RunScene(g);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MenuLayer::OnBack(c::Ref* r) {
+  auto p = SCAST(MainMenu*, getParent());
+  p->OnBackAction();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MenuLayer::OnQuit(c::Ref* r) {
+  auto p = SCAST(MainMenu*, getParent());
+  p->OnQuitAction();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
+  backAction= back;
+  back->retain();
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void MainMenu::OnBackAction(c::Ref* s) {
   backAction->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XScene* MainMenu::Realize() {
-  return AddLayer(MenuLayer::create())->Realize();
+f::XScene* MainMenu::Realize() {
+  auto y = MenuLayer::create();
+  AddLayer(y);
+  y->Realize();
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

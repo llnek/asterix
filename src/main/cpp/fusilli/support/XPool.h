@@ -14,16 +14,17 @@
 
 #include "deprecated/CCDeprecated.h"
 #include "platform/CCCommon.h"
+#include "base/CCRef.h"
 #include "core/fusilli.h"
 #include "2d/ComObj.h"
 #include <vector>
-
+NS_ALIAS(c,cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XPool {
+class CC_DLL XPool : public c::Ref { //, c::Clonable {
 private:
 
   NO__COPYASSIGN(XPool)
@@ -47,10 +48,11 @@ public:
   void Reset();
   void Checkin(ComObj*);
 
+  virtual bool init() { return true; }
   virtual ~XPool();
 
 
-  DEFCREATE_FUNC(XPool)
+  CREATE_FUNC(XPool)
 };
 
 

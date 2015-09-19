@@ -9,26 +9,33 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__SPLASH_H__)
-#define __SPLASH_H__
+#if !defined(__HUD_H__)
+#define __HUD_H__
 
-#include "../../fusilli/core/fusilli.h"
-#include "../../fusilli/2d/XScene.h"
-NS_FI_BEGIN
-
-
-class CC_DLL SplashLayer : public XLayer {
-  virtual void Setup();
-}
-
-
-class CC_DLL Splash : public XScene {
-  virtual void Setup();
-}
+#include "platform/CCCommon.h"
+#include "2d/XHUDLayer.h"
+NS_ALIAS(f, fusilli)
+NS_BEGIN(invaders)
 
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL HUDLayer : public f::XHUDLayer {
+private:
+  NO__COPYASSIGN(HUDLayer)
+  HUDLayer();
 
-NS_FI_END
+public:
+
+
+  virtual ~HUDLayer();
+
+};
+
+
+
+NS_END(invaders)
 #endif
+
 
