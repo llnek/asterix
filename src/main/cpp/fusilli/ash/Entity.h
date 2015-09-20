@@ -12,7 +12,7 @@
 #if !defined(__ENTITY_H__)
 #define __ENTITY_H__
 
-#include "Component.h"
+#include "Ash.h"
 #include <vector>
 #include <map>
 

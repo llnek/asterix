@@ -15,8 +15,8 @@
 #include "deprecated/CCDictionary.h"
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
-#include "support/XPool.h"
 #include "Primitives.h"
+#include "XPool.h"
 #include <map>
 
 NS_ALIAS(c, cocos2d)

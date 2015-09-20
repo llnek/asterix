@@ -10,12 +10,14 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "audio/include/SimpleAudioEngine.h"
-#include "support/XConfig.h"
-#include "boot/Boot.h"
+#include "platform/CCGLView.h"
+#include "platform/CCGL.h"
+#include "XConfig.h"
+#include "Boot.h"
 #include "App.h"
 
 NS_ALIAS(den, CocosDenshion)
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 
 
@@ -44,22 +46,27 @@ void App::initGLContextAttrs() {
   //set OpenGL context attributions,now can only set six attributions:
   //red,green,blue,alpha,depth,stencil
   GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
-  cc::GLView::setGLContextAttrs(glContextAttrs);
+  c::GLView::setGLContextAttrs(glContextAttrs);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool App::applicationDidFinishLaunching() {
 
-  auto director = cc::Director::getInstance();
+  auto director = c::Director::getInstance();
   auto glview = director->getOpenGLView();
+  auto cfg = XConfig::GetInstance();
+  auto sz = cfg->GetGameSize();
 
   if (!glview) {
-    glview = cc::GLViewImpl::create("My Game");
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+        glview = c::GLViewImpl::createWithRect("z", c::Rect(0, 0, sz.width, sz.height));
+#else
+        glview = c::GLViewImpl::create("z");
+#endif
     director->setOpenGLView(glview);
   }
 
-  auto cfg = XConfig::GetInstance();
   Boot b;
 
   register_all_packages();
@@ -75,7 +82,7 @@ bool App::applicationDidFinishLaunching() {
 // When comes a phone call,it's be invoked too
 void App::applicationDidEnterBackground() {
 
-  cc::Director::getInstance()->stopAnimation();
+  c::Director::getInstance()->stopAnimation();
   den::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
@@ -83,7 +90,7 @@ void App::applicationDidEnterBackground() {
 // this function will be called when the app is active again
 void App::applicationWillEnterForeground() {
 
-  cc::Director::getInstance()->startAnimation();
+  c::Director::getInstance()->startAnimation();
   den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 

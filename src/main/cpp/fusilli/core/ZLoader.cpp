@@ -9,40 +9,38 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITYLIST_H__)
-#define __ENTITYLIST_H__
-
-#include "Entity.h"
-NS_ALIAS(s, std)
-NS_BEGIN(ash)
-
+#include "base/CCRef.h"
+#include "ZLoader.h"
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL EntityList {
-friend class Engine;
-private:
+void ZLoader::onEnter() {
+  c::Scene::onEnter();
+  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad), 0.3);
+}
 
-  NO__COPYASSIGN(EntityList)
+//////////////////////////////////////////////////////////////////////////////
+//
+void ZLoader::InitWithResources() {
+}
 
-  virtual ~EntityList();
-  EntityList();
+//////////////////////////////////////////////////////////////////////////////
+//
+void ZLoader::StartLoad(float delta) {
+  this->unschedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad));
+}
 
-public:
+//////////////////////////////////////////////////////////////////////////////
+//
+ZLoader::ZLoader() {
+}
 
-  const s::vector<Entity*> List();
-
-  void Release(Entity*);
-  void Add(Entity* );
-  void Clear() ;
-
-  Entity* head;
-  Entity* tail;
-
-};
+//////////////////////////////////////////////////////////////////////////////
+//
+ZLoader::~ZLoader() {
+}
 
 
-NS_END(ash)
-#endif
-
+NS_END(fusilli)
 

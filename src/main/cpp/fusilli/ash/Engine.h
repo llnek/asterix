@@ -12,8 +12,6 @@
 #if !defined(__ENGINE_H__)
 #define __ENGINE_H__
 
-#include "SystemList.h"
-#include "EntityList.h"
 #include "NodeList.h"
 #include <vector>
 #include <map>
@@ -21,24 +19,48 @@
 NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+class FS_DLL ObjList {
+private:
+
+  NO__COPYASSIGN(ObjList)
+
+public:
+
+  const s::vector<T*> List();
+
+  void Release(T*);
+  void Add(T* );
+  void Clear() ;
+
+  T* head;
+  T* tail;
+
+  virtual ~ObjList();
+  ObjList();
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Engine {
 private:
 
-  void RemoveEntity(EntityList*, Entity*);
+  void RemoveEntity(ObjList<Entity>*, Entity*);
   void OnModifyEntity(Entity*);
   void OnRemoveEntity(Entity*);
   void OnAddEntity(Entity*);
   void HouseKeeping();
 
-  s::map<stdstr, EntityList*> groups;
+  s::map<stdstr, ObjList<Entity>*> groups;
   s::vector<NodeList*> nodeLists;
   s::vector<Entity*> freeList;
   s::vector<Entity*> modList;
   s::vector<Entity*> addList;
 
-  SystemList systemList;
+  ObjList<System> systemList;
   bool updating;
   bool dirty;
 
@@ -63,10 +85,9 @@ public:
   NodeList* GetNodeList(const stdstr& group, const NodeType& );
   void ReleaseNodeList(NodeList*& );
 
-  System* GetSystem(const SystemType& );
-  void RegoSystem(System* );
   void RemoveSystem (System* );
   void RemoveSystems();
+  void RegoSystem(System* );
 
   void Update(float time);
 

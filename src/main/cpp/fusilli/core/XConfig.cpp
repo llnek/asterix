@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XConfig.h"
+#include "XConfig.h"
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ XPool* XConfig::GetPool(const stdstr& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 XPool* XConfig::CreatePool(const stdstr& key) {
-  auto p = XPool::Create();
+  auto p = XPool::create();
   pools.insert(pair<stdstr, XPool*>(key, p));
   return p;
 }

@@ -67,9 +67,9 @@ c::MenuItem* CreateMenuBtn(const stdstr& n,
     const stdstr& s,
     const stdstr& d) {
 
-  return c::MenuItemSprite::create(cx::CreateSprite(n),
-                                cx::CreateSprite(s),
-                                cx::CreateSprite(d));
+  return c::MenuItemSprite::create(CreateSprite(n),
+                                CreateSprite(s),
+                                CreateSprite(d));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -10,11 +10,11 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "base/ccUtils.h"
-#include "support/JSON.h"
+#include "JSON.h"
 #include "Odin.h"
 
 NS_ALIAS(n, cocos2d::network)
-NS_ALIAS(cc, cocos2d)
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
@@ -45,6 +45,13 @@ static Event mkJoinRequest (const stdstr& room,
   return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
 }
 */
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+static js::Document* evtToDoc(const Event& evt) {
+  return nullptr;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -84,7 +91,7 @@ static Event json_decode(const n::WebSocket::Data& e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 Event::Event() {
-  timeStamp = cc::utils::getTimeInMilliseconds();
+  timeStamp = c::utils::getTimeInMilliseconds();
   type= MType::SESSION;
   code= EType::NICHTS;
   doco= nullptr;
@@ -130,9 +137,9 @@ WSockSS::WSockSS() {
 // Send this event through the socket
 //
 void WSockSS::Send(const Event& evt) {
-  if (state == EType::S_CONNECTED &&
+  if (state == CType::S_CONNECTED &&
       NNP(wss)) {
-    wss->send( json::Stringify(evt));
+    wss->send( json::Stringify( evtToDoc(evt)));
   }
 }
 
@@ -184,7 +191,7 @@ void WSockSS::Reset() {
 // Close the connection to the socket
 //
 void WSockSS::Close() {
-  state= EType::S_NOT_CONNECTED;
+  state= CType::S_NOT_CONNECTED;
   Reset();
   if (NNP(wss)) {
     try {
@@ -207,7 +214,7 @@ void WSockSS::Disconnect() {
 void WSockSS::onOpen(n::WebSocket* ws) {
   // connection success
   // send the play game request
-  state= EType::S_CONNECTED;
+  state= CType::S_CONNECTED;
   ws->send(GetPlayRequest());
 }
 
@@ -267,7 +274,7 @@ void WSockSS::Connect(const stdstr& url) {
 //////////////////////////////////////////////////////////////////////////////
 //
 const stdstr WSockSS::GetPlayRequest() {
-  return json::Stringify( mkPlayRequest(game, user, passwd));
+  return json::Stringify( evtToDoc(mkPlayRequest(game, user, passwd)));
 }
 
 

@@ -9,56 +9,58 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XPOOL_H__)
-#define __XPOOL_H__
+#if !defined(__COMOBJ_H__)
+#define __COMOBJ_H__
 
 #include "deprecated/CCDeprecated.h"
 #include "platform/CCCommon.h"
-#include "base/CCRef.h"
-#include "core/fusilli.h"
-#include "2d/ComObj.h"
-#include <vector>
-NS_ALIAS(c,cocos2d)
-NS_ALIAS(s, std)
+#include "2d/CCSprite.h"
+#include "ash/Ash.h"
+NS_ALIAS(c, cocos2d)
+NS_ALIAS(a, ash)
+NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XPool : public c::Ref { //, c::Clonable {
+class CC_DLL ComObj : public a::Component {
+
 private:
 
-  NO__COPYASSIGN(XPool)
-  XPool();
-
-  s::vector<ComObj*> objs;
+  NO__COPYASSIGN(ComObj)
 
 public:
 
-  const s::vector<ComObj*>& Elements() { return objs; }
-  void Preset(s::function<ComObj* (XPool*)>, int);
-  ComObj* Select(s::function<bool (ComObj*)>);
+  c::Sprite* sprite;
+  int origHealth;
+  bool status;
+  int health;
+  int score;
 
-  ComObj* GetAndSet();
-  ComObj* Get();
-  ComObj* GetAt(int n);
+  c::Vec2 lastPos;
+  c::Vec2 vel;
 
-  int Size() { return (int)objs.size(); }
-  int CountActives();
+  void Inflate(c::Dictionary* options);
+  void Inflate(float x, float y);
+  void Deflate();
 
-  void Foreach(s::function<void (ComObj*)>);
-  void ClearAll(bool del=true);
+  void SetPos(float x, float y);
+  void Hurt(int damage);
 
-  void Reset();
-  void Checkin(ComObj*);
+  const c::Size CSize();
+  const c::Vec2 Pos();
 
-  virtual bool init() { return true; }
-  virtual ~XPool();
+  float Height();
+  float Width();
+  int Pid();
 
+  void UpdatePosition(float x, float y);
 
-  CREATE_FUNC(XPool)
+  ComObj(c::Sprite*, int health, int score);
+  ComObj(c::Sprite*);
+
+  virtual ~ComObj();
 };
-
-
 
 
 

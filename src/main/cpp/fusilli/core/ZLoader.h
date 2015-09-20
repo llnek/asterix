@@ -9,41 +9,36 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__COMPONENT_H__)
-#define __COMPONENT_H__
+#if !defined(__ZLOADER_H__)
+#define __ZLOADER_H__
 
 #include "platform/CCCommon.h"
 #include "core/fusilli.h"
-#include "Ash.h"
-NS_BEGIN(ash)
+NS_ALIAS(c, cocos2d)
+NS_BEGIN(fusilli)
 
-
-class Entity;
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Component {
-friend class Entity;
-protected:
-
-  Component() { par=nullptr;}
-
-  Entity* par;
-
+class CC_DLL ZLoader : public c::Scene {
 private:
 
-  NO__COPYASSIGN(Component)
+  NO__COPYASSIGN(ZLoader)
+  void StartLoad(float);
 
 public:
 
-  virtual const COMType TypeId() = 0;
-  bool HasParent() { return par; }
-  virtual ~Component() {}
+  void InitWithResources();
+
+  virtual void onEnter() ;
+  virtual ~ZLoader();
+  ZLoader();
 
 };
 
 
 
-NS_END(ash)
-#endif
 
+
+NS_END(fusilli)
+#endif
 

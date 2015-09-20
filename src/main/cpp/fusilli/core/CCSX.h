@@ -14,10 +14,9 @@
 
 #include "platform/CCCommon.h"
 #include "base/ccTypes.h"
-#include "support/Primitives.h"
-#include "2d/ComObj.h"
-
-NS_ALIAS(cc, cocos2d)
+#include "Primitives.h"
+#include "ComObj.h"
+NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
@@ -48,7 +47,7 @@ namespace ccsx {
   const c::Color3B White();
   const c::Color3B Black();
 
-  bool Collide0(cc::Sprite* , cc::Sprite* );
+  bool Collide0(c::Sprite* , c::Sprite* );
   bool Collide(ComObj* a, ComObj* b);
 
   void SetDevRes(bool landscape, float x, float y,
@@ -58,42 +57,42 @@ namespace ccsx {
   bool OutOfBound(ComObj* ent, const Box4& B);
   bool OutOfBound(const Box4& src, const Box4& B);
 
-  cc::Action* CreateTimer(cc::Node*, float millis);
-  void UndoTimer(cc::ActionInterval*);
-  bool TimerDone(cc::ActionInterval*);
+  c::Action* CreateTimer(c::Node*, float millis);
+  void UndoTimer(c::ActionInterval*);
+  bool TimerDone(c::ActionInterval*);
 
   c::Label* CreateBmfLabel(float x, float y,
     const stdstr& fontPath, const stdstr& text);
 
-  cc::Sprite* CreateSprite(const stdstr& frameName);
+  c::Sprite* CreateSprite(const stdstr& frameName);
 
   const Box4 BBox4B4(ComObj* ent);
-  const Box4 BBox4(cc::Sprite* );
+  const Box4 BBox4(c::Sprite* );
 
-  void RunScene(cc::Scene* ns, float delay);
-  void RunScene(cc::Scene* ns);
+  void RunScene(c::Scene* ns, float delay);
+  void RunScene(c::Scene* ns);
   bool IsTransitioning();
 
-  const cc::Size CalcSize(const stdstr& frame);
+  const c::Size CalcSize(const stdstr& frame);
 
-  const cc::Size HalfHW(cc::Sprite* );
-  const cc::Rect BBox(cc::Sprite* );
+  const c::Size HalfHW(c::Sprite* );
+  const c::Rect BBox(c::Sprite* );
 
-  float GetScaledHeight(cc::Node* );
+  float GetScaledHeight(c::Node* );
 
-  float GetHeight(cc::Node*);
+  float GetHeight(c::Node*);
 
-  float GetScaledWidth(cc::Node* );
+  float GetScaledWidth(c::Node* );
 
-  float GetWidth(cc::Node* );
+  float GetWidth(c::Node* );
 
-  float GetLeft(cc::Node* );
+  float GetLeft(c::Node* );
 
-  float GetRight(cc::Node*);
+  float GetRight(c::Node*);
 
-  float GetTop(cc::Node*);
+  float GetTop(c::Node*);
 
-  float GetBottom(cc::Node*);
+  float GetBottom(c::Node*);
 
   float GetLastLeft(ComObj* );
 
@@ -107,29 +106,29 @@ namespace ccsx {
 
   float CenterY();
 
-  const cc::Vec2 Center();
+  const c::Vec2 Center();
 
   float ScreenHeight();
 
   float ScreenWidth();
 
-  const cc::Rect VisRect();
+  const c::Rect VisRect();
   const Box4 VisBox();
 
-  const cc::Size Screen();
-  const cc::Vec2 SCenter();
+  const c::Size Screen();
+  const c::Vec2 SCenter();
 
-  const cc::Vec2 VBoxMID(const Box4& );
+  const c::Vec2 VBoxMID(const Box4& );
 
   bool TraceEnclosure(float dt, const Box4& bbox,
-      const cc::Rect& rect, const cc::Vec2& vel,
-      cc::Vec2& outPos, cc::Vec2& outVel);
+      const c::Rect& rect, const c::Vec2& vel,
+      c::Vec2& outPos, c::Vec2& outVel);
 
   /**
    * Get the sprite from the frame cache using
    * its id (e.g. #ship).
    */
-  cc::SpriteFrame* GetSpriteFrame(const stdstr& frameid);
+  c::SpriteFrame* GetSpriteFrame(const stdstr& frameid);
 
   bool HasKeyPad();
 
@@ -147,15 +146,15 @@ namespace ccsx {
 
   void OnTouchOne();
 
-  const cc::Vec2 AnchorC();
-  const cc::Vec2 AnchorTL();
-  const cc::Vec2 AnchorT();
-  const cc::Vec2 AnchorTR();
-  const cc::Vec2 AnchorR();
-  const cc::Vec2 AnchorL();
-  const cc::Vec2 AnchorBR();
-  const cc::Vec2 AnchorB();
-  const cc::Vec2 AnchorBL();
+  const c::Vec2 AnchorC();
+  const c::Vec2 AnchorTL();
+  const c::Vec2 AnchorT();
+  const c::Vec2 AnchorTR();
+  const c::Vec2 AnchorR();
+  const c::Vec2 AnchorL();
+  const c::Vec2 AnchorBR();
+  const c::Vec2 AnchorB();
+  const c::Vec2 AnchorBL();
 
 };
 

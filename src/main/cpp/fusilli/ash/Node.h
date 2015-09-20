@@ -12,7 +12,7 @@
 #if !defined(__NODE_H__)
 #define __NODE_H__
 
-#include "Component.h"
+#include "Ash.h"
 #include <vector>
 #include <map>
 

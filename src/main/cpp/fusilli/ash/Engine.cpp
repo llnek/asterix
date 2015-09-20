@@ -12,6 +12,80 @@
 #include "Engine.h"
 NS_BEGIN(ash)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+void ObjList<T>::Add(T* e ) {
+  if (ENP(head)) {
+    head = tail = e;
+  } else {
+    tail->next = e;
+    e->previous = tail;
+    tail = e;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+void ObjList<T>::Release(T* e) {
+  if (head == e) {
+    head = head->next;
+  }
+  if (tail == e) {
+    tail = tail->previous;
+  }
+  if (e->previous ) {
+    e->previous->next = e->next;
+  }
+  if (e->next) {
+    e->next->previous = e->previous;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+void ObjList<T>::Clear() {
+  while (NNP(head)) {
+    auto e= head;
+    head = head->next;
+    e->previous = nullptr;
+    e->next = nullptr;
+  }
+  tail = nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+const s::vector<T*> ObjList<T>::List() {
+  s::vector<T*> v;
+  for (auto p= head; NNP(p); p=p->next) {
+    v.push_back(p);
+  }
+  return v;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+ObjList<T>::~ObjList() {
+  while (NNP(head)) {
+    auto e= head;
+    head = head->next;
+    delete e;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+ObjList<T>::ObjList()
+  : head(nullptr)
+  , tail(nullptr) {
+}
+
   /*
 A* myA = new A;
 Will_Get_Function_Pointer(1.00,2.00, &myA->Minus)
@@ -76,12 +150,12 @@ const s::vector<System*> Engine::GetSystems() {
 Entity* Engine::CreateEntity(const stdstr& group) {
   auto e= Entity::Create(group, this);
   auto it= groups.find(group);
-  EntityList* el;
+  ObjList<Entity>* el;
   if (it != groups.end()) {
     el= it->second;
   } else {
-    el= new EntityList();
-    groups.insert(pair<stdstr, EntityList*>(group,el));
+    el= new ObjList<Entity>();
+    groups.insert(pair<stdstr, ObjList<Entity>*>(group,el));
   }
   el->Add(e);
   addList.push_back(e);
@@ -112,7 +186,7 @@ void Engine::RemoveEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntity(EntityList* el, Entity* e) {
+void Engine::RemoveEntity(ObjList<Entity>* el, Entity* e) {
   e->MarkDelete();
   el->Release(e);
   dirty=true;
@@ -173,12 +247,6 @@ void Engine::ReleaseNodeList(NodeList*& nl) {
 void Engine::RegoSystem(System* s) {
   s->AddToEngine( this );
   systemList.Add(s);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-System* Engine::GetSystem(const SystemType& type) {
-  return systemList.Get(type);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -9,38 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "base/CCRef.h"
-#include "ZLoader.h"
+#if !defined(__BOOT_H__)
+#define __BOOT_H__
+
+#include "platform/CCCommon.h"
+#include "core/fusilli.h"
+#include "L10N.h"
+NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void ZLoader::onEnter() {
-  cc::Scene::onEnter();
-  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad), 0.3);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ZLoader::InitWithResources() {
-}
+class CC_DLL Boot {
+private:
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void ZLoader::StartLoad(float delta) {
-  this->unschedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad));
-}
+  NO__COPYASSIGN(Boot)
+  void PreLaunch();
+  void InitAudio();
+  L10NCache l10n;
 
-//////////////////////////////////////////////////////////////////////////////
-//
-ZLoader::ZLoader() {
-}
+public:
 
-//////////////////////////////////////////////////////////////////////////////
-//
-ZLoader::~ZLoader() {
-}
+  virtual ~Boot();
+  Boot();
+
+};
+
+
+
 
 
 NS_END(fusilli)
+#endif
 

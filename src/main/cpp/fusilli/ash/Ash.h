@@ -18,10 +18,23 @@ NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 
+//////////////////////////////////////////////////////////////////////////
+//
 typedef s::string SystemType;
 typedef s::string COMType;
 typedef s::string NodeType;
 
+//////////////////////////////////////////////////////////////////////////
+//
+class FS_DLL Component {
+protected:
+  Component() {}
+private:
+  NO__COPYASSIGN(Component)
+public:
+  virtual const COMType TypeId() = 0;
+  virtual ~Component() {}
+};
 
 
 

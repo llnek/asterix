@@ -12,13 +12,26 @@
 #if !defined(__NODEREGISTRY_H__)
 #define __NODEREGISTRY_H__
 
-#include "NodeFactory.h"
 #include <vector>
 #include <map>
+#include "Ash.h"
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 class Node;
+//////////////////////////////////////////////////////////////////////////////
+//
+class FS_DLL NodeFactory {
+protected:
+  NodeFactory() {}
+private:
+  NO__COPYASSIGN(NodeFactory)
+public:
+  static const NodeType TypeId();
+  virtual Node* CreateNode() = 0;
+  virtual ~NodeFactory() {}
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL NodeRegistry {

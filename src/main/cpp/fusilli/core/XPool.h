@@ -9,32 +9,53 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__BOOT_H__)
-#define __BOOT_H__
+#if !defined(__XPOOL_H__)
+#define __XPOOL_H__
 
+#include "deprecated/CCDeprecated.h"
 #include "platform/CCCommon.h"
+#include "base/CCRef.h"
 #include "core/fusilli.h"
-#include "i18n/L10N.h"
-
-NS_ALIAS(cc, cocos2d)
+#include "ComObj.h"
+#include <vector>
+NS_ALIAS(c,cocos2d)
+NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Boot {
+class CC_DLL XPool : public c::Ref { //, c::Clonable {
 private:
 
-  NO__COPYASSIGN(Boot)
-  void PreLaunch();
-  void InitAudio();
-  L10NCache l10n;
+  NO__COPYASSIGN(XPool)
+  XPool();
+
+  s::vector<ComObj*> objs;
 
 public:
 
-  virtual ~Boot();
-  Boot();
+  const s::vector<ComObj*>& Elements() { return objs; }
+  void Preset(s::function<ComObj* (XPool*)>, int);
+  ComObj* Select(s::function<bool (ComObj*)>);
 
+  ComObj* GetAndSet();
+  ComObj* Get();
+  ComObj* GetAt(int n);
+
+  int Size() { return (int)objs.size(); }
+  int CountActives();
+
+  void Foreach(s::function<void (ComObj*)>);
+  void ClearAll(bool del=true);
+
+  void Reset();
+  void Checkin(ComObj*);
+
+  virtual bool init() { return true; }
+  virtual ~XPool();
+
+
+  CREATE_FUNC(XPool)
 };
 
 
