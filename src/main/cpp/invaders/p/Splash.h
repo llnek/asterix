@@ -26,11 +26,13 @@ private:
   void OnPlay(c::Ref*);
   Splash();
 
+  CREATE_FUNC(Splash)
 public:
+
   virtual f::XScene* Realize();
   virtual ~Splash();
 
-  CREATE_FUNC(Splash)
+  static Splash* Create();
 };
 
 

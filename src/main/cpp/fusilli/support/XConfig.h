@@ -29,14 +29,14 @@ NS_BEGIN(fusilli)
 class CC_DLL XConfig {
 protected:
 
-  static const stdstr ATLASES= "atlases";
-  static const stdstr LEVELS= "levels";
-  static const stdstr FONTS= "fonts";
-  static const stdstr TILES= "tiles";
-  static const stdstr IMAGES= "images";
-  static const stdstr SOUNDS= "sounds";
-  static const stdstr CSTS= "csts";
-  static const stdstr CFG= "cfg";
+  static const stdstr ATLASES;
+  static const stdstr LEVELS;
+  static const stdstr FONTS;
+  static const stdstr TILES;
+  static const stdstr IMAGES;
+  static const stdstr SOUNDS;
+  static const stdstr CSTS;
+  static const stdstr CFG;
 
   c::Dictionary* GetFragment(const stdstr& key);
   XPool* CreatePool(const stdstr& p);

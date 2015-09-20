@@ -100,7 +100,13 @@ f::XScene* Splash::Realize() {
   return this;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
+Splash* Splash::Create() {
+  auto s = Splash::create();
+  s->Realize();
+  return s;
+}
 
 
 NS_END(invaders)

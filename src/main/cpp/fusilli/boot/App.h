@@ -53,8 +53,6 @@ public:
 
   virtual void initGLContextAttrs();
 
-  virtual cc::Scene* GetStartScene() = 0;
-
   virtual ~App();
 
 };

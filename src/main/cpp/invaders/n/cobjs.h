@@ -46,7 +46,7 @@ public:
   AlienSquad(f::XPool* aliens, int step);
   virtual ~AlienSquad();
   const s::vector<f::ComObj*>& Elements() { return aliens->Elements(); }
-  const c::Size Size() { return aliens->Size(); }
+  int Size() { return aliens->Size(); }
 
   f::XPool* aliens;
   int stepx;

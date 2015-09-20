@@ -27,12 +27,13 @@ AppDelegate::AppDelegate() {
   r->Register( g::CannonCtrlNode::Create());
   r->Register( g::AlienMotionNode::Create());
 
-  f::XConfig::SetInstance(new g::Config());
+  f::XConfig::SetInstance(g::Config::Create());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
 }
+
 
 

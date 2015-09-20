@@ -14,8 +14,16 @@ NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static XConfig* singleton;
+const stdstr XConfig::ATLASES= "atlases";
+const stdstr XConfig::LEVELS= "levels";
+const stdstr XConfig::FONTS= "fonts";
+const stdstr XConfig::TILES= "tiles";
+const stdstr XConfig::IMAGES= "images";
+const stdstr XConfig::SOUNDS= "sounds";
+const stdstr XConfig::CSTS= "csts";
+const stdstr XConfig::CFG= "cfg";
 
+static XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
 static const stdstr getXXX(cc::Dictionary* d, const stdstr& key ) {
