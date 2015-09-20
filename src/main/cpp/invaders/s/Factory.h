@@ -9,6 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__FACTORY_H__)
+#define __FACTORY_H__
+
+
 #include "support/XPool.h"
 #include "ash/Engine.h"
 NS_ALIAS(a, ash)
@@ -27,7 +31,7 @@ class CC_DLL Factory {
 protected:
 
   c::Dictionary* state;
-  a::Engine engine;
+  a::Engine* engine;
 
 private:
 
@@ -42,7 +46,7 @@ public:
   void CreateBombs(int count = 24);
 
   const c::Size CalcImgSize(const stdstr& img);
-  GetRankInfo(const Rank r);
+  c::Dictionary* GetRankInfo(const Rank r);
 
   void FillSquad(f::XPool* );
   void CreateAliens();
@@ -54,5 +58,6 @@ public:
 
 
 NS_END(invaders)
+#endif
 
 

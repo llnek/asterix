@@ -159,7 +159,7 @@ namespace ccsx {
 
 };
 
-
+typedef NodeFld<ComObj*> GComObj;
 
 
 NS_END(fusilli)

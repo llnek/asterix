@@ -9,6 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__STAGER_H__)
+#define __STAGER_H__
+
+
 #include "BaseSystem.h"
 NS_BEGIN(invaders)
 
@@ -29,6 +33,7 @@ public:
 
   static Stager* Create(Factory*, c::Dictionary*);
 
+  virtual const a::SystemType TypeId() { return "s/Stager"; }
   virtual void RemoveFromEngine(a::Engine*);
   virtual void AddToEngine(a::Engine*);
 
@@ -47,4 +52,5 @@ public:
 
 
 NS_END(invaders)
+#endif
 

@@ -14,6 +14,7 @@
 #include "support/XPool.h"
 #include "2d/MainGame.h"
 #include "ash/Engine.h"
+#include "n/gnodes.h"
 #include "Factory.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
@@ -21,7 +22,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::Factory(f::Engine* e, c::Dictionary* options)
+Factory::Factory(a::Engine* e, c::Dictionary* options)
   : engine(e)
   , state(options) {
 
@@ -60,7 +61,7 @@ void Factory::CreateMissiles(int count) {
 void Factory::CreateExplosions(int count) {
   auto p= f::XConfig::GetInstance()->GetPool("explosions");
   auto cb= []() -> a::Component* {
-    const sp = cx::CreateSprite("boom_0.png");
+    auto sp = cx::CreateSprite("boom_0.png");
     sp->setVisible(false);
     f::MainGame::Get()->AddAtlasItem("game-pics", sp);
     return new Explosion(sp);
@@ -73,7 +74,7 @@ void Factory::CreateExplosions(int count) {
 void Factory::CreateBombs(int count) {
   auto p= f::XConfig::GetInstance()->GetPool("bombs");
   auto cb= []() -> a::Component* {
-    const sp = cx::CreateSprite("bomb.png");
+    auto sp = cx::CreateSprite("bomb.png");
     sp->setVisible(false);
     f::MainGame::Get()->AddAtlasItem("game-pics", sp);
     return new Bomb(sp);
@@ -90,11 +91,11 @@ const c::Size Factory::CalcImgSize(const stdstr& img) {
 //////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* Factory::GetRankInfo(const Rank r) {
-  c::Size z= CalcImgSize("purple_bug_0.png");
+  c::Size z= cx::CalcSize("purple_bug_0.png");
   stdstr s0 = "purple_bug_0.png";
   stdstr s1= "purple_bug_1.png";
   int v= 30;
-  auto d = c::Directory::create();
+  auto d = c::Dictionary::create();
 
   if (r < 3) {
     v= 100;
@@ -134,23 +135,28 @@ void Factory::FillSquad(f::XPool* pool) {
   int v, row;
   float x,y;
 
-  az= DictVal<f::Size2>(info, "size")->getValue();
+  f::Size2* s2 = DictVal<f::Size2>(info, "size");
+  az= s2->getValue();
   row=0;
   for (int n=0; n < cells; ++n) {
     if (n % cols == 0) {
       y = (n == 0) ? wb.top * 0.9
-                   : y - az.height - wz.height * 4/480;
-      x = wb.left + (8/320 * wz.width) + HWZ(az);
+                   : y - az.height - wz.size.height * 4/480;
+      x = wb.left + (8/320 * wz.size.width) + HWZ(az);
       row += 1;
       info= GetRankInfo(row);
-      az= DictVal<f::Size2>(info, "size")->getValue();
+      s2= DictVal<f::Size2>(info, "size");
+      az= s2->getValue();
     }
-    aa = DictVal<c::String>(info, "img0")->getCString();
+    c::String* s = DictVal<c::String>(info, "img0");
+    aa = s->getCString();
     aa->setPosition(x + HWZ(az), y - HHZ(az));
 
     c::Vector<c::SpriteFrame*> animFrames(2);
-    auto f1 = DictVal<c::String>(info, "img0")->getCString();
-    auto f2 = DictVal<c::String>(info, "img1")->getCString();
+    s=DictVal<c::String>(info, "img0");
+    auto f1 = s->getCString();
+    s=DictVal<c::String>(info, "img1");
+    auto f2 = s->getCString();
     animFrames.pushBack( cx::CreateSprite(f1));
     animFrames.pushBack( cx::CreateSprite(f2));
 
@@ -159,11 +165,12 @@ void Factory::FillSquad(f::XPool* pool) {
         c::Animation::createWithSpriteFrames( animFrames, 1))));
 
     f::MainGame::Get()->AddAtlasItem("game-pics", aa);
-    x += az.width + (8/320 * wz.width);
-    v= DictVal<c::Integer>(info, "value")->getValue();
-    aa= new Alien(aa, v, row);
-    aa->status=true;
-    pool->Checkin(aa);
+    x += az.width + (8/320 * wz.size.width);
+    c::Integer* nn= DictVal<c::Integer>(info, "value");
+    v= nn->getValue();
+    auto co= new Alien(aa, v, row);
+    co->status=true;
+    pool->Checkin(co);
   }
 }
 
@@ -202,8 +209,8 @@ a::Entity* Factory::CreateShip() {
   auto s= cx::CreateSprite("ship_1.png");
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
-  auto y = sz.height + wb.bottom + (5/60 * wz.height);
-  auto x = wb.left + wz.width * 0.5;
+  auto y = sz.height + wb.bottom + (5/60 * wz.size.height);
+  auto x = wb.left + wz.size.width * 0.5;
   Ship* ship;
 
   f::MainGame::Get()->AddAtlasItem("game-pics", s);

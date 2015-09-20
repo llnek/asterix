@@ -9,23 +9,27 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__ALIENS_H__)
+#define __ALIENS_H__
+
 #include "BaseSystem.h"
-NS_ALAIS(c, cocos2d)
+#include "n/gnodes.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Aliens : public BaseSystem {
-protected:
-  NodeList* aliens;
-
 private:
 
   NO__COPYASSIGN(Aliens)
   Aliens();
 
+  a::NodeList* baddies;
+
 public:
+
+  virtual const a::SystemType TypeId() { return "n/Aliens"; }
 
   static Aliens* Create(Factory*, c::Dictionary*);
   virtual ~Aliens();
@@ -38,19 +42,19 @@ public:
   void ProcessBombs(a::Node*, float dt);
 
   void DropBomb(float x, float y);
-  void CheckBomb(a::Node* sqad);
+  void CheckBomb(AlienSquad* sqad);
 
-  void MaybeShuffleAliens(a::Node* sqad);
+  void MaybeShuffleAliens(AlienSquad* sqad);
   void TestDirX(f::ComObj* b, int stepx);
 
   void ForwardOneAlien(f::ComObj* a, float delta);
   void ShuffleOneAlien(f::ComObj* a, int stepx);
 
-  void DoShuffle(a::Node* sqad);
-  void DoForward(a::Node* sqad);
+  void DoShuffle(AlienSquad* sqad);
+  void DoForward(AlienSquad* sqad);
 
-  float FindMinX(a::Node* sqad);
-  float FindMaxX(a::Node* sqad);
+  f::ComObj* FindMinX(AlienSquad* sqad);
+  f::ComObj* FindMaxX(AlienSquad* sqad);
 
   virtual int Priority() { return Motion; }
 
@@ -58,5 +62,5 @@ public:
 
 
 NS_END(invaders)
-
+#endif
 

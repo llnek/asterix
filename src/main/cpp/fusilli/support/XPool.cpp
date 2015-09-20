@@ -47,6 +47,12 @@ ComObj* XPool::GetAndSet() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+//
+ComObj* XPool::GetAt(int pos) {
+  return objs.at(pos);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool.  More like a peek
 ComObj* XPool::Get() {
   for (auto it = objs.begin(); it != objs.end(); ++it) {

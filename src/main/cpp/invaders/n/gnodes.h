@@ -9,9 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__GNODES_H__)
+#define __GNODES_H__
+
+
 #include "ash/NodeFactory.h"
 #include "ash/Node.h"
 #include "cobjs.h"
+NS_ALIAS(a,ash)
 NS_BEGIN(invaders)
 
 
@@ -70,5 +75,6 @@ public:
 
 
 NS_END(invaders)
+#endif
 
 

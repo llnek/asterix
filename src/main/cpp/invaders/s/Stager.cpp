@@ -55,7 +55,7 @@ void Stager::AddToEngine(a::Engine* e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::InitAlienSize() {
-  auto z= cx::CSize("purple_bug_0.png");
+  auto z= cx::CalcSize("purple_bug_0.png");
   //pick purple since it is the largest
   state->setObject(f::Size2::create(z.width,z.height), "alienSize");
 }
@@ -63,7 +63,7 @@ void Stager::InitAlienSize() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::InitShipSize() {
-  auto z= cx::CSize("ship_0.png");
+  auto z= cx::CalcSize("ship_0.png");
   state->setObject(f::Size2::create(z.width, z.height), "shipSize");
 }
 
@@ -95,31 +95,33 @@ void Stager::OnceOnly() {
 
   cx::OnTouchOne(this);
   cx::OnMouse(this);
-  g->PKInput(engine);
+  //TODO:
+  //g->PKInput(engine);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::Fire(t, evt) {
-  auto s = f::MainGame::GetS();
+void Stager::Fire(const stdstr& t, void* evt) {
+  auto s = f::MainGame::Self();
 
-  if ('/touch/one/move' === t ||
-      '/mouse/move' === t) {} else {
+  if ("/touch/one/move" == t ||
+      "/mouse/move" == t) {} else {
     return;
   }
   if (s->IsOperational() &&
       NNP(ships->head)) {
 
-    auto ship = ships->head->ship;
+    auto ship = SCAST(f::ComObj*, ships->head->Get("ship"));
     auto pos = ship->Pos();
     auto x=pos.x;
     auto y=pos.y;
     auto wz= cx::VisRect();
 
-    pos.add(cc::Vec2(evt->getDelta().x, 0));
+    //TODO:
+    //pos.add(cc::Vec2(evt->getDelta().x, 0));
     pos.clamp(cc::Vec2(0, 0),
-              cc::Vec2(wz.width, wz.height));
-    ship->setPos(pos.x, pos.y);
+              cc::Vec2(wz.size.width, wz.size.height));
+    ship->SetPos(pos.x, pos.y);
   }
 }
 

@@ -40,6 +40,7 @@ public:
 
   ComObj* GetAndSet();
   ComObj* Get();
+  ComObj* GetAt(int n);
 
   int Size() { return (int)objs.size(); }
   int CountActives();

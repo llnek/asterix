@@ -50,6 +50,9 @@ public:
   virtual int GetIID() { return 2; }
   virtual void update(float);
 
+  virtual void SendMsg(const stdstr& topic, void* msg);
+  virtual ComObj* GetPlayer();
+
   virtual XLayer* Realize();
   virtual ~XGameLayer();
 

@@ -9,6 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__RESOLVE_H__)
+#define __RESOLVE_H__
+
+
 #include "BaseSystem.h"
 NS_BEGIN(invaders)
 
@@ -30,6 +34,8 @@ public:
   static Resolve* Create(Factory*, c::Dictionary*);
   virtual ~Resolve();
 
+  virtual const a::SystemType TypeId() { return "s/Resolve"; }
+
   virtual void RemoveFromEngine(a::Engine*);
   virtual void AddToEngine(a::Engine*);
   virtual bool Update(float dt);
@@ -46,5 +52,6 @@ public:
 
 
 NS_END(invaders)
+#endif
 
 

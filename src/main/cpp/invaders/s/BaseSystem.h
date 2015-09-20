@@ -9,9 +9,16 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__BASESYSTEM_H__)
+#define __BASESYSTEM_H__
+
+
+#include "deprecated/CCDictionary.h"
 #include "platform/CCCommon.h"
+#include "Factory.h"
 #include "ash/Ash.h"
 NS_ALIAS(c, cocos2d)
+NS_ALIAS(a,ash)
 NS_BEGIN(invaders)
 
 
@@ -41,5 +48,6 @@ public:
 
 
 NS_END(invaders)
+#endif
 
 

@@ -9,6 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__COLLIDE_H__)
+#define __COLLIDE_H__
+
+
 #include "BaseSystem.h"
 NS_BEGIN(invaders)
 
@@ -16,15 +20,17 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Collide : public BaseSystem {
-protected:
-  a::NodeList aliens;
-  a::NodeList ships;
 private:
 
   NO__COPYASSIGN(Collide)
   Collide();
 
+  a::NodeList* aliens;
+  a::NodeList* ships;
+
 public:
+
+  virtual const a::SystemType TypeId() { return "n/Collide"; }
 
   static Collide* Create(Factory*, c::Dictionary*);
   virtual ~Collide();
@@ -46,4 +52,5 @@ public:
 
 
 NS_END(invaders)
+#endif
 

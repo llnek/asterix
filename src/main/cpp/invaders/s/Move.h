@@ -9,7 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__MOVE_H__)
+#define __MOVE_H__
+
+
 #include "BaseSystem.h"
+#include "n/gnodes.h"
 NS_BEGIN(invaders)
 
 
@@ -21,7 +26,11 @@ private:
   NO__COPYASSIGN(Move)
   Move();
 
+  a::NodeList* ships;
+
 public:
+
+  virtual const a::SystemType TypeId() { return "s/Move"; }
 
   static Move* Create(Factory*, c::Dictionary* );
   virtual ~Move();
@@ -43,6 +52,7 @@ public:
 
 
 NS_END(invaders)
+#endif
 
 
 

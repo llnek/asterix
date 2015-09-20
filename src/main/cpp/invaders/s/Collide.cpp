@@ -46,7 +46,7 @@ void Collide::RemoveFromEngine(a::Engine* e) {
 //
 void Collide::AddToEngine(a::Engine* e) {
   aliens= e->GetNodeList(AlienMotionNode::TypeId());
-  ships= e->GetNodeList(ShipMotionNode::TypeId);
+  ships= e->GetNodeList(ShipMotionNode::TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,9 +106,9 @@ void Collide::CheckMissilesBombs() {
 //
 void Collide::CheckMissilesAliens(a::Node* node) {
 
+  AlienSquad* sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto cfg = f::XConfig::GetInstance();
   auto mss = cfg->GetPool("missiles");
-  auto sqad= node->aliens,
   auto c = sqad->Elements();
   auto c2 = mss->Elements();
 
@@ -128,9 +128,10 @@ void Collide::CheckMissilesAliens(a::Node* node) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::CheckShipBombs(a::Node* node) {
+
+  Ship* ship= a::NodeFld<Ship>(node, "ship");
   auto cfg = f::XConfig::GetInstance();
   auto bbs= cfg->GetPool("bombs");
-  auto ship= node->ship;
   auto c= bbs->Elements();
 
   if (ship->status)
@@ -148,10 +149,10 @@ void Collide::CheckShipBombs(a::Node* node) {
 //
 void Collide::CheckShipAliens(a::Node* anode, a::Node* snode) {
 
-  auto sqad= anode->aliens;
-  auto ship = snode->ship;
-  auto sz= sqad->Size();
+  AlienSquad* sqad= a::NodeFld<AlienSquad>(anode, "aliens");
+  Ship* ship = a::NodeFld<Ship>(snode, "ship");
   auto c = sqad->Elements();
+  auto sz= sqad->Size();
 
   if (ship->status)
   for (auto it = c.begin(); it != c.end(); ++it) {

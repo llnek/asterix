@@ -9,8 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/CCSX.h"
+#include "deprecated/CCInteger.h"
 #include "2d/MainGame.h"
+#include "support/CCSX.h"
 #include "Move.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
@@ -58,24 +59,25 @@ bool Move::Update(float dt) {
     MoveMissiles(dt);
     MoveBombs(dt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::ProcessShipMotions(a::Node* node, float dt) {
-  auto motion = node->Get("motion");
-  auto sv = node->Get("vel");
-  auto ship= node->Get("ship");
+  Motion* motion = a::NodeFld<Motion>(node,"motion");
+  Velocity* sv = a::NodeFld<Velocity>(node,"vel");
+  Ship* ship= a::NodeFld<Ship>(node,"ship");
   auto pos = ship->Pos();
-  auto x= Pos().x;
-  auto y= Pos().y;
+  auto x= pos.x;
+  auto y= pos.y;
 
   if (motion->right) {
-    x = pos.x + dt * sv.vel.x;
+    x = pos.x + dt * sv->x;
   }
 
   if (motion->left) {
-    x = pos.x - dt * sv.vel.x;
+    x = pos.x - dt * sv->x;
   }
 
   ship->SetPos(x,y);
@@ -89,14 +91,14 @@ void Move::ProcessShipMotions(a::Node* node, float dt) {
 //
 void Move::Clamp(f::ComObj* ship) {
 
-  auto tile= CstVal<Integer>("TILE")->getValue();
+  auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto sz= ship->sprite->getContentSize();
   auto cfg = f::XConfig::GetInstance();
   auto pos= ship->Pos();
   auto wz = cx::VisRect();
 
-  if (cx::GetRight(ship->sprite) > wz.width - tile) {
-    ship->SetPos(wz.width - tile - sz.width * 0.5, pos.y);
+  if (cx::GetRight(ship->sprite) > wz.size.width - tile) {
+    ship->SetPos(wz.size.width - tile - sz.width * 0.5, pos.y);
   }
   if (cx::GetLeft(ship->sprite) < tile) {
     ship->SetPos(tile + sz.width * 0.5, pos.y);
@@ -114,7 +116,7 @@ void Move::MoveBombs(float dt) {
     auto b = *it;
     if (b->status) {
       auto pos= b->Pos();
-      auto y = pos.y + dt * b.vel.y;
+      auto y = pos.y + dt * b->vel.y;
       b->SetPos(pos.x, y);
     }
   }
@@ -124,7 +126,7 @@ void Move::MoveBombs(float dt) {
 //
 void Move::MoveMissiles(float dt) {
   auto cfg = f::XConfig::GetInstance();
-  auto bbs= cfg->GetPool("missiles");
+  auto mss= cfg->GetPool("missiles");
   auto c= mss->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {

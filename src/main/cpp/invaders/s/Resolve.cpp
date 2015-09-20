@@ -27,7 +27,7 @@ Resolve* Resolve::Create(Factory* f, c::Dictionary* options) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve;:RemoveFromEngine(a::Engine* e) {
+void Resolve::RemoveFromEngine(a::Engine* e) {
   aliens= nullptr;
   ships= nullptr;
 }
@@ -58,7 +58,7 @@ bool Resolve::Update(float dt) {
 void Resolve::CheckMissiles() {
   auto cfg = f::XConfig::GetInstance();
   auto mss = cfg->GetPool("missiles");
-  auto ht = cx::VisRect().height;
+  auto ht = cx::VisRect().size.height;
   auto c = mss->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
@@ -94,14 +94,15 @@ void Resolve::CheckBombs() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckAliens(a::Node* node) {
-  auto sqad= NodeFld<>(node, "aliens");
+  AlienSquad* sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto c= sqad->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
     auto en= *it;
     if (en->status) {
       if (en->health <= 0) {
-        f::MainGame::Get()->EarnScore(en->value);
+//        f::MainGame::Get()->EarnScore(en->value);
+        f::MainGame::Get()->SendMsg("earnscore", en);
         en->Deflate();
       }
     }
@@ -111,12 +112,12 @@ void Resolve::CheckAliens(a::Node* node) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckShip(a::Node* node) {
-  auto ship = NodeFld<>(node, "ship");
+  Ship* ship = a::NodeFld<Ship>(node, "ship");
 
   if (ship->status &&
       ship->health <= 0) {
     ship->Deflate();
-    f::MainGame::Get()->PlayerKilled();
+    f::MainGame::Get()->SendMsg("PlayerKilled", nullptr);
   }
 }
 
