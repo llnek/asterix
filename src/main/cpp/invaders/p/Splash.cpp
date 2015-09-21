@@ -10,8 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "2d/CCActionInstant.h"
-#include "support/CCSX.h"
-#include "2d/XLayer.h"
+#include "core/CCSX.h"
+#include "x2d/XLayer.h"
 #include "Menu.h"
 #include "Splash.h"
 NS_ALIAS(cx, fusilli::ccsx)

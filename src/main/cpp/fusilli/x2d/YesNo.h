@@ -14,6 +14,8 @@
 
 
 #include "platform/CCCommon.h"
+#include "2d/CCActionInstant.h"
+#include "XScene.h"
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 

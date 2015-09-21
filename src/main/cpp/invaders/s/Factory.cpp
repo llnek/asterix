@@ -9,10 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XConfig.h"
-#include "support/CCSX.h"
-#include "support/XPool.h"
-#include "2d/MainGame.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "core/XPool.h"
+#include "x2d/MainGame.h"
 #include "ash/Engine.h"
 #include "n/gnodes.h"
 #include "Factory.h"

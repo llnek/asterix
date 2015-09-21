@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/CCSX.h"
+#include "core/CCSX.h"
 #include "cobjs.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
@@ -165,7 +165,10 @@ Missile::~Missile() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Motion::Motion()
-  : right(false)
+  : aliens(nullptr)
+  , ships(nullptr)
+  , cannons(nullptr)
+  , right(false)
   , left(false) {
 }
 

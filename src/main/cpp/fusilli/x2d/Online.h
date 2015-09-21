@@ -12,7 +12,7 @@
 #if !defined(__ONLINE_H__)
 #define __ONLINE_H__
 
-#include "net/Odin.h"
+#include "core/Odin.h"
 #include "XScene.h"
 NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)

@@ -11,8 +11,8 @@
 
 #include "audio/include/SimpleAudioEngine.h"
 #include "ash/Engine.h"
-#include "support/XConfig.h"
-#include "support/CCSX.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "XGameLayer.h"
 NS_ALIAS(den,CocosDenshion)
 NS_ALIAS(cx, fusilli::ccsx)
@@ -96,9 +96,9 @@ XLayer* XGameLayer::GetBackgd(int tag) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XGameLayer::GetHUD(int tag) {
+XHUDLayer* XGameLayer::GetHUD(int tag) {
   auto s= GetScene();
-  return s->GetLayer(tag);
+  return SCAST(XHUDLayer*, s->GetLayer(tag));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -10,8 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "deprecated/CCInteger.h"
-#include "2d/MainGame.h"
-#include "support/CCSX.h"
+#include "x2d/MainGame.h"
+#include "core/CCSX.h"
 #include "Move.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)

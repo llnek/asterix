@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/XLayer.h"
 #include "Game.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_ALIAS(cc, cocos2d)
@@ -17,10 +18,20 @@ NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 
+GameLayer::~GameLayer() {
+
+}
+
+GameLayer::GameLayer()
+  : factory(nullptr) {
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::PKInput() {
-  cx::OnKeyPolls(this->keyboard);
+f::XLayer* GameLayer::Realize() {
+  //cx::OnKeyPolls(this->keyboard);
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,18 +73,18 @@ void GameLayer::Play(bool newFlag) {
 void GameLayer::InitAsh() {
   options = cc::Dictionary::create();
   factory = new Factory(engine, d);
-  engine->AddSystem(new Stager(factory, options));
-  engine->AddSystem(new Motion(factory, options));
-  engine->AddSystem(new Move(factory, options));
-  engine->AddSystem(new Aliens(factory, options));
-  engine->AddSystem(new Collide(factory, options));
-  engine->AddSystem(new Resolve(factory, options));
+  engine->RegoSystem(new Stager(factory, options));
+  engine->RegoSystem(new Motion(factory, options));
+  engine->RegoSystem(new Move(factory, options));
+  engine->RegoSystem(new Aliens(factory, options));
+  engine->RegoSystem(new Collide(factory, options));
+  engine->RegoSystem(new Resolve(factory, options));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::SpawnPlayer() {
-  factory->bornShip();
+  factory->BornShip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -89,7 +100,7 @@ void GameLayer::OnPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnNewGame(const GameMode mode) {
+void GameLayer::OnNewGame(const f::GMode mode) {
   //sh.sfxPlay('start_game');
   SetGameMode(mode);
   Play(true);
@@ -97,14 +108,14 @@ void GameLayer::OnNewGame(const GameMode mode) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnEarnScore(float score) {
+void GameLayer::OnEarnScore(int score) {
   GetHUD()->UpdateScore(score);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::OnDone() {
-  SCAST(Game,getParent())->Pause();
+  SCAST(Game*,getParent())->Pause();
   Reset();
   GetHUD()->EnableReplay();
 }
@@ -142,7 +153,7 @@ Game::Game()
 
 //////////////////////////////////////////////////////////////////////////
 //
-XScene* Game::Realize() {
+f::XScene* Game::Realize() {
   auto g = GameLayer::create();
   auto b = BGLayer::create();
   auto h = HUDLayer::create();

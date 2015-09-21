@@ -9,9 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/Primitives.h"
-#include "support/CCSX.h"
-#include "2d/MainGame.h"
+#include "core/Primitives.h"
+#include "core/CCSX.h"
+#include "x2d/MainGame.h"
 #include "n/gnodes.h"
 #include "Factory.h"
 #include "Stager.h"

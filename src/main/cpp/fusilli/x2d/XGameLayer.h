@@ -15,7 +15,7 @@
 #include "deprecated/CCDictionary.h"
 #include "ash/System.h"
 #include "ash/Engine.h"
-#include "XLayer.h"
+#include "XHUDLayer.h"
 
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
@@ -62,7 +62,7 @@ public:
 
 
   XLayer* GetBackgd(int tag= 1);
-  XLayer* GetHUD(int tag=3);
+  XHUDLayer* GetHUD(int tag=3);
 
 
   void NewGame(const GMode);

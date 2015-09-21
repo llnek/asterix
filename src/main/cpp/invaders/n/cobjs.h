@@ -13,8 +13,8 @@
 #define __COBJS_H__
 
 #include "2d/CCActionInterval.h"
-#include "support/XPool.h"
-#include "2d/ComObj.h"
+#include "core/ComObj.h"
+#include "core/XPool.h"
 NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 

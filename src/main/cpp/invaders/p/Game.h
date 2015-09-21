@@ -9,62 +9,61 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "XGameLayer.h"
-NS_USING(std)
-NS_USING(fusilli)
+#include "x2d/XGameLayer.h"
+#include "s/Factory.h"
+NS_ALIAS(s,std)
+NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BGLayer : public XLayer {
+class CC_DLL BGLayer : public f::XLayer {
+private:
+  NO__COPYASSIGN(BGLayer)
 public:
-  virtual XLayer* Realize() {
-    CenterImage(XConfig::GetInstance()->GetImage("game.bg"));
+  virtual f::XLayer* Realize() {
+    CenterImage(f::XConfig::GetInstance()->GetImage("game.bg"));
     return this;
   }
   virtual ~BGLayer();
   BGLayer();
-  virtual const string Moniker() { return "BackLayer"; }
-private:
-  DISALLOW_COPYASSIGN(BGLayer)
+  virtual int GetIID() { return 1; }
+  CREATE_FUNC(BGLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GameLayer : public XGameLayer {
+class CC_DLL GameLayer : public f::XGameLayer {
+private:
+  NO__COPYASSIGN(GameLayer)
+  Factory* factory;
+  void InitAsh();
 public:
-
-  virtual void PKInput() override;
-
-  virtual void Reset(bool newFlag) override;
-  virtual bool IsOperational() override;
-  virtual void Replay() override;
+  virtual void Reset(bool newFlag) ;
+  virtual void Replay() ;
   virtual void Play(bool newFlag);
 
+  virtual void OnNewGame(const f::GMode);
   void SpawnPlayer();
-  void OnPlayerKilled(msg);
-  void OnNewGame(int mode);
-  void OnEarnScore(msg);
+  void OnPlayerKilled();
+
+  void OnEarnScore(int);
   void OnDone();
 
   virtual ~GameLayer();
   GameLayer();
 
-private:
-  DISALLOW_COPYASSIGN(GameLayer)
+  virtual f::XLayer* Realize();
+
+  CREATE_FUNC(GameLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Game : public MainGame {
-protected:
-
-
+class CC_DLL Game : public f::XScene {
 private:
-
-  DISALLOW_COPYASSIGN(Game)
-
+  NO__COPYASSIGN(Game)
 public:
 
   virtual XScene* Realize();

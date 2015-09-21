@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XConfig.h"
+#include "core/XConfig.h"
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)

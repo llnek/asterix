@@ -14,9 +14,7 @@
 
 
 #include "platform/CCCommon.h"
-#include "2d/XScene.h"
-#include "core/fusilli.h"
-
+#include "XScene.h"
 
 NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)

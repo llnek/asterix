@@ -12,7 +12,7 @@
 #if !defined(__SPLASH_H__)
 #define __SPLASH_H__
 
-#include "2d/XScene.h"
+#include "x2d/XScene.h"
 NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
 

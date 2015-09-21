@@ -10,8 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "deprecated/CCInteger.h"
-#include "support/XConfig.h"
-#include "support/CCSX.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "XHUDLayer.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)

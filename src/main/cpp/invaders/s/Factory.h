@@ -13,7 +13,7 @@
 #define __FACTORY_H__
 
 
-#include "support/XPool.h"
+#include "core/XPool.h"
 #include "ash/Engine.h"
 NS_ALIAS(a, ash)
 NS_BEGIN(invaders)

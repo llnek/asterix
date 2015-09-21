@@ -13,7 +13,7 @@
 #define __APP_DELEGATE_H__
 
 #include "core/fusilli.h"
-#include "boot/App.h"
+#include "core/App.h"
 NS_ALIAS(f, fusilli)
 
 

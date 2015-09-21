@@ -13,7 +13,7 @@
 #define __HUD_H__
 
 #include "platform/CCCommon.h"
-#include "2d/XHUDLayer.h"
+#include "x2d/XHUDLayer.h"
 NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
@@ -25,12 +25,15 @@ class CC_DLL HUDLayer : public f::XHUDLayer {
 private:
   NO__COPYASSIGN(HUDLayer)
   HUDLayer();
-
+  c::Label* m_scoreLabel;
 public:
 
+  virtual f::XLayer* Realize();
 
+  virtual int GetIID() { return 3; }
   virtual ~HUDLayer();
 
+  CREATE_FUNC(HUDLayer)
 };
 
 

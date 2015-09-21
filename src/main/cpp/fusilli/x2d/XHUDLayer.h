@@ -13,6 +13,7 @@
 #define __XHUDLAYER_H__
 
 #include "base/ccTypes.h"
+#include "XLives.h"
 #include "XLayer.h"
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)

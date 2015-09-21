@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "deprecated/CCInteger.h"
-#include "support/XConfig.h"
+#include "core/XConfig.h"
 #include "Menu.h"
 NS_ALIAS(cx,fusilli::ccsx)
 NS_BEGIN(invaders)

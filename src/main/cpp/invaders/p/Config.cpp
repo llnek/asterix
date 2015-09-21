@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XPool.h"
+#include "core/XPool.h"
 #include "Config.h"
 NS_BEGIN(invaders)
 

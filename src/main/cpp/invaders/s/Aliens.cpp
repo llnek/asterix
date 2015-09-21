@@ -9,10 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XConfig.h"
-#include "support/CCSX.h"
-#include "2d/ComObj.h"
 #include "base/ccMacros.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "core/ComObj.h"
 #include "Aliens.h"
 #include <math.h>
 NS_ALIAS(cx, fusilli::ccsx)

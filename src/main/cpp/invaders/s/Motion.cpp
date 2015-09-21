@@ -10,9 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "base/CCEventKeyboard.h"
-#include "support/XConfig.h"
-#include "support/CCSX.h"
-#include "2d/MainGame.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "x2d/MainGame.h"
 #include "Motion.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)

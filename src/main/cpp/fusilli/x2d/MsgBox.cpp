@@ -9,11 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XConfig.h"
-#include "support/CCSX.h"
 #include "2d/CCMenuItem.h"
 #include "2d/CCMenu.h"
-#include "2d/XLayer.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "XLayer.h"
 #include "MsgBox.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)

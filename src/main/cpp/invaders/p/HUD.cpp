@@ -9,8 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/CCSX.h"
+#include "2d/CCLabel.h"
+#include "core/CCSX.h"
 #include "HUD.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +22,8 @@ HUDLayer::~HUDLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-HUDLayer::HUDLayer() {
+HUDLayer::HUDLayer()
+  : m_scoreLabel(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +32,7 @@ f::XLayer* HUDLayer::Realize() {
   auto color=  cx::White();
   auto scale=1;
 
-  auto r= CreateMenuBtn("#icon_replay.png");
+  auto r= cx::CreateMenuBtn("#icon_replay.png");
   r->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::OnReplay));
   r->setVisible(false);
@@ -37,12 +40,14 @@ f::XLayer* HUDLayer::Realize() {
   //r->setScale(scale);
   AddReplayIcon(r, cx::AnchorB());
 
-  auto b= CreateMenuBtn("#icon_menu.png");
+  auto b= cx::CreateMenuBtn("#icon_menu.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::ShowMenu));
   b->setColor(color);
   //b->setScale(scale);
   AddMenuIcon(b, cx::AnchorB());
+
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -52,22 +57,24 @@ void HUDLayer::InitAtlases() {
 }
 
 void HUDLayer::InitLabels() {
+  auto soff = CstVal<c::Integer>("S_OFF")->getValue();
+  auto tile = CstVal<c::Integer>("TILE")->getValue();
+  auto cfg = f::XConfig::GetInstance();
   auto wb = cx::VisBox();
-  m_scoreLabel = CreateBmfLabel("font.SmallTypeWriting", "0");
-  m_scoreLabel->setAnchor(Anchor::BottomRight);
-  m_scoreLabel->setScale(xcfg.game.scale);
-  m_scoreLabel->setPosition(wb.right - csts.TILE - csts.S_OFF,
-    wb.top - csts.TILE - csts.S_OFF - cx::GetScaledHeight(m_scoreLabel));
+  m_scoreLabel = cx::CreateBmfLabel("font.SmallTypeWriting", "0");
+  m_scoreLabel->setAnchorPoint(cx::AnchorBR());
+  m_scoreLabel->setScale(cfg->GetScale());
+  m_scoreLabel->setPosition(wb.right - tile - soff,
+    wb.top - tile - soff - cx::GetScaledHeight(m_scoreLabel));
   addChild(m_scoreLabel, m_lastZix, ++m_lastTag);
 }
 
 void HUDLayer::InitIcons() {
+  auto soff = CstVal<c::Integer>("S_OFF")->getValue();
+  auto tile = CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
-  m_lives = new scenes.XHUDLives( this, csts.TILE + csts.S_OFF,
-    wb.top - csts.TILE - csts.S_OFF,
-    "health.png",
-    3);
-  m_lives->Setup();
+  lives = new f::XLives( this, "health.png", tile + soff,
+    wb.top - tile - soff);
 }
 
 

@@ -9,9 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "support/XConfig.h"
-#include "support/CCSX.h"
 #include "ui/UITextField.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Online.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)

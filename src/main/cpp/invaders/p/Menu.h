@@ -13,7 +13,7 @@
 #define __MENU_H__
 
 #include "2d/CCActionInstant.h"
-#include "2d/XScene.h"
+#include "x2d/XScene.h"
 NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
 

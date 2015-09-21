@@ -14,8 +14,8 @@
 #include "2d/CCSprite.h"
 #include "2d/CCMenuItem.h"
 #include "2d/CCMenu.h"
-#include "support/XConfig.h"
-#include "support/CCSX.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 //#include "YesNo.h"
 #include "XLayer.h"
 NS_ALIAS(cx, fusilli::ccsx)

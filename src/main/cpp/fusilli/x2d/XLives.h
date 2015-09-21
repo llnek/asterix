@@ -13,12 +13,13 @@
 #define __XLIVES_H__
 
 #include "platform/CCCommon.h"
-#include "2d/XHUDLayer.h"
+#include "XHUDLayer.h"
 #include <vector>
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
+class c::Node;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLives {

@@ -35,8 +35,8 @@ private:
 
 public:
 
-  void AddLayer(XLayer*, int z=0);
-  XLayer* GetLayer(int tag);
+  XLayer*  AddLayer(XLayer*, int z=0);
+  XLayer*  GetLayer(int tag);
 
   virtual XScene* Realize();
   virtual ~XScene();

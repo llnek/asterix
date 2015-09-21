@@ -49,7 +49,6 @@ void Entity::Rego(Component* c) {
     throw "cannot reassign component";
   }
   parts.insert(pair<COMType,Component*>(z,c));
-  c->par= this;
   engine->NotifyModify(this);
 }
 

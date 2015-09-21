@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/NodeRegistry.h"
-#include "support/XConfig.h"
+#include "core/XConfig.h"
 #include "n/gnodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
