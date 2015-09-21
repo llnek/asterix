@@ -60,16 +60,15 @@ void Entity::MarkDelete() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Remove(const COMType& z) {
+void Entity::Purge(const COMType& z) {
   auto it = parts.find(z);
-  Component* rc= nullptr;
 
   if (it != parts.end()) {
-    rc= it->second;
+    auto rc= it->second;
     parts.erase(it);
+    mc_del_ptr(rc);
+    engine->NotifyModify(this);
   }
-  mc_del_ptr(rc);
-  engine->NotifyModify(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////

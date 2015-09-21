@@ -10,12 +10,14 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "NodeList.h"
+#include "Node.h"
 NS_BEGIN(ash)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList::~NodeList() {
+  Clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -28,18 +30,19 @@ NodeList::NodeList()
 //////////////////////////////////////////////////////////////////////////////
 //
 void NodeList::Add(Node* n) {
-  if ( !head ) {
+  if ( ENP(head) ) {
     head = tail = n;
   } else {
     tail->next = n;
     n->previous = tail;
+    n->next= nullptr;
     tail = n;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Remove(Node* node) {
+void NodeList::Purge(Node* node) {
   if (head == node ) {
     head = head->next;
   }
@@ -52,17 +55,18 @@ void NodeList::Remove(Node* node) {
   if ( node->next ) {
     node->next->previous = node->previous;
   }
+  mc_del_ptr(node);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::RemoveAll() {
+void NodeList::Clear() {
   while (NNP(head)) {
-    auto node = head;
-    head = node->next;
-    node->previous = nullptr;
-    node->next = nullptr;
+    auto n = head;
+    head = n->next;
+    delete n;
   }
+  head = nullptr;
   tail = nullptr;
 }
 
@@ -76,11 +80,12 @@ bool NodeList::IsEmpty() {
 //
 void NodeList::RemoveEntity(Entity* e) {
   Node* n = head;
+  Node* c;
   while (NNP(n)) {
     if (n->BelongsTo(e)) {
-      Remove(n);
-      delete n;
-      n=head;
+      c= n->next;
+      Purge(n);
+      n=c;
     } else {
       n = n->next;
     }

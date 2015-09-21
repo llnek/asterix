@@ -9,6 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "NodeRegistry.h"
+#include "System.h"
+#include "Entity.h"
 #include "Engine.h"
 NS_BEGIN(ash)
 
@@ -18,9 +21,12 @@ template <typename T>
 void ObjList<T>::Add(T* e ) {
   if (ENP(head)) {
     head = tail = e;
+    e->previous= nullptr;
+    e->next = nullptr;
   } else {
     tail->next = e;
     e->previous = tail;
+    e->next= nullptr;
     tail = e;
   }
 }
@@ -41,6 +47,8 @@ void ObjList<T>::Release(T* e) {
   if (e->next) {
     e->next->previous = e->previous;
   }
+  e->previous = nullptr;
+  e->next = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,10 +58,9 @@ void ObjList<T>::Clear() {
   while (NNP(head)) {
     auto e= head;
     head = head->next;
-    e->previous = nullptr;
-    e->next = nullptr;
+    delete e;
   }
-  tail = nullptr;
+  head = tail = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,11 +78,7 @@ const s::vector<T*> ObjList<T>::List() {
 //
 template <typename T>
 ObjList<T>::~ObjList() {
-  while (NNP(head)) {
-    auto e= head;
-    head = head->next;
-    delete e;
-  }
+  Clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -177,16 +180,16 @@ void Engine::NotifyModify(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntity(Entity* e) {
+void Engine::PurgeEntity(Entity* e) {
   auto it = groups.find(e->GroupId());
   if (it != groups.end()) {
-    RemoveEntity(it->second,e);
+    PurgeEntity(it->second,e);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntity(ObjList<Entity>* el, Entity* e) {
+void Engine::PurgeEntity(ObjList<Entity>* el, Entity* e) {
   e->MarkDelete();
   el->Release(e);
   dirty=true;
@@ -195,12 +198,12 @@ void Engine::RemoveEntity(ObjList<Entity>* el, Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveEntities(const stdstr& group) {
+void Engine::PurgeEntities(const stdstr& group) {
   auto it = groups.find(group);
   if (it != groups.end()) {
     auto el=it->second;
     while (NNP(el->head)) {
-      RemoveEntity(el, el->head);
+      PurgeEntity(el, el->head);
     }
   }
 }
@@ -230,20 +233,6 @@ NodeList* Engine::GetNodeList(const stdstr& group, const NodeType& nodeType) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::ReleaseNodeList(NodeList*& nl) {
-  for (auto it=nodeLists.begin();
-      it != nodeLists.end(); ++it) {
-    if (nl == *it) {
-      nodeLists.erase(it);
-      break;
-    }
-  }
-  delete nl;
-  nl=nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Engine::RegoSystem(System* s) {
   s->AddToEngine( this );
   systemList.Add(s);
@@ -251,17 +240,17 @@ void Engine::RegoSystem(System* s) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveSystem(System* s ) {
+void Engine::PurgeSystem(System* s ) {
   systemList.Release(s);
   s->RemoveFromEngine(this);
-  mc_del_ptr(s);
+  delete s;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RemoveSystems() {
+void Engine::PurgeSystems() {
   while (NNP(systemList.head)) {
-    RemoveSystem(systemList.head);
+    PurgeSystem(systemList.head);
   }
 }
 
@@ -283,7 +272,7 @@ void Engine::Update(float time) {
 
 //////////////////////////////////////////////////////////////////////////////
 // get rid of nodes bound to this entity
-void Engine::OnRemoveEntity(Entity* e) {
+void Engine::OnPurgeEntity(Entity* e) {
   for (auto it = nodeLists.begin();
       it != nodeLists.end(); ++it) {
     auto nl= *it;
@@ -337,7 +326,7 @@ void Engine::HouseKeeping() {
   for (auto it= freeList.begin();
       it != freeList.end(); ++it) {
     auto e = *it;
-    OnRemoveEntity(e);
+    OnPurgeEntity(e);
     delete e;
   }
   for (auto it= addList.begin();

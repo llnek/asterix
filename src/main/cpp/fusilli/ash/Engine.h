@@ -12,6 +12,7 @@
 #if !defined(__ENGINE_H__)
 #define __ENGINE_H__
 
+#include "NodeRegistry.h"
 #include "NodeList.h"
 #include <vector>
 #include <map>
@@ -19,9 +20,10 @@
 NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
-
+class System;
+class Entity;
 //////////////////////////////////////////////////////////////////////////////
-//
+// owns all items in this list
 template <typename T>
 class FS_DLL ObjList {
 private:
@@ -48,9 +50,9 @@ public:
 class FS_DLL Engine {
 private:
 
-  void RemoveEntity(ObjList<Entity>*, Entity*);
+  void PurgeEntity(ObjList<Entity>*, Entity*);
   void OnModifyEntity(Entity*);
-  void OnRemoveEntity(Entity*);
+  void OnPurgeEntity(Entity*);
   void OnAddEntity(Entity*);
   void HouseKeeping();
 
@@ -79,14 +81,13 @@ public:
 
   Entity* CreateEntity(const stdstr& group);
   void NotifyModify(Entity*);
-  void RemoveEntity(Entity* );
-  void RemoveEntities(const stdstr& group) ;
+  void PurgeEntity(Entity* );
+  void PurgeEntities(const stdstr& group) ;
 
   NodeList* GetNodeList(const stdstr& group, const NodeType& );
-  void ReleaseNodeList(NodeList*& );
 
-  void RemoveSystem (System* );
-  void RemoveSystems();
+  void PurgeSystem (System* );
+  void PurgeSystems();
   void RegoSystem(System* );
 
   void Update(float time);

@@ -27,7 +27,7 @@ protected:
 private:
   NO__COPYASSIGN(NodeFactory)
 public:
-  static const NodeType TypeId();
+  virtual const NodeType TypeId() = 0;
   virtual Node* CreateNode() = 0;
   virtual ~NodeFactory() {}
 };

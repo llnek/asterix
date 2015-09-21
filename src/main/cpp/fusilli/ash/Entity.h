@@ -19,11 +19,10 @@
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
-
+class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Entity {
-friend class Engine;
 private:
 
   s::map<stdstr, Component*> parts;
@@ -44,7 +43,7 @@ public:
 
   virtual ~Entity();
 
-  void Remove(const COMType&);
+  void Purge(const COMType&);
   void Rego(Component*);
 
   Component* Get(const COMType& );

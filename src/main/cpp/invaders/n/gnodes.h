@@ -13,7 +13,7 @@
 #define __GNODES_H__
 
 
-#include "ash/NodeFactory.h"
+#include "ash/NodeRegistry.h"
 #include "ash/Node.h"
 #include "cobjs.h"
 NS_ALIAS(a,ash)

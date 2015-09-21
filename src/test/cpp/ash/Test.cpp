@@ -9,37 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ASH_H__)
-#define __ASH_H__
+#include <stdio.h>
 
-#include "aeon/fusilli.h"
-#include <string>
-NS_ALIAS(s, std)
-NS_BEGIN(ash)
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-typedef s::string SystemType;
-typedef s::string COMType;
-typedef s::string NodeType;
-
-//////////////////////////////////////////////////////////////////////////
-//
-class FS_DLL Component {
-protected:
-  Component() {}
-private:
-  NO__COPYASSIGN(Component)
-public:
-  virtual const COMType TypeId() = 0;
-  virtual ~Component() {}
-};
-
-
-
-
-NS_END(ash)
-#endif
-
-
+int main(int ac, char** argv) {
+  printf("hello world\n");
+  return 0;
+}

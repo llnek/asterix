@@ -15,33 +15,31 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
+class Engine;
 class Entity;
 class Node;
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL NodeList {
-friend class Engine;
-protected:
-
 private:
 
   NO__COPYASSIGN(NodeList)
   NodeType nType;
-  NodeList();
 
 public:
 
   const NodeType GetType() { return nType; }
   virtual ~NodeList();
+  NodeList();
 
   bool ContainsWithin(Entity*);
   bool IsCompatible(Entity*);
   void RemoveEntity(Entity* );
 
   void Add(Node* );
-  void Remove(Node* );
-  void RemoveAll();
+  void Purge(Node* );
+  void Clear();
   bool IsEmpty();
 
   Node* head;
