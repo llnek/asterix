@@ -27,7 +27,7 @@ Entity* Entity::Create(const stdstr& group, Engine* e) {
 //
 Entity::~Entity() {
   for (auto it= parts.begin(); it != parts.end(); ++it) {
-    delete *it;
+    delete it->second;
   }
   parts.clear();
 }
@@ -49,7 +49,7 @@ void Entity::Rego(Component* c) {
   if (Has(z)) {
     throw "cannot reassign component";
   }
-  parts.insert(pair<COMType,Component*>(z,c));
+  parts.insert(s::pair<COMType,Component*>(z,c));
   engine->NotifyModify(this);
 }
 

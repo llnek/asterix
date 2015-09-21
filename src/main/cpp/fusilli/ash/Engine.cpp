@@ -10,7 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "NodeRegistry.h"
+#include "Node.h"
 #include "Engine.h"
+NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -156,7 +158,7 @@ Entity* Engine::CreateEntity(const stdstr& group) {
     el= it->second;
   } else {
     el= new ObjList<Entity>();
-    groups.insert(pair<stdstr, ObjList<Entity>*>(group,el));
+    groups.insert(s::pair<stdstr, ObjList<Entity>*>(group,el));
   }
   el->Add(e);
   addList.push_back(e);

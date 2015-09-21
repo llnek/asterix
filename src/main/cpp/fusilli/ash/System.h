@@ -27,6 +27,7 @@ private:
 
   NO__COPYASSIGN(System)
   System();
+  void Init();
 
   int priority;
   bool active;

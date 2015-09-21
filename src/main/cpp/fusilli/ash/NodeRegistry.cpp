@@ -30,7 +30,7 @@ NodeRegistry* NodeRegistry::GetInstance() {
 //
 NodeRegistry::~NodeRegistry() {
   for (auto it= regos.begin(); it != regos.end(); ++it) {
-    delete *it;
+    delete it->second;
   }
   regos.clear();
 }
