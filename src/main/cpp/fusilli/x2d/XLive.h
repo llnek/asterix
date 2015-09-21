@@ -12,7 +12,7 @@
 #if !defined(__XLIVE_H__)
 #define __XLIVE_H__
 
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 #include "2d/CCSprite.h"
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)

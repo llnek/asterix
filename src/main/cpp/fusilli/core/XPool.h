@@ -12,10 +12,8 @@
 #if !defined(__XPOOL_H__)
 #define __XPOOL_H__
 
-#include "deprecated/CCDeprecated.h"
-#include "platform/CCCommon.h"
+#include "core/Primitives.h"
 #include "base/CCRef.h"
-#include "core/fusilli.h"
 #include "ComObj.h"
 #include <vector>
 NS_ALIAS(c,cocos2d)

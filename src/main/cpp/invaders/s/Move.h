@@ -40,11 +40,11 @@ public:
   virtual bool Update(float dt);
 
   void ProcessShipMotions(a::Node*, float dt);
-  void clamp(f::ComObj* ship);
+  void Clamp(f::ComObj* ship);
   void MoveBombs(float dt);
   void MoveMissiles(float dt);
 
-  virtual int Priority() { return Move; }
+  virtual int Priority() { return a::Move; }
 
 };
 

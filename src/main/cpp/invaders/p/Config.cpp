@@ -34,7 +34,7 @@ const stdstr Config::GetColor() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ResolutionPolicy Config::GetResolution() {
+ResolutionPolicy Config::GetPolicy() {
   return ResolutionPolicy::FIXED_HEIGHT;
 }
 
@@ -86,50 +86,52 @@ void Config::RunOnce() {
 //
 void Config::InitAssets() {
 
+
   auto d = GetFragment(ATLASES);
 
-  d->setObject("res/l10n/en/images.plist", "lang-pics");
-  d->setObject("res/pics/images.plst", "game-pics");
+  d->setObject(c::String::create("res/l10n/en/images.plist"), "lang-pics");
+  d->setObject(c::String::create("res/pics/images.plst"), "game-pics");
 
   d= GetFragment(IMAGES);
-  d->setObject("res/pics/bg.png", "mmenus.bg");
-  d->setObject("res/pics/bg.png", "game.bg");
+  d->setObject(c::String::create("res/pics/bg.png"), "mmenus.bg");
+  d->setObject(c::String::create("res/pics/bg.png"), "game.bg");
 
   d= GetFragment(SOUNDS);
-  d->setObject("res/sfx/MineExplosion", "game_end");
-  d->setObject("res/sfx/Death", "game_quit");
-  d->setObject("res/sfx/missile", "ship-missile");
-  d->setObject("res/sfx/march", "bugs-march");
-  d->setObject("res/sfx/explode", "xxx-explode");
+  d->setObject(c::String::create("res/sfx/MineExplosion"), "game_end");
+  d->setObject(c::String::create("res/sfx/Death"), "game_quit");
+  d->setObject(c::String::create("res/sfx/missile"), "ship-missile");
+  d->setObject(c::String::create("res/sfx/march"), "bugs-march");
+  d->setObject(c::String::create("res/sfx/explode"), "xxx-explode");
 
   d= GetFragment(FONTS);
-  d->setObject("res/font/en/SmallTypeWriting", "font.SmallTypeWriting");
-  d->setObject("res/font/en/AutoMission", "font.AutoMission");
-  d->setObject("res/font/en/Subito", "font.Subito");
-  d->setObject("res/font/en/CoffeeBuzzed", "font.CoffeeBuzzed");
+  d->setObject(c::String::create("res/font/en/SmallTypeWriting"), "font.SmallTypeWriting");
+  d->setObject(c::String::create("res/font/en/AutoMission"), "font.AutoMission");
+  d->setObject(c::String::create("res/font/en/Subito"), "font.Subito");
+  d->setObject(c::String::create("res/font/en/CoffeeBuzzed"), "font.CoffeeBuzzed");
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::InitCsts() {
+
   auto d = GetFragment(CSTS);
 
-  d->setObject("live-missiles", "P_LMS");
-  d->setObject("missiles", "P_MS");
-  d->setObject("bombs", "P_BS");
-  d->setObject("explosions", "P_ES");
-  d->setObject("live-bombs", "P_LBS");
+  d->setObject(c::String::create("live-missiles"), "P_LMS");
+  d->setObject(c::String::create("missiles"), "P_MS");
+  d->setObject(c::String::create("bombs"), "P_BS");
+  d->setObject(c::String::create("explosions"), "P_ES");
+  d->setObject(c::String::create("live-bombs"), "P_LBS");
 
-  d->setObject(42, "CELLS");
-  d->setObject(8, "TILE");
-  d->setObject(6, "COLS");
-  d->setObject(7, "ROWS");
+  d->setObject(c::Integer::create(42), "CELLS");
+  d->setObject(c::Integer::create(8), "TILE");
+  d->setObject(c::Integer::create(6), "COLS");
+  d->setObject(c::Integer::create(7), "ROWS");
 
-  d->setObject(2, "LEFT");
-  d->setObject(6, "TOP");
-  d->setObject(4, "OFF_X");
-  d->setObject(2, "OFF_Y");
+  d->setObject(c::Integer::create(2), "LEFT");
+  d->setObject(c::Integer::create(6), "TOP");
+  d->setObject(c::Integer::create(4), "OFF_X");
+  d->setObject(c::Integer::create(2), "OFF_Y");
 }
 
 //////////////////////////////////////////////////////////////////////////////

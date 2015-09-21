@@ -13,12 +13,15 @@
 #include "platform/CCGLView.h"
 #include "platform/CCGL.h"
 #include "XConfig.h"
-#include "Boot.h"
 #include "App.h"
 
 NS_ALIAS(den, CocosDenshion)
-NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
+
+static c::Size designSize = c::Size(480, 320);
+static c::Size smallSize = c::Size(480, 320);
+static c::Size mediumSize = c::Size(1024, 768);
+static c::Size largeSize = c::Size(2048, 1536);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,14 +63,14 @@ bool App::applicationDidFinishLaunching() {
 
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = c::GLViewImpl::createWithRect("z", c::Rect(0, 0, sz.width, sz.height));
+    glview = nullptr;//c::GLViewImpl::createWithRect("z", c::Rect(0, 0, sz.width, sz.height));
 #else
-        glview = c::GLViewImpl::create("z");
+    glview = c::GLViewImpl::create("z");
 #endif
     director->setOpenGLView(glview);
   }
 
-  Boot b;
+  PreLaunch(sz);
 
   register_all_packages();
 
@@ -76,6 +79,50 @@ bool App::applicationDidFinishLaunching() {
 
   return true;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void App::PreLaunch(const c::Size& dz) {
+
+  auto director = c::Director::getInstance();
+  auto glview = director->getOpenGLView();
+
+  // turn on display FPS
+  director->setDisplayStats(true);
+
+  // set FPS. the default value is 1.0/60 if you don't call this
+  director->setAnimationInterval(1.0 / 60);
+
+  // Set the design resolution
+  glview->setDesignResolutionSize(dz.width, dz.height, ResolutionPolicy::NO_BORDER);
+  c::Size frameSize = glview->getFrameSize();
+
+  // if the frame's height is larger than the height of medium size.
+  if (frameSize.height > mediumSize.height) {
+    director->setContentScaleFactor(
+        MIN(largeSize.height/dz.height, largeSize.width/dz.width));
+  }
+  // if the frame's height is larger than the height of small size.
+  else if (frameSize.height > smallSize.height) {
+    director->setContentScaleFactor(
+        MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
+  }
+  // if the frame's height is smaller than the height of medium size.
+  else {
+    director->setContentScaleFactor(
+        MIN(smallSize.height/dz.height, smallSize.width/dz.width));
+  }
+
+  InitAudio();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void App::InitAudio() {
+
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // This function will be called when the app is inactive

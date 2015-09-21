@@ -12,7 +12,6 @@
 #if !defined(__XCONFIG_H__)
 #define __XCONFIG_H__
 
-#include "deprecated/CCDictionary.h"
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 #include "Primitives.h"
@@ -37,6 +36,7 @@ protected:
   static const stdstr SOUNDS;
   static const stdstr CSTS;
   static const stdstr CFG;
+  static const stdstr POOLS;
 
   c::Dictionary* GetFragment(const stdstr& key);
   XPool* CreatePool(const stdstr& p);

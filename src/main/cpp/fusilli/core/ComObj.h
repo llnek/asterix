@@ -12,8 +12,7 @@
 #if !defined(__COMOBJ_H__)
 #define __COMOBJ_H__
 
-#include "deprecated/CCDeprecated.h"
-#include "platform/CCCommon.h"
+#include "core/Primitives.h"
 #include "2d/CCSprite.h"
 #include "ash/Ash.h"
 NS_ALIAS(c, cocos2d)
@@ -42,10 +41,11 @@ public:
 
   void Inflate(c::Dictionary* options);
   void Inflate(float x, float y);
+  void Inflate();
   void Deflate();
 
   void SetPos(float x, float y);
-  void Hurt(int damage);
+  void Hurt(int damage=1);
 
   const c::Size CSize();
   const c::Vec2 Pos();

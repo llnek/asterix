@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "NodeRegistry.h"
 #include "NodeList.h"
+#include "Entity.h"
 #include "Node.h"
 NS_BEGIN(ash)
 

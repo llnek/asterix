@@ -47,7 +47,7 @@ Factory::Factory()
 //
 void Factory::CreateMissiles(int count) {
   auto p= f::XConfig::GetInstance()->GetPool("missiles");
-  auto cb= []() -> a::Component* {
+  auto cb= [=](f::XPool* pp) -> f::ComObj* {
     auto sp = cx::CreateSprite("missile.png");
     sp->setVisible(false);
     f::MainGame::Get()->AddAtlasItem("game-pics", sp);
@@ -60,7 +60,7 @@ void Factory::CreateMissiles(int count) {
 //
 void Factory::CreateExplosions(int count) {
   auto p= f::XConfig::GetInstance()->GetPool("explosions");
-  auto cb= []() -> a::Component* {
+  auto cb= [=](f::XPool* pp) -> f::ComObj* {
     auto sp = cx::CreateSprite("boom_0.png");
     sp->setVisible(false);
     f::MainGame::Get()->AddAtlasItem("game-pics", sp);
@@ -73,7 +73,7 @@ void Factory::CreateExplosions(int count) {
 //
 void Factory::CreateBombs(int count) {
   auto p= f::XConfig::GetInstance()->GetPool("bombs");
-  auto cb= []() -> a::Component* {
+  auto cb= [=](f::XPool* pp) -> f::ComObj* {
     auto sp = cx::CreateSprite("bomb.png");
     sp->setVisible(false);
     f::MainGame::Get()->AddAtlasItem("game-pics", sp);
@@ -85,12 +85,12 @@ void Factory::CreateBombs(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 const c::Size Factory::CalcImgSize(const stdstr& img) {
-  return cx::CSize(img);
+  return cx::CalcSize(img);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* Factory::GetRankInfo(const Rank r) {
+c::Dictionary* Factory::GetRankInfo(int r) {
   c::Size z= cx::CalcSize("purple_bug_0.png");
   stdstr s0 = "purple_bug_0.png";
   stdstr s1= "purple_bug_1.png";
@@ -157,8 +157,8 @@ void Factory::FillSquad(f::XPool* pool) {
     auto f1 = s->getCString();
     s=DictVal<c::String>(info, "img1");
     auto f2 = s->getCString();
-    animFrames.pushBack( cx::CreateSprite(f1));
-    animFrames.pushBack( cx::CreateSprite(f2));
+    animFrames.pushBack( cx::GetSpriteFrame(f1));
+    animFrames.pushBack( cx::GetSpriteFrame(f2));
 
     aa->runAction(c::RepeatForever::create(
       c::Animate::create(

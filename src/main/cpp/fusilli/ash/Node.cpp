@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "Entity.h"
 #include "Node.h"
 NS_BEGIN(ash)
 
@@ -19,7 +20,7 @@ Node* Node::Create(const s::map<stdstr, COMType>& s) {
   auto node= new Node();
   for (auto it = s.begin();
       it != s.end(); ++it) {
-    node->types.insert(pair<COMType, stdstr>(it->second,it->first));
+    node->types.insert(s::pair<COMType, stdstr>(it->second,it->first));
   }
   return node;
 }
@@ -52,7 +53,7 @@ bool Node::BindEntity(Entity* e) {
     auto t= it->first;
     auto c= e->Get(t);
     if (NNP(c)) {
-      values.insert(pair<stdstr, Component*>(f,c));
+      values.insert(s::pair<stdstr, Component*>(f,c));
     } else {
       // this entity is no good, doesn't have the right
       // components

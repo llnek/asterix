@@ -15,7 +15,7 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
-class Engine;
+
 class Entity;
 class Node;
 

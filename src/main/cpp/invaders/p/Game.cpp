@@ -10,6 +10,12 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/XLayer.h"
+#include "s/Stager.h"
+#include "s/Motion.h"
+#include "s/Move.h"
+#include "s/Collide.h"
+#include "s/Resolve.h"
+#include "s/Aliens.h"
 #include "Game.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_ALIAS(cc, cocos2d)
@@ -56,14 +62,13 @@ void GameLayer::Reset(bool newFlag) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool GameLayer::Replay() {
+void GameLayer::Replay() {
   Play(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Play(bool newFlag) {
-  InitEngine();
   InitAsh();
   Reset(newFlag);
 }
@@ -71,14 +76,14 @@ void GameLayer::Play(bool newFlag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::InitAsh() {
-  options = cc::Dictionary::create();
-  factory = new Factory(engine, d);
-  engine->RegoSystem(new Stager(factory, options));
-  engine->RegoSystem(new Motion(factory, options));
-  engine->RegoSystem(new Move(factory, options));
-  engine->RegoSystem(new Aliens(factory, options));
-  engine->RegoSystem(new Collide(factory, options));
-  engine->RegoSystem(new Resolve(factory, options));
+  auto options = cc::Dictionary::create();
+  factory = new Factory(engine, options);
+  engine->RegoSystem(Stager::Create(factory, options));
+  engine->RegoSystem(Motion::Create(factory, options));
+  engine->RegoSystem(Move::Create(factory, options));
+  engine->RegoSystem(Aliens::Create(factory, options));
+  engine->RegoSystem(Collide::Create(factory, options));
+  engine->RegoSystem(Resolve::Create(factory, options));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,7 +107,7 @@ void GameLayer::OnPlayerKilled() {
 //
 void GameLayer::OnNewGame(const f::GMode mode) {
   //sh.sfxPlay('start_game');
-  SetGameMode(mode);
+  SetMode(mode);
   Play(true);
 }
 
@@ -116,7 +121,7 @@ void GameLayer::OnEarnScore(int score) {
 //
 void GameLayer::OnDone() {
   SCAST(Game*,getParent())->Pause();
-  Reset();
+  Reset(false);
   GetHUD()->EnableReplay();
 }
 

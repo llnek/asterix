@@ -28,9 +28,10 @@ NS_BEGIN(fusilli)
 //
 namespace ccsx {
 
+  void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void ResolveElastic(ComObj* obj1, ComObj* obj2);
 
-  void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
+  void SfxPlay(const stdstr& sound);
 
   c::MenuItem* CreateMenuBtn(const stdstr& n);
 
@@ -157,9 +158,6 @@ namespace ccsx {
   const c::Vec2 AnchorBL();
 
 };
-
-typedef NodeFld<ComObj*> GComObj;
-
 
 NS_END(fusilli)
 #endif

@@ -12,7 +12,8 @@
 #if !defined(__XGAMELAYER_H__)
 #define __XGAMELAYER_H__
 
-#include "deprecated/CCDictionary.h"
+#include "base/CCEventKeyboard.h"
+#include "core/Primitives.h"
 #include "ash/System.h"
 #include "ash/Engine.h"
 #include "XHUDLayer.h"
@@ -57,7 +58,7 @@ public:
   virtual ~XGameLayer();
 
   const s::map<int,bool>& Keys();
-  bool KeyPoll(int key);
+  bool KeyPoll(c::EventKeyboard::KeyCode key);
   c::Dictionary* GetLCfg();
 
 

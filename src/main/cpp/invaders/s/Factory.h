@@ -18,13 +18,6 @@
 NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
-
-//////////////////////////////////////////////////////////////////////////
-//
-enum class Rank {
-
-};
-
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Factory {
@@ -46,12 +39,12 @@ public:
   void CreateBombs(int count = 24);
 
   const c::Size CalcImgSize(const stdstr& img);
-  c::Dictionary* GetRankInfo(const Rank r);
+  c::Dictionary* GetRankInfo(int r);
 
   void FillSquad(f::XPool* );
-  void CreateAliens();
+  a::Entity* CreateAliens();
   void BornShip();
-  void CreateShip();
+  a::Entity* CreateShip();
 
   virtual ~Factory();
 };

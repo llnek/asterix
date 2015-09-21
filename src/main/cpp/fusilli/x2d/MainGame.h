@@ -13,7 +13,7 @@
 #define __MAINGAME_H__
 
 #include "platform/CCCommon.h"
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 #include "XScene.h"
 NS_BEGIN(fusilli)
 

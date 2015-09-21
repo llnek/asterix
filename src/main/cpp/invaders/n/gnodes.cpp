@@ -16,8 +16,8 @@ NS_BEGIN(invaders)
 //
 a::Node* AlienMotionNode::CreateNode() {
   s::map<stdstr,a::COMType> s;
-  s.insert(pair<stdstr,a::COMType>("aliens", "n/AlienSquad"));
-  s.insert(pair<stdstr,a::COMType>("looper", "n/Looper"));
+  s.insert(s::pair<stdstr,a::COMType>("aliens", "n/AlienSquad"));
+  s.insert(s::pair<stdstr,a::COMType>("looper", "n/Looper"));
   return new a::Node(s);
 }
 
@@ -41,9 +41,9 @@ const a::NodeType AlienMotionNode::TypeId() {
 //
 a::Node* CannonCtrlNode::CreateNode() {
   s::map<stdstr, a::COMType> s;
-  s.insert(pair<stdstr, a::COMType>("looper", "n/Looper"));
-  s.insert(pair<stdstr, a::COMType>("cannon", "n/Cannon"));
-  s.insert(pair<stdstr, a::COMType>("ship", "n/Ship"));
+  s.insert(s::pair<stdstr, a::COMType>("looper", "n/Looper"));
+  s.insert(s::pair<stdstr, a::COMType>("cannon", "n/Cannon"));
+  s.insert(s::pair<stdstr, a::COMType>("ship", "n/Ship"));
   return new a::Node(s);
 }
 
@@ -67,9 +67,9 @@ const a::NodeType CannonCtrlNode::TypeId() {
 //
 a::Node* ShipMotionNode::CreateNode() {
   s::map<stdstr, a::COMType> s;
-  s.insert(pair<stdstr, a::COMType>("vel", "n/Velocity"));
-  s.insert(pair<stdstr, a::COMType>("motion", "n/Motion"));
-  s.insert(pair<stdstr, a::COMType>("ship", "n/Ship"));
+  s.insert(s::pair<stdstr, a::COMType>("vel", "n/Velocity"));
+  s.insert(s::pair<stdstr, a::COMType>("motion", "n/Motion"));
+  s.insert(s::pair<stdstr, a::COMType>("ship", "n/Ship"));
   return new a::Node(s);
 }
 

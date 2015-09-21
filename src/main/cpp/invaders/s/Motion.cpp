@@ -134,11 +134,11 @@ void Motion::ScanInput(a::Node* node, float dt) {
   Ship* s= a::NodeFld<Ship>(node, "ship");
 
   if (f::MainGame::Get()->KeyPoll(
-      c::EventKeyboard::KeyCode::KEY_RIGHT)) {
+      c::EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
     m->right=true;
   }
   if (f::MainGame::Get()->KeyPoll(
-      c::EventKeyboard::KeyCode::KEY_LEFT)) {
+      c::EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
     m->left=true;
   }
 }

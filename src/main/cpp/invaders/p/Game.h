@@ -64,10 +64,15 @@ public:
 class CC_DLL Game : public f::XScene {
 private:
   NO__COPYASSIGN(Game)
+  Game();
+  bool running;
 public:
 
   virtual XScene* Realize();
   virtual ~Game();
+  virtual void Resume();
+  virtual void Pause();
+  virtual bool IsOperational();
 
   static Game* Create();
 };

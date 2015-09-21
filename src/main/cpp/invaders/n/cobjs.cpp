@@ -19,7 +19,7 @@ NS_BEGIN(invaders)
 AlienSquad::AlienSquad(f::XPool* aliens, int stepx)
   : AlienSquad() {
   this->aliens=aliens;
-  this->stepx=step;
+  this->stepx=stepx;
 }
 
 //////////////////////////////////////////////////////////////////////////////

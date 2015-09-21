@@ -37,13 +37,15 @@ public:
   virtual void RemoveFromEngine(a::Engine*);
   virtual void AddToEngine(a::Engine*);
 
+  void Fire(const stdstr& t, void* evt);
+
   void InitAlienSize();
   void InitShipSize();
 
   virtual bool Update(float dt);
   void OnceOnly();
 
-  virtual int Priority() { return PreUpdate; }
+  virtual int Priority() { return a::PreUpdate; }
 
   virtual ~Stager();
 

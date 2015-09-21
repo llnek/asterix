@@ -45,7 +45,7 @@ public:
   void FireMissile(a::Node*, float dt);
   void ScanInput(a::Node*, float dt);
 
-  virtual int Priority() { return Motion; }
+  virtual int Priority() { return a::Motion; }
 
 };
 

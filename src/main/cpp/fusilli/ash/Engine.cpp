@@ -10,8 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "NodeRegistry.h"
-#include "System.h"
-#include "Entity.h"
 #include "Engine.h"
 NS_BEGIN(ash)
 
@@ -210,11 +208,10 @@ void Engine::PurgeEntities(const stdstr& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Engine::GetNodeList(const stdstr& group, const NodeType& nodeType) {
+NodeList* Engine::GetNodeList( const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
-  auto it= groups.find(group);
   auto nl = new NodeList();
-  if (it != groups.end()) {
+  for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
     Node* n= nullptr;
     for (auto e= el->head; NNP(e); e=e->next) {

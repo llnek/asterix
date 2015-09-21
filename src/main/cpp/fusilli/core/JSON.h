@@ -15,7 +15,7 @@
 #include "json/stringbuffer.h"
 #include "json/document.h"
 #include "json/writer.h"
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 
 NS_ALIAS(js, rapidjson)
 NS_ALIAS(s, std)

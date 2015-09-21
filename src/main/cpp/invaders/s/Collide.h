@@ -27,6 +27,7 @@ private:
 
   a::NodeList* aliens;
   a::NodeList* ships;
+  a::Engine* engine;
 
 public:
 
@@ -45,7 +46,7 @@ public:
   void CheckShipBombs(a::Node*);
   void CheckShipAliens(a::Node*, a::Node*);
 
-  virtual int Priority() { return Collide; }
+  virtual int Priority() { return a::Collide; }
 
 };
 

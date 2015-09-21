@@ -13,7 +13,7 @@
 #define __L10N_H__
 
 #include "platform/CCCommon.h"
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 #include <map>
 
 NS_ALIAS(s, std)

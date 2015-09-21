@@ -13,7 +13,7 @@
 #define __ZLOADER_H__
 
 #include "platform/CCCommon.h"
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 

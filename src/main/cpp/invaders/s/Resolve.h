@@ -45,7 +45,7 @@ public:
   void CheckAliens(a::Node*);
   void CheckShip(a::Node*);
 
-  virtual int Priority() { return Resolve; }
+  virtual int Priority() { return a::Resolve; }
 
 };
 

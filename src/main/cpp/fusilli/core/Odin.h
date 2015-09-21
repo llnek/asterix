@@ -15,7 +15,7 @@
 #include "network/WebSocket.h"
 #include "json/rapidjson.h"
 #include "json/document.h"
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 
 NS_ALIAS(n, cocos2d::network)
 NS_ALIAS(js, rapidjson)

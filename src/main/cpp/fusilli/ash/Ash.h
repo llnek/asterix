@@ -36,7 +36,19 @@ public:
   virtual ~Component() {}
 };
 
-
+//////////////////////////////////////////////////////////////////////////
+//
+enum SPV {
+    PreUpdate =  100,
+    NetPlay=    200,
+    Select=     300,
+    Motion=     400,
+    Move=       500,
+    Logic=   600,
+    Collide=  700,
+    Resolve=    800,
+    Render=     900
+};
 
 
 NS_END(ash)

@@ -12,9 +12,7 @@
 #if !defined(__BASESYSTEM_H__)
 #define __BASESYSTEM_H__
 
-
-#include "deprecated/CCDictionary.h"
-#include "platform/CCCommon.h"
+#include "core/Primitives.h"
 #include "Factory.h"
 #include "ash/Ash.h"
 NS_ALIAS(c, cocos2d)

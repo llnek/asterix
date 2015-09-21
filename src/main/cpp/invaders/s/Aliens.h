@@ -45,18 +45,18 @@ public:
   void CheckBomb(AlienSquad* sqad);
 
   void MaybeShuffleAliens(AlienSquad* sqad);
-  void TestDirX(f::ComObj* b, int stepx);
+  bool TestDirX(f::ComObj* b, int stepx);
 
   void ForwardOneAlien(f::ComObj* a, float delta);
   void ShuffleOneAlien(f::ComObj* a, int stepx);
 
-  void DoShuffle(AlienSquad* sqad);
-  void DoForward(AlienSquad* sqad);
+  bool DoShuffle(AlienSquad* sqad);
+  bool DoForward(AlienSquad* sqad);
 
   f::ComObj* FindMinX(AlienSquad* sqad);
   f::ComObj* FindMaxX(AlienSquad* sqad);
 
-  virtual int Priority() { return Motion; }
+  virtual int Priority() { return a::Motion; }
 
 };
 

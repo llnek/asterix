@@ -97,6 +97,8 @@ public:
   virtual const a::COMType TypeId() { return "n/Explosion"; }
 
   virtual void Inflate(c::Dictionary* );
+  virtual void Inflate(float x, float y);
+
   virtual ~Explosion();
   Explosion(c::Sprite* );
 

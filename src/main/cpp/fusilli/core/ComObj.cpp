@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "deprecated/CCFloat.h"
 #include "Primitives.h"
 #include "ComObj.h"
 NS_BEGIN(fusilli)
@@ -59,6 +58,18 @@ void ComObj::Inflate(float x, float y) {
 
   if (NNP(sprite)) {
     sprite->setPosition(x,y);
+    sprite->setVisible(true);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void ComObj::Inflate() {
+
+  health = origHealth;
+  status=true;
+
+  if (NNP(sprite)) {
     sprite->setVisible(true);
   }
 }

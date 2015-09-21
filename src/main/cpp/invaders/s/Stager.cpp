@@ -93,8 +93,8 @@ void Stager::OnceOnly() {
   factory->CreateAliens();
   factory->CreateShip();
 
-  cx::OnTouchOne(this);
-  cx::OnMouse(this);
+  //cx::OnTouchOne(this);
+  //cx::OnMouse(this);
   //TODO:
   //g->PKInput(engine);
 }

@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "NodeRegistry.h"
+#include "Node.h"
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,7 +44,7 @@ NodeRegistry::NodeRegistry() {
 //
 void NodeRegistry::Register(NodeFactory* f) {
   Deregister(f->TypeId());
-  regos.insert(pair<NodeType,NodeFactory*>(f->TypeId(),f));
+  regos.insert(s::pair<NodeType,NodeFactory*>(f->TypeId(),f));
 }
 
 //////////////////////////////////////////////////////////////////////////////

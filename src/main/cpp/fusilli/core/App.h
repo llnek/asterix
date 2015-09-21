@@ -13,20 +13,22 @@
 #define __APP_H__
 #include "platform/CCApplication.h"
 #include "platform/CCCommon.h"
-#include "core/fusilli.h"
-
-NS_ALIAS(cc, cocos2d)
+#include "aeon/fusilli.h"
+NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL App : public cc::Application {
+class CC_DLL App : public c::Application {
 protected:
 
   App();
 
 private:
+
+  void PreLaunch(const c::Size&);
+  void InitAudio();
 
   NO__COPYASSIGN(App)
 
@@ -56,7 +58,6 @@ public:
   virtual ~App();
 
 };
-
 
 
 

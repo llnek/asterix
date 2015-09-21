@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Collide.h"
+NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -31,6 +33,7 @@ Collide::~Collide() {
 //
 Collide::Collide()
   : aliens(nullptr)
+  , engine(nullptr)
   , ships(nullptr) {
 }
 
@@ -94,7 +97,7 @@ void Collide::CheckMissilesBombs() {
       auto e= *it;
       if (e2->status &&
           e->status &&
-          MaybeCollide(m,b)) {
+          MaybeCollide(e2,e)) {
         e2->Hurt();
         e->Hurt();
       }

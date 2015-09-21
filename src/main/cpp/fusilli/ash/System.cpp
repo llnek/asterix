@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "System.h"
+#include "Engine.h"
 NS_BEGIN(ash)
 
 

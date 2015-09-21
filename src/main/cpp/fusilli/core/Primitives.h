@@ -12,13 +12,42 @@
 #if !defined(__PRIMITIVES_H__)
 #define __PRIMITIVES_H__
 
+/*
 #include "platform/CCCommon.h"
+
+#include "math/CCAffineTransform.h"
+#include "math/CCGeometry.h"
+#include "math/CCVertex.h"
+#include "math/Mat4.h"
+#include "math/MathUtil.h"
+#include "math/Quaternion.h"
+#include "math/Vec2.h"
+#include "math/Vec3.h"
+#include "math/Vec4.h"
+
+// Deprecated include
+#include "deprecated/CCArray.h"
+#include "deprecated/CCBool.h"
+#include "deprecated/CCDictionary.h"
+#include "deprecated/CCDouble.h"
+#include "deprecated/CCFloat.h"
+#include "deprecated/CCInteger.h"
+#include "deprecated/CCNotificationCenter.h"
+#include "deprecated/CCSet.h"
+#include "deprecated/CCString.h"
+// CCDeprecated.h must be included at the end
+#include "deprecated/CCDeprecated.h"
+
 #include "base/CCDataVisitor.h"
 #include "base/CCConsole.h"
 #include "base/CCRef.h"
-#include "core/fusilli.h"
+*/
+#include "cocos2d.h"
+#include "aeon/fusilli.h"
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
+NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -33,7 +62,6 @@ T* DictVal(c::Dictionary* d, const stdstr& key) {
 }
 
 
-NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Box4 {

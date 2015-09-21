@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "deprecated/CCInteger.h"
+#include "core/Primitives.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "XHUDLayer.h"
@@ -35,7 +35,7 @@ XHUDLayer::XHUDLayer()
 //////////////////////////////////////////////////////////////////////////////
 //
 void XHUDLayer::AddIcon(c::Node* icon) {
-  AddItem(icon, z, idx);
+  AddItem(icon);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ void XHUDLayer::AddMenuIcon(c::MenuItem* b,
 void XHUDLayer::AddReplayIcon(c::MenuItem* c,
     const c::Vec2& where) {
 
-  c::Integer* tile= CstVal<c::Integer>("TILE")->getValue();
+  auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(c) * 0.5;
   auto hw = cx::GetScaledWidth(c) * 0.5;
   auto cfg = XConfig::GetInstance();

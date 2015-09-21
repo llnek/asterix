@@ -18,6 +18,7 @@ const stdstr XConfig::ATLASES= "atlases";
 const stdstr XConfig::LEVELS= "levels";
 const stdstr XConfig::FONTS= "fonts";
 const stdstr XConfig::TILES= "tiles";
+const stdstr XConfig::POOLS= "pools";
 const stdstr XConfig::IMAGES= "images";
 const stdstr XConfig::SOUNDS= "sounds";
 const stdstr XConfig::CSTS= "csts";

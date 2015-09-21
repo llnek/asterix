@@ -12,35 +12,28 @@
 #if !defined(__ENGINE_H__)
 #define __ENGINE_H__
 
-#include "NodeRegistry.h"
 #include "NodeList.h"
+#include "System.h"
+#include "Entity.h"
 #include <vector>
 #include <map>
 
 NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
-class System;
-class Entity;
 //////////////////////////////////////////////////////////////////////////////
 // owns all items in this list
 template <typename T>
 class FS_DLL ObjList {
 private:
-
   NO__COPYASSIGN(ObjList)
-
 public:
-
   const s::vector<T*> List();
-
   void Release(T*);
   void Add(T* );
   void Clear() ;
-
   T* head;
   T* tail;
-
   virtual ~ObjList();
   ObjList();
 };
@@ -84,7 +77,7 @@ public:
   void PurgeEntity(Entity* );
   void PurgeEntities(const stdstr& group) ;
 
-  NodeList* GetNodeList(const stdstr& group, const NodeType& );
+  NodeList* GetNodeList(const NodeType& );
 
   void PurgeSystem (System* );
   void PurgeSystems();

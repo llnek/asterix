@@ -14,7 +14,7 @@
 
 
 #include "platform/CCCommon.h"
-#include "core/fusilli.h"
+#include "aeon/fusilli.h"
 #include "2d/CCLayer.h"
 #include <stdint.h>
 NS_ALIAS(c, cocos2d)
