@@ -128,6 +128,7 @@ static void SetUp() {
   ccc= ns2->head->Get("f4");
   printf("f4 value = %d\n", static_cast<COMP4*>(ccc)->value);
 
+  delete eng;
 }
 
 

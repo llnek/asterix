@@ -109,18 +109,16 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
-  for (auto it= nodeLists.begin();
-      it != nodeLists.end(); ++it) {
-    //free a nodelist
+  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
     delete *it;
   }
   nodeLists.clear();
   for (auto it= groups.begin();
       it != groups.end(); ++it) {
-    //free a entitylist
     delete it->second;
   }
   groups.clear();
+//  printf("Engine dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -225,7 +223,7 @@ void Engine::PurgeEntities(const stdstr& group) {
 //
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
-  auto nl = NodeList::Create(nodeType);
+  NodeList* nl = NodeList::Create(nodeType);
   for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
     Node* n= nullptr;
@@ -238,8 +236,8 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
         n=nullptr;
       }
     }
-    nodeLists.push_back(nl);
   }
+  nodeLists.push_back(nl);
   return nl;
 }
 

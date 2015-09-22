@@ -19,6 +19,7 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList::~NodeList() {
+//  printf("NodeList dtor\n");
   Clear();
 }
 
@@ -28,6 +29,8 @@ NodeList::NodeList() {
   head = tail = nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 owner<NodeList*> NodeList::Create(const NodeType& t) {
   auto n = new NodeList();
   n->nType = t;
@@ -72,7 +75,7 @@ void NodeList::Purge(not_null<Node*> p) {
 void NodeList::Clear() {
   while (NNP(head)) {
     auto n = head;
-    head = n->next;
+    head = head->next;
     delete n;
   }
   head = nullptr;
