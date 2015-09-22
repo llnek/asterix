@@ -15,6 +15,7 @@
 #include <vector>
 #include <map>
 #include "Ash.h"
+NS_USING(Guide)
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
@@ -47,8 +48,8 @@ public:
   static NodeRegistry* GetInstance();
   virtual ~NodeRegistry();
 
+  void Register(not_null<NodeFactory*>);
   void Deregister(const NodeType&);
-  void Register(NodeFactory*);
 
   Node* CreateNode(const NodeType&);
 

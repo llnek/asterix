@@ -16,6 +16,7 @@
 #include <vector>
 #include <map>
 
+NS_USING(Guide)
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
@@ -40,8 +41,8 @@ public:
 
   Entity* GetEntity() { return entity; }
   Component* Get(const stdstr& field);
-  bool BindEntity(Entity* );
-  bool BelongsTo(Entity*);
+  bool BindEntity(not_null<Entity*> );
+  bool BelongsTo(not_null<Entity*>);
 
   Node* previous;
   Node* next;

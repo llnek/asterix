@@ -13,6 +13,7 @@
 #define __SYSTEM_H__
 
 #include "Ash.h"
+NS_USING(Guide)
 NS_BEGIN(ash)
 
 class Engine;
@@ -34,8 +35,8 @@ private:
 
 public:
 
-  virtual void RemoveFromEngine(Engine*);
-  virtual void AddToEngine(Engine*);
+  virtual void RemoveFromEngine(not_null<Engine*>);
+  virtual void AddToEngine(not_null<Engine*>);
   virtual bool Update(float time);
   bool Is(const SystemType& );
 

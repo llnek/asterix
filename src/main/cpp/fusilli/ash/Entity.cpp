@@ -16,10 +16,10 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Entity::Create(const stdstr& group, Engine* e) {
+Entity* Entity::Create(const stdstr& group, not_null<Engine*> e) {
   auto ent= new Entity();
   ent->group=group;
-  ent->engine= e;
+  ent->engine= e.get();
   return ent;
 }
 
@@ -34,22 +34,20 @@ Entity::~Entity() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity()
-  : previous(nullptr)
-  , next(nullptr)
-  , dead(false)
-  , engine(nullptr) {
-
+Entity::Entity() {
+  next = previous = nullptr;
+  dead=false;
+  engine=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Rego(Component* c) {
+void Entity::Rego(not_null<Component*> c) {
   auto z = c->TypeId();
   if (Has(z)) {
     throw "cannot reassign component";
   }
-  parts.insert(s::pair<COMType,Component*>(z,c));
+  parts.insert(s::pair<COMType,Component*>(z,c.get()));
   engine->NotifyModify(this);
 }
 

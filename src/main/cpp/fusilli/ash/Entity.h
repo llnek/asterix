@@ -16,6 +16,7 @@
 #include <vector>
 #include <map>
 
+NS_USING(Guide)
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
@@ -36,15 +37,15 @@ private:
 
 public:
 
-  static Entity* Create(const stdstr& group, Engine*);
+  static Entity* Create(const stdstr& group, not_null<Engine*>);
 
   Entity* previous;
   Entity* next;
 
   virtual ~Entity();
 
+  void Rego(not_null<Component*>);
   void Purge(const COMType&);
-  void Rego(Component*);
 
   Component* Get(const COMType& );
   bool Has(const COMType&);

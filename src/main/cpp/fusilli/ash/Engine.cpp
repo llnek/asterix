@@ -18,23 +18,24 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Add(T* e ) {
+void ObjList<T>::Add(not_null<T*> e ) {
   if (ENP(head)) {
-    head = tail = e;
-    e->previous= nullptr;
-    e->next = nullptr;
+    head = tail = e.get();
+    head->previous= nullptr;
+    head->next = nullptr;
   } else {
-    tail->next = e;
+    tail->next = e.get();
     e->previous = tail;
     e->next= nullptr;
-    tail = e;
+    tail = e.get();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Release(T* e) {
+void ObjList<T>::Release(not_null<T*> p) {
+  auto e= p.get();
   if (head == e) {
     head = head->next;
   }
@@ -124,9 +125,9 @@ Engine::~Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Engine::Engine()
-  : updating(false)
-  , dirty(false) {
+Engine::Engine() {
+  updating=false;
+  dirty=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -140,6 +141,18 @@ Engine::GetEntities(const stdstr& group) {
   } else {
     return v;
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s::vector<Entity*>
+Engine::GetEntities() {
+  s::vector<Entity*> rc;
+  for (auto it = groups.begin(); it != groups.end(); ++it) {
+    auto v= it->second->List();
+    rc.insert(rc.end(), v.begin(), v.end());
+  }
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -167,23 +180,23 @@ Entity* Engine::CreateEntity(const stdstr& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::NotifyModify(Entity* e) {
+void Engine::NotifyModify(not_null<Entity*> e) {
   bool fnd=false;
   for (auto it= modList.begin();
       it != modList.end(); ++it) {
-    if (e == *it) { fnd=true; break; }
+    if (e.get() == *it) { fnd=true; break; }
   }
   if (!fnd) {
-    modList.push_back(e);
+    modList.push_back(e.get());
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeEntity(Entity* e) {
+void Engine::PurgeEntity(not_null<Entity*> e) {
   auto it = groups.find(e->GroupId());
   if (it != groups.end()) {
-    PurgeEntity(it->second,e);
+    PurgeEntity(it->second,e.get());
   }
 }
 
@@ -212,7 +225,7 @@ void Engine::PurgeEntities(const stdstr& group) {
 //
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
-  auto nl = new NodeList();
+  auto nl = NodeList::Create(nodeType);
   for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
     Node* n= nullptr;
@@ -220,8 +233,8 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
       if (ENP(n)) {
         n= rego->CreateNode(nodeType);
       }
-      if (n->BindEntity(e)) {
-        nl->Add(n);
+      if (n->BindEntity(not_null<Entity*>(e))) {
+        nl->Add(not_null<Node*>(n));
         n=nullptr;
       }
     }
@@ -232,15 +245,15 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RegoSystem(System* s) {
+void Engine::RegoSystem(not_null<System*> s) {
   s->AddToEngine( this );
-  systemList.Add(s);
+  systemList.Add(s.get());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeSystem(System* s ) {
-  systemList.Release(s);
+void Engine::PurgeSystem(not_null<System*> s ) {
+  systemList.Release(s.get());
   s->RemoveFromEngine(this);
   delete s;
 }

@@ -24,14 +24,20 @@ NodeList::~NodeList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList::NodeList()
-  : head(nullptr)
-  , tail(nullptr) {
+NodeList::NodeList() {
+  head = tail = nullptr;
+}
+
+owner<NodeList*> NodeList::Create(const NodeType& t) {
+  auto n = new NodeList();
+  n->nType = t;
+  return n;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Add(Node* n) {
+void NodeList::Add(not_null<Node*> p) {
+  auto n= p.get();
   if ( ENP(head) ) {
     head = tail = n;
   } else {
@@ -44,7 +50,8 @@ void NodeList::Add(Node* n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Purge(Node* node) {
+void NodeList::Purge(not_null<Node*> p) {
+  auto node=p.get();
   if (head == node ) {
     head = head->next;
   }
@@ -80,7 +87,7 @@ bool NodeList::IsEmpty() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::RemoveEntity(Entity* e) {
+void NodeList::RemoveEntity(not_null<Entity*> e) {
   Node* n = head;
   Node* c;
   while (NNP(n)) {
@@ -96,7 +103,7 @@ void NodeList::RemoveEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool NodeList::ContainsWithin(Entity* e) {
+bool NodeList::ContainsWithin(not_null<Entity*> e) {
   for (auto n= head; NNP(n); n = n->next) {
     if (n->BelongsTo(e)) { return true; }
   }
@@ -105,7 +112,7 @@ bool NodeList::ContainsWithin(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool NodeList::IsCompatible(Entity* e) {
+bool NodeList::IsCompatible(not_null<Entity*> e) {
   auto rego = NodeRegistry::GetInstance();
   auto n = rego->CreateNode(nType);
   auto ok= n->BindEntity(e);

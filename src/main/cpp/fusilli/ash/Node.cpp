@@ -32,18 +32,15 @@ Node::~Node() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node::Node()
-  : entity( nullptr)
-  , previous( nullptr)
-  , next( nullptr) {
-
+Node::Node() {
+  next = previous = nullptr;
+  entity= nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Node::BindEntity(Entity* e) {
+bool Node::BindEntity(not_null<Entity*> e) {
   if (NNP(entity) ||
-      ENP(e) ||
       !e->IsOk() ) {
     return false;
   }
@@ -61,13 +58,18 @@ bool Node::BindEntity(Entity* e) {
       break;
     }
   }
-  return values.size() > 0;
+  if ( values.size() > 0) {
+    entity=e.get();
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Node::BelongsTo(Entity* e) {
-  return entity == e;
+bool Node::BelongsTo(not_null<Entity*> e) {
+  return entity == e.get();
 }
 
 //////////////////////////////////////////////////////////////////////////////

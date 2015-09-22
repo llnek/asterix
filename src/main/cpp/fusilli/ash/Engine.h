@@ -18,6 +18,7 @@
 #include <vector>
 #include <map>
 
+NS_USING(Guide)
 NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
@@ -29,8 +30,8 @@ private:
   NO__COPYASSIGN(ObjList)
 public:
   const s::vector<T*> List();
-  void Release(T*);
-  void Add(T* );
+  void Release(not_null<T*>);
+  void Add(not_null<T*> );
   void Clear() ;
   T* head;
   T* tail;
@@ -70,18 +71,19 @@ public:
   virtual ~Engine();
 
   const s::vector<Entity*> GetEntities(const stdstr& group);
+  const s::vector<Entity*> GetEntities();
   const s::vector<System*> GetSystems();
 
   Entity* CreateEntity(const stdstr& group);
-  void NotifyModify(Entity*);
-  void PurgeEntity(Entity* );
+  void NotifyModify(not_null<Entity*>);
+  void PurgeEntity(not_null<Entity*> );
   void PurgeEntities(const stdstr& group) ;
 
   NodeList* GetNodeList(const NodeType& );
 
-  void PurgeSystem (System* );
+  void PurgeSystem (not_null<System*> );
   void PurgeSystems();
-  void RegoSystem(System* );
+  void RegoSystem(not_null<System*> );
 
   void Update(float time);
 

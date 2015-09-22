@@ -13,6 +13,7 @@
 #define __NODELIST_H__
 
 #include "Ash.h"
+NS_USING(Guide)
 NS_BEGIN(ash)
 
 
@@ -26,19 +27,21 @@ private:
 
   NO__COPYASSIGN(NodeList)
   NodeType nType;
+  NodeList();
 
 public:
 
+  static owner<NodeList*> Create(const NodeType&);
+
   const NodeType GetType() { return nType; }
   virtual ~NodeList();
-  NodeList();
 
-  bool ContainsWithin(Entity*);
-  bool IsCompatible(Entity*);
-  void RemoveEntity(Entity* );
+  bool ContainsWithin(not_null<Entity*>);
+  bool IsCompatible(not_null<Entity*>);
+  void RemoveEntity(not_null<Entity*> );
 
-  void Add(Node* );
-  void Purge(Node* );
+  void Purge(not_null<Node*> );
+  void Add(not_null<Node*> );
   void Clear();
   bool IsEmpty();
 

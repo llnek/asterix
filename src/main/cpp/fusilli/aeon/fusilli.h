@@ -12,6 +12,8 @@
 #if !defined(__FUSILLI_H__)
 #define __FUSILLI_H__
 
+#include "GSL/gsl.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -42,9 +42,9 @@ NodeRegistry::NodeRegistry() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeRegistry::Register(NodeFactory* f) {
+void NodeRegistry::Register(not_null<NodeFactory*> f) {
   Deregister(f->TypeId());
-  regos.insert(s::pair<NodeType,NodeFactory*>(f->TypeId(),f));
+  regos.insert(s::pair<NodeType,NodeFactory*>(f->TypeId(),f.get()));
 }
 
 //////////////////////////////////////////////////////////////////////////////
