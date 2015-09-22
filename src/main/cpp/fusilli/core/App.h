@@ -11,6 +11,8 @@
 
 #if !defined(__APP_H__)
 #define __APP_H__
+
+
 #include "platform/CCApplication.h"
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"

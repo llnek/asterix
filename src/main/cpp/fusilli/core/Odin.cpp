@@ -14,6 +14,7 @@
 #include "Odin.h"
 
 NS_ALIAS(n, cocos2d::network)
+NS_ALIAS(j, fusilli::json)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
@@ -49,7 +50,7 @@ static Event mkJoinRequest (const stdstr& room,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static js::Document* evtToDoc(const Event& evt) {
+static owner<js::Document*>  evtToDoc(const Event& evt) {
   return nullptr;
 }
 
@@ -105,7 +106,19 @@ Event::~Event() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS* WSockSS::CreatePlayRequest(const stdstr& game,
+WSockSS::~WSockSS() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+WSockSS::WSockSS() {
+  wss=nullptr;
+  state=nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<WSockSS*> WSockSS::CreatePlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->game= game;
@@ -139,7 +152,8 @@ WSockSS::WSockSS() {
 void WSockSS::Send(const Event& evt) {
   if (state == CType::S_CONNECTED &&
       NNP(wss)) {
-    wss->send( json::Stringify( evtToDoc(evt)));
+    auto d=  j::Stringify( evtToDoc(evt));
+    wss->send(d);
   }
 }
 
@@ -274,7 +288,7 @@ void WSockSS::Connect(const stdstr& url) {
 //////////////////////////////////////////////////////////////////////////////
 //
 const stdstr WSockSS::GetPlayRequest() {
-  return json::Stringify( evtToDoc(mkPlayRequest(game, user, passwd)));
+  return j::Stringify( evtToDoc(mkPlayRequest(game, user, passwd)));
 }
 
 

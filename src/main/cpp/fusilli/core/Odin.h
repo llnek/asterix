@@ -121,10 +121,10 @@ private:
 
 public:
 
-  static WSockSS* CreatePlayRequest(const stdstr& game,
+  static owner<WSockSS*> CreatePlayRequest(const stdstr& game,
       const stdstr& user, const stdstr& pwd);
 
-  static WSockSS* CreateJoinRequest(const stdstr& room,
+  static owner<WSockSS*> CreateJoinRequest(const stdstr& room,
       const stdstr& user, const stdstr& pwd);
 
   virtual ~WSockSS();

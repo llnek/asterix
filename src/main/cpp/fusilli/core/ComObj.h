@@ -15,9 +15,8 @@
 #include "core/Primitives.h"
 #include "2d/CCSprite.h"
 #include "ash/Ash.h"
-NS_ALIAS(c, cocos2d)
+
 NS_ALIAS(a, ash)
-NS_ALIAS(s,std)
 NS_BEGIN(fusilli)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +25,9 @@ class CC_DLL ComObj : public a::Component {
 
 private:
 
+  void Init(c::Sprite*, int health, int score);
   NO__COPYASSIGN(ComObj)
+  ComObj();
 
 public:
 
@@ -39,7 +40,7 @@ public:
   c::Vec2 lastPos;
   c::Vec2 vel;
 
-  void Inflate(c::Dictionary* options);
+  void Inflate(not_null<c::Dictionary*> options);
   void Inflate(float x, float y);
   void Inflate();
   void Deflate();
@@ -59,7 +60,7 @@ public:
   ComObj(c::Sprite*, int health, int score);
   ComObj(c::Sprite*);
 
-  virtual ~ComObj();
+  virtual ~ComObj() {}
 };
 
 

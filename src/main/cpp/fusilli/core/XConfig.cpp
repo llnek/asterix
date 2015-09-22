@@ -27,14 +27,16 @@ const stdstr XConfig::CFG= "cfg";
 static XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
-static const stdstr getXXX(cc::Dictionary* d, const stdstr& key ) {
-  cc::String* r= DictVal<cc::String>(d,key);
+static const stdstr getXXX(not_null<c::Dictionary*> d,
+    const stdstr& key ) {
+
+  c::String* r= DictVal<c::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetInstance(XConfig* c) {
+void XConfig::SetInstance(not_null<XConfig*> c) {
   singleton=c;
 }
 
@@ -57,21 +59,21 @@ XConfig::~XConfig() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::XConfig() {
-  dict = cc::Dictionary::create();
+  dict = c::Dictionary::create();
   dict->retain();
-  dict->setObject(cc::Dictionary::create(), ATLASES);
-  dict->setObject(cc::Dictionary::create(), TILES);
-  dict->setObject(cc::Dictionary::create(), CSTS);
-  dict->setObject(cc::Dictionary::create(), IMAGES);
-  dict->setObject(cc::Dictionary::create(), FONTS);
-  dict->setObject(cc::Dictionary::create(), SOUNDS);
-  dict->setObject(cc::Dictionary::create(), LEVELS);
+  dict->setObject(c::Dictionary::create(), ATLASES);
+  dict->setObject(c::Dictionary::create(), TILES);
+  dict->setObject(c::Dictionary::create(), CSTS);
+  dict->setObject(c::Dictionary::create(), IMAGES);
+  dict->setObject(c::Dictionary::create(), FONTS);
+  dict->setObject(c::Dictionary::create(), SOUNDS);
+  dict->setObject(c::Dictionary::create(), LEVELS);
   AddLevel("1");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Ref* XConfig::GetCst(const stdstr& key) {
+c::Ref* XConfig::GetCst(const stdstr& key) {
   return GetFragment(CSTS)->objectForKey(key);
 }
 
@@ -118,7 +120,7 @@ XPool* XConfig::GetPool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* XConfig::CreatePool(const stdstr& key) {
+owner<XPool*> XConfig::CreatePool(const stdstr& key) {
   auto p = XPool::create();
   pools.insert(pair<stdstr, XPool*>(key, p));
   return p;
@@ -126,17 +128,17 @@ XPool* XConfig::CreatePool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XConfig::GetLevel(const stdstr& n) {
+c::Dictionary* XConfig::GetLevel(const stdstr& n) {
   auto d= GetFragment(LEVELS);
-  return SCAST(cc::Dictionary*, d->objectForKey(n));
+  return SCAST(c::Dictionary*, d->objectForKey(n));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
+c::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
   auto r= GetLevel(n);
   if (NNP(r)) {
-    return SCAST(cc::Dictionary*, r->objectForKey(CFG));
+    return SCAST(c::Dictionary*, r->objectForKey(CFG));
   } else {
     return nullptr;
   }
@@ -144,14 +146,14 @@ cc::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-cc::Dictionary* XConfig::AddLevel(const stdstr& level) {
+c::Dictionary* XConfig::AddLevel(const stdstr& level) {
 
-  auto d2= cc::Dictionary::create();
+  auto d2= c::Dictionary::create();
   GetFragment(LEVELS)->setObject(d2, level);
 
-  d2->setObject(cc::Dictionary::create(), IMAGES);
-  d2->setObject(cc::Dictionary::create(), TILES);
-  d2->setObject(cc::Dictionary::create(), CFG);
+  d2->setObject(c::Dictionary::create(), IMAGES);
+  d2->setObject(c::Dictionary::create(), TILES);
+  d2->setObject(c::Dictionary::create(), CFG);
   return d2;
 }
 

@@ -26,13 +26,13 @@ NS_BEGIN(fusilli)
 //
 namespace json {
 
-  js::Document* Parse(const stdstr& s) {
+  owner<js::Document*> Parse(const stdstr& s) {
     auto doc= new js::Document();
     doc->Parse(s.c_str());
     return doc;
   }
 
-  const stdstr Stringify(js::Document* doc) {
+  const stdstr Stringify(not_null<js::Document*> doc) {
     js::StringBuffer buf;
     js::Writer<js::StringBuffer> w(buf);
     doc->Accept(w);

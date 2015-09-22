@@ -22,7 +22,7 @@ void ComObj::Hurt(int damage) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Inflate(c::Dictionary* dict) {
+void ComObj::Inflate(not_null<c::Dictionary*> dict) {
 
   health = origHealth;
   status=true;
@@ -125,8 +125,7 @@ int ComObj::Pid() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(c::Sprite* sprite, int health, int score)
-  : ComObj(sprite) {
+void ComObj::Init(c::Sprite* sprite, int health, int score) {
   this->origHealth = health;
   this->sprite = sprite;
   this->health = health;
@@ -136,10 +135,21 @@ ComObj::ComObj(c::Sprite* sprite, int health, int score)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(c::Sprite* sprite)
-  : ComObj(sprite,1,0) {
+ComObj::ComObj(c::Sprite* sprite, int health, int score) {
+  Init(sprite, health, score);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+ComObj::ComObj(c::Sprite* sprite) {
+  Init(sprite,1,0);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+ComObj::ComObj() {
+  Init(nullptr,1,0);
+}
 
 NS_END(fusilli)
 

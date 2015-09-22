@@ -17,17 +17,19 @@
 #include "2d/CCTransition.h"
 #include "base/CCDirector.h"
 #include "CCSX.h"
+
 NS_BEGIN(fusilli)
 NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-c::Menu* MkBackQuit(c::MenuItem* b,
-    c::MenuItem* q, bool vert) {
+// b & q should be same size
+c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
+    not_null<c::MenuItem*> q, bool vert) {
 
   auto sz= b->getContentSize();
-  auto padding = 10;
   auto menu= c::Menu::create();
+  auto padding = 10;
+
   menu->addChild(b);
   menu->addChild(q);
 
@@ -110,7 +112,7 @@ c::Label* CreateBmfLabel(float x, float y,
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
-bool Collide(ComObj* a, ComObj* b) {
+bool Collide(not_null<ComObj*> a, not_null<ComObj*> b) {
   if (NNP(a) && NNP(b)) {
     return Collide0(a->sprite, b->sprite);
   } else {
@@ -120,7 +122,7 @@ bool Collide(ComObj* a, ComObj* b) {
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
-bool Collide0(cc::Sprite* a, cc::Sprite* b) {
+bool Collide0(not_null<c::Node*> a, not_null<c::Node*> b) {
   if (NNP(a) && NNP(b)) {
     return BBox(a).intersectsRect( BBox(b));
   } else {
@@ -130,8 +132,10 @@ bool Collide0(cc::Sprite* a, cc::Sprite* b) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SetDevRes(bool landscape, float x, float y, ResolutionPolicy pcy) {
-  auto v= cc::Director::getInstance()->getOpenGLView();
+void SetDevRes(bool landscape, float x, float y,
+    ResolutionPolicy pcy) {
+
+  auto v= c::Director::getInstance()->getOpenGLView();
   if (landscape) {
     v->setDesignResolutionSize(x, y, pcy);
   } else {
@@ -148,7 +152,7 @@ bool IsPortrait() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool OutOfBound(ComObj* ent, const Box4& B) {
+bool OutOfBound(not_null<ComObj*> ent, const Box4& B) {
   if (NNP(ent) && NNP(ent->sprite)) {
     return OutOfBound(BBox4(ent->sprite), B);
   } else {
@@ -167,33 +171,33 @@ bool OutOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UndoTimer(cc::ActionInterval* tm) {
+void UndoTimer(not_null<c::DelayTime*> tm) {
   if (NNP(tm)) { tm->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create a timer action
 //
-cc::Action* CreateTimer(cc::Node* par, float tm) {
-  return par->runAction(cc::DelayTime::create(tm));
+c::Action* CreateTimer(not_null<c::Node*> par, float tm) {
+  return par->runAction(c::DelayTime::create(tm));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TimerDone(cc::Action* t) {
+bool TimerDone(not_null<c::DelayTime*> t) {
   return NNP(t) ? t->isDone() : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create a sprite from its frame name
 //
-cc::Sprite* CreateSprite(const stdstr& name) {
-  return cc::Sprite::createWithSpriteFrameName(name);
+c::Sprite* CreateSprite(const stdstr& name) {
+  return c::Sprite::createWithSpriteFrameName(name);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Box4 BBox4(cc::Sprite* s) {
+const Box4 BBox4(not_null<c::Node*> s) {
   return Box4(
     GetTop(s),
     GetRight(s),
@@ -204,43 +208,44 @@ const Box4 BBox4(cc::Sprite* s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void RunScene(cc::Scene* ns, float delay) {
-  cc::Director::getInstance()->replaceScene(cc::TransitionCrossFade::create(delay, ns));
+void RunScene(not_null<c::Scene*> ns, float delay) {
+  c::Director::getInstance()->replaceScene(
+      c::TransitionCrossFade::create(delay, ns));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void RunScene(cc::Scene* ns) {
-  cc::Director::getInstance()->replaceScene(ns);
+void RunScene(not_null<c::Scene*> ns) {
+  c::Director::getInstance()->replaceScene(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool IsTransitioning() {
-  return dynamic_cast<cc::TransitionScene*>(
-    cc::Director::getInstance()->getRunningScene()) != nullptr;
+  return dynamic_cast<c::TransitionScene*>(
+    c::Director::getInstance()->getRunningScene()) != nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const cc::Size CalcSize(const stdstr& frame) {
+const c::Size CalcSize(const stdstr& frame) {
   return CreateSprite(frame)->getContentSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const cc::Size HalfHW(cc::Sprite* s) {
+const c::Size HalfHW(not_null<c::Sprite*> s) {
   auto z= s->getContentSize();
-  return cc::Size(z.width * 0.5, z.height * 0.5);
+  return c::Size(z.width * 0.5, z.height * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create a rectangle from this sprite
 //
-const cc::Rect BBox(cc::Sprite* s) {
-  return cc::Rect(GetLeft(s),
+const c::Rect BBox(not_null<c::Node*> s) {
+  return c::Rect(GetLeft(s),
                  GetBottom(s),
                  GetWidth(s),
                  GetHeight(s));
@@ -249,7 +254,7 @@ const cc::Rect BBox(cc::Sprite* s) {
 //////////////////////////////////////////////////////////////////////////
 // Create a rect from the last frame
 //
-const Box4 BBox4B4(ComObj* ent) {
+const Box4 BBox4B4(not_null<ComObj*> ent) {
   return Box4(
     GetLastTop(ent),
     GetLastRight(ent),
@@ -259,31 +264,31 @@ const Box4 BBox4B4(ComObj* ent) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetScaledHeight(cc::Node* s) {
+float GetScaledHeight(not_null<c::Node*> s) {
   return s->getContentSize().height * s->getScaleY();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetHeight(cc::Node* s) {
+float GetHeight(not_null<c::Node*> s) {
   return s->getContentSize().height;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetScaledWidth(cc::Node* s) {
+float GetScaledWidth(not_null<c::Node*> s) {
   return s->getContentSize().width * s->getScaleX();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetWidth(cc::Node* s) {
+float GetWidth(not_null<c::Node*> s) {
   return s->getContentSize().width;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-static float get_XXX(cc::Node* s, float px, float bound) {
+static float get_XXX(not_null<c::Node*> s, float px, float bound) {
   auto w= s->getContentSize().width;
   auto a= s->getAnchorPoint().x;
   return px + (bound - a) * w ;
@@ -291,7 +296,7 @@ static float get_XXX(cc::Node* s, float px, float bound) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-static float get_YYY(cc::Node* s, float py, float bound) {
+static float get_YYY(not_null<c::Node*> s, float py, float bound) {
   auto h= s->getContentSize().height;
   auto a= s->getAnchorPoint().y;
   return py + (bound - a) * h ;
@@ -299,49 +304,49 @@ static float get_YYY(cc::Node* s, float py, float bound) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLeft(cc::Node* s) {
+float GetLeft(not_null<c::Node*> s) {
   return get_XXX(s, s->getPosition().x, AnchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetRight(cc::Node* s) {
+float GetRight(not_null<c::Node*> s) {
   return get_XXX(s, s->getPosition().x, AnchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetBottom(cc::Node* s) {
+float GetBottom(not_null<c::Node*> s) {
   return get_YYY(s, s->getPosition().y, AnchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetTop(cc::Node* s) {
+float GetTop(not_null<c::Node*> s) {
   return get_YYY(s, s->getPosition().y, AnchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastLeft(ComObj* ent) {
+float GetLastLeft(not_null<ComObj*> ent) {
   return get_XXX(ent->sprite, ent->lastPos.x, AnchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastRight(ComObj* ent) {
+float GetLastRight(not_null<ComObj*> ent) {
   return get_XXX(ent->sprite, ent->lastPos.x, AnchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastTop(ComObj* ent) {
+float GetLastTop(not_null<ComObj*> ent) {
   return get_YYY(ent->sprite, ent->lastPos.y, AnchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastBottom(ComObj* ent) {
+float GetLastBottom(not_null<ComObj*> ent) {
   return get_YYY(ent->sprite, ent->lastPos.y, AnchorB().y);
 }
 
@@ -358,9 +363,9 @@ float CenterY() { return Center().y; }
 //////////////////////////////////////////////////////////////////////////
 // Get the center of the visible screen
 //
-const cc::Vec2 Center() {
+const c::Vec2 Center() {
   auto rc = VisRect();
-  return cc::Vec2( rc.origin.x + rc.size.width * 0.5,
+  return c::Vec2( rc.origin.x + rc.size.width * 0.5,
       rc.origin.y + rc.size.height * 0.5);
 }
 
@@ -377,15 +382,15 @@ float ScreenWidth() { return Screen().width; }
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen rectangle
 //
-const cc::Rect VisRect() {
-  return cc::Director::getInstance()->getOpenGLView()->getVisibleRect();
+const c::Rect VisRect() {
+  return c::Director::getInstance()->getOpenGLView()->getVisibleRect();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen box
 //
 const Box4 VisBox() {
-  auto vr = cc::Director::getInstance()->getOpenGLView()->getVisibleRect();
+  auto vr = c::Director::getInstance()->getOpenGLView()->getVisibleRect();
   return Box4(
     vr.origin.y + vr.size.height,
     vr.origin.x + vr.size.width,
@@ -397,23 +402,23 @@ const Box4 VisBox() {
 //////////////////////////////////////////////////////////////////////////
 // Get the actual window/frame size.
 //
-const cc::Size Screen() {
-  return cc::Director::getInstance()->getOpenGLView()->getFrameSize();
+const c::Size Screen() {
+  return c::Director::getInstance()->getOpenGLView()->getFrameSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the actual screen center.
 //
-const cc::Vec2 SCenter() {
+const c::Vec2 SCenter() {
   auto sz = Screen();
-  return cc::Vec2(sz.width * 0.5, sz.height * 0.5);
+  return c::Vec2(sz.width * 0.5, sz.height * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the center of this box.
 //
-const cc::Vec2 VBoxMID(const Box4& box) {
-  return cc::Vec2(box.left + (box.right-box.left) * 0.5,
+const c::Vec2 VBoxMID(const Box4& box) {
+  return c::Vec2(box.left + (box.right-box.left) * 0.5,
               box.bottom + (box.top-box.bottom) * 0.5);
 }
 
@@ -425,8 +430,8 @@ const cc::Vec2 VBoxMID(const Box4& box) {
 // are returned
 //
 bool TraceEnclosure(float dt, const Box4& bbox,
-    const cc::Rect& rect, const cc::Vec2& vel,
-    cc::Vec2& outPos, cc::Vec2& outVel) {
+    const c::Rect& rect, const c::Vec2& vel,
+    c::Vec2& outPos, c::Vec2& outVel) {
   auto y = rect.origin.y + dt * vel.y;
   auto x = rect.origin.x + dt * vel.x;
   auto sz= rect.size.height * 0.5;
@@ -474,8 +479,8 @@ bool TraceEnclosure(float dt, const Box4& bbox,
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-cc::SpriteFrame* GetSpriteFrame(const stdstr& frameid) {
-  return cc::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
+c::SpriteFrame* GetSpriteFrame(const stdstr& frameid) {
+  return c::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -601,44 +606,44 @@ void OnTouchOne() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorC() { return cc::Vec2(0.5, 0.5); }
+const c::Vec2 AnchorC() { return c::Vec2(0.5, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorT() { return cc::Vec2(0.5, 1); }
+const c::Vec2 AnchorT() { return c::Vec2(0.5, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorTR() { return cc::Vec2(1, 1); }
+const c::Vec2 AnchorTR() { return c::Vec2(1, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorR() { return cc::Vec2(1, 0.5); }
+const c::Vec2 AnchorR() { return c::Vec2(1, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorBR() { return cc::Vec2(1, 0); }
+const c::Vec2 AnchorBR() { return c::Vec2(1, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorB() { return cc::Vec2(0.5, 0); }
+const c::Vec2 AnchorB() { return c::Vec2(0.5, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorBL() { return cc::Vec2(0, 0); }
+const c::Vec2 AnchorBL() { return c::Vec2(0, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorL() { return cc::Vec2(0, 0.5); }
+const c::Vec2 AnchorL() { return c::Vec2(0, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const cc::Vec2 AnchorTL() { return cc::Vec2(0, 1); }
+const c::Vec2 AnchorTL() { return c::Vec2(0, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 // not used for now.
 //
-void ResolveElastic(ComObj* obj1, ComObj* obj2) {
+void ResolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
   auto pos2 = obj2->sprite->getPosition();
   auto pos1= obj1->sprite->getPosition();
   auto sz2= obj2->sprite->getContentSize();

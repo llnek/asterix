@@ -39,7 +39,7 @@ protected:
   static const stdstr POOLS;
 
   c::Dictionary* GetFragment(const stdstr& key);
-  XPool* CreatePool(const stdstr& p);
+  owner<XPool*> CreatePool(const stdstr& p);
 
   s::map<stdstr, XPool*> pools;
   c::Dictionary* dict;
@@ -51,7 +51,7 @@ private:
 
 public:
 
-  static void SetInstance(XConfig*);
+  static void SetInstance(not_null<XConfig*>);
   static XConfig* GetInstance();
 
   virtual void HandleResolution(const c::Size& ) {}
@@ -64,8 +64,8 @@ public:
   virtual const stdstr GetColor() = 0;
   virtual const c::Size GetGameSize() = 0;
 
+  virtual owner<c::Scene*> StartWith() = 0;
   virtual const stdstr GetWSUrl() = 0;
-  virtual c::Scene* StartWith() = 0;
 
   virtual void SetGameId(const stdstr& ) = 0;
   virtual void SetRoomId(const stdstr& ) = 0;

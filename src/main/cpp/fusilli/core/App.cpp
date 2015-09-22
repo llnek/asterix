@@ -95,15 +95,15 @@ void App::PreLaunch(const c::Size& dz) {
 
   // Set the design resolution
   glview->setDesignResolutionSize(dz.width, dz.height, ResolutionPolicy::NO_BORDER);
-  c::Size frameSize = glview->getFrameSize();
+  c::Size fz = glview->getFrameSize();
 
   // if the frame's height is larger than the height of medium size.
-  if (frameSize.height > mediumSize.height) {
+  if (fz.height > mediumSize.height) {
     director->setContentScaleFactor(
         MIN(largeSize.height/dz.height, largeSize.width/dz.width));
   }
   // if the frame's height is larger than the height of small size.
-  else if (frameSize.height > smallSize.height) {
+  else if (fz.height > smallSize.height) {
     director->setContentScaleFactor(
         MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
   }

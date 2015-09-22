@@ -107,7 +107,6 @@ typedef std::string stdstr;
 //
 #define DEFCREATE_FUNC(T) static T* Create() { return new(std::nothrow) T(); }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 NS_BEGIN(fusilli)
@@ -135,8 +134,8 @@ enum class Locale {
   BULGARIAN
 };
 
-
 NS_END(fusilli)
+NS_USING(Guide)
 #endif
 
 

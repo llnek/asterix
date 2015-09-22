@@ -16,6 +16,7 @@
 #include "base/ccTypes.h"
 #include "Primitives.h"
 #include "ComObj.h"
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
@@ -29,7 +30,7 @@ NS_BEGIN(fusilli)
 namespace ccsx {
 
   void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
-  void ResolveElastic(ComObj* obj1, ComObj* obj2);
+  void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
   void SfxPlay(const stdstr& sound);
 
@@ -39,8 +40,8 @@ namespace ccsx {
       const stdstr& n,
       const stdstr& s, const stdstr& d);
 
-  c::Menu* MkBackQuit(c::MenuItem* b,
-      c::MenuItem* q, bool vert = false);
+  c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
+      not_null<c::MenuItem*> q, bool vert = false);
 
   void MkAudio();
 
@@ -48,63 +49,65 @@ namespace ccsx {
   const c::Color3B White();
   const c::Color3B Black();
 
-  bool Collide0(c::Sprite* , c::Sprite* );
-  bool Collide(ComObj* a, ComObj* b);
+  bool Collide0(not_null<c::Node*>, not_null<c::Node*> );
+  bool Collide(not_null<ComObj*>, not_null<ComObj*>);
 
   void SetDevRes(bool landscape, float x, float y,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
   bool IsPortrait();
-  bool OutOfBound(ComObj* ent, const Box4& B);
+
+  bool OutOfBound(not_null<ComObj*>, const Box4& B);
   bool OutOfBound(const Box4& src, const Box4& B);
 
-  c::Action* CreateTimer(c::Node*, float millis);
-  void UndoTimer(c::ActionInterval*);
-  bool TimerDone(c::ActionInterval*);
+  c::Action* CreateTimer(not_null<c::Node*>, float millis);
+  void UndoTimer(not_null<c::DelayTime*>);
+  bool TimerDone(not_null<c::DelayTime*>);
 
   c::Label* CreateBmfLabel(float x, float y,
     const stdstr& fontPath, const stdstr& text);
 
   c::Sprite* CreateSprite(const stdstr& frameName);
 
-  const Box4 BBox4B4(ComObj* ent);
-  const Box4 BBox4(c::Sprite* );
+  const Box4 BBox4B4(not_null<ComObj*>);
+  const Box4 BBox4(not_null<c::Node*>);
 
-  void RunScene(c::Scene* ns, float delay);
-  void RunScene(c::Scene* ns);
+  void RunScene(not_null<c::Scene*>, float delay);
+  void RunScene(not_null<c::Scene*>);
+
   bool IsTransitioning();
 
   const c::Size CalcSize(const stdstr& frame);
 
-  const c::Size HalfHW(c::Sprite* );
-  const c::Rect BBox(c::Sprite* );
+  const c::Size HalfHW(not_null<c::Node*>);
 
-  float GetScaledHeight(c::Node* );
+  const c::Rect BBox(not_null<c::Node*>);
 
-  float GetHeight(c::Node*);
+  float GetScaledHeight(not_null<c::Node*>);
 
-  float GetScaledWidth(c::Node* );
+  float GetHeight(not_null<c::Node*>);
 
-  float GetWidth(c::Node* );
+  float GetScaledWidth(not_null<c::Node*>);
 
-  float GetLeft(c::Node* );
+  float GetWidth(not_null<c::Node*>);
 
-  float GetRight(c::Node*);
+  float GetLeft(not_null<c::Node*>);
 
-  float GetTop(c::Node*);
+  float GetRight(not_null<c::Node*>);
 
-  float GetBottom(c::Node*);
+  float GetTop(not_null<c::Node*>);
 
-  float GetLastLeft(ComObj* );
+  float GetBottom(not_null<c::Node*>);
 
-  float GetLastRight(ComObj*);
+  float GetLastLeft(not_null<ComObj*> );
 
-  float GetLastTop(ComObj*);
+  float GetLastRight(not_null<ComObj*> );
 
-  float GetLastBottom(ComObj*);
+  float GetLastTop(not_null<ComObj*> );
+
+  float GetLastBottom(not_null<ComObj*> );
 
   float CenterX();
-
   float CenterY();
 
   const c::Vec2 Center();

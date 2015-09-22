@@ -47,12 +47,14 @@
 
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
+
 NS_BEGIN(fusilli)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* DictVal(c::Dictionary* d, const stdstr& key) {
+T* DictVal(not_null<c::Dictionary*> d, const stdstr& key) {
   auto v= d->objectForKey(key);
   if (NNP(v)) {
     return static_cast<T*>(v);
@@ -60,6 +62,7 @@ T* DictVal(c::Dictionary* d, const stdstr& key) {
     return nullptr;
   }
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////////

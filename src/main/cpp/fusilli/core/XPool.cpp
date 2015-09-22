@@ -64,7 +64,7 @@ ComObj* XPool::Get() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::Checkin(ComObj* c) {
+void XPool::Checkin(not_null<ComObj*> c) {
   objs.push_back(c);
 }
 

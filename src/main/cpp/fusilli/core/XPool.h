@@ -46,8 +46,8 @@ public:
   void Foreach(s::function<void (ComObj*)>);
   void ClearAll(bool del=true);
 
+  void Checkin(not_null<ComObj*>);
   void Reset();
-  void Checkin(ComObj*);
 
   virtual bool init() { return true; }
   virtual ~XPool();
