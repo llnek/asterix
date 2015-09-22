@@ -1,17 +1,17 @@
-/////////////////////////////////////////////////////////////////////////////// 
-// 
-// Copyright (c) 2015 Microsoft Corporation. All rights reserved. 
-// 
-// This code is licensed under the MIT License (MIT). 
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
-// THE SOFTWARE. 
-// 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) 2015 Microsoft Corporation. All rights reserved.
+//
+// This code is licensed under the MIT License (MIT).
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -24,7 +24,7 @@ namespace Guide
 {
 
 //
-// GSL.owner: ownership pointers 
+// GSL.owner: ownership pointers
 //
 using std::unique_ptr;
 using std::shared_ptr;
@@ -48,11 +48,11 @@ class Final_act
 {
 public:
     explicit Final_act(F f) : f_(f) {}
-    
+
     Final_act(const Final_act&& other) : f_(other.f_) {}
     Final_act(const Final_act&) = delete;
     Final_act& operator=(const Final_act&) = delete;
-    
+
     ~Final_act() { f_(); }
 
 private:
@@ -89,11 +89,11 @@ typename Cont::value_type& at(Cont& cont, size_t index) { fail_fast_assert(index
 // not_null
 //
 // Restricts a pointer or smart pointer to only hold non-null values.
-// 
+//
 // Has zero size overhead over T.
 //
-// If T is a pointer (i.e. T == U*) then 
-// - allow construction from U* or U& 
+// If T is a pointer (i.e. T == U*) then
+// - allow construction from U* or U&
 // - disallow construction from nullptr_t
 // - disallow default construction
 // - ensure construction from U* fails with nullptr
@@ -118,10 +118,10 @@ public:
 
     not_null<T>& operator=(const T& t) { ptr_ = t; ensure_invariant(); return *this; }
 
-    // prevents compilation when someone attempts to assign a nullptr 
+    // prevents compilation when someone attempts to assign a nullptr
     not_null<T>& operator=(std::nullptr_t) = delete;
 	not_null<T>& operator=(int) = delete;
-    
+
     T get() const {
 #ifdef _MSC_VER
         __assume(ptr_ != nullptr);
@@ -154,7 +154,7 @@ private:
 };
 
 
-// 
+//
 // maybe_null
 //
 // Describes an optional pointer - provides symmetry with not_null
@@ -208,7 +208,7 @@ public:
 #ifdef _MSC_VER
         __assume(ptr_ != nullptr);
 #endif
-        return ptr_; 
+        return ptr_;
     }
 
     operator T() const { return get(); }

@@ -36,7 +36,7 @@ private:
 
 public:
 
-  static Node* Create(const s::map<stdstr, COMType>& );
+  static owner<Node*> Create(const s::map<stdstr, COMType>& );
   virtual ~Node();
 
   Entity* GetEntity() { return entity; }
@@ -54,7 +54,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* NodeFld(ash::Node* n, const stdstr& fld) {
+T* NodeFld(not_null<ash::Node*> n, const stdstr& fld) {
   auto v= n->Get(fld);
   if (NNP(v)) {
     return static_cast<T*>(v);

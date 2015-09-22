@@ -32,7 +32,8 @@ NodeRegistry::~NodeRegistry() {
   for (auto it= regos.begin(); it != regos.end(); ++it) {
     delete it->second;
   }
-  regos.clear();
+  //regos.clear();
+  //printf("NodeRegistry dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,7 +45,7 @@ NodeRegistry::NodeRegistry() {
 //
 void NodeRegistry::Register(not_null<NodeFactory*> f) {
   Deregister(f->TypeId());
-  regos.insert(s::pair<NodeType,NodeFactory*>(f->TypeId(),f.get()));
+  regos.insert(s::pair<NodeType,NodeFactory*>(f->TypeId(),f));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ void NodeRegistry::Deregister(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* NodeRegistry::CreateNode(const NodeType& t) {
+owner<Node*> NodeRegistry::CreateNode(const NodeType& t) {
   auto it=regos.find(t);
   Node* rc= nullptr;
   if (it != regos.end()) {

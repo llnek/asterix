@@ -16,10 +16,10 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Entity::Create(const stdstr& group, not_null<Engine*> e) {
+owner<Entity*> Entity::Create(const stdstr& group, not_null<Engine*> e) {
   auto ent= new Entity();
   ent->group=group;
-  ent->engine= e.get();
+  ent->engine= e;
   return ent;
 }
 
@@ -29,8 +29,8 @@ Entity::~Entity() {
   for (auto it= parts.begin(); it != parts.end(); ++it) {
     delete it->second;
   }
-  parts.clear();
-  printf("Entity dtor\n");
+  //parts.clear();
+  //printf("Entity dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ void Entity::Rego(not_null<Component*> c) {
   if (Has(z)) {
     throw "cannot reassign component";
   }
-  parts.insert(s::pair<COMType,Component*>(z,c.get()));
+  parts.insert(s::pair<COMType,Component*>(z,c));
   engine->NotifyModify(this);
 }
 
@@ -66,7 +66,7 @@ void Entity::Purge(const COMType& z) {
   if (it != parts.end()) {
     auto rc= it->second;
     parts.erase(it);
-    mc_del_ptr(rc);
+    delete rc;
     engine->NotifyModify(this);
   }
 }

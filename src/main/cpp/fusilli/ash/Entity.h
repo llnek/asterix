@@ -37,7 +37,8 @@ private:
 
 public:
 
-  static Entity* Create(const stdstr& group, not_null<Engine*>);
+  static owner<Entity*> Create(const stdstr& group,
+      not_null<Engine*>);
 
   Entity* previous;
   Entity* next;

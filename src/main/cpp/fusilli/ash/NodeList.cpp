@@ -39,9 +39,8 @@ owner<NodeList*> NodeList::Create(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Add(not_null<Node*> p) {
-  auto n= p.get();
-  if ( ENP(head) ) {
+void NodeList::Add(not_null<Node*> n) {
+  if (ENP(head)) {
     head = tail = n;
   } else {
     tail->next = n;
@@ -50,7 +49,6 @@ void NodeList::Add(not_null<Node*> p) {
     tail = n;
   }
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -66,8 +64,7 @@ int NodeList::Size() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Purge(not_null<Node*> p) {
-  auto node=p.get();
+void NodeList::Purge(not_null<Node*> node) {
   if (head == node ) {
     head = head->next;
   }
@@ -80,7 +77,7 @@ void NodeList::Purge(not_null<Node*> p) {
   if ( node->next ) {
     node->next->previous = node->previous;
   }
-  mc_del_ptr(node);
+  delete node.get();
 }
 
 //////////////////////////////////////////////////////////////////////////////

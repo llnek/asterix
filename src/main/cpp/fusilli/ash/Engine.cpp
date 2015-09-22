@@ -111,12 +111,12 @@ Engine::~Engine() {
   for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
     delete *it;
   }
-  nodeLists.clear();
+  //nodeLists.clear();
   for (auto it= groups.begin();
       it != groups.end(); ++it) {
     delete it->second;
   }
-  groups.clear();
+  //groups.clear();
 //  printf("Engine dtor\n");
 }
 
@@ -181,10 +181,10 @@ void Engine::NotifyModify(not_null<Entity*> e) {
   bool fnd=false;
   for (auto it= modList.begin();
       it != modList.end(); ++it) {
-    if (e.get() == *it) { fnd=true; break; }
+    if (e == *it) { fnd=true; break; }
   }
   if (!fnd) {
-    modList.push_back(e.get());
+    modList.push_back(e);
   }
 }
 
@@ -193,7 +193,7 @@ void Engine::NotifyModify(not_null<Entity*> e) {
 void Engine::PurgeEntity(not_null<Entity*> e) {
   auto it = groups.find(e->GroupId());
   if (it != groups.end()) {
-    PurgeEntity(it->second,e.get());
+    PurgeEntity(it->second,e);
   }
 }
 
@@ -222,7 +222,7 @@ void Engine::PurgeEntities(const stdstr& group) {
 //
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
   auto rego = NodeRegistry::GetInstance();
-  NodeList* nl = NodeList::Create(nodeType);
+  auto nl = NodeList::Create(nodeType);
   for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
     Node* n= nullptr;
@@ -230,8 +230,8 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
       if (ENP(n)) {
         n= rego->CreateNode(nodeType);
       }
-      if (n->BindEntity(not_null<Entity*>(e))) {
-        nl->Add(not_null<Node*>(n));
+      if (n->BindEntity(e)) {
+        nl->Add(n);
         n=nullptr;
       }
     }
@@ -244,13 +244,13 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
 //
 void Engine::RegoSystem(not_null<System*> s) {
   s->AddToEngine( this );
-  systemList.Add(s.get());
+  systemList.Add(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::PurgeSystem(not_null<System*> s ) {
-  systemList.Release(s.get());
+  systemList.Release(s);
   s->RemoveFromEngine(this);
   delete s;
 }

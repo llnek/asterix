@@ -51,7 +51,7 @@ public:
   void Register(not_null<NodeFactory*>);
   void Deregister(const NodeType&);
 
-  Node* CreateNode(const NodeType&);
+  owner<Node*> CreateNode(const NodeType&);
 
 };
 

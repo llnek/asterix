@@ -16,7 +16,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* Node::Create(const s::map<stdstr, COMType>& s) {
+owner<Node*> Node::Create(const s::map<stdstr, COMType>& s) {
   auto node= new Node();
   for (auto it = s.begin();
       it != s.end(); ++it) {
@@ -70,7 +70,7 @@ bool Node::BindEntity(not_null<Entity*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Node::BelongsTo(not_null<Entity*> e) {
-  return entity == e.get();
+  return entity == e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
