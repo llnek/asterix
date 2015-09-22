@@ -18,24 +18,23 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Add(not_null<T*> e ) {
+void ObjList<T>::Add(not_null<T*> e) {
   if (ENP(head)) {
-    head = tail = e.get();
+    head = tail = e;
     head->previous= nullptr;
     head->next = nullptr;
   } else {
-    tail->next = e.get();
+    tail->next = e;
     e->previous = tail;
     e->next= nullptr;
-    tail = e.get();
+    tail = e;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Release(not_null<T*> p) {
-  auto e= p.get();
+void ObjList<T>::Release(not_null<T*> e) {
   if (head == e) {
     head = head->next;
   }
@@ -79,16 +78,15 @@ const s::vector<T*> ObjList<T>::List() {
 //
 template <typename T>
 ObjList<T>::~ObjList() {
-  printf("ObjList dtor\n");
+  //printf("ObjList dtor\n");
   Clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-ObjList<T>::ObjList()
-  : head(nullptr)
-  , tail(nullptr) {
+ObjList<T>::ObjList() {
+  head = tail = nullptr;
 }
 
   /*

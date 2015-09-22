@@ -34,22 +34,22 @@ private:
 public:
   virtual const COMType TypeId() = 0;
   virtual ~Component() {
-    printf("Component dtor\n");
+    //printf("Component dtor\n");
   }
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 enum SPV {
-    PreUpdate =  100,
-    NetPlay=    200,
-    Select=     300,
-    Motion=     400,
-    Move=       500,
-    Logic=   600,
-    Collide=  700,
-    Resolve=    800,
-    Render=     900
+  PreUpdate =  100,
+  NetPlay=    200,
+  Select=     300,
+  Motion=     400,
+  Move=       500,
+  Logic=   600,
+  Collide=  700,
+  Resolve=    800,
+  Render=     900
 };
 
 
