@@ -65,6 +65,14 @@ public:
   }
 };
 
+class FS_DLL Sys2 : public a::System {
+public:
+  virtual const a::SystemType TypeId() { return "s1"; }
+  Sys2() : a::System(3) {}
+  virtual ~Sys2() {}
+};
+
+
 static void SetUp() {
   auto r = a::NodeRegistry::GetInstance();
   auto eng = ash::Engine::Create();
@@ -72,6 +80,9 @@ static void SetUp() {
   auto f2 = new Fac2();
   r->Register(not_null<a::NodeFactory*>(f1));
   r->Register(not_null<a::NodeFactory*>(f2));
+
+  auto ss= new Sys2();
+  eng->RegoSystem(not_null<a::System*>(ss));
 
   a::Component* c;
   auto e1= eng->CreateEntity("g1");
@@ -127,6 +138,30 @@ static void SetUp() {
 
   ccc= ns2->head->Get("f4");
   printf("f4 value = %d\n", static_cast<COMP4*>(ccc)->value);
+
+  printf("ns1 size  = %d\n", ns1->Size());
+  printf("ns2 size = %d\n", ns2->Size());
+
+  // change e1, should alter ns1
+  e1->Purge("c1");
+
+  // add entity, should alter ns2
+  auto e3= eng->CreateEntity("g2");
+  c = new COMP3();
+  e3->Rego(not_null<a::Component*>(c));
+  c = new COMP4();
+  e3->Rego(not_null<a::Component*>(c));
+
+  eng->Update(0);
+
+  printf("AFTER UPDATE()!\n\n");
+
+  ns1 = eng->GetNodeList("Fac1");
+  ns2 = eng->GetNodeList("Fac2");
+
+  printf("ns1 size  = %d\n", ns1->Size());
+  printf("ns2 size = %d\n", ns2->Size());
+
 
   delete eng;
 }

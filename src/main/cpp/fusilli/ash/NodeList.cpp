@@ -51,6 +51,19 @@ void NodeList::Add(not_null<Node*> p) {
   }
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+int NodeList::Size() {
+  auto n= head;
+  int c=0;
+  while (NNP(n)) {
+    n = n->next;
+    ++c;
+  }
+  return c;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void NodeList::Purge(not_null<Node*> p) {

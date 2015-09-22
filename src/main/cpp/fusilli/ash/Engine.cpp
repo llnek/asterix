@@ -79,6 +79,7 @@ const s::vector<T*> ObjList<T>::List() {
 //
 template <typename T>
 ObjList<T>::~ObjList() {
+  printf("ObjList dtor\n");
   Clear();
 }
 

@@ -30,6 +30,7 @@ Entity::~Entity() {
     delete it->second;
   }
   parts.clear();
+  printf("Entity dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////

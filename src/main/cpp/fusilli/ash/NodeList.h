@@ -45,6 +45,8 @@ public:
   void Clear();
   bool IsEmpty();
 
+  int Size();
+
   Node* head;
   Node* tail;
 
