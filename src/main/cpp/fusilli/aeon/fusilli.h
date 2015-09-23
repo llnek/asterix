@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <functional>
 #include <string>
 
 typedef std::string stdstr;
