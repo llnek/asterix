@@ -1,7 +1,15 @@
 
 #pragma once
 
+#include <new>
+#include <stdexcept>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
 #include <type_traits>
+#include <utility>
+#include <array>
+#include <iterator>
 #include <memory>
 
 #include "fail_fast.h"
@@ -45,8 +53,7 @@ public:
 
     not_null(const not_null &other) = default;
 
-    //template <typename U, typename Dummy = std::enable_if_t<std::is_convertible<U, T>::value>>
-    template <typename U, typename Dummy = std::enable_if<std::is_convertible<U, T>::value,T>>
+    template <typename U, typename Dummy = std::enable_if_t<std::is_convertible<U, T>::value>>
     not_null(const not_null<U> &other) : ptr_(other.get())
     {
     }
