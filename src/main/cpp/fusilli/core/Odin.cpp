@@ -69,10 +69,10 @@ static Event json_decode(const n::WebSocket::Data& e) {
 
   if (doc.IsObject()) {
     if (doc.HasMember("type")) {
-      evt.type = doc["type"];
+      //evt.type = doc["type"];
     }
     if (doc.HasMember("code")) {
-      evt.code = SCAST(EType, doc["code"]);
+      //evt.code = SCAST(EType, doc["code"]);
     }
     if (doc.HasMember("source")) {
       auto v= doc["source"].GetString();
@@ -107,13 +107,6 @@ Event::~Event() {
 //////////////////////////////////////////////////////////////////////////////
 //
 WSockSS::~WSockSS() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-WSockSS::WSockSS() {
-  wss=nullptr;
-  state=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -277,7 +270,7 @@ void WSockSS::OnEvent(const Event& evt) {
 // Connect to this url and request a websocket upgrade
 //
 void WSockSS::Connect(const stdstr& url) {
-  auto ws= new n::WebSocket(url);
+  auto ws= new n::WebSocket();
   if (!ws->init(*this, url)) {
     mc_del_ptr(ws);
   } else {

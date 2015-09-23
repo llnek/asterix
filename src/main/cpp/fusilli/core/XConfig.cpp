@@ -122,7 +122,7 @@ XPool* XConfig::GetPool(const stdstr& key) {
 //
 owner<XPool*> XConfig::CreatePool(const stdstr& key) {
   auto p = XPool::create();
-  pools.insert(pair<stdstr, XPool*>(key, p));
+  pools.insert(s::pair<stdstr, XPool*>(key, p));
   return p;
 }
 
