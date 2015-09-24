@@ -169,6 +169,12 @@ bool XConfig::HasAudio() {
   return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//
+c::Dictionary* XConfig::GetFragment(const stdstr& key) {
+  auto obj = dict->objectForKey(key);
+  return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
+}
 
 NS_END(fusilli)
 
