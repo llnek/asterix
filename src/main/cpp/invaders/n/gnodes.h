@@ -29,10 +29,12 @@ private:
 
 public:
 
-  static const a::NodeType TypeId();
+  virtual const a::NodeType TypeId() {
+    return "n/AlienMotionNode"; }
+
   DEFCREATE_FUNC(AlienMotionNode)
 
-  virtual a::Node* CreateNode() ;
+  virtual owner<a::Node*> CreateNode() ;
   virtual ~AlienMotionNode();
 
 };
@@ -46,12 +48,13 @@ private:
 
 public:
 
-  static const a::NodeType TypeId();
+  virtual const a::NodeType TypeId() {
+    return "n/CannonCtrlNode"; }
+
   DEFCREATE_FUNC(CannonCtrlNode)
 
-  virtual a::Node* CreateNode();
+  virtual owner<a::Node*> CreateNode();
   virtual ~CannonCtrlNode();
-
 
 };
 
@@ -64,10 +67,12 @@ private:
 
 public:
 
-  static const a::NodeType TypeId();
+  virtual const a::NodeType TypeId() {
+    return "n/ShipMotionNode"; }
+
   DEFCREATE_FUNC(ShipMotionNode)
 
-  virtual a::Node* CreateNode();
+  virtual owner<a::Node*> CreateNode();
   virtual ~ShipMotionNode();
 
 };

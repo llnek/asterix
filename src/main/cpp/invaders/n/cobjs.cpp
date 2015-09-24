@@ -11,22 +11,24 @@
 
 #include "core/CCSX.h"
 #include "cobjs.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
-AlienSquad::AlienSquad(f::XPool* aliens, int stepx)
-  : AlienSquad() {
+AlienSquad::AlienSquad(not_null<f::XPool*> aliens, int stepx) {
+
   this->aliens=aliens;
   this->stepx=stepx;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AlienSquad::AlienSquad()
-  :aliens(nullptr)
-  , stepx(0) {
+AlienSquad::AlienSquad() {
+  aliens= nullptr;
+  stepx= 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +39,7 @@ AlienSquad::~AlienSquad() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Alien::Alien(c::Sprite* s, int value, int rank)
+Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
   : ComObj(s, 1, value) {
   this->rank=rank;
 }
@@ -49,12 +51,14 @@ Alien::~Alien() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Alien::Alien()
-  : rank(0) {
+Alien::Alien() {
+  rank = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-Bomb::Bomb(c::Sprite* s) : ComObj(s) {
+Bomb::Bomb(not_null<c::Sprite*> s)
+  : ComObj(s) {
+
   auto wz= cx::VisRect();
   x=0;
   y= -50 * wz.size.height / 480;
@@ -67,9 +71,8 @@ Bomb::~Bomb() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Bomb::Bomb()
-  : x(0)
-  , y(0) {
+Bomb::Bomb() {
+  x = y = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,9 +84,9 @@ Cannon::Cannon(float coolDownWindow) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Cannon::Cannon()
-  : coolDownWindow(0)
-  , hasAmmo(false) {
+Cannon::Cannon() {
+  coolDownWindow = 0;
+  hasAmmo= false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -93,14 +96,15 @@ Cannon::~Cannon() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Explosion::Explosion(c::Sprite* s) : ComObj(s) {
+Explosion::Explosion(not_null<c::Sprite*> s)
+  : ComObj(s) {
   frameTime= 0.1;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Explosion::Explosion()
-  : frameTime(0) {
+Explosion::Explosion() {
+  frameTime = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -111,6 +115,7 @@ Explosion::~Explosion() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Explosion::Inflate(float x, float y) {
+
   auto anim= c::Animation::create();
   anim->addSpriteFrame(cx::GetSpriteFrame("boom_0.png"));
   anim->addSpriteFrame(cx::GetSpriteFrame("boom_1.png"));
@@ -126,25 +131,22 @@ void Explosion::Inflate(float x, float y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-Looper::Looper(int count) : Looper() {
-  //TODO:
-}
-
-//////////////////////////////////////////////////////////////////////////////
-Looper::Looper()
-  : timer0(nullptr)
-  , timer1(nullptr) {
+Looper::Looper() {
+  timer0 = nullptr;
+  timer1 = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 Looper::~Looper() {
-  timer0->release();
-  timer1->release();
+  if ( NNP(timer0)) { timer0->release(); }
+  if ( NNP(timer1)) { timer1->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Missile::Missile(c::Sprite* s) : ComObj(s) {
+Missile::Missile(not_null<c::Sprite*> s)
+  : ComObj(s) {
+
   auto wz= cx::VisRect();
   x= 0;
   y= 150 * wz.size.height / 480;
@@ -152,9 +154,8 @@ Missile::Missile(c::Sprite* s) : ComObj(s) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Missile::Missile()
-  : x(0)
-  , y(0) {
+Missile::Missile() {
+  x = y = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -164,12 +165,12 @@ Missile::~Missile() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Motion::Motion()
-  : aliens(nullptr)
-  , ships(nullptr)
-  , cannons(nullptr)
-  , right(false)
-  , left(false) {
+Motion::Motion() {
+  aliens = nullptr;
+  ships = nullptr;
+  cannons = nullptr;
+  right = false;
+  left = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,8 +180,11 @@ Motion::~Motion() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Ship::Ship(c::Sprite* s, const stdstr& f1, const stdstr& f2)
+Ship::Ship(not_null<c::Sprite*> s,
+    const stdstr& f1, const stdstr& f2)
+
   : ComObj(s) {
+
   this->frame0 = f1;
   this->frame1= f2;
 }
@@ -204,10 +208,8 @@ Velocity::Velocity(float vx, float vy) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Velocity::Velocity()
-  : x(0)
-  , y(0) {
-
+Velocity::Velocity() {
+  x = y = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

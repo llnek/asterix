@@ -28,9 +28,11 @@ private:
 
 public:
 
-  Alien(c::Sprite*, int value, int rank);
-  virtual ~Alien();
   virtual const a::COMType TypeId() { return "n/Alien"; }
+
+  Alien(not_null<c::Sprite*>, int value, int rank);
+  virtual ~Alien();
+
   int rank;
 };
 
@@ -38,14 +40,20 @@ public:
 //
 class CC_DLL AlienSquad : public a::Component {
 private:
+
   NO__COPYASSIGN(AlienSquad)
   AlienSquad();
+
 public:
 
   virtual const a::COMType TypeId() { return "n/AlienSquad"; }
-  AlienSquad(f::XPool* aliens, int step);
+
+  AlienSquad(not_null<f::XPool*> aliens, int step);
   virtual ~AlienSquad();
-  const s::vector<f::ComObj*>& Elements() { return aliens->Elements(); }
+
+  const s::vector<f::ComObj*>& Elements() {
+    return aliens->Elements(); }
+
   int Size() { return aliens->Size(); }
 
   f::XPool* aliens;
@@ -62,7 +70,7 @@ public:
 
   virtual const a::COMType TypeId() { return "n/Bomb"; }
 
-  Bomb(c::Sprite*);
+  Bomb(not_null<c::Sprite*>);
   virtual ~Bomb();
 
   float x;
@@ -96,11 +104,11 @@ public:
 
   virtual const a::COMType TypeId() { return "n/Explosion"; }
 
-  virtual void Inflate(c::Dictionary* );
+  virtual void Inflate(not_null<c::Dictionary*> );
   virtual void Inflate(float x, float y);
 
   virtual ~Explosion();
-  Explosion(c::Sprite* );
+  Explosion(not_null<c::Sprite*> );
 
   float frameTime;
 };
@@ -110,13 +118,13 @@ public:
 class CC_DLL Looper : public a::Component {
 private:
   NO__COPYASSIGN(Looper);
-  Looper();
+
 public:
 
   virtual const a::COMType TypeId() { return "n/Looper"; }
 
-  Looper(int count);
   virtual ~Looper();
+  Looper();
 
   c::DelayTime* timer0;
   c::DelayTime* timer1;
@@ -133,8 +141,9 @@ public:
 
   virtual const a::COMType TypeId() { return "n/Missile"; }
 
-  Missile(c::Sprite*);
+  Missile(not_null<c::Sprite*>);
   virtual ~Missile();
+
   float x;
   float y;
 };
@@ -147,9 +156,9 @@ private:
 public:
 
   virtual const a::COMType TypeId() { return "n/Motion"; }
-
   virtual ~Motion();
   Motion();
+
   bool right;
   bool left;
 };
@@ -164,8 +173,9 @@ public:
 
   virtual const a::COMType TypeId() { return "n/Ship"; }
 
-  Ship(c::Sprite*, const stdstr&, const stdstr&);
+  Ship(not_null<c::Sprite*>, const stdstr&, const stdstr&);
   virtual ~Ship();
+
   stdstr frame0;
   stdstr frame1;
 };
@@ -182,6 +192,7 @@ public:
 
   Velocity(float vx, float vy);
   virtual ~Velocity();
+
   float x;
   float y;
 };

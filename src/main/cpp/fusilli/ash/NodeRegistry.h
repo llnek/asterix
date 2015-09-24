@@ -29,7 +29,7 @@ private:
   NO__COPYASSIGN(NodeFactory)
 public:
   virtual const NodeType TypeId() = 0;
-  virtual Node* CreateNode() = 0;
+  virtual owner<Node*> CreateNode() = 0;
   virtual ~NodeFactory() {}
 };
 

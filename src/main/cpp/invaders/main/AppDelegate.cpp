@@ -23,9 +23,9 @@ NS_ALIAS(g, invaders)
 AppDelegate::AppDelegate() {
   auto r= a::NodeRegistry::GetInstance();
 
+  r->Register( g::AlienMotionNode::Create());
   r->Register( g::ShipMotionNode::Create());
   r->Register( g::CannonCtrlNode::Create());
-  r->Register( g::AlienMotionNode::Create());
 
   f::XConfig::SetInstance(g::Config::Create());
 }
