@@ -29,7 +29,7 @@ private:
 
 public:
 
-  static void Set(XScene*, int layer=2);
+  static void Set(not_null<XScene*>, int layer=2);
 
   static XGameLayer* Get();
   static XScene* Self();

@@ -18,6 +18,7 @@
 #include "core/CCSX.h"
 //#include "YesNo.h"
 #include "XLayer.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
@@ -46,9 +47,9 @@ void XLayer::OnQuit(c::Ref* rr) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer::XLayer()
-  : lastTag(0)
-  , lastZix(0) {
+XLayer::XLayer() {
+  lastTag = 0;
+  lastZix = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,9 +57,9 @@ XLayer::XLayer()
 XLayer::~XLayer() {
   for (auto it= atlases.begin();
       it != atlases.end(); ++it) {
-    it->second->release();
+    //it->second->release();
   }
-  atlases.clear();
+  //atlases.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,9 +73,9 @@ XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
   auto t = ENP(tag) ? ++lastTag : *tag;
   auto x = ENP(z) ? lastZix : *z;
 
-  addChild(a, x,t);
-  atlases.insert(pair<stdstr, c::SpriteBatchNode*>(name,a));
-  a->retain(); // for the map
+  atlases.insert(s::pair<stdstr, c::SpriteBatchNode*>(name,a));
+  this->addChild(a, x,t);
+  //a->retain(); // for the map
   return a;
 }
 
@@ -114,12 +115,12 @@ void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
 // Add a child to this atlas
 //
 void XLayer::AddAtlasItem(const stdstr& atlas,
-    c::Node* n, int* zx, int* tag) {
+    not_null<c::Node*> n, int* zx, int* tag) {
 
   auto ptag = ENP(tag) ? ++lastTag : *tag;
   auto pzx = ENP(zx) ? lastZix : *zx;
   auto p= GetAtlas(atlas);
-  auto ss = DCAST(c::Sprite*, n);
+  auto ss = DCAST(c::Sprite*, n.get());
 
   if (NNP(p)) {
     if (NNP(ss)) { ss->setBatchNode(p); }
@@ -130,7 +131,7 @@ void XLayer::AddAtlasItem(const stdstr& atlas,
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 //
-void XLayer::AddItem(c::Node* n, int* zx, int* tag) {
+void XLayer::AddItem(not_null<c::Node*> n, int* zx, int* tag) {
   auto ptag = ENP(tag) ?  ++lastTag : *tag;
   auto pzx = ENP(zx) ? lastZix : *zx;
   this->addChild(n, pzx, ptag);
@@ -168,7 +169,7 @@ void XLayer::RemoveAll() {
 //////////////////////////////////////////////////////////////////////////////
 // Remove a child
 //
-void XLayer::RemoveItem(c::Node* n) {
+void XLayer::RemoveItem(not_null<c::Node*> n) {
   if (NNP(n)) {
     n->removeFromParent();
   }
@@ -184,16 +185,18 @@ int XLayer::IncIndexZ() {
 // Remember the parent scene object
 //
 XScene* XLayer::GetScene() {
-  //return DCAST(XScene*, getParent());
-  return SCAST(XScene*, getParent());
+  return (XScene*) getScene();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::AddAudioIcons(c::MenuItem* off, c::MenuItem* on,
+void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
+    not_null<c::MenuItem*> on,
     const c::Vec2& anchor, const c::Vec2& pos) {
 
-  c::Vector<c::MenuItem*> items {on,off};
+  c::Vector<c::MenuItem*> items;
+  items.pushBack(on);
+  items.pushBack(off);
   auto cfg = XConfig::GetInstance();
 
   auto audio = c::MenuItemToggle::createWithTarget(

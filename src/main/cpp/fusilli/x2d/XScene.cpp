@@ -9,8 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "XScene.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
@@ -33,16 +35,18 @@ XLayer* XScene::GetLayer(int tag) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XScene::AddLayer(XLayer* y, int z) {
+XLayer* XScene::AddLayer(not_null<XLayer*> y, int z) {
  this->addChild(y, z, y->GetIID());
  return y;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
+/*
 XScene* XScene::Realize() {
    return this;
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 //

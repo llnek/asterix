@@ -14,6 +14,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "XGameLayer.h"
+#include "XScene.h"
+
 NS_ALIAS(den,CocosDenshion)
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
@@ -22,16 +24,15 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::~XGameLayer() {
-
+  delete engine;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XGameLayer::XGameLayer()
-  : mode(GMode::ONE)
-  , level(1)
-  , engine(nullptr) {
-
+XGameLayer::XGameLayer() {
+  mode = GMode::ONE;
+  level = 1;
+  engine = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ c::Dictionary* XGameLayer::GetLCfg() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XGameLayer::KeyPoll(int key) {
+bool XGameLayer::KeyPoll(c::EventKeyboard::KeyCode key) {
   auto it = keyboard.find(key);
   if (it != keyboard.end()) {
     return it->second;
@@ -104,7 +105,7 @@ XHUDLayer* XGameLayer::GetHUD(int tag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::update(float dt) {
-  if (GetScene()->IsOperational() &&
+  if (GetScene()->IsRunning() &&
       NNP(engine)) {
     engine->Update(dt);
   }
@@ -112,8 +113,10 @@ void XGameLayer::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::map<int,bool>& XGameLayer::Keys() { return keyboard; }
-
+const s::map<c::EventKeyboard::KeyCode,bool>&
+XGameLayer::Keys() {
+  return keyboard;
+}
 
 
 

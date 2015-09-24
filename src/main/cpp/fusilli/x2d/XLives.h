@@ -15,11 +15,12 @@
 #include "platform/CCCommon.h"
 #include "XHUDLayer.h"
 #include <vector>
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
-class c::Node;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLives {
@@ -42,7 +43,7 @@ private:
 
 public:
 
-  static XLives* Create(XHUDLayer*,
+  static owner<XLives*> Create(not_null<XHUDLayer*>,
       const stdstr& frame,
       float x, float y, int dir= 1);
 

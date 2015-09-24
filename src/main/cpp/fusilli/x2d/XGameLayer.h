@@ -24,22 +24,22 @@ NS_ALIAS(a, ash)
 NS_BEGIN(fusilli)
 
 enum class GMode { ONE, TWO, NET };
-
+class ComObj;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XGameLayer : public XLayer {
 
 protected:
 
-  virtual void OnNewGame(const GMode);
-  virtual void SetMode(const GMode);
-  XGameLayer();
-
-  s::map<int,bool> keyboard;
+  s::map<c::EventKeyboard::KeyCode, bool> keyboard;
   a::Engine* engine;
 
   GMode mode;
   int level;
+
+  virtual void OnNewGame(const GMode) = 0;
+  virtual void SetMode(const GMode m) { mode=m; }
+  XGameLayer();
 
 private:
 
@@ -47,24 +47,23 @@ private:
 
 public:
 
-  virtual const Box4 GetEnclosureBox();
-  virtual int GetIID() { return 2; }
-  virtual void update(float);
-
   virtual void SendMsg(const stdstr& topic, void* msg);
   virtual ComObj* GetPlayer();
+
+  virtual const Box4 GetEnclosureBox();
+  virtual int GetIID() { return 2; }
+
+  virtual void update(float);
 
   virtual XLayer* Realize();
   virtual ~XGameLayer();
 
-  const s::map<int,bool>& Keys();
+  const s::map<c::EventKeyboard::KeyCode,bool>& Keys();
   bool KeyPoll(c::EventKeyboard::KeyCode key);
   c::Dictionary* GetLCfg();
 
-
   XLayer* GetBackgd(int tag= 1);
   XHUDLayer* GetHUD(int tag=3);
-
 
   void NewGame(const GMode);
 

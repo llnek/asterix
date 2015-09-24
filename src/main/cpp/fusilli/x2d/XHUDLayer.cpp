@@ -13,6 +13,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "XHUDLayer.h"
+#include "XLives.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
@@ -24,18 +26,17 @@ XHUDLayer::~XHUDLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XHUDLayer::XHUDLayer()
-  : scoreLabel(nullptr)
-  , lives( nullptr)
-  , score(0)
-  , replayBtn(nullptr) {
+XHUDLayer::XHUDLayer() {
+  scoreLabel = nullptr;
+  lives= nullptr;
+  score = 0;
+  replayBtn = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddIcon(c::Node* icon) {
-  AddItem(icon);
+void XHUDLayer::AddIcon(not_null<XLive*> icon) {
+  AddItem((c::Node*) icon.get());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,10 +83,10 @@ void XHUDLayer::EnableReplay() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddMenuIcon(c::MenuItem* b,
+void XHUDLayer::AddMenuIcon(not_null<c::MenuItem*> b,
     const c::Vec2& where) {
 
-  c::Integer* tile= CstVal<c::Integer>("TILE")->getValue();
+  auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(b) * 0.5;
   auto hw = cx::GetScaledWidth(b) * 0.5;
   auto cfg = XConfig::GetInstance();
@@ -100,13 +101,14 @@ void XHUDLayer::AddMenuIcon(c::MenuItem* b,
   } else {
     y = wz.top - tile - hh;
   }
+
   menu->setPosition(wz.right - tile - hw, y);
   AddItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XHUDLayer::AddReplayIcon(c::MenuItem* c,
+void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
     const c::Vec2& where) {
 
   auto tile= CstVal<c::Integer>("TILE")->getValue();
@@ -124,6 +126,7 @@ void XHUDLayer::AddReplayIcon(c::MenuItem* c,
   } else {
     y = wz.top - tile  - hh;
   }
+
   menu->setPosition(wz.left + tile + hw, y);
   replayBtn=menu;
   AddItem(menu);

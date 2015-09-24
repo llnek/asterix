@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Online.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
@@ -23,12 +24,14 @@ class CC_DLL OnlineLayer : public XLayer {
 private:
 
   void OnReq(const stdstr&, const stdstr&);
-  void ShowWaitOthers();
   OnlineLayer() {}
 
   NO__COPYASSIGN(OnlineLayer)
 
 public:
+
+  void ShowWaitOthers();
+
   virtual int GetIID() { return 1; }
   virtual XLayer* Realize();
   virtual ~OnlineLayer() {}
@@ -56,17 +59,17 @@ void Online::SetActions(c::CallFunc* yes, c::CallFunc* no) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Online::Online()
-  : yes(nullptr)
-  , wss(nullptr)
-  , no(nullptr) {
+Online::Online() {
+  yes=nullptr;
+  wss=nullptr;
+  no=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Online::~Online() {
-   yes->release();
-   no->release();
+  yes->release();
+  no->release();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -147,7 +150,7 @@ void Online::OnCancel(c::Ref* rr) {
     wss->Close();
   } catch (...) {}
   wss=nullptr;
-  this->no->execute();
+  no->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,6 +163,7 @@ void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void OnlineLayer::ShowWaitOthers() {
+
   auto cfg= XConfig::GetInstance();
   auto fnt= cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "waiting...");
@@ -186,6 +190,7 @@ void OnlineLayer::ShowWaitOthers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* OnlineLayer::Realize() {
+
   auto cfg = XConfig::GetInstance();
   auto fnt= cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "Sign in");
@@ -200,9 +205,9 @@ XLayer* OnlineLayer::Realize() {
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto bxz = cx::CalcSize("#ok.png");
   // editbox for user
   auto uid = c::ui::TextField::create();
+  auto bxz = cx::CalcSize("#ok.png");
   uid->setMaxLengthEnabled(true);
   uid->setMaxLength(16);
   uid->setTouchEnabled(true);
@@ -236,6 +241,7 @@ XLayer* OnlineLayer::Realize() {
   menu->addChild(b2,2);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
+
   return this;
 }
 

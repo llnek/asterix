@@ -29,9 +29,11 @@ protected:
   void OnSessionEvent(const Event&);
   void OnOdinEvent(const Event&);
   void OnNetworkEvent(const Event&);
+
   void OnPlayReq(const stdstr&, const stdstr&);
   void OnContinue();
   void OnCancel(c::Ref*);
+
   Online();
 
 private:

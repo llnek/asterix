@@ -17,8 +17,8 @@
 #include "aeon/fusilli.h"
 #include "2d/CCLayer.h"
 #include <stdint.h>
+
 NS_ALIAS(c, cocos2d)
-NS_ALIAS(a, ash)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
@@ -27,30 +27,33 @@ class XScene;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLayer : public c::Layer {
-friend class XScene;
 protected:
-
-  void AudioCallback(c::Ref* sender);
-  virtual void OnQuit(c::Ref*);
-  XLayer();
 
   s::map<stdstr, c::SpriteBatchNode*> atlases;
   int lastTag;
   int lastZix;
 
+  void AudioCallback(c::Ref* sender);
+  virtual void OnQuit(c::Ref*);
+  XLayer();
+
 private:
+
   NO__COPYASSIGN(XLayer)
 
 public:
 
-  c::SpriteBatchNode* RegoAtlas(const stdstr& name, int* z = nullptr, int* tag= nullptr);
+  virtual c::SpriteBatchNode* GetAtlas(const stdstr& name);
   virtual XLayer* Realize();
 
-  virtual c::SpriteBatchNode* GetAtlas(const stdstr& name);
+  c::SpriteBatchNode* RegoAtlas(const stdstr& name,
+      int* z = nullptr, int* tag= nullptr);
 
   virtual void AddAtlasItem(const stdstr& atlas,
-      c::Node* n, int* zx = nullptr, int* tag = nullptr);
-  virtual void AddItem(c::Node* n,
+      not_null<c::Node*> n,
+      int* zx = nullptr, int* tag = nullptr);
+
+  virtual void AddItem(not_null<c::Node*> n,
       int* zx = nullptr, int* tag = nullptr);
 
   void AddAtlasFrame
@@ -65,9 +68,10 @@ public:
 
   void RemoveAtlasAll(const stdstr& atlas) ;
   void RemoveAll();
-  void RemoveItem(c::Node* n);
+  void RemoveItem(not_null<c::Node*> n);
 
-  void AddAudioIcons(c::MenuItem* off, c::MenuItem* on,
+  void AddAudioIcons(not_null<c::MenuItem*> off,
+      not_null<c::MenuItem*> on,
       const c::Vec2& anchor,
       const c::Vec2& pos);
 

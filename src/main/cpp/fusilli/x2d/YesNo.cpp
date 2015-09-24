@@ -9,9 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "2d/CCLabel.h"
+#include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "2d/CCLabel.h"
 #include "YesNo.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
@@ -71,32 +73,38 @@ XLayer* YesNoLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::CreateWithActions(const stdstr& msg,
-    c::CallFunc* y, c::CallFunc* n) {
+owner<YesNo*> YesNo::CreateWithActions(const stdstr& msg,
+    not_null<c::CallFunc*> y,
+    not_null<c::CallFunc*> n) {
 
   YesNo* yn = YesNo::create();
   yn->SetActions(y,n);
   yn->SetMsg(msg);
   yn->Realize();
-  return this;
+  return yn;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo* YesNo::Create(const stdstr& msg) {
+owner<YesNo*> YesNo::Create(const stdstr& msg) {
+
   c::CallFunc* y = c::CallFunc::create([](){
       c::Director::getInstance()->popToRootScene();
       cx::RunScene(XConfig::GetInstance()->StartWith());
       });
+
   c::CallFunc* n= c::CallFunc::create([]() {
       c::Director::getInstance()->popScene();
       });
+
   return CreateWithActions(msg, y,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void YesNo::SetActions(c::CallFunc* y, c::CallFunc* n) {
+void YesNo::SetActions(not_null<c::CallFunc*> y,
+    not_null<c::CallFunc*> n) {
+
   yes = y;
   no = n;
   y->retain();
@@ -126,10 +134,15 @@ XScene* YesNo::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-YesNo::YesNo()
-  : yes(nullptr)
-  , no(nullptr) {
+void YesNo::SetMsg(const stdstr& m) {
+  msgText=m;
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+YesNo::YesNo() {
+  yes= nullptr;
+  no= nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////

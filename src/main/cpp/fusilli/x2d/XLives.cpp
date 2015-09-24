@@ -9,7 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
+#include "XLive.h"
 #include "XLives.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(fusilli)
 
@@ -79,7 +82,7 @@ void XLives::DrawLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLives* XLives::Create(XHUDLayer* hud,
+owner<XLives*> XLives::Create(not_null<XHUDLayer*> hud,
     const stdstr& frame,
     float x, float y, int dir) {
 
@@ -102,12 +105,11 @@ XLives::~XLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLives::XLives()
-  : hud(nullptr)
-  , curLives(-1)
-  , totalLives(0)
-  , dir(1) {
-
+XLives::XLives() {
+  hud= nullptr;
+  curLives = -1;
+  totalLives = 0;
+  dir = 1;
 }
 
 

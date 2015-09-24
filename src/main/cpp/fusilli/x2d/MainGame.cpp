@@ -19,7 +19,7 @@ static int _gameLayer;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainGame::Set(XScene* g, int gy) {
+void MainGame::Set(not_null<XScene*> g, int gy) {
   _gameLayer= gy;
   _singleton=g;
 }

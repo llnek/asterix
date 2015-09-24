@@ -13,22 +13,23 @@
 #define __XHUDLAYER_H__
 
 #include "base/ccTypes.h"
-#include "XLives.h"
 #include "XLayer.h"
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
-
+class XLives;
+class XLive;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XHUDLayer : public XLayer {
+friend class XLives;
 protected:
 
-  void AddReplayIcon(c::MenuItem*, const c::Vec2& where);
-  void AddMenuIcon(c::MenuItem*, const c::Vec2& where);
+  void AddReplayIcon(not_null<c::MenuItem*>, const c::Vec2& where);
+  void AddMenuIcon(not_null<c::MenuItem*>, const c::Vec2& where);
 
-  virtual void AddIcon(c::Node*);
+  virtual void AddIcon(not_null<XLive*>);
 
   void UpdateScore(int num);
   bool ReduceLives(int );
@@ -36,7 +37,7 @@ protected:
   void DisableReplay();
   void EnableReplay();
 
-  c::MenuItem* replayBtn;
+  c::Menu* replayBtn;
   c::Label* scoreLabel;
   XLives* lives;
   int score;

@@ -81,9 +81,6 @@ typedef std::string stdstr;
 #define mc_bool_str(b)    ((b) ? "true" : "false")
 #define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
 
-#define mc_pcast(classname, expr) (##classname*) expr
-#define mc_rcast(classname, expr) (##classname&) expr
-
 //////////////////////////////////////////////////////////////////////////////
 //
 #define DCAST(type,expr) dynamic_cast<type>(expr)
@@ -93,16 +90,12 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define NO__COPYASSIGNDFT(T) \
-  T() = delete; \
-  T(const T&) = delete; \
-  T&operator =(const T&) = delete;
-
-//////////////////////////////////////////////////////////////////////////////
-//
 #define NO__COPYASSIGN(T) \
   T(const T&) = delete; \
-  T&operator =(const T&) = delete;
+  T&operator =(const T&) = delete;  \
+  T(T&&) = delete;  \
+  T&operator =(T&&) = delete;
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

@@ -35,7 +35,7 @@ MsgBox* MsgBox::CreateWithAction(c::CallFunc* cb,
 //
 MsgBox* MsgBox::CreateWithMsg(const stdstr& msg) {
 
-  auto cb= c::CallFunc::create([](){
+  auto cb= c::CallFunc::create([=](){
       c::Director::getInstance()->popScene();
       });
   return CreateWithAction(cb, msg);
@@ -68,8 +68,8 @@ MsgBox::~MsgBox() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-MsgBox::MsgBox()
-  : action(nullptr) {
+MsgBox::MsgBox() {
+  action=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,18 +78,22 @@ class CC_DLL MsgBoxLayer : public XLayer {
 private:
 
   NO__COPYASSIGN(MsgBoxLayer)
-  MsgBoxLayer();
+  MsgBoxLayer() {};
 
 public:
+
   virtual int GetIID() { return 1; }
   virtual XLayer* Realize();
-  virtual ~MsgBoxLayer();
+  virtual ~MsgBoxLayer() {};
+
   CREATE_FUNC(MsgBoxLayer)
+
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 XLayer* MsgBoxLayer::Realize() {
+
   auto par = SCAST(MsgBox*, getParent());
   auto cfg = XConfig::GetInstance();
 

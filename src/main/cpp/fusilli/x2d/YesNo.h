@@ -16,6 +16,7 @@
 #include "platform/CCCommon.h"
 #include "2d/CCActionInstant.h"
 #include "XScene.h"
+
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusilli)
 
@@ -26,9 +27,12 @@ class CC_DLL YesNo : public XScene {
 friend class YesNoLayer;
 protected:
 
-  void SetActions(c::CallFunc*, c::CallFunc*);
+  void SetActions(not_null<c::CallFunc*>,
+      not_null<c::CallFunc*>);
+
+  const stdstr& GetMsg() { return msgText; }
   void SetMsg(const stdstr&);
-  const stdstr& GetMsg() { return msg; }
+
   void OnYes(c::Ref*);
   void OnNo(c::Ref*);
 
@@ -36,7 +40,9 @@ protected:
 
   c::CallFunc* yes;
   c::CallFunc* no;
-  stdstr msg;
+  stdstr msgText;
+
+  CREATE_FUNC(YesNo)
 
 private:
 
@@ -44,10 +50,11 @@ private:
 
 public:
 
-  static YesNo* CreateWithActions(const stdstr& msg,
-      c::CallFunc* yes, c::CallFunc* no);
+  static owner<YesNo*> CreateWithActions(const stdstr& msg,
+      not_null<c::CallFunc*> yes,
+      not_null<c::CallFunc*> no);
 
-  static YesNo* Create(const stdstr& msg);
+  static owner<YesNo*> Create(const stdstr& msg);
 
   virtual XScene* Realize();
   virtual ~YesNo();
