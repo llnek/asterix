@@ -34,6 +34,7 @@ public:
   virtual ~Alien();
 
   int rank;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -104,7 +105,7 @@ public:
 
   virtual const a::COMType TypeId() { return "n/Explosion"; }
 
-  virtual void Inflate(not_null<c::Dictionary*> );
+  //virtual void Inflate(not_null<c::Dictionary*> );
   virtual void Inflate(float x, float y);
 
   virtual ~Explosion();

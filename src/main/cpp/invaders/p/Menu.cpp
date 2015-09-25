@@ -11,6 +11,9 @@
 
 #include "core/Primitives.h"
 #include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "2d/CCMenuItem.h"
+#include "2d/CCMenu.h"
 #include "Menu.h"
 NS_ALIAS(cx,fusilli::ccsx)
 NS_BEGIN(invaders)
@@ -28,7 +31,7 @@ public:
   virtual XLayer* Realize();
 
   virtual int GetIID() { return 1; }
-  virtual void OnInit();
+  virtual void OnInit() {}
   virtual ~MenuLayer();
 
   void OnPlay(c::Ref*);
@@ -86,7 +89,7 @@ f::XLayer* MenuLayer::Realize() {
   auto q= cx::CreateMenuBtn("#icon_quit.png");
   q->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnQuit));
-  auto m2= cx::MkBackQuit(false, b, q);
+  auto m2= cx::MkBackQuit(b, q, false);
   auto sz= b->getContentSize();
 
   m2->setPosition(wb.left + tile + sz.width * 1.1,
@@ -116,23 +119,25 @@ void MenuLayer::OnPlay(c::Ref* r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnBack(c::Ref* r) {
-  auto p = SCAST(MainMenu*, getParent());
+  auto p = (MainMenu*) getParent();
   p->OnBackAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnQuit(c::Ref* r) {
-  auto p = SCAST(MainMenu*, getParent());
+  auto p = (MainMenu*) getParent();
   p->OnQuitAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
-  backAction= back;
+  auto m = new MainMenu();
+  m->backAction= back;
   back->retain();
-  return this;
+  m->Realize();
+  return m;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -153,13 +158,13 @@ f::XScene* MainMenu::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu::~MainMenu() {
-  backAction->release();
+  if (NNP(backAction)) { backAction->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu::MainMenu()
-  : backAction(nullptr) {
+MainMenu::MainMenu() {
+  SNPTR(backAction)
 }
 
 

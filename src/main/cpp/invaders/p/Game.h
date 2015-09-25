@@ -10,27 +10,11 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/XGameLayer.h"
+#include "x2d/XScene.h"
 #include "s/Factory.h"
 NS_ALIAS(s,std)
 NS_ALIAS(f,fusilli)
 NS_BEGIN(invaders)
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL BGLayer : public f::XLayer {
-private:
-  NO__COPYASSIGN(BGLayer)
-public:
-  virtual f::XLayer* Realize() {
-    CenterImage(f::XConfig::GetInstance()->GetImage("game.bg"));
-    return this;
-  }
-  virtual ~BGLayer();
-  BGLayer();
-  virtual int GetIID() { return 1; }
-  CREATE_FUNC(BGLayer)
-};
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -46,14 +30,15 @@ public:
 
   virtual void OnNewGame(const f::GMode);
   void SpawnPlayer();
-  void OnPlayerKilled();
 
+  void OnPlayerKilled();
   void OnEarnScore(int);
   void OnDone();
 
   virtual ~GameLayer();
   GameLayer();
 
+  virtual int GetIID() { return 2; }
   virtual f::XLayer* Realize();
 
   CREATE_FUNC(GameLayer)
@@ -72,9 +57,9 @@ public:
   virtual ~Game();
   virtual void Resume();
   virtual void Pause();
-  virtual bool IsOperational();
+  virtual bool IsRunning();
 
-  static Game* Create();
+  static owner<Game*> Create();
 };
 
 

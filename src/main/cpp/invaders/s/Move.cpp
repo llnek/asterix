@@ -11,6 +11,7 @@
 
 #include "core/Primitives.h"
 #include "x2d/MainGame.h"
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
 NS_ALIAS(cx, fusilli::ccsx)
@@ -19,40 +20,46 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Move* Move::Create(Factory* f, c::Dictionary* d) {
-  auto s = new Move();
-  s->Set(f,d);
-  return s;
+Move::Move(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+  Init();
+  Set(f,d);
 }
 
 //////////////////////////////////////////////////////////////////////////
+//
+Move::Move() {
+  Init();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 Move::~Move() {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Move::Move()
-  : ships(nullptr) {
+void Move::Init() {
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::RemoveFromEngine(a::Engine* e) {
-  ships=nullptr;
+void Move::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::AddToEngine(a::Engine* e) {
-  ships = e->GetNodeList(ShipMotionNode::TypeId());
+void Move::AddToEngine(not_null<a::Engine*> e) {
+  ShipMotionNode s;
+  ships = e->GetNodeList(s.TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::Update(float dt) {
   auto node = ships->head;
-  if (f::MainGame::Self()->IsOperational()) {
+  if (f::MainGame::Self()->IsRunning()) {
     if (NNP(node)) {
       ProcessShipMotions(node, dt);
     }
@@ -64,10 +71,11 @@ bool Move::Update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::ProcessShipMotions(a::Node* node, float dt) {
-  Motion* motion = a::NodeFld<Motion>(node,"motion");
-  Velocity* sv = a::NodeFld<Velocity>(node,"vel");
-  Ship* ship= a::NodeFld<Ship>(node,"ship");
+void Move::ProcessShipMotions(not_null<a::Node*> node, float dt) {
+
+  auto motion = a::NodeFld<Motion>(node,"motion");
+  auto sv = a::NodeFld<Velocity>(node,"vel");
+  auto ship= a::NodeFld<Ship>(node,"ship");
   auto pos = ship->Pos();
   auto x= pos.x;
   auto y= pos.y;
@@ -89,7 +97,7 @@ void Move::ProcessShipMotions(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::Clamp(f::ComObj* ship) {
+void Move::Clamp(not_null<f::ComObj*> ship) {
 
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto sz= ship->sprite->getContentSize();
@@ -108,6 +116,7 @@ void Move::Clamp(f::ComObj* ship) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::MoveBombs(float dt) {
+
   auto cfg = f::XConfig::GetInstance();
   auto bbs= cfg->GetPool("bombs");
   auto c= bbs->Elements();
@@ -125,6 +134,7 @@ void Move::MoveBombs(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::MoveMissiles(float dt) {
+
   auto cfg = f::XConfig::GetInstance();
   auto mss= cfg->GetPool("missiles");
   auto c= mss->Elements();

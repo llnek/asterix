@@ -12,9 +12,9 @@
 #if !defined(__FACTORY_H__)
 #define __FACTORY_H__
 
-
 #include "core/XPool.h"
 #include "ash/Engine.h"
+NS_ALIAS(f, fusilli)
 NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
@@ -33,7 +33,7 @@ private:
 
 public:
 
-  Factory(a::Engine*, c::Dictionary* options);
+  Factory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
   void CreateMissiles(int count= 36);
   void CreateExplosions(int count = 24);
   void CreateBombs(int count = 24);
@@ -41,7 +41,7 @@ public:
   const c::Size CalcImgSize(const stdstr& img);
   c::Dictionary* GetRankInfo(int r);
 
-  void FillSquad(f::XPool* );
+  void FillSquad(not_null<f::XPool*> );
   a::Entity* CreateAliens();
   void BornShip();
   a::Entity* CreateShip();

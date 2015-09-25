@@ -14,11 +14,11 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Node* AlienMotionNode::CreateNode() {
+owner<a::Node*> AlienMotionNode::CreateNode() {
   s::map<stdstr,a::COMType> s;
   s.insert(s::pair<stdstr,a::COMType>("aliens", "n/AlienSquad"));
   s.insert(s::pair<stdstr,a::COMType>("looper", "n/Looper"));
-  return new a::Node(s);
+  return a::Node::Create(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,18 +33,12 @@ AlienMotionNode::~AlienMotionNode() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const a::NodeType AlienMotionNode::TypeId() {
-  return "n/AlienMotionNode";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-a::Node* CannonCtrlNode::CreateNode() {
+owner<a::Node*> CannonCtrlNode::CreateNode() {
   s::map<stdstr, a::COMType> s;
   s.insert(s::pair<stdstr, a::COMType>("looper", "n/Looper"));
   s.insert(s::pair<stdstr, a::COMType>("cannon", "n/Cannon"));
   s.insert(s::pair<stdstr, a::COMType>("ship", "n/Ship"));
-  return new a::Node(s);
+  return a::Node::Create(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,18 +53,12 @@ CannonCtrlNode::~CannonCtrlNode() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const a::NodeType CannonCtrlNode::TypeId() {
-  return "n/CannonCtrlNode";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-a::Node* ShipMotionNode::CreateNode() {
+owner<a::Node*> ShipMotionNode::CreateNode() {
   s::map<stdstr, a::COMType> s;
   s.insert(s::pair<stdstr, a::COMType>("vel", "n/Velocity"));
   s.insert(s::pair<stdstr, a::COMType>("motion", "n/Motion"));
   s.insert(s::pair<stdstr, a::COMType>("ship", "n/Ship"));
-  return new a::Node(s);
+  return a::Node::Create(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,13 +69,6 @@ ShipMotionNode::ShipMotionNode() {
 //////////////////////////////////////////////////////////////////////////
 //
 ShipMotionNode::~ShipMotionNode() {
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const a::NodeType ShipMotionNode::TypeId() {
-  return "n/ShipMotionNode";
 }
 
 

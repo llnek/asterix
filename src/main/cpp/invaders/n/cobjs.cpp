@@ -166,9 +166,6 @@ Missile::~Missile() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Motion::Motion() {
-  aliens = nullptr;
-  ships = nullptr;
-  cannons = nullptr;
   right = false;
   left = false;
 }

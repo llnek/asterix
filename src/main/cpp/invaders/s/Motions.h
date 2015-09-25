@@ -9,9 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MOTION_H__)
-#define __MOTION_H__
-
+#if !defined(__MOTIONS_H__)
+#define __MOTIONS_H__
 
 #include "BaseSystem.h"
 NS_BEGIN(invaders)
@@ -19,34 +18,39 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motion : public BaseSystem {
+class CC_DLL Motions : public BaseSystem {
 private:
 
-  NO__COPYASSIGN(Motion)
-  Motion();
+  NO__COPYASSIGN(Motions)
+  Motions();
+
+  void Init();
 
   a::NodeList* cannons;
   a::NodeList* ships;
   a::NodeList* aliens;
+  bool right;
+  bool left;
 
 public:
 
-  static Motion* Create(Factory*, c::Dictionary*);
-  virtual ~Motion();
+  Motions(not_null<Factory*>, not_null<c::Dictionary*>);
 
-  virtual const a::SystemType TypeId() { return "n/Motion"; }
+  virtual const a::SystemType TypeId() {
+    return "n/Motions"; }
 
-  virtual void RemoveFromEngine(a::Engine*);
-  virtual void AddToEngine(a::Engine*);
+  virtual void RemoveFromEngine(not_null<a::Engine*>);
+  virtual void AddToEngine(not_null<a::Engine*>);
   virtual bool Update(float dt);
 
-  void ProcessAlienMotions(a::Node*,float dt);
-  void ControlCannon(a::Node*, float dt);
-  void FireMissile(a::Node*, float dt);
-  void ScanInput(a::Node*, float dt);
+  void ProcessAlienMotions(not_null<a::Node*>,float dt);
+  void ControlCannon(not_null<a::Node*>, float dt);
+  void FireMissile(not_null<a::Node*>, float dt);
+  void ScanInput(not_null<a::Node*>, float dt);
 
   virtual int Priority() { return a::Motion; }
 
+  virtual ~Motions();
 };
 
 

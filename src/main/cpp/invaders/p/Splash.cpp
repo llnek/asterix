@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "2d/CCActionInstant.h"
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "x2d/XLayer.h"
 #include "Menu.h"
@@ -24,6 +25,7 @@ class CC_DLL SplashLayer : public f::XLayer {
 private:
   NO__COPYASSIGN(SplashLayer)
   SplashLayer();
+
   void Title();
   void Btns();
 
@@ -68,12 +70,13 @@ void SplashLayer::Title() {
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Btns() {
-  auto cw= cx::Center();
-  auto wb= cx::VisBox();
   auto b1= cx::CreateMenuBtn("#play.png");
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Splash::OnPlay));
   auto menu= c::Menu::create();
+  auto cw= cx::Center();
+  auto wb= cx::VisBox();
+
   menu->addChild(b1);
   menu->setPosition( cw.x, wb.top * 0.1);
   AddItem(menu);

@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "n/gnodes.h"
 #include "Collide.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
@@ -18,10 +20,15 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide* Collide::Create(Factory* f, c::Dictionary* d) {
-  auto s = new Collide();
-  s->Set(f,d);
-  return s;
+Collide::Collide(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+  Init();
+  Set(f,d);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Collide::Collide() {
+  Init();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,25 +38,28 @@ Collide::~Collide() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide::Collide()
-  : aliens(nullptr)
-  , engine(nullptr)
-  , ships(nullptr) {
+void Collide::Init() {
+  SNPTR(aliens)
+  SNPTR(engine)
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::RemoveFromEngine(a::Engine* e) {
-  aliens= nullptr;
-  ships= nullptr;
-  engine=nullptr;
+void Collide::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(aliens)
+  SNPTR(ships)
+  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::AddToEngine(a::Engine* e) {
-  aliens= e->GetNodeList(AlienMotionNode::TypeId());
-  ships= e->GetNodeList(ShipMotionNode::TypeId());
+void Collide::AddToEngine(not_null<a::Engine*> e) {
+  AlienMotionNode a;
+  ShipMotionNode s;
+
+  aliens= e->GetNodeList(a.TypeId());
+  ships= e->GetNodeList(s.TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,7 +87,9 @@ bool Collide::Update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::MaybeCollide(f::ComObj* a, f::ComObj* b) {
+bool Collide::MaybeCollide(not_null<f::ComObj*> a,
+    not_null<f::ComObj*> b) {
+
   return cx::Collide0(a->sprite, b->sprite);
 }
 
@@ -107,9 +119,9 @@ void Collide::CheckMissilesBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::CheckMissilesAliens(a::Node* node) {
+void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 
-  AlienSquad* sqad= a::NodeFld<AlienSquad>(node, "aliens");
+  auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto cfg = f::XConfig::GetInstance();
   auto mss = cfg->GetPool("missiles");
   auto c = sqad->Elements();
@@ -130,42 +142,43 @@ void Collide::CheckMissilesAliens(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::CheckShipBombs(a::Node* node) {
+void Collide::CheckShipBombs(not_null<a::Node*> node) {
 
-  Ship* ship= a::NodeFld<Ship>(node, "ship");
+  auto ship= a::NodeFld<Ship>(node, "ship");
   auto cfg = f::XConfig::GetInstance();
   auto bbs= cfg->GetPool("bombs");
   auto c= bbs->Elements();
 
   if (ship->status)
-  for (auto it = c.begin(); it != c.end(); ++it) {
-    auto b = *it;
-    if (b->status &&
-        MaybeCollide(ship, b)) {
-      ship->Hurt();
-      b->Hurt();
+    for (auto it = c.begin(); it != c.end(); ++it) {
+      auto b = *it;
+      if (b->status &&
+          MaybeCollide(ship, b)) {
+        ship->Hurt();
+        b->Hurt();
+      }
     }
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::CheckShipAliens(a::Node* anode, a::Node* snode) {
+void Collide::CheckShipAliens(not_null<a::Node*> anode,
+    not_null<a::Node*> snode) {
 
-  AlienSquad* sqad= a::NodeFld<AlienSquad>(anode, "aliens");
-  Ship* ship = a::NodeFld<Ship>(snode, "ship");
+  auto sqad= a::NodeFld<AlienSquad>(anode, "aliens");
+  auto ship = a::NodeFld<Ship>(snode, "ship");
   auto c = sqad->Elements();
   auto sz= sqad->Size();
 
   if (ship->status)
-  for (auto it = c.begin(); it != c.end(); ++it) {
-    auto a = *it;
-    if (a->status &&
-        MaybeCollide(ship, a)) {
-      ship->Hurt();
-      a->Hurt();
+    for (auto it = c.begin(); it != c.end(); ++it) {
+      auto a = *it;
+      if (a->status &&
+          MaybeCollide(ship, a)) {
+        ship->Hurt();
+        a->Hurt();
+      }
     }
-  }
 }
 
 

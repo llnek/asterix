@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XPool.h"
+#include "Splash.h"
 #include "Config.h"
 NS_BEGIN(invaders)
 
@@ -40,19 +41,17 @@ ResolutionPolicy Config::GetPolicy() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Scene* Config::StartWith() {
+owner<c::Scene*> Config::StartWith() {
   return Splash::Create();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Config::Config()
-  : scale(1) {
-
+Config::Config() {
+  scale = 1;
   InitAssets();
   InitCsts();
   InitPools();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

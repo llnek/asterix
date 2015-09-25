@@ -9,10 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "2d/CCLabel.h"
 #include "core/CCSX.h"
+#include "x2d/XLives.h"
 #include "HUD.h"
 NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -22,13 +25,22 @@ HUDLayer::~HUDLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-HUDLayer::HUDLayer()
-  : m_scoreLabel(nullptr) {
+HUDLayer::HUDLayer() {
+  SNPTR(m_scoreLabel)
+}
+
+void HUDLayer::ShowMenu(c::Ref* r) {
+
+}
+
+void HUDLayer::OnReplay(c::Ref* r) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* HUDLayer::Realize() {
+
   auto color=  cx::White();
   auto scale=1;
 
@@ -56,24 +68,31 @@ void HUDLayer::InitAtlases() {
   RegoAtlas("game-pics");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::InitLabels() {
   auto soff = CstVal<c::Integer>("S_OFF")->getValue();
   auto tile = CstVal<c::Integer>("TILE")->getValue();
   auto cfg = f::XConfig::GetInstance();
   auto wb = cx::VisBox();
-  m_scoreLabel = cx::CreateBmfLabel("font.SmallTypeWriting", "0");
+
+  m_scoreLabel = cx::CreateBmfLabel(0,0,"font.SmallTypeWriting", "0");
   m_scoreLabel->setAnchorPoint(cx::AnchorBR());
   m_scoreLabel->setScale(cfg->GetScale());
   m_scoreLabel->setPosition(wb.right - tile - soff,
     wb.top - tile - soff - cx::GetScaledHeight(m_scoreLabel));
-  addChild(m_scoreLabel, m_lastZix, ++m_lastTag);
+
+  this->addChild(m_scoreLabel, lastZix, ++lastTag);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::InitIcons() {
   auto soff = CstVal<c::Integer>("S_OFF")->getValue();
   auto tile = CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
-  lives = new f::XLives( this, "health.png", tile + soff,
+
+  lives = f::XLives::Create( this, "health.png", tile + soff,
     wb.top - tile - soff);
 }
 

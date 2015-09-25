@@ -12,7 +12,7 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
-
+#include "2d/CCSpriteBatchNode.h"
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
 #include "2d/CCLayer.h"
@@ -22,7 +22,7 @@ NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusilli)
 
-
+class SpriteBatchNode;
 class XScene;
 //////////////////////////////////////////////////////////////////////////////
 //

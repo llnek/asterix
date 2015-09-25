@@ -31,12 +31,6 @@ protected:
 
   virtual void AddIcon(not_null<XLive*>);
 
-  void UpdateScore(int num);
-  bool ReduceLives(int );
-
-  void DisableReplay();
-  void EnableReplay();
-
   c::Menu* replayBtn;
   c::Label* scoreLabel;
   XLives* lives;
@@ -56,6 +50,13 @@ public:
   virtual void Reset();
 
   virtual ~XHUDLayer();
+
+  void UpdateScore(int num);
+  bool ReduceLives(int );
+
+  void DisableReplay();
+  void EnableReplay();
+
 
 };
 

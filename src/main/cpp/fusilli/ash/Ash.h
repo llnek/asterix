@@ -32,6 +32,7 @@ protected:
 private:
   NO__COPYASSIGN(Component)
 public:
+
   virtual const COMType TypeId() = 0;
   virtual ~Component() {
     //printf("Component dtor\n");

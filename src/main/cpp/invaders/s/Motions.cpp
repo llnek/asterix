@@ -13,57 +13,68 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "x2d/MainGame.h"
-#include "Motion.h"
+#include "n/gnodes.h"
+#include "Motions.h"
 NS_ALIAS(cx, fusilli::ccsx)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motion* Motion::Create(Factory* f, c::Dictionary* d) {
-  auto s = new Motion();
-  s->Set(f,d);
-  return s;
+Motions::Motions(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+  Init();
+  Set(f,d);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motion::~Motion() {
+Motions::Motions() {
+  Init();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motion::Motion()
-  : aliens(nullptr)
-  , ships(nullptr)
-  , right(false)
-  , left(false)
-  , cannons(nullptr) {
+Motions::~Motions() {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motion::RemoveFromEngine(a::Engine* e) {
-  aliens = nullptr;
-  ships = nullptr;
-  cannons= nullptr;
+void Motions::Init() {
+  SNPTR(cannons)
+  SNPTR(aliens)
+  SNPTR(ships)
+  right=false;
+  left= false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motion::AddToEngine(a::Engine* e) {
-  aliens = e->GetNodeList(AlienMotionNode::TypeId());
-  ships = e->GetNodeList(ShipMotionNode::TypeId());
-  cannons = e->GetNodeList(CannonCtrlNode::TypeId());
+void Motions::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(aliens)
+  SNPTR(ships)
+  SNPTR(cannons)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Motion::Update(float dt) {
+void Motions::AddToEngine(not_null<a::Engine*> e) {
+  AlienMotionNode a;
+  ShipMotionNode s;
+  CannonCtrlNode c;
+
+  aliens = e->GetNodeList(a.TypeId());
+  ships = e->GetNodeList(s.TypeId());
+  cannons = e->GetNodeList(c.TypeId());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool Motions::Update(float dt) {
   auto enemy = aliens->head;
   auto ship=ships->head;
   auto cns= cannons->head;
-  if (f::MainGame::Self()->IsOperational()) {
+
+  if (f::MainGame::Self()->IsRunning()) {
     if (NNP(enemy)) {
       ProcessAlienMotions(enemy,dt);
     }
@@ -80,20 +91,23 @@ bool Motion::Update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motion::ControlCannon(a::Node* node, float dt) {
-  Cannon* gun = a::NodeFld<Cannon>(node, "cannon");
-  Looper* lpr= a::NodeFld<Looper>(node, "looper");
-  Ship* ship= a::NodeFld<Ship>(node, "ship");
+void Motions::ControlCannon(not_null<a::Node*> node, float dt) {
+
+  auto gun = a::NodeFld<Cannon>(node, "cannon");
+  auto lpr= a::NodeFld<Looper>(node, "looper");
+  auto ship= a::NodeFld<Ship>(node, "ship");
   auto t= lpr->timer0;
 
   if (! gun->hasAmmo) {
+    //throttle the cannon with timer
     if (cx::TimerDone(t)) {
       ship->sprite->setSpriteFrame(ship->frame0);
       gun->hasAmmo=true;
       cx::UndoTimer(t);
-      lpr->timer0=nullptr;
+      SNPTR(lpr->timer0)
     }
   } else {
+    //TODO:
     if (f::MainGame::Get()->KeyPoll(c::EventKeyboard::KeyCode::KEY_SPACE)) {
       FireMissile(node,dt);
     }
@@ -102,13 +116,14 @@ void Motion::ControlCannon(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motion::FireMissile(a::Node* node, float dt) {
+void Motions::FireMissile(not_null<a::Node*> node, float dt) {
 
-  Cannon* gun= a::NodeFld<Cannon>(node, "cannon");
-  Looper* lpr= a::NodeFld<Looper>(node, "looper");
-  Ship* ship=a::NodeFld<Ship>(node, "ship");
-  auto top= cx::GetTop(ship->sprite);
+  auto gun= a::NodeFld<Cannon>(node, "cannon");
+  auto lpr= a::NodeFld<Looper>(node, "looper");
+  auto ship=a::NodeFld<Ship>(node, "ship");
+
   auto cfg= f::XConfig::GetInstance();
+  auto top= cx::GetTop(ship->sprite);
   auto p= cfg->GetPool("missiles");
   auto pos= ship->Pos();
   auto ent= p->Get();
@@ -124,14 +139,16 @@ void Motion::FireMissile(a::Node* node, float dt) {
     f::MainGame::Get(), gun->coolDownWindow);
   gun->hasAmmo=false;
   ship->sprite->setSpriteFrame(ship->frame1);
-  //sh.sfxPlay('ship-missile');
+
+  cx::SfxPlay("ship-missile");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motion::ScanInput(a::Node* node, float dt) {
-  Motion* m= a::NodeFld<Motion>(node, "motion");
-  Ship* s= a::NodeFld<Ship>(node, "ship");
+void Motions::ScanInput(not_null<a::Node*> node, float dt) {
+
+  auto m= a::NodeFld<Motion>(node, "motion");
+  auto s= a::NodeFld<Ship>(node, "ship");
 
   if (f::MainGame::Get()->KeyPoll(
       c::EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
@@ -145,19 +162,18 @@ void Motion::ScanInput(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motion::ProcessAlienMotions(a::Node* node, float dt) {
-  AlienSquad* sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  Looper* lpr = a::NodeFld<Looper>(node, "looper");
+void Motions::ProcessAlienMotions(not_null<a::Node*> node, float dt) {
+
+  auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
+  auto lpr = a::NodeFld<Looper>(node, "looper");
   auto g= f::MainGame::Get();
 
   if (ENP(lpr->timer0)) {
-    lpr->timer0= nullptr;
-    cx::CreateTimer(g,1);
+    lpr->timer0= cx::CreateTimer(g,1);
   }
 
   if (ENP(lpr->timer1)) {
-    lpr->timer1= nullptr;
-    cx::CreateTimer(g,2);
+    lpr->timer1= cx::CreateTimer(g,2);
   }
 }
 

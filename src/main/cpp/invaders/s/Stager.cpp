@@ -21,35 +21,41 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager* Stager::Create(Factory* f, c::Dictionary* d) {
-  auto s = new Stager();
-  s->Set(f,d);
-  return s;
+Stager::Stager(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+  Init();
+  Set(f,d);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager::Stager()
-  : ships(nullptr)
-  , inited(false) {
+void Stager::Init() {
+  inited=false;
+  SNPTR(ships)
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+Stager::Stager() {
+  Init();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Stager::~Stager() {
+  //printf("Stager dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::RemoveFromEngine(a::Engine* e) {
-  ships=nullptr;
+void Stager::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::AddToEngine(a::Engine* e) {
-  ships = e->GetNodeList(ShipMotionNode::TypeId());
+void Stager::AddToEngine(not_null<a::Engine*> e) {
+  ShipMotionNode s;
+  ships = e->GetNodeList(s.TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -108,19 +114,19 @@ void Stager::Fire(const stdstr& t, void* evt) {
       "/mouse/move" == t) {} else {
     return;
   }
-  if (s->IsOperational() &&
+  if (s->IsRunning() &&
       NNP(ships->head)) {
 
-    auto ship = SCAST(f::ComObj*, ships->head->Get("ship"));
+    auto ship = (f::ComObj*) ships->head->Get("ship");
     auto pos = ship->Pos();
     auto x=pos.x;
     auto y=pos.y;
     auto wz= cx::VisRect();
 
     //TODO:
-    //pos.add(cc::Vec2(evt->getDelta().x, 0));
-    pos.clamp(cc::Vec2(0, 0),
-              cc::Vec2(wz.size.width, wz.size.height));
+    //pos.add(c::Vec2(evt->getDelta().x, 0));
+    pos.clamp(c::Vec2(0, 0),
+              c::Vec2(wz.size.width, wz.size.height));
     ship->SetPos(pos.x, pos.y);
   }
 }

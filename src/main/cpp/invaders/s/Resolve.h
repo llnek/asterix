@@ -20,30 +20,32 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Resolve : public BaseSystem {
-protected:
-  a::NodeList* aliens;
-  a::NodeList* ships;
-
 private:
 
   NO__COPYASSIGN(Resolve)
   Resolve();
 
+  void Init();
+
+  a::NodeList* aliens;
+  a::NodeList* ships;
+
 public:
 
-  static Resolve* Create(Factory*, c::Dictionary*);
+  Resolve(not_null<Factory*>, not_null<c::Dictionary*>);
   virtual ~Resolve();
 
-  virtual const a::SystemType TypeId() { return "s/Resolve"; }
+  virtual const a::SystemType TypeId() {
+    return "s/Resolve"; }
 
-  virtual void RemoveFromEngine(a::Engine*);
-  virtual void AddToEngine(a::Engine*);
+  virtual void RemoveFromEngine(not_null<a::Engine*> );
+  virtual void AddToEngine(not_null<a::Engine*> );
   virtual bool Update(float dt);
 
   void CheckMissiles();
   void CheckBombs();
-  void CheckAliens(a::Node*);
-  void CheckShip(a::Node*);
+  void CheckAliens(not_null<a::Node*> );
+  void CheckShip(not_null<a::Node*> );
 
   virtual int Priority() { return a::Resolve; }
 

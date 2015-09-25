@@ -12,7 +12,6 @@
 #if !defined(__STAGER_H__)
 #define __STAGER_H__
 
-
 #include "BaseSystem.h"
 NS_BEGIN(invaders)
 
@@ -21,6 +20,13 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Stager : public BaseSystem {
 protected:
+  void Fire(const stdstr& t, void* evt);
+
+  void InitAlienSize();
+  void InitShipSize();
+
+  void OnceOnly();
+
   a::NodeList* ships;
   bool inited;
 
@@ -28,22 +34,19 @@ private:
 
   NO__COPYASSIGN(Stager)
   Stager();
+  void Init();
 
 public:
 
-  static Stager* Create(Factory*, c::Dictionary*);
+  Stager(not_null<Factory*>, not_null<c::Dictionary*>);
 
-  virtual const a::SystemType TypeId() { return "s/Stager"; }
-  virtual void RemoveFromEngine(a::Engine*);
-  virtual void AddToEngine(a::Engine*);
+  virtual const a::SystemType TypeId() {
+    return "s/Stager"; }
 
-  void Fire(const stdstr& t, void* evt);
-
-  void InitAlienSize();
-  void InitShipSize();
+  virtual void RemoveFromEngine(not_null<a::Engine*>);
+  virtual void AddToEngine(not_null<a::Engine*>);
 
   virtual bool Update(float dt);
-  void OnceOnly();
 
   virtual int Priority() { return a::PreUpdate; }
 

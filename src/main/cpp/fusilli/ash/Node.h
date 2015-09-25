@@ -57,7 +57,7 @@ template<typename T>
 T* NodeFld(not_null<ash::Node*> n, const stdstr& fld) {
   auto v= n->Get(fld);
   if (NNP(v)) {
-    return static_cast<T*>(v);
+    return (T*) v;
   } else {
     return nullptr;
   }

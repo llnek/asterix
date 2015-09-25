@@ -25,36 +25,40 @@ private:
   NO__COPYASSIGN(Aliens)
   Aliens();
 
+  void Init();
+
   a::NodeList* baddies;
 
 public:
 
-  virtual const a::SystemType TypeId() { return "n/Aliens"; }
+  Aliens(not_null<Factory*>, not_null<c::Dictionary*>);
 
-  static Aliens* Create(Factory*, c::Dictionary*);
+  virtual const a::SystemType TypeId() {
+    return "n/Aliens"; }
+
   virtual ~Aliens();
 
-  virtual void RemoveFromEngine(a::Engine*);
-  virtual void AddToEngine(a::Engine*);
+  virtual void RemoveFromEngine(not_null<a::Engine*>);
+  virtual void AddToEngine(not_null<a::Engine*>);
   virtual bool Update(float dt);
 
-  void ProcessMovement(a::Node*, float dt);
-  void ProcessBombs(a::Node*, float dt);
+  void ProcessMovement(not_null<a::Node*>, float dt);
+  void ProcessBombs(not_null<a::Node*>, float dt);
 
   void DropBomb(float x, float y);
-  void CheckBomb(AlienSquad* sqad);
+  void CheckBomb(not_null<AlienSquad*> );
 
-  void MaybeShuffleAliens(AlienSquad* sqad);
-  bool TestDirX(f::ComObj* b, int stepx);
+  void MaybeShuffleAliens(not_null<AlienSquad*> );
+  bool TestDirX(not_null<f::ComObj*> b, int stepx);
 
-  void ForwardOneAlien(f::ComObj* a, float delta);
-  void ShuffleOneAlien(f::ComObj* a, int stepx);
+  void ForwardOneAlien(not_null<f::ComObj*> a, float delta);
+  void ShuffleOneAlien(not_null<f::ComObj*> a, int stepx);
 
-  bool DoShuffle(AlienSquad* sqad);
-  bool DoForward(AlienSquad* sqad);
+  bool DoShuffle(not_null<AlienSquad*> sqad);
+  bool DoForward(not_null<AlienSquad*> sqad);
 
-  f::ComObj* FindMinX(AlienSquad* sqad);
-  f::ComObj* FindMaxX(AlienSquad* sqad);
+  f::ComObj* FindMinX(not_null<AlienSquad*> sqad);
+  f::ComObj* FindMaxX(not_null<AlienSquad*> sqad);
 
   virtual int Priority() { return a::Motion; }
 

@@ -18,20 +18,27 @@ NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL HUDLayer : public f::XHUDLayer {
 private:
   NO__COPYASSIGN(HUDLayer)
-  HUDLayer();
+
+  void InitAtlases();
+  void InitIcons();
+  void InitLabels();
+
+  void ShowMenu(c::Ref*);
+  void OnReplay(c::Ref*);
+
   c::Label* m_scoreLabel;
 public:
 
+  virtual int GetIID() { return 3; }
   virtual f::XLayer* Realize();
 
-  virtual int GetIID() { return 3; }
   virtual ~HUDLayer();
+  HUDLayer();
 
   CREATE_FUNC(HUDLayer)
 };

@@ -25,26 +25,30 @@ private:
   NO__COPYASSIGN(Collide)
   Collide();
 
+  void Init();
+
   a::NodeList* aliens;
   a::NodeList* ships;
   a::Engine* engine;
 
 public:
 
-  virtual const a::SystemType TypeId() { return "n/Collide"; }
+  Collide(not_null<Factory*>, not_null<c::Dictionary*>);
 
-  static Collide* Create(Factory*, c::Dictionary*);
+  virtual const a::SystemType TypeId() {
+    return "n/Collide"; }
+
   virtual ~Collide();
 
-  virtual void RemoveFromEngine(a::Engine*);
-  virtual void AddToEngine(a::Engine*);
+  virtual void RemoveFromEngine(not_null<a::Engine*>);
+  virtual void AddToEngine(not_null<a::Engine*> );
   virtual bool Update(float dt);
 
-  bool MaybeCollide(f::ComObj* a, f::ComObj* b);
+  bool MaybeCollide(not_null<f::ComObj*>, not_null<f::ComObj*>);
   void CheckMissilesBombs();
-  void CheckMissilesAliens(a::Node*);
-  void CheckShipBombs(a::Node*);
-  void CheckShipAliens(a::Node*, a::Node*);
+  void CheckMissilesAliens(not_null<a::Node*>);
+  void CheckShipBombs(not_null<a::Node*>);
+  void CheckShipAliens(not_null<a::Node*>, not_null<a::Node*>);
 
   virtual int Priority() { return a::Collide; }
 

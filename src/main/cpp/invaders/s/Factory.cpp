@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/XPool.h"
+#include "x2d/XGameLayer.h"
 #include "x2d/MainGame.h"
 #include "ash/Engine.h"
 #include "n/gnodes.h"
@@ -22,25 +23,23 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::Factory(a::Engine* e, c::Dictionary* options)
-  : engine(e)
-  , state(options) {
-
+Factory::Factory(not_null<a::Engine*> e, not_null<c::Dictionary*> options) {
+  state= options;
+  engine = e;
   state->retain();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Factory::~Factory() {
-  state->release();
+  if (NNP(state)) { state->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::Factory()
-  : engine(nullptr)
-  , state(nullptr) {
-
+Factory::Factory() {
+  engine= nullptr;
+  state= nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,42 +120,39 @@ c::Dictionary* Factory::GetRankInfo(int r) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::FillSquad(f::XPool* pool) {
+void Factory::FillSquad(not_null<f::XPool*> pool) {
 
-  int cells = CstVal<cc::Integer>("CELLS")->getValue();
-  int cols = CstVal<cc::Integer>("COLS")->getValue();
+  auto cells = CstVal<c::Integer>("CELLS")->getValue();
+  auto cols = CstVal<c::Integer>("COLS")->getValue();
   auto cfg = f::XConfig::GetInstance();
-  auto info= GetRankInfo(0);
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
 
-  c::Sprite* aa;
-  c::Size az;
-  int v, row;
-  float x,y;
+  auto info= GetRankInfo(0);
+  float x;
+  float y;
+  int row=0;
 
-  f::Size2* s2 = DictVal<f::Size2>(info, "size");
-  az= s2->getValue();
-  row=0;
   for (int n=0; n < cells; ++n) {
+
+    auto az= f::DictVal<f::Size2>(info, "size")->getValue();
     if (n % cols == 0) {
       y = (n == 0) ? wb.top * 0.9
                    : y - az.height - wz.size.height * 4/480;
       x = wb.left + (8/320 * wz.size.width) + HWZ(az);
       row += 1;
       info= GetRankInfo(row);
-      s2= DictVal<f::Size2>(info, "size");
-      az= s2->getValue();
+      az= f::DictVal<f::Size2>(info, "size")->getValue();
     }
-    c::String* s = DictVal<c::String>(info, "img0");
-    aa = s->getCString();
+
+    auto s = f::DictVal<c::String>(info, "img0");
+    auto aa = cx::CreateSprite(s->getCString());
     aa->setPosition(x + HWZ(az), y - HHZ(az));
 
+    auto f1= f::DictVal<c::String>(info, "img0")->getCString();
+    auto f2= f::DictVal<c::String>(info, "img1")->getCString();
     c::Vector<c::SpriteFrame*> animFrames(2);
-    s=DictVal<c::String>(info, "img0");
-    auto f1 = s->getCString();
-    s=DictVal<c::String>(info, "img1");
-    auto f2 = s->getCString();
+
     animFrames.pushBack( cx::GetSpriteFrame(f1));
     animFrames.pushBack( cx::GetSpriteFrame(f2));
 
@@ -166,8 +162,7 @@ void Factory::FillSquad(f::XPool* pool) {
 
     f::MainGame::Get()->AddAtlasItem("game-pics", aa);
     x += az.width + (8/320 * wz.size.width);
-    c::Integer* nn= DictVal<c::Integer>(info, "value");
-    v= nn->getValue();
+    auto v = f::DictVal<c::Integer>(info, "value")->getValue();
     auto co= new Alien(aa, v, row);
     co->status=true;
     pool->Checkin(co);
@@ -177,7 +172,7 @@ void Factory::FillSquad(f::XPool* pool) {
 //////////////////////////////////////////////////////////////////////////
 //
 a::Entity* Factory::CreateAliens() {
-  auto stepx= DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
+  auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
   auto ent= engine->CreateEntity("baddies");
   auto cfg = f::XConfig::GetInstance();
   auto p = cfg->GetPool("aliens");
@@ -185,7 +180,7 @@ a::Entity* Factory::CreateAliens() {
   FillSquad(p);
 
   ent->Rego(new AlienSquad(p, stepx));
-  ent->Rego(new Looper(2));
+  ent->Rego(new Looper());
 
   return ent;
 }
@@ -204,23 +199,22 @@ void Factory::BornShip() {
 //
 a::Entity* Factory::CreateShip() {
 
-  auto sz = DictVal<f::Size2>(state, "shipSize")->getValue();
+  auto sz = f::DictVal<f::Size2>(state, "shipSize")->getValue();
   auto ent= engine->CreateEntity("goodies");
   auto s= cx::CreateSprite("ship_1.png");
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
   auto y = sz.height + wb.bottom + (5/60 * wz.size.height);
   auto x = wb.left + wz.size.width * 0.5;
-  Ship* ship;
 
   f::MainGame::Get()->AddAtlasItem("game-pics", s);
 
-  ship = new Ship(s, "ship_1.png", "ship_0.png");
+  auto ship = new Ship(s, "ship_1.png", "ship_0.png");
   ship->Inflate(x,y);
 
   ent->Rego(new Velocity(150,0));
-  ent->Rego(new Looper(1));
-  ent->Rego(new Cannon());
+  ent->Rego(new Looper());
+  ent->Rego(new Cannon(0.3));
   ent->Rego(new Motion());
 
   ent->Rego(ship);

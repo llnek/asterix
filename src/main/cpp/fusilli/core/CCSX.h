@@ -60,7 +60,7 @@ namespace ccsx {
   bool OutOfBound(not_null<ComObj*>, const Box4& B);
   bool OutOfBound(const Box4& src, const Box4& B);
 
-  c::Action* CreateTimer(not_null<c::Node*>, float millis);
+  c::DelayTime* CreateTimer(not_null<c::Node*>, float millis);
   void UndoTimer(not_null<c::DelayTime*>);
   bool TimerDone(not_null<c::DelayTime*>);
 

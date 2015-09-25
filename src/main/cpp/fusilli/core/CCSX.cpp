@@ -178,8 +178,8 @@ void UndoTimer(not_null<c::DelayTime*> tm) {
 //////////////////////////////////////////////////////////////////////////
 // Create a timer action
 //
-c::Action* CreateTimer(not_null<c::Node*> par, float tm) {
-  return par->runAction(c::DelayTime::create(tm));
+c::DelayTime* CreateTimer(not_null<c::Node*> par, float tm) {
+  return (c::DelayTime*) par->runAction(c::DelayTime::create(tm));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -20,17 +20,17 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Splash : public f::XScene {
-friend class SplashLayer;
 private:
   NO__COPYASSIGN(Splash)
-  void OnPlay(c::Ref*);
-  Splash();
+  Splash() {};
 
   CREATE_FUNC(Splash)
 public:
 
   virtual f::XScene* Realize();
-  virtual ~Splash();
+  virtual ~Splash() {};
+
+  void OnPlay(c::Ref*);
 
   static Splash* Create();
 };

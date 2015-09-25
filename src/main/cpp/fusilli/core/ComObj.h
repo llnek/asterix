@@ -22,12 +22,14 @@ NS_BEGIN(fusilli)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL ComObj : public a::Component {
+protected:
+
+  ComObj();
 
 private:
 
   void Init(c::Sprite*, int health, int score);
   NO__COPYASSIGN(ComObj)
-  ComObj();
 
 public:
 

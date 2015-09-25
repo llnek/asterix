@@ -9,14 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/XLayer.h"
+#include "x2d/XGameLayer.h"
+#include "x2d/MainGame.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "s/Stager.h"
-#include "s/Motion.h"
+#include "s/Motions.h"
 #include "s/Move.h"
 #include "s/Collide.h"
 #include "s/Resolve.h"
 #include "s/Aliens.h"
 #include "Game.h"
+#include "HUD.h"
+
 NS_ALIAS(cx, fusilli::ccsx)
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
@@ -24,13 +29,32 @@ NS_ALIAS(f, fusilli)
 NS_BEGIN(invaders)
 
 
-GameLayer::~GameLayer() {
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL BGLayer : public f::XLayer {
+private:
+  NO__COPYASSIGN(BGLayer)
+public:
+  virtual f::XLayer* Realize() {
+    CenterImage(f::XConfig::GetInstance()->GetImage("game.bg"));
+    return this;
+  }
+  virtual int GetIID() { return 1; }
+  virtual ~BGLayer() {}
+  BGLayer() {}
+  CREATE_FUNC(BGLayer)
+};
 
+//////////////////////////////////////////////////////////////////////////////
+//
+GameLayer::~GameLayer() {
+  delete factory;
 }
 
-GameLayer::GameLayer()
-  : factory(nullptr) {
-
+//////////////////////////////////////////////////////////////////////////////
+//
+GameLayer::GameLayer() {
+  SNPTR(factory)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,14 +100,14 @@ void GameLayer::Play(bool newFlag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::InitAsh() {
-  auto options = cc::Dictionary::create();
+  auto options = c::Dictionary::create();
   factory = new Factory(engine, options);
-  engine->RegoSystem(Stager::Create(factory, options));
-  engine->RegoSystem(Motion::Create(factory, options));
-  engine->RegoSystem(Move::Create(factory, options));
-  engine->RegoSystem(Aliens::Create(factory, options));
-  engine->RegoSystem(Collide::Create(factory, options));
-  engine->RegoSystem(Resolve::Create(factory, options));
+  engine->RegoSystem(new Stager(factory, options));
+  engine->RegoSystem(new Motions(factory, options));
+  engine->RegoSystem(new Move(factory, options));
+  engine->RegoSystem(new Aliens(factory, options));
+  engine->RegoSystem(new Collide(factory, options));
+  engine->RegoSystem(new Resolve(factory, options));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -120,7 +144,8 @@ void GameLayer::OnEarnScore(int score) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::OnDone() {
-  SCAST(Game*,getParent())->Pause();
+  auto g= (Game*) getParent();
+  g->Pause();
   Reset(false);
   GetHUD()->EnableReplay();
 }
@@ -139,7 +164,7 @@ void Game::Pause() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Game::IsOperational() {
+bool Game::IsRunning() {
   return running;
 }
 
@@ -151,21 +176,21 @@ Game::~Game() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Game::Game()
-  : running(false) {
-
+Game::Game() {
+  running = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 f::XScene* Game::Realize() {
-  auto g = GameLayer::create();
-  auto b = BGLayer::create();
-  auto h = HUDLayer::create();
+
+  auto g = (f::XLayer*) GameLayer::create();
+  auto b = (f::XLayer*) BGLayer::create();
+  auto h = (f::XLayer*) HUDLayer::create();
 
   AddLayer(b, 1)->Realize();
   AddLayer(g, 2);
-  AddLayer(h)->Realize();
+  AddLayer(h, 3)->Realize();
 
   // realize game layer last
   g->Realize();

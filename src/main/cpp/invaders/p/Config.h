@@ -21,7 +21,6 @@ class CC_DLL Config : public f::XConfig {
 private:
 
   NO__COPYASSIGN(Config)
-  Config();
 
   void InitAssets();
   void InitCsts();
@@ -32,6 +31,7 @@ private:
 public:
 
   virtual void HandleResolution(const c::Size& rs);
+  Config();
 
   virtual ResolutionPolicy GetPolicy();
   virtual const stdstr GetAppKey();
@@ -40,20 +40,19 @@ public:
   virtual const c::Size GetGameSize();
 
   virtual const stdstr GetWSUrl();
-  virtual c::Scene* StartWith();
+  virtual owner<c::Scene*> StartWith();
 
-  virtual void SetGameId(const stdstr& );
-  virtual void SetRoomId(const stdstr& );
+  virtual void SetGameId(const stdstr& s) {}
+  virtual void SetRoomId(const stdstr& s) {}
 
-  virtual const stdstr GetGameId();
-  virtual const stdstr GetRoomId();
+  virtual const stdstr GetGameId() { return ""; }
+  virtual const stdstr GetRoomId() { return ""; }
 
   virtual float GetScale() ;
   virtual void RunOnce() ;
 
-  virtual ~Config();
+  virtual ~Config() {}
 
-  DEFCREATE_FUNC(Config)
 };
 
 

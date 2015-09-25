@@ -24,23 +24,28 @@ class CC_DLL Move : public BaseSystem {
 private:
 
   NO__COPYASSIGN(Move)
+
   Move();
+  void Init();
 
   a::NodeList* ships;
 
 public:
 
-  virtual const a::SystemType TypeId() { return "s/Move"; }
+  Move(not_null<Factory*>, not_null<c::Dictionary*> );
 
-  static Move* Create(Factory*, c::Dictionary* );
+  virtual const a::SystemType TypeId() {
+    return "s/Move"; }
+
   virtual ~Move();
 
-  virtual void RemoveFromEngine(a::Engine*);
-  virtual void AddToEngine(a::Engine*);
+  virtual void RemoveFromEngine(not_null<a::Engine*>);
+  virtual void AddToEngine(not_null<a::Engine*>);
   virtual bool Update(float dt);
 
-  void ProcessShipMotions(a::Node*, float dt);
-  void Clamp(f::ComObj* ship);
+  void ProcessShipMotions(not_null<a::Node*>, float dt);
+  void Clamp(not_null<f::ComObj*> ship);
+
   void MoveBombs(float dt);
   void MoveMissiles(float dt);
 

@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "renderer/CCTextureCache.h"
-#include "2d/CCSpriteBatchNode.h"
 #include "2d/CCSprite.h"
 #include "2d/CCMenuItem.h"
 #include "2d/CCMenu.h"

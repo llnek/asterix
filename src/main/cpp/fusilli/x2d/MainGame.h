@@ -15,10 +15,11 @@
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
 #include "XScene.h"
+#include "XGameLayer.h"
 NS_BEGIN(fusilli)
 
 
-class XGameLayer;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainGame {

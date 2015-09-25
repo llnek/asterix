@@ -25,14 +25,13 @@ NS_BEGIN(invaders)
 class CC_DLL AlienMotionNode : public a::NodeFactory {
 private:
   NO__COPYASSIGN(AlienMotionNode)
-  AlienMotionNode();
 
 public:
 
   virtual const a::NodeType TypeId() {
     return "n/AlienMotionNode"; }
 
-  DEFCREATE_FUNC(AlienMotionNode)
+  AlienMotionNode();
 
   virtual owner<a::Node*> CreateNode() ;
   virtual ~AlienMotionNode();
@@ -44,14 +43,13 @@ public:
 class CC_DLL CannonCtrlNode : public a::NodeFactory {
 private:
   NO__COPYASSIGN(CannonCtrlNode)
-  CannonCtrlNode();
 
 public:
 
   virtual const a::NodeType TypeId() {
     return "n/CannonCtrlNode"; }
 
-  DEFCREATE_FUNC(CannonCtrlNode)
+  CannonCtrlNode();
 
   virtual owner<a::Node*> CreateNode();
   virtual ~CannonCtrlNode();
@@ -63,14 +61,13 @@ public:
 class CC_DLL ShipMotionNode : public a::NodeFactory {
 private:
   NO__COPYASSIGN(ShipMotionNode)
-  ShipMotionNode();
 
 public:
 
   virtual const a::NodeType TypeId() {
     return "n/ShipMotionNode"; }
 
-  DEFCREATE_FUNC(ShipMotionNode)
+  ShipMotionNode();
 
   virtual owner<a::Node*> CreateNode();
   virtual ~ShipMotionNode();

@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/MainGame.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "n/gnodes.h"
@@ -19,24 +20,45 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve* Resolve::Create(Factory* f, c::Dictionary* options) {
-  auto s = new Resolve();
-  s->Set(f, options);
-  return s;
+Resolve::Resolve(not_null<Factory*> f, not_null<c::Dictionary*> options) {
+  Init();
+  Set(f, options);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Resolve::~Resolve() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Resolve::Resolve() {
+  Init();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::Init() {
+  SNPTR(aliens)
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::RemoveFromEngine(a::Engine* e) {
-  aliens= nullptr;
-  ships= nullptr;
+void Resolve::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(aliens)
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::AddToEngine(a::Engine* e) {
-  aliens= e->GetNodeList(AlienMotionNode::TypeId());
-  ships= e->GetNodeList(ShipMotionNode::TypeId());
+void Resolve::AddToEngine(not_null<a::Engine*> e) {
+  AlienMotionNode a;
+  ShipMotionNode s;
+
+  aliens= e->GetNodeList(a.TypeId());
+  ships= e->GetNodeList(s.TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,8 +115,8 @@ void Resolve::CheckBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckAliens(a::Node* node) {
-  AlienSquad* sqad= a::NodeFld<AlienSquad>(node, "aliens");
+void Resolve::CheckAliens(not_null<a::Node*> node) {
+  auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto c= sqad->Elements();
 
   for (auto it = c.begin(); it != c.end(); ++it) {
@@ -111,8 +133,8 @@ void Resolve::CheckAliens(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckShip(a::Node* node) {
-  Ship* ship = a::NodeFld<Ship>(node, "ship");
+void Resolve::CheckShip(not_null<a::Node*> node) {
+  auto ship = a::NodeFld<Ship>(node, "ship");
 
   if (ship->status &&
       ship->health <= 0) {

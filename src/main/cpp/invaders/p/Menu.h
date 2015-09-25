@@ -20,13 +20,9 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainMenu : public f::XScene {
-friend class MainMenuLayer;
 private:
   NO__COPYASSIGN(MainMenu)
   MainMenu();
-
-  void OnBackAction();
-  void OnQuitAction();
 
   c::CallFunc* backAction;
 
@@ -34,10 +30,12 @@ public:
 
   static MainMenu* CreateWithBackAction(c::CallFunc* );
   virtual f::XScene* Realize();
-  virtual void OnInit();
+  virtual void OnInit() {}
 
   virtual ~MainMenu();
 
+  void OnBackAction();
+  void OnQuitAction() {}
 };
 
 

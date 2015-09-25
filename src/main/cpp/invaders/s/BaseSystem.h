@@ -15,6 +15,7 @@
 #include "core/Primitives.h"
 #include "Factory.h"
 #include "ash/Ash.h"
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(a,ash)
 NS_BEGIN(invaders)
@@ -27,7 +28,7 @@ protected:
   c::Dictionary* state;
   Factory* factory;
 
-  void Set(Factory*, c::Dictionary*);
+  void Set(not_null<Factory*>, not_null<c::Dictionary*>);
   BaseSystem();
 
 private:
