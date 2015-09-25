@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL MainMenu : public f::XScene {
 private:
-  NO__COPYASSIGN(MainMenu)
+  NO__CPYASS(MainMenu)
   MainMenu();
 
   c::CallFunc* backAction;

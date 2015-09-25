@@ -23,7 +23,7 @@ NS_BEGIN(invaders)
 class CC_DLL Alien : public f::ComObj {
 private:
 
-  NO__COPYASSIGN(Alien)
+  NO__CPYASS(Alien)
   Alien();
 
 public:
@@ -42,7 +42,7 @@ public:
 class CC_DLL AlienSquad : public a::Component {
 private:
 
-  NO__COPYASSIGN(AlienSquad)
+  NO__CPYASS(AlienSquad)
   AlienSquad();
 
 public:
@@ -65,7 +65,7 @@ public:
 //
 class CC_DLL Bomb : public f::ComObj {
 private:
-  NO__COPYASSIGN(Bomb)
+  NO__CPYASS(Bomb)
   Bomb();
 public:
 
@@ -81,7 +81,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Cannon : public a::Component {
 private:
-  NO__COPYASSIGN(Cannon)
+  NO__CPYASS(Cannon)
   Cannon();
 public:
 
@@ -99,7 +99,7 @@ public:
 //
 class CC_DLL Explosion : public f::ComObj {
 private:
-  NO__COPYASSIGN(Explosion)
+  NO__CPYASS(Explosion)
   Explosion();
 public:
 
@@ -118,7 +118,7 @@ public:
 //
 class CC_DLL Looper : public a::Component {
 private:
-  NO__COPYASSIGN(Looper);
+  NO__CPYASS(Looper);
 
 public:
 
@@ -136,7 +136,7 @@ public:
 //
 class CC_DLL Missile : public f::ComObj {
 private:
-  NO__COPYASSIGN(Missile)
+  NO__CPYASS(Missile)
   Missile();
 public:
 
@@ -153,7 +153,7 @@ public:
 //
 class CC_DLL Motion : public a::Component {
 private:
-  NO__COPYASSIGN(Motion)
+  NO__CPYASS(Motion)
 public:
 
   virtual const a::COMType TypeId() { return "n/Motion"; }
@@ -168,7 +168,7 @@ public:
 //
 class CC_DLL Ship : public f::ComObj {
 private:
-  NO__COPYASSIGN(Ship)
+  NO__CPYASS(Ship)
   Ship();
 public:
 
@@ -185,7 +185,7 @@ public:
 //
 class CC_DLL Velocity : public a::Component {
 private:
-  NO__COPYASSIGN(Velocity)
+  NO__CPYASS(Velocity)
   Velocity();
 public:
 

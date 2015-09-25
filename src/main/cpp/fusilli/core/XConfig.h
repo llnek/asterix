@@ -47,7 +47,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XConfig)
+  NO__CPYASS(XConfig)
 
 public:
 
@@ -102,7 +102,7 @@ template<typename T>
 T* CstVal(const stdstr& key) {
   auto r= fusilli::XConfig::GetInstance()->GetCst(key);
   if (NNP(r)) {
-    return static_cast<T*>(r);
+    return (T*) r;
   } else {
     return nullptr;
   }

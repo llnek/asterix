@@ -29,7 +29,7 @@ protected:
 private:
 
   void Init(c::Sprite*, int health, int score);
-  NO__COPYASSIGN(ComObj)
+  NO__CPYASS(ComObj)
 
 public:
 

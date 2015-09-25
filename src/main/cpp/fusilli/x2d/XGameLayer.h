@@ -43,7 +43,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XGameLayer)
+  NO__CPYASS(XGameLayer)
 
 public:
 

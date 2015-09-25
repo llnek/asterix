@@ -26,7 +26,7 @@ class FS_DLL NodeFactory {
 protected:
   NodeFactory() {}
 private:
-  NO__COPYASSIGN(NodeFactory)
+  NO__CPYASS(NodeFactory)
 public:
   virtual const NodeType TypeId() = 0;
   virtual owner<Node*> CreateNode() = 0;
@@ -40,7 +40,7 @@ private:
 
   s::map<NodeType,NodeFactory*> regos;
 
-  NO__COPYASSIGN(NodeRegistry)
+  NO__CPYASS(NodeRegistry)
   NodeRegistry();
 
 public:

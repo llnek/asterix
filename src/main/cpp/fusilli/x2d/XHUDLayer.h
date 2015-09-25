@@ -40,7 +40,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XHUDLayer)
+  NO__CPYASS(XHUDLayer)
 
 public:
 

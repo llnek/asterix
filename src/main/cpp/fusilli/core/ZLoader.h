@@ -23,7 +23,7 @@ NS_BEGIN(fusilli)
 class CC_DLL ZLoader : public c::Scene {
 private:
 
-  NO__COPYASSIGN(ZLoader)
+  NO__CPYASS(ZLoader)
   void StartLoad(float);
 
 public:

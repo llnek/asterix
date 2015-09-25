@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Splash : public f::XScene {
 private:
-  NO__COPYASSIGN(Splash)
+  NO__CPYASS(Splash)
   Splash() {};
 
   CREATE_FUNC(Splash)

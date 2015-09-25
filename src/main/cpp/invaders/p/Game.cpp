@@ -33,7 +33,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL BGLayer : public f::XLayer {
 private:
-  NO__COPYASSIGN(BGLayer)
+  NO__CPYASS(BGLayer)
 public:
   virtual f::XLayer* Realize() {
     CenterImage(f::XConfig::GetInstance()->GetImage("game.bg"));

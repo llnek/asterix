@@ -25,7 +25,7 @@ NS_BEGIN(fusilli)
 class CC_DLL MainGame {
 private:
 
-  NO__COPYASSIGN(MainGame)
+  NO__CPYASS(MainGame)
   MainGame();
 
 public:

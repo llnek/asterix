@@ -26,7 +26,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(System)
+  NO__CPYASS(System)
   System();
   void Init();
 

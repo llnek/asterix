@@ -32,7 +32,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(Stager)
+  NO__CPYASS(Stager)
   Stager();
   void Init();
 

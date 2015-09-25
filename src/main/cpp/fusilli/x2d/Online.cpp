@@ -26,7 +26,7 @@ private:
   void OnReq(const stdstr&, const stdstr&);
   OnlineLayer() {}
 
-  NO__COPYASSIGN(OnlineLayer)
+  NO__CPYASS(OnlineLayer)
 
 public:
 

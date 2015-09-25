@@ -33,7 +33,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(BaseSystem)
+  NO__CPYASS(BaseSystem)
 
 public:
 

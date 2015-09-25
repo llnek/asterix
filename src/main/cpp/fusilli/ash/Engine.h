@@ -27,7 +27,7 @@ NS_BEGIN(ash)
 template <typename T>
 class FS_DLL ObjList {
 private:
-  NO__COPYASSIGN(ObjList)
+  NO__CPYASS(ObjList)
 public:
   const s::vector<T*> List();
   void Release(not_null<T*>);
@@ -62,7 +62,7 @@ private:
 
   Engine();
 
-  NO__COPYASSIGN(Engine)
+  NO__CPYASS(Engine)
 
 public:
 

@@ -21,7 +21,7 @@ NS_ALIAS(f, fusilli)
 //
 class CC_DLL AppDelegate : public f::App {
 private:
-  NO__COPYASSIGN(AppDelegate)
+  NO__CPYASS(AppDelegate)
 public:
   virtual ~AppDelegate();
   AppDelegate();

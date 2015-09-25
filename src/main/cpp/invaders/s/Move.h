@@ -23,7 +23,7 @@ NS_BEGIN(invaders)
 class CC_DLL Move : public BaseSystem {
 private:
 
-  NO__COPYASSIGN(Move)
+  NO__CPYASS(Move)
 
   Move();
   void Init();

@@ -24,7 +24,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL AlienMotionNode : public a::NodeFactory {
 private:
-  NO__COPYASSIGN(AlienMotionNode)
+  NO__CPYASS(AlienMotionNode)
 
 public:
 
@@ -42,7 +42,7 @@ public:
 //
 class CC_DLL CannonCtrlNode : public a::NodeFactory {
 private:
-  NO__COPYASSIGN(CannonCtrlNode)
+  NO__CPYASS(CannonCtrlNode)
 
 public:
 
@@ -60,7 +60,7 @@ public:
 //
 class CC_DLL ShipMotionNode : public a::NodeFactory {
 private:
-  NO__COPYASSIGN(ShipMotionNode)
+  NO__CPYASS(ShipMotionNode)
 
 public:
 

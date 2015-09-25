@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL HUDLayer : public f::XHUDLayer {
 private:
-  NO__COPYASSIGN(HUDLayer)
+  NO__CPYASS(HUDLayer)
 
   void InitAtlases();
   void InitIcons();

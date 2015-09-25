@@ -26,7 +26,7 @@ NS_BEGIN(fusilli)
 class CC_DLL XPool : public c::Ref { //, c::Clonable {
 private:
 
-  NO__COPYASSIGN(XPool)
+  NO__CPYASS(XPool)
   XPool();
 
   s::vector<ComObj*> objs;

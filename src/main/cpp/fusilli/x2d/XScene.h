@@ -31,7 +31,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XScene)
+  NO__CPYASS(XScene)
 
 public:
 

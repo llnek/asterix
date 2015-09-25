@@ -38,7 +38,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(Online)
+  NO__CPYASS(Online)
   CREATE_FUNC(Online)
 
   WSockSS* wss;

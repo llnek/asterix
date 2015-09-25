@@ -46,7 +46,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(YesNo)
+  NO__CPYASS(YesNo)
 
 public:
 

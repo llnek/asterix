@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 class CC_DLL Motions : public BaseSystem {
 private:
 
-  NO__COPYASSIGN(Motions)
+  NO__CPYASS(Motions)
   Motions();
 
   void Init();

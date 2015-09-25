@@ -23,7 +23,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL MenuLayer : public f::XLayer {
 private:
-  NO__COPYASSIGN(MenuLayer)
+  NO__CPYASS(MenuLayer)
   MenuLayer();
   void Title();
 

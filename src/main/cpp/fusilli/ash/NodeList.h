@@ -25,7 +25,7 @@ class Node;
 class FS_DLL NodeList {
 private:
 
-  NO__COPYASSIGN(NodeList)
+  NO__CPYASS(NodeList)
   NodeType nType;
   NodeList();
 

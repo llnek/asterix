@@ -25,7 +25,7 @@ NS_BEGIN(fusilli)
 class CC_DLL L10NCache {
 private:
 
-  NO__COPYASSIGN(L10NCache)
+  NO__CPYASS(L10NCache)
   s::map<stdstr, stdstr> _cache;
 
 public:

@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 class CC_DLL Config : public f::XConfig {
 private:
 
-  NO__COPYASSIGN(Config)
+  NO__CPYASS(Config)
 
   void InitAssets();
   void InitCsts();

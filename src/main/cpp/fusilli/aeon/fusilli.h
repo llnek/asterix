@@ -90,7 +90,7 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define NO__COPYASSIGN(T) \
+#define NO__CPYASS(T) \
   T(const T&) = delete; \
   T&operator =(const T&) = delete;  \
   T(T&&) = delete;  \

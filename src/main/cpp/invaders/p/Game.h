@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL GameLayer : public f::XGameLayer {
 private:
-  NO__COPYASSIGN(GameLayer)
+  NO__CPYASS(GameLayer)
   Factory* factory;
   void InitAsh();
 public:
@@ -48,7 +48,7 @@ public:
 //
 class CC_DLL Game : public f::XScene {
 private:
-  NO__COPYASSIGN(Game)
+  NO__CPYASS(Game)
   Game();
   bool running;
 public:

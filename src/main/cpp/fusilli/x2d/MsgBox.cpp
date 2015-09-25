@@ -77,7 +77,7 @@ MsgBox::MsgBox() {
 class CC_DLL MsgBoxLayer : public XLayer {
 private:
 
-  NO__COPYASSIGN(MsgBoxLayer)
+  NO__CPYASS(MsgBoxLayer)
   MsgBoxLayer() {};
 
 public:

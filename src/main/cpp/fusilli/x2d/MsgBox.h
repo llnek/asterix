@@ -38,7 +38,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(MsgBox)
+  NO__CPYASS(MsgBox)
   MsgBox();
 
   CREATE_FUNC(MsgBox)

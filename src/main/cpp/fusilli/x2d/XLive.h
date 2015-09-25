@@ -28,7 +28,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XLive)
+  NO__CPYASS(XLive)
 
 public:
 

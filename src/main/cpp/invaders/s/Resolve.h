@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 class CC_DLL Resolve : public BaseSystem {
 private:
 
-  NO__COPYASSIGN(Resolve)
+  NO__CPYASS(Resolve)
   Resolve();
 
   void Init();

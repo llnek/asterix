@@ -24,7 +24,7 @@ class CC_DLL YesNoLayer : public XLayer {
 
 private:
 
-  NO__COPYASSIGN(YesNoLayer)
+  NO__CPYASS(YesNoLayer)
   YesNoLayer() {}
 
 public:

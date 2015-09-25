@@ -27,7 +27,7 @@ class Entity;
 class FS_DLL Node {
 private:
 
-  NO__COPYASSIGN(Node)
+  NO__CPYASS(Node)
   Node();
 
   s::map<stdstr, Component*> values;

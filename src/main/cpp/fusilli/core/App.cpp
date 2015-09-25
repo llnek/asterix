@@ -12,6 +12,7 @@
 #include "audio/include/SimpleAudioEngine.h"
 #include "platform/CCGLView.h"
 #include "platform/CCGL.h"
+#include "Primitives.h"
 #include "XConfig.h"
 #include "App.h"
 
@@ -86,23 +87,30 @@ void App::PreLaunch(const c::Size& dz) {
 
   auto director = c::Director::getInstance();
   auto glview = director->getOpenGLView();
+  auto cfg = XConfig::GetInstance();
 
-  // turn on display FPS
-  director->setDisplayStats(true);
-
-  // set FPS. the default value is 1.0/60 if you don't call this
-  director->setAnimationInterval(1.0 / 60);
-
-  // Set the design resolution
-  glview->setDesignResolutionSize(dz.width, dz.height, ResolutionPolicy::NO_BORDER);
+  auto dispFPS= CstVal<c::Bool>("showFPS");
+  auto fps = CstVal<c::Integer>("FPS");
   c::Size fz = glview->getFrameSize();
 
-  // if the frame's height is larger than the height of medium size.
+  // set FPS. the default value is 1.0/60 if you don't call this
+  director->setAnimationInterval(1.0 / fps->getValue());
+
+  // turn on display FPS
+  director->setDisplayStats( dispFPS->getValue());
+
+  // Set the design resolution
+  glview->setDesignResolutionSize(
+    dz.width, dz.height, ResolutionPolicy::NO_BORDER);
+
+  // if the frame's height is larger than
+  // the height of medium size
   if (fz.height > mediumSize.height) {
     director->setContentScaleFactor(
         MIN(largeSize.height/dz.height, largeSize.width/dz.width));
   }
-  // if the frame's height is larger than the height of small size.
+  // if the frame's height is larger than
+  // the height of small size.
   else if (fz.height > smallSize.height) {
     director->setContentScaleFactor(
         MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
@@ -115,7 +123,6 @@ void App::PreLaunch(const c::Size& dz) {
 
   InitAudio();
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 class CC_DLL Collide : public BaseSystem {
 private:
 
-  NO__COPYASSIGN(Collide)
+  NO__CPYASS(Collide)
   Collide();
 
   void Init();

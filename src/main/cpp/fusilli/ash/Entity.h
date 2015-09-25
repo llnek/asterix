@@ -33,7 +33,7 @@ private:
 
   Entity();
 
-  NO__COPYASSIGN(Entity)
+  NO__CPYASS(Entity)
 
 public:
 

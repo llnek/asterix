@@ -39,7 +39,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XLayer)
+  NO__CPYASS(XLayer)
 
 public:
 

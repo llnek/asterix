@@ -32,7 +32,7 @@ private:
   void PreLaunch(const c::Size&);
   void InitAudio();
 
-  NO__COPYASSIGN(App)
+  NO__CPYASS(App)
 
 public:
 

@@ -28,7 +28,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(Factory)
+  NO__CPYASS(Factory)
   Factory();
 
 public:

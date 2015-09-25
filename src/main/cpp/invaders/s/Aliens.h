@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 class CC_DLL Aliens : public BaseSystem {
 private:
 
-  NO__COPYASSIGN(Aliens)
+  NO__CPYASS(Aliens)
   Aliens();
 
   void Init();

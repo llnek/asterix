@@ -30,7 +30,7 @@ class FS_DLL Component {
 protected:
   Component() {}
 private:
-  NO__COPYASSIGN(Component)
+  NO__CPYASS(Component)
 public:
 
   virtual const COMType TypeId() = 0;

@@ -39,7 +39,7 @@ protected:
 
 private:
 
-  NO__COPYASSIGN(XLives)
+  NO__CPYASS(XLives)
 
 public:
 

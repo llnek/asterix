@@ -23,7 +23,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL SplashLayer : public f::XLayer {
 private:
-  NO__COPYASSIGN(SplashLayer)
+  NO__CPYASS(SplashLayer)
   SplashLayer();
 
   void Title();
