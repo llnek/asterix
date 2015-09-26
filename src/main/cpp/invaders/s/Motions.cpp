@@ -15,7 +15,7 @@
 #include "x2d/MainGame.h"
 #include "n/gnodes.h"
 #include "Motions.h"
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -122,7 +122,7 @@ void Motions::FireMissile(not_null<a::Node*> node, float dt) {
   auto lpr= a::NodeFld<Looper>(node, "looper");
   auto ship=a::NodeFld<Ship>(node, "ship");
 
-  auto cfg= f::XConfig::GetInstance();
+  auto cfg= f::XConfig::Self();
   auto top= cx::GetTop(ship->sprite);
   auto p= cfg->GetPool("missiles");
   auto pos= ship->Pos();

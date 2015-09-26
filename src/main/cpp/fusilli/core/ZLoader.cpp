@@ -11,7 +11,7 @@
 
 #include "base/CCRef.h"
 #include "ZLoader.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -42,5 +42,5 @@ ZLoader::~ZLoader() {
 }
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "n/gnodes.h"
 #include "Resolve.h"
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -78,7 +78,7 @@ bool Resolve::Update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckMissiles() {
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto mss = cfg->GetPool("missiles");
   auto ht = cx::VisRect().size.height;
   auto c = mss->Elements();
@@ -97,7 +97,7 @@ void Resolve::CheckMissiles() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckBombs() {
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto bbs = cfg->GetPool("bombs");
   auto c = bbs->Elements();
   int bt = 0;

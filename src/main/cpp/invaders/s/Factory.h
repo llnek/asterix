@@ -14,7 +14,7 @@
 
 #include "core/XPool.h"
 #include "ash/Engine.h"
-NS_ALIAS(f, fusilli)
+NS_ALIAS(f, fusii)
 NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 

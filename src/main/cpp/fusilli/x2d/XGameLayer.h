@@ -21,7 +21,7 @@
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_ALIAS(a, ash)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 enum class GMode { ONE, TWO, NET };
 class ComObj;
@@ -73,6 +73,6 @@ public:
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 #endif
 

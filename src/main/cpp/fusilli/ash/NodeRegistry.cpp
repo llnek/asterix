@@ -19,7 +19,7 @@ static NodeRegistry* _singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeRegistry* NodeRegistry::GetInstance() {
+NodeRegistry* NodeRegistry::Self() {
   if (ENP(_singleton)) {
     _singleton= new NodeRegistry();
   }

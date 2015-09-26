@@ -104,7 +104,7 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 enum class Locale {
@@ -129,7 +129,7 @@ enum class Locale {
   BULGARIAN
 };
 
-NS_END(fusilli)
+NS_END(fusii)
 NS_USING(Guide)
 #endif
 

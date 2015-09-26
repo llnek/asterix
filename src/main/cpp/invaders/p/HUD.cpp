@@ -14,8 +14,8 @@
 #include "core/CCSX.h"
 #include "x2d/XLives.h"
 #include "HUD.h"
-NS_ALIAS(cx, fusilli::ccsx)
-NS_ALIAS(f, fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ void HUDLayer::InitAtlases() {
 void HUDLayer::InitLabels() {
   auto soff = CstVal<c::Integer>("S_OFF")->getValue();
   auto tile = CstVal<c::Integer>("TILE")->getValue();
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto wb = cx::VisBox();
 
   m_scoreLabel = cx::CreateBmfLabel(0,0,"font.SmallTypeWriting", "0");

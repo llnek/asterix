@@ -15,7 +15,7 @@
 #include "2d/CCMenuItem.h"
 #include "2d/CCMenu.h"
 #include "Menu.h"
-NS_ALIAS(cx,fusilli::ccsx)
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -55,7 +55,7 @@ MenuLayer::MenuLayer() {
 //
 f::XLayer* MenuLayer::Realize() {
   auto tile = CstVal<c::Integer>("TILE")->getValue();
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto color= c::Color3B(94,49,120);
   auto cw = cx::Center();
   auto wb = cx::VisBox();

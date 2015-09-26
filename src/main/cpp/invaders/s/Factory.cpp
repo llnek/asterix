@@ -17,7 +17,7 @@
 #include "ash/Engine.h"
 #include "n/gnodes.h"
 #include "Factory.h"
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -45,7 +45,7 @@ Factory::Factory() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateMissiles(int count) {
-  auto p= f::XConfig::GetInstance()->GetPool("missiles");
+  auto p= f::XConfig::Self()->GetPool("missiles");
   auto cb= [=](f::XPool* pp) -> f::ComObj* {
     auto sp = cx::CreateSprite("missile.png");
     sp->setVisible(false);
@@ -58,7 +58,7 @@ void Factory::CreateMissiles(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateExplosions(int count) {
-  auto p= f::XConfig::GetInstance()->GetPool("explosions");
+  auto p= f::XConfig::Self()->GetPool("explosions");
   auto cb= [=](f::XPool* pp) -> f::ComObj* {
     auto sp = cx::CreateSprite("boom_0.png");
     sp->setVisible(false);
@@ -71,7 +71,7 @@ void Factory::CreateExplosions(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateBombs(int count) {
-  auto p= f::XConfig::GetInstance()->GetPool("bombs");
+  auto p= f::XConfig::Self()->GetPool("bombs");
   auto cb= [=](f::XPool* pp) -> f::ComObj* {
     auto sp = cx::CreateSprite("bomb.png");
     sp->setVisible(false);
@@ -124,7 +124,7 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
 
   auto cells = CstVal<c::Integer>("CELLS")->getValue();
   auto cols = CstVal<c::Integer>("COLS")->getValue();
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
 
@@ -174,7 +174,7 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
 a::Entity* Factory::CreateAliens() {
   auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
   auto ent= engine->CreateEntity("baddies");
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto p = cfg->GetPool("aliens");
 
   FillSquad(p);

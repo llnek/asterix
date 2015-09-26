@@ -22,10 +22,10 @@
 #include "Game.h"
 #include "HUD.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
-NS_ALIAS(f, fusilli)
+NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
 
@@ -36,7 +36,7 @@ private:
   NO__CPYASS(BGLayer)
 public:
   virtual f::XLayer* Realize() {
-    CenterImage(f::XConfig::GetInstance()->GetImage("game.bg"));
+    CenterImage(f::XConfig::Self()->GetImage("game.bg"));
     return this;
   }
   virtual int GetIID() { return 1; }

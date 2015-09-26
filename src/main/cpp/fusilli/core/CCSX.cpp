@@ -18,7 +18,7 @@
 #include "base/CCDirector.h"
 #include "CCSX.h"
 
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -179,7 +179,10 @@ void UndoTimer(not_null<c::DelayTime*> tm) {
 // Create a timer action
 //
 c::DelayTime* CreateTimer(not_null<c::Node*> par, float tm) {
-  return (c::DelayTime*) par->runAction(c::DelayTime::create(tm));
+  auto t= c::DelayTime::create(tm);
+  par->runAction(t);
+  t->retain();
+  return t;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -690,6 +693,6 @@ void ResolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
 
 
 NS_END(ccsx)
-NS_END(fusilli)
+NS_END(fusii)
 
 

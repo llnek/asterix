@@ -17,7 +17,7 @@
 #include <map>
 
 NS_ALIAS(s, std)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,6 +42,6 @@ public:
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 #endif
 

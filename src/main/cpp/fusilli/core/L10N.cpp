@@ -11,7 +11,7 @@
 
 #include "L10N.h"
 
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -55,7 +55,7 @@ L10NCache::L10NCache() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 
 
 

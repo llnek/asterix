@@ -22,9 +22,11 @@ void BaseSystem::Set(not_null<Factory*> f, not_null<c::Dictionary*> d) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-BaseSystem::BaseSystem()  : System (a::Error) {
-  factory= nullptr;
-  state= nullptr;
+BaseSystem::BaseSystem()
+  : System (a::Error) {
+
+  SNPTR(factory)
+  SNPTR(state)
 }
 
 //////////////////////////////////////////////////////////////////////////

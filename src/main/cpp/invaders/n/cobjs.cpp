@@ -12,7 +12,7 @@
 #include "core/CCSX.h"
 #include "cobjs.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -26,15 +26,8 @@ AlienSquad::AlienSquad(not_null<f::XPool*> aliens, int stepx) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AlienSquad::AlienSquad() {
-  aliens= nullptr;
-  stepx= 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 AlienSquad::~AlienSquad() {
-  aliens->ClearAll();
+  if (NNP(aliens)) { aliens->ClearAll(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,12 +40,6 @@ Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
 //////////////////////////////////////////////////////////////////////////////
 //
 Alien::~Alien() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Alien::Alien() {
-  rank = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,23 +58,10 @@ Bomb::~Bomb() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Bomb::Bomb() {
-  x = y = 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 Cannon::Cannon(float coolDownWindow) {
   this->coolDownWindow= coolDownWindow;
   hasAmmo = true;
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Cannon::Cannon() {
-  coolDownWindow = 0;
-  hasAmmo= false;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -103,12 +77,6 @@ Explosion::Explosion(not_null<c::Sprite*> s)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Explosion::Explosion() {
-  frameTime = 0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 Explosion::~Explosion() {
 }
 
@@ -116,15 +84,23 @@ Explosion::~Explosion() {
 //
 void Explosion::Inflate(float x, float y) {
 
-  auto anim= c::Animation::create();
-  anim->addSpriteFrame(cx::GetSpriteFrame("boom_0.png"));
-  anim->addSpriteFrame(cx::GetSpriteFrame("boom_1.png"));
-  anim->addSpriteFrame(cx::GetSpriteFrame("boom_2.png"));
-  anim->addSpriteFrame(cx::GetSpriteFrame("boom_3.png"));
-  anim->setDelayPerUnit(frameTime);
+  auto cache = c::AnimationCache::getInstance();
+  auto anim= cache->getAnimation("boom!");
+  if (ENP(anim)) {
+    anim = c::Animation::create();
+    anim->addSpriteFrame(cx::GetSpriteFrame("boom_0.png"));
+    anim->addSpriteFrame(cx::GetSpriteFrame("boom_1.png"));
+    anim->addSpriteFrame(cx::GetSpriteFrame("boom_2.png"));
+    anim->addSpriteFrame(cx::GetSpriteFrame("boom_3.png"));
+    anim->setDelayPerUnit(frameTime);
+    anim->setRestoreOriginalFrame(true);
+    cache->addAnimation(anim, "boom!");
+    anim= cache->getAnimation("boom!");
+  }
 
   sprite->setPosition(x,y);
   status=true;
+
   sprite->runAction(
     c::Sequence::createWithTwoActions(c::Animate::create(anim),
     c::CallFunc::create([=]() { this->Deflate(); })));
@@ -132,8 +108,8 @@ void Explosion::Inflate(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 Looper::Looper() {
-  timer0 = nullptr;
-  timer1 = nullptr;
+  SNPTR(timer0)
+  SNPTR(timer1)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -150,12 +126,6 @@ Missile::Missile(not_null<c::Sprite*> s)
   auto wz= cx::VisRect();
   x= 0;
   y= 150 * wz.size.height / 480;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Missile::Missile() {
-  x = y = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,11 +158,6 @@ Ship::Ship(not_null<c::Sprite*> s,
 
 //////////////////////////////////////////////////////////////////////////
 //
-Ship::Ship() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 Ship::~Ship() {
 }
 
@@ -201,12 +166,6 @@ Ship::~Ship() {
 Velocity::Velocity(float vx, float vy) {
   x= vx;
   y= vy;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Velocity::Velocity() {
-  x = y = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

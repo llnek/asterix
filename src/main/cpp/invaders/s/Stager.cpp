@@ -15,7 +15,7 @@
 #include "n/gnodes.h"
 #include "Factory.h"
 #include "Stager.h"
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 

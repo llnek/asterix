@@ -13,8 +13,8 @@
 #include "XLive.h"
 #include "XLives.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -115,4 +115,4 @@ XLives::XLives() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)

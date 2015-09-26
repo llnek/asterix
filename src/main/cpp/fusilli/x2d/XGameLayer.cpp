@@ -17,8 +17,8 @@
 #include "XScene.h"
 
 NS_ALIAS(den,CocosDenshion)
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ ComObj* XGameLayer::GetPlayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XGameLayer::GetLCfg() {
-  return XConfig::GetInstance()->GetLevelCfg(s::to_string(level));
+  return XConfig::Self()->GetLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ const Box4 XGameLayer::GetEnclosureBox() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::NewGame(const GMode mode) {
-  if (XConfig::GetInstance()->HasAudio()) {
+  if (XConfig::Self()->HasAudio()) {
     den::SimpleAudioEngine::getInstance()->stopAllEffects();
     den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
   }
@@ -122,5 +122,5 @@ XGameLayer::Keys() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

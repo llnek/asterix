@@ -21,18 +21,25 @@ NS_ALIAS(g, invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-  auto r= a::NodeRegistry::GetInstance();
+
+  // bootstrap app here
+
+  // step.1: register all ash::node facttories here
+  auto r= a::NodeRegistry::Self();
 
   r->Register( new g::AlienMotionNode());
   r->Register( new g::ShipMotionNode());
   r->Register( new g::CannonCtrlNode());
 
-  f::XConfig::SetInstance(new g::Config());
+  // step.2: set up app-config
+  f::XConfig::Bind(new g::Config());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
+  //delete a::NodeRegistry::Self();
+  //delete f::XConfig::Self();
 }
 
 

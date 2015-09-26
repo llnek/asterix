@@ -126,7 +126,7 @@ bool NodeList::ContainsWithin(not_null<Entity*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool NodeList::IsCompatible(not_null<Entity*> e) {
-  auto rego = NodeRegistry::GetInstance();
+  auto rego = NodeRegistry::Self();
   auto n = rego->CreateNode(nType);
   auto ok= n->BindEntity(e);
   delete n;

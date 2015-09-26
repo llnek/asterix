@@ -17,7 +17,7 @@
 #include "ash/Ash.h"
 
 NS_ALIAS(a, ash)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -67,6 +67,6 @@ public:
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 #endif
 

@@ -74,7 +74,7 @@ public:
 
 
 static void SetUp() {
-  auto r = a::NodeRegistry::GetInstance();
+  auto r = a::NodeRegistry::Self();
   auto eng = ash::Engine::Create();
   auto f1 = new Fac1();
   auto f2 = new Fac2();

@@ -11,7 +11,7 @@
 
 #include "core/XConfig.h"
 NS_ALIAS(c, cocos2d)
-NS_ALIAS(f,fusilli)
+NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
 

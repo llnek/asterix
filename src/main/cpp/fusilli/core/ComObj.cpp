@@ -11,7 +11,7 @@
 
 #include "Primitives.h"
 #include "ComObj.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 
@@ -158,5 +158,5 @@ ComObj::ComObj() {
   Init(nullptr,1,0);
 }
 
-NS_END(fusilli)
+NS_END(fusii)
 

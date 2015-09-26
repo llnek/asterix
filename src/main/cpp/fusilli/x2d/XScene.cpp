@@ -13,8 +13,8 @@
 #include "core/CCSX.h"
 #include "XScene.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -51,11 +51,11 @@ XScene* XScene::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XScene::OnQuitAction() {
-  cx::RunScene( XConfig::GetInstance()->StartWith());
+  cx::RunScene( XConfig::Self()->StartWith());
 }
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 
 

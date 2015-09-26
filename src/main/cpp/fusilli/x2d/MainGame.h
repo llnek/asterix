@@ -16,7 +16,7 @@
 #include "aeon/fusilli.h"
 #include "XScene.h"
 #include "XGameLayer.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 
@@ -42,6 +42,6 @@ public:
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 #endif
 

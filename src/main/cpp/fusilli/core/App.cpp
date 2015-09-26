@@ -17,7 +17,7 @@
 #include "App.h"
 
 NS_ALIAS(den, CocosDenshion)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 static c::Size designSize = c::Size(480, 320);
 static c::Size smallSize = c::Size(480, 320);
@@ -59,7 +59,7 @@ bool App::applicationDidFinishLaunching() {
 
   auto director = c::Director::getInstance();
   auto glview = director->getOpenGLView();
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
   auto sz = cfg->GetGameSize();
 
   if (!glview) {
@@ -87,7 +87,7 @@ void App::PreLaunch(const c::Size& dz) {
 
   auto director = c::Director::getInstance();
   auto glview = director->getOpenGLView();
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
 
   auto dispFPS= CstVal<c::Bool>("showFPS");
   auto fps = CstVal<c::Integer>("FPS");
@@ -148,5 +148,5 @@ void App::applicationWillEnterForeground() {
   den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 
-NS_END(fusilli)
+NS_END(fusii)
 

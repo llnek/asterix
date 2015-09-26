@@ -15,7 +15,7 @@
 #include "2d/CCActionInterval.h"
 #include "core/ComObj.h"
 #include "core/XPool.h"
-NS_ALIAS(f, fusilli)
+NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ class CC_DLL Alien : public f::ComObj {
 private:
 
   NO__CPYASS(Alien)
-  Alien();
+  Alien()=delete;
 
 public:
 
@@ -43,7 +43,7 @@ class CC_DLL AlienSquad : public a::Component {
 private:
 
   NO__CPYASS(AlienSquad)
-  AlienSquad();
+  AlienSquad()=delete;
 
 public:
 
@@ -66,7 +66,7 @@ public:
 class CC_DLL Bomb : public f::ComObj {
 private:
   NO__CPYASS(Bomb)
-  Bomb();
+  Bomb()=delete;
 public:
 
   virtual const a::COMType TypeId() { return "n/Bomb"; }
@@ -82,7 +82,7 @@ public:
 class CC_DLL Cannon : public a::Component {
 private:
   NO__CPYASS(Cannon)
-  Cannon();
+  Cannon()=delete;
 public:
 
   virtual const a::COMType TypeId() { return "n/Cannon"; }
@@ -100,16 +100,14 @@ public:
 class CC_DLL Explosion : public f::ComObj {
 private:
   NO__CPYASS(Explosion)
-  Explosion();
+  Explosion()=delete;
 public:
 
   virtual const a::COMType TypeId() { return "n/Explosion"; }
-
-  //virtual void Inflate(not_null<c::Dictionary*> );
   virtual void Inflate(float x, float y);
 
-  virtual ~Explosion();
   Explosion(not_null<c::Sprite*> );
+  virtual ~Explosion();
 
   float frameTime;
 };
@@ -137,7 +135,7 @@ public:
 class CC_DLL Missile : public f::ComObj {
 private:
   NO__CPYASS(Missile)
-  Missile();
+  Missile()=delete;
 public:
 
   virtual const a::COMType TypeId() { return "n/Missile"; }
@@ -169,7 +167,7 @@ public:
 class CC_DLL Ship : public f::ComObj {
 private:
   NO__CPYASS(Ship)
-  Ship();
+  Ship()=delete;
 public:
 
   virtual const a::COMType TypeId() { return "n/Ship"; }
@@ -186,7 +184,7 @@ public:
 class CC_DLL Velocity : public a::Component {
 private:
   NO__CPYASS(Velocity)
-  Velocity();
+  Velocity()=delete;
 public:
 
   virtual const a::COMType TypeId() { return "n/Velocity"; }

@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XConfig.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -36,13 +36,13 @@ static const stdstr getXXX(not_null<c::Dictionary*> d,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetInstance(not_null<XConfig*> c) {
+void XConfig::Bind(not_null<XConfig*> c) {
   singleton=c;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XConfig* XConfig::GetInstance() {
+XConfig* XConfig::Self() {
   return singleton;
 }
 
@@ -175,5 +175,5 @@ c::Dictionary* XConfig::GetFragment(const stdstr& key) {
   return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
 }
 
-NS_END(fusilli)
+NS_END(fusii)
 

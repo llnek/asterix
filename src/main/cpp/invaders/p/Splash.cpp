@@ -15,8 +15,8 @@
 #include "x2d/XLayer.h"
 #include "Menu.h"
 #include "Splash.h"
-NS_ALIAS(cx, fusilli::ccsx)
-NS_ALIAS(f, fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ SplashLayer::SplashLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* SplashLayer::Realize() {
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto fp= cfg->GetImage("game.bg");
   CenterImage(fp);
   Title();
@@ -86,7 +86,7 @@ void SplashLayer::Btns() {
 //
 void Splash::OnPlay(c::Ref* b) {
   auto f= []() {
-    cx::RunScene(f::XConfig::GetInstance()->StartWith());
+    cx::RunScene(f::XConfig::Self()->StartWith());
   };
   auto a= c::CallFunc::create(f);
   MainMenu* m = MainMenu::CreateWithBackAction(a);

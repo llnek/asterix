@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "XLive.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -32,4 +32,4 @@ XLive::XLive() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)

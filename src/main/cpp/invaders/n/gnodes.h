@@ -29,7 +29,8 @@ private:
 public:
 
   virtual const a::NodeType TypeId() {
-    return "n/AlienMotionNode"; }
+    return "n/AlienMotionNode";
+  }
 
   AlienMotionNode();
 
@@ -47,7 +48,8 @@ private:
 public:
 
   virtual const a::NodeType TypeId() {
-    return "n/CannonCtrlNode"; }
+    return "n/CannonCtrlNode";
+  }
 
   CannonCtrlNode();
 
@@ -65,7 +67,8 @@ private:
 public:
 
   virtual const a::NodeType TypeId() {
-    return "n/ShipMotionNode"; }
+    return "n/ShipMotionNode";
+  }
 
   ShipMotionNode();
 

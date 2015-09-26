@@ -13,7 +13,7 @@
 #include "x2d/XScene.h"
 #include "s/Factory.h"
 NS_ALIAS(s,std)
-NS_ALIAS(f,fusilli)
+NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////

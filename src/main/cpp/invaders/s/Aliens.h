@@ -23,9 +23,7 @@ class CC_DLL Aliens : public BaseSystem {
 private:
 
   NO__CPYASS(Aliens)
-  Aliens();
-
-  void Init();
+  Aliens()=delete ;
 
   a::NodeList* baddies;
 
@@ -34,7 +32,8 @@ public:
   Aliens(not_null<Factory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
-    return "n/Aliens"; }
+    return "n/Aliens";
+  }
 
   virtual ~Aliens();
 
@@ -45,8 +44,8 @@ public:
   void ProcessMovement(not_null<a::Node*>, float dt);
   void ProcessBombs(not_null<a::Node*>, float dt);
 
-  void DropBomb(float x, float y);
   void CheckBomb(not_null<AlienSquad*> );
+  void DropBomb(float x, float y);
 
   void MaybeShuffleAliens(not_null<AlienSquad*> );
   bool TestDirX(not_null<f::ComObj*> b, int stepx);

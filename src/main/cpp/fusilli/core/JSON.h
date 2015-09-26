@@ -19,7 +19,7 @@
 
 NS_ALIAS(js, rapidjson)
 NS_ALIAS(s, std)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace json {
 };
 
 
-NS_END(fusilli)
+NS_END(fusii)
 #endif
 
 

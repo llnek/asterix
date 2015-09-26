@@ -15,8 +15,8 @@
 #include "XHUDLayer.h"
 #include "XLives.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ void XHUDLayer::AddMenuIcon(not_null<c::MenuItem*> b,
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(b) * 0.5;
   auto hw = cx::GetScaledWidth(b) * 0.5;
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
   auto menu= c::Menu::create();
   auto wz= cx::VisBox();
   float x, y;
@@ -114,7 +114,7 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(c) * 0.5;
   auto hw = cx::GetScaledWidth(c) * 0.5;
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
   auto menu= c::Menu::create();
   auto wz= cx::VisBox();
   float x, y;
@@ -140,5 +140,5 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

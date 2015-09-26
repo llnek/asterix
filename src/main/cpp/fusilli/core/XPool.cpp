@@ -11,7 +11,7 @@
 
 #include "XPool.h"
 
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 // Pre-populate a bunch of objects in the pool
@@ -119,5 +119,5 @@ XPool::XPool() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

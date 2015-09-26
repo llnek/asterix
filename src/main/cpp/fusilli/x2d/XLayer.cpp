@@ -18,8 +18,8 @@
 //#include "YesNo.h"
 #include "XLayer.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -29,7 +29,7 @@ XLayer* XLayer::Realize() { return this; }
 //
 void XLayer::AudioCallback(c::Ref* r) {
   auto t = SCAST(c::MenuItemToggle*, r);
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
   if (t->getSelectedIndex() == 0) {
     cfg->ToggleAudio(true);
   } else {
@@ -66,7 +66,7 @@ XLayer::~XLayer() {
 c::SpriteBatchNode*
 XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
 
-  auto fp = XConfig::GetInstance()->GetImage(name);
+  auto fp = XConfig::Self()->GetImage(name);
   auto i= c::TextureCache::getInstance()->addImage(fp);
   auto a= c::SpriteBatchNode::createWithTexture(i);
   auto t = ENP(tag) ? ++lastTag : *tag;
@@ -196,7 +196,7 @@ void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
   c::Vector<c::MenuItem*> items;
   items.pushBack(on);
   items.pushBack(off);
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
 
   auto audio = c::MenuItemToggle::createWithTarget(
       this,
@@ -211,5 +211,5 @@ void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
 }
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

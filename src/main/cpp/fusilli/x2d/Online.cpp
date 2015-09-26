@@ -14,8 +14,8 @@
 #include "core/CCSX.h"
 #include "Online.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ XScene* Online::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
   auto wsurl = cfg->GetWSUrl();
   auto game = cfg->GetGameId();
 
@@ -164,7 +164,7 @@ void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
 //
 void OnlineLayer::ShowWaitOthers() {
 
-  auto cfg= XConfig::GetInstance();
+  auto cfg= XConfig::Self();
   auto fnt= cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "waiting...");
   auto cw= cx::Center();
@@ -191,7 +191,7 @@ void OnlineLayer::ShowWaitOthers() {
 //
 XLayer* OnlineLayer::Realize() {
 
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
   auto fnt= cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "Sign in");
   auto wz= cx::VisRect();
@@ -247,5 +247,5 @@ XLayer* OnlineLayer::Realize() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

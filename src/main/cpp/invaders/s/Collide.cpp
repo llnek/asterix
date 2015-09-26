@@ -13,7 +13,7 @@
 #include "core/CCSX.h"
 #include "n/gnodes.h"
 #include "Collide.h"
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -97,7 +97,7 @@ bool Collide::MaybeCollide(not_null<f::ComObj*> a,
 //
 void Collide::CheckMissilesBombs() {
 
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto mss = cfg->GetPool("missiles");
   auto bbs = cfg->GetPool("bombs");
   auto m = mss->Elements();
@@ -122,7 +122,7 @@ void Collide::CheckMissilesBombs() {
 void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 
   auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto mss = cfg->GetPool("missiles");
   auto c = sqad->Elements();
   auto c2 = mss->Elements();
@@ -145,7 +145,7 @@ void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 void Collide::CheckShipBombs(not_null<a::Node*> node) {
 
   auto ship= a::NodeFld<Ship>(node, "ship");
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto bbs= cfg->GetPool("bombs");
   auto c= bbs->Elements();
 

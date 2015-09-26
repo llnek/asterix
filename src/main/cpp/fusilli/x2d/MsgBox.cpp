@@ -15,8 +15,8 @@
 #include "core/CCSX.h"
 #include "XLayer.h"
 #include "MsgBox.h"
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ public:
 XLayer* MsgBoxLayer::Realize() {
 
   auto par = SCAST(MsgBox*, getParent());
-  auto cfg = XConfig::GetInstance();
+  auto cfg = XConfig::Self();
 
   auto fnt = cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(
@@ -134,5 +134,5 @@ XScene* MsgBox::Realize() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

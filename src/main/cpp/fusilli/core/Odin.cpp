@@ -14,10 +14,10 @@
 #include "Odin.h"
 
 NS_ALIAS(n, cocos2d::network)
-NS_ALIAS(j, fusilli::json)
+NS_ALIAS(j, fusii::json)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -285,5 +285,5 @@ const stdstr WSockSS::GetPlayRequest() {
 }
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

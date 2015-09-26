@@ -18,7 +18,7 @@
 #include "XScene.h"
 
 NS_ALIAS(c, cocos2d)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,6 +61,6 @@ public:
 };
 
 
-NS_END(fusilli)
+NS_END(fusii)
 #endif
 

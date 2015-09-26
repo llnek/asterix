@@ -221,7 +221,7 @@ void Engine::PurgeEntities(const stdstr& group) {
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
-  auto rego = NodeRegistry::GetInstance();
+  auto rego = NodeRegistry::Self();
   auto nl = NodeList::Create(nodeType);
   for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
@@ -292,7 +292,7 @@ void Engine::OnPurgeEntity(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 // sync existing nodes, add if necessary
 void Engine::OnAddEntity(Entity* e) {
-  auto rego = NodeRegistry::GetInstance();
+  auto rego = NodeRegistry::Self();
   for (auto it = nodeLists.begin();
       it != nodeLists.end(); ++it) {
     auto nl= *it;
@@ -308,7 +308,7 @@ void Engine::OnAddEntity(Entity* e) {
 //////////////////////////////////////////////////////////////////////////////
 // sync changes
 void Engine::OnModifyEntity(Entity* e) {
-  auto rego = NodeRegistry::GetInstance();
+  auto rego = NodeRegistry::Self();
   for (auto it = nodeLists.begin();
       it != nodeLists.end(); ++it) {
     auto nl = *it;

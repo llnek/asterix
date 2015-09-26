@@ -16,33 +16,21 @@
 #include "x2d/MainGame.h"
 #include "Aliens.h"
 #include <math.h>
-NS_ALIAS(cx, fusilli::ccsx)
-NS_ALIAS(f, fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 Aliens::Aliens(not_null<Factory*> f, not_null<c::Dictionary*> d) {
-  Init();
+  SNPTR(baddies)
   Set(f,d);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Aliens::Aliens() {
-  Init();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 Aliens::~Aliens() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Aliens::Init() {
-  SNPTR(baddies)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,7 +114,7 @@ void Aliens::CheckBomb(not_null<AlienSquad*> sqad) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::DropBomb(float x, float y) {
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto bbs = cfg->GetPool("bombs");
   auto ent = bbs->Get();
 

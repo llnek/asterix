@@ -14,7 +14,7 @@
 
 #include "2d/CCActionInstant.h"
 #include "x2d/XScene.h"
-NS_ALIAS(f,fusilli)
+NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////

@@ -11,7 +11,7 @@
 
 #include "XGameLayer.h"
 #include "MainGame.h"
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 static XScene* _singleton;
@@ -51,5 +51,5 @@ MainGame::MainGame() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

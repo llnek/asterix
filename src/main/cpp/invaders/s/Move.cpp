@@ -14,7 +14,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
-NS_ALIAS(cx, fusilli::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
@@ -101,7 +101,7 @@ void Move::Clamp(not_null<f::ComObj*> ship) {
 
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto sz= ship->sprite->getContentSize();
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto pos= ship->Pos();
   auto wz = cx::VisRect();
 
@@ -117,7 +117,7 @@ void Move::Clamp(not_null<f::ComObj*> ship) {
 //
 void Move::MoveBombs(float dt) {
 
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto bbs= cfg->GetPool("bombs");
   auto c= bbs->Elements();
 
@@ -135,7 +135,7 @@ void Move::MoveBombs(float dt) {
 //
 void Move::MoveMissiles(float dt) {
 
-  auto cfg = f::XConfig::GetInstance();
+  auto cfg = f::XConfig::Self();
   auto mss= cfg->GetPool("missiles");
   auto c= mss->Elements();
 

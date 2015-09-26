@@ -14,7 +14,7 @@
 
 #include "aeon/fusilli.h"
 #include "core/App.h"
-NS_ALIAS(f, fusilli)
+NS_ALIAS(f, fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -14,8 +14,8 @@
 #include "2d/CCLabel.h"
 #include "YesNo.h"
 
-NS_ALIAS(cx, fusilli::ccsx)
-NS_BEGIN(fusilli)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
 XLayer* YesNoLayer::Realize() {
 
   auto par = SCAST(YesNo*, getParent());
-  auto cfg= XConfig::GetInstance();
+  auto cfg= XConfig::Self();
   auto msg= par->GetMsg();
   auto fnt= cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, msg);
@@ -90,7 +90,7 @@ owner<YesNo*> YesNo::Create(const stdstr& msg) {
 
   c::CallFunc* y = c::CallFunc::create([](){
       c::Director::getInstance()->popToRootScene();
-      cx::RunScene(XConfig::GetInstance()->StartWith());
+      cx::RunScene(XConfig::Self()->StartWith());
       });
 
   c::CallFunc* n= c::CallFunc::create([]() {
@@ -154,5 +154,5 @@ YesNo::~YesNo() {
 
 
 
-NS_END(fusilli)
+NS_END(fusii)
 

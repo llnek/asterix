@@ -45,7 +45,7 @@ private:
 
 public:
 
-  static NodeRegistry* GetInstance();
+  static NodeRegistry* Self();
   virtual ~NodeRegistry();
 
   void Register(not_null<NodeFactory*>);

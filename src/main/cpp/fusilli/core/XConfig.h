@@ -20,7 +20,7 @@
 
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
-NS_BEGIN(fusilli)
+NS_BEGIN(fusii)
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,8 +51,8 @@ private:
 
 public:
 
-  static void SetInstance(not_null<XConfig*>);
-  static XConfig* GetInstance();
+  static void Bind(not_null<XConfig*>);
+  static XConfig* Self();
 
   virtual void HandleResolution(const c::Size& ) {}
   virtual float GetScale() { return 1; }
@@ -94,13 +94,13 @@ public:
 
 };
 
-NS_END(fusilli)
+NS_END(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 T* CstVal(const stdstr& key) {
-  auto r= fusilli::XConfig::GetInstance()->GetCst(key);
+  auto r= fusii::XConfig::Self()->GetCst(key);
   if (NNP(r)) {
     return (T*) r;
   } else {
