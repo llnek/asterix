@@ -89,7 +89,7 @@ void Config::InitAssets() {
   auto d = GetFragment(ATLASES);
 
   d->setObject(c::String::create("res/l10n/en/images.plist"), "lang-pics");
-  d->setObject(c::String::create("res/pics/images.plst"), "game-pics");
+  d->setObject(c::String::create("res/pics/images.plist"), "game-pics");
 
   d= GetFragment(IMAGES);
   d->setObject(c::String::create("res/pics/bg.png"), "mmenus.bg");

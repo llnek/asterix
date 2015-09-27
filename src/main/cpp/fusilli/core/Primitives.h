@@ -45,6 +45,8 @@
 #include "cocos2d.h"
 #include "aeon/fusilli.h"
 
+#define DIRTOR() cocos2d::Director()::getInstance()
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 

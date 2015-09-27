@@ -101,7 +101,10 @@ void GameLayer::Play(bool newFlag) {
 //
 void GameLayer::InitAsh() {
   auto options = c::Dictionary::create();
+
   factory = new Factory(engine, options);
+  engine = a::Engine::Create();
+
   engine->RegoSystem(new Stager(factory, options));
   engine->RegoSystem(new Motions(factory, options));
   engine->RegoSystem(new Move(factory, options));
@@ -153,6 +156,29 @@ void GameLayer::OnDone() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::SendMsg(const stdstr& topic, void* msg) {
+
+  if (topic == "/game/players/earnscore") {
+    c::Integer* i = (c::Integer*) msg;
+    OnEarnScore(i->getValue());
+    i->release();
+  }
+
+  if (topic == "/hud/showmenu") {
+
+    auto f= []() { DIRTOR()->popScene(); }
+    auto a= c::CallFunc::create(f);
+    MainMenu* m = MainMenu::CreateWithBackAction(a);
+
+    DIRTOR()->pushScene(MainMenu::CreateWithBackAction(a));
+  }
+
+  if (topic == "/hud/replay") {
+    Play(false);
+  }
+
+  if (topic == "/game/players/killed") {
+    OnPlayerKilled(msg);
+  }
 
 }
 
