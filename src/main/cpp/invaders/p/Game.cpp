@@ -36,7 +36,7 @@ private:
   NO__CPYASS(BGLayer)
 public:
   virtual f::XLayer* Realize() {
-    CenterImage(f::XConfig::Self()->GetImage("game.bg"));
+    CenterImage(XCFGS()->GetImage("game.bg"));
     return this;
   }
   virtual int GetIID() { return 1; }
@@ -148,6 +148,12 @@ void GameLayer::OnDone() {
   g->Pause();
   Reset(false);
   GetHUD()->EnableReplay();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::SendMsg(const stdstr& topic, void* msg) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -33,15 +33,15 @@ protected:
 private:
 
   NO__CPYASS(Stager)
-  Stager();
-  void Init();
+  Stager()=delete;
 
 public:
 
   Stager(not_null<Factory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
-    return "s/Stager"; }
+    return "s/Stager";
+  }
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);

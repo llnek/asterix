@@ -22,29 +22,17 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Motions::Motions(not_null<Factory*> f, not_null<c::Dictionary*> d) {
-  Init();
-  Set(f,d);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Motions::Motions() {
-  Init();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Motions::~Motions() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Motions::Init() {
   SNPTR(cannons)
   SNPTR(aliens)
   SNPTR(ships)
   right=false;
   left= false;
+  Set(f,d);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Motions::~Motions() {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,7 +62,7 @@ bool Motions::Update(float dt) {
   auto ship=ships->head;
   auto cns= cannons->head;
 
-  if (f::MainGame::Self()->IsRunning()) {
+  if (MGMS()->IsRunning()) {
     if (NNP(enemy)) {
       ProcessAlienMotions(enemy,dt);
     }
@@ -108,7 +96,7 @@ void Motions::ControlCannon(not_null<a::Node*> node, float dt) {
     }
   } else {
     //TODO:
-    if (f::MainGame::Get()->KeyPoll(c::EventKeyboard::KeyCode::KEY_SPACE)) {
+    if (MGML()->KeyPoll(c::EventKeyboard::KeyCode::KEY_SPACE)) {
       FireMissile(node,dt);
     }
   }
@@ -122,9 +110,8 @@ void Motions::FireMissile(not_null<a::Node*> node, float dt) {
   auto lpr= a::NodeFld<Looper>(node, "looper");
   auto ship=a::NodeFld<Ship>(node, "ship");
 
-  auto cfg= f::XConfig::Self();
+  auto p= XCFGS()->GetPool("missiles");
   auto top= cx::GetTop(ship->sprite);
-  auto p= cfg->GetPool("missiles");
   auto pos= ship->Pos();
   auto ent= p->Get();
 
@@ -135,8 +122,7 @@ void Motions::FireMissile(not_null<a::Node*> node, float dt) {
 
   ent->Inflate(pos.x, top+4);
 
-  lpr->timer0 = cx::CreateTimer(
-    f::MainGame::Get(), gun->coolDownWindow);
+  lpr->timer0 = cx::CreateTimer( MGML(), gun->coolDownWindow);
   gun->hasAmmo=false;
   ship->sprite->setSpriteFrame(ship->frame1);
 
@@ -150,11 +136,11 @@ void Motions::ScanInput(not_null<a::Node*> node, float dt) {
   auto m= a::NodeFld<Motion>(node, "motion");
   auto s= a::NodeFld<Ship>(node, "ship");
 
-  if (f::MainGame::Get()->KeyPoll(
+  if (MGML()->KeyPoll(
       c::EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
     m->right=true;
   }
-  if (f::MainGame::Get()->KeyPoll(
+  if (MGML()->KeyPoll(
       c::EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
     m->left=true;
   }
@@ -166,14 +152,13 @@ void Motions::ProcessAlienMotions(not_null<a::Node*> node, float dt) {
 
   auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto lpr = a::NodeFld<Looper>(node, "looper");
-  auto g= f::MainGame::Get();
 
   if (ENP(lpr->timer0)) {
-    lpr->timer0= cx::CreateTimer(g,1);
+    lpr->timer0= cx::CreateTimer(MGML(), 1);
   }
 
   if (ENP(lpr->timer1)) {
-    lpr->timer1= cx::CreateTimer(g,2);
+    lpr->timer1= cx::CreateTimer(MGML(), 2);
   }
 }
 

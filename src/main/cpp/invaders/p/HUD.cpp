@@ -41,7 +41,7 @@ void HUDLayer::OnReplay(c::Ref* r) {
 //
 f::XLayer* HUDLayer::Realize() {
 
-  auto color=  cx::White();
+  auto color=  c::Color3B::WHITE;//cx::White();
   auto scale=1;
 
   auto r= cx::CreateMenuBtn("#icon_replay.png");
@@ -71,14 +71,13 @@ void HUDLayer::InitAtlases() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::InitLabels() {
-  auto soff = CstVal<c::Integer>("S_OFF")->getValue();
-  auto tile = CstVal<c::Integer>("TILE")->getValue();
-  auto cfg = f::XConfig::Self();
+  auto soff = f::CstVal<c::Integer>("S_OFF")->getValue();
+  auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
 
   m_scoreLabel = cx::CreateBmfLabel(0,0,"font.SmallTypeWriting", "0");
   m_scoreLabel->setAnchorPoint(cx::AnchorBR());
-  m_scoreLabel->setScale(cfg->GetScale());
+  m_scoreLabel->setScale(XCFGS()->GetScale());
   m_scoreLabel->setPosition(wb.right - tile - soff,
     wb.top - tile - soff - cx::GetScaledHeight(m_scoreLabel));
 
@@ -88,8 +87,8 @@ void HUDLayer::InitLabels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::InitIcons() {
-  auto soff = CstVal<c::Integer>("S_OFF")->getValue();
-  auto tile = CstVal<c::Integer>("TILE")->getValue();
+  auto soff = f::CstVal<c::Integer>("S_OFF")->getValue();
+  auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
 
   lives = f::XLives::Create( this, "health.png", tile + soff,

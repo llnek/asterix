@@ -31,13 +31,13 @@ public:
   virtual XLayer* Realize();
 
   virtual int GetIID() { return 1; }
-  virtual void OnInit() {}
   virtual ~MenuLayer();
 
   void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
   void OnQuit(c::Ref*);
 
+  // standard create
   CREATE_FUNC(MenuLayer)
 };
 
@@ -54,22 +54,21 @@ MenuLayer::MenuLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* MenuLayer::Realize() {
-  auto tile = CstVal<c::Integer>("TILE")->getValue();
-  auto cfg = f::XConfig::Self();
+  auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto color= c::Color3B(94,49,120);
   auto cw = cx::Center();
   auto wb = cx::VisBox();
 
   // background
-  auto fp = cfg->GetImage("mmenus.bg");
+  auto fp = XCFGS()->GetImage("mmenus.bg");
   CenterImage(fp);
 
   // title
-  fp= cfg->GetFont("font.JellyBelly");
+  fp= XCFGS()->GetFont("font.JellyBelly");
   auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
                           fp,
                           "some text");
-  lb->setScale(cfg->GetScale());
+  lb->setScale(XCFGS()->GetScale());
   lb->setColor(cx::White());
   AddItem(lb);
 
@@ -144,6 +143,12 @@ MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
 //
 void MainMenu::OnBackAction() {
   backAction->execute();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void MainMenu::OnQuitAction() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -23,7 +23,7 @@ class CC_DLL Splash : public f::XScene {
 private:
   NO__CPYASS(Splash)
   Splash() {};
-
+  // standard create
   CREATE_FUNC(Splash)
 public:
 

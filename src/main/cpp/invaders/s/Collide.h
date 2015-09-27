@@ -23,9 +23,7 @@ class CC_DLL Collide : public BaseSystem {
 private:
 
   NO__CPYASS(Collide)
-  Collide();
-
-  void Init();
+  Collide()=delete;
 
   a::NodeList* aliens;
   a::NodeList* ships;
@@ -36,7 +34,8 @@ public:
   Collide(not_null<Factory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
-    return "n/Collide"; }
+    return "n/Collide";
+  }
 
   virtual ~Collide();
 

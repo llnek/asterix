@@ -30,12 +30,11 @@ public:
 
   static MainMenu* CreateWithBackAction(c::CallFunc* );
   virtual f::XScene* Realize();
-  virtual void OnInit() {}
 
   virtual ~MainMenu();
 
   void OnBackAction();
-  void OnQuitAction() {}
+  void OnQuitAction();
 };
 
 

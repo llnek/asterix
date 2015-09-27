@@ -21,25 +21,13 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Move::Move(not_null<Factory*> f, not_null<c::Dictionary*> d) {
-  Init();
+  SNPTR(ships)
   Set(f,d);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Move::Move() {
-  Init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 Move::~Move() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Move::Init() {
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,7 +47,7 @@ void Move::AddToEngine(not_null<a::Engine*> e) {
 //
 bool Move::Update(float dt) {
   auto node = ships->head;
-  if (f::MainGame::Self()->IsRunning()) {
+  if (MGMS()->IsRunning()) {
     if (NNP(node)) {
       ProcessShipMotions(node, dt);
     }
@@ -97,11 +85,10 @@ void Move::ProcessShipMotions(not_null<a::Node*> node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::Clamp(not_null<f::ComObj*> ship) {
+void Move::Clamp(not_null<Ship*> ship) {
 
-  auto tile= CstVal<c::Integer>("TILE")->getValue();
+  auto tile= f::CstVal<c::Integer>("TILE")->getValue();
   auto sz= ship->sprite->getContentSize();
-  auto cfg = f::XConfig::Self();
   auto pos= ship->Pos();
   auto wz = cx::VisRect();
 
@@ -117,8 +104,7 @@ void Move::Clamp(not_null<f::ComObj*> ship) {
 //
 void Move::MoveBombs(float dt) {
 
-  auto cfg = f::XConfig::Self();
-  auto bbs= cfg->GetPool("bombs");
+  auto bbs= XCFGS()->GetPool("bombs");
   auto c= bbs->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {
@@ -135,8 +121,7 @@ void Move::MoveBombs(float dt) {
 //
 void Move::MoveMissiles(float dt) {
 
-  auto cfg = f::XConfig::Self();
-  auto mss= cfg->GetPool("missiles");
+  auto mss= XCFGS()->GetPool("missiles");
   auto c= mss->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {

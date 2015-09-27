@@ -38,18 +38,18 @@ Factory::~Factory() {
 //////////////////////////////////////////////////////////////////////////
 //
 Factory::Factory() {
-  engine= nullptr;
-  state= nullptr;
+  SNPTR(engine)
+  SNPTR(state)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateMissiles(int count) {
-  auto p= f::XConfig::Self()->GetPool("missiles");
-  auto cb= [=](f::XPool* pp) -> f::ComObj* {
+  auto p= XCFGS()->GetPool("missiles");
+  auto cb= []() -> f::ComObj* {
     auto sp = cx::CreateSprite("missile.png");
     sp->setVisible(false);
-    f::MainGame::Get()->AddAtlasItem("game-pics", sp);
+    MGML()->AddAtlasItem("game-pics", sp);
     return new Missile(sp);
   };
   p->Preset(cb, count);
@@ -58,11 +58,11 @@ void Factory::CreateMissiles(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateExplosions(int count) {
-  auto p= f::XConfig::Self()->GetPool("explosions");
-  auto cb= [=](f::XPool* pp) -> f::ComObj* {
+  auto p= XCFGS()->GetPool("explosions");
+  auto cb= []() -> f::ComObj* {
     auto sp = cx::CreateSprite("boom_0.png");
     sp->setVisible(false);
-    f::MainGame::Get()->AddAtlasItem("game-pics", sp);
+    MGML()->AddAtlasItem("game-pics", sp);
     return new Explosion(sp);
   };
   p->Preset(cb, count);
@@ -71,11 +71,11 @@ void Factory::CreateExplosions(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateBombs(int count) {
-  auto p= f::XConfig::Self()->GetPool("bombs");
-  auto cb= [=](f::XPool* pp) -> f::ComObj* {
+  auto p= XCFGS()->GetPool("bombs");
+  auto cb= []() -> f::ComObj* {
     auto sp = cx::CreateSprite("bomb.png");
     sp->setVisible(false);
-    f::MainGame::Get()->AddAtlasItem("game-pics", sp);
+    MGML()->AddAtlasItem("game-pics", sp);
     return new Bomb(sp);
   };
   p->Preset(cb, count);
@@ -122,12 +122,12 @@ c::Dictionary* Factory::GetRankInfo(int r) {
 //
 void Factory::FillSquad(not_null<f::XPool*> pool) {
 
-  auto cells = CstVal<c::Integer>("CELLS")->getValue();
-  auto cols = CstVal<c::Integer>("COLS")->getValue();
-  auto cfg = f::XConfig::Self();
+  auto cells = f::CstVal<c::Integer>("CELLS")->getValue();
+  auto cols = f::CstVal<c::Integer>("COLS")->getValue();
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
 
+  auto cache= c::AnimationCache::getInstance();
   auto info= GetRankInfo(0);
   float x;
   float y;
@@ -160,7 +160,7 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
       c::Animate::create(
         c::Animation::createWithSpriteFrames( animFrames, 1))));
 
-    f::MainGame::Get()->AddAtlasItem("game-pics", aa);
+    MGML()->AddAtlasItem("game-pics", aa);
     x += az.width + (8/320 * wz.size.width);
     auto v = f::DictVal<c::Integer>(info, "value")->getValue();
     auto co= new Alien(aa, v, row);
@@ -174,8 +174,7 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
 a::Entity* Factory::CreateAliens() {
   auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
   auto ent= engine->CreateEntity("baddies");
-  auto cfg = f::XConfig::Self();
-  auto p = cfg->GetPool("aliens");
+  auto p = XCFGS()->GetPool("aliens");
 
   FillSquad(p);
 
@@ -188,8 +187,7 @@ a::Entity* Factory::CreateAliens() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::BornShip() {
-  auto s= f::MainGame::Get()->GetPlayer();
-
+  auto s= MGML()->GetPlayer();
   if (NNP(s)) {
     s->Inflate();
   }
@@ -207,7 +205,7 @@ a::Entity* Factory::CreateShip() {
   auto y = sz.height + wb.bottom + (5/60 * wz.size.height);
   auto x = wb.left + wz.size.width * 0.5;
 
-  f::MainGame::Get()->AddAtlasItem("game-pics", s);
+  MGML()->AddAtlasItem("game-pics", s);
 
   auto ship = new Ship(s, "ship_1.png", "ship_0.png");
   ship->Inflate(x,y);

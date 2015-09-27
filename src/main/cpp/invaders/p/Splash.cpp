@@ -51,8 +51,7 @@ SplashLayer::SplashLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* SplashLayer::Realize() {
-  auto cfg = f::XConfig::Self();
-  auto fp= cfg->GetImage("game.bg");
+  auto fp= XCFGS()->GetImage("game.bg");
   CenterImage(fp);
   Title();
   Btns();
@@ -85,9 +84,7 @@ void SplashLayer::Btns() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Splash::OnPlay(c::Ref* b) {
-  auto f= []() {
-    cx::RunScene(f::XConfig::Self()->StartWith());
-  };
+  auto f= []() { cx::RunScene(XCFGS()->StartWith()); };
   auto a= c::CallFunc::create(f);
   MainMenu* m = MainMenu::CreateWithBackAction(a);
 

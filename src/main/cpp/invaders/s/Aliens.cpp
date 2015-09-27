@@ -51,8 +51,7 @@ void Aliens::AddToEngine(not_null<a::Engine*> e) {
 bool Aliens::Update(float dt) {
   auto node=baddies->head;
 
-  if (f::MainGame::Self()->IsRunning() &&
-     NNP(node)) {
+  if (MGMS()->IsRunning() && NNP(node)) {
     ProcessMovement(node,dt);
     ProcessBombs(node,dt);
   }
@@ -114,8 +113,7 @@ void Aliens::CheckBomb(not_null<AlienSquad*> sqad) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::DropBomb(float x, float y) {
-  auto cfg = f::XConfig::Self();
-  auto bbs = cfg->GetPool("bombs");
+  auto bbs = XCFGS()->GetPool("bombs");
   auto ent = bbs->Get();
 
   if (NNP(ent)) {
@@ -135,8 +133,7 @@ void Aliens::MaybeShuffleAliens(not_null<AlienSquad*> sqad) {
   bool ok;
 
   if (NNP(b) && b->status) {
-    ok = TestDirX(b, sqad->stepx) ?
-      DoShuffle(sqad) : DoForward(sqad);
+    ok = TestDirX(b, sqad->stepx) ? DoShuffle(sqad) : DoForward(sqad);
     if (ok) {
       cx::SfxPlay("bugs-march");
     }

@@ -22,21 +22,9 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Stager::Stager(not_null<Factory*> f, not_null<c::Dictionary*> d) {
-  Init();
-  Set(f,d);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Stager::Init() {
   inited=false;
   SNPTR(ships)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Stager::Stager() {
-  Init();
+  Set(f,d);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,7 +75,6 @@ bool Stager::Update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::OnceOnly() {
-  auto g = f::MainGame::Get();
 
   InitAlienSize();
   InitShipSize();
@@ -108,14 +95,12 @@ void Stager::OnceOnly() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::Fire(const stdstr& t, void* evt) {
-  auto s = f::MainGame::Self();
 
   if ("/touch/one/move" == t ||
       "/mouse/move" == t) {} else {
     return;
   }
-  if (s->IsRunning() &&
-      NNP(ships->head)) {
+  if (MGMS()->IsRunning() && NNP(ships->head)) {
 
     auto ship = (f::ComObj*) ships->head->Get("ship");
     auto pos = ship->Pos();

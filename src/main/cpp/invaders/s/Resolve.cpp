@@ -21,7 +21,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Resolve::Resolve(not_null<Factory*> f, not_null<c::Dictionary*> options) {
-  Init();
+  SNPTR(aliens)
+  SNPTR(ships)
   Set(f, options);
 }
 
@@ -29,19 +30,6 @@ Resolve::Resolve(not_null<Factory*> f, not_null<c::Dictionary*> options) {
 //
 Resolve::~Resolve() {
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Resolve::Resolve() {
-  Init();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::Init() {
-  SNPTR(aliens)
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,8 +66,8 @@ bool Resolve::Update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckMissiles() {
-  auto cfg = f::XConfig::Self();
-  auto mss = cfg->GetPool("missiles");
+
+  auto mss = XCFGS()->GetPool("missiles");
   auto ht = cx::VisRect().size.height;
   auto c = mss->Elements();
 
@@ -97,8 +85,8 @@ void Resolve::CheckMissiles() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::CheckBombs() {
-  auto cfg = f::XConfig::Self();
-  auto bbs = cfg->GetPool("bombs");
+
+  auto bbs = XCFGS()->GetPool("bombs");
   auto c = bbs->Elements();
   int bt = 0;
 
@@ -124,7 +112,7 @@ void Resolve::CheckAliens(not_null<a::Node*> node) {
     if (en->status) {
       if (en->health <= 0) {
 //        f::MainGame::Get()->EarnScore(en->value);
-        f::MainGame::Get()->SendMsg("earnscore", en);
+        MGML()->SendMsg("earnscore", en);
         en->Deflate();
       }
     }
@@ -139,7 +127,7 @@ void Resolve::CheckShip(not_null<a::Node*> node) {
   if (ship->status &&
       ship->health <= 0) {
     ship->Deflate();
-    f::MainGame::Get()->SendMsg("PlayerKilled", nullptr);
+    MGML()->SendMsg("PlayerKilled", nullptr);
   }
 }
 

@@ -22,9 +22,7 @@ class CC_DLL Motions : public BaseSystem {
 private:
 
   NO__CPYASS(Motions)
-  Motions();
-
-  void Init();
+  Motions()=delete;
 
   a::NodeList* cannons;
   a::NodeList* ships;
@@ -37,7 +35,8 @@ public:
   Motions(not_null<Factory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
-    return "n/Motions"; }
+    return "n/Motions";
+  }
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);

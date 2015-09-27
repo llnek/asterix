@@ -25,8 +25,7 @@ private:
 
   NO__CPYASS(Move)
 
-  Move();
-  void Init();
+  Move()=delete;
 
   a::NodeList* ships;
 
@@ -35,7 +34,8 @@ public:
   Move(not_null<Factory*>, not_null<c::Dictionary*> );
 
   virtual const a::SystemType TypeId() {
-    return "s/Move"; }
+    return "s/Move";
+  }
 
   virtual ~Move();
 
@@ -44,7 +44,7 @@ public:
   virtual bool Update(float dt);
 
   void ProcessShipMotions(not_null<a::Node*>, float dt);
-  void Clamp(not_null<f::ComObj*> ship);
+  void Clamp(not_null<Ship*> ship);
 
   void MoveBombs(float dt);
   void MoveMissiles(float dt);

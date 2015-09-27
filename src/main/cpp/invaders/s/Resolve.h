@@ -23,9 +23,7 @@ class CC_DLL Resolve : public BaseSystem {
 private:
 
   NO__CPYASS(Resolve)
-  Resolve();
-
-  void Init();
+  Resolve()=delete;
 
   a::NodeList* aliens;
   a::NodeList* ships;
@@ -36,7 +34,8 @@ public:
   virtual ~Resolve();
 
   virtual const a::SystemType TypeId() {
-    return "s/Resolve"; }
+    return "s/Resolve";
+  }
 
   virtual void RemoveFromEngine(not_null<a::Engine*> );
   virtual void AddToEngine(not_null<a::Engine*> );

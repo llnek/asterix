@@ -16,9 +16,11 @@
 #include "aeon/fusilli.h"
 #include "XScene.h"
 #include "XGameLayer.h"
+
+#define MGMS() fusii::MainGame::Self()
+#define MGML() fusii::MainGame::Get()
+
 NS_BEGIN(fusii)
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -37,9 +39,6 @@ public:
 
   virtual ~MainGame();
 };
-
-
-
 
 
 NS_END(fusii)

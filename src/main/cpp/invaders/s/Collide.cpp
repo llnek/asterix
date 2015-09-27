@@ -17,31 +17,18 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 Collide::Collide(not_null<Factory*> f, not_null<c::Dictionary*> d) {
-  Init();
+  SNPTR(aliens)
+  SNPTR(engine)
+  SNPTR(ships)
   Set(f,d);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide::Collide() {
-  Init();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 Collide::~Collide() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Collide::Init() {
-  SNPTR(aliens)
-  SNPTR(engine)
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,9 +84,8 @@ bool Collide::MaybeCollide(not_null<f::ComObj*> a,
 //
 void Collide::CheckMissilesBombs() {
 
-  auto cfg = f::XConfig::Self();
-  auto mss = cfg->GetPool("missiles");
-  auto bbs = cfg->GetPool("bombs");
+  auto mss = XCFGS()->GetPool("missiles");
+  auto bbs = XCFGS()->GetPool("bombs");
   auto m = mss->Elements();
   auto b= bbs->Elements();
 
@@ -122,8 +108,7 @@ void Collide::CheckMissilesBombs() {
 void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 
   auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  auto cfg = f::XConfig::Self();
-  auto mss = cfg->GetPool("missiles");
+  auto mss = XCFGS()->GetPool("missiles");
   auto c = sqad->Elements();
   auto c2 = mss->Elements();
 
@@ -145,8 +130,7 @@ void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 void Collide::CheckShipBombs(not_null<a::Node*> node) {
 
   auto ship= a::NodeFld<Ship>(node, "ship");
-  auto cfg = f::XConfig::Self();
-  auto bbs= cfg->GetPool("bombs");
+  auto bbs= XCFGS()->GetPool("bombs");
   auto c= bbs->Elements();
 
   if (ship->status)

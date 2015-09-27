@@ -28,6 +28,7 @@ public:
   virtual void Replay() ;
   virtual void Play(bool newFlag);
 
+  virtual void SendMsg(const stdstr& topic, void* msg);
   virtual void OnNewGame(const f::GMode);
   void SpawnPlayer();
 

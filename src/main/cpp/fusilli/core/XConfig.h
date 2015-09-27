@@ -18,10 +18,11 @@
 #include "XPool.h"
 #include <map>
 
+
+#define XCFGS() fusii::XConfig::Self()
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -94,20 +95,19 @@ public:
 
 };
 
-NS_END(fusii)
-
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 T* CstVal(const stdstr& key) {
   auto r= fusii::XConfig::Self()->GetCst(key);
   if (NNP(r)) {
-    return (T*) r;
+    return static_cast<T*>( r);
   } else {
     return nullptr;
   }
 }
 
 
+NS_END(fusii)
 #endif
 

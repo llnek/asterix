@@ -34,7 +34,7 @@ private:
 public:
 
   const s::vector<ComObj*>& Elements() { return objs; }
-  void Preset(s::function<ComObj* (XPool*)>, int);
+  void Preset(s::function<ComObj* ()>, int);
   ComObj* Select(s::function<bool (ComObj*)>);
 
   ComObj* GetAndSet();
