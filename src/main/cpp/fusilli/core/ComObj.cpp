@@ -14,11 +14,10 @@
 NS_BEGIN(fusii)
 
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::UpdatePosition(float x, float y) {
-
+//TODO:
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,10 +37,10 @@ void ComObj::Inflate(not_null<c::Dictionary*> dict) {
     return;
   }
 
-  c::Float* scale= DictVal<c::Float>(dict,"scale");
-  c::Float* deg= DictVal<c::Float>(dict, "deg");
-  c::Float* x= DictVal<c::Float>(dict, "x");
-  c::Float* y= DictVal<c::Float>(dict, "y");
+  auto scale= DictVal<c::Float>(dict,"scale");
+  auto deg= DictVal<c::Float>(dict, "deg");
+  auto x= DictVal<c::Float>(dict, "x");
+  auto y= DictVal<c::Float>(dict, "y");
 
   if (NNP(x) && NNP(y)) {
     sprite->setPosition(x->getValue(), y->getValue());

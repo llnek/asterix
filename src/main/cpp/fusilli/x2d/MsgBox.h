@@ -38,10 +38,9 @@ protected:
 
 private:
 
+  CREATE_FUNC(MsgBox)
   NO__CPYASS(MsgBox)
   MsgBox();
-
-  CREATE_FUNC(MsgBox)
 
 public:
 

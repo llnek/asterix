@@ -106,18 +106,18 @@ void App::PreLaunch(const c::Size& dz) {
   // if the frame's height is larger than
   // the height of medium size
   if (fz.height > mediumSize.height) {
-    director->setContentScaleFactor(
+    CC_DTOR()->setContentScaleFactor(
         MIN(largeSize.height/dz.height, largeSize.width/dz.width));
   }
   // if the frame's height is larger than
   // the height of small size.
   else if (fz.height > smallSize.height) {
-    director->setContentScaleFactor(
+    CC_DTOR()->setContentScaleFactor(
         MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
   }
   // if the frame's height is smaller than the height of medium size.
   else {
-    director->setContentScaleFactor(
+    CC_DTOR()->setContentScaleFactor(
         MIN(smallSize.height/dz.height, smallSize.width/dz.width));
   }
 
@@ -136,7 +136,7 @@ void App::InitAudio() {
 // When comes a phone call,it's be invoked too
 void App::applicationDidEnterBackground() {
 
-  c::Director::getInstance()->stopAnimation();
+  CC_DTOR()->stopAnimation();
   den::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
@@ -144,7 +144,7 @@ void App::applicationDidEnterBackground() {
 // this function will be called when the app is active again
 void App::applicationWillEnterForeground() {
 
-  c::Director::getInstance()->startAnimation();
+  CC_DTOR()->startAnimation();
   den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
 

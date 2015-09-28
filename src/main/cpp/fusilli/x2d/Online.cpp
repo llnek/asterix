@@ -30,11 +30,11 @@ private:
 
 public:
 
-  void ShowWaitOthers();
-
   virtual int GetIID() { return 1; }
   virtual XLayer* Realize();
   virtual ~OnlineLayer() {}
+
+  void ShowWaitOthers();
 
   CREATE_FUNC(OnlineLayer)
 };
@@ -51,8 +51,8 @@ Online* Online::Create(c::CallFunc* yes, c::CallFunc* no) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Online::SetActions(c::CallFunc* yes, c::CallFunc* no) {
-  yes->retain();
-  no->retain();
+  CC_KEEP(yes)
+  CC_KEEP(no)
   this->yes= yes;
   this->no = no;
 }
@@ -60,16 +60,16 @@ void Online::SetActions(c::CallFunc* yes, c::CallFunc* no) {
 //////////////////////////////////////////////////////////////////////////////
 //
 Online::Online() {
-  yes=nullptr;
-  wss=nullptr;
-  no=nullptr;
+  SNPTR(yes)
+  SNPTR(wss)
+  SNPTR(no)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Online::~Online() {
-  yes->release();
-  no->release();
+  CC_DROP(yes)
+  CC_DROP(no)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,9 +84,8 @@ XScene* Online::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
-  auto cfg = XConfig::Self();
-  auto wsurl = cfg->GetWSUrl();
-  auto game = cfg->GetGameId();
+  auto wsurl = XCFGS()->GetWSUrl();
+  auto game = XCFGS()->GetGameId();
 
   if (uid.length() == 0 ||
       pwd.length() == 0) { return; }
@@ -149,7 +148,7 @@ void Online::OnCancel(c::Ref* rr) {
   try {
     wss->Close();
   } catch (...) {}
-  wss=nullptr;
+  SNPTR(wss)
   no->execute();
 }
 
@@ -164,11 +163,10 @@ void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
 //
 void OnlineLayer::ShowWaitOthers() {
 
-  auto cfg= XConfig::Self();
-  auto fnt= cfg->GetFont("font.OCR");
+  auto fnt= XCFGS()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "waiting...");
-  auto cw= cx::Center();
   auto wz= cx::VisRect();
+  auto cw= cx::Center();
   auto wb = cx::VisBox();
 
   RemoveAll();
@@ -191,7 +189,6 @@ void OnlineLayer::ShowWaitOthers() {
 //
 XLayer* OnlineLayer::Realize() {
 
-  auto cfg = XConfig::Self();
   auto fnt= cfg->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "Sign in");
   auto wz= cx::VisRect();

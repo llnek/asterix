@@ -35,8 +35,8 @@ MsgBox* MsgBox::CreateWithAction(c::CallFunc* cb,
 //
 MsgBox* MsgBox::CreateWithMsg(const stdstr& msg) {
 
-  auto cb= c::CallFunc::create([=](){
-      c::Director::getInstance()->popScene();
+  auto cb= c::CallFunc::create([](){
+      CC_DTOR()->popScene();
       });
   return CreateWithAction(cb, msg);
 }
@@ -45,7 +45,7 @@ MsgBox* MsgBox::CreateWithMsg(const stdstr& msg) {
 //
 void MsgBox::SetAction(c::CallFunc* cb) {
   action = cb;
-  cb->retain();
+  CC_KEEP(cb)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,13 +63,13 @@ void MsgBox::OnYes(c::Ref* rr) {
 //////////////////////////////////////////////////////////////////////////
 //
 MsgBox::~MsgBox() {
- action->release();
+  CC_DROP(action)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 MsgBox::MsgBox() {
-  action=nullptr;
+  SNPTR(action)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,14 +95,12 @@ public:
 XLayer* MsgBoxLayer::Realize() {
 
   auto par = SCAST(MsgBox*, getParent());
-  auto cfg = XConfig::Self();
-
-  auto fnt = cfg->GetFont("font.OCR");
+  auto fnt = XCFGS()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(
       fnt, par->GetMsg());
 
-  auto cw= cx::Center();
   auto wz= cx::VisRect();
+  auto cw= cx::Center();
   auto wb = cx::VisBox();
 
   CenterImage("game.bg");

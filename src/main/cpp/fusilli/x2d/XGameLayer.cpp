@@ -32,13 +32,7 @@ XGameLayer::~XGameLayer() {
 XGameLayer::XGameLayer() {
   mode = GMode::ONE;
   level = 1;
-  engine = nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XGameLayer::SendMsg(const stdstr& topic, void* msg) {
-
+  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +44,7 @@ ComObj* XGameLayer::GetPlayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XGameLayer::GetLCfg() {
-  return XConfig::Self()->GetLevelCfg(s::to_string(level));
+  return XCFGS()->GetLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -73,7 +67,7 @@ const Box4 XGameLayer::GetEnclosureBox() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::NewGame(const GMode mode) {
-  if (XConfig::Self()->HasAudio()) {
+  if (XCFGS()->HasAudio()) {
     den::SimpleAudioEngine::getInstance()->stopAllEffects();
     den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
   }

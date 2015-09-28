@@ -37,8 +37,8 @@ protected:
   GMode mode;
   int level;
 
-  virtual void OnNewGame(const GMode) = 0;
   virtual void SetMode(const GMode m) { mode=m; }
+  virtual void OnNewGame(const GMode) = 0;
   XGameLayer();
 
 private:
@@ -47,7 +47,7 @@ private:
 
 public:
 
-  virtual void SendMsg(const stdstr& topic, void* msg);
+  virtual void SendMsg(const stdstr& topic, void* msg) = 0;
   virtual ComObj* GetPlayer();
 
   virtual const Box4 GetEnclosureBox();

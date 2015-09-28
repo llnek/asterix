@@ -30,7 +30,7 @@ static XConfig* singleton;
 static const stdstr getXXX(not_null<c::Dictionary*> d,
     const stdstr& key ) {
 
-  c::String* r= DictVal<c::String>(d,key);
+  auto r= DictVal<c::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
 
@@ -49,18 +49,18 @@ XConfig* XConfig::Self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::~XConfig() {
-  dict->release();
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
-  pools.clear();
+  CC_DROP(dict)
+  //pools.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::XConfig() {
   dict = c::Dictionary::create();
-  dict->retain();
+  CC_KEEP(dict)
   dict->setObject(c::Dictionary::create(), ATLASES);
   dict->setObject(c::Dictionary::create(), TILES);
   dict->setObject(c::Dictionary::create(), CSTS);
@@ -130,7 +130,7 @@ owner<XPool*> XConfig::CreatePool(const stdstr& key) {
 //
 c::Dictionary* XConfig::GetLevel(const stdstr& n) {
   auto d= GetFragment(LEVELS);
-  return SCAST(c::Dictionary*, d->objectForKey(n));
+  return SCAST(c::Dictionary*,  d->objectForKey(n));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,6 +160,7 @@ c::Dictionary* XConfig::AddLevel(const stdstr& level) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::ToggleAudio(bool b) {
+  //TODO:
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -38,12 +38,12 @@ protected:
 
 private:
 
-  NO__CPYASS(Online)
   CREATE_FUNC(Online)
+  NO__CPYASS(Online)
 
-  WSockSS* wss;
   c::CallFunc* yes;
   c::CallFunc* no;
+  WSockSS* wss;
 
 public:
 

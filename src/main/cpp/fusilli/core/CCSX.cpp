@@ -45,14 +45,14 @@ c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
 //////////////////////////////////////////////////////////////////////////////
 //
 void MkAudio() {
-
+//TODO:
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void SfxPlay(const stdstr& sound) {
-
+//TODO:
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ bool Collide0(not_null<c::Node*> a, not_null<c::Node*> b) {
 void SetDevRes(bool landscape, float x, float y,
     ResolutionPolicy pcy) {
 
-  auto v= c::Director::getInstance()->getOpenGLView();
+  auto v= CC_DTOR()->getOpenGLView();
   if (landscape) {
     v->setDesignResolutionSize(x, y, pcy);
   } else {
@@ -172,7 +172,7 @@ bool OutOfBound(const Box4& a, const Box4& B) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UndoTimer(not_null<c::DelayTime*> tm) {
-  if (NNP(tm)) { tm->release(); }
+  CC_DROP(tm)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ void UndoTimer(not_null<c::DelayTime*> tm) {
 c::DelayTime* CreateTimer(not_null<c::Node*> par, float tm) {
   auto t= c::DelayTime::create(tm);
   par->runAction(t);
-  t->retain();
+  CC_KEEP(t)
   return t;
 }
 
@@ -201,32 +201,36 @@ c::Sprite* CreateSprite(const stdstr& name) {
 //////////////////////////////////////////////////////////////////////////
 //
 const Box4 BBox4(not_null<c::Node*> s) {
-  return Box4(
+  auto z= s->getBoundingBox();
+  return Box4(z.origin.y + z.size.height,
+      z.origin.x + z.size.width,
+      z.origin.y,
+      z.origin.x);
+  /*
     GetTop(s),
     GetRight(s),
     GetBottom(s),
-    GetLeft(s)
-  );
+    GetLeft(s) */
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void RunScene(not_null<c::Scene*> ns, float delay) {
-  c::Director::getInstance()->replaceScene(
+  CC_DTOR()->replaceScene(
       c::TransitionCrossFade::create(delay, ns));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void RunScene(not_null<c::Scene*> ns) {
-  c::Director::getInstance()->replaceScene(ns);
+  CC_DTOR()->replaceScene(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool IsTransitioning() {
   return dynamic_cast<c::TransitionScene*>(
-    c::Director::getInstance()->getRunningScene()) != nullptr;
+      CC_DTOR()->getRunningScene()) != nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -248,10 +252,12 @@ const c::Size HalfHW(not_null<c::Sprite*> s) {
 // Create a rectangle from this sprite
 //
 const c::Rect BBox(not_null<c::Node*> s) {
+  return s->getBoundingBox();
+  /*
   return c::Rect(GetLeft(s),
                  GetBottom(s),
                  GetWidth(s),
-                 GetHeight(s));
+                 GetHeight(s)); */
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -386,14 +392,14 @@ float ScreenWidth() { return Screen().width; }
 // Get the visible screen rectangle
 //
 const c::Rect VisRect() {
-  return c::Director::getInstance()->getOpenGLView()->getVisibleRect();
+  return CC_DTOR()->getOpenGLView()->getVisibleRect();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen box
 //
 const Box4 VisBox() {
-  auto vr = c::Director::getInstance()->getOpenGLView()->getVisibleRect();
+  auto vr = CC_DTOR()->getOpenGLView()->getVisibleRect();
   return Box4(
     vr.origin.y + vr.size.height,
     vr.origin.x + vr.size.width,
@@ -406,7 +412,7 @@ const Box4 VisBox() {
 // Get the actual window/frame size.
 //
 const c::Size Screen() {
-  return c::Director::getInstance()->getOpenGLView()->getFrameSize();
+  return CC_DTOR()->getOpenGLView()->getFrameSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -523,7 +529,7 @@ bool HasMouse() {
 //////////////////////////////////////////////////////////////////////////
 //
 void OnMouse() {
-if (!HasMouse()) {return;}
+  if (!HasMouse()) {return;}
 /*
 cc.eventManager.addListener({
   onMouseMove(e) {

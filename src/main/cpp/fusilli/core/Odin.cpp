@@ -21,7 +21,10 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkEvent(MType eventType, EType code, js::Document* d) {
+static Event mkEvent(MType eventType,
+    EType code,
+    not_null<js::Document*> d) {
+
   return Event(eventType, code, d);
 }
 
@@ -30,7 +33,9 @@ static Event mkEvent(MType eventType, EType code, js::Document* d) {
 static Event mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
+
   auto d = new js::Document();
+  //TODO:
       //[game, user, pwd]);
   return mkEvent(MType::SESSION, EType::PLAYGAME_REQ, d);
 }
@@ -46,7 +51,6 @@ static Event mkJoinRequest (const stdstr& room,
   return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
 }
 */
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -134,8 +138,8 @@ WSockSS* WSockSS::CreateJoinRequest(const stdstr& room,
 //////////////////////////////////////////////////////////////////////////////
 //
 WSockSS::WSockSS() {
-  state= CType::S_NOT_CONNECTED;
   cbNetwork = cbSession = cbAll = nullptr;
+  state= CType::S_NOT_CONNECTED;
   wss = nullptr;
 }
 
