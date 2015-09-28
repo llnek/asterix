@@ -57,10 +57,10 @@ void App::initGLContextAttrs() {
 //
 bool App::applicationDidFinishLaunching() {
 
-  auto director = c::Director::getInstance();
-  auto glview = director->getOpenGLView();
-  auto cfg = XConfig::Self();
-  auto sz = cfg->GetGameSize();
+  auto glview = CC_DTOR()->getOpenGLView();
+  auto sz = XCFGS()->GetGameSize();
+
+  CCLOG("game size, width=%d, height=%d", sz.width, sz.height);
 
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
@@ -68,15 +68,16 @@ bool App::applicationDidFinishLaunching() {
 #else
     glview = c::GLViewImpl::create("z");
 #endif
-    director->setOpenGLView(glview);
+    CC_DTOR()->setOpenGLView(glview);
   }
 
   PreLaunch(sz);
 
   register_all_packages();
 
+  CCLOG("about to run start scene");
   // run
-  director->runWithScene( cfg->StartWith());
+  CC_DTOR()->runWithScene( XCFGS()->StartWith());
 
   return true;
 }
@@ -85,23 +86,22 @@ bool App::applicationDidFinishLaunching() {
 //
 void App::PreLaunch(const c::Size& dz) {
 
-  auto director = c::Director::getInstance();
-  auto glview = director->getOpenGLView();
-  auto cfg = XConfig::Self();
-
+  auto glview = CC_DTOR()->getOpenGLView();
   auto dispFPS= CstVal<c::Bool>("showFPS");
   auto fps = CstVal<c::Integer>("FPS");
   c::Size fz = glview->getFrameSize();
 
-  // set FPS. the default value is 1.0/60 if you don't call this
-  director->setAnimationInterval(1.0 / fps->getValue());
+  CCLOG("frame size, width=%d, height=%d", fz.width, fz.height);
+
+  // set FPS. default is 1.0/60 if you don't call this
+  CC_DTOR()->setAnimationInterval(1.0 / fps->getValue());
 
   // turn on display FPS
-  director->setDisplayStats( dispFPS->getValue());
+  CC_DTOR()->setDisplayStats( dispFPS->getValue());
 
   // Set the design resolution
   glview->setDesignResolutionSize(
-    dz.width, dz.height, ResolutionPolicy::NO_BORDER);
+    dz.width, dz.height, XCFGS()->GetPolicy());
 
   // if the frame's height is larger than
   // the height of medium size

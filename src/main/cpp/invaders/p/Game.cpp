@@ -19,6 +19,7 @@
 #include "s/Collide.h"
 #include "s/Resolve.h"
 #include "s/Aliens.h"
+#include "Menu.h"
 #include "Game.h"
 #include "HUD.h"
 
@@ -165,10 +166,8 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
 
   if (topic == "/hud/showmenu") {
 
-    auto f= []() { DIRTOR()->popScene(); }
+    auto f= []() { DIRTOR()->popScene(); };
     auto a= c::CallFunc::create(f);
-    MainMenu* m = MainMenu::CreateWithBackAction(a);
-
     DIRTOR()->pushScene(MainMenu::CreateWithBackAction(a));
   }
 
@@ -177,7 +176,7 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
   }
 
   if (topic == "/game/players/killed") {
-    OnPlayerKilled(msg);
+    OnPlayerKilled();
   }
 
 }
