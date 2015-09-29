@@ -27,10 +27,10 @@ XHUDLayer::~XHUDLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XHUDLayer::XHUDLayer() {
-  scoreLabel = nullptr;
-  lives= nullptr;
+  SNPTR(scoreLabel)
+  SNPTR(lives)
   score = 0;
-  replayBtn = nullptr;
+  SNPTR(replayBtn)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,6 @@ void XHUDLayer::AddMenuIcon(not_null<c::MenuItem*> b,
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(b) * 0.5;
   auto hw = cx::GetScaledWidth(b) * 0.5;
-  auto cfg = XConfig::Self();
   auto menu= c::Menu::create();
   auto wz= cx::VisBox();
   float x, y;
@@ -114,7 +113,6 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(c) * 0.5;
   auto hw = cx::GetScaledWidth(c) * 0.5;
-  auto cfg = XConfig::Self();
   auto menu= c::Menu::create();
   auto wz= cx::VisBox();
   float x, y;

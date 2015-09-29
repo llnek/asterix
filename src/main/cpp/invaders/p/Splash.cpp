@@ -86,7 +86,7 @@ void SplashLayer::Btns() {
 void Splash::OnPlay(c::Ref* b) {
   auto f= []() { cx::RunScene(XCFGS()->StartWith()); };
   auto a= c::CallFunc::create(f);
-  MainMenu* m = MainMenu::CreateWithBackAction(a);
+  auto m = MainMenu::CreateWithBackAction(a);
 
   cx::RunScene( m->Realize());
 }

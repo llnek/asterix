@@ -166,9 +166,9 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
 
   if (topic == "/hud/showmenu") {
 
-    auto f= []() { DIRTOR()->popScene(); };
+    auto f= []() { CC_DTOR()->popScene(); };
     auto a= c::CallFunc::create(f);
-    DIRTOR()->pushScene(MainMenu::CreateWithBackAction(a));
+    CC_DTOR()->pushScene(MainMenu::CreateWithBackAction(a));
   }
 
   if (topic == "/hud/replay") {

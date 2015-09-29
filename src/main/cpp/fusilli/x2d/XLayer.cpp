@@ -29,11 +29,10 @@ XLayer* XLayer::Realize() { return this; }
 //
 void XLayer::AudioCallback(c::Ref* r) {
   auto t = SCAST(c::MenuItemToggle*, r);
-  auto cfg = XConfig::Self();
   if (t->getSelectedIndex() == 0) {
-    cfg->ToggleAudio(true);
+    XCFGS()->ToggleAudio(true);
   } else {
-    cfg->ToggleAudio(false);
+    XCFGS()->ToggleAudio(false);
   }
 }
 
@@ -66,8 +65,8 @@ XLayer::~XLayer() {
 c::SpriteBatchNode*
 XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
 
-  auto fp = XConfig::Self()->GetImage(name);
-  auto i= c::TextureCache::getInstance()->addImage(fp);
+  auto i= c::TextureCache::getInstance()->addImage(
+      XCFGS()->GetImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
   auto t = ENP(tag) ? ++lastTag : *tag;
   auto x = ENP(z) ? lastZix : *z;
@@ -196,13 +195,12 @@ void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
   c::Vector<c::MenuItem*> items;
   items.pushBack(on);
   items.pushBack(off);
-  auto cfg = XConfig::Self();
 
   auto audio = c::MenuItemToggle::createWithTarget(
       this,
       CC_MENU_SELECTOR(XLayer::AudioCallback), items);
 
-  audio->setSelectedIndex( cfg->HasAudio() ? 0 : 1);
+  audio->setSelectedIndex( XCFGS()->HasAudio() ? 0 : 1);
   audio->setAnchorPoint(anchor);
   //
   auto menu= c::Menu::create(audio);

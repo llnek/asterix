@@ -105,7 +105,7 @@ XLayer* MsgBoxLayer::Realize() {
 
   CenterImage("game.bg");
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(cfg->GetScale() * 0.25);
+  qn->setScale(XCFGS()->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 

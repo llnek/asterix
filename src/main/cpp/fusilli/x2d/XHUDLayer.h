@@ -31,8 +31,8 @@ protected:
 
   virtual void AddIcon(not_null<XLive*>);
 
-  c::Menu* replayBtn;
   c::Label* scoreLabel;
+  c::Menu* replayBtn;
   XLives* lives;
   int score;
 

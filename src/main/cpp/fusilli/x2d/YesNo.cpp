@@ -41,9 +41,8 @@ public:
 XLayer* YesNoLayer::Realize() {
 
   auto par = SCAST(YesNo*, getParent());
-  auto cfg= XConfig::Self();
   auto msg= par->GetMsg();
-  auto fnt= cfg->GetFont("font.OCR");
+  auto fnt= XCFGS()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, msg);
 
   auto cw= cx::Center();
@@ -51,7 +50,7 @@ XLayer* YesNoLayer::Realize() {
   auto wb= cx::VisBox();
 
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(cfg->GetScale() * 0.25);
+  qn->setScale(XCFGS()->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
 
   CenterImage("game.bg");
@@ -89,12 +88,12 @@ owner<YesNo*> YesNo::CreateWithActions(const stdstr& msg,
 owner<YesNo*> YesNo::Create(const stdstr& msg) {
 
   c::CallFunc* y = c::CallFunc::create([](){
-      c::Director::getInstance()->popToRootScene();
-      cx::RunScene(XConfig::Self()->StartWith());
+      CC_DTOR()->popToRootScene();
+      cx::RunScene(XCFGS()->StartWith());
       });
 
   c::CallFunc* n= c::CallFunc::create([]() {
-      c::Director::getInstance()->popScene();
+      CC_DTOR()->popScene();
       });
 
   return CreateWithActions(msg, y,n);
@@ -107,8 +106,8 @@ void YesNo::SetActions(not_null<c::CallFunc*> y,
 
   yes = y;
   no = n;
-  y->retain();
-  n->retain();
+  CC_KEEP(y)
+  CC_KEEP(n)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -141,15 +140,15 @@ void YesNo::SetMsg(const stdstr& m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 YesNo::YesNo() {
-  yes= nullptr;
-  no= nullptr;
+  SNPTR(yes)
+  SNPTR(no)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 YesNo::~YesNo() {
-  yes->release();
-  no->release();
+  CC_DROP(yes)
+  CC_DROP(no)
 }
 
 

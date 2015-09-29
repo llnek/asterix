@@ -21,8 +21,8 @@ NS_BEGIN(fusii)
 
 static c::Size designSize = c::Size(480, 320);
 static c::Size smallSize = c::Size(480, 320);
-static c::Size mediumSize = c::Size(1024, 768);
-static c::Size largeSize = c::Size(2048, 1536);
+static c::Size mediumSize = c::Size(768,1024);
+static c::Size largeSize = c::Size(1536,2048);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,6 +90,7 @@ void App::PreLaunch(const c::Size& dz) {
   auto dispFPS= CstVal<c::Bool>("showFPS");
   auto fps = CstVal<c::Integer>("FPS");
   c::Size fz = glview->getFrameSize();
+  s::vector<stdstr> searchPaths;
 
   CCLOG("frame size, width=%d, height=%d", fz.width, fz.height);
 
@@ -106,20 +107,28 @@ void App::PreLaunch(const c::Size& dz) {
   // if the frame's height is larger than
   // the height of medium size
   if (fz.height > mediumSize.height) {
+    /*
     CC_DTOR()->setContentScaleFactor(
-        MIN(largeSize.height/dz.height, largeSize.width/dz.width));
+        MIN(largeSize.height/dz.height, largeSize.width/dz.width)); */
+    searchPaths.push_back("hdr");
   }
   // if the frame's height is larger than
   // the height of small size.
   else if (fz.height > smallSize.height) {
+    /*
     CC_DTOR()->setContentScaleFactor(
-        MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
+        MIN(mediumSize.height/dz.height, mediumSize.width/dz.width)); */
+    searchPaths.push_back("hd");
   }
   // if the frame's height is smaller than the height of medium size.
   else {
+    /*
     CC_DTOR()->setContentScaleFactor(
-        MIN(smallSize.height/dz.height, smallSize.width/dz.width));
+        MIN(smallSize.height/dz.height, smallSize.width/dz.width)); */
+    searchPaths.push_back("sd");
   }
+
+  c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   InitAudio();
 }

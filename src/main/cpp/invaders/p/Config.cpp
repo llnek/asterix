@@ -96,17 +96,24 @@ void Config::InitAssets() {
   d->setObject(c::String::create("res/pics/bg.png"), "game.bg");
 
   d= GetFragment(SOUNDS);
-  d->setObject(c::String::create("res/sfx/MineExplosion"), "game_end");
-  d->setObject(c::String::create("res/sfx/Death"), "game_quit");
-  d->setObject(c::String::create("res/sfx/missile"), "ship-missile");
-  d->setObject(c::String::create("res/sfx/march"), "bugs-march");
-  d->setObject(c::String::create("res/sfx/explode"), "xxx-explode");
+  d->setObject(c::String::create("res/sfx/MineExplosion.mp3"), "game_end");
+  d->setObject(c::String::create("res/sfx/Death.mp3"), "game_quit");
+  d->setObject(c::String::create("res/sfx/missile.mp3"), "ship-missile");
+  d->setObject(c::String::create("res/sfx/march.mp3"), "bugs-march");
+  d->setObject(c::String::create("res/sfx/explode.mp3"), "xxx-explode");
 
   d= GetFragment(FONTS);
-  d->setObject(c::String::create("res/font/en/SmallTypeWriting"), "font.SmallTypeWriting");
-  d->setObject(c::String::create("res/font/en/AutoMission"), "font.AutoMission");
-  d->setObject(c::String::create("res/font/en/Subito"), "font.Subito");
-  d->setObject(c::String::create("res/font/en/CoffeeBuzzed"), "font.CoffeeBuzzed");
+  d->setObject(c::String::create("res/font/en/SmallTypeWriting.fnt"), "font.SmallTypeWriting");
+  d->setObject(c::String::create("res/font/en/AutoMission.fnt"), "font.AutoMission");
+  d->setObject(c::String::create("res/font/en/Subito.fnt"), "font.Subito");
+  d->setObject(c::String::create("res/font/en/CoffeeBuzzed.fnt"), "font.CoffeeBuzzed");
+
+  d->setObject(c::String::create("res/font/en/TinyBoxBlackBitA8.fnt"), "font.TinyBoxBB");
+  d->setObject(c::String::create("res/font/en/OogieBoogie.fnt"), "font.OogieBoogie");
+  d->setObject(c::String::create("res/font/en/JellyBelly.fnt"), "font.JellyBelly");
+  d->setObject(c::String::create("res/font/en/AgentOrange.fnt"), "font.AgentOrange");
+  d->setObject(c::String::create("res/font/en/Hiruko.fnt"), "font.Hiruko");
+  d->setObject(c::String::create("res/font/en/OCR.fnt"), "font.OCR");
 
 }
 
@@ -131,6 +138,7 @@ void Config::InitCsts() {
   d->setObject(c::Integer::create(6), "TOP");
   d->setObject(c::Integer::create(4), "OFF_X");
   d->setObject(c::Integer::create(2), "OFF_Y");
+  d->setObject(c::Integer::create(4), "S_OFF");
 }
 
 //////////////////////////////////////////////////////////////////////////////
