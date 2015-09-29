@@ -88,32 +88,32 @@ void Config::InitAssets() {
 
   auto d = GetFragment(ATLASES);
 
-  d->setObject(c::String::create("res/l10n/en/images.plist"), "lang-pics");
-  d->setObject(c::String::create("res/pics/images.plist"), "game-pics");
+  d->setObject(c::String::create("l10n/en/images.plist"), "lang-pics");
+  d->setObject(c::String::create("pics/images.plist"), "game-pics");
 
   d= GetFragment(IMAGES);
-  d->setObject(c::String::create("res/pics/bg.png"), "mmenus.bg");
-  d->setObject(c::String::create("res/pics/bg.png"), "game.bg");
+  d->setObject(c::String::create("pics/bg.png"), "mmenus.bg");
+  d->setObject(c::String::create("pics/bg.png"), "game.bg");
 
   d= GetFragment(SOUNDS);
-  d->setObject(c::String::create("res/sfx/MineExplosion.mp3"), "game_end");
-  d->setObject(c::String::create("res/sfx/Death.mp3"), "game_quit");
-  d->setObject(c::String::create("res/sfx/missile.mp3"), "ship-missile");
-  d->setObject(c::String::create("res/sfx/march.mp3"), "bugs-march");
-  d->setObject(c::String::create("res/sfx/explode.mp3"), "xxx-explode");
+  d->setObject(c::String::create("sfx/MineExplosion.mp3"), "game_end");
+  d->setObject(c::String::create("sfx/Death.mp3"), "game_quit");
+  d->setObject(c::String::create("sfx/missile.mp3"), "ship-missile");
+  d->setObject(c::String::create("sfx/march.mp3"), "bugs-march");
+  d->setObject(c::String::create("sfx/explode.mp3"), "xxx-explode");
 
   d= GetFragment(FONTS);
-  d->setObject(c::String::create("res/font/en/SmallTypeWriting.fnt"), "font.SmallTypeWriting");
-  d->setObject(c::String::create("res/font/en/AutoMission.fnt"), "font.AutoMission");
-  d->setObject(c::String::create("res/font/en/Subito.fnt"), "font.Subito");
-  d->setObject(c::String::create("res/font/en/CoffeeBuzzed.fnt"), "font.CoffeeBuzzed");
+  d->setObject(c::String::create("fon/en/SmallTypeWriting.fnt"), "font.SmallTypeWriting");
+  d->setObject(c::String::create("fon/en/AutoMission.fnt"), "font.AutoMission");
+  d->setObject(c::String::create("fon/en/Subito.fnt"), "font.Subito");
+  d->setObject(c::String::create("fon/en/CoffeeBuzzed.fnt"), "font.CoffeeBuzzed");
 
-  d->setObject(c::String::create("res/font/en/TinyBoxBlackBitA8.fnt"), "font.TinyBoxBB");
-  d->setObject(c::String::create("res/font/en/OogieBoogie.fnt"), "font.OogieBoogie");
-  d->setObject(c::String::create("res/font/en/JellyBelly.fnt"), "font.JellyBelly");
-  d->setObject(c::String::create("res/font/en/AgentOrange.fnt"), "font.AgentOrange");
-  d->setObject(c::String::create("res/font/en/Hiruko.fnt"), "font.Hiruko");
-  d->setObject(c::String::create("res/font/en/OCR.fnt"), "font.OCR");
+  d->setObject(c::String::create("fon/en/TinyBoxBlackBitA8.fnt"), "font.TinyBoxBB");
+  d->setObject(c::String::create("fon/en/OogieBoogie.fnt"), "font.OogieBoogie");
+  d->setObject(c::String::create("fon/en/JellyBelly.fnt"), "font.JellyBelly");
+  d->setObject(c::String::create("fon/en/AgentOrange.fnt"), "font.AgentOrange");
+  d->setObject(c::String::create("fon/en/Hiruko.fnt"), "font.Hiruko");
+  d->setObject(c::String::create("fon/en/OCR.fnt"), "font.OCR");
 
 }
 
