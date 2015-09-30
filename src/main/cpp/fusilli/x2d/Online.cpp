@@ -100,7 +100,7 @@ void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Online::OnOdinEvent(const Event& evt) {
-  CCLOG("odin event = %p", evt);
+  //CCLOG("odin event = %p", evt);
   switch (evt.type) {
     case MType::NETWORK: OnNetworkEvent(evt); break;
     case MType::SESSION: OnSessionEvent(evt); break;

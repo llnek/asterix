@@ -239,7 +239,7 @@ void WSockSS::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
       OnEvent(evt);
     break;
     default:
-      CCLOGWARN("unhandled server event: %d, code: %d", evt.type, evt.code);
+      CCLOG("unhandled server event: %d, code: %d", evt.type, evt.code);
   }
 }
 
