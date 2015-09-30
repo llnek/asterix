@@ -21,9 +21,8 @@ NS_BEGIN(fusii)
 
 static c::Size designSize = c::Size(480, 320);
 static c::Size smallSize = c::Size(480, 320);
-static c::Size mediumSize = c::Size(768,1024);
-static c::Size largeSize = c::Size(1536,2048);
-
+static c::Size mediumSize = c::Size(1024, 768);
+static c::Size largeSize = c::Size(2048,1536);
 
 //////////////////////////////////////////////////////////////////////////////
 // If you want to use packages manager to install more packages,
