@@ -52,12 +52,18 @@
 
   [appid]
 
-  (a/RunTasks*
-    (a/AntMkdir {:dir (fp! (ge :basedir) "sandbox")})
-    (a/AntExec
-      {:executable "cocos"}
-      [[:argvalues ["new" "-l" "cpp"
-                    "-d" (fp! (ge :basedir) "sandbox") appid]]])))
+  (let [gdir (fp! (ge :basedir) "games")]
+    (a/RunTasks*
+      (a/AntMkdir {:dir gdir})
+      (a/AntExec
+        {:executable "cocos"}
+        [[:argvalues ["new" "-l" "cpp"
+                      "-d" gdir appid]]]))
+    (let [des (fp! gdir appid)
+          res (io/file des "Resources")
+          cls (io/file des "Classes") ]
+      (a/CleanDir res)
+      (a/CleanDir cls))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -147,8 +153,7 @@
            (js/write-str )
            (spit (io/file despath "project.json"))))
 
-    (jiggleTheIndexFile appid
-                        (io/file (ge :basedir) "cocos" appid) true)))
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

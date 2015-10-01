@@ -1,4 +1,6 @@
 cocos/
+games/
+sandbox/
 
 # Compiled Object files
 *.slo
