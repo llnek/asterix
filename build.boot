@@ -18,9 +18,10 @@
   :DOMAIN "czlab.fusilli"
   :PID "fusilli"
 
-  :source-paths #{"src/main/cpp"}
+  :source-paths #{"src/main/cpp/fusilli"
+                  "src/main/cpp/"}
 
-  :dependencies '[ ] )
+  :dependencies '[])
 
 (require '[czlab.tpcl.boot :as b :refer [fp! ge ]]
          '[clojure.data.json :as js]
@@ -41,308 +42,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- compileJS ""
-
-  [wappid]
-
-  (let [root (io/file (ge :webDir) wappid "src")
-        tks (atom []) ]
-    (try
-      (cleanLocalJs wappid)
-      (b/BabelTree root (partial onbabel wappid))
-    (finally
-      (cleanLocalJs wappid)))
-
-    (when false
-      (a/RunTasks*
-        (a/AntExec
-          {:executable "jsdoc"
-           :dir (ge :basedir)
-           :spawn true}
-          [[:argvalues [(fp! (ge :websrc) wappid)
-                         "-c"
-                         (fp! (ge :basedir)
-                              "jsdoc.json")
-                         "-d"
-                         (fp! (ge :docs) wappid)]]])))
-
-    (.mkdirs (io/file (ge :basedir) "public/ig/lib/game"))
-    (.mkdirs (io/file (ge :basedir) "public/scripts"))
-
-    (case wappid
-
-      "cocos2d"
-      (->> (a/AntCopy
-             {:todir (fp! (ge :basedir) "public/ig/lib") }
-             [[:fileset {:dir (fp! (ge :websrc) wappid)}]])
-           (conj @tks)
-           (reset! tks))
-
-      "main"
-      (->> (a/AntCopy
-             {:todir (fp! (ge :basedir) "public/scripts") }
-             [[:fileset {:dir (fp! (ge :websrc) wappid) } ]])
-           (conj @tks)
-           (reset! tks))
-      ;;else
-      (do
-        (->> (a/AntCopy
-               {:file (fp! (ge :srcDir) "resources/main.js")
-                :todir (fp! (ge :basedir)
-                            "public/ig/lib/game" wappid)} )
-             (conj @tks)
-             (reset! tks))
-        (->> (a/AntCopy
-               {:todir (fp! (ge :basedir)
-                            "public/ig/lib/game" wappid)}
-               [[:fileset {:dir (fp! (ge :websrc) wappid)} ]])
-             (conj @tks)
-             (reset! tks))))
-
-    (apply a/RunTasks* (reverse @tks))
-  ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- compileMedia ""
-
-  [wappid]
-
-  (a/RunTasks*
-    (a/AntMkdir {:dir (fp! (ge :basedir)
-                           "public/ig/res" wappid)})
-    (a/AntCopy
-      {:todir (fp! (ge :basedir)
-                   "public/ig/res" wappid)}
-      [[:fileset {:dir (fp! (ge :webDir) wappid "res/sd")}]
-       [:fileset {:dir (fp! (ge :webDir) wappid "res")
-                  :includes "sfx/**/*"}]])))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- compileInfo ""
-
-  [wappid]
-
-  (when-not (or (= "cocos2d" wappid)
-                (= "main" wappid))
-    (a/RunTasks*
-      (a/AntMkdir {:dir (fp! (ge :basedir)
-                             "public/ig/info" wappid)})
-      (a/AntCopy
-        {:todir (fp! (ge :basedir) "public/ig/info" wappid)}
-        [[:fileset {:dir (fp! (ge :webDir) wappid "info")}]]))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- compilePages ""
-
-  [wappid]
-
-  (case wappid
-    ("main" "cocos2d")
-    (a/RunTasks*
-      (a/AntCopy
-        {:todir (fp! (ge :basedir) "public/pages" wappid)}
-        [[:fileset {:dir (fp! (ge :webDir) wappid "pages")}]]))
-    ;;else
-    (jiggleTheIndexFile wappid
-                        (fp! (ge :basedir)
-                             "public/pages" wappid)
-                        false)
-  ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- finzApp ""
-
-  [wappid]
-
-  (when (not= (ge :pmode) "release")
-    (let [des (fp! (ge :basedir)
-                   "public/ig/lib/game" wappid)]
-      (a/CopyFile (fp! (ge :srcDir) "resources/project.json") des)
-      (a/CopyFile (fp! (ge :srcDir) "resources/main.js") des))
-  ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- buildOneWebApp ""
-
-  [^File dir]
-
-  (let [wappid (.getName dir)]
-    (.mkdirs (io/file (fp! (ge :websrc) wappid)))
-    (.mkdirs (io/file (fp! (ge :webcss) wappid)))
-    (doto wappid
-      (compileJS)
-      (compileSCSS)
-      (compileMedia)
-      (compileInfo)
-      (compilePages)
-      (finzApp))
-  ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- buildWebApps ""
-
-  []
-
-  (let [isDir? #(.isDirectory %)
-        dirs (->> (.listFiles (io/file (ge :webDir)))
-                  (filter isDir?))]
-    (doall (map #(buildOneWebApp %) dirs))
-  ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
 ;; task definitions ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(deftask clean4build "clean,pre-build"
-
-  []
-
-  (bc/with-pre-wrap fileset
-    (b/Clean4Build)
-    (b/PreBuild)
-    fileset))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(deftask dev "clean,resolve,build"
-
-  []
-
-  (comp (clean4build)
-        (b/libjars)
-        (b/buildr)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(deftask games ""
-
-  []
-
-  (bc/with-pre-wrap fileset
-    (b/CleanPublic)
-    (fn [& args]
-      (a/CleanDir (fp! (ge :basedir) "public/ig"))
-      (a/CleanDir (fp! (ge :websrc)))
-      (a/CleanDir (fp! (ge :webcss))))
-    (buildWebApps)
-    fileset))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(deftask rel ""
-
-  []
-
-  (bc/with-pre-wrap fileset
-    (b/CleanPublic)
-    (fn [& args]
-      (a/CleanDir (fp! (ge :basedir) "public/ig"))
-      (a/CleanDir (fp! (ge :websrc)))
-      (a/CleanDir (fp! (ge :webcss))))
-    (buildWebApps)
-    (yuiCSS)
-    (yuiJS)
-    (finzBuild)
-    fileset))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(deftask release ""
-  []
-
-  (set-env! :pmode "release")
-  (comp (dev) (rel)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(defn- mkGame ""
-
-  [appid]
-
-  (let [pubtime (b/FmtTime "yyyy-MM-dd")
-        appkey (b/RandUUID)]
-
-    ;;(format "Creating new game: %s" appid)
-
-    (doseq [s ["src/n" "src/s" "src/p"
-               "src/i18n" "res/sfx"]]
-      (.mkdirs (io/file (fp! (ge :webDir) appid s))))
-
-    (doseq [s ["hdr" "hds" "sd"]]
-      (.mkdirs (io/file (ge :webDir) appid "res" s "pics"))
-      (.mkdirs (io/file (ge :webDir) appid "res" s "fon")))
-
-    (doseq [s ["info" "pages" "styles"]]
-      (.mkdirs (io/file (ge :webDir) appid s)))
-
-    (a/CopyFile (fp! (ge :srcDir) "resources/game.json")
-                (io/file (ge :webDir) appid "info"))
-    (a/CopyFile (fp! (ge :srcDir) "resources/game.mf")
-                (io/file (ge :webDir) appid "info"))
-
-    (b/ReplaceFile (fp! (ge :webDir) appid "info/game.mf")
-                   #(-> (cs/replace % "@@PUBDATE@@" pubtime)
-                        (cs/replace "@@APPID@@" appid)))
-
-    (b/ReplaceFile (fp! (ge :webDir) appid "info/game.json")
-                   #(cs/replace % "@@UUID@@" appkey))
-
-    (doseq [s ["game.js" "splash.js" "mmenu.js"
-               "hud.js" "config.js" "protos.js"]]
-      (a/CopyFile (fp! (ge :srcDir) "resources" s)
-                  (fp! (ge :webDir) appid "src/p")))
-
-    (a/CopyFile (fp! (ge :srcDir) "resources/gnodes.js")
-                (fp! (ge :webDir) appid "src/n"))
-
-    (a/CopyFile (fp! (ge :srcDir) "resources/cobjs.js")
-                (fp! (ge :webDir) appid "src/n"))
-
-    (doseq [s ["stager.js" "factory.js"
-               "motion.js" "resolve.js" "sysobjs.js"]]
-      (a/CopyFile (io/file (ge :srcDir) "resources" s)
-                  (fp! (ge :webDir) appid "src/s")))
-
-    (b/ReplaceFile (fp! (ge :webDir)
-                        appid "src/p/config.js")
-                   #(cs/replace % "@@UUID@@" appkey))
-
-    (a/CopyFile (fp! (ge :srcDir) "resources/l10n.js")
-                (fp! (ge :webDir) appid "src/i18n/l10n.js"))
-
-    (a/CopyFile (fp! (ge :srcDir) "resources/ccconfig.js")
-                (fp! (ge :webDir) appid "src"))
-
-    (a/CopyFile (fp! (ge :srcDir) "resources/proj.json")
-                (fp! (ge :webDir) appid "src/project.json"))
-
-    (b/ReplaceFile (fp! (ge :webDir) appid "src/project.json")
-                   #(cs/replace % "@@APPID@@" appid))
-
-    (b/ReplaceFile (fp! (ge :webDir) appid "src/ccconfig.js")
-                   #(cs/replace % "@@APPID@@" appid))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-(deftask newgame
-
-  ""
-  [n id VAL str "game id"]
-
-  (bc/with-pre-wrap fileset
-    (mkGame id)
-    fileset))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -351,17 +53,15 @@
   [appid]
 
   (a/RunTasks*
-    (a/AntMkdir {:dir (fp! (ge :basedir) "cocos")})
+    (a/AntMkdir {:dir (fp! (ge :basedir) "sandbox")})
     (a/AntExec
       {:executable "cocos"}
-      [[:argvalues ["new" "-l" "js" "-t"
-                    "runtime" "--ios-bundleid"
-                    (str "com.zotohlab.p." appid)
-                    "-d" (fp! (ge :basedir) "cocos") appid]]])))
+      [[:argvalues ["new" "-l" "cpp"
+                    "-d" (fp! (ge :basedir) "sandbox") appid]]])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(deftask cocos+new
+(deftask ccnew
 
   ""
   [n id VAL str "game id"]
