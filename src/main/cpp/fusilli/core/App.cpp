@@ -19,10 +19,10 @@
 NS_ALIAS(den, CocosDenshion)
 NS_BEGIN(fusii)
 
-static c::Size designSize = c::Size(480, 320);
-static c::Size smallSize = c::Size(480, 320);
-static c::Size mediumSize = c::Size(1024, 768);
-static c::Size largeSize = c::Size(2048,1536);
+static c::Vec2 smallSize = c::Vec2(480, 320);
+static c::Vec2 mediumSize = c::Vec2(1024, 768);
+static c::Vec2 largeSize = c::Vec2(2048,1536);
+
 
 //////////////////////////////////////////////////////////////////////////////
 // If you want to use packages manager to install more packages,

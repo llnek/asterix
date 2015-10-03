@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "audio/include/SimpleAudioEngine.h"
 #include "XConfig.h"
 NS_BEGIN(fusii)
 
@@ -69,6 +70,69 @@ XConfig::XConfig() {
   dict->setObject(c::Dictionary::create(), SOUNDS);
   dict->setObject(c::Dictionary::create(), LEVELS);
   AddLevel("1");
+  SetCsts();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::SetCsts() {
+  auto f = GetFragment(CSTS);
+
+  f->setObject(c::Bool::create(true), "showFPS");
+  f->setObject(c::Integer::create(60), "FPS");
+  f->setObject(c::Integer::create(8), "TILE");
+  f->setObject(c::Integer::create(4), "S_OFF");
+
+  f->setObject(c::String::create("O"), "P2_COLOR");
+  f->setObject(c::String::create("X"), "P1_COLOR");
+
+  f->setObject(c::Integer::create(79), "CV_O");
+  f->setObject(c::Integer::create(88), "CV_X");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::ToggleAudio(bool b) {
+  audioState= b;
+  if (! b) {
+    SetMusicVolume(0);
+    SetVolume(0);
+  } else {
+    SetMusicVolume(lastMusicVol);
+    SetVolume(lastSfxVol);
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+bool XConfig::HasAudio() {
+  return audioState;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float XConfig::SetMusicVolume(float v) {
+  lastMusicVol= GetMusicVolume();
+  SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float XConfig::SetVolume(float v) {
+  lastSfxVol = GetVolume();
+  SimpleAudioEngine::getInstance()->setEffectsVolume(v);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float XConfig::GetMusicVolume() {
+  return SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float XConfig::GetVolume() {
+  return SimpleAudioEngine::getInstance()->getEffectsVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -156,19 +220,6 @@ c::Dictionary* XConfig::AddLevel(const stdstr& level) {
   d2->setObject(c::Dictionary::create(), CFG);
   return d2;
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XConfig::ToggleAudio(bool b) {
-  //TODO:
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-bool XConfig::HasAudio() {
-  return true;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XConfig::GetFragment(const stdstr& key) {

@@ -41,9 +41,14 @@ protected:
 
   c::Dictionary* GetFragment(const stdstr& key);
   owner<XPool*> CreatePool(const stdstr& p);
+  void SetCsts();
 
   s::map<stdstr, XPool*> pools;
   c::Dictionary* dict;
+  float lastMusicVol;
+  float lastSfxVol;
+  bool audioState;
+
   XConfig();
 
 private:
@@ -86,10 +91,17 @@ public:
   void ToggleAudio(bool s);
   bool HasAudio();
 
+  float SetMusicVolume(float);
+  float SetVolume(float);
+
+  float GetMusicVolume();
+  float GetVolume();
+
   c::Dictionary* GetLevelCfg(const stdstr& n);
   c::Dictionary* GetLevel(const stdstr& n);
 
   c::Dictionary* AddLevel(const stdstr& n);
+
 
   virtual ~XConfig();
 
