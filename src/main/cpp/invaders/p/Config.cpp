@@ -130,7 +130,6 @@ void Config::InitCsts() {
   d->setObject(c::String::create("live-bombs"), "P_LBS");
 
   d->setObject(c::Integer::create(42), "CELLS");
-  d->setObject(c::Integer::create(8), "TILE");
   d->setObject(c::Integer::create(6), "COLS");
   d->setObject(c::Integer::create(7), "ROWS");
 
@@ -138,7 +137,7 @@ void Config::InitCsts() {
   d->setObject(c::Integer::create(6), "TOP");
   d->setObject(c::Integer::create(4), "OFF_X");
   d->setObject(c::Integer::create(2), "OFF_Y");
-  d->setObject(c::Integer::create(4), "S_OFF");
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

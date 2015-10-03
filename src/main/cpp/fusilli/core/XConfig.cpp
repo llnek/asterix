@@ -71,6 +71,8 @@ XConfig::XConfig() {
   dict->setObject(c::Dictionary::create(), LEVELS);
   AddLevel("1");
   SetCsts();
+  SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
+  SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////////

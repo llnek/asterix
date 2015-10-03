@@ -19,10 +19,9 @@
 NS_ALIAS(den, CocosDenshion)
 NS_BEGIN(fusii)
 
-static c::Vec2 smallSize = c::Vec2(480, 320);
-static c::Vec2 mediumSize = c::Vec2(1024, 768);
-static c::Vec2 largeSize = c::Vec2(2048,1536);
-
+static c::Size2 largeSize;
+static c::Size2 mediumSize;
+static c::Size2 smallSize;
 
 //////////////////////////////////////////////////////////////////////////////
 // If you want to use packages manager to install more packages,
@@ -88,7 +87,8 @@ void App::PreLaunch(const c::Size& dz) {
   auto glview = CC_DTOR()->getOpenGLView();
   auto dispFPS= CstVal<c::Bool>("showFPS");
   auto fps = CstVal<c::Integer>("FPS");
-  c::Size fz = glview->getFrameSize();
+  auto portrait = dz.height > dz.width;
+  auto fz = glview->getFrameSize();
   s::vector<stdstr> searchPaths;
 
   CCLOG("frame size, width=%d, height=%d", fz.width, fz.height);
@@ -99,35 +99,42 @@ void App::PreLaunch(const c::Size& dz) {
   // turn on display FPS
   CC_DTOR()->setDisplayStats( dispFPS->getValue());
 
-  // Set the design resolution
-  glview->setDesignResolutionSize(
-    dz.width, dz.height, XCFGS()->GetPolicy());
+  if (portrait) {
+    largeSize = c::Size2(1536, 2048);
+    mediumSize = c::Size2(768, 1024);
+    smallSize = c::Size2(320, 480);
+  } else {
+    largeSize = c::Size2(2048, 1536);
+    mediumSize = c::Size2(1024, 768);
+    smallSize = c::Size2(480, 320);
+  }
 
   // if the frame's height is larger than
   // the height of medium size
   if (fz.height > mediumSize.height) {
-    /*
     CC_DTOR()->setContentScaleFactor(
-        MIN(largeSize.height/dz.height, largeSize.width/dz.width)); */
+        MIN(largeSize.height/dz.height, largeSize.width/dz.width));
     searchPaths.push_back("hdr");
   }
   // if the frame's height is larger than
   // the height of small size.
   else if (fz.height > smallSize.height) {
-    /*
     CC_DTOR()->setContentScaleFactor(
-        MIN(mediumSize.height/dz.height, mediumSize.width/dz.width)); */
+        MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
     searchPaths.push_back("hd");
   }
   // if the frame's height is smaller than the height of medium size.
   else {
-    /*
     CC_DTOR()->setContentScaleFactor(
-        MIN(smallSize.height/dz.height, smallSize.width/dz.width)); */
+        MIN(smallSize.height/dz.height, smallSize.width/dz.width));
     searchPaths.push_back("sd");
   }
 
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
+
+  // Set the design resolution
+  glview->setDesignResolutionSize(
+    dz.width, dz.height, XCFGS()->GetPolicy());
 
   InitAudio();
 }
@@ -155,6 +162,9 @@ void App::applicationWillEnterForeground() {
   CC_DTOR()->startAnimation();
   den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
+
+
+
 
 NS_END(fusii)
 
