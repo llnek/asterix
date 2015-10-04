@@ -18,8 +18,7 @@
   :DOMAIN "czlab.fusilli"
   :PID "fusilli"
 
-  :source-paths #{"src/main/cpp/fusilli"
-                  "src/main/cpp/"}
+  :source-paths #{"src/main/cpp" }
 
   :dependencies '[])
 
@@ -67,6 +66,60 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
+(defn- deploy->core ""
+
+  [appid]
+
+  (let [top (io/file (ge :srcDir) "cpp/fusilli")
+        base (ge :basedir)]
+    (doseq [f (.listFiles top)
+            :when (.isDirectory f)
+            :let [fname (.getName f)]]
+      (a/SymLink (fp! base "games" appid "Classes" fname)
+                 (.getCanonicalPath f)))
+    (a/SymLink (fp! base "games" appid "Classes" "GSL")
+               (fp! (ge :srcDir) "cpp/GSL"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn- deploy->res ""
+
+  [appid]
+
+  (let [top (io/file (ge :srcDir) "cpp" appid "res")
+        base (ge :basedir)]
+    (doseq [f (.listFiles top)
+            :let [fname (.getName f)]]
+      (a/SymLink (fp! base "games" appid "Resources" fname)
+                 (.getCanonicalPath f)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn- deploy->app ""
+
+  [appid]
+
+  (let [top (io/file (ge :srcDir) "cpp" appid)
+        base (ge :basedir)]
+    (doseq [f (.listFiles top)
+            :let [fname (.getName f)]]
+      (if (and (.isDirectory f)
+               (= "res" fname))
+        (deploy->res appid)
+        (a/SymLink (fp! base "games" appid "Classes" fname)
+                   (.getCanonicalPath f))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn- clean-cocos ""
+
+  [appid]
+
+  (a/CleanDir (fp! (ge :basedir) "games" appid "Resources"))
+  (a/CleanDir (fp! (ge :basedir) "games" appid "Classes")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 (deftask ccnew
 
   ""
@@ -78,7 +131,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- deploy->app ""
+(deftask cclink
+
+  ""
+  [n id VAL str "game id"]
+
+  (bc/with-pre-wrap fileset
+    (clean-cocos id)
+    (deploy->core id)
+    (deploy->app id)
+    fileset))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(deftask ccclean
+
+  ""
+  [n id VAL str "game id"]
+
+  (bc/with-pre-wrap fileset
+    (clean-cocos id)
+    fileset))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn- deploy->XXXapp ""
 
   [appid]
 
