@@ -29,7 +29,8 @@
          '[boot.core :as bc]
          '[czlab.tpcl.antlib :as a])
 
-(import '[java.io File])
+(import '[java.io File]
+        '[java.util Stack])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -155,6 +156,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
+(defn- listFilePaths ""
+
+  [appid]
+
+  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "fusilli") ".cpp")
+  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" appid) ".cpp")
+
+
+  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "fusilli") ".h")
+  (map #(str "GSL/" %)
+       (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "GSL") ".h"))
+  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" appid) ".h")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 (defn- deploy->XXXapp ""
 
   [appid]
@@ -249,4 +266,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 
