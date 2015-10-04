@@ -112,6 +112,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
+(defn- syncMakeFile ""
+
+  [appid]
+
+  (let [top (fp! (ge :basedir) "games" appid)
+        f (fp! top "CMakeLists.txt")
+        c1 (cs/join "\n"
+                    (map #(str "Classes/" %)
+                         (b/CollectFilePaths (fp! top "Classes") ".cpp")))
+        h1 (cs/join "\n"
+                    (map #(str "Classes/" %)
+                         (b/CollectFilePaths (fp! top "Classes") ".h"))) ]
+    (b/ReplaceFile f #(cs/replace % "@@GAMEHEADERS@@" h1))
+    (b/ReplaceFile f #(cs/replace % "@@GAMESRC@@" c1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 (defn- clean-cocos ""
 
   [appid]
@@ -141,6 +158,7 @@
     (clean-cocos id)
     (deploy->core id)
     (deploy->app id)
+    (syncMakeFile id)
     fileset))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -156,19 +174,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- listFilePaths ""
+(defn- XXsyncMakeFile ""
 
   [appid]
 
-  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "fusilli") ".cpp")
-  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" appid) ".cpp")
-
-
-  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "fusilli") ".h")
-  (map #(str "GSL/" %)
-       (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "GSL") ".h"))
-  (b/CollectFilePaths (fp! (ge :srcDir) "cpp" appid) ".h")
-
+  (let [f (fp! (ge :basedir) "games" appid "CMakeLists.txt")
+        c1  (str
+              (cs/join "\n"
+                       (map #(str "Classes/" %)
+                            (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "fusilli") ".cpp")))
+              "\n"
+              (cs/join "\n"
+                       (map #(str "Classes/" %)
+                            (b/CollectFilePaths (fp! (ge :srcDir) "cpp" appid) ".cpp"))))
+        h1  (str
+              (cs/join "\n"
+                       (map #(str "Classes/" %)
+                            (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "fusilli") ".h")))
+              "\n"
+              (cs/join "\n"
+                       (map #(str "Classes/GSL/" %)
+                            (b/CollectFilePaths (fp! (ge :srcDir) "cpp" "GSL") ".h")))
+              "\n"
+              (cs/join "\n"
+                       (map #(str "Classes/" %)
+                            (b/CollectFilePaths (fp! (ge :srcDir) "cpp" appid) ".h")))) ]
+    (b/ReplaceFile f #(cs/replace % "@@GAMEHEADERS@@" h1))
+    (b/ReplaceFile f #(cs/replace % "@@GAMESRC@@" c1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
