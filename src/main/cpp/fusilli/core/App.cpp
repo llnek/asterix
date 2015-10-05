@@ -100,13 +100,13 @@ void App::PreLaunch(const c::Size& dz) {
   CC_DTOR()->setDisplayStats( dispFPS->getValue());
 
   if (portrait) {
-    largeSize = c::Vec2(1536, 2048);
-    mediumSize = c::Vec2(768, 1024);
-    smallSize = c::Vec2(320, 480);
+    largeSize = c::Size(1536, 2048);
+    mediumSize = c::Size(768, 1024);
+    smallSize = c::Size(320, 480);
   } else {
-    largeSize = c::Vec2(2048, 1536);
-    mediumSize = c::Vec2(1024, 768);
-    smallSize = c::Vec2(480, 320);
+    largeSize = c::Size(2048, 1536);
+    mediumSize = c::Size(1024, 768);
+    smallSize = c::Size(480, 320);
   }
 
   // if the frame's height is larger than
