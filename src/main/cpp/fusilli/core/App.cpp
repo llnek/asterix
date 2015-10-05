@@ -19,9 +19,9 @@
 NS_ALIAS(den, CocosDenshion)
 NS_BEGIN(fusii)
 
-static c::Size2 largeSize;
-static c::Size2 mediumSize;
-static c::Size2 smallSize;
+static c::Size largeSize;
+static c::Size mediumSize;
+static c::Size smallSize;
 
 //////////////////////////////////////////////////////////////////////////////
 // If you want to use packages manager to install more packages,
@@ -100,13 +100,13 @@ void App::PreLaunch(const c::Size& dz) {
   CC_DTOR()->setDisplayStats( dispFPS->getValue());
 
   if (portrait) {
-    largeSize = c::Size2(1536, 2048);
-    mediumSize = c::Size2(768, 1024);
-    smallSize = c::Size2(320, 480);
+    largeSize = c::Vec2(1536, 2048);
+    mediumSize = c::Vec2(768, 1024);
+    smallSize = c::Vec2(320, 480);
   } else {
-    largeSize = c::Size2(2048, 1536);
-    mediumSize = c::Size2(1024, 768);
-    smallSize = c::Size2(480, 320);
+    largeSize = c::Vec2(2048, 1536);
+    mediumSize = c::Vec2(1024, 768);
+    smallSize = c::Vec2(480, 320);
   }
 
   // if the frame's height is larger than
