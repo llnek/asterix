@@ -39,13 +39,15 @@ void Move::RemoveFromEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::AddToEngine(not_null<a::Engine*> e) {
+  CCLOG("adding system: Move");
   ShipMotionNode s;
   ships = e->GetNodeList(s.TypeId());
+  CCLOG("added system: Move");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Move::Update(float dt) {
+bool Move::OnUpdate(float dt) {
   auto node = ships->head;
   if (MGMS()->IsRunning()) {
     if (NNP(node)) {
@@ -60,27 +62,38 @@ bool Move::Update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::ProcessShipMotions(not_null<a::Node*> node, float dt) {
-
+CCLOG("aaa");
   auto motion = a::NodeFld<Motion>(node,"motion");
   auto sv = a::NodeFld<Velocity>(node,"vel");
   auto ship= a::NodeFld<Ship>(node,"ship");
+  CCLOG("aaa %p", ship);
+  CCLOG("aaa.sp %p", ship->sprite);
+
   auto pos = ship->Pos();
+  CCLOG("aaa, pos.x = %d", pos.x);
   auto x= pos.x;
   auto y= pos.y;
+  CCLOG("aaa");
 
   if (motion->right) {
     x = pos.x + dt * sv->x;
   }
+  CCLOG("aaa");
 
   if (motion->left) {
     x = pos.x - dt * sv->x;
   }
+  CCLOG("aaa");
 
   ship->SetPos(x,y);
+  CCLOG("aaa");
   Clamp(ship);
+  CCLOG("aaa");
 
   motion->right=false;
   motion->left=false;
+  CCLOG("bbb");
+
 }
 
 //////////////////////////////////////////////////////////////////////////

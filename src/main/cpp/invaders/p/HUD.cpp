@@ -44,7 +44,11 @@ f::XLayer* HUDLayer::Realize() {
   auto color=  c::Color3B::WHITE;//cx::White();
   auto scale=1;
 
-  auto r= cx::CreateMenuBtn("#icon_replay.png");
+  RegoAtlas("game-pics");
+  InitLabels();
+  InitIcons();
+
+  auto r= cx::CreateMenuBtn("icon_replay.png");
   r->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::OnReplay));
   r->setVisible(false);
@@ -52,7 +56,7 @@ f::XLayer* HUDLayer::Realize() {
   //r->setScale(scale);
   AddReplayIcon(r, cx::AnchorB());
 
-  auto b= cx::CreateMenuBtn("#icon_menu.png");
+  auto b= cx::CreateMenuBtn("icon_menu.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::ShowMenu));
   b->setColor(color);
@@ -64,18 +68,13 @@ f::XLayer* HUDLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::InitAtlases() {
-  RegoAtlas("game-pics");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void HUDLayer::InitLabels() {
   auto soff = f::CstVal<c::Integer>("S_OFF")->getValue();
   auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
+  auto fp= XCFGS()->GetFont("font.SmallTypeWriting");
 
-  m_scoreLabel = cx::CreateBmfLabel(0,0,"font.SmallTypeWriting", "0");
+  m_scoreLabel = cx::CreateBmfLabel(0,0,fp, "0");
   m_scoreLabel->setAnchorPoint(cx::AnchorBR());
   m_scoreLabel->setScale(XCFGS()->GetScale());
   m_scoreLabel->setPosition(wb.right - tile - soff,
@@ -91,7 +90,7 @@ void HUDLayer::InitIcons() {
   auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
 
-  lives = f::XLives::Create( this, "health.png", tile + soff,
+  lives = f::XLives::Create( this, "health.png", 3, tile + soff,
     wb.top - tile - soff);
 }
 

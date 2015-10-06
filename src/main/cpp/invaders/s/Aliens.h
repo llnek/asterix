@@ -20,6 +20,9 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Aliens : public BaseSystem {
+protected:
+  virtual bool OnUpdate(float dt);
+
 private:
 
   NO__CPYASS(Aliens)
@@ -39,7 +42,6 @@ public:
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
-  virtual bool Update(float dt);
 
   void ProcessMovement(not_null<a::Node*>, float dt);
   void ProcessBombs(not_null<a::Node*>, float dt);
@@ -59,7 +61,7 @@ public:
   f::ComObj* FindMinX(not_null<AlienSquad*> sqad);
   f::ComObj* FindMaxX(not_null<AlienSquad*> sqad);
 
-  virtual int Priority() { return a::Motion; }
+  virtual int Priority() { return a::AI; }
 
 };
 

@@ -35,7 +35,8 @@ protected:
   stdstr frameId;
   XHUDLayer* hud;
 
-  XLives();
+  XLives(int lives, int dir=1);
+  XLives()=delete;
 
 private:
 
@@ -45,6 +46,7 @@ public:
 
   static owner<XLives*> Create(not_null<XHUDLayer*>,
       const stdstr& frame,
+      int lives,
       float x, float y, int dir= 1);
 
   virtual ~XLives();

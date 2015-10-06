@@ -22,6 +22,7 @@ class CC_DLL GameLayer : public f::XGameLayer {
 private:
   NO__CPYASS(GameLayer)
   Factory* factory;
+  GameLayer();
   void InitAsh();
 public:
   virtual void Reset(bool newFlag) ;
@@ -37,7 +38,6 @@ public:
   void OnDone();
 
   virtual ~GameLayer();
-  GameLayer();
 
   virtual int GetIID() { return 2; }
   virtual f::XLayer* Realize();
@@ -49,6 +49,7 @@ public:
 //
 class CC_DLL Game : public f::XScene {
 private:
+  CREATE_FUNC(Game)
   NO__CPYASS(Game)
   Game();
   bool running;
@@ -58,6 +59,7 @@ public:
   virtual ~Game();
   virtual void Resume();
   virtual void Pause();
+  virtual void Run();
   virtual bool IsRunning();
 
   static owner<Game*> Create();

@@ -64,7 +64,6 @@ XLayer::~XLayer() {
 //
 c::SpriteBatchNode*
 XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
-
   auto i= c::TextureCache::getInstance()->addImage(
       XCFGS()->GetImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
@@ -120,9 +119,12 @@ void XLayer::AddAtlasItem(const stdstr& atlas,
   auto p= GetAtlas(atlas);
   auto ss = DCAST(c::Sprite*, n.get());
 
+  CCASSERT(p != nullptr, "atlas cannot be null");
+  CCASSERT(ss != nullptr, "sprite cannot be null");
+
   if (NNP(p)) {
     if (NNP(ss)) { ss->setBatchNode(p); }
-    p->addChild(n, pzx, ptag);
+    p->addChild(n.get(), pzx, ptag);
   }
 }
 
@@ -132,21 +134,17 @@ void XLayer::AddAtlasItem(const stdstr& atlas,
 void XLayer::AddItem(not_null<c::Node*> n, int* zx, int* tag) {
   auto ptag = ENP(tag) ?  ++lastTag : *tag;
   auto pzx = ENP(zx) ? lastZix : *zx;
-  this->addChild(n, pzx, ptag);
+  this->addChild(n.get(), pzx, ptag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::CenterAtlasImage(const stdstr& atlas,
-    const stdstr& frame) {
-
-  AddAtlasFrame(atlas, frame, cx::Center());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XLayer::CenterImage(const stdstr& frame) {
-  AddFrame(frame, cx::Center());
+void XLayer::CenterImage(const stdstr& name, int z) {
+  auto fp= XCFGS()->GetImage(name);
+  auto t= c::TextureCache::getInstance()->addImage(fp);
+  auto s= c::Sprite::createWithTexture(t);
+  s->setPosition(cx::Center());
+  this->addChild(s,z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -191,7 +189,6 @@ XScene* XLayer::GetScene() {
 void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
     not_null<c::MenuItem*> on,
     const c::Vec2& anchor, const c::Vec2& pos) {
-
   c::Vector<c::MenuItem*> items;
   items.pushBack(on);
   items.pushBack(off);
@@ -202,8 +199,9 @@ void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
 
   audio->setSelectedIndex( XCFGS()->HasAudio() ? 0 : 1);
   audio->setAnchorPoint(anchor);
-  //
-  auto menu= c::Menu::create(audio);
+
+  // need null to end var-args
+  auto menu= c::Menu::create(audio, nullptr);
   menu->setPosition(pos);
   AddItem(menu);
 }

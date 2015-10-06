@@ -19,6 +19,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Motions : public BaseSystem {
+protected:
+  virtual bool OnUpdate(float dt);
 private:
 
   NO__CPYASS(Motions)
@@ -40,7 +42,6 @@ public:
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
-  virtual bool Update(float dt);
 
   void ProcessAlienMotions(not_null<a::Node*>,float dt);
   void ControlCannon(not_null<a::Node*>, float dt);

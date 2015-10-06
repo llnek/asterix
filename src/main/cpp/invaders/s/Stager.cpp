@@ -42,8 +42,14 @@ void Stager::RemoveFromEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::AddToEngine(not_null<a::Engine*> e) {
+  CCLOG("adding system: Stager");
+  if (! inited) {
+    OnceOnly(e);
+    inited=true;
+  }
   ShipMotionNode s;
   ships = e->GetNodeList(s.TypeId());
+  CCLOG("added system: Stager");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,28 +69,25 @@ void Stager::InitShipSize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Stager::Update(float dt) {
+bool Stager::OnUpdate(float dt) {
   if (cx::IsTransitioning()) { return false; }
-  if (! inited) {
-    OnceOnly();
-    inited=true;
-  }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::OnceOnly() {
+void Stager::OnceOnly(a::Engine* e) {
 
   InitAlienSize();
   InitShipSize();
 
+  factory->CreateExplosions();
   factory->CreateMissiles();
   factory->CreateBombs();
-  factory->CreateExplosions();
-
   factory->CreateAliens();
   factory->CreateShip();
+
+  e->ForceSync();
 
   //cx::OnTouchOne(this);
   //cx::OnMouse(this);

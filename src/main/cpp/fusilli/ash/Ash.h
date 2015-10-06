@@ -46,7 +46,7 @@ enum SPV {
 
   PreUpdate =  100,
   NetPlay=    200,
-  Select=     300,
+  AI=     300,
   Motion=     400,
   Move=       500,
   Logic=   600,

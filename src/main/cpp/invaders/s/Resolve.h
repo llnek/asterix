@@ -20,6 +20,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Resolve : public BaseSystem {
+protected:
+  virtual bool OnUpdate(float dt);
 private:
 
   NO__CPYASS(Resolve)
@@ -39,7 +41,6 @@ public:
 
   virtual void RemoveFromEngine(not_null<a::Engine*> );
   virtual void AddToEngine(not_null<a::Engine*> );
-  virtual bool Update(float dt);
 
   void CheckMissiles();
   void CheckBombs();

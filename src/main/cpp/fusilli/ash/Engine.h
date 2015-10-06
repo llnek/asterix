@@ -84,6 +84,7 @@ public:
 
   void PurgeSystem (not_null<System*> );
   void PurgeSystems();
+  void ForceSync();
   void RegoSystem(not_null<System*> );
 
   void Update(float time);

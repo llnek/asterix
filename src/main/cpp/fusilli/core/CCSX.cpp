@@ -57,10 +57,10 @@ void SfxPlay(const stdstr& sound) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on) {
-  auto n="#sound_off.png";
+void CreateAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
+  auto n="sound_off.png";
   off= CreateMenuBtn(n,n,n);
-  n="#sound_on.png";
+  n="sound_on.png";
   on= CreateMenuBtn(n,n,n);
 }
 

@@ -25,13 +25,13 @@ private:
   void InitAssets();
   void InitCsts();
   void InitPools();
+  Config();
 
   float scale;
 
 public:
 
   virtual void HandleResolution(const c::Size& rs);
-  Config();
 
   virtual ResolutionPolicy GetPolicy();
   virtual const stdstr GetAppKey();
@@ -53,6 +53,7 @@ public:
 
   virtual ~Config() {}
 
+  static owner<f::XConfig*> Create();
 };
 
 

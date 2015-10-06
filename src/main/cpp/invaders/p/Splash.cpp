@@ -51,8 +51,7 @@ SplashLayer::SplashLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* SplashLayer::Realize() {
-  auto fp= XCFGS()->GetImage("game.bg");
-  CenterImage(fp);
+  CenterImage("game.bg");
   Title();
   Btns();
   return this;
@@ -63,13 +62,13 @@ f::XLayer* SplashLayer::Realize() {
 void SplashLayer::Title() {
   auto cw= cx::Center();
   auto wb= cx::VisBox();
-  AddFrame("#title.png", c::Vec2(cw.x, wb.top * 0.9));
+  AddFrame("title.png", c::Vec2(cw.x, wb.top * 0.9));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Btns() {
-  auto b1= cx::CreateMenuBtn("#play.png");
+  auto b1= cx::CreateMenuBtn("play.png");
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Splash::OnPlay));
   auto menu= c::Menu::create();
@@ -88,7 +87,7 @@ void Splash::OnPlay(c::Ref* b) {
   auto a= c::CallFunc::create(f);
   auto m = MainMenu::CreateWithBackAction(a);
 
-  cx::RunScene( m->Realize());
+  cx::RunScene( m);
 }
 
 //////////////////////////////////////////////////////////////////////////////

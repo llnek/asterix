@@ -15,6 +15,7 @@
 #include "2d/CCMenuItem.h"
 #include "2d/CCMenu.h"
 #include "Menu.h"
+#include "Game.h"
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(invaders)
 
@@ -60,11 +61,10 @@ f::XLayer* MenuLayer::Realize() {
   auto wb = cx::VisBox();
 
   // background
-  auto fp = XCFGS()->GetImage("mmenus.bg");
-  CenterImage(fp);
+  CenterImage("mmenus.bg");
 
   // title
-  fp= XCFGS()->GetFont("font.JellyBelly");
+  auto fp= XCFGS()->GetFont("font.JellyBelly");
   auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
                           fp,
                           "some text");
@@ -73,7 +73,7 @@ f::XLayer* MenuLayer::Realize() {
   AddItem(lb);
 
   // play button
-  auto b1= cx::CreateMenuBtn("#play.png");
+  auto b1= cx::CreateMenuBtn("play.png");
   b1->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   auto menu= c::Menu::create();
@@ -82,10 +82,10 @@ f::XLayer* MenuLayer::Realize() {
   AddItem(menu);
 
   // back-quit button
-  auto b= cx::CreateMenuBtn("#icon_back.png");
+  auto b= cx::CreateMenuBtn("icon_back.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnBack));
-  auto q= cx::CreateMenuBtn("#icon_quit.png");
+  auto q= cx::CreateMenuBtn("icon_quit.png");
   q->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnQuit));
   auto m2= cx::MkBackQuit(b, q, false);
@@ -105,14 +105,14 @@ f::XLayer* MenuLayer::Realize() {
   AddAudioIcons(off, on,
       cx::AnchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
+
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay(c::Ref* r) {
-//  auto g= Game::create()->Realize();
-//  cx::RunScene(g);
+  cx::RunScene(Game::Create());
 }
 
 //////////////////////////////////////////////////////////////////////////////

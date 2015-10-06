@@ -21,6 +21,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Move : public BaseSystem {
+protected:
+  virtual bool OnUpdate(float dt);
 private:
 
   NO__CPYASS(Move)
@@ -41,7 +43,6 @@ public:
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
-  virtual bool Update(float dt);
 
   void ProcessShipMotions(not_null<a::Node*>, float dt);
   void Clamp(not_null<Ship*> ship);

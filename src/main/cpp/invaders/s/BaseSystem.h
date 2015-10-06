@@ -31,12 +31,15 @@ protected:
   void Set(not_null<Factory*>, not_null<c::Dictionary*>);
   BaseSystem();
 
+  virtual bool OnUpdate(float) = 0;
+
 private:
 
   NO__CPYASS(BaseSystem)
 
 public:
 
+  virtual bool Update(float time);
   virtual ~BaseSystem();
 
 };

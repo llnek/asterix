@@ -221,8 +221,8 @@ void Engine::PurgeEntities(const stdstr& group) {
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
-  auto rego = NodeRegistry::Self();
   auto nl = NodeList::Create(nodeType);
+  auto rego = NodeRegistry::Self();
   for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
     Node* n= nullptr;
@@ -327,6 +327,12 @@ void Engine::OnModifyEntity(Entity* e) {
       }
     }
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Engine::ForceSync() {
+  HouseKeeping();
 }
 
 //////////////////////////////////////////////////////////////////////////////

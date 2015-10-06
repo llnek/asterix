@@ -49,6 +49,7 @@ void App::initGLContextAttrs() {
   //red,green,blue,alpha,depth,stencil
   GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
   c::GLView::setGLContextAttrs(glContextAttrs);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ bool App::applicationDidFinishLaunching() {
   auto glview = CC_DTOR()->getOpenGLView();
   auto sz = XCFGS()->GetGameSize();
 
-  CCLOG("game size, width=%d, height=%d", sz.width, sz.height);
+  CCLOG("game size, width=%d, height=%d", (int)sz.width, (int)sz.height);
 
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
@@ -91,7 +92,7 @@ void App::PreLaunch(const c::Size& dz) {
   auto fz = glview->getFrameSize();
   s::vector<stdstr> searchPaths;
 
-  CCLOG("frame size, width=%d, height=%d", fz.width, fz.height);
+  CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
 
   // set FPS. default is 1.0/60 if you don't call this
   CC_DTOR()->setAnimationInterval(1.0 / fps->getValue());
@@ -136,6 +137,7 @@ void App::PreLaunch(const c::Size& dz) {
   glview->setDesignResolutionSize(
     dz.width, dz.height, XCFGS()->GetPolicy());
 
+  XCFGS()->RunOnce();
   InitAudio();
 }
 

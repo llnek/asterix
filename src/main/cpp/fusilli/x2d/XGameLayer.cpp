@@ -78,7 +78,6 @@ void XGameLayer::NewGame(const GMode mode) {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* XGameLayer::Realize() {
-  NewGame(mode);
   return this;
 }
 

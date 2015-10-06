@@ -84,15 +84,15 @@ void XLives::DrawLives() {
 //
 owner<XLives*> XLives::Create(not_null<XHUDLayer*> hud,
     const stdstr& frame,
+    int lives,
     float x, float y, int dir) {
 
-  auto vs = new XLives();
+  auto vs = new XLives(lives, dir);
 
   vs->topLeft= c::Vec2(x,y);
   vs->frameId = frame;
   vs->hud= hud;
   vs->Reset();
-  vs->dir=dir;
   vs->DrawLives();
 
   return vs;
@@ -105,11 +105,11 @@ XLives::~XLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLives::XLives() {
+XLives::XLives(int lives, int dir) {
   hud= nullptr;
   curLives = -1;
-  totalLives = 0;
-  dir = 1;
+  totalLives = lives;
+  this->dir = dir;
 }
 
 

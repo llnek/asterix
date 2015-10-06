@@ -46,6 +46,7 @@ void Motions::RemoveFromEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::AddToEngine(not_null<a::Engine*> e) {
+  CCLOG("adding system: Motions");
   AlienMotionNode a;
   ShipMotionNode s;
   CannonCtrlNode c;
@@ -53,11 +54,12 @@ void Motions::AddToEngine(not_null<a::Engine*> e) {
   aliens = e->GetNodeList(a.TypeId());
   ships = e->GetNodeList(s.TypeId());
   cannons = e->GetNodeList(c.TypeId());
+  CCLOG("added system: Motions");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Motions::Update(float dt) {
+bool Motions::OnUpdate(float dt) {
   auto enemy = aliens->head;
   auto ship=ships->head;
   auto cns= cannons->head;

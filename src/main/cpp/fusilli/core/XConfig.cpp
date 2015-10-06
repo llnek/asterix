@@ -11,6 +11,7 @@
 
 #include "audio/include/SimpleAudioEngine.h"
 #include "XConfig.h"
+NS_ALIAS(den, CocosDenshion)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,10 +70,11 @@ XConfig::XConfig() {
   dict->setObject(c::Dictionary::create(), FONTS);
   dict->setObject(c::Dictionary::create(), SOUNDS);
   dict->setObject(c::Dictionary::create(), LEVELS);
+
   AddLevel("1");
   SetCsts();
-  SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
-  SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
+  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
+  den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -115,26 +117,26 @@ bool XConfig::HasAudio() {
 //
 float XConfig::SetMusicVolume(float v) {
   lastMusicVol= GetMusicVolume();
-  SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
+  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float XConfig::SetVolume(float v) {
   lastSfxVol = GetVolume();
-  SimpleAudioEngine::getInstance()->setEffectsVolume(v);
+  den::SimpleAudioEngine::getInstance()->setEffectsVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float XConfig::GetMusicVolume() {
-  return SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+  return den::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float XConfig::GetVolume() {
-  return SimpleAudioEngine::getInstance()->getEffectsVolume();
+  return den::SimpleAudioEngine::getInstance()->getEffectsVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -187,7 +189,7 @@ XPool* XConfig::GetPool(const stdstr& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<XPool*> XConfig::CreatePool(const stdstr& key) {
-  auto p = XPool::create();
+  auto p = new XPool();
   pools.insert(s::pair<stdstr, XPool*>(key, p));
   return p;
 }

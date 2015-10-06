@@ -20,6 +20,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Collide : public BaseSystem {
+protected:
+  virtual bool OnUpdate(float dt);
 private:
 
   NO__CPYASS(Collide)
@@ -41,7 +43,6 @@ public:
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*> );
-  virtual bool Update(float dt);
 
   bool MaybeCollide(not_null<f::ComObj*>, not_null<f::ComObj*>);
   void CheckMissilesBombs();

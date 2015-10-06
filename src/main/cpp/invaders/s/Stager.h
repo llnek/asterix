@@ -21,11 +21,12 @@ NS_BEGIN(invaders)
 class CC_DLL Stager : public BaseSystem {
 protected:
   void Fire(const stdstr& t, void* evt);
+  virtual bool OnUpdate(float);
 
   void InitAlienSize();
   void InitShipSize();
 
-  void OnceOnly();
+  void OnceOnly(a::Engine*);
 
   a::NodeList* ships;
   bool inited;
@@ -45,8 +46,6 @@ public:
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
-
-  virtual bool Update(float dt);
 
   virtual int Priority() { return a::PreUpdate; }
 

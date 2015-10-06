@@ -37,7 +37,7 @@ private:
   NO__CPYASS(BGLayer)
 public:
   virtual f::XLayer* Realize() {
-    CenterImage(XCFGS()->GetImage("game.bg"));
+    CenterImage("game.bg");
     return this;
   }
   virtual int GetIID() { return 1; }
@@ -62,6 +62,7 @@ GameLayer::GameLayer() {
 //
 f::XLayer* GameLayer::Realize() {
   //cx::OnKeyPolls(this->keyboard);
+  NewGame(f::GMode::ONE);
   return this;
 }
 
@@ -94,24 +95,30 @@ void GameLayer::Replay() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Play(bool newFlag) {
-  InitAsh();
   Reset(newFlag);
+  InitAsh();
+  GetScene()->Resume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::InitAsh() {
   auto options = c::Dictionary::create();
+  auto e = a::Engine::Create();
 
-  factory = new Factory(engine, options);
-  engine = a::Engine::Create();
+  CCLOG("about to init-ash");
 
-  engine->RegoSystem(new Stager(factory, options));
-  engine->RegoSystem(new Motions(factory, options));
-  engine->RegoSystem(new Move(factory, options));
-  engine->RegoSystem(new Aliens(factory, options));
-  engine->RegoSystem(new Collide(factory, options));
-  engine->RegoSystem(new Resolve(factory, options));
+  factory = new Factory(e, options);
+  engine = e;
+
+  e->RegoSystem(new Stager(factory, options));
+  e->RegoSystem(new Motions(factory, options));
+  e->RegoSystem(new Move(factory, options));
+  e->RegoSystem(new Aliens(factory, options));
+  e->RegoSystem(new Collide(factory, options));
+  e->RegoSystem(new Resolve(factory, options));
+
+  CCLOG("init-ash - ok");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,6 +196,12 @@ void Game::Resume() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void Game::Run() {
+  running= true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Game::Pause() {
   running= false;
 }
@@ -223,14 +236,21 @@ f::XScene* Game::Realize() {
   AddLayer(g, 2);
   AddLayer(h, 3)->Realize();
 
+  f::MainGame::Set(this);
+
   // realize game layer last
   g->Realize();
 
-  f::MainGame::Set(this);
   return this;
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+//
+owner<Game*> Game::Create() {
+  auto g= Game::create();
+  g->Realize();
+  return g;
+}
 
 
 

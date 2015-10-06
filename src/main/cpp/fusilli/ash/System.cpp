@@ -37,7 +37,7 @@ System::System() {
 //
 void System::Init() {
   next = previous = nullptr;
-  active=false;
+  active=true;
   priority = ash::Error;
 }
 

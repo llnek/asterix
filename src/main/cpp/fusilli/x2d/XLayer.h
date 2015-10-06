@@ -63,8 +63,7 @@ public:
   void AddFrame
     (const stdstr& frame, const c::Vec2& pos);
 
-  void CenterAtlasImage(const stdstr& atlas, const stdstr& frame);
-  void CenterImage(const stdstr& frame);
+  void CenterImage(const stdstr& name, int z= -1);
 
   void RemoveAtlasAll(const stdstr& atlas) ;
   void RemoveAll();

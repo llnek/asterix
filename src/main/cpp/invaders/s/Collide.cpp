@@ -42,16 +42,18 @@ void Collide::RemoveFromEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::AddToEngine(not_null<a::Engine*> e) {
+  CCLOG("adding system: Collide");
   AlienMotionNode a;
   ShipMotionNode s;
 
   aliens= e->GetNodeList(a.TypeId());
   ships= e->GetNodeList(s.TypeId());
+  CCLOG("added system: Collide");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::Update(float dt) {
+bool Collide::OnUpdate(float dt) {
   auto enemies= aliens->head;
   auto ship = ships->head;
 

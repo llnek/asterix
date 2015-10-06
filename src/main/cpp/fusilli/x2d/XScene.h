@@ -41,7 +41,8 @@ public:
   virtual XScene* Realize() = 0;
   virtual ~XScene();
 
-  virtual bool IsRunning() { return true; }
+  virtual bool IsRunning() { return false; }
+  virtual void Run() {}
   virtual void Pause() {}
   virtual void Resume() {}
 

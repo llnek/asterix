@@ -114,7 +114,17 @@ void ComObj::SetPos(float x, float y) {
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Vec2 ComObj::Pos() {
-  return NNP(sprite) ? sprite->getPosition() : c::Vec2(0,0);
+  CCLOG("YO");
+  c::Vec2 rc;
+  if (NNP(sprite)) {
+    CCLOG("YO111");
+    rc= sprite->getPosition();
+    CCLOG("YO333333");
+  } else {
+    rc= c::Vec2(0,0);
+  }
+  CCLOG("WTF");
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -32,7 +32,7 @@ AppDelegate::AppDelegate() {
   r->Register( new g::CannonCtrlNode());
 
   // step.2: set up app-config
-  f::XConfig::Bind(new g::Config());
+  f::XConfig::Bind(g::Config::Create());
 }
 
 //////////////////////////////////////////////////////////////////////////////

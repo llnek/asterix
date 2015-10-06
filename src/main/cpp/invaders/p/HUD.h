@@ -24,9 +24,8 @@ class CC_DLL HUDLayer : public f::XHUDLayer {
 private:
   NO__CPYASS(HUDLayer)
 
-  void InitAtlases();
-  void InitIcons();
   void InitLabels();
+  void InitIcons();
 
   void ShowMenu(c::Ref*);
   void OnReplay(c::Ref*);

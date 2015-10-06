@@ -33,7 +33,7 @@ AlienSquad::~AlienSquad() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
-  : ComObj(s, 1, value) {
+  : ComObj(s.get(), 1, value) {
   this->rank=rank;
 }
 
@@ -44,7 +44,7 @@ Alien::~Alien() {
 
 //////////////////////////////////////////////////////////////////////////////
 Bomb::Bomb(not_null<c::Sprite*> s)
-  : ComObj(s) {
+  : ComObj(s.get()) {
 
   auto wz= cx::VisRect();
   x=0;
@@ -71,7 +71,7 @@ Cannon::~Cannon() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Explosion::Explosion(not_null<c::Sprite*> s)
-  : ComObj(s) {
+  : ComObj(s.get()) {
   frameTime= 0.1;
 }
 
@@ -121,7 +121,7 @@ Looper::~Looper() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Missile::Missile(not_null<c::Sprite*> s)
-  : ComObj(s) {
+  : ComObj(s.get()) {
 
   auto wz= cx::VisRect();
   x= 0;
@@ -150,7 +150,7 @@ Motion::~Motion() {
 Ship::Ship(not_null<c::Sprite*> s,
     const stdstr& f1, const stdstr& f2)
 
-  : ComObj(s) {
+  : ComObj(s.get()) {
 
   this->frame0 = f1;
   this->frame1= f2;

@@ -204,10 +204,11 @@ a::Entity* Factory::CreateShip() {
   auto wb= cx::VisBox();
   auto y = sz.height + wb.bottom + (5/60 * wz.size.height);
   auto x = wb.left + wz.size.width * 0.5;
+  auto ship = new Ship(s, "ship_1.png", "ship_0.png");
+
+  CCASSERT(s != nullptr, "ship sprite cannot be null");
 
   MGML()->AddAtlasItem("game-pics", s);
-
-  auto ship = new Ship(s, "ship_1.png", "ship_0.png");
   ship->Inflate(x,y);
 
   ent->Rego(new Velocity(150,0));

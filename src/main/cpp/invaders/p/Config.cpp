@@ -49,9 +49,16 @@ owner<c::Scene*> Config::StartWith() {
 //
 Config::Config() {
   scale = 1;
-  InitAssets();
-  InitCsts();
-  InitPools();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<f::XConfig*> Config::Create() {
+  Config* c = new Config();
+  c->InitAssets();
+  c->InitCsts();
+  c->InitPools();
+  return c;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -77,14 +84,17 @@ void Config::HandleResolution(const c::Size& rs) {
 //
 void Config::RunOnce() {
   auto c= c::SpriteFrameCache::getInstance();
-  c->addSpriteFramesWithFile( GetAtlas("game-pics"));
-  c->addSpriteFramesWithFile( GetAtlas("lang-pics"));
+  auto fp= GetAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprites sheets %s", fp.c_str());
+  fp=  GetAtlas("lang-pics");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprites sheets %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::InitAssets() {
-
 
   auto d = GetFragment(ATLASES);
 
@@ -94,6 +104,8 @@ void Config::InitAssets() {
   d= GetFragment(IMAGES);
   d->setObject(c::String::create("pics/bg.png"), "mmenus.bg");
   d->setObject(c::String::create("pics/bg.png"), "game.bg");
+  d->setObject(c::String::create("l10n/en/images.png"), "lang-pics");
+  d->setObject(c::String::create("pics/images.png"), "game-pics");
 
   d= GetFragment(SOUNDS);
   d->setObject(c::String::create("sfx/MineExplosion.mp3"), "game_end");
@@ -123,11 +135,11 @@ void Config::InitCsts() {
 
   auto d = GetFragment(CSTS);
 
-  d->setObject(c::String::create("live-missiles"), "P_LMS");
-  d->setObject(c::String::create("missiles"), "P_MS");
-  d->setObject(c::String::create("bombs"), "P_BS");
-  d->setObject(c::String::create("explosions"), "P_ES");
-  d->setObject(c::String::create("live-bombs"), "P_LBS");
+//  d->setObject(c::String::create("live-missiles"), "P_LMS");
+//  d->setObject(c::String::create("missiles"), "P_MS");
+//  d->setObject(c::String::create("bombs"), "P_BS");
+//  d->setObject(c::String::create("explosions"), "P_ES");
+//  d->setObject(c::String::create("live-bombs"), "P_LBS");
 
   d->setObject(c::Integer::create(42), "CELLS");
   d->setObject(c::Integer::create(6), "COLS");
@@ -143,11 +155,10 @@ void Config::InitCsts() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::InitPools() {
-  c::Dictionary* d = GetFragment(POOLS);
-
-  d->setObject(f::XPool::create(), "missiles");
-  d->setObject(f::XPool::create(), "bombs");
-  d->setObject(f::XPool::create(), "explosions");
+  CreatePool("explosions");
+  CreatePool("aliens");
+  CreatePool("missiles");
+  CreatePool("bombs");
 }
 
 //////////////////////////////////////////////////////////////////////////

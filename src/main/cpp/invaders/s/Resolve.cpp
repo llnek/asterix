@@ -42,16 +42,18 @@ void Resolve::RemoveFromEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::AddToEngine(not_null<a::Engine*> e) {
+  CCLOG("adding system: Resolve");
   AlienMotionNode a;
   ShipMotionNode s;
 
   aliens= e->GetNodeList(a.TypeId());
   ships= e->GetNodeList(s.TypeId());
+  CCLOG("added system: Resolve");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::Update(float dt) {
+bool Resolve::OnUpdate(float dt) {
   auto enemies = aliens->head;
   auto ship = ships->head;
 
