@@ -38,7 +38,7 @@ BaseSystem::~BaseSystem() {
 //////////////////////////////////////////////////////////////////////////
 //
 bool BaseSystem::Update(float time) {
-  CCLOG("update called on system: %s", this->TypeId().c_str());
+  //CCLOG("update called on system: %s", this->TypeId().c_str());
   return OnUpdate(time);
 }
 

@@ -118,7 +118,7 @@ void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
     for (auto it2 = c2.begin(); it2 != c2.end(); ++it2) {
       auto e2= *it2;
       auto e = *it;
-      if (e->status &&
+      if (e->status && e2->status &&
           MaybeCollide(e,e2)) {
         e->Hurt();
         e2->Hurt();

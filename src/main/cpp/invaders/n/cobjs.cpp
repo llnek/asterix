@@ -47,8 +47,8 @@ Bomb::Bomb(not_null<c::Sprite*> s)
   : ComObj(s.get()) {
 
   auto wz= cx::VisRect();
-  x=0;
-  y= -50 * wz.size.height / 480;
+  vel.x=0;
+  vel.y= -50 * wz.size.height / 480;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -124,8 +124,8 @@ Missile::Missile(not_null<c::Sprite*> s)
   : ComObj(s.get()) {
 
   auto wz= cx::VisRect();
-  x= 0;
-  y= 150 * wz.size.height / 480;
+  vel.x= 0;
+  vel.y= 150 * wz.size.height / 480;
 }
 
 //////////////////////////////////////////////////////////////////////////////

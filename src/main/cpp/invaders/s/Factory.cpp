@@ -187,10 +187,8 @@ a::Entity* Factory::CreateAliens() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::BornShip() {
-  auto s= MGML()->GetPlayer();
-  if (NNP(s)) {
-    s->Inflate();
-  }
+  CCASSERT(player != nullptr, "player cannot be null");
+  player->Inflate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -210,6 +208,7 @@ a::Entity* Factory::CreateShip() {
 
   MGML()->AddAtlasItem("game-pics", s);
   ship->Inflate(x,y);
+  player= ship;
 
   ent->Rego(new Velocity(150,0));
   ent->Rego(new Looper());

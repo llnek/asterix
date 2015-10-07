@@ -25,6 +25,7 @@ protected:
 
   c::Dictionary* state;
   a::Engine* engine;
+  f::ComObj* player;
 
 private:
 

@@ -10,6 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "audio/include/SimpleAudioEngine.h"
+#include "base/CCEventListenerKeyboard.h"
+#include "base/CCEventListenerMouse.h"
+#include "base/CCEventListenerTouch.h"
+
 #include "ash/Engine.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -50,12 +54,8 @@ c::Dictionary* XGameLayer::GetLCfg() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool XGameLayer::KeyPoll(c::EventKeyboard::KeyCode key) {
-  auto it = keyboard.find(key);
-  if (it != keyboard.end()) {
-    return it->second;
-  } else {
-    return false;
-  }
+  int k= (int) key;
+  return k >= 0 && k < 256 ? keyboard[k] : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,11 +68,144 @@ const Box4 XGameLayer::GetEnclosureBox() {
 //
 void XGameLayer::NewGame(const GMode mode) {
   if (XCFGS()->HasAudio()) {
-    den::SimpleAudioEngine::getInstance()->stopAllEffects();
     den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    den::SimpleAudioEngine::getInstance()->stopAllEffects();
   }
+  EnableEventHandlers();
   OnNewGame(mode);
   this->scheduleUpdate();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::DisableEventHandlers() {
+  _eventDispatcher->removeAllEventListeners();
+  for (int n=0; n < 256; ++n) {
+    keyboard[n]=false;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::EnableEventHandlers() {
+  DisableEventHandlers();
+  try {
+    InitMouse();
+  } catch (...) {
+  }
+  try {
+    InitKeys();
+  } catch (...) {
+  }
+  try {
+    InitTouch();
+  } catch (...) {
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::InitMouse() {
+  auto ln = c::EventListenerMouse::create();
+  ln->onMouseMove = CC_CALLBACK_1(XGameLayer::OnMouseMove, this);
+  ln->onMouseUp = CC_CALLBACK_1(XGameLayer::OnMouseUp, this);
+  ln->onMouseDown = CC_CALLBACK_1(XGameLayer::OnMouseDown, this);
+  ln->onMouseScroll = CC_CALLBACK_1(XGameLayer::OnMouseScroll, this);
+
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::OnMouseMove(c::Event* e) {
+  auto evt = (c::EventMouse*) e;
+  evt->getDelta();
+  evt->getLocation();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::OnMouseDown(c::Event*) {
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::OnMouseUp(c::Event*) {
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::OnMouseScroll(c::Event*) {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::OnKeyReleased(c::EventKeyboard::KeyCode code, c::Event* ) {
+  //CCLOG("key released = %d", (int)code);
+  int n= (int)code;
+  if ( n >= 0 && n < 256) {
+    keyboard[n]=false;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::OnKeyPressed(c::EventKeyboard::KeyCode code, c::Event* ) {
+  //CCLOG("key pressed = %d", (int)code);
+  int n= (int)code;
+  if ( n >= 0 && n < 256) {
+    keyboard[n]= true;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::InitKeys() {
+
+  auto ln = c::EventListenerKeyboard::create();
+
+  ln->onKeyReleased = CC_CALLBACK_2(XGameLayer::OnKeyReleased, this);
+  ln->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
+
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::InitTouch() {
+  //  Create a "one by one" touch event listener
+  // (processes one touch at a time)
+  auto ln= c::EventListenerTouchOneByOne::create();
+
+  // trigger when you push down
+  ln->onTouchBegan = [](c::Touch* touch, c::Event* event){
+
+      return true; // if you are consuming it
+  };
+
+  // trigger when moving touch
+  ln->onTouchMoved = [](c::Touch* touch, c::Event* event){
+      // your code
+  };
+
+  // trigger when you let up
+  ln->onTouchEnded = [=](c::Touch* touch, c::Event* event){
+      // your code
+  };
+
+  // When "swallow touches" is true, then returning 'true' from the
+  // onTouchBegan method will "swallow" the touch event, preventing
+  // other listeners from using it.
+  ln->setSwallowTouches(true);
+
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -103,15 +236,6 @@ void XGameLayer::update(float dt) {
     engine->Update(dt);
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const s::map<c::EventKeyboard::KeyCode,bool>&
-XGameLayer::Keys() {
-  return keyboard;
-}
-
-
 
 
 

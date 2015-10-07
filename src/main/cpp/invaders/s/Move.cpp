@@ -62,37 +62,31 @@ bool Move::OnUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::ProcessShipMotions(not_null<a::Node*> node, float dt) {
-CCLOG("aaa");
+
   auto motion = a::NodeFld<Motion>(node,"motion");
   auto sv = a::NodeFld<Velocity>(node,"vel");
   auto ship= a::NodeFld<Ship>(node,"ship");
-  CCLOG("aaa %p", ship);
-  CCLOG("aaa.sp %p", ship->sprite);
 
   auto pos = ship->Pos();
-  CCLOG("aaa, pos.x = %d", pos.x);
   auto x= pos.x;
   auto y= pos.y;
-  CCLOG("aaa");
+
+//  CCLOG("motion right = %s", motion->right ? "true" : "false");
+//  CCLOG("motion left = %s", motion->left ? "true" : "false");
 
   if (motion->right) {
     x = pos.x + dt * sv->x;
   }
-  CCLOG("aaa");
 
   if (motion->left) {
     x = pos.x - dt * sv->x;
   }
-  CCLOG("aaa");
 
   ship->SetPos(x,y);
-  CCLOG("aaa");
   Clamp(ship);
-  CCLOG("aaa");
 
   motion->right=false;
   motion->left=false;
-  CCLOG("bbb");
 
 }
 

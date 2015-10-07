@@ -141,10 +141,14 @@ void Motions::ScanInput(not_null<a::Node*> node, float dt) {
   if (MGML()->KeyPoll(
       c::EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
     m->right=true;
+  } else {
+    m->right=false;
   }
   if (MGML()->KeyPoll(
       c::EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
     m->left=true;
+  } else {
+    m->left=false;
   }
 }
 

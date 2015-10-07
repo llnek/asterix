@@ -113,8 +113,7 @@ void Resolve::CheckAliens(not_null<a::Node*> node) {
     auto en= *it;
     if (en->status) {
       if (en->health <= 0) {
-//        f::MainGame::Get()->EarnScore(en->value);
-        MGML()->SendMsg("earnscore", en);
+        MGML()->SendMsg("/game/player/earnscore", en);
         en->Deflate();
       }
     }
@@ -129,7 +128,7 @@ void Resolve::CheckShip(not_null<a::Node*> node) {
   if (ship->status &&
       ship->health <= 0) {
     ship->Deflate();
-    MGML()->SendMsg("PlayerKilled", nullptr);
+    MGML()->SendMsg("/game/player/killed", nullptr);
   }
 }
 

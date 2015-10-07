@@ -73,9 +73,6 @@ public:
 
   Bomb(not_null<c::Sprite*>);
   virtual ~Bomb();
-
-  float x;
-  float y;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -142,9 +139,6 @@ public:
 
   Missile(not_null<c::Sprite*>);
   virtual ~Missile();
-
-  float x;
-  float y;
 };
 
 //////////////////////////////////////////////////////////////////////////////

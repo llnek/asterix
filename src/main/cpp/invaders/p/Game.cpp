@@ -61,7 +61,6 @@ GameLayer::GameLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* GameLayer::Realize() {
-  //cx::OnKeyPolls(this->keyboard);
   NewGame(f::GMode::ONE);
   return this;
 }
@@ -165,10 +164,9 @@ void GameLayer::OnDone() {
 //
 void GameLayer::SendMsg(const stdstr& topic, void* msg) {
 
-  if (topic == "/game/players/earnscore") {
-    c::Integer* i = (c::Integer*) msg;
-    OnEarnScore(i->getValue());
-    i->release();
+  if (topic == "/game/player/earnscore") {
+    f::ComObj* i = (f::ComObj*) msg;
+    OnEarnScore(i->score);
   }
 
   if (topic == "/hud/showmenu") {
@@ -182,7 +180,7 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
     Play(false);
   }
 
-  if (topic == "/game/players/killed") {
+  if (topic == "/game/player/killed") {
     OnPlayerKilled();
   }
 

@@ -52,7 +52,7 @@ void Aliens::AddToEngine(not_null<a::Engine*> e) {
 //
 bool Aliens::OnUpdate(float dt) {
   auto node=baddies->head;
-CCLOG("aliens-update, node = %p", node);
+
   if (MGMS()->IsRunning() && NNP(node)) {
     ProcessMovement(node,dt);
     ProcessBombs(node,dt);
@@ -64,7 +64,7 @@ CCLOG("aliens-update, node = %p", node);
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::ProcessMovement(not_null<a::Node*> node, float dt) {
-CCLOG("move");
+
   auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto lpr = a::NodeFld<Looper>(node, "looper");
   auto tm= lpr->timer0;
@@ -74,13 +74,13 @@ CCLOG("move");
     cx::UndoTimer(tm);
     SNPTR(lpr->timer0)
   }
-  CCLOG("move -ok");
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::ProcessBombs(not_null<a::Node*> node, float dt) {
-  CCLOG("boimbs");
+
   auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
   auto lpr = a::NodeFld<Looper>(node, "looper");
   auto tm= lpr->timer1;
@@ -90,7 +90,7 @@ void Aliens::ProcessBombs(not_null<a::Node*> node, float dt) {
     cx::UndoTimer(tm);
     SNPTR(lpr->timer1)
   }
-  CCLOG("bombs 0o");
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,8 @@ void Aliens::CheckBomb(not_null<AlienSquad*> sqad) {
 
   if (rc.size() > 0) {
     pos = floor( c::rand_0_1() * rc.size());
-    auto v= p->GetAt(pos)->sprite->getPosition();
+    int n=rc[pos];
+    auto v= p->GetAt(n)->sprite->getPosition();
     DropBomb(v.x, v.y-4);
   }
 }

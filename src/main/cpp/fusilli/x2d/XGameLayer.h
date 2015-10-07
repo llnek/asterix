@@ -18,6 +18,8 @@
 #include "ash/Engine.h"
 #include "XHUDLayer.h"
 
+#include <array>
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_ALIAS(a, ash)
@@ -31,7 +33,7 @@ class CC_DLL XGameLayer : public XLayer {
 
 protected:
 
-  s::map<c::EventKeyboard::KeyCode, bool> keyboard;
+  s::array<bool, 256> keyboard;
   a::Engine* engine;
 
   GMode mode;
@@ -39,6 +41,11 @@ protected:
 
   virtual void SetMode(const GMode m) { mode=m; }
   virtual void OnNewGame(const GMode) = 0;
+  virtual void DisableEventHandlers();
+  virtual void EnableEventHandlers();
+  virtual void InitMouse();
+  virtual void InitKeys();
+  virtual void InitTouch();
   XGameLayer();
 
 private:
@@ -58,7 +65,6 @@ public:
   virtual XLayer* Realize();
   virtual ~XGameLayer();
 
-  const s::map<c::EventKeyboard::KeyCode,bool>& Keys();
   bool KeyPoll(c::EventKeyboard::KeyCode key);
   c::Dictionary* GetLCfg();
 
@@ -66,6 +72,15 @@ public:
   XHUDLayer* GetHUD(int tag=3);
 
   void NewGame(const GMode);
+
+  void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
+  void OnKeyPressed(c::EventKeyboard::KeyCode, c::Event* );
+
+  void OnMouseMove(c::Event*);
+  void OnMouseDown(c::Event*);
+  void OnMouseUp(c::Event*);
+  void OnMouseScroll(c::Event*);
+
 
 };
 
