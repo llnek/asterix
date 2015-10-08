@@ -196,6 +196,14 @@ owner<XPool*> XConfig::CreatePool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void XConfig::ResetPools() {
+  for (auto it = pools.begin(); it != pools.end(); ++it) {
+    it->second->ClearAll();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 c::Dictionary* XConfig::GetLevel(const stdstr& n) {
   auto d= GetFragment(LEVELS);
   return SCAST(c::Dictionary*,  d->objectForKey(n));

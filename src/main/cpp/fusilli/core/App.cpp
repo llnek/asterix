@@ -137,6 +137,7 @@ void App::PreLaunch(const c::Size& dz) {
   glview->setDesignResolutionSize(
     dz.width, dz.height, XCFGS()->GetPolicy());
 
+  XCFGS()->HandleResolution(fz);
   XCFGS()->RunOnce();
   InitAudio();
 }

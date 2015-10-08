@@ -36,7 +36,6 @@ public:
 
   void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
-  void OnQuit(c::Ref*);
 
   // standard create
   CREATE_FUNC(MenuLayer)
@@ -87,7 +86,7 @@ f::XLayer* MenuLayer::Realize() {
       CC_MENU_SELECTOR(MenuLayer::OnBack));
   auto q= cx::CreateMenuBtn("icon_quit.png");
   q->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::OnQuit));
+      CC_MENU_SELECTOR(XLayer::OnQuit));
   auto m2= cx::MkBackQuit(b, q, false);
   auto sz= b->getContentSize();
 
@@ -124,13 +123,6 @@ void MenuLayer::OnBack(c::Ref* r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnQuit(c::Ref* r) {
-  auto p = (MainMenu*) getParent();
-  p->OnQuitAction();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
   auto m = new MainMenu();
   m->backAction= back;
@@ -143,12 +135,6 @@ MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
 //
 void MainMenu::OnBackAction() {
   backAction->execute();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void MainMenu::OnQuitAction() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

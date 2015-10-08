@@ -77,7 +77,7 @@ float Config::GetScale() {
 //
 void Config::HandleResolution(const c::Size& rs) {
   //for default font, we use 48pt
-  scale = 52/256 * rs.width /320;
+  scale = 0.15;//52/256 * rs.width /320;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -140,6 +140,9 @@ void Config::InitCsts() {
 //  d->setObject(c::String::create("bombs"), "P_BS");
 //  d->setObject(c::String::create("explosions"), "P_ES");
 //  d->setObject(c::String::create("live-bombs"), "P_LBS");
+
+  d->setObject(c::Bool::create(false), "showFPS");
+//  d->setObject(c::Integer::create(60), "FPS");
 
   d->setObject(c::Integer::create(42), "CELLS");
   d->setObject(c::Integer::create(6), "COLS");

@@ -78,6 +78,8 @@ void GameLayer::Reset(bool newFlag) {
     RegoAtlas("lang-pics");
   }
 
+  XCFGS()->ResetPools();
+
   if (newFlag) {
     GetHUD()->ResetAsNew();
   } else {
@@ -97,7 +99,7 @@ void GameLayer::Replay() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Play(bool newFlag) {
-  CCLOG("play game, newflag = %s", newFlag ? "true" : "false");
+  //CCLOG("play game, newflag = %s", newFlag ? "true" : "false");
   Reset(newFlag);
   InitAsh();
   GetScene()->Resume();
@@ -158,7 +160,7 @@ void GameLayer::OnEarnScore(int score) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::OnGameOver() {
-  CCLOG("game over!");
+  //CCLOG("game over!");
   auto g= (Game*) getParent();
   g->Pause();
   Reset(false);
@@ -182,7 +184,7 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
   }
   else
   if (topic == "/hud/replay") {
-    Play(false);
+    Replay();
   }
   else
   if (topic == "/game/player/killed") {

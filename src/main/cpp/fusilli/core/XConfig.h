@@ -87,6 +87,7 @@ public:
 
   c::Ref* GetCst(const stdstr& cst);
   XPool* GetPool(const stdstr& n);
+  void ResetPools();
 
   void ToggleAudio(bool s);
   bool HasAudio();

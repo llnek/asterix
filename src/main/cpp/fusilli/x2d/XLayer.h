@@ -34,7 +34,6 @@ protected:
   int lastZix;
 
   void AudioCallback(c::Ref* sender);
-  virtual void OnQuit(c::Ref*);
   XLayer();
 
 private:
@@ -44,6 +43,7 @@ private:
 public:
 
   virtual c::SpriteBatchNode* GetAtlas(const stdstr& name);
+  virtual void OnQuit(c::Ref*);
   virtual XLayer* Realize();
 
   c::SpriteBatchNode* RegoAtlas(const stdstr& name,

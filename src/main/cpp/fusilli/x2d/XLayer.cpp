@@ -15,7 +15,7 @@
 #include "2d/CCMenu.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-//#include "YesNo.h"
+#include "YesNo.h"
 #include "XLayer.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -39,8 +39,8 @@ void XLayer::AudioCallback(c::Ref* r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::OnQuit(c::Ref* rr) {
-  //c::Scene* s= YesNo::Create()->Realize();
-  //c::Director::getInstance()->pushScene(s);
+  auto s= YesNo::Create("Are you sure ?");
+  CC_DTOR()->pushScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////

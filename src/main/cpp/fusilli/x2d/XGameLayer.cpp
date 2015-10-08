@@ -78,9 +78,7 @@ void XGameLayer::NewGame(const GMode mode) {
   EnableEventHandlers();
   OnNewGame(mode);
   ++tries;
-  if (tries == 1L) {
-    this->scheduleUpdate();
-  }
+  this->scheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -92,7 +90,7 @@ void XGameLayer::FinzGame() {
   }
   DisableEventHandlers();
   OnGameOver();
-  //this->unscheduleUpdate();
+  this->unscheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -119,18 +117,22 @@ void XGameLayer::DisableEventHandlers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::EnableEventHandlers() {
+  CCLOG("enabling event handlers");
   DisableEventHandlers();
   try {
     InitMouse();
   } catch (...) {
+    CCLOG("failed to init-mouse");
   }
   try {
     InitKeys();
   } catch (...) {
+    CCLOG("failed to init-keys");
   }
   try {
     InitTouch();
   } catch (...) {
+    CCLOG("failed to init-touch");
   }
 }
 
@@ -138,6 +140,9 @@ void XGameLayer::EnableEventHandlers() {
 //
 void XGameLayer::InitMouse() {
   auto ln = c::EventListenerMouse::create();
+
+  CCLOG("init-mouse with listener = %p", ln);
+
   ln->onMouseMove = CC_CALLBACK_1(XGameLayer::OnMouseMove, this);
   ln->onMouseUp = CC_CALLBACK_1(XGameLayer::OnMouseUp, this);
   ln->onMouseDown = CC_CALLBACK_1(XGameLayer::OnMouseDown, this);
@@ -205,6 +210,8 @@ void XGameLayer::InitKeys() {
 
   auto ln = c::EventListenerKeyboard::create();
 
+  CCLOG("init-keys with listener = %p", ln);
+
   ln->onKeyReleased = CC_CALLBACK_2(XGameLayer::OnKeyReleased, this);
   ln->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
 
@@ -218,6 +225,8 @@ void XGameLayer::InitTouch() {
   //  Create a "one by one" touch event listener
   // (processes one touch at a time)
   auto ln= c::EventListenerTouchOneByOne::create();
+
+  CCLOG("init-touch with listener = %p", ln);
 
   // trigger when you push down
   ln->onTouchBegan = [](c::Touch* touch, c::Event* event){
@@ -269,8 +278,6 @@ XHUDLayer* XGameLayer::GetHUD(int tag) {
 void XGameLayer::update(float dt) {
   if (GetScene()->IsRunning() &&
       NNP(engine)) {
-    CCLOG("update called, engine = ???");
-    CCLOG("update called, engine = %p", this->engine);
     engine->Update(dt);
   }
 }

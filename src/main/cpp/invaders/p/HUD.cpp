@@ -78,10 +78,10 @@ void HUDLayer::InitLabels() {
   auto fp= XCFGS()->GetFont("font.SmallTypeWriting");
 
   scoreLabel = cx::CreateBmfLabel(0,0,fp, "0");
-  scoreLabel->setAnchorPoint(cx::AnchorBR());
+  scoreLabel->setAnchorPoint(cx::AnchorTR());
   scoreLabel->setScale(XCFGS()->GetScale());
   scoreLabel->setPosition(wb.right - tile - soff,
-    wb.top - tile - soff - cx::GetScaledHeight(scoreLabel));
+    wb.top - tile);// - soff - cx::GetScaledHeight(scoreLabel));
 
   this->addChild(scoreLabel, lastZix, ++lastTag);
 }

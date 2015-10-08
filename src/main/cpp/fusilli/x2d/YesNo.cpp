@@ -56,14 +56,16 @@ XLayer* YesNoLayer::Realize() {
   CenterImage("game.bg");
   AddItem(qn);
 
-  auto b1= cx::CreateMenuBtn("#continue.png");
+  auto b1= cx::CreateMenuBtn("continue.png");
   b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnYes));
-  auto b2= cx::CreateMenuBtn("#cancel.png");
-  b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnNo));
+
+  auto b2= cx::CreateMenuBtn("cancel.png");
+  b2->setTarget(par, CC_MENU_SELECTOR(YesNo::OnNo));
   auto menu= c::Menu::create();
 
   menu->addChild(b1);
   menu->addChild(b2);
+  menu->alignItemsVerticallyWithPadding(10);
   menu->setPosition(cw);
   AddItem(menu);
 

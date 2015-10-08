@@ -53,6 +53,7 @@ void XHUDLayer::Reset() {
   if (NNP(lives)) {
     lives->Resurrect();
   }
+  UpdateScore(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
