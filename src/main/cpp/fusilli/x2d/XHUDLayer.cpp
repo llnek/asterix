@@ -91,7 +91,8 @@ void XHUDLayer::AddMenuIcon(not_null<c::MenuItem*> b,
   auto hw = cx::GetScaledWidth(b) * 0.5;
   auto menu= c::Menu::create();
   auto wz= cx::VisBox();
-  float x, y;
+  float y;
+  int zx = 10;
 
   menu->addChild(b);
 
@@ -102,7 +103,7 @@ void XHUDLayer::AddMenuIcon(not_null<c::MenuItem*> b,
   }
 
   menu->setPosition(wz.right - tile - hw, y);
-  AddItem(menu);
+  AddItem(menu, &zx);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -115,7 +116,8 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
   auto hw = cx::GetScaledWidth(c) * 0.5;
   auto menu= c::Menu::create();
   auto wz= cx::VisBox();
-  float x, y;
+  float y;
+  int zx= 10;
 
   menu->addChild(c);
 
@@ -126,8 +128,9 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
   }
 
   menu->setPosition(wz.left + tile + hw, y);
+  menu->setVisible(false);
   replayBtn=menu;
-  AddItem(menu);
+  AddItem(menu, &zx);
 }
 
 

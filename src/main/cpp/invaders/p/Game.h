@@ -35,8 +35,8 @@ public:
 
   void OnPlayerKilled();
   void OnEarnScore(int);
-  void OnDone();
 
+  virtual void OnGameOver();
   virtual ~GameLayer();
 
   virtual int GetIID() { return 2; }

@@ -13,6 +13,7 @@
 #include "2d/CCLabel.h"
 #include "core/CCSX.h"
 #include "x2d/XLives.h"
+#include "x2d/MainGame.h"
 #include "HUD.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(f, fusii)
@@ -26,15 +27,18 @@ HUDLayer::~HUDLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 HUDLayer::HUDLayer() {
-  SNPTR(m_scoreLabel)
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::ShowMenu(c::Ref* r) {
-
+  MGML()->SendMsg("/hud/showmenu", nullptr);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::OnReplay(c::Ref* r) {
-
+  MGML()->SendMsg("/hud/replay", nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,7 +55,6 @@ f::XLayer* HUDLayer::Realize() {
   auto r= cx::CreateMenuBtn("icon_replay.png");
   r->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::OnReplay));
-  r->setVisible(false);
   r->setColor(color);
   //r->setScale(scale);
   AddReplayIcon(r, cx::AnchorB());
@@ -74,13 +77,13 @@ void HUDLayer::InitLabels() {
   auto wb = cx::VisBox();
   auto fp= XCFGS()->GetFont("font.SmallTypeWriting");
 
-  m_scoreLabel = cx::CreateBmfLabel(0,0,fp, "0");
-  m_scoreLabel->setAnchorPoint(cx::AnchorBR());
-  m_scoreLabel->setScale(XCFGS()->GetScale());
-  m_scoreLabel->setPosition(wb.right - tile - soff,
-    wb.top - tile - soff - cx::GetScaledHeight(m_scoreLabel));
+  scoreLabel = cx::CreateBmfLabel(0,0,fp, "0");
+  scoreLabel->setAnchorPoint(cx::AnchorBR());
+  scoreLabel->setScale(XCFGS()->GetScale());
+  scoreLabel->setPosition(wb.right - tile - soff,
+    wb.top - tile - soff - cx::GetScaledHeight(scoreLabel));
 
-  this->addChild(m_scoreLabel, lastZix, ++lastTag);
+  this->addChild(scoreLabel, lastZix, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////

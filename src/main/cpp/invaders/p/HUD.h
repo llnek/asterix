@@ -24,13 +24,12 @@ class CC_DLL HUDLayer : public f::XHUDLayer {
 private:
   NO__CPYASS(HUDLayer)
 
-  void InitLabels();
-  void InitIcons();
-
   void ShowMenu(c::Ref*);
   void OnReplay(c::Ref*);
 
-  c::Label* m_scoreLabel;
+  void InitLabels();
+  void InitIcons();
+
 public:
 
   virtual int GetIID() { return 3; }

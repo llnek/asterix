@@ -22,9 +22,9 @@ NS_BEGIN(fusii)
 void XLives::Reduce(int x) {
   while (x > 0) {
     if (icons.size() > 0) {
-      auto it= icons.begin();
-      hud->RemoveItem( *it );
-      icons.erase(it);
+      auto it= icons.back();
+      hud->RemoveItem( it );
+      icons.pop_back();
     }
     --x;
     --curLives;

@@ -45,19 +45,21 @@ void Aliens::AddToEngine(not_null<a::Engine*> e) {
   CCLOG("adding system: Aliens");
   AlienMotionNode a;
   baddies = e->GetNodeList(a.TypeId());
+  CCASSERT(baddies != nullptr, "nodelist cannot be null");
   CCLOG("added system: Aliens");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::OnUpdate(float dt) {
+  CCLOG("WTFtttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
+  CCLOG("baddies = %p", this->baddies);
   auto node=baddies->head;
-
   if (MGMS()->IsRunning() && NNP(node)) {
     ProcessMovement(node,dt);
     ProcessBombs(node,dt);
   }
-
+  CCLOG("baddies =---------------------------------");
   return true;
 }
 

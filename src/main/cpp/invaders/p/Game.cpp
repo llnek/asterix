@@ -83,17 +83,21 @@ void GameLayer::Reset(bool newFlag) {
   } else {
     GetHUD()->Reset();
   }
+
+  mc_del_ptr(factory)
+  mc_del_ptr(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Replay() {
-  Play(false);
+  NewGame(mode);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Play(bool newFlag) {
+  CCLOG("play game, newflag = %s", newFlag ? "true" : "false");
   Reset(newFlag);
   InitAsh();
   GetScene()->Resume();
@@ -131,7 +135,7 @@ void GameLayer::SpawnPlayer() {
 void GameLayer::OnPlayerKilled() {
   cx::SfxPlay("xxx-explode");
   if (GetHUD()->ReduceLives(1)) {
-    OnDone();
+    FinzGame();
   } else {
     SpawnPlayer();
   }
@@ -142,7 +146,7 @@ void GameLayer::OnPlayerKilled() {
 void GameLayer::OnNewGame(const f::GMode mode) {
   //sh.sfxPlay('start_game');
   SetMode(mode);
-  Play(true);
+  Play(tries > 0L ? false : true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -153,7 +157,8 @@ void GameLayer::OnEarnScore(int score) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnDone() {
+void GameLayer::OnGameOver() {
+  CCLOG("game over!");
   auto g= (Game*) getParent();
   g->Pause();
   Reset(false);
@@ -168,18 +173,18 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
     f::ComObj* i = (f::ComObj*) msg;
     OnEarnScore(i->score);
   }
-
+  else
   if (topic == "/hud/showmenu") {
 
     auto f= []() { CC_DTOR()->popScene(); };
     auto a= c::CallFunc::create(f);
     CC_DTOR()->pushScene(MainMenu::CreateWithBackAction(a));
   }
-
+  else
   if (topic == "/hud/replay") {
     Play(false);
   }
-
+  else
   if (topic == "/game/player/killed") {
     OnPlayerKilled();
   }

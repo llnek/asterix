@@ -36,11 +36,17 @@ protected:
   s::array<bool, 256> keyboard;
   a::Engine* engine;
 
+  c::EventListener* mouseListener;
+  c::EventListener* keysListener;
+  c::EventListener* touchListener;
+
   GMode mode;
+  long tries;
   int level;
 
   virtual void SetMode(const GMode m) { mode=m; }
   virtual void OnNewGame(const GMode) = 0;
+  virtual void OnGameOver() = 0;
   virtual void DisableEventHandlers();
   virtual void EnableEventHandlers();
   virtual void InitMouse();
@@ -72,6 +78,7 @@ public:
   XHUDLayer* GetHUD(int tag=3);
 
   void NewGame(const GMode);
+  void FinzGame();
 
   void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
   void OnKeyPressed(c::EventKeyboard::KeyCode, c::Event* );

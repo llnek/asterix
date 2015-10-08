@@ -36,6 +36,10 @@ XGameLayer::~XGameLayer() {
 XGameLayer::XGameLayer() {
   mode = GMode::ONE;
   level = 1;
+  tries= 0L;
+  SNPTR(mouseListener)
+  SNPTR(keysListener)
+  SNPTR(touchListener)
   SNPTR(engine)
 }
 
@@ -73,16 +77,43 @@ void XGameLayer::NewGame(const GMode mode) {
   }
   EnableEventHandlers();
   OnNewGame(mode);
-  this->scheduleUpdate();
+  ++tries;
+  if (tries == 1L) {
+    this->scheduleUpdate();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XGameLayer::FinzGame() {
+  if (XCFGS()->HasAudio()) {
+    den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    den::SimpleAudioEngine::getInstance()->stopAllEffects();
+  }
+  DisableEventHandlers();
+  OnGameOver();
+  //this->unscheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::DisableEventHandlers() {
-  _eventDispatcher->removeAllEventListeners();
+  if (NNP(mouseListener)) {
+    _eventDispatcher->removeEventListener(mouseListener);
+  }
+  if (NNP(keysListener)) {
+    _eventDispatcher->removeEventListener(keysListener);
+  }
+  if (NNP(touchListener)) {
+    _eventDispatcher->removeEventListener(touchListener);
+  }
   for (int n=0; n < 256; ++n) {
     keyboard[n]=false;
   }
+
+  SNPTR(mouseListener)
+  SNPTR(keysListener)
+  SNPTR(touchListener)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -113,6 +144,7 @@ void XGameLayer::InitMouse() {
   ln->onMouseScroll = CC_CALLBACK_1(XGameLayer::OnMouseScroll, this);
 
   _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+  mouseListener=ln;
 }
 
 
@@ -122,12 +154,14 @@ void XGameLayer::OnMouseMove(c::Event* e) {
   auto evt = (c::EventMouse*) e;
   evt->getDelta();
   evt->getLocation();
+  //CCLOG("mouse moved");
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::OnMouseDown(c::Event*) {
+  //CCLOG("mouse down");
 
 }
 
@@ -135,7 +169,7 @@ void XGameLayer::OnMouseDown(c::Event*) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::OnMouseUp(c::Event*) {
-
+ // CCLOG("mouse up");
 }
 
 
@@ -175,6 +209,7 @@ void XGameLayer::InitKeys() {
   ln->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
 
   _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+  keysListener=ln;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -206,6 +241,7 @@ void XGameLayer::InitTouch() {
   ln->setSwallowTouches(true);
 
   _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+  touchListener=ln;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -233,6 +269,8 @@ XHUDLayer* XGameLayer::GetHUD(int tag) {
 void XGameLayer::update(float dt) {
   if (GetScene()->IsRunning() &&
       NNP(engine)) {
+    CCLOG("update called, engine = ???");
+    CCLOG("update called, engine = %p", this->engine);
     engine->Update(dt);
   }
 }
