@@ -111,7 +111,7 @@ void Move::Clamp(not_null<Ship*> ship) {
 //
 void Move::MoveBombs(float dt) {
 
-  auto bbs= XCFGS()->GetPool("bombs");
+  auto bbs= MGMS()->GetPool("bombs");
   auto c= bbs->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {
@@ -128,7 +128,7 @@ void Move::MoveBombs(float dt) {
 //
 void Move::MoveMissiles(float dt) {
 
-  auto mss= XCFGS()->GetPool("missiles");
+  auto mss= MGMS()->GetPool("missiles");
   auto c= mss->Elements();
 
   for (auto it= c.begin(); it != c.end(); ++it) {

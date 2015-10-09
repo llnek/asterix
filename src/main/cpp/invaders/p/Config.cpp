@@ -57,7 +57,6 @@ owner<f::XConfig*> Config::Create() {
   Config* c = new Config();
   c->InitAssets();
   c->InitCsts();
-  c->InitPools();
   return c;
 }
 
@@ -153,15 +152,6 @@ void Config::InitCsts() {
   d->setObject(c::Integer::create(4), "OFF_X");
   d->setObject(c::Integer::create(2), "OFF_Y");
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Config::InitPools() {
-  CreatePool("explosions");
-  CreatePool("aliens");
-  CreatePool("missiles");
-  CreatePool("bombs");
 }
 
 //////////////////////////////////////////////////////////////////////////

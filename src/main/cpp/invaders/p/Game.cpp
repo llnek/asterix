@@ -78,7 +78,7 @@ void GameLayer::Reset(bool newFlag) {
     RegoAtlas("lang-pics");
   }
 
-  XCFGS()->ResetPools();
+  MGMS()->ResetPools();
 
   if (newFlag) {
     GetHUD()->ResetAsNew();
@@ -236,6 +236,11 @@ f::XScene* Game::Realize() {
   auto g = (f::XLayer*) GameLayer::create();
   auto b = (f::XLayer*) BGLayer::create();
   auto h = (f::XLayer*) HUDLayer::create();
+
+  CreatePool("explosions");
+  CreatePool("aliens");
+  CreatePool("missiles");
+  CreatePool("bombs");
 
   AddLayer(b, 1)->Realize();
   AddLayer(g, 2);

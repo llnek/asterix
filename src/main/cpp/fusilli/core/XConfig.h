@@ -15,7 +15,6 @@
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 #include "Primitives.h"
-#include "XPool.h"
 #include <map>
 
 
@@ -37,13 +36,10 @@ protected:
   static const stdstr SOUNDS;
   static const stdstr CSTS;
   static const stdstr CFG;
-  static const stdstr POOLS;
 
   c::Dictionary* GetFragment(const stdstr& key);
-  owner<XPool*> CreatePool(const stdstr& p);
   void SetCsts();
 
-  s::map<stdstr, XPool*> pools;
   c::Dictionary* dict;
   float lastMusicVol;
   float lastSfxVol;
@@ -86,8 +82,6 @@ public:
   const stdstr GetSound(const stdstr& key);
 
   c::Ref* GetCst(const stdstr& cst);
-  XPool* GetPool(const stdstr& n);
-  void ResetPools();
 
   void ToggleAudio(bool s);
   bool HasAudio();

@@ -69,7 +69,7 @@ bool Resolve::OnUpdate(float dt) {
 //
 void Resolve::CheckMissiles() {
 
-  auto mss = XCFGS()->GetPool("missiles");
+  auto mss = MGMS()->GetPool("missiles");
   auto ht = cx::VisRect().size.height;
   auto c = mss->Elements();
 
@@ -88,7 +88,7 @@ void Resolve::CheckMissiles() {
 //
 void Resolve::CheckBombs() {
 
-  auto bbs = XCFGS()->GetPool("bombs");
+  auto bbs = MGMS()->GetPool("bombs");
   auto c = bbs->Elements();
   int bt = 0;
 

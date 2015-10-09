@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/XGameLayer.h"
-#include "x2d/XScene.h"
+#include "x2d/MainGame.h"
 #include "s/Factory.h"
 NS_ALIAS(s,std)
 NS_ALIAS(f,fusii)
@@ -47,7 +47,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Game : public f::XScene {
+class CC_DLL Game : public f::MainGame {
 private:
   CREATE_FUNC(Game)
   NO__CPYASS(Game)

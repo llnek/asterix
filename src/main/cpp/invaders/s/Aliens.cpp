@@ -117,7 +117,7 @@ void Aliens::CheckBomb(not_null<AlienSquad*> sqad) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::DropBomb(float x, float y) {
-  auto bbs = XCFGS()->GetPool("bombs");
+  auto bbs = MGMS()->GetPool("bombs");
   auto ent = bbs->Get();
 
   if (NNP(ent)) {

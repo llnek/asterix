@@ -45,7 +45,7 @@ Factory::Factory() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateMissiles(int count) {
-  auto p= XCFGS()->GetPool("missiles");
+  auto p= MGMS()->GetPool("missiles");
   auto cb= []() -> f::ComObj* {
     auto sp = cx::CreateSprite("missile.png");
     sp->setVisible(false);
@@ -58,7 +58,7 @@ void Factory::CreateMissiles(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateExplosions(int count) {
-  auto p= XCFGS()->GetPool("explosions");
+  auto p= MGMS()->GetPool("explosions");
   auto cb= []() -> f::ComObj* {
     auto sp = cx::CreateSprite("boom_0.png");
     sp->setVisible(false);
@@ -71,7 +71,7 @@ void Factory::CreateExplosions(int count) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Factory::CreateBombs(int count) {
-  auto p= XCFGS()->GetPool("bombs");
+  auto p= MGMS()->GetPool("bombs");
   auto cb= []() -> f::ComObj* {
     auto sp = cx::CreateSprite("bomb.png");
     sp->setVisible(false);
@@ -174,7 +174,7 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
 a::Entity* Factory::CreateAliens() {
   auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
   auto ent= engine->CreateEntity("baddies");
-  auto p = XCFGS()->GetPool("aliens");
+  auto p = MGMS()->GetPool("aliens");
 
   FillSquad(p);
 

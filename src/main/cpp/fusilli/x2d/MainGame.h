@@ -14,6 +14,7 @@
 
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
+#include "core/XPool.h"
 #include "XScene.h"
 #include "XGameLayer.h"
 
@@ -24,18 +25,25 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainGame {
+class CC_DLL MainGame : public XScene {
+protected:
+  s::map<stdstr, XPool*> pools;
+  MainGame();
+
 private:
 
   NO__CPYASS(MainGame)
-  MainGame();
 
 public:
 
-  static void Set(not_null<XScene*>, int layer=2);
+  static void Set(not_null<MainGame*>, int layer=2);
+
+  XPool* CreatePool(const stdstr& n);
+  XPool* GetPool(const stdstr& n);
+  void ResetPools();
 
   static XGameLayer* Get();
-  static XScene* Self();
+  static MainGame* Self();
 
   virtual ~MainGame();
 };

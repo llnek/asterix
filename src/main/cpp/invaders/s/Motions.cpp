@@ -112,7 +112,7 @@ void Motions::FireMissile(not_null<a::Node*> node, float dt) {
   auto lpr= a::NodeFld<Looper>(node, "looper");
   auto ship=a::NodeFld<Ship>(node, "ship");
 
-  auto p= XCFGS()->GetPool("missiles");
+  auto p= MGMS()->GetPool("missiles");
   auto top= cx::GetTop(ship->sprite);
   auto pos= ship->Pos();
   auto ent= p->Get();

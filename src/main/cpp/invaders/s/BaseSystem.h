@@ -15,7 +15,7 @@
 #include "core/Primitives.h"
 #include "Factory.h"
 #include "ash/Ash.h"
-
+#include "x2d/MainGame.h"
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(a,ash)
 NS_BEGIN(invaders)

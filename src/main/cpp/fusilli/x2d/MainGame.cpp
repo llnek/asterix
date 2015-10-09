@@ -14,12 +14,12 @@
 NS_BEGIN(fusii)
 
 
-static XScene* _singleton;
+static MainGame* _singleton;
 static int _gameLayer;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainGame::Set(not_null<XScene*> g, int gy) {
+void MainGame::Set(not_null<MainGame*> g, int gy) {
   _gameLayer= gy;
   _singleton=g;
 }
@@ -33,13 +33,17 @@ XGameLayer* MainGame::Get() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XScene* MainGame::Self() {
+MainGame* MainGame::Self() {
   return _singleton;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainGame::~MainGame() {
+  for (auto it=pools.begin(); it != pools.end(); ++it) {
+    delete it->second;
+  }
+  //pools.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,8 +51,32 @@ MainGame::~MainGame() {
 MainGame::MainGame() {
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+XPool* MainGame::GetPool(const stdstr& key) {
+  auto it = pools.find(key);
+  if (it != pools.end()) {
+    return it->second;
+  } else {
+    return nullptr;
+  }
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+XPool* MainGame::CreatePool(const stdstr& key) {
+  auto p = new XPool();
+  pools.insert(s::pair<stdstr, XPool*>(key, p));
+  return p;
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void MainGame::ResetPools() {
+  for (auto it = pools.begin(); it != pools.end(); ++it) {
+    it->second->ClearAll();
+  }
+}
 
 
 NS_END(fusii)

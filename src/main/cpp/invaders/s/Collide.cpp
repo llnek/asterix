@@ -86,8 +86,8 @@ bool Collide::MaybeCollide(not_null<f::ComObj*> a,
 //
 void Collide::CheckMissilesBombs() {
 
-  auto mss = XCFGS()->GetPool("missiles");
-  auto bbs = XCFGS()->GetPool("bombs");
+  auto mss = MGMS()->GetPool("missiles");
+  auto bbs = MGMS()->GetPool("bombs");
   auto m = mss->Elements();
   auto b= bbs->Elements();
 
@@ -110,7 +110,7 @@ void Collide::CheckMissilesBombs() {
 void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 
   auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  auto mss = XCFGS()->GetPool("missiles");
+  auto mss = MGMS()->GetPool("missiles");
   auto c = sqad->Elements();
   auto c2 = mss->Elements();
 
@@ -132,7 +132,7 @@ void Collide::CheckMissilesAliens(not_null<a::Node*> node) {
 void Collide::CheckShipBombs(not_null<a::Node*> node) {
 
   auto ship= a::NodeFld<Ship>(node, "ship");
-  auto bbs= XCFGS()->GetPool("bombs");
+  auto bbs= MGMS()->GetPool("bombs");
   auto c= bbs->Elements();
 
   if (ship->status)

@@ -20,7 +20,6 @@ const stdstr XConfig::ATLASES= "atlases";
 const stdstr XConfig::LEVELS= "levels";
 const stdstr XConfig::FONTS= "fonts";
 const stdstr XConfig::TILES= "tiles";
-const stdstr XConfig::POOLS= "pools";
 const stdstr XConfig::IMAGES= "images";
 const stdstr XConfig::SOUNDS= "sounds";
 const stdstr XConfig::CSTS= "csts";
@@ -51,11 +50,7 @@ XConfig* XConfig::Self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::~XConfig() {
-  for (auto it=pools.begin(); it != pools.end(); ++it) {
-    delete it->second;
-  }
   CC_DROP(dict)
-  //pools.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -173,33 +168,6 @@ const stdstr XConfig::GetImage(const stdstr& key) {
 //
 const stdstr XConfig::GetSound(const stdstr& key) {
   return getXXX(GetFragment(SOUNDS), key);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XPool* XConfig::GetPool(const stdstr& key) {
-  auto it = pools.find(key);
-  if (it != pools.end()) {
-    return it->second;
-  } else {
-    return nullptr;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-owner<XPool*> XConfig::CreatePool(const stdstr& key) {
-  auto p = new XPool();
-  pools.insert(s::pair<stdstr, XPool*>(key, p));
-  return p;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XConfig::ResetPools() {
-  for (auto it = pools.begin(); it != pools.end(); ++it) {
-    it->second->ClearAll();
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
