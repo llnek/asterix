@@ -130,7 +130,7 @@ enum class Locale {
 };
 
 NS_END(fusii)
-NS_USING(Guide)
+NS_USING(gsl)
 #endif
 
 

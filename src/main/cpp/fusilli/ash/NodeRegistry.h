@@ -15,7 +15,6 @@
 #include <vector>
 #include <map>
 #include "Ash.h"
-NS_USING(Guide)
 NS_ALIAS(s, std)
 NS_BEGIN(ash)
 

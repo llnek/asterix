@@ -7,7 +7,8 @@
 #include "fail_fast.h"
 
 
-namespace Guide
+//namespace Guide
+namespace gsl
 {
 
 template <class T>
@@ -16,8 +17,8 @@ using owner = T;
 //
 // GSL.assert: assertions
 //
-#define Expects(x)  Guide::fail_fast_assert((x))
-#define Ensures(x)  Guide::fail_fast_assert((x))
+#define Expects(x)  gsl::fail_fast_assert((x))
+#define Ensures(x)  gsl::fail_fast_assert((x))
 
 //
 // not_null
@@ -36,24 +37,32 @@ using owner = T;
 template<class T>
 class not_null
 {
+    static_assert(std::is_assignable<T&, std::nullptr_t>::value, "T cannot be assigned nullptr.");
 public:
     not_null(T t) : ptr_(t) { ensure_invariant(); }
-
-    // deleting these two prevents compilation when initialized with a nullptr or literal 0
-    not_null(std::nullptr_t) = delete;
-    not_null(int) = delete;
+    not_null& operator=(const T& t) { ptr_ = t; ensure_invariant(); return *this; }
 
     not_null(const not_null &other) = default;
+    not_null& operator=(const not_null &other) = default;
 
-    //template <typename U, typename Dummy = std::enable_if_t<std::is_convertible<U, T>::value>>
     template <typename U, typename Dummy = std::enable_if<std::is_convertible<U, T>::value,T>>
-    not_null(const not_null<U> &other) : ptr_(other.get())
+    //template <typename U, typename Dummy = std::enable_if_t<std::is_convertible<U, T>::value>>
+    not_null(const not_null<U> &other)
     {
+        *this = other;
     }
 
-    not_null<T>& operator=(const T& t) { ptr_ = t; ensure_invariant(); return *this; }
+    template <typename U, typename Dummy = std::enable_if<std::is_convertible<U, T>::value,T>>
+    //template <typename U, typename Dummy = std::enable_if_t<std::is_convertible<U, T>::value>>
+    not_null& operator=(const not_null<U> &other)
+    {
+        ptr_ = other.get();
+        return *this;
+    }
 
     // prevents compilation when someone attempts to assign a nullptr
+    not_null(std::nullptr_t) = delete;
+    not_null(int) = delete;
     not_null<T>& operator=(std::nullptr_t) = delete;
 	not_null<T>& operator=(int) = delete;
 
@@ -88,5 +97,4 @@ private:
     not_null<T>& operator-=(size_t) = delete;
 };
 
-
-} // namespace Guide
+} // namespace gsl

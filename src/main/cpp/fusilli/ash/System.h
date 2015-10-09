@@ -13,7 +13,6 @@
 #define __SYSTEM_H__
 
 #include "Ash.h"
-NS_USING(Guide)
 NS_BEGIN(ash)
 
 class Engine;
