@@ -42,7 +42,7 @@ XLayer* YesNoLayer::Realize() {
 
   auto par = SCAST(YesNo*, getParent());
   auto msg= par->GetMsg();
-  auto fnt= XCFGS()->GetFont("font.OCR");
+  auto fnt= XCFG()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, msg);
 
   auto cw= cx::Center();
@@ -50,7 +50,7 @@ XLayer* YesNoLayer::Realize() {
   auto wb= cx::VisBox();
 
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFGS()->GetScale() * 0.25);
+  qn->setScale(XCFG()->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
 
   CenterImage("game.bg");
@@ -91,7 +91,7 @@ owner<YesNo*> YesNo::Create(const stdstr& msg) {
 
   c::CallFunc* y = c::CallFunc::create([](){
       CC_DTOR()->popToRootScene();
-      cx::RunScene(XCFGS()->StartWith());
+      cx::RunScene(XCFG()->StartWith());
       });
 
   c::CallFunc* n= c::CallFunc::create([]() {

@@ -83,7 +83,7 @@ void SplashLayer::Btns() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Splash::OnPlay(c::Ref* b) {
-  auto f= []() { cx::RunScene(XCFGS()->StartWith()); };
+  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
   auto a= c::CallFunc::create(f);
   auto m = MainMenu::CreateWithBackAction(a);
 

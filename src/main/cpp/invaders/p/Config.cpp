@@ -106,7 +106,7 @@ void Config::InitAssets() {
   d->setObject(c::String::create("l10n/en/images.png"), "lang-pics");
   d->setObject(c::String::create("pics/images.png"), "game-pics");
 
-  d= GetFragment(SOUNDS);
+  d= GetFragment(EFX);
   d->setObject(c::String::create("sfx/MineExplosion.mp3"), "game_end");
   d->setObject(c::String::create("sfx/Death.mp3"), "game_quit");
   d->setObject(c::String::create("sfx/missile.mp3"), "ship-missile");

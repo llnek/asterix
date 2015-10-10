@@ -12,7 +12,6 @@
 #if !defined(__APP_H__)
 #define __APP_H__
 
-
 #include "platform/CCApplication.h"
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
@@ -22,14 +21,14 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL App : public c::Application {
+class CC_DLL App : public cocos2d::Application {
 protected:
 
   App();
 
 private:
 
-  void PreLaunch(const c::Size&);
+  void PreLaunch(const c::Size& designSize);
   void InitAudio();
 
   NO__CPYASS(App)

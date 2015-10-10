@@ -95,7 +95,7 @@ public:
 XLayer* MsgBoxLayer::Realize() {
 
   auto par = SCAST(MsgBox*, getParent());
-  auto fnt = XCFGS()->GetFont("font.OCR");
+  auto fnt = XCFG()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(
       fnt, par->GetMsg());
 
@@ -105,7 +105,7 @@ XLayer* MsgBoxLayer::Realize() {
 
   CenterImage("game.bg");
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFGS()->GetScale() * 0.25);
+  qn->setScale(XCFG()->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 

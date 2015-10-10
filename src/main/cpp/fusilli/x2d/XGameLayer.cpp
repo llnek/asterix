@@ -52,7 +52,7 @@ ComObj* XGameLayer::GetPlayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XGameLayer::GetLCfg() {
-  return XCFGS()->GetLevelCfg(s::to_string(level));
+  return XCFG()->GetLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ const Box4 XGameLayer::GetEnclosureBox() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::NewGame(const GMode mode) {
-  if (XCFGS()->HasAudio()) {
+  if (XCFG()->HasAudio()) {
     den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     den::SimpleAudioEngine::getInstance()->stopAllEffects();
   }
@@ -84,7 +84,7 @@ void XGameLayer::NewGame(const GMode mode) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::FinzGame() {
-  if (XCFGS()->HasAudio()) {
+  if (XCFG()->HasAudio()) {
     den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     den::SimpleAudioEngine::getInstance()->stopAllEffects();
   }

@@ -63,11 +63,11 @@ f::XLayer* MenuLayer::Realize() {
   CenterImage("mmenus.bg");
 
   // title
-  auto fp= XCFGS()->GetFont("font.JellyBelly");
+  auto fp= XCFG()->GetFont("font.JellyBelly");
   auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
                           fp,
                           "some text");
-  lb->setScale(XCFGS()->GetScale());
+  lb->setScale(XCFG()->GetScale());
   lb->setColor(cx::White());
   AddItem(lb);
 

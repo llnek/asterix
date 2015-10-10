@@ -18,7 +18,7 @@
 #include <map>
 
 
-#define XCFGS() fusii::XConfig::Self()
+#define XCFG() fusii::XConfig::Self()
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
@@ -33,7 +33,8 @@ protected:
   static const stdstr FONTS;
   static const stdstr TILES;
   static const stdstr IMAGES;
-  static const stdstr SOUNDS;
+  static const stdstr MUSIC;
+  static const stdstr EFX;
   static const stdstr CSTS;
   static const stdstr CFG;
 
@@ -79,7 +80,9 @@ public:
   const stdstr GetFont(const stdstr& key);
   const stdstr GetTile(const stdstr& key);
   const stdstr GetImage(const stdstr& key);
-  const stdstr GetSound(const stdstr& key);
+
+  const stdstr GetEffect(const stdstr& key);
+  const stdstr GetMusic(const stdstr& key);
 
   c::Ref* GetCst(const stdstr& cst);
 
@@ -97,6 +100,8 @@ public:
 
   c::Dictionary* AddLevel(const stdstr& n);
 
+  const s::vector<stdstr> GetEffectFiles();
+  const s::vector<stdstr> GetMusicFiles();
 
   virtual ~XConfig();
 

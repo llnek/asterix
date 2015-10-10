@@ -51,7 +51,7 @@ XScene* XScene::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XScene::OnQuitAction() {
-  cx::RunScene( XCFGS()->StartWith());
+  cx::RunScene( XCFG()->StartWith());
 }
 
 

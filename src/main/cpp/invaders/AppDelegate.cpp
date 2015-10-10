@@ -10,13 +10,12 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/NodeRegistry.h"
-#include "core/XConfig.h"
 #include "n/gnodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-//NS_ALIAS(c, cocos2d)
-NS_ALIAS(g, invaders)
-
+NS_USING(invaders)
+NS_USING(fusii)
+NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -24,22 +23,22 @@ AppDelegate::AppDelegate() {
 
   // bootstrap app here
 
-  // step.1: register all ash::node facttories here
-  auto r= a::NodeRegistry::Self();
+  // step.1: register all ash::node factories here
+  auto r= NodeRegistry::Self();
 
-  r->Register( new g::AlienMotionNode());
-  r->Register( new g::ShipMotionNode());
-  r->Register( new g::CannonCtrlNode());
+  r->Register( new AlienMotionNode());
+  r->Register( new ShipMotionNode());
+  r->Register( new CannonCtrlNode());
 
   // step.2: set up app-config
-  f::XConfig::Bind(g::Config::Create());
+  XConfig::Bind(Config::Create());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
-  //delete a::NodeRegistry::Self();
-  //delete f::XConfig::Self();
+  //delete NodeRegistry::Self();
+  //delete XConfig::Self();
 }
 
 

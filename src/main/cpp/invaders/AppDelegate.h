@@ -14,12 +14,11 @@
 
 #include "aeon/fusilli.h"
 #include "core/App.h"
-NS_ALIAS(f, fusii)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AppDelegate : public f::App {
+class CC_DLL AppDelegate : public fusii::App {
 private:
   NO__CPYASS(AppDelegate)
 public:

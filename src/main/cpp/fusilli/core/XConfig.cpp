@@ -21,7 +21,10 @@ const stdstr XConfig::LEVELS= "levels";
 const stdstr XConfig::FONTS= "fonts";
 const stdstr XConfig::TILES= "tiles";
 const stdstr XConfig::IMAGES= "images";
-const stdstr XConfig::SOUNDS= "sounds";
+
+const stdstr XConfig::MUSIC= "music";
+const stdstr XConfig::EFX= "effects";
+
 const stdstr XConfig::CSTS= "csts";
 const stdstr XConfig::CFG= "cfg";
 
@@ -63,7 +66,8 @@ XConfig::XConfig() {
   dict->setObject(c::Dictionary::create(), CSTS);
   dict->setObject(c::Dictionary::create(), IMAGES);
   dict->setObject(c::Dictionary::create(), FONTS);
-  dict->setObject(c::Dictionary::create(), SOUNDS);
+  dict->setObject(c::Dictionary::create(), MUSIC);
+  dict->setObject(c::Dictionary::create(), EFX);
   dict->setObject(c::Dictionary::create(), LEVELS);
 
   AddLevel("1");
@@ -166,8 +170,14 @@ const stdstr XConfig::GetImage(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetSound(const stdstr& key) {
-  return getXXX(GetFragment(SOUNDS), key);
+const stdstr XConfig::GetMusic(const stdstr& key) {
+  return getXXX(GetFragment(MUSIC), key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const stdstr XConfig::GetEffect(const stdstr& key) {
+  return getXXX(GetFragment(EFX), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -200,11 +210,40 @@ c::Dictionary* XConfig::AddLevel(const stdstr& level) {
   d2->setObject(c::Dictionary::create(), CFG);
   return d2;
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XConfig::GetFragment(const stdstr& key) {
   auto obj = dict->objectForKey(key);
   return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s::vector<stdstr> XConfig::GetEffectFiles() {
+  NS_USING(cocos2d)
+  DictElement* element = nullptr;
+  auto d= GetFragment(MUSIC);
+  s::vector<stdstr> rc;
+
+  CCDICT_FOREACH(d, element) {
+    rc.push_back( static_cast<String*>(element->getObject())->getCString());
+  }
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s::vector<stdstr> XConfig::GetMusicFiles() {
+  NS_USING(cocos2d)
+  DictElement* element = nullptr;
+  auto d= GetFragment(EFX);
+  s::vector<stdstr> rc;
+
+  CCDICT_FOREACH(d, element) {
+    rc.push_back( static_cast<String*>(element->getObject())->getCString());
+  }
+  return rc;
 }
 
 NS_END(fusii)

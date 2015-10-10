@@ -75,11 +75,11 @@ void HUDLayer::InitLabels() {
   auto soff = f::CstVal<c::Integer>("S_OFF")->getValue();
   auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
-  auto fp= XCFGS()->GetFont("font.SmallTypeWriting");
+  auto fp= XCFG()->GetFont("font.SmallTypeWriting");
 
   scoreLabel = cx::CreateBmfLabel(0,0,fp, "0");
   scoreLabel->setAnchorPoint(cx::AnchorTR());
-  scoreLabel->setScale(XCFGS()->GetScale());
+  scoreLabel->setScale(XCFG()->GetScale());
   scoreLabel->setPosition(wb.right - tile - soff,
     wb.top - tile);// - soff - cx::GetScaledHeight(scoreLabel));
 

@@ -84,8 +84,8 @@ XScene* Online::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
-  auto wsurl = XCFGS()->GetWSUrl();
-  auto game = XCFGS()->GetGameId();
+  auto wsurl = XCFG()->GetWSUrl();
+  auto game = XCFG()->GetGameId();
 
   if (uid.length() == 0 ||
       pwd.length() == 0) { return; }
@@ -163,7 +163,7 @@ void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
 //
 void OnlineLayer::ShowWaitOthers() {
 
-  auto fnt= XCFGS()->GetFont("font.OCR");
+  auto fnt= XCFG()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "waiting...");
   auto wz= cx::VisRect();
   auto cw= cx::Center();
@@ -172,7 +172,7 @@ void OnlineLayer::ShowWaitOthers() {
   RemoveAll();
 
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFGS()->GetScale() * 0.3);
+  qn->setScale(XCFG()->GetScale() * 0.3);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
@@ -189,7 +189,7 @@ void OnlineLayer::ShowWaitOthers() {
 //
 XLayer* OnlineLayer::Realize() {
 
-  auto fnt= XCFGS()->GetFont("font.OCR");
+  auto fnt= XCFG()->GetFont("font.OCR");
   auto qn= c::Label::createWithBMFont(fnt, "Sign in");
   auto wz= cx::VisRect();
   auto cw= cx::Center();
@@ -198,7 +198,7 @@ XLayer* OnlineLayer::Realize() {
 
   CenterImage("game.bg");
   qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFGS()->GetScale() * 0.3);
+  qn->setScale(XCFG()->GetScale() * 0.3);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 

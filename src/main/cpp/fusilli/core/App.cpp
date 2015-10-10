@@ -57,7 +57,7 @@ void App::initGLContextAttrs() {
 bool App::applicationDidFinishLaunching() {
 
   auto glview = CC_DTOR()->getOpenGLView();
-  auto sz = XCFGS()->GetGameSize();
+  auto sz = XCFG()->GetGameSize();
 
   CCLOG("game size, width=%d, height=%d", (int)sz.width, (int)sz.height);
 
@@ -74,9 +74,9 @@ bool App::applicationDidFinishLaunching() {
 
   register_all_packages();
 
-  CCLOG("about to run start scene");
+  //CCLOG("about to run start scene");
   // run
-  CC_DTOR()->runWithScene( XCFGS()->StartWith());
+  CC_DTOR()->runWithScene( XCFG()->StartWith());
 
   return true;
 }
@@ -97,7 +97,7 @@ void App::PreLaunch(const c::Size& dz) {
   // set FPS. default is 1.0/60 if you don't call this
   CC_DTOR()->setAnimationInterval(1.0 / fps->getValue());
 
-  // turn on display FPS
+  // turn on display FPS?
   CC_DTOR()->setDisplayStats( dispFPS->getValue());
 
   if (portrait) {
@@ -135,17 +135,27 @@ void App::PreLaunch(const c::Size& dz) {
 
   // Set the design resolution
   glview->setDesignResolutionSize(
-    dz.width, dz.height, XCFGS()->GetPolicy());
+    dz.width, dz.height, XCFG()->GetPolicy());
 
-  XCFGS()->HandleResolution(fz);
-  XCFGS()->RunOnce();
+  XCFG()->HandleResolution(fz);
+  XCFG()->RunOnce();
+
   InitAudio();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void App::InitAudio() {
-
+  auto a = XCFG()->GetEffectFiles();
+  for (auto it = a.begin(); it != a.end(); ++it) {
+    auto fp = *it;
+    den::SimpleAudioEngine::getInstance()->preloadEffect(fp.c_str());
+  }
+  a= XCFG()->GetMusicFiles();
+  for (auto it = a.begin(); it != a.end(); ++it) {
+    auto fp = *it;
+    den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());
+  }
 }
 
 
