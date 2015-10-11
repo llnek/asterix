@@ -95,36 +95,31 @@ void Config::RunOnce() {
 //
 void Config::InitAssets() {
 
-  auto d = GetFragment(ATLASES);
+  AddAtlas("lang-pics", c::String::create("l10n/en/images.plist"));
+  AddAtlas("game-pics", c::String::create("pics/images.plist"));
 
-  d->setObject(c::String::create("l10n/en/images.plist"), "lang-pics");
-  d->setObject(c::String::create("pics/images.plist"), "game-pics");
+  AddImage("mmenus.bg", c::String::create("pics/bg.png"));
+  AddImage("game.bg", c::String::create("pics/bg.png"));
+  AddImage("lang-pics", c::String::create("l10n/en/images.png"));
+  AddImage("game-pics", c::String::create("pics/images.png"));
 
-  d= GetFragment(IMAGES);
-  d->setObject(c::String::create("pics/bg.png"), "mmenus.bg");
-  d->setObject(c::String::create("pics/bg.png"), "game.bg");
-  d->setObject(c::String::create("l10n/en/images.png"), "lang-pics");
-  d->setObject(c::String::create("pics/images.png"), "game-pics");
+  AddEffect("game_end", c::String::create("sfx/MineExplosion.mp3"));
+  AddEffect("game_quit", c::String::create("sfx/Death.mp3"));
+  AddEffect("ship-missile", c::String::create("sfx/missile.mp3"));
+  AddEffect("bug-march", c::String::create("sfx/march.mp3"));
+  AddEffect("xxx-explode", c::String::create("sfx/explode.mp3"));
 
-  d= GetFragment(EFX);
-  d->setObject(c::String::create("sfx/MineExplosion.mp3"), "game_end");
-  d->setObject(c::String::create("sfx/Death.mp3"), "game_quit");
-  d->setObject(c::String::create("sfx/missile.mp3"), "ship-missile");
-  d->setObject(c::String::create("sfx/march.mp3"), "bugs-march");
-  d->setObject(c::String::create("sfx/explode.mp3"), "xxx-explode");
+  AddFont("font.SmallTypeWriting", c::String::create("fon/en/SmallTypeWriting.fnt"));
+  AddFont("font.AutoMission", c::String::create("fon/en/AutoMission.fnt"));
+  AddFont("font.Subito", c::String::create("fon/en/Subito.fnt"));
+  AddFont("font.CoffeeBuzzed", c::String::create("fon/en/CoffeeBuzzed.fnt"));
 
-  d= GetFragment(FONTS);
-  d->setObject(c::String::create("fon/en/SmallTypeWriting.fnt"), "font.SmallTypeWriting");
-  d->setObject(c::String::create("fon/en/AutoMission.fnt"), "font.AutoMission");
-  d->setObject(c::String::create("fon/en/Subito.fnt"), "font.Subito");
-  d->setObject(c::String::create("fon/en/CoffeeBuzzed.fnt"), "font.CoffeeBuzzed");
-
-  d->setObject(c::String::create("fon/en/TinyBoxBlackBitA8.fnt"), "font.TinyBoxBB");
-  d->setObject(c::String::create("fon/en/OogieBoogie.fnt"), "font.OogieBoogie");
-  d->setObject(c::String::create("fon/en/JellyBelly.fnt"), "font.JellyBelly");
-  d->setObject(c::String::create("fon/en/AgentOrange.fnt"), "font.AgentOrange");
-  d->setObject(c::String::create("fon/en/Hiruko.fnt"), "font.Hiruko");
-  d->setObject(c::String::create("fon/en/OCR.fnt"), "font.OCR");
+  AddFont("font.TinyBoxBB", c::String::create("fon/en/TinyBoxBlackBitA8.fnt"));
+  AddFont("font.OogieBoogie", c::String::create("fon/en/OogieBoogie.fnt"));
+  AddFont("font.JellyBelly", c::String::create("fon/en/JellyBelly.fnt"));
+  AddFont("font.AgentOrange", c::String::create("fon/en/AgentOrange.fnt"));
+  AddFont("font.Hiruko", c::String::create("fon/en/Hiruko.fnt"));
+  AddFont("font.OCR", c::String::create("fon/en/OCR.fnt"));
 
 }
 
@@ -132,25 +127,16 @@ void Config::InitAssets() {
 //
 void Config::InitCsts() {
 
-  auto d = GetFragment(CSTS);
+  AddCst("showFPS", c::Bool::create(false));
 
-//  d->setObject(c::String::create("live-missiles"), "P_LMS");
-//  d->setObject(c::String::create("missiles"), "P_MS");
-//  d->setObject(c::String::create("bombs"), "P_BS");
-//  d->setObject(c::String::create("explosions"), "P_ES");
-//  d->setObject(c::String::create("live-bombs"), "P_LBS");
+  AddCst("CELLS", c::Integer::create(42));
+  AddCst("COLS", c::Integer::create(6));
+  AddCst("ROWS", c::Integer::create(7));
 
-  d->setObject(c::Bool::create(false), "showFPS");
-//  d->setObject(c::Integer::create(60), "FPS");
-
-  d->setObject(c::Integer::create(42), "CELLS");
-  d->setObject(c::Integer::create(6), "COLS");
-  d->setObject(c::Integer::create(7), "ROWS");
-
-  d->setObject(c::Integer::create(2), "LEFT");
-  d->setObject(c::Integer::create(6), "TOP");
-  d->setObject(c::Integer::create(4), "OFF_X");
-  d->setObject(c::Integer::create(2), "OFF_Y");
+  AddCst("LEFT", c::Integer::create(2));
+  AddCst("TOP", c::Integer::create(6));
+  AddCst("OFF_X", c::Integer::create(4));
+  AddCst("OFF_Y", c::Integer::create(2));
 
 }
 

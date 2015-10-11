@@ -16,22 +16,21 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::ATLASES= "atlases";
-const stdstr XConfig::LEVELS= "levels";
-const stdstr XConfig::FONTS= "fonts";
-const stdstr XConfig::TILES= "tiles";
-const stdstr XConfig::IMAGES= "images";
+static const stdstr ATLASES= "atlases";
+static const stdstr LEVELS= "levels";
+static const stdstr FONTS= "fonts";
+static const stdstr TILES= "tiles";
+static const stdstr IMAGES= "images";
 
-const stdstr XConfig::MUSIC= "music";
-const stdstr XConfig::EFX= "effects";
-
-const stdstr XConfig::CSTS= "csts";
-const stdstr XConfig::CFG= "cfg";
+static const stdstr MUSIC= "music";
+static const stdstr EFX= "effects";
+static const stdstr CSTS= "csts";
+static const stdstr CFG= "cfg";
 
 static XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
-static const stdstr getXXX(not_null<c::Dictionary*> d,
+static const filepath getXXX(not_null<c::Dictionary*> d,
     const stdstr& key ) {
 
   auto r= DictVal<c::String>(d,key);
@@ -61,6 +60,7 @@ XConfig::~XConfig() {
 XConfig::XConfig() {
   dict = c::Dictionary::create();
   CC_KEEP(dict)
+
   dict->setObject(c::Dictionary::create(), ATLASES);
   dict->setObject(c::Dictionary::create(), TILES);
   dict->setObject(c::Dictionary::create(), CSTS);
@@ -72,8 +72,6 @@ XConfig::XConfig() {
 
   AddLevel("1");
   SetCsts();
-  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
-  den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -83,8 +81,9 @@ void XConfig::SetCsts() {
 
   f->setObject(c::Bool::create(true), "showFPS");
   f->setObject(c::Integer::create(60), "FPS");
-  f->setObject(c::Integer::create(8), "TILE");
+
   f->setObject(c::Integer::create(4), "S_OFF");
+  f->setObject(c::Integer::create(8), "TILE");
 
   f->setObject(c::String::create("O"), "P2_COLOR");
   f->setObject(c::String::create("X"), "P1_COLOR");
@@ -146,37 +145,37 @@ c::Ref* XConfig::GetCst(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetAtlas(const stdstr& key) {
+const filepath XConfig::GetAtlas(const stdstr& key) {
   return getXXX(GetFragment(ATLASES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetFont(const stdstr& key) {
+const filepath XConfig::GetFont(const stdstr& key) {
   return getXXX(GetFragment(FONTS), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetTile(const stdstr& key) {
+const filepath XConfig::GetTile(const stdstr& key) {
   return getXXX(GetFragment(TILES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetImage(const stdstr& key) {
+const filepath XConfig::GetImage(const stdstr& key) {
   return getXXX(GetFragment(IMAGES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetMusic(const stdstr& key) {
+const filepath XConfig::GetMusic(const stdstr& key) {
   return getXXX(GetFragment(MUSIC), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetEffect(const stdstr& key) {
+const filepath XConfig::GetEffect(const stdstr& key) {
   return getXXX(GetFragment(EFX), key);
 }
 
@@ -220,11 +219,60 @@ c::Dictionary* XConfig::GetFragment(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<stdstr> XConfig::GetEffectFiles() {
+void XConfig::AddAtlas(const stdstr& key, c::Ref* ref) {
+  AddXXX(ATLASES, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddFont(const stdstr& key, c::Ref* ref) {
+  AddXXX(FONTS, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddTile(const stdstr& key, c::Ref* ref) {
+  AddXXX(TILES, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddImage(const stdstr& key, c::Ref* ref) {
+  AddXXX(IMAGES, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddEffect(const stdstr& key, c::Ref* ref) {
+  AddXXX(EFX, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddMusic(const stdstr& key, c::Ref* ref) {
+  AddXXX(MUSIC, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddCst(const stdstr& key, c::Ref* ref) {
+  AddXXX(CSTS, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::AddXXX(const stdstr& frag, const stdstr& key, c::Ref* ref) {
+  auto d = GetFragment(frag);
+  d->setObject(ref, key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s::vector<filepath> XConfig::GetEffectFiles() {
   NS_USING(cocos2d)
   DictElement* element = nullptr;
   auto d= GetFragment(MUSIC);
-  s::vector<stdstr> rc;
+  s::vector<filepath> rc;
 
   CCDICT_FOREACH(d, element) {
     rc.push_back( static_cast<String*>(element->getObject())->getCString());
@@ -234,11 +282,11 @@ const s::vector<stdstr> XConfig::GetEffectFiles() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<stdstr> XConfig::GetMusicFiles() {
+const s::vector<filepath> XConfig::GetMusicFiles() {
   NS_USING(cocos2d)
   DictElement* element = nullptr;
   auto d= GetFragment(EFX);
-  s::vector<stdstr> rc;
+  s::vector<filepath> rc;
 
   CCDICT_FOREACH(d, element) {
     rc.push_back( static_cast<String*>(element->getObject())->getCString());

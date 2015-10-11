@@ -23,10 +23,8 @@ NS_BEGIN(fusii)
 class CC_DLL OnlineLayer : public XLayer {
 private:
 
-  void OnReq(const stdstr&, const stdstr&);
-  OnlineLayer() {}
-
   NO__CPYASS(OnlineLayer)
+  OnlineLayer() {}
 
 public:
 
@@ -34,6 +32,7 @@ public:
   virtual XLayer* Realize();
   virtual ~OnlineLayer() {}
 
+  void OnReq(const stdstr&, const stdstr&);
   void ShowWaitOthers();
 
   CREATE_FUNC(OnlineLayer)
@@ -41,11 +40,102 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Online* Online::Create(c::CallFunc* yes, c::CallFunc* no) {
-  auto s= Online::create();
-  s->SetActions(yes,no);
-  s->Realize();
-  return s;
+void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
+  auto par = SCAST(Online*, getParent());
+  par->OnPlayReq(uid, pwd);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void OnlineLayer::ShowWaitOthers() {
+
+  auto qn= cx::CreateBmfLabel("font.OCR", "waiting...");
+  auto wz= cx::VisRect();
+  auto cw= cx::Center();
+  auto wb = cx::VisBox();
+
+  RemoveAll();
+
+  qn->setPosition(cw.x, wb.top * 0.75);
+  qn->setScale(XCFG()->GetScale() * 0.3);
+  qn->setOpacity(0.9*255);
+  AddItem(qn);
+
+  auto b1= cx::CreateMenuBtn("cancel.png");
+  b1->setTarget(getParent(),
+      CC_MENU_SELECTOR(Online::OnCancel));
+  auto menu= c::Menu::create();
+  menu->addChild(b1);
+  menu->setPosition(cw.x, wb.top * 0.1);
+  AddItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+XLayer* OnlineLayer::Realize() {
+  SCAST(Online*, getParent())->decorateUI(this);
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Online* Online::Create(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) {
+  box->SetActions(yes,no);
+  box->Realize();
+  return box;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Online::decorateUI(OnlineLayer* layer) {
+
+  auto qn= cx::CreateBmfLabel("font.OCR", "Sign in");
+  auto wz= cx::VisRect();
+  auto cw= cx::Center();
+  auto wb= cx::VisBox();
+
+  layer->CenterImage("game.bg");
+  qn->setPosition(cw.x, wb.top * 0.75);
+  qn->setScale(XCFG()->GetScale() * 0.3);
+  qn->setOpacity(0.9*255);
+  layer->AddItem(qn);
+
+  // editbox for user
+  auto uid = c::ui::TextField::create();
+  auto bxz = cx::CalcSize("ok.png");
+  uid->setMaxLengthEnabled(true);
+  uid->setMaxLength(16);
+  uid->setTouchEnabled(true);
+  uid->setFontName( "Arial");
+  uid->setFontSize( 18);
+  uid->setPlaceHolder( "user id:");
+  uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
+  layer->AddItem(uid);
+
+  // editbox for password
+  auto pwd = c::ui::TextField::create();
+  pwd->setPasswordEnabled(true);
+  pwd->setPasswordStyleText("*");
+  pwd->setTouchEnabled(true);
+  pwd->setMaxLength(16);
+  pwd->setFontName( "Arial");
+  pwd->setFontSize( 18);
+  pwd->setPlaceHolder( "password:");
+  pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
+  layer->AddItem(pwd);
+
+  auto b1= cx::CreateMenuBtn("continue.png");
+  b1->setCallback([=](c::Ref* rr) {
+        layer->OnReq(uid->getString(), pwd->getString());
+      });
+
+  auto b2= cx::CreateMenuBtn("cancel.png");
+  b2->setTarget(this, CC_MENU_SELECTOR(Online::OnCancel));
+  auto menu= c::Menu::create();
+  menu->addChild(b1,1);
+  menu->addChild(b2,2);
+  menu->setPosition(cw.x, wb.top * 0.1);
+  layer->AddItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -151,97 +241,6 @@ void Online::OnCancel(c::Ref* rr) {
   SNPTR(wss)
   no->execute();
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
-  auto par = SCAST(Online*, getParent());
-  par->OnPlayReq(uid, pwd);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void OnlineLayer::ShowWaitOthers() {
-
-  auto fnt= XCFG()->GetFont("font.OCR");
-  auto qn= c::Label::createWithBMFont(fnt, "waiting...");
-  auto wz= cx::VisRect();
-  auto cw= cx::Center();
-  auto wb = cx::VisBox();
-
-  RemoveAll();
-
-  qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFG()->GetScale() * 0.3);
-  qn->setOpacity(0.9*255);
-  AddItem(qn);
-
-  auto b1= cx::CreateMenuBtn("#cancel.png");
-  b1->setTarget(getParent(),
-      CC_MENU_SELECTOR(Online::OnCancel));
-  auto menu= c::Menu::create();
-  menu->addChild(b1);
-  menu->setPosition(cw.x, wb.top * 0.1);
-  AddItem(menu);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer* OnlineLayer::Realize() {
-
-  auto fnt= XCFG()->GetFont("font.OCR");
-  auto qn= c::Label::createWithBMFont(fnt, "Sign in");
-  auto wz= cx::VisRect();
-  auto cw= cx::Center();
-  auto wb= cx::VisBox();
-  auto par= SCAST(Online*,getParent());
-
-  CenterImage("game.bg");
-  qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFG()->GetScale() * 0.3);
-  qn->setOpacity(0.9*255);
-  AddItem(qn);
-
-  // editbox for user
-  auto uid = c::ui::TextField::create();
-  auto bxz = cx::CalcSize("#ok.png");
-  uid->setMaxLengthEnabled(true);
-  uid->setMaxLength(16);
-  uid->setTouchEnabled(true);
-  uid->setFontName( "Arial");
-  uid->setFontSize( 18);
-  uid->setPlaceHolder( "user id:");
-  uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
-  AddItem(uid);
-
-  // editbox for password
-  auto pwd = c::ui::TextField::create();
-  pwd->setPasswordEnabled(true);
-  pwd->setPasswordStyleText("*");
-  pwd->setTouchEnabled(true);
-  pwd->setMaxLength(16);
-  pwd->setFontName( "Arial");
-  pwd->setFontSize( 18);
-  pwd->setPlaceHolder( "password:");
-  pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
-  AddItem(pwd);
-
-  auto b1= cx::CreateMenuBtn("#continue.png");
-  b1->setCallback([=](c::Ref* rr) {
-        this->OnReq(uid->getString(), pwd->getString());
-      });
-
-  auto b2= cx::CreateMenuBtn("#cancel.png");
-  b2->setTarget(par, CC_MENU_SELECTOR(Online::OnCancel));
-  auto menu= c::Menu::create();
-  menu->addChild(b1,1);
-  menu->addChild(b2,2);
-  menu->setPosition(cw.x, wb.top * 0.1);
-  AddItem(menu);
-
-  return this;
-}
-
 
 
 NS_END(fusii)

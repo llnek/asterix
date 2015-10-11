@@ -21,17 +21,14 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ComObj : public a::Component {
+class CC_DLL ComObj : public ash::Component {
 protected:
 
   ComObj();
 
 private:
 
-  void Init(c::Sprite*,
-      int health,
-      int score);
-
+  void Init(c::Sprite*, int health, int score);
   NO__CPYASS(ComObj)
 
 public:
@@ -62,9 +59,7 @@ public:
 
   void UpdatePosition(float x, float y);
 
-  ComObj(c::Sprite*,
-      int health,
-      int score);
+  ComObj(c::Sprite*, int health, int score);
   ComObj(c::Sprite*);
 
   virtual ~ComObj() {}

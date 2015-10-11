@@ -13,7 +13,6 @@
 #include "MainGame.h"
 NS_BEGIN(fusii)
 
-
 static MainGame* _singleton;
 static int _gameLayer;
 

@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "audio/include/SimpleAudioEngine.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCActionInterval.h"
 #include "2d/CCMenuItem.h"
@@ -16,8 +17,10 @@
 #include "2d/CCLabel.h"
 #include "2d/CCTransition.h"
 #include "base/CCDirector.h"
+#include "XConfig.h"
 #include "CCSX.h"
 
+NS_ALIAS(den, CocosDenshion)
 NS_BEGIN(fusii)
 NS_BEGIN(ccsx)
 
@@ -26,17 +29,16 @@ NS_BEGIN(ccsx)
 c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
     not_null<c::MenuItem*> q, bool vert) {
 
-  auto sz= b->getContentSize();
   auto menu= c::Menu::create();
-  auto padding = 10;
+//  auto padding = 10;
 
   menu->addChild(b);
   menu->addChild(q);
 
   if (!vert) {
-    menu->alignItemsHorizontallyWithPadding(padding);
+    menu->alignItemsHorizontally();//WithPadding(padding);
   } else {
-    menu->alignItemsVerticallyWithPadding(padding);
+    menu->alignItemsVertically();//WithPadding(padding);
   }
 
   return menu;
@@ -44,15 +46,13 @@ c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MkAudio() {
-//TODO:
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void SfxPlay(const stdstr& sound) {
-//TODO:
+  auto fp= XCFG()->GetEffect(sound);
+  try {
+    den::SimpleAudioEngine::getInstance()->playEffect(fp.c_str());
+  } catch (...) {
+    CCLOG("failed to play sound: %s", sound.c_str());
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,10 +101,18 @@ const c::Color3B Black() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* CreateBmfLabel(float x, float y,
-    const stdstr& fontPath, const stdstr& text) {
+c::Label* CreateBmfLabel(const stdstr& font, const stdstr& text) {
 
-  auto f= c::Label::createWithBMFont(fontPath, text);
+  auto f= c::Label::createWithBMFont( XCFG()->GetFont(font), text);
+  f->setOpacity(0.9*255);
+  return f;
+}
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Label* CreateBmfLabel(float x, float y,
+    const stdstr& font, const stdstr& text) {
+
+  auto f= c::Label::createWithBMFont(XCFG()->GetFont(font), text);
   f->setPosition(x,y);
   f->setOpacity(0.9*255);
   return f;
@@ -114,7 +122,7 @@ c::Label* CreateBmfLabel(float x, float y,
 // Test collision of 2 entities using cc-rects
 bool Collide(not_null<ComObj*> a, not_null<ComObj*> b) {
   if (NNP(a) && NNP(b)) {
-    return Collide0(a->sprite, b->sprite);
+    return CollideN(a->sprite, b->sprite);
   } else {
     return false;
   }
@@ -122,7 +130,7 @@ bool Collide(not_null<ComObj*> a, not_null<ComObj*> b) {
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
-bool Collide0(not_null<c::Node*> a, not_null<c::Node*> b) {
+bool CollideN(not_null<c::Node*> a, not_null<c::Node*> b) {
   if (NNP(a) && NNP(b)) {
     return BBox(a).intersectsRect( BBox(b));
   } else {
@@ -132,15 +140,8 @@ bool Collide0(not_null<c::Node*> a, not_null<c::Node*> b) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SetDevRes(bool landscape, float x, float y,
-    ResolutionPolicy pcy) {
-
-  auto v= CC_DTOR()->getOpenGLView();
-  if (landscape) {
-    v->setDesignResolutionSize(x, y, pcy);
-  } else {
-    v->setDesignResolutionSize(y, x, pcy);
-  }
+void SetDevRes(float x, float y, ResolutionPolicy pcy) {
+  CC_DTOR()->getOpenGLView()->setDesignResolutionSize(x, y, pcy);
 }
 
 //////////////////////////////////////////////////////////////////////////

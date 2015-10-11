@@ -27,6 +27,7 @@ NS_BEGIN(fusii)
 //
 class CC_DLL MainGame : public XScene {
 protected:
+
   s::map<stdstr, XPool*> pools;
   MainGame();
 

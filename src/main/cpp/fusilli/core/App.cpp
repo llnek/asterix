@@ -59,8 +59,6 @@ bool App::applicationDidFinishLaunching() {
   auto glview = CC_DTOR()->getOpenGLView();
   auto sz = XCFG()->GetGameSize();
 
-  CCLOG("game size, width=%d, height=%d", (int)sz.width, (int)sz.height);
-
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
     glview = c::GLViewImpl::createWithRect("z", c::Rect(0, 0, sz.width, sz.height));
@@ -90,9 +88,8 @@ void App::PreLaunch(const c::Size& dz) {
   auto fps = CstVal<c::Integer>("FPS");
   auto portrait = dz.height > dz.width;
   auto fz = glview->getFrameSize();
+  auto spath="hdr";
   s::vector<stdstr> searchPaths;
-
-  CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
 
   // set FPS. default is 1.0/60 if you don't call this
   CC_DTOR()->setAnimationInterval(1.0 / fps->getValue());
@@ -115,27 +112,33 @@ void App::PreLaunch(const c::Size& dz) {
   if (fz.height > mediumSize.height) {
     CC_DTOR()->setContentScaleFactor(
         MIN(largeSize.height/dz.height, largeSize.width/dz.width));
-    searchPaths.push_back("hdr");
+    spath= "hdr";
   }
   // if the frame's height is larger than
   // the height of small size.
   else if (fz.height > smallSize.height) {
     CC_DTOR()->setContentScaleFactor(
         MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
-    searchPaths.push_back("hd");
+    spath= "hd";
   }
   // if the frame's height is smaller than the height of medium size.
   else {
     CC_DTOR()->setContentScaleFactor(
         MIN(smallSize.height/dz.height, smallSize.width/dz.width));
-    searchPaths.push_back("sd");
+    spath="sd";
   }
 
+  searchPaths.push_back(spath);
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   // Set the design resolution
   glview->setDesignResolutionSize(
     dz.width, dz.height, XCFG()->GetPolicy());
+
+  CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
+  CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
+  CCLOG("file search path=%s", spath);
+  CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
 
   XCFG()->HandleResolution(fz);
   XCFG()->RunOnce();
@@ -156,6 +159,10 @@ void App::InitAudio() {
     auto fp = *it;
     den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());
   }
+
+  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
+  den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
+
 }
 
 

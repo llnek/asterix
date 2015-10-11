@@ -18,7 +18,7 @@ NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
-
+class OnlineLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Online : public XScene {
@@ -34,20 +34,21 @@ protected:
   void OnContinue();
   void OnCancel(c::Ref*);
 
+  virtual void decorateUI(OnlineLayer*);
   Online();
-
-private:
-
-  CREATE_FUNC(Online)
-  NO__CPYASS(Online)
 
   c::CallFunc* yes;
   c::CallFunc* no;
   WSockSS* wss;
 
+private:
+
+//  CREATE_FUNC(Online)
+  NO__CPYASS(Online)
+
 public:
 
-  static Online* Create(c::CallFunc* yes, c::CallFunc* no);
+  static Online* Create(not_null<Online*>, c::CallFunc* yes, c::CallFunc* no);
   virtual XScene* Realize();
   virtual ~Online();
 

@@ -25,8 +25,8 @@ NS_BEGIN(fusii)
 class CC_DLL L10NCache {
 private:
 
-  NO__CPYASS(L10NCache)
   s::map<stdstr, stdstr> _cache;
+  NO__CPYASS(L10NCache)
 
 public:
 

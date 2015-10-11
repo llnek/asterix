@@ -20,7 +20,7 @@ NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
-
+class MsgBoxLayer;
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MsgBox : public XScene {
@@ -28,24 +28,28 @@ friend class MsgBoxLayer;
 protected:
 
   const stdstr& GetMsg() { return textMsg; }
-
   void SetAction(c::CallFunc* cb);
   void SetMsg(const stdstr&);
   void OnYes(c::Ref*);
+
+  virtual void decorateUI(MsgBoxLayer*);
+  MsgBox();
 
   c::CallFunc* action;
   stdstr textMsg;
 
 private:
 
-  CREATE_FUNC(MsgBox)
+  //CREATE_FUNC(MsgBox)
   NO__CPYASS(MsgBox)
-  MsgBox();
 
 public:
 
-  static MsgBox* CreateWithAction(c::CallFunc*, const stdstr&);
-  static MsgBox* CreateWithMsg(const stdstr&);
+  static MsgBox* CreateWithMsg(not_null<MsgBox*>, const stdstr&);
+
+  static MsgBox* CreateWithAction(
+      not_null<MsgBox*>,
+      c::CallFunc*, const stdstr&);
 
   virtual XScene* Realize();
   virtual ~MsgBox();

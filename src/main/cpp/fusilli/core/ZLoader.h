@@ -23,8 +23,8 @@ NS_BEGIN(fusii)
 class CC_DLL ZLoader : public c::Scene {
 private:
 
-  NO__CPYASS(ZLoader)
   void StartLoad(float);
+  NO__CPYASS(ZLoader)
 
 public:
 

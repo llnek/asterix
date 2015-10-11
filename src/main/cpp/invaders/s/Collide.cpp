@@ -79,7 +79,7 @@ bool Collide::OnUpdate(float dt) {
 bool Collide::MaybeCollide(not_null<f::ComObj*> a,
     not_null<f::ComObj*> b) {
 
-  return cx::Collide0(a->sprite, b->sprite);
+  return cx::CollideN(a->sprite, b->sprite);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -18,27 +18,75 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithAction(c::CallFunc* cb,
-    const stdstr& msg) {
+class CC_DLL MsgBoxLayer : public XLayer {
+private:
 
-  auto m= MsgBox::create();
-  m->SetAction(cb);
-  m->SetMsg(msg);
-  m->Realize();
-  return m;
+  NO__CPYASS(MsgBoxLayer)
+  MsgBoxLayer() {};
+
+public:
+
+  virtual int GetIID() { return 1; }
+  virtual XLayer* Realize();
+  virtual ~MsgBoxLayer() {};
+
+  CREATE_FUNC(MsgBoxLayer)
+};
+
+//////////////////////////////////////////////////////////////////////////
+//
+XLayer* MsgBoxLayer::Realize() {
+  SCAST(MsgBox*, getParent())->decorateUI(this);
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithMsg(const stdstr& msg) {
+void MsgBox::decorateUI(MsgBoxLayer* layer) {
+
+  auto qn= cx::CreateBmfLabel("font.OCR", GetMsg());
+  auto wz= cx::VisRect();
+  auto cw= cx::Center();
+  auto wb = cx::VisBox();
+
+  layer->CenterImage("game.bg");
+  qn->setPosition(cw.x, wb.top * 0.75);
+  qn->setScale(XCFG()->GetScale() * 0.25);
+  qn->setOpacity(0.9*255);
+  layer->AddItem(qn);
+
+  auto b1= cx::CreateMenuBtn("ok.png");
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(MsgBox::OnYes));
+  auto menu= c::Menu::create();
+  menu->addChild(b1);
+  menu->setPosition(cw.x, wb.top * 0.1);
+  layer->AddItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MsgBox* MsgBox::CreateWithAction(
+    not_null<MsgBox*> box,
+    c::CallFunc* cb, const stdstr& msg) {
+
+  box->SetAction(cb);
+  box->SetMsg(msg);
+  box->Realize();
+
+  return box;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MsgBox* MsgBox::CreateWithMsg(not_null<MsgBox*> box, const stdstr& msg) {
 
   auto cb= c::CallFunc::create([](){
       CC_DTOR()->popScene();
       });
-  return CreateWithAction(cb, msg);
+  return CreateWithAction(box, cb, msg);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,7 +105,7 @@ void MsgBox::SetMsg(const stdstr& msg) {
 //////////////////////////////////////////////////////////////////////////
 //
 void MsgBox::OnYes(c::Ref* rr) {
- action->execute();
+  action->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,53 +118,6 @@ MsgBox::~MsgBox() {
 //
 MsgBox::MsgBox() {
   SNPTR(action)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL MsgBoxLayer : public XLayer {
-private:
-
-  NO__CPYASS(MsgBoxLayer)
-  MsgBoxLayer() {};
-
-public:
-
-  virtual int GetIID() { return 1; }
-  virtual XLayer* Realize();
-  virtual ~MsgBoxLayer() {};
-
-  CREATE_FUNC(MsgBoxLayer)
-
-};
-
-//////////////////////////////////////////////////////////////////////////
-//
-XLayer* MsgBoxLayer::Realize() {
-
-  auto par = SCAST(MsgBox*, getParent());
-  auto fnt = XCFG()->GetFont("font.OCR");
-  auto qn= c::Label::createWithBMFont(
-      fnt, par->GetMsg());
-
-  auto wz= cx::VisRect();
-  auto cw= cx::Center();
-  auto wb = cx::VisBox();
-
-  CenterImage("game.bg");
-  qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setScale(XCFG()->GetScale() * 0.25);
-  qn->setOpacity(0.9*255);
-  AddItem(qn);
-
-  auto b1= cx::CreateMenuBtn("#ok.png");
-  b1->setTarget(par,
-      CC_MENU_SELECTOR(MsgBox::OnYes));
-  auto menu= c::Menu::create();
-  menu->addChild(b1);
-  menu->setPosition(cw.x, wb.top * 0.1);
-  AddItem(menu);
-  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////

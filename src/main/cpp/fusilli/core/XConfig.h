@@ -28,18 +28,13 @@ NS_BEGIN(fusii)
 class CC_DLL XConfig {
 protected:
 
-  static const stdstr ATLASES;
-  static const stdstr LEVELS;
-  static const stdstr FONTS;
-  static const stdstr TILES;
-  static const stdstr IMAGES;
-  static const stdstr MUSIC;
-  static const stdstr EFX;
-  static const stdstr CSTS;
-  static const stdstr CFG;
-
-  c::Dictionary* GetFragment(const stdstr& key);
-  void SetCsts();
+  void AddAtlas(const stdstr& key, c::Ref*);
+  void AddFont(const stdstr& key, c::Ref*);
+  void AddTile(const stdstr& key, c::Ref*);
+  void AddImage(const stdstr& key, c::Ref*);
+  void AddEffect(const stdstr& key, c::Ref*);
+  void AddMusic(const stdstr& key, c::Ref*);
+  void AddCst(const stdstr& key, c::Ref*);
 
   c::Dictionary* dict;
   float lastMusicVol;
@@ -50,6 +45,9 @@ protected:
 
 private:
 
+  void AddXXX(const stdstr& frag, const stdstr& key, c::Ref*);
+  c::Dictionary* GetFragment(const stdstr&);
+  void SetCsts();
   NO__CPYASS(XConfig)
 
 public:
@@ -58,7 +56,7 @@ public:
   static XConfig* Self();
 
   virtual void HandleResolution(const c::Size& ) {}
-  virtual float GetScale() { return 1; }
+  virtual float GetScale() { return 1.0f; }
   virtual void RunOnce() {}
 
   virtual ResolutionPolicy GetPolicy() = 0;
@@ -72,17 +70,16 @@ public:
 
   virtual void SetGameId(const stdstr& ) = 0;
   virtual void SetRoomId(const stdstr& ) = 0;
-
   virtual const stdstr GetGameId() = 0;
   virtual const stdstr GetRoomId() = 0;
 
-  const stdstr GetAtlas(const stdstr& key);
-  const stdstr GetFont(const stdstr& key);
-  const stdstr GetTile(const stdstr& key);
-  const stdstr GetImage(const stdstr& key);
+  const filepath GetAtlas(const stdstr& key);
+  const filepath GetFont(const stdstr& key);
+  const filepath GetTile(const stdstr& key);
+  const filepath GetImage(const stdstr& key);
 
-  const stdstr GetEffect(const stdstr& key);
-  const stdstr GetMusic(const stdstr& key);
+  const filepath GetEffect(const stdstr& key);
+  const filepath GetMusic(const stdstr& key);
 
   c::Ref* GetCst(const stdstr& cst);
 
@@ -100,8 +97,8 @@ public:
 
   c::Dictionary* AddLevel(const stdstr& n);
 
-  const s::vector<stdstr> GetEffectFiles();
-  const s::vector<stdstr> GetMusicFiles();
+  const s::vector<filepath> GetEffectFiles();
+  const s::vector<filepath> GetMusicFiles();
 
   virtual ~XConfig();
 

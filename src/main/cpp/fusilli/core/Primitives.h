@@ -49,11 +49,11 @@
 #define CC_KEEP(x) if (x) {x->retain();}
 #define CC_DROP(x) if (x) {x->release();}
 
+typedef std::string filepath;
+
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
-
 NS_BEGIN(fusii)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

@@ -16,11 +16,9 @@
 #include "base/ccTypes.h"
 #include "Primitives.h"
 #include "ComObj.h"
-
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
-
 
 #define HHZ(z) z.height * 0.5
 #define HWZ(z) z.width * 0.5
@@ -43,16 +41,14 @@ namespace ccsx {
   c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
       not_null<c::MenuItem*> q, bool vert = false);
 
-  void MkAudio();
-
   bool PointInBox(const Box4& box, float x,  float y);
   const c::Color3B White();
   const c::Color3B Black();
 
-  bool Collide0(not_null<c::Node*>, not_null<c::Node*> );
+  bool CollideN(not_null<c::Node*>, not_null<c::Node*> );
   bool Collide(not_null<ComObj*>, not_null<ComObj*>);
 
-  void SetDevRes(bool landscape, float x, float y,
+  void SetDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
   bool IsPortrait();
@@ -64,8 +60,11 @@ namespace ccsx {
   void UndoTimer(not_null<c::DelayTime*>);
   bool TimerDone(not_null<c::DelayTime*>);
 
+  c::Label* CreateBmfLabel(const stdstr& font, const stdstr& text);
+
   c::Label* CreateBmfLabel(float x, float y,
-    const stdstr& fontPath, const stdstr& text);
+    const stdstr& font,
+    const stdstr& text);
 
   c::Sprite* CreateSprite(const stdstr& frameName);
 
@@ -84,45 +83,34 @@ namespace ccsx {
   const c::Rect BBox(not_null<c::Node*>);
 
   float GetScaledHeight(not_null<c::Node*>);
-
-  float GetHeight(not_null<c::Node*>);
-
   float GetScaledWidth(not_null<c::Node*>);
 
+  float GetHeight(not_null<c::Node*>);
   float GetWidth(not_null<c::Node*>);
 
   float GetLeft(not_null<c::Node*>);
-
   float GetRight(not_null<c::Node*>);
-
   float GetTop(not_null<c::Node*>);
-
   float GetBottom(not_null<c::Node*>);
 
   float GetLastLeft(not_null<ComObj*> );
-
   float GetLastRight(not_null<ComObj*> );
-
   float GetLastTop(not_null<ComObj*> );
-
   float GetLastBottom(not_null<ComObj*> );
 
+  const c::Vec2 Center();
   float CenterX();
   float CenterY();
 
-  const c::Vec2 Center();
-
   float ScreenHeight();
-
   float ScreenWidth();
 
+  const c::Vec2 VBoxMID(const Box4& );
   const c::Rect VisRect();
   const Box4 VisBox();
 
-  const c::Size Screen();
   const c::Vec2 SCenter();
-
-  const c::Vec2 VBoxMID(const Box4& );
+  const c::Size Screen();
 
   bool TraceEnclosure(float dt, const Box4& bbox,
       const c::Rect& rect, const c::Vec2& vel,
@@ -130,24 +118,20 @@ namespace ccsx {
 
   /**
    * Get the sprite from the frame cache using
-   * its id (e.g. #ship).
+   * its id (e.g. ship.png)
    */
   c::SpriteFrame* GetSpriteFrame(const stdstr& frameid);
 
   bool HasKeyPad();
+  bool HasMouse();
+  bool HasTouch();
 
   void OnKeyPolls();
-
   void OnKeys();
-
-  bool HasMouse();
 
   void OnMouse();
 
-  bool HasTouch();
-
   void OnTouchAll();
-
   void OnTouchOne();
 
   const c::Vec2 AnchorC();
