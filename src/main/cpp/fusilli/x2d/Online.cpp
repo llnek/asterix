@@ -180,32 +180,32 @@ void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
   if (uid.length() == 0 ||
       pwd.length() == 0) { return; }
 
-  wss= WSockSS::CreatePlayRequest(game, uid, pwd);
-  wss->ListenAll([=](const Event& e) {
+  wss= ws::CreatePlayRequest(game, uid, pwd);
+  wss->Listen(ws::MType::EVERYTHING, [=](const ws::Event& e) {
       this->OnOdinEvent(e);
       });
-  wss->Connect(wsurl);
+  ws::Connect(wss,wsurl);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnOdinEvent(const Event& evt) {
+void Online::OnOdinEvent(const ws::Event& evt) {
   //CCLOG("odin event = %p", evt);
   switch (evt.type) {
-    case MType::NETWORK: OnNetworkEvent(evt); break;
-    case MType::SESSION: OnSessionEvent(evt); break;
+    case ws::MType::NETWORK: OnNetworkEvent(evt); break;
+    case ws::MType::SESSION: OnSessionEvent(evt); break;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnNetworkEvent(const Event& evt) {
+void Online::OnNetworkEvent(const ws::Event& evt) {
   switch (evt.code) {
-    case EType::PLAYER_JOINED:
+    case ws::EType::PLAYER_JOINED:
       //TODO
       //CCLOG("another player joined room: ", evt.source.puid);
     break;
-    case EType::START:
+    case ws::EType::START:
       CCLOG("play room is ready, game can start");
       wss->CancelAll();
       OnContinue();
@@ -222,9 +222,9 @@ void Online::OnContinue() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnSessionEvent(const Event& evt) {
+void Online::OnSessionEvent(const ws::Event& evt) {
   switch (evt.code) {
-    case EType::PLAYREQ_OK:
+    case ws::EType::PLAYREQ_OK:
       //CCLOG("player %d: request to play game was successful",evt.source.pnum);
       //player=evt.source.pnum;
       SCAST(OnlineLayer*, GetLayer(1))->ShowWaitOthers();
@@ -236,7 +236,7 @@ void Online::OnSessionEvent(const Event& evt) {
 //
 void Online::OnCancel(c::Ref* rr) {
   try {
-    wss->Close();
+    ws::Close(wss);
   } catch (...) {}
   SNPTR(wss)
   no->execute();

@@ -16,6 +16,7 @@
 #include "XScene.h"
 NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
+NS_ALIAS(ws, fusii::wsock)
 NS_BEGIN(fusii)
 
 class OnlineLayer;
@@ -26,9 +27,9 @@ friend class OnlineLayer;
 protected:
 
   void SetActions(c::CallFunc*, c::CallFunc* );
-  void OnSessionEvent(const Event&);
-  void OnOdinEvent(const Event&);
-  void OnNetworkEvent(const Event&);
+  void OnSessionEvent(const ws::Event&);
+  void OnOdinEvent(const ws::Event&);
+  void OnNetworkEvent(const ws::Event&);
 
   void OnPlayReq(const stdstr&, const stdstr&);
   void OnContinue();
@@ -39,7 +40,7 @@ protected:
 
   c::CallFunc* yes;
   c::CallFunc* no;
-  WSockSS* wss;
+  ws::WSockSS* wss;
 
 private:
 

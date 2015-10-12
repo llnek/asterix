@@ -24,12 +24,14 @@ NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 
+NS_BEGIN(wsock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class CC_DLL MType {
   NETWORK,
-  SESSION
+  SESSION,
+  EVERYTHING
 };
 
 enum class CC_DLL CType {
@@ -99,10 +101,7 @@ struct CC_DLL Event {
 class CC_DLL WSockSS : public n::WebSocket::Delegate {
 protected:
 
-  const stdstr GetPlayRequest();
   void OnEvent(const Event&);
-  void Reset();
-  WSockSS();
 
 private:
 
@@ -112,30 +111,10 @@ private:
 
   NO__CPYASS(WSockSS)
 
-  n::WebSocket* wss;
-  stdstr room;
-  stdstr game;
-  stdstr user;
-  stdstr passwd;
-  CType state;
-
 public:
 
-  static owner<WSockSS*> CreatePlayRequest(const stdstr& game,
-      const stdstr& user, const stdstr& pwd);
-
-  static owner<WSockSS*> CreateJoinRequest(const stdstr& room,
-      const stdstr& user, const stdstr& pwd);
-
-  virtual ~WSockSS();
-
-  void Connect(const stdstr& url);
-  void Disconnect();
-  void Close();
-  void Send(const Event&);
-
   void Listen(const MType, s::function<void (const Event&)>);
-  void ListenAll(s::function<void (const Event&)>);
+  void Reset();
   void CancelAll();
   void Cancel(const MType);
 
@@ -148,10 +127,30 @@ public:
   virtual void onError(n::WebSocket* ,
       const n::WebSocket::ErrorCode& ) ;
 
+  virtual ~WSockSS();
+  WSockSS();
+
+  n::WebSocket* socket;
+  stdstr room;
+  stdstr game;
+  stdstr user;
+  stdstr passwd;
+  CType state;
+
 };
 
+n::WebSocket* Connect(not_null<WSockSS*>, const stdstr& url);
+  void Disconnect(not_null<WSockSS*>);
+  void Close(not_null<WSockSS*>);
+  void Send(not_null<WSockSS*>, const Event&);
+  const stdstr GetPlayRequest(not_null<WSockSS*>);
+  owner<WSockSS*> CreatePlayRequest(const stdstr& game,
+      const stdstr& user, const stdstr& pwd);
 
+  owner<WSockSS*> CreateJoinRequest(const stdstr& room,
+      const stdstr& user, const stdstr& pwd);
 
+NS_END(wsock)
 NS_END(fusii)
 #endif
 

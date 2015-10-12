@@ -18,7 +18,7 @@ NS_ALIAS(j, fusii::json)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
-
+NS_BEGIN(wsock)
 //////////////////////////////////////////////////////////////////////////////
 //
 static Event mkEvent(MType eventType,
@@ -111,11 +111,12 @@ Event::~Event() {
 //////////////////////////////////////////////////////////////////////////////
 //
 WSockSS::~WSockSS() {
+  mc_del_ptr(socket)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<WSockSS*> WSockSS::CreatePlayRequest(const stdstr& game,
+owner<WSockSS*> CreatePlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->game= game;
@@ -126,7 +127,7 @@ owner<WSockSS*> WSockSS::CreatePlayRequest(const stdstr& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS* WSockSS::CreateJoinRequest(const stdstr& room,
+owner<WSockSS*> CreateJoinRequest(const stdstr& room,
     const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->room= room;
@@ -140,32 +141,31 @@ WSockSS* WSockSS::CreateJoinRequest(const stdstr& room,
 WSockSS::WSockSS() {
   cbNetwork = cbSession = cbAll = nullptr;
   state= CType::S_NOT_CONNECTED;
-  wss = nullptr;
+  SNPTR(socket)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 //
-void WSockSS::Send(const Event& evt) {
-  if (state == CType::S_CONNECTED &&
-      NNP(wss)) {
-    auto d=  j::Stringify( evtToDoc(evt));
-    wss->send(d);
+void Send(not_null<WSockSS*> wss, const Event& evt) {
+  if (wss->state == CType::S_CONNECTED) {
+    auto d= j::Stringify( evtToDoc(evt));
+    wss->socket->send(d);
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Listen to this message-type and event
-void WSockSS::ListenAll(s::function<void (const Event&)> cb) {
-  cbAll= cb;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
 void WSockSS::Listen(MType t, s::function<void (const Event&)> cb) {
+
+  if (MType::EVERYTHING == t) {
+    cbAll =cb;
+  }
+  else
   if (MType::SESSION == t) {
     cbSession= cb;
   }
+  else
   if (MType::NETWORK == t) {
     cbNetwork =cb;
   }
@@ -175,17 +175,24 @@ void WSockSS::Listen(MType t, s::function<void (const Event&)> cb) {
 // Cancel and remove all subscribers
 //
 void WSockSS::CancelAll() {
-  cbAll= nullptr;
+  SNPTR(cbNetwork)
+  SNPTR(cbSession)
+  SNPTR(cbAll)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
 void WSockSS::Cancel(MType t) {
-  if (MType::SESSION == t) {
-    cbSession= nullptr;
+  if (MType::EVERYTHING == t) {
+    SNPTR(cbAll)
   }
+  else
+  if (MType::SESSION == t) {
+    SNPTR(cbSession)
+  }
+  else
   if (MType::NETWORK == t) {
-    cbNetwork =nullptr;
+    SNPTR(cbNetwork)
   }
 }
 
@@ -193,31 +200,28 @@ void WSockSS::Cancel(MType t) {
 // Reset and clear everything
 //
 void WSockSS::Reset() {
-  cbNetwork = nullptr;
-  cbSession = nullptr;
-  cbAll = nullptr;
+  state= CType::S_NOT_CONNECTED;
+  mc_del_ptr(socket);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Close the connection to the socket
 //
-void WSockSS::Close() {
-  state= CType::S_NOT_CONNECTED;
-  Reset();
-  if (NNP(wss)) {
-    try {
-      wss->close();
-    }
-    catch (...) {}
+void Close(not_null<WSockSS*> wss) {
+  wss->CancelAll();
+  try {
+    wss->socket->close();
   }
-  wss = nullptr;
+  catch (...)
+  {}
+  wss->Reset();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Disconnect from the socket
 //
-void WSockSS::Disconnect() {
-  Close();
+void Disconnect(not_null<WSockSS*> wss) {
+  Close(wss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -226,7 +230,8 @@ void WSockSS::onOpen(n::WebSocket* ws) {
   // connection success
   // send the play game request
   state= CType::S_CONNECTED;
-  ws->send(GetPlayRequest());
+  socket=ws;
+  ws->send(GetPlayRequest(this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -273,21 +278,22 @@ void WSockSS::OnEvent(const Event& evt) {
 //////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
-void WSockSS::Connect(const stdstr& url) {
+n::WebSocket* Connect(not_null<WSockSS*> wss, const stdstr& url) {
   auto ws= new n::WebSocket();
-  if (!ws->init(*this, url)) {
+  if (!ws->init(*wss, url)) {
     mc_del_ptr(ws);
   } else {
-    wss=ws;
+    wss->socket=ws;
   }
+  return ws;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr WSockSS::GetPlayRequest() {
-  return j::Stringify( evtToDoc(mkPlayRequest(game, user, passwd)));
+const stdstr GetPlayRequest(not_null<WSockSS*> wss) {
+  return j::Stringify( evtToDoc(mkPlayRequest(wss->game, wss->user, wss->passwd)));
 }
 
-
+NS_END(wsock)
 NS_END(fusii)
 
