@@ -42,13 +42,18 @@ public:
   virtual void Pause() {}
   virtual void Resume() {}
 
-  virtual XScene* Realize() =0;
+  virtual XScene* Realize() = 0;
   virtual ~XScene() {}
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class CC_DLL XSceneFactory  {
+public:
+  static XScene* ReifySimple(s::function<void (XLayer*)> );
+};
+
 
 NS_END(fusii)
 #endif
