@@ -106,7 +106,7 @@ void Config::InitAssets() {
   AddEffect("game_end", c::String::create("sfx/MineExplosion.mp3"));
   AddEffect("game_quit", c::String::create("sfx/Death.mp3"));
   AddEffect("ship-missile", c::String::create("sfx/missile.mp3"));
-  AddEffect("bug-march", c::String::create("sfx/march.mp3"));
+  AddEffect("bugs-march", c::String::create("sfx/march.mp3"));
   AddEffect("xxx-explode", c::String::create("sfx/explode.mp3"));
 
   AddFont("font.SmallTypeWriting", c::String::create("fon/en/SmallTypeWriting.fnt"));

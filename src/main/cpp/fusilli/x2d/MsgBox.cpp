@@ -38,13 +38,13 @@ public:
 //////////////////////////////////////////////////////////////////////////
 //
 XLayer* MsgBoxLayer::Realize() {
-  SCAST(MsgBox*, getParent())->decorateUI(this);
+  SCAST(MsgBox*, getParent())->Decorate(this);
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::decorateUI(MsgBoxLayer* layer) {
+void MsgBox::Decorate(MsgBoxLayer* layer) {
 
   auto qn= cx::CreateBmfLabel("font.OCR", GetMsg());
   auto wz= cx::VisRect();

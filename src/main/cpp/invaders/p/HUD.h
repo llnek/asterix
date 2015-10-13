@@ -14,6 +14,7 @@
 
 #include "platform/CCCommon.h"
 #include "x2d/XHUDLayer.h"
+
 NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 

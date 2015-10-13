@@ -92,7 +92,9 @@ void HUDLayer::InitIcons() {
   auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
 
-  lives = f::XLives::Create( this, "health.png", 3, tile + soff,
+  lives= f::XLives::create();
+  AddItem(lives);
+  lives->Realize("health.png", 3, tile + soff,
     wb.top - tile - soff);
 }
 

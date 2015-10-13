@@ -82,6 +82,7 @@ public:
   const filepath GetMusic(const stdstr& key);
 
   c::Ref* GetCst(const stdstr& cst);
+  int GetBtnPadding();
 
   void ToggleAudio(bool s);
   bool HasAudio();
@@ -99,6 +100,7 @@ public:
 
   const s::vector<filepath> GetEffectFiles();
   const s::vector<filepath> GetMusicFiles();
+
 
   virtual ~XConfig();
 

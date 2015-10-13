@@ -76,8 +76,16 @@ XConfig::XConfig() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+int XConfig::GetBtnPadding() {
+  return CstVal<c::Integer>("BTN_PADDING")->getValue();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void XConfig::SetCsts() {
   auto f = GetFragment(CSTS);
+
+  f->setObject(c::Integer::create(10), "BTN_PADDING");
 
   f->setObject(c::Bool::create(true), "showFPS");
   f->setObject(c::Integer::create(60), "FPS");

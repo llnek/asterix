@@ -10,12 +10,12 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
+#include "XHUDLayer.h"
 #include "XLive.h"
 #include "XLives.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -23,7 +23,7 @@ void XLives::Reduce(int x) {
   while (x > 0) {
     if (icons.size() > 0) {
       auto it= icons.back();
-      hud->RemoveItem( it );
+      it->removeFromParent();
       icons.pop_back();
     }
     --x;
@@ -33,15 +33,10 @@ void XLives::Reduce(int x) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XLives::IsDead() {
-  return curLives < 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void XLives::Reset() {
   for (auto it= icons.begin(); it != icons.end(); ++it) {
-    hud->RemoveItem(*it);
+    auto n= *it;
+    n->removeFromParent();
   }
   curLives = totalLives;
   icons.clear();
@@ -57,62 +52,49 @@ void XLives::Resurrect() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::DrawLives() {
-  auto gap=2;
+//  auto gap=2;
   float y;
   float x;
 
   for (int n = 0; n < curLives; ++n) {
     auto v= XLive::Create(frameId);
     if (n==0) {
-      lifeSize = c::Size(cx::GetScaledWidth(v),
-                          cx::GetScaledHeight(v));
-      y= topLeft.y - lifeSize.height * 0.5;
-      x= topLeft.x + lifeSize.width * 0.5;
+      lifeSize = v->getContentSize();
+      y= refPt.y - lifeSize.height * 0.5;
+      x= refPt.x + lifeSize.width * 0.5;
     }
     v->setPosition(x,y);
-    hud->AddIcon(v);
+    addChild(v);
     icons.push_back(v);
     if (this->dir > 0) {
-      x += lifeSize.width + gap;
+      x += lifeSize.width * 1.2f;
     } else {
-      x -= lifeSize.width - gap;
+      x -= lifeSize.width - 1.2f;
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<XLives*> XLives::Create(not_null<XHUDLayer*> hud,
-    const stdstr& frame,
+void XLives::Realize(const stdstr& frame,
     int lives,
     float x, float y, int dir) {
 
-  auto vs = new XLives(lives, dir);
-
-  vs->topLeft= c::Vec2(x,y);
-  vs->frameId = frame;
-  vs->hud= hud;
-  vs->Reset();
-  vs->DrawLives();
-
-  return vs;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XLives::~XLives() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XLives::XLives(int lives, int dir) {
-  hud= nullptr;
-  curLives = -1;
   totalLives = lives;
+  curLives = 0;
   this->dir = dir;
+  refPt= c::Vec2(x,y);
+  frameId = frame;
+  Reset();
+  DrawLives();
 }
 
-
-
+//////////////////////////////////////////////////////////////////////////////
+//
+XLives::XLives() {
+  totalLives = 0;
+  curLives = 0;
+  dir = 1;
+}
 
 NS_END(fusii)

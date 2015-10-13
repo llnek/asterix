@@ -20,15 +20,14 @@
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
-
+class YesNoLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL YesNo : public XScene {
 friend class YesNoLayer;
 protected:
 
-  void SetActions(not_null<c::CallFunc*>,
-      not_null<c::CallFunc*>);
+  void SetActions(not_null<c::CallFunc*>, not_null<c::CallFunc*>);
 
   const stdstr& GetMsg() { return msgText; }
   void SetMsg(const stdstr&);
@@ -36,13 +35,12 @@ protected:
   void OnYes(c::Ref*);
   void OnNo(c::Ref*);
 
-  YesNo();
-
   c::CallFunc* yes;
   c::CallFunc* no;
   stdstr msgText;
 
-  CREATE_FUNC(YesNo)
+  virtual void Decorate(YesNoLayer*);
+  YesNo();
 
 private:
 
@@ -50,14 +48,18 @@ private:
 
 public:
 
-  static owner<YesNo*> CreateWithActions(const stdstr& msg,
+  static owner<YesNo*> Create(not_null<YesNo*>, const stdstr& msg);
+
+  static owner<YesNo*> CreateWithActions(
+      not_null<YesNo*>, const stdstr& msg,
       not_null<c::CallFunc*> yes,
       not_null<c::CallFunc*> no);
 
-  static owner<YesNo*> Create(const stdstr& msg);
 
   virtual XScene* Realize();
   virtual ~YesNo();
+
+  CREATE_FUNC(YesNo)
 };
 
 

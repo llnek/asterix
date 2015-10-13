@@ -73,7 +73,7 @@ void OnlineLayer::ShowWaitOthers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* OnlineLayer::Realize() {
-  SCAST(Online*, getParent())->decorateUI(this);
+  SCAST(Online*, getParent())->Decorate(this);
   return this;
 }
 
@@ -87,7 +87,7 @@ Online* Online::Create(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::decorateUI(OnlineLayer* layer) {
+void Online::Decorate(OnlineLayer* layer) {
 
   auto qn= cx::CreateBmfLabel("font.OCR", "Sign in");
   auto wz= cx::VisRect();

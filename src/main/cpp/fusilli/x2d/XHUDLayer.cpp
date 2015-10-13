@@ -28,15 +28,9 @@ XHUDLayer::~XHUDLayer() {
 //
 XHUDLayer::XHUDLayer() {
   SNPTR(scoreLabel)
-  SNPTR(lives)
+  SNPTR(lives);
   score = 0;
   SNPTR(replayBtn)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XHUDLayer::AddIcon(not_null<XLive*> icon) {
-  AddItem((c::Node*) icon.get());
 }
 
 //////////////////////////////////////////////////////////////////////////////

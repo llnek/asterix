@@ -32,7 +32,7 @@ protected:
   void SetMsg(const stdstr&);
   void OnYes(c::Ref*);
 
-  virtual void decorateUI(MsgBoxLayer*);
+  virtual void Decorate(MsgBoxLayer*);
   MsgBox();
 
   c::CallFunc* action;
@@ -40,7 +40,6 @@ protected:
 
 private:
 
-  //CREATE_FUNC(MsgBox)
   NO__CPYASS(MsgBox)
 
 public:
@@ -54,6 +53,7 @@ public:
   virtual XScene* Realize();
   virtual ~MsgBox();
 
+  CREATE_FUNC(MsgBox)
 };
 
 

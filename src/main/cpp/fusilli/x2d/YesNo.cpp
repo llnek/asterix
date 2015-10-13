@@ -21,7 +21,6 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL YesNoLayer : public XLayer {
-
 private:
 
   NO__CPYASS(YesNoLayer)
@@ -40,11 +39,15 @@ public:
 //
 XLayer* YesNoLayer::Realize() {
 
-  auto par = SCAST(YesNo*, getParent());
-  auto msg= par->GetMsg();
-  auto fnt= XCFG()->GetFont("font.OCR");
-  auto qn= c::Label::createWithBMFont(fnt, msg);
+  SCAST(YesNo*, getParent())->Decorate(this);
+  return this;
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void YesNo::Decorate(YesNoLayer* layer) {
+
+  auto qn= cx::CreateBmfLabel("font.OCR", GetMsg());
   auto cw= cx::Center();
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
@@ -53,41 +56,41 @@ XLayer* YesNoLayer::Realize() {
   qn->setScale(XCFG()->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
 
-  CenterImage("game.bg");
-  AddItem(qn);
+  layer->CenterImage("game.bg");
+  layer->AddItem(qn);
 
   auto b1= cx::CreateMenuBtn("continue.png");
-  b1->setTarget(par, CC_MENU_SELECTOR(YesNo::OnYes));
+  b1->setTarget(this, CC_MENU_SELECTOR(YesNo::OnYes));
 
   auto b2= cx::CreateMenuBtn("cancel.png");
-  b2->setTarget(par, CC_MENU_SELECTOR(YesNo::OnNo));
-  auto menu= c::Menu::create();
+  b2->setTarget(this, CC_MENU_SELECTOR(YesNo::OnNo));
 
+  auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->addChild(b2);
-  menu->alignItemsVerticallyWithPadding(10);
+  menu->alignItemsVerticallyWithPadding(XCFG()->GetBtnPadding());
   menu->setPosition(cw);
-  AddItem(menu);
 
-  return this;
+  layer->AddItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<YesNo*> YesNo::CreateWithActions(const stdstr& msg,
+owner<YesNo*> YesNo::CreateWithActions(
+    not_null<YesNo*> box,
+    const stdstr& msg,
     not_null<c::CallFunc*> y,
     not_null<c::CallFunc*> n) {
 
-  YesNo* yn = YesNo::create();
-  yn->SetActions(y,n);
-  yn->SetMsg(msg);
-  yn->Realize();
-  return yn;
+  box->SetActions(y,n);
+  box->SetMsg(msg);
+  box->Realize();
+  return box;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<YesNo*> YesNo::Create(const stdstr& msg) {
+owner<YesNo*> YesNo::Create(not_null<YesNo*> box, const stdstr& msg) {
 
   c::CallFunc* y = c::CallFunc::create([](){
       CC_DTOR()->popToRootScene();
@@ -98,7 +101,7 @@ owner<YesNo*> YesNo::Create(const stdstr& msg) {
       CC_DTOR()->popScene();
       });
 
-  return CreateWithActions(msg, y,n);
+  return CreateWithActions(box, msg, y,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////

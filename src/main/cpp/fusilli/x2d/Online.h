@@ -35,7 +35,7 @@ protected:
   void OnContinue();
   void OnCancel(c::Ref*);
 
-  virtual void decorateUI(OnlineLayer*);
+  virtual void Decorate(OnlineLayer*);
   Online();
 
   c::CallFunc* yes;
@@ -44,7 +44,6 @@ protected:
 
 private:
 
-//  CREATE_FUNC(Online)
   NO__CPYASS(Online)
 
 public:
@@ -53,6 +52,7 @@ public:
   virtual XScene* Realize();
   virtual ~Online();
 
+  CREATE_FUNC(Online)
 };
 
 

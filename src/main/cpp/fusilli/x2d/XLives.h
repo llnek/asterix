@@ -13,17 +13,16 @@
 #define __XLIVES_H__
 
 #include "platform/CCCommon.h"
-#include "XHUDLayer.h"
 #include <vector>
 
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
-
+class XHUDLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XLives {
+class CC_DLL XLives : public c::Node {
 protected:
 
   s::vector<c::Node*> icons;
@@ -31,12 +30,10 @@ protected:
   int curLives;
   int dir;
   c::Size lifeSize;
-  c::Vec2 topLeft;
+  c::Vec2 refPt;
   stdstr frameId;
-  XHUDLayer* hud;
 
-  XLives(int lives, int dir=1);
-  XLives()=delete;
+  XLives();
 
 private:
 
@@ -44,21 +41,21 @@ private:
 
 public:
 
-  static owner<XLives*> Create(not_null<XHUDLayer*>,
+  virtual void Realize(
       const stdstr& frame,
       int lives,
       float x, float y, int dir= 1);
 
-  virtual ~XLives();
-
+  bool IsDead() { return curLives < 0; }
   int GetLives() { return curLives; }
   void Reduce(int c);
-  bool IsDead();
   void Reset();
   void Resurrect();
   void DrawLives();
-  void Create();
 
+  virtual ~XLives() {}
+
+  CREATE_FUNC(XLives)
 };
 
 

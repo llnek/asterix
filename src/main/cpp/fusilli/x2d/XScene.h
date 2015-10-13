@@ -27,7 +27,7 @@ class CC_DLL XScene : public c::Scene {
 protected:
 
   virtual void OnQuitAction();
-  XScene();
+  XScene() {}
 
 private:
 
@@ -38,19 +38,15 @@ public:
   XLayer*  AddLayer(not_null<XLayer*>, int z=0);
   XLayer*  GetLayer(int tag);
 
-  virtual XScene* Realize() = 0;
-  virtual ~XScene();
-
   virtual bool IsRunning() { return false; }
   virtual void Run() {}
   virtual void Pause() {}
   virtual void Resume() {}
 
+  virtual XScene* Realize() = 0;
+  virtual ~XScene() {}
+
 };
-
-
-
-
 
 NS_END(fusii)
 #endif

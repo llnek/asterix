@@ -39,7 +39,7 @@ void XLayer::AudioCallback(c::Ref* r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::OnQuit(c::Ref* rr) {
-  auto s= YesNo::Create("Are you sure ?");
+  auto s= YesNo::Create(YesNo::create(), "Are you sure ?");
   CC_DTOR()->pushScene(s);
 }
 

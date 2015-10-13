@@ -129,6 +129,7 @@ void App::PreLaunch(const c::Size& dz) {
   }
 
   searchPaths.push_back(spath);
+  //searchPaths.push_back("sfx");
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   // Set the design resolution
@@ -137,7 +138,8 @@ void App::PreLaunch(const c::Size& dz) {
 
   CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
   CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
-  CCLOG("file search path=%s", spath);
+  CCLOG("image search path=%s", spath);
+  CCLOG("sound search path=%s", "sfx");
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
 
   XCFG()->HandleResolution(fz);
@@ -152,11 +154,13 @@ void App::InitAudio() {
   auto a = XCFG()->GetEffectFiles();
   for (auto it = a.begin(); it != a.end(); ++it) {
     auto fp = *it;
+    CCLOG("preloading sound effect: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadEffect(fp.c_str());
   }
   a= XCFG()->GetMusicFiles();
   for (auto it = a.begin(); it != a.end(); ++it) {
     auto fp = *it;
+    CCLOG("preloading music: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());
   }
 
