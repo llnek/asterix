@@ -121,7 +121,7 @@ void Aliens::DropBomb(float x, float y) {
   auto ent = bbs->Get();
 
   if (NNP(ent)) {
-    factory->CreateBombs(25);
+    factory->ReifyBombs(25);
     ent = bbs->Get();
   }
 

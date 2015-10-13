@@ -46,7 +46,7 @@ XLayer* MsgBoxLayer::Realize() {
 //
 void MsgBox::Decorate(MsgBoxLayer* layer) {
 
-  auto qn= cx::CreateBmfLabel("font.OCR", GetMsg());
+  auto qn= cx::ReifyBmfLabel("font.OCR", GetMsg());
   auto wz= cx::VisRect();
   auto cw= cx::Center();
   auto wb = cx::VisBox();
@@ -57,7 +57,7 @@ void MsgBox::Decorate(MsgBoxLayer* layer) {
   qn->setOpacity(0.9*255);
   layer->AddItem(qn);
 
-  auto b1= cx::CreateMenuBtn("ok.png");
+  auto b1= cx::ReifyMenuBtn("ok.png");
   b1->setTarget(this,
       CC_MENU_SELECTOR(MsgBox::OnYes));
   auto menu= c::Menu::create();
@@ -68,7 +68,7 @@ void MsgBox::Decorate(MsgBoxLayer* layer) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithAction(
+MsgBox* MsgBox::ReifyWithAction(
     not_null<MsgBox*> box,
     c::CallFunc* cb, const stdstr& msg) {
 
@@ -81,12 +81,12 @@ MsgBox* MsgBox::CreateWithAction(
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MsgBox* MsgBox::CreateWithMsg(not_null<MsgBox*> box, const stdstr& msg) {
+MsgBox* MsgBox::ReifyWithMsg(not_null<MsgBox*> box, const stdstr& msg) {
 
   auto cb= c::CallFunc::create([](){
       CC_DTOR()->popScene();
       });
-  return CreateWithAction(box, cb, msg);
+  return ReifyWithAction(box, cb, msg);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -62,7 +62,7 @@ public:
   virtual void Run();
   virtual bool IsRunning();
 
-  static owner<Game*> Create();
+  static owner<Game*> Reify();
 };
 
 

@@ -30,7 +30,7 @@ private:
 
 public:
 
-  static owner<NodeList*> Create(const NodeType&);
+  static owner<NodeList*> Reify(const NodeType&);
 
   const NodeType GetType() { return nType; }
   virtual ~NodeList();

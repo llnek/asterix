@@ -116,7 +116,7 @@ WSockSS::~WSockSS() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<WSockSS*> CreatePlayRequest(const stdstr& game,
+owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->game= game;
@@ -127,7 +127,7 @@ owner<WSockSS*> CreatePlayRequest(const stdstr& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<WSockSS*> CreateJoinRequest(const stdstr& room,
+owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
     const stdstr& user, const stdstr& pwd) {
   auto w= new WSockSS();
   w->room= room;

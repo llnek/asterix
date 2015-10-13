@@ -28,7 +28,7 @@ private:
 
 public:
 
-  static MainMenu* CreateWithBackAction(c::CallFunc* );
+  static MainMenu* ReifyWithBackAction(c::CallFunc* );
   virtual f::XScene* Realize();
   void OnBackAction();
   virtual ~MainMenu();

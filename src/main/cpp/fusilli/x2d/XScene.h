@@ -26,7 +26,6 @@ class CC_DLL XScene : public c::Scene {
 
 protected:
 
-  virtual void OnQuitAction();
   XScene() {}
 
 private:
@@ -43,10 +42,13 @@ public:
   virtual void Pause() {}
   virtual void Resume() {}
 
-  virtual XScene* Realize() = 0;
+  virtual XScene* Realize() =0;
   virtual ~XScene() {}
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
 
 NS_END(fusii)
 #endif

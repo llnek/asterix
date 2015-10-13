@@ -39,7 +39,7 @@ void XLayer::AudioCallback(c::Ref* r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::OnQuit(c::Ref* rr) {
-  auto s= YesNo::Create(YesNo::create(), "Are you sure ?");
+  auto s= YesNo::Reify(YesNo::create(), "Are you sure ?");
   CC_DTOR()->pushScene(s);
 }
 
@@ -94,7 +94,7 @@ c::SpriteBatchNode* XLayer::GetAtlas(const stdstr& name) {
 void XLayer::AddAtlasFrame(const stdstr& atlas,
                            const stdstr& frame,
                            const c::Vec2& pos) {
-  auto tt= cx::CreateSprite(frame);
+  auto tt= cx::ReifySprite(frame);
   tt->setPosition(pos);
   AddAtlasItem(atlas, tt);
 }
@@ -103,7 +103,7 @@ void XLayer::AddAtlasFrame(const stdstr& atlas,
 // Add an image
 //
 void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
-  auto tt= cx::CreateSprite(frame);
+  auto tt= cx::ReifySprite(frame);
   tt->setPosition(pos);
   AddItem(tt);
 }

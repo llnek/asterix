@@ -35,17 +35,17 @@ private:
 public:
 
   Factory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
-  void CreateMissiles(int count= 36);
-  void CreateExplosions(int count = 24);
-  void CreateBombs(int count = 24);
+  void ReifyMissiles(int count= 36);
+  void ReifyExplosions(int count = 24);
+  void ReifyBombs(int count = 24);
 
   const c::Size CalcImgSize(const stdstr& img);
   c::Dictionary* GetRankInfo(int r);
 
   void FillSquad(not_null<f::XPool*> );
-  a::Entity* CreateAliens();
+  a::Entity* ReifyAliens();
   void BornShip();
-  a::Entity* CreateShip();
+  a::Entity* ReifyShip();
 
   virtual ~Factory();
 };

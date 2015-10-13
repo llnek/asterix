@@ -144,10 +144,10 @@ n::WebSocket* Connect(not_null<WSockSS*>, const stdstr& url);
   void Close(not_null<WSockSS*>);
   void Send(not_null<WSockSS*>, const Event&);
   const stdstr GetPlayRequest(not_null<WSockSS*>);
-  owner<WSockSS*> CreatePlayRequest(const stdstr& game,
+  owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
       const stdstr& user, const stdstr& pwd);
 
-  owner<WSockSS*> CreateJoinRequest(const stdstr& room,
+  owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
       const stdstr& user, const stdstr& pwd);
 
 NS_END(wsock)

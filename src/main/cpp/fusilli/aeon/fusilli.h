@@ -99,7 +99,7 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define DEFCREATE_FUNC(T) static owner<T*> Create() { return new(std::nothrow) T(); }
+#define DEFCREATE_FUNC(T) static owner<T*> Reify() { return new(std::nothrow) T(); }
 #define SNPTR(x) x = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////

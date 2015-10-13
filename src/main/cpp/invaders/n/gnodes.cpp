@@ -14,11 +14,11 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<a::Node*> AlienMotionNode::CreateNode() {
+owner<a::Node*> AlienMotionNode::ReifyNode() {
   s::map<stdstr,a::COMType> s;
   s.insert(s::pair<stdstr,a::COMType>("aliens", "n/AlienSquad"));
   s.insert(s::pair<stdstr,a::COMType>("looper", "n/Looper"));
-  return a::Node::Create(s);
+  return a::Node::Reify(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,12 +33,12 @@ AlienMotionNode::~AlienMotionNode() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<a::Node*> CannonCtrlNode::CreateNode() {
+owner<a::Node*> CannonCtrlNode::ReifyNode() {
   s::map<stdstr, a::COMType> s;
   s.insert(s::pair<stdstr, a::COMType>("looper", "n/Looper"));
   s.insert(s::pair<stdstr, a::COMType>("cannon", "n/Cannon"));
   s.insert(s::pair<stdstr, a::COMType>("ship", "n/Ship"));
-  return a::Node::Create(s);
+  return a::Node::Reify(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,12 +53,12 @@ CannonCtrlNode::~CannonCtrlNode() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<a::Node*> ShipMotionNode::CreateNode() {
+owner<a::Node*> ShipMotionNode::ReifyNode() {
   s::map<stdstr, a::COMType> s;
   s.insert(s::pair<stdstr, a::COMType>("vel", "n/Velocity"));
   s.insert(s::pair<stdstr, a::COMType>("motion", "n/Motion"));
   s.insert(s::pair<stdstr, a::COMType>("ship", "n/Ship"));
-  return a::Node::Create(s);
+  return a::Node::Reify(s);
 }
 
 //////////////////////////////////////////////////////////////////////////

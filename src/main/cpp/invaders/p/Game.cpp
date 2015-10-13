@@ -109,7 +109,7 @@ void GameLayer::Play(bool newFlag) {
 //
 void GameLayer::InitAsh() {
   auto options = c::Dictionary::create();
-  auto e = a::Engine::Create();
+  auto e = a::Engine::Reify();
 
   CCLOG("about to init-ash");
 
@@ -180,7 +180,7 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
 
     auto f= []() { CC_DTOR()->popScene(); };
     auto a= c::CallFunc::create(f);
-    CC_DTOR()->pushScene(MainMenu::CreateWithBackAction(a));
+    CC_DTOR()->pushScene(MainMenu::ReifyWithBackAction(a));
   }
   else
   if (topic == "/hud/replay") {
@@ -237,10 +237,10 @@ f::XScene* Game::Realize() {
   auto b = (f::XLayer*) BGLayer::create();
   auto h = (f::XLayer*) HUDLayer::create();
 
-  CreatePool("explosions");
-  CreatePool("aliens");
-  CreatePool("missiles");
-  CreatePool("bombs");
+  ReifyPool("explosions");
+  ReifyPool("aliens");
+  ReifyPool("missiles");
+  ReifyPool("bombs");
 
   AddLayer(b, 1)->Realize();
   AddLayer(g, 2);
@@ -256,7 +256,7 @@ f::XScene* Game::Realize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-owner<Game*> Game::Create() {
+owner<Game*> Game::Reify() {
   auto g= Game::create();
   g->Realize();
   return g;

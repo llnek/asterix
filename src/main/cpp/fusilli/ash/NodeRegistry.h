@@ -28,7 +28,7 @@ private:
   NO__CPYASS(NodeFactory)
 public:
   virtual const NodeType TypeId() = 0;
-  virtual owner<Node*> CreateNode() = 0;
+  virtual owner<Node*> ReifyNode() = 0;
   virtual ~NodeFactory() {}
 };
 
@@ -50,7 +50,7 @@ public:
   void Register(not_null<NodeFactory*>);
   void Deregister(const NodeType&);
 
-  owner<Node*> CreateNode(const NodeType&);
+  owner<Node*> ReifyNode(const NodeType&);
 
 };
 

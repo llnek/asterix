@@ -48,7 +48,7 @@ private:
 
 public:
 
-  static Online* Create(not_null<Online*>, c::CallFunc* yes, c::CallFunc* no);
+  static Online* Reify(not_null<Online*>, c::CallFunc* yes, c::CallFunc* no);
   virtual XScene* Realize();
   virtual ~Online();
 

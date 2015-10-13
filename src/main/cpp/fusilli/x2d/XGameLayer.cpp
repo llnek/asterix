@@ -222,7 +222,7 @@ void XGameLayer::InitKeys() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::InitTouch() {
-  //  Create a "one by one" touch event listener
+  //  Reify a "one by one" touch event listener
   // (processes one touch at a time)
   auto ln= c::EventListenerTouchOneByOne::create();
 

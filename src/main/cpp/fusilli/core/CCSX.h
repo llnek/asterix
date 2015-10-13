@@ -27,14 +27,14 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  void CreateAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
+  void ReifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
   void SfxPlay(const stdstr& sound);
 
-  c::MenuItem* CreateMenuBtn(const stdstr& n);
+  c::MenuItem* ReifyMenuBtn(const stdstr& n);
 
-  c::MenuItem* CreateMenuBtn(
+  c::MenuItem* ReifyMenuBtn(
       const stdstr& n,
       const stdstr& s, const stdstr& d);
 
@@ -56,17 +56,17 @@ namespace ccsx {
   bool OutOfBound(not_null<ComObj*>, const Box4& B);
   bool OutOfBound(const Box4& src, const Box4& B);
 
-  c::DelayTime* CreateTimer(not_null<c::Node*>, float millis);
+  c::DelayTime* ReifyTimer(not_null<c::Node*>, float millis);
   void UndoTimer(not_null<c::DelayTime*>);
   bool TimerDone(not_null<c::DelayTime*>);
 
-  c::Label* CreateBmfLabel(const stdstr& font, const stdstr& text);
+  c::Label* ReifyBmfLabel(const stdstr& font, const stdstr& text);
 
-  c::Label* CreateBmfLabel(float x, float y,
+  c::Label* ReifyBmfLabel(float x, float y,
     const stdstr& font,
     const stdstr& text);
 
-  c::Sprite* CreateSprite(const stdstr& frameName);
+  c::Sprite* ReifySprite(const stdstr& frameName);
 
   const Box4 BBox4B4(not_null<ComObj*>);
   const Box4 BBox4(not_null<c::Node*>);

@@ -73,7 +73,7 @@ public:
   const s::vector<Entity*> GetEntities();
   const s::vector<System*> GetSystems();
 
-  Entity* CreateEntity(const stdstr& group);
+  Entity* ReifyEntity(const stdstr& group);
 
   void NotifyModify(not_null<Entity*>);
   void PurgeEntity(not_null<Entity*> );

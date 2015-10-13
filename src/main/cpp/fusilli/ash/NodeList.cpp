@@ -31,7 +31,7 @@ NodeList::NodeList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<NodeList*> NodeList::Create(const NodeType& t) {
+owner<NodeList*> NodeList::Reify(const NodeType& t) {
   auto n = new NodeList();
   n->nType = t;
   return n;
@@ -127,7 +127,7 @@ bool NodeList::ContainsWithin(not_null<Entity*> e) {
 //
 bool NodeList::IsCompatible(not_null<Entity*> e) {
   auto rego = NodeRegistry::Self();
-  auto n = rego->CreateNode(nType);
+  auto n = rego->ReifyNode(nType);
   auto ok= n->BindEntity(e);
   delete n;
   return ok;

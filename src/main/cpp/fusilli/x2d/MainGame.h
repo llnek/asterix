@@ -39,7 +39,7 @@ public:
 
   static void Set(not_null<MainGame*>, int layer=2);
 
-  XPool* CreatePool(const stdstr& n);
+  XPool* ReifyPool(const stdstr& n);
   XPool* GetPool(const stdstr& n);
   void ResetPools();
 

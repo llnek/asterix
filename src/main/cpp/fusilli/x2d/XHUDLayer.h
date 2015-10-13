@@ -29,7 +29,6 @@ protected:
   void AddReplayIcon(not_null<c::MenuItem*>, const c::Vec2& where);
   void AddMenuIcon(not_null<c::MenuItem*>, const c::Vec2& where);
 
-
   c::Label* scoreLabel;
   c::Menu* replayBtn;
   XLives* lives;

@@ -118,13 +118,13 @@ void Motions::FireMissile(not_null<a::Node*> node, float dt) {
   auto ent= p->Get();
 
   if (ENP(ent)) {
-    factory->CreateMissiles(36);
+    factory->ReifyMissiles(36);
     ent= p->Get();
   }
 
   ent->Inflate(pos.x, top+4);
 
-  lpr->timer0 = cx::CreateTimer( MGML(), gun->coolDownWindow);
+  lpr->timer0 = cx::ReifyTimer( MGML(), gun->coolDownWindow);
   gun->hasAmmo=false;
   ship->sprite->setSpriteFrame(ship->frame1);
 
@@ -160,11 +160,11 @@ void Motions::ProcessAlienMotions(not_null<a::Node*> node, float dt) {
   auto lpr = a::NodeFld<Looper>(node, "looper");
 
   if (ENP(lpr->timer0)) {
-    lpr->timer0= cx::CreateTimer(MGML(), 1);
+    lpr->timer0= cx::ReifyTimer(MGML(), 1);
   }
 
   if (ENP(lpr->timer1)) {
-    lpr->timer1= cx::CreateTimer(MGML(), 2);
+    lpr->timer1= cx::ReifyTimer(MGML(), 2);
   }
 }
 

@@ -36,7 +36,7 @@ private:
 
 public:
 
-  static owner<Entity*> Create(const stdstr& group,
+  static owner<Entity*> Reify(const stdstr& group,
       not_null<Engine*>);
 
   Entity* previous;

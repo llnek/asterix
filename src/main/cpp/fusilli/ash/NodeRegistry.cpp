@@ -61,12 +61,12 @@ void NodeRegistry::Deregister(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> NodeRegistry::CreateNode(const NodeType& t) {
+owner<Node*> NodeRegistry::ReifyNode(const NodeType& t) {
   auto it=regos.find(t);
   Node* rc= nullptr;
   if (it != regos.end()) {
     auto f= it->second;
-    rc= f->CreateNode();
+    rc= f->ReifyNode();
   }
   return rc;
 }

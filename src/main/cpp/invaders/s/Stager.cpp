@@ -81,11 +81,11 @@ void Stager::OnceOnly(a::Engine* e) {
   InitAlienSize();
   InitShipSize();
 
-  factory->CreateExplosions();
-  factory->CreateMissiles();
-  factory->CreateBombs();
-  factory->CreateAliens();
-  factory->CreateShip();
+  factory->ReifyExplosions();
+  factory->ReifyMissiles();
+  factory->ReifyBombs();
+  factory->ReifyAliens();
+  factory->ReifyShip();
 
   e->ForceSync();
 

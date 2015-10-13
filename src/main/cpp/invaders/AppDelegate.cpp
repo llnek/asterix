@@ -31,7 +31,7 @@ AppDelegate::AppDelegate() {
   r->Register( new CannonCtrlNode());
 
   // step.2: set up app-config
-  XConfig::Bind(Config::Create());
+  XConfig::Bind(Config::Reify());
 }
 
 //////////////////////////////////////////////////////////////////////////////

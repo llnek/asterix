@@ -46,22 +46,22 @@ public:
 class FS_DLL Fac1  : public a::NodeFactory  {
 public:
   virtual const a::NodeType TypeId() { return "Fac1"; }
-  virtual ash::Node* CreateNode() {
+  virtual ash::Node* ReifyNode() {
     s::map<stdstr, a::COMType> sc;
     sc.insert(s::pair<stdstr,a::COMType>("f1", "c1"));
     sc.insert(s::pair<stdstr,a::COMType>("f2", "c2"));
-    return a::Node::Create(sc);
+    return a::Node::Reify(sc);
   }
 };
 
 class FS_DLL Fac2 : public a::NodeFactory {
 public:
   virtual const a::NodeType TypeId() { return "Fac2"; }
-  virtual a::Node* CreateNode() {
+  virtual a::Node* ReifyNode() {
     s::map<stdstr,a::COMType> s;
     s.insert(s::pair<stdstr,a::COMType>("f3", "c3"));
     s.insert(s::pair<stdstr,a::COMType>("f4", "c4"));
-    return a::Node::Create(s);
+    return a::Node::Reify(s);
   }
 };
 
@@ -75,7 +75,7 @@ public:
 
 static void SetUp() {
   auto r = a::NodeRegistry::Self();
-  auto eng = ash::Engine::Create();
+  auto eng = ash::Engine::Reify();
   auto f1 = new Fac1();
   auto f2 = new Fac2();
   r->Register(not_null<a::NodeFactory*>(f1));
@@ -85,13 +85,13 @@ static void SetUp() {
   eng->RegoSystem(not_null<a::System*>(ss));
 
   a::Component* c;
-  auto e1= eng->CreateEntity("g1");
+  auto e1= eng->ReifyEntity("g1");
   c = new COMP1();
   e1->Rego(not_null<a::Component*>(c));
   c = new COMP2();
   e1->Rego(not_null<a::Component*>(c));
 
-  auto e2= eng->CreateEntity("g2");
+  auto e2= eng->ReifyEntity("g2");
   c = new COMP3();
   e2->Rego(not_null<a::Component*>(c));
   c = new COMP4();
@@ -146,7 +146,7 @@ static void SetUp() {
   e1->Purge("c1");
 
   // add entity, should alter ns2
-  auto e3= eng->CreateEntity("g2");
+  auto e3= eng->ReifyEntity("g2");
   c = new COMP3();
   e3->Rego(not_null<a::Component*>(c));
   c = new COMP4();

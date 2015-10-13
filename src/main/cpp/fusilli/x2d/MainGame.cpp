@@ -63,7 +63,7 @@ XPool* MainGame::GetPool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* MainGame::CreatePool(const stdstr& key) {
+XPool* MainGame::ReifyPool(const stdstr& key) {
   auto p = new XPool();
   pools.insert(s::pair<stdstr, XPool*>(key, p));
   return p;

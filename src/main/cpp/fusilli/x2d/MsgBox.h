@@ -44,9 +44,9 @@ private:
 
 public:
 
-  static MsgBox* CreateWithMsg(not_null<MsgBox*>, const stdstr&);
+  static MsgBox* ReifyWithMsg(not_null<MsgBox*>, const stdstr&);
 
-  static MsgBox* CreateWithAction(
+  static MsgBox* ReifyWithAction(
       not_null<MsgBox*>,
       c::CallFunc*, const stdstr&);
 

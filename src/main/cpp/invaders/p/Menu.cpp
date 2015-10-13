@@ -63,7 +63,7 @@ f::XLayer* MenuLayer::Realize() {
   CenterImage("mmenus.bg");
 
   // title
-  auto lb= cx::CreateBmfLabel(cw.x, wb.top * 0.9,
+  auto lb= cx::ReifyBmfLabel(cw.x, wb.top * 0.9,
                           "font.JellyBelly",
                           "some text");
   lb->setScale(XCFG()->GetScale());
@@ -71,7 +71,7 @@ f::XLayer* MenuLayer::Realize() {
   AddItem(lb);
 
   // play button
-  auto b1= cx::CreateMenuBtn("play.png");
+  auto b1= cx::ReifyMenuBtn("play.png");
   b1->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   auto menu= c::Menu::create();
@@ -80,10 +80,10 @@ f::XLayer* MenuLayer::Realize() {
   AddItem(menu);
 
   // back-quit button
-  auto b= cx::CreateMenuBtn("icon_back.png");
+  auto b= cx::ReifyMenuBtn("icon_back.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnBack));
-  auto q= cx::CreateMenuBtn("icon_quit.png");
+  auto q= cx::ReifyMenuBtn("icon_quit.png");
   q->setTarget(this,
       CC_MENU_SELECTOR(XLayer::OnQuit));
   auto m2= cx::MkBackQuit(b, q, false);
@@ -96,7 +96,7 @@ f::XLayer* MenuLayer::Realize() {
   // audio
   c::MenuItem* off;
   c::MenuItem* on;
-  cx::CreateAudioIcons(on,off);
+  cx::ReifyAudioIcons(on,off);
   off->setColor(cx::White());
   on->setColor(cx::White());
 
@@ -110,7 +110,7 @@ f::XLayer* MenuLayer::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay(c::Ref* r) {
-  cx::RunScene(Game::Create());
+  cx::RunScene(Game::Reify());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ void MenuLayer::OnBack(c::Ref* r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::CreateWithBackAction(c::CallFunc* back) {
+MainMenu* MainMenu::ReifyWithBackAction(c::CallFunc* back) {
   auto m = new MainMenu();
   m->backAction= back;
   back->retain();

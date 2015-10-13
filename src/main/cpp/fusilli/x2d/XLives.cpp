@@ -11,7 +11,6 @@
 
 #include "core/CCSX.h"
 #include "XHUDLayer.h"
-#include "XLive.h"
 #include "XLives.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -57,7 +56,7 @@ void XLives::DrawLives() {
   float x;
 
   for (int n = 0; n < curLives; ++n) {
-    auto v= XLive::Create(frameId);
+    auto v= c::Sprite::createWithSpriteFrameName(frameId);
     if (n==0) {
       lifeSize = v->getContentSize();
       y= refPt.y - lifeSize.height * 0.5;

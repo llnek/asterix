@@ -44,10 +44,10 @@ Factory::Factory() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::CreateMissiles(int count) {
+void Factory::ReifyMissiles(int count) {
   auto p= MGMS()->GetPool("missiles");
   auto cb= []() -> f::ComObj* {
-    auto sp = cx::CreateSprite("missile.png");
+    auto sp = cx::ReifySprite("missile.png");
     sp->setVisible(false);
     MGML()->AddAtlasItem("game-pics", sp);
     return new Missile(sp);
@@ -57,10 +57,10 @@ void Factory::CreateMissiles(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::CreateExplosions(int count) {
+void Factory::ReifyExplosions(int count) {
   auto p= MGMS()->GetPool("explosions");
   auto cb= []() -> f::ComObj* {
-    auto sp = cx::CreateSprite("boom_0.png");
+    auto sp = cx::ReifySprite("boom_0.png");
     sp->setVisible(false);
     MGML()->AddAtlasItem("game-pics", sp);
     return new Explosion(sp);
@@ -70,10 +70,10 @@ void Factory::CreateExplosions(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::CreateBombs(int count) {
+void Factory::ReifyBombs(int count) {
   auto p= MGMS()->GetPool("bombs");
   auto cb= []() -> f::ComObj* {
-    auto sp = cx::CreateSprite("bomb.png");
+    auto sp = cx::ReifySprite("bomb.png");
     sp->setVisible(false);
     MGML()->AddAtlasItem("game-pics", sp);
     return new Bomb(sp);
@@ -146,7 +146,7 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
     }
 
     auto s = f::DictVal<c::String>(info, "img0");
-    auto aa = cx::CreateSprite(s->getCString());
+    auto aa = cx::ReifySprite(s->getCString());
     aa->setPosition(x + HWZ(az), y - HHZ(az));
 
     auto f1= f::DictVal<c::String>(info, "img0")->getCString();
@@ -171,9 +171,9 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* Factory::CreateAliens() {
+a::Entity* Factory::ReifyAliens() {
   auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
-  auto ent= engine->CreateEntity("baddies");
+  auto ent= engine->ReifyEntity("baddies");
   auto p = MGMS()->GetPool("aliens");
 
   FillSquad(p);
@@ -193,11 +193,11 @@ void Factory::BornShip() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* Factory::CreateShip() {
+a::Entity* Factory::ReifyShip() {
 
   auto sz = f::DictVal<f::Size2>(state, "shipSize")->getValue();
-  auto ent= engine->CreateEntity("goodies");
-  auto s= cx::CreateSprite("ship_1.png");
+  auto ent= engine->ReifyEntity("goodies");
+  auto s= cx::ReifySprite("ship_1.png");
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
   auto y = sz.height + wb.bottom + (5/60 * wz.size.height);

@@ -16,11 +16,6 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer* XScene::GetLayer(int tag) {
-  return SCAST(XLayer*, getChildByTag(tag));
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -31,11 +26,9 @@ XLayer* XScene::AddLayer(not_null<XLayer*> y, int z) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XScene::OnQuitAction() {
-  cx::RunScene( XCFG()->StartWith());
+XLayer* XScene::GetLayer(int tag) {
+  return SCAST(XLayer*, getChildByTag(tag));
 }
-
-
 
 NS_END(fusii)
 

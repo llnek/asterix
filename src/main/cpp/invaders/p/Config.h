@@ -53,7 +53,7 @@ public:
 
   virtual ~Config() {}
 
-  static owner<f::XConfig*> Create();
+  static owner<f::XConfig*> Reify();
 };
 
 

@@ -48,9 +48,9 @@ private:
 
 public:
 
-  static owner<YesNo*> Create(not_null<YesNo*>, const stdstr& msg);
+  static owner<YesNo*> Reify(not_null<YesNo*>, const stdstr& msg);
 
-  static owner<YesNo*> CreateWithActions(
+  static owner<YesNo*> ReifyWithActions(
       not_null<YesNo*>, const stdstr& msg,
       not_null<c::CallFunc*> yes,
       not_null<c::CallFunc*> no);

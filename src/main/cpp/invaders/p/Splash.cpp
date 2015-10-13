@@ -68,7 +68,7 @@ void SplashLayer::Title() {
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Btns() {
-  auto b1= cx::CreateMenuBtn("play.png");
+  auto b1= cx::ReifyMenuBtn("play.png");
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Splash::OnPlay));
   auto menu= c::Menu::create();
@@ -85,7 +85,7 @@ void SplashLayer::Btns() {
 void Splash::OnPlay(c::Ref* b) {
   auto f= []() { cx::RunScene(XCFG()->StartWith()); };
   auto a= c::CallFunc::create(f);
-  auto m = MainMenu::CreateWithBackAction(a);
+  auto m = MainMenu::ReifyWithBackAction(a);
 
   cx::RunScene( m);
 }
@@ -101,7 +101,7 @@ f::XScene* Splash::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Splash* Splash::Create() {
+Splash* Splash::Reify() {
   auto s = Splash::create();
   s->Realize();
   return s;

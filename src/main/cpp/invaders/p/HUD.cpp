@@ -52,14 +52,14 @@ f::XLayer* HUDLayer::Realize() {
   InitLabels();
   InitIcons();
 
-  auto r= cx::CreateMenuBtn("icon_replay.png");
+  auto r= cx::ReifyMenuBtn("icon_replay.png");
   r->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::OnReplay));
   r->setColor(color);
   //r->setScale(scale);
   AddReplayIcon(r, cx::AnchorB());
 
-  auto b= cx::CreateMenuBtn("icon_menu.png");
+  auto b= cx::ReifyMenuBtn("icon_menu.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::ShowMenu));
   b->setColor(color);
@@ -76,7 +76,7 @@ void HUDLayer::InitLabels() {
   auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
 
-  scoreLabel = cx::CreateBmfLabel("font.SmallTypeWriting", "0");
+  scoreLabel = cx::ReifyBmfLabel("font.SmallTypeWriting", "0");
   scoreLabel->setAnchorPoint(cx::AnchorTR());
   scoreLabel->setScale(XCFG()->GetScale());
   scoreLabel->setPosition(wb.right - tile - soff,

@@ -47,7 +47,7 @@ XLayer* YesNoLayer::Realize() {
 //
 void YesNo::Decorate(YesNoLayer* layer) {
 
-  auto qn= cx::CreateBmfLabel("font.OCR", GetMsg());
+  auto qn= cx::ReifyBmfLabel("font.OCR", GetMsg());
   auto cw= cx::Center();
   auto wz= cx::VisRect();
   auto wb= cx::VisBox();
@@ -59,10 +59,10 @@ void YesNo::Decorate(YesNoLayer* layer) {
   layer->CenterImage("game.bg");
   layer->AddItem(qn);
 
-  auto b1= cx::CreateMenuBtn("continue.png");
+  auto b1= cx::ReifyMenuBtn("continue.png");
   b1->setTarget(this, CC_MENU_SELECTOR(YesNo::OnYes));
 
-  auto b2= cx::CreateMenuBtn("cancel.png");
+  auto b2= cx::ReifyMenuBtn("cancel.png");
   b2->setTarget(this, CC_MENU_SELECTOR(YesNo::OnNo));
 
   auto menu= c::Menu::create();
@@ -76,7 +76,7 @@ void YesNo::Decorate(YesNoLayer* layer) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<YesNo*> YesNo::CreateWithActions(
+owner<YesNo*> YesNo::ReifyWithActions(
     not_null<YesNo*> box,
     const stdstr& msg,
     not_null<c::CallFunc*> y,
@@ -90,7 +90,7 @@ owner<YesNo*> YesNo::CreateWithActions(
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<YesNo*> YesNo::Create(not_null<YesNo*> box, const stdstr& msg) {
+owner<YesNo*> YesNo::Reify(not_null<YesNo*> box, const stdstr& msg) {
 
   c::CallFunc* y = c::CallFunc::create([](){
       CC_DTOR()->popToRootScene();
@@ -101,7 +101,7 @@ owner<YesNo*> YesNo::Create(not_null<YesNo*> box, const stdstr& msg) {
       CC_DTOR()->popScene();
       });
 
-  return CreateWithActions(box, msg, y,n);
+  return ReifyWithActions(box, msg, y,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////

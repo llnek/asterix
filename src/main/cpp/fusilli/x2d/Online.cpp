@@ -49,7 +49,7 @@ void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
 //
 void OnlineLayer::ShowWaitOthers() {
 
-  auto qn= cx::CreateBmfLabel("font.OCR", "waiting...");
+  auto qn= cx::ReifyBmfLabel("font.OCR", "waiting...");
   auto wz= cx::VisRect();
   auto cw= cx::Center();
   auto wb = cx::VisBox();
@@ -61,7 +61,7 @@ void OnlineLayer::ShowWaitOthers() {
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
-  auto b1= cx::CreateMenuBtn("cancel.png");
+  auto b1= cx::ReifyMenuBtn("cancel.png");
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Online::OnCancel));
   auto menu= c::Menu::create();
@@ -79,7 +79,7 @@ XLayer* OnlineLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Online* Online::Create(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) {
+Online* Online::Reify(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) {
   box->SetActions(yes,no);
   box->Realize();
   return box;
@@ -89,7 +89,7 @@ Online* Online::Create(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no)
 //
 void Online::Decorate(OnlineLayer* layer) {
 
-  auto qn= cx::CreateBmfLabel("font.OCR", "Sign in");
+  auto qn= cx::ReifyBmfLabel("font.OCR", "Sign in");
   auto wz= cx::VisRect();
   auto cw= cx::Center();
   auto wb= cx::VisBox();
@@ -124,12 +124,12 @@ void Online::Decorate(OnlineLayer* layer) {
   pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
   layer->AddItem(pwd);
 
-  auto b1= cx::CreateMenuBtn("continue.png");
+  auto b1= cx::ReifyMenuBtn("continue.png");
   b1->setCallback([=](c::Ref* rr) {
         layer->OnReq(uid->getString(), pwd->getString());
       });
 
-  auto b2= cx::CreateMenuBtn("cancel.png");
+  auto b2= cx::ReifyMenuBtn("cancel.png");
   b2->setTarget(this, CC_MENU_SELECTOR(Online::OnCancel));
   auto menu= c::Menu::create();
   menu->addChild(b1,1);
@@ -180,7 +180,7 @@ void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
   if (uid.length() == 0 ||
       pwd.length() == 0) { return; }
 
-  wss= ws::CreatePlayRequest(game, uid, pwd);
+  wss= ws::ReifyPlayRequest(game, uid, pwd);
   wss->Listen(ws::MType::EVERYTHING, [=](const ws::Event& e) {
       this->OnOdinEvent(e);
       });

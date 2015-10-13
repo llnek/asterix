@@ -34,7 +34,7 @@ public:
 
   AlienMotionNode();
 
-  virtual owner<a::Node*> CreateNode() ;
+  virtual owner<a::Node*> ReifyNode() ;
   virtual ~AlienMotionNode();
 
 };
@@ -53,7 +53,7 @@ public:
 
   CannonCtrlNode();
 
-  virtual owner<a::Node*> CreateNode();
+  virtual owner<a::Node*> ReifyNode();
   virtual ~CannonCtrlNode();
 
 };
@@ -72,7 +72,7 @@ public:
 
   ShipMotionNode();
 
-  virtual owner<a::Node*> CreateNode();
+  virtual owner<a::Node*> ReifyNode();
   virtual ~ShipMotionNode();
 
 };

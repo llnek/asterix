@@ -16,7 +16,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> Node::Create(const s::map<stdstr, COMType>& s) {
+owner<Node*> Node::Reify(const s::map<stdstr, COMType>& s) {
   auto node= new Node();
   for (auto it = s.begin();
       it != s.end(); ++it) {

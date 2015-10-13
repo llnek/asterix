@@ -16,7 +16,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Entity*> Entity::Create(const stdstr& group, not_null<Engine*> e) {
+owner<Entity*> Entity::Reify(const stdstr& group, not_null<Engine*> e) {
   auto ent= new Entity();
   ent->group=group;
   ent->engine= e;

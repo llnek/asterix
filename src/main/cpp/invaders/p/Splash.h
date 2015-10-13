@@ -32,7 +32,7 @@ public:
 
   void OnPlay(c::Ref*);
 
-  static Splash* Create();
+  static Splash* Reify();
 };
 
 

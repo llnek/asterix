@@ -57,28 +57,28 @@ void SfxPlay(const stdstr& sound) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void CreateAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
+void ReifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
   auto n="sound_off.png";
-  off= CreateMenuBtn(n,n,n);
+  off= ReifyMenuBtn(n,n,n);
   n="sound_on.png";
-  on= CreateMenuBtn(n,n,n);
+  on= ReifyMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* CreateMenuBtn(const stdstr& n) {
-  return CreateMenuBtn(n,n,n);
+c::MenuItem* ReifyMenuBtn(const stdstr& n) {
+  return ReifyMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* CreateMenuBtn(const stdstr& n,
+c::MenuItem* ReifyMenuBtn(const stdstr& n,
     const stdstr& s,
     const stdstr& d) {
 
-  return c::MenuItemSprite::create(CreateSprite(n),
-                                CreateSprite(s),
-                                CreateSprite(d));
+  return c::MenuItemSprite::create(ReifySprite(n),
+                                ReifySprite(s),
+                                ReifySprite(d));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ const c::Color3B Black() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* CreateBmfLabel(const stdstr& font, const stdstr& text) {
+c::Label* ReifyBmfLabel(const stdstr& font, const stdstr& text) {
 
   auto f= c::Label::createWithBMFont( XCFG()->GetFont(font), text);
   f->setOpacity(0.9*255);
@@ -109,7 +109,7 @@ c::Label* CreateBmfLabel(const stdstr& font, const stdstr& text) {
 }
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* CreateBmfLabel(float x, float y,
+c::Label* ReifyBmfLabel(float x, float y,
     const stdstr& font, const stdstr& text) {
 
   auto f= c::Label::createWithBMFont(XCFG()->GetFont(font), text);
@@ -177,9 +177,9 @@ void UndoTimer(not_null<c::DelayTime*> tm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Create a timer action
+// Reify a timer action
 //
-c::DelayTime* CreateTimer(not_null<c::Node*> par, float tm) {
+c::DelayTime* ReifyTimer(not_null<c::Node*> par, float tm) {
   auto t= c::DelayTime::create(tm);
   par->runAction(t);
   CC_KEEP(t)
@@ -193,9 +193,9 @@ bool TimerDone(not_null<c::DelayTime*> t) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Create a sprite from its frame name
+// Reify a sprite from its frame name
 //
-c::Sprite* CreateSprite(const stdstr& name) {
+c::Sprite* ReifySprite(const stdstr& name) {
   return c::Sprite::createWithSpriteFrameName(name);
 }
 
@@ -238,7 +238,7 @@ bool IsTransitioning() {
 // Find size of this sprite
 //
 const c::Size CalcSize(const stdstr& frame) {
-  return CreateSprite(frame)->getContentSize();
+  return ReifySprite(frame)->getContentSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ const c::Size HalfHW(not_null<c::Sprite*> s) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Create a rectangle from this sprite
+// Reify a rectangle from this sprite
 //
 const c::Rect BBox(not_null<c::Node*> s) {
   return s->getBoundingBox();
@@ -262,7 +262,7 @@ const c::Rect BBox(not_null<c::Node*> s) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Create a rect from the last frame
+// Reify a rect from the last frame
 //
 const Box4 BBox4B4(not_null<ComObj*> ent) {
   return Box4(

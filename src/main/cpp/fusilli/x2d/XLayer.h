@@ -78,7 +78,7 @@ public:
   int IncIndexZ();
 
   // tag value
-  virtual int GetIID() = 0;
+  virtual int GetIID() { return 1; }
   virtual ~XLayer();
 
 };

@@ -35,7 +35,7 @@ private:
 
 public:
 
-  static owner<Node*> Create(const s::map<stdstr, COMType>& );
+  static owner<Node*> Reify(const s::map<stdstr, COMType>& );
   virtual ~Node();
 
   Entity* GetEntity() { return entity; }

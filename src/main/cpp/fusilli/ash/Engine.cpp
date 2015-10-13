@@ -160,8 +160,8 @@ const s::vector<System*> Engine::GetSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::CreateEntity(const stdstr& group) {
-  auto e= Entity::Create(group, this);
+Entity* Engine::ReifyEntity(const stdstr& group) {
+  auto e= Entity::Reify(group, this);
   auto it= groups.find(group);
   ObjList<Entity>* el;
   if (it != groups.end()) {
@@ -221,14 +221,14 @@ void Engine::PurgeEntities(const stdstr& group) {
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
-  auto nl = NodeList::Create(nodeType);
+  auto nl = NodeList::Reify(nodeType);
   auto rego = NodeRegistry::Self();
   for (auto it = groups.begin(); it != groups.end(); ++it) {
     auto el= it->second;
     Node* n= nullptr;
     for (auto e= el->head; NNP(e); e=e->next) {
       if (ENP(n)) {
-        n= rego->CreateNode(nodeType);
+        n= rego->ReifyNode(nodeType);
       }
       if (n->BindEntity(e)) {
         nl->Add(n);
@@ -296,7 +296,7 @@ void Engine::OnAddEntity(Entity* e) {
   for (auto it = nodeLists.begin();
       it != nodeLists.end(); ++it) {
     auto nl= *it;
-    auto n= rego->CreateNode(nl->GetType());
+    auto n= rego->ReifyNode(nl->GetType());
     if (n->BindEntity(e)) {
       nl->Add(n);
     } else {
@@ -319,7 +319,7 @@ void Engine::OnModifyEntity(Entity* e) {
         nl->RemoveEntity(e);
       }
     } else {
-      n= rego->CreateNode(t);
+      n= rego->ReifyNode(t);
       if (n->BindEntity(e)) {
         nl->Add(n);
       } else {
