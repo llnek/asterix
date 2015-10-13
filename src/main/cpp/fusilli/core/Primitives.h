@@ -46,6 +46,7 @@
 #include "aeon/fusilli.h"
 
 #define CC_DTOR() cocos2d::Director::getInstance()
+#define CC_PCAST(T) static_cast<T*>(getParent())
 #define CC_KEEP(x) if (x) {x->retain();}
 #define CC_DROP(x) if (x) {x->release();}
 
@@ -67,7 +68,19 @@ T* DictVal(not_null<c::Dictionary*> d, const stdstr& key) {
   }
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T* ReifyRefType() {
+  T* pRet = new(std::nothrow) T();
+  if (pRet && pRet->init()) {
+    pRet->autorelease();
+  } else {
+    delete pRet;
+    pRet = nullptr;
+  }
+  return pRet;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //

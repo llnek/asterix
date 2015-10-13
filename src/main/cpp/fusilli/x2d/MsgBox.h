@@ -12,7 +12,6 @@
 #if !defined(__MSGBOX_H__)
 #define __MSGBOX_H__
 
-
 #include "platform/CCCommon.h"
 #include "XScene.h"
 
@@ -20,27 +19,16 @@ NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
-class MsgBoxLayer;
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MsgBox : public XScene {
-friend class MsgBoxLayer;
 protected:
 
-  const stdstr& GetMsg() { return textMsg; }
-  void SetAction(c::CallFunc* cb);
-  void SetMsg(const stdstr&);
   void OnYes(c::Ref*);
-
-  virtual void Decorate(MsgBoxLayer*);
-  MsgBox();
+  NO__CPYASS(MsgBox)
 
   c::CallFunc* action;
   stdstr textMsg;
-
-private:
-
-  NO__CPYASS(MsgBox)
 
 public:
 
@@ -50,10 +38,10 @@ public:
       not_null<MsgBox*>,
       c::CallFunc*, const stdstr&);
 
+  virtual void DecoUI(XLayer*);
   virtual XScene* Realize();
-  virtual ~MsgBox();
 
-  CREATE_FUNC(MsgBox)
+  DECL_CTOR(MsgBox)
 };
 
 

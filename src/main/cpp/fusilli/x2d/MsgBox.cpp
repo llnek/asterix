@@ -21,46 +21,41 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MsgBoxLayer : public XLayer {
-private:
-
+protected:
   NO__CPYASS(MsgBoxLayer)
-  MsgBoxLayer() {};
-
 public:
 
-  virtual int GetIID() { return 1; }
-  virtual XLayer* Realize();
-  virtual ~MsgBoxLayer() {};
+  virtual XLayer* Realize() {
 
-  CREATE_FUNC(MsgBoxLayer)
+    CC_PCAST(MsgBox)->DecoUI(this);
+    return this;
+  }
+
+  IMPL_CTOR(MsgBoxLayer)
 };
-
-//////////////////////////////////////////////////////////////////////////
-//
-XLayer* MsgBoxLayer::Realize() {
-  SCAST(MsgBox*, getParent())->Decorate(this);
-  return this;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::Decorate(MsgBoxLayer* layer) {
+void MsgBox::DecoUI(XLayer* layer) {
 
-  auto qn= cx::ReifyBmfLabel("font.OCR", GetMsg());
+  auto qn= cx::ReifyBmfLabel("font.OCR", this->textMsg);
   auto wz= cx::VisRect();
   auto cw= cx::Center();
   auto wb = cx::VisBox();
 
   layer->CenterImage("game.bg");
+
   qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(XCFG()->GetScale() * 0.25);
   qn->setOpacity(0.9*255);
   layer->AddItem(qn);
 
   auto b1= cx::ReifyMenuBtn("ok.png");
+    auto menu= ReifyRefType<cocos2d::Menu>();
+
   b1->setTarget(this,
       CC_MENU_SELECTOR(MsgBox::OnYes));
-  auto menu= c::Menu::create();
+
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   layer->AddItem(menu);
@@ -72,8 +67,9 @@ MsgBox* MsgBox::ReifyWithAction(
     not_null<MsgBox*> box,
     c::CallFunc* cb, const stdstr& msg) {
 
-  box->SetAction(cb);
-  box->SetMsg(msg);
+  box->textMsg = msg;
+  box->action = cb;
+  CC_KEEP(cb)
   box->Realize();
 
   return box;
@@ -87,19 +83,6 @@ MsgBox* MsgBox::ReifyWithMsg(not_null<MsgBox*> box, const stdstr& msg) {
       CC_DTOR()->popScene();
       });
   return ReifyWithAction(box, cb, msg);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void MsgBox::SetAction(c::CallFunc* cb) {
-  action = cb;
-  CC_KEEP(cb)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void MsgBox::SetMsg(const stdstr& msg) {
-  textMsg= msg;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -123,7 +106,7 @@ MsgBox::MsgBox() {
 //////////////////////////////////////////////////////////////////////////
 //
 XScene* MsgBox::Realize() {
-  auto y = MsgBoxLayer::create();
+  auto y = ReifyRefType<MsgBoxLayer>();
   AddLayer(y);
   y->Realize();
   return this;
