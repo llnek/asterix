@@ -77,8 +77,9 @@ typedef std::string stdstr;
 #define mc_new(T) new T()
 #define mc_free_ptr(ptr)  mc_free_mem(ptr)
 #define mc_free_str(pc)   mc_free_mem(pc)
-#define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }
+
 #define mc_del_arr(arr)   { delete[] arr; arr = nullptr; }
+#define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }
 #define mc_bool_str(b)    ((b) ? "true" : "false")
 #define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
 
@@ -92,8 +93,8 @@ typedef std::string stdstr;
 //////////////////////////////////////////////////////////////////////////////
 //
 #define NO__CPYASS(T) \
-  T(const T&) = delete; \
   T&operator =(const T&) = delete;  \
+  T(const T&) = delete; \
   T(T&&) = delete;  \
   T&operator =(T&&) = delete;
 

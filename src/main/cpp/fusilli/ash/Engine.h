@@ -34,8 +34,7 @@ public:
   void Clear() ;
   T* head;
   T* tail;
-  virtual ~ObjList();
-  ObjList();
+  DECL_CTOR(ObjList)
 };
 
 //////////////////////////////////////////////////////////////////////////////
