@@ -21,12 +21,12 @@ template <typename T>
 void ObjList<T>::Add(not_null<T*> e) {
   if (ENP(head)) {
     head = tail = e;
-    head->previous= nullptr;
-    head->next = nullptr;
+    SNPTR(head->previous)
+    SNPTR(head->next)
   } else {
     tail->next = e;
     e->previous = tail;
-    e->next= nullptr;
+    SNPTR(e->next)
     tail = e;
   }
 }
@@ -47,8 +47,8 @@ void ObjList<T>::Release(not_null<T*> e) {
   if (e->next) {
     e->next->previous = e->previous;
   }
-  e->previous = nullptr;
-  e->next = nullptr;
+  SNPTR(e->previous)
+  SNPTR(e->next)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,8 @@ void ObjList<T>::Clear() {
     head = head->next;
     delete e;
   }
-  head = tail = nullptr;
+  SNPTR(head)
+  SNPTR(tail)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,7 +87,8 @@ ObjList<T>::~ObjList() {
 //
 template <typename T>
 ObjList<T>::ObjList() {
-  head = tail = nullptr;
+  SNPTR(head)
+  SNPTR(tail)
 }
 
   /*
@@ -112,8 +114,7 @@ Engine::~Engine() {
     delete *it;
   }
   //nodeLists.clear();
-  for (auto it= groups.begin();
-      it != groups.end(); ++it) {
+  for (auto it= groups.begin(); it != groups.end(); ++it) {
     delete it->second;
   }
   //groups.clear();
@@ -167,10 +168,11 @@ Entity* Engine::ReifyEntity(const stdstr& group) {
   if (it != groups.end()) {
     el= it->second;
   } else {
-    el= new ObjList<Entity>();
+    el= mc_new(ObjList<Entity>);
     groups.insert(s::pair<stdstr, ObjList<Entity>*>(group,el));
   }
   el->Add(e);
+  dirty=true;
   addList.push_back(e);
   return e;
 }
@@ -179,11 +181,11 @@ Entity* Engine::ReifyEntity(const stdstr& group) {
 //
 void Engine::NotifyModify(not_null<Entity*> e) {
   bool fnd=false;
-  for (auto it= modList.begin();
-      it != modList.end(); ++it) {
+  for (auto it= modList.begin(); it != modList.end(); ++it) {
     if (e == *it) { fnd=true; break; }
   }
   if (!fnd) {
+    dirty=true;
     modList.push_back(e);
   }
 }
@@ -232,7 +234,7 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
       }
       if (n->BindEntity(e)) {
         nl->Add(n);
-        n=nullptr;
+        SNPTR(n)
       }
     }
   }
@@ -282,8 +284,7 @@ void Engine::Update(float time) {
 //////////////////////////////////////////////////////////////////////////////
 // get rid of nodes bound to this entity
 void Engine::OnPurgeEntity(Entity* e) {
-  for (auto it = nodeLists.begin();
-      it != nodeLists.end(); ++it) {
+  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
     auto nl= *it;
     nl->RemoveEntity(e);
   }
@@ -309,8 +310,7 @@ void Engine::OnAddEntity(Entity* e) {
 // sync changes
 void Engine::OnModifyEntity(Entity* e) {
   auto rego = NodeRegistry::Self();
-  for (auto it = nodeLists.begin();
-      it != nodeLists.end(); ++it) {
+  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
     auto nl = *it;
     auto t = nl->GetType();
     Node* n;

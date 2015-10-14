@@ -39,16 +39,14 @@ public:
   virtual ~Node();
 
   Entity* GetEntity() { return entity; }
+
   Component* Get(const stdstr& field);
   bool BindEntity(not_null<Entity*> );
   bool BelongsTo(not_null<Entity*>);
 
   Node* previous;
   Node* next;
-
 };
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

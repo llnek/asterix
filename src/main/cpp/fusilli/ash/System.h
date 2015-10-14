@@ -40,14 +40,13 @@ public:
   bool Is(const SystemType& );
 
   virtual const SystemType TypeId() = 0;
+  virtual ~System();
 
   int Priority() { return priority; }
   bool IsActive() { return active; }
 
   void Restart();
   void Suspend();
-
-  virtual ~System();
 
   System* previous;
   System* next;

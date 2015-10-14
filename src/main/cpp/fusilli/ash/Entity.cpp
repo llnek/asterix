@@ -36,9 +36,10 @@ Entity::~Entity() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity::Entity() {
-  next = previous = nullptr;
+  SNPTR(previous)
+  SNPTR(next)
   dead=false;
-  engine=nullptr;
+  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,8 +87,7 @@ Component* Entity::Get(const COMType& z) {
 //
 const s::vector<Component*> Entity::GetAll() {
   s::vector<Component*> v;
-  for (auto it = parts.begin();
-      it != parts.end(); ++it) {
+  for (auto it = parts.begin(); it != parts.end(); ++it) {
     v.push_back(it->second);
   }
   return v;

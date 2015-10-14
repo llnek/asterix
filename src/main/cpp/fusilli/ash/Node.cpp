@@ -17,9 +17,8 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Node*> Node::Reify(const s::map<stdstr, COMType>& s) {
-  auto node= new Node();
-  for (auto it = s.begin();
-      it != s.end(); ++it) {
+  auto node= mc_new(Node);
+  for (auto it = s.begin(); it != s.end(); ++it) {
     node->types.insert(s::pair<COMType, stdstr>(it->second,it->first));
   }
   return node;
@@ -34,8 +33,9 @@ Node::~Node() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Node::Node() {
-  next = previous = nullptr;
-  entity= nullptr;
+  SNPTR(previous)
+  SNPTR(next)
+  SNPTR(entity)
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -26,13 +26,14 @@ NodeList::~NodeList() {
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList::NodeList() {
-  head = tail = nullptr;
+  SNPTR(head)
+  SNPTR(tail)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<NodeList*> NodeList::Reify(const NodeType& t) {
-  auto n = new NodeList();
+  auto n = mc_new(NodeList);
   n->nType = t;
   return n;
 }
@@ -45,7 +46,7 @@ void NodeList::Add(not_null<Node*> n) {
   } else {
     tail->next = n;
     n->previous = tail;
-    n->next= nullptr;
+    SNPTR(n->next)
     tail = n;
   }
 }
@@ -88,8 +89,8 @@ void NodeList::Clear() {
     head = head->next;
     delete n;
   }
-  head = nullptr;
-  tail = nullptr;
+  SNPTR(head)
+  SNPTR(tail)
 }
 
 //////////////////////////////////////////////////////////////////////////////

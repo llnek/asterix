@@ -22,14 +22,12 @@ class Node;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL NodeFactory {
-protected:
-  NodeFactory() {}
-private:
-  NO__CPYASS(NodeFactory)
 public:
-  virtual const NodeType TypeId() = 0;
   virtual owner<Node*> ReifyNode() = 0;
-  virtual ~NodeFactory() {}
+  virtual const NodeType TypeId() = 0;
+
+  NO__CPYASS(NodeFactory)
+  IMPL_CTOR(NodeFactory)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,7 +49,6 @@ public:
   void Deregister(const NodeType&);
 
   owner<Node*> ReifyNode(const NodeType&);
-
 };
 
 
