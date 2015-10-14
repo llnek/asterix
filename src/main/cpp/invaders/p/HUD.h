@@ -22,8 +22,7 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL HUDLayer : public f::XHUDLayer {
-private:
-  NO__CPYASS(HUDLayer)
+protected:
 
   void ShowMenu(c::Ref*);
   void OnReplay(c::Ref*);
@@ -36,10 +35,8 @@ public:
   virtual int GetIID() { return 3; }
   virtual f::XLayer* Realize();
 
-  virtual ~HUDLayer();
-  HUDLayer();
-
-  CREATE_FUNC(HUDLayer)
+  NO__CPYASS(HUDLayer)
+  IMPL_CTOR(HUDLayer)
 };
 
 

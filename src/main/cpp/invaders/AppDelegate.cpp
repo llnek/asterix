@@ -21,14 +21,12 @@ NS_USING(ash)
 //
 AppDelegate::AppDelegate() {
 
-  // bootstrap app here
-
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::Self();
 
-  r->Register( new AlienMotionNode());
-  r->Register( new ShipMotionNode());
-  r->Register( new CannonCtrlNode());
+  r->Register( mc_new(AlienMotionNode));
+  r->Register( mc_new(ShipMotionNode));
+  r->Register( mc_new(CannonCtrlNode));
 
   // step.2: set up app-config
   XConfig::Bind(Config::Reify());
@@ -40,6 +38,5 @@ AppDelegate::~AppDelegate() {
   //delete NodeRegistry::Self();
   //delete XConfig::Self();
 }
-
 
 

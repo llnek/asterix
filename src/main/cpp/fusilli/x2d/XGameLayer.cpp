@@ -36,6 +36,7 @@ XGameLayer::XGameLayer() {
   SNPTR(mouseListener)
   SNPTR(keysListener)
   SNPTR(touchListener)
+  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,6 @@ const Box4 XGameLayer::GetEnclosureBox() {
 void XGameLayer::InizGame() {
   EnableEventHandlers();
   cx::PauseAudio();
-  OnNewGame();
   this->scheduleUpdate();
 }
 

@@ -16,26 +16,19 @@
 NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Splash : public f::XScene {
-private:
-  NO__CPYASS(Splash)
-  Splash() {};
-  // standard create
-  CREATE_FUNC(Splash)
 public:
 
   virtual f::XScene* Realize();
-  virtual ~Splash() {};
-
   void OnPlay(c::Ref*);
 
   static Splash* Reify();
+
+  NO__CPYASS(Splash)
+  IMPL_CTOR(Splash)
 };
-
-
 
 
 NS_END(invaders)

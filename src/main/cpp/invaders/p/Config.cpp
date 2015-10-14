@@ -41,7 +41,7 @@ ResolutionPolicy Config::GetPolicy() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<c::Scene*> Config::StartWith() {
+c::Scene* Config::StartWith() {
   return Splash::Reify();
 }
 
@@ -54,7 +54,7 @@ Config::Config() {
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<f::XConfig*> Config::Reify() {
-  Config* c = new Config();
+  auto c =  mc_new(Config);
   c->InitAssets();
   c->InitCsts();
   return c;
@@ -64,12 +64,6 @@ owner<f::XConfig*> Config::Reify() {
 //
 const c::Size Config::GetGameSize() {
   return c::Size(320, 480);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-float Config::GetScale() {
-  return scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,41 +79,41 @@ void Config::RunOnce() {
   auto c= c::SpriteFrameCache::getInstance();
   auto fp= GetAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprites sheets %s", fp.c_str());
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
   fp=  GetAtlas("lang-pics");
   c->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprites sheets %s", fp.c_str());
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::InitAssets() {
 
-  AddAtlas("lang-pics", c::String::create("l10n/en/images.plist"));
-  AddAtlas("game-pics", c::String::create("pics/images.plist"));
+  AddAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  AddAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  AddImage("mmenus.bg", c::String::create("pics/bg.png"));
-  AddImage("game.bg", c::String::create("pics/bg.png"));
-  AddImage("lang-pics", c::String::create("l10n/en/images.png"));
-  AddImage("game-pics", c::String::create("pics/images.png"));
+  AddImage("mmenus.bg", CC_STR("pics/bg.png"));
+  AddImage("game.bg", CC_STR("pics/bg.png"));
+  AddImage("lang-pics", CC_STR("l10n/en/images.png"));
+  AddImage("game-pics", CC_STR("pics/images.png"));
 
-  AddEffect("game_end", c::String::create("sfx/MineExplosion.mp3"));
-  AddEffect("game_quit", c::String::create("sfx/Death.mp3"));
-  AddEffect("ship-missile", c::String::create("sfx/missile.mp3"));
-  AddEffect("bugs-march", c::String::create("sfx/march.mp3"));
-  AddEffect("xxx-explode", c::String::create("sfx/explode.mp3"));
+  AddEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
+  AddEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  AddEffect("ship-missile", CC_STR("sfx/missile.mp3"));
+  AddEffect("bugs-march", CC_STR("sfx/march.mp3"));
+  AddEffect("xxx-explode", CC_STR("sfx/explode.mp3"));
 
-  AddFont("font.SmallTypeWriting", c::String::create("fon/en/SmallTypeWriting.fnt"));
-  AddFont("font.AutoMission", c::String::create("fon/en/AutoMission.fnt"));
-  AddFont("font.Subito", c::String::create("fon/en/Subito.fnt"));
-  AddFont("font.CoffeeBuzzed", c::String::create("fon/en/CoffeeBuzzed.fnt"));
+  AddFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  AddFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  AddFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
+  AddFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  AddFont("font.TinyBoxBB", c::String::create("fon/en/TinyBoxBlackBitA8.fnt"));
-  AddFont("font.OogieBoogie", c::String::create("fon/en/OogieBoogie.fnt"));
-  AddFont("font.JellyBelly", c::String::create("fon/en/JellyBelly.fnt"));
-  AddFont("font.AgentOrange", c::String::create("fon/en/AgentOrange.fnt"));
-  AddFont("font.Hiruko", c::String::create("fon/en/Hiruko.fnt"));
-  AddFont("font.OCR", c::String::create("fon/en/OCR.fnt"));
+  AddFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  AddFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  AddFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  AddFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  AddFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  AddFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
 
@@ -127,16 +121,14 @@ void Config::InitAssets() {
 //
 void Config::InitCsts() {
 
-  AddCst("showFPS", c::Bool::create(false));
-
-  AddCst("CELLS", c::Integer::create(42));
-  AddCst("COLS", c::Integer::create(6));
-  AddCst("ROWS", c::Integer::create(7));
-
-  AddCst("LEFT", c::Integer::create(2));
-  AddCst("TOP", c::Integer::create(6));
-  AddCst("OFF_X", c::Integer::create(4));
-  AddCst("OFF_Y", c::Integer::create(2));
+  AddCst("showFPS", CC_BOOL(false));
+  AddCst("CELLS",  CC_INT(42));
+  AddCst("COLS",  CC_INT(6));
+  AddCst("ROWS",  CC_INT(7));
+  AddCst("LEFT", CC_INT(2));
+  AddCst("TOP", CC_INT(6));
+  AddCst("OFF_X", CC_INT(4));
+  AddCst("OFF_Y", CC_INT(2));
 
 }
 

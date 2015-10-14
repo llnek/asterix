@@ -50,6 +50,11 @@
 #define CC_KEEP(x) if (x) {x->retain();}
 #define CC_DROP(x) if (x) {x->release();}
 
+#define CC_FLOAT(x) cocos2d::Float::create(x)
+#define CC_BOOL(x) cocos2d::Bool::create(x)
+#define CC_STR(x) cocos2d::String::create(x)
+#define CC_INT(x) cocos2d::Integer::create(x)
+
 typedef std::string filepath;
 
 NS_ALIAS(c, cocos2d)

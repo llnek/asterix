@@ -14,33 +14,32 @@ NS_ALIAS(c, cocos2d)
 NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
 private:
 
   NO__CPYASS(Config)
+  Config();
 
   void InitAssets();
   void InitCsts();
   void InitPools();
-  Config();
 
   float scale;
 
 public:
 
   virtual void HandleResolution(const c::Size& rs);
+  virtual const c::Size GetGameSize();
 
   virtual ResolutionPolicy GetPolicy();
   virtual const stdstr GetAppKey();
   virtual const stdstr AppId();
   virtual const stdstr GetColor();
-  virtual const c::Size GetGameSize();
 
   virtual const stdstr GetWSUrl();
-  virtual owner<c::Scene*> StartWith();
+  virtual c::Scene* StartWith();
 
   virtual void SetGameId(const stdstr& s) {}
   virtual void SetRoomId(const stdstr& s) {}
@@ -48,7 +47,7 @@ public:
   virtual const stdstr GetGameId() { return ""; }
   virtual const stdstr GetRoomId() { return ""; }
 
-  virtual float GetScale() ;
+  virtual float GetScale()  { return scale; }
   virtual void RunOnce() ;
 
   virtual ~Config() {}

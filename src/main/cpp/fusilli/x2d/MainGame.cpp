@@ -15,20 +15,11 @@
 NS_BEGIN(fusii)
 
 static MainGame* _singleton;
-static int _gameLayer;
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void MainGame::Set(not_null<MainGame*> g, int gy) {
-  _gameLayer= gy;
-  _singleton=g;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer* MainGame::Get() {
-  //return DCAST(XGameLayer*, _singleton->GetLayer(_gameLayer));
-  return SCAST(XGameLayer*, _singleton->GetLayer(_gameLayer));
+  return  _singleton->GetGLayer();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,6 +34,7 @@ MainGame::~MainGame() {
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
+  if (NNP(options)) { options->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,6 +42,8 @@ MainGame::~MainGame() {
 MainGame::MainGame() {
   mode = GMode::ONE;
   level = 1;
+  running=false;
+  SNPTR(options);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,6 +84,36 @@ void MainGame::ResetPools() {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void MainGame::SetMode(GMode m, c::Dictionary* d) {
+  this->options = d;
+  d->retain();
+  this->mode= m;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+MainGame* MainGame::Reify(not_null<MainGame*> g, GMode mode) {
+  return Reify(g, mode, c::Dictionary::create());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+MainGame* MainGame::Reify(not_null<MainGame*> g,
+    GMode mode,
+    not_null<c::Dictionary*> options) {
+
+  g->SetMode(mode, options);
+  g->Realize();
+  return g;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void MainGame::Bind(not_null<MainGame*> m) {
+  _singleton=m;
+}
 
 NS_END(fusii)
 

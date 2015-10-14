@@ -15,17 +15,13 @@
 #include "aeon/fusilli.h"
 #include "core/App.h"
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AppDelegate : public fusii::App {
-private:
-  NO__CPYASS(AppDelegate)
 public:
-  virtual ~AppDelegate();
-  AppDelegate();
+  NO__CPYASS(AppDelegate)
+  DECL_CTOR(AppDelegate)
 };
-
 
 #endif
 

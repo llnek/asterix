@@ -25,7 +25,6 @@ NS_ALIAS(s, std)
 NS_ALIAS(a, ash)
 NS_BEGIN(fusii)
 
-enum class GMode { ONE, TWO, NET };
 class ComObj;
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -39,15 +38,14 @@ protected:
   c::EventListener* keysListener;
   c::EventListener* touchListener;
 
-  virtual void OnGameOver() = 0;
-  virtual void OnNewGame() = 0;
-
   virtual void DisableEventHandlers();
   virtual void EnableEventHandlers();
 
   virtual void InitMouse();
   virtual void InitKeys();
   virtual void InitTouch();
+
+  virtual void OnGameOver() = 0;
 
   NO__CPYASS(XGameLayer)
   XGameLayer();

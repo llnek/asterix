@@ -24,18 +24,16 @@ private:
   Factory* factory;
   void InitAsh();
 public:
-  virtual void Reset(bool newFlag) ;
-  virtual void Replay() ;
-  virtual void Play(bool newFlag);
 
   virtual void SendMsg(const stdstr& topic, void* msg);
-  virtual void OnNewGame();
-  void SpawnPlayer();
+  virtual void Reset(bool newFlag) ;
+  virtual void Replay() ;
+  virtual void Play();
+  virtual void OnGameOver();
 
   void OnPlayerKilled();
   void OnEarnScore(int);
-
-  virtual void OnGameOver();
+  void SpawnPlayer();
 
   virtual int GetIID() { return 2; }
   virtual f::XLayer* Realize();
@@ -46,19 +44,20 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::MainGame {
-private:
-  NO__CPYASS(Game)
-  bool running;
+protected:
+  virtual f::XGameLayer* GetGLayer();
+
 public:
 
-  virtual XScene* Realize();
+  virtual f::XScene* Realize();
+
+  NO__CPYASS(Game)
   DECL_CTOR(Game)
+
+  virtual bool IsRunning();
   virtual void Resume();
   virtual void Pause();
   virtual void Run();
-  virtual bool IsRunning();
-
-  static Game* Reify();
 };
 
 

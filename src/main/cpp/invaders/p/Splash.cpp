@@ -22,31 +22,16 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL SplashLayer : public f::XLayer {
-private:
+public:
+
+  virtual f::XLayer* Realize();
+
   NO__CPYASS(SplashLayer)
-  SplashLayer();
+  IMPL_CTOR(SplashLayer)
 
   void Title();
   void Btns();
-
-public:
-
-  virtual int GetIID() { return 1; }
-  virtual f::XLayer* Realize();
-  virtual ~SplashLayer();
-
-  CREATE_FUNC(SplashLayer)
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-SplashLayer::~SplashLayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-SplashLayer::SplashLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -68,10 +53,10 @@ void SplashLayer::Title() {
 //////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Btns() {
+  auto menu=  f::ReifyRefType<cocos2d::Menu>();
   auto b1= cx::ReifyMenuBtn("play.png");
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Splash::OnPlay));
-  auto menu= c::Menu::create();
   auto cw= cx::Center();
   auto wb= cx::VisBox();
 
@@ -93,7 +78,7 @@ void Splash::OnPlay(c::Ref* b) {
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XScene* Splash::Realize() {
-  auto y = SplashLayer::create();
+  auto y =  f::ReifyRefType<SplashLayer>();
   AddLayer(y);
   y->Realize();
   return this;
@@ -102,7 +87,7 @@ f::XScene* Splash::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Splash* Splash::Reify() {
-  auto s = Splash::create();
+  auto s =  f::ReifyRefType<Splash>();
   s->Realize();
   return s;
 }

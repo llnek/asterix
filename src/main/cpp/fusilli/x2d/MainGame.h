@@ -23,26 +23,34 @@
 
 NS_BEGIN(fusii)
 
+enum class GMode { ONE, TWO, NET };
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainGame : public XScene {
 protected:
 
   s::map<stdstr, XPool*> pools;
+  c::Dictionary* options;
+  bool running;
   GMode mode;
   int level;
 
-  static void Set(not_null<MainGame*>, int);
+  virtual void SetMode(GMode, c::Dictionary*);
+  virtual XGameLayer* GetGLayer() = 0;
+
+  static void Bind(not_null<MainGame*>);
 
   NO__CPYASS(MainGame)
   MainGame();
 
 public:
 
-  static MainGame* Reify(GMode mode, c::Dictionary* options);
+  static MainGame* Reify(not_null<MainGame*>, GMode, not_null<c::Dictionary*> );
+  static MainGame* Reify(not_null<MainGame*>, GMode);
+
   static XGameLayer* Get();
   static MainGame* Self();
-
 
   XPool* ReifyPool(const stdstr& n);
   XPool* GetPool(const stdstr& n);

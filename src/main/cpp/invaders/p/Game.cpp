@@ -61,7 +61,8 @@ GameLayer::GameLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* GameLayer::Realize() {
-  //NewGame(f::GMode::ONE);
+  InizGame();
+  Play();
   return this;
 }
 
@@ -93,14 +94,17 @@ void GameLayer::Reset(bool newFlag) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Replay() {
-  //NewGame(mode);
+  InizGame();
+  Reset(false);
+  InitAsh();
+  GetScene()->Resume();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::Play(bool newFlag) {
+void GameLayer::Play() {
   //CCLOG("play game, newflag = %s", newFlag ? "true" : "false");
-  Reset(newFlag);
+  Reset(true);
   InitAsh();
   GetScene()->Resume();
 }
@@ -145,13 +149,6 @@ void GameLayer::OnPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnNewGame() {
-  //sh.sfxPlay('start_game');
-  Play(true);//tries > 0L ? false : true);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 void GameLayer::OnEarnScore(int score) {
   GetHUD()->UpdateScore(score);
 }
@@ -160,9 +157,8 @@ void GameLayer::OnEarnScore(int score) {
 //
 void GameLayer::OnGameOver() {
   //CCLOG("game over!");
-  auto g= (Game*) getParent();
-  g->Pause();
-  Reset(false);
+  CC_PCAST(Game*)->Pause();
+  //Reset(false);
   GetHUD()->EnableReplay();
 }
 
@@ -219,22 +215,26 @@ bool Game::IsRunning() {
 //////////////////////////////////////////////////////////////////////////
 //
 Game::~Game() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Game::Game() {
-  running = false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+f::XGameLayer* Game::GetGLayer() {
+  return (f::XGameLayer*) GetLayer(2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 f::XScene* Game::Realize() {
 
-  auto g = (f::XLayer*) GameLayer::create();
-  auto b = (f::XLayer*) BGLayer::create();
-  auto h = (f::XLayer*) HUDLayer::create();
+  auto g = (f::XLayer*) f::ReifyRefType<GameLayer>();
+  auto b = (f::XLayer*) f::ReifyRefType<BGLayer>();
+  auto h = (f::XLayer*) f::ReifyRefType<HUDLayer>();
 
   ReifyPool("explosions");
   ReifyPool("aliens");
@@ -245,23 +245,14 @@ f::XScene* Game::Realize() {
   AddLayer(g, 2);
   AddLayer(h, 3)->Realize();
 
-  f::MainGame::Set(this, 2);
+  // set this to be THE main game
+  Bind(this);
 
   // realize game layer last
   g->Realize();
 
   return this;
 }
-
-//////////////////////////////////////////////////////////////////////////
-//
-Game* Game::Reify() {
-  auto g= f::ReifyRefType<invaders::Game>();
-  g->Realize();
-  return g;
-}
-
-
 
 NS_END(invaders)
 

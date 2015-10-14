@@ -23,33 +23,17 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MenuLayer : public f::XLayer {
-private:
-  NO__CPYASS(MenuLayer)
-  MenuLayer();
+public:
+
+  virtual f::XLayer* Realize();
   void Title();
 
-public:
-  virtual XLayer* Realize();
-
-  virtual int GetIID() { return 1; }
-  virtual ~MenuLayer();
+  NO__CPYASS(MenuLayer)
+  IMPL_CTOR(MenuLayer)
 
   void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
-
-  // standard create
-  CREATE_FUNC(MenuLayer)
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MenuLayer::~MenuLayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MenuLayer::MenuLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -70,11 +54,11 @@ f::XLayer* MenuLayer::Realize() {
   lb->setColor(cx::White());
   AddItem(lb);
 
+  auto menu=  f::ReifyRefType<cocos2d::Menu>();
   // play button
   auto b1= cx::ReifyMenuBtn("play.png");
   b1->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw);
   AddItem(menu);
@@ -110,20 +94,20 @@ f::XLayer* MenuLayer::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay(c::Ref* r) {
-  cx::RunScene(Game::Reify());
+  auto g = f::ReifyRefType<Game>();
+    cx::RunScene(f::MainGame::Reify(g, f::GMode::ONE));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnBack(c::Ref* r) {
-  auto p = (MainMenu*) getParent();
-  p->OnBackAction();
+  CC_PCAST(MainMenu*)->OnBackAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu* MainMenu::ReifyWithBackAction(c::CallFunc* back) {
-  auto m = new MainMenu();
+  auto m = f::ReifyRefType<MainMenu>();
   m->backAction= back;
   back->retain();
   m->Realize();
@@ -139,7 +123,7 @@ void MainMenu::OnBackAction() {
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XScene* MainMenu::Realize() {
-  auto y = MenuLayer::create();
+  auto y = f::ReifyRefType<MenuLayer>();
   AddLayer(y);
   y->Realize();
   return this;
@@ -156,8 +140,6 @@ MainMenu::~MainMenu() {
 MainMenu::MainMenu() {
   SNPTR(backAction)
 }
-
-
 
 
 

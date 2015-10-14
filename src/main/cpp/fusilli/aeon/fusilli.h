@@ -74,6 +74,7 @@ typedef std::string stdstr;
 //
 #define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
 #define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
+#define mc_new(T) new T()
 #define mc_free_ptr(ptr)  mc_free_mem(ptr)
 #define mc_free_str(pc)   mc_free_mem(pc)
 #define mc_del_ptr(ptr)   { delete ptr; ptr = nullptr; }

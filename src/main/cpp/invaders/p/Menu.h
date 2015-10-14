@@ -20,22 +20,17 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainMenu : public f::XScene {
-private:
-  NO__CPYASS(MainMenu)
-  MainMenu();
-
+protected:
   c::CallFunc* backAction;
-
+  NO__CPYASS(MainMenu)
 public:
 
   static MainMenu* ReifyWithBackAction(c::CallFunc* );
   virtual f::XScene* Realize();
   void OnBackAction();
-  virtual ~MainMenu();
 
+  DECL_CTOR(MainMenu)
 };
-
-
 
 
 NS_END(invaders)
