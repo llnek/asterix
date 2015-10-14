@@ -12,7 +12,6 @@
 #if !defined(__YESNO_H__)
 #define __YESNO_H__
 
-
 #include "platform/CCCommon.h"
 #include "2d/CCActionInstant.h"
 #include "XScene.h"
@@ -20,46 +19,33 @@
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
-class YesNoLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL YesNo : public XScene {
-friend class YesNoLayer;
 protected:
 
-  void SetActions(not_null<c::CallFunc*>, not_null<c::CallFunc*>);
-
-  const stdstr& GetMsg() { return msgText; }
-  void SetMsg(const stdstr&);
-
-  void OnYes(c::Ref*);
-  void OnNo(c::Ref*);
+  void OnYesBtn(c::Ref*);
+  void OnNoBtn(c::Ref*);
 
   c::CallFunc* yes;
   c::CallFunc* no;
   stdstr msgText;
 
-  virtual void Decorate(YesNoLayer*);
-  YesNo();
-
-private:
-
   NO__CPYASS(YesNo)
 
 public:
 
-  static owner<YesNo*> Reify(not_null<YesNo*>, const stdstr& msg);
+  static YesNo* Reify(not_null<YesNo*>, const stdstr& msg);
 
-  static owner<YesNo*> ReifyWithActions(
+  static YesNo* ReifyWithActions(
       not_null<YesNo*>, const stdstr& msg,
       not_null<c::CallFunc*> yes,
       not_null<c::CallFunc*> no);
 
-
+  virtual void DecoUI(XLayer*);
   virtual XScene* Realize();
-  virtual ~YesNo();
 
-  CREATE_FUNC(YesNo)
+  DECL_CTOR(YesNo)
 };
 
 

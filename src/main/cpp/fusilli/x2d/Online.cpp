@@ -17,32 +17,24 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL OnlineLayer : public XLayer {
-private:
-
-  NO__CPYASS(OnlineLayer)
-  OnlineLayer() {}
-
 public:
 
-  virtual int GetIID() { return 1; }
-  virtual XLayer* Realize();
-  virtual ~OnlineLayer() {}
-
-  void OnReq(const stdstr&, const stdstr&);
+  void OnRequest(const stdstr&, const stdstr&);
   void ShowWaitOthers();
 
-  CREATE_FUNC(OnlineLayer)
+  virtual XLayer* Realize();
+
+  NO__CPYASS(OnlineLayer)
+  IMPL_CTOR(OnlineLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OnlineLayer::OnReq(const stdstr& uid, const stdstr& pwd) {
-  auto par = SCAST(Online*, getParent());
-  par->OnPlayReq(uid, pwd);
+void OnlineLayer::OnRequest(const stdstr& uid, const stdstr& pwd) {
+  CC_PCAST(Online*)->OnPlayRequest(uid, pwd);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,15 +48,16 @@ void OnlineLayer::ShowWaitOthers() {
 
   RemoveAll();
 
-  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(XCFG()->GetScale() * 0.3);
+  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setOpacity(0.9*255);
   AddItem(qn);
 
   auto b1= cx::ReifyMenuBtn("cancel.png");
+  auto menu= ReifyRefType<cocos2d::Menu>();
+
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Online::OnCancel));
-  auto menu= c::Menu::create();
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
   AddItem(menu);
@@ -73,7 +66,7 @@ void OnlineLayer::ShowWaitOthers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* OnlineLayer::Realize() {
-  SCAST(Online*, getParent())->Decorate(this);
+  CC_PCAST(Online*)->DecoUI(this);
   return this;
 }
 
@@ -87,7 +80,7 @@ Online* Online::Reify(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::Decorate(OnlineLayer* layer) {
+void Online::DecoUI(XLayer* layer) {
 
   auto qn= cx::ReifyBmfLabel("font.OCR", "Sign in");
   auto wz= cx::VisRect();
@@ -95,6 +88,7 @@ void Online::Decorate(OnlineLayer* layer) {
   auto wb= cx::VisBox();
 
   layer->CenterImage("game.bg");
+
   qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(XCFG()->GetScale() * 0.3);
   qn->setOpacity(0.9*255);
@@ -125,15 +119,18 @@ void Online::Decorate(OnlineLayer* layer) {
   layer->AddItem(pwd);
 
   auto b1= cx::ReifyMenuBtn("continue.png");
+  auto yy= SCAST(OnlineLayer*,layer);
   b1->setCallback([=](c::Ref* rr) {
-        layer->OnReq(uid->getString(), pwd->getString());
+        yy->OnRequest(uid->getString(), pwd->getString());
       });
 
   auto b2= cx::ReifyMenuBtn("cancel.png");
-  b2->setTarget(this, CC_MENU_SELECTOR(Online::OnCancel));
-  auto menu= c::Menu::create();
-  menu->addChild(b1,1);
-  menu->addChild(b2,2);
+  b2->setTarget(this,
+      CC_MENU_SELECTOR(Online::OnCancel));
+
+  auto menu= ReifyRefType<cocos2d::Menu>();
+  menu->addChild(b1);
+  menu->addChild(b2);
   menu->setPosition(cw.x, wb.top * 0.1);
   layer->AddItem(menu);
 }
@@ -165,7 +162,7 @@ Online::~Online() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XScene* Online::Realize() {
-  auto y= OnlineLayer::create();
+  auto y= ReifyRefType<OnlineLayer>();
   AddLayer(y);
   y->Realize();
   return this;
@@ -173,7 +170,8 @@ XScene* Online::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnPlayReq(const stdstr& uid, const stdstr& pwd) {
+void Online::OnPlayRequest(const stdstr& uid, const stdstr& pwd) {
+  //TODO: fix url
   auto wsurl = XCFG()->GetWSUrl();
   auto game = XCFG()->GetGameId();
 

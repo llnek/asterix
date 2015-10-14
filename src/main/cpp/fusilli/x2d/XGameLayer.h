@@ -30,7 +30,6 @@ class ComObj;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XGameLayer : public XLayer {
-
 protected:
 
   s::array<bool, 256> keyboard;
@@ -40,44 +39,36 @@ protected:
   c::EventListener* keysListener;
   c::EventListener* touchListener;
 
-  GMode mode;
-  long tries;
-  int level;
-
-  virtual void SetMode(const GMode m) { mode=m; }
-  virtual void OnNewGame(const GMode) = 0;
   virtual void OnGameOver() = 0;
+  virtual void OnNewGame() = 0;
+
   virtual void DisableEventHandlers();
   virtual void EnableEventHandlers();
+
   virtual void InitMouse();
   virtual void InitKeys();
   virtual void InitTouch();
-  XGameLayer();
-
-private:
 
   NO__CPYASS(XGameLayer)
+  XGameLayer();
 
 public:
 
   virtual void SendMsg(const stdstr& topic, void* msg) = 0;
-  virtual ComObj* GetPlayer();
 
   virtual const Box4 GetEnclosureBox();
   virtual int GetIID() { return 2; }
 
   virtual void update(float);
 
-  virtual XLayer* Realize();
   virtual ~XGameLayer();
 
   bool KeyPoll(c::EventKeyboard::KeyCode key);
-  c::Dictionary* GetLCfg();
 
   XLayer* GetBackgd(int tag= 1);
   XHUDLayer* GetHUD(int tag=3);
 
-  void NewGame(const GMode);
+  void InizGame();
   void FinzGame();
 
   void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );

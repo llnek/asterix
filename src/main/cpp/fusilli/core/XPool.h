@@ -23,7 +23,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XPool {//: public c::Ref { //, c::Clonable {
+class CC_DLL XPool {
 private:
 
   s::vector<ComObj*> objs;
@@ -48,12 +48,7 @@ public:
   void Checkin(not_null<ComObj*>);
   void Reset();
 
-//  virtual bool init() { return true; }
-  virtual ~XPool();
-  XPool();
-
-
-  //CREATE_FUNC(XPool)
+  DECL_CTOR(XPool)
 };
 
 

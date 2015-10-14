@@ -22,7 +22,6 @@ class CC_DLL GameLayer : public f::XGameLayer {
 private:
   NO__CPYASS(GameLayer)
   Factory* factory;
-  GameLayer();
   void InitAsh();
 public:
   virtual void Reset(bool newFlag) ;
@@ -30,39 +29,36 @@ public:
   virtual void Play(bool newFlag);
 
   virtual void SendMsg(const stdstr& topic, void* msg);
-  virtual void OnNewGame(const f::GMode);
+  virtual void OnNewGame();
   void SpawnPlayer();
 
   void OnPlayerKilled();
   void OnEarnScore(int);
 
   virtual void OnGameOver();
-  virtual ~GameLayer();
 
   virtual int GetIID() { return 2; }
   virtual f::XLayer* Realize();
 
-  CREATE_FUNC(GameLayer)
+  DECL_CTOR(GameLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::MainGame {
 private:
-  CREATE_FUNC(Game)
   NO__CPYASS(Game)
-  Game();
   bool running;
 public:
 
   virtual XScene* Realize();
-  virtual ~Game();
+  DECL_CTOR(Game)
   virtual void Resume();
   virtual void Pause();
   virtual void Run();
   virtual bool IsRunning();
 
-  static owner<Game*> Reify();
+  static Game* Reify();
 };
 
 

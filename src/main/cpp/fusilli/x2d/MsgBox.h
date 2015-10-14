@@ -24,7 +24,7 @@ NS_BEGIN(fusii)
 class CC_DLL MsgBox : public XScene {
 protected:
 
-  void OnYes(c::Ref*);
+  void OnYesBtn(c::Ref*);
   NO__CPYASS(MsgBox)
 
   c::CallFunc* action;

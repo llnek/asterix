@@ -92,7 +92,7 @@ void HUDLayer::InitIcons() {
   auto tile = f::CstVal<c::Integer>("TILE")->getValue();
   auto wb = cx::VisBox();
 
-  lives= f::XLives::create();
+  lives= f::ReifyRefType<fusii::XLives>();
   AddItem(lives);
   lives->Realize("health.png", 3, tile + soff,
     wb.top - tile - soff);

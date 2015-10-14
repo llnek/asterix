@@ -34,11 +34,8 @@ protected:
   int lastZix;
 
   void AudioCallback(c::Ref* sender);
-  XLayer();
-
-private:
-
   NO__CPYASS(XLayer)
+  XLayer();
 
 public:
 
@@ -47,14 +44,17 @@ public:
   virtual XLayer* Realize();
 
   c::SpriteBatchNode* RegoAtlas(const stdstr& name,
-      int* z = nullptr, int* tag= nullptr);
+      int* z = nullptr,
+      int* tag= nullptr);
 
   virtual void AddAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,
-      int* zx = nullptr, int* tag = nullptr);
+      int* zx = nullptr,
+      int* tag = nullptr);
 
   virtual void AddItem(not_null<c::Node*> n,
-      int* zx = nullptr, int* tag = nullptr);
+      int* zx = nullptr,
+      int* tag = nullptr);
 
   void AddAtlasFrame
     (const stdstr& atlas,

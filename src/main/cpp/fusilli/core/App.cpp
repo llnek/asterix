@@ -14,14 +14,12 @@
 #include "platform/CCGL.h"
 #include "Primitives.h"
 #include "XConfig.h"
+#include "CCSX.h"
 #include "App.h"
 
 NS_ALIAS(den, CocosDenshion)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
-
-static c::Size largeSize;
-static c::Size mediumSize;
-static c::Size smallSize;
 
 //////////////////////////////////////////////////////////////////////////////
 // If you want to use packages manager to install more packages,
@@ -88,8 +86,12 @@ void App::PreLaunch(const c::Size& dz) {
   auto fps = CstVal<c::Integer>("FPS");
   auto portrait = dz.height > dz.width;
   auto fz = glview->getFrameSize();
-  auto spath="hdr";
+
   s::vector<stdstr> searchPaths;
+  c::Size largeSize;
+  c::Size mediumSize;
+  c::Size smallSize;
+  auto spath="hdr";
 
   // set FPS. default is 1.0/60 if you don't call this
   CC_DTOR()->setAnimationInterval(1.0 / fps->getValue());
@@ -129,18 +131,17 @@ void App::PreLaunch(const c::Size& dz) {
   }
 
   searchPaths.push_back(spath);
-  //searchPaths.push_back("sfx");
-  c::FileUtils::getInstance()->setSearchPaths(searchPaths);
-
-  // Set the design resolution
-  glview->setDesignResolutionSize(
-    dz.width, dz.height, XCFG()->GetPolicy());
 
   CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
   CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
   CCLOG("image search path=%s", spath);
   CCLOG("sound search path=%s", "sfx");
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
+
+  c::FileUtils::getInstance()->setSearchPaths(searchPaths);
+
+  // Set the design resolution
+  cx::SetDevRes(dz.width, dz.height, XCFG()->GetPolicy());
 
   XCFG()->HandleResolution(fz);
   XCFG()->RunOnce();

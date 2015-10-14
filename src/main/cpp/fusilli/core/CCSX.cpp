@@ -57,6 +57,13 @@ void SfxPlay(const stdstr& sound) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void PauseAudio() {
+  den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+  den::SimpleAudioEngine::getInstance()->stopAllEffects();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void ReifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
   auto n="sound_off.png";
   off= ReifyMenuBtn(n,n,n);

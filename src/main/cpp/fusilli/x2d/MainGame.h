@@ -29,22 +29,25 @@ class CC_DLL MainGame : public XScene {
 protected:
 
   s::map<stdstr, XPool*> pools;
-  MainGame();
+  GMode mode;
+  int level;
 
-private:
+  static void Set(not_null<MainGame*>, int);
 
   NO__CPYASS(MainGame)
+  MainGame();
 
 public:
 
-  static void Set(not_null<MainGame*>, int layer=2);
+  static MainGame* Reify(GMode mode, c::Dictionary* options);
+  static XGameLayer* Get();
+  static MainGame* Self();
+
 
   XPool* ReifyPool(const stdstr& n);
   XPool* GetPool(const stdstr& n);
   void ResetPools();
-
-  static XGameLayer* Get();
-  static MainGame* Self();
+  c::Dictionary* GetLCfg();
 
   virtual ~MainGame();
 };

@@ -18,7 +18,6 @@
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL App : public cocos2d::Application {
@@ -57,7 +56,6 @@ public:
   virtual void initGLContextAttrs();
 
   virtual ~App();
-
 };
 
 

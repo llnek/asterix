@@ -51,7 +51,6 @@ void XLives::Resurrect() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::DrawLives() {
-//  auto gap=2;
   float y;
   float x;
 
@@ -77,15 +76,21 @@ void XLives::DrawLives() {
 //
 void XLives::Realize(const stdstr& frame,
     int lives,
-    float x, float y, int dir) {
+    float x, float y, int d) {
 
   totalLives = lives;
   curLives = 0;
-  this->dir = dir;
-  refPt= c::Vec2(x,y);
+  dir = d;
   frameId = frame;
+
+  refPt= c::Vec2(x,y);
   Reset();
   DrawLives();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+XLives::~XLives() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,5 +100,6 @@ XLives::XLives() {
   curLives = 0;
   dir = 1;
 }
+
 
 NS_END(fusii)

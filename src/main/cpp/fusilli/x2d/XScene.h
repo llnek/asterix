@@ -19,18 +19,13 @@ NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XScene : public c::Scene {
-
 protected:
 
-  XScene() {}
-
-private:
-
   NO__CPYASS(XScene)
+  XScene() {}
 
 public:
 
@@ -44,7 +39,6 @@ public:
 
   virtual XScene* Realize() = 0;
   virtual ~XScene() {}
-
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -18,12 +18,10 @@ NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
-class XLives;
-class XLive;
 //////////////////////////////////////////////////////////////////////////////
 //
+class XLives;
 class CC_DLL XHUDLayer : public XLayer {
-friend class XLives;
 protected:
 
   void AddReplayIcon(not_null<c::MenuItem*>, const c::Vec2& where);
@@ -34,11 +32,8 @@ protected:
   XLives* lives;
   int score;
 
-  XHUDLayer();
-
-private:
-
   NO__CPYASS(XHUDLayer)
+  XHUDLayer();
 
 public:
 
@@ -49,12 +44,11 @@ public:
 
   virtual ~XHUDLayer();
 
+  bool ReduceLives(int minus=1);
   void UpdateScore(int num);
-  bool ReduceLives(int );
 
   void DisableReplay();
   void EnableReplay();
-
 
 };
 

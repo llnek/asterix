@@ -61,7 +61,7 @@ GameLayer::GameLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* GameLayer::Realize() {
-  NewGame(f::GMode::ONE);
+  //NewGame(f::GMode::ONE);
   return this;
 }
 
@@ -93,7 +93,7 @@ void GameLayer::Reset(bool newFlag) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Replay() {
-  NewGame(mode);
+  //NewGame(mode);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -145,10 +145,9 @@ void GameLayer::OnPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnNewGame(const f::GMode mode) {
+void GameLayer::OnNewGame() {
   //sh.sfxPlay('start_game');
-  SetMode(mode);
-  Play(tries > 0L ? false : true);
+  Play(true);//tries > 0L ? false : true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -246,7 +245,7 @@ f::XScene* Game::Realize() {
   AddLayer(g, 2);
   AddLayer(h, 3)->Realize();
 
-  f::MainGame::Set(this);
+  f::MainGame::Set(this, 2);
 
   // realize game layer last
   g->Realize();
@@ -256,8 +255,8 @@ f::XScene* Game::Realize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-owner<Game*> Game::Reify() {
-  auto g= Game::create();
+Game* Game::Reify() {
+  auto g= f::ReifyRefType<invaders::Game>();
   g->Realize();
   return g;
 }

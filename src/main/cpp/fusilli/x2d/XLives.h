@@ -19,7 +19,6 @@ NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
-class XHUDLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XLives : public c::Node {
@@ -33,10 +32,6 @@ protected:
   c::Vec2 refPt;
   stdstr frameId;
 
-  XLives();
-
-private:
-
   NO__CPYASS(XLives)
 
 public:
@@ -45,20 +40,17 @@ public:
       const stdstr& frame,
       int lives,
       float x, float y, int dir= 1);
+  DECL_CTOR(XLives)
 
   bool IsDead() { return curLives < 0; }
   int GetLives() { return curLives; }
-  void Reduce(int c);
+
+  void Reduce(int cnt = 1);
   void Reset();
   void Resurrect();
   void DrawLives();
 
-  virtual ~XLives() {}
-
-  CREATE_FUNC(XLives)
 };
-
-
 
 
 

@@ -17,55 +17,47 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL YesNoLayer : public XLayer {
-private:
-
-  NO__CPYASS(YesNoLayer)
-  YesNoLayer() {}
-
 public:
-
-  virtual int GetIID() { return 1; }
   virtual XLayer* Realize();
-  virtual ~YesNoLayer() {}
-
-  CREATE_FUNC(YesNoLayer)
+  NO__CPYASS(YesNoLayer)
+  IMPL_CTOR(YesNoLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* YesNoLayer::Realize() {
-
-  SCAST(YesNo*, getParent())->Decorate(this);
+  CC_PCAST(YesNo*)->DecoUI(this);
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void YesNo::Decorate(YesNoLayer* layer) {
+void YesNo::DecoUI(XLayer* layer) {
 
-  auto qn= cx::ReifyBmfLabel("font.OCR", GetMsg());
-  auto cw= cx::Center();
+  auto qn= cx::ReifyBmfLabel("font.OCR", this->msgText);
   auto wz= cx::VisRect();
+  auto cw= cx::Center();
   auto wb= cx::VisBox();
 
-  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(XCFG()->GetScale() * 0.25);
+  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setOpacity(0.9*255);
 
   layer->CenterImage("game.bg");
   layer->AddItem(qn);
 
   auto b1= cx::ReifyMenuBtn("continue.png");
-  b1->setTarget(this, CC_MENU_SELECTOR(YesNo::OnYes));
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(YesNo::OnYesBtn));
 
   auto b2= cx::ReifyMenuBtn("cancel.png");
-  b2->setTarget(this, CC_MENU_SELECTOR(YesNo::OnNo));
+  b2->setTarget(this,
+      CC_MENU_SELECTOR(YesNo::OnNoBtn));
 
-  auto menu= c::Menu::create();
+  auto menu= ReifyRefType<cocos2d::Menu>();
   menu->addChild(b1);
   menu->addChild(b2);
   menu->alignItemsVerticallyWithPadding(XCFG()->GetBtnPadding());
@@ -76,21 +68,24 @@ void YesNo::Decorate(YesNoLayer* layer) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<YesNo*> YesNo::ReifyWithActions(
+YesNo* YesNo::ReifyWithActions(
     not_null<YesNo*> box,
     const stdstr& msg,
     not_null<c::CallFunc*> y,
     not_null<c::CallFunc*> n) {
 
-  box->SetActions(y,n);
-  box->SetMsg(msg);
+  box->yes= y;
+  box->no=n;
+  CC_KEEP(y);
+  CC_KEEP(n);
+  box->msgText= msg;
   box->Realize();
   return box;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<YesNo*> YesNo::Reify(not_null<YesNo*> box, const stdstr& msg) {
+YesNo* YesNo::Reify(not_null<YesNo*> box, const stdstr& msg) {
 
   c::CallFunc* y = c::CallFunc::create([](){
       CC_DTOR()->popToRootScene();
@@ -106,40 +101,23 @@ owner<YesNo*> YesNo::Reify(not_null<YesNo*> box, const stdstr& msg) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void YesNo::SetActions(not_null<c::CallFunc*> y,
-    not_null<c::CallFunc*> n) {
-
-  yes = y;
-  no = n;
-  CC_KEEP(y)
-  CC_KEEP(n)
+void YesNo::OnYesBtn(Ref* rr) {
+  yes->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void YesNo::OnYes(Ref* rr) {
- yes->execute();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void YesNo::OnNo(Ref* rr) {
- no->execute();
+void YesNo::OnNoBtn(Ref* rr) {
+  no->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XScene* YesNo::Realize() {
-  auto y= YesNoLayer::create();
+  auto y= ReifyRefType<YesNoLayer>();
   AddLayer(y);
   y->Realize();
   return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void YesNo::SetMsg(const stdstr& m) {
-  msgText=m;
 }
 
 //////////////////////////////////////////////////////////////////////////////

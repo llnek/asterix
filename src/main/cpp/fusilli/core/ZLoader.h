@@ -23,17 +23,15 @@ NS_BEGIN(fusii)
 class CC_DLL ZLoader : public c::Scene {
 private:
 
-  void StartLoad(float);
+  void StartLoad(float delay);
   NO__CPYASS(ZLoader)
 
 public:
 
   void InitWithResources();
-
   virtual void onEnter() ;
-  virtual ~ZLoader();
-  ZLoader();
 
+  DECL_CTOR(ZLoader)
 };
 
 

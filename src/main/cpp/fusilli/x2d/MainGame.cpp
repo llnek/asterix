@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "XGameLayer.h"
 #include "MainGame.h"
 NS_BEGIN(fusii)
@@ -42,12 +43,19 @@ MainGame::~MainGame() {
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
-  //pools.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainGame::MainGame() {
+  mode = GMode::ONE;
+  level = 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Dictionary* MainGame::GetLCfg() {
+  return XCFG()->GetLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -64,7 +72,12 @@ XPool* MainGame::GetPool(const stdstr& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 XPool* MainGame::ReifyPool(const stdstr& key) {
-  auto p = new XPool();
+  auto it = pools.find(key);
+  if (it != pools.end()) {
+    delete it->second;
+    pools.erase(it);
+  }
+  auto p=new XPool();
   pools.insert(s::pair<stdstr, XPool*>(key, p));
   return p;
 }

@@ -19,11 +19,9 @@ NS_ALIAS(s,std)
 NS_ALIAS(ws, fusii::wsock)
 NS_BEGIN(fusii)
 
-class OnlineLayer;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Online : public XScene {
-friend class OnlineLayer;
 protected:
 
   void SetActions(c::CallFunc*, c::CallFunc* );
@@ -31,11 +29,8 @@ protected:
   void OnOdinEvent(const ws::Event&);
   void OnNetworkEvent(const ws::Event&);
 
-  void OnPlayReq(const stdstr&, const stdstr&);
   void OnContinue();
-  void OnCancel(c::Ref*);
 
-  virtual void Decorate(OnlineLayer*);
   Online();
 
   c::CallFunc* yes;
@@ -49,10 +44,12 @@ private:
 public:
 
   static Online* Reify(not_null<Online*>, c::CallFunc* yes, c::CallFunc* no);
+  void OnPlayRequest(const stdstr&, const stdstr&);
+  void OnCancel(c::Ref*);
+
+  virtual void DecoUI(XLayer*);
   virtual XScene* Realize();
   virtual ~Online();
-
-  CREATE_FUNC(Online)
 };
 
 

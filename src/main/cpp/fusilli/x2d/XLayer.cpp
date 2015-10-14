@@ -39,7 +39,7 @@ void XLayer::AudioCallback(c::Ref* r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::OnQuit(c::Ref* rr) {
-  auto s= YesNo::Reify(YesNo::create(), "Are you sure ?");
+  auto s= YesNo::Reify(ReifyRefType<YesNo>(), "Are you sure ?");
   CC_DTOR()->pushScene(s);
 }
 
@@ -53,8 +53,7 @@ XLayer::XLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::~XLayer() {
-  for (auto it= atlases.begin();
-      it != atlases.end(); ++it) {
+  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
     //it->second->release();
   }
   //atlases.clear();
@@ -64,15 +63,13 @@ XLayer::~XLayer() {
 //
 c::SpriteBatchNode*
 XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
-  auto i= c::TextureCache::getInstance()->addImage(
-      XCFG()->GetImage(name));
+  auto i= c::TextureCache::getInstance()->addImage( XCFG()->GetImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
   auto t = ENP(tag) ? ++lastTag : *tag;
   auto x = ENP(z) ? lastZix : *z;
 
   atlases.insert(s::pair<stdstr, c::SpriteBatchNode*>(name,a));
   this->addChild(a, x,t);
-  //a->retain(); // for the map
   return a;
 }
 
@@ -112,15 +109,16 @@ void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
 // Add a child to this atlas
 //
 void XLayer::AddAtlasItem(const stdstr& atlas,
-    not_null<c::Node*> n, int* zx, int* tag) {
+    not_null<c::Node*> n,
+    int* zx, int* tag) {
 
   auto ptag = ENP(tag) ? ++lastTag : *tag;
   auto pzx = ENP(zx) ? lastZix : *zx;
   auto p= GetAtlas(atlas);
   auto ss = DCAST(c::Sprite*, n.get());
 
-  CCASSERT(p != nullptr, "atlas cannot be null");
   CCASSERT(ss != nullptr, "sprite cannot be null");
+  CCASSERT(p != nullptr, "atlas cannot be null");
 
   if (NNP(p)) {
     if (NNP(ss)) { ss->setBatchNode(p); }
@@ -140,8 +138,7 @@ void XLayer::AddItem(not_null<c::Node*> n, int* zx, int* tag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::CenterImage(const stdstr& name, int z) {
-  auto fp= XCFG()->GetImage(name);
-  auto t= c::TextureCache::getInstance()->addImage(fp);
+  auto t= c::TextureCache::getInstance()->addImage(XCFG()->GetImage(name));
   auto s= c::Sprite::createWithTexture(t);
   s->setPosition(cx::Center());
   this->addChild(s,z);
@@ -181,7 +178,7 @@ int XLayer::IncIndexZ() {
 // Remember the parent scene object
 //
 XScene* XLayer::GetScene() {
-  return (XScene*) getScene();
+  return SCAST(XScene*, getScene());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,6 +186,7 @@ XScene* XLayer::GetScene() {
 void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
     not_null<c::MenuItem*> on,
     const c::Vec2& anchor, const c::Vec2& pos) {
+
   c::Vector<c::MenuItem*> items;
   items.pushBack(on);
   items.pushBack(off);

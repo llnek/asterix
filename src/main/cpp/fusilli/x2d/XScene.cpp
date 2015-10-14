@@ -16,62 +16,55 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL SimpleLayer : public XLayer {
-private:
-
-  NO__CPYASS(SimpleLayer)
-  SimpleLayer() {}
-
 public:
-
-  virtual int GetIID() { return 1; }
 
   virtual XLayer* Realize();
 
-  virtual ~SimpleLayer() {}
-
-  CREATE_FUNC(SimpleLayer)
+  NO__CPYASS(SimpleLayer)
+  IMPL_CTOR(SimpleLayer)
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL SimpleScene : public XScene {
-friend class SimpleLayer;
-private:
-  s::function<void (XLayer*)> deco;
-  NO__CPYASS(SimpleScene)
-  void Decorate(XLayer* layer) {
-    deco(layer);
-  }
-  SimpleScene() {}
 public:
-  SimpleScene* SetDecorator(s::function<void (XLayer*)> d) {
+
+  SimpleScene* SetDecoUI(s::function<void (XLayer*)> d) {
     deco=d;
     return this;
   }
+
+  s::function<void (XLayer*)> deco;
+  NO__CPYASS(SimpleScene)
+
+  void DecoUI(XLayer* layer) {
+    deco(layer);
+  }
+
   virtual XScene* Realize() {
-    auto y = SimpleLayer::create();
+    auto y = ReifyRefType<SimpleLayer>();
     AddLayer(y);
     y->Realize();
     return this;
   }
-  virtual ~SimpleScene() {}
-  CREATE_FUNC(SimpleScene)
+
+  IMPL_CTOR(SimpleScene)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* SimpleLayer::Realize() {
-  SCAST(SimpleScene*, getParent())->Decorate(this);
+  CC_PCAST(SimpleScene*)->DecoUI(this);
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XScene* XSceneFactory::ReifySimple(s::function<void (XLayer*)> d) {
-  auto s = SimpleScene::create();
-  return s->SetDecorator(d)->Realize();
+  return ReifyRefType<SimpleScene>()->SetDecoUI(d)->Realize();
 }
 
 //////////////////////////////////////////////////////////////////////////////

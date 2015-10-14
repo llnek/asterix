@@ -31,6 +31,7 @@ namespace ccsx {
   void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
   void SfxPlay(const stdstr& sound);
+  void PauseAudio();
 
   c::MenuItem* ReifyMenuBtn(const stdstr& n);
 

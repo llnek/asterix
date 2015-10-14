@@ -27,7 +27,7 @@ public:
 
   virtual XLayer* Realize() {
 
-    CC_PCAST(MsgBox)->DecoUI(this);
+    CC_PCAST(MsgBox*)->DecoUI(this);
     return this;
   }
 
@@ -45,16 +45,16 @@ void MsgBox::DecoUI(XLayer* layer) {
 
   layer->CenterImage("game.bg");
 
-  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(XCFG()->GetScale() * 0.25);
+  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setOpacity(0.9*255);
   layer->AddItem(qn);
 
+  auto menu= ReifyRefType<cocos2d::Menu>();
   auto b1= cx::ReifyMenuBtn("ok.png");
-    auto menu= ReifyRefType<cocos2d::Menu>();
 
   b1->setTarget(this,
-      CC_MENU_SELECTOR(MsgBox::OnYes));
+      CC_MENU_SELECTOR(MsgBox::OnYesBtn));
 
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
@@ -87,7 +87,7 @@ MsgBox* MsgBox::ReifyWithMsg(not_null<MsgBox*> box, const stdstr& msg) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MsgBox::OnYes(c::Ref* rr) {
+void MsgBox::OnYesBtn(c::Ref* rr) {
   action->execute();
 }
 

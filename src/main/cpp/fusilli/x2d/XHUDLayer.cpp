@@ -53,8 +53,12 @@ void XHUDLayer::Reset() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool XHUDLayer::ReduceLives(int x) {
-  lives->Reduce(x);
-  return lives->IsDead();
+  if (NNP(lives)) {
+    lives->Reduce(x);
+    return lives->IsDead();
+  } else {
+    return false;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,7 +88,7 @@ void XHUDLayer::AddMenuIcon(not_null<c::MenuItem*> b,
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(b) * 0.5;
   auto hw = cx::GetScaledWidth(b) * 0.5;
-  auto menu= c::Menu::create();
+  auto menu= ReifyRefType<cocos2d::Menu>();
   auto wz= cx::VisBox();
   float y;
   int zx = 10;
@@ -109,7 +113,7 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto hh = cx::GetScaledHeight(c) * 0.5;
   auto hw = cx::GetScaledWidth(c) * 0.5;
-  auto menu= c::Menu::create();
+  auto menu= ReifyRefType<cocos2d::Menu>();
   auto wz= cx::VisBox();
   float y;
   int zx= 10;
@@ -127,13 +131,6 @@ void XHUDLayer::AddReplayIcon(not_null<c::MenuItem*> c,
   replayBtn=menu;
   AddItem(menu, &zx);
 }
-
-
-
-
-
-
-
 
 
 NS_END(fusii)
