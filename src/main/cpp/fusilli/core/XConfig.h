@@ -36,7 +36,9 @@ protected:
   void AddMusic(const stdstr& key, c::Ref*);
   void AddCst(const stdstr& key, c::Ref*);
 
-  c::Dictionary* dict;
+  c::Dictionary* frags;
+  c::Dictionary* l10n;
+
   float lastMusicVol;
   float lastSfxVol;
   bool audioState;
@@ -47,6 +49,7 @@ private:
 
   void AddXXX(const stdstr& frag, const stdstr& key, c::Ref*);
   c::Dictionary* GetFragment(const stdstr&);
+  void LoadL10NStrings();
   void SetCsts();
   NO__CPYASS(XConfig)
 
@@ -80,6 +83,10 @@ public:
 
   const filepath GetEffect(const stdstr& key);
   const filepath GetMusic(const stdstr& key);
+
+  const stdstr GetL10NStr(const stdstr& key,
+      const s::vector<stdstr>& pms);
+  const stdstr GetL10NStr(const stdstr& key);
 
   c::Ref* GetCst(const stdstr& cst);
   int GetBtnPadding();

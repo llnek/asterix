@@ -10,8 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "audio/include/SimpleAudioEngine.h"
+#include "CCSX.h"
 #include "XConfig.h"
 NS_ALIAS(den, CocosDenshion)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -52,26 +54,76 @@ XConfig* XConfig::Self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::~XConfig() {
-  CC_DROP(dict)
+  CC_DROP(frags)
+  CC_DROP(l10n)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::XConfig() {
-  dict = c::Dictionary::create();
-  CC_KEEP(dict)
+  frags = c::Dictionary::create();
+  CC_KEEP(frags)
 
-  dict->setObject(c::Dictionary::create(), ATLASES);
-  dict->setObject(c::Dictionary::create(), TILES);
-  dict->setObject(c::Dictionary::create(), CSTS);
-  dict->setObject(c::Dictionary::create(), IMAGES);
-  dict->setObject(c::Dictionary::create(), FONTS);
-  dict->setObject(c::Dictionary::create(), MUSIC);
-  dict->setObject(c::Dictionary::create(), EFX);
-  dict->setObject(c::Dictionary::create(), LEVELS);
+  frags->setObject(c::Dictionary::create(), ATLASES);
+  frags->setObject(c::Dictionary::create(), TILES);
+  frags->setObject(c::Dictionary::create(), CSTS);
+  frags->setObject(c::Dictionary::create(), IMAGES);
+  frags->setObject(c::Dictionary::create(), FONTS);
+  frags->setObject(c::Dictionary::create(), MUSIC);
+  frags->setObject(c::Dictionary::create(), EFX);
+  frags->setObject(c::Dictionary::create(), LEVELS);
+
+  LoadL10NStrings();
 
   AddLevel("1");
   SetCsts();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::LoadL10NStrings() {
+  auto b= cx::ReadXmlAsDict("i18n/base_strings.plist");
+  auto d= cx::ReadXmlAsDict("i18n/strings.plist");
+  NS_USING(cocos2d)
+  DictElement* e= nullptr;
+  CCDICT_FOREACH(d, e) {
+    auto obj = e->getObject();
+    auto key= e->getStrKey();
+    b->setObject(obj, key);
+  }
+
+  CC_KEEP(b)
+  l10n = b;
+  CCLOG("loaded L10N strings");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const stdstr XConfig::GetL10NStr(const stdstr& key,
+    const s::vector<stdstr>& pms) {
+  auto vs = GetL10NStr(key);
+  if (pms.size() == 0) { return vs; }
+  auto pos= vs.find("{}");
+  int n= 0;
+  while (pos != s::string::npos) {
+    vs= vs.substr(0, pos) + pms[n] + vs.substr(pos+2);
+    ++n;
+    pos= vs.find("{}");
+  }
+  return vs;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const stdstr XConfig::GetL10NStr(const stdstr& key) {
+  auto d = DictVal<c::Dictionary>(l10n, "en");
+  auto obj=DictVal<c::String>(d, key);
+  if (NNP(obj)) {
+    return obj->getCString();
+  } else {
+    return "";
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -221,7 +273,7 @@ c::Dictionary* XConfig::AddLevel(const stdstr& level) {
 ///////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XConfig::GetFragment(const stdstr& key) {
-  auto obj = dict->objectForKey(key);
+  auto obj = frags->objectForKey(key);
   return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
 }
 

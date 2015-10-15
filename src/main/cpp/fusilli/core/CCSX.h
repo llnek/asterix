@@ -27,6 +27,9 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
+  c::Dictionary* ReadXmlAsDict(const stdstr& fpath);
+  c::Array* ReadXmlAsList(const stdstr& fpath);
+
   void ReifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 

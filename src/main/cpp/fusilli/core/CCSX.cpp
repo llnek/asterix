@@ -160,6 +160,18 @@ bool IsPortrait() {
 
 //////////////////////////////////////////////////////////////////////////
 //
+c::Array* ReadXmlAsList(const stdstr& fpath) {
+  return c::Array::createWithContentsOfFile(fpath.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+c::Dictionary* ReadXmlAsDict(const stdstr& fpath) {
+  return c::Dictionary::createWithContentsOfFile(fpath.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 bool OutOfBound(not_null<ComObj*> ent, const Box4& B) {
   if (NNP(ent) && NNP(ent->sprite)) {
     return OutOfBound(BBox4(ent->sprite), B);
