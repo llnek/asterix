@@ -20,6 +20,16 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Stager : public f::BaseSystem {
+protected:
+
+  virtual bool OnUpdate(float);
+
+  void OnceOnly(a::Node*, float);
+  void ShowGrid(a::Node*);
+  void DoIt(a::Node*, float);
+
+  NO__CPYASS(Stager)
+
 public:
 
   Stager(not_null<a::Engine*> engine,
@@ -27,11 +37,9 @@ public:
 
   virtual void removeFromEngine(not_null<a::Engine*>);
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool OnUpdate(float);
-  void ShowGrid(a::Node*);
-  void OnceOnly(a::Node*, float);
-  void DoIt(a::Node*, float);
 //Priority: xcfg.ftypes.PreUpdate
+
+  virtual ~Stager();
 };
 
 

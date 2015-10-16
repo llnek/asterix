@@ -9,124 +9,96 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/odin
- * @requires s/utils
- * @requires n/gnodes
- * @module s/stager
- */
-
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import odin from 'zotohlab/asx/odin';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+#include "core/CCSX.h"
+#include "Stager.h"
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-let evts= odin.Events,
-sjs= sh.skarojs,
-xcfg=sh.xcfg,
-csts= xcfg.csts,
-R=sjs.ramda,
-undef,
+Stager::Stager(not_null<a::Engine*> e,
+    not_null<c::Dictionary*> options)
+
+  : f::BaseSystem(e,options) {
+
+  this->inited=false;
+}
+
 //////////////////////////////////////////////////////////////////////////////
-/** * @class Stager */
-Stager = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/stager~Stager
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-    this.inited=false;
-  },
-  /**
-   * @memberof module:s/stager~Stager
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.board=null;
-  },
-  /**
-   * @memberof module:s/stager~Stager
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    engine.addEntity(sh.factory.reifyBoard(sh.main,
-                                           this.state));
-    this.board= engine.getNodeList(gnodes.BoardNode);
-  },
-  /**
-   * @memberof module:s/stager~Stager
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    if (ccsx.isTransitioning()) { return false; }
-    const node= this.board.head;
-    if (this.state.running &&
-        !!node) {
-      if (! this.inited) {
-        this.onceOnly(node, dt);
-        this.inited=true;
-      } else {
-        this.doit(node,dt);
-      }
+//
+Stager::~Stager() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(board)
+}
+
+void Stager::AddToEngine(not_null<a::Engine*> e) {
+  e->AddEntity(sh.factory.reifyBoard(sh.main,
+                                       this.state));
+  CCLOG("adding system: Stager");
+  if (! inited) {
+    OnceOnly(e);
+    inited=true;
+  }
+  BoardNode n;
+  board= e->GetNodeList(n.TypeId());
+}
+
+bool Stager::OnUpdate(float dt) {
+  if (cx::IsTransitioning()) { return false; }
+  auto node= board->head;
+  if (MGMS()->IsRunning() && NNP(node) {
+    DoIt(node,dt);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::ShowGrid(a::Node* node) {
+  auto cs= a::NodeFld<GridView>(node, "view");
+  auto mgs = MapGridPos();
+  auto pos=0;
+  sp;
+
+  R.forEach( mp => {
+    sp= ccsx.createSprite('z.png');
+    sp.setPosition(ccsx.vboxMID(mp));
+    sh.main.addAtlasItem('game-pics',sp);
+    cs[pos++]=[sp, sp.getPositionX(), sp.getPositionY(), csts.CV_Z];
+  }, mgs);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::OnceOnly(a::Node* node, float dt) {
+
+  ShowGrid(node);
+
+  if (MGMS()->IsOnline()) {
+    CCLOG("reply to server: session started ok");
+    MGMS()->NetSend({
+      type: evts.MSG_SESSION,
+      code: evts.STARTED
+    });
+    state->setObject(c::Integer::create(0), "actor");
+  } else {
+    //randomly pick a player to start the game.
+    let pnum = sjs.randSign() > 0 ? 1 : 2;
+    this.state.actor=pnum;
+    if (this.state.players[pnum].category === csts.HUMAN) {
+      sh.fire('/hud/timer/show');
     }
-  },
-  /**
-   * @method showGrid
-   * @private
-   */
-  showGrid(node) {
-    let mgs = utils.mapGridPos(),
-    cs=node.view.cells,
-    pos=0,
-    sp;
-
-    R.forEach( mp => {
-      sp= ccsx.createSprite('z.png');
-      sp.setPosition(ccsx.vboxMID(mp));
-      sh.main.addAtlasItem('game-pics',sp);
-      cs[pos++]=[sp, sp.getPositionX(), sp.getPositionY(), csts.CV_Z];
-    }, mgs);
-  },
-
-  /**
-   * @method onceOnly
-   * @private
-   */
-  onceOnly(node,dt) {
-
-    this.showGrid(node);
-
-    if (sjs.isobj(this.state.wsock)) {
-      // online play
-      sjs.loggr.debug("reply to server: session started ok");
-      this.state.wsock.send({
-        type: evts.MSG_SESSION,
-        code: evts.STARTED
-      });
-      this.state.actor= 0;
-    } else {
-      //randomly pick a player to start the game.
-      let pnum = sjs.randSign() > 0 ? 1 : 2;
-      this.state.actor=pnum;
-      if (this.state.players[pnum].category === csts.HUMAN) {
-        sh.fire('/hud/timer/show');
-      }
-      else
-      if (this.state.players[pnum].category === csts.BOT) {
-      }
+    else
+    if (this.state.players[pnum].category === csts.BOT) {
     }
+  }
 
-    sh.main.pkInput();
-  },
+  sh.main.pkInput();
+}
+
   /**
    * @method doit
    * @private
