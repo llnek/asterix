@@ -9,41 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NEGAMAX_H__)
-#define __NEGAMAX_H__
+#if !defined(__APP_DELEGATE_H__)
+#define __APP_DELEGATE_H__
 
 #include "aeon/fusilli.h"
-NS_ALIAS(s,std)
-NS_BEGIN(fusii)
-
+#include "core/App.h"
 
 //////////////////////////////////////////////////////////////////////////////
-class FS_DLL GameBoard {
-public:
-
-  virtual const s::vector<int> GetNextMoves(game);
-  virtual int EvalScore(Snapshot& game);
-  virtual bool IsStalemate();
-  virtual bool IsOver(game);
-  virtual Snapshot TakeSnapshot();
-
-  virtual void MakeMove(Snapshot&, int move);
-  virtual void SwitchPlayer(game);
-  virtual void UndoMove(game, int move);
-
-  IMPL_CTOR(GameBoard)
-};
-
-//////////////////////////////////////////////////////////////////////////
 //
-struct Snapshot {
-  int lastBestMove;
-  int other;
-  int cur;
-  FArray<int> state;
+class CC_DLL AppDelegate : public fusii::App {
+public:
+  NO__CPYASS(AppDelegate)
+  DECL_CTOR(AppDelegate)
 };
 
-
-NS_END(fusii)
 #endif
 

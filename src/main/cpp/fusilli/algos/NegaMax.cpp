@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "negamax.h"
-NS_BEGIN(negamax)
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -104,6 +104,6 @@ int EvalNegaMax(not_null<GameBoard*> board) {
   return snapshot.lastBestMove;
 }
 
-NS_END(negamax)
+NS_END(fusii)
 
 

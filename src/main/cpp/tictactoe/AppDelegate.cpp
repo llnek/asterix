@@ -9,41 +9,34 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NEGAMAX_H__)
-#define __NEGAMAX_H__
-
-#include "aeon/fusilli.h"
-NS_ALIAS(s,std)
-NS_BEGIN(fusii)
-
+#include "ash/NodeRegistry.h"
+#include "n/gnodes.h"
+#include "p/Config.h"
+#include "AppDelegate.h"
+NS_USING(tttoe)
+NS_USING(fusii)
+NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
-class FS_DLL GameBoard {
-public:
-
-  virtual const s::vector<int> GetNextMoves(game);
-  virtual int EvalScore(Snapshot& game);
-  virtual bool IsStalemate();
-  virtual bool IsOver(game);
-  virtual Snapshot TakeSnapshot();
-
-  virtual void MakeMove(Snapshot&, int move);
-  virtual void SwitchPlayer(game);
-  virtual void UndoMove(game, int move);
-
-  IMPL_CTOR(GameBoard)
-};
-
-//////////////////////////////////////////////////////////////////////////
 //
-struct Snapshot {
-  int lastBestMove;
-  int other;
-  int cur;
-  FArray<int> state;
-};
+AppDelegate::AppDelegate() {
 
+  // step.1: register all ash::node factories here
+  auto r= NodeRegistry::Self();
 
-NS_END(fusii)
-#endif
+  r->Register( mc_new(NetPlayNode));
+  r->Register( mc_new(GUINode));
+  r->Register( mc_new(BoardNode));
+
+  // step.2: set up app-config
+  XConfig::Bind(Config::Reify());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+AppDelegate::~AppDelegate() {
+  //delete NodeRegistry::Self();
+  //delete XConfig::Self();
+}
+
 

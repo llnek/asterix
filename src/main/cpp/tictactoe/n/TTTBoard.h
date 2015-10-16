@@ -13,22 +13,29 @@
 #define __TTTBOARD_H__
 
 #include "algos/NegaMax.h"
+#include <tuple>
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
 class FS_DLL TTTBoard : public GameBoard {
+protected:
+  f::FArray* grid;
+  size_t size;
+  int nil;
+
 public:
 
-  bool IsNil(int cellv);
-
   TTTBoard(int size, int nil,  int p1v,  int p2v, int goals);
+  virtual ~TTTBoard();
 
-  int GetFirstMove();
+  virtual bool IsNil(int cellv);
 
-  void SyncState(int seed, int actor);
+  virtual int GetFirstMove();
 
-  virtual GetNextMoves(Snapshot&);
+  virtual void SyncState(const f::FArray<int>& seed, int actor);
+
+  virtual const s::vector<int> GetNextMoves(Snapshot&);
 
   virtual void UndoMove(Snapshot&, int move);
 
@@ -36,7 +43,7 @@ public:
 
   virtual void SwitchPlayer(Snapshot&);
 
-  int getOtherPlayer(int pv);
+  virtual int getOtherPlayer(int pv);
 
   virtual Snapshot TakeSnapshot();
 
@@ -44,9 +51,9 @@ public:
 
   virtual bool IsOver(Snapshot&);
 
-  virtual bool IsStalemate(Snapshot&);
+  virtual bool IsStalemate(Snapshot*);
 
-  virtual bool IsWinner(int actor, Snapshot& );
+  virtual s::tuple<int,f::FArray<int>> IsWinner(int actor, Snapshot& );
 
 };
 
