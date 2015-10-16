@@ -44,7 +44,7 @@ Entity::Entity() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Rego(not_null<Component*> c) {
+void Entity::Checkin(not_null<Component*> c) {
   auto z = c->TypeId();
   if (Has(z)) {
     throw "cannot reassign component";

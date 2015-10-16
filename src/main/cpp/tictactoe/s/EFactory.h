@@ -9,58 +9,39 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITY_H__)
-#define __ENTITY_H__
+#if !defined(__EFACTORY_H__)
+#define __EFACTORY_H__
 
-#include "Ash.h"
-#include <vector>
-#include <map>
+#include "core/Factory.h"
+NS_ALIAS(f, fusii)
+NS_ALIAS(a,ash)
+NS_BEGIN(tttoe)
 
-NS_ALIAS(s, std)
-NS_BEGIN(ash)
-
-class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Entity {
-private:
+class CC_DLL EFactory {
+protected:
 
-  s::map<stdstr, Component*> parts;
-  Engine* engine;
-  stdstr group;
-  bool dead;
+  s::vector<f::FArray<int>> goals;
+  c::Dictionary* state;
+  a::Engine* engine;
 
-  Entity();
+  void MapGoalSpace(int );
 
-  NO__CPYASS(Entity)
+  NO__CPYASS(Factory)
+  Factory() = delete;
 
 public:
 
-  static owner<Entity*> Reify(const stdstr& group,
-      not_null<Engine*>);
+  EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
+  virtual ~EFactory();
 
-  Entity* previous;
-  Entity* next;
-
-  virtual ~Entity();
-
-  void Checkin(not_null<Component*>);
-  void Purge(const COMType&);
-
-  Component* Get(const COMType& );
-  bool Has(const COMType&);
-
-  const stdstr GroupId() { return group; }
-
-  bool IsOk() { return !dead; };
-  void MarkDelete();
-
-  const s::vector<Component*> GetAll();
+  a::Entity* ReifyBoard(not_null<c::Node*> layer);
 
 };
 
 
-
-NS_END(ash)
+NS_END(tttoe)
 #endif
+
 

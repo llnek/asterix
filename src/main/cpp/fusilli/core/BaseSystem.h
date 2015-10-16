@@ -9,58 +9,46 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITY_H__)
-#define __ENTITY_H__
+#if !defined(__BASESYSTEM_H__)
+#define __BASESYSTEM_H__
 
-#include "Ash.h"
-#include <vector>
-#include <map>
+#include "core/Primitives.h"
+#include "Factory.h"
+#include "ash/Ash.h"
+NS_ALIAS(c, cocos2d)
+NS_ALIAS(a,ash)
+NS_BEGIN(fusii)
 
-NS_ALIAS(s, std)
-NS_BEGIN(ash)
 
-class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Entity {
+class CC_DLL BaseSystem : public a::System {
+protected:
+  c::Dictionary* state;
+  Factory* factory;
+
+  void Set(not_null<Factory*>, not_null<c::Dictionary*>);
+  BaseSystem();
+
+  virtual bool OnUpdate(float) = 0;
+
 private:
 
-  s::map<stdstr, Component*> parts;
-  Engine* engine;
-  stdstr group;
-  bool dead;
-
-  Entity();
-
-  NO__CPYASS(Entity)
+  NO__CPYASS(BaseSystem)
 
 public:
 
-  static owner<Entity*> Reify(const stdstr& group,
-      not_null<Engine*>);
-
-  Entity* previous;
-  Entity* next;
-
-  virtual ~Entity();
-
-  void Checkin(not_null<Component*>);
-  void Purge(const COMType&);
-
-  Component* Get(const COMType& );
-  bool Has(const COMType&);
-
-  const stdstr GroupId() { return group; }
-
-  bool IsOk() { return !dead; };
-  void MarkDelete();
-
-  const s::vector<Component*> GetAll();
+  virtual bool Update(float time);
+  virtual ~BaseSystem();
 
 };
 
 
 
-NS_END(ash)
+
+
+
+NS_END(fusii)
 #endif
+
 

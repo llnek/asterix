@@ -9,58 +9,32 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__ENTITY_H__)
-#define __ENTITY_H__
+#if !defined(__STAGER_H__)
+#define __STAGER_H__
 
-#include "Ash.h"
-#include <vector>
-#include <map>
+#include "core/BaseSystem.h"
+NS_ALIAS(f,fusii)
+NS_ALIAS(a,ash)
+NS_BEGIN(tttoe)
 
-NS_ALIAS(s, std)
-NS_BEGIN(ash)
-
-class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Entity {
-private:
-
-  s::map<stdstr, Component*> parts;
-  Engine* engine;
-  stdstr group;
-  bool dead;
-
-  Entity();
-
-  NO__CPYASS(Entity)
-
+class CC_DLL Stager : public f::BaseSystem {
 public:
 
-  static owner<Entity*> Reify(const stdstr& group,
-      not_null<Engine*>);
+  Stager(not_null<a::Engine*> engine,
+      not_null<c::Dictionary*> options);
 
-  Entity* previous;
-  Entity* next;
-
-  virtual ~Entity();
-
-  void Checkin(not_null<Component*>);
-  void Purge(const COMType&);
-
-  Component* Get(const COMType& );
-  bool Has(const COMType&);
-
-  const stdstr GroupId() { return group; }
-
-  bool IsOk() { return !dead; };
-  void MarkDelete();
-
-  const s::vector<Component*> GetAll();
-
+  virtual void removeFromEngine(not_null<a::Engine*>);
+  virtual void addToEngine(not_null<a::Engine*>);
+  virtual bool OnUpdate(float);
+  void ShowGrid(a::Node*);
+  void OnceOnly(a::Node*, float);
+  void DoIt(a::Node*, float);
+//Priority: xcfg.ftypes.PreUpdate
 };
 
 
-
-NS_END(ash)
+NS_END(tttoe)
 #endif
 
