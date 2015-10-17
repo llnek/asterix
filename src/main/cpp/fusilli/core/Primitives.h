@@ -55,6 +55,9 @@
 #define CC_STR(x) cocos2d::String::create(x)
 #define CC_INT(x) cocos2d::Integer::create(x)
 
+#define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)->getValue()
+#define CC_CSV(t,f) fusii::CstVal<t>(f)->getValue()
+
 typedef std::string filepath;
 
 NS_ALIAS(c, cocos2d)

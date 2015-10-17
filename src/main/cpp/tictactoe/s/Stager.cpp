@@ -74,6 +74,10 @@ void Stager::ShowGrid(a::Node* node) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stager::OnceOnly(a::Node* node, float dt) {
+  auto human = f::CstVal<c::Integer>("HUMAN")->geValue();
+  auto bot= f::CstVal<c::Integer>("BOT")->geValue();
+  auto ps = a::NodeFld<Players>(node, "players")->parr;
+  auto pnum = 0;
 
   ShowGrid(node);
 
@@ -83,62 +87,36 @@ void Stager::OnceOnly(a::Node* node, float dt) {
       type: evts.MSG_SESSION,
       code: evts.STARTED
     });
-    state->setObject(c::Integer::create(0), "actor");
   } else {
-    //randomly pick a player to start the game.
-    let pnum = sjs.randSign() > 0 ? 1 : 2;
-    this.state.actor=pnum;
-    if (this.state.players[pnum].category === csts.HUMAN) {
-      sh.fire('/hud/timer/show');
+    pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2; // randomly choose
+    if (parr[pnum]->category == human) {
+      MGML()->SendMsg("/hud/timer/show");
     }
     else
-    if (this.state.players[pnum].category === csts.BOT) {
+    if (parr[pnum]->category == bot) {
     }
   }
 
-  sh.main.pkInput();
+  state->setObject(c::Integer::create(pnum), "actor");
 }
 
-  /**
-   * @method doit
-   * @private
-   */
-  doit(node,dt) {
+//////////////////////////////////////////////////////////////////////////
+//
+Stager::DoIt(a::Node* node, float dt) {
 
-    let active = this.state.running,
-    actor = this.state.actor;
+  auto actor = CC_GDV(c::Integer,state,"actor");
+  auto active = MGMS()->IsRunning();
 
-    if (!active) {
-      actor= this.state.lastWinner;
-    }
-
-    sh.fire('/hud/update', {
-      running: active,
-      pnum: actor
-    });
+  if (!active) {
+    actor= CC_GDV(c::Integer,state,"lastWinner");
   }
 
-}, {
-/**
- * @memberof module:s/stager~Stager
- * @property {Number} Priority
- */
-Priority: xcfg.ftypes.PreUpdate
-});
+  MGML()->SendMsg("/hud/update", {
+    running: active,
+    pnum: actor
+  });
+}
 
-
-/** @alias module:s/stager */
-const xbox = {
-  /**
-   * @property {Stager} Stager
-   */
-  Stager : Stager
-};
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(tttoe)
 
 
