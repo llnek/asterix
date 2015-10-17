@@ -9,240 +9,194 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/odin
- * @requires n/gnodes
- * @requires Rx
- * @module s/motion
- */
-
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import odin from 'zotohlab/asx/odin';
-import gnodes from 'n/gnodes';
-import Rx from 'Rx';
+#include "Motions.h"
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-let evts= odin.Events,
-sjs= sh.skarojs,
-xcfg= sh.xcfg,
-csts = xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////////
-/** * @class Motions */
-Motions = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/motion~Motions
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-    this.inited=false;
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method removefromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.netplay=null;
-    this.stream=null;
-    this.evQ=null;
-    this.gui=null;
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.netplay = engine.getNodeList(gnodes.NetPlayNode);
-    this.gui = engine.getNodeList(gnodes.GUINode);
-    this.evQ=[];
-  },
-  /**
-   * @method onceOnly
-   * @private
-   */
-  onceOnly() {
-    let ws= this.state.wsock,
-    t, m, s;
-    if (sjs.isobj(ws)) {
-      ws.cancelAll();
-      s=Rx.Observable.create( obj => {
-        ws.listenAll( msg => {
-          obj.onNext({group:'net',
-                      event: msg});
-        });
+//
+Motions::Motions(not_null<a::Engine*> e,
+    not_null<c::Dictionary*> options)
+
+  : f::BaseSystem(e,options) {
+
+  inited=false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::RemoveFromEngine(not_null<a::Engine*> e) {
+  SNPTR(netplay)
+  SNPTR(stream)
+  SNPTR(evQ)
+  SNPTR(gui)
+
+  evQ.clear();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::AddToEngine(not_null<a::Engine*> e) {
+
+  NetPlayNode n;
+  netplay = e->GetNodeList(n.TypeId());
+
+  GUINode g;
+  gui = e->GetNodeList(g.TypeId());
+
+  evQ.clear();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnceOnly() {
+  let ws= this.state.wsock,
+  t, m, s;
+  if (MGMS()->IsOnline()) {
+    ws.cancelAll();
+    s=Rx.Observable.create( obj => {
+      ws.listenAll( msg => {
+        obj.onNext({group:'net',
+                    event: msg});
       });
+    });
+  } else {
+    s= Rx.Observable.never();
+  }
+  t=Rx.Observable.create( obj => {
+    sh.main.signal('/touch/one/end',
+                   msg => obj.onNext(msg));
+  });
+  m=Rx.Observable.create( obj => {
+    sh.main.signal('/mouse/up',
+                   msg => obj.onNext(msg));
+  });
+  this.stream= Rx.Observable.merge(m,t,s);
+  this.stream.subscribe( msg => {
+    if (!!this.evQ) {
+      this.evQ.push(msg);
+    }
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool Motions::OnUpdate(float dt) {
+  auto evt= evQ.empty() ? nullptr : evQ.pop();
+  auto n= netplay->head;
+  auto g= gui->head;
+
+  if (!inited) {
+    OnceOnly();
+    inited=true;
+  }
+  else if (NNP(evt)) {
+    if (evt->group == "net") {
+      if (NNP(n)) { OnNet(n, evt->event); }
     } else {
-      s= Rx.Observable.never();
-    }
-    t=Rx.Observable.create( obj => {
-      sh.main.signal('/touch/one/end',
-                     msg => obj.onNext(msg));
-    });
-    m=Rx.Observable.create( obj => {
-      sh.main.signal('/mouse/up',
-                     msg => obj.onNext(msg));
-    });
-    this.stream= Rx.Observable.merge(m,t,s);
-    this.stream.subscribe( msg => {
-      if (!!this.evQ) {
-        this.evQ.push(msg);
-      }
-    });
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const evt= this.evQ.length > 0 ? this.evQ.shift() : undef,
-    n= this.netplay.head,
-    g= this.gui.head;
-
-    if (!this.inited) {
-      this.onceOnly();
-      this.inited=true;
-    }
-    else if (!!evt) {
-      if (evt.group === 'net') {
-        if (!!n) { this.onnet(n, evt.event); }
-      } else {
-        if (!!g) { this.ongui(g,evt); }
-      }
-    }
-  },
-  /**
-   * @method onnet
-   * @private
-   */
-  onnet(node, evt) {
-    switch (evt.type) {
-      case evts.MSG_NETWORK:
-        this.onnetw(node, evt);
-      break;
-      case evts.MSG_SESSION:
-        this.onsess(node, evt);
-      break;
-    }
-  },
-  /**
-   * @method onnetw
-   * @private
-   */
-  onnetw(node, evt) {
-    switch (evt.code) {
-      case evts.RESTART:
-        sjs.loggr.debug("restarting a new game...");
-        sh.fire('/net/restart');
-      break;
-      case evts.STOP:
-        if (this.state.running) {
-          sjs.loggr.debug("game will stop");
-          sh.fire('/hud/timer/hide');
-          this.onsess(node,evt);
-          sh.fire('/net/stop', evt);
-        }
-      break;
-    }
-  },
-  /**
-   * @method onsess
-   * @private
-   */
-  onsess(node, evt) {
-    let cmd= evt.source.cmd,
-    snd, pnum,
-    grid=node.grid,
-    vs=grid.values;
-
-    if (sjs.isobj(cmd) &&
-        sjs.isnum(cmd.cell) &&
-        cmd.cell >= 0 &&
-        cmd.cell < vs.length) {
-
-      if (this.state.players[1].value === cmd.value) {
-        snd= 'x_pick';
-      } else {
-        snd= 'o_pick';
-      }
-      vs[cmd.cell] = cmd.value;
-      sh.sfxPlay(snd);
-    }
-
-    pnum= sjs.isnum(evt.source.pnum) ? evt.source.pnum : -1;
-    if (pnum === 1 || pnum === 2) {} else { return; }
-    switch (evt.code) {
-      case evts.POKE_MOVE:
-        sjs.loggr.debug("player " + pnum + ": my turn to move");
-        sh.fire('/hud/timer/show');
-        this.state.actor= pnum;
-      break;
-      case evts.POKE_WAIT:
-        sjs.loggr.debug("player " + pnum + ": my turn to wait");
-        sh.fire('/hud/timer/hide');
-        // toggle color
-        this.state.actor= pnum===1 ? 2 : 1;
-      break;
-    }
-  },
-  /**
-   * @method ongui
-   * @private
-   */
-  ongui(node, evt) {
-    if (!this.state.running) {return;}
-    let sel = node.selection,
-    map = node.view.gridMap,
-    rect,
-    sz= map.length;
-
-    //set the mouse/touch position
-    sel.px = evt.loc.x;
-    sel.py = evt.loc.y;
-    sel.cell= -1;
-
-    if (this.state.actor === 0) {
-      return;
-    }
-
-    //which cell did he click on?
-    for (let n=0; n < sz; ++n) {
-      rect = map[n];
-      if (sel.px >= rect.left && sel.px <= rect.right &&
-          sel.py >= rect.bottom && sel.py <= rect.top) {
-        sel.cell= n;
-        break;
-      }
+      if (NNP(g)) { OnGUI(g,evt); }
     }
   }
 
-}, {
-/**
- * @memberof module:s/motion~Motions
- * @property {Number} Priority
- */
-Priority: xcfg.ftypes.Motion
-});
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnSocket(a::Node* node, evt) {
+  switch (evt.type) {
+    case evts.MSG_NETWORK:
+      OnNet(node, evt);
+    break;
+    case evts.MSG_SESSION:
+      OnSess(node, evt);
+    break;
+  }
+}
+
+void Motions::OnNet(a::Node* node, evt) {
+  switch (evt.code) {
+    case evts.RESTART:
+      CCLOG("restarting a new game...");
+      MGML()->SendMsg("/net/restart");
+    break;
+    case evts.STOP:
+      if (MGMS()->IsRunning()) {
+        CCLOG("game will stop");
+        MGML()->SendMsg("/hud/timer/hide");
+        OnSess(node,evt);
+        MGML()->SendMsg("/net/stop", evt);
+      }
+    break;
+  }
+}
+
+void Motions::OnSess(a::Node* node, evt) {
+  auto grid= CC_GNF(GridView, node, "grid");
+  auto ps= CC_GNF(Players, node, "players");
+  auto cmd= evt.source.cmd;
+  auto snd="";
+  auto vs = grid->values;
+
+  if (NNP(cmd) &&
+      cmd.cell >= 0 &&
+      cmd.cell < vs.Size()) {
+
+    if (ps->parr[1]->value == cmd->value) {
+      snd= "x_pick";
+    } else {
+      snd= "o_pick";
+    }
+    vs[cmd->cell] = cmd->value;
+    cx::SfxPlay(snd);
+  }
+
+  auto pnum= evt.source.pnum > 0 ? evt.source.pnum : -1;
+  if (pnum == 1 || pnum == 2) {} else { return; }
+
+  switch (evt.code) {
+    case evts.POKE_MOVE:
+      CCLOG("player %d: my turn to move", pnum);
+      MGML()->SendMsg("/hud/timer/show");
+      state->setObject(c::Integer::create(pnum), "actor");
+    break;
+    case evts.POKE_WAIT:
+      CCLOG("player %d: my turn to wait", pnum);
+      MGML()->SendMsg("/hud/timer/hide");
+      // toggle color
+      state->setObject(c::Integer::create( pnum==1 ? 2 : 1), "actor");
+    break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnGUI(a::Node* node, evt) {
+  if (!MGMS()->IsRunning()) {return;}
+  auto sel = CC_GNF(UISelection, node, "selection");
+  auto map = CC_GNF(GridView, node, "view")->gridMap;
+  auto cur = CC_GDV(c::Integer, state, "actor");
+  auto sz= map.Size();
+
+  //set the mouse/touch position
+  sel->px = evt.loc.x;
+  sel->py = evt.loc.y;
+  sel->cell= -1;
+
+  if (cur <= 0) { return; }
+
+  //which cell did he click on?
+  for (int n=0; n < sz; ++n) {
+    auto rect = map[n];
+    if (sel->px >= rect.left && sel->px <= rect.right &&
+        sel->py >= rect.bottom && sel->py <= rect.top) {
+      sel->cell= n;
+      break;
+    }
+  }
+}
 
 
-/** @alias module:s/motion */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Motions} Motions
-   */
-  Motions: Motions
-};
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+
+NS_END(tttoe)
 

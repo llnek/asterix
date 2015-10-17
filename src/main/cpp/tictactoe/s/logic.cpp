@@ -47,108 +47,118 @@ bool Logic::OnUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Logic::DoIt(a::Node* node, float dt) {
-  auto ps = CC_GNF(Players,node,"players")->parr;
   auto cur= CC_GDV(c::Integer,state,"actor");
-  auto cp= ps[cur];
+  auto ps = CC_GNF(Players,node,"players");
+  auto bot= CC_CSV(c::Integer,"BOT");
+  auto cp= ps->parr[cur];
 
   auto sel= CC_GNF(UISelection,node, "selection");
   auto board= CC_GNF(Board,node,"board");
   auto grid= CC_GNF(GridView,node,"grid");
   auto bot= CC_GNF(SmartAlgo,node, "robot");
+  auto pnum= CC_GDV(c::Integer,state,"pnum");
 
   //handle online play
-  if (MGMS()->IsOnline()sjs.isobj(this.state.wsock)) {
+  if (MGMS()->IsOnline()) {
     //if the mouse click is from the valid user, handle it
-    if (!!cp && (this.state.pnum === cp.pnum)) {
-      this.enqueue(sel.cell,cp.value,grid);
+    if (NNP(cp) && (pnum == cp->pnum)) {
+      Enqueue(sel->cell, cp->value, grid);
     }
   }
   else
-  if (cp.category === csts.BOT) {
+  if (cp->category == bot) {
     // for the bot, create some small delay...
-    if (!!this.botTimer) {
-      if (ccsx.timerDone(this.botTimer)) {
-        let bd= bot.algo.getGameBoard(),
-        rc;
-        bd.syncState(grid.values, this.state.players[this.state.actor].value);
-        rc= bd.getFirstMove();
-        if (!sjs.echt(rc)) { rc = bot.algo.eval(); }
-        this.enqueue(rc,cp.value,grid);
-        this.botTimer=ccsx.undoTimer(this.botTimer);
+    if (NNP(botTimer)) {
+      if (cx::TimerDone(botTimer)) {
+        auto bd= bot->algo->board;
+        bd->SyncState(grid->values, ps->parr[cur]->value);
+        rc= bd->GetFirstMove();
+        if (rc < 0) { rc = bot->algo->Eval(); }
+        Enqueue(rc,cp->value, grid);
+        cx::UndoTimer(botTimer);
+        SNPTR(botTimer)
       }
     } else {
-      this.botTimer = ccsx.createTimer(sh.main, 0.6);
+      botTimer = cx::CreateTimer(MGML(), 0.6);
     }
   }
   else
-  if (sel.cell >= 0) {
+  if (sel->cell >= 0) {
     //possibly a valid click ? handle it
-    this.enqueue(sel.cell,cp.value,grid);
+    Enqueue(sel->cell, cp->value, grid);
   }
 
-  sel.cell= -1;
+  sel->cell= -1;
 }
 
-/**
- * @method enqueue
- * @private
- */
-enqueue(pos, value, grid) {
+//////////////////////////////////////////////////////////////////////////
+//
+void Logic::Enqueue(int pos, int value, GridView* grid) {
 
-  if ((pos >= 0 && pos < grid.values.length) &&
-      csts.CV_Z === grid.values[pos]) {
+  auto cur = CC_GDV(c::Integer, state, "actor");
+  auto nil = CC_CSV(c::Integer, "CV_Z");
+  auto human= CC_CSV(c::Integer,"HUMAN");
+  auto pnum=1;
+  auto snd="";
 
-    let snd, pnum;
+  if ((pos >= 0 && pos < grid->values.Size()) &&
+      nil == grid->values[pos]) {
 
-      sh.fire('/hud/timer/hide');
+    MGML()->SendMsg("/hud/timer/hide");
 
-      if (sjs.isobj(this.state.wsock)) {
-        this.onEnqueue(grid,this.state.actor,pos);
+    if (MGMS()->IsOnline()) {
+      OnEnqueue(grid, cur, pos);
+    } else {
+      if (cur == 1) {
+        snd= "x_pick";
+        pnum = 2;
       } else {
-        if (this.state.actor === 1) {
-          snd= 'x_pick';
-          pnum = 2;
-        } else {
-          snd= 'o_pick';
-          pnum = 1;
-        }
-        grid.values[pos] = value;
-        this.state.actor = pnum;
-        sh.sfxPlay(snd);
-        if (this.state.players[pnum].category === csts.HUMAN) {
-          sh.fire('/hud/timer/show');
-        }
+        snd= "o_pick";
+        pnum = 1;
+      }
+
+      state->setObject(c::Integer::create(pnum), "actor");
+      grid->values[pos] = value;
+      cx::SfxPlay(snd);
+
+      if (ps->parr[pnum]->category == human) {
+        MGMS()->SendMsg("/hud/timer/show");
       }
     }
-  },
+  }
+}
+
+
   /**
    * @method onEnqueue
    * @private
    */
-  onEnqueue(grid,pnum,cell) {
-    const src= {
-      color: this.state.players[pnum].color,
-      value: this.state.players[pnum].value,
-      grid: grid.values,
-      cell: cell
-    },
-    snd = pnum===1 ? 'x_pick' : 'o_pick',
-    evt= {
-      source: sjs.jsonfy(src),
-      type: evts.MSG_SESSION,
-      code: evts.PLAY_MOVE
-    };
-    this.state.wsock.send(evt);
-    this.state.actor=0;
-    sh.sfxPlay(snd);
+void Logic::OnEnqueue(GridView* grid, int pnum, int cell) {
+  auto ps = CC_GNF(Players,node,"players");
+  /*TODO: fix me
+  const src= {
+    color: ps->parr[pnum]->color,
+    value: ps->parr[pnum]->value,
+    grid: grid->values,
+    cell: cell
   }
-},{
-/**
- * @memberof module:s/logic~Logic
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Logic
-});
+  */
+  auto snd = pnum == 1 ? "x_pick" : "o_pick";
+  /*TODO: fix me
+  evt= {
+    source: sjs.jsonfy(src),
+    type: evts.MSG_SESSION,
+    code: evts.PLAY_MOVE
+  };
+  MGMS()->NetSend(evt);
+  */
+  state->setObject(c::Integer::create(0),"actor");
+  cx::SfxPlay(snd);
+}
+
+
+
+
 
 NS_END(tttoe)
 

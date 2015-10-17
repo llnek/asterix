@@ -9,41 +9,18 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires s/utils
- * @requires n/gnodes
- * @module s/resolve
- */
-
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+#include "Resolve.h"
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
-//////////////////////////////////////////////////////////////////////////////
-/** * @class Resolve */
-Resolve = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
+//
+Resolve::Resolve(not_null<a::Engine*> e,
+    not_null<c:Dictionary*> options)
+  : f::BaseSystem(e,options) {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
   removeFromEngine(engine) {
     this.board=null;
   },
