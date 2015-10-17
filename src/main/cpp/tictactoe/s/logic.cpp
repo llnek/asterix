@@ -44,16 +44,20 @@ bool Logic::OnUpdate(float dt) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Logic::DoIt(a::Node* node, float dt) {
-  const ps= this.state.players,
-  cp= ps[this.state.actor],
-  board= node.board,
-  grid= node.grid,
-  bot= node.robot,
-  sel= node.selection;
+  auto ps = CC_GNF(Players,node,"players")->parr;
+  auto cur= CC_GDV(c::Integer,state,"actor");
+  auto cp= ps[cur];
+
+  auto sel= CC_GNF(UISelection,node, "selection");
+  auto board= CC_GNF(Board,node,"board");
+  auto grid= CC_GNF(GridView,node,"grid");
+  auto bot= CC_GNF(SmartAlgo,node, "robot");
 
   //handle online play
-  if (sjs.isobj(this.state.wsock)) {
+  if (MGMS()->IsOnline()sjs.isobj(this.state.wsock)) {
     //if the mouse click is from the valid user, handle it
     if (!!cp && (this.state.pnum === cp.pnum)) {
       this.enqueue(sel.cell,cp.value,grid);
