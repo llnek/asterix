@@ -107,6 +107,9 @@ struct CC_DLL Box4 {
     bottom=b.bottom;
     left=b.left;
   }
+  Box4() {
+    top= right= bottom= left=0;
+  }
   Box4& operator=(const Box4& b) {
     top=b.top;
     right=b.right;
