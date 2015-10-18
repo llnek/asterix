@@ -62,11 +62,11 @@ public:
   virtual float GetScale() { return 1.0f; }
   virtual void RunOnce() {}
 
-  virtual ResolutionPolicy GetPolicy() = 0;
-  virtual const stdstr GetAppKey() = 0;
+  virtual ResolutionPolicy Policy() = 0;
+  virtual const stdstr AppKey() = 0;
   virtual const stdstr AppId() = 0;
-  virtual const stdstr GetColor() = 0;
-  virtual const c::Size GetGameSize() = 0;
+  virtual const stdstr Color() = 0;
+  virtual const c::Size GameSize() = 0;
 
   virtual owner<c::Scene*> StartWith() = 0;
   virtual const stdstr GetWSUrl() = 0;

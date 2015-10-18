@@ -15,7 +15,8 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
-
+//////////////////////////////////////////////////////////////////////////
+//
   /**
    * Calculate position of each individual cells in the grid,
    * so that we can detect when a user clicks on the cell.
@@ -57,6 +58,8 @@ owner<f:FArray<f:Box4>*> MapGridPos(int gsz, scale) {
   return gridMap;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 const stdstr PkFlip(const stdstr& img, bool flip) {
   if (flip) {
     return img + ".i.png";
@@ -65,7 +68,8 @@ const stdstr PkFlip(const stdstr& img, bool flip) {
   }
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+//
 const stdstr& XrefImg(int value) {
   auto x= CC_CSV(c::Integer,"CV_X");
   auto o= CC_CSV(c::Integer,"CV_O");
@@ -78,7 +82,8 @@ const stdstr& XrefImg(int value) {
   throw "bad value!";
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+//
 //pass in gridview
   /**
    * @method drawSymbol
@@ -89,15 +94,16 @@ const stdstr& XrefImg(int value) {
    * @param {Boolean} flip
    * @return {cc.Sprite}
    */
-  drawSymbol(view, x,y,value,flip) {
-    const frame = this.pkFlip(this.xrefImg(value),flip),
-    s1= ccsx.createSprite(frame);
-    s1.setAnchorPoint(ccsx.acs.Center);
-    s1.setPosition(x,y);
-    view.layer.addAtlasItem('game-pics', s1);
-    return s1;
-  }
-};
+c::Sprite* DrawSymbol(not_null<GridView*> view,
+    float x, float y, int value, bool flip) {
+
+  auto frame = PkFlip(XrefImg(value),flip);
+  auto s1= cx::CreateSprite(frame);
+  s1->setAnchorPoint(cx::AnchorC());
+  s1->setPosition(x,y);
+  view->layer->AddAtlasItem("game-pics", s1);
+  return s1;
+}
 
 
 NS_END(tttoe)
