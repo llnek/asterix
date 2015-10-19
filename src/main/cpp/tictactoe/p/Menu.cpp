@@ -9,24 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/scenes
- * @requires zotohlab/asx/ccsx
- * @module p/mmenu
- */
+#include "Menu.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R=sjs.ramda,
-undef,
-SEED= {
+static SEED= {
   ppids: {},
   grid: [
     0,0,0,
@@ -36,26 +24,26 @@ SEED= {
   size: 3,
   pnum: 1,
   mode: 0
-},
+};
+
 //////////////////////////////////////////////////////////////////////////////
-/** * @class MainMenuLayer */
-MainMenuLayer = scenes.XMenuLayer.extend({
-  /**
-   * @method title
-   * @private
-   */
-  title() {
-    const wb=ccsx.vbox(),
-    cw= ccsx.center(),
-    tt=ccsx.bmfLabel({
-      fontPath: sh.getFont('font.JellyBelly'),
-      text: sh.l10n('%mmenu'),
-      pos: cc.p(cw.x, wb.top * 0.9),
-      color: cc.color('#F6B17F'),
-      scale: xcfg.game.scale
-    });
-    this.addItem(tt);
-  },
+class CC_DLL MainMenuLayer : public f::XLayer {
+public:
+
+}
+
+f::XLayer* MainMenu::Realize() {
+  auto c= cx::ColorRGB("#f6b17f");
+  auto wb=cx::VisBox();
+  auto cw= cx::Center();
+  auto lb= cx::ReifyBmfLabel(cw.x, wb.top * 0.9,
+      "font.JellyBelly",
+      XCFG()->GetL10NStr("mmenu"));
+  lb->setColor(c::Color3B(c[0],c[1],c[2]));
+  lb->setScale(XCFG()->GetScale());
+  AddItem(lb);
+
+}
   /**
    * @method onnetplay
    * @private

@@ -9,48 +9,29 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__FARRAY_H__)
-#define __FARRAY_H__
+#if !defined(__SPLASH_H__)
+#define __SPLASH_H__
 
-#include "fusilli.h"
-NS_BEGIN(fusii)
+#include "x2d/XScene.h"
 
-template<typename T>
-class FS_DLL FArray {
-protected:
-  size_t size;
-  T* data;
+NS_ALIAS(f, fusii)
+NS_BEGIN(tttoe)
+
+
+class CC_DLL Splash : public f::XScene {
 public:
 
-  void Clone(const FArray<T>& other);
-  void Set(size_t pos, T value);
-  int Size() { return size; }
-  void Fill(T v);
-  bool NotAny(T v);
-  int RandomIndex();
-  bool Some(T v);
-  bool All(T v);
-  int Find(T v);
-  T operator[](size_t pos);
-  T Get(size_t pos);
+  virtual f::XScene* Realize();
+  void OnPlay(c::Ref*);
 
-  FArray& operator=(FArray<T>&&);
-  FArray(FArray<T>&&);
+  static Splash* Reify();
 
-  FArray& operator=(const FArray<T>&);
-  FArray(const FArray<T>&);
+  NO__CPYASS(Splash)
+  IMPL_CTOR(Splash)
 
-  FArray(size_t size = 0);
-  virtual ~FArray();
 };
 
 
-
-
-
-
-
-NS_END(fusii)
+NS_END(tttoe)
 #endif
-
 

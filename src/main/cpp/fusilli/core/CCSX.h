@@ -33,6 +33,8 @@ namespace ccsx {
   void ReifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
+  FArray<GLubyte> ColorRGB(const stdstr& color);
+
   void SfxPlay(const stdstr& sound);
   void PauseAudio();
 

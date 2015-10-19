@@ -46,6 +46,20 @@ c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
 
 //////////////////////////////////////////////////////////////////////////////
 //
+FArray<GLubyte> ColorRGB(const stdstr& color) {
+  FArray<GLubyte> c(3);
+  int r=0;
+  int g=0;
+  int b=0;
+  ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
+  c.Set(0,r);
+  c.Set(1,g);
+  c.Set(2,b);
+  return c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void SfxPlay(const stdstr& sound) {
   auto fp= XCFG()->GetEffect(sound);
   try {

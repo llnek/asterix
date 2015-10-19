@@ -22,6 +22,7 @@
 
 typedef std::string stdstr;
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 #if defined(WIN32) || defined(_WIN32)
@@ -143,6 +144,8 @@ enum class Locale {
 };
 
 NS_END(fusii)
+#include "FPtr.h"
+NS_ALIAS(f,fusii)
 NS_USING(gsl)
 #endif
 
