@@ -80,6 +80,8 @@ namespace ccsx {
   void RunScene(not_null<c::Scene*>, float delay);
   void RunScene(not_null<c::Scene*>);
 
+  c::Size ScaleSize(c::Size z, float scale);
+
   bool IsTransitioning();
 
   const c::Size CalcSize(const stdstr& frame);

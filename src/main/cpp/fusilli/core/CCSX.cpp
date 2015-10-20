@@ -203,6 +203,12 @@ bool OutOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+c::Size ScaleSize(c::Size z, float scale) {
+  return c::Size(z.width * scale, z.height * scale);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 void UndoTimer(not_null<c::DelayTime*> tm) {
   CC_DROP(tm)
 }

@@ -13,16 +13,19 @@
 #define __UTILS_H__
 
 #include "core/CCSX.h"
+#include "n/cobjs.h"
+
 NS_BEGIN(tttoe)
 
-  FArray<FArray<int>> MapGridPos(int gsz, float scale);
+  s::vector<fusii::Box4> MapGridPos(int gsz, float scale);
 
   const stdstr PkFlip(const stdstr& img, bool flip);
 
   const stdstr XrefImg(int value);
 
   c::Sprite* DrawSymbol(not_null<GridView*> view,
-      float x, float y, int value, bool flip);
+      float x, float y,
+      int value, bool flip);
 
 NS_END(tttoe)
 #endif

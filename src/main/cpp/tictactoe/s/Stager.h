@@ -13,13 +13,15 @@
 #define __STAGER_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
+
 NS_ALIAS(f,fusii)
 NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public f::BaseSystem {
+class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
 
   virtual bool OnUpdate(float);

@@ -9,47 +9,42 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/CCSX.h"
 #include "utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
-//
-  /**
-   * Calculate position of each individual cells in the grid,
-   * so that we can detect when a user clicks on the cell.
-   * @method mapGridPos
-   * @param {Number} gsz
-   * @param {Number} scale
-   * @return {Array} Array(Array(Int))
-   */
-owner<f:FArray<f:Box4>*> MapGridPos(int gsz, scale) {
+// Calculate position of each individual cells in the grid,
+// so that we can detect when a user clicks on the cell
+s::vector<Box4> MapGridPos(int gsz, float scale) {
   // memorize the co-ordinates of each cell on the board, so
-  // we know which cell the user has clicked on.
+  // we know which cell the user has clicked on
+  USING(fusii)
   auto sp = cx::CreateSprite("z.png");
-  auto csz = c::Size(sp->getContentSize().width * scale,
-                sp->getContentSize().height * scale);
+  auto z = sp->getContentSize();
+  auto csz = cx::ScaleSize(z, scale);
   auto cells= gsz * gsz;
   auto ro= 8/72 * scale;
+  auto cw = cx::Center();
   auto gh = csz.height * ro;
   auto gw = csz.width * ro;
   auto zh= gsz * csz.height + (gsz-1) * gh;
   auto zw= gsz * csz.width + (gsz-1) * gw;
-  auto cw = cx::Center();
 
-  auto gridMap= new f::FArray<f::Box4>(cells);
   auto x0 = cw.x - zw * 0.5;
   auto y0 = cw.y + zh * 0.5;
   auto x1= x0;
   auto y1=y0;
 
+  s::vector<Box4> gridMap;
+
   for (int r=0; r < gsz; ++r) {
     for (int c= 0; c < gsz; ++c) {
       auto y2 = y1 - csz.height;
       auto x2 = x1 + csz.width;
-      gridMap[r * gsz + c] = f::Box4(y1, x2, y2, x1);
+      //gridMap[r * gsz + c] = f::Box4(y1, x2, y2, x1);
+      gridMap.push_back( Box4(y1, x2, y2, x1));
     }
     y1 = y2 - gh;
     x1 = x0;
@@ -84,23 +79,16 @@ const stdstr& XrefImg(int value) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-//pass in gridview
-  /**
-   * @method drawSymbol
-   * @param {Ash.Node} view
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} value
-   * @param {Boolean} flip
-   * @return {cc.Sprite}
-   */
 c::Sprite* DrawSymbol(not_null<GridView*> view,
-    float x, float y, int value, bool flip) {
+    float x, float y,
+    int value, bool flip) {
 
-  auto frame = PkFlip(XrefImg(value),flip);
+  auto frame = PkFlip(XrefImg(value), flip);
   auto s1= cx::CreateSprite(frame);
+
   s1->setAnchorPoint(cx::AnchorC());
   s1->setPosition(x,y);
+
   view->layer->AddAtlasItem("game-pics", s1);
   return s1;
 }
