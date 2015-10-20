@@ -47,6 +47,175 @@ public:
 };
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>& FArray<T>::operator=(FArray<T>&& src) {
+  mc_del_arr(data);
+  data=src.data;
+  size=src.size;
+  src.data=nullptr;
+  src.size=0;
+  return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>::FArray(FArray<T>&& src) {
+  data=src.data;
+  size=src.size;
+  src.data=nullptr;
+  src.size=0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
+  mc_del_arr(data);
+  data= new T[src.size];
+  size=src.size;
+  for (int i=0; i < src.size; ++i) {
+    data[i] = src.data[i];
+  }
+  return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>::FArray(const FArray<T>& src) {
+  data= new T[src.size];
+  size=src.size;
+  for (int i=0; i < src.size; ++i) {
+    data[i] = src.data[i];
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>::FArray(int sz) {
+  data = sz > 0 ? new T[sz] : nullptr;
+  size=sz;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>::FArray() {
+  data = nullptr;
+  size=0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>::~FArray() {
+  mc_del_arr(data)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+int FArray<T>::Find(T v) {
+  for (int i = 0; i < size; ++i) {
+    if (v == data[i]) { return i; }
+  }
+  return -1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+void FArray<T>::Fill(T v) {
+  for (int i = 0; i < size; ++i) {
+    data[i]=v;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+bool FArray<T>::Some(T v) {
+  for (int i = 0; i < size; ++i) {
+    if (v == data[i]) { return true; }
+  }
+  return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+bool FArray<T>::NotAny(T v) {
+  for (int i = 0; i < size; ++i) {
+    if (v == data[i]) { return false; }
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+bool FArray<T>::All(T v) {
+  for (int i = 0; i < size; ++i) {
+    if (v != data[i]) { return false; }
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+int FArray<T>::RandomIndex() {
+  auto pos= rand() % size;
+  if (pos >= size) {
+    return (int) size/2;
+  } else {
+    return pos;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+void FArray<T>::Clone(const FArray<T>& other) {
+  assert(size == other.size);
+  for (int i=0; i < size; ++i) {
+    data[i] = other.data[i];
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+void FArray<T>::Set(int pos, T v) {
+  assert(pos >= 0 && pos < size);
+  data[pos] = v;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T FArray<T>::Get(int pos) {
+  assert(pos >= 0 && pos < size);
+  return data[pos];
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T FArray<T>::operator[](int pos) {
+  assert(pos >= 0 && pos < size);
+  return data[pos];
+}
+
+
+
+
+
+
 
 
 

@@ -44,7 +44,30 @@ public:
 
 };
 
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename F>
+BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d)
+  : a::System(a::Error) {
+  factory=f;
+  state=d;
+  state->retain();
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename F>
+BaseSystem<F>::~BaseSystem() {
+  if (NNP(state)) { state->release(); }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename F>
+bool BaseSystem<F>::Update(float time) {
+  //CCLOG("update called on system: %s", this->TypeId().c_str());
+  return OnUpdate(time);
+}
 
 
 
