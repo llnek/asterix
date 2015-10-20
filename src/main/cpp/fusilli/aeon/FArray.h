@@ -18,12 +18,12 @@ NS_BEGIN(fusii)
 template<typename T>
 class FS_DLL FArray {
 protected:
-  size_t size;
+  int size;
   T* data;
 public:
 
   void Clone(const FArray<T>& other);
-  void Set(size_t pos, T value);
+  void Set(int pos, T value);
   int Size() { return size; }
   void Fill(T v);
   bool NotAny(T v);
@@ -31,16 +31,18 @@ public:
   bool Some(T v);
   bool All(T v);
   int Find(T v);
-  T operator[](size_t pos);
-  T Get(size_t pos);
+  T operator[](int pos);
+  T Get(int pos);
 
-  FArray& operator=(FArray<T>&&);
+  FArray<T>& operator=(FArray<T>&&);
   FArray(FArray<T>&&);
 
-  FArray& operator=(const FArray<T>&);
+  FArray<T>& operator=(const FArray<T>&);
   FArray(const FArray<T>&);
 
-  FArray(size_t size = 0);
+  FArray(int size);
+  FArray();
+
   virtual ~FArray();
 };
 

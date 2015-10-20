@@ -9,44 +9,43 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__BASESYSTEM_H__)
-#define __BASESYSTEM_H__
+#if !defined(__EFACTORY_H__)
+#define __EFACTORY_H__
 
-#include "core/Primitives.h"
-#include "Factory.h"
-#include "ash/Ash.h"
-#include "x2d/MainGame.h"
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(a,ash)
+#include "core/Factory.h"
+NS_ALIAS(f, fusii)
+NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
-
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BaseSystem : public a::System {
+class CC_DLL EFactory : public f::Factory {
 protected:
-  c::Dictionary* state;
-  Factory* factory;
 
-  void Set(not_null<Factory*>, not_null<c::Dictionary*>);
-  BaseSystem();
-
-  virtual bool OnUpdate(float) = 0;
+  f::ComObj* player;
 
 private:
 
-  NO__CPYASS(BaseSystem)
+  NO__CPYASS(EFactory)
+  EFactory()=delete;
 
 public:
 
-  virtual bool Update(float time);
-  virtual ~BaseSystem();
+  EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
+  void ReifyMissiles(int count= 36);
+  void ReifyExplosions(int count = 24);
+  void ReifyBombs(int count = 24);
 
+  const c::Size CalcImgSize(const stdstr& img);
+  c::Dictionary* GetRankInfo(int r);
+
+  void FillSquad(not_null<f::XPool*> );
+  a::Entity* ReifyAliens();
+  void BornShip();
+  a::Entity* ReifyShip();
+
+  virtual ~EFactory();
 };
-
-
-
-
 
 
 NS_END(invaders)

@@ -20,21 +20,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<Factory*> f, not_null<c::Dictionary*> options) {
-  SNPTR(aliens)
-  SNPTR(ships)
-  Set(f, options);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Resolve::~Resolve() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Resolve::RemoveFromEngine(not_null<a::Engine*> e) {
+Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d) : f::BaseSystem<EFactory>(f, d) {
   SNPTR(aliens)
   SNPTR(ships)
 }

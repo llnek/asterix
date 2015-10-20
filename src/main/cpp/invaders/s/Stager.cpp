@@ -13,7 +13,7 @@
 #include "core/CCSX.h"
 #include "x2d/MainGame.h"
 #include "n/gnodes.h"
-#include "Factory.h"
+#include "EFactory.h"
 #include "Stager.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -21,21 +21,8 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager::Stager(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d) : f::BaseSystem<EFactory>(f, d) {
   inited=false;
-  SNPTR(ships)
-  Set(f,d);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Stager::~Stager() {
-  //printf("Stager dtor\n");
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Stager::RemoveFromEngine(not_null<a::Engine*> e) {
   SNPTR(ships)
 }
 

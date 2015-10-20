@@ -16,35 +16,27 @@
 #include "x2d/MainGame.h"
 #include "ash/Engine.h"
 #include "n/gnodes.h"
-#include "Factory.h"
+#include "EFactory.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::Factory(not_null<a::Engine*> e, not_null<c::Dictionary*> options) {
-  state= options;
-  engine = e;
-  state->retain();
+EFactory::EFactory(not_null<a::Engine*> e,
+    not_null<c::Dictionary*> options)
+  : f::Factory(e,options) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::~Factory() {
-  if (NNP(state)) { state->release(); }
+EFactory::~EFactory() {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Factory::Factory() {
-  SNPTR(engine)
-  SNPTR(state)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Factory::ReifyMissiles(int count) {
+void EFactory::ReifyMissiles(int count) {
   auto p= MGMS()->GetPool("missiles");
   auto cb= []() -> f::ComObj* {
     auto sp = cx::ReifySprite("missile.png");
@@ -57,7 +49,7 @@ void Factory::ReifyMissiles(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::ReifyExplosions(int count) {
+void EFactory::ReifyExplosions(int count) {
   auto p= MGMS()->GetPool("explosions");
   auto cb= []() -> f::ComObj* {
     auto sp = cx::ReifySprite("boom_0.png");
@@ -70,7 +62,7 @@ void Factory::ReifyExplosions(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::ReifyBombs(int count) {
+void EFactory::ReifyBombs(int count) {
   auto p= MGMS()->GetPool("bombs");
   auto cb= []() -> f::ComObj* {
     auto sp = cx::ReifySprite("bomb.png");
@@ -83,13 +75,13 @@ void Factory::ReifyBombs(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size Factory::CalcImgSize(const stdstr& img) {
+const c::Size EFactory::CalcImgSize(const stdstr& img) {
   return cx::CalcSize(img);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* Factory::GetRankInfo(int r) {
+c::Dictionary* EFactory::GetRankInfo(int r) {
   c::Size z= cx::CalcSize("purple_bug_0.png");
   stdstr s0 = "purple_bug_0.png";
   stdstr s1= "purple_bug_1.png";
@@ -120,7 +112,7 @@ c::Dictionary* Factory::GetRankInfo(int r) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::FillSquad(not_null<f::XPool*> pool) {
+void EFactory::FillSquad(not_null<f::XPool*> pool) {
 
   auto cells = f::CstVal<c::Integer>("CELLS")->getValue();
   auto cols = f::CstVal<c::Integer>("COLS")->getValue();
@@ -171,29 +163,29 @@ void Factory::FillSquad(not_null<f::XPool*> pool) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* Factory::ReifyAliens() {
+a::Entity* EFactory::ReifyAliens() {
   auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
   auto ent= engine->ReifyEntity("baddies");
   auto p = MGMS()->GetPool("aliens");
 
   FillSquad(p);
 
-  ent->Rego(new AlienSquad(p, stepx));
-  ent->Rego(new Looper());
+  ent->Checkin(new AlienSquad(p, stepx));
+  ent->Checkin(new Looper());
 
   return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Factory::BornShip() {
+void EFactory::BornShip() {
   CCASSERT(player != nullptr, "player cannot be null");
   player->Inflate();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* Factory::ReifyShip() {
+a::Entity* EFactory::ReifyShip() {
 
   auto sz = f::DictVal<f::Size2>(state, "shipSize")->getValue();
   auto ent= engine->ReifyEntity("goodies");
@@ -210,12 +202,12 @@ a::Entity* Factory::ReifyShip() {
   ship->Inflate(x,y);
   player= ship;
 
-  ent->Rego(new Velocity(150,0));
-  ent->Rego(new Looper());
-  ent->Rego(new Cannon(0.3));
-  ent->Rego(new Motion());
+  ent->Checkin(new Velocity(150,0));
+  ent->Checkin(new Looper());
+  ent->Checkin(new Cannon(0.3));
+  ent->Checkin(new Motion());
 
-  ent->Rego(ship);
+  ent->Checkin(ship);
 
   return ent;
 }

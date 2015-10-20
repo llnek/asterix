@@ -55,7 +55,7 @@ void App::initGLContextAttrs() {
 bool App::applicationDidFinishLaunching() {
 
   auto glview = CC_DTOR()->getOpenGLView();
-  auto sz = XCFG()->GetGameSize();
+  auto sz = XCFG()->GameSize();
 
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
@@ -141,7 +141,7 @@ void App::PreLaunch(const c::Size& dz) {
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   // Set the design resolution
-  cx::SetDevRes(dz.width, dz.height, XCFG()->GetPolicy());
+  cx::SetDevRes(dz.width, dz.height, XCFG()->Policy());
 
   XCFG()->HandleResolution(fz);
   XCFG()->RunOnce();

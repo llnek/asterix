@@ -22,19 +22,20 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+template<typename F>
 class CC_DLL BaseSystem : public a::System {
 protected:
+
   c::Dictionary* state;
-  Factory* factory;
+  F* factory;
 
-  void Set(not_null<Factory*>, not_null<c::Dictionary*>);
-  BaseSystem();
-
+  BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
   virtual bool OnUpdate(float) = 0;
 
 private:
 
   NO__CPYASS(BaseSystem)
+  BaseSystem()=delete;
 
 public:
 

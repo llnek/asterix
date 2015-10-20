@@ -48,13 +48,11 @@ c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
 //
 FArray<GLubyte> ColorRGB(const stdstr& color) {
   FArray<GLubyte> c(3);
-  int r=0;
-  int g=0;
-  int b=0;
+  int r=0, g=0, b=0;
   ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
-  c.Set(0,r);
-  c.Set(1,g);
-  c.Set(2,b);
+  c.Set(0,(GLubyte) r);
+  c.Set(1,(GLubyte) g);
+  c.Set(2,(GLubyte) b);
   return c;
 }
 

@@ -12,36 +12,34 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-
-#include "BaseSystem.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 #include "n/gnodes.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public BaseSystem {
+class CC_DLL Move : public f::BaseSystem<EFactory> {
 protected:
   virtual bool OnUpdate(float dt);
 private:
 
   NO__CPYASS(Move)
-
   Move()=delete;
 
   a::NodeList* ships;
 
 public:
 
-  Move(not_null<Factory*>, not_null<c::Dictionary*> );
+  Move(not_null<EFactory*>, not_null<c::Dictionary*> );
 
   virtual const a::SystemType TypeId() {
     return "s/Move";
   }
 
-  virtual ~Move();
+  virtual ~Move() {}
 
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
 
   void ProcessShipMotions(not_null<a::Node*>, float dt);

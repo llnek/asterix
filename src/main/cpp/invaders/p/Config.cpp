@@ -17,7 +17,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::GetAppKey() {
+const stdstr Config::AppKey() {
   return "d39bf198-518a-4de7-88a0-5e28c88571b0";
 }
 
@@ -29,13 +29,13 @@ const stdstr Config::AppId() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::GetColor() {
+const stdstr Config::Color() {
   return "red";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ResolutionPolicy Config::GetPolicy() {
+ResolutionPolicy Config::Policy() {
   return ResolutionPolicy::FIXED_HEIGHT;
 }
 
@@ -62,7 +62,7 @@ owner<f::XConfig*> Config::Reify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Size Config::GetGameSize() {
+const c::Size Config::GameSize() {
   return c::Size(320, 480);
 }
 

@@ -12,13 +12,14 @@
 #if !defined(__STAGER_H__)
 #define __STAGER_H__
 
-#include "BaseSystem.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public BaseSystem {
+class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
   void Fire(const stdstr& t, void* evt);
   virtual bool OnUpdate(float);
@@ -38,18 +39,17 @@ private:
 
 public:
 
-  Stager(not_null<Factory*>, not_null<c::Dictionary*>);
+  Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
     return "s/Stager";
   }
 
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
 
   virtual int Priority() { return a::PreUpdate; }
 
-  virtual ~Stager();
+  virtual ~Stager() {}
 
 };
 

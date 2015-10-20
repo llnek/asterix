@@ -33,17 +33,13 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL BGLayer : public f::XLayer {
-private:
-  NO__CPYASS(BGLayer)
 public:
   virtual f::XLayer* Realize() {
     CenterImage("game.bg");
     return this;
   }
-  virtual int GetIID() { return 1; }
-  virtual ~BGLayer() {}
-  BGLayer() {}
-  CREATE_FUNC(BGLayer)
+  NO__CPYASS(BGLayer)
+  IMPL_CTOR(BGLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +113,7 @@ void GameLayer::InitAsh() {
 
   CCLOG("about to init-ash");
 
-  factory = new Factory(e, options);
+  factory = new EFactory(e, options);
   engine = e;
 
   e->RegoSystem(new Stager(factory, options));

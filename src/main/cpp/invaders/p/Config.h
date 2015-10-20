@@ -31,12 +31,12 @@ private:
 public:
 
   virtual void HandleResolution(const c::Size& rs);
-  virtual const c::Size GetGameSize();
+  virtual const c::Size GameSize();
 
-  virtual ResolutionPolicy GetPolicy();
-  virtual const stdstr GetAppKey();
+  virtual ResolutionPolicy Policy();
+  virtual const stdstr AppKey();
   virtual const stdstr AppId();
-  virtual const stdstr GetColor();
+  virtual const stdstr Color();
 
   virtual const stdstr GetWSUrl();
   virtual c::Scene* StartWith();

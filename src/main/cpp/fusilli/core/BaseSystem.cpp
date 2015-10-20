@@ -14,7 +14,9 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void BaseSystem::Set(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+template<typename F>
+BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d)
+  : a::System(a::Error) {
   factory=f;
   state=d;
   state->retain();
@@ -22,22 +24,15 @@ void BaseSystem::Set(not_null<Factory*> f, not_null<c::Dictionary*> d) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-BaseSystem::BaseSystem()
-  : System (a::Error) {
-
-  SNPTR(factory)
-  SNPTR(state)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-BaseSystem::~BaseSystem() {
+template<typename F>
+BaseSystem<F>::~BaseSystem() {
   if (NNP(state)) { state->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool BaseSystem::Update(float time) {
+template<typename F>
+bool BaseSystem<F>::Update(float time) {
   //CCLOG("update called on system: %s", this->TypeId().c_str());
   return OnUpdate(time);
 }

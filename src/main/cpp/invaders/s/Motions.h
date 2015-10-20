@@ -12,13 +12,14 @@
 #if !defined(__MOTIONS_H__)
 #define __MOTIONS_H__
 
-#include "BaseSystem.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public BaseSystem {
+class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
   virtual bool OnUpdate(float dt);
 private:
@@ -34,13 +35,12 @@ private:
 
 public:
 
-  Motions(not_null<Factory*>, not_null<c::Dictionary*>);
+  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
     return "n/Motions";
   }
 
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);
 
   void ProcessAlienMotions(not_null<a::Node*>,float dt);
@@ -50,7 +50,7 @@ public:
 
   virtual int Priority() { return a::Motion; }
 
-  virtual ~Motions();
+  virtual ~Motions() {}
 };
 
 

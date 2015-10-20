@@ -21,26 +21,13 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motions::Motions(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+  : f::BaseSystem<EFactory>(f, d) {
   SNPTR(cannons)
   SNPTR(aliens)
   SNPTR(ships)
   right=false;
   left= false;
-  Set(f,d);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Motions::~Motions() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Motions::RemoveFromEngine(not_null<a::Engine*> e) {
-  SNPTR(aliens)
-  SNPTR(ships)
-  SNPTR(cannons)
 }
 
 //////////////////////////////////////////////////////////////////////////

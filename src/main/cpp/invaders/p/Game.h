@@ -11,7 +11,7 @@
 
 #include "x2d/XGameLayer.h"
 #include "x2d/MainGame.h"
-#include "s/Factory.h"
+#include "s/EFactory.h"
 NS_ALIAS(s,std)
 NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 class CC_DLL GameLayer : public f::XGameLayer {
 private:
   NO__CPYASS(GameLayer)
-  Factory* factory;
+  EFactory* factory;
   void InitAsh();
 public:
 

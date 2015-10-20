@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/MainGame.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "n/gnodes.h"
@@ -19,24 +20,13 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Collide::Collide(not_null<Factory*> f, not_null<c::Dictionary*> d) {
+Collide::Collide(not_null<EFactory*> f,
+    not_null<c::Dictionary*> d)
+  : f::BaseSystem<EFactory>(f,d) {
+
   SNPTR(aliens)
   SNPTR(engine)
   SNPTR(ships)
-  Set(f,d);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Collide::~Collide() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Collide::RemoveFromEngine(not_null<a::Engine*> e) {
-  SNPTR(aliens)
-  SNPTR(ships)
-  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////

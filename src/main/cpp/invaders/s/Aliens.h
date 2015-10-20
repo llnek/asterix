@@ -12,14 +12,16 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "BaseSystem.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 #include "n/gnodes.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Aliens : public BaseSystem {
+class CC_DLL Aliens : public f::BaseSystem<EFactory> {
+
 protected:
   virtual bool OnUpdate(float dt);
 
@@ -32,13 +34,13 @@ private:
 
 public:
 
-  Aliens(not_null<Factory*>, not_null<c::Dictionary*>);
+  Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
     return "n/Aliens";
   }
 
-  virtual ~Aliens();
+  virtual ~Aliens() {}
 
   virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*>);

@@ -22,7 +22,7 @@ static void initor() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray& FArray<T>::operator=(FArray<T>&& src) {
+FArray<T>& FArray<T>::operator=(FArray<T>&& src) {
   mc_del_arr(data);
   data=src.data;
   size=src.size;
@@ -45,7 +45,7 @@ FArray<T>::FArray(FArray<T>&& src) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray& FArray<T>::operator=(const FArray<T>& src) {
+FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
   mc_del_arr(data);
   data= new T[src.size];
   size=src.size;
@@ -70,9 +70,18 @@ FArray<T>::FArray(const FArray<T>& src) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray<T>::FArray(size_t sz) {
+FArray<T>::FArray(int sz) {
   data = sz > 0 ? new T[sz] : nullptr;
   size=sz;
+  initor();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+FArray<T>::FArray() {
+  data = nullptr;
+  size=0;
   initor();
 }
 
@@ -157,7 +166,7 @@ void FArray<T>::Clone(const FArray<T>& other) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::Set(size_t pos, T v) {
+void FArray<T>::Set(int pos, T v) {
   assert(pos >= 0 && pos < size);
   data[pos] = v;
 }
@@ -165,7 +174,7 @@ void FArray<T>::Set(size_t pos, T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::Get(size_t pos) {
+T FArray<T>::Get(int pos) {
   assert(pos >= 0 && pos < size);
   return data[pos];
 }
@@ -173,7 +182,7 @@ T FArray<T>::Get(size_t pos) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::operator[](size_t pos) {
+T FArray<T>::operator[](int pos) {
   assert(pos >= 0 && pos < size);
   return data[pos];
 }

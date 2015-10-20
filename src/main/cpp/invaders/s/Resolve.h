@@ -12,14 +12,13 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-
-#include "BaseSystem.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public BaseSystem {
+class CC_DLL Resolve : public f::BaseSystem<EFactory> {
 protected:
   virtual bool OnUpdate(float dt);
 private:
@@ -32,14 +31,13 @@ private:
 
 public:
 
-  Resolve(not_null<Factory*>, not_null<c::Dictionary*>);
-  virtual ~Resolve();
+  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual ~Resolve() {}
 
   virtual const a::SystemType TypeId() {
     return "s/Resolve";
   }
 
-  virtual void RemoveFromEngine(not_null<a::Engine*> );
   virtual void AddToEngine(not_null<a::Engine*> );
 
   void CheckMissiles();

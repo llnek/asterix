@@ -13,13 +13,14 @@
 #define __COLLIDE_H__
 
 
-#include "BaseSystem.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide : public BaseSystem {
+class CC_DLL Collide : public f::BaseSystem<EFactory> {
 protected:
   virtual bool OnUpdate(float dt);
 private:
@@ -33,15 +34,14 @@ private:
 
 public:
 
-  Collide(not_null<Factory*>, not_null<c::Dictionary*>);
+  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual const a::SystemType TypeId() {
     return "n/Collide";
   }
 
-  virtual ~Collide();
+  virtual ~Collide() {}
 
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*> );
 
   bool MaybeCollide(not_null<f::ComObj*>, not_null<f::ComObj*>);
