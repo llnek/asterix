@@ -156,6 +156,13 @@ void Send(not_null<WSockSS*> wss, const Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
+void WSockSS::Listen( s::function<void (const Event&)> cb) {
+  SNPTR(cbAll)
+  Listen(MType::EVERYTHING , cb);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Listen to this message-type and event
 void WSockSS::Listen(MType t, s::function<void (const Event&)> cb) {
 
   if (MType::EVERYTHING == t) {

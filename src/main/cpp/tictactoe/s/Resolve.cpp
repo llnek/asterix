@@ -14,114 +14,101 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<a::Engine*> e,
-    not_null<c:Dictionary*> options)
-  : f::BaseSystem(e,options) {
+Resolve::Resolve(not_null<EFactory*> f,
+    not_null<c:Dictionary*> d)
+  : f::BaseSystem(f,d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-  removeFromEngine(engine) {
-    this.board=null;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.board = engine.getNodeList(gnodes.BoardNode);
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const node= this.board.head;
-    if (this.state.running &&
-        !!node) {
-      this.syncup(node, dt);
-      this.doit(node, dt);
-    }
-  },
-  /**
-   * @method syncup
-   * @private
-   */
-  syncup(node) {
-    let values= node.grid.values,
-    view= node.view,
-    cs= view.cells,
-    z,c, offset;
+void Resolve::AddToEngine(not_null<a::Engine*> e) {
+  BoardNode n;
+  board = e->GetNodeList(n.TypeId());
+}
 
-    R.forEachIndexed((v, pos) => {
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::OnUpdate(float dt) {
+  auto node= board->head;
+  if (MGMS()->IsRunning() &&
+      NNP(node)) {
+    SyncUp(node, dt);
+    DoIt(node, dt);
+  }
+}
 
-      if (v !== csts.CV_Z) {
-        c= this.xrefCell(pos, view.gridMap);
-        if (!!c) {
-          z=cs[pos];
-          if (!!z) {
-            z[0].removeFromParent();
-          }
-          cs[pos] = [utils.drawSymbol(view, c[0], c[1], v),
-                     c[0], c[1], v];
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::SyncUp(a::Node* node) {
+  auto view= CC_GNF(GridView, node, "view");
+  auto grid= CC_GNF(Grid, node, "grid");
+  auto nil= CC_CSV(c::Integer, "CV_Z");
+  let values= node.grid.values,
+  cs= view.cells,
+  z,c, offset;
+
+  for (int i=0; i < grid->values.Size(); ++i) {
+    if (grid->values[i] != nil) {
+      auto c= XrefCell(i, view);
+      if (NNP(c)) {
+        z=cs[pos];
+        if (!!z) {
+          z[0].removeFromParent();
         }
-      }
-
-    }, values);
-  },
-  /**
-   * Given a cell, find the screen co-ordinates for that cell.
-   * @method xrefCell
-   * @private
-   */
-  xrefCell(pos, map) {
-    let gg, x, y,
-    delta=0;
-
-    if (pos >= 0 && pos < csts.CELLS) {
-      gg = map[pos];
-      x = gg.left + (gg.right - gg.left  - delta) * 0.5;
-      y = gg.top - (gg.top - gg.bottom - delta ) * 0.5;
-      // the cell's center
-      return [x, y];
-    } else {
-      return null;
-    }
-  },
-  /**
-   * @method doit
-   * @private
-   */
-  doit(node, dt) {
-    let values= node.grid.values,
-    msg,
-    rc,
-    res;
-
-    if (R.find( p => {
-        if (!!p) {
-          rc= this.checkWin(p,values);
-          if (rc) {
-            return res=[p, rc];
-          }
-        }
-      }, this.state.players)) {
-      this.doWin(node, res[0], res[1]);
-    }
-    else
-    if (this.checkDraw(values)) {
-      this.doDraw(node);
-    }
-    else
-    if (this.state.msgQ.length > 0) {
-      msg = this.state.msgQ.shift();
-      if ("forfeit" === msg) {
-        this.doForfeit(node);
+        cs[pos] = [utils.drawSymbol(view, c[0], c[1], v),
+                   c[0], c[1], v];
       }
     }
-  },
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Resolve::XrefCell(int pos, map) {
+  auto cells = CC_GDV(c::Integer, state, "CELLS");
+  auto delta=0;
+
+  if (pos >= 0 && pos < cells) {
+    auto gg = map[pos];
+    auto x = gg.left + (gg.right - gg.left  - delta) * 0.5;
+    auto y = gg.top - (gg.top - gg.bottom - delta ) * 0.5;
+    // the cell's center
+    return [x, y];
+  } else {
+    return null;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Resolve::DoIt(a::Node* node, float dt) {
+  let values= node.grid.values,
+  msg,
+  rc,
+  res;
+
+  if (R.find( p => {
+      if (!!p) {
+        rc= this.checkWin(p,values);
+        if (rc) {
+          return res=[p, rc];
+        }
+      }
+    }, this.state.players)) {
+    this.doWin(node, res[0], res[1]);
+  }
+  else
+  if (this.checkDraw(values)) {
+    this.doDraw(node);
+  }
+  else
+  if (this.state.msgQ.length > 0) {
+    msg = this.state.msgQ.shift();
+    if ("forfeit" === msg) {
+      this.doForfeit(node);
+    }
+  }
+},
   /**
    * @method doWin
    * @private

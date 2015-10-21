@@ -45,17 +45,14 @@ void Motions::AddToEngine(not_null<a::Engine*> e) {
 void Motions::OnceOnly() {
   let ws= this.state.wsock,
   t, m, s;
+
   if (MGMS()->IsOnline()) {
-    ws.cancelAll();
-    s=Rx.Observable.create( obj => {
-      ws.listenAll( msg => {
-        obj.onNext({group:'net',
-                    event: msg});
-      });
+    ws->ListenAll( [=](const ws::Event& evt) {
+      this->evQ.push_back(evt);
     });
-  } else {
-    s= Rx.Observable.never();
   }
+
+  /*
   t=Rx.Observable.create( obj => {
     sh.main.signal('/touch/one/end',
                    msg => obj.onNext(msg));
@@ -64,12 +61,7 @@ void Motions::OnceOnly() {
     sh.main.signal('/mouse/up',
                    msg => obj.onNext(msg));
   });
-  this.stream= Rx.Observable.merge(m,t,s);
-  this.stream.subscribe( msg => {
-    if (!!this.evQ) {
-      this.evQ.push(msg);
-    }
-  });
+  */
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,96 +88,103 @@ bool Motions::OnUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnSocket(a::Node* node, evt) {
+void Motions::OnSocket(a::Node* node, const ws::Event& evt) {
   switch (evt.type) {
-    case evts.MSG_NETWORK:
+    case ws::MType::NETWORK:
       OnNet(node, evt);
     break;
-    case evts.MSG_SESSION:
+    case ws::MType::SESSION:
       OnSess(node, evt);
-    break;
-  }
-}
-
-void Motions::OnNet(a::Node* node, evt) {
-  switch (evt.code) {
-    case evts.RESTART:
-      CCLOG("restarting a new game...");
-      MGML()->SendMsg("/net/restart");
-    break;
-    case evts.STOP:
-      if (MGMS()->IsRunning()) {
-        CCLOG("game will stop");
-        MGML()->SendMsg("/hud/timer/hide");
-        OnSess(node,evt);
-        MGML()->SendMsg("/net/stop", evt);
-      }
-    break;
-  }
-}
-
-void Motions::OnSess(a::Node* node, evt) {
-  auto grid= CC_GNF(GridView, node, "grid");
-  auto ps= CC_GNF(Players, node, "players");
-  auto cmd= evt.source.cmd;
-  auto snd="";
-  auto vs = grid->values;
-
-  if (NNP(cmd) &&
-      cmd.cell >= 0 &&
-      cmd.cell < vs.Size()) {
-
-    if (ps->parr[1]->value == cmd->value) {
-      snd= "x_pick";
-    } else {
-      snd= "o_pick";
-    }
-    vs[cmd->cell] = cmd->value;
-    cx::SfxPlay(snd);
-  }
-
-  auto pnum= evt.source.pnum > 0 ? evt.source.pnum : -1;
-  if (pnum == 1 || pnum == 2) {} else { return; }
-
-  switch (evt.code) {
-    case evts.POKE_MOVE:
-      CCLOG("player %d: my turn to move", pnum);
-      MGML()->SendMsg("/hud/timer/show");
-      state->setObject(c::Integer::create(pnum), "actor");
-    break;
-    case evts.POKE_WAIT:
-      CCLOG("player %d: my turn to wait", pnum);
-      MGML()->SendMsg("/hud/timer/hide");
-      // toggle color
-      state->setObject(c::Integer::create( pnum==1 ? 2 : 1), "actor");
     break;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUI(a::Node* node, evt) {
-  if (!MGMS()->IsRunning()) {return;}
+void Motions::OnNet(a::Node* node, const ws::Event& evt) {
+  switch (evt.code) {
+    case ws::EType::RESTART:
+      CCLOG("restarting a new game...");
+      MGML()->SendMsg("/net/restart");
+    break;
+    case ws::EType::STOP:
+      if (MGMS()->IsRunning()) {
+        CCLOG("game will stop");
+        MGML()->SendMsg("/hud/timer/hide");
+        OnSess(node, evt);
+        MGML()->SendMsg("/net/stop", &evt);
+      }
+    break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnSess(a::Node* node, const ws::Event& evt) {
+  auto ps= CC_GNF(Players, node, "players");
+  auto grid= CC_GNF(Grid, node, "grid");
+  auto snd="";
+  auto pnum= evt.doco["pnum"].GetInt();
+  auto p2=pnum;
+
+  if (evt.doco.HasMember("cmd")) {
+    auto cmd= evt.doco["cmd"];
+    auto cell= cmd["cell"].GetInt();
+    auto cv= cmd["value"].GetInt();
+    if (cell >= 0 &&
+        cell < grid->values.Size()) {
+      if (ps->parr[1]->value == cv) {
+        snd= "x_pick";
+      } else {
+        snd= "o_pick";
+      }
+      grid->values[cell] = cv;
+      cx::SfxPlay(snd);
+    }
+  }
+
+  if (pnum == 1 || pnum == 2) {} else { return; }
+
+  switch (evt.code) {
+    case ws::EType::POKE_MOVE:
+      CCLOG("player %d: my turn to move", pnum);
+      MGML()->SendMsg("/hud/timer/show");
+      state->setObject(CC_INT(pnum), "actor");
+    break;
+    case ws::EType::POKE_WAIT:
+      CCLOG("player %d: my turn to wait", pnum);
+      MGML()->SendMsg("/hud/timer/hide");
+      // toggle color
+      p2= pnum == 1 ? 2 : 1;
+      state->setObject(CC_INT(p2), "actor");
+    break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnGUI(a::Node* node, float x, float y) {
   auto sel = CC_GNF(UISelection, node, "selection");
-  auto map = CC_GNF(GridView, node, "view")->gridMap;
+  auto map = CC_GNF(GridView, node, "view");//->gridMap;
   auto cur = CC_GDV(c::Integer, state, "actor");
-  auto sz= map.Size();
+  auto n=0;
 
   //set the mouse/touch position
-  sel->px = evt.loc.x;
-  sel->py = evt.loc.y;
   sel->cell= -1;
+  sel->px = x;
+  sel->py = y;
 
   if (cur <= 0) { return; }
 
   //which cell did he click on?
-  for (int n=0; n < sz; ++n) {
-    auto rect = map[n];
-    if (sel->px >= rect.left && sel->px <= rect.right &&
-        sel->py >= rect.bottom && sel->py <= rect.top) {
+  for (auto it= view->mpos.begin(); it != view->mpos.end(); ++it) {
+    auto bx = *it;
+    if (sel->px >= bx.left && sel->px <= bx.right &&
+        sel->py >= bx.bottom && sel->py <= bx.top) {
       sel->cell= n;
       break;
     }
+    ++n;
   }
 }
 

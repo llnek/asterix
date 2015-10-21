@@ -114,6 +114,7 @@ private:
 public:
 
   void Listen(const MType, s::function<void (const Event&)>);
+  void Listen( s::function<void (const Event&)>);
   void Reset();
   void CancelAll();
   void Cancel(const MType);

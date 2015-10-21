@@ -13,32 +13,50 @@
 #define __RESOLVE_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : f::BaseSystem {
-public:
+class CC_DLL Resolve : f::BaseSystem<EFactory> {
+protected:
 
-  Resolve(not_null<a::Engine*>, not_null<c::Dictionary*>);
-  virtual void RemoveFromEngine(not_null<a::Engine*> );
-  virtual void AddToEngine(not_null<a::Engine*> );
   virtual bool OnUpdate(float);
   void SyncUp(a::Node*);
+
   void XrefCell(int pos, const f::FArray<>& map);
+
   void DoIt(a::Node*, float);
-  void DoWin(a::Node*, f::ComObj*, const f::FArray<int>& combo);
-  void DoDraw(a::Node*);
-  void DoForfeit(a::Node*);
+  void DoWin(a::Node*, f::ComObj*,
+      const f::FArray<int>& combo);
+
   void ShowWinningIcons(GridView*, const FArray<int>&);
+  void DoForfeit(a::Node*);
+  void DoDraw(a::Node*);
 
   void DoDone(a::Node*,  pobj, const FArray<int>& combo);
   void CheckDraw(values);
 
-  const FArray<int> CheckWin(int actor, const FArray<int>& game);
+  const FArray<int> CheckWin(int actor,
+      const FArray<int>& game);
 
-  //Priority: xcfg.ftypes.Resolve
+  NO__CPYASS(Resolve)
+  Resolve() = delete;
+
+public:
+
+  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual ~Resolve() {}
+
+  virtual void AddToEngine(not_null<a::Engine*> );
+
+  virtual int Priority() { return a::Resolve; }
+
+  virtual const a::SystemType TypeId() {
+    return "n/Resolve";
+  }
+
 };
 
 
