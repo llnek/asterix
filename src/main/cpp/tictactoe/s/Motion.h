@@ -13,33 +13,42 @@
 #define __MOTION_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
+
+NS_ALIAS(ws, fusii::wsock)
 NS_ALIAS(f, fusii)
 NS_ALIAS(a, Ash)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public f::BaseSystem {
+class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
 
+  void OnSess(a::Node*, ws::Event& );
+  void OnGUI(a::Node* , ws::Event& );
+  void OnNet(a::Node*, ws::Event& );
   void OnSocket(a::Node*, float);
-  void OnNet(a::Node*, evt);
-  void OnSess(a::Node*, evt);
-  void OnGUI(a::Node* , evt);
   void OnceOnly();
 
   virtual bool OnUpdate(float);
-  Motions() = delete;
+
   NO__CPYASS(Motions)
+  Motions() = delete;
+
+  bool inited;
 
 public:
 
-  Motions(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
   virtual ~Motions();
 
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
   virtual void AddToEngine(not_null<a::Engine*> );
-  //Priority: xcfg.ftypes.Motion
+  virtual int Priority() { return a::Motion; }
+
+  virtual const a::SystemType TypeId() {
+    return "n/Motions";
+  }
 
 };
 

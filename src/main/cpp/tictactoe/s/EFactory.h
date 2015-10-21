@@ -12,8 +12,8 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
+#include "core/Primitives.h"
 #include "core/Factory.h"
-NS_ALIAS(f, fusii)
 NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
 
@@ -28,13 +28,13 @@ protected:
 
   void MapGoalSpace(int );
 
-  NO__CPYASS(Factory)
-  Factory() = delete;
+  NO__CPYASS(EFactory)
+  EFactory() = delete;
 
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
-  virtual ~EFactory();
+  virtual ~EFactory() {}
 
   a::Entity* ReifyBoard(not_null<c::Node*> layer);
 

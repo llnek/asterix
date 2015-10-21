@@ -17,6 +17,25 @@
 
 NS_BEGIN(tttoe)
 
+  struct HUDUpdate {
+    HUDUpdate(bool r, int p) { running=r; pnum=p; }
+    bool running;
+    int pnum;
+  };
+
+  struct GridData {
+  GridData(c::Sprite* s, float x, float y, int v) {
+    sprite=s;
+    this->x=x;
+    this->y=y;
+    value=v;
+  }
+    c::Sprite* sprite;
+    float x;
+    float y;
+    int value;
+  };
+
   s::vector<fusii::Box4> MapGridPos(int gsz, float scale);
 
   const stdstr PkFlip(const stdstr& img, bool flip);

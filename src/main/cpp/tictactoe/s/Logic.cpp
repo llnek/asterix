@@ -14,18 +14,11 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Logic::Logic(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
+Logic::Logic(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem(e,options) {
+  : f::BaseSystem(f,d) {
 
   SNPTR(botTimer)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Logic::RemoveFromEngine(not_null<a::Engine*> e) {
-  SNPTR(board)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,16 +40,16 @@ bool Logic::OnUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Logic::DoIt(a::Node* node, float dt) {
-  auto cur= CC_GDV(c::Integer,state,"actor");
-  auto ps = CC_GNF(Players,node,"players");
-  auto bot= CC_CSV(c::Integer,"BOT");
+
+  auto pnum= CC_GDV(c::Integer, state, "actor");
+  auto ps = CC_GNF(Players, node, "players");
+  auto bot= CC_CSV(c::Integer, "BOT");
   auto cp= ps->parr[cur];
 
-  auto sel= CC_GNF(UISelection,node, "selection");
-  auto board= CC_GNF(Board,node,"board");
-  auto grid= CC_GNF(GridView,node,"grid");
-  auto bot= CC_GNF(SmartAlgo,node, "robot");
-  auto pnum= CC_GDV(c::Integer,state,"pnum");
+  auto sel= CC_GNF(UISelection, node, "selection");
+  auto board= CC_GNF(Board, node, "board");
+  auto grid= CC_GNF(Grid, node, "grid");
+  auto bot= CC_GNF(SmartAlgo, node, "robot");
 
   //handle online play
   if (MGMS()->IsOnline()) {
@@ -68,16 +61,15 @@ void Logic::DoIt(a::Node* node, float dt) {
   else
   if (cp->category == bot) {
     // for the bot, create some small delay...
-    if (NNP(botTimer)) {
-      if (cx::TimerDone(botTimer)) {
-        auto bd= bot->algo->board;
-        bd->SyncState(grid->values, ps->parr[cur]->value);
-        rc= bd->GetFirstMove();
-        if (rc < 0) { rc = bot->algo->Eval(); }
-        Enqueue(rc,cp->value, grid);
-        cx::UndoTimer(botTimer);
-        SNPTR(botTimer)
-      }
+    if (NNP(botTimer) &&
+        cx::TimerDone(botTimer)) {
+      auto bd= bot->algo->board;
+      bd->SyncState(grid->values, ps->parr[cur]->value);
+      rc= bd->GetFirstMove();
+      if (rc < 0) { rc = bot->algo->Eval(); }
+      Enqueue(rc,cp->value, grid);
+      cx::UndoTimer(botTimer);
+      SNPTR(botTimer)
     } else {
       botTimer = cx::CreateTimer(MGML(), 0.6);
     }
@@ -93,12 +85,12 @@ void Logic::DoIt(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Logic::Enqueue(int pos, int value, GridView* grid) {
+void Logic::Enqueue(int pos, int value, Grid* grid) {
 
   auto cur = CC_GDV(c::Integer, state, "actor");
   auto nil = CC_CSV(c::Integer, "CV_Z");
   auto human= CC_CSV(c::Integer,"HUMAN");
-  auto pnum=1;
+  auto pnum=0;
   auto snd="";
 
   if ((pos >= 0 && pos < grid->values.Size()) &&
@@ -107,7 +99,7 @@ void Logic::Enqueue(int pos, int value, GridView* grid) {
     MGML()->SendMsg("/hud/timer/hide");
 
     if (MGMS()->IsOnline()) {
-      OnEnqueue(grid, cur, pos);
+      OnEnqueue(cur, pos, grid);
     } else {
       if (cur == 1) {
         snd= "x_pick";
@@ -128,13 +120,10 @@ void Logic::Enqueue(int pos, int value, GridView* grid) {
   }
 }
 
-
-  /**
-   * @method onEnqueue
-   * @private
-   */
-void Logic::OnEnqueue(GridView* grid, int pnum, int cell) {
-  auto ps = CC_GNF(Players,node,"players");
+//////////////////////////////////////////////////////////////////////////////
+//
+void Logic::OnEnqueue(int pnum, int cell, Grid* grid) {
+  auto ps = CC_GNF(Players, node, "players");
   /*TODO: fix me
   const src= {
     color: ps->parr[pnum]->color,
@@ -152,7 +141,7 @@ void Logic::OnEnqueue(GridView* grid, int pnum, int cell) {
   };
   MGMS()->NetSend(evt);
   */
-  state->setObject(c::Integer::create(0),"actor");
+  state->setObject(c::Integer::create(0), "actor");
   cx::SfxPlay(snd);
 }
 

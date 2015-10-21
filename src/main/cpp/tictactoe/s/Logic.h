@@ -13,29 +13,38 @@
 #define __LOGIC_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
+
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Logic : public f::BaseSystem {
+class CC_DLL Logic : public f::BaseSystem<EFactory> {
 protected:
 
-  void Enqueue(pos, value, grid);
-  void OnEnqueue(grid,pnum,cell);
+  void OnEnqueue(int pnum, int cell, f::FArray<int>& grid);
+  void Enqueue(int pos, int value, f::FArray<int>& grid);
   void DoIt(a::Node*, float);
+
   NO__CPYASS(Logic)
   Logic() = delete;
 
 public:
 
-  Logic(not_null<a::Engine*>, not_null<c::Dictionary*>);
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
+  Logic(not_null<EFactory*>, not_null<c::Dictionary*>);
+
   virtual void AddToEngine(not_null<a::Engine*>);
   virtual bool OnUpdate(float);
+
+  virtual int Priority() { return a::Logic; }
+
   virtual ~Logic();
 
-//Priority : xcfg.ftypes.Logic
+  virtual const a::SystemType TypeId() {
+    return "n/Logic";
+  }
+
 };
 
 

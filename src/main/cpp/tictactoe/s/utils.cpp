@@ -12,6 +12,7 @@
 #include "utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
+NS_USING(fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
@@ -20,8 +21,7 @@ NS_BEGIN(tttoe)
 s::vector<Box4> MapGridPos(int gsz, float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
-  USING(fusii)
-  auto sp = cx::CreateSprite("z.png");
+  auto sp = cx::ReifySprite("z.png");
   auto z = sp->getContentSize();
   auto csz = cx::ScaleSize(z, scale);
   auto cells= gsz * gsz;
@@ -36,13 +36,13 @@ s::vector<Box4> MapGridPos(int gsz, float scale) {
   auto y0 = cw.y + zh * 0.5;
   auto x1= x0;
   auto y1=y0;
-
+  int x2,y2;
   s::vector<Box4> gridMap;
 
   for (int r=0; r < gsz; ++r) {
     for (int c= 0; c < gsz; ++c) {
-      auto y2 = y1 - csz.height;
-      auto x2 = x1 + csz.width;
+      y2 = y1 - csz.height;
+      x2 = x1 + csz.width;
       //gridMap[r * gsz + c] = f::Box4(y1, x2, y2, x1);
       gridMap.push_back( Box4(y1, x2, y2, x1));
     }
@@ -84,7 +84,7 @@ c::Sprite* DrawSymbol(not_null<GridView*> view,
     int value, bool flip) {
 
   auto frame = PkFlip(XrefImg(value), flip);
-  auto s1= cx::CreateSprite(frame);
+  auto s1= cx::ReifySprite(frame);
 
   s1->setAnchorPoint(cx::AnchorC());
   s1->setPosition(x,y);

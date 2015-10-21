@@ -15,20 +15,21 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 void EFactory::MapGoalSpace(int size) {
-  auto dx = new f::FArray<int>(size);
-  auto dy = new f::FArray<int>(size);
+
+  f::FArray<int> dx(size);
+  f::FArray<int> dy(size);
 
   for (int r=0; r < size; ++r) {
-    auto h = new f::FArray<int>(size);
-    auto v = new f::FArray<int>(size);
+    f::FArray<int> h(size);
+    f::FArray<int> v(size);
     for (int c=0; c < size; ++c) {
-      h->Set(c, r * size + c);
-      v->Set(c, c * size + r);
+      h.Set(c, r * size + c);
+      v.Set(c, c * size + r);
     }
     goals.push_back(h);
     goals.push_back(v);
-    dx->Set(r, r * size + r);
-    dy->Set(r, (size - r - 1) * size + r);
+    dx.Set(r, r * size + r);
+    dy.Set(r, (size - r - 1) * size + r);
   }
 
   goals.push_back(dx);
@@ -39,26 +40,21 @@ void EFactory::MapGoalSpace(int size) {
 //
 EFactory::EFactory(not_null<a::Engine*> e,
     not_null<c::Dictionary*> options)
-: Factory(e, options) {
-  auto size= f::DictVal<c::Integer>(options, "size");
-  MapGoalSpace(size->getValue());
-}
 
-//////////////////////////////////////////////////////////////////////////
-//
-EFactory::~EFactory() {
-  for (auto it= goals.begin(); it != goals.end(); ++it) {
-     delete *it;
-  }
+  : f::Factory(e, options) {
+
+  auto size= CC_GDV(c::Integer, options, "size");
+  MapGoalSpace(size);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::ReifyBoard(c::Node* layer) {
-  auto size= f::DictVal<c::Integer>(options, "size")->getValue();
-  auto nil= f::CstVal<c::Integer>("CV_Z")->getValue();
-  auto xv= f::CstVal<c::Integer>("CV_X")->getValue();
-  auto ov= f::CstVal<c::Integer>("CV_O")->getValue();
+a::Entity* EFactory::ReifyBoard(not_null<c::Node*> layer) {
+
+  auto size= CC_GDV(c::Integer, state, "size");
+  auto nil= CC_CSV(c::Integer, "CV_Z");
+  auto xv= CC_CSV(c::Integer, "CV_X");
+  auto ov= CC_CSV(c::Integer, "CV_O");
   auto ent= engine->ReifyEntity("game");
 
   f::FArray<int> seed(size * size);

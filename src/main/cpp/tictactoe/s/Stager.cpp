@@ -10,34 +10,26 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
+#include "utils.h"
 #include "Stager.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-Stager::Stager(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
+Stager::Stager(not_null<EFactory*> f,
+    not_null<c::Dictionary*> d)
 
-  : f::BaseSystem(e,options) {
+  : f::BaseSystem(f,d) {
 
   this->inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Stager::~Stager() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Stager::RemoveFromEngine(not_null<a::Engine*> e) {
-  SNPTR(board)
-}
-
 void Stager::AddToEngine(not_null<a::Engine*> e) {
-  e->AddEntity(sh.factory.reifyBoard(sh.main,
-                                       this.state));
+
+  e->AddEntity(factory->ReifyBoard(MGML()));
   CCLOG("adding system: Stager");
   if (! inited) {
     OnceOnly(e);
@@ -47,6 +39,8 @@ void Stager::AddToEngine(not_null<a::Engine*> e) {
   board= e->GetNodeList(n.TypeId());
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 bool Stager::OnUpdate(float dt) {
   if (cx::IsTransitioning()) { return false; }
   auto node= board->head;
@@ -58,25 +52,27 @@ bool Stager::OnUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stager::ShowGrid(a::Node* node) {
-  auto cs= a::NodeFld<GridView>(node, "view");
-  auto mgs = MapGridPos();
+  auto view= CC_GNF(GridView, node, "view");
+  auto nil = CC_CSV(c::integer, "CV_Z");
+  auto arr = MapGridPos();
   auto pos=0;
-  sp;
 
-  R.forEach( mp => {
-    sp= ccsx.createSprite('z.png');
-    sp.setPosition(ccsx.vboxMID(mp));
-    sh.main.addAtlasItem('game-pics',sp);
-    cs[pos++]=[sp, sp.getPositionX(), sp.getPositionY(), csts.CV_Z];
-  }, mgs);
+  for (auto it= arr.begin(); it != arr.end(); ++it) {
+    auto sp= cx::ReifySprite("z.png");
+    sp->setPosition(cx::VisBoxMID(*it));
+    view->layer->AddAtlasItem("game-pics", sp);
+    view->cells[pos++]=GridData(sp, sp.getPositionX(),
+                                sp.getPositionY(),
+                                nil);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stager::OnceOnly(a::Node* node, float dt) {
-  auto human = f::CstVal<c::Integer>("HUMAN")->geValue();
-  auto bot= f::CstVal<c::Integer>("BOT")->geValue();
-  auto ps = a::NodeFld<Players>(node, "players")->parr;
+  auto human = CC_CSV(c::Integer, "HUMAN");
+  auto bot= CC_CSV(c::Integer,"BOT");
+  auto ps = CC_GNF(Players, node, "players");
   auto pnum = 0;
 
   ShowGrid(node);
@@ -89,11 +85,12 @@ void Stager::OnceOnly(a::Node* node, float dt) {
     });
   } else {
     pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2; // randomly choose
-    if (parr[pnum]->category == human) {
+    if (ps->parr[pnum]->category == human) {
       MGML()->SendMsg("/hud/timer/show");
     }
     else
     if (parr[pnum]->category == bot) {
+      //noop
     }
   }
 
@@ -104,18 +101,19 @@ void Stager::OnceOnly(a::Node* node, float dt) {
 //
 Stager::DoIt(a::Node* node, float dt) {
 
-  auto actor = CC_GDV(c::Integer,state,"actor");
+  auto actor = CC_GDV(c::Integer, state, "actor");
   auto active = MGMS()->IsRunning();
+  HUDUpdate msg(active,actor);
 
   if (!active) {
-    actor= CC_GDV(c::Integer,state,"lastWinner");
+    actor= CC_GDV(c::Integer, state, "lastWinner");
   }
 
-  MGML()->SendMsg("/hud/update", {
-    running: active,
-    pnum: actor
-  });
+  MGML()->SendMsg("/hud/update", &msg);
 }
+
+
+
 
 NS_END(tttoe)
 

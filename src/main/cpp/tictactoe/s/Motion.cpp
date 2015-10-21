@@ -14,22 +14,16 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Motions::Motions(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
+Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem(e,options) {
+  : f::BaseSystem(f, d) {
 
   inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::RemoveFromEngine(not_null<a::Engine*> e) {
-  SNPTR(netplay)
-  SNPTR(stream)
-  SNPTR(evQ)
-  SNPTR(gui)
-
+Motions::~Motions() {
   evQ.clear();
 }
 

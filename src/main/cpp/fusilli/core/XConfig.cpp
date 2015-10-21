@@ -150,6 +150,11 @@ void XConfig::SetCsts() {
 
   f->setObject(c::Integer::create(79), "CV_O");
   f->setObject(c::Integer::create(88), "CV_X");
+
+
+  f->setObject(c::Integer::create(9901), "BOT");
+  f->setObject(c::Integer::create(1099), "HUMAN");
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

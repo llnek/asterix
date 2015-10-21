@@ -33,6 +33,10 @@ void Config::InitCsts() {
   AddCst("CV_Z", CC_INT(0));
   AddCst("CV_X", CC_INT(0));
   AddCst("CV_O", CC_INT(0));
+
+  AddCst("CV_O", CC_INT(0));
+  AddCst("CV_O", CC_INT(0));
+
 }
 
 //////////////////////////////////////////////////////////////////////////

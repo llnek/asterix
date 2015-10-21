@@ -26,7 +26,7 @@ public:
     this->board= b;
   }
 
-  virtual const COMType TypeId() { return "n/SmartAlgo"; }
+  virtual const a::COMType TypeId() { return "n/SmartAlgo"; }
   virtual ~SmartAlgo() {}
 
   SmartAlgo() = delete;
@@ -45,7 +45,7 @@ public:
     this->size=size;
   }
 
-  virtual const COMType TypeId() { return "n/Board"; }
+  virtual const a::COMType TypeId() { return "n/Board"; }
   virtual ~Board() {}
   NO__CPYASS(Board);
   Board() = delete;
@@ -64,7 +64,7 @@ public:
     this->size=size;
   }
 
-  virtual const COMType TypeId() { return "n/Grid"; }
+  virtual const a::COMType TypeId() { return "n/Grid"; }
   virtual ~Grid() {}
   NO__CPYASS(Grid);
   Grid() = delete;
@@ -78,7 +78,7 @@ public:
 class CC_DLL GridView : public a::Component {
 
   GridView(size_t size, not_null<c::Node*> layer) {
-    auto sp = cx::CreateSprite("z.png");
+    auto sp = cx::ReifySprite("z.png");
     auto sz= sp->getContentSize();
 
     this->cells= sjs.makeArray(size * size, null);
@@ -89,7 +89,7 @@ class CC_DLL GridView : public a::Component {
     this->gridMap= utils.mapGridPos();
   }
 
-  virtual const COMType TypeId() { return "n/GridView"; }
+  virtual const a::COMType TypeId() { return "n/GridView"; }
   virtual ~GridView() {}
   NO__CPYASS(GridView)
   GridView() = delete;
@@ -107,7 +107,7 @@ public:
 
   NetPlay() { SNPTR(event) }
 
-  virtual const COMType TypeId() { return "n/NetPlay"; }
+  virtual const a::COMType TypeId() { return "n/NetPlay"; }
   virtual ~NetPlay() {}
   NO__CPYASS(NetPlay)
 
@@ -127,7 +127,7 @@ public:
     this->offset = id == 1 ? 0 : 1;
   }
 
-  virtual const COMType TypeId() { return "n/Player"; }
+  virtual const a::COMType TypeId() { return "n/Player"; }
   virtual ~Player() {}
   NO__CPYASS(Player)
   Player() = delete;
@@ -145,7 +145,7 @@ public:
     this->py = -1;
   }
 
-  virtual const COMType TypeId() { return "n/UISelection"; }
+  virtual const a::COMType TypeId() { return "n/UISelection"; }
   virtual ~UISelection() {}
   NO__CPYASS(UISelection)
 

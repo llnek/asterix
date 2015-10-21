@@ -14,6 +14,7 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
+#include "n/gnodes.h"
 
 NS_ALIAS(f,fusii)
 NS_ALIAS(a,ash)
@@ -31,17 +32,25 @@ protected:
   void DoIt(a::Node*, float);
 
   NO__CPYASS(Stager)
+  Stager() = delete;
+
+  a::NodeList* board;
+  bool inited;
 
 public:
 
-  Stager(not_null<a::Engine*> engine,
-      not_null<c::Dictionary*> options);
+  Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual void removeFromEngine(not_null<a::Engine*>);
   virtual void addToEngine(not_null<a::Engine*>);
-//Priority: xcfg.ftypes.PreUpdate
 
-  virtual ~Stager();
+  virtual int Priority() { return a::PreUpdate; }
+
+  virtual const a::SystemType TypeId() {
+    return "n/Stager";
+  }
+
+  virtual ~Stager() {}
+
 };
 
 
