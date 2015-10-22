@@ -35,13 +35,12 @@ static Event mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
-  Document::AllocatorType& alloc = d->GetAllocator();
   auto d = new js::Document();
   auto a= d->SetArray();
 
-  a.PushBack(game, alloc);
-  a.PushBack(user, alloc);
-  a.PushBack(pwd, alloc);
+  a.PushBack(game, d->GetAllocator() );
+  a.PushBack(user, d->GetAllocator() );
+  a.PushBack(pwd, d->GetAllocator() );
 
   return mkEvent(MType::SESSION, EType::PLAYGAME_REQ, d);
 }
@@ -54,9 +53,9 @@ static Event mkJoinRequest (const stdstr& room,
   auto d = new js::Document();
   auto a= d->SetArray();
 
-  a.PushBack(room, alloc);
-  a.PushBack(user, alloc);
-  a.PushBack(pwd, alloc);
+  a.PushBack(room, d->GetAllocator() );
+  a.PushBack(user, d->GetAllocator() );
+  a.PushBack(pwd, d->GetAllocator() );
 
   return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
 }
