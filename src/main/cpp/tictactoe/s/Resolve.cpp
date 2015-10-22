@@ -64,7 +64,7 @@ void Resolve::SyncUp(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve::XrefCell(int pos, map) {
+const c::Vec2 Resolve::XrefCell(int pos, const s::array<Box4>& map) {
   auto cells = CC_GDV(c::Integer, state, "CELLS");
   auto delta=0;
 
@@ -73,9 +73,9 @@ Resolve::XrefCell(int pos, map) {
     auto x = gg.left + (gg.right - gg.left  - delta) * 0.5;
     auto y = gg.top - (gg.top - gg.bottom - delta ) * 0.5;
     // the cell's center
-    return [x, y];
+    return c::Vec2(x,y);
   } else {
-    return null;
+    return c::Vec2(-1, -1);
   }
 }
 

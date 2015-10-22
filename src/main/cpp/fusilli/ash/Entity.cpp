@@ -29,7 +29,6 @@ Entity::~Entity() {
   for (auto it= parts.begin(); it != parts.end(); ++it) {
     delete it->second;
   }
-  //parts.clear();
   //printf("Entity dtor\n");
 }
 

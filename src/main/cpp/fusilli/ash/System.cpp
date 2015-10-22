@@ -73,7 +73,7 @@ bool System::Update(float time) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool System::Is(const SystemType& type) {
+bool System::Isa(const SystemType& type) {
   return type == TypeId();
 }
 

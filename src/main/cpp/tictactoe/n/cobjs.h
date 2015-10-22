@@ -15,9 +15,33 @@
 #include "core/CCSX.h"
 #include "ash/Ash.h"
 
+#define TTT_CELLS 9
+#define TTT_SIZE 3
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct ViewData {
+  ViewData(c::Sprite* s, float x, float y, int v) {
+    sprite=s;
+    this->x=x;
+    this->y=y;
+    value=v;
+  }
+  c::Sprite* sprite;
+  float x;
+  float y;
+  int value;
+};
+
+struct HUDUpdate {
+  HUDUpdate(bool r, int p) { running=r; pnum=p; }
+  bool running;
+  int pnum;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL SmartAlgo : public a::Component {
@@ -40,18 +64,19 @@ public:
 class CC_DLL Board : public a::Component {
 public:
 
-  Board(size_t size, const s::vector<f::FArray<int>>& goals) {
+  Board(int size, const s::vector<s::array<int,TTT_SIZE>>& goals) {
     this->GOALS= goals;
     this->size=size;
   }
 
   virtual const a::COMType TypeId() { return "n/Board"; }
   virtual ~Board() {}
+
   NO__CPYASS(Board);
   Board() = delete;
 
-  s::vector<f::FArray<int>> GOALS;
-  size_t size;
+  const s::vector<s::array<int,TTT_SIZE>>& GOALS;
+  int size;
 };
 
 
@@ -59,45 +84,39 @@ public:
 class CC_DLL Grid : public a::Component {
 public:
 
-  Grid(size_t size, const f::FArray<int>& seed) {
-    this->values.Clone(seed);
-    this->size=size;
+  Grid(const s::array<int,TTT_CELLS>& seed) {
+    s::copy(s::begin(seed), s::end(seed), s::begin(values));
   }
 
   virtual const a::COMType TypeId() { return "n/Grid"; }
   virtual ~Grid() {}
+
   NO__CPYASS(Grid);
   Grid() = delete;
 
-  f::FArray<int> values;
-  size_t size;
+  s::array<int, TTT_CELLS> values;
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL GridView : public a::Component {
+class CC_DLL PlayView : public a::Component {
 
-  GridView(size_t size, not_null<c::Node*> layer) {
+  PlayView(not_null<c::Node*> layer) {
     auto sp = cx::ReifySprite("z.png");
     auto sz= sp->getContentSize();
-
-    this->cells= sjs.makeArray(size * size, null);
     this->layer= layer;
     this->size = sz;
-    this->url= "";
-
-    this->gridMap= utils.mapGridPos();
   }
 
-  virtual const a::COMType TypeId() { return "n/GridView"; }
-  virtual ~GridView() {}
-  NO__CPYASS(GridView)
-  GridView() = delete;
+  virtual const a::COMType TypeId() { return "n/PlayView"; }
+  virtual ~PlayView() {}
+
+  NO__CPYASS(PlayView)
+  PlayView() = delete;
 
   c::Node* layer;
   c::Size size;
-  stdstr url;
-
+  s::array<ViewData,TTT_CELLS> cells;
 };
 
 
@@ -119,7 +138,7 @@ public:
 class CC_DLL Player : public a::Component {
 public:
 
-  Player(category,value,id,color) {
+  Player(int category, int value, int id, const stdstr& color) {
     this->color= color;
     this->pnum=id;
     this->category= category;
@@ -132,7 +151,11 @@ public:
   NO__CPYASS(Player)
   Player() = delete;
 
-
+  stdstr color;
+  int pnum;
+  int category;
+  int value;
+  int offset;
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -26,12 +26,12 @@ class Entity;
 class FS_DLL Node {
 private:
 
-  NO__CPYASS(Node)
-  Node();
-
   s::map<stdstr, Component*> values;
   s::map<COMType, stdstr> types;
   Entity* entity;
+
+  NO__CPYASS(Node)
+  Node();
 
 public:
 

@@ -13,49 +13,56 @@
 #define __TTTBOARD_H__
 
 #include "algos/NegaMax.h"
+#include "cobjs.h"
 #include <tuple>
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-class FS_DLL TTTBoard : public GameBoard {
+class FS_DLL TTTBoard : public f::GameBoard<TTT_SIZE> {
 protected:
-  f::FArray* grid;
-  size_t size;
-  int nil;
-
+  const s::vector<s::array<int,TTT_SIZE>>& GOALS;
+  s::array<int,TTT_CELLS> grid;
+  s::array<int,3> actors;
+  int CV_Z;
 public:
 
-  TTTBoard(int size, int nil,  int p1v,  int p2v, int goals);
+  TTTBoard( int nil,  int p1v,  int p2v,
+      const s::vector<s::array<int,TTT_SIZE>>& goals);
+
   virtual ~TTTBoard();
 
   virtual bool IsNil(int cellv);
 
   virtual int GetFirstMove();
 
-  virtual void SyncState(const f::FArray<int>& seed, int actor);
+  virtual void SyncState(const s::array<int,TTT_CELLS>& seed, int actor);
 
-  virtual const s::vector<int> GetNextMoves(Snapshot&);
+  virtual const s::vector<int> GetNextMoves(not_null<f::Snapshot<TTT_SIZE>*>);
 
-  virtual void UndoMove(Snapshot&, int move);
+  virtual void UndoMove(not_null<f::Snapshot<TTT_SIZE>*>, int move);
 
-  virtual void MakeMove(Snapshot& snap, int move);
+  virtual void MakeMove(not_null<f::Snapshot<TTT_SIZE>*>, int move);
 
-  virtual void SwitchPlayer(Snapshot&);
+  virtual void SwitchPlayer(not_null<f::Snapshot<TTT_SIZE>*>);
 
-  virtual int getOtherPlayer(int pv);
+  virtual int GetOtherPlayer(int pv);
 
-  virtual Snapshot TakeSnapshot();
+  virtual f::Snapshot<TTT_SIZE> TakeSnapshot();
 
-  virtual int EvalScore(Snapshot&);
+  virtual int EvalScore(not_null<f::Snapshot<TTT_SIZE>*>);
 
-  virtual bool IsOver(Snapshot&);
+  virtual bool IsOver(not_null<f::Snapshot<TTT_SIZE>*>);
 
-  virtual bool IsStalemate(Snapshot*);
+  virtual bool IsStalemate(f::Snapshot<TTT_SIZE>*);
 
-  virtual s::tuple<int,f::FArray<int>> IsWinner(int actor, Snapshot& );
+  virtual int IsWinner(
+      f::Snapshot<TTT_SIZE>*, int actor, s::array<int,TTT_SIZE>& combo);
+  bool TTTBoard::TestWin(f::Snapshot<TTT_SIZE>* snap, int actor,
+      const s::array<int,TTT_SIZE>& g) ;
 
 };
+
 
 NS_END(tttoe)
 #endif

@@ -32,7 +32,6 @@ NodeRegistry::~NodeRegistry() {
   for (auto it= regos.begin(); it != regos.end(); ++it) {
     delete it->second;
   }
-  //regos.clear();
   //printf("NodeRegistry dtor\n");
 }
 
@@ -71,7 +70,17 @@ owner<Node*> NodeRegistry::ReifyNode(const NodeType& t) {
   return rc;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Node*> NodeFactory::ReifyXXXNode(const s::vector<stdstr>& flds,
+    const s::vector<COMType>& types) {
+  assert(flds.size() == types.size());
+  s::map<stdstr,a::COMType> s;
+  for (int i=0; i < flds.size(); ++i) {
+    s.insert(s::pair<stdstr, COMType>( flds[i], types[i] ));
+  }
+  return a::Node::Reify(s);
+}
 
 
 NS_END(ash)

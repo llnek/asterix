@@ -30,9 +30,8 @@ private:
   stdstr group;
   bool dead;
 
-  Entity();
-
   NO__CPYASS(Entity)
+  Entity();
 
 public:
 

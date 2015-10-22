@@ -25,7 +25,7 @@ protected:
   virtual bool OnUpdate(float);
   void SyncUp(a::Node*);
 
-  void XrefCell(int pos, const f::FArray<>& map);
+  const c::Vec2  XrefCell(int pos, const f::FArray<>& map);
 
   void DoIt(a::Node*, float);
   void DoWin(a::Node*, f::ComObj*,

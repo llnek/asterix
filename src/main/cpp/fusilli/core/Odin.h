@@ -22,14 +22,14 @@ NS_ALIAS(js, rapidjson)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
-
-
 NS_BEGIN(wsock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class CC_DLL MType {
-  NETWORK,
+  NICHTS = -1,
+
+  NETWORK = 0,
   SESSION,
   EVERYTHING
 };
@@ -82,15 +82,15 @@ enum class CC_DLL EType {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Event {
-  Event(MType t, EType c, js::Document* payload) :
+  Event(MType t, EType c, owner<js::Document*> payload) :
   Event() {
     doco=payload;
     type=t;
     code=c;
   }
-  Event();
   ~Event();
-  long long timeStamp;
+  Event();
+  long long tstamp;
   MType type;
   EType code;
   js::Document* doco;
@@ -114,7 +114,7 @@ private:
 public:
 
   void Listen(const MType, s::function<void (const Event&)>);
-  void Listen( s::function<void (const Event&)>);
+  void Listen(s::function<void (const Event&)>);
   void Reset();
   void CancelAll();
   void Cancel(const MType);
@@ -128,8 +128,7 @@ public:
   virtual void onError(n::WebSocket* ,
       const n::WebSocket::ErrorCode& ) ;
 
-  virtual ~WSockSS();
-  WSockSS();
+  DECL_CTOR(WSockSS)
 
   n::WebSocket* socket;
   stdstr room;
@@ -137,19 +136,36 @@ public:
   stdstr user;
   stdstr passwd;
   CType state;
-
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
 n::WebSocket* Connect(not_null<WSockSS*>, const stdstr& url);
-  void Disconnect(not_null<WSockSS*>);
-  void Close(not_null<WSockSS*>);
-  void Send(not_null<WSockSS*>, const Event&);
-  const stdstr GetPlayRequest(not_null<WSockSS*>);
-  owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
-      const stdstr& user, const stdstr& pwd);
 
-  owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
-      const stdstr& user, const stdstr& pwd);
+void Disconnect(not_null<WSockSS*>);
+
+void Close(not_null<WSockSS*>);
+
+void Send(not_null<WSockSS*>, const Event&);
+
+const stdstr GetPlayRequest(not_null<WSockSS*>);
+
+owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
+    const stdstr& user, const stdstr& pwd);
+
+owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
+    const stdstr& user, const stdstr& pwd);
+
+
+
+
+
+
+
+
+
+
+
 
 NS_END(wsock)
 NS_END(fusii)

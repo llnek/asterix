@@ -19,9 +19,16 @@ NS_BEGIN(tttoe)
 class CC_DLL BoardNode : public a::NodeFactory {
 public:
 
-  virtual owner<Node*> ReifyNode();
+  virtual owner<a::Node*> ReifyNode() {
+    return ReifyXXXNode(
+        s::vector<stdstr> {
+          "selection", "board", "robot", "grid", "view" },
+        s::vector<a::COMType> {
+          "n/UISelection", "n/Board", "n/SmartAlgo",
+          "n/Grid", "n/PlayView" });
+  }
 
-  virtual const NodeType TypeId() {
+  virtual const a::NodeType TypeId() {
     return "n/BoardNode";
   }
 
@@ -33,9 +40,13 @@ public:
 class CC_DLL GUINode : public a::NodeFactory {
 public:
 
-  virtual owner<Node*> ReifyNode();
+  virtual owner<a::Node*> ReifyNode() {
+    return ReifyXXXNode(
+        s::vector<stdstr> { "selection", "view" },
+        s::vector<a::COMType> { "n/UISelection", "n/PlayView" });
+  }
 
-  virtual const NodeType TypeId() {
+  virtual const a::NodeType TypeId() {
     return "n/GUINode";
   }
 
@@ -47,9 +58,13 @@ public:
 class CC_DLL NetPlayNode : public a::NodeFactory {
 public:
 
-  virtual owner<Node*> ReifyNode();
+  virtual owner<a::Node*> ReifyNode() {
+    return ReifyXXXNode(
+        s::vector<stdstr> { "playcmd", "grid" },
+        s::vector<a::COMType> { "n/NetPlay", "n/Grid" });
+  }
 
-  virtual const NodeType TypeId() {
+  virtual const a::NodeType TypeId() {
     return "n/NetPlayNode";
   }
 

@@ -24,13 +24,13 @@ typedef s::string SystemType;
 typedef s::string COMType;
 typedef s::string NodeType;
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Component {
 protected:
-  Component() {}
-private:
   NO__CPYASS(Component)
+  Component() {}
 public:
 
   virtual const COMType TypeId() = 0;

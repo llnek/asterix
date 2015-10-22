@@ -37,7 +37,7 @@ public:
   virtual void RemoveFromEngine(not_null<Engine*>);
   virtual void AddToEngine(not_null<Engine*>);
   virtual bool Update(float time);
-  bool Is(const SystemType& );
+  bool Isa(const SystemType& );
 
   virtual const SystemType TypeId() = 0;
   virtual ~System();

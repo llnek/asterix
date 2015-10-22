@@ -39,6 +39,82 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
+template <typename T>
+void ObjList<T>::Add(not_null<T*> e) {
+  if (ENP(head)) {
+    head = tail = e;
+    SNPTR(head->previous)
+    SNPTR(head->next)
+  } else {
+    tail->next = e;
+    e->previous = tail;
+    SNPTR(e->next)
+    tail = e;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+void ObjList<T>::Release(not_null<T*> e) {
+  if (head == e) {
+    head = head->next;
+  }
+  if (tail == e) {
+    tail = tail->previous;
+  }
+  if (e->previous ) {
+    e->previous->next = e->next;
+  }
+  if (e->next) {
+    e->next->previous = e->previous;
+  }
+  SNPTR(e->previous)
+  SNPTR(e->next)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+void ObjList<T>::Clear() {
+  while (NNP(head)) {
+    auto e= head;
+    head = head->next;
+    delete e;
+  }
+  SNPTR(head)
+  SNPTR(tail)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+const s::vector<T*> ObjList<T>::List() {
+  s::vector<T*> v;
+  for (auto p= head; NNP(p); p=p->next) {
+    v.push_back(p);
+  }
+  return v;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+ObjList<T>::~ObjList() {
+  //printf("ObjList dtor\n");
+  Clear();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+ObjList<T>::ObjList() {
+  SNPTR(head)
+  SNPTR(tail)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class FS_DLL Engine {
 private:
 
@@ -58,15 +134,12 @@ private:
   bool updating;
   bool dirty;
 
-  Engine();
-
   NO__CPYASS(Engine)
 
 public:
 
-  DEFCREATE_FUNC(Engine)
-
   virtual ~Engine();
+  Engine();
 
   const s::vector<Entity*> GetEntities(const stdstr& group);
   const s::vector<Entity*> GetEntities();

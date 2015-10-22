@@ -22,7 +22,13 @@ class Node;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL NodeFactory {
+protected:
+
+  owner<Node*> ReifyXXXNode(const s::vector<stdstr>&,
+      const s::vector<COMType>&);
+
 public:
+
   virtual owner<Node*> ReifyNode() = 0;
   virtual const NodeType TypeId() = 0;
 
