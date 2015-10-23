@@ -25,17 +25,17 @@ protected:
   virtual bool OnUpdate(float);
   void SyncUp(a::Node*);
 
-  const c::Vec2  XrefCell(int pos, const f::FArray<>& map);
+  const c::Vec2 XrefCell(int pos, const f::FArray<>& map);
 
   void DoIt(a::Node*, float);
   void DoWin(a::Node*, f::ComObj*,
-      const f::FArray<int>& combo);
+      const s::array<int,DB_SZ>& combo);
 
-  void ShowWinningIcons(GridView*, const FArray<int>&);
+  void ShowWinningIcons(PlayView*, const FArray<int>&);
   void DoForfeit(a::Node*);
   void DoDraw(a::Node*);
 
-  void DoDone(a::Node*,  pobj, const FArray<int>& combo);
+  void DoDone(a::Node*,  pobj, const s::array<int, BD_SZ>& combo);
   void CheckDraw(values);
 
   const FArray<int> CheckWin(int actor,

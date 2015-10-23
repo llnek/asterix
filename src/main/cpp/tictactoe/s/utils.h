@@ -19,7 +19,8 @@ namespace tttoe {
 
   const s::vector<s::array<int,BD_SZ>> MapGoalSpace();
 
-  const s::vector<fusii::Box4> MapGridPos(float scale = 1.0f);
+  const s::array<fusii::Box4, BD_SZ * BD_SZ>
+    MapGridPos(float scale = 1.0f);
 
   const stdstr PkFlip(const stdstr& img, bool flip);
 
@@ -27,7 +28,7 @@ namespace tttoe {
 
   c::Sprite* DrawSymbol(not_null<PlayView*> view,
       float x, float y,
-      int value, bool flip);
+      int value, bool flip=false);
 
 
 };

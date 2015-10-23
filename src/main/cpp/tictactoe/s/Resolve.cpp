@@ -16,7 +16,7 @@ NS_BEGIN(tttoe)
 //
 Resolve::Resolve(not_null<EFactory*> f,
     not_null<c:Dictionary*> d)
-  : f::BaseSystem(f,d) {
+  : f::BaseSystem(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,28 +35,29 @@ void Resolve::OnUpdate(float dt) {
     SyncUp(node, dt);
     DoIt(node, dt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::SyncUp(a::Node* node) {
-  auto view= CC_GNF(GridView, node, "view");
+  auto view= CC_GNF(PlayView, node, "view");
   auto grid= CC_GNF(Grid, node, "grid");
   auto nil= CC_CSV(c::Integer, "CV_Z");
-  let values= node.grid.values,
-  cs= view.cells,
-  z,c, offset;
 
-  for (int i=0; i < grid->values.Size(); ++i) {
-    if (grid->values[i] != nil) {
+  for (int i=0; i < grid->values.size(); ++i) {
+    auto v= grid->values[i];
+    if (v != nil) {
       auto c= XrefCell(i, view);
-      if (NNP(c)) {
-        z=cs[pos];
-        if (!!z) {
-          z[0].removeFromParent();
+      if (c.x > 0 && c.y > 0) {
+        auto& z= view->cells[i];
+        if (NNP(z.sprite)) {
+          z.sprite->removeFromParent();
         }
-        cs[pos] = [utils.drawSymbol(view, c[0], c[1], v),
-                   c[0], c[1], v];
+        z.sprite = DrawSymbol(view, c.x, c.y, v);
+        z.x= c.x;
+        z.y= c.y;
+        z.value=v;
       }
     }
   }
@@ -64,18 +65,18 @@ void Resolve::SyncUp(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 Resolve::XrefCell(int pos, const s::array<Box4>& map) {
-  auto cells = CC_GDV(c::Integer, state, "CELLS");
+const c::Vec2 Resolve::XrefCell(int pos, PlayView* view) {
+  auto cells = view->boxes.size();
   auto delta=0;
 
   if (pos >= 0 && pos < cells) {
-    auto gg = map[pos];
+    auto& gg = view->boxes[pos];
     auto x = gg.left + (gg.right - gg.left  - delta) * 0.5;
     auto y = gg.top - (gg.top - gg.bottom - delta ) * 0.5;
     // the cell's center
     return c::Vec2(x,y);
   } else {
-    return c::Vec2(-1, -1);
+    return c::Vec2(-1.0f, -1.0f);
   }
 }
 
@@ -87,6 +88,8 @@ void Resolve::DoIt(a::Node* node, float dt) {
   rc,
   res;
 
+  for (int i=1; i <= 2; ++i) {
+  }
   if (R.find( p => {
       if (!!p) {
         rc= this.checkWin(p,values);
@@ -108,55 +111,56 @@ void Resolve::DoIt(a::Node* node, float dt) {
       this.doForfeit(node);
     }
   }
-},
-  /**
-   * @method doWin
-   * @private
-   */
-  doWin(node, winner, combo) {
-    sh.fire('/hud/score/update',
-            {color: winner.color,
-             score: 1});
-    this.doDone(node, winner, combo);
-  },
-  /**
-   * @method doDraw
-   * @private
-   */
-  doDraw(node) {
-    this.doDone(node, null, []);
-  },
-  /**
-   * @method doForfeit
-   * @private
-   */
-  doForfeit(node) {
-    let other = this.state.actor===1 ? 2 : this.state.actor===2 ? 1 : 0,
-    tv = this.state.players[this.state.actor],
-    win= this.state.players[other],
-    cs = node.view.cells,
-    v2= -1,
-    layer= node.view.layer;
+}
 
-    if (!!tv) {
-      v2 = tv.value;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::DoWin(a::Node* node,
+    Player* winner,
+    combo) {
+
+  ScoreUpdate msg(winner->color, 1);
+
+  MGML()->SendMsg("/hud/score/update", &msg);
+  DoDone(node, winner, combo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::DoDraw(a::Node* node) {
+  DoDone(node, nullptr, 0);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::DoForfeit(a::Node* node) {
+  auto cur= CC_GDV(c::Integer, state, "pnum");
+  auto other= cur == 1 ? 2 : cur == 2 ? 1 : 0;
+  auto& win= ps->parr[other];
+  auto& tv = ps->parr[cur];
+  cs = node.view.cells,
+  v2= -1,
+  layer= node.view.layer;
+
+  if (tv.yes) {
+    v2 = tv.value;
+  }
+
+  ScoreUpdate msg(win.color, 1);
+  MGML()->SendMsg("/hud/score/update", &msg);
+
+  //gray out the losing icons
+  R.forEachIndexed((z, n) => {
+    if (!!z && z[4] === v2) {
+      z[0].removeFromParent();
+      z[0] = utils.drawSymbol(node.view, z[1], z[2], z[3]+2);
     }
+  }, cs);
 
-    sh.fire('/hud/score/update',
-            {color: win.color,
-             score: 1});
+  DoDone(node, &win, null);
+}
 
-    //gray out the losing icons
-    R.forEachIndexed((z, n) => {
-      if (!!z && z[4] === v2) {
-        z[0].removeFromParent();
-        z[0] = utils.drawSymbol(node.view, z[1], z[2], z[3]+2);
-      }
-    }, cs);
-
-    this.doDone(node, win, null);
-  },
-  /**
+/**
    * Flip all other icons except for the winning ones.
    * @method showWinningIcons
    * @private

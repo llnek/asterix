@@ -18,7 +18,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
-const s::vector<Box4> MapGridPos(float scale) {
+const s::array<Box4,BD_SZ*BD_SZ> MapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
   auto sp = cx::ReifySprite("z.png");
@@ -36,14 +36,13 @@ const s::vector<Box4> MapGridPos(float scale) {
   auto x1= x0;
   auto y1=y0;
   int x2,y2;
-  s::vector<Box4> boxes;
+  s::array<Box4, BD_SZ * BD_SZ> boxes;
 
   for (int r=0; r < BD_SZ; ++r) {
     for (int c= 0; c < BD_SZ; ++c) {
       y2 = y1 - csz.height;
       x2 = x1 + csz.width;
-      //boxes[r * BD_SZ + c] = f::Box4(y1, x2, y2, x1);
-      boxes.push_back(Box4(y1, x2, y2, x1));
+      boxes[r * BD_SZ + c] = Box4(y1, x2, y2, x1);
     }
     y1 = y2 - gh;
     x1 = x0;

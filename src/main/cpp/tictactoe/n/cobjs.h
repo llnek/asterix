@@ -42,6 +42,12 @@ struct HUDUpdate {
   int pnum;
 };
 
+struct ScoreUpdate {
+  ScoreUpdate(const stdstr& c, int n) { color=c; score=n; }
+  stdstr color;
+  int score;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL SmartAlgo : public a::Component {
 public:
@@ -74,7 +80,7 @@ public:
   NO__CPYASS(Board);
   Board() = delete;
 
-  const s::vector<s::array<int,BD_SZ>>& GOALS;
+  s::vector<s::array<int,BD_SZ>> GOALS;
   int size;
 };
 
@@ -105,6 +111,7 @@ class CC_DLL PlayView : public a::Component {
     auto sz= sp->getContentSize();
     this->layer= layer;
     this->size = sz;
+    this->boxes= MapGridPos(1.0f);
   }
 
   virtual const a::COMType TypeId() { return "n/PlayView"; }
@@ -113,6 +120,7 @@ class CC_DLL PlayView : public a::Component {
   NO__CPYASS(PlayView)
   PlayView() = delete;
 
+  s::array<f::Box4,BD_SZ * BD_SZ> boxes;
   f::XLayer* layer;
   c::Size size;
   s::array<ViewData,BD_SZ * BD_SZ> cells;
