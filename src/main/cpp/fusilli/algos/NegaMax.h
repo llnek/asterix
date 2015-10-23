@@ -42,8 +42,8 @@ public:
   virtual const s::vector<int> GetNextMoves(not_null<Snapshot<Z>*>) = 0;
   virtual int EvalScore(not_null<Snapshot<Z>*>) = 0;
 
+  virtual bool IsStalemate(not_null<Snapshot<Z>*>) = 0;
   virtual bool IsOver(not_null<Snapshot<Z>*>) = 0;
-  virtual bool IsStalemate() = 0;
 
   virtual void UndoMove(not_null<Snapshot<Z>*>, int move) = 0;
   virtual void MakeMove(not_null<Snapshot<Z>*>, int move) = 0;

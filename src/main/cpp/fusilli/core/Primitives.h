@@ -58,7 +58,7 @@
 
 #define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)->getValue()
 #define CC_CSV(t,f) fusii::CstVal<t>(f)->getValue()
-#define CC_GNF(t,n,f) fusii::NodeFld<t>(n,f)
+#define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
 
 
 

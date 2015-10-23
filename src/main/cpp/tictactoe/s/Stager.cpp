@@ -9,10 +9,16 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/MainGame.h"
+#include "core/Primitives.h"
 #include "core/CCSX.h"
+#include "core/Odin.h"
+#include "ash/Node.h"
+#include "n/cobjs.h"
 #include "utils.h"
 #include "Stager.h"
 
+NS_ALIAS(ws, fusii::wsock)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
@@ -20,23 +26,26 @@ NS_BEGIN(tttoe)
 Stager::Stager(not_null<EFactory*> f,
     not_null<c::Dictionary*> d)
 
-  : f::BaseSystem(f,d) {
+  : f::BaseSystem(f, d) {
 
   this->inited=false;
+  SNPTR(board)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stager::AddToEngine(not_null<a::Engine*> e) {
 
-  e->AddEntity(factory->ReifyBoard(MGML()));
   CCLOG("adding system: Stager");
-  if (! inited) {
-    OnceOnly(e);
-    inited=true;
-  }
+  factory->ReifyBoard( MGML());
+
   BoardNode n;
   board= e->GetNodeList(n.TypeId());
+
+  if (! inited) {
+    OnceOnly(board->head);
+    inited=true;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,69 +53,70 @@ void Stager::AddToEngine(not_null<a::Engine*> e) {
 bool Stager::OnUpdate(float dt) {
   if (cx::IsTransitioning()) { return false; }
   auto node= board->head;
-  if (MGMS()->IsRunning() && NNP(node) {
+  if (MGMS()->IsRunning() && NNP(node)) {
     DoIt(node,dt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stager::ShowGrid(a::Node* node) {
-  auto view= CC_GNF(GridView, node, "view");
-  auto nil = CC_CSV(c::integer, "CV_Z");
-  auto arr = MapGridPos();
+  auto view= CC_GNF(PlayView, node, "view");
+  auto nil = CC_CSV(c::Integer, "CV_Z");
+  auto arr = MapGridPos(1.0f);
   auto pos=0;
 
   for (auto it= arr.begin(); it != arr.end(); ++it) {
     auto sp= cx::ReifySprite("z.png");
-    sp->setPosition(cx::VisBoxMID(*it));
+    sp->setPosition(cx::VBoxMID(*it));
     view->layer->AddAtlasItem("game-pics", sp);
-    view->cells[pos++]=GridData(sp, sp.getPositionX(),
-                                sp.getPositionY(),
+    view->cells[pos++]=ViewData(sp, sp->getPositionX(),
+                                sp->getPositionY(),
                                 nil);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::OnceOnly(a::Node* node, float dt) {
+void Stager::OnceOnly(a::Node* node) {
+  auto ps = CC_GNF(Players, node, "players");
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot= CC_CSV(c::Integer,"BOT");
-  auto ps = CC_GNF(Players, node, "players");
   auto pnum = 0;
 
   ShowGrid(node);
 
   if (MGMS()->IsOnline()) {
     CCLOG("reply to server: session started ok");
-    MGMS()->NetSend({
-      type: evts.MSG_SESSION,
-      code: evts.STARTED
-    });
+    MGMS()->NetSend(ws::Event(
+      ws::MType::SESSION,
+      ws::EType::STARTED
+    ));
   } else {
     pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2; // randomly choose
-    if (ps->parr[pnum]->category == human) {
+    if (ps->parr[pnum].category == human) {
       MGML()->SendMsg("/hud/timer/show");
     }
     else
-    if (parr[pnum]->category == bot) {
+    if (ps->parr[pnum].category == bot) {
       //noop
     }
   }
 
-  state->setObject(c::Integer::create(pnum), "actor");
+  state->setObject(CC_INT(pnum), "pnum");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager::DoIt(a::Node* node, float dt) {
+void Stager::DoIt(a::Node* node, float dt) {
 
-  auto actor = CC_GDV(c::Integer, state, "actor");
+  auto pnum = CC_GDV(c::Integer, state, "pnum");
   auto active = MGMS()->IsRunning();
-  HUDUpdate msg(active,actor);
+  HUDUpdate msg(active, pnum);
 
   if (!active) {
-    actor= CC_GDV(c::Integer, state, "lastWinner");
+    pnum= CC_GDV(c::Integer, state, "lastWinner");
   }
 
   MGML()->SendMsg("/hud/update", &msg);

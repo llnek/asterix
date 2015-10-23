@@ -15,18 +15,22 @@
 #include "core/CCSX.h"
 #include "n/cobjs.h"
 
-NS_BEGIN(tttoe)
+namespace tttoe {
 
-  s::vector<fusii::Box4> MapGridPos(int gsz, float scale);
+  const s::vector<s::array<int,BD_SZ>> MapGoalSpace();
+
+  const s::vector<fusii::Box4> MapGridPos(float scale = 1.0f);
 
   const stdstr PkFlip(const stdstr& img, bool flip);
 
   const stdstr XrefImg(int value);
 
-  c::Sprite* DrawSymbol(not_null<GridView*> view,
+  c::Sprite* DrawSymbol(not_null<PlayView*> view,
       float x, float y,
       int value, bool flip);
 
-NS_END(tttoe)
+
+};
+
 #endif
 

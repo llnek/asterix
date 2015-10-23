@@ -9,32 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "n/TTTBoard.h"
 #include "EFactory.h"
+#include "n/cobjs.h"
 NS_BEGIN(tttoe)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void EFactory::MapGoalSpace(int size) {
-
-  f::FArray<int> dx(size);
-  f::FArray<int> dy(size);
-
-  for (int r=0; r < size; ++r) {
-    f::FArray<int> h(size);
-    f::FArray<int> v(size);
-    for (int c=0; c < size; ++c) {
-      h.Set(c, r * size + c);
-      v.Set(c, c * size + r);
-    }
-    goals.push_back(h);
-    goals.push_back(v);
-    dx.Set(r, r * size + r);
-    dy.Set(r, (size - r - 1) * size + r);
-  }
-
-  goals.push_back(dx);
-  goals.push_back(dy);
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -43,30 +21,27 @@ EFactory::EFactory(not_null<a::Engine*> e,
 
   : f::Factory(e, options) {
 
-  auto size= CC_GDV(c::Integer, options, "size");
-  MapGoalSpace(size);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::ReifyBoard(not_null<c::Node*> layer) {
+a::Entity* EFactory::ReifyBoard(not_null<f::XLayer*> layer) {
 
-  auto size= CC_GDV(c::Integer, state, "size");
   auto nil= CC_CSV(c::Integer, "CV_Z");
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
   auto ent= engine->ReifyEntity("game");
 
-  f::FArray<int> seed(size * size);
-  seed.Fill(nil);
+  auto bd= new TTTBoard(nil, xv, ov);
+  s::array<int, BD_SZ * BD_SZ> seed;
+  seed.fill(nil);
 
-  auto bd= new TTTBoard(size, nil, xv, ov, goals);
-  ent->Checkin(new Grid(size, seed));
-  ent->Checkin(new Board(size, goals));
+  ent->Checkin(new Grid(seed));
+  ent->Checkin(new Board());
   ent->Checkin(new UISelection());
   ent->Checkin(new SmartAlgo(bd));
   ent->Checkin(new NetPlay());
-  ent->Checkin(new GridView(size, layer));
+  ent->Checkin(new PlayView(layer));
 
   return ent;
 };

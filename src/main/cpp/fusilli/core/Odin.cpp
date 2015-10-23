@@ -10,11 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "base/ccUtils.h"
-#include "JSON.h"
 #include "Odin.h"
 
 NS_ALIAS(n, cocos2d::network)
-NS_ALIAS(j, fusii::json)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
@@ -22,11 +20,12 @@ NS_BEGIN(wsock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkEvent(MType eventType,
-    EType code,
-    owner<js::Document*> d) {
-
-  return Event(eventType, code, d);
+static j::Json evtToDoc(const Event& evt) {
+  return j::Json::object {
+    {"type", evt.type },
+    {"code", evt.code },
+    {"source", evt.doco }
+  };
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,76 +34,44 @@ static Event mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
-  auto d = new js::Document();
-  auto a= d->SetArray();
-
-  a.PushBack(game, d->GetAllocator() );
-  a.PushBack(user, d->GetAllocator() );
-  a.PushBack(pwd, d->GetAllocator() );
-
-  return mkEvent(MType::SESSION, EType::PLAYGAME_REQ, d);
+  return Event(MType::SESSION,
+      EType::PLAYGAME_REQ,
+      j::Json::array({ game, user, pwd }) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
+/*
 static Event mkJoinRequest (const stdstr& room,
     const stdstr& user,
     const stdstr& pwd) {
-  auto d = new js::Document();
-  auto a= d->SetArray();
 
-  a.PushBack(room, d->GetAllocator() );
-  a.PushBack(user, d->GetAllocator() );
-  a.PushBack(pwd, d->GetAllocator() );
-
-  return mkEvent(MType::SESSION, EType::JOINGAME_REQ, d);
+  return Event(MType::SESSION,
+      EType::JOINGAME_REQ,
+      j::Json::array({ room, user, pwd }) );
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static owner<js::Document*> evtToDoc(const Event& evt) {
-  auto d = new js::Document();
-  auto a= d->SetObject();
-  a["type"] = (int)evt.type;
-  a["code"] = (int)evt.code;
-  if (NNP(evt.doco)) {
-    a["source"] = fusii::json::Stringify(evt.doco);
-  } else {
-    a["source"] = "{}";
-  }
-  return d;
+static Event getPlayRequest(not_null<WSockSS*> wss) {
+  return mkPlayRequest(wss->game, wss->user, wss->passwd);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 static Event json_decode(const n::WebSocket::Data& e) {
-  js::Document doc;
+
+  stdstr error;
   Event evt;
 
   assert(!e.isBinary);
   try {
-    doc.Parse(e.bytes);
+    j::Json doc;
+    doc.parse(e.bytes, error);
+    evt= Event(doc);
   } catch (...) {
-    CCLOGERROR("failed to parse json: %s", e.bytes);
-  }
-
-  if (doc.IsObject()) {
-    if (doc.HasMember("type")) {
-      evt.type = (MType) doc["type"].GetInt();
-    }
-    if (doc.HasMember("code")) {
-      evt.code = (EType) doc["code"].GetInt();
-    }
-    if (doc.HasMember("source")) {
-      auto v= doc["source"].GetString();
-      auto s = new js::Document();
-      try {
-        s->Parse(v);
-        evt.doco=s;
-      } catch (...) {
-        mc_del_ptr(s);
-      }
-    }
+    CCLOGERROR("failed to parse json: %s", error.c_str());
   }
 
   return evt;
@@ -112,17 +79,56 @@ static Event json_decode(const n::WebSocket::Data& e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+Event::Event(MType t, EType c, j::Json& body) : Event() {
+  doco = j::Json::object {
+    { "type", (int)t },
+    { "code", (int)c }
+  };
+  type= t;
+  code= c;
+  if (!body.is_null()) {
+    doco["source"] = body;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Event::Event(MType t, EType c) : Event() {
+  type= t;
+  code= c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Event::Event(j::Json& doc) : Event() {
+  if (doc.is_object()) {
+    auto v= doc["type"];
+    if (v.is_number()) {
+      type = SCAST(MType, v.int_value());
+    }
+    v= doc["code"];
+    if (v.is_number()) {
+      code = SCAST(EType, v.int_value());
+    }
+    v= doc["source"];
+    if (!v.is_null()) {
+      doco =v;
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 Event::Event() {
-  tstamp = c::utils::getTimeInMilliseconds();
-  type= MType::SESSION;
+  tstamp = (double) c::utils::getTimeInMilliseconds();
+  type= MType::NICHTS;
   code= EType::NICHTS;
-  SNPTR(doco)
+  doco= j::Json::object{};
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Event::~Event() {
-  mc_del_ptr(doco);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -166,8 +172,8 @@ WSockSS::WSockSS() {
 //
 void Send(not_null<WSockSS*> wss, const Event& evt) {
   if (wss->state == CType::S_CONNECTED) {
-    auto d= j::Stringify( evtToDoc(evt));
-    wss->socket->send(d);
+    auto d= evtToDoc(evt);
+    wss->socket->send(d.dump());
   }
 }
 
@@ -255,7 +261,7 @@ void WSockSS::onOpen(n::WebSocket* ws) {
   // send the play game request
   state= CType::S_CONNECTED;
   socket=ws;
-  ws->send(GetPlayRequest(this));
+  ws->send(evtToDoc(getPlayRequest(this)).dump());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -310,12 +316,6 @@ n::WebSocket* Connect(not_null<WSockSS*> wss, const stdstr& url) {
     wss->socket=ws;
   }
   return ws;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const stdstr GetPlayRequest(not_null<WSockSS*> wss) {
-  return j::Stringify( evtToDoc(mkPlayRequest(wss->game, wss->user, wss->passwd)));
 }
 
 

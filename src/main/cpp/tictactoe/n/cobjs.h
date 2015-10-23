@@ -14,9 +14,8 @@
 
 #include "core/CCSX.h"
 #include "ash/Ash.h"
-
-#define TTT_CELLS 9
-#define TTT_SIZE 3
+#include "s/utils.h"
+#define BD_SZ 3
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(a,ash)
@@ -46,7 +45,7 @@ struct HUDUpdate {
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL SmartAlgo : public a::Component {
 public:
-  SmartAlgo(not_null<f::GameBoard*> b) {
+  SmartAlgo(not_null<TTTBoard*> b) {
     this->board= b;
   }
 
@@ -56,7 +55,7 @@ public:
   SmartAlgo() = delete;
   NO__CPYASS(SmartAlgo)
 
-  f::GameBoard* board;
+  TTTBoard* board;
 };
 
 
@@ -64,9 +63,9 @@ public:
 class CC_DLL Board : public a::Component {
 public:
 
-  Board(int size, const s::vector<s::array<int,TTT_SIZE>>& goals) {
-    this->GOALS= goals;
-    this->size=size;
+  Board() {
+    this->GOALS= MapGoalSpace();
+    this->size=BD_SZ;
   }
 
   virtual const a::COMType TypeId() { return "n/Board"; }
@@ -75,7 +74,7 @@ public:
   NO__CPYASS(Board);
   Board() = delete;
 
-  const s::vector<s::array<int,TTT_SIZE>>& GOALS;
+  const s::vector<s::array<int,BD_SZ>>& GOALS;
   int size;
 };
 
@@ -84,7 +83,7 @@ public:
 class CC_DLL Grid : public a::Component {
 public:
 
-  Grid(const s::array<int,TTT_CELLS>& seed) {
+  Grid(const s::array<int,BD_SZ * BD_SZ>& seed) {
     s::copy(s::begin(seed), s::end(seed), s::begin(values));
   }
 
@@ -94,14 +93,14 @@ public:
   NO__CPYASS(Grid);
   Grid() = delete;
 
-  s::array<int, TTT_CELLS> values;
+  s::array<int, BD_SZ * BD_SZ> values;
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL PlayView : public a::Component {
 
-  PlayView(not_null<c::Node*> layer) {
+  PlayView(not_null<f::XLayer*> layer) {
     auto sp = cx::ReifySprite("z.png");
     auto sz= sp->getContentSize();
     this->layer= layer;
@@ -114,9 +113,9 @@ class CC_DLL PlayView : public a::Component {
   NO__CPYASS(PlayView)
   PlayView() = delete;
 
-  c::Node* layer;
+  f::XLayer* layer;
   c::Size size;
-  s::array<ViewData,TTT_CELLS> cells;
+  s::array<ViewData,BD_SZ * BD_SZ> cells;
 };
 
 
@@ -132,7 +131,6 @@ public:
 
   void* event;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Player : public a::Component {
@@ -156,6 +154,20 @@ public:
   int category;
   int value;
   int offset;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+class CC_DLL Players : public a::Component {
+public:
+
+  Players() {}
+
+  virtual const a::COMType TypeId() { return "n/Players"; }
+  virtual ~Players() {}
+  NO__CPYASS(Players)
+
+  s::array<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////

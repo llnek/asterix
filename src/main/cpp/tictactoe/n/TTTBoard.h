@@ -15,51 +15,54 @@
 #include "algos/NegaMax.h"
 #include "cobjs.h"
 #include <tuple>
+NS_ALIAS(ag, fusii::algos)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-class FS_DLL TTTBoard : public f::GameBoard<TTT_SIZE> {
+class FS_DLL TTTBoard : public ag::GameBoard<BD_SZ> {
 protected:
-  const s::vector<s::array<int,TTT_SIZE>>& GOALS;
-  s::array<int,TTT_CELLS> grid;
+
+  const s::vector<s::array<int,BD_SZ>>& GOALS;
+  s::array<int, BD_SZ * BD_SZ> grid;
   s::array<int,3> actors;
   int CV_Z;
+
 public:
 
-  TTTBoard( int nil,  int p1v,  int p2v,
-      const s::vector<s::array<int,TTT_SIZE>>& goals);
+  TTTBoard(int nil,  int p1v,  int p2v);
 
   virtual ~TTTBoard();
 
-  virtual bool IsNil(int cellv);
+  int GetOtherPlayer(int pv);
+  bool IsNil(int cellv);
+  int GetFirstMove();
 
-  virtual int GetFirstMove();
+  void SyncState(const s::array<int,BD_SZ * BD_SZ>& seed, int actor);
 
-  virtual void SyncState(const s::array<int,TTT_CELLS>& seed, int actor);
+  int IsWinner( ag::Snapshot<BD_SZ>*,
+      int actor, s::array<int,BD_SZ>& combo);
 
-  virtual const s::vector<int> GetNextMoves(not_null<f::Snapshot<TTT_SIZE>*>);
+  bool TestWin(ag::Snapshot<BD_SZ>* snap,
+      int actor,
+      const s::array<int,BD_SZ>& g) ;
 
-  virtual void UndoMove(not_null<f::Snapshot<TTT_SIZE>*>, int move);
 
-  virtual void MakeMove(not_null<f::Snapshot<TTT_SIZE>*>, int move);
+  virtual const s::vector<int> GetNextMoves(not_null<ag::Snapshot<BD_SZ>*>);
 
-  virtual void SwitchPlayer(not_null<f::Snapshot<TTT_SIZE>*>);
+  virtual void UndoMove(not_null<ag::Snapshot<BD_SZ>*>, int move);
 
-  virtual int GetOtherPlayer(int pv);
+  virtual void MakeMove(not_null<ag::Snapshot<BD_SZ>*>, int move);
 
-  virtual f::Snapshot<TTT_SIZE> TakeSnapshot();
+  virtual void SwitchPlayer(not_null<ag::Snapshot<BD_SZ>*>);
 
-  virtual int EvalScore(not_null<f::Snapshot<TTT_SIZE>*>);
+  virtual ag::Snapshot<BD_SZ> TakeSnapshot();
 
-  virtual bool IsOver(not_null<f::Snapshot<TTT_SIZE>*>);
+  virtual int EvalScore(not_null<ag::Snapshot<BD_SZ>*>);
 
-  virtual bool IsStalemate(f::Snapshot<TTT_SIZE>*);
+  virtual bool IsOver(not_null<ag::Snapshot<BD_SZ>*>);
 
-  virtual int IsWinner(
-      f::Snapshot<TTT_SIZE>*, int actor, s::array<int,TTT_SIZE>& combo);
-  bool TTTBoard::TestWin(f::Snapshot<TTT_SIZE>* snap, int actor,
-      const s::array<int,TTT_SIZE>& g) ;
+  virtual bool IsStalemate(not_null<ag::Snapshot<BD_SZ>*> );
 
 };
 

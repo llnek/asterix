@@ -14,7 +14,6 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
-#include "n/gnodes.h"
 
 NS_ALIAS(f,fusii)
 NS_ALIAS(a,ash)
@@ -27,9 +26,9 @@ protected:
 
   virtual bool OnUpdate(float);
 
-  void OnceOnly(a::Node*, float);
-  void ShowGrid(a::Node*);
   void DoIt(a::Node*, float);
+  void OnceOnly(a::Node*);
+  void ShowGrid(a::Node*);
 
   NO__CPYASS(Stager)
   Stager() = delete;
@@ -41,7 +40,7 @@ public:
 
   Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual void addToEngine(not_null<a::Engine*>);
+  virtual void AddToEngine(not_null<a::Engine*>);
 
   virtual int Priority() { return a::PreUpdate; }
 

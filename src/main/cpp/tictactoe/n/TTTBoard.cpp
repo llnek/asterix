@@ -11,12 +11,13 @@
 
 #include "base/ccRandom.h"
 #include "TTTBoard.h"
+#include "s/utils.h"
 #include <math.h>
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static bool not_any(const s::array<int,TTT_CELLS>& arr, int v) {
+static bool not_any(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] == v) { return false; }
   }
@@ -25,7 +26,7 @@ static bool not_any(const s::array<int,TTT_CELLS>& arr, int v) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static bool every(const s::array<int,TTT_CELLS>& arr, int v) {
+static bool every(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] != v) { return false; }
   }
@@ -35,11 +36,10 @@ static bool every(const s::array<int,TTT_CELLS>& arr, int v) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-TTTBoard::TTTBoard(int nil, int p1v, int p2v,
-    const s::vector<s::array<int,TTT_SIZE>>& goals) {
+TTTBoard::TTTBoard(int nil, int p1v, int p2v) {
   this->actors = {nil, p1v, p2v};
   this->CV_Z= nil;
-  this->GOALS=goals;
+  this->GOALS= MapGoalSpace();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -75,14 +75,14 @@ int TTTBoard::GetFirstMove() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::SyncState(const s::array<int,TTT_CELLS>& seed, int actor) {
+void TTTBoard::SyncState(const s::array<int,BD_SZ * BD_SZ>& seed, int actor) {
   s::copy(s::begin(seed), s::end(seed), s::begin(grid));
   actors[0] = actor;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s::vector<int> TTTBoard::GetNextMoves(not_null<f::Snapshot<TTT_SIZE>*> snap) {
+const s::vector<int> TTTBoard::GetNextMoves(not_null<ag::Snapshot<BD_SZ>*> snap) {
   s::vector<int> rc;
   int pos=0;
 
@@ -97,13 +97,13 @@ const s::vector<int> TTTBoard::GetNextMoves(not_null<f::Snapshot<TTT_SIZE>*> sna
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::UndoMove(not_null<f::Snapshot<TTT_SIZE>*> snap, int move) {
+void TTTBoard::UndoMove(not_null<ag::Snapshot<BD_SZ>*> snap, int move) {
   snap->state[move] = CV_Z;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::MakeMove(not_null<f::Snapshot<TTT_SIZE>*> snap, int move) {
+void TTTBoard::MakeMove(not_null<ag::Snapshot<BD_SZ>*> snap, int move) {
   if (IsNil(snap->state[move])) {
     snap->state[move] = snap->cur;
   } else {
@@ -113,7 +113,7 @@ void TTTBoard::MakeMove(not_null<f::Snapshot<TTT_SIZE>*> snap, int move) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::SwitchPlayer(not_null<f::Snapshot<TTT_SIZE>*> snap) {
+void TTTBoard::SwitchPlayer(not_null<ag::Snapshot<BD_SZ>*> snap) {
   auto t = snap->cur;
   snap->cur= snap->other;
   snap->other=t;
@@ -136,8 +136,8 @@ int TTTBoard::GetOtherPlayer(int pv) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::Snapshot<TTT_SIZE> TTTBoard::TakeSnapshot() {
-  f::Snapshot<TTT_SIZE> s;
+ag::Snapshot<BD_SZ> TTTBoard::TakeSnapshot() {
+  ag::Snapshot<BD_SZ> s;
 
   s::copy(s::begin(grid), s::end(grid), s::begin(s.state));
   s.other= GetOtherPlayer(actors[0]);
@@ -149,16 +149,16 @@ f::Snapshot<TTT_SIZE> TTTBoard::TakeSnapshot() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-int TTTBoard::EvalScore(not_null<f::Snapshot<TTT_SIZE>*> snap) {
+int TTTBoard::EvalScore(not_null<ag::Snapshot<BD_SZ>*> snap) {
   // if we lose, return a nega value
-  s::array<int,TTT_SIZE> combo;
+  s::array<int,BD_SZ> combo;
   return IsWinner(snap.get(), snap->other, combo) > 0 ? -100 : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::IsOver(not_null<f::Snapshot<TTT_SIZE>*> snap) {
-  s::array<int,TTT_SIZE> combo;
+bool TTTBoard::IsOver(not_null<ag::Snapshot<BD_SZ>*> snap) {
+  s::array<int,BD_SZ> combo;
   return IsWinner(snap.get(), snap->cur, combo) > 0 ||
          IsWinner(snap.get(), snap->other, combo) > 0 ||
          IsStalemate(snap.get());
@@ -166,7 +166,8 @@ bool TTTBoard::IsOver(not_null<f::Snapshot<TTT_SIZE>*> snap) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::IsStalemate(f::Snapshot<TTT_SIZE>* snap) {
+bool TTTBoard::IsStalemate(not_null<ag::Snapshot<BD_SZ>*> snap) {
+  //TODO: fix
   if (NNP(snap)) {
     return not_any(snap->state, CV_Z);
   } else {
@@ -176,8 +177,8 @@ bool TTTBoard::IsStalemate(f::Snapshot<TTT_SIZE>* snap) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-int TTTBoard::IsWinner(f::Snapshot<TTT_SIZE>* snap, int actor,
-    s::array<int,TTT_SIZE>& combo) {
+int TTTBoard::IsWinner(ag::Snapshot<BD_SZ>* snap, int actor,
+    s::array<int,BD_SZ>& combo) {
   int win= -1;
   for (auto it = GOALS.begin(); it != GOALS.end(); ++it) {
     auto& t= *it;
@@ -191,10 +192,10 @@ int TTTBoard::IsWinner(f::Snapshot<TTT_SIZE>* snap, int actor,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::TestWin(f::Snapshot<TTT_SIZE>* snap, int actor,
-    const s::array<int,TTT_SIZE>& g) {
+bool TTTBoard::TestWin(ag::Snapshot<BD_SZ>* snap, int actor,
+    const s::array<int,BD_SZ>& g) {
 
-  s::array<int,TTT_SIZE>& vs= ENP(snap) ? grid : snap->state;
+  s::array<int,BD_SZ>& vs= ENP(snap) ? grid : snap->state;
   int cnt=0;
   for (int n= 0; n < g.size(); ++n) {
     auto pos= g[n];

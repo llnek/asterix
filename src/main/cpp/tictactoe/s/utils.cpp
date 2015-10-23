@@ -18,39 +18,70 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
-s::vector<Box4> MapGridPos(int gsz, float scale) {
+const s::vector<Box4> MapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
   auto sp = cx::ReifySprite("z.png");
   auto z = sp->getContentSize();
   auto csz = cx::ScaleSize(z, scale);
-  auto cells= gsz * gsz;
   auto ro= 8/72 * scale;
   auto cw = cx::Center();
   auto gh = csz.height * ro;
   auto gw = csz.width * ro;
-  auto zh= gsz * csz.height + (gsz-1) * gh;
-  auto zw= gsz * csz.width + (gsz-1) * gw;
+  auto zh= BD_SZ * csz.height + (BD_SZ-1) * gh;
+  auto zw= BD_SZ * csz.width + (BD_SZ-1) * gw;
 
   auto x0 = cw.x - zw * 0.5;
   auto y0 = cw.y + zh * 0.5;
   auto x1= x0;
   auto y1=y0;
   int x2,y2;
-  s::vector<Box4> gridMap;
+  s::vector<Box4> boxes;
 
-  for (int r=0; r < gsz; ++r) {
-    for (int c= 0; c < gsz; ++c) {
+  for (int r=0; r < BD_SZ; ++r) {
+    for (int c= 0; c < BD_SZ; ++c) {
       y2 = y1 - csz.height;
       x2 = x1 + csz.width;
-      //gridMap[r * gsz + c] = f::Box4(y1, x2, y2, x1);
-      gridMap.push_back( Box4(y1, x2, y2, x1));
+      //boxes[r * BD_SZ + c] = f::Box4(y1, x2, y2, x1);
+      boxes.push_back(Box4(y1, x2, y2, x1));
     }
     y1 = y2 - gh;
     x1 = x0;
   }
 
-  return gridMap;
+  return boxes;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s::vector<s::array<int, BD_SZ>> MapGoalSpace() {
+
+  s::vector<s::array<int,BD_SZ>> goals;
+
+  s::array<int,BD_SZ> dx;
+  s::array<int,BD_SZ> dy;
+
+  for (int r=0; r < BD_SZ; ++r) {
+
+    s::array<int,BD_SZ> h;
+    s::array<int,BD_SZ> v;
+
+    for (int c=0; c < BD_SZ; ++c) {
+      h[c] = r * BD_SZ + c;
+      v[c] = c * BD_SZ + r;
+    }
+
+    goals.push_back(h);
+    goals.push_back(v);
+
+    dx[r] = r * BD_SZ + r;
+    dy[r] = (BD_SZ - r - 1) * BD_SZ + r;
+  }
+
+  goals.push_back(dx);
+  goals.push_back(dy);
+
+  return goals;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,7 +110,7 @@ const stdstr& XrefImg(int value) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Sprite* DrawSymbol(not_null<GridView*> view,
+c::Sprite* DrawSymbol(not_null<PlayView*> view,
     float x, float y,
     int value, bool flip) {
 
@@ -92,6 +123,7 @@ c::Sprite* DrawSymbol(not_null<GridView*> view,
   view->layer->AddAtlasItem("game-pics", s1);
   return s1;
 }
+
 
 
 NS_END(tttoe)

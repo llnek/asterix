@@ -12,21 +12,16 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
-#include "core/Primitives.h"
 #include "core/Factory.h"
+#include "x2d/XLayer.h"
+NS_ALIAS(f, fusii)
 NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EFactory {
+class CC_DLL EFactory  : public f::Factory {
 protected:
-
-  s::vector<f::FArray<int>> goals;
-  c::Dictionary* state;
-  a::Engine* engine;
-
-  void MapGoalSpace(int );
 
   NO__CPYASS(EFactory)
   EFactory() = delete;
@@ -36,7 +31,7 @@ public:
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
   virtual ~EFactory() {}
 
-  a::Entity* ReifyBoard(not_null<c::Node*> layer);
+  a::Entity* ReifyBoard(not_null<f::XLayer*>);
 
 };
 

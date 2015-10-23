@@ -13,12 +13,11 @@
 #define __ODIN_H__
 
 #include "network/WebSocket.h"
-#include "json/rapidjson.h"
-#include "json/document.h"
+#include "dropbox/json11.hpp"
 #include "aeon/fusilli.h"
 
 NS_ALIAS(n, cocos2d::network)
-NS_ALIAS(js, rapidjson)
+NS_ALIAS(j, json11)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
@@ -82,18 +81,15 @@ enum class CC_DLL EType {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Event {
-  Event(MType t, EType c, owner<js::Document*> payload) :
-  Event() {
-    doco=payload;
-    type=t;
-    code=c;
-  }
+  Event::Event(MType, EType, j::Json& body);
+  Event(MType t, EType c);
+  Event(j::Json& doc);
   ~Event();
   Event();
-  long long tstamp;
+  double tstamp;
   MType type;
   EType code;
-  js::Document* doco;
+  j::Json doco;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -147,8 +143,6 @@ void Disconnect(not_null<WSockSS*>);
 void Close(not_null<WSockSS*>);
 
 void Send(not_null<WSockSS*>, const Event&);
-
-const stdstr GetPlayRequest(not_null<WSockSS*>);
 
 owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd);

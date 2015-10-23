@@ -53,6 +53,9 @@ protected:
 public:
 
   virtual void SendMsg(const stdstr& topic, void* msg) = 0;
+  void SendMsg(const stdstr& topic) {
+    SendMsg(topic,nullptr);
+  }
 
   virtual const Box4 GetEnclosureBox();
   virtual int GetIID() { return 2; }
