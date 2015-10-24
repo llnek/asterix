@@ -17,6 +17,7 @@
 #include "core/XPool.h"
 #include "XScene.h"
 #include "XGameLayer.h"
+#include <queue>
 
 #define MGMS() fusii::MainGame::Self()
 #define MGML() fusii::MainGame::Get()
@@ -32,6 +33,7 @@ protected:
 
   s::map<stdstr, XPool*> pools;
   c::Dictionary* options;
+  s::queue<stdstr> msgQ;
   bool running;
   GMode mode;
   int level;
@@ -56,6 +58,8 @@ public:
   XPool* GetPool(const stdstr& n);
   void ResetPools();
   c::Dictionary* GetLCfg();
+
+  s::queue<stdstr>& MsgQueue() { return msgQ; }
 
   virtual ~MainGame();
 };

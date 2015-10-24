@@ -9,14 +9,15 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/MainGame.h"
 #include "Resolve.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<EFactory*> f,
-    not_null<c:Dictionary*> d)
+Resolve::Resolve(not_null<EFactory*> f,not_null<c::Dictionary*> d)
   : f::BaseSystem(f, d) {
+  SNPTR(board)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -28,11 +29,11 @@ void Resolve::AddToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::OnUpdate(float dt) {
+bool Resolve::OnUpdate(float dt) {
   auto node= board->head;
   if (MGMS()->IsRunning() &&
       NNP(node)) {
-    SyncUp(node, dt);
+    SyncUp(node);
     DoIt(node, dt);
   }
   return true;
@@ -49,7 +50,7 @@ void Resolve::SyncUp(a::Node* node) {
     auto v= grid->values[i];
     if (v != nil) {
       auto c= XrefCell(i, view);
-      if (c.x > 0 && c.y > 0) {
+      if (c.x > 0.0f && c.y > 0.0f ) {
         auto& z= view->cells[i];
         if (NNP(z.sprite)) {
           z.sprite->removeFromParent();
@@ -83,32 +84,32 @@ const c::Vec2 Resolve::XrefCell(int pos, PlayView* view) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::DoIt(a::Node* node, float dt) {
-  let values= node.grid.values,
-  msg,
-  rc,
-  res;
 
-  for (int i=1; i <= 2; ++i) {
+  auto ps = CC_GNF(Players, node, "players");
+  auto gd = CC_GNF(Grid, node, "grid");
+  auto winner= -1;
+  s::array<int, BD_SZ> combo;
+
+  for (int i=0; i < ps->parr.size(); ++i) {
+    if (i > 0 &&
+        CheckWin(node, ps->parr[i], gd, combo)) {
+      winner=i;
+      break;
+    }
   }
-  if (R.find( p => {
-      if (!!p) {
-        rc= this.checkWin(p,values);
-        if (rc) {
-          return res=[p, rc];
-        }
-      }
-    }, this.state.players)) {
-    this.doWin(node, res[0], res[1]);
+
+  if (winner > 0) {
+    DoWin(node, ps->parr[winner], combo);
   }
   else
-  if (this.checkDraw(values)) {
-    this.doDraw(node);
+  if (CheckDraw(node, gd)) {
+    DoDraw(node);
   }
-  else
-  if (this.state.msgQ.length > 0) {
-    msg = this.state.msgQ.shift();
-    if ("forfeit" === msg) {
-      this.doForfeit(node);
+  else {
+    auto& q= MGMS()->MsgQueue();
+    if (q.size() > 0 &&
+        "forfeit" == q.pop()) {
+      DoForfeit(node);
     }
   }
 }
@@ -116,19 +117,22 @@ void Resolve::DoIt(a::Node* node, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::DoWin(a::Node* node,
-    Player* winner,
-    combo) {
+    Player& winner,
+    const s::array<int, BD_SZ>& combo) {
 
-  ScoreUpdate msg(winner->color, 1);
-
+  ScoreUpdate msg(winner.color, 1);
   MGML()->SendMsg("/hud/score/update", &msg);
-  DoDone(node, winner, combo);
+
+  ShowWinningIcons(node, combo);
+
+  DoDone(node, winner);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::DoDraw(a::Node* node) {
-  DoDone(node, nullptr, 0);
+  auto ps= CC_GNF(Players, node, "players");
+  DoDone(node, ps->parr[0]);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,112 +140,108 @@ void Resolve::DoDraw(a::Node* node) {
 void Resolve::DoForfeit(a::Node* node) {
   auto cur= CC_GDV(c::Integer, state, "pnum");
   auto other= cur == 1 ? 2 : cur == 2 ? 1 : 0;
-  auto& win= ps->parr[other];
-  auto& tv = ps->parr[cur];
-  cs = node.view.cells,
-  v2= -1,
-  layer= node.view.layer;
+  auto view = CC_GNF(PlayView, node, "view");
+  auto ps= CC_GNF(Players, node, "players");
 
-  if (tv.yes) {
-    v2 = tv.value;
-  }
+  auto& loser = ps->parr[cur];
+  auto& win= ps->parr[other];
 
   ScoreUpdate msg(win.color, 1);
   MGML()->SendMsg("/hud/score/update", &msg);
 
   //gray out the losing icons
-  R.forEachIndexed((z, n) => {
-    if (!!z && z[4] === v2) {
-      z[0].removeFromParent();
-      z[0] = utils.drawSymbol(node.view, z[1], z[2], z[3]+2);
+  for (auto it= view->cells.begin(); it != view->cells.end(); ++it) {
+    auto& z = *it;
+    if (z.value == loser.value) {
+      if (NNP(z.sprite)) {
+        z.sprite->removeFromParent();
+      }
+      //TODO: why + 2????
+      z.sprite = DrawSymbol(view, z.x, z.y, z.value+2);
     }
-  }, cs);
-
-  DoDone(node, &win, null);
-}
-
-/**
-   * Flip all other icons except for the winning ones.
-   * @method showWinningIcons
-   * @private
-   */
-  showWinningIcons(view, combo) {
-    const layer= view.layer,
-    cs = view.cells;
-
-    if (combo===null) { return; }
-
-    R.forEachIndexed((z, n) => {
-      if (! R.contains(n, combo)) { if (!!z && z[3] !== csts.CV_Z) {
-        z[0].removeFromParent();
-        z[0] = utils.drawSymbol(view, z[1], z[2], z[3], true);
-      } }
-    }, cs);
-  },
-  /**
-   * @method doDone
-   * @private
-   */
-  doDone(node, pobj, combo) {
-
-    const pnum = !!pobj ? pobj.pnum : 0;
-
-    this.showWinningIcons(node.view, combo);
-    sh.fire('/hud/timer/hide');
-    sh.sfxPlay('game_end');
-    sh.fire('/hud/end', { winner: pnum });
-
-    this.state.lastWinner = pnum;
-    this.state.running=false;
-  },
-  /**
-   * @method checkDraw
-   * @private
-   */
-  checkDraw(values) {
-    return ! (csts.CV_Z === R.find((v) => {
-      return (v === csts.CV_Z);
-    }, values));
-  },
-  /**
-   * @method checkWin
-   * @private
-   */
-  checkWin(actor, game) {
-    //sjs.loggr.debug('checking win for ' + actor.color);
-    let combo, rc= R.any( r => {
-      combo=r;
-      return R.all( n => {
-        return actor.value === n;
-      },
-      R.map( i => { return game[i]; }, r));
-    },
-    this.state.GOALSPACE);
-
-    return rc ? combo : null;
   }
 
-},{
-/**
- * @memberof module:s/resolve~Resolve
- * @property {Number} Priority
- */
-Priority: xcfg.ftypes.Resolve
-});
+  DoDone(node, win);
+}
 
 
-
-/** @alias module:s/resolve */
-const xbox = {
-  /**
-   * @property {Resolve} Resolve
-   */
-  Resolve: Resolve
-};
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void Resolve::ShowWinningIcons(a::Node* node,
+    const s::array<int,BD_SZ>& combo) {
+
+  auto view = CC_GNF(PlayView, node, "view");
+  auto nil = CC_CSV(c::Integer, "CV_Z");
+
+  for (int i=0; i < view->cells.size(); ++i) {
+    if (! (s::find(s::begin(combo), s::end(combo), i)
+          != combo.end())) {
+      //flip the other cells to gray
+      auto& z= view->cells[i];
+      if (NNP(z.sprite) && z.value != nil) {
+        z.sprite->removeFromParent();
+        z.sprite= DrawSymbol(view, z.x, z.y, z.value, true);
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::DoDone(a::Node* node, Player& pobj) {
+
+  int pnum = pobj.pnum > 0 ? pobj.pnum : 0;
+
+  MGML()->SendMsg("/hud/timer/hide");
+  cx::SfxPlay("game_end");
+  MGML()->SendMsg("/hud/end", &pnum);
+
+  state->setObject(CC_INT(pnum), "lastWinner");
+  MGMS()->Pause();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::CheckDraw(a::Node* node, Grid* gd) {
+
+  auto nil= CC_CSV(c::Integer, "CV_Z");
+
+  return ! (s::find(s::begin(gd->values), s::end(gd->values), nil)
+    != gd->values.end());
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::CheckWin(a::Node* node,
+    Player& p, Grid* game,
+    s::array<int, BD_SZ>& combo) {
+
+  auto bd= CC_GNF(Board, node, "board");
+
+  CCLOG("checking win for %s", p.color.c_str());
+
+  for (auto it= bd->GOALS.begin(); it != bd->GOALS.end(); ++it) {
+    auto& g = *it;
+    int cnt=0;
+    for (int i=0; i < g.size(); ++i) {
+      auto pos = g[i];
+      if (game->values[pos] == p.value) {
+        ++cnt;
+      }
+    }
+    if (cnt == g.size()) {
+       // found a winning combo, this guy wins!
+      s::copy(s::begin(g), s::end(g), s::begin(combo));
+      return true;
+    }
+  }
+  return false;
+}
+
+
+
+
+
+NS_END(tttoe)
 

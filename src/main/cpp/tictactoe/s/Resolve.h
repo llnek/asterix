@@ -14,6 +14,7 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
+#include "n/cobjs.h"
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
@@ -25,21 +26,21 @@ protected:
   virtual bool OnUpdate(float);
   void SyncUp(a::Node*);
 
-  const c::Vec2 XrefCell(int pos, const f::FArray<>& map);
+  const c::Vec2 XrefCell(int pos, PlayView*);
 
   void DoIt(a::Node*, float);
-  void DoWin(a::Node*, f::ComObj*,
-      const s::array<int,DB_SZ>& combo);
+  void DoWin(a::Node*, Player&,
+      const s::array<int,BD_SZ>& combo);
 
-  void ShowWinningIcons(PlayView*, const FArray<int>&);
+  void ShowWinningIcons(a::Node*, const s::array<int, BD_SZ>&);
   void DoForfeit(a::Node*);
   void DoDraw(a::Node*);
 
-  void DoDone(a::Node*,  pobj, const s::array<int, BD_SZ>& combo);
-  void CheckDraw(values);
+  void DoDone(a::Node*, Player&);
+  bool CheckDraw(a::Node*, Grid*);
 
-  const FArray<int> CheckWin(int actor,
-      const FArray<int>& game);
+  bool CheckWin(a::Node*, Player&, Grid*,
+      s::array<int, BD_SZ>& combo);
 
   NO__CPYASS(Resolve)
   Resolve() = delete;
@@ -57,6 +58,7 @@ public:
     return "n/Resolve";
   }
 
+  a::NodeList* board;
 };
 
 
