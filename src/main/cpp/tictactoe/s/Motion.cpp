@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/MainGame.h"
 #include "Motions.h"
 NS_BEGIN(tttoe)
 
@@ -24,7 +25,15 @@ Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 Motions::~Motions() {
-  evQ.clear();
+  FlushQ();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::FlushQ() {
+  while (! evQ.empty()) {
+    evQ.pop();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,37 +46,23 @@ void Motions::AddToEngine(not_null<a::Engine*> e) {
   GUINode g;
   gui = e->GetNodeList(g.TypeId());
 
-  evQ.clear();
+  FlushQ();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::OnceOnly() {
-  let ws= this.state.wsock,
-  t, m, s;
-
-  if (MGMS()->IsOnline()) {
-    ws->ListenAll( [=](const ws::Event& evt) {
-      this->evQ.push_back(evt);
+  auto ws= MGMS()->WSOCK();
+  if (NNP(ws)) {
+    ws->Listen( [=](const ws::Event& evt) {
+      this->evQ.push(EventXXX(evt));
     });
   }
-
-  /*
-  t=Rx.Observable.create( obj => {
-    sh.main.signal('/touch/one/end',
-                   msg => obj.onNext(msg));
-  });
-  m=Rx.Observable.create( obj => {
-    sh.main.signal('/mouse/up',
-                   msg => obj.onNext(msg));
-  });
-  */
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Motions::OnUpdate(float dt) {
-  auto evt= evQ.empty() ? nullptr : evQ.pop();
   auto n= netplay->head;
   auto g= gui->head;
 
@@ -75,11 +70,14 @@ bool Motions::OnUpdate(float dt) {
     OnceOnly();
     inited=true;
   }
-  else if (NNP(evt)) {
-    if (evt->group == "net") {
-      if (NNP(n)) { OnNet(n, evt->event); }
+
+  if (evQ.size() > 0) {
+    auto evt= evQ.front();
+    evQ.pop();
+    if (evt.group == "net") {
+      if (NNP(n)) { OnSocket(n, evt.wsevent); }
     } else {
-      if (NNP(g)) { OnGUI(g,evt); }
+      if (NNP(g)) { OnGUI(g, evt.pos); }
     }
   }
 
@@ -102,6 +100,7 @@ void Motions::OnSocket(a::Node* node, const ws::Event& evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::OnNet(a::Node* node, const ws::Event& evt) {
+  auto msg= evt;
   switch (evt.code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
@@ -112,7 +111,7 @@ void Motions::OnNet(a::Node* node, const ws::Event& evt) {
         CCLOG("game will stop");
         MGML()->SendMsg("/hud/timer/hide");
         OnSess(node, evt);
-        MGML()->SendMsg("/net/stop", &evt);
+        MGML()->SendMsg("/net/stop", &msg);
       }
     break;
   }
@@ -124,16 +123,16 @@ void Motions::OnSess(a::Node* node, const ws::Event& evt) {
   auto ps= CC_GNF(Players, node, "players");
   auto grid= CC_GNF(Grid, node, "grid");
   auto snd="";
-  auto pnum= evt.doco["pnum"].GetInt();
-  auto p2=pnum;
+  auto source = evt.doco["source"];
+  auto cmd= source["cmd"];
+  auto pnum= source["pnum"].int_value();
 
-  if (evt.doco.HasMember("cmd")) {
-    auto cmd= evt.doco["cmd"];
-    auto cell= cmd["cell"].GetInt();
-    auto cv= cmd["value"].GetInt();
+  if (cmd.is_object()) {
+    auto cell= cmd["cell"].int_value();
+    auto cv= cmd["value"].int_value();
     if (cell >= 0 &&
-        cell < grid->values.Size()) {
-      if (ps->parr[1]->value == cv) {
+        cell < grid->values.size()) {
+      if (ps->parr[1].value == cv) {
         snd= "x_pick";
       } else {
         snd= "o_pick";
@@ -149,36 +148,36 @@ void Motions::OnSess(a::Node* node, const ws::Event& evt) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
       MGML()->SendMsg("/hud/timer/show");
-      state->setObject(CC_INT(pnum), "actor");
+      state->setObject(CC_INT(pnum), "pnum");
     break;
     case ws::EType::POKE_WAIT:
       CCLOG("player %d: my turn to wait", pnum);
       MGML()->SendMsg("/hud/timer/hide");
       // toggle color
-      p2= pnum == 1 ? 2 : 1;
-      state->setObject(CC_INT(p2), "actor");
+      auto p2= pnum == 1 ? 2 : 1;
+      state->setObject(CC_INT(p2), "pnum");
     break;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUI(a::Node* node, float x, float y) {
+void Motions::OnGUI(a::Node* node, const c::Vec2& pos) {
   auto sel = CC_GNF(UISelection, node, "selection");
-  auto map = CC_GNF(GridView, node, "view");//->gridMap;
-  auto cur = CC_GDV(c::Integer, state, "actor");
+  auto view = CC_GNF(PlayView, node, "view");
+  auto cur = CC_GDV(c::Integer, state, "pnum");
   auto n=0;
 
   //set the mouse/touch position
   sel->cell= -1;
-  sel->px = x;
-  sel->py = y;
+  sel->px = pos.x;
+  sel->py = pos.y;
 
-  if (cur <= 0) { return; }
+  if (cur >  0) {} else { return; }
 
   //which cell did he click on?
-  for (auto it= view->mpos.begin(); it != view->mpos.end(); ++it) {
-    auto bx = *it;
+  for (auto it= view->boxes.begin(); it != view->boxes.end(); ++it) {
+    auto& bx = *it;
     if (sel->px >= bx.left && sel->px <= bx.right &&
         sel->py >= bx.bottom && sel->py <= bx.top) {
       sel->cell= n;

@@ -14,10 +14,12 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
+#include "n/cobjs.h"
+#include <queue>
 
 NS_ALIAS(ws, fusii::wsock)
 NS_ALIAS(f, fusii)
-NS_ALIAS(a, Ash)
+NS_ALIAS(a, ash)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -25,17 +27,19 @@ NS_BEGIN(tttoe)
 class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
 
-  void OnSess(a::Node*, ws::Event& );
-  void OnGUI(a::Node* , ws::Event& );
-  void OnNet(a::Node*, ws::Event& );
-  void OnSocket(a::Node*, float);
+  void OnSess(a::Node*, const ws::Event& );
+  void OnGUI(a::Node* , const c::Vec2& );
+  void OnNet(a::Node*, const ws::Event& );
+  void OnSocket(a::Node*, const ws::Event&);
   void OnceOnly();
+  void FlushQ();
 
   virtual bool OnUpdate(float);
 
   NO__CPYASS(Motions)
   Motions() = delete;
 
+  s::queue<EventXXX> evQ;
   bool inited;
 
 public:
@@ -49,6 +53,9 @@ public:
   virtual const a::SystemType TypeId() {
     return "n/Motions";
   }
+
+  a::NodeList* netplay;
+  a::NodeList* gui;
 
 };
 

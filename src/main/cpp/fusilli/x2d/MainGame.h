@@ -15,6 +15,7 @@
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
 #include "core/XPool.h"
+#include "core/Odin.h"
 #include "XScene.h"
 #include "XGameLayer.h"
 #include <queue>
@@ -22,6 +23,7 @@
 #define MGMS() fusii::MainGame::Self()
 #define MGML() fusii::MainGame::Get()
 
+NS_ALIAS(ws, fusii::wsock)
 NS_BEGIN(fusii)
 
 enum class GMode { ONE, TWO, NET };
@@ -34,6 +36,8 @@ protected:
   s::map<stdstr, XPool*> pools;
   c::Dictionary* options;
   s::queue<stdstr> msgQ;
+  ws::WSockSS* wss;
+
   bool running;
   GMode mode;
   int level;
@@ -60,6 +64,7 @@ public:
   c::Dictionary* GetLCfg();
 
   s::queue<stdstr>& MsgQueue() { return msgQ; }
+  ws::WSockSS* WSOCK() { return wss; }
 
   virtual ~MainGame();
 };

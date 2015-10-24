@@ -12,11 +12,13 @@
 #if !defined(__COBJS_H__)
 #define __COBJS_H__
 
+#include "core/Odin.h"
 #include "core/CCSX.h"
 #include "ash/Ash.h"
 #include "s/utils.h"
 #define BD_SZ 3
 
+NS_ALIAS(ws, fusii::wsock)
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
@@ -46,6 +48,22 @@ struct ScoreUpdate {
   ScoreUpdate(const stdstr& c, int n) { color=c; score=n; }
   stdstr color;
   int score;
+};
+
+struct EventXXX {
+  EventXXX(const ws::Event& e) {
+     wsevent=e;
+     group="net";
+  }
+  EventXXX(const c::Vec2& v) {
+    group= "mouse";
+    pos= v;
+  }
+  EventXXX() = delete;
+  ~EventXXX() {}
+  ws::Event wsevent;
+  c::Vec2 pos;
+  stdstr group;
 };
 
 //////////////////////////////////////////////////////////////////////////////
