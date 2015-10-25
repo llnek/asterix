@@ -12,8 +12,10 @@
 #if !defined(__LOGIC_H__)
 #define __LOGIC_H__
 
+#include "2d/CCActionInterval.h"
 #include "core/BaseSystem.h"
 #include "EFactory.h"
+#include "n/cobjs.h"
 
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
@@ -23,9 +25,11 @@ NS_BEGIN(tttoe)
 class CC_DLL Logic : public f::BaseSystem<EFactory> {
 protected:
 
-  void OnEnqueue(int pnum, int cell, f::FArray<int>& grid);
-  void Enqueue(int pos, int value, f::FArray<int>& grid);
+  void OnEnqueue(a::Node*, int pnum, int cell, Grid*);
+  void Enqueue(a::Node*, int pos, int value, Grid*);
   void DoIt(a::Node*, float);
+
+  virtual bool OnUpdate(float);
 
   NO__CPYASS(Logic)
   Logic() = delete;
@@ -35,7 +39,6 @@ public:
   Logic(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void AddToEngine(not_null<a::Engine*>);
-  virtual bool OnUpdate(float);
 
   virtual int Priority() { return a::Logic; }
 
@@ -45,6 +48,8 @@ public:
     return "n/Logic";
   }
 
+  cocos2d::DelayTime* botTimer;
+  a::NodeList* board;
 };
 
 

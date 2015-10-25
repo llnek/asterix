@@ -15,33 +15,37 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 Config::Config() {
-  scale=1.0f;
+  scale = 1.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Config::~Config() {
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<f::XConfig*> Config::Reify() {
+  auto c =  mc_new(Config);
+  c->InitAssets();
+  c->InitCsts();
+  return c;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::InitCsts() {
-  AddCst("PLAYER_THINK_TIME", CC_INT(7));
-  AddCst("GRID_SIZE", CC_INT(3));
-  AddCst("CELLS", CC_INT(9));
-  AddCst("CV_Z", CC_INT(0));
-  AddCst("CV_X", CC_INT(0));
-  AddCst("CV_O", CC_INT(0));
 
-  AddCst("CV_O", CC_INT(0));
-  AddCst("CV_O", CC_INT(0));
+  AddCst("PLAYER_THINK_TIME", CC_INT(7));
+  AddCst("CV_Z", CC_INT(0));
+  AddCst("showFPS", CC_BOOL(false));
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::InitAssets() {
+
   AddAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
   AddAtlas("game-pics", CC_STR("pics/images.plist"));
 
@@ -59,11 +63,18 @@ void Config::InitAssets() {
   AddFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
   AddFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
+  AddFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  AddFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  AddFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  AddFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  AddFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  AddFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Config:::HandleResolution(const c::Size& rs) {
+void Config::HandleResolution(const c::Size& rs) {
   //for default font, we use 48pt
   scale = 52/256 * rs.width /320;
 }
@@ -80,7 +91,42 @@ void Config::RunOnce() {
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+const stdstr Config::GetWSUrl() {
+  return "";
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+const stdstr GetGameId() {
+  return "";
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+const stdstr GetRoomId() {
+  return "";
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::SetGameId(const stdstr& s) {
+
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::SetRoomId(const stdstr& s) {
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+owner<c::Scene*> Config::StartWith() {
+  return Splash::Reify();
+}
 
 NS_END(tttoe)
 

@@ -9,6 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "s/utils.h"
+#include "n/cobjs.h"
 #include "Splash.h"
 
 NS_BEGIN(tttoe)
@@ -22,26 +26,26 @@ public:
   virtual f::XLayer* Realize();
   NO__CPYASS(SplashLayer)
   IMPL_CTOR(SplashLayer)
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Demo() {
-  auto scale= 0.75,
+  auto scale= 0.75;
   auto fm= "";
-  auto ps= MapGridPos(3,scale);
+  auto ps= MapGridPos(scale);
 
   // we scale down the icons to make it look nicer
-  for (int i = 0; i < ps->Size(); ++i) {
+  for (auto i = 0; i < ps.size(); ++i) {
     // set up the grid icons
     if (i == 1 || i == 5 || i == 6 || i == 7) { fm= "x.png"; }
     else if (i == 0 || i == 4) { fm= "z.png"; }
     else { fm= "o.png"; }
-    auto sp= new c::Sprite(fm);
-    bx=cx::VBoxMID( ps->Get(i));
+    auto sp= cx::ReifySprite(fm);
+    auto bx= cx::VBoxMID( ps[i]);
     sp->setScale(scale);
-    sp->setPosition(bx.x,bx.y);
-    AddAtlasItem("game-pics",sp);
+    sp->setPosition(bx.x, bx.y);
+    AddAtlasItem("game-pics", sp);
   }
 }
 
@@ -62,7 +66,7 @@ f::XLayer* SplashLayer::Realize() {
   Demo();
 
   // play button
-  auto menu=  f::ReifyRefType<cocos2d::Menu>();
+  auto menu= f::ReifyRefType<cocos2d::Menu>();
   auto b1= cx::ReifyMenuBtn("play.png");
   b1->setTarget(getParent(),
       CC_MENU_SELECTOR(Splash::OnPlay));
@@ -96,5 +100,5 @@ void Splash::OnPlay(c::Ref* rr) {
 
 
 
+
 NS_END(tttoe)
-#endif

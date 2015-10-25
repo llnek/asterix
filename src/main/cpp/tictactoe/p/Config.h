@@ -15,7 +15,16 @@
 #include "core/XConfig.h"
 NS_BEGIN(tttoe)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Config : public f::XConfig {
+protected:
+
+  void InitAssets();
+  void InitCsts();
+
+  NO__CPYASS(Config)
+  float scale;
 public:
 
   virtual const stdstr AppKey() {
@@ -41,10 +50,13 @@ public:
   virtual const stdstr GetGameId();
   virtual const stdstr GetRoomId();
 
-  virtual void handleResolution(c::Size rs);
+  virtual void HandleResolution(const c::Size& rs);
 
-  virtual void runOnce();
+  virtual void RunOnce();
 
+  static owner<f::XConfig*> Reify();
+
+  DECL_CTOR(Config)
 };
 
 

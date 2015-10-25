@@ -17,7 +17,8 @@
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
-
+//////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Splash : public f::XScene {
 public:
 

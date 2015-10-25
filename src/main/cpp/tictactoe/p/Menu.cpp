@@ -9,24 +9,29 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "x2d/Online.h"
 #include "Menu.h"
+#include "Game.h"
+#include "n/cobjs.h"
 
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL MenuLayer : public f::XLayer {
 public:
+  virtual f::XLayer* Realize();
   void OnNetPlay(c::Ref*);
   void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
   NO__CPYASS(MenuLayer)
   IMPL_CTOR(MenuLayer)
-}
+};
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* MainMenuLayer::Realize() {
+f::XLayer* MenuLayer::Realize() {
   //auto c= cx::ColorRGB("#f6b17f");
   auto c= cx::ColorRGB("#5E3178");
   auto wb=cx::VisBox();
@@ -42,48 +47,66 @@ f::XLayer* MainMenuLayer::Realize() {
   lb->setScale(XCFG()->GetScale());
   AddItem(lb);
 
-  auto menu=  f::ReifyRefType<cocos2d::Menu>();
+  auto menu= f::ReifyRefType<cocos2d::Menu>();
+  auto tile = CC_CSV(c::Integer,"TILE");
+  auto nil = CC_CSV(c::Integer,"CV_Z");
   auto b= cx::ReifyMenuBtn("online.png");
   auto seed= f::ReifyRefType<SeedData>();
-  seed->mode = f::GMode::ONLINE;
+  seed->mode = f::GMode::NET;
+  seed->data.fill(nil);
   b->setUserObject(seed);
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnNetPlay));
   menu->addChild(b);
 
-  //p[ sh.l10n('%p1') ] = [ 1, sh.l10n('%player1') ];
-  //p[ sh.l10n('%p2') ] = [ 2, sh.l10n('%player2') ];
+  // one player
   seed= f::ReifyRefType<SeedData>();
   seed->mode = f::GMode::TWO;
+  seed->data.fill(nil);
+
+  seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
+    1, XCFG()->GetL10NStr("player1") };
+  seed->ppids[ XCFG()->GetL10NStr("p2") ] = j::Json::array {
+    2, XCFG()->GetL10NStr("player2") };
+
   b= cx::ReifyMenuBtn("player2.png");
   b->setUserObject(seed);
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   menu->addChild(b);
 
-  //p[ sh.l10n('%cpu') ] = [ 2, sh.l10n('%computer') ];
-  //p[ sh.l10n('%p1') ] = [ 1,  sh.l10n('%player1') ];
+  // two player
   seed= f::ReifyRefType<SeedData>();
   seed->mode = f::GMode::ONE;
+  seed->data.fill(nil);
+
+  seed->ppids[ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
+    2, XCFG()->GetL10NStr("computer") };
+  seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
+    1, XCFG()->GetL10NStr("player1") };
+
   b= cx::ReifyMenuBtn("player1.png");
   b->setUserObject(seed);
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   menu->addChild(b);
+
+  // add the menu
   menu->setPosition(cw);
   AddItem(menu);
 
   // back-quit button
-  auto b= cx::ReifyMenuBtn("icon_back.png");
-  b->setTarget(this,
+  auto back= cx::ReifyMenuBtn("icon_back.png");
+  back->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnBack));
-  b->setColor(c::Color3B(c[0],c[1],c[2]));
-  auto q= cx::ReifyMenuBtn("icon_quit.png");
-  q->setTarget(this,
+  back->setColor(c::Color3B(c[0],c[1],c[2]));
+  auto quit= cx::ReifyMenuBtn("icon_quit.png");
+  quit->setTarget(this,
       CC_MENU_SELECTOR(XLayer::OnQuit));
-  q->setColor(c::Color3B(c[0],c[1],c[2]));
-  auto m2= cx::MkBackQuit(b, q, false);
-  auto sz= b->getContentSize();
+  quit->setColor(c::Color3B(c[0],c[1],c[2]));
+
+  auto m2= cx::MkBackQuit(back, quit, false);
+  auto sz= back->getContentSize();
 
   m2->setPosition(wb.left + tile + sz.width * 1.1,
                   wb.bottom + tile + sz.height * 0.45);
@@ -106,19 +129,23 @@ f::XLayer* MainMenuLayer::Realize() {
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnNetPlay(c::Ref* r) {
-  auto ol = f::ReifyRefType<Online>();
-  auto y= []() { cx::RunScene(MainGame::Reify()); }
+  auto ol = f::ReifyRefType<f::Online>();
+  auto y= []() { };//cx::RunScene(Game::Reify()); }
   auto yes= c::CallFunc::create(y);
-  auto n= []() { cx::RunScene(MainMenu::Reify()); }
+
+  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
+  auto a= c::CallFunc::create(f);
+  auto n= []() { cx::RunScene(MainMenu::ReifyWithBackAction(a)); };
   auto no= c::CallFunc::create(n);
-  auto s= Online::Reify(ol, yes,no);
+
+  auto s= f::Online::Reify(ol, yes,no);
   cx::RunScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay(c::Ref* r) {
-  cx::RunScene( MainGame::Reify() );
+  cx::RunScene( nullptr);//Game::Reify() );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -158,4 +185,6 @@ MainMenu::MainMenu() {
   SNPTR(backAction)
 }
 
+
 NS_END(tttoe)
+

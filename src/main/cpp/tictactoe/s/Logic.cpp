@@ -9,8 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "dropbox/json11.hpp"
+#include "algos/NegaMax.h"
+#include "x2d/MainGame.h"
+#include "core/Odin.h"
 #include "Logic.h"
 NS_BEGIN(tttoe)
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -19,6 +24,7 @@ Logic::Logic(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   : f::BaseSystem(f,d) {
 
   SNPTR(botTimer)
+  SNPTR(board)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,49 +41,51 @@ bool Logic::OnUpdate(float dt) {
   if (MGMS()->IsRunning() && NNP(node)) {
     DoIt(node, dt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Logic::DoIt(a::Node* node, float dt) {
 
-  auto pnum= CC_GDV(c::Integer, state, "actor");
+  auto pnum= CC_GDV(c::Integer, state, "pnum");
   auto ps = CC_GNF(Players, node, "players");
   auto bot= CC_CSV(c::Integer, "BOT");
-  auto cp= ps->parr[cur];
+  auto cp= ps->parr[pnum];
 
   auto sel= CC_GNF(UISelection, node, "selection");
   auto board= CC_GNF(Board, node, "board");
   auto grid= CC_GNF(Grid, node, "grid");
-  auto bot= CC_GNF(SmartAlgo, node, "robot");
+  auto robot= CC_GNF(SmartAlgo, node, "robot");
 
   //handle online play
   if (MGMS()->IsOnline()) {
     //if the mouse click is from the valid user, handle it
-    if (NNP(cp) && (pnum == cp->pnum)) {
-      Enqueue(sel->cell, cp->value, grid);
+    if (pnum == cp.pnum) {
+      Enqueue(node, sel->cell, cp.value, grid);
     }
   }
   else
-  if (cp->category == bot) {
+  if (cp.category == bot) {
     // for the bot, create some small delay...
     if (NNP(botTimer) &&
         cx::TimerDone(botTimer)) {
-      auto bd= bot->algo->board;
-      bd->SyncState(grid->values, ps->parr[cur]->value);
+      auto bd= robot->board;
+      int rc=0;
+      bd->SyncState(grid->values, cp.value);
       rc= bd->GetFirstMove();
-      if (rc < 0) { rc = bot->algo->Eval(); }
-      Enqueue(rc,cp->value, grid);
+      if (rc < 0) { rc = fusii::algos::EvalNegaMax<BD_SZ>(bd); }
+      Enqueue(node, rc,cp.value, grid);
       cx::UndoTimer(botTimer);
       SNPTR(botTimer)
     } else {
-      botTimer = cx::CreateTimer(MGML(), 0.6);
+      botTimer = cx::ReifyTimer(MGML(), 0.6);
     }
   }
   else
   if (sel->cell >= 0) {
     //possibly a valid click ? handle it
-    Enqueue(sel->cell, cp->value, grid);
+    Enqueue(node, sel->cell, cp.value, grid);
   }
 
   sel->cell= -1;
@@ -85,36 +93,38 @@ void Logic::DoIt(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Logic::Enqueue(int pos, int value, Grid* grid) {
+void Logic::Enqueue(a::Node* node, int pos, int value, Grid* grid) {
 
-  auto cur = CC_GDV(c::Integer, state, "actor");
+  auto cur = CC_GDV(c::Integer, state, "pnum");
   auto nil = CC_CSV(c::Integer, "CV_Z");
+  auto ps= CC_GNF(Players, node, "players");
   auto human= CC_CSV(c::Integer,"HUMAN");
-  auto pnum=0;
+  auto other=0;
   auto snd="";
 
-  if ((pos >= 0 && pos < grid->values.Size()) &&
+  if ((pos >= 0 && pos < grid->values.size()) &&
       nil == grid->values[pos]) {
 
     MGML()->SendMsg("/hud/timer/hide");
 
     if (MGMS()->IsOnline()) {
-      OnEnqueue(cur, pos, grid);
+      OnEnqueue(node, cur, pos, grid);
     } else {
       if (cur == 1) {
         snd= "x_pick";
-        pnum = 2;
+        other = 2;
       } else {
         snd= "o_pick";
-        pnum = 1;
+        other = 1;
       }
 
-      state->setObject(c::Integer::create(pnum), "actor");
+      // switch player
+      state->setObject(CC_INT(other), "pnum");
       grid->values[pos] = value;
       cx::SfxPlay(snd);
 
-      if (ps->parr[pnum]->category == human) {
-        MGMS()->SendMsg("/hud/timer/show");
+      if (ps->parr[other].category == human) {
+        MGML()->SendMsg("/hud/timer/show");
       }
     }
   }
@@ -122,26 +132,22 @@ void Logic::Enqueue(int pos, int value, Grid* grid) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Logic::OnEnqueue(int pnum, int cell, Grid* grid) {
+void Logic::OnEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto ps = CC_GNF(Players, node, "players");
-  /*TODO: fix me
-  const src= {
-    color: ps->parr[pnum]->color,
-    value: ps->parr[pnum]->value,
-    grid: grid->values,
-    cell: cell
-  }
-  */
-  auto snd = pnum == 1 ? "x_pick" : "o_pick";
-  /*TODO: fix me
-  evt= {
-    source: sjs.jsonfy(src),
-    type: evts.MSG_SESSION,
-    code: evts.PLAY_MOVE
+  auto body = j::Json::object {
+    { "color", ps->parr[pnum].color },
+    { "value", ps->parr[pnum].value },
+    { "grid", grid->values },
+    { "cell", cell }
   };
-  MGMS()->NetSend(evt);
-  */
-  state->setObject(c::Integer::create(0), "actor");
+
+  auto snd = pnum == 1 ? "x_pick" : "o_pick";
+  auto c = ws::EType::PLAY_MOVE;
+  auto t = ws::MType::SESSION;
+
+  MGMS()->NetSend(ws::Event(t,c, body));
+
+  state->setObject(CC_INT(0), "pnum");
   cx::SfxPlay(snd);
 }
 
