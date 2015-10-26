@@ -57,9 +57,6 @@ void GameLayer::Play() {
   Reset(true);
   InitAsh();
 
-  //csts.CELLS = this.options.size*this.options.size;
-  //csts.GRID_SIZE= this.options.size;
-
   // sort out names of players
   let p1ids, p2ids;
   sjs.eachObj((v,k) => {
@@ -92,8 +89,6 @@ void GameLayer::Reset(bool newFlag) {
     RegoAtlas("lang-pics");
   }
 
-  lastWinner=undef;
-
   if (newFlag) {
     GetHUD()->ResetAsNew();
   } else {
@@ -108,39 +103,39 @@ void GameLayer::Reset(bool newFlag) {
 //
 void GameLayer::UpdateHUD() {
   if (MGMS()->IsRunning()) {
-    GetHUD()->DrawStatus(this.actor);
+    GetHUD()->DrawStatus(CC_GDV(c::Integer, options, "pnum"));
   } else {
-    GetHUD()->DrawResult(this.lastWinner);
+    GetHUD()->DrawResult(CC_GDV(c::Integer, options, "lastWinner"));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::PlayTimeExpired(msg) {
-  this.options.msgQ.push("forfeit");
+void GameLayer::PlayTimeExpired() {
+  MGMS()->MsgQueue().push("forfeit");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::InitPlayers() {
-  let p2cat, p1cat,
-  p2, p1;
+  auto human = CC_CSV(c::Integer, "HUMAN");
+  auto bot = CC_CSV(c::Integer, "BOT");
+  auto netp = CC_CSV(c::Integer, "NETP");
+  int p1cat, p2cat;
 
   if (mode == f::GMode::NET) {
-
-      p2cat = csts.NETP;
-      p1cat = csts.NETP;
+    p2cat = netp;
+    p1cat = netp;
   }
   else
   if (mode == f::GMode::ONE) {
-
-      p1cat= csts.HUMAN;
-      p2cat= csts.BOT;
+    p1cat= human;
+    p2cat= bot;
   }
   else
   if (mode == f::GMode::TWO) {
-      p2cat= csts.HUMAN;
-      p1cat= csts.HUMAN;
+    p2cat= human;
+    p1cat= human;
   }
 
   p1= new cobjs.Player(p1cat, csts.CV_X, 1, csts.P1_COLOR);
