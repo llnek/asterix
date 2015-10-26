@@ -9,9 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/Odin.h"
 #include "Game.h"
 
+NS_ALIAS(ws, fusii::wsock);
 NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(cc, cocos2d)
+NS_ALIAS(s, std)
+NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 
@@ -34,10 +39,10 @@ public:
 void GameLayer::Replay() {
   if (MGMS()->IsOnline()) {
     // request server to restart a new game
-    this.options.wsock.send({
-      type: evts.MSG_SESSION,
-      code: evts.REPLAY
-    });
+    ws::Send(MGMS()->WSOCK(), ws::Event(
+      ws::MType::SESSION,
+      ws::EType::REPLAY
+    ));
   } else {
     InizGame();
     Reset(false);
@@ -51,7 +56,6 @@ void GameLayer::Replay() {
 void GameLayer::Play() {
   Reset(true);
   InitAsh();
-  GetScene()->Resume();
 
   //csts.CELLS = this.options.size*this.options.size;
   //csts.GRID_SIZE= this.options.size;
@@ -71,6 +75,8 @@ void GameLayer::Play() {
   GetHUD()->RegoPlayers(csts.P1_COLOR, p1ids,
                             csts.P2_COLOR, p2ids);
   this.options.msgQ = [];
+
+  GetScene()->Resume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
