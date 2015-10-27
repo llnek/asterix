@@ -34,7 +34,7 @@ class CC_DLL MainGame : public XScene {
 protected:
 
   s::map<stdstr, XPool*> pools;
-  c::Dictionary* options;
+  c::Dictionary* seedData;
   s::queue<stdstr> msgQ;
   ws::WSockSS* wss;
 

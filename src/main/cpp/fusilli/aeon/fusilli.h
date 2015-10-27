@@ -15,10 +15,14 @@
 #include "GSL/gsl.h"
 
 #include <functional>
+#include <queue>
+#include <vector>
+#include <array>
+#include <map>
+#include <string>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 
 typedef std::string stdstr;
 

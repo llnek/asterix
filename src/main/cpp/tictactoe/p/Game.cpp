@@ -71,8 +71,8 @@ void GameLayer::Play() {
 
   GetHUD()->RegoPlayers(csts.P1_COLOR, p1ids,
                             csts.P2_COLOR, p2ids);
-  this.options.msgQ = [];
 
+  f::EmptyQueue( MGMS()->MsgQueue() );
   GetScene()->Resume();
 }
 
@@ -118,10 +118,18 @@ void GameLayer::PlayTimeExpired() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::InitPlayers() {
+
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot = CC_CSV(c::Integer, "BOT");
   auto netp = CC_CSV(c::Integer, "NETP");
-  int p1cat, p2cat;
+
+  auto p1c= CC_CSV(c::Integer, "P1_COLOR");
+  auto p2c= CC_CSV(c::Integer, "P2_COLOR");
+  auto vx= CC_CSV(c::Integer, "CV_X");
+  auto vo= CC_CSV(c::Integer, "CV_O");
+
+  auto p1cat= human;
+  auto p2cat= bot;
 
   if (mode == f::GMode::NET) {
     p2cat = netp;
@@ -129,21 +137,16 @@ void GameLayer::InitPlayers() {
   }
   else
   if (mode == f::GMode::ONE) {
-    p1cat= human;
-    p2cat= bot;
   }
   else
   if (mode == f::GMode::TWO) {
     p2cat= human;
-    p1cat= human;
+    //p1cat= human;
   }
 
-  p1= new cobjs.Player(p1cat, csts.CV_X, 1, csts.P1_COLOR);
-  p2= new cobjs.Player(p2cat, csts.CV_O, 2, csts.P2_COLOR);
-  this.options.players = [null,p1,p2];
-  this.options.colors={};
-  this.options.colors[csts.P1_COLOR] = p1;
-  this.options.colors[csts.P2_COLOR] = p2;
+  p1= new Player(p1cat, vx, 1, p1c);
+  p2= new Player(p2cat, vo, 2, p2c);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

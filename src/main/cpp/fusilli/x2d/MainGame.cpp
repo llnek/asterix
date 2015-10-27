@@ -34,16 +34,17 @@ MainGame::~MainGame() {
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
-  if (NNP(options)) { options->release(); }
+  if (NNP(seedData)) { seedData->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainGame::MainGame() {
   mode = GMode::ONE;
+  SNPTR(seedData)
+  SNPTR(wss)
   level = 1;
   running=false;
-  SNPTR(options);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +88,7 @@ void MainGame::ResetPools() {
 //////////////////////////////////////////////////////////////////////////
 //
 void MainGame::SetMode(GMode m, c::Dictionary* d) {
-  this->options = d;
+  this->seedData = d;
   d->retain();
   this->mode= m;
 }

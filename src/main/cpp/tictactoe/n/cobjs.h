@@ -202,6 +202,8 @@ public:
   NO__CPYASS(Player)
   Player() = delete;
 
+  stdstr pidlong;
+  stdstr pid;
   stdstr color;
   int pnum;
   int category;

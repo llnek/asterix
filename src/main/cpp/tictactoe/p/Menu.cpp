@@ -51,34 +51,19 @@ f::XLayer* MenuLayer::Realize() {
   auto tile = CC_CSV(c::Integer,"TILE");
   auto nil = CC_CSV(c::Integer,"CV_Z");
   auto b= cx::ReifyMenuBtn("online.png");
-  auto seed= f::ReifyRefType<SeedData>();
-  seed->mode = f::GMode::NET;
-  seed->data.fill(nil);
-  b->setUserObject(seed);
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnNetPlay));
   menu->addChild(b);
 
-  // one player
-  seed= f::ReifyRefType<SeedData>();
-  seed->mode = f::GMode::TWO;
-  seed->data.fill(nil);
+  b= cx::ReifyMenuBtn("player2.png");
+  b->setTarget(this,
+      CC_MENU_SELECTOR(MenuLayer::OnPlay));
+  menu->addChild(b);
 
   seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
     1, XCFG()->GetL10NStr("player1") };
   seed->ppids[ XCFG()->GetL10NStr("p2") ] = j::Json::array {
     2, XCFG()->GetL10NStr("player2") };
-
-  b= cx::ReifyMenuBtn("player2.png");
-  b->setUserObject(seed);
-  b->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  menu->addChild(b);
-
-  // two player
-  seed= f::ReifyRefType<SeedData>();
-  seed->mode = f::GMode::ONE;
-  seed->data.fill(nil);
 
   seed->ppids[ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
     2, XCFG()->GetL10NStr("computer") };
@@ -86,7 +71,6 @@ f::XLayer* MenuLayer::Realize() {
     1, XCFG()->GetL10NStr("player1") };
 
   b= cx::ReifyMenuBtn("player1.png");
-  b->setUserObject(seed);
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   menu->addChild(b);
@@ -126,6 +110,21 @@ f::XLayer* MenuLayer::Realize() {
   return this;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void MenuLayer::MakeSeedData() {
+
+}
+
+seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
+    1, XCFG()->GetL10NStr("player1") };
+  seed->ppids[ XCFG()->GetL10NStr("p2") ] = j::Json::array {
+    2, XCFG()->GetL10NStr("player2") };
+
+  seed->ppids[ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
+    2, XCFG()->GetL10NStr("computer") };
+  seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
+    1, XCFG()->GetL10NStr("player1") };
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnNetPlay(c::Ref* r) {
