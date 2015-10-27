@@ -179,7 +179,7 @@ void Online::OnPlayRequest(const stdstr& uid, const stdstr& pwd) {
       pwd.length() == 0) { return; }
 
   wss= ws::ReifyPlayRequest(game, uid, pwd);
-  wss->Listen(ws::MType::EVERYTHING, [=](const ws::Event& e) {
+  wss->Listen([=](const ws::Event& e) {
       this->OnOdinEvent(e);
       });
   ws::Connect(wss,wsurl);
@@ -206,16 +206,22 @@ void Online::OnNetworkEvent(const ws::Event& evt) {
     case ws::EType::START:
       CCLOG("play room is ready, game can start");
       wss->CancelAll();
-      OnContinue();
+      OnStart(evt);
     break;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnContinue() {
-      // flip to game scene
-   //OnContinue(this.wss, this.player, evt.source);
+void Online::OnStart(const ws::Event& evt) {
+  auto s= XCFG()->GetSeedData();
+
+  s["ppids"] = evt.source["ppids"];
+  s["pnum"]= player;
+
+  MGMS()->SetOnlineChannel(wss);
+  SNPTR(wss)
+  yes->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -223,8 +229,8 @@ void Online::OnContinue() {
 void Online::OnSessionEvent(const ws::Event& evt) {
   switch (evt.code) {
     case ws::EType::PLAYREQ_OK:
-      //CCLOG("player %d: request to play game was successful",evt.source.pnum);
-      //player=evt.source.pnum;
+      player=evt.source["pnum"].int_value();
+      CCLOG("player %d: request to play game was ok", player);
       SCAST(OnlineLayer*, GetLayer(1))->ShowWaitOthers();
     break;
   }

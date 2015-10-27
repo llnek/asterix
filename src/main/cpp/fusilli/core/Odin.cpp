@@ -16,7 +16,7 @@ NS_ALIAS(n, cocos2d::network)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
-NS_BEGIN(wsock)
+NS_BEGIN(odin)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -334,6 +334,6 @@ n::WebSocket* Connect(not_null<WSockSS*> wss, const stdstr& url) {
 
 
 
-NS_END(wsock)
+NS_END(odin)
 NS_END(fusii)
 

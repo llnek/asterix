@@ -34,14 +34,12 @@ MainGame::~MainGame() {
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
-  if (NNP(seedData)) { seedData->release(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainGame::MainGame() {
   mode = GMode::ONE;
-  SNPTR(seedData)
   SNPTR(wss)
   level = 1;
   running=false;
@@ -87,20 +85,21 @@ void MainGame::ResetPools() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MainGame::SetMode(GMode m, c::Dictionary* d) {
-  this->seedData = d;
-  d->retain();
+void MainGame::SetMode(GMode m) {//, c::Dictionary* d) {
   this->mode= m;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 MainGame* MainGame::Reify(not_null<MainGame*> g, GMode mode) {
-  return Reify(g, mode, c::Dictionary::create());
+  g->SetMode(mode);
+  g->Realize();
+  return g;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
+/*
 MainGame* MainGame::Reify(not_null<MainGame*> g,
     GMode mode,
     not_null<c::Dictionary*> options) {
@@ -109,7 +108,7 @@ MainGame* MainGame::Reify(not_null<MainGame*> g,
   g->Realize();
   return g;
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////
 //
 void MainGame::Bind(not_null<MainGame*> m) {

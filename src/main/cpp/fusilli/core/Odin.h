@@ -21,7 +21,7 @@ NS_ALIAS(j, json11)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
-NS_BEGIN(wsock)
+NS_BEGIN(odin)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -161,7 +161,7 @@ owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
 
 
 
-NS_END(wsock)
+NS_END(odin)
 NS_END(fusii)
 #endif
 

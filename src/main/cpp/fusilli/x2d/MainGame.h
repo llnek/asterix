@@ -34,7 +34,6 @@ class CC_DLL MainGame : public XScene {
 protected:
 
   s::map<stdstr, XPool*> pools;
-  c::Dictionary* seedData;
   s::queue<stdstr> msgQ;
   ws::WSockSS* wss;
 
@@ -42,7 +41,8 @@ protected:
   GMode mode;
   int level;
 
-  virtual void SetMode(GMode, c::Dictionary*);
+  //virtual void SetMode(GMode, c::Dictionary*);
+  virtual void SetMode(GMode);
   virtual XGameLayer* GetGLayer() = 0;
 
   static void Bind(not_null<MainGame*>);
@@ -52,7 +52,7 @@ protected:
 
 public:
 
-  static MainGame* Reify(not_null<MainGame*>, GMode, not_null<c::Dictionary*> );
+  //static MainGame* Reify(not_null<MainGame*>, GMode, not_null<c::Dictionary*> );
   static MainGame* Reify(not_null<MainGame*>, GMode);
 
   static XGameLayer* Get();

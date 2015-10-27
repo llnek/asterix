@@ -14,9 +14,10 @@
 
 #include "core/Odin.h"
 #include "XScene.h"
+
+NS_ALIAS(o, fusii::odin)
 NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
-NS_ALIAS(ws, fusii::wsock)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -29,12 +30,13 @@ protected:
   void OnOdinEvent(const ws::Event&);
   void OnNetworkEvent(const ws::Event&);
 
-  void OnContinue();
+  void OnStart(const ws::Event&);
 
   Online();
 
   c::CallFunc* yes;
   c::CallFunc* no;
+  int player;
   ws::WSockSS* wss;
 
 private:

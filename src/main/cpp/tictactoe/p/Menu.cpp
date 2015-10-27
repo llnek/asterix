@@ -51,29 +51,23 @@ f::XLayer* MenuLayer::Realize() {
   auto tile = CC_CSV(c::Integer,"TILE");
   auto nil = CC_CSV(c::Integer,"CV_Z");
   auto b= cx::ReifyMenuBtn("online.png");
+  int tag = (int) f::GMode::NET;
+
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnNetPlay));
-  menu->addChild(b);
+  menu->addChild(b,nullptr,&tag);
 
   b= cx::ReifyMenuBtn("player2.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  menu->addChild(b);
-
-  seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
-    1, XCFG()->GetL10NStr("player1") };
-  seed->ppids[ XCFG()->GetL10NStr("p2") ] = j::Json::array {
-    2, XCFG()->GetL10NStr("player2") };
-
-  seed->ppids[ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
-    2, XCFG()->GetL10NStr("computer") };
-  seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
-    1, XCFG()->GetL10NStr("player1") };
+  tag= (int) f::GMode::TWO;
+  menu->addChild(b,nullptr,&tag);
 
   b= cx::ReifyMenuBtn("player1.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  menu->addChild(b);
+  tag= (int) f::GMode:ONE;
+  menu->addChild(b,nullptr,&tag);
 
   // add the menu
   menu->setPosition(cw);
@@ -112,19 +106,34 @@ f::XLayer* MenuLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::MakeSeedData() {
+void MenuLayer::MaybeSeedGame(f::GMode m) {
 
+  auto j::Json seed = j::Json::object {
+    {"ppids", j::Json::object {} }
+  };
+
+  switch (m) {
+    case f::GMode::ONE:
+      seed["ppids"][ XCFG()->GetL10NStr("p1") ] = j::Json::array {
+        1, XCFG()->GetL10NStr("player1") };
+      seed["ppids"][ XCFG()->GetL10NStr("p2") ] = j::Json::array {
+        2, XCFG()->GetL10NStr("player2") };
+    break;
+
+    case f::GMode::TWO:
+      seed["ppids"][ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
+        2, XCFG()->GetL10NStr("computer") };
+      seed["ppids"][ XCFG()->GetL10NStr("p1") ] = j::Json::array {
+        1, XCFG()->GetL10NStr("player1") };
+    break;
+
+    case f::GMode::NET:
+    break;
+  }
+
+  XCFG()->SetSeed(seed);
 }
 
-seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
-    1, XCFG()->GetL10NStr("player1") };
-  seed->ppids[ XCFG()->GetL10NStr("p2") ] = j::Json::array {
-    2, XCFG()->GetL10NStr("player2") };
-
-  seed->ppids[ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
-    2, XCFG()->GetL10NStr("computer") };
-  seed->ppids[ XCFG()->GetL10NStr("p1") ] = j::Json::array {
-    1, XCFG()->GetL10NStr("player1") };
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnNetPlay(c::Ref* r) {
@@ -138,12 +147,16 @@ void MenuLayer::OnNetPlay(c::Ref* r) {
   auto no= c::CallFunc::create(n);
 
   auto s= f::Online::Reify(ol, yes,no);
+
+  MaybeSeedGame(f::GMode::NET);
   cx::RunScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay(c::Ref* r) {
+  auto tag = SCAST(c::Node*, r)->getTag();
+  MaybeSeedGame( (f::GMode) tag);
   cx::RunScene( nullptr);//Game::Reify() );
 }
 
