@@ -45,6 +45,9 @@ protected:
   virtual void InitKeys();
   virtual void InitTouch();
 
+  virtual void InizGame();
+  virtual void FinzGame();
+
   virtual void OnGameOver() = 0;
 
   NO__CPYASS(XGameLayer)
@@ -69,9 +72,6 @@ public:
   XLayer* GetBackgd(int tag= 1);
   XHUDLayer* GetHUD(int tag=3);
 
-  void InizGame();
-  void FinzGame();
-
   void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
   void OnKeyPressed(c::EventKeyboard::KeyCode, c::Event* );
 
@@ -80,6 +80,7 @@ public:
   void OnMouseUp(c::Event*);
   void OnMouseScroll(c::Event*);
 
+  virtual XLayer* Realize();
 
 };
 

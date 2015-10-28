@@ -95,6 +95,7 @@ void MainGame::SetMode(GMode m) {//, c::Dictionary* d) {
 MainGame* MainGame::Reify(not_null<MainGame*> g, GMode mode) {
   g->SetMode(mode);
   g->Realize();
+  g->Play();
   return g;
 }
 

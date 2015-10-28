@@ -12,7 +12,7 @@
 #include "core/Odin.h"
 #include "Game.h"
 
-NS_ALIAS(ws, fusii::odin);
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
@@ -34,6 +34,66 @@ public:
   IMPL_CTOR(BGLayer)
 };
 
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::InizGame() {
+  CCLOG("about to init-game");
+
+  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
+    it->second->removeAllChildren();
+  }
+
+  if (atlases.empty()) {
+    RegoAtlas("game-pics");
+    RegoAtlas("lang-pics");
+  }
+
+  f::EmptyQueue( MGMS()->MsgQueue() );
+  MkAsh();
+
+  auto p1c= CC_CSV(c::String, "P1_COLOR")->getCString();
+  auto p2c= CC_CSV(c::String, "P2_COLOR")->getCString();
+  auto seed = XCFG()->GetSeedData();
+  auto ppids = seed["ppids"];
+  stdstr p1k;
+  stdstr p2k;
+  stdstr p1n;
+  stdstr p2n;
+
+  for (auto it=ppids.begin(); it != ppids.end(); ++it) {
+    auto arr= it->second;
+    if (arr[0].int_value() == 1) {
+      p1k= it->first;
+      p1n= arr[1].string_value();
+    } else {
+      p2k= it->first;
+      p2n= arr[1].string_value();
+    }
+  }
+
+  GetHUD()->RegoPlayers(p1c, p1k, p1n,
+                        p2c, p2k, p2n);
+  GetHUD()->Reset();
+
+  options->setObject(CC_INT(0), "lastWinner");
+
+  CCLOG("init-game - ok");
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::MkAsh() {
+  auto e = a::Engine::Reify();
+  auto d = CC_DICT();
+  auto f = new EFactory(e, d);
+  e->RegoSystem(new Stager(f, d));
+  e->RegoSystem(new Motion(f, d));
+  e->RegoSystem(new Logic(f, d));
+  e->RegoSystem(new Resolve(f, d));
+  this->factory=f;
+  this->engine = e;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::Replay() {
@@ -53,54 +113,6 @@ void GameLayer::Replay() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::Play() {
-  Reset(true);
-  InitAsh();
-
-  // sort out names of players
-  let p1ids, p2ids;
-  sjs.eachObj((v,k) => {
-    if (v[0] === 1) {
-      p1ids= [k, v[1] ];
-    } else {
-      p2ids= [k, v[1] ];
-    }
-  }, this.options.ppids);
-
-  InitPlayers();
-
-  GetHUD()->RegoPlayers(csts.P1_COLOR, p1ids,
-                            csts.P2_COLOR, p2ids);
-
-  f::EmptyQueue( MGMS()->MsgQueue() );
-  GetScene()->Resume();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::Reset(bool newFlag) {
-
-  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
-    it->second->removeAllChildren();
-  }
-
-  if (atlases.empty()) {
-    RegoAtlas("game-pics");
-    RegoAtlas("lang-pics");
-  }
-
-  if (newFlag) {
-    GetHUD()->ResetAsNew();
-  } else {
-    GetHUD()->Reset();
-  }
-
-  mc_del_ptr(factory)
-  mc_del_ptr(engine)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GameLayer::UpdateHUD() {
   if (MGMS()->IsRunning()) {
     GetHUD()->DrawStatus(CC_GDV(c::Integer, options, "pnum"));
@@ -113,40 +125,6 @@ void GameLayer::UpdateHUD() {
 //
 void GameLayer::PlayTimeExpired() {
   MGMS()->MsgQueue().push("forfeit");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::InitPlayers() {
-
-  auto human = CC_CSV(c::Integer, "HUMAN");
-  auto bot = CC_CSV(c::Integer, "BOT");
-  auto netp = CC_CSV(c::Integer, "NETP");
-
-  auto p1c= CC_CSV(c::Integer, "P1_COLOR");
-  auto p2c= CC_CSV(c::Integer, "P2_COLOR");
-  auto vx= CC_CSV(c::Integer, "CV_X");
-  auto vo= CC_CSV(c::Integer, "CV_O");
-
-  auto p1cat= human;
-  auto p2cat= bot;
-
-  if (mode == f::GMode::NET) {
-    p2cat = netp;
-    p1cat = netp;
-  }
-  else
-  if (mode == f::GMode::ONE) {
-  }
-  else
-  if (mode == f::GMode::TWO) {
-    p2cat= human;
-    //p1cat= human;
-  }
-
-  p1= new Player(p1cat, vx, 1, p1c);
-  p2= new Player(p2cat, vo, 2, p2c);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -203,38 +181,19 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
 
 }
 
+/* scene */
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::Resume() {
+void Game::Play() {
   running= true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::Run() {
-  running= true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::Pause() {
+void Game::Stop() {
   running= false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Game::IsRunning() {
-  return running;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Game::~Game() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Game::Game() {
 }
 
 //////////////////////////////////////////////////////////////////////////

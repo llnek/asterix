@@ -23,7 +23,7 @@ class CC_DLL GameLayer : public f::XGameLayer {
 private:
   NO__CPYASS(GameLayer)
   EFactory* factory;
-  void InitAsh();
+  void MkAsh();
 public:
 
   virtual void SendMsg(const stdstr& topic, void* msg);
@@ -37,7 +37,7 @@ public:
   void SpawnPlayer();
 
   virtual int GetIID() { return 2; }
-  virtual f::XLayer* Realize();
+  virtual void InizGame();
 
   DECL_CTOR(GameLayer)
 };
@@ -54,7 +54,7 @@ public:
 
   virtual f::XScene* Realize();
 
-  DECL_CTOR(Game)
+  IMPL_CTOR(Game)
 
   virtual void Stop();
   virtual void Play();

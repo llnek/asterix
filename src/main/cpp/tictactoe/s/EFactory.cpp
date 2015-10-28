@@ -46,6 +46,37 @@ a::Entity* EFactory::ReifyBoard(not_null<f::XLayer*> layer) {
   return ent;
 };
 
+void EFactory::InitPlayers() {
+
+  auto human = CC_CSV(c::Integer, "HUMAN");
+  auto bot = CC_CSV(c::Integer, "BOT");
+  auto netp = CC_CSV(c::Integer, "NETP");
+
+  auto p1c= CC_CSV(c::Integer, "P1_COLOR");
+  auto p2c= CC_CSV(c::Integer, "P2_COLOR");
+  auto vx= CC_CSV(c::Integer, "CV_X");
+  auto vo= CC_CSV(c::Integer, "CV_O");
+
+  auto p1cat= human;
+  auto p2cat= bot;
+
+  if (mode == f::GMode::NET) {
+    p2cat = netp;
+    p1cat = netp;
+  }
+  else
+  if (mode == f::GMode::ONE) {
+  }
+  else
+  if (mode == f::GMode::TWO) {
+    p2cat= human;
+    //p1cat= human;
+  }
+
+  p1= new Player(p1cat, vx, 1, p1c);
+  p2= new Player(p2cat, vo, 2, p2c);
+
+}
 
 
 NS_END(tttoe)

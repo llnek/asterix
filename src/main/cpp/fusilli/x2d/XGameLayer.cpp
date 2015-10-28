@@ -54,10 +54,12 @@ const Box4 XGameLayer::GetEnclosureBox() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::InizGame() {
+XLayer* XGameLayer::Realize() {
   EnableEventHandlers();
   cx::PauseAudio();
+  InizGame();
   this->scheduleUpdate();
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
