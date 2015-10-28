@@ -16,7 +16,6 @@
 #include "core/Odin.h"
 #include "XLayer.h"
 
-NS_ALIAS(ws, fusii::wsock)
 NS_ALIAS(c, cocos2d)
 NS_ALIAS(s, std)
 NS_BEGIN(fusii)
@@ -33,15 +32,6 @@ public:
 
   XLayer*  AddLayer(not_null<XLayer*>, int z=0);
   XLayer*  GetLayer(int tag);
-
-  virtual bool IsRunning() { return false; }
-  virtual bool IsOnline() { return false; }
-  virtual void Run() {}
-  virtual void Pause() {}
-  virtual void Resume() {}
-
-  virtual void NetSend(const ws::Event&);
-  //virtual void NetSend(ws::Event);
 
   virtual XScene* Realize() = 0;
   virtual ~XScene() {}

@@ -71,7 +71,7 @@ public:
   virtual const stdstr Color() = 0;
   virtual const c::Size GameSize() = 0;
 
-  virtual owner<c::Scene*> StartWith() = 0;
+  virtual c::Scene* StartWith() = 0;
   virtual const stdstr GetWSUrl() = 0;
 
   virtual void SetGameId(const stdstr& ) = 0;

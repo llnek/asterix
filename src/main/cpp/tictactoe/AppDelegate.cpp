@@ -23,13 +23,14 @@ AppDelegate::AppDelegate() {
 
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::Self();
+  auto c= Config::Reify();
 
   r->Register( mc_new(NetPlayNode));
   r->Register( mc_new(GUINode));
   r->Register( mc_new(BoardNode));
 
   // step.2: set up app-config
-  XConfig::Bind(Config::Reify());
+  XConfig::Bind(c);
 }
 
 //////////////////////////////////////////////////////////////////////////////

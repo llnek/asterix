@@ -12,6 +12,10 @@
 #if !defined(__MENU_H__)
 #define __MENU_H__
 
+#include "2d/CCActionInstant.h"
+#include "x2d/XScene.h"
+NS_ALIAS(c,cocos2d)
+NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////

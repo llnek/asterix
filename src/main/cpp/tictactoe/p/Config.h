@@ -24,6 +24,7 @@ protected:
   void InitCsts();
 
   NO__CPYASS(Config)
+  Config();
   float scale;
 public:
 
@@ -42,7 +43,7 @@ public:
     return c::Size(320,480);
   }
 
-  virtual owner<c::Scene*> StartWith();
+  virtual c::Scene* StartWith();
   virtual const stdstr GetWSUrl();
 
   virtual void SetGameId(const stdstr& );
@@ -54,9 +55,9 @@ public:
 
   virtual void RunOnce();
 
-  static owner<f::XConfig*> Reify();
+  virtual ~Config() {}
 
-  DECL_CTOR(Config)
+  static owner<f::XConfig*> Reify();
 };
 
 

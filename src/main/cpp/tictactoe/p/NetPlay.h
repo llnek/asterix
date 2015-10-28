@@ -9,40 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @module i18n/l10n
- */
+#if !defined(__NETPLAY_H__)
+#define __NETPLAY_H__
 
-import sh from 'zotohlab/asx/asterix';
+#include "x2d/Online.h"
 
-
-//////////////////////////////////////////////////////////////////////////////
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-undef;
-
-/** @alias module:i18n/l10n */
-const xbox = sjs.merge(xcfg.l10nTable, {
-
-  "en" : {
-
-    "%whosturn" : "{{who}}'s TURN...",
-    "%whodraw" : "No one wins!",
-    "%whowin" : "{{who}} Wins!",
-
-    "%p2" : "P2",
-    "%p1" : "P1"
-
-  }
-
-});
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
+NS_ALIAS(ws, fusii::odin)
+NS_ALIAS(f, fusii)
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+class CC_DLL NetPlay : public f::Online {
+protected:
+
+  virtual void OnPlayReply(const ws::Event&);
+  virtual void OnStart(const ws::Event&);
+
+  int player;
+
+  NO__CPYASS(NetPlay)
+
+public:
+
+  virtual void ShowWaitOthers(f::OnlineLayer*);
+  virtual void DecoUI(f::OnlineLayer*);
+
+  DECL_CTOR(NetPlay)
+};
+
+
+
+NS_END(tttoe)
+#endif
 

@@ -12,10 +12,35 @@
 #if !defined(__GAME_H__)
 #define __GAME_H__
 
-#incldue "x2d/XGameLayer.h"
+#include "x2d/XGameLayer.h"
 #include "x2d/MainGame.h"
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
+
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL GameLayer : public f::XGameLayer {
+private:
+  NO__CPYASS(GameLayer)
+  EFactory* factory;
+  void InitAsh();
+public:
+
+  virtual void SendMsg(const stdstr& topic, void* msg);
+  virtual void Reset(bool newFlag) ;
+  virtual void Replay() ;
+  virtual void Play();
+  virtual void OnGameOver();
+
+  void OnPlayerKilled();
+  void OnEarnScore(int);
+  void SpawnPlayer();
+
+  virtual int GetIID() { return 2; }
+  virtual f::XLayer* Realize();
+
+  DECL_CTOR(GameLayer)
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -31,10 +56,8 @@ public:
 
   DECL_CTOR(Game)
 
-  virtual bool IsRunning();
-  virtual void Resume();
-  virtual void Pause();
-  virtual void Run();
+  virtual void Stop();
+  virtual void Play();
 };
 
 

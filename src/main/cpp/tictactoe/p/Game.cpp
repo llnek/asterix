@@ -12,7 +12,7 @@
 #include "core/Odin.h"
 #include "Game.h"
 
-NS_ALIAS(ws, fusii::wsock);
+NS_ALIAS(ws, fusii::odin);
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(cc, cocos2d)
 NS_ALIAS(s, std)
@@ -32,7 +32,7 @@ public:
 
   NO__CPYASS(BGLayer)
   IMPL_CTOR(BGLayer)
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //

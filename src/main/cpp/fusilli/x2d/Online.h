@@ -15,41 +15,55 @@
 #include "core/Odin.h"
 #include "XScene.h"
 
-NS_ALIAS(o, fusii::odin)
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(c,cocos2d)
 NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class CC_DLL OnlineLayer : public XLayer {
+public:
+
+  void Login(const stdstr&, const stdstr&);
+  virtual XLayer* Realize();
+
+  NO__CPYASS(OnlineLayer)
+  IMPL_CTOR(OnlineLayer)
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Online : public XScene {
+friend class OnlineLayer;
 protected:
 
-  void SetActions(c::CallFunc*, c::CallFunc* );
-  void OnSessionEvent(const ws::Event&);
-  void OnOdinEvent(const ws::Event&);
-  void OnNetworkEvent(const ws::Event&);
+  virtual void SetActions(c::CallFunc*, c::CallFunc* );
+  virtual void OnSessionEvent(const ws::Event&);
+  virtual void OnNetworkEvent(const ws::Event&);
+  virtual void OnOdinEvent(const ws::Event&);
 
-  void OnStart(const ws::Event&);
+  virtual void OnPlayRequest(const stdstr&, const stdstr&);
+  virtual void OnCancel(c::Ref*);
+
+  virtual void ShowWaitOthers(OnlineLayer*) = 0;
+  virtual void OnStart(const ws::Event&) = 0;
+  virtual void DecoUI(OnlineLayer*) = 0;
+  virtual void OnPlayReply(const ws::Event&) = 0;
 
   Online();
 
+  ws::WSockSS* odin;
   c::CallFunc* yes;
   c::CallFunc* no;
-  int player;
-  ws::WSockSS* wss;
-
-private:
 
   NO__CPYASS(Online)
 
 public:
 
   static Online* Reify(not_null<Online*>, c::CallFunc* yes, c::CallFunc* no);
-  void OnPlayRequest(const stdstr&, const stdstr&);
-  void OnCancel(c::Ref*);
 
-  virtual void DecoUI(XLayer*);
   virtual XScene* Realize();
   virtual ~Online();
 };

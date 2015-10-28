@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "Splash.h"
 #include "Config.h"
 NS_BEGIN(tttoe)
 
@@ -16,11 +17,6 @@ NS_BEGIN(tttoe)
 //
 Config::Config() {
   scale = 1.0f;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Config::~Config() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -124,7 +120,7 @@ void Config::SetRoomId(const stdstr& s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-owner<c::Scene*> Config::StartWith() {
+c::Scene* Config::StartWith() {
   return Splash::Reify();
 }
 

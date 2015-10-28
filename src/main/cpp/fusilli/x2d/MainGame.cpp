@@ -34,13 +34,14 @@ MainGame::~MainGame() {
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
+  mc_del_ptr(odin);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainGame::MainGame() {
   mode = GMode::ONE;
-  SNPTR(wss)
+  SNPTR(odin)
   level = 1;
   running=false;
 }

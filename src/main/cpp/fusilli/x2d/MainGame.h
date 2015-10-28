@@ -23,7 +23,7 @@
 #define MGMS() fusii::MainGame::Self()
 #define MGML() fusii::MainGame::Get()
 
-NS_ALIAS(ws, fusii::wsock)
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
 enum class GMode { ONE, TWO, NET };
@@ -35,7 +35,7 @@ protected:
 
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
-  ws::WSockSS* wss;
+  ws::WSockSS* odin;
 
   bool running;
   GMode mode;
@@ -58,13 +58,27 @@ public:
   static XGameLayer* Get();
   static MainGame* Self();
 
+  void SetOnlineChannel(owner<ws::WSockSS*> s) { odin= s; }
+
+  virtual bool IsRunning() { return running; }
+  virtual bool IsOnline() { return NNP(odin); }
+
+  virtual void NetSend(const ws::Event&);
+
+  virtual void Stop() = 0;
+  virtual void Play() = 0;
+
+  virtual void Resume() {}
+  virtual void Pause() {}
+
   XPool* ReifyPool(const stdstr& n);
   XPool* GetPool(const stdstr& n);
-  void ResetPools();
+
   c::Dictionary* GetLCfg();
+  void ResetPools();
 
   s::queue<stdstr>& MsgQueue() { return msgQ; }
-  ws::WSockSS* WSOCK() { return wss; }
+  ws::WSockSS* WSOCK() { return odin; }
 
   virtual ~MainGame();
 };

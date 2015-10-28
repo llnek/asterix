@@ -22,6 +22,8 @@ NS_BEGIN(tttoe)
 class CC_DLL MenuLayer : public f::XLayer {
 public:
   virtual f::XLayer* Realize();
+  void MaybeSeedGame(f::GMode);
+  void OnPlayXXX(f::GMode);
   void OnNetPlay(c::Ref*);
   void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
@@ -55,19 +57,19 @@ f::XLayer* MenuLayer::Realize() {
 
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnNetPlay));
-  menu->addChild(b,nullptr,&tag);
+  menu->addChild(b,0,tag);
 
   b= cx::ReifyMenuBtn("player2.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   tag= (int) f::GMode::TWO;
-  menu->addChild(b,nullptr,&tag);
+  menu->addChild(b,0,tag);
 
   b= cx::ReifyMenuBtn("player1.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
   tag= (int) f::GMode:ONE;
-  menu->addChild(b,nullptr,&tag);
+  menu->addChild(b,0,tag);
 
   // add the menu
   menu->setPosition(cw);
@@ -108,7 +110,7 @@ f::XLayer* MenuLayer::Realize() {
 //
 void MenuLayer::MaybeSeedGame(f::GMode m) {
 
-  auto j::Json seed = j::Json::object {
+  j::Json seed = j::Json::object {
     {"ppids", j::Json::object {} }
   };
 
@@ -131,33 +133,38 @@ void MenuLayer::MaybeSeedGame(f::GMode m) {
     break;
   }
 
-  XCFG()->SetSeed(seed);
+  XCFG()->SetSeedData(seed);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnNetPlay(c::Ref* r) {
-  auto ol = f::ReifyRefType<f::Online>();
-  auto y= []() { };//cx::RunScene(Game::Reify()); }
-  auto yes= c::CallFunc::create(y);
-
+  // yes
+  auto y= [=]() { this->OnPlayXXX(f::GMode::NET); };
+  // no
   auto f= []() { cx::RunScene(XCFG()->StartWith()); };
   auto a= c::CallFunc::create(f);
   auto n= []() { cx::RunScene(MainMenu::ReifyWithBackAction(a)); };
-  auto no= c::CallFunc::create(n);
 
-  auto s= f::Online::Reify(ol, yes,no);
-
-  MaybeSeedGame(f::GMode::NET);
+  auto s= f::Online::Reify(f::ReifyRefType<NetPlay>(),
+      c::CallFunc::create(y),
+      c::CallFunc::create(n));
   cx::RunScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::OnPlay(c::Ref* r) {
-  auto tag = SCAST(c::Node*, r)->getTag();
-  MaybeSeedGame( (f::GMode) tag);
-  cx::RunScene( nullptr);//Game::Reify() );
+  auto mode = (f::GMode) SCAST(c::Node*, r)->getTag();
+  OnPlayXXX(mode);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void MenuLayer::OnPlayXXX(f::GMode mode) {
+  auto g = f::ReifyRefType<Game>();
+  MaybeSeedGame(mode);
+  cx::RunScene( Game::Reify(g, mode) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,7 +195,7 @@ f::XScene* MainMenu::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu::~MainMenu() {
-  if (NNP(backAction)) { backAction->release(); }
+  CC_DROP(backAction)
 }
 
 //////////////////////////////////////////////////////////////////////////////
