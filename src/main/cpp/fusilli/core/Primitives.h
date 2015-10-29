@@ -56,8 +56,12 @@
 #define CC_INT(x) cocos2d::Integer::create(x)
 #define CC_DICT() cocos2d::Dictionary::create()
 
-#define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)
-#define CC_CSV(t,f) fusii::CstVal<t>(f)
+#define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)->getValue()
+#define CC_CSV(t,f) fusii::CstVal<t>(f)->getValue()
+
+#define CC_GDS(d,f) fusii::DictVal<cocos2d::String>(d,f)->getCString()
+#define CC_CSS(f) fusii::CstVal<cocos2d::String>(f)->getCString()
+
 #define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
 
 typedef std::string filepath;
@@ -265,5 +269,6 @@ private:
 
 
 NS_END(fusii)
+NS_ALIAS(c,cocos2d)
 #endif
 

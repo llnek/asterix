@@ -14,9 +14,6 @@
 
 #include "aeon/fusilli.h"
 #include <algorithm>
-#include <array>
-
-NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 NS_BEGIN(algos)
 
@@ -56,6 +53,7 @@ public:
 
 };
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 template <int Z>
@@ -96,9 +94,10 @@ int NegaMax(not_null<GameBoard<Z>*> board,
 
   return bestValue;
 }
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
-//
+// Main method for nega-max algo
 template <int Z>
 int EvalNegaMax(not_null<GameBoard<Z>*> board) {
   auto snapshot= board->TakeSnapshot();

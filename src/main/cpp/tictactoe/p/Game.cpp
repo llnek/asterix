@@ -86,12 +86,15 @@ void GameLayer::MkAsh() {
   auto e = a::Engine::Reify();
   auto d = CC_DICT();
   auto f = new EFactory(e, d);
+
+  this->factory=f;
+  this->engine = e;
+  this->options= d;
+
+  e->RegoSystem(new Resolve(f, d));
   e->RegoSystem(new Stager(f, d));
   e->RegoSystem(new Motion(f, d));
   e->RegoSystem(new Logic(f, d));
-  e->RegoSystem(new Resolve(f, d));
-  this->factory=f;
-  this->engine = e;
 }
 
 //////////////////////////////////////////////////////////////////////////////

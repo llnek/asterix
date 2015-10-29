@@ -1,5 +1,6 @@
 #if !defined(__FPTR_H__)
 #define __FPTR_H__
+
 // from stdc++
 #include "fusilli.h"
 NS_BEGIN(fusii)

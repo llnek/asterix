@@ -16,8 +16,6 @@
 #include "base/ccTypes.h"
 #include "Primitives.h"
 #include "ComObj.h"
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 #define HHZ(z) z.height * 0.5
@@ -45,7 +43,8 @@ namespace ccsx {
       const stdstr& s, const stdstr& d);
 
   c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
-      not_null<c::MenuItem*> q, bool vert = false);
+      not_null<c::MenuItem*> q,
+      bool vert = false, float padding= 10.0f);
 
   bool PointInBox(const Box4& box, float x,  float y);
   const c::Color3B White();

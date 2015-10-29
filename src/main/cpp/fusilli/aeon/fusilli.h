@@ -26,7 +26,6 @@
 
 typedef std::string stdstr;
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 #if defined(WIN32) || defined(_WIN32)
@@ -67,11 +66,15 @@ typedef std::string stdstr;
   #define NS_BEGIN(nsp)  namespace nsp {
   #define NS_END(nsp)    };
   #define NS_ALIAS(x,y)  namespace x = y;
+  #define BEGIN_NS_UNAMED() namespace {
+  #define END_NS_UNAMED() };
 #else
   #define NS_USING(nsp)
   #define NS_BEGIN(nsp)
   #define NS_END(nsp)
   #define NS_ALIAS(x,y)
+  #define BEGIN_NS_UNAMED()
+  #define END_NS_UNAMED()
 #endif
 
 
@@ -124,7 +127,6 @@ typedef std::string stdstr;
 //
 NS_BEGIN(fusii)
 
-
 enum class Locale {
   ENGLISH = 0,
   CHINESE,
@@ -151,6 +153,7 @@ NS_END(fusii)
 #include "FArray.h"
 #include "FPtr.h"
 NS_ALIAS(f,fusii)
+NS_ALIAS(s,std)
 NS_USING(gsl)
 #endif
 

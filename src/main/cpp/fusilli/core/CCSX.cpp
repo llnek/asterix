@@ -27,18 +27,17 @@ NS_BEGIN(ccsx)
 //////////////////////////////////////////////////////////////////////////////
 // b & q should be same size
 c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
-    not_null<c::MenuItem*> q, bool vert) {
+    not_null<c::MenuItem*> q, bool vert, float pad) {
 
   auto menu= c::Menu::create();
-//  auto padding = 10;
 
   menu->addChild(b);
   menu->addChild(q);
 
   if (!vert) {
-    menu->alignItemsHorizontally();//WithPadding(padding);
+    menu->alignItemsHorizontallyWithPadding(pad);
   } else {
-    menu->alignItemsVertically();//WithPadding(padding);
+    menu->alignItemsVerticallyWithPadding(pad);
   }
 
   return menu;
@@ -126,6 +125,7 @@ c::Label* ReifyBmfLabel(const stdstr& font, const stdstr& text) {
   f->setOpacity(0.9*255);
   return f;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Label* ReifyBmfLabel(float x, float y,

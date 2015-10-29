@@ -26,9 +26,7 @@ protected:
   void PreLaunch(const c::Size& designSize);
   void InitAudio();
 
-  App();
-
-private:
+  App() {}
 
   NO__CPYASS(App)
 
@@ -55,7 +53,7 @@ public:
 
   virtual void initGLContextAttrs();
 
-  virtual ~App();
+  virtual ~App() {}
 };
 
 

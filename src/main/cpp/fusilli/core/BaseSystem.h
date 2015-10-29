@@ -51,14 +51,14 @@ BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d)
   : a::System(a::Error) {
   factory=f;
   state=d;
-  state->retain();
+  CC_KEEP(state)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename F>
 BaseSystem<F>::~BaseSystem() {
-  if (NNP(state)) { state->release(); }
+  CC_DROP(state)
 }
 
 //////////////////////////////////////////////////////////////////////////

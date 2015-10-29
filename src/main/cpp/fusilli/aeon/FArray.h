@@ -15,6 +15,8 @@
 #include "fusilli.h"
 NS_BEGIN(fusii)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 template<typename T>
 class FS_DLL FArray {
 protected:

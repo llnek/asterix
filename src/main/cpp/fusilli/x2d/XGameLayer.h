@@ -32,6 +32,7 @@ class CC_DLL XGameLayer : public XLayer {
 protected:
 
   s::array<bool, 256> keyboard;
+  c::Dictionary* options;
   a::Engine* engine;
 
   c::EventListener* mouseListener;

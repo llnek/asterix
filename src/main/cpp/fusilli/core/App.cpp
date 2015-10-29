@@ -29,16 +29,6 @@ static int register_all_packages() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
-App::App() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-App::~App() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
 //if you want a different context,just modify the value of glContextAttrs
 //it will takes effect on all platforms
 void App::initGLContextAttrs() {
@@ -82,8 +72,8 @@ bool App::applicationDidFinishLaunching() {
 void App::PreLaunch(const c::Size& dz) {
 
   auto glview = CC_DTOR()->getOpenGLView();
-  auto dispFPS= CstVal<c::Bool>("showFPS");
-  auto fps = CstVal<c::Integer>("FPS");
+  auto dispFPS= CC_CSV(c::Bool,"showFPS");
+  auto fps = CC_CSV(c::Integer,"FPS");
   auto portrait = dz.height > dz.width;
   auto fz = glview->getFrameSize();
 
@@ -94,10 +84,10 @@ void App::PreLaunch(const c::Size& dz) {
   auto spath="hdr";
 
   // set FPS. default is 1.0/60 if you don't call this
-  CC_DTOR()->setAnimationInterval(1.0 / fps->getValue());
+  CC_DTOR()->setAnimationInterval(1.0 / fps);
 
   // turn on display FPS?
-  CC_DTOR()->setDisplayStats( dispFPS->getValue());
+  CC_DTOR()->setDisplayStats( dispFPS);
 
   if (portrait) {
     largeSize = c::Size(1536, 2048);
@@ -114,7 +104,7 @@ void App::PreLaunch(const c::Size& dz) {
   if (fz.height > mediumSize.height) {
     CC_DTOR()->setContentScaleFactor(
         MIN(largeSize.height/dz.height, largeSize.width/dz.width));
-    spath= "hdr";
+    spath= "rd";
   }
   // if the frame's height is larger than
   // the height of small size.
