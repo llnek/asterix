@@ -15,8 +15,6 @@
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
 #include <map>
-
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 
@@ -34,9 +32,7 @@ public:
   void Purge();
   void Init();
 
-  virtual ~L10NCache();
-  L10NCache();
-
+  DECL_CTOR( L10NCache)
 };
 
 

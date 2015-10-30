@@ -129,18 +129,6 @@ namespace ccsx {
    */
   c::SpriteFrame* GetSpriteFrame(const stdstr& frameid);
 
-  bool HasKeyPad();
-  bool HasMouse();
-  bool HasTouch();
-
-  void OnKeyPolls();
-  void OnKeys();
-
-  void OnMouse();
-
-  void OnTouchAll();
-  void OnTouchOne();
-
   const c::Vec2 AnchorC();
   const c::Vec2 AnchorTL();
   const c::Vec2 AnchorT();

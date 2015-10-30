@@ -13,13 +13,10 @@
 #define __ODIN_H__
 
 #include "network/WebSocket.h"
-#include "dropbox/json11.hpp"
+#include "dbox/json11.hpp"
 #include "aeon/fusilli.h"
-
 NS_ALIAS(n, cocos2d::network)
 NS_ALIAS(j, json11)
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
 
@@ -27,7 +24,6 @@ NS_BEGIN(odin)
 //
 enum class CC_DLL MType {
   NICHTS = -1,
-
   NETWORK = 0,
   SESSION,
   EVERYTHING
@@ -83,7 +79,7 @@ enum class CC_DLL EType {
 struct CC_DLL Event {
   Event::Event(MType, EType, j::Json& body);
   Event(MType t, EType c);
-  Event(j::Json& doc);
+  Event(j::Json& msg);
   ~Event();
   Event();
   double tstamp;
@@ -94,18 +90,16 @@ struct CC_DLL Event {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL WSockSS : public n::WebSocket::Delegate {
+class CC_DLL OdinIO : public n::WebSocket::Delegate {
 protected:
-
-  void OnEvent(const Event&);
-
-private:
 
   s::function<void (const Event&)> cbSession;
   s::function<void (const Event&)> cbNetwork;
   s::function<void (const Event&)> cbAll;
 
-  NO__CPYASS(WSockSS)
+  void OnEvent(const Event&);
+
+  NO__CPYASS(OdinIO)
 
 public:
 
@@ -124,7 +118,7 @@ public:
   virtual void onError(n::WebSocket* ,
       const n::WebSocket::ErrorCode& ) ;
 
-  DECL_CTOR(WSockSS)
+  DECL_CTOR(OdinIO)
 
   n::WebSocket* socket;
   stdstr room;
@@ -132,22 +126,23 @@ public:
   stdstr user;
   stdstr passwd;
   CType state;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-n::WebSocket* Connect(not_null<WSockSS*>, const stdstr& url);
+n::WebSocket* Connect(not_null<OdinIO*>, const stdstr& url);
 
-void Disconnect(not_null<WSockSS*>);
+void Disconnect(not_null<OdinIO*>);
 
-void Close(not_null<WSockSS*>);
+void Close(not_null<OdinIO*>);
 
-void Send(not_null<WSockSS*>, const Event&);
+void Send(not_null<OdinIO*>, const Event&);
 
-owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
+owner<OdinIO*> ReifyPlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd);
 
-owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
+owner<OdinIO*> ReifyJoinRequest(const stdstr& room,
     const stdstr& user, const stdstr& pwd);
 
 

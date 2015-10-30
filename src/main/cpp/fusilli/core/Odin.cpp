@@ -11,26 +11,23 @@
 
 #include "base/ccUtils.h"
 #include "Odin.h"
-
 NS_ALIAS(n, cocos2d::network)
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
-
+NS_BEGIN_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-static j::Json evtToDoc(const Event& evt) {
+j::Json evtToDoc(const Event& evt) {
   return j::Json::object {
-    {"type", evt.type },
-    {"code", evt.code },
+    {"type", (int) evt.type },
+    {"code", (int) evt.code },
     {"source", evt.doco }
   };
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event mkPlayRequest(const stdstr& game,
+Event mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
@@ -42,7 +39,7 @@ static Event mkPlayRequest(const stdstr& game,
 //////////////////////////////////////////////////////////////////////////////
 //
 /*
-static Event mkJoinRequest (const stdstr& room,
+Event mkJoinRequest (const stdstr& room,
     const stdstr& user,
     const stdstr& pwd) {
 
@@ -54,40 +51,41 @@ static Event mkJoinRequest (const stdstr& room,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event getPlayRequest(not_null<WSockSS*> wss) {
+Event getPlayRequest(not_null<OdinIO*> wss) {
   return mkPlayRequest(wss->game, wss->user, wss->passwd);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static Event json_decode(const n::WebSocket::Data& e) {
+Event json_decode(const n::WebSocket::Data& e) {
 
   stdstr error;
   Event evt;
 
   assert(!e.isBinary);
   try {
-    j::Json doc;
-    doc.parse(e.bytes, error);
-    evt= Event(doc);
+    j::Json msg;
+    msg.parse(e.bytes, error);
+    evt= Event(msg);
   } catch (...) {
     CCLOGERROR("failed to parse json: %s", error.c_str());
   }
 
   return evt;
 }
+NS_END_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Event::Event(MType t, EType c, j::Json& body) : Event() {
-  doco = j::Json::object {
+  this->doco = j::Json::object {
     { "type", (int)t },
     { "code", (int)c }
   };
-  type= t;
-  code= c;
+  this->type= t;
+  this->code= c;
   if (!body.is_null()) {
-    doco["source"] = body;
+    this->doco["source"] = body;
   }
 }
 
@@ -100,17 +98,17 @@ Event::Event(MType t, EType c) : Event() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Event::Event(j::Json& doc) : Event() {
-  if (doc.is_object()) {
-    auto v= doc["type"];
+Event::Event(j::Json& msg) : Event() {
+  if (msg.is_object()) {
+    auto v= msg["type"];
     if (v.is_number()) {
       type = SCAST(MType, v.int_value());
     }
-    v= doc["code"];
+    v= msg["code"];
     if (v.is_number()) {
       code = SCAST(EType, v.int_value());
     }
-    v= doc["source"];
+    v= msg["source"];
     if (!v.is_null()) {
       doco =v;
     }
@@ -133,15 +131,15 @@ Event::~Event() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS::~WSockSS() {
+OdinIO::~OdinIO() {
   mc_del_ptr(socket)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
+owner<OdinIO*> ReifyPlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd) {
-  auto w= new WSockSS();
+  auto w= new OdinIO();
   w->game= game;
   w->user= user;
   w->passwd= pwd;
@@ -150,9 +148,9 @@ owner<WSockSS*> ReifyPlayRequest(const stdstr& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
+owner<OdinIO*> ReifyJoinRequest(const stdstr& room,
     const stdstr& user, const stdstr& pwd) {
-  auto w= new WSockSS();
+  auto w= new OdinIO();
   w->room= room;
   w->user= user;
   w->passwd= pwd;
@@ -161,7 +159,7 @@ owner<WSockSS*> ReifyJoinRequest(const stdstr& room,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-WSockSS::WSockSS() {
+OdinIO::OdinIO() {
   cbNetwork = cbSession = cbAll = nullptr;
   state= CType::S_NOT_CONNECTED;
   SNPTR(socket)
@@ -170,7 +168,7 @@ WSockSS::WSockSS() {
 //////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 //
-void Send(not_null<WSockSS*> wss, const Event& evt) {
+void Send(not_null<OdinIO*> wss, const Event& evt) {
   if (wss->state == CType::S_CONNECTED) {
     auto d= evtToDoc(evt);
     wss->socket->send(d.dump());
@@ -179,14 +177,14 @@ void Send(not_null<WSockSS*> wss, const Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void WSockSS::Listen( s::function<void (const Event&)> cb) {
+void OdinIO::Listen( s::function<void (const Event&)> cb) {
   SNPTR(cbAll)
   Listen(MType::EVERYTHING , cb);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void WSockSS::Listen(MType t, s::function<void (const Event&)> cb) {
+void OdinIO::Listen(MType t, s::function<void (const Event&)> cb) {
 
   if (MType::EVERYTHING == t) {
     cbAll =cb;
@@ -204,7 +202,7 @@ void WSockSS::Listen(MType t, s::function<void (const Event&)> cb) {
 //////////////////////////////////////////////////////////////////////////////
 // Cancel and remove all subscribers
 //
-void WSockSS::CancelAll() {
+void OdinIO::CancelAll() {
   SNPTR(cbNetwork)
   SNPTR(cbSession)
   SNPTR(cbAll)
@@ -212,7 +210,7 @@ void WSockSS::CancelAll() {
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void WSockSS::Cancel(MType t) {
+void OdinIO::Cancel(MType t) {
   if (MType::EVERYTHING == t) {
     SNPTR(cbAll)
   }
@@ -229,7 +227,7 @@ void WSockSS::Cancel(MType t) {
 //////////////////////////////////////////////////////////////////////////////
 // Reset and clear everything
 //
-void WSockSS::Reset() {
+void OdinIO::Reset() {
   state= CType::S_NOT_CONNECTED;
   mc_del_ptr(socket);
 }
@@ -237,7 +235,7 @@ void WSockSS::Reset() {
 //////////////////////////////////////////////////////////////////////////////
 // Close the connection to the socket
 //
-void Close(not_null<WSockSS*> wss) {
+void Close(not_null<OdinIO*> wss) {
   wss->CancelAll();
   try {
     wss->socket->close();
@@ -250,13 +248,13 @@ void Close(not_null<WSockSS*> wss) {
 //////////////////////////////////////////////////////////////////////////////
 // Disconnect from the socket
 //
-void Disconnect(not_null<WSockSS*> wss) {
+void Disconnect(not_null<OdinIO*> wss) {
   Close(wss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onOpen(n::WebSocket* ws) {
+void OdinIO::onOpen(n::WebSocket* ws) {
   // connection success
   // send the play game request
   state= CType::S_CONNECTED;
@@ -266,7 +264,7 @@ void WSockSS::onOpen(n::WebSocket* ws) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
+void OdinIO::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
   auto evt= json_decode(data);
   switch (evt.type) {
     case MType::NETWORK:
@@ -274,25 +272,25 @@ void WSockSS::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
       OnEvent(evt);
     break;
     default:
-      CCLOG("unhandled server event: %d, code: %d", evt.type, evt.code);
+      CCLOG("unhandled server event: %d, code: %d", (int) evt.type, (int) evt.code);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onClose(n::WebSocket* ws) {
+void OdinIO::onClose(n::WebSocket* ws) {
   CCLOG("websocket instance (%p) closed", ws);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::onError(n::WebSocket* ws, const n::WebSocket::ErrorCode& error) {
-  CCLOG("websocket instance (%p) has error, code: %d", ws, error);
+void OdinIO::onError(n::WebSocket* ws, const n::WebSocket::ErrorCode& error) {
+  CCLOG("websocket instance (%p) has error, code: %d", ws, (int) error);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void WSockSS::OnEvent(const Event& evt) {
+void OdinIO::OnEvent(const Event& evt) {
   switch (evt.type) {
     case MType::NETWORK:
       if (NNP(cbNetwork)) { cbNetwork(evt); }
@@ -308,7 +306,7 @@ void WSockSS::OnEvent(const Event& evt) {
 //////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
-n::WebSocket* Connect(not_null<WSockSS*> wss, const stdstr& url) {
+n::WebSocket* Connect(not_null<OdinIO*> wss, const stdstr& url) {
   auto ws= new n::WebSocket();
   if (!ws->init(*wss, url)) {
     mc_del_ptr(ws);

@@ -18,26 +18,24 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static const stdstr ATLASES= "atlases";
-static const stdstr LEVELS= "levels";
-static const stdstr FONTS= "fonts";
-static const stdstr TILES= "tiles";
-static const stdstr IMAGES= "images";
-
-static const stdstr MUSIC= "music";
-static const stdstr EFX= "effects";
-static const stdstr CSTS= "csts";
-static const stdstr CFG= "cfg";
-
-static XConfig* singleton;
+NS_BEGIN_UNAMED()
+const stdstr ATLASES= "atlases";
+const stdstr LEVELS= "levels";
+const stdstr FONTS= "fonts";
+const stdstr TILES= "tiles";
+const stdstr IMAGES= "images";
+const stdstr MUSIC= "music";
+const stdstr EFX= "effects";
+const stdstr CSTS= "csts";
+const stdstr CFG= "cfg";
+XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
-static const filepath getXXX(not_null<c::Dictionary*> d,
-    const stdstr& key ) {
-
-  auto r= DictVal<c::String>(d,key);
+const filepath getXXX(not_null<c::Dictionary*> d, const stdstr& key ) {
+  auto r= CC_GDS(d,key);
   return NNP(r) ? r->getCString() : "";
 }
+NS_END_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -61,17 +59,17 @@ XConfig::~XConfig() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::XConfig() {
-  frags = c::Dictionary::create();
+  frags = CC_DICT();
   CC_KEEP(frags)
 
-  frags->setObject(c::Dictionary::create(), ATLASES);
-  frags->setObject(c::Dictionary::create(), TILES);
-  frags->setObject(c::Dictionary::create(), CSTS);
-  frags->setObject(c::Dictionary::create(), IMAGES);
-  frags->setObject(c::Dictionary::create(), FONTS);
-  frags->setObject(c::Dictionary::create(), MUSIC);
-  frags->setObject(c::Dictionary::create(), EFX);
-  frags->setObject(c::Dictionary::create(), LEVELS);
+  frags->setObject(CC_DICT(), ATLASES);
+  frags->setObject(CC_DICT(), TILES);
+  frags->setObject(CC_DICT(), CSTS);
+  frags->setObject(CC_DICT(), IMAGES);
+  frags->setObject(CC_DICT(), FONTS);
+  frags->setObject(CC_DICT(), MUSIC);
+  frags->setObject(CC_DICT(), EFX);
+  frags->setObject(CC_DICT(), LEVELS);
 
   LoadL10NStrings();
 
@@ -117,8 +115,11 @@ const stdstr XConfig::GetL10NStr(const stdstr& key,
 //////////////////////////////////////////////////////////////////////////////
 //
 const stdstr XConfig::GetL10NStr(const stdstr& key) {
-  auto d = DictVal<c::Dictionary>(l10n, "en");
-  auto obj=DictVal<c::String>(d, key);
+  stdstr lang= c::Application::getInstance()->getCurrentLanguageCode();
+  auto d = DictVal<c::Dictionary>(l10n, lang);
+  auto obj=NNP(d) ?
+    DictVal<c::String>(d, key) : nullptr;
+
   if (NNP(obj)) {
     return obj->getCString();
   } else {
@@ -129,7 +130,7 @@ const stdstr XConfig::GetL10NStr(const stdstr& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int XConfig::GetBtnPadding() {
-  return CstVal<c::Integer>("BTN_PADDING")->getValue();
+  return CC_CSV(c::Integer,"BTN_PADDING");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -137,24 +138,23 @@ int XConfig::GetBtnPadding() {
 void XConfig::SetCsts() {
   auto f = GetFragment(CSTS);
 
-  f->setObject(c::Integer::create(10), "BTN_PADDING");
+  f->setObject(CC_INT(10), "BTN_PADDING");
 
-  f->setObject(c::Bool::create(true), "showFPS");
-  f->setObject(c::Integer::create(60), "FPS");
+  f->setObject(CC_BOOL(true), "showFPS");
+  f->setObject(CC_INT(60), "FPS");
 
-  f->setObject(c::Integer::create(4), "S_OFF");
-  f->setObject(c::Integer::create(8), "TILE");
+  f->setObject(CC_INT(4), "S_OFF");
+  f->setObject(CC_INT(8), "TILE");
 
-  f->setObject(c::String::create("O"), "P2_COLOR");
-  f->setObject(c::String::create("X"), "P1_COLOR");
+  f->setObject(CC_STR("O"), "P2_COLOR");
+  f->setObject(CC_STR("X"), "P1_COLOR");
 
-  f->setObject(c::Integer::create(79), "CV_O");
-  f->setObject(c::Integer::create(88), "CV_X");
+  f->setObject(CC_INT(79), "CV_O");
+  f->setObject(CC_INT(88), "CV_X");
 
-
-  f->setObject(c::Integer::create(9091), "NETP");
-  f->setObject(c::Integer::create(9901), "BOT");
-  f->setObject(c::Integer::create(1099), "HUMAN");
+  f->setObject(CC_INT(9091), "NETP");
+  f->setObject(CC_INT(9901), "BOT");
+  f->setObject(CC_INT(1099), "HUMAN");
 
 }
 
@@ -265,8 +265,9 @@ c::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetSeedData(j::Json j) {
+void XConfig::SetSeedData(j::Json& j) {
   seed=j;
+  j= j::Json();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -279,12 +280,13 @@ j::Json& XConfig::GetSeedData() {
 //
 c::Dictionary* XConfig::AddLevel(const stdstr& level) {
 
-  auto d2= c::Dictionary::create();
-  GetFragment(LEVELS)->setObject(d2, level);
+  auto d2= CC_DICT();
 
-  d2->setObject(c::Dictionary::create(), IMAGES);
-  d2->setObject(c::Dictionary::create(), TILES);
-  d2->setObject(c::Dictionary::create(), CFG);
+  d2->setObject(CC_DICT(), IMAGES);
+  d2->setObject(CC_DICT(), TILES);
+  d2->setObject(CC_DICT(), CFG);
+
+  GetFragment(LEVELS)->setObject(d2, level);
   return d2;
 }
 
@@ -371,6 +373,10 @@ const s::vector<filepath> XConfig::GetMusicFiles() {
   }
   return rc;
 }
+
+
+
+
 
 NS_END(fusii)
 

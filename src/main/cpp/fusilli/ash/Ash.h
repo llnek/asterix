@@ -57,6 +57,7 @@ enum SPV {
 
 
 NS_END(ash)
+NS_ALIAS(a, ash)
 #endif
 
 

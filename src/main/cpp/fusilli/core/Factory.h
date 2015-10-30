@@ -14,7 +14,6 @@
 
 #include "core/XPool.h"
 #include "ash/Engine.h"
-NS_ALIAS(a, ash)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,6 +34,11 @@ public:
 
   virtual ~Factory();
 };
+
+
+
+
+
 
 
 NS_END(fusii)

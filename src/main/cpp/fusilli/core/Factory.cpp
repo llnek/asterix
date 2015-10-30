@@ -21,14 +21,18 @@ Factory::Factory(not_null<a::Engine*> e,
 
   state= options;
   engine = e;
-  state->retain();
+  CC_KEEP(state)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Factory::~Factory() {
-  if (NNP(state)) { state->release(); }
+  CC_DROP(state)
 }
+
+
+
+
 
 NS_END(fusii)
 

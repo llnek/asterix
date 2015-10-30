@@ -15,10 +15,6 @@
 #include "core/Primitives.h"
 #include "base/CCRef.h"
 #include "ComObj.h"
-#include <functional>
-#include <vector>
-NS_ALIAS(c,cocos2d)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

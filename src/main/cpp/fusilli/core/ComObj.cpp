@@ -37,19 +37,19 @@ void ComObj::Inflate(not_null<c::Dictionary*> dict) {
     return;
   }
 
-  auto scale= DictVal<c::Float>(dict,"scale");
-  auto deg= DictVal<c::Float>(dict, "deg");
-  auto x= DictVal<c::Float>(dict, "x");
-  auto y= DictVal<c::Float>(dict, "y");
+  auto scale= CC_GDV(c::Float, "scale");
+  auto deg= CC_GDV(c::Float, "deg");
+  auto x= CC_GDV(c::Float, "x");
+  auto y= CC_GDV(c::Float, "y");
 
   if (NNP(x) && NNP(y)) {
-    sprite->setPosition(x->getValue(), y->getValue());
+    sprite->setPosition(x, y);
   }
   if (NNP(deg)) {
-    sprite->setRotation(deg->getValue());
+    sprite->setRotation(deg);
   }
   if (NNP(scale)) {
-    sprite->setScale(scale->getValue());
+    sprite->setScale(scale);
   }
 
   sprite->setVisible(true);
@@ -156,6 +156,11 @@ ComObj::ComObj(c::Sprite* sprite) {
 ComObj::ComObj() {
   Init(nullptr,1,0);
 }
+
+
+
+
+
 
 NS_END(fusii)
 

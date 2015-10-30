@@ -24,23 +24,12 @@ NS_BEGIN(fusii)
 class CC_DLL ComObj : public ash::Component {
 protected:
 
-  ComObj();
-
-private:
-
   void Init(c::Sprite*, int health, int score);
   NO__CPYASS(ComObj)
 
+  ComObj();
+
 public:
-
-  c::Sprite* sprite;
-  int origHealth;
-  bool status;
-  int health;
-  int score;
-
-  c::Vec2 lastPos;
-  c::Vec2 vel;
 
   void Inflate(not_null<c::Dictionary*> options);
   void Inflate(float x, float y);
@@ -63,6 +52,16 @@ public:
   ComObj(c::Sprite*);
 
   virtual ~ComObj() {}
+
+  c::Sprite* sprite;
+  int origHealth;
+  bool status;
+  int health;
+  int score;
+
+  c::Vec2 lastPos;
+  c::Vec2 vel;
+
 };
 
 

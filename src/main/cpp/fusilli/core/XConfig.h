@@ -12,23 +12,21 @@
 #if !defined(__XCONFIG_H__)
 #define __XCONFIG_H__
 
+#define XCFG() fusii::XConfig::Self()
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
-#include "dropbox/json11.hpp"
+#include "dbox/json11.hpp"
 #include "Primitives.h"
-#include <map>
-
-
-#define XCFG() fusii::XConfig::Self()
-NS_ALIAS(c, cocos2d)
 NS_ALIAS(j, json11)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XConfig {
 protected:
+
+  void AddXXX(const stdstr& frag, const stdstr& key, c::Ref*);
+  c::Dictionary* GetFragment(const stdstr&);
 
   void AddAtlas(const stdstr& key, c::Ref*);
   void AddFont(const stdstr& key, c::Ref*);
@@ -46,20 +44,13 @@ protected:
   float lastSfxVol;
   bool audioState;
 
-  XConfig();
-
-private:
-
-  void AddXXX(const stdstr& frag, const stdstr& key, c::Ref*);
-  c::Dictionary* GetFragment(const stdstr&);
   void LoadL10NStrings();
   void SetCsts();
+
   NO__CPYASS(XConfig)
+  XConfig();
 
 public:
-
-  static void Bind(not_null<XConfig*>);
-  static XConfig* Self();
 
   virtual void HandleResolution(const c::Size& ) {}
   virtual float GetScale() { return 1.0f; }
@@ -105,16 +96,18 @@ public:
 
   c::Dictionary* GetLevelCfg(const stdstr& n);
   c::Dictionary* GetLevel(const stdstr& n);
-
   c::Dictionary* AddLevel(const stdstr& n);
 
   const s::vector<filepath> GetEffectFiles();
   const s::vector<filepath> GetMusicFiles();
 
-  void SetSeedData(j::Json);
+  void SetSeedData(j::Json&);
   j::Json& GetSeedData();
 
   virtual ~XConfig();
+
+  static void Bind(not_null<XConfig*>);
+  static XConfig* Self();
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -128,6 +121,9 @@ T* CstVal(const stdstr& key) {
     return nullptr;
   }
 }
+
+
+
 
 
 NS_END(fusii)

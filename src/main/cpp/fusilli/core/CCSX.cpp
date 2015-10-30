@@ -140,21 +140,17 @@ c::Label* ReifyBmfLabel(float x, float y,
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
 bool Collide(not_null<ComObj*> a, not_null<ComObj*> b) {
-  if (NNP(a) && NNP(b)) {
-    return CollideN(a->sprite, b->sprite);
-  } else {
-    return false;
-  }
+
+  return (NNP(a) && NNP(b)) ?
+    CollideN(a->sprite, b->sprite) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
 bool CollideN(not_null<c::Node*> a, not_null<c::Node*> b) {
-  if (NNP(a) && NNP(b)) {
-    return BBox(a).intersectsRect( BBox(b));
-  } else {
-    return false;
-  }
+
+  return (NNP(a) && NNP(b)) ?
+    BBox(a).intersectsRect( BBox(b)) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -185,11 +181,8 @@ c::Dictionary* ReadXmlAsDict(const stdstr& fpath) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool OutOfBound(not_null<ComObj*> ent, const Box4& B) {
-  if (NNP(ent) && NNP(ent->sprite)) {
-    return OutOfBound(BBox4(ent->sprite), B);
-  } else {
-    return false;
-  }
+  return (NNP(ent) && NNP(ent->sprite)) ?
+    OutOfBound(BBox4(ent->sprite), B) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -528,127 +521,6 @@ bool TraceEnclosure(float dt, const Box4& bbox,
 //
 c::SpriteFrame* GetSpriteFrame(const stdstr& frameid) {
   return c::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-bool HasKeyPad() {
-  return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void OnKeyPolls() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void OnKeys() {
-  if (!HasKeyPad()) {return;}
-  /*
-  cc.eventManager.addListener({
-    onKeyPressed(key, e) {
-      bus.fire('/key/down', {group: 'key', key: key, event: e});
-    },
-    onKeyReleased(key, e) {
-      bus.fire('/key/up', {group: 'key', key: key, event: e});
-    },
-    event: cc.EventListener.KEYBOARD
-  }, sh.main);
-  */
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-bool HasMouse() {
-  return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void OnMouse() {
-  if (!HasMouse()) {return;}
-/*
-cc.eventManager.addListener({
-  onMouseMove(e) {
-    if (e.getButton() === cc.EventMouse.BUTTON_LEFT) {
-      bus.fire('/mouse/move', {group:'mouse',
-               loc: e.getLocation(),
-               delta: e.getDelta(),
-               event: e});
-    }
-  },
-  onMouseDown(e) {
-    bus.fire('/mouse/down', {group:'mouse',
-             loc: e.getLocation(),
-             event: e});
-  },
-  onMouseUp(e) {
-    bus.fire('/mouse/up', {group:'mouse',
-             loc: e.getLocation(),
-             event: e});
-  },
-  event: cc.EventListener.MOUSE
-  }, sh.main);
-  */
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-bool HasTouch() {
-  return false; //!!cc.sys.capabilities['touches'];
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void OnTouchAll() {
-  if (!HasTouch()) {return;}
-  /*
-  cc.eventManager.addListener({
-    event: cc.EventListener.TOUCH_ALL_AT_ONCE,
-    prevTouchId: -1,
-    onTouchesBegan(ts,e) { return true; },
-    onTouchesEnded(ts,e) {
-      bus.fire('/touch/all/end', {group:'touch',
-                 event: e,
-                 loc: ts[0].getLocation()});
-    },
-    onTouchesMoved(ts,e) {
-      const id = ts[0].id;
-      if (this.prevTouchId != id) {
-        this.prevTouchId = id;
-      } else {
-        bus.fire('/touch/all/move', {group:'touch',
-                 event: e,
-                 delta: ts[0].getDelta()});
-      }
-    }
-  }, sh.main);
-  */
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void OnTouchOne() {
-  if (!HasTouch()) {return;}
-  /*
-  cc.eventManager.addListener({
-    event: cc.EventListener.TOUCH_ONE_BY_ONE,
-    swallowTouches: true,
-    onTouchBegan(t,e) { return true; },
-    onTouchMoved(t,e) {
-      bus.fire('/touch/one/move', {group:'touch',
-               event: e,
-               delta: t.getDelta(),
-               loc: t.getLocation()});
-    },
-    onTouchEnded(t,e) {
-      bus.fire('/touch/one/end', {group:'touch',
-               event: e,
-               loc: t.getLocation()});
-    }
-  }, sh.main);
-  */
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -42,8 +42,9 @@
 #include "base/CCConsole.h"
 #include "base/CCRef.h"
 */
-#include "cocos2d.h"
+
 #include "aeon/fusilli.h"
+#include "cocos2d.h"
 
 #define CC_DTOR() cocos2d::Director::getInstance()
 #define CC_PCAST(T) static_cast<T>(getParent())
@@ -67,7 +68,6 @@
 typedef std::string filepath;
 
 NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,8 +90,7 @@ T* ReifyRefType() {
   if (pRet && pRet->init()) {
     pRet->autorelease();
   } else {
-    delete pRet;
-    pRet = nullptr;
+    mc_del_ptr(pRet)
   }
   return pRet;
 }
@@ -269,6 +268,5 @@ private:
 
 
 NS_END(fusii)
-NS_ALIAS(c,cocos2d)
 #endif
 

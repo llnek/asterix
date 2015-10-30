@@ -15,7 +15,6 @@
 #include "platform/CCCommon.h"
 #include "2d/CCScene.h"
 #include "aeon/fusilli.h"
-NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ public:
   void InitWithResources();
   virtual void onEnter() ;
 
-  DECL_CTOR(ZLoader)
+  IMPL_CTOR(ZLoader)
 };
 
 
