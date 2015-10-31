@@ -14,9 +14,6 @@
 
 #include "platform/CCCommon.h"
 #include "XScene.h"
-
-NS_ALIAS(c,cocos2d)
-NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
@@ -25,7 +22,9 @@ class CC_DLL MsgBox : public XScene {
 protected:
 
   void OnYesBtn(c::Ref*);
+
   NO__CPYASS(MsgBox)
+  MsgBox();
 
   c::CallFunc* action;
   stdstr textMsg;
@@ -38,10 +37,10 @@ public:
       not_null<MsgBox*>,
       c::CallFunc*, const stdstr&);
 
-  virtual void DecoUI(XLayer*);
+  virtual void DecoUI(XLayer*) = 0;
   virtual XScene* Realize();
+  virtual ~MsgBox();
 
-  DECL_CTOR(MsgBox)
 };
 
 

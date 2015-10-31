@@ -67,11 +67,11 @@ XPool* MainGame::GetPool(const stdstr& key) {
 //
 XPool* MainGame::ReifyPool(const stdstr& key) {
   auto it = pools.find(key);
+  auto p=new XPool();
   if (it != pools.end()) {
     delete it->second;
     pools.erase(it);
   }
-  auto p=new XPool();
   pools.insert(s::pair<stdstr, XPool*>(key, p));
   return p;
 }
@@ -86,7 +86,7 @@ void MainGame::ResetPools() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MainGame::SetMode(GMode m) {//, c::Dictionary* d) {
+void MainGame::SetMode(GMode m) {
   this->mode= m;
 }
 
@@ -101,21 +101,13 @@ MainGame* MainGame::Reify(not_null<MainGame*> g, GMode mode) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-/*
-MainGame* MainGame::Reify(not_null<MainGame*> g,
-    GMode mode,
-    not_null<c::Dictionary*> options) {
-
-  g->SetMode(mode, options);
-  g->Realize();
-  return g;
-}
-*/
-//////////////////////////////////////////////////////////////////////////
-//
 void MainGame::Bind(not_null<MainGame*> m) {
   _singleton=m;
 }
+
+
+
+
 
 NS_END(fusii)
 

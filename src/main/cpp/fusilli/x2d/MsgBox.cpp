@@ -18,6 +18,7 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MsgBoxLayer : public XLayer {
@@ -26,7 +27,6 @@ protected:
 public:
 
   virtual XLayer* Realize() {
-
     CC_PCAST(MsgBox*)->DecoUI(this);
     return this;
   }
@@ -34,8 +34,10 @@ public:
   IMPL_CTOR(MsgBoxLayer)
 };
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
+/*
 void MsgBox::DecoUI(XLayer* layer) {
 
   auto qn= cx::ReifyBmfLabel("font.OCR", this->textMsg);
@@ -60,7 +62,7 @@ void MsgBox::DecoUI(XLayer* layer) {
   menu->setPosition(cw.x, wb.top * 0.1);
   layer->AddItem(menu);
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////////
 //
 MsgBox* MsgBox::ReifyWithAction(

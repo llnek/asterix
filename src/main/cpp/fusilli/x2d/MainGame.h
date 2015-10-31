@@ -12,53 +12,53 @@
 #if !defined(__MAINGAME_H__)
 #define __MAINGAME_H__
 
+#define MGMS() fusii::MainGame::Self()
+#define MGML() fusii::MainGame::Get()
+
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
 #include "core/XPool.h"
 #include "core/Odin.h"
 #include "XScene.h"
 #include "XGameLayer.h"
-#include <queue>
-
-#define MGMS() fusii::MainGame::Self()
-#define MGML() fusii::MainGame::Get()
 
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
-enum class GMode { ONE, TWO, NET };
+enum class GMode {
+  ONE,
+  TWO,
+  NET
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainGame : public XScene {
 protected:
 
+  static void Bind(not_null<MainGame*>);
+
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
-  ws::WSockSS* odin;
+  ws::OdinIO* odin;
 
   bool running;
-  GMode mode;
   int level;
+  GMode mode;
 
-  //virtual void SetMode(GMode, c::Dictionary*);
-  virtual void SetMode(GMode);
   virtual XGameLayer* GetGLayer() = 0;
-
-  static void Bind(not_null<MainGame*>);
+  virtual void SetMode(GMode);
 
   NO__CPYASS(MainGame)
   MainGame();
 
 public:
 
-  //static MainGame* Reify(not_null<MainGame*>, GMode, not_null<c::Dictionary*> );
-  static MainGame* Reify(not_null<MainGame*>, GMode);
+  void SetOnlineChannel(owner<ws::OdinIO*> s) { odin= s; }
 
+  static MainGame* Reify(not_null<MainGame*>, GMode);
   static XGameLayer* Get();
   static MainGame* Self();
-
-  void SetOnlineChannel(owner<ws::WSockSS*> s) { odin= s; }
 
   virtual bool IsRunning() { return running; }
   virtual bool IsOnline() { return NNP(odin); }
