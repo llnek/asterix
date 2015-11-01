@@ -14,24 +14,21 @@
 
 #include "core/Odin.h"
 #include "XScene.h"
-
 NS_ALIAS(ws, fusii::odin)
-NS_ALIAS(c,cocos2d)
-NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL OnlineLayer : public XLayer {
+protected:
+  NO__CPYASS(OnlineLayer)
 public:
 
   void Login(const stdstr&, const stdstr&);
   virtual XLayer* Realize();
 
-  NO__CPYASS(OnlineLayer)
   IMPL_CTOR(OnlineLayer)
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -52,13 +49,12 @@ protected:
   virtual void DecoUI(OnlineLayer*) = 0;
   virtual void OnPlayReply(const ws::Event&) = 0;
 
-  Online();
-
-  ws::WSockSS* odin;
+  ws::OdinIO* odin;
   c::CallFunc* yes;
   c::CallFunc* no;
 
   NO__CPYASS(Online)
+  Online();
 
 public:
 

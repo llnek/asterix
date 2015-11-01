@@ -12,7 +12,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Online.h"
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
@@ -29,10 +28,6 @@ XLayer* OnlineLayer::Realize() {
   return this;
 }
 
-
-
-/* scene */
-
 //////////////////////////////////////////////////////////////////////////////
 //
 Online* Online::Reify(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) {
@@ -44,8 +39,8 @@ Online* Online::Reify(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) 
 //////////////////////////////////////////////////////////////////////////////
 //
 Online::Online() {
-  SNPTR(yes)
   SNPTR(odin)
+  SNPTR(yes)
   SNPTR(no)
 }
 
@@ -126,8 +121,8 @@ void Online::OnNetworkEvent(const ws::Event& evt) {
 void Online::OnSessionEvent(const ws::Event& evt) {
   switch (evt.code) {
     case ws::EType::PLAYREQ_OK:
-      OnPlayReply(evt);
       auto y= SCAST(OnlineLayer*, GetLayer(1));
+      OnPlayReply(evt);
       y->RemoveAll();
       ShowWaitOthers(y);
     break;
