@@ -15,8 +15,6 @@
 #include "core/Primitives.h"
 #include "2d/CCSprite.h"
 #include "ash/Ash.h"
-
-NS_ALIAS(a, ash)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

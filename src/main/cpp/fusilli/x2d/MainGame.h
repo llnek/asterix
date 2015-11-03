@@ -78,7 +78,7 @@ public:
   void ResetPools();
 
   s::queue<stdstr>& MsgQueue() { return msgQ; }
-  ws::WSockSS* WSOCK() { return odin; }
+  ws::OdinIO* WSOCK() { return odin; }
 
   virtual ~MainGame();
 };

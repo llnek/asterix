@@ -13,8 +13,6 @@
 #define __ASH_H__
 
 #include "aeon/fusilli.h"
-#include <string>
-NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 

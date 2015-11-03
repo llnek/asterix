@@ -24,7 +24,6 @@ NS_ALIAS(den,CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::~XGameLayer() {

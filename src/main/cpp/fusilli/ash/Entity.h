@@ -16,7 +16,6 @@
 #include <vector>
 #include <map>
 
-NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 class Engine;

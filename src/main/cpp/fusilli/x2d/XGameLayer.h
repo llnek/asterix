@@ -14,18 +14,12 @@
 
 #include "base/CCEventKeyboard.h"
 #include "core/Primitives.h"
+#include "core/ComObj.h"
 #include "ash/System.h"
 #include "ash/Engine.h"
 #include "XHUDLayer.h"
-
-#include <array>
-
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
-NS_ALIAS(a, ash)
 NS_BEGIN(fusii)
 
-class ComObj;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XGameLayer : public XLayer {
@@ -51,6 +45,9 @@ protected:
 
   virtual void OnGameOver() = 0;
 
+  XLayer* GetBackgd(int tag= 1);
+  XHUDLayer* GetHUD(int tag=3);
+
   NO__CPYASS(XGameLayer)
   XGameLayer();
 
@@ -65,13 +62,8 @@ public:
   virtual int GetIID() { return 2; }
 
   virtual void update(float);
-
+  virtual XLayer* Realize();
   virtual ~XGameLayer();
-
-  bool KeyPoll(c::EventKeyboard::KeyCode key);
-
-  XLayer* GetBackgd(int tag= 1);
-  XHUDLayer* GetHUD(int tag=3);
 
   void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
   void OnKeyPressed(c::EventKeyboard::KeyCode, c::Event* );
@@ -81,8 +73,7 @@ public:
   void OnMouseUp(c::Event*);
   void OnMouseScroll(c::Event*);
 
-  virtual XLayer* Realize();
-
+  bool KeyPoll(c::EventKeyboard::KeyCode key);
 };
 
 

@@ -58,7 +58,7 @@ protected:
 
 public:
 
-  static Online* Reify(not_null<Online*>, c::CallFunc* yes, c::CallFunc* no);
+  static Online* Reify(not_null<Online*>, VOIDFN yes, VOIDFN no);
 
   virtual XScene* Realize();
   virtual ~Online();

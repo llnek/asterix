@@ -65,6 +65,7 @@
 
 #define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
 
+typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
 
 NS_ALIAS(c, cocos2d)

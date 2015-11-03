@@ -30,8 +30,9 @@ XLayer* OnlineLayer::Realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Online* Online::Reify(not_null<Online*> box, c::CallFunc* yes, c::CallFunc* no) {
-  box->SetActions(yes,no);
+Online* Online::Reify(not_null<Online*> box, VOIDFN yes, VOIDFN no) {
+  box->SetActions(c::CallFunc::create(yes),
+      c::CallFunc::create(no));
   box->Realize();
   return box;
 }
