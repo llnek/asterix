@@ -22,7 +22,6 @@
 NS_ALIAS(ws, fusii::wsock)
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(j, json11)
-NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
 
 struct CC_DLL PPInfo {
@@ -77,34 +76,22 @@ struct ScoreUpdate {
   int score;
 };
 
-struct EventXXX {
-  EventXXX(const ws::Event& e) {
-     wsevent=e;
-     group="net";
-  }
-  EventXXX(const c::Vec2& v) {
-    group= "mouse";
-    pos= v;
-  }
-  EventXXX() = delete;
-  ~EventXXX() {}
-  ws::Event wsevent;
-  c::Vec2 pos;
-  stdstr group;
-};
-
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL SmartAlgo : public a::Component {
 public:
+
   SmartAlgo(not_null<TTTBoard*> b) {
     this->board= b;
   }
 
-  virtual const a::COMType TypeId() { return "n/SmartAlgo"; }
+  virtual const a::COMType TypeId() {
+    return "n/SmartAlgo";
+  }
+
   virtual ~SmartAlgo() {}
 
-  SmartAlgo() = delete;
   NO__CPYASS(SmartAlgo)
+  SmartAlgo() = delete;
 
   TTTBoard* board;
 };
@@ -119,7 +106,10 @@ public:
     this->size=BD_SZ;
   }
 
-  virtual const a::COMType TypeId() { return "n/Board"; }
+  virtual const a::COMType TypeId() {
+    return "n/Board";
+  }
+
   virtual ~Board() {}
 
   NO__CPYASS(Board);
@@ -138,7 +128,10 @@ public:
     s::copy(s::begin(seed), s::end(seed), s::begin(values));
   }
 
-  virtual const a::COMType TypeId() { return "n/Grid"; }
+  virtual const a::COMType TypeId() {
+    return "n/Grid";
+  }
+
   virtual ~Grid() {}
 
   NO__CPYASS(Grid);
@@ -159,16 +152,19 @@ class CC_DLL PlayView : public a::Component {
     this->boxes= MapGridPos(1.0f);
   }
 
-  virtual const a::COMType TypeId() { return "n/PlayView"; }
+  virtual const a::COMType TypeId() {
+    return "n/PlayView";
+  }
+
   virtual ~PlayView() {}
 
   NO__CPYASS(PlayView)
   PlayView() = delete;
 
+  s::array<ViewData,BD_SZ * BD_SZ> cells;
   s::array<f::Box4,BD_SZ * BD_SZ> boxes;
   f::XLayer* layer;
   c::Size size;
-  s::array<ViewData,BD_SZ * BD_SZ> cells;
 };
 
 
@@ -178,7 +174,10 @@ public:
 
   NetPlay() { SNPTR(event) }
 
-  virtual const a::COMType TypeId() { return "n/NetPlay"; }
+  virtual const a::COMType TypeId() {
+    return "n/NetPlay";
+  }
+
   virtual ~NetPlay() {}
   NO__CPYASS(NetPlay)
 
@@ -197,8 +196,12 @@ public:
     this->offset = id == 1 ? 0 : 1;
   }
 
-  virtual const a::COMType TypeId() { return "n/Player"; }
+  virtual const a::COMType TypeId() {
+    return "n/Player";
+  }
+
   virtual ~Player() {}
+
   NO__CPYASS(Player)
   Player() = delete;
 
@@ -216,11 +219,14 @@ public:
 class CC_DLL Players : public a::Component {
 public:
 
-  Players() {}
+  virtual const a::COMType TypeId() {
+    return "n/Players";
+  }
 
-  virtual const a::COMType TypeId() { return "n/Players"; }
   virtual ~Players() {}
+
   NO__CPYASS(Players)
+  Players() {}
 
   s::array<Player,3> parr;
 };
@@ -235,8 +241,12 @@ public:
     this->py = -1;
   }
 
-  virtual const a::COMType TypeId() { return "n/UISelection"; }
+  virtual const a::COMType TypeId() {
+    return "n/UISelection";
+  }
+
   virtual ~UISelection() {}
+
   NO__CPYASS(UISelection)
 
   int cell;

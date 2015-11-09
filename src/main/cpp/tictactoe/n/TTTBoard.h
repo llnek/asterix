@@ -28,6 +28,9 @@ protected:
   s::array<int,3> actors;
   int CV_Z;
 
+  NO__CPYASS(TTTBoard)
+  TTTBoard() = delete;
+
 public:
 
   TTTBoard(int nil,  int p1v,  int p2v);
@@ -46,7 +49,6 @@ public:
   bool TestWin(ag::Snapshot<BD_SZ>* snap,
       int actor,
       const s::array<int,BD_SZ>& g) ;
-
 
   virtual const s::vector<int> GetNextMoves(not_null<ag::Snapshot<BD_SZ>*>);
 
