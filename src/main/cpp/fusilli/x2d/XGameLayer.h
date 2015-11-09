@@ -13,12 +13,36 @@
 #define __XGAMELAYER_H__
 
 #include "base/CCEventKeyboard.h"
-#include "core/Primitives.h"
+#include "core/Odin.h"
 #include "core/ComObj.h"
-#include "ash/System.h"
 #include "ash/Engine.h"
 #include "XHUDLayer.h"
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
+
+struct GEvent {
+  GEvent(const ws::Event& e) {
+    group="odin";
+    nEvent=e;
+    SNPTR(cEvent)
+  }
+  GEvent(c::EventMouse* e) {
+    group="mouse";
+    cEvent=e;
+    CC_KEEP(cEvent)
+  }
+  GEvent(c::EventTouch* e) {
+    group="touch";
+    cEvent=e;
+    CC_KEEP(cEvent)
+  }
+  ~GEvent() {
+    CC_DROP(cEvent)
+  }
+  stdstr group;
+  c::Event* cEvent;
+  ws::Event nEvent;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //

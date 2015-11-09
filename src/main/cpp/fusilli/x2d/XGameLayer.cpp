@@ -13,12 +13,10 @@
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCEventListenerMouse.h"
 #include "base/CCEventListenerTouch.h"
-
-#include "ash/Engine.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "XGameLayer.h"
 #include "XScene.h"
+#include "XGameLayer.h"
 
 NS_ALIAS(den,CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
@@ -76,6 +74,7 @@ void XGameLayer::FinzGame() {
 //
 void XGameLayer::DisableEventHandlers() {
   CCLOG("disabling event handlers");
+
   if (NNP(mouseListener)) {
     _eventDispatcher->removeEventListener(mouseListener);
   }
@@ -85,13 +84,12 @@ void XGameLayer::DisableEventHandlers() {
   if (NNP(touchListener)) {
     _eventDispatcher->removeEventListener(touchListener);
   }
-  for (int n=0; n < 256; ++n) {
-    keyboard[n]=false;
-  }
 
   SNPTR(mouseListener)
   SNPTR(keysListener)
   SNPTR(touchListener)
+
+  keyboard.fill(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,14 +134,18 @@ void XGameLayer::InitMouse() {
 //
 void XGameLayer::OnMouseMove(c::Event* e) {
   auto evt = (c::EventMouse*) e;
-  evt->getDelta();
-  evt->getLocation();
+  GEvent e(evt);
+  //evt->getDelta();
+  //evt->getLocation();
   //CCLOG("mouse moved");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::OnMouseDown(c::Event*) {
+  auto evt = (c::EventMouse*) e;
+  GEvent e(evt);
+
   //CCLOG("mouse down");
 }
 
@@ -151,12 +153,16 @@ void XGameLayer::OnMouseDown(c::Event*) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::OnMouseUp(c::Event*) {
+  auto evt = (c::EventMouse*) e;
+  GEvent e(evt);
  // CCLOG("mouse up");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::OnMouseScroll(c::Event*) {
+  auto evt = (c::EventMouse*) e;
+  GEvent e(evt);
 }
 
 //////////////////////////////////////////////////////////////////////////////

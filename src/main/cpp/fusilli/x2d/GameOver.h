@@ -9,48 +9,33 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XHUDLAYER_H__)
-#define __XHUDLAYER_H__
+#if !defined(__GAMEOVER_H__)
+#define __GAMEOVER_H__
 
-#include "base/ccTypes.h"
-#include "XLayer.h"
+#include "platform/CCCommon.h"
+#include "XScene.h"
 NS_BEGIN(fusii)
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-class XLives;
-class CC_DLL XHUDLayer : public XLayer {
+class CC_DLL GameOver : public XScene {
 protected:
 
-  void AddReplayIcon(not_null<c::MenuItem*>, const c::Vec2& where);
-  void AddMenuIcon(not_null<c::MenuItem*>, const c::Vec2& where);
+  void OnReplayBtn(c::Ref*);
+  void OnQuitBtn(c::Ref*);
 
-  c::Label* scoreLabel;
-  c::Menu* replayBtn;
-  XLives* lives;
-  int score;
-
-  NO__CPYASS(XHUDLayer)
-  XHUDLayer();
+  NO__CPYASS(GameOver)
+  GameOver();
 
 public:
 
-  int GetScore() { return score; }
+  static GameOver* ReifyWIthAction( not_null<GameOver*>, VOIDFN);
 
-  virtual void ResetAsNew();
-  virtual void Reset();
-
-  virtual ~XHUDLayer();
-
-  bool ReduceLives(int minus=1);
-  void UpdateScore(int num);
-
-  void DisableReplay();
-  void EnableReplay();
+  virtual void DecoUI(XLayer*) = 0;
+  virtual XScene* Realize();
+  virtual ~GameOver();
 
 };
-
-
 
 
 
