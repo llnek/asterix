@@ -37,10 +37,10 @@ void ComObj::Inflate(not_null<c::Dictionary*> dict) {
     return;
   }
 
-  auto scale= CC_GDV(c::Float, "scale");
-  auto deg= CC_GDV(c::Float, "deg");
-  auto x= CC_GDV(c::Float, "x");
-  auto y= CC_GDV(c::Float, "y");
+  auto scale= CC_GDV(c::Float, dict,"scale");
+  auto deg= CC_GDV(c::Float, dict, "deg");
+  auto x= CC_GDV(c::Float, dict, "x");
+  auto y= CC_GDV(c::Float, dict, "y");
 
   if (NNP(x) && NNP(y)) {
     sprite->setPosition(x, y);

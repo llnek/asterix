@@ -29,7 +29,7 @@ protected:
 
 public:
 
-  static GameOver* ReifyWIthAction( not_null<GameOver*>, VOIDFN);
+  static GameOver* ReifyWithAction( not_null<GameOver*>, VOIDFN);
 
   virtual void DecoUI(XLayer*) = 0;
   virtual XScene* Realize();

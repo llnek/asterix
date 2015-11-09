@@ -34,7 +34,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GameOver* GameOver::Reify(not_null<GameOver*> s) {
+GameOver* GameOver::ReifyWithAction(not_null<GameOver*> s, VOIDFN fn) {
 
   s->Realize();
   return s;

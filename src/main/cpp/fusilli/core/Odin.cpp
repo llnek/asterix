@@ -14,7 +14,7 @@
 NS_ALIAS(n, cocos2d::network)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
-NS_BEGIN_UNAMED()
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 j::Json evtToDoc(const Event& evt) {
@@ -73,7 +73,7 @@ Event json_decode(const n::WebSocket::Data& e) {
 
   return evt;
 }
-NS_END_UNAMED()
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //

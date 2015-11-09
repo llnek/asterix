@@ -18,7 +18,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NS_BEGIN_UNAMED()
+BEGIN_NS_UNAMED()
 const stdstr ATLASES= "atlases";
 const stdstr LEVELS= "levels";
 const stdstr FONTS= "fonts";
@@ -32,10 +32,10 @@ XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
 const filepath getXXX(not_null<c::Dictionary*> d, const stdstr& key ) {
-  auto r= CC_GDS(d,key);
+  auto r= f::DictVal<cocos2d::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
-NS_END_UNAMED()
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //

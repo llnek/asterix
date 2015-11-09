@@ -33,6 +33,7 @@ public:
   XLayer*  AddLayer(not_null<XLayer*>, int z=0);
   XLayer*  GetLayer(int tag);
 
+  virtual bool IsRunning() { return false; }
   virtual XScene* Realize() = 0;
   virtual ~XScene() {}
 };

@@ -142,7 +142,7 @@ void XGameLayer::OnMouseMove(c::Event* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::OnMouseDown(c::Event*) {
+void XGameLayer::OnMouseDown(c::Event* e) {
   auto evt = (c::EventMouse*) e;
   GEvent e(evt);
 
@@ -152,7 +152,7 @@ void XGameLayer::OnMouseDown(c::Event*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::OnMouseUp(c::Event*) {
+void XGameLayer::OnMouseUp(c::Event* e) {
   auto evt = (c::EventMouse*) e;
   GEvent e(evt);
  // CCLOG("mouse up");
@@ -160,7 +160,7 @@ void XGameLayer::OnMouseUp(c::Event*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XGameLayer::OnMouseScroll(c::Event*) {
+void XGameLayer::OnMouseScroll(c::Event* e) {
   auto evt = (c::EventMouse*) e;
   GEvent e(evt);
 }
