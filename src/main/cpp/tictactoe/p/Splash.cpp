@@ -14,9 +14,9 @@
 #include "s/utils.h"
 #include "n/cobjs.h"
 #include "Splash.h"
-
 NS_BEGIN(tttoe)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL SplashLayer : public f::XLayer {
@@ -76,6 +76,7 @@ f::XLayer* SplashLayer::Realize() {
 
   return this;
 }
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -89,15 +90,10 @@ f::XScene* Splash::Realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::OnPlay(c::Ref* rr) {
-
   auto f= []() { cx::RunScene(XCFG()->StartWith()); };
-  auto a= c::CallFunc::create(f);
-  auto m = MainMenu::ReifyWithBackAction(a);
-
+  auto m = MainMenu::ReifyWithBackAction(f);
   cx::RunScene( m);
 }
-
-
 
 
 

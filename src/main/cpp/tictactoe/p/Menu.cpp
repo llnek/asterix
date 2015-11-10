@@ -15,9 +15,9 @@
 #include "Menu.h"
 #include "Game.h"
 #include "n/cobjs.h"
-
 NS_BEGIN(tttoe)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL MenuLayer : public f::XLayer {
 public:
@@ -111,7 +111,8 @@ f::XLayer* MenuLayer::Realize() {
 void MenuLayer::MaybeSeedGame(f::GMode m) {
 
   j::Json seed = j::Json::object {
-    {"ppids", j::Json::object {} }
+    {"ppids", j::Json::object {} },
+    {"pnum", 1 }
   };
 
   switch (m) {
@@ -130,6 +131,7 @@ void MenuLayer::MaybeSeedGame(f::GMode m) {
     break;
 
     case f::GMode::NET:
+      seed["pnum"] = 0;
     break;
   }
 
@@ -143,12 +145,9 @@ void MenuLayer::OnNetPlay(c::Ref* r) {
   auto y= [=]() { this->OnPlayXXX(f::GMode::NET); };
   // no
   auto f= []() { cx::RunScene(XCFG()->StartWith()); };
-  auto a= c::CallFunc::create(f);
-  auto n= []() { cx::RunScene(MainMenu::ReifyWithBackAction(a)); };
+  auto n= []() { cx::RunScene(MainMenu::ReifyWithBackAction(f)); };
 
-  auto s= f::Online::Reify(f::ReifyRefType<NetPlay>(),
-      c::CallFunc::create(y),
-      c::CallFunc::create(n));
+  auto s= f::Online::Reify(f::ReifyRefType<NetPlay>(), y,n);
   cx::RunScene(s);
 }
 
@@ -167,12 +166,15 @@ void MenuLayer::OnPlayXXX(f::GMode mode) {
   cx::RunScene( Game::Reify(g, mode) );
 }
 
+END_NS_UNAMED()
+
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::ReifyWithBackAction(c::CallFunc* back) {
+MainMenu* MainMenu::ReifyWithBackAction(VOIDFN cb) {
   auto m = f::ReifyRefType<MainMenu>();
-  m->backAction= back;
-  back->retain();
+  auto a= c::CallFunc::create(cb);
+  m->backAction= a;
+  a->retain();
   m->Realize();
   return m;
 }

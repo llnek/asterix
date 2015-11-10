@@ -9,17 +9,16 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "s/EFactory.h"
+#include "core/CCSX.h"
 #include "core/Odin.h"
 #include "Game.h"
-
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
-NS_ALIAS(cc, cocos2d)
-NS_ALIAS(s, std)
-NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL BGLayer : f::XLayer {
@@ -32,6 +31,33 @@ public:
 
   NO__CPYASS(BGLayer)
   IMPL_CTOR(BGLayer)
+};
+
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL GameLayer : public f::XGameLayer {
+private:
+
+  NO__CPYASS(GameLayer)
+  EFactory* factory;
+  void MkAsh();
+
+public:
+
+  virtual void SendMsg(const stdstr& topic, void* msg);
+  virtual void Reset(bool newFlag) ;
+  virtual void Replay() ;
+  virtual void Play();
+  virtual void OnGameOver();
+
+  void OnPlayerKilled();
+  void OnEarnScore(int);
+  void SpawnPlayer();
+
+  virtual int GetIID() { return 2; }
+  virtual void InizGame();
+
+  DECL_CTOR(GameLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,8 +77,8 @@ void GameLayer::InizGame() {
   f::EmptyQueue( MGMS()->MsgQueue() );
   MkAsh();
 
-  auto p1c= CC_CSV(c::String, "P1_COLOR")->getCString();
-  auto p2c= CC_CSV(c::String, "P2_COLOR")->getCString();
+  auto p1c= CC_CSS("P1_COLOR")->getCString();
+  auto p2c= CC_CSS("P2_COLOR")->getCString();
   auto seed = XCFG()->GetSeedData();
   auto ppids = seed["ppids"];
   stdstr p1k;
@@ -184,8 +210,7 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
 
 }
 
-/* scene */
-
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //

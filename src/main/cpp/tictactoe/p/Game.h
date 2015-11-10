@@ -14,7 +14,6 @@
 
 #include "x2d/XGameLayer.h"
 #include "x2d/MainGame.h"
-NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////

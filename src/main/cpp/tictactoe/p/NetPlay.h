@@ -13,10 +13,9 @@
 #define __NETPLAY_H__
 
 #include "x2d/Online.h"
-
 NS_ALIAS(ws, fusii::odin)
-NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

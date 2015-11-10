@@ -14,8 +14,6 @@
 
 #include "2d/CCActionInstant.h"
 #include "x2d/XScene.h"
-NS_ALIAS(c,cocos2d)
-NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +24,7 @@ protected:
   NO__CPYASS(MainMenu)
 public:
 
-  static MainMenu* ReifyWithBackAction(c::CallFunc* );
+  static MainMenu* ReifyWithBackAction(VOIDFN );
   virtual f::XScene* Realize();
   void OnBackAction();
 
