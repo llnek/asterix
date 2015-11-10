@@ -79,7 +79,9 @@
       (a/SymLink (fp! base "games" appid "Classes" fname)
                  (.getCanonicalPath f)))
     (a/SymLink (fp! base "games" appid "Classes" "GSL")
-               (fp! (ge :srcDir) "cpp/GSL"))))
+               (fp! (ge :srcDir) "cpp/GSL"))
+    (a/SymLink (fp! base "games" appid "Classes" "dbox")
+               (fp! (ge :srcDir) "cpp/dbox"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
