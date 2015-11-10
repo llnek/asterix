@@ -11,6 +11,7 @@
 
 #include "x2d/MainGame.h"
 #include "Motions.h"
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,9 @@ Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
   : f::BaseSystem(f, d) {
 
-  inited=false;
+	SNPTR(netplay)
+	SNPTR(gui)
+	inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,7 +58,7 @@ void Motions::OnceOnly() {
   auto ws= MGMS()->WSOCK();
   if (NNP(ws)) {
     ws->Listen( [=](const ws::Event& evt) {
-      this->evQ.push(EventXXX(evt));
+      this->evQ.push(f::GEvent(evt));
     });
   }
 }
@@ -74,10 +77,10 @@ bool Motions::OnUpdate(float dt) {
   if (evQ.size() > 0) {
     auto evt= evQ.front();
     evQ.pop();
-    if (evt.group == "net") {
-      if (NNP(n)) { OnSocket(n, evt.wsevent); }
+    if (evt.group == "odin") {
+      if (NNP(n)) { OnSocket(n, evt.nEvent); }
     } else {
-      if (NNP(g)) { OnGUI(g, evt.pos); }
+      if (NNP(g)) { OnGUI(g, evt.group, evt.cEvent); }
     }
   }
 
@@ -162,12 +165,21 @@ void Motions::OnSess(a::Node* node, const ws::Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUI(a::Node* node, const c::Vec2& pos) {
+void Motions::OnGUI(a::Node* node,
+		const stdstr& group, c::Event* evt) {
   auto sel = CC_GNF(UISelection, node, "selection");
   auto view = CC_GNF(PlayView, node, "view");
   auto cur = CC_GDV(c::Integer, state, "pnum");
   auto n=0;
+  c::Vec2 pos;
 
+  if (group ==  "mouse") {
+	  auto e= (c::EventMouse*) evt;
+	  pos= e->getLocation();
+  } else {
+	  auto e= (c::EventTouch*) evt;
+	  //TODO:
+  }
   //set the mouse/touch position
   sel->cell= -1;
   sel->px = pos.x;

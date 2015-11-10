@@ -16,31 +16,6 @@
 #include "x2d/MainGame.h"
 NS_BEGIN(tttoe)
 
-//////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL GameLayer : public f::XGameLayer {
-private:
-  NO__CPYASS(GameLayer)
-  EFactory* factory;
-  void MkAsh();
-public:
-
-  virtual void SendMsg(const stdstr& topic, void* msg);
-  virtual void Reset(bool newFlag) ;
-  virtual void Replay() ;
-  virtual void Play();
-  virtual void OnGameOver();
-
-  void OnPlayerKilled();
-  void OnEarnScore(int);
-  void SpawnPlayer();
-
-  virtual int GetIID() { return 2; }
-  virtual void InizGame();
-
-  DECL_CTOR(GameLayer)
-};
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::MainGame {

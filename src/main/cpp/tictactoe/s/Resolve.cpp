@@ -55,7 +55,7 @@ void Resolve::SyncUp(a::Node* node) {
         if (NNP(z.sprite)) {
           z.sprite->removeFromParent();
         }
-        z.sprite = DrawSymbol(view, c.x, c.y, v);
+        z.sprite = DrawSymbol(view, c.x, c.y, v, false);
         z.x= c.x;
         z.y= c.y;
         z.value=v;
@@ -157,7 +157,7 @@ void Resolve::DoForfeit(a::Node* node) {
         z.sprite->removeFromParent();
       }
       //TODO: why + 2????
-      z.sprite = DrawSymbol(view, z.x, z.y, z.value+2);
+      z.sprite = DrawSymbol(view, z.x, z.y, z.value+2,false);
     }
   }
 

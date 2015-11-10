@@ -25,6 +25,7 @@ protected:
 
   NO__CPYASS(EFactory)
   EFactory() = delete;
+  void InitPlayers();
 
 public:
 

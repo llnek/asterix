@@ -179,14 +179,14 @@ bool XConfig::HasAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float XConfig::SetMusicVolume(float v) {
+void XConfig::SetMusicVolume(float v) {
   lastMusicVol= GetMusicVolume();
   den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float XConfig::SetVolume(float v) {
+void XConfig::SetVolume(float v) {
   lastSfxVol = GetVolume();
   den::SimpleAudioEngine::getInstance()->setEffectsVolume(v);
 }

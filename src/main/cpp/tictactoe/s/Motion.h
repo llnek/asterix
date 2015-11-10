@@ -17,7 +17,7 @@
 #include "n/cobjs.h"
 #include <queue>
 
-NS_ALIAS(ws, fusii::wsock)
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(f, fusii)
 NS_ALIAS(a, ash)
 NS_BEGIN(tttoe)
@@ -28,7 +28,7 @@ class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
 
   void OnSess(a::Node*, const ws::Event& );
-  void OnGUI(a::Node* , const c::Vec2& );
+  void OnGUI(a::Node* , const stdstr& group, c::Event* );
   void OnNet(a::Node*, const ws::Event& );
   void OnSocket(a::Node*, const ws::Event&);
   void OnceOnly();
@@ -39,7 +39,7 @@ protected:
   NO__CPYASS(Motions)
   Motions() = delete;
 
-  s::queue<EventXXX> evQ;
+  s::queue<f::GEvent> evQ;
   bool inited;
 
 public:

@@ -12,14 +12,13 @@
 #if !defined(__COBJS_H__)
 #define __COBJS_H__
 
-#include "dropbox/json11.hpp"
+#include "dbox/json11.hpp"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Ash.h"
 #include "s/utils.h"
-#define BD_SZ 3
 
-NS_ALIAS(ws, fusii::wsock)
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(j, json11)
 NS_BEGIN(tttoe)
@@ -30,23 +29,6 @@ struct CC_DLL PPInfo {
   NO__CPYASS(PPInfo)
   stdstr longID;
   int pnum;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SeedData : public c::Ref {
-public:
-  ~SeedData() {}
-  SeedData() {
-    mode= f::GMode::ONE;
-    ppids = j::Json::object {};
-    pnum=0;
-  }
-  s::array<int,BD_SZ * BD_SZ> data;
-  j::Json ppids;
-  f::GMode mode;
-  int pnum;
-  NO__CPYASS(SeedData)
 };
 
 //////////////////////////////////////////////////////////////////////////////

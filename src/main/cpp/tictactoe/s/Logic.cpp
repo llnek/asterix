@@ -9,11 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "dropbox/json11.hpp"
+#include "dbox/json11.hpp"
 #include "algos/NegaMax.h"
 #include "x2d/MainGame.h"
 #include "core/Odin.h"
 #include "Logic.h"
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
 

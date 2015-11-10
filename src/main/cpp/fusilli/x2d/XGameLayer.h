@@ -20,30 +20,6 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
-struct GEvent {
-  GEvent(const ws::Event& e) {
-    group="odin";
-    nEvent=e;
-    SNPTR(cEvent)
-  }
-  GEvent(c::EventMouse* e) {
-    group="mouse";
-    cEvent=e;
-    CC_KEEP(cEvent)
-  }
-  GEvent(c::EventTouch* e) {
-    group="touch";
-    cEvent=e;
-    CC_KEEP(cEvent)
-  }
-  ~GEvent() {
-    CC_DROP(cEvent)
-  }
-  stdstr group;
-  c::Event* cEvent;
-  ws::Event nEvent;
-};
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XGameLayer : public XLayer {

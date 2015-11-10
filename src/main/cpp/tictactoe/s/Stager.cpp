@@ -18,7 +18,7 @@
 #include "utils.h"
 #include "Stager.h"
 
-NS_ALIAS(ws, fusii::wsock)
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 

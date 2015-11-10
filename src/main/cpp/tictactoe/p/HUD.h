@@ -39,6 +39,7 @@ protected:
   void DrawStatus(int pnum);
   void RegoPlayers(color1,p1ids,color2,p2ids);
 
+  c::Color3B  color;
   stdstr p2Long;
   stdstr p1Long;
   stdstr p2ID;

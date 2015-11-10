@@ -14,6 +14,7 @@
 
 #include "core/CCSX.h"
 #include "n/cobjs.h"
+#define BD_SZ 3
 
 namespace tttoe {
 

@@ -77,9 +77,9 @@ void GameLayer::InizGame() {
   f::EmptyQueue( MGMS()->MsgQueue() );
   MkAsh();
 
-  auto p1c= CC_CSS("P1_COLOR")->getCString();
-  auto p2c= CC_CSS("P2_COLOR")->getCString();
   auto seed = XCFG()->GetSeedData();
+  auto p1c= CC_CSS("P1_COLOR");
+  auto p2c= CC_CSS("P2_COLOR");
   auto ppids = seed["ppids"];
   stdstr p1k;
   stdstr p2k;
@@ -113,14 +113,17 @@ void GameLayer::MkAsh() {
   auto d = CC_DICT();
   auto f = new EFactory(e, d);
 
+  CC_DROP(this->options)
+  this->options= d;
   this->factory=f;
   this->engine = e;
-  this->options= d;
 
   e->RegoSystem(new Resolve(f, d));
   e->RegoSystem(new Stager(f, d));
   e->RegoSystem(new Motion(f, d));
   e->RegoSystem(new Logic(f, d));
+
+  CC_KEEP(this->options)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -193,19 +196,22 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
   }
 
   if ("/hud/score/update" == topic) {
-    GetHUD()->UpdateScore(msg.color, msg.score);
+    auto p = (ScoreUpdate*) msg;
+    GetHUD()->UpdateScore(p->color, p->score);
   }
 
   if ("/hud/end" == topic) {
-    OverAndDone(msg.winner);
+    auto p= (int*) msg;
+    OverAndDone(*p);
   }
 
   if ("/hud/update" == topic) {
-    GetHUD()->Draw(msg.running, msg.pnum);
+    auto p= (HUDUpdate*) msg;
+    GetHUD()->Draw(p->running, p->pnum);
   }
 
   if ("/player/timer/expired" == topic) {
-    PlayTimeExpired(msg);
+    PlayTimeExpired();
   }
 
 }

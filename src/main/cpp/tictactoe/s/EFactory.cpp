@@ -32,7 +32,7 @@ a::Entity* EFactory::ReifyBoard(not_null<f::XLayer*> layer) {
   auto ov= CC_CSV(c::Integer, "CV_O");
   auto ent= engine->ReifyEntity("game");
 
-  auto bd= new TTTBoard(nil, xv, ov);
+  auto bd= new TTTBoard<BD_SZ>(nil, xv, ov);
   s::array<int, BD_SZ * BD_SZ> seed;
   seed.fill(nil);
 
@@ -47,7 +47,7 @@ a::Entity* EFactory::ReifyBoard(not_null<f::XLayer*> layer) {
 };
 
 void EFactory::InitPlayers() {
-
+/*
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot = CC_CSV(c::Integer, "BOT");
   auto netp = CC_CSV(c::Integer, "NETP");
@@ -75,7 +75,7 @@ void EFactory::InitPlayers() {
 
   p1= new Player(p1cat, vx, 1, p1c);
   p2= new Player(p2cat, vo, 2, p2c);
-
+*/
 }
 
 

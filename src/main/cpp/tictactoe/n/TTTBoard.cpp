@@ -15,9 +15,10 @@
 #include <math.h>
 NS_BEGIN(tttoe)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-static bool not_any(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
+bool not_any(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] == v) { return false; }
   }
@@ -26,13 +27,13 @@ static bool not_any(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static bool every(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
+bool every(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] != v) { return false; }
   }
   return arr.size() > 0;
 }
-
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
 //

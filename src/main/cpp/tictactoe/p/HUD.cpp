@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "HUD.h"
 NS_BEGIN(tttoe)
 
@@ -19,6 +20,8 @@ f::XLayer* HUDLayer::Realize() {
   c::Color3B c3(c[0],c[1],c[2]);
 
   RegoAtlas("game-pics");
+  this->color= c3;
+
   InitLabels();
   InitIcons();
 

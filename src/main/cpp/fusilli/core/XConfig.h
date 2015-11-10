@@ -88,8 +88,8 @@ public:
   void ToggleAudio(bool s);
   bool HasAudio();
 
-  float SetMusicVolume(float);
-  float SetVolume(float);
+  void SetMusicVolume(float);
+  void SetVolume(float);
 
   float GetMusicVolume();
   float GetVolume();
