@@ -65,6 +65,9 @@
 
 #define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
 
+#define CC_PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
+
+
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
 

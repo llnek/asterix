@@ -9,19 +9,17 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MAINGAME_H__)
-#define __MAINGAME_H__
+#if !defined(__GAMESCENE_H__)
+#define __GAMESCENE_H__
 
-#define MGMS() fusii::MainGame::Self()
-#define MGML() fusii::MainGame::Get()
+#define MGMS() fusii::GameScene::Self()
+#define MGML() fusii::GameScene::Get()
 
 #include "platform/CCCommon.h"
-#include "aeon/fusilli.h"
 #include "core/XPool.h"
 #include "core/Odin.h"
 #include "XScene.h"
 #include "XGameLayer.h"
-
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
@@ -33,10 +31,10 @@ enum class GMode {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainGame : public XScene {
+class CC_DLL GameScene : public XScene {
 protected:
 
-  static void Bind(not_null<MainGame*>);
+  static void Bind(not_null<GameScene*>);
 
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
@@ -49,21 +47,21 @@ protected:
   virtual XGameLayer* GetGLayer() = 0;
   virtual void SetMode(GMode);
 
-  NO__CPYASS(MainGame)
-  MainGame();
+  NO__CPYASS(GameScene)
+  GameScene();
 
 public:
 
   void SetOnlineChannel(owner<ws::OdinIO*> s) { odin= s; }
 
-  static MainGame* Reify(not_null<MainGame*>, GMode);
+  static GameScene* Reify(not_null<GameScene*>, GMode);
   static XGameLayer* Get();
-  static MainGame* Self();
+  static GameScene* Self();
 
-  virtual bool IsRunning() { return running; }
   virtual bool IsOnline() { return NNP(odin); }
+  virtual bool IsRunning() { return running; }
 
-  virtual void NetSend(const ws::Event&);
+  virtual void NetSend(const ws::OdinEvent&);
 
   virtual void Stop() = 0;
   virtual void Play() = 0;
@@ -80,7 +78,7 @@ public:
   s::queue<stdstr>& MsgQueue() { return msgQ; }
   ws::OdinIO* WSOCK() { return odin; }
 
-  virtual ~MainGame();
+  virtual ~GameScene();
 };
 
 

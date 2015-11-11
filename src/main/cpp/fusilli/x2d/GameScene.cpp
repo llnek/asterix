@@ -11,26 +11,26 @@
 
 #include "core/XConfig.h"
 #include "XGameLayer.h"
-#include "MainGame.h"
+#include "GameScene.h"
 NS_BEGIN(fusii)
 
-static MainGame* _singleton;
+static GameScene* _singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XGameLayer* MainGame::Get() {
+XGameLayer* GameScene::Get() {
   return  _singleton->GetGLayer();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainGame* MainGame::Self() {
+GameScene* GameScene::Self() {
   return _singleton;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainGame::~MainGame() {
+GameScene::~GameScene() {
   for (auto it=pools.begin(); it != pools.end(); ++it) {
     delete it->second;
   }
@@ -39,7 +39,7 @@ MainGame::~MainGame() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainGame::MainGame() {
+GameScene::GameScene() {
   mode = GMode::ONE;
   SNPTR(odin)
   level = 1;
@@ -48,13 +48,13 @@ MainGame::MainGame() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* MainGame::GetLCfg() {
+c::Dictionary* GameScene::GetLCfg() {
   return XCFG()->GetLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* MainGame::GetPool(const stdstr& key) {
+XPool* GameScene::GetPool(const stdstr& key) {
   auto it = pools.find(key);
   if (it != pools.end()) {
     return it->second;
@@ -65,20 +65,20 @@ XPool* MainGame::GetPool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* MainGame::ReifyPool(const stdstr& key) {
+XPool* GameScene::ReifyPool(const stdstr& key) {
   auto it = pools.find(key);
   auto p=new XPool();
   if (it != pools.end()) {
     delete it->second;
     pools.erase(it);
   }
-  pools.insert(s::pair<stdstr, XPool*>(key, p));
+  pools.insert( CC_PAIR(stdstr, XPool*, key, p));
   return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainGame::ResetPools() {
+void GameScene::ResetPools() {
   for (auto it = pools.begin(); it != pools.end(); ++it) {
     it->second->ClearAll();
   }
@@ -86,13 +86,13 @@ void MainGame::ResetPools() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MainGame::SetMode(GMode m) {
+void GameScene::SetMode(GMode m) {
   this->mode= m;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-MainGame* MainGame::Reify(not_null<MainGame*> g, GMode mode) {
+GameScene* GameScene::Reify(not_null<GameScene*> g, GMode mode) {
   g->SetMode(mode);
   g->Realize();
   g->Play();
@@ -101,7 +101,7 @@ MainGame* MainGame::Reify(not_null<MainGame*> g, GMode mode) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MainGame::Bind(not_null<MainGame*> m) {
+void GameScene::Bind(not_null<GameScene*> m) {
   _singleton=m;
 }
 

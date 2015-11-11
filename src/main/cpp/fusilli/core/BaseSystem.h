@@ -13,10 +13,8 @@
 #define __BASESYSTEM_H__
 
 #include "core/Primitives.h"
-#include "Factory.h"
 #include "ash/System.h"
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(a,ash)
+#include "Factory.h"
 NS_BEGIN(fusii)
 
 

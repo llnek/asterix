@@ -14,10 +14,12 @@
 NS_ALIAS(n, cocos2d::network)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
+
+
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-j::Json evtToDoc(const Event& evt) {
+j::Json evtToDoc(const OdinEvent& evt) {
   return j::Json::object {
     {"type", (int) evt.type },
     {"code", (int) evt.code },
@@ -27,107 +29,52 @@ j::Json evtToDoc(const Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Event mkPlayRequest(const stdstr& game,
+OdinEvent mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
-  return Event(MType::SESSION,
+  return OdinEvent(MType::SESSION,
       EType::PLAYGAME_REQ,
       j::Json::array({ game, user, pwd }) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-/*
-Event mkJoinRequest (const stdstr& room,
+OdinEvent mkJoinRequest (const stdstr& room,
     const stdstr& user,
     const stdstr& pwd) {
 
-  return Event(MType::SESSION,
+  return OdinEvent(MType::SESSION,
       EType::JOINGAME_REQ,
       j::Json::array({ room, user, pwd }) );
 }
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Event getPlayRequest(not_null<OdinIO*> wss) {
+OdinEvent getPlayRequest(not_null<OdinIO*> wss) {
   return mkPlayRequest(wss->game, wss->user, wss->passwd);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Event json_decode(const n::WebSocket::Data& e) {
+OdinEvent json_decode(const n::WebSocket::Data& e) {
 
-  stdstr error;
-  Event evt;
+  OdinEvent evt;
+  stdstr err;
 
   assert(!e.isBinary);
   try {
     j::Json msg;
-    msg.parse(e.bytes, error);
-    evt= Event(msg);
+    msg.parse(e.bytes, err);
+    evt= OdinEvent(msg);
   } catch (...) {
-    CCLOGERROR("failed to parse json: %s", error.c_str());
+    CCLOGERROR("failed to parse json: %s", err.c_str());
   }
 
   return evt;
 }
 END_NS_UNAMED()
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Event::Event(MType t, EType c, j::Json& body) : Event() {
-  this->doco = j::Json::object {
-    { "type", (int)t },
-    { "code", (int)c }
-  };
-  this->type= t;
-  this->code= c;
-  if (!body.is_null()) {
-    this->doco["source"] = body;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Event::Event(MType t, EType c) : Event() {
-  type= t;
-  code= c;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Event::Event(j::Json& msg) : Event() {
-  if (msg.is_object()) {
-    auto v= msg["type"];
-    if (v.is_number()) {
-      type = SCAST(MType, v.int_value());
-    }
-    v= msg["code"];
-    if (v.is_number()) {
-      code = SCAST(EType, v.int_value());
-    }
-    v= msg["source"];
-    if (!v.is_null()) {
-      doco =v;
-    }
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Event::Event() {
-  tstamp = (double) c::utils::getTimeInMilliseconds();
-  type= MType::NICHTS;
-  code= EType::NICHTS;
-  doco= j::Json::object{};
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Event::~Event() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -168,7 +115,7 @@ OdinIO::OdinIO() {
 //////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 //
-void Send(not_null<OdinIO*> wss, const Event& evt) {
+void Send(not_null<OdinIO*> wss, const OdinEvent& evt) {
   if (wss->state == CType::S_CONNECTED) {
     auto d= evtToDoc(evt);
     wss->socket->send(d.dump());
@@ -177,14 +124,14 @@ void Send(not_null<OdinIO*> wss, const Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void OdinIO::Listen( s::function<void (const Event&)> cb) {
+void OdinIO::Listen( s::function<void (const OdinEvent&)> cb) {
   SNPTR(cbAll)
   Listen(MType::EVERYTHING , cb);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void OdinIO::Listen(MType t, s::function<void (const Event&)> cb) {
+void OdinIO::Listen(MType t, s::function<void (const OdinEvent&)> cb) {
 
   if (MType::EVERYTHING == t) {
     cbAll =cb;
@@ -290,7 +237,7 @@ void OdinIO::onError(n::WebSocket* ws, const n::WebSocket::ErrorCode& error) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OdinIO::OnEvent(const Event& evt) {
+void OdinIO::OnEvent(const OdinEvent& evt) {
   switch (evt.type) {
     case MType::NETWORK:
       if (NNP(cbNetwork)) { cbNetwork(evt); }
