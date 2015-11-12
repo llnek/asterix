@@ -81,7 +81,7 @@ void Online::OnPlayRequest(const stdstr& uid, const stdstr& pwd) {
       pwd.length() == 0) { return; }
 
   odin= ws::ReifyPlayRequest(game, uid, pwd);
-  odin->Listen([=](const ws::Event& e) {
+  odin->Listen([=](const ws::OdinEvent& e) {
       this->OnOdinEvent(e);
       });
   ws::Connect(odin,wsurl);
@@ -89,7 +89,7 @@ void Online::OnPlayRequest(const stdstr& uid, const stdstr& pwd) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnOdinEvent(const ws::Event& evt) {
+void Online::OnOdinEvent(const ws::OdinEvent& evt) {
   //CCLOG("odin event = %p", evt);
   switch (evt.type) {
     case ws::MType::NETWORK:
@@ -103,7 +103,7 @@ void Online::OnOdinEvent(const ws::Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnNetworkEvent(const ws::Event& evt) {
+void Online::OnNetworkEvent(const ws::OdinEvent& evt) {
   switch (evt.code) {
     case ws::EType::PLAYER_JOINED:
       //TODO
@@ -119,7 +119,7 @@ void Online::OnNetworkEvent(const ws::Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Online::OnSessionEvent(const ws::Event& evt) {
+void Online::OnSessionEvent(const ws::OdinEvent& evt) {
   switch (evt.code) {
     case ws::EType::PLAYREQ_OK:
       auto y= SCAST(OnlineLayer*, GetLayer(1));

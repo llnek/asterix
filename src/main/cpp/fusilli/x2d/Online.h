@@ -37,17 +37,17 @@ friend class OnlineLayer;
 protected:
 
   virtual void SetActions(c::CallFunc*, c::CallFunc* );
-  virtual void OnSessionEvent(const ws::Event&);
-  virtual void OnNetworkEvent(const ws::Event&);
-  virtual void OnOdinEvent(const ws::Event&);
+  virtual void OnSessionEvent(const ws::OdinEvent&);
+  virtual void OnNetworkEvent(const ws::OdinEvent&);
+  virtual void OnOdinEvent(const ws::OdinEvent&);
 
   virtual void OnPlayRequest(const stdstr&, const stdstr&);
   virtual void OnCancel(c::Ref*);
 
   virtual void ShowWaitOthers(OnlineLayer*) = 0;
-  virtual void OnStart(const ws::Event&) = 0;
+  virtual void OnStart(const ws::OdinEvent&) = 0;
   virtual void DecoUI(OnlineLayer*) = 0;
-  virtual void OnPlayReply(const ws::Event&) = 0;
+  virtual void OnPlayReply(const ws::OdinEvent&) = 0;
 
   ws::OdinIO* odin;
   c::CallFunc* yes;

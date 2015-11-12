@@ -119,15 +119,16 @@ void XGameLayer::EnableEventHandlers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::InitMouse() {
-  mouse = c::EventListenerMouse::create();
+  auto m = c::EventListenerMouse::create();
+  mouse=m;
 
-  mouse->onMouseMove = CC_CALLBACK_1(XGameLayer::OnMouseMove, this);
-  mouse->onMouseUp = CC_CALLBACK_1(XGameLayer::OnMouseUp, this);
-  mouse->onMouseDown = CC_CALLBACK_1(XGameLayer::OnMouseDown, this);
-  mouse->onMouseScroll = CC_CALLBACK_1(XGameLayer::OnMouseScroll, this);
+  m->onMouseMove = CC_CALLBACK_1(XGameLayer::OnMouseMove, this);
+  m->onMouseUp = CC_CALLBACK_1(XGameLayer::OnMouseUp, this);
+  m->onMouseDown = CC_CALLBACK_1(XGameLayer::OnMouseDown, this);
+  m->onMouseScroll = CC_CALLBACK_1(XGameLayer::OnMouseScroll, this);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(mouse, this);
-  CCLOG("init-mouse: listener = %p", mouse);
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(m, this);
+  CCLOG("init-mouse: listener = %p", m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,13 +190,14 @@ void XGameLayer::OnKeyPressed(c::EventKeyboard::KeyCode code, c::Event* ) {
 //
 void XGameLayer::InitKeys() {
 
-  keys = c::EventListenerKeyboard::create();
+  auto k = c::EventListenerKeyboard::create();
+  keys=k;
 
-  keys->onKeyReleased = CC_CALLBACK_2(XGameLayer::OnKeyReleased, this);
-  keys->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
+  k->onKeyReleased = CC_CALLBACK_2(XGameLayer::OnKeyReleased, this);
+  k->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(keys, this);
-  CCLOG("init-keys: listener = %p", keys);
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(k, this);
+  CCLOG("init-keys: listener = %p", k);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -203,31 +205,32 @@ void XGameLayer::InitKeys() {
 void XGameLayer::InitTouch() {
   //  Reify a "one by one" touch event listener
   // (processes one touch at a time)
-  touch= c::EventListenerTouchOneByOne::create();
+  auto t= c::EventListenerTouchOneByOne::create();
+  touch =t;
 
   // trigger when you push down
-  touch->onTouchBegan = [](c::Touch* t, c::Event* e){
+  t->onTouchBegan = [](c::Touch* t, c::Event* e){
 
       return true; // if you are consuming it
   };
 
   // trigger when moving touch
-  touch->onTouchMoved = [](c::Touch* t, c::Event* e){
+  t->onTouchMoved = [](c::Touch* t, c::Event* e){
       // your code
   };
 
   // trigger when you let up
-  touch->onTouchEnded = [=](c::Touch* t, c::Event* e){
+  t->onTouchEnded = [=](c::Touch* t, c::Event* e){
       // your code
   };
 
   // When "swallow touches" is true, then returning 'true' from the
   // onTouchBegan method will "swallow" the touch event, preventing
   // other listeners from using it.
-  touch->setSwallowTouches(true);
+  t->setSwallowTouches(true);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(touch, this);
-  CCLOG("init-touch: listener = %p", touch);
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(t, this);
+  CCLOG("init-touch: listener = %p", t);
 }
 
 //////////////////////////////////////////////////////////////////////////////
