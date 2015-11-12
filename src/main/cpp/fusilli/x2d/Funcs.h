@@ -9,46 +9,30 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XHUDLAYER_H__)
-#define __XHUDLAYER_H__
+#if !defined(__FUNCS_H__)
+#define __FUNCS_H__
 
 #include "base/ccTypes.h"
+#include "cocos2d.h"
 #include "XLayer.h"
 NS_BEGIN(fusii)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class XLives;
-class CC_DLL XHUDLayer : public XLayer {
-protected:
 
-  void AddReplayIcon(not_null<c::MenuItem*>, const c::Vec2& where);
-  void AddMenuIcon(not_null<c::MenuItem*>, const c::Vec2& where);
+c::Menu* AddMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b,
+    const c::Vec2& where);
 
-  c::Label* scoreLabel;
-  c::Menu* replayBtn;
-  XLives* lives;
-  int score;
+c::Menu* AddReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
+    const c::Vec2& where);
 
-  NO__CPYASS(XHUDLayer)
-  XHUDLayer();
+c::Menu* AddAudioIcons(not_null<XLayer*> layer,
+    not_null<c::MenuItem*> off,
+    not_null<c::MenuItem*> on,
+    const c::Vec2& anchor, const c::Vec2& pos);
 
-public:
 
-  int GetScore() { return score; }
 
-  virtual void ResetAsNew();
-  virtual void Reset();
 
-  virtual ~XHUDLayer();
 
-  bool ReduceLives(int minus=1);
-  void UpdateScore(int num);
-
-  void DisableReplay();
-  void EnableReplay();
-
-};
 
 
 

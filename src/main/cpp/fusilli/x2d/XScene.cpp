@@ -12,10 +12,10 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "XScene.h"
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL SimpleLayer : public XLayer {
@@ -60,6 +60,8 @@ XLayer* SimpleLayer::Realize() {
   CC_PCAST(SimpleScene*)->DecoUI(this);
   return this;
 }
+
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //

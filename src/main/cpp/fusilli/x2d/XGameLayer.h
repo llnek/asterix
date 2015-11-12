@@ -13,11 +13,9 @@
 #define __XGAMELAYER_H__
 
 #include "base/CCEventKeyboard.h"
-#include "core/Odin.h"
 #include "core/ComObj.h"
 #include "ash/Engine.h"
-#include "XHUDLayer.h"
-NS_ALIAS(ws, fusii::odin)
+#include "XLayer.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,12 +24,12 @@ class CC_DLL XGameLayer : public XLayer {
 protected:
 
   s::array<bool, 256> keyboard;
-  c::Dictionary* options;
-  a::Engine* engine;
+  //c::Dictionary* options;
+  //a::Engine* engine;
 
-  c::EventListener* mouseListener;
-  c::EventListener* keysListener;
-  c::EventListener* touchListener;
+  c::EventListener* mouse;
+  c::EventListener* keys;
+  c::EventListener* touch;
 
   virtual void DisableEventHandlers();
   virtual void EnableEventHandlers();
@@ -40,14 +38,6 @@ protected:
   virtual void InitKeys();
   virtual void InitTouch();
 
-  virtual void InizGame();
-  virtual void FinzGame();
-
-  virtual void OnGameOver() = 0;
-
-  XLayer* GetBackgd(int tag= 1);
-  XHUDLayer* GetHUD(int tag=3);
-
   NO__CPYASS(XGameLayer)
   XGameLayer();
 
@@ -55,14 +45,14 @@ public:
 
   virtual void SendMsg(const stdstr& topic, void* msg) = 0;
   void SendMsg(const stdstr& topic) {
-    SendMsg(topic,nullptr);
+    SendMsg(topic, nullptr);
   }
 
   virtual const Box4 GetEnclosureBox();
   virtual int GetIID() { return 2; }
 
-  virtual void update(float);
-  virtual XLayer* Realize();
+  //virtual void update(float);
+  //virtual XLayer* Realize();
   virtual ~XGameLayer();
 
   void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );

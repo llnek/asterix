@@ -10,9 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
-#include "XHUDLayer.h"
+#include "XLayer.h"
 #include "XLives.h"
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 

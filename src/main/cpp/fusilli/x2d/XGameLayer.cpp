@@ -18,24 +18,24 @@
 #include "XScene.h"
 #include "XGameLayer.h"
 
-NS_ALIAS(den,CocosDenshion)
+NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::~XGameLayer() {
-  SNPTR(options)
+  //SNPTR(options)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::XGameLayer() {
-  SNPTR(mouseListener)
-  SNPTR(keysListener)
-  SNPTR(touchListener)
-  SNPTR(engine)
-  SNPTR(options)
+  SNPTR(mouse)
+  SNPTR(keys)
+  SNPTR(touch)
+  //SNPTR(engine)
+  //SNPTR(options)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,6 +51,7 @@ const Box4 XGameLayer::GetEnclosureBox() {
   return cx::VisBox();
 }
 
+/*
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* XGameLayer::Realize() {
@@ -69,25 +70,26 @@ void XGameLayer::FinzGame() {
   OnGameOver();
   this->unscheduleUpdate();
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::DisableEventHandlers() {
   CCLOG("disabling event handlers");
 
-  if (NNP(mouseListener)) {
-    _eventDispatcher->removeEventListener(mouseListener);
+  if (NNP(mouse)) {
+    _eventDispatcher->removeEventListener(mouse);
   }
-  if (NNP(keysListener)) {
-    _eventDispatcher->removeEventListener(keysListener);
+  if (NNP(keys)) {
+    _eventDispatcher->removeEventListener(keys);
   }
-  if (NNP(touchListener)) {
-    _eventDispatcher->removeEventListener(touchListener);
+  if (NNP(touch)) {
+    _eventDispatcher->removeEventListener(touch);
   }
 
-  SNPTR(mouseListener)
-  SNPTR(keysListener)
-  SNPTR(touchListener)
+  SNPTR(mouse)
+  SNPTR(keys)
+  SNPTR(touch)
 
   keyboard.fill(false);
 }
@@ -117,24 +119,22 @@ void XGameLayer::EnableEventHandlers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::InitMouse() {
-  auto ln = c::EventListenerMouse::create();
+  mouse = c::EventListenerMouse::create();
 
-  ln->onMouseMove = CC_CALLBACK_1(XGameLayer::OnMouseMove, this);
-  ln->onMouseUp = CC_CALLBACK_1(XGameLayer::OnMouseUp, this);
-  ln->onMouseDown = CC_CALLBACK_1(XGameLayer::OnMouseDown, this);
-  ln->onMouseScroll = CC_CALLBACK_1(XGameLayer::OnMouseScroll, this);
+  mouse->onMouseMove = CC_CALLBACK_1(XGameLayer::OnMouseMove, this);
+  mouse->onMouseUp = CC_CALLBACK_1(XGameLayer::OnMouseUp, this);
+  mouse->onMouseDown = CC_CALLBACK_1(XGameLayer::OnMouseDown, this);
+  mouse->onMouseScroll = CC_CALLBACK_1(XGameLayer::OnMouseScroll, this);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
-
-  CCLOG("init-mouse: listener = %p", ln);
-  mouseListener=ln;
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(mouse, this);
+  CCLOG("init-mouse: listener = %p", mouse);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XGameLayer::OnMouseMove(c::Event* e) {
   auto evt = (c::EventMouse*) e;
-  GEvent e(evt);
+  //GEvent e(evt);
   //evt->getDelta();
   //evt->getLocation();
   //CCLOG("mouse moved");
@@ -144,7 +144,7 @@ void XGameLayer::OnMouseMove(c::Event* e) {
 //
 void XGameLayer::OnMouseDown(c::Event* e) {
   auto evt = (c::EventMouse*) e;
-  GEvent e(evt);
+  //GEvent e(evt);
 
   //CCLOG("mouse down");
 }
@@ -154,7 +154,7 @@ void XGameLayer::OnMouseDown(c::Event* e) {
 //
 void XGameLayer::OnMouseUp(c::Event* e) {
   auto evt = (c::EventMouse*) e;
-  GEvent e(evt);
+  //GEvent e(evt);
  // CCLOG("mouse up");
 }
 
@@ -162,7 +162,7 @@ void XGameLayer::OnMouseUp(c::Event* e) {
 //
 void XGameLayer::OnMouseScroll(c::Event* e) {
   auto evt = (c::EventMouse*) e;
-  GEvent e(evt);
+  //GEvent e(evt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,15 +189,13 @@ void XGameLayer::OnKeyPressed(c::EventKeyboard::KeyCode code, c::Event* ) {
 //
 void XGameLayer::InitKeys() {
 
-  auto ln = c::EventListenerKeyboard::create();
+  keys = c::EventListenerKeyboard::create();
 
-  ln->onKeyReleased = CC_CALLBACK_2(XGameLayer::OnKeyReleased, this);
-  ln->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
+  keys->onKeyReleased = CC_CALLBACK_2(XGameLayer::OnKeyReleased, this);
+  keys->onKeyPressed = CC_CALLBACK_2(XGameLayer::OnKeyPressed, this);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
-
-  CCLOG("init-keys: listener = %p", ln);
-  keysListener=ln;
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(keys, this);
+  CCLOG("init-keys: listener = %p", keys);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -205,57 +203,43 @@ void XGameLayer::InitKeys() {
 void XGameLayer::InitTouch() {
   //  Reify a "one by one" touch event listener
   // (processes one touch at a time)
-  auto ln= c::EventListenerTouchOneByOne::create();
+  touch= c::EventListenerTouchOneByOne::create();
 
   // trigger when you push down
-  ln->onTouchBegan = [](c::Touch* touch, c::Event* event){
+  touch->onTouchBegan = [](c::Touch* t, c::Event* e){
 
       return true; // if you are consuming it
   };
 
   // trigger when moving touch
-  ln->onTouchMoved = [](c::Touch* touch, c::Event* event){
+  touch->onTouchMoved = [](c::Touch* t, c::Event* e){
       // your code
   };
 
   // trigger when you let up
-  ln->onTouchEnded = [=](c::Touch* touch, c::Event* event){
+  touch->onTouchEnded = [=](c::Touch* t, c::Event* e){
       // your code
   };
 
   // When "swallow touches" is true, then returning 'true' from the
   // onTouchBegan method will "swallow" the touch event, preventing
   // other listeners from using it.
-  ln->setSwallowTouches(true);
+  touch->setSwallowTouches(true);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
-
-
-  CCLOG("init-touch: listener = %p", ln);
-  touchListener=ln;
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(touch, this);
+  CCLOG("init-touch: listener = %p", touch);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XGameLayer::GetBackgd(int tag) {
-  return GetScene()->GetLayer(tag);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XHUDLayer* XGameLayer::GetHUD(int tag) {
-  return SCAST(XHUDLayer*, GetScene()->GetLayer(tag));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
+/*
 void XGameLayer::update(float dt) {
   if (GetScene()->IsRunning() &&
       NNP(engine)) {
     engine->Update(dt);
   }
 }
-
+*/
 
 
 NS_END(fusii)

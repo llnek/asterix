@@ -27,20 +27,9 @@ XLayer* XLayer::Realize() { return this; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::AudioCallback(c::Ref* r) {
-  auto t = SCAST(c::MenuItemToggle*, r);
-  if (t->getSelectedIndex() == 0) {
-    XCFG()->ToggleAudio(true);
-  } else {
-    XCFG()->ToggleAudio(false);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void XLayer::OnQuit(c::Ref* rr) {
-  auto s= YesNo::Reify(ReifyRefType<YesNo>(), "Are you sure ?");
-  CC_DTOR()->pushScene(s);
+  //auto s= YesNo::Reify(ReifyRefType<YesNo>(), "Are you sure ?");
+  //CC_DTOR()->pushScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +57,7 @@ XLayer::RegoAtlas(const stdstr& name, int* z, int* tag) {
   auto t = ENP(tag) ? ++lastTag : *tag;
   auto x = ENP(z) ? lastZix : *z;
 
-  atlases.insert(s::pair<stdstr, c::SpriteBatchNode*>(name,a));
+  atlases.insert(CC_PAIR(stdstr, c::SpriteBatchNode*, name, a));
   this->addChild(a, x,t);
   return a;
 }
@@ -179,29 +168,6 @@ int XLayer::IncIndexZ() {
 //
 XScene* XLayer::GetScene() {
   return SCAST(XScene*, getScene());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void XLayer::AddAudioIcons(not_null<c::MenuItem*> off,
-    not_null<c::MenuItem*> on,
-    const c::Vec2& anchor, const c::Vec2& pos) {
-
-  c::Vector<c::MenuItem*> items;
-  items.pushBack(on);
-  items.pushBack(off);
-
-  auto audio = c::MenuItemToggle::createWithTarget(
-      this,
-      CC_MENU_SELECTOR(XLayer::AudioCallback), items);
-
-  audio->setSelectedIndex( XCFG()->HasAudio() ? 0 : 1);
-  audio->setAnchorPoint(anchor);
-
-  // need null to end var-args
-  auto menu= c::Menu::create(audio, nullptr);
-  menu->setPosition(pos);
-  AddItem(menu);
 }
 
 

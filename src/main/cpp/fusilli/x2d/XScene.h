@@ -15,9 +15,6 @@
 #include "2d/CCScene.h"
 #include "core/Odin.h"
 #include "XLayer.h"
-
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

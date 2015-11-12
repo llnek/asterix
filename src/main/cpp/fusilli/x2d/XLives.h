@@ -13,10 +13,7 @@
 #define __XLIVES_H__
 
 #include "platform/CCCommon.h"
-#include <vector>
-
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(s, std)
+#include "core/Primitives.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

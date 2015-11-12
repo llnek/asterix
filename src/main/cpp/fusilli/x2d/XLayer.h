@@ -16,9 +16,7 @@
 #include "platform/CCCommon.h"
 #include "aeon/fusilli.h"
 #include "2d/CCLayer.h"
-#include "core/Odin.h"
 #include <stdint.h>
-NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
 class SpriteBatchNode;
@@ -32,7 +30,6 @@ protected:
   int lastTag;
   int lastZix;
 
-  void AudioCallback(c::Ref* sender);
   NO__CPYASS(XLayer)
   XLayer();
 
@@ -67,11 +64,6 @@ public:
   void RemoveAtlasAll(const stdstr& atlas) ;
   void RemoveAll();
   void RemoveItem(not_null<c::Node*> n);
-
-  void AddAudioIcons(not_null<c::MenuItem*> off,
-      not_null<c::MenuItem*> on,
-      const c::Vec2& anchor,
-      const c::Vec2& pos);
 
   XScene* GetScene();
   int IncIndexZ();
