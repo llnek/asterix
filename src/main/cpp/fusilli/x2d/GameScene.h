@@ -40,7 +40,6 @@ protected:
   s::queue<stdstr> msgQ;
   ws::OdinIO* odin;
 
-  bool running;
   int level;
   GMode mode;
 
@@ -59,15 +58,11 @@ public:
   static GameScene* Self();
 
   virtual bool IsOnline() { return NNP(odin); }
-  virtual bool IsRunning() { return running; }
 
   virtual void NetSend(const ws::OdinEvent&);
 
   virtual void Stop() = 0;
   virtual void Play() = 0;
-
-  virtual void Resume() {}
-  virtual void Pause() {}
 
   XPool* ReifyPool(const stdstr& n);
   XPool* GetPool(const stdstr& n);

@@ -46,6 +46,9 @@
 #include "aeon/fusilli.h"
 #include "cocos2d.h"
 
+#define CC_LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
+#define CC_PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
+
 #define CC_DTOR() cocos2d::Director::getInstance()
 #define CC_PCAST(T) static_cast<T>(getParent())
 #define CC_KEEP(x) if (x) {x->retain();}
@@ -65,7 +68,6 @@
 
 #define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
 
-#define CC_PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
 
 
 typedef std::function<void ()> VOIDFN;

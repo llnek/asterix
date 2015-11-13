@@ -31,9 +31,7 @@ GameScene* GameScene::Self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 GameScene::~GameScene() {
-  for (auto it=pools.begin(); it != pools.end(); ++it) {
-    delete it->second;
-  }
+  CC_LOOP(it, pools) { delete it->second; }
   mc_del_ptr(odin);
 }
 
@@ -43,7 +41,6 @@ GameScene::GameScene() {
   mode = GMode::ONE;
   SNPTR(odin)
   level = 1;
-  running=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

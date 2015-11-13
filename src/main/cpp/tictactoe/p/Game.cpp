@@ -38,6 +38,9 @@ private:
 
   NO__CPYASS(GameLayer)
   EFactory* factory;
+  bool playable;
+
+  HUDLayer* GetHUD();
   void MkAsh();
 
 public:
@@ -47,6 +50,8 @@ public:
   virtual void Replay() ;
   virtual void Play();
   virtual void OnGameOver();
+
+  virtual f::XLayer* Realize();
 
   void OnPlayerKilled();
   void OnEarnScore(int);
@@ -60,12 +65,38 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::InizGame() {
-  CCLOG("about to init-game");
+GameLayer::~GameLayer() {
 
-  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
-    it->second->removeAllChildren();
-  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+GameLayer::GameLayer() {
+  playable=false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+HUDLayer* GameLayer::GetHUD() {
+  return static_cast<HUDLayer*>( GetScene()->GetLayer(3));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+f::XLayer* GameLayer::Realize() {
+  EnableEventHandlers();
+  cx::PauseAudio();
+  playable=false;
+  InizGame();
+  scheduleUpdate();
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::InizGame() {
+
+  CC_LOOP(it, atlases) { it->second->removeAllChildren(); }
 
   if (atlases.empty()) {
     RegoAtlas("game-pics");
@@ -84,7 +115,7 @@ void GameLayer::InizGame() {
   stdstr p1n;
   stdstr p2n;
 
-  for (auto it=ppids.begin(); it != ppids.end(); ++it) {
+  CC_LOOP(it, ppids) {
     auto arr= it->second;
     if (arr[0].int_value() == 1) {
       p1k= it->first;
@@ -95,11 +126,11 @@ void GameLayer::InizGame() {
     }
   }
 
-  GetHUD()->RegoPlayers(p1c, p1k, p1n,
-                        p2c, p2k, p2n);
+  GetHUD()->RegoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   GetHUD()->Reset();
 
-  options->setObject(CC_INT(0), "lastWinner");
+  this->options->setObject(CC_INT(0), "lastWinner");
+  this->playable=true;
 
   CCLOG("init-game - ok");
 }
@@ -113,8 +144,9 @@ void GameLayer::MkAsh() {
 
   CC_DROP(this->options)
   this->options= d;
-  this->factory=f;
+
   this->engine = e;
+  this->factory=f;
 
   e->RegoSystem(new Resolve(f, d));
   e->RegoSystem(new Stager(f, d));
@@ -144,10 +176,10 @@ void GameLayer::Replay() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::UpdateHUD() {
-  if (MGMS()->IsRunning()) {
-    GetHUD()->DrawStatus(CC_GDV(c::Integer, options, "pnum"));
+  if (this->playable) {
+    GetHUD()->DrawStatus(CC_GDV(c::Integer, this->options, "pnum"));
   } else {
-    GetHUD()->DrawResult(CC_GDV(c::Integer, options, "lastWinner"));
+    GetHUD()->DrawResult(CC_GDV(c::Integer, this->options, "lastWinner"));
   }
 }
 
@@ -163,6 +195,14 @@ void GameLayer::OverAndDone(int winner) {
   GetHUD()->EndGame(winner);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::update(float dt) {
+  if (playable && NNP(engine)) {
+    engine->Update(dt);
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::SendMsg(const stdstr& topic, void* msg) {
@@ -171,80 +211,83 @@ void GameLayer::SendMsg(const stdstr& topic, void* msg) {
   if ("/hud/showmenu" == topic) {
     ShowMenu();
   }
-
-  if ("/hud/replay" == topic) {
-    Replay();
-  }
-
+  else
   if ("/hud/timer/show" == topic) {
     GetHUD()->ShowTimer();
   }
-
+  else
   if ("/net/restart" == topic) {
     GetHUD()->KillTimer();
     Play(false);
   }
-
+  else
   if ("/net/stop" == topic) {
     OverAndDone(msg.status);
   }
-
+  else
   if ("/hud/timer/hide" == topic) {
     GetHUD()->KillTimer();
   }
-
+  else
   if ("/hud/score/update" == topic) {
     auto p = (ScoreUpdate*) msg;
     GetHUD()->UpdateScore(p->color, p->score);
   }
-
+  else
   if ("/hud/end" == topic) {
     auto p= (int*) msg;
     OverAndDone(*p);
   }
-
+  else
   if ("/hud/update" == topic) {
     auto p= (HUDUpdate*) msg;
     GetHUD()->Draw(p->running, p->pnum);
   }
-
+  else
   if ("/player/timer/expired" == topic) {
     PlayTimeExpired();
   }
-
+  else
+  if ("/game/stop" == topic) {
+    playable=false;
+  }
+  else
+  if ("/game/play" == topic) {
+    playable=true;
+  }
 }
 
 END_NS_UNAMED()
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::Play() {
-  running= true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
 void Game::Stop() {
-  running= false;
+  GetGLayer()->SendMsg("/game/stop");
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Game::Play() {
+  GetGLayer()->SendMsg("/game/play");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 f::XGameLayer* Game::GetGLayer() {
-  return (f::XGameLayer*) GetLayer(2);
+  return static_cast<f::XGameLayer*>( GetLayer(2));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 f::XScene* Game::Realize() {
 
-  auto g = (f::XLayer*) f::ReifyRefType<GameLayer>();
-  auto b = (f::XLayer*) f::ReifyRefType<BGLayer>();
-  auto h = (f::XLayer*) f::ReifyRefType<HUDLayer>();
+  auto g = f::ReifyRefType<GameLayer>();
+  auto b = f::ReifyRefType<BGLayer>();
+  auto h = f::ReifyRefType<HUDLayer>();
 
-  AddLayer(b, 1)->Realize();
-  AddLayer(g, 2);
-  AddLayer(h, 3)->Realize();
+  AddLayer( static_cast<f::XLayer*>(b), 1)->Realize();
+  AddLayer( static_cast<f::XLayer*>(g), 2);
+  AddLayer( static_cast<f::XLayer*>(h), 3)->Realize();
 
   // set this to be THE main game
   Bind(this);

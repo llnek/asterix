@@ -26,16 +26,17 @@ NS_BEGIN(fusii)
 //
 XGameLayer::~XGameLayer() {
   //SNPTR(options)
+  //SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XGameLayer::XGameLayer() {
+  SNPTR(options)
   SNPTR(mouse)
   SNPTR(keys)
   SNPTR(touch)
-  //SNPTR(engine)
-  //SNPTR(options)
+  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////

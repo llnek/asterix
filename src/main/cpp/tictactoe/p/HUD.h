@@ -12,12 +12,12 @@
 #if !defined(__HUD_H__)
 #define __HUD_H__
 
-#include "x2d/XHUDLayer.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HUDLayer : public f::XHUDLayer {
+class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
   void ShowMenu(c::Ref*);
@@ -50,8 +50,8 @@ public:
   virtual int GetIID() { return 3; }
   virtual f::XLayer* Realize();
 
-  virtual void ResetAsNew();
-  virtual void Reset();
+  void ResetAsNew();
+  void Reset();
 
   NO__CPYASS(HUDLayer)
   IMPL_CTOR(HUDLayer)
