@@ -21,8 +21,6 @@ class CC_DLL Splash : public f::XScene {
 public:
 
   virtual f::XScene* Realize();
-  void OnPlay(c::Ref*);
-
   static Splash* Reify();
 
   NO__CPYASS(Splash)

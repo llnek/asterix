@@ -9,9 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "dropbox/json11.hpp"
-#include "x2d/MainGame.h"
 #include "ui/UITextField.h"
+#include "dbox/json11.hpp"
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "NetPlay.h"
@@ -31,8 +31,8 @@ void NetPlay::DecoUI(f::OnlineLayer* layer) {
   layer->CenterImage("game.bg");
 
   // test msg
-  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setScale(XCFG()->GetScale() * 0.3);
+  qn->setPosition(cw.x, wb.top * 0.75);
   qn->setOpacity(0.9*255);
   layer->AddItem(qn);
 
@@ -62,18 +62,15 @@ void NetPlay::DecoUI(f::OnlineLayer* layer) {
 
   // btns
   auto b1= cx::ReifyMenuBtn("continue.png");
-  auto yy= (f::OnlineLayer*) layer;
   b1->setCallback([=](c::Ref*) {
-        yy->Login(uid->getString(), pwd->getString());
+        layer->Login(uid->getString(), pwd->getString());
       });
 
   auto b2= cx::ReifyMenuBtn("cancel.png");
   b2->setTarget(this,
-      CC_MENU_SELECTOR(Online::OnCancel));
+      CC_MENU_SELECTOR(f::Online::OnCancel));
 
-  auto menu= f::ReifyRefType<cocos2d::Menu>();
-  menu->addChild(b1);
-  menu->addChild(b2);
+  auto menu= cx::MkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
   menu->setPosition(cw.x, wb.top * 0.1);
   layer->AddItem(menu);
 }
@@ -94,8 +91,7 @@ void NetPlay::ShowWaitOthers(f::OnlineLayer* layer) {
 
   auto menu= f::ReifyRefType<cocos2d::Menu>();
   auto b1= cx::ReifyMenuBtn("cancel.png");
-
-  b1->setTarget(getParent(),
+  b1->setTarget(this,
       CC_MENU_SELECTOR(f::Online::OnCancel));
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
@@ -104,7 +100,7 @@ void NetPlay::ShowWaitOthers(f::OnlineLayer* layer) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::OnStart(const ws::Event& evt) {
+void NetPlay::OnStart(const ws::OdinEvent& evt) {
   auto s= XCFG()->GetSeedData();
   s["ppids"] = evt.doco["source"]["ppids"];
   s["pnum"]= player;
@@ -116,7 +112,7 @@ void NetPlay::OnStart(const ws::Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::OnPlayReply(const ws::Event& evt) {
+void NetPlay::OnPlayReply(const ws::OdinEvent& evt) {
   player= evt.doco["pnum"].int_value();
   CCLOG("player %d: ok", player);
 }

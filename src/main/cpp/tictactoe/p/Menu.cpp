@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "x2d/Online.h"
+#include "x2d/Funcs.h"
 #include "Menu.h"
 #include "Game.h"
 #include "n/cobjs.h"
@@ -22,53 +23,59 @@ BEGIN_NS_UNAMED()
 class CC_DLL MenuLayer : public f::XLayer {
 public:
   virtual f::XLayer* Realize();
+
   void MaybeSeedGame(f::GMode);
   void OnPlayXXX(f::GMode);
   void OnNetPlay(c::Ref*);
   void OnPlay(c::Ref*);
   void OnBack(c::Ref*);
+  void OnQuit(c::Ref*);
+
   NO__CPYASS(MenuLayer)
   IMPL_CTOR(MenuLayer)
 };
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* MenuLayer::Realize() {
   //auto c= cx::ColorRGB("#f6b17f");
-  auto c= cx::ColorRGB("#5E3178");
-  auto wb=cx::VisBox();
-  auto cw= cx::Center();
-  auto lb= cx::ReifyBmfLabel(cw.x, wb.top * 0.9,
+  auto c = cx::ColorRGB("#5E3178");
+  auto wb =cx::VisBox();
+  auto cw = cx::Center();
+  auto lb = cx::ReifyBmfLabel(
+      cw.x,
+      wb.top * 0.9,
       "font.JellyBelly",
       XCFG()->GetL10NStr("mmenu"));
+
+  lb->setColor(c::Color3B(c[0],c[1],c[2]));
+  lb->setScale(XCFG()->GetScale());
 
   CenterImage("gui.mmenu.menu.bg");
   IncIndexZ();
 
-  lb->setColor(c::Color3B(c[0],c[1],c[2]));
-  lb->setScale(XCFG()->GetScale());
   AddItem(lb);
 
-  auto menu= f::ReifyRefType<cocos2d::Menu>();
+  auto menu = f::ReifyRefType<cocos2d::Menu>();
   auto tile = CC_CSV(c::Integer,"TILE");
   auto nil = CC_CSV(c::Integer,"CV_Z");
-  auto b= cx::ReifyMenuBtn("online.png");
+  auto b = cx::ReifyMenuBtn("online.png");
   int tag = (int) f::GMode::NET;
 
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnNetPlay));
   menu->addChild(b,0,tag);
 
-  b= cx::ReifyMenuBtn("player2.png");
+  b = cx::ReifyMenuBtn("player2.png");
+  tag = (int) f::GMode::TWO;
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  tag= (int) f::GMode::TWO;
   menu->addChild(b,0,tag);
 
-  b= cx::ReifyMenuBtn("player1.png");
+  b = cx::ReifyMenuBtn("player1.png");
+  tag = (int) f::GMode::ONE;
   b->setTarget(this,
       CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  tag= (int) f::GMode:ONE;
   menu->addChild(b,0,tag);
 
   // add the menu
@@ -82,10 +89,10 @@ f::XLayer* MenuLayer::Realize() {
   back->setColor(c::Color3B(c[0],c[1],c[2]));
   auto quit= cx::ReifyMenuBtn("icon_quit.png");
   quit->setTarget(this,
-      CC_MENU_SELECTOR(XLayer::OnQuit));
+      CC_MENU_SELECTOR(MenuLayer::OnQuit));
   quit->setColor(c::Color3B(c[0],c[1],c[2]));
 
-  auto m2= cx::MkBackQuit(back, quit, false);
+  auto m2= cx::MkMenu(s::vector<c::MenuItem*> {back, quit}, false, 10.0);
   auto sz= back->getContentSize();
 
   m2->setPosition(wb.left + tile + sz.width * 1.1,
@@ -99,7 +106,8 @@ f::XLayer* MenuLayer::Realize() {
   off->setColor(c::Color3B(c[0],c[1],c[2]));
   on->setColor(c::Color3B(c[0],c[1],c[2]));
 
-  AddAudioIcons(off, on,
+  AddAudioIcons((XLayer*) this,
+      off, on,
       cx::AnchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
 
@@ -166,6 +174,12 @@ void MenuLayer::OnPlayXXX(f::GMode mode) {
   cx::RunScene( Game::Reify(g, mode) );
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void MenuLayer::OnQuit(c::Ref* r) {
+
+}
+
 END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,7 +188,7 @@ MainMenu* MainMenu::ReifyWithBackAction(VOIDFN cb) {
   auto m = f::ReifyRefType<MainMenu>();
   auto a= c::CallFunc::create(cb);
   m->backAction= a;
-  a->retain();
+  CC_KEEP(a)
   m->Realize();
   return m;
 }

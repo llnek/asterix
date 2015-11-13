@@ -42,8 +42,7 @@ namespace ccsx {
       const stdstr& n,
       const stdstr& s, const stdstr& d);
 
-  c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
-      not_null<c::MenuItem*> q,
+  c::Menu* MkMenu(const s::vector<c::MenuItem*>& items,
       bool vert = false, float padding= 10.0f);
 
   bool PointInBox(const Box4& box, float x,  float y);

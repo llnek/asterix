@@ -25,14 +25,14 @@ NS_BEGIN(fusii)
 NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
-// b & q should be same size
-c::Menu* MkBackQuit(not_null<c::MenuItem*> b,
-    not_null<c::MenuItem*> q, bool vert, float pad) {
+// items should be same size
+c::Menu* MkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
 
-  menu->addChild(b);
-  menu->addChild(q);
+  for (auto it = items.begin(); it != items.end(); ++it) {
+	  menu->addChild( *it);
+  }
 
   if (!vert) {
     menu->alignItemsHorizontallyWithPadding(pad);

@@ -20,10 +20,12 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL SplashLayer : public f::XLayer {
-protected:
-  void Demo();
 public:
   virtual f::XLayer* Realize();
+
+  void OnPlay(c::Ref*);
+  void Demo();
+
   NO__CPYASS(SplashLayer)
   IMPL_CTOR(SplashLayer)
 };
@@ -51,6 +53,14 @@ void SplashLayer::Demo() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void SplashLayer::OnPlay(c::Ref* rr) {
+  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
+  auto m = MainMenu::ReifyWithBackAction(f);
+  cx::RunScene( m);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 f::XLayer* SplashLayer::Realize() {
 
   CenterImage("game.bg");
@@ -69,7 +79,7 @@ f::XLayer* SplashLayer::Realize() {
   auto menu= f::ReifyRefType<cocos2d::Menu>();
   auto b1= cx::ReifyMenuBtn("play.png");
   b1->setTarget(getParent(),
-      CC_MENU_SELECTOR(Splash::OnPlay));
+      CC_MENU_SELECTOR(SplashLayer::OnPlay));
   menu->addChild(b1);
   menu->setPosition( cw.x, wb.top * 0.1);
   AddItem(menu);
@@ -85,14 +95,6 @@ f::XScene* Splash::Realize() {
   AddLayer(y);
   y->Realize();
   return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Splash::OnPlay(c::Ref* rr) {
-  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
-  auto m = MainMenu::ReifyWithBackAction(f);
-  cx::RunScene( m);
 }
 
 

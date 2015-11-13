@@ -22,8 +22,8 @@ NS_BEGIN(tttoe)
 class CC_DLL NetPlay : public f::Online {
 protected:
 
-  virtual void OnPlayReply(const ws::Event&);
-  virtual void OnStart(const ws::Event&);
+  virtual void OnPlayReply(const ws::OdinEvent&);
+  virtual void OnStart(const ws::OdinEvent&);
 
   int player;
 

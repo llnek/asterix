@@ -16,8 +16,6 @@
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
-
-
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //

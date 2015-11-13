@@ -12,13 +12,12 @@
 #if !defined(__GAME_H__)
 #define __GAME_H__
 
-#include "x2d/XGameLayer.h"
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Game : public f::MainGame {
+class CC_DLL Game : public f::GameScene {
 protected:
 
   virtual f::XGameLayer* GetGLayer();
