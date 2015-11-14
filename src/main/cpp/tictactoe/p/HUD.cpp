@@ -16,11 +16,9 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* HUDLayer::Realize() {
-  auto c= cx::ColorRGB("#5e3178");
-  c::Color3B c3(c[0],c[1],c[2]);
 
+  this->color = cx::ColorRGB("#5e3178");
   RegoAtlas("game-pics");
-  this->color= c3;
 
   InitLabels();
   InitIcons();
@@ -59,41 +57,55 @@ void HUDLayer::InitLabels() {
   auto cw= cx::Center();
   auto wb= cx::VisBox();
 
+  //title
   title = cx::ReifyBmfLabel( "font.JellyBelly", "");
-  title->setColor(this->color);
+  title->setScale(scale * 0.6);
   title->setAnchor(cx::AnchorT());
-  title->setScale(XCFG()->GetScale() * 0.6);
+  title->setColor(this->color);
   title->setPosition(cw.x, wb.top - 2*tile);
   AddItem(title);
 
+  //score1
   score1= cx::ReifyBmfLabel("font.SmallTypeWriting", "0");
+  score1->setAnchor(cx::AnchorTL());
   score1->setColor(cx::White());
   score1->setScale(scale);
   score1->setPosition(tile + soff + 2, wb.top - tile - soff);
-  score1->setAnchor(cx::AnchorTL());
   AddItem(score1);
 
+  //score2
   score2= cx::ReifyBmfLabel( "font.SmallTypeWriting", "0");
+  score2->setAnchor(cx::AnchorTR());
   score2->setColor(cx::White());
   score2->setScale(scale);
   score2->setPosition(wb.right - tile - soff,
               wb.top - tile - soff);
-  score2->setAnchor(cx::AnchorTR());
   AddItem(score2);
 
+  // status
   status= cx::ReifyBmfLabel( "font.CoffeeBuzzed", "");
   status->setColor(cx::White());
   status->setScale(scale * 0.3);
   status->setPosition(cw.x, wb.bottom + tile * 10);
   AddItem(status);
 
+  // result
   result= cx::ReifyBmfLabel( "font.CoffeeBuzzed", "");
   result->setColor(cx::White());
   result->setScale(scale * 0.3);
-
   result->setPosition(cw.x, wb.bottom + tile * 10);
   result->setVisible(false);
   AddItem(result);
+
+  auto b = cx::ReifyMenuBtn("icon_menu.png");
+  auto hh = cx::GetHeight(b) * 0.5;
+  auto hw = cx::GetWidth(b) * 0.5;
+  b->setTarget(this,
+      CC_MENU_SELECTOR(HUDLayer::ShowMenu));
+  b->setColor(this->color);
+  auto menu = cx::MkMenu(b);
+  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  this->AddItem(menu, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -120,11 +132,12 @@ void HUDLayer::ShowTimer() {
     AddItem(countDown);
   }
 
-  countDownValue= ptt;
-  showCountDown();
-
   countDownState= true;
-  schedule(updateTimer, 1.0);
+  countDownValue= ptt;
+
+  ShowCountDown();
+
+  schedule(this->UpdateTimer, 1.0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -146,7 +159,6 @@ void HUDLayer::UpdateTimer(float dt) {
 void HUDLayer::ShowCountDown(const stdstr& msg) {
   if (NNP(countDown)) {
     countDown->setString(msg);
-    //|| '' + this.countDownValue);
   }
 }
 
@@ -154,7 +166,7 @@ void HUDLayer::ShowCountDown(const stdstr& msg) {
 //
 void HUDLayer::KillTimer() {
   if (countDownState) {
-    unschedule(this.updateTimer);
+    unschedule(this->UpdateTimer);
     ShowCountDown(" ");
   }
   countDownValue=0;
@@ -181,17 +193,15 @@ void HUDLayer::Draw(bool running, int pnum) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::EndGame(int winner) {
-  KillTimer();
-  replayBtn->setVisible(true);
-  result->setVisible(true);
   status->setVisible(false);
+  result->setVisible(true);
+  KillTimer();
   DrawResult(winner);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::DrawStatusText(c::Label* obj,
-    const stdstr& msg) {
+void HUDLayer::DrawXXXText(c::Label* obj, const stdstr& msg) {
   obj->setString(msg);
 }
 
@@ -223,7 +233,7 @@ void HUDLayer::DrawResult(int pnum) {
       break;
   }
 
-  DrawStatusText(result, msg);
+  DrawXXXText(result, msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,7 +241,7 @@ void HUDLayer::DrawResult(int pnum) {
 void HUDLayer::DrawStatus(int pnum) {
   if (pnum > 0) {
     auto pfx = pnum == 1 ? p1Long : p2Long;
-    DrawStatusText(status,
+    DrawXXXText(status,
       XCFG()->GetL10NStr("whosturn",
         s::vector<stdstr> { pfx }));
   }
@@ -239,13 +249,18 @@ void HUDLayer::DrawStatus(int pnum) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::RegoPlayers(color1,p1ids,color2,p2ids) {
+void HUDLayer::RegoPlayers(const stdstr& color1,
+    const stdstr& p1k, const stdstr& p1n,
+    const stdstr& color2, const stdstr& p2k, const stdstr& p2n) {
+
+  scores.insert(CC_PAIR(stdstr,int, color2, 0));
+  scores.insert(CC_PAIR(stdstr,int, color1, 0));
   play2= color2;
   play1= color1;
-  p2Long= p2ids[1];
-  p1Long= p1ids[1];
-  p2ID= p2ids[0];
-  p1ID= p1ids[0];
+  p2Long= p2n;
+  p1Long= p1n;
+  p2ID= p2k;
+  p1ID= p1k;
   title->setString(p1ID + " / " + p2ID);
 }
 
@@ -259,7 +274,6 @@ void HUDLayer::ResetAsNew() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::Reset() {
-  replayBtn->setVisible(false);
   result->setVisible(false);
   status->setVisible(true);
 }

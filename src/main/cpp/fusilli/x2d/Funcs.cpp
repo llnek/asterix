@@ -17,26 +17,13 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* AddMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b,
-    const c::Vec2& where) {
+c::Menu* AddMenuIcon(not_null<XLayer*> layer,
+		not_null<c::MenuItem*> b) {
 
-  auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto menu= ReifyRefType<cocos2d::Menu>();
-  auto hh = cx::GetScaledHeight(b);
-  auto hw = cx::GetScaledWidth(b);
-  auto wz= cx::VisBox();
-  float y;
   int zx = 10;
 
   menu->addChild(b);
-
-  if (where.y == cx::AnchorB().y) {
-    y = wz.bottom + tile  + hh;
-  } else {
-    y = wz.top - tile - hh;
-  }
-
-  menu->setPosition(wz.right - tile - hw, y);
   layer->AddItem(menu, &zx);
 
   return menu;

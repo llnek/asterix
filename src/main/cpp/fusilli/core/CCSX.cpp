@@ -45,14 +45,20 @@ c::Menu* MkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-FArray<GLubyte> ColorRGB(const stdstr& color) {
-  FArray<GLubyte> c(3);
+c::Menu* MkMenu(c::MenuItem* item) {
+  auto menu= c::Menu::create();
+  menu->addChild( item);
+  return menu;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Color3B ColorRGB(const stdstr& color) {
   int r=0, g=0, b=0;
   ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
-  c.Set(0,(GLubyte) r);
-  c.Set(1,(GLubyte) g);
-  c.Set(2,(GLubyte) b);
-  return c;
+  return c::Color3B( (GLubyte)r,
+      (GLubyte)g,
+      (GLubyte)b);
 }
 
 //////////////////////////////////////////////////////////////////////////////

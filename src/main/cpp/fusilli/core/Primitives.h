@@ -45,36 +45,26 @@
 
 #include "aeon/fusilli.h"
 #include "cocos2d.h"
-
-#define CC_LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
-#define CC_PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
-
-#define CC_DTOR() cocos2d::Director::getInstance()
-#define CC_PCAST(T) static_cast<T>(getParent())
-#define CC_KEEP(x) if (x) {x->retain();}
-#define CC_DROP(x) if (x) {x->release();}
-
-#define CC_FLOAT(x) cocos2d::Float::create(x)
-#define CC_BOOL(x) cocos2d::Bool::create(x)
-#define CC_STR(x) cocos2d::String::create(x)
-#define CC_INT(x) cocos2d::Integer::create(x)
-#define CC_DICT() cocos2d::Dictionary::create()
-
-#define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)->getValue()
-#define CC_CSV(t,f) fusii::CstVal<t>(f)->getValue()
-
-#define CC_GDS(d,f) fusii::DictVal<cocos2d::String>(d,f)->getCString()
-#define CC_CSS(f) fusii::CstVal<cocos2d::String>(f)->getCString()
-
-#define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
-
-
-
-typedef std::function<void ()> VOIDFN;
-typedef std::string filepath;
+#include "Macros.h"
 
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+class CC_DLL Option {
+private:
+  NO__CPYASS(Option)
+  bool isset;
+  T value;
+public:
+  explicit Option(T t) { value=t; isset=true; }
+  ~Option() {}
+  Option() { isset=false; }
+  T Get() { return value; }
+  bool IsNone() { return isset; }
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //

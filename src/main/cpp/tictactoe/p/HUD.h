@@ -21,7 +21,6 @@ class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
   void ShowMenu(c::Ref*);
-  void OnReplay(c::Ref*);
 
   void InitLabels();
   void InitIcons();
@@ -33,13 +32,26 @@ protected:
   void UpdateScore(int pcolor,  int value);
   void Draw(bool running,  int pnum);
   void EndGame(int winner);
-  void DrawStatusText(obj, const stdstr& msg);
+  void DrawXXXText(obj, const stdstr& msg);
   void DrawScores();
   void DrawResult(int pnum);
   void DrawStatus(int pnum);
-  void RegoPlayers(color1,p1ids,color2,p2ids);
+  void RegoPlayers(const stdstr& color1,
+      const stdstr& p1k, const stdstr& p1n,
+      const stdstr& color2,
+      const stdstr& p2k, const stdstr& p2n);
 
+  s::map<stdstr, int> scores;
+  bool countDownState;
+  int countDownValue;
+
+  c::Label* countDown;
+  c::Label* result;
+  c::Label* status;
   c::Color3B  color;
+
+  stdstr play2;
+  stdstr play1;
   stdstr p2Long;
   stdstr p1Long;
   stdstr p2ID;

@@ -31,7 +31,7 @@ namespace ccsx {
   void ReifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
-  FArray<GLubyte> ColorRGB(const stdstr& color);
+  c::Color3B ColorRGB(const stdstr& color);
 
   void SfxPlay(const stdstr& sound);
   void PauseAudio();
@@ -41,6 +41,8 @@ namespace ccsx {
   c::MenuItem* ReifyMenuBtn(
       const stdstr& n,
       const stdstr& s, const stdstr& d);
+
+  c::Menu* MkMenu(c::MenuItem*);
 
   c::Menu* MkMenu(const s::vector<c::MenuItem*>& items,
       bool vert = false, float padding= 10.0f);
