@@ -51,11 +51,11 @@ XLayer::~XLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::SpriteBatchNode*
-XLayer::RegoAtlas(const stdstr& name, int z, int tag) {
+XLayer::RegoAtlas(const stdstr& name, const Option<int>& zx, const Option<int>& tag) {
   auto i= c::TextureCache::getInstance()->addImage( XCFG()->GetImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
-  auto t = tag==NULL_INT ? ++lastTag : tag;
-  auto z = tag==NULL_INT ? lastZix : z;
+  auto t = tag.IsNone() ? ++lastTag : tag.Get();
+  auto z = zx.IsNone() ? lastZix : zx.Get();
 
   atlases.insert(CC_PAIR(stdstr, c::SpriteBatchNode*, name, a));
   this->addChild(a, x,t);
@@ -99,10 +99,10 @@ void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
 //
 void XLayer::AddAtlasItem(const stdstr& atlas,
     not_null<c::Node*> n,
-    int zx, int tag) {
+    const Option<int>& zx, const Option<int>& tag) {
 
-  auto ptag = tag==NULL_INT  ? ++lastTag : tag;
-  auto pzx = zx==NULL_INT ? lastZix : zx;
+  auto ptag = tag.IsNone() ? ++lastTag : tag.Get();
+  auto pzx = zx.IsNone() ? lastZix : zx.Get();
   auto p= GetAtlas(atlas);
   auto ss = DCAST(c::Sprite*, n.get());
 
@@ -118,9 +118,10 @@ void XLayer::AddAtlasItem(const stdstr& atlas,
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 //
-void XLayer::AddItem(not_null<c::Node*> n, int zx, int tag) {
-  auto ptag = tag==NULL_INT ?  ++lastTag : tag;
-  auto pzx = zx==NULL_INT ? lastZix : zx;
+void XLayer::AddItem(not_null<c::Node*> n,
+    const Option<int>&  zx, const Option<int>& tag) {
+  auto ptag = tag.IsNone() ?  ++lastTag : tag.Get();
+  auto pzx = zx.IsNone()  ? lastZix : zx.Get();
   this->addChild(n.get(), pzx, ptag);
 }
 
