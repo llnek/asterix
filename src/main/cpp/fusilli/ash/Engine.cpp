@@ -12,7 +12,6 @@
 #include "NodeRegistry.h"
 #include "Node.h"
 #include "Engine.h"
-NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
   /*
@@ -34,10 +33,10 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
-  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+  F__LOOP(it, nodeLists) {
     delete *it;
   }
-  for (auto it= groups.begin(); it != groups.end(); ++it) {
+  F__LOOP(it, groups) {
     delete it->second;
   }
 //  printf("Engine dtor\n");
@@ -68,7 +67,7 @@ Engine::GetEntities(const stdstr& group) {
 const s::vector<Entity*>
 Engine::GetEntities() {
   s::vector<Entity*> rc;
-  for (auto it = groups.begin(); it != groups.end(); ++it) {
+  F__LOOP(it, groups) {
     auto v= it->second->List();
     rc.insert(rc.end(), v.begin(), v.end());
   }
@@ -91,7 +90,7 @@ Entity* Engine::ReifyEntity(const stdstr& group) {
     el= it->second;
   } else {
     el= mc_new(ObjList<Entity>);
-    groups.insert(s::pair<stdstr, ObjList<Entity>*>(group,el));
+    groups.insert(S__PAIR(stdstr, ObjList<Entity>*, group, el));
   }
   el->Add(e);
   dirty=true;
@@ -103,7 +102,7 @@ Entity* Engine::ReifyEntity(const stdstr& group) {
 //
 void Engine::NotifyModify(not_null<Entity*> e) {
   bool fnd=false;
-  for (auto it= modList.begin(); it != modList.end(); ++it) {
+  F__LOOP(it, modList) {
     if (e == *it) { fnd=true; break; }
   }
   if (!fnd) {
@@ -147,7 +146,7 @@ void Engine::PurgeEntities(const stdstr& group) {
 NodeList* Engine::GetNodeList( const NodeType& nodeType) {
   auto nl = NodeList::Reify(nodeType);
   auto rego = NodeRegistry::Self();
-  for (auto it = groups.begin(); it != groups.end(); ++it) {
+  F__LOOP(it, groups) {
     auto el= it->second;
     Node* n= nullptr;
     for (auto e= el->head; NNP(e); e=e->next) {
@@ -206,7 +205,7 @@ void Engine::Update(float time) {
 //////////////////////////////////////////////////////////////////////////////
 // get rid of nodes bound to this entity
 void Engine::OnPurgeEntity(Entity* e) {
-  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+  F__LOOP(it, nodeLists) {
     auto nl= *it;
     nl->RemoveEntity(e);
   }
@@ -216,8 +215,7 @@ void Engine::OnPurgeEntity(Entity* e) {
 // sync existing nodes, add if necessary
 void Engine::OnAddEntity(Entity* e) {
   auto rego = NodeRegistry::Self();
-  for (auto it = nodeLists.begin();
-      it != nodeLists.end(); ++it) {
+  F__LOOP(it, nodeLists) {
     auto nl= *it;
     auto n= rego->ReifyNode(nl->GetType());
     if (n->BindEntity(e)) {
@@ -232,7 +230,7 @@ void Engine::OnAddEntity(Entity* e) {
 // sync changes
 void Engine::OnModifyEntity(Entity* e) {
   auto rego = NodeRegistry::Self();
-  for (auto it = nodeLists.begin(); it != nodeLists.end(); ++it) {
+  F__LOOP(it, nodeLists) {
     auto nl = *it;
     auto t = nl->GetType();
     Node* n;
@@ -260,19 +258,16 @@ void Engine::ForceSync() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::HouseKeeping() {
-  for (auto it= freeList.begin();
-      it != freeList.end(); ++it) {
+  F__LOOP(it, freeList) {
     auto e = *it;
     OnPurgeEntity(e);
     delete e;
   }
-  for (auto it= addList.begin();
-      it != addList.end(); ++it) {
+  F__LOOP(it, addList) {
     auto e = *it;
     OnAddEntity(e);
   }
-  for (auto it= modList.begin();
-      it != modList.end(); ++it) {
+  F__LOOP(it, modList) {
     auto e= *it;
     OnModifyEntity(e);
   }

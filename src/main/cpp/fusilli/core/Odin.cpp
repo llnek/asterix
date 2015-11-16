@@ -11,7 +11,6 @@
 
 #include "base/ccUtils.h"
 #include "Odin.h"
-NS_ALIAS(n, cocos2d::network)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
 

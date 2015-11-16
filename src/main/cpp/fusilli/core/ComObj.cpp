@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Primitives.h"
 #include "ComObj.h"
 NS_BEGIN(fusii)
 
@@ -37,19 +36,19 @@ void ComObj::Inflate(not_null<c::Dictionary*> dict) {
     return;
   }
 
-  auto scale= CC_GDV(c::Float, dict,"scale");
-  auto deg= CC_GDV(c::Float, dict, "deg");
-  auto x= CC_GDV(c::Float, dict, "x");
-  auto y= CC_GDV(c::Float, dict, "y");
+  auto scale= fusii::DictVal<c::Float>(dict, "scale");
+  auto deg= fusii::DictVal<c::Float>(dict, "deg");
+  auto x= fusii::DictVal<c::Float>(dict, "x");
+  auto y= fusii::DictVal<c::Float>(dict, "y");
 
   if (NNP(x) && NNP(y)) {
-    sprite->setPosition(x, y);
+    sprite->setPosition(x->getValue(), y->getValue());
   }
   if (NNP(deg)) {
-    sprite->setRotation(deg);
+    sprite->setRotation(deg->getValue());
   }
   if (NNP(scale)) {
-    sprite->setScale(scale);
+    sprite->setScale(scale->getValue());
   }
 
   sprite->setVisible(true);

@@ -40,8 +40,8 @@ protected:
   s::queue<stdstr> msgQ;
   ws::OdinIO* odin;
 
-  int level;
   GMode mode;
+  int level;
 
   virtual XGameLayer* GetGLayer() = 0;
   virtual void SetMode(GMode);
@@ -58,9 +58,6 @@ public:
   static GameScene* Self();
 
   virtual bool IsOnline() { return NNP(odin); }
-
-  virtual void NetSend(const ws::OdinEvent&);
-
   virtual void Stop() = 0;
   virtual void Play() = 0;
 

@@ -12,10 +12,7 @@
 #if !defined(__NODEREGISTRY_H__)
 #define __NODEREGISTRY_H__
 
-#include <vector>
-#include <map>
 #include "Ash.h"
-NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 class Node;
@@ -24,8 +21,8 @@ class Node;
 class FS_DLL NodeFactory {
 protected:
 
-  owner<Node*> ReifyXXXNode(const s::vector<stdstr>&,
-      const s::vector<COMType>&);
+  owner<Node*>
+  ReifyXXXNode(const s::vector<stdstr>&, const s::vector<COMType>&);
 
 public:
 

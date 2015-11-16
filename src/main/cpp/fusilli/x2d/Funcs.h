@@ -13,7 +13,6 @@
 #define __FUNCS_H__
 
 #include "base/ccTypes.h"
-#include "cocos2d.h"
 #include "XLayer.h"
 NS_BEGIN(fusii)
 

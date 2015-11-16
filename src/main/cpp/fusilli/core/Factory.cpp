@@ -9,10 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "ash/Engine.h"
 #include "Factory.h"
 NS_BEGIN(fusii)
-
 
 //////////////////////////////////////////////////////////////////////////
 //

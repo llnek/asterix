@@ -15,10 +15,6 @@
 #include "NodeList.h"
 #include "System.h"
 #include "Entity.h"
-#include <vector>
-#include <map>
-
-NS_ALIAS(s,std)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -138,9 +134,6 @@ private:
 
 public:
 
-  virtual ~Engine();
-  Engine();
-
   const s::vector<Entity*> GetEntities(const stdstr& group);
   const s::vector<Entity*> GetEntities();
   const s::vector<System*> GetSystems();
@@ -160,6 +153,7 @@ public:
 
   void Update(float time);
 
+  DECL_CTOR(Engine)
 };
 
 

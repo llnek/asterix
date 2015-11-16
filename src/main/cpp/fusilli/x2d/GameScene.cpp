@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "XGameLayer.h"
 #include "GameScene.h"
 NS_BEGIN(fusii)
 
@@ -31,7 +30,7 @@ GameScene* GameScene::Self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 GameScene::~GameScene() {
-  CC_LOOP(it, pools) { delete it->second; }
+  F__LOOP(it, pools) { delete it->second; }
   mc_del_ptr(odin);
 }
 
@@ -69,14 +68,14 @@ XPool* GameScene::ReifyPool(const stdstr& key) {
     delete it->second;
     pools.erase(it);
   }
-  pools.insert( CC_PAIR(stdstr, XPool*, key, p));
+  pools.insert(S__PAIR(stdstr, XPool*, key, p));
   return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameScene::ResetPools() {
-  for (auto it = pools.begin(); it != pools.end(); ++it) {
+  F__LOOP(it, pools) {
     it->second->ClearAll();
   }
 }

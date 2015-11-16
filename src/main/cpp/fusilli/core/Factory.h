@@ -12,8 +12,8 @@
 #if !defined(__FACTORY_H__)
 #define __FACTORY_H__
 
-#include "core/XPool.h"
 #include "ash/Engine.h"
+#include "XPool.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////

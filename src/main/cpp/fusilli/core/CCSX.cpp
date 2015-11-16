@@ -30,9 +30,7 @@ c::Menu* MkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
 
-  for (auto it = items.begin(); it != items.end(); ++it) {
-	  menu->addChild( *it);
-  }
+  F__LOOP(it, items) { menu->addChild( *it); }
 
   if (!vert) {
     menu->alignItemsHorizontallyWithPadding(pad);
@@ -53,7 +51,7 @@ c::Menu* MkMenu(c::MenuItem* item) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Color3B ColorRGB(const stdstr& color) {
+const c::Color3B ColorRGB(const stdstr& color) {
   int r=0, g=0, b=0;
   ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
   return c::Color3B( (GLubyte)r,
@@ -202,7 +200,7 @@ bool OutOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Size ScaleSize(c::Size z, float scale) {
+const c::Size ScaleSize(c::Size z, float scale) {
   return c::Size(z.width * scale, z.height * scale);
 }
 

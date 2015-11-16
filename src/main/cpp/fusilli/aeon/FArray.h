@@ -42,7 +42,7 @@ public:
   FArray<T>& operator=(const FArray<T>&);
   FArray(const FArray<T>&);
 
-  FArray(int size);
+  explicit FArray(int size);
   FArray();
 
   virtual ~FArray();
@@ -76,7 +76,9 @@ FArray<T>::FArray(FArray<T>&& src) {
 template<typename T>
 FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
   mc_del_arr(data);
-  data= new T[src.size];
+  if (src.size > 0) {
+    data= new T[src.size];
+  }
   size=src.size;
   for (int i=0; i < src.size; ++i) {
     data[i] = src.data[i];
@@ -88,7 +90,9 @@ FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
 //
 template<typename T>
 FArray<T>::FArray(const FArray<T>& src) {
-  data= new T[src.size];
+  if (src.size > 0) {
+    data= new T[src.size];
+  }
   size=src.size;
   for (int i=0; i < src.size; ++i) {
     data[i] = src.data[i];
@@ -164,14 +168,14 @@ bool FArray<T>::All(T v) {
   for (int i = 0; i < size; ++i) {
     if (v != data[i]) { return false; }
   }
-  return true;
+  return size > 0 ;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 int FArray<T>::RandomIndex() {
-  auto pos= rand() % size;
+  auto pos= size > 0 ? rand() % size : -1;
   if (pos >= size) {
     return (int) size/2;
   } else {

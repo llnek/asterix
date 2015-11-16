@@ -12,8 +12,8 @@
 #if !defined(__XPOOL_H__)
 #define __XPOOL_H__
 
-#include "core/Primitives.h"
 #include "base/CCRef.h"
+#include "Primitives.h"
 #include "ComObj.h"
 NS_BEGIN(fusii)
 

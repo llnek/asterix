@@ -18,8 +18,8 @@ NS_BEGIN(ash)
 //
 owner<Node*> Node::Reify(const s::map<stdstr, COMType>& s) {
   auto node= mc_new(Node);
-  for (auto it = s.begin(); it != s.end(); ++it) {
-    node->types.insert(s::pair<COMType, stdstr>(it->second,it->first));
+  F__LOOP(it, s) {
+    node->types.insert(S__PAIR(COMType, stdstr, it->second, it->first));
   }
   return node;
 }
@@ -46,12 +46,12 @@ bool Node::BindEntity(not_null<Entity*> e) {
     return false;
   }
   values.clear();
-  for (auto it= types.begin(); it != types.end(); ++it) {
+  F__LOOP(it, types) {
     auto f= it->second;
     auto t= it->first;
     auto c= e->Get(t);
     if (NNP(c)) {
-      values.insert(s::pair<stdstr, Component*>(f,c));
+      values.insert(S__PAIR(stdstr, Component*, f, c));
     } else {
       // this entity is no good, doesn't have the right
       // components

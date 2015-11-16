@@ -13,9 +13,6 @@
 #define __ENTITY_H__
 
 #include "Ash.h"
-#include <vector>
-#include <map>
-
 NS_BEGIN(ash)
 
 class Engine;

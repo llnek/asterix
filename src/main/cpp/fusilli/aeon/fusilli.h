@@ -93,10 +93,15 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
+
+#define F__LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
+#define S__PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
+
 #define DCAST(type,expr) dynamic_cast<type>(expr)
 #define SCAST(type,expr) static_cast<type>(expr)
 #define NNP(p) p != nullptr
 #define ENP(p) p == nullptr
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

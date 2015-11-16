@@ -26,7 +26,7 @@ void XPool::Preset(s::function<ComObj* ()> f, int count) {
 //////////////////////////////////////////////////////////////////////////
 // Find an object by applying this filter
 ComObj* XPool::Select(s::function<bool (ComObj*)> f) {
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
+  F__LOOP(it, objs) {
     auto e = *it;
     if (f(e)) {
       return e;
@@ -54,7 +54,7 @@ ComObj* XPool::GetAt(int pos) {
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool.  More like a peek
 ComObj* XPool::Get() {
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
+  F__LOOP(it, objs) {
     auto e= *it;
     if (! e->status) { return e; }
   }
@@ -70,9 +70,8 @@ void XPool::Checkin(not_null<ComObj*> c) {
 //////////////////////////////////////////////////////////////////////////
 //
 void XPool::ClearAll(bool del) {
-  if (del)
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
-    delete *it;
+  if (del) {
+    F__LOOP(it, objs) { delete *it; }
   }
   objs.clear();
 }
@@ -81,7 +80,7 @@ void XPool::ClearAll(bool del) {
 // Get the count of active objects
 int XPool::CountActives() {
   auto c=0;
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
+  F__LOOP(it, objs) {
     if ((*it)->status) {
       ++c;
     }
@@ -92,7 +91,7 @@ int XPool::CountActives() {
 //////////////////////////////////////////////////////////////////////////
 //
 void XPool::Foreach(s::function<void (ComObj*)> f) {
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
+  F__LOOP(it, objs) {
     f(*it);
   }
 }
@@ -100,7 +99,7 @@ void XPool::Foreach(s::function<void (ComObj*)> f) {
 //////////////////////////////////////////////////////////////////////////
 // Hibernate (status off) all objects in the pool
 void XPool::Reset() {
-  for (auto it = objs.begin(); it != objs.end(); ++it) {
+  F__LOOP(it, objs) {
     (*it)->Deflate();
   }
 }

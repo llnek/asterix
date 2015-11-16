@@ -31,7 +31,7 @@ namespace ccsx {
   void ReifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
-  c::Color3B ColorRGB(const stdstr& color);
+  const c::Color3B ColorRGB(const stdstr& hexcolor);
 
   void SfxPlay(const stdstr& sound);
   void PauseAudio();
@@ -80,7 +80,7 @@ namespace ccsx {
   void RunScene(not_null<c::Scene*>, float delay);
   void RunScene(not_null<c::Scene*>);
 
-  c::Size ScaleSize(c::Size z, float scale);
+  const c::Size ScaleSize(c::Size z, float scale);
 
   bool IsTransitioning();
 

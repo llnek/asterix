@@ -12,11 +12,9 @@
 #if !defined(__BASESYSTEM_H__)
 #define __BASESYSTEM_H__
 
-#include "core/Primitives.h"
 #include "ash/System.h"
 #include "Factory.h"
 NS_BEGIN(fusii)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

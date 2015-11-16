@@ -29,9 +29,7 @@ NodeRegistry* NodeRegistry::Self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeRegistry::~NodeRegistry() {
-  for (auto it= regos.begin(); it != regos.end(); ++it) {
-    delete it->second;
-  }
+  F__LOOP(it, regos) { delete it->second; }
   //printf("NodeRegistry dtor\n");
 }
 
@@ -44,7 +42,7 @@ NodeRegistry::NodeRegistry() {
 //
 void NodeRegistry::Register(not_null<NodeFactory*> f) {
   Deregister(f->TypeId());
-  regos.insert(s::pair<NodeType,NodeFactory*>(f->TypeId(),f));
+  regos.insert(S__PAIR(NodeType,NodeFactory*,f->TypeId(),f));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,11 +72,14 @@ owner<Node*> NodeRegistry::ReifyNode(const NodeType& t) {
 //
 owner<Node*> NodeFactory::ReifyXXXNode(const s::vector<stdstr>& flds,
     const s::vector<COMType>& types) {
+
   assert(flds.size() == types.size());
   s::map<stdstr,a::COMType> s;
+
   for (int i=0; i < flds.size(); ++i) {
-    s.insert(s::pair<stdstr, COMType>( flds[i], types[i] ));
+    s.insert(S__PAIR(stdstr, COMType, flds[i], types[i] ));
   }
+
   return a::Node::Reify(s);
 }
 

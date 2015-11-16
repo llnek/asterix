@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "L10N.h"
-
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

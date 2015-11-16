@@ -26,9 +26,7 @@ owner<Entity*> Entity::Reify(const stdstr& group, not_null<Engine*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity::~Entity() {
-  for (auto it= parts.begin(); it != parts.end(); ++it) {
-    delete it->second;
-  }
+  F__LOOP(it, parts) { delete it->second; }
   //printf("Entity dtor\n");
 }
 
@@ -48,7 +46,7 @@ void Entity::Checkin(not_null<Component*> c) {
   if (Has(z)) {
     throw "cannot reassign component";
   }
-  parts.insert(s::pair<COMType,Component*>(z,c));
+  parts.insert(S__PAIR(COMType, Component*, z, c));
   engine->NotifyModify(this);
 }
 
@@ -86,7 +84,7 @@ Component* Entity::Get(const COMType& z) {
 //
 const s::vector<Component*> Entity::GetAll() {
   s::vector<Component*> v;
-  for (auto it = parts.begin(); it != parts.end(); ++it) {
+  F__LOOP(it, parts) {
     v.push_back(it->second);
   }
   return v;

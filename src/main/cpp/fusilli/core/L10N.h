@@ -13,10 +13,8 @@
 #define __L10N_H__
 
 #include "platform/CCCommon.h"
-#include "aeon/fusilli.h"
-#include <map>
+#include "Primitives.h"
 NS_BEGIN(fusii)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

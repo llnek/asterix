@@ -55,13 +55,30 @@ NS_BEGIN(fusii)
 template<typename T>
 class CC_DLL Option {
 private:
-  NO__CPYASS(Option)
   bool isset;
   T value;
 public:
   explicit Option(T t) { value=t; isset=true; }
-  ~Option() {}
   Option() { isset=false; }
+  Option<T>& operator=(const Option<T>& arg) {
+    value=arg.value;
+    isset=arg.isset;
+    return *this;
+  }
+  Option(const Option<T>& arg) {
+    value=arg.value;
+    isset=arg.isset;
+  }
+  Option<T>& operator=(Option<T>&& arg) {
+    value=arg.value;
+    isset=arg.isset;
+    return *this;
+  }
+  Option(Option<T>&& arg) {
+    value=arg.value;
+    isset=arg.isset;
+  }
+  ~Option() {}
   T Get() { return value; }
   bool IsNone() { return isset; }
 };

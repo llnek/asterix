@@ -32,8 +32,6 @@ struct FS_DLL Snapshot {
 //////////////////////////////////////////////////////////////////////////////
 template<int Z>
 class FS_DLL GameBoard {
-protected:
-  GameBoard() {}
 public:
 
   virtual const s::vector<int> GetNextMoves(not_null<Snapshot<Z>*>) = 0;
@@ -47,10 +45,7 @@ public:
 
   virtual void SwitchPlayer(not_null<Snapshot<Z>*>) = 0;
   virtual Snapshot<Z> TakeSnapshot() = 0;
-
-  NO__CPYASS(GameBoard)
   virtual ~GameBoard() {}
-
 };
 
 BEGIN_NS_UNAMED()
@@ -70,10 +65,10 @@ int NegaMax(not_null<GameBoard<Z>*> board,
   int bestValue = -PINF;
 
   if (depth == maxDepth) {
-    game->LastBestMove = openMoves[0];
+    game->lastBestMove = openMoves[0];
   }
 
-  for (auto it=openMoves.begin(); it != openMoves.end(); ++it) {
+  F__LOOP(it, openMoves) {
     int move = *it;
     int rc;
     board->MakeMove(game, move);
@@ -86,7 +81,7 @@ int NegaMax(not_null<GameBoard<Z>*> board,
       alpha = rc;
       bestMove = move;
       if (depth == maxDepth) {
-        game->LastBestMove = move;
+        game->lastBestMove = move;
       }
       if (alpha >= beta) { break; }
     }

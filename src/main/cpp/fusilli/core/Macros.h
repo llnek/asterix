@@ -15,9 +15,6 @@
 #define CC_GDS(d,f) fusii::DictVal<cocos2d::String>(d,f)->getCString()
 #define CC_CSS(f) fusii::CstVal<cocos2d::String>(f)->getCString()
 
-#define CC_LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
-#define CC_PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
-
 #define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)->getValue()
 #define CC_CSV(t,f) fusii::CstVal<t>(f)->getValue()
 
@@ -38,7 +35,6 @@ typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
 
 #define NULL_INT 977814444
-
 
 #endif
 

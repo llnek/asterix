@@ -40,17 +40,17 @@ public:
   virtual XLayer* Realize();
 
   c::SpriteBatchNode* RegoAtlas(const stdstr& name,
-      const Option<int>& z,
-      const Option<int>& tag);
+      const Option<int>& = Option<int>(),
+      const Option<int>& =Option<int>());
 
   virtual void AddAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,
-      const Option<int>& z,
-      const Option<int>& tag);
+      const Option<int>& = Option<int>(),
+      const Option<int>& = Option<int>() );
 
   virtual void AddItem(not_null<c::Node*> n,
-      const Option<int>& z,
-      const Option<int>& tag);
+      const Option<int>& = Option<int>() ,
+      const Option<int>& = Option<int>() );
 
   void AddAtlasFrame
     (const stdstr& atlas,

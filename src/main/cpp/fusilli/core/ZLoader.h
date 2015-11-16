@@ -14,7 +14,7 @@
 
 #include "platform/CCCommon.h"
 #include "2d/CCScene.h"
-#include "aeon/fusilli.h"
+#include "Primitives.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

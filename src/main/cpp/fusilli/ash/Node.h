@@ -13,10 +13,6 @@
 #define __NODE_H__
 
 #include "Ash.h"
-#include <vector>
-#include <map>
-
-NS_ALIAS(s, std)
 NS_BEGIN(ash)
 
 
@@ -59,6 +55,7 @@ T* NodeFld(not_null<ash::Node*> n, const stdstr& fld) {
     return nullptr;
   }
 }
+
 
 NS_END(ash)
 #endif

@@ -12,7 +12,6 @@
 #include "audio/include/SimpleAudioEngine.h"
 #include "platform/CCGLView.h"
 #include "platform/CCGL.h"
-#include "Primitives.h"
 #include "XConfig.h"
 #include "CCSX.h"
 #include "App.h"
@@ -81,7 +80,7 @@ void App::PreLaunch(const c::Size& dz) {
   c::Size largeSize;
   c::Size mediumSize;
   c::Size smallSize;
-  auto spath="hdr";
+  auto spath="rd";
 
   // set FPS. default is 1.0/60 if you don't call this
   CC_DTOR()->setAnimationInterval(1.0 / fps);
@@ -143,13 +142,13 @@ void App::PreLaunch(const c::Size& dz) {
 //
 void App::InitAudio() {
   auto a = XCFG()->GetEffectFiles();
-  for (auto it = a.begin(); it != a.end(); ++it) {
+  F__LOOP(it, a) {
     auto fp = *it;
     CCLOG("preloading sound effect: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadEffect(fp.c_str());
   }
   a= XCFG()->GetMusicFiles();
-  for (auto it = a.begin(); it != a.end(); ++it) {
+  F__LOOP(it, a) {
     auto fp = *it;
     CCLOG("preloading music: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());

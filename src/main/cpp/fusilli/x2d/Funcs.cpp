@@ -21,11 +21,8 @@ c::Menu* AddMenuIcon(not_null<XLayer*> layer,
 		not_null<c::MenuItem*> b) {
 
   auto menu= ReifyRefType<cocos2d::Menu>();
-  int zx = 10;
-
   menu->addChild(b);
-  layer->AddItem(menu, &zx);
-
+  layer->AddItem(menu);
   return menu;
 }
 
@@ -40,7 +37,6 @@ c::Menu* AddReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
   auto hw = cx::GetScaledWidth(c);
   auto wz= cx::VisBox();
   float y;
-  int zx= 10;
 
   menu->addChild(c);
 
@@ -51,7 +47,7 @@ c::Menu* AddReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
   }
 
   menu->setPosition(wz.left + tile + hw, y);
-  layer->AddItem(menu, &zx);
+  layer->AddItem(menu);
 
   return menu;
 }

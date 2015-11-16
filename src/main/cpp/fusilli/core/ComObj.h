@@ -12,8 +12,8 @@
 #if !defined(__COMOBJ_H__)
 #define __COMOBJ_H__
 
-#include "core/Primitives.h"
 #include "2d/CCSprite.h"
+#include "Primitives.h"
 #include "ash/Ash.h"
 NS_BEGIN(fusii)
 

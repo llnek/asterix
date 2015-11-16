@@ -14,8 +14,7 @@
 
 #include "platform/CCApplication.h"
 #include "platform/CCCommon.h"
-#include "aeon/fusilli.h"
-NS_ALIAS(c, cocos2d)
+#include "Primitives.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
