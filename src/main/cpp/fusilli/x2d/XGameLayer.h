@@ -23,6 +23,13 @@ NS_BEGIN(fusii)
 class CC_DLL XGameLayer : public XLayer {
 protected:
 
+  virtual void DisableEventHandlers();
+  virtual void EnableEventHandlers();
+
+  virtual void InitMouse();
+  virtual void InitKeys();
+  virtual void InitTouch();
+
   s::array<bool, 256> keyboard;
 
   c::Dictionary* options;
@@ -32,13 +39,6 @@ protected:
   c::EventListener* mouse;
   c::EventListener* keys;
   c::EventListener* touch;
-
-  virtual void DisableEventHandlers();
-  virtual void EnableEventHandlers();
-
-  virtual void InitMouse();
-  virtual void InitKeys();
-  virtual void InitTouch();
 
   NO__CPYASS(XGameLayer)
   XGameLayer();

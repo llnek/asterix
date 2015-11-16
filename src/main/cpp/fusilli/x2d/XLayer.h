@@ -14,9 +14,8 @@
 
 #include "2d/CCSpriteBatchNode.h"
 #include "platform/CCCommon.h"
-#include "aeon/fusilli.h"
 #include "2d/CCLayer.h"
-#include <stdint.h>
+#include "core/Primitives.h"
 NS_BEGIN(fusii)
 
 class SpriteBatchNode;
@@ -27,8 +26,9 @@ class CC_DLL XLayer : public c::Layer {
 protected:
 
   s::map<stdstr, c::SpriteBatchNode*> atlases;
+
   int lastTag;
-  int lastZix;
+  int lastZ;
 
   NO__CPYASS(XLayer)
   XLayer();
@@ -40,26 +40,23 @@ public:
   virtual XLayer* Realize();
 
   c::SpriteBatchNode* RegoAtlas(const stdstr& name,
-      const Option<int>& = Option<int>(),
-      const Option<int>& =Option<int>());
+      const Maybe<int>& = Maybe<int>(),
+      const Maybe<int>& = Maybe<int>() );
 
   virtual void AddAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,
-      const Option<int>& = Option<int>(),
-      const Option<int>& = Option<int>() );
+      const Maybe<int>& = Maybe<int>(),
+      const Maybe<int>& = Maybe<int>() );
 
   virtual void AddItem(not_null<c::Node*> n,
-      const Option<int>& = Option<int>() ,
-      const Option<int>& = Option<int>() );
+      const Maybe<int>& = Maybe<int>() ,
+      const Maybe<int>& = Maybe<int>() );
 
-  void AddAtlasFrame
-    (const stdstr& atlas,
-     const stdstr& frame, const c::Vec2& pos);
+  void AddAtlasFrame(const stdstr& atlas, const stdstr& n, const c::Vec2& pos);
 
-  void AddFrame
-    (const stdstr& frame, const c::Vec2& pos);
+  void AddFrame(const stdstr& n, const c::Vec2& pos);
 
-  void CenterImage(const stdstr& name, int z= -1);
+  void CenterImage(const stdstr& n, int z= -1);
 
   void RemoveAtlasAll(const stdstr& atlas) ;
   void RemoveAll();

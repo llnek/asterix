@@ -10,14 +10,12 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "renderer/CCTextureCache.h"
-#include "2d/CCSprite.h"
 #include "2d/CCMenuItem.h"
+#include "2d/CCSprite.h"
 #include "2d/CCMenu.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "YesNo.h"
 #include "XLayer.h"
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
@@ -28,21 +26,20 @@ XLayer* XLayer::Realize() { return this; }
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::OnQuit(c::Ref* rr) {
-  //auto s= YesNo::Reify(ReifyRefType<YesNo>(), "Are you sure ?");
-  //CC_DTOR()->pushScene(s);
+  cx::RunScene( XCFG()->StartWith());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::XLayer() {
   lastTag = 0;
-  lastZix = 0;
+  lastZ = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::~XLayer() {
-  CC_LOOP(it, atlases) {
+  F__LOOP(it, atlases) {
     //it->second->release();
   }
   //atlases.clear();
@@ -51,14 +48,16 @@ XLayer::~XLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::SpriteBatchNode*
-XLayer::RegoAtlas(const stdstr& name, const Option<int>& zx, const Option<int>& tag) {
+XLayer::RegoAtlas(const stdstr& name,
+     const Maybe<int>& zx,  const Maybe<int>& tag) {
+
   auto i= c::TextureCache::getInstance()->addImage( XCFG()->GetImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
-  auto t = tag.IsNone() ? ++lastTag : tag.Get();
-  auto z = zx.IsNone() ? lastZix : zx.Get();
+  auto t = tag.IsNone()  ?  ++lastTag : tag.Get();
+  auto z = zx.IsNone() ? lastZ : zx.Get();
 
-  atlases.insert(CC_PAIR(stdstr, c::SpriteBatchNode*, name, a));
-  this->addChild(a, x,t);
+  atlases.insert(S__PAIR(stdstr, c::SpriteBatchNode*, name, a));
+  this->addChild(a, z,t);
   return a;
 }
 
@@ -99,29 +98,28 @@ void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
 //
 void XLayer::AddAtlasItem(const stdstr& atlas,
     not_null<c::Node*> n,
-    const Option<int>& zx, const Option<int>& tag) {
+    const Maybe<int>& zx, const Maybe<int>& tag) {
 
   auto ptag = tag.IsNone() ? ++lastTag : tag.Get();
-  auto pzx = zx.IsNone() ? lastZix : zx.Get();
+  auto pzx = zx.IsNone() ? lastZ : zx.Get();
   auto p= GetAtlas(atlas);
   auto ss = DCAST(c::Sprite*, n.get());
 
-  CCASSERT(ss != nullptr, "sprite cannot be null");
+  //CCASSERT(ss != nullptr, "sprite cannot be null");
   CCASSERT(p != nullptr, "atlas cannot be null");
 
-  if (NNP(p)) {
-    if (NNP(ss)) { ss->setBatchNode(p); }
-    p->addChild(n.get(), pzx, ptag);
-  }
+  if (NNP(ss)) { ss->setBatchNode(p); }
+  p->addChild(n.get(), pzx, ptag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 //
 void XLayer::AddItem(not_null<c::Node*> n,
-    const Option<int>&  zx, const Option<int>& tag) {
+    const Maybe<int>&  zx, const Maybe<int>& tag) {
+
   auto ptag = tag.IsNone() ?  ++lastTag : tag.Get();
-  auto pzx = zx.IsNone()  ? lastZix : zx.Get();
+  auto pzx = zx.IsNone() ? lastZ : zx.Get();
   this->addChild(n.get(), pzx, ptag);
 }
 
@@ -161,15 +159,16 @@ void XLayer::RemoveItem(not_null<c::Node*> n) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int XLayer::IncIndexZ() {
-  return ++lastZix;
+  return ++lastZ;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Remember the parent scene object
 //
 XScene* XLayer::GetScene() {
-  return SCAST(XScene*, getScene());
+  return SCAST(XScene*, getParent());
 }
+
 
 
 NS_END(fusii)

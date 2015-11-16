@@ -32,7 +32,7 @@ void XLives::Reduce(int x) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::Reset() {
-  for (auto it= icons.begin(); it != icons.end(); ++it) {
+  F__LOOP(it, icons) {
     auto n= *it;
     n->removeFromParent();
   }

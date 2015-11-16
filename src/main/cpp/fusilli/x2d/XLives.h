@@ -22,12 +22,13 @@ class CC_DLL XLives : public c::Node {
 protected:
 
   s::vector<c::Node*> icons;
-  int totalLives;
-  int curLives;
-  int dir;
   c::Size lifeSize;
   c::Vec2 refPt;
   stdstr frameId;
+
+  int totalLives;
+  int curLives;
+  int dir;
 
   NO__CPYASS(XLives)
 
@@ -37,7 +38,6 @@ public:
       const stdstr& frame,
       int lives,
       float x, float y, int dir= 1);
-  DECL_CTOR(XLives)
 
   bool IsDead() { return curLives < 0; }
   int GetLives() { return curLives; }
@@ -47,6 +47,7 @@ public:
   void Resurrect();
   void DrawLives();
 
+  DECL_CTOR(XLives)
 };
 
 

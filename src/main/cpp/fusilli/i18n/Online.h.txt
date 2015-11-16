@@ -36,7 +36,6 @@ class CC_DLL Online : public XScene {
 friend class OnlineLayer;
 protected:
 
-  virtual void SetActions(c::CallFunc*, c::CallFunc* );
   virtual void OnSessionEvent(const ws::OdinEvent&);
   virtual void OnNetworkEvent(const ws::OdinEvent&);
   virtual void OnOdinEvent(const ws::OdinEvent&);
@@ -44,10 +43,12 @@ protected:
   virtual void OnPlayRequest(const stdstr&, const stdstr&);
   virtual void OnCancel(c::Ref*);
 
+  virtual void SetActions(VOIDFN, VOIDFN );
+
+  virtual void OnPlayReply(const ws::OdinEvent&) = 0;
   virtual void ShowWaitOthers(OnlineLayer*) = 0;
   virtual void OnStart(const ws::OdinEvent&) = 0;
   virtual void DecoUI(OnlineLayer*) = 0;
-  virtual void OnPlayReply(const ws::OdinEvent&) = 0;
 
   ws::OdinIO* odin;
   c::CallFunc* yes;

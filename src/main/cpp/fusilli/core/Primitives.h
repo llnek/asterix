@@ -53,35 +53,36 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-class CC_DLL Option {
+class CC_DLL Maybe {
 private:
   bool isset;
   T value;
 public:
-  explicit Option(T t) { value=t; isset=true; }
-  Option() { isset=false; }
-  Option<T>& operator=(const Option<T>& arg) {
+  explicit Maybe(T t) { value=t; isset=true; }
+  Maybe() { isset=false; }
+  Maybe<T>& operator=(const Maybe<T>& arg) {
     value=arg.value;
     isset=arg.isset;
     return *this;
   }
-  Option(const Option<T>& arg) {
+  Maybe(const Maybe<T>& arg) {
     value=arg.value;
     isset=arg.isset;
   }
-  Option<T>& operator=(Option<T>&& arg) {
+  Maybe<T>& operator=(Maybe<T>&& arg) {
     value=arg.value;
     isset=arg.isset;
     return *this;
   }
-  Option(Option<T>&& arg) {
+  Maybe(Maybe<T>&& arg) {
     value=arg.value;
     isset=arg.isset;
   }
-  ~Option() {}
-  T Get() { return value; }
-  bool IsNone() { return isset; }
+  ~Maybe() {}
+  T Get() const { return value; }
+  bool IsNone() const { return isset; }
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
