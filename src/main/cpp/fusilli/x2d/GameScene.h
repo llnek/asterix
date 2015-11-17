@@ -58,6 +58,7 @@ public:
   static GameScene* Self();
 
   virtual bool IsOnline() { return NNP(odin); }
+  virtual bool IsLive() = 0;
   virtual void Stop() = 0;
   virtual void Play() = 0;
 

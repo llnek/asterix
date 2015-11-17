@@ -10,8 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "n/TTTBoard.h"
-#include "EFactory.h"
 #include "n/cobjs.h"
+#include "EFactory.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ EFactory::EFactory(not_null<a::Engine*> e,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::ReifyBoard(not_null<f::XLayer*> layer) {
+a::Entity* EFactory::ReifyArena(not_null<f::XLayer*> layer) {
 
   auto nil= CC_CSV(c::Integer, "CV_Z");
   auto xv= CC_CSV(c::Integer, "CV_X");
@@ -33,7 +33,7 @@ a::Entity* EFactory::ReifyBoard(not_null<f::XLayer*> layer) {
   auto ent= engine->ReifyEntity("game");
 
   auto bd= new TTTBoard<BD_SZ>(nil, xv, ov);
-  s::array<int, BD_SZ * BD_SZ> seed;
+  ArrCells seed;
   seed.fill(nil);
 
   ent->Checkin(new Grid(seed));

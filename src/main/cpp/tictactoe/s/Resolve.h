@@ -15,7 +15,7 @@
 #include "core/BaseSystem.h"
 #include "EFactory.h"
 #include "n/cobjs.h"
-NS_ALIAS(f, fusii)
+
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -23,24 +23,21 @@ NS_BEGIN(tttoe)
 class CC_DLL Resolve : f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool OnUpdate(float);
-  void SyncUp(a::Node*);
+  bool CheckWin(a::Node*, Player&, Grid*, ArrDim& );
+  void ShowWinningIcons(a::Node*, const ArrDim& );
+  void DoWin(a::Node*, Player&, const ArrDim& );
 
   const c::Vec2 XrefCell(int pos, PlayView*);
 
-  void DoIt(a::Node*, float);
-  void DoWin(a::Node*, Player&,
-      const s::array<int,BD_SZ>& combo);
+  virtual bool OnUpdate(float);
+  void SyncUp(a::Node*);
 
-  void ShowWinningIcons(a::Node*, const s::array<int, BD_SZ>&);
+  void DoIt(a::Node*, float);
   void DoForfeit(a::Node*);
   void DoDraw(a::Node*);
 
-  void DoDone(a::Node*, Player&);
   bool CheckDraw(a::Node*, Grid*);
-
-  bool CheckWin(a::Node*, Player&, Grid*,
-      s::array<int, BD_SZ>& combo);
+  void DoDone(a::Node*, Player&);
 
   NO__CPYASS(Resolve)
   Resolve() = delete;
@@ -58,7 +55,7 @@ public:
     return "n/Resolve";
   }
 
-  a::NodeList* board;
+  a::NodeList* arena;
 };
 
 

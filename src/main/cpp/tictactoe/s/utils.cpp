@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -18,7 +19,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
-const s::array<Box4,BD_SZ*BD_SZ> MapGridPos(float scale) {
+const s::array<Box4,GD_SZ> MapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
   auto sp = cx::ReifySprite("z.png");
@@ -36,7 +37,7 @@ const s::array<Box4,BD_SZ*BD_SZ> MapGridPos(float scale) {
   auto x1= x0;
   auto y1=y0;
   int x2,y2;
-  s::array<Box4, BD_SZ * BD_SZ> boxes;
+  s::array<Box4, GD_SZ> boxes;
 
   for (int r=0; r < BD_SZ; ++r) {
     for (int c= 0; c < BD_SZ; ++c) {
@@ -53,17 +54,16 @@ const s::array<Box4,BD_SZ*BD_SZ> MapGridPos(float scale) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<s::array<int, BD_SZ>> MapGoalSpace() {
+const s::vector<ArrDim> MapGoalSpace() {
 
-  s::vector<s::array<int,BD_SZ>> goals;
-
-  s::array<int,BD_SZ> dx;
-  s::array<int,BD_SZ> dy;
+  s::vector<ArrDim> goals;
+  ArrDim dx;
+  ArrDim dy;
 
   for (int r=0; r < BD_SZ; ++r) {
 
-    s::array<int,BD_SZ> h;
-    s::array<int,BD_SZ> v;
+    ArrDim h;
+    ArrDim v;
 
     for (int c=0; c < BD_SZ; ++c) {
       h[c] = r * BD_SZ + c;

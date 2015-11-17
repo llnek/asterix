@@ -14,14 +14,19 @@
 
 #include "core/CCSX.h"
 #include "n/cobjs.h"
+
+#define GD_SZ BD_SZ * BD_SZ
 #define BD_SZ 3
+
+typedef s::array<int, GD_SZ> ArrCells;
+typedef s::array<int, BD_SZ> ArrDim;
+
 
 namespace tttoe {
 
-  const s::vector<s::array<int,BD_SZ>> MapGoalSpace();
+  const s::array<fusii::Box4, GD_SZ> MapGridPos(float scale = 1.0f);
 
-  const s::array<fusii::Box4, BD_SZ * BD_SZ>
-    MapGridPos(float scale = 1.0f);
+  const s::vector<ArrDim> MapGoalSpace();
 
   const stdstr PkFlip(const stdstr& img, bool flip);
 

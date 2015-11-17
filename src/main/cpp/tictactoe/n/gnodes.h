@@ -16,7 +16,8 @@
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL BoardNode : public a::NodeFactory {
+//
+class CC_DLL ArenaNode : public a::NodeFactory {
 public:
 
   virtual owner<a::Node*> ReifyNode() {
@@ -32,11 +33,12 @@ public:
     return "n/BoardNode";
   }
 
-  NO__CPYASS(BoardNode)
-  IMPL_CTOR(BoardNode)
+  NO__CPYASS(ArenaNode)
+  IMPL_CTOR(ArenaNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL GUINode : public a::NodeFactory {
 public:
 
@@ -55,6 +57,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL NetPlayNode : public a::NodeFactory {
 public:
 

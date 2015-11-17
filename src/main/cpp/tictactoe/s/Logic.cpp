@@ -11,7 +11,7 @@
 
 #include "dbox/json11.hpp"
 #include "algos/NegaMax.h"
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "core/Odin.h"
 #include "Logic.h"
 NS_ALIAS(ws, fusii::odin)
@@ -25,21 +25,21 @@ Logic::Logic(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   : f::BaseSystem(f,d) {
 
   SNPTR(botTimer)
-  SNPTR(board)
+  SNPTR(arena)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Logic::AddToEngine(not_null<a::Engine*> e) {
-  BoardNode n;
-  board = e->GetNodeList(n.TypeId());
+  ArenaNode n;
+  arena = e->GetNodeList(n.TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Logic::OnUpdate(float dt) {
-  auto node= board->head;
-  if (MGMS()->IsRunning() && NNP(node)) {
+  auto node= arena->head;
+  if (MGMS()->IsLive() && NNP(node)) {
     DoIt(node, dt);
   }
   return true;
@@ -60,7 +60,7 @@ void Logic::DoIt(a::Node* node, float dt) {
   auto robot= CC_GNF(SmartAlgo, node, "robot");
 
   //handle online play
-  if (MGMS()->IsOnline()) {
+  if (MGMS()->IsLive()) {
     //if the mouse click is from the valid user, handle it
     if (pnum == cp.pnum) {
       Enqueue(node, sel->cell, cp.value, grid);
@@ -76,7 +76,7 @@ void Logic::DoIt(a::Node* node, float dt) {
       bd->SyncState(grid->values, cp.value);
       rc= bd->GetFirstMove();
       if (rc < 0) { rc = fusii::algos::EvalNegaMax<BD_SZ>(bd); }
-      Enqueue(node, rc,cp.value, grid);
+      Enqueue(node, rc, cp.value, grid);
       cx::UndoTimer(botTimer);
       SNPTR(botTimer)
     } else {
@@ -106,9 +106,9 @@ void Logic::Enqueue(a::Node* node, int pos, int value, Grid* grid) {
   if ((pos >= 0 && pos < grid->values.size()) &&
       nil == grid->values[pos]) {
 
-    MGML()->SendMsg("/hud/timer/hide");
+    MGMS()->SendMsg("/hud/timer/hide");
 
-    if (MGMS()->IsOnline()) {
+    if (MGMS()->IsLive()) {
       OnEnqueue(node, cur, pos, grid);
     } else {
       if (cur == 1) {
@@ -125,7 +125,7 @@ void Logic::Enqueue(a::Node* node, int pos, int value, Grid* grid) {
       cx::SfxPlay(snd);
 
       if (ps->parr[other].category == human) {
-        MGML()->SendMsg("/hud/timer/show");
+        MGMS()->SendMsg("/hud/timer/show");
       }
     }
   }
@@ -146,7 +146,7 @@ void Logic::OnEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
 
-  MGMS()->NetSend(ws::Event(t,c, body));
+  NetSend(ws::OdinEvent(t,c, body));
 
   state->setObject(CC_INT(0), "pnum");
   cx::SfxPlay(snd);

@@ -59,6 +59,7 @@ struct ScoreUpdate {
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL SmartAlgo : public a::Component {
 public:
 
@@ -80,6 +81,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Board : public a::Component {
 public:
 
@@ -97,16 +99,17 @@ public:
   NO__CPYASS(Board);
   Board() = delete;
 
-  s::vector<s::array<int,BD_SZ>> GOALS;
+  s::vector<ArrDim> GOALS;
   int size;
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Grid : public a::Component {
 public:
 
-  Grid(const s::array<int,BD_SZ * BD_SZ>& seed) {
+  Grid(const ArrCells& seed) {
     s::copy(s::begin(seed), s::end(seed), s::begin(values));
   }
 
@@ -119,11 +122,12 @@ public:
   NO__CPYASS(Grid);
   Grid() = delete;
 
-  s::array<int, BD_SZ * BD_SZ> values;
+  ArrCells values;
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL PlayView : public a::Component {
 
   PlayView(not_null<f::XLayer*> layer) {
@@ -151,6 +155,7 @@ class CC_DLL PlayView : public a::Component {
 
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL NetPlay : public a::Component {
 public:
 
@@ -167,15 +172,16 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Player : public a::Component {
 public:
 
   Player(int category, int value, int id, const stdstr& color) {
+    this->offset = id == 1 ? 0 : 1;
+    this->category= category;
     this->color= color;
     this->pnum=id;
-    this->category= category;
     this->value= value;
-    this->offset = id == 1 ? 0 : 1;
   }
 
   virtual const a::COMType TypeId() {
@@ -198,6 +204,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Players : public a::Component {
 public:
 
@@ -214,6 +221,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL UISelection : public a::Component {
 public:
 

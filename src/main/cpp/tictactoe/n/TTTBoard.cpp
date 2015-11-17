@@ -18,7 +18,7 @@ NS_BEGIN(tttoe)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-bool not_any(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
+bool not_any(const ArrCells& arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] == v) { return false; }
   }
@@ -27,7 +27,7 @@ bool not_any(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool every(const s::array<int,BD_SZ * BD_SZ>& arr, int v) {
+bool every(const ArrCells& arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] != v) { return false; }
   }
@@ -76,16 +76,17 @@ int TTTBoard::GetFirstMove() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::SyncState(const s::array<int,BD_SZ * BD_SZ>& seed, int actor) {
+void TTTBoard::SyncState(const ArrCells& seed, int actor) {
   s::copy(s::begin(seed), s::end(seed), s::begin(grid));
   actors[0] = actor;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s::vector<int> TTTBoard::GetNextMoves(not_null<ag::Snapshot<BD_SZ>*> snap) {
+const s::vector<int>
+TTTBoard::GetNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
+
   s::vector<int> rc;
-  int pos=0;
 
   for (int pos= 0; pos < snap->state.size(); ++pos) {
     if (IsNil(snap->state[pos])) {
@@ -93,18 +94,19 @@ const s::vector<int> TTTBoard::GetNextMoves(not_null<ag::Snapshot<BD_SZ>*> snap)
     }
     ++pos;
   }
+
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::UndoMove(not_null<ag::Snapshot<BD_SZ>*> snap, int move) {
+void TTTBoard::UndoMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   snap->state[move] = CV_Z;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::MakeMove(not_null<ag::Snapshot<BD_SZ>*> snap, int move) {
+void TTTBoard::MakeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   if (IsNil(snap->state[move])) {
     snap->state[move] = snap->cur;
   } else {
@@ -114,7 +116,7 @@ void TTTBoard::MakeMove(not_null<ag::Snapshot<BD_SZ>*> snap, int move) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void TTTBoard::SwitchPlayer(not_null<ag::Snapshot<BD_SZ>*> snap) {
+void TTTBoard::SwitchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
   auto t = snap->cur;
   snap->cur= snap->other;
   snap->other=t;
@@ -137,8 +139,8 @@ int TTTBoard::GetOtherPlayer(int pv) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-ag::Snapshot<BD_SZ> TTTBoard::TakeSnapshot() {
-  ag::Snapshot<BD_SZ> s;
+ag::FFrame<BD_SZ> TTTBoard::TakeFFrame() {
+  ag::FFrame<BD_SZ> s;
 
   s::copy(s::begin(grid), s::end(grid), s::begin(s.state));
   s.other= GetOtherPlayer(actors[0]);
@@ -150,42 +152,45 @@ ag::Snapshot<BD_SZ> TTTBoard::TakeSnapshot() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-int TTTBoard::EvalScore(not_null<ag::Snapshot<BD_SZ>*> snap) {
+int TTTBoard::EvalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
-  s::array<int,BD_SZ> combo;
-  return IsWinner(snap.get(), snap->other, combo) > 0 ? -100 : 0;
+  ArrDim  combo;
+  return TestWin(snap->state, snap->other, combo) ? -100 : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::IsOver(not_null<ag::Snapshot<BD_SZ>*> snap) {
-  s::array<int,BD_SZ> combo;
-  return IsWinner(snap.get(), snap->cur, combo) > 0 ||
-         IsWinner(snap.get(), snap->other, combo) > 0 ||
-         IsStalemate(snap.get());
+bool TTTBoard::IsOver(not_null<ag::FFrame<BD_SZ>*> snap) {
+  ArrDim combo;
+  return TestWin(snap->state, snap->cur, combo) ||
+         TestWin(snap->state, snap->other, combo) ||
+         IsStalemate(snap);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::IsStalemate(not_null<ag::Snapshot<BD_SZ>*> snap) {
-  //TODO: fix
-  if (NNP(snap)) {
-    return not_any(snap->state, CV_Z);
-  } else {
-    return not_any(grid, CV_Z);
-  }
+bool TTTBoard::IsStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
+  return not_any(snap->state, CV_Z);
+  //return not_any(grid, CV_Z);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-int TTTBoard::IsWinner(ag::Snapshot<BD_SZ>* snap, int actor,
-    s::array<int,BD_SZ>& combo) {
+int TTTBoard::GetWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim& combo) {
+
   int win= -1;
-  for (auto it = GOALS.begin(); it != GOALS.end(); ++it) {
+  F__LOOP(it, GOALS) {
     auto& t= *it;
-    if (TestWin(snap,actor, *it)) {
-      win=actor;
+    if (TestWin(snap->state, snap->other, t)) {
+      win=snap->other;
+    }
+    else
+    if (TestWin(snap->state, snap->cur, t)) {
+      win=snap->cur;
+    }
+    if (win > 0) {
       s::copy(s::begin(t),s::end(t),s::begin(combo));
+      break;
     }
   }
   return win;
@@ -193,10 +198,8 @@ int TTTBoard::IsWinner(ag::Snapshot<BD_SZ>* snap, int actor,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::TestWin(ag::Snapshot<BD_SZ>* snap, int actor,
-    const s::array<int,BD_SZ>& g) {
+bool TTTBoard::TestWin(const ArrCells& vs, int actor, const s::array<int,BD_SZ>& g) {
 
-  s::array<int,BD_SZ>& vs= ENP(snap) ? grid : snap->state;
   int cnt=0;
   for (int n= 0; n < g.size(); ++n) {
     auto pos= g[n];

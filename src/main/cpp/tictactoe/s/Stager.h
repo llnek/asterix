@@ -14,9 +14,6 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
-
-NS_ALIAS(f,fusii)
-NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,7 +30,7 @@ protected:
   NO__CPYASS(Stager)
   Stager() = delete;
 
-  a::NodeList* board;
+  a::NodeList* arena;
   bool inited;
 
 public:

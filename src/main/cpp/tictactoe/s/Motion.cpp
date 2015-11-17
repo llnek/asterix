@@ -34,9 +34,7 @@ Motions::~Motions() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::FlushQ() {
-  while (! evQ.empty()) {
-    evQ.pop();
-  }
+  f::EmptyQueue<c::Event*>(evQ);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,8 +55,9 @@ void Motions::AddToEngine(not_null<a::Engine*> e) {
 void Motions::OnceOnly() {
   auto ws= MGMS()->WSOCK();
   if (NNP(ws)) {
-    ws->Listen( [=](const ws::Event& evt) {
-      this->evQ.push(f::GEvent(evt));
+    ws->Listen( [=](ws::OdinEvent* evt) {
+      evt->retain();
+      this->evQ.push(evt);
     });
   }
 }
@@ -77,11 +76,19 @@ bool Motions::OnUpdate(float dt) {
   if (evQ.size() > 0) {
     auto evt= evQ.front();
     evQ.pop();
-    if (evt.group == "odin") {
-      if (NNP(n)) { OnSocket(n, evt.nEvent); }
-    } else {
-      if (NNP(g)) { OnGUI(g, evt.group, evt.cEvent); }
+    if (evt->getType() == c::Event::MOUSE) {
+      if (NNP(g)) { OnGUI(g, (c::EventMouse*) evt); }
     }
+    else
+    if (evt->getType() == c::Event::TOUCH) {
+      if (NNP(g)) { OnGUI(g, (c::EventTouch*) evt); }
+    }
+    else
+    if (evt->getType() == c::Event::CUSTOM) {
+      if (NNP(n)) { OnSocket(n, (ws::OdinEvent*)evt); }
+    }
+
+    evt->release();
   }
 
   return true;
@@ -89,8 +96,8 @@ bool Motions::OnUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnSocket(a::Node* node, const ws::Event& evt) {
-  switch (evt.type) {
+void Motions::OnSocket(a::Node* node, ws::OdinEvent* evt) {
+  switch (evt->type) {
     case ws::MType::NETWORK:
       OnNet(node, evt);
     break;
@@ -102,19 +109,19 @@ void Motions::OnSocket(a::Node* node, const ws::Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnNet(a::Node* node, const ws::Event& evt) {
-  auto msg= evt;
-  switch (evt.code) {
+void Motions::OnNet(a::Node* node, const ws::OdinEvent* evt) {
+
+  switch (evt->code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
-      MGML()->SendMsg("/net/restart");
+      MGMS()->SendMsg("/net/restart");
     break;
     case ws::EType::STOP:
-      if (MGMS()->IsRunning()) {
+      if (MGMS()->IsLive()) {
         CCLOG("game will stop");
-        MGML()->SendMsg("/hud/timer/hide");
+        MGMS()->SendMsg("/hud/timer/hide");
         OnSess(node, evt);
-        MGML()->SendMsg("/net/stop", &msg);
+        MGMS()->SendMsg("/net/stop", evt);
       }
     break;
   }
@@ -122,11 +129,11 @@ void Motions::OnNet(a::Node* node, const ws::Event& evt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnSess(a::Node* node, const ws::Event& evt) {
+void Motions::OnSess(a::Node* node, const ws::OdinEvent* evt) {
   auto ps= CC_GNF(Players, node, "players");
   auto grid= CC_GNF(Grid, node, "grid");
   auto snd="";
-  auto source = evt.doco["source"];
+  auto source = evt->doco["source"];
   auto cmd= source["cmd"];
   auto pnum= source["pnum"].int_value();
 
@@ -147,15 +154,15 @@ void Motions::OnSess(a::Node* node, const ws::Event& evt) {
 
   if (pnum == 1 || pnum == 2) {} else { return; }
 
-  switch (evt.code) {
+  switch (evt->code) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
-      MGML()->SendMsg("/hud/timer/show");
+      MGMS()->SendMsg("/hud/timer/show");
       state->setObject(CC_INT(pnum), "pnum");
     break;
     case ws::EType::POKE_WAIT:
       CCLOG("player %d: my turn to wait", pnum);
-      MGML()->SendMsg("/hud/timer/hide");
+      MGMS()->SendMsg("/hud/timer/hide");
       // toggle color
       auto p2= pnum == 1 ? 2 : 1;
       state->setObject(CC_INT(p2), "pnum");
@@ -163,23 +170,27 @@ void Motions::OnSess(a::Node* node, const ws::Event& evt) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnGUI(a::Node* node, c::EventMouse* evt) {
+  OnGUIXXX(node, evt->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Motions::OnGUI(a::Node* node, c::EventTouch* evt) {
+  //OnGUIXXX(node, evt->getLocation());
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUI(a::Node* node,
-		const stdstr& group, c::Event* evt) {
+void Motions::OnGUIXXX(a::Node* node, const c::Vec2& pos) {
+
   auto sel = CC_GNF(UISelection, node, "selection");
   auto view = CC_GNF(PlayView, node, "view");
   auto cur = CC_GDV(c::Integer, state, "pnum");
   auto n=0;
-  c::Vec2 pos;
 
-  if (group ==  "mouse") {
-	  auto e= (c::EventMouse*) evt;
-	  pos= e->getLocation();
-  } else {
-	  auto e= (c::EventTouch*) evt;
-	  //TODO:
-  }
   //set the mouse/touch position
   sel->cell= -1;
   sel->px = pos.x;
@@ -188,7 +199,7 @@ void Motions::OnGUI(a::Node* node,
   if (cur >  0) {} else { return; }
 
   //which cell did he click on?
-  for (auto it= view->boxes.begin(); it != view->boxes.end(); ++it) {
+  F__LOOP(it, view->boxes) {
     auto& bx = *it;
     if (sel->px >= bx.left && sel->px <= bx.right &&
         sel->py >= bx.bottom && sel->py <= bx.top) {

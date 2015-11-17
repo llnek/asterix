@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/MainGame.h"
 #include "core/Primitives.h"
+#include "x2d/MainGame.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Node.h"
@@ -21,6 +21,7 @@
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
+
 
 //////////////////////////////////////////////////////////////////////////////
 Stager::Stager(not_null<EFactory*> f,
@@ -37,13 +38,13 @@ Stager::Stager(not_null<EFactory*> f,
 void Stager::AddToEngine(not_null<a::Engine*> e) {
 
   CCLOG("adding system: Stager");
-  factory->ReifyBoard( MGML());
+  factory->ReifyArena( MGML());
 
-  BoardNode n;
-  board= e->GetNodeList(n.TypeId());
+  ArenaNode n;
+  arena = e->GetNodeList(n.TypeId());
 
   if (! inited) {
-    OnceOnly(board->head);
+    OnceOnly(arena->head);
     inited=true;
   }
 }
@@ -52,8 +53,8 @@ void Stager::AddToEngine(not_null<a::Engine*> e) {
 //
 bool Stager::OnUpdate(float dt) {
   if (cx::IsTransitioning()) { return false; }
-  auto node= board->head;
-  if (MGMS()->IsRunning() && NNP(node)) {
+  auto node= arena->head;
+  if (MGMS()->IsLive() && NNP(node)) {
     DoIt(node,dt);
   }
   return true;
@@ -67,7 +68,7 @@ void Stager::ShowGrid(a::Node* node) {
   auto arr = MapGridPos(1.0f);
   auto pos=0;
 
-  for (auto it= arr.begin(); it != arr.end(); ++it) {
+  F__LOOP(it, arr) {
     auto sp= cx::ReifySprite("z.png");
     sp->setPosition(cx::VBoxMID(*it));
     view->layer->AddAtlasItem("game-pics", sp);
@@ -89,14 +90,14 @@ void Stager::OnceOnly(a::Node* node) {
 
   if (MGMS()->IsOnline()) {
     CCLOG("reply to server: session started ok");
-    MGMS()->NetSend(ws::Event(
+    NetSend(ws::OdinEvent(
       ws::MType::SESSION,
       ws::EType::STARTED
     ));
   } else {
     pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2; // randomly choose
     if (ps->parr[pnum].category == human) {
-      MGML()->SendMsg("/hud/timer/show");
+      MGMS()->SendMsg("/hud/timer/show");
     }
     else
     if (ps->parr[pnum].category == bot) {
@@ -112,14 +113,14 @@ void Stager::OnceOnly(a::Node* node) {
 void Stager::DoIt(a::Node* node, float dt) {
 
   auto pnum = CC_GDV(c::Integer, state, "pnum");
-  auto active = MGMS()->IsRunning();
+  auto active = MGMS()->IsLive();
   HUDUpdate msg(active, pnum);
 
   if (!active) {
     pnum= CC_GDV(c::Integer, state, "lastWinner");
   }
 
-  MGML()->SendMsg("/hud/update", &msg);
+  MGMS()->SendMsg("/hud/update", &msg);
 }
 
 

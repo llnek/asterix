@@ -17,7 +17,6 @@
 #include "EFactory.h"
 #include "n/cobjs.h"
 
-NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,8 +47,8 @@ public:
     return "n/Logic";
   }
 
-  cocos2d::DelayTime* botTimer;
-  a::NodeList* board;
+  c::DelayTime* botTimer;
+  a::NodeList* arena;
 };
 
 

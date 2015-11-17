@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "Resolve.h"
 NS_BEGIN(tttoe)
 
@@ -17,21 +17,21 @@ NS_BEGIN(tttoe)
 //
 Resolve::Resolve(not_null<EFactory*> f,not_null<c::Dictionary*> d)
   : f::BaseSystem(f, d) {
-  SNPTR(board)
+  SNPTR(arena)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::AddToEngine(not_null<a::Engine*> e) {
-  BoardNode n;
-  board = e->GetNodeList(n.TypeId());
+  ArenaNode n;
+  arena = e->GetNodeList(n.TypeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::OnUpdate(float dt) {
-  auto node= board->head;
-  if (MGMS()->IsRunning() &&
+  auto node= arena->head;
+  if (MGMS()->IsLive() &&
       NNP(node)) {
     SyncUp(node);
     DoIt(node, dt);
@@ -88,7 +88,7 @@ void Resolve::DoIt(a::Node* node, float dt) {
   auto ps = CC_GNF(Players, node, "players");
   auto gd = CC_GNF(Grid, node, "grid");
   auto winner= -1;
-  s::array<int, BD_SZ> combo;
+  ArrDim combo;
 
   for (int i=0; i < ps->parr.size(); ++i) {
     if (i > 0 &&
@@ -116,12 +116,10 @@ void Resolve::DoIt(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::DoWin(a::Node* node,
-    Player& winner,
-    const s::array<int, BD_SZ>& combo) {
+void Resolve::DoWin(a::Node* node, Player& winner, const ArrDim& combo) {
 
   ScoreUpdate msg(winner.color, 1);
-  MGML()->SendMsg("/hud/score/update", &msg);
+  MGMS()->SendMsg("/hud/score/update", &msg);
 
   ShowWinningIcons(node, combo);
 
@@ -147,17 +145,18 @@ void Resolve::DoForfeit(a::Node* node) {
   auto& win= ps->parr[other];
 
   ScoreUpdate msg(win.color, 1);
-  MGML()->SendMsg("/hud/score/update", &msg);
+  MGMS()->SendMsg("/hud/score/update", &msg);
 
   //gray out the losing icons
-  for (auto it= view->cells.begin(); it != view->cells.end(); ++it) {
+  F__LOOP(it, view->cells) {
+
     auto& z = *it;
     if (z.value == loser.value) {
       if (NNP(z.sprite)) {
         z.sprite->removeFromParent();
       }
       //TODO: why + 2????
-      z.sprite = DrawSymbol(view, z.x, z.y, z.value+2,false);
+      z.sprite = DrawSymbol(view, z.x, z.y, z.value+2, false);
     }
   }
 
@@ -167,8 +166,7 @@ void Resolve::DoForfeit(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::ShowWinningIcons(a::Node* node,
-    const s::array<int,BD_SZ>& combo) {
+void Resolve::ShowWinningIcons(a::Node* node, const ArrDim& combo) {
 
   auto view = CC_GNF(PlayView, node, "view");
   auto nil = CC_CSV(c::Integer, "CV_Z");
@@ -192,9 +190,9 @@ void Resolve::DoDone(a::Node* node, Player& pobj) {
 
   int pnum = pobj.pnum > 0 ? pobj.pnum : 0;
 
-  MGML()->SendMsg("/hud/timer/hide");
+  MGMS()->SendMsg("/hud/timer/hide");
   cx::SfxPlay("game_end");
-  MGML()->SendMsg("/hud/end", &pnum);
+  MGMS()->SendMsg("/hud/end", &pnum);
 
   state->setObject(CC_INT(pnum), "lastWinner");
   MGMS()->Pause();
@@ -213,15 +211,14 @@ bool Resolve::CheckDraw(a::Node* node, Grid* gd) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::CheckWin(a::Node* node,
-    Player& p, Grid* game,
-    s::array<int, BD_SZ>& combo) {
+bool Resolve::CheckWin(a::Node* node, Player& p, Grid* game, ArrDim& combo) {
 
   auto bd= CC_GNF(Board, node, "board");
 
   CCLOG("checking win for %s", p.color.c_str());
 
-  for (auto it= bd->GOALS.begin(); it != bd->GOALS.end(); ++it) {
+  F__LOOP(it, bd->GOALS) {
+
     auto& g = *it;
     int cnt=0;
     for (int i=0; i < g.size(); ++i) {

@@ -14,13 +14,11 @@
 
 #include "core/Factory.h"
 #include "x2d/XLayer.h"
-NS_ALIAS(f, fusii)
-NS_ALIAS(a,ash)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EFactory  : public f::Factory {
+class CC_DLL EFactory  : public fusii::Factory {
 protected:
 
   NO__CPYASS(EFactory)
@@ -32,7 +30,7 @@ public:
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
   virtual ~EFactory() {}
 
-  a::Entity* ReifyBoard(not_null<f::XLayer*>);
+  a::Entity* ReifyArena(not_null<f::XLayer*>);
 
 };
 
