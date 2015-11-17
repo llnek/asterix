@@ -26,14 +26,15 @@ protected:
   NO__CPYASS(Config)
   Config();
   float scale;
+
 public:
+
+  virtual const stdstr AppId() { return "tictactoe"; }
+  virtual const stdstr Color() { return "white"; }
 
   virtual const stdstr AppKey() {
     return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
   }
-
-  virtual const stdstr AppId() { return "tictactoe"; }
-  virtual const stdstr Color() { return "white"; }
 
   virtual ResolutionPolicy Policy() {
     return ResolutionPolicy::FIXED_HEIGHT;
@@ -43,18 +44,17 @@ public:
     return c::Size(320,480);
   }
 
-  virtual c::Scene* StartWith();
+  virtual void HandleResolution(const c::Size& rs);
   virtual const stdstr GetWSUrl();
+  virtual c::Scene* StartWith();
 
   virtual void SetGameId(const stdstr& );
   virtual void SetRoomId(const stdstr& );
+
   virtual const stdstr GetGameId();
   virtual const stdstr GetRoomId();
 
-  virtual void HandleResolution(const c::Size& rs);
-
   virtual void RunOnce();
-
   virtual ~Config() {}
 
   static owner<f::XConfig*> Reify();

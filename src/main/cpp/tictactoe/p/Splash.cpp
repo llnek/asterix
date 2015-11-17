@@ -11,7 +11,6 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/utils.h"
 #include "n/cobjs.h"
 #include "Splash.h"
 NS_BEGIN(tttoe)
@@ -33,9 +32,9 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 void SplashLayer::Demo() {
+  auto ps= MapGridPos(scale);
   auto scale= 0.75;
   auto fm= "";
-  auto ps= MapGridPos(scale);
 
   // we scale down the icons to make it look nicer
   for (auto i = 0; i < ps.size(); ++i) {

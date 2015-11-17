@@ -25,7 +25,6 @@ public:
 
   NO__CPYASS(Splash)
   IMPL_CTOR(Splash)
-
 };
 
 
