@@ -34,17 +34,17 @@ template<int Z>
 class FS_DLL GameBoard {
 public:
 
-  virtual const s::vector<int> GetNextMoves(not_null<FFrame<Z>*>) = 0;
-  virtual int EvalScore(not_null<FFrame<Z>*>) = 0;
+  virtual const s::vector<int> getNextMoves(xnull<FFrame<Z>*>) = 0;
+  virtual int evalScore(xnull<FFrame<Z>*>) = 0;
 
-  virtual bool IsStalemate(not_null<FFrame<Z>*>) = 0;
-  virtual bool IsOver(not_null<FFrame<Z>*>) = 0;
+  virtual bool isStalemate(xnull<FFrame<Z>*>) = 0;
+  virtual bool isOver(xnull<FFrame<Z>*>) = 0;
 
-  virtual void UndoMove(not_null<FFrame<Z>*>, int move) = 0;
-  virtual void MakeMove(not_null<FFrame<Z>*>, int move) = 0;
+  virtual void undoMove(xnull<FFrame<Z>*>, int move) = 0;
+  virtual void makeMove(xnull<FFrame<Z>*>, int move) = 0;
 
-  virtual void SwitchPlayer(not_null<FFrame<Z>*>) = 0;
-  virtual FFrame<Z> TakeFFrame() = 0;
+  virtual void switchPlayer(xnull<FFrame<Z>*>) = 0;
+  virtual FFrame<Z> takeFFrame() = 0;
   virtual ~GameBoard() {}
 };
 
@@ -52,15 +52,15 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 template <int Z>
-int NegaMax(not_null<GameBoard<Z>*> board,
-    not_null<FFrame<Z>*> game,
+int NegaMax(xnull<GameBoard<Z>*> board,
+    xnull<FFrame<Z>*> game,
     int maxDepth, int depth, int alpha, int beta) {
 
-  if (depth == 0 || board->IsOver(game)) {
-    return board->EvalScore(game);
+  if (depth == 0 || board->isOver(game)) {
+    return board->evalScore(game);
   }
 
-  auto openMoves = board->GetNextMoves(game);
+  auto openMoves = board->getNextMoves(game);
   auto bestMove = openMoves[0];
   int bestValue = -PINF;
 
@@ -71,11 +71,14 @@ int NegaMax(not_null<GameBoard<Z>*> board,
   F__LOOP(it, openMoves) {
     int move = *it;
     int rc;
-    board->MakeMove(game, move);
-    board->SwitchPlayer(game);
+    //try  a move
+    board->makeMove(game, move);
+    board->switchPlayer(game);
     rc = - NegaMax(board, game, maxDepth, depth-1, -beta, -alpha);
-    board->SwitchPlayer(game);
-    board->UndoMove(game, move);
+    //now, roll it back
+    board->switchPlayer(game);
+    board->undoMove(game, move);
+    //how did we do ?
     bestValue = s::max(bestValue,  rc);
     if (alpha < rc) {
       alpha = rc;
@@ -94,7 +97,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
 template <int Z>
-int EvalNegaMax(not_null<GameBoard<Z>*> board) {
+int EvalNegaMax(xnull<GameBoard<Z>*> board) {
   auto snapshot= board->TakeFFrame();
   NegaMax(board, snapshot, 10, 10, -PINF, PINF);
   return snapshot.lastBestMove;

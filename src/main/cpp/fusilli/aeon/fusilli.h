@@ -101,6 +101,7 @@ typedef std::string stdstr;
 #define SCAST(type,expr) static_cast<type>(expr)
 #define NNP(p) p != nullptr
 #define ENP(p) p == nullptr
+#define not_null xnull
 
 
 //////////////////////////////////////////////////////////////////////////////

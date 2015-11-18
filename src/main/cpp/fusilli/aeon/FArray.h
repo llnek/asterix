@@ -24,23 +24,23 @@ protected:
   T* data;
 public:
 
-  void Clone(const FArray<T>& other);
-  void Set(int pos, T value);
-  int Size() { return size; }
-  void Fill(T v);
-  bool NotAny(T v);
-  int RandomIndex();
-  bool Some(T v);
-  bool All(T v);
-  int Find(T v);
+  void clone(const FArray<T>& other);
+  void set(int pos, T value);
+  int size() { return size; }
+  void fill(T v);
+  bool notAny(T v);
+  int randomIndex();
+  bool some(T v);
+  bool all(T v);
+  int find(T v);
   T operator[](int pos);
-  T Get(int pos);
-
-  FArray<T>& operator=(FArray<T>&&);
-  FArray(FArray<T>&&);
+  T get(int pos);
 
   FArray<T>& operator=(const FArray<T>&);
+  FArray<T>& operator=(FArray<T>&&);
+
   FArray(const FArray<T>&);
+  FArray(FArray<T>&&);
 
   explicit FArray(int size);
   FArray();
@@ -125,7 +125,7 @@ FArray<T>::~FArray() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-int FArray<T>::Find(T v) {
+int FArray<T>::find(T v) {
   for (int i = 0; i < size; ++i) {
     if (v == data[i]) { return i; }
   }
@@ -135,7 +135,7 @@ int FArray<T>::Find(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::Fill(T v) {
+void FArray<T>::fill(T v) {
   for (int i = 0; i < size; ++i) {
     data[i]=v;
   }
@@ -144,7 +144,7 @@ void FArray<T>::Fill(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-bool FArray<T>::Some(T v) {
+bool FArray<T>::some(T v) {
   for (int i = 0; i < size; ++i) {
     if (v == data[i]) { return true; }
   }
@@ -154,7 +154,7 @@ bool FArray<T>::Some(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-bool FArray<T>::NotAny(T v) {
+bool FArray<T>::notAny(T v) {
   for (int i = 0; i < size; ++i) {
     if (v == data[i]) { return false; }
   }
@@ -164,7 +164,7 @@ bool FArray<T>::NotAny(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-bool FArray<T>::All(T v) {
+bool FArray<T>::all(T v) {
   for (int i = 0; i < size; ++i) {
     if (v != data[i]) { return false; }
   }
@@ -174,7 +174,7 @@ bool FArray<T>::All(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-int FArray<T>::RandomIndex() {
+int FArray<T>::randomIndex() {
   auto pos= size > 0 ? rand() % size : -1;
   if (pos >= size) {
     return (int) size/2;
@@ -186,7 +186,7 @@ int FArray<T>::RandomIndex() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::Clone(const FArray<T>& other) {
+void FArray<T>::clone(const FArray<T>& other) {
   assert(size == other.size);
   for (int i=0; i < size; ++i) {
     data[i] = other.data[i];
@@ -196,7 +196,7 @@ void FArray<T>::Clone(const FArray<T>& other) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::Set(int pos, T v) {
+void FArray<T>::set(int pos, T v) {
   assert(pos >= 0 && pos < size);
   data[pos] = v;
 }
@@ -204,7 +204,7 @@ void FArray<T>::Set(int pos, T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::Get(int pos) {
+T FArray<T>::get(int pos) {
   assert(pos >= 0 && pos < size);
   return data[pos];
 }
