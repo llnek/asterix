@@ -30,30 +30,27 @@ enum class CC_DLL CType {
 class CC_DLL OdinIO : public n::WebSocket::Delegate {
 protected:
 
-  s::function<void (const OdinEvent&)> cbSession;
-  s::function<void (const OdinEvent&)> cbNetwork;
-  s::function<void (const OdinEvent&)> cbAll;
+  s::function<void (OdinEvent*)> cbSession;
+  s::function<void (OdinEvent*)> cbNetwork;
+  s::function<void (OdinEvent*)> cbAll;
 
-  void OnEvent(const OdinEvent&);
+  void onEvent(OdinEvent*);
 
   NO__CPYASS(OdinIO)
 
 public:
 
-  void Listen(const MType, s::function<void (const OdinEvent&)>);
-  void Listen(s::function<void (const OdinEvent&)>);
-  void Reset();
-  void CancelAll();
-  void Cancel(const MType);
+  void listen(const MType, s::function<void (OdinEvent*)>);
+  void listen(s::function<void (OdinEvent*)>);
+  void reset();
+  void cancelAll();
+  void cancel(const MType);
+
+  virtual void onError(n::WebSocket* , const n::WebSocket::ErrorCode& ) ;
+  virtual void onMessage(n::WebSocket*, const n::WebSocket::Data& ) ;
 
   virtual void onClose(n::WebSocket* ) ;
   virtual void onOpen(n::WebSocket*) ;
-
-  virtual void onMessage(n::WebSocket*,
-      const n::WebSocket::Data& ) ;
-
-  virtual void onError(n::WebSocket* ,
-      const n::WebSocket::ErrorCode& ) ;
 
   DECL_CTOR(OdinIO)
 
@@ -68,18 +65,18 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-n::WebSocket* Connect(not_null<OdinIO*>, const stdstr& url);
+n::WebSocket* connect(not_null<OdinIO*>, const stdstr& url);
 
-void Disconnect(not_null<OdinIO*>);
+void disconnect(not_null<OdinIO*>);
 
-void Close(not_null<OdinIO*>);
+void close(not_null<OdinIO*>);
 
-void Send(not_null<OdinIO*>, const OdinEvent&);
+void netSend(not_null<OdinIO*>, OdinEvent*);
 
-owner<OdinIO*> ReifyPlayRequest(const stdstr& game,
+owner<OdinIO*> reifyPlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd);
 
-owner<OdinIO*> ReifyJoinRequest(const stdstr& room,
+owner<OdinIO*> reifyJoinRequest(const stdstr& room,
     const stdstr& user, const stdstr& pwd);
 
 

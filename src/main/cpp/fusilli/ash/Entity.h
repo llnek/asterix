@@ -31,26 +31,25 @@ private:
 
 public:
 
-  static owner<Entity*> Reify(const stdstr& group,
-      not_null<Engine*>);
+  static owner<Entity*> reify(const stdstr& group, not_null<Engine*>);
 
   Entity* previous;
   Entity* next;
 
   virtual ~Entity();
 
-  void Checkin(not_null<Component*>);
-  void Purge(const COMType&);
+  void checkin(not_null<Component*>);
+  void purge(const COMType&);
 
-  Component* Get(const COMType& );
-  bool Has(const COMType&);
+  Component* get(const COMType& );
+  bool has(const COMType&);
 
-  const stdstr GroupId() { return group; }
+  const stdstr groupId() { return group; }
 
-  bool IsOk() { return !dead; };
-  void MarkDelete();
+  bool isOk() { return !dead; };
+  void markDelete();
 
-  const s::vector<Component*> GetAll();
+  const s::vector<Component*> getAll();
 
 };
 

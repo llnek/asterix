@@ -24,10 +24,10 @@ class FS_DLL ObjList {
 private:
   NO__CPYASS(ObjList)
 public:
-  const s::vector<T*> List();
-  void Release(not_null<T*>);
-  void Add(not_null<T*> );
-  void Clear() ;
+  const s::vector<T*> list();
+  void release(not_null<T*>);
+  void add(not_null<T*> );
+  void clear() ;
   T* head;
   T* tail;
   DECL_CTOR(ObjList)
@@ -36,7 +36,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Add(not_null<T*> e) {
+void ObjList<T>::add(not_null<T*> e) {
   if (ENP(head)) {
     head = tail = e;
     SNPTR(head->previous)
@@ -52,7 +52,7 @@ void ObjList<T>::Add(not_null<T*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Release(not_null<T*> e) {
+void ObjList<T>::release(not_null<T*> e) {
   if (head == e) {
     head = head->next;
   }
@@ -72,7 +72,7 @@ void ObjList<T>::Release(not_null<T*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-void ObjList<T>::Clear() {
+void ObjList<T>::clear() {
   while (NNP(head)) {
     auto e= head;
     head = head->next;
@@ -85,7 +85,7 @@ void ObjList<T>::Clear() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-const s::vector<T*> ObjList<T>::List() {
+const s::vector<T*> ObjList<T>::list() {
   s::vector<T*> v;
   for (auto p= head; NNP(p); p=p->next) {
     v.push_back(p);
@@ -98,7 +98,7 @@ const s::vector<T*> ObjList<T>::List() {
 template <typename T>
 ObjList<T>::~ObjList() {
   //printf("ObjList dtor\n");
-  Clear();
+  clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,11 +114,11 @@ ObjList<T>::ObjList() {
 class FS_DLL Engine {
 private:
 
-  void PurgeEntity(ObjList<Entity>*, Entity*);
-  void OnModifyEntity(Entity*);
-  void OnPurgeEntity(Entity*);
-  void OnAddEntity(Entity*);
-  void HouseKeeping();
+  void purgeEntity(ObjList<Entity>*, Entity*);
+  void onModifyEntity(Entity*);
+  void onPurgeEntity(Entity*);
+  void onAddEntity(Entity*);
+  void houseKeeping();
 
   s::map<stdstr, ObjList<Entity>*> groups;
   s::vector<NodeList*> nodeLists;
@@ -134,24 +134,24 @@ private:
 
 public:
 
-  const s::vector<Entity*> GetEntities(const stdstr& group);
-  const s::vector<Entity*> GetEntities();
-  const s::vector<System*> GetSystems();
+  const s::vector<Entity*> getEntities(const stdstr& group);
+  const s::vector<Entity*> getEntities();
+  const s::vector<System*> getSystems();
 
-  Entity* ReifyEntity(const stdstr& group);
+  Entity* reifyEntity(const stdstr& group);
 
-  void NotifyModify(not_null<Entity*>);
-  void PurgeEntity(not_null<Entity*> );
-  void PurgeEntities(const stdstr& group) ;
+  void notifyModify(not_null<Entity*>);
+  void purgeEntity(not_null<Entity*> );
+  void purgeEntities(const stdstr& group) ;
 
-  NodeList* GetNodeList(const NodeType& );
+  NodeList* getNodeList(const NodeType& );
 
-  void PurgeSystem (not_null<System*> );
-  void PurgeSystems();
-  void ForceSync();
-  void RegoSystem(not_null<System*> );
+  void purgeSystem (not_null<System*> );
+  void purgeSystems();
+  void forceSync();
+  void regoSystem(not_null<System*> );
 
-  void Update(float time);
+  void update(float time);
 
   DECL_CTOR(Engine)
 };

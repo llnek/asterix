@@ -16,8 +16,8 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Entity*> Entity::Reify(const stdstr& group, not_null<Engine*> e) {
-  auto ent= new Entity();
+owner<Entity*> Entity::reify(const stdstr& group, not_null<Engine*> e) {
+  auto ent= mc_new( Entity);
   ent->group=group;
   ent->engine= e;
   return ent;
@@ -41,37 +41,37 @@ Entity::Entity() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Checkin(not_null<Component*> c) {
-  auto z = c->TypeId();
-  if (Has(z)) {
+void Entity::checkin(not_null<Component*> c) {
+  auto z = c->typeId();
+  if (has(z)) {
     throw "cannot reassign component";
   }
   parts.insert(S__PAIR(COMType, Component*, z, c));
-  engine->NotifyModify(this);
+  engine->notifyModify(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::MarkDelete() {
+void Entity::markDelete() {
   dead=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::Purge(const COMType& z) {
+void Entity::purge(const COMType& z) {
   auto it = parts.find(z);
 
   if (it != parts.end()) {
     auto rc= it->second;
     parts.erase(it);
     delete rc;
-    engine->NotifyModify(this);
+    engine->notifyModify(this);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Entity::Get(const COMType& z) {
+Component* Entity::get(const COMType& z) {
   auto it=  parts.find(z);
   Component* c= nullptr;
   if (it != parts.end()) {
@@ -82,7 +82,7 @@ Component* Entity::Get(const COMType& z) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<Component*> Entity::GetAll() {
+const s::vector<Component*> Entity::getAll() {
   s::vector<Component*> v;
   F__LOOP(it, parts) {
     v.push_back(it->second);
@@ -92,7 +92,7 @@ const s::vector<Component*> Entity::GetAll() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Entity::Has(const COMType& z) {
+bool Entity::has(const COMType& z) {
   return parts.find(z) != parts.end();
 }
 

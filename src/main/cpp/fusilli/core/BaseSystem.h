@@ -22,11 +22,11 @@ template<typename F>
 class CC_DLL BaseSystem : public a::System {
 protected:
 
+  BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
+  virtual bool onUpdate(float) = 0;
+
   c::Dictionary* state;
   F* factory;
-
-  BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
-  virtual bool OnUpdate(float) = 0;
 
 private:
 
@@ -35,7 +35,7 @@ private:
 
 public:
 
-  virtual bool Update(float time);
+  virtual bool update(float time);
   virtual ~BaseSystem();
 
 };
@@ -60,9 +60,9 @@ BaseSystem<F>::~BaseSystem() {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename F>
-bool BaseSystem<F>::Update(float time) {
-  //CCLOG("update called on system: %s", this->TypeId().c_str());
-  return OnUpdate(time);
+bool BaseSystem<F>::update(float time) {
+  //CCLOG("update called on system: %s", this->typeId().c_str());
+  return onUpdate(time);
 }
 
 

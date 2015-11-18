@@ -25,102 +25,102 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  c::Dictionary* ReadXmlAsDict(const stdstr& fpath);
-  c::Array* ReadXmlAsList(const stdstr& fpath);
+  c::Dictionary* readXmlAsDict(const stdstr& fpath);
+  c::Array* readXmlAsList(const stdstr& fpath);
 
-  void ReifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
-  void ResolveElastic(not_null<ComObj*>, not_null<ComObj*>);
+  void reifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
+  void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
-  const c::Color3B ColorRGB(const stdstr& hexcolor);
+  const c::Color3B colorRGB(const stdstr& hexcolor);
 
-  void SfxPlay(const stdstr& sound);
-  void PauseAudio();
+  void sfxPlay(const stdstr& sound);
+  void pauseAudio();
 
-  c::MenuItem* ReifyMenuBtn(const stdstr& n);
+  c::MenuItem* reifyMenuBtn(const stdstr& n);
 
-  c::MenuItem* ReifyMenuBtn(
+  c::MenuItem* reifyMenuBtn(
       const stdstr& n,
       const stdstr& s, const stdstr& d);
 
-  c::Menu* MkMenu(c::MenuItem*);
+  c::Menu* mkMenu(c::MenuItem*);
 
-  c::Menu* MkMenu(const s::vector<c::MenuItem*>& items,
+  c::Menu* mkMenu(const s::vector<c::MenuItem*>& items,
       bool vert = false, float padding= 10.0f);
 
-  bool PointInBox(const Box4& box, float x,  float y);
-  const c::Color3B White();
-  const c::Color3B Black();
+  bool pointInBox(const Box4& box, float x,  float y);
+  const c::Color3B white();
+  const c::Color3B black();
 
-  bool CollideN(not_null<c::Node*>, not_null<c::Node*> );
-  bool Collide(not_null<ComObj*>, not_null<ComObj*>);
+  bool collideN(not_null<c::Node*>, not_null<c::Node*> );
+  bool collide(not_null<ComObj*>, not_null<ComObj*>);
 
-  void SetDevRes(float width, float height,
+  void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
-  bool IsPortrait();
+  bool isPortrait();
 
-  bool OutOfBound(not_null<ComObj*>, const Box4& B);
-  bool OutOfBound(const Box4& src, const Box4& B);
+  bool outOfBound(not_null<ComObj*>, const Box4& B);
+  bool outOfBound(const Box4& src, const Box4& B);
 
-  c::DelayTime* ReifyTimer(not_null<c::Node*>, float millis);
-  void UndoTimer(not_null<c::DelayTime*>);
-  bool TimerDone(not_null<c::DelayTime*>);
+  c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
+  void undoTimer(not_null<c::DelayTime*>);
+  bool timerDone(not_null<c::DelayTime*>);
 
-  c::Label* ReifyBmfLabel(const stdstr& font, const stdstr& text);
+  c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text);
 
-  c::Label* ReifyBmfLabel(float x, float y,
+  c::Label* reifyBmfLabel(float x, float y,
     const stdstr& font,
     const stdstr& text);
 
-  c::Sprite* ReifySprite(const stdstr& frameName);
+  c::Sprite* reifySprite(const stdstr& frameName);
 
-  const Box4 BBox4B4(not_null<ComObj*>);
-  const Box4 BBox4(not_null<c::Node*>);
+  const Box4 bbox4B4(not_null<ComObj*>);
+  const Box4 bbox4(not_null<c::Node*>);
 
-  void RunScene(not_null<c::Scene*>, float delay);
-  void RunScene(not_null<c::Scene*>);
+  void runScene(not_null<c::Scene*>, float delay);
+  void runScene(not_null<c::Scene*>);
 
-  const c::Size ScaleSize(c::Size z, float scale);
+  const c::Size scaleSize(c::Size z, float scale);
 
-  bool IsTransitioning();
+  bool isTransitioning();
 
-  const c::Size CalcSize(const stdstr& frame);
+  const c::Size calcSize(const stdstr& frame);
 
-  const c::Size HalfHW(not_null<c::Node*>);
+  const c::Size halfHW(not_null<c::Node*>);
 
-  const c::Rect BBox(not_null<c::Node*>);
+  const c::Rect bbox(not_null<c::Node*>);
 
-  float GetScaledHeight(not_null<c::Node*>);
-  float GetScaledWidth(not_null<c::Node*>);
+  float getScaledHeight(not_null<c::Node*>);
+  float getScaledWidth(not_null<c::Node*>);
 
-  float GetHeight(not_null<c::Node*>);
-  float GetWidth(not_null<c::Node*>);
+  float getHeight(not_null<c::Node*>);
+  float getWidth(not_null<c::Node*>);
 
-  float GetLeft(not_null<c::Node*>);
-  float GetRight(not_null<c::Node*>);
-  float GetTop(not_null<c::Node*>);
-  float GetBottom(not_null<c::Node*>);
+  float getLeft(not_null<c::Node*>);
+  float getRight(not_null<c::Node*>);
+  float getTop(not_null<c::Node*>);
+  float getBottom(not_null<c::Node*>);
 
-  float GetLastLeft(not_null<ComObj*> );
-  float GetLastRight(not_null<ComObj*> );
-  float GetLastTop(not_null<ComObj*> );
-  float GetLastBottom(not_null<ComObj*> );
+  float getLastLeft(not_null<ComObj*> );
+  float getLastRight(not_null<ComObj*> );
+  float getLastTop(not_null<ComObj*> );
+  float getLastBottom(not_null<ComObj*> );
 
-  const c::Vec2 Center();
-  float CenterX();
-  float CenterY();
+  const c::Vec2 center();
+  float centerX();
+  float centerY();
 
-  float ScreenHeight();
-  float ScreenWidth();
+  float screenHeight();
+  float screenWidth();
 
-  const c::Vec2 VBoxMID(const Box4& );
-  const c::Rect VisRect();
-  const Box4 VisBox();
+  const c::Vec2 vboxMID(const Box4& );
+  const c::Rect visRect();
+  const Box4 visBox();
 
-  const c::Vec2 SCenter();
-  const c::Size Screen();
+  const c::Vec2 scenter();
+  const c::Size screen();
 
-  bool TraceEnclosure(float dt, const Box4& bbox,
+  bool traceEnclosure(float dt, const Box4& bbox,
       const c::Rect& rect, const c::Vec2& vel,
       c::Vec2& outPos, c::Vec2& outVel);
 
@@ -128,17 +128,17 @@ namespace ccsx {
    * Get the sprite from the frame cache using
    * its id (e.g. ship.png)
    */
-  c::SpriteFrame* GetSpriteFrame(const stdstr& frameid);
+  c::SpriteFrame* getSpriteFrame(const stdstr& frameid);
 
-  const c::Vec2 AnchorC();
-  const c::Vec2 AnchorTL();
-  const c::Vec2 AnchorT();
-  const c::Vec2 AnchorTR();
-  const c::Vec2 AnchorR();
-  const c::Vec2 AnchorL();
-  const c::Vec2 AnchorBR();
-  const c::Vec2 AnchorB();
-  const c::Vec2 AnchorBL();
+  const c::Vec2 anchorC();
+  const c::Vec2 anchorTL();
+  const c::Vec2 anchorT();
+  const c::Vec2 anchorTR();
+  const c::Vec2 anchorR();
+  const c::Vec2 anchorL();
+  const c::Vec2 anchorBR();
+  const c::Vec2 anchorB();
+  const c::Vec2 anchorBL();
 
 };
 

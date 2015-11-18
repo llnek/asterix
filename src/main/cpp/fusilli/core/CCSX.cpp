@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "audio/include/SimpleAudioEngine.h"
+/*
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCActionInterval.h"
 #include "2d/CCMenuItem.h"
@@ -17,6 +18,8 @@
 #include "2d/CCLabel.h"
 #include "2d/CCTransition.h"
 #include "base/CCDirector.h"
+*/
+#include "cocos2d.h"
 #include "XConfig.h"
 #include "CCSX.h"
 
@@ -26,11 +29,13 @@ NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
 // items should be same size
-c::Menu* MkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
+c::Menu* mkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
 
-  F__LOOP(it, items) { menu->addChild( *it); }
+  F__LOOP(it, items) {
+    menu->addChild( *it);
+  }
 
   if (!vert) {
     menu->alignItemsHorizontallyWithPadding(pad);
@@ -43,7 +48,7 @@ c::Menu* MkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* MkMenu(c::MenuItem* item) {
+c::Menu* mkMenu(c::MenuItem* item) {
   auto menu= c::Menu::create();
   menu->addChild( item);
   return menu;
@@ -51,18 +56,16 @@ c::Menu* MkMenu(c::MenuItem* item) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B ColorRGB(const stdstr& color) {
+const c::Color3B colorRGB(const stdstr& color) {
   int r=0, g=0, b=0;
   ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
-  return c::Color3B( (GLubyte)r,
-      (GLubyte)g,
-      (GLubyte)b);
+  return c::Color3B( (GLubyte)r, (GLubyte)g, (GLubyte)b);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SfxPlay(const stdstr& sound) {
-  auto fp= XCFG()->GetEffect(sound);
+void sfxPlay(const stdstr& sound) {
+  auto fp= XCFG()->getEffect(sound);
   try {
     den::SimpleAudioEngine::getInstance()->playEffect(fp.c_str());
   } catch (...) {
@@ -72,70 +75,70 @@ void SfxPlay(const stdstr& sound) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PauseAudio() {
+void pauseAudio() {
   den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
   den::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ReifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
+void reifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
   auto n="sound_off.png";
-  off= ReifyMenuBtn(n,n,n);
+  off= reifyMenuBtn(n,n,n);
   n="sound_on.png";
-  on= ReifyMenuBtn(n,n,n);
+  on= reifyMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* ReifyMenuBtn(const stdstr& n) {
-  return ReifyMenuBtn(n,n,n);
+c::MenuItem* reifyMenuBtn(const stdstr& n) {
+  return reifyMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* ReifyMenuBtn(const stdstr& n,
+c::MenuItem* reifyMenuBtn(const stdstr& n,
     const stdstr& s,
     const stdstr& d) {
 
-  return c::MenuItemSprite::create(ReifySprite(n),
-                                ReifySprite(s),
-                                ReifySprite(d));
+  return c::MenuItemSprite::create(reifySprite(n),
+                                reifySprite(s),
+                                reifySprite(d));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Test if this point is inside this rectangle
-bool PointInBox(const Box4& box, float x, float y) {
+bool pointInBox(const Box4& box, float x, float y) {
   return x >= box.left && x <= box.right &&
     y >= box.bottom && y <= box.top;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B White() {
+const c::Color3B white() {
   return c::Color3B::WHITE;
 }
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B Black() {
+const c::Color3B black() {
   return c::Color3B::BLACK;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* ReifyBmfLabel(const stdstr& font, const stdstr& text) {
+c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text) {
 
-  auto f= c::Label::createWithBMFont( XCFG()->GetFont(font), text);
+  auto f= c::Label::createWithBMFont( XCFG()->getFont(font), text);
   f->setOpacity(0.9*255);
   return f;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* ReifyBmfLabel(float x, float y,
+c::Label* reifyBmfLabel(float x, float y,
     const stdstr& font, const stdstr& text) {
 
-  auto f= c::Label::createWithBMFont(XCFG()->GetFont(font), text);
+  auto f= c::Label::createWithBMFont(XCFG()->getFont(font), text);
   f->setPosition(x,y);
   f->setOpacity(0.9*255);
   return f;
@@ -143,55 +146,52 @@ c::Label* ReifyBmfLabel(float x, float y,
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
-bool Collide(not_null<ComObj*> a, not_null<ComObj*> b) {
+bool collide(not_null<ComObj*> a, not_null<ComObj*> b) {
 
-  return (NNP(a) && NNP(b)) ?
-    CollideN(a->sprite, b->sprite) : false;
+  return (NNP(a) && NNP(b)) ? collideN(a->sprite, b->sprite) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
-bool CollideN(not_null<c::Node*> a, not_null<c::Node*> b) {
+bool collideN(not_null<c::Node*> a, not_null<c::Node*> b) {
 
-  return (NNP(a) && NNP(b)) ?
-    BBox(a).intersectsRect( BBox(b)) : false;
+  return (NNP(a) && NNP(b)) ? bbox(a).intersectsRect( bbox(b)) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SetDevRes(float x, float y, ResolutionPolicy pcy) {
+void setDevRes(float x, float y, ResolutionPolicy pcy) {
   CC_DTOR()->getOpenGLView()->setDesignResolutionSize(x, y, pcy);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool IsPortrait() {
-  auto s=Screen();
+bool isPortrait() {
+  auto s=screen();
   return s.height > s.width;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Array* ReadXmlAsList(const stdstr& fpath) {
+c::Array* readXmlAsList(const stdstr& fpath) {
   return c::Array::createWithContentsOfFile(fpath.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* ReadXmlAsDict(const stdstr& fpath) {
+c::Dictionary* readXmlAsDict(const stdstr& fpath) {
   return c::Dictionary::createWithContentsOfFile(fpath.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool OutOfBound(not_null<ComObj*> ent, const Box4& B) {
-  return (NNP(ent) && NNP(ent->sprite)) ?
-    OutOfBound(BBox4(ent->sprite), B) : false;
+bool outOfBound(not_null<ComObj*> ent, const Box4& B) {
+  return (NNP(ent) && NNP(ent->sprite)) ? outOfBound(bbox4(ent->sprite), B) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool OutOfBound(const Box4& a, const Box4& B) {
+bool outOfBound(const Box4& a, const Box4& B) {
   return a.left > B.right    ||
          a.top < B.bottom  ||
          a.right < B.left      ||
@@ -200,20 +200,20 @@ bool OutOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size ScaleSize(c::Size z, float scale) {
+const c::Size scaleSize(c::Size z, float scale) {
   return c::Size(z.width * scale, z.height * scale);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UndoTimer(not_null<c::DelayTime*> tm) {
+void undoTimer(not_null<c::DelayTime*> tm) {
   CC_DROP(tm)
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Reify a timer action
 //
-c::DelayTime* ReifyTimer(not_null<c::Node*> par, float tm) {
+c::DelayTime* reifyTimer(not_null<c::Node*> par, float tm) {
   auto t= c::DelayTime::create(tm);
   par->runAction(t);
   CC_KEEP(t)
@@ -222,20 +222,20 @@ c::DelayTime* ReifyTimer(not_null<c::Node*> par, float tm) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TimerDone(not_null<c::DelayTime*> t) {
+bool timerDone(not_null<c::DelayTime*> t) {
   return NNP(t) ? t->isDone() : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Reify a sprite from its frame name
 //
-c::Sprite* ReifySprite(const stdstr& name) {
+c::Sprite* reifySprite(const stdstr& name) {
   return c::Sprite::createWithSpriteFrameName(name);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const Box4 BBox4(not_null<c::Node*> s) {
+const Box4 bbox4(not_null<c::Node*> s) {
   auto z= s->getBoundingBox();
   return Box4(z.origin.y + z.size.height,
       z.origin.x + z.size.width,
@@ -250,20 +250,20 @@ const Box4 BBox4(not_null<c::Node*> s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void RunScene(not_null<c::Scene*> ns, float delay) {
+void runScene(not_null<c::Scene*> ns, float delay) {
   CC_DTOR()->replaceScene(
       c::TransitionCrossFade::create(delay, ns));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void RunScene(not_null<c::Scene*> ns) {
+void runScene(not_null<c::Scene*> ns) {
   CC_DTOR()->replaceScene(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool IsTransitioning() {
+bool isTransitioning() {
   return dynamic_cast<c::TransitionScene*>(
       CC_DTOR()->getRunningScene()) != nullptr;
 }
@@ -271,14 +271,14 @@ bool IsTransitioning() {
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const c::Size CalcSize(const stdstr& frame) {
-  return ReifySprite(frame)->getContentSize();
+const c::Size calcSize(const stdstr& frame) {
+  return reifySprite(frame)->getContentSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size HalfHW(not_null<c::Sprite*> s) {
+const c::Size halfHW(not_null<c::Sprite*> s) {
   auto z= s->getContentSize();
   return c::Size(z.width * 0.5, z.height * 0.5);
 }
@@ -286,7 +286,7 @@ const c::Size HalfHW(not_null<c::Sprite*> s) {
 //////////////////////////////////////////////////////////////////////////
 // Reify a rectangle from this sprite
 //
-const c::Rect BBox(not_null<c::Node*> s) {
+const c::Rect bbox(not_null<c::Node*> s) {
   return s->getBoundingBox();
   /*
   return c::Rect(GetLeft(s),
@@ -298,35 +298,35 @@ const c::Rect BBox(not_null<c::Node*> s) {
 //////////////////////////////////////////////////////////////////////////
 // Reify a rect from the last frame
 //
-const Box4 BBox4B4(not_null<ComObj*> ent) {
+const Box4 bbox4B4(not_null<ComObj*> ent) {
   return Box4(
-    GetLastTop(ent),
-    GetLastRight(ent),
-    GetLastBottom(ent),
-    GetLastLeft(ent));
+    getLastTop(ent),
+    getLastRight(ent),
+    getLastBottom(ent),
+    getLastLeft(ent));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetScaledHeight(not_null<c::Node*> s) {
+float getScaledHeight(not_null<c::Node*> s) {
   return s->getContentSize().height * s->getScaleY();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetHeight(not_null<c::Node*> s) {
+float getHeight(not_null<c::Node*> s) {
   return s->getContentSize().height;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetScaledWidth(not_null<c::Node*> s) {
+float getScaledWidth(not_null<c::Node*> s) {
   return s->getContentSize().width * s->getScaleX();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetWidth(not_null<c::Node*> s) {
+float getWidth(not_null<c::Node*> s) {
   return s->getContentSize().width;
 }
 
@@ -348,67 +348,67 @@ static float get_YYY(not_null<c::Node*> s, float py, float bound) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLeft(not_null<c::Node*> s) {
-  return get_XXX(s, s->getPosition().x, AnchorL().x);
+float getLeft(not_null<c::Node*> s) {
+  return get_XXX(s, s->getPosition().x, anchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetRight(not_null<c::Node*> s) {
-  return get_XXX(s, s->getPosition().x, AnchorR().x);
+float getRight(not_null<c::Node*> s) {
+  return get_XXX(s, s->getPosition().x, anchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetBottom(not_null<c::Node*> s) {
-  return get_YYY(s, s->getPosition().y, AnchorB().y);
+float getBottom(not_null<c::Node*> s) {
+  return get_YYY(s, s->getPosition().y, anchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetTop(not_null<c::Node*> s) {
-  return get_YYY(s, s->getPosition().y, AnchorT().y);
+float getTop(not_null<c::Node*> s) {
+  return get_YYY(s, s->getPosition().y, anchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastLeft(not_null<ComObj*> ent) {
-  return get_XXX(ent->sprite, ent->lastPos.x, AnchorL().x);
+float getLastLeft(not_null<ComObj*> ent) {
+  return get_XXX(ent->sprite, ent->lastPos.x, anchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastRight(not_null<ComObj*> ent) {
-  return get_XXX(ent->sprite, ent->lastPos.x, AnchorR().x);
+float getLastRight(not_null<ComObj*> ent) {
+  return get_XXX(ent->sprite, ent->lastPos.x, anchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastTop(not_null<ComObj*> ent) {
-  return get_YYY(ent->sprite, ent->lastPos.y, AnchorT().y);
+float getLastTop(not_null<ComObj*> ent) {
+  return get_YYY(ent->sprite, ent->lastPos.y, anchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float GetLastBottom(not_null<ComObj*> ent) {
-  return get_YYY(ent->sprite, ent->lastPos.y, AnchorB().y);
+float getLastBottom(not_null<ComObj*> ent) {
+  return get_YYY(ent->sprite, ent->lastPos.y, anchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the x pos of the center of the visible screen
 //
-float CenterX() { return Center().x; }
+float centerX() { return center().x; }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the y pos of the center of the visible screen.
 //
-float CenterY() { return Center().y; }
+float centerY() { return center().y; }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the center of the visible screen
 //
-const c::Vec2 Center() {
-  auto rc = VisRect();
+const c::Vec2 center() {
+  auto rc = visRect();
   return c::Vec2( rc.origin.x + rc.size.width * 0.5,
       rc.origin.y + rc.size.height * 0.5);
 }
@@ -416,24 +416,24 @@ const c::Vec2 Center() {
 //////////////////////////////////////////////////////////////////////////
 // Get the screen height
 //
-float ScreenHeight() { return Screen().height; }
+float screenHeight() { return screen().height; }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the screen width
 //
-float ScreenWidth() { return Screen().width; }
+float screenWidth() { return screen().width; }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen rectangle
 //
-const c::Rect VisRect() {
+const c::Rect visRect() {
   return CC_DTOR()->getOpenGLView()->getVisibleRect();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen box
 //
-const Box4 VisBox() {
+const Box4 visBox() {
   auto vr = CC_DTOR()->getOpenGLView()->getVisibleRect();
   return Box4(
     vr.origin.y + vr.size.height,
@@ -446,22 +446,22 @@ const Box4 VisBox() {
 //////////////////////////////////////////////////////////////////////////
 // Get the actual window/frame size.
 //
-const c::Size Screen() {
+const c::Size screen() {
   return CC_DTOR()->getOpenGLView()->getFrameSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the actual screen center.
 //
-const c::Vec2 SCenter() {
-  auto sz = Screen();
+const c::Vec2 scenter() {
+  auto sz = screen();
   return c::Vec2(sz.width * 0.5, sz.height * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the center of this box.
 //
-const c::Vec2 VBoxMID(const Box4& box) {
+const c::Vec2 vboxMID(const Box4& box) {
   return c::Vec2(box.left + (box.right-box.left) * 0.5,
               box.bottom + (box.top-box.bottom) * 0.5);
 }
@@ -473,7 +473,7 @@ const c::Vec2 VBoxMID(const Box4& box) {
 // If hit, the new position and velocities
 // are returned
 //
-bool TraceEnclosure(float dt, const Box4& bbox,
+bool traceEnclosure(float dt, const Box4& bbox,
     const c::Rect& rect, const c::Vec2& vel,
     c::Vec2& outPos, c::Vec2& outVel) {
   auto y = rect.origin.y + dt * vel.y;
@@ -523,50 +523,50 @@ bool TraceEnclosure(float dt, const Box4& bbox,
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-c::SpriteFrame* GetSpriteFrame(const stdstr& frameid) {
+c::SpriteFrame* getSpriteFrame(const stdstr& frameid) {
   return c::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorC() { return c::Vec2(0.5, 0.5); }
+const c::Vec2 anchorC() { return c::Vec2(0.5, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorT() { return c::Vec2(0.5, 1); }
+const c::Vec2 anchorT() { return c::Vec2(0.5, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorTR() { return c::Vec2(1, 1); }
+const c::Vec2 anchorTR() { return c::Vec2(1, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorR() { return c::Vec2(1, 0.5); }
+const c::Vec2 anchorR() { return c::Vec2(1, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorBR() { return c::Vec2(1, 0); }
+const c::Vec2 anchorBR() { return c::Vec2(1, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorB() { return c::Vec2(0.5, 0); }
+const c::Vec2 anchorB() { return c::Vec2(0.5, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorBL() { return c::Vec2(0, 0); }
+const c::Vec2 anchorBL() { return c::Vec2(0, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorL() { return c::Vec2(0, 0.5); }
+const c::Vec2 anchorL() { return c::Vec2(0, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 AnchorTL() { return c::Vec2(0, 1); }
+const c::Vec2 anchorTL() { return c::Vec2(0, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 // not used for now.
 //
-void ResolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
+void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
   auto pos2 = obj2->sprite->getPosition();
   auto pos1= obj1->sprite->getPosition();
   auto sz2= obj2->sprite->getContentSize();
@@ -575,40 +575,40 @@ void ResolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
   auto hw1= sz1.width * 0.5;
   auto x = pos1.x;
   auto y= pos1.y;
-  auto bx2 = BBox4(obj2->sprite);
-  auto bx1 = BBox4(obj1->sprite);
+  auto bx2 = bbox4(obj2->sprite);
+  auto bx1 = bbox4(obj1->sprite);
 
   // coming from right
   if (bx1.left < bx2.right && bx2.right < bx1.right) {
     obj2->vel.x = - fabs(obj2->vel.x);
     obj1->vel.x = fabs(obj1->vel.x);
-    x= GetRight(obj2->sprite) + hw1;
+    x= getRight(obj2->sprite) + hw1;
   }
   else
   // coming from left
   if (bx1.right > bx2.left && bx1.left < bx2.left) {
     obj1->vel.x = - fabs( obj1->vel.x);
     obj2->vel.x = fabs(obj2->vel.x);
-    x= GetLeft(obj2->sprite) - hw1;
+    x= getLeft(obj2->sprite) - hw1;
   }
   else
   // coming from top
   if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
     obj2->vel.y = - fabs(obj2->vel.y);
     obj1->vel.y = fabs(obj1->vel.y);
-    y= GetTop(obj2->sprite) + hh1;
+    y= getTop(obj2->sprite) + hh1;
   }
   else
   // coming from bottom
   if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
     obj1->vel.y = - fabs(obj1->vel.y);
     obj2->vel.y = fabs(obj2->vel.y);
-    y= GetBottom(obj2->sprite) - hh1;
+    y= getBottom(obj2->sprite) - hh1;
   }
   else {
     return;
   }
-  obj1->UpdatePosition(x,y);
+  obj1->updatePosition(x,y);
 }
 
 

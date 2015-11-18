@@ -14,20 +14,20 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void L10NCache::Purge() {
+void L10NCache::purge() {
   _cache.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void L10NCache::Init() {
+void L10NCache::init() {
   Purge();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 //Application::getInstance()->getCurrentLanguage();
-const stdstr L10NCache::GetStr(const stdstr& key, const stdstr& dft) {
+const stdstr L10NCache::getStr(const stdstr& key, const stdstr& dft) {
   auto it= _cache.find(key);
   stdstr rc;
   if (it != _cache.end()) {

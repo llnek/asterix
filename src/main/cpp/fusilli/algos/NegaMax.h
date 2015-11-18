@@ -34,16 +34,16 @@ template<int Z>
 class FS_DLL GameBoard {
 public:
 
-  virtual const s::vector<int> getNextMoves(xnull<FFrame<Z>*>) = 0;
-  virtual int evalScore(xnull<FFrame<Z>*>) = 0;
+  virtual const s::vector<int> getNextMoves(not_null<FFrame<Z>*>) = 0;
+  virtual int evalScore(not_null<FFrame<Z>*>) = 0;
 
-  virtual bool isStalemate(xnull<FFrame<Z>*>) = 0;
-  virtual bool isOver(xnull<FFrame<Z>*>) = 0;
+  virtual bool isStalemate(not_null<FFrame<Z>*>) = 0;
+  virtual bool isOver(not_null<FFrame<Z>*>) = 0;
 
-  virtual void undoMove(xnull<FFrame<Z>*>, int move) = 0;
-  virtual void makeMove(xnull<FFrame<Z>*>, int move) = 0;
+  virtual void undoMove(not_null<FFrame<Z>*>, int move) = 0;
+  virtual void makeMove(not_null<FFrame<Z>*>, int move) = 0;
 
-  virtual void switchPlayer(xnull<FFrame<Z>*>) = 0;
+  virtual void switchPlayer(not_null<FFrame<Z>*>) = 0;
   virtual FFrame<Z> takeFFrame() = 0;
   virtual ~GameBoard() {}
 };
@@ -52,8 +52,8 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 template <int Z>
-int NegaMax(xnull<GameBoard<Z>*> board,
-    xnull<FFrame<Z>*> game,
+int NegaMax(not_null<GameBoard<Z>*> board,
+    not_null<FFrame<Z>*> game,
     int maxDepth, int depth, int alpha, int beta) {
 
   if (depth == 0 || board->isOver(game)) {
@@ -97,10 +97,10 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
 template <int Z>
-int EvalNegaMax(xnull<GameBoard<Z>*> board) {
-  auto snapshot= board->TakeFFrame();
-  NegaMax(board, snapshot, 10, 10, -PINF, PINF);
-  return snapshot.lastBestMove;
+int EvalNegaMax(not_null<GameBoard<Z>*> board) {
+  auto f= board->takeFFrame();
+  NegaMax(board, f, 10, 10, -PINF, PINF);
+  return f.lastBestMove;
 }
 
 NS_END(algos)

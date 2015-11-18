@@ -33,12 +33,8 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
-  F__LOOP(it, nodeLists) {
-    delete *it;
-  }
-  F__LOOP(it, groups) {
-    delete it->second;
-  }
+  F__LOOP(it, groups) { delete it->second; }
+  F__LOOP(it, nodeLists) { delete *it; }
 //  printf("Engine dtor\n");
 }
 
@@ -51,12 +47,11 @@ Engine::Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<Entity*>
-Engine::GetEntities(const stdstr& group) {
+const s::vector<Entity*> Engine::getEntities(const stdstr& group) {
   auto it=groups.find(group);
   s::vector<Entity*> v;
   if (it != groups.end()) {
-    return it->second->List();
+    return it->second->list();
   } else {
     return v;
   }
@@ -64,11 +59,10 @@ Engine::GetEntities(const stdstr& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<Entity*>
-Engine::GetEntities() {
+const s::vector<Entity*> Engine::getEntities() {
   s::vector<Entity*> rc;
   F__LOOP(it, groups) {
-    auto v= it->second->List();
+    auto v= it->second->list();
     rc.insert(rc.end(), v.begin(), v.end());
   }
   return rc;
@@ -76,14 +70,14 @@ Engine::GetEntities() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<System*> Engine::GetSystems() {
-  return systemList.List();
+const s::vector<System*> Engine::getSystems() {
+  return systemList.list();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::ReifyEntity(const stdstr& group) {
-  auto e= Entity::Reify(group, this);
+Entity* Engine::reifyEntity(const stdstr& group) {
+  auto e= Entity::reify(group, this);
   auto it= groups.find(group);
   ObjList<Entity>* el;
   if (it != groups.end()) {
@@ -92,7 +86,7 @@ Entity* Engine::ReifyEntity(const stdstr& group) {
     el= mc_new(ObjList<Entity>);
     groups.insert(S__PAIR(stdstr, ObjList<Entity>*, group, el));
   }
-  el->Add(e);
+  el->add(e);
   dirty=true;
   addList.push_back(e);
   return e;
@@ -100,7 +94,7 @@ Entity* Engine::ReifyEntity(const stdstr& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::NotifyModify(not_null<Entity*> e) {
+void Engine::notifyModify(not_null<Entity*> e) {
   bool fnd=false;
   F__LOOP(it, modList) {
     if (e == *it) { fnd=true; break; }
@@ -113,48 +107,48 @@ void Engine::NotifyModify(not_null<Entity*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeEntity(not_null<Entity*> e) {
-  auto it = groups.find(e->GroupId());
+void Engine::purgeEntity(not_null<Entity*> e) {
+  auto it = groups.find(e->groupId());
   if (it != groups.end()) {
-    PurgeEntity(it->second,e);
+    purgeEntity(it->second,e);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeEntity(ObjList<Entity>* el, Entity* e) {
-  e->MarkDelete();
-  el->Release(e);
+void Engine::purgeEntity(ObjList<Entity>* el, Entity* e) {
+  e->markDelete();
+  el->release(e);
   dirty=true;
   freeList.push_back(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeEntities(const stdstr& group) {
+void Engine::purgeEntities(const stdstr& group) {
   auto it = groups.find(group);
   if (it != groups.end()) {
     auto el=it->second;
     while (NNP(el->head)) {
-      PurgeEntity(el, el->head);
+      purgeEntity(el, el->head);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList* Engine::GetNodeList( const NodeType& nodeType) {
-  auto nl = NodeList::Reify(nodeType);
-  auto rego = NodeRegistry::Self();
+NodeList* Engine::getNodeList( const NodeType& nodeType) {
+  auto nl = NodeList::reify(nodeType);
+  auto rego = NodeRegistry::self();
   F__LOOP(it, groups) {
     auto el= it->second;
     Node* n= nullptr;
     for (auto e= el->head; NNP(e); e=e->next) {
       if (ENP(n)) {
-        n= rego->ReifyNode(nodeType);
+        n= rego->reifyNode(nodeType);
       }
-      if (n->BindEntity(e)) {
-        nl->Add(n);
+      if (n->bindEntity(e)) {
+        nl->add(n);
         SNPTR(n)
       }
     }
@@ -165,38 +159,38 @@ NodeList* Engine::GetNodeList( const NodeType& nodeType) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::RegoSystem(not_null<System*> s) {
-  s->AddToEngine( this );
-  systemList.Add(s);
+void Engine::regoSystem(not_null<System*> s) {
+  s->addToEngine( this );
+  systemList.add(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeSystem(not_null<System*> s ) {
-  systemList.Release(s);
-  s->RemoveFromEngine(this);
+void Engine::purgeSystem(not_null<System*> s ) {
+  systemList.release(s);
+  s->removeFromEngine(this);
   delete s;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::PurgeSystems() {
+void Engine::purgeSystems() {
   while (NNP(systemList.head)) {
-    PurgeSystem(systemList.head);
+    purgeSystem(systemList.head);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::Update(float time) {
+void Engine::update(float time) {
   updating = true;
   for (auto s= systemList.head; NNP(s); s= s->next) {
-    if (s->IsActive()) {
-      if (! s->Update(time)) { break; }
+    if (s->isActive()) {
+      if (! s->update(time)) { break; }
     }
   }
   if (dirty) {
-    HouseKeeping();
+    houseKeeping();
   }
   dirty=false;
   updating = false;
@@ -204,22 +198,22 @@ void Engine::Update(float time) {
 
 //////////////////////////////////////////////////////////////////////////////
 // get rid of nodes bound to this entity
-void Engine::OnPurgeEntity(Entity* e) {
+void Engine::onPurgeEntity(Entity* e) {
   F__LOOP(it, nodeLists) {
     auto nl= *it;
-    nl->RemoveEntity(e);
+    nl->removeEntity(e);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // sync existing nodes, add if necessary
-void Engine::OnAddEntity(Entity* e) {
-  auto rego = NodeRegistry::Self();
+void Engine::onAddEntity(Entity* e) {
+  auto rego = NodeRegistry::self();
   F__LOOP(it, nodeLists) {
     auto nl= *it;
-    auto n= rego->ReifyNode(nl->GetType());
-    if (n->BindEntity(e)) {
-      nl->Add(n);
+    auto n= rego->reifyNode(nl->getType());
+    if (n->bindEntity(e)) {
+      nl->add(n);
     } else {
       delete n;
     }
@@ -228,20 +222,20 @@ void Engine::OnAddEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 // sync changes
-void Engine::OnModifyEntity(Entity* e) {
-  auto rego = NodeRegistry::Self();
+void Engine::onModifyEntity(Entity* e) {
+  auto rego = NodeRegistry::self();
   F__LOOP(it, nodeLists) {
     auto nl = *it;
-    auto t = nl->GetType();
+    auto t = nl->getType();
     Node* n;
-    if (nl->ContainsWithin(e)) {
-      if (!nl->IsCompatible(e)) {
-        nl->RemoveEntity(e);
+    if (nl->containsWithin(e)) {
+      if (!nl->isCompatible(e)) {
+        nl->removeEntity(e);
       }
     } else {
-      n= rego->ReifyNode(t);
-      if (n->BindEntity(e)) {
-        nl->Add(n);
+      n= rego->reifyNode(t);
+      if (n->bindEntity(e)) {
+        nl->add(n);
       } else {
         delete n;
       }
@@ -251,25 +245,25 @@ void Engine::OnModifyEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::ForceSync() {
-  HouseKeeping();
+void Engine::forceSync() {
+  houseKeeping();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::HouseKeeping() {
+void Engine::houseKeeping() {
   F__LOOP(it, freeList) {
     auto e = *it;
-    OnPurgeEntity(e);
+    onPurgeEntity(e);
     delete e;
   }
   F__LOOP(it, addList) {
     auto e = *it;
-    OnAddEntity(e);
+    onAddEntity(e);
   }
   F__LOOP(it, modList) {
     auto e= *it;
-    OnModifyEntity(e);
+    onModifyEntity(e);
   }
   freeList.clear();
   modList.clear();

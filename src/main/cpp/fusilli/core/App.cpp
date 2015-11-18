@@ -44,7 +44,7 @@ void App::initGLContextAttrs() {
 bool App::applicationDidFinishLaunching() {
 
   auto glview = CC_DTOR()->getOpenGLView();
-  auto sz = XCFG()->GameSize();
+  auto sz = XCFG()->gameSize();
 
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
@@ -55,24 +55,25 @@ bool App::applicationDidFinishLaunching() {
     CC_DTOR()->setOpenGLView(glview);
   }
 
-  PreLaunch(sz);
+  preLaunch(sz);
 
   register_all_packages();
 
   //CCLOG("about to run start scene");
   // run
-  CC_DTOR()->runWithScene( XCFG()->StartWith());
+  CC_DTOR()->runWithScene( XCFG()->startWith());
 
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void App::PreLaunch(const c::Size& dz) {
+void App::preLaunch(const c::Size& dz) {
 
   auto glview = CC_DTOR()->getOpenGLView();
   auto dispFPS= CC_CSV(c::Bool,"showFPS");
   auto fps = CC_CSV(c::Integer,"FPS");
+
   auto portrait = dz.height > dz.width;
   auto fz = glview->getFrameSize();
 
@@ -130,24 +131,24 @@ void App::PreLaunch(const c::Size& dz) {
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   // Set the design resolution
-  cx::SetDevRes(dz.width, dz.height, XCFG()->Policy());
+  cx::setDevRes(dz.width, dz.height, XCFG()->Policy());
 
-  XCFG()->HandleResolution(fz);
-  XCFG()->RunOnce();
+  XCFG()->handleResolution(fz);
+  XCFG()->runOnce();
 
-  InitAudio();
+  initAudio();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void App::InitAudio() {
-  auto a = XCFG()->GetEffectFiles();
+void App::initAudio() {
+  auto a = XCFG()->getEffectFiles();
   F__LOOP(it, a) {
     auto fp = *it;
     CCLOG("preloading sound effect: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadEffect(fp.c_str());
   }
-  a= XCFG()->GetMusicFiles();
+  a= XCFG()->getMusicFiles();
   F__LOOP(it, a) {
     auto fp = *it;
     CCLOG("preloading music: %s", fp.c_str());

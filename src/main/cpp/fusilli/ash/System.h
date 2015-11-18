@@ -27,26 +27,26 @@ private:
 
   NO__CPYASS(System)
   System();
-  void Init();
+  void init();
 
-  int priority;
+  int _priority;
   bool active;
 
 public:
 
-  virtual void RemoveFromEngine(not_null<Engine*>);
-  virtual void AddToEngine(not_null<Engine*>);
-  virtual bool Update(float time);
-  bool Isa(const SystemType& );
+  virtual void removeFromEngine(not_null<Engine*>);
+  virtual void addToEngine(not_null<Engine*>);
+  virtual bool update(float time);
+  bool isa(const SystemType& );
 
-  virtual const SystemType TypeId() = 0;
+  virtual const SystemType typeId() = 0;
   virtual ~System();
 
-  int Priority() { return priority; }
-  bool IsActive() { return active; }
+  int priority() { return _priority; }
+  bool isActive() { return active; }
 
-  void Restart();
-  void Suspend();
+  void restart();
+  void suspend();
 
   System* previous;
   System* next;

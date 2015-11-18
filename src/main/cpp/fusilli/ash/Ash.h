@@ -30,7 +30,7 @@ protected:
   NO__CPYASS(Component)
   Component() {}
 public:
-  virtual const COMType TypeId() = 0;
+  virtual const COMType typeId() = 0;
   virtual ~Component() {
     //printf("Component dtor\n");
   }

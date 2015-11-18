@@ -16,7 +16,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> Node::Reify(const s::map<stdstr, COMType>& s) {
+owner<Node*> Node::reify(const s::map<stdstr, COMType>& s) {
   auto node= mc_new(Node);
   F__LOOP(it, s) {
     node->types.insert(S__PAIR(COMType, stdstr, it->second, it->first));
@@ -40,16 +40,16 @@ Node::Node() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Node::BindEntity(not_null<Entity*> e) {
+bool Node::bindEntity(not_null<Entity*> e) {
   if (NNP(entity) ||
-      !e->IsOk() ) {
+      !e->isOk() ) {
     return false;
   }
   values.clear();
   F__LOOP(it, types) {
     auto f= it->second;
     auto t= it->first;
-    auto c= e->Get(t);
+    auto c= e->get(t);
     if (NNP(c)) {
       values.insert(S__PAIR(stdstr, Component*, f, c));
     } else {
@@ -69,13 +69,13 @@ bool Node::BindEntity(not_null<Entity*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Node::BelongsTo(not_null<Entity*> e) {
+bool Node::belongsTo(not_null<Entity*> e) {
   return entity == e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::Get(const stdstr& field) {
+Component* Node::get(const stdstr& field) {
   auto it = values.find(field);
   if (it != values.end()) {
     return it->second;

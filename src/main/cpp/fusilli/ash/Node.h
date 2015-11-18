@@ -31,14 +31,14 @@ private:
 
 public:
 
-  static owner<Node*> Reify(const s::map<stdstr, COMType>& );
+  static owner<Node*> reify(const s::map<stdstr, COMType>& );
   virtual ~Node();
 
-  Entity* GetEntity() { return entity; }
+  Entity* getEntity() { return entity; }
 
-  Component* Get(const stdstr& field);
-  bool BindEntity(not_null<Entity*> );
-  bool BelongsTo(not_null<Entity*>);
+  Component* get(const stdstr& field);
+  bool bindEntity(not_null<Entity*> );
+  bool belongsTo(not_null<Entity*>);
 
   Node* previous;
   Node* next;
@@ -48,7 +48,7 @@ public:
 //
 template<typename T>
 T* NodeFld(not_null<ash::Node*> n, const stdstr& fld) {
-  auto v= n->Get(fld);
+  auto v= n->get(fld);
   if (NNP(v)) {
     return (T*) v;
   } else {

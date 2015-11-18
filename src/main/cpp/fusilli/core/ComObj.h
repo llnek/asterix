@@ -22,29 +22,29 @@ NS_BEGIN(fusii)
 class CC_DLL ComObj : public ash::Component {
 protected:
 
-  void Init(c::Sprite*, int health, int score);
+  void init(c::Sprite*, int health, int score);
   NO__CPYASS(ComObj)
 
   ComObj();
 
 public:
 
-  void Inflate(not_null<c::Dictionary*> options);
-  void Inflate(float x, float y);
-  void Inflate();
-  void Deflate();
+  void inflate(not_null<c::Dictionary*> options);
+  void inflate(float x, float y);
+  void inflate();
+  void deflate();
 
-  void SetPos(float x, float y);
-  void Hurt(int damage=1);
+  void setPos(float x, float y);
+  void hurt(int damage=1);
 
-  const c::Size CSize();
-  const c::Vec2 Pos();
+  const c::Size csize();
+  const c::Vec2 pos();
 
-  float Height();
-  float Width();
-  int Pid();
+  float height();
+  float width();
+  int pid();
 
-  void UpdatePosition(float x, float y);
+  void updatePosition(float x, float y);
 
   ComObj(c::Sprite*, int health, int score);
   ComObj(c::Sprite*);

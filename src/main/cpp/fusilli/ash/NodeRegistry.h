@@ -21,13 +21,12 @@ class Node;
 class FS_DLL NodeFactory {
 protected:
 
-  owner<Node*>
-  ReifyXXXNode(const s::vector<stdstr>&, const s::vector<COMType>&);
+  owner<Node*> reifyXXXNode(const s::vector<stdstr>&, const s::vector<COMType>&);
 
 public:
 
-  virtual owner<Node*> ReifyNode() = 0;
-  virtual const NodeType TypeId() = 0;
+  virtual owner<Node*> reifyNode() = 0;
+  virtual const NodeType typeId() = 0;
 
   NO__CPYASS(NodeFactory)
   IMPL_CTOR(NodeFactory)
@@ -45,13 +44,13 @@ private:
 
 public:
 
-  static NodeRegistry* Self();
+  static NodeRegistry* self();
   virtual ~NodeRegistry();
 
-  void Register(not_null<NodeFactory*>);
-  void Deregister(const NodeType&);
+  void rego(not_null<NodeFactory*>);
+  void derego(const NodeType&);
 
-  owner<Node*> ReifyNode(const NodeType&);
+  owner<Node*> reifyNode(const NodeType&);
 };
 
 

@@ -22,8 +22,8 @@ NS_BEGIN(fusii)
 class CC_DLL App : public cocos2d::Application {
 protected:
 
-  void PreLaunch(const c::Size& designSize);
-  void InitAudio();
+  void preLaunch(const c::Size& designSize);
+  void initAudio();
 
   App() {}
 

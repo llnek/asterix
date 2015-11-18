@@ -26,9 +26,9 @@ private:
 
 public:
 
-  const stdstr GetStr(const stdstr& key, const stdstr& dft);
-  void Purge();
-  void Init();
+  const stdstr getStr(const stdstr& key, const stdstr& dft);
+  void purge();
+  void init();
 
   DECL_CTOR( L10NCache)
 };

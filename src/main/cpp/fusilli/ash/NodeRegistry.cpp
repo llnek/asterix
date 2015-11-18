@@ -19,7 +19,7 @@ static NodeRegistry* _singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeRegistry* NodeRegistry::Self() {
+NodeRegistry* NodeRegistry::self() {
   if (ENP(_singleton)) {
     _singleton= new NodeRegistry();
   }
@@ -40,14 +40,14 @@ NodeRegistry::NodeRegistry() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeRegistry::Register(not_null<NodeFactory*> f) {
-  Deregister(f->TypeId());
-  regos.insert(S__PAIR(NodeType,NodeFactory*,f->TypeId(),f));
+void NodeRegistry::rego(not_null<NodeFactory*> f) {
+  derego(f->typeId());
+  regos.insert(S__PAIR(NodeType,NodeFactory*,f->typeId(),f));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeRegistry::Deregister(const NodeType& t) {
+void NodeRegistry::derego(const NodeType& t) {
   auto it= regos.find(t);
   if (it != regos.end()) {
     auto v= it->second;
@@ -58,19 +58,19 @@ void NodeRegistry::Deregister(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> NodeRegistry::ReifyNode(const NodeType& t) {
+owner<Node*> NodeRegistry::reifyNode(const NodeType& t) {
   auto it=regos.find(t);
   Node* rc= nullptr;
   if (it != regos.end()) {
     auto f= it->second;
-    rc= f->ReifyNode();
+    rc= f->reifyNode();
   }
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> NodeFactory::ReifyXXXNode(const s::vector<stdstr>& flds,
+owner<Node*> NodeFactory::reifyXXXNode(const s::vector<stdstr>& flds,
     const s::vector<COMType>& types) {
 
   assert(flds.size() == types.size());
@@ -80,7 +80,7 @@ owner<Node*> NodeFactory::ReifyXXXNode(const s::vector<stdstr>& flds,
     s.insert(S__PAIR(stdstr, COMType, flds[i], types[i] ));
   }
 
-  return a::Node::Reify(s);
+  return a::Node::reify(s);
 }
 
 

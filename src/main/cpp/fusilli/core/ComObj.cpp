@@ -15,19 +15,19 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::UpdatePosition(float x, float y) {
+void ComObj::updatePosition(float x, float y) {
 //TODO:
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Hurt(int damage) {
+void ComObj::hurt(int damage) {
   health -= damage;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Inflate(not_null<c::Dictionary*> dict) {
+void ComObj::inflate(not_null<c::Dictionary*> dict) {
 
   health = origHealth;
   status=true;
@@ -56,7 +56,7 @@ void ComObj::Inflate(not_null<c::Dictionary*> dict) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Inflate(float x, float y) {
+void ComObj::inflate(float x, float y) {
 
   health = origHealth;
   status=true;
@@ -69,7 +69,7 @@ void ComObj::Inflate(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Inflate() {
+void ComObj::inflate() {
 
   health = origHealth;
   status=true;
@@ -81,7 +81,7 @@ void ComObj::Inflate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Deflate() {
+void ComObj::deflate() {
   if (NNP(sprite)) {
     sprite->unscheduleAllCallbacks();
     sprite->stopAllActions();
@@ -92,19 +92,19 @@ void ComObj::Deflate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float ComObj::Height() {
+float ComObj::height() {
   return NNP(sprite) ? sprite->getContentSize().height : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float ComObj::Width() {
+float ComObj::width() {
   return NNP(sprite) ? sprite->getContentSize().width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::SetPos(float x, float y) {
+void ComObj::setPos(float x, float y) {
   if (NNP(sprite)) {
     sprite->setPosition(x,y);
   }
@@ -112,25 +112,25 @@ void ComObj::SetPos(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 ComObj::Pos() {
+const c::Vec2 ComObj::pos() {
   return NNP(sprite) ? sprite->getPosition() : c::Vec2(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Size ComObj::CSize() {
+const c::Size ComObj::csize() {
   return NNP(sprite) ? sprite->getContentSize() : c::Size(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int ComObj::Pid() {
+int ComObj::pid() {
   return NNP(sprite) ? sprite->getTag() : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::Init(c::Sprite* sprite, int health, int score) {
+void ComObj::init(c::Sprite* sprite, int health, int score) {
   this->origHealth = health;
   this->sprite = sprite;
   this->health = health;
@@ -141,19 +141,19 @@ void ComObj::Init(c::Sprite* sprite, int health, int score) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ComObj::ComObj(c::Sprite* sprite, int health, int score) {
-  Init(sprite, health, score);
+  init(sprite, health, score);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 ComObj::ComObj(c::Sprite* sprite) {
-  Init(sprite,1,0);
+  init(sprite,1,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 ComObj::ComObj() {
-  Init(nullptr,1,0);
+  init(nullptr,1,0);
 }
 
 

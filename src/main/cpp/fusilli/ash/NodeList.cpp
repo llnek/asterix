@@ -20,7 +20,7 @@ NS_BEGIN(ash)
 //
 NodeList::~NodeList() {
 //  printf("NodeList dtor\n");
-  Clear();
+  clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ NodeList::NodeList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<NodeList*> NodeList::Reify(const NodeType& t) {
+owner<NodeList*> NodeList::reify(const NodeType& t) {
   auto n = mc_new(NodeList);
   n->nType = t;
   return n;
@@ -40,7 +40,7 @@ owner<NodeList*> NodeList::Reify(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Add(not_null<Node*> n) {
+void NodeList::add(not_null<Node*> n) {
   if (ENP(head)) {
     head = tail = n;
   } else {
@@ -53,7 +53,7 @@ void NodeList::Add(not_null<Node*> n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int NodeList::Size() {
+int NodeList::size() {
   auto n= head;
   int c=0;
   while (NNP(n)) {
@@ -65,7 +65,7 @@ int NodeList::Size() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Purge(not_null<Node*> node) {
+void NodeList::purge(not_null<Node*> node) {
   if (head == node ) {
     head = head->next;
   }
@@ -83,7 +83,7 @@ void NodeList::Purge(not_null<Node*> node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::Clear() {
+void NodeList::clear() {
   while (NNP(head)) {
     auto n = head;
     head = head->next;
@@ -95,19 +95,19 @@ void NodeList::Clear() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool NodeList::IsEmpty() {
+bool NodeList::isEmpty() {
   return ENP(head);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::RemoveEntity(not_null<Entity*> e) {
+void NodeList::removeEntity(not_null<Entity*> e) {
   Node* n = head;
   Node* c;
   while (NNP(n)) {
-    if (n->BelongsTo(e)) {
+    if (n->belongsTo(e)) {
       c= n->next;
-      Purge(n);
+      purge(n);
       n=c;
     } else {
       n = n->next;
@@ -117,19 +117,19 @@ void NodeList::RemoveEntity(not_null<Entity*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool NodeList::ContainsWithin(not_null<Entity*> e) {
+bool NodeList::containsWithin(not_null<Entity*> e) {
   for (auto n= head; NNP(n); n = n->next) {
-    if (n->BelongsTo(e)) { return true; }
+    if (n->belongsTo(e)) { return true; }
   }
   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool NodeList::IsCompatible(not_null<Entity*> e) {
-  auto rego = NodeRegistry::Self();
-  auto n = rego->ReifyNode(nType);
-  auto ok= n->BindEntity(e);
+bool NodeList::isCompatible(not_null<Entity*> e) {
+  auto rego = NodeRegistry::self();
+  auto n = rego->reifyNode(nType);
+  auto ok= n->bindEntity(e);
   delete n;
   return ok;
 }

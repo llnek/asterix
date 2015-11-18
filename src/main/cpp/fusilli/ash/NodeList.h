@@ -30,21 +30,20 @@ private:
 
 public:
 
-  static owner<NodeList*> Reify(const NodeType&);
+  static owner<NodeList*> reify(const NodeType&);
 
-  const NodeType GetType() { return nType; }
+  const NodeType getType() { return nType; }
   virtual ~NodeList();
 
-  bool ContainsWithin(not_null<Entity*>);
-  bool IsCompatible(not_null<Entity*>);
-  void RemoveEntity(not_null<Entity*> );
+  bool containsWithin(not_null<Entity*>);
+  bool isCompatible(not_null<Entity*>);
+  void removeEntity(not_null<Entity*> );
 
-  void Purge(not_null<Node*> );
-  void Add(not_null<Node*> );
-  void Clear();
-  bool IsEmpty();
-
-  int Size();
+  void purge(not_null<Node*> );
+  void add(not_null<Node*> );
+  void clear();
+  bool isEmpty();
+  int size();
 
   Node* head;
   Node* tail;
