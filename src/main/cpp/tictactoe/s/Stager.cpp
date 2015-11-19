@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/Primitives.h"
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Node.h"
@@ -35,69 +35,68 @@ Stager::Stager(not_null<EFactory*> f,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::AddToEngine(not_null<a::Engine*> e) {
+void Stager::addToEngine(not_null<a::Engine*> e) {
 
   CCLOG("adding system: Stager");
-  factory->ReifyArena( MGML());
+  factory->reifyArena( MGML());
 
-  ArenaNode n;
-  arena = e->GetNodeList(n.TypeId());
+  BoardNode n;
+  board = e->getNodeList(n.typeId());
 
   if (! inited) {
-    OnceOnly(arena->head);
+    onceOnly(board->head);
     inited=true;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Stager::OnUpdate(float dt) {
-  if (cx::IsTransitioning()) { return false; }
-  auto node= arena->head;
-  if (MGMS()->IsLive() && NNP(node)) {
-    DoIt(node,dt);
+bool Stager::onUpdate(float dt) {
+  if (cx::isTransitioning()) { return false; }
+  auto node= board->head;
+  if (MGMS()->isLive() && NNP(node)) {
+    doIt(node,dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::ShowGrid(a::Node* node) {
+void Stager::showGrid(a::Node* node) {
   auto view= CC_GNF(PlayView, node, "view");
   auto nil = CC_CSV(c::Integer, "CV_Z");
-  auto arr = MapGridPos(1.0f);
+  auto arr = mapGridPos(1.0f);
   auto pos=0;
 
   F__LOOP(it, arr) {
-    auto sp= cx::ReifySprite("z.png");
-    sp->setPosition(cx::VBoxMID(*it));
-    view->layer->AddAtlasItem("game-pics", sp);
-    view->cells[pos++]=ViewData(sp, sp->getPositionX(),
-                                sp->getPositionY(),
-                                nil);
+    auto sp= cx::reifySprite("z.png");
+    sp->setPosition(cx::vboxMID(*it));
+    sp->setUserObject(CC_INT(nil));
+    view->layer->addAtlasItem("game-pics", sp);
+    view->cells[pos++]=sp;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::OnceOnly(a::Node* node) {
+void Stager::onceOnly(a::Node* node) {
   auto ps = CC_GNF(Players, node, "players");
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot= CC_CSV(c::Integer,"BOT");
   auto pnum = 0;
 
-  ShowGrid(node);
+  showGrid(node);
 
-  if (MGMS()->IsOnline()) {
+  if (MGMS()->isOnline()) {
     CCLOG("reply to server: session started ok");
-    NetSend(ws::OdinEvent(
+    netSend(new ws::OdinEvent(
       ws::MType::SESSION,
       ws::EType::STARTED
     ));
   } else {
     pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2; // randomly choose
     if (ps->parr[pnum].category == human) {
-      MGMS()->SendMsg("/hud/timer/show");
+      MGMS()->sendMsg("/hud/timer/show");
     }
     else
     if (ps->parr[pnum].category == bot) {
@@ -110,15 +109,19 @@ void Stager::OnceOnly(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::DoIt(a::Node* node, float dt) {
+void Stager::doIt(a::Node* node, float dt) {
 
   auto pnum = CC_GDV(c::Integer, state, "pnum");
-  auto active = MGMS()->IsLive();
-  HUDUpdate msg(active, pnum);
+  auto active = MGMS()->isLive();
 
   if (!active) {
     pnum= CC_GDV(c::Integer, state, "lastWinner");
   }
+
+  j::Json msg = j::Json::object {
+    { "running", active },
+    { "pnum", pnum }
+  };
 
   MGMS()->SendMsg("/hud/update", &msg);
 }

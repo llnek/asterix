@@ -35,38 +35,38 @@ protected:
 
 public:
 
-  virtual c::SpriteBatchNode* GetAtlas(const stdstr& name);
-  virtual void OnQuit(c::Ref*);
-  virtual XLayer* Realize();
+  virtual c::SpriteBatchNode* getAtlas(const stdstr& name);
+  virtual void onQuit(c::Ref*);
+  virtual XLayer* realize();
 
-  c::SpriteBatchNode* RegoAtlas(const stdstr& name,
+  c::SpriteBatchNode* regoAtlas(const stdstr& name,
       const Maybe<int>& = Maybe<int>(),
       const Maybe<int>& = Maybe<int>() );
 
-  virtual void AddAtlasItem(const stdstr& atlas,
+  virtual void addAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,
       const Maybe<int>& = Maybe<int>(),
       const Maybe<int>& = Maybe<int>() );
 
-  virtual void AddItem(not_null<c::Node*> n,
+  virtual void addItem(not_null<c::Node*> n,
       const Maybe<int>& = Maybe<int>() ,
       const Maybe<int>& = Maybe<int>() );
 
-  void AddAtlasFrame(const stdstr& atlas, const stdstr& n, const c::Vec2& pos);
+  void addAtlasFrame(const stdstr& atlas, const stdstr& n, const c::Vec2& pos);
 
-  void AddFrame(const stdstr& n, const c::Vec2& pos);
+  void addFrame(const stdstr& n, const c::Vec2& pos);
 
-  void CenterImage(const stdstr& n, int z= -1);
+  void centerImage(const stdstr& n, int z= -1);
 
-  void RemoveAtlasAll(const stdstr& atlas) ;
-  void RemoveAll();
-  void RemoveItem(not_null<c::Node*> n);
+  void removeAtlasAll(const stdstr& atlas) ;
+  void removeAll();
+  void removeItem(not_null<c::Node*> n);
 
-  XScene* GetScene();
-  int IncIndexZ();
+  XScene* getSceneX();
+  int incIndexZ();
 
   // tag value
-  virtual int GetIID() { return 1; }
+  virtual int getIID() { return 1; }
   virtual ~XLayer();
 
 };

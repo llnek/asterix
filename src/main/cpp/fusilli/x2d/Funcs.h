@@ -17,13 +17,13 @@
 NS_BEGIN(fusii)
 
 
-c::Menu* AddMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b,
+c::Menu* addMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b,
     const c::Vec2& where);
 
-c::Menu* AddReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
+c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
     const c::Vec2& where);
 
-c::Menu* AddAudioIcons(not_null<XLayer*> layer,
+c::Menu* addAudioIcons(not_null<XLayer*> layer,
     not_null<c::MenuItem*> off,
     not_null<c::MenuItem*> on,
     const c::Vec2& anchor, const c::Vec2& pos);

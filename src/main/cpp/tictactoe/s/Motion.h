@@ -25,18 +25,18 @@ NS_BEGIN(tttoe)
 class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
 
-  void OnGUIXXX(a::Node*, const c::Vec2& );
-  void OnGUI(a::Node*, c::EventMouse* );
-  void OnGUI(a::Node*, c::EventTouch* );
+  void onGUIXXX(a::Node*, const c::Vec2& );
+  void onGUI(a::Node*, c::EventMouse* );
+  void onGUI(a::Node*, c::EventTouch* );
 
-  void OnSocket(a::Node*, ws::OdinEvent*);
-  void OnSess(a::Node*, ws::OdinEvent*);
-  void OnNet(a::Node*, ws::OdinEvent*);
+  void onSocket(a::Node*, ws::OdinEvent*);
+  void onSess(a::Node*, ws::OdinEvent*);
+  void onNet(a::Node*, ws::OdinEvent*);
 
-  void OnceOnly();
-  void FlushQ();
+  void onceOnly();
+  void flushQ();
 
-  virtual bool OnUpdate(float);
+  virtual bool onUpdate(float);
 
   NO__CPYASS(Motions)
   Motions() = delete;
@@ -46,15 +46,13 @@ protected:
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Motions"; }
+
   Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
   virtual ~Motions();
 
-  virtual void AddToEngine(not_null<a::Engine*> );
-  virtual int Priority() { return a::Motion; }
-
-  virtual const a::SystemType TypeId() {
-    return "n/Motions";
-  }
+  virtual void addToEngine(not_null<a::Engine*> );
+  virtual int priority() { return a::Motion; }
 
   a::NodeList* netplay;
   a::NodeList* gui;

@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__XGAMELAYER_H__)
-#define __XGAMELAYER_H__
+#if !defined(__GAMELAYER_H__)
+#define __GAMELAYER_H__
 
 #include "base/CCEventKeyboard.h"
 #include "core/ComObj.h"
@@ -20,18 +20,17 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XGameLayer : public XLayer {
+class CC_DLL GameLayer : public XLayer {
 protected:
 
-  virtual void DisableEventHandlers();
-  virtual void EnableEventHandlers();
+  virtual void disableEventHandlers();
+  virtual void enableEventHandlers();
 
-  virtual void InitMouse();
-  virtual void InitKeys();
-  virtual void InitTouch();
+  virtual void initMouse();
+  virtual void initKeys();
+  virtual void initTouch();
 
   s::array<bool, 256> keyboard;
-
   c::Dictionary* options;
   a::Engine* engine;
   bool paused;
@@ -40,32 +39,32 @@ protected:
   c::EventListener* keys;
   c::EventListener* touch;
 
-  NO__CPYASS(XGameLayer)
-  XGameLayer();
+  NO__CPYASS(GameLayer)
+  GameLayer();
 
 public:
 
-  virtual void SendMsg(const stdstr& topic, void* msg) = 0;
-  void SendMsg(const stdstr& topic) {
-    SendMsg(topic, nullptr);
+  virtual void sendMsg(const stdstr& topic, void* msg) = 0;
+  void sendMsg(const stdstr& topic) {
+    sendMsg(topic, nullptr);
   }
 
-  virtual const Box4 GetEnclosureBox();
-  virtual int GetIID() { return 2; }
+  virtual const Box4 getEnclosureBox();
+  virtual int getIID() { return 2; }
 
   //virtual void update(float);
   //virtual XLayer* Realize();
-  virtual ~XGameLayer();
+  virtual ~GameLayer();
 
-  void OnKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
-  void OnKeyPressed(c::EventKeyboard::KeyCode, c::Event* );
+  void onKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
+  void onKeyPressed(c::EventKeyboard::KeyCode, c::Event* );
 
-  void OnMouseMove(c::Event*);
-  void OnMouseDown(c::Event*);
-  void OnMouseUp(c::Event*);
-  void OnMouseScroll(c::Event*);
+  void onMouseMove(c::Event*);
+  void onMouseDown(c::Event*);
+  void onMouseUp(c::Event*);
+  void onMouseScroll(c::Event*);
 
-  bool KeyPoll(c::EventKeyboard::KeyCode key);
+  bool keyPoll(c::EventKeyboard::KeyCode );
 };
 
 

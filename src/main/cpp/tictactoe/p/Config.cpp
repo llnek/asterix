@@ -15,10 +15,10 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<f::XConfig*> Config::Reify() {
+owner<f::XConfig*> Config::reify() {
   auto c =  mc_new(Config);
-  c->InitAssets();
-  c->InitCsts();
+  c->initAssets();
+  c->initCsts();
   return c;
 }
 
@@ -30,97 +30,96 @@ Config::Config() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::InitCsts() {
-
-  AddCst("PLAYER_THINK_TIME", CC_INT(7));
-  AddCst("CV_Z", CC_INT(0));
-  AddCst("showFPS", CC_BOOL(false));
+void Config::initCsts() {
+  addCst("PLAYER_THINK_TIME", CC_INT(7));
+  addCst("CV_Z", CC_INT(0));
+  addCst("showFPS", CC_BOOL(false));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Config::InitAssets() {
+void Config::initAssets() {
 
-  AddAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
-  AddAtlas("game-pics", CC_STR("pics/images.plist"));
+  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  AddImage("gui.edit.orange", CC_STR("pics/orange_edit.png"));
-  AddImage("game.bg", CC_STR("pics/bg.png"));
-  AddImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
+  addImage("gui.edit.orange", CC_STR("pics/orange_edit.png"));
+  addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
 
-  AddEffect("game_end", CC_STR("sfx/MineExplosion.mpg"));
-  AddEffect("x_pick", CC_STR("sfx/ElevatorBeep.mpg"));
-  AddEffect("o_pick", CC_STR("sfx/MineBeep.mpg"));
-  AddEffect("game_quit", CC_STR("sfx/Death.mpg"));
+  addEffect("game_end", CC_STR("sfx/MineExplosion.mpg"));
+  addEffect("x_pick", CC_STR("sfx/ElevatorBeep.mpg"));
+  addEffect("o_pick", CC_STR("sfx/MineBeep.mpg"));
+  addEffect("game_quit", CC_STR("sfx/Death.mpg"));
 
-  AddFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  AddFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  AddFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  AddFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  AddFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  AddFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  AddFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  AddFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  AddFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  AddFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
-
+  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::HandleResolution(const c::Size& rs) {
+void Config::handleResolution(const c::Size& rs) {
   //for default font, we use 48pt
   scale = 52/256 * rs.width /320;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::RunOnce() {
+void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
-  auto fp= GetAtlas("game-pics");
+  auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
-  fp=  GetAtlas("lang-pics");
+  fp= getAtlas("lang-pics");
   c->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::GetWSUrl() {
+const stdstr Config::getWSUrl() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr GetGameId() {
+const stdstr getGameId() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr GetRoomId() {
+const stdstr getRoomId() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::SetGameId(const stdstr& s) {
+void Config::setGameId(const stdstr& s) {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::SetRoomId(const stdstr& s) {
+void Config::setRoomId(const stdstr& s) {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Scene* Config::StartWith() {
-  return Splash::Reify();
+c::Scene* Config::startWith() {
+  return Splash::reify();
 }
+
 
 NS_END(tttoe)
 

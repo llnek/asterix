@@ -20,10 +20,10 @@ BEGIN_NS_UNAMED()
 //
 class CC_DLL SplashLayer : public f::XLayer {
 public:
-  virtual f::XLayer* Realize();
+  virtual f::XLayer* realize();
 
-  void OnPlay(c::Ref*);
-  void Demo();
+  void onPlay(c::Ref*);
+  void demo();
 
   NO__CPYASS(SplashLayer)
   IMPL_CTOR(SplashLayer)
@@ -31,8 +31,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::Demo() {
-  auto ps= MapGridPos(scale);
+void SplashLayer::demo() {
+  auto ps= mapGridPos(scale);
   auto scale= 0.75;
   auto fm= "";
 
@@ -42,46 +42,46 @@ void SplashLayer::Demo() {
     if (i == 1 || i == 5 || i == 6 || i == 7) { fm= "x.png"; }
     else if (i == 0 || i == 4) { fm= "z.png"; }
     else { fm= "o.png"; }
-    auto sp= cx::ReifySprite(fm);
-    auto bx= cx::VBoxMID( ps[i]);
+    auto sp= cx::reifySprite(fm);
+    auto bx= cx::vboxMID( ps[i]);
     sp->setScale(scale);
     sp->setPosition(bx.x, bx.y);
-    AddAtlasItem("game-pics", sp);
+    addAtlasItem("game-pics", sp);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::OnPlay(c::Ref* rr) {
-  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
-  auto m = MainMenu::ReifyWithBackAction(f);
-  cx::RunScene( m);
+void SplashLayer::onPlay(c::Ref* rr) {
+  auto f= []() { cx::runScene(XCFG()->startWith()); };
+  auto m = MainMenu::reifyWithBackAction(f);
+  cx::runScene( m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* SplashLayer::Realize() {
+f::XLayer* SplashLayer::realize() {
 
-  CenterImage("game.bg");
-  IncIndexZ();
-  RegoAtlas("game-pics");
+  centerImage("game.bg");
+  incIndexZ();
+  regoAtlas("game-pics");
 
   // title
-  auto cw = cx::Center();
-  auto wb = cx::VisBox();
-  AddAtlasFrame("game-pics", "title.png",
+  auto cw = cx::center();
+  auto wb = cx::visBox();
+  addAtlasFrame("game-pics", "title.png",
                      c::Vec2(cw.x, wb.top * 0.9));
 
-  Demo();
+  demo();
 
   // play button
   auto menu= f::ReifyRefType<cocos2d::Menu>();
-  auto b1= cx::ReifyMenuBtn("play.png");
+  auto b1= cx::reifyMenuBtn("play.png");
   b1->setTarget(getParent(),
-      CC_MENU_SELECTOR(SplashLayer::OnPlay));
+      CC_MENU_SELECTOR(SplashLayer::onPlay));
   menu->addChild(b1);
   menu->setPosition( cw.x, wb.top * 0.1);
-  AddItem(menu);
+  addItem(menu);
 
   return this;
 }
@@ -89,10 +89,10 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* Splash::Realize() {
+f::XScene* Splash::realize() {
   auto y = f::ReifyRefType<SplashLayer>();
-  AddLayer(y);
-  y->Realize();
+  addLayer(y);
+  y->realize();
   return this;
 }
 

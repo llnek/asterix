@@ -17,18 +17,18 @@ NS_BEGIN(fusii)
 //
 void ZLoader::onEnter() {
   c::Scene::onEnter();
-  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad), 0.3);
+  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::startLoad), 0.3);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ZLoader::InitWithResources() {
+void ZLoader::initWithResources() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ZLoader::StartLoad(float delta) {
-  this->unschedule(CC_SCHEDULE_SELECTOR(ZLoader::StartLoad));
+void ZLoader::startLoad(float delta) {
+  this->unschedule(CC_SCHEDULE_SELECTOR(ZLoader::startLoad));
 }
 
 

@@ -125,14 +125,14 @@ void NetSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
 // Listen to this message-type and event
 void OdinIO::listen( s::function<void (OdinEvent*)> cb) {
   SNPTR(cbAll)
-  listen(MType::EVERYTHING , cb);
+  listen(MType::ALL , cb);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
 void OdinIO::listen(MType t, s::function<void (OdinEvent*)> cb) {
 
-  if (MType::EVERYTHING == t) {
+  if (MType::ALL == t) {
     cbAll =cb;
   }
   else
@@ -157,7 +157,7 @@ void OdinIO::cancelAll() {
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
 void OdinIO::cancel(MType t) {
-  if (MType::EVERYTHING == t) {
+  if (MType::ALL == t) {
     SNPTR(cbAll)
   }
   else

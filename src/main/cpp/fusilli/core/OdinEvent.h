@@ -22,17 +22,16 @@ NS_BEGIN(odin)
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class CC_DLL MType {
-  NICHTS = -1,
   NETWORK = 0,
   SESSION,
-  EVERYTHING
+  ALL,
+
+  NICHTS = -1
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class CC_DLL EType {
-
-  NICHTS = -1,
 
   PLAYGAME_REQ = 0,
   JOINGAME_REQ,
@@ -66,8 +65,9 @@ enum class CC_DLL EType {
   STARTED,
   CONNECTED,
   ERROR,
-  CLOSED
+  CLOSED,
 
+  NICHTS = -1
 };
 
 //////////////////////////////////////////////////////////////////////////////

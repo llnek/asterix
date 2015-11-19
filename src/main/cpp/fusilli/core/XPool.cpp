@@ -14,7 +14,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 // Pre-populate a bunch of objects in the pool
-void XPool::Preset(s::function<ComObj* ()> f, int count) {
+void XPool::preset(s::function<ComObj* ()> f, int count) {
   for (int n=0; n < count; ++n) {
     auto rc= f();
     if (NNP(rc)) {
@@ -25,7 +25,7 @@ void XPool::Preset(s::function<ComObj* ()> f, int count) {
 
 //////////////////////////////////////////////////////////////////////////
 // Find an object by applying this filter
-ComObj* XPool::Select(s::function<bool (ComObj*)> f) {
+ComObj* XPool::select(s::function<bool (ComObj*)> f) {
   F__LOOP(it, objs) {
     auto e = *it;
     if (f(e)) {
@@ -37,8 +37,8 @@ ComObj* XPool::Select(s::function<bool (ComObj*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool and set it's status to true
-ComObj* XPool::GetAndSet() {
-  auto rc= Get();
+ComObj* XPool::getAndSet() {
+  auto rc= get();
   if (NNP(rc)) {
     rc->status=true;
   }
@@ -47,13 +47,13 @@ ComObj* XPool::GetAndSet() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-ComObj* XPool::GetAt(int pos) {
+ComObj* XPool::getAt(int pos) {
   return objs.at(pos);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool.  More like a peek
-ComObj* XPool::Get() {
+ComObj* XPool::get() {
   F__LOOP(it, objs) {
     auto e= *it;
     if (! e->status) { return e; }
@@ -63,13 +63,13 @@ ComObj* XPool::Get() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::Checkin(not_null<ComObj*> c) {
+void XPool::checkin(not_null<ComObj*> c) {
   objs.push_back(c);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::ClearAll(bool del) {
+void XPool::clearAll(bool del) {
   if (del) {
     F__LOOP(it, objs) { delete *it; }
   }
@@ -78,7 +78,7 @@ void XPool::ClearAll(bool del) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get the count of active objects
-int XPool::CountActives() {
+int XPool::countActives() {
   auto c=0;
   F__LOOP(it, objs) {
     if ((*it)->status) {
@@ -90,7 +90,7 @@ int XPool::CountActives() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::Foreach(s::function<void (ComObj*)> f) {
+void XPool::foreach(s::function<void (ComObj*)> f) {
   F__LOOP(it, objs) {
     f(*it);
   }
@@ -98,16 +98,16 @@ void XPool::Foreach(s::function<void (ComObj*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 // Hibernate (status off) all objects in the pool
-void XPool::Reset() {
+void XPool::reset() {
   F__LOOP(it, objs) {
-    (*it)->Deflate();
+    (*it)->deflate();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 XPool::~XPool() {
-  ClearAll(true);
+  clearAll(true);
 }
 
 //////////////////////////////////////////////////////////////////////////

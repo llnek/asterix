@@ -27,22 +27,22 @@ private:
 
 public:
 
-  const s::vector<ComObj*>& Elements() { return objs; }
-  void Preset(s::function<ComObj* ()>, int);
-  ComObj* Select(s::function<bool (ComObj*)>);
+  const s::vector<ComObj*>& elements() { return objs; }
+  ComObj* select(s::function<bool (ComObj*)>);
+  void preset(s::function<ComObj* ()>, int);
 
-  ComObj* GetAndSet();
-  ComObj* Get();
-  ComObj* GetAt(int n);
+  ComObj* getAndSet();
+  ComObj* get();
+  ComObj* getAt(int n);
 
-  int Size() { return (int)objs.size(); }
-  int CountActives();
+  int size() { return (int)objs.size(); }
+  int countActives();
 
-  void Foreach(s::function<void (ComObj*)>);
-  void ClearAll(bool del=true);
+  void foreach(s::function<void (ComObj*)>);
+  void clearAll(bool del=true);
 
-  void Checkin(not_null<ComObj*>);
-  void Reset();
+  void checkin(not_null<ComObj*>);
+  void reset();
 
   DECL_CTOR(XPool)
 };

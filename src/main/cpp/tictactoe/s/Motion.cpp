@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "Motions.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
@@ -20,43 +20,42 @@ Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
   : f::BaseSystem(f, d) {
 
-	SNPTR(netplay)
-	SNPTR(gui)
-	inited=false;
+  SNPTR(netplay)
+  SNPTR(gui)
+  inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Motions::~Motions() {
-  FlushQ();
+  flushQ();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::FlushQ() {
+void Motions::flushQ() {
   f::EmptyQueue<c::Event*>(evQ);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::AddToEngine(not_null<a::Engine*> e) {
+void Motions::addToEngine(not_null<a::Engine*> e) {
 
   NetPlayNode n;
-  netplay = e->GetNodeList(n.TypeId());
+  netplay = e->getNodeList(n.typeId());
 
   GUINode g;
-  gui = e->GetNodeList(g.TypeId());
+  gui = e->getNodeList(g.typeId());
 
-  FlushQ();
+  flushQ();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnceOnly() {
-  auto ws= MGMS()->WSOCK();
+void Motions::onceOnly() {
+  auto ws= MGMS()->wsock();
   if (NNP(ws)) {
-    ws->Listen( [=](ws::OdinEvent* evt) {
-      evt->retain();
+    ws->listen( [=](ws::OdinEvent* evt) {
       this->evQ.push(evt);
     });
   }
@@ -64,12 +63,12 @@ void Motions::OnceOnly() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Motions::OnUpdate(float dt) {
+bool Motions::onUpdate(float dt) {
   auto n= netplay->head;
   auto g= gui->head;
 
   if (!inited) {
-    OnceOnly();
+    onceOnly();
     inited=true;
   }
 
@@ -77,15 +76,15 @@ bool Motions::OnUpdate(float dt) {
     auto evt= evQ.front();
     evQ.pop();
     if (evt->getType() == c::Event::MOUSE) {
-      if (NNP(g)) { OnGUI(g, (c::EventMouse*) evt); }
+      if (NNP(g)) { onGUI(g, (c::EventMouse*) evt); }
     }
     else
     if (evt->getType() == c::Event::TOUCH) {
-      if (NNP(g)) { OnGUI(g, (c::EventTouch*) evt); }
+      if (NNP(g)) { onGUI(g, (c::EventTouch*) evt); }
     }
     else
     if (evt->getType() == c::Event::CUSTOM) {
-      if (NNP(n)) { OnSocket(n, (ws::OdinEvent*)evt); }
+      if (NNP(n)) { onSocket(n, (ws::OdinEvent*)evt); }
     }
 
     evt->release();
@@ -96,32 +95,32 @@ bool Motions::OnUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnSocket(a::Node* node, ws::OdinEvent* evt) {
+void Motions::onSocket(a::Node* node, ws::OdinEvent* evt) {
   switch (evt->type) {
     case ws::MType::NETWORK:
-      OnNet(node, evt);
+      onNet(node, evt);
     break;
     case ws::MType::SESSION:
-      OnSess(node, evt);
+      onSess(node, evt);
     break;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnNet(a::Node* node, const ws::OdinEvent* evt) {
+void Motions::onNet(a::Node* node, const ws::OdinEvent* evt) {
 
   switch (evt->code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
-      MGMS()->SendMsg("/net/restart");
+      MGMS()->sendMsg("/net/restart");
     break;
     case ws::EType::STOP:
-      if (MGMS()->IsLive()) {
+      if (MGMS()->isLive()) {
         CCLOG("game will stop");
-        MGMS()->SendMsg("/hud/timer/hide");
+        MGMS()->sendMsg("/hud/timer/hide");
         OnSess(node, evt);
-        MGMS()->SendMsg("/net/stop", evt);
+        MGMS()->sendMsg("/net/stop", evt);
       }
     break;
   }
@@ -129,7 +128,7 @@ void Motions::OnNet(a::Node* node, const ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnSess(a::Node* node, const ws::OdinEvent* evt) {
+void Motions::onSess(a::Node* node, const ws::OdinEvent* evt) {
   auto ps= CC_GNF(Players, node, "players");
   auto grid= CC_GNF(Grid, node, "grid");
   auto snd="";
@@ -148,7 +147,7 @@ void Motions::OnSess(a::Node* node, const ws::OdinEvent* evt) {
         snd= "o_pick";
       }
       grid->values[cell] = cv;
-      cx::SfxPlay(snd);
+      cx::sfxPlay(snd);
     }
   }
 
@@ -157,12 +156,12 @@ void Motions::OnSess(a::Node* node, const ws::OdinEvent* evt) {
   switch (evt->code) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
-      MGMS()->SendMsg("/hud/timer/show");
+      MGMS()->sendMsg("/hud/timer/show");
       state->setObject(CC_INT(pnum), "pnum");
     break;
     case ws::EType::POKE_WAIT:
       CCLOG("player %d: my turn to wait", pnum);
-      MGMS()->SendMsg("/hud/timer/hide");
+      MGMS()->sendMsg("/hud/timer/hide");
       // toggle color
       auto p2= pnum == 1 ? 2 : 1;
       state->setObject(CC_INT(p2), "pnum");
@@ -172,19 +171,19 @@ void Motions::OnSess(a::Node* node, const ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUI(a::Node* node, c::EventMouse* evt) {
-  OnGUIXXX(node, evt->getLocation());
+void Motions::onGUI(a::Node* node, c::EventMouse* evt) {
+  onGUIXXX(node, evt->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUI(a::Node* node, c::EventTouch* evt) {
+void Motions::onGUI(a::Node* node, c::EventTouch* evt) {
   //OnGUIXXX(node, evt->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::OnGUIXXX(a::Node* node, const c::Vec2& pos) {
+void Motions::onGUIXXX(a::Node* node, const c::Vec2& pos) {
 
   auto sel = CC_GNF(UISelection, node, "selection");
   auto view = CC_GNF(PlayView, node, "view");

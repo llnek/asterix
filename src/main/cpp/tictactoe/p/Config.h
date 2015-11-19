@@ -20,8 +20,8 @@ NS_BEGIN(tttoe)
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  void InitAssets();
-  void InitCsts();
+  void initAssets();
+  void initCsts();
 
   NO__CPYASS(Config)
   Config();
@@ -29,35 +29,35 @@ protected:
 
 public:
 
-  virtual const stdstr AppId() { return "tictactoe"; }
-  virtual const stdstr Color() { return "white"; }
+  virtual const stdstr appId() { return "tictactoe"; }
+  virtual const stdstr color() { return "white"; }
 
-  virtual const stdstr AppKey() {
+  virtual const stdstr appKey() {
     return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
   }
 
-  virtual ResolutionPolicy Policy() {
+  virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_HEIGHT;
   }
 
-  virtual const c::Size GameSize() {
+  virtual const c::Size gameSize() {
     return c::Size(320,480);
   }
 
-  virtual void HandleResolution(const c::Size& rs);
-  virtual const stdstr GetWSUrl();
-  virtual c::Scene* StartWith();
+  virtual void handleResolution(const c::Size& rs);
+  virtual const stdstr getWSUrl();
+  virtual c::Scene* startWith();
 
-  virtual void SetGameId(const stdstr& );
-  virtual void SetRoomId(const stdstr& );
+  virtual void setGameId(const stdstr& );
+  virtual void setRoomId(const stdstr& );
 
-  virtual const stdstr GetGameId();
-  virtual const stdstr GetRoomId();
+  virtual const stdstr getGameId();
+  virtual const stdstr getRoomId();
 
-  virtual void RunOnce();
+  virtual void runOnce();
   virtual ~Config() {}
 
-  static owner<f::XConfig*> Reify();
+  static owner<f::XConfig*> reify();
 };
 
 

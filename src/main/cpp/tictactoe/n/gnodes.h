@@ -17,11 +17,13 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ArenaNode : public a::NodeFactory {
+class CC_DLL BoardNode : public a::NodeFactory {
 public:
 
-  virtual owner<a::Node*> ReifyNode() {
-    return ReifyXXXNode(
+  virtual const a::NodeType typeId() { return "n/BoardNode"; }
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
         s::vector<stdstr> {
           "selection", "board", "robot", "grid", "view" },
         s::vector<a::COMType> {
@@ -29,12 +31,8 @@ public:
           "n/Grid", "n/PlayView" });
   }
 
-  virtual const a::NodeType TypeId() {
-    return "n/BoardNode";
-  }
-
-  NO__CPYASS(ArenaNode)
-  IMPL_CTOR(ArenaNode)
+  NO__CPYASS(BoardNode)
+  IMPL_CTOR(BoardNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,14 +40,12 @@ public:
 class CC_DLL GUINode : public a::NodeFactory {
 public:
 
-  virtual owner<a::Node*> ReifyNode() {
-    return ReifyXXXNode(
+  virtual const a::NodeType typeId() { return "n/GUINode"; }
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
         s::vector<stdstr> { "selection", "view" },
         s::vector<a::COMType> { "n/UISelection", "n/PlayView" });
-  }
-
-  virtual const a::NodeType TypeId() {
-    return "n/GUINode";
   }
 
   NO__CPYASS(GUINode)
@@ -61,14 +57,12 @@ public:
 class CC_DLL NetPlayNode : public a::NodeFactory {
 public:
 
-  virtual owner<a::Node*> ReifyNode() {
-    return ReifyXXXNode(
+  virtual const a::NodeType typeId() { return "n/NetPlayNode"; }
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
         s::vector<stdstr> { "playcmd", "grid" },
         s::vector<a::COMType> { "n/NetPlay", "n/Grid" });
-  }
-
-  virtual const a::NodeType TypeId() {
-    return "n/NetPlayNode";
   }
 
   NO__CPYASS(NetPlayNode)

@@ -131,7 +131,7 @@ void App::preLaunch(const c::Size& dz) {
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   // Set the design resolution
-  cx::setDevRes(dz.width, dz.height, XCFG()->Policy());
+  cx::setDevRes(dz.width, dz.height, XCFG()->policy());
 
   XCFG()->handleResolution(fz);
   XCFG()->runOnce();

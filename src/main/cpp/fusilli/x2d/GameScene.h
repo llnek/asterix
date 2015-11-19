@@ -12,14 +12,14 @@
 #if !defined(__GAMESCENE_H__)
 #define __GAMESCENE_H__
 
-#define MGMS() fusii::GameScene::Self()
-#define MGML() fusii::GameScene::Get()
+#define MGMS() fusii::GameScene::self()
+#define MGML() fusii::GameScene::get()
 
 #include "platform/CCCommon.h"
 #include "core/XPool.h"
 #include "core/Odin.h"
 #include "XScene.h"
-#include "XGameLayer.h"
+#include "GameLayer.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
@@ -34,7 +34,7 @@ enum class GMode {
 class CC_DLL GameScene : public XScene {
 protected:
 
-  static void Bind(not_null<GameScene*>);
+  static void bind(not_null<GameScene*>);
 
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
@@ -43,33 +43,39 @@ protected:
   GMode mode;
   int level;
 
-  virtual XGameLayer* GetGLayer() = 0;
-  virtual void SetMode(GMode);
+  void setOnlineChannel(ws::OdinIO* s) { odin= s; }
+  virtual GameLayer* getGLayer() = 0;
+  void setMode(GMode m) { mode= m; }
 
   NO__CPYASS(GameScene)
   GameScene();
 
 public:
 
-  void SetOnlineChannel(owner<ws::OdinIO*> s) { odin= s; }
+  static GameScene* reify(not_null<GameScene*>, GMode, not_null<ws::OdinIO*>);
+  static GameScene* reify(not_null<GameScene*>, GMode);
 
-  static GameScene* Reify(not_null<GameScene*>, GMode);
-  static XGameLayer* Get();
-  static GameScene* Self();
+  static GameScene* self();
+  static GameLayer* get();
 
-  virtual bool IsOnline() { return NNP(odin); }
-  virtual bool IsLive() = 0;
-  virtual void Stop() = 0;
-  virtual void Play() = 0;
+  virtual bool isOnline() { return NNP(odin); }
+  virtual bool isLive() = 0;
+  virtual void stop() = 0;
+  virtual void play() = 0;
 
-  XPool* ReifyPool(const stdstr& n);
-  XPool* GetPool(const stdstr& n);
+  virtual void sendMsg(const stdstr& topic, void* msg) = 0;
+  void sendMsg(const stdstr& topic) {
+    sendMsg(topic, nullptr);
+  }
 
-  c::Dictionary* GetLCfg();
-  void ResetPools();
+  XPool* reifyPool(const stdstr& n);
+  XPool* getPool(const stdstr& n);
 
-  s::queue<stdstr>& MsgQueue() { return msgQ; }
-  ws::OdinIO* WSOCK() { return odin; }
+  c::Dictionary* getLCfg();
+  void resetPools();
+
+  s::queue<stdstr>& msgQueue() { return msgQ; }
+  ws::OdinIO* wsock() { return odin; }
 
   virtual ~GameScene();
 };

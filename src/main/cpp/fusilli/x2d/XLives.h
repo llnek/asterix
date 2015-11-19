@@ -34,18 +34,17 @@ protected:
 
 public:
 
-  virtual void Realize(
-      const stdstr& frame,
+  bool isDead() { return curLives < 0; }
+  int getLives() { return curLives; }
+
+  virtual void realize( const stdstr& frame,
       int lives,
       float x, float y, int dir= 1);
 
-  bool IsDead() { return curLives < 0; }
-  int GetLives() { return curLives; }
-
-  void Reduce(int cnt = 1);
-  void Reset();
-  void Resurrect();
-  void DrawLives();
+  void reduce(int cnt = 1);
+  void reset();
+  void resurrect();
+  void drawLives();
 
   DECL_CTOR(XLives)
 };

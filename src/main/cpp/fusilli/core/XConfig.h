@@ -12,7 +12,7 @@
 #if !defined(__XCONFIG_H__)
 #define __XCONFIG_H__
 
-#define XCFG() fusii::XConfig::Self()
+#define XCFG() fusii::XConfig::self()
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 #include "dbox/json11.hpp"
@@ -25,16 +25,16 @@ NS_BEGIN(fusii)
 class CC_DLL XConfig {
 protected:
 
-  void AddXXX(const stdstr& frag, const stdstr& key, c::Ref*);
-  c::Dictionary* GetFragment(const stdstr&);
+  void addXXX(const stdstr& frag, const stdstr& key, c::Ref*);
+  c::Dictionary* getFragment(const stdstr&);
 
-  void AddAtlas(const stdstr& key, c::Ref*);
-  void AddFont(const stdstr& key, c::Ref*);
-  void AddTile(const stdstr& key, c::Ref*);
-  void AddImage(const stdstr& key, c::Ref*);
-  void AddEffect(const stdstr& key, c::Ref*);
-  void AddMusic(const stdstr& key, c::Ref*);
-  void AddCst(const stdstr& key, c::Ref*);
+  void addAtlas(const stdstr& key, c::Ref*);
+  void addFont(const stdstr& key, c::Ref*);
+  void addTile(const stdstr& key, c::Ref*);
+  void addImage(const stdstr& key, c::Ref*);
+  void addEffect(const stdstr& key, c::Ref*);
+  void addMusic(const stdstr& key, c::Ref*);
+  void addCst(const stdstr& key, c::Ref*);
 
   c::Dictionary* frags;
   c::Dictionary* l10n;
@@ -44,77 +44,77 @@ protected:
   float lastSfxVol;
   bool audioState;
 
-  void LoadL10NStrings();
-  void SetCsts();
+  void loadL10NStrings();
+  void setCsts();
 
   NO__CPYASS(XConfig)
   XConfig();
 
 public:
 
-  virtual void HandleResolution(const c::Size& ) {}
-  virtual float GetScale() { return 1.0f; }
-  virtual void RunOnce() {}
+  virtual void handleResolution(const c::Size& ) {}
+  virtual float getScale() { return 1.0f; }
+  virtual void runOnce() {}
 
-  virtual ResolutionPolicy Policy() = 0;
-  virtual const stdstr AppKey() = 0;
-  virtual const stdstr AppId() = 0;
-  virtual const stdstr Color() = 0;
-  virtual const c::Size GameSize() = 0;
+  virtual ResolutionPolicy policy() = 0;
+  virtual const stdstr appKey() = 0;
+  virtual const stdstr appId() = 0;
+  virtual const stdstr color() = 0;
+  virtual const c::Size gameSize() = 0;
 
-  virtual c::Scene* StartWith() = 0;
-  virtual const stdstr GetWSUrl() = 0;
+  virtual c::Scene* startWith() = 0;
+  virtual const stdstr getWSUrl() = 0;
 
-  virtual void SetGameId(const stdstr& ) = 0;
-  virtual void SetRoomId(const stdstr& ) = 0;
-  virtual const stdstr GetGameId() = 0;
-  virtual const stdstr GetRoomId() = 0;
+  virtual void setGameId(const stdstr& ) = 0;
+  virtual void setRoomId(const stdstr& ) = 0;
+  virtual const stdstr getGameId() = 0;
+  virtual const stdstr getRoomId() = 0;
 
-  const filepath GetAtlas(const stdstr& key);
-  const filepath GetFont(const stdstr& key);
-  const filepath GetTile(const stdstr& key);
-  const filepath GetImage(const stdstr& key);
+  const filepath getAtlas(const stdstr& key);
+  const filepath getFont(const stdstr& key);
+  const filepath getTile(const stdstr& key);
+  const filepath getImage(const stdstr& key);
 
-  const filepath GetEffect(const stdstr& key);
-  const filepath GetMusic(const stdstr& key);
+  const filepath getEffect(const stdstr& key);
+  const filepath getMusic(const stdstr& key);
 
-  const stdstr GetL10NStr(const stdstr& key,
+  const stdstr getL10NStr(const stdstr& key,
       const s::vector<stdstr>& pms);
-  const stdstr GetL10NStr(const stdstr& key);
+  const stdstr getL10NStr(const stdstr& key);
 
-  c::Ref* GetCst(const stdstr& cst);
-  int GetBtnPadding();
+  c::Ref* getCst(const stdstr& cst);
+  int getBtnPadding();
 
-  void ToggleAudio(bool s);
-  bool HasAudio();
+  void toggleAudio(bool s);
+  bool hasAudio();
 
-  void SetMusicVolume(float);
-  void SetVolume(float);
+  void setMusicVolume(float);
+  void setVolume(float);
 
-  float GetMusicVolume();
-  float GetVolume();
+  float getMusicVolume();
+  float getVolume();
 
-  c::Dictionary* GetLevelCfg(const stdstr& n);
-  c::Dictionary* GetLevel(const stdstr& n);
-  c::Dictionary* AddLevel(const stdstr& n);
+  c::Dictionary* getLevelCfg(const stdstr& n);
+  c::Dictionary* getLevel(const stdstr& n);
+  c::Dictionary* addLevel(const stdstr& n);
 
-  const s::vector<filepath> GetEffectFiles();
-  const s::vector<filepath> GetMusicFiles();
+  const s::vector<filepath> getEffectFiles();
+  const s::vector<filepath> getMusicFiles();
 
-  void SetSeedData(j::Json&);
-  j::Json& GetSeedData();
+  void setSeedData(j::Json&);
+  j::Json& getSeedData();
 
   virtual ~XConfig();
 
-  static void Bind(not_null<XConfig*>);
-  static XConfig* Self();
+  static void bind(not_null<XConfig*>);
+  static XConfig* self();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 T* CstVal(const stdstr& key) {
-  auto r= fusii::XConfig::Self()->GetCst(key);
+  auto r= fusii::XConfig::self()->getCst(key);
   if (NNP(r)) {
     return static_cast<T*>( r);
   } else {

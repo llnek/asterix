@@ -21,12 +21,12 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XLayer::Realize() { return this; }
+XLayer* XLayer::realize() { return this; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::OnQuit(c::Ref* rr) {
-  cx::RunScene( XCFG()->StartWith());
+void XLayer::onQuit(c::Ref* rr) {
+  cx::runScene( XCFG()->startWith());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,13 +48,13 @@ XLayer::~XLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::SpriteBatchNode*
-XLayer::RegoAtlas(const stdstr& name,
+XLayer::regoAtlas(const stdstr& name,
      const Maybe<int>& zx,  const Maybe<int>& tag) {
 
-  auto i= c::TextureCache::getInstance()->addImage( XCFG()->GetImage(name));
+  auto i= c::TextureCache::getInstance()->addImage( XCFG()->getImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
-  auto t = tag.IsNone()  ?  ++lastTag : tag.Get();
-  auto z = zx.IsNone() ? lastZ : zx.Get();
+  auto t = tag.isNone()  ?  ++lastTag : tag.get();
+  auto z = zx.isNone() ? lastZ : zx.get();
 
   atlases.insert(S__PAIR(stdstr, c::SpriteBatchNode*, name, a));
   this->addChild(a, z,t);
@@ -64,7 +64,7 @@ XLayer::RegoAtlas(const stdstr& name,
 //////////////////////////////////////////////////////////////////////////////
 // Get the atlas
 //
-c::SpriteBatchNode* XLayer::GetAtlas(const stdstr& name) {
+c::SpriteBatchNode* XLayer::getAtlas(const stdstr& name) {
   auto it= atlases.find(name);
   if (it != atlases.end()) {
     return it->second;
@@ -76,33 +76,33 @@ c::SpriteBatchNode* XLayer::GetAtlas(const stdstr& name) {
 //////////////////////////////////////////////////////////////////////////////
 // Add an image chosen from this atlas
 //
-void XLayer::AddAtlasFrame(const stdstr& atlas,
+void XLayer::addAtlasFrame(const stdstr& atlas,
                            const stdstr& frame,
                            const c::Vec2& pos) {
-  auto tt= cx::ReifySprite(frame);
+  auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  AddAtlasItem(atlas, tt);
+  addAtlasItem(atlas, tt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add an image
 //
-void XLayer::AddFrame(const stdstr& frame, const c::Vec2& pos) {
-  auto tt= cx::ReifySprite(frame);
+void XLayer::addFrame(const stdstr& frame, const c::Vec2& pos) {
+  auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  AddItem(tt);
+  addItem(tt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child to this atlas
 //
-void XLayer::AddAtlasItem(const stdstr& atlas,
+void XLayer::addAtlasItem(const stdstr& atlas,
     not_null<c::Node*> n,
     const Maybe<int>& zx, const Maybe<int>& tag) {
 
-  auto ptag = tag.IsNone() ? ++lastTag : tag.Get();
-  auto pzx = zx.IsNone() ? lastZ : zx.Get();
-  auto p= GetAtlas(atlas);
+  auto ptag = tag.isNone() ? ++lastTag : tag.get();
+  auto pzx = zx.isNone() ? lastZ : zx.get();
+  auto p= getAtlas(atlas);
   auto ss = DCAST(c::Sprite*, n.get());
 
   //CCASSERT(ss != nullptr, "sprite cannot be null");
@@ -115,42 +115,42 @@ void XLayer::AddAtlasItem(const stdstr& atlas,
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 //
-void XLayer::AddItem(not_null<c::Node*> n,
+void XLayer::addItem(not_null<c::Node*> n,
     const Maybe<int>&  zx, const Maybe<int>& tag) {
 
-  auto ptag = tag.IsNone() ?  ++lastTag : tag.Get();
-  auto pzx = zx.IsNone() ? lastZ : zx.Get();
+  auto ptag = tag.isNone() ?  ++lastTag : tag.get();
+  auto pzx = zx.isNone() ? lastZ : zx.get();
   this->addChild(n.get(), pzx, ptag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::CenterImage(const stdstr& name, int z) {
-  auto t= c::TextureCache::getInstance()->addImage(XCFG()->GetImage(name));
+void XLayer::centerImage(const stdstr& name, int z) {
+  auto t= c::TextureCache::getInstance()->addImage(XCFG()->getImage(name));
   auto s= c::Sprite::createWithTexture(t);
-  s->setPosition(cx::Center());
+  s->setPosition(cx::center());
   this->addChild(s,z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Remove all children from this atlas
 //
-void XLayer::RemoveAtlasAll(const stdstr& atlas) {
-  auto a=GetAtlas(atlas);
+void XLayer::removeAtlasAll(const stdstr& atlas) {
+  auto a=getAtlas(atlas);
   if (NNP(a)) { a->removeAllChildren(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Remove all children
 //
-void XLayer::RemoveAll() {
+void XLayer::removeAll() {
   this->removeAllChildren();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Remove a child
 //
-void XLayer::RemoveItem(not_null<c::Node*> n) {
+void XLayer::removeItem(not_null<c::Node*> n) {
   if (NNP(n)) {
     n->removeFromParent();
   }
@@ -158,14 +158,14 @@ void XLayer::RemoveItem(not_null<c::Node*> n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int XLayer::IncIndexZ() {
+int XLayer::incIndexZ() {
   return ++lastZ;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Remember the parent scene object
 //
-XScene* XLayer::GetScene() {
+XScene* XLayer::getSceneX() {
   return SCAST(XScene*, getParent());
 }
 

@@ -17,13 +17,13 @@ static GameScene* _singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XGameLayer* GameScene::Get() {
-  return  _singleton->GetGLayer();
+GameLayer* GameScene::get() {
+  return _singleton->getGLayer();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GameScene* GameScene::Self() {
+GameScene* GameScene::self() {
   return _singleton;
 }
 
@@ -44,13 +44,13 @@ GameScene::GameScene() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* GameScene::GetLCfg() {
-  return XCFG()->GetLevelCfg(s::to_string(level));
+c::Dictionary* GameScene::getLCfg() {
+  return XCFG()->getLevelCfg(s::to_string(level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::GetPool(const stdstr& key) {
+XPool* GameScene::getPool(const stdstr& key) {
   auto it = pools.find(key);
   if (it != pools.end()) {
     return it->second;
@@ -61,9 +61,9 @@ XPool* GameScene::GetPool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::ReifyPool(const stdstr& key) {
+XPool* GameScene::reifyPool(const stdstr& key) {
   auto it = pools.find(key);
-  auto p=new XPool();
+  auto p= mc_new( XPool);
   if (it != pools.end()) {
     delete it->second;
     pools.erase(it);
@@ -74,30 +74,41 @@ XPool* GameScene::ReifyPool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameScene::ResetPools() {
+void GameScene::resetPools() {
   F__LOOP(it, pools) {
-    it->second->ClearAll();
+    it->second->clearAll();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameScene::SetMode(GMode m) {
+void GameScene::setMode(GMode m) {
   this->mode= m;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-GameScene* GameScene::Reify(not_null<GameScene*> g, GMode mode) {
-  g->SetMode(mode);
-  g->Realize();
-  g->Play();
+GameScene* GameScene::reify(not_null<GameScene*> g, GMode mode,
+    not_null<ws::OdinIO*> wsock) {
+  g->setOnlineChannel( wsock);
+  g->setMode(mode);
+  g->realize();
+  g->play();
   return g;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameScene::Bind(not_null<GameScene*> m) {
+GameScene* GameScene::reify(not_null<GameScene*> g, GMode mode) {
+  g->setMode(mode);
+  g->realize();
+  g->play();
+  return g;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GameScene::bind(not_null<GameScene*> m) {
   _singleton=m;
 }
 

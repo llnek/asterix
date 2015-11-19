@@ -24,31 +24,29 @@ NS_BEGIN(tttoe)
 class CC_DLL Logic : public f::BaseSystem<EFactory> {
 protected:
 
-  void OnEnqueue(a::Node*, int pnum, int cell, Grid*);
-  void Enqueue(a::Node*, int pos, int value, Grid*);
-  void DoIt(a::Node*, float);
+  void onEnqueue(a::Node*, int pnum, int cell, Grid*);
+  void enqueue(a::Node*, int pos, int value, Grid*);
+  void doIt(a::Node*, float);
 
-  virtual bool OnUpdate(float);
+  virtual bool onUpdate(float);
 
   NO__CPYASS(Logic)
   Logic() = delete;
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Logic"; }
+
   Logic(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual void AddToEngine(not_null<a::Engine*>);
+  virtual void addToEngine(not_null<a::Engine*>);
 
-  virtual int Priority() { return a::Logic; }
+  virtual int priority() { return a::Logic; }
 
   virtual ~Logic();
 
-  virtual const a::SystemType TypeId() {
-    return "n/Logic";
-  }
-
   c::DelayTime* botTimer;
-  a::NodeList* arena;
+  a::NodeList* board;
 };
 
 

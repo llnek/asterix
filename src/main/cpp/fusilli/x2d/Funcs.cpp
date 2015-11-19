@@ -17,37 +17,37 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* AddMenuIcon(not_null<XLayer*> layer,
+c::Menu* addMenuIcon(not_null<XLayer*> layer,
 		not_null<c::MenuItem*> b) {
 
   auto menu= ReifyRefType<cocos2d::Menu>();
   menu->addChild(b);
-  layer->AddItem(menu);
+  layer->addItem(menu);
   return menu;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* AddReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
+c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
     const c::Vec2& where ) {
 
   auto tile= CstVal<c::Integer>("TILE")->getValue();
   auto menu= ReifyRefType<cocos2d::Menu>();
-  auto hh = cx::GetScaledHeight(c);
-  auto hw = cx::GetScaledWidth(c);
-  auto wz= cx::VisBox();
+  auto hh = cx::getScaledHeight(c);
+  auto hw = cx::getScaledWidth(c);
+  auto wz= cx::visBox();
   float y;
 
   menu->addChild(c);
 
-  if (where.y == cx::AnchorB().y) {
+  if (where.y == cx::anchorB().y) {
     y = wz.bottom + tile  + hh;
   } else {
     y = wz.top - tile  - hh;
   }
 
   menu->setPosition(wz.left + tile + hw, y);
-  layer->AddItem(menu);
+  layer->addItem(menu);
 
   return menu;
 }
@@ -55,7 +55,7 @@ c::Menu* AddReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* AddAudioIcons(not_null<XLayer*> layer,
+c::Menu* addAudioIcons(not_null<XLayer*> layer,
     not_null<c::MenuItem*> off,
     not_null<c::MenuItem*> on,
     const c::Vec2& anchor, const c::Vec2& pos) {
@@ -63,7 +63,7 @@ c::Menu* AddAudioIcons(not_null<XLayer*> layer,
   auto cb = [](c::Ref* r) {
     auto t = SCAST(c::MenuItemToggle*, r);
     auto b= t->getSelectedIndex() == 0;
-    XCFG()->ToggleAudio( b);
+    XCFG()->toggleAudio( b);
   };
 
   c::Vector<c::MenuItem*> items;
@@ -71,13 +71,13 @@ c::Menu* AddAudioIcons(not_null<XLayer*> layer,
   items.pushBack(off);
 
   auto audio = c::MenuItemToggle::createWithCallback(cb, items);
-  audio->setSelectedIndex( XCFG()->HasAudio() ? 0 : 1);
+  audio->setSelectedIndex( XCFG()->hasAudio() ? 0 : 1);
   audio->setAnchorPoint(anchor);
 
   // need null to end var-args
   auto menu= c::Menu::create(audio, nullptr);
   menu->setPosition(pos);
-  layer->AddItem(menu);
+  layer->addItem(menu);
   return menu;
 }
 

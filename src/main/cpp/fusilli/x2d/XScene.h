@@ -27,10 +27,10 @@ protected:
 
 public:
 
-  XLayer*  AddLayer(not_null<XLayer*>, int z=0);
-  XLayer*  GetLayer(int tag);
+  XLayer* addLayer(not_null<XLayer*>, int z=0);
+  XLayer* getLayer(int tag);
 
-  virtual XScene* Realize() = 0;
+  virtual XScene* realize() = 0;
   virtual ~XScene() {}
 };
 
@@ -38,7 +38,7 @@ public:
 //
 class CC_DLL XSceneFactory  {
 public:
-  static XScene* ReifySimple(s::function<void (XLayer*)> );
+  static XScene* reifySimple(s::function<void (XLayer*)> );
 };
 
 

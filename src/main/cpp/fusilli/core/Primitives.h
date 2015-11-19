@@ -79,8 +79,8 @@ public:
     isset=arg.isset;
   }
   ~Maybe() {}
-  T Get() const { return value; }
-  bool IsNone() const { return isset; }
+  T get() const { return value; }
+  bool isNone() const { return isset; }
 };
 
 

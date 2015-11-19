@@ -22,15 +22,15 @@ NS_USING(ash)
 AppDelegate::AppDelegate() {
 
   // step.1: register all ash::node factories here
-  auto r= NodeRegistry::Self();
-  auto c= Config::Reify();
+  auto r= NodeRegistry::self();
+  auto c= Config::reify();
 
   r->Register( mc_new(NetPlayNode));
   r->Register( mc_new(GUINode));
-  r->Register( mc_new(ArenaNode));
+  r->Register( mc_new(BoardNode));
 
   // step.2: set up app-config
-  XConfig::Bind(c);
+  XConfig::bind(c);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -20,8 +20,8 @@ NS_BEGIN(tttoe)
 class CC_DLL Splash : public f::XScene {
 public:
 
-  virtual f::XScene* Realize();
-  static Splash* Reify();
+  virtual f::XScene* realize();
+  static Splash* reify();
 
   NO__CPYASS(Splash)
   IMPL_CTOR(Splash)

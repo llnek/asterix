@@ -19,14 +19,14 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
-const s::array<Box4,GD_SZ> MapGridPos(float scale) {
+const s::array<Box4,GD_SZ> mapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
-  auto sp = cx::ReifySprite("z.png");
+  auto sp = cx::reifySprite("z.png");
   auto z = sp->getContentSize();
-  auto csz = cx::ScaleSize(z, scale);
+  auto csz = cx::scaleSize(z, scale);
   auto ro= 8/72 * scale;
-  auto cw = cx::Center();
+  auto cw = cx::center();
   auto gh = csz.height * ro;
   auto gw = csz.width * ro;
   auto zh= BD_SZ * csz.height + (BD_SZ-1) * gh;
@@ -54,7 +54,7 @@ const s::array<Box4,GD_SZ> MapGridPos(float scale) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<ArrDim> MapGoalSpace() {
+const s::vector<ArrDim> mapGoalSpace() {
 
   s::vector<ArrDim> goals;
   ArrDim dx;
@@ -85,7 +85,7 @@ const s::vector<ArrDim> MapGoalSpace() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr PkFlip(const stdstr& img, bool flip) {
+const stdstr pkFlip(const stdstr& img, bool flip) {
   if (flip) {
     return img + ".i.png";
   } else {
@@ -95,7 +95,7 @@ const stdstr PkFlip(const stdstr& img, bool flip) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr& XrefImg(int value) {
+const stdstr& xrefImg(int value) {
   auto x= CC_CSV(c::Integer,"CV_X");
   auto o= CC_CSV(c::Integer,"CV_O");
   auto z= CC_CSV(c::Integer,"CV_Z");
@@ -109,17 +109,17 @@ const stdstr& XrefImg(int value) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Sprite* DrawSymbol(not_null<PlayView*> view,
+c::Sprite* drawSymbol(not_null<PlayView*> view,
     float x, float y,
     int value, bool flip) {
 
-  auto frame = PkFlip(XrefImg(value), flip);
-  auto s1= cx::ReifySprite(frame);
+  auto frame = pkFlip(xrefImg(value), flip);
+  auto s1= cx::reifySprite(frame);
 
-  s1->setAnchorPoint(cx::AnchorC());
+  s1->setAnchorPoint(cx::anchorC());
   s1->setPosition(x,y);
 
-  view->layer->AddAtlasItem("game-pics", s1);
+  view->layer->addAtlasItem("game-pics", s1);
   return s1;
 }
 

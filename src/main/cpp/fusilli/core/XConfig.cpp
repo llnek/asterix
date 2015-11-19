@@ -39,13 +39,13 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::Bind(not_null<XConfig*> c) {
+void XConfig::bind(not_null<XConfig*> c) {
   singleton=c;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XConfig* XConfig::Self() {
+XConfig* XConfig::self() {
   return singleton;
 }
 
@@ -71,18 +71,18 @@ XConfig::XConfig() {
   frags->setObject(CC_DICT(), EFX);
   frags->setObject(CC_DICT(), LEVELS);
 
-  LoadL10NStrings();
+  loadL10NStrings();
 
-  AddLevel("1");
-  SetCsts();
+  addLevel("1");
+  setCsts();
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::LoadL10NStrings() {
-  auto b= cx::ReadXmlAsDict("i18n/base_strings.plist");
-  auto d= cx::ReadXmlAsDict("i18n/strings.plist");
+void XConfig::loadL10NStrings() {
+  auto b= cx::readXmlAsDict("i18n/base_strings.plist");
+  auto d= cx::readXmlAsDict("i18n/strings.plist");
   NS_USING(cocos2d)
   DictElement* e= nullptr;
   CCDICT_FOREACH(d, e) {
@@ -98,9 +98,9 @@ void XConfig::LoadL10NStrings() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetL10NStr(const stdstr& key,
+const stdstr XConfig::getL10NStr(const stdstr& key,
     const s::vector<stdstr>& pms) {
-  auto vs = GetL10NStr(key);
+  auto vs = getL10NStr(key);
   if (pms.size() == 0) { return vs; }
   auto pos= vs.find("{}");
   int n= 0;
@@ -114,7 +114,7 @@ const stdstr XConfig::GetL10NStr(const stdstr& key,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::GetL10NStr(const stdstr& key) {
+const stdstr XConfig::getL10NStr(const stdstr& key) {
   stdstr lang= c::Application::getInstance()->getCurrentLanguageCode();
   auto d = DictVal<c::Dictionary>(l10n, lang);
   auto obj=NNP(d) ?
@@ -129,14 +129,14 @@ const stdstr XConfig::GetL10NStr(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int XConfig::GetBtnPadding() {
+int XConfig::getBtnPadding() {
   return CC_CSV(c::Integer,"BTN_PADDING");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetCsts() {
-  auto f = GetFragment(CSTS);
+void XConfig::setCsts() {
+  auto f = getFragment(CSTS);
 
   f->setObject(CC_INT(10), "BTN_PADDING");
 
@@ -160,102 +160,102 @@ void XConfig::SetCsts() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::ToggleAudio(bool b) {
+void XConfig::toggleAudio(bool b) {
   audioState= b;
   if (! b) {
-    SetMusicVolume(0);
-    SetVolume(0);
+    setMusicVolume(0);
+    setVolume(0);
   } else {
-    SetMusicVolume(lastMusicVol);
-    SetVolume(lastSfxVol);
+    setMusicVolume(lastMusicVol);
+    setVolume(lastSfxVol);
   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-bool XConfig::HasAudio() {
+bool XConfig::hasAudio() {
   return audioState;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetMusicVolume(float v) {
-  lastMusicVol= GetMusicVolume();
+void XConfig::setMusicVolume(float v) {
+  lastMusicVol= getMusicVolume();
   den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetVolume(float v) {
-  lastSfxVol = GetVolume();
+void XConfig::setVolume(float v) {
+  lastSfxVol = getVolume();
   den::SimpleAudioEngine::getInstance()->setEffectsVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float XConfig::GetMusicVolume() {
+float XConfig::getMusicVolume() {
   return den::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float XConfig::GetVolume() {
+float XConfig::getVolume() {
   return den::SimpleAudioEngine::getInstance()->getEffectsVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Ref* XConfig::GetCst(const stdstr& key) {
-  return GetFragment(CSTS)->objectForKey(key);
+c::Ref* XConfig::getCst(const stdstr& key) {
+  return getFragment(CSTS)->objectForKey(key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::GetAtlas(const stdstr& key) {
-  return getXXX(GetFragment(ATLASES), key);
+const filepath XConfig::getAtlas(const stdstr& key) {
+  return getXXX(getFragment(ATLASES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::GetFont(const stdstr& key) {
-  return getXXX(GetFragment(FONTS), key);
+const filepath XConfig::getFont(const stdstr& key) {
+  return getXXX(getFragment(FONTS), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::GetTile(const stdstr& key) {
-  return getXXX(GetFragment(TILES), key);
+const filepath XConfig::getTile(const stdstr& key) {
+  return getXXX(getFragment(TILES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::GetImage(const stdstr& key) {
-  return getXXX(GetFragment(IMAGES), key);
+const filepath XConfig::getImage(const stdstr& key) {
+  return getXXX(getFragment(IMAGES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::GetMusic(const stdstr& key) {
-  return getXXX(GetFragment(MUSIC), key);
+const filepath XConfig::getMusic(const stdstr& key) {
+  return getXXX(getFragment(MUSIC), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::GetEffect(const stdstr& key) {
-  return getXXX(GetFragment(EFX), key);
+const filepath XConfig::getEffect(const stdstr& key) {
+  return getXXX(getFragment(EFX), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::GetLevel(const stdstr& n) {
-  auto d= GetFragment(LEVELS);
+c::Dictionary* XConfig::getLevel(const stdstr& n) {
+  auto d= getFragment(LEVELS);
   return SCAST(c::Dictionary*,  d->objectForKey(n));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
-  auto r= GetLevel(n);
+c::Dictionary* XConfig::getLevelCfg(const stdstr& n) {
+  auto r= getLevel(n);
   if (NNP(r)) {
     return SCAST(c::Dictionary*, r->objectForKey(CFG));
   } else {
@@ -265,20 +265,20 @@ c::Dictionary* XConfig::GetLevelCfg(const stdstr& n) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XConfig::SetSeedData(j::Json& j) {
+void XConfig::setSeedData(j::Json& j) {
   seed=j;
   j= j::Json();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-j::Json& XConfig::GetSeedData() {
+j::Json& XConfig::getSeedData() {
   return seed;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::AddLevel(const stdstr& level) {
+c::Dictionary* XConfig::addLevel(const stdstr& level) {
 
   auto d2= CC_DICT();
 
@@ -286,72 +286,72 @@ c::Dictionary* XConfig::AddLevel(const stdstr& level) {
   d2->setObject(CC_DICT(), TILES);
   d2->setObject(CC_DICT(), CFG);
 
-  GetFragment(LEVELS)->setObject(d2, level);
+  getFragment(LEVELS)->setObject(d2, level);
   return d2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::GetFragment(const stdstr& key) {
+c::Dictionary* XConfig::getFragment(const stdstr& key) {
   auto obj = frags->objectForKey(key);
   return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddAtlas(const stdstr& key, c::Ref* ref) {
-  AddXXX(ATLASES, key, ref);
+void XConfig::addAtlas(const stdstr& key, c::Ref* ref) {
+  addXXX(ATLASES, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddFont(const stdstr& key, c::Ref* ref) {
-  AddXXX(FONTS, key, ref);
+void XConfig::addFont(const stdstr& key, c::Ref* ref) {
+  addXXX(FONTS, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddTile(const stdstr& key, c::Ref* ref) {
-  AddXXX(TILES, key, ref);
+void XConfig::addTile(const stdstr& key, c::Ref* ref) {
+  addXXX(TILES, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddImage(const stdstr& key, c::Ref* ref) {
-  AddXXX(IMAGES, key, ref);
+void XConfig::addImage(const stdstr& key, c::Ref* ref) {
+  addXXX(IMAGES, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddEffect(const stdstr& key, c::Ref* ref) {
-  AddXXX(EFX, key, ref);
+void XConfig::addEffect(const stdstr& key, c::Ref* ref) {
+  addXXX(EFX, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddMusic(const stdstr& key, c::Ref* ref) {
-  AddXXX(MUSIC, key, ref);
+void XConfig::addMusic(const stdstr& key, c::Ref* ref) {
+  addXXX(MUSIC, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddCst(const stdstr& key, c::Ref* ref) {
-  AddXXX(CSTS, key, ref);
+void XConfig::addCst(const stdstr& key, c::Ref* ref) {
+  addXXX(CSTS, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::AddXXX(const stdstr& frag, const stdstr& key, c::Ref* ref) {
-  auto d = GetFragment(frag);
+void XConfig::addXXX(const stdstr& frag, const stdstr& key, c::Ref* ref) {
+  auto d = getFragment(frag);
   d->setObject(ref, key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<filepath> XConfig::GetEffectFiles() {
+const s::vector<filepath> XConfig::getEffectFiles() {
   NS_USING(cocos2d)
   DictElement* element = nullptr;
-  auto d= GetFragment(MUSIC);
+  auto d= getFragment(MUSIC);
   s::vector<filepath> rc;
 
   CCDICT_FOREACH(d, element) {
@@ -362,10 +362,10 @@ const s::vector<filepath> XConfig::GetEffectFiles() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<filepath> XConfig::GetMusicFiles() {
+const s::vector<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
   DictElement* element = nullptr;
-  auto d= GetFragment(EFX);
+  auto d= getFragment(EFX);
   s::vector<filepath> rc;
 
   CCDICT_FOREACH(d, element) {

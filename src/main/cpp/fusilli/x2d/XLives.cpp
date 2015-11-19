@@ -17,7 +17,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::Reduce(int x) {
+void XLives::reduce(int x) {
   while (x > 0) {
     if (icons.size() > 0) {
       auto it= icons.back();
@@ -31,7 +31,7 @@ void XLives::Reduce(int x) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::Reset() {
+void XLives::reset() {
   F__LOOP(it, icons) {
     auto n= *it;
     n->removeFromParent();
@@ -42,14 +42,14 @@ void XLives::Reset() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::Resurrect() {
-  Reset();
-  DrawLives();
+void XLives::resurrect() {
+  reset();
+  drawLives();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::DrawLives() {
+void XLives::drawLives() {
   float y;
   float x;
 
@@ -73,7 +73,7 @@ void XLives::DrawLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::Realize(const stdstr& frame,
+void XLives::realize(const stdstr& frame,
     int lives,
     float x, float y, int d) {
 
@@ -83,8 +83,8 @@ void XLives::Realize(const stdstr& frame,
   frameId = frame;
 
   refPt= c::Vec2(x,y);
-  Reset();
-  DrawLives();
+  reset();
+  drawLives();
 }
 
 //////////////////////////////////////////////////////////////////////////////

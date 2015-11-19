@@ -21,7 +21,7 @@ BEGIN_NS_UNAMED()
 class CC_DLL SimpleLayer : public XLayer {
 public:
 
-  virtual XLayer* Realize();
+  virtual XLayer* realize();
 
   NO__CPYASS(SimpleLayer)
   IMPL_CTOR(SimpleLayer)
@@ -32,7 +32,7 @@ public:
 class CC_DLL SimpleScene : public XScene {
 public:
 
-  SimpleScene* SetDecoUI(s::function<void (XLayer*)> d) {
+  SimpleScene* setDecoUI(s::function<void (XLayer*)> d) {
     deco=d;
     return this;
   }
@@ -40,14 +40,14 @@ public:
   s::function<void (XLayer*)> deco;
   NO__CPYASS(SimpleScene)
 
-  void DecoUI(XLayer* layer) {
+  void decoUI(XLayer* layer) {
     deco(layer);
   }
 
-  virtual XScene* Realize() {
+  virtual XScene* realize() {
     auto y = ReifyRefType<SimpleLayer>();
-    AddLayer(y);
-    y->Realize();
+    addLayer(y);
+    y->realize();
     return this;
   }
 
@@ -56,8 +56,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* SimpleLayer::Realize() {
-  CC_PCAST(SimpleScene*)->DecoUI(this);
+XLayer* SimpleLayer::realize() {
+  CC_PCAST(SimpleScene*)->decoUI(this);
   return this;
 }
 
@@ -65,20 +65,20 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XScene* XSceneFactory::ReifySimple(s::function<void (XLayer*)> d) {
-  return ReifyRefType<SimpleScene>()->SetDecoUI(d)->Realize();
+XScene* XSceneFactory::reifySimple(s::function<void (XLayer*)> d) {
+  return ReifyRefType<SimpleScene>()->setDecoUI(d)->realize();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XScene::AddLayer(not_null<XLayer*> y, int z) {
- this->addChild(y, z, y->GetIID());
+XLayer* XScene::addLayer(not_null<XLayer*> y, int z) {
+ this->addChild(y, z, y->getIID());
  return y;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* XScene::GetLayer(int tag) {
+XLayer* XScene::getLayer(int tag) {
   return SCAST(XLayer*, getChildByTag(tag));
 }
 

@@ -21,29 +21,27 @@ NS_BEGIN(tttoe)
 class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool OnUpdate(float);
+  virtual bool onUpdate(float);
 
-  void DoIt(a::Node*, float);
-  void OnceOnly(a::Node*);
-  void ShowGrid(a::Node*);
+  void doIt(a::Node*, float);
+  void onceOnly(a::Node*);
+  void showGrid(a::Node*);
 
   NO__CPYASS(Stager)
   Stager() = delete;
 
-  a::NodeList* arena;
+  a::NodeList* board;
   bool inited;
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Stager"; }
+
   Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual void AddToEngine(not_null<a::Engine*>);
+  virtual void addToEngine(not_null<a::Engine*>);
 
-  virtual int Priority() { return a::PreUpdate; }
-
-  virtual const a::SystemType TypeId() {
-    return "n/Stager";
-  }
+  virtual int priority() { return a::PreUpdate; }
 
   virtual ~Stager() {}
 

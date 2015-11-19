@@ -23,39 +23,37 @@ NS_BEGIN(tttoe)
 class CC_DLL Resolve : f::BaseSystem<EFactory> {
 protected:
 
-  bool CheckWin(a::Node*, Player&, Grid*, ArrDim& );
-  void ShowWinningIcons(a::Node*, const ArrDim& );
-  void DoWin(a::Node*, Player&, const ArrDim& );
+  bool checkWin(a::Node*, Player&, Grid*, ArrDim& );
+  void showWinningIcons(a::Node*, const ArrDim& );
+  void doWin(a::Node*, Player&, const ArrDim& );
 
-  const c::Vec2 XrefCell(int pos, PlayView*);
+  const c::Vec2 xrefCell(int pos, PlayView*);
 
-  virtual bool OnUpdate(float);
-  void SyncUp(a::Node*);
+  virtual bool onUpdate(float);
+  void syncUp(a::Node*);
 
-  void DoIt(a::Node*, float);
-  void DoForfeit(a::Node*);
-  void DoDraw(a::Node*);
+  void doIt(a::Node*, float);
+  void doForfeit(a::Node*);
+  void doDraw(a::Node*);
 
-  bool CheckDraw(a::Node*, Grid*);
-  void DoDone(a::Node*, Player&);
+  bool checkDraw(a::Node*, Grid*);
+  void doDone(a::Node*, Player&);
 
   NO__CPYASS(Resolve)
   Resolve() = delete;
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Resolve"; }
+
   Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
   virtual ~Resolve() {}
 
-  virtual void AddToEngine(not_null<a::Engine*> );
+  virtual void addToEngine(not_null<a::Engine*> );
 
-  virtual int Priority() { return a::Resolve; }
+  virtual int priority() { return a::Resolve; }
 
-  virtual const a::SystemType TypeId() {
-    return "n/Resolve";
-  }
-
-  a::NodeList* arena;
+  a::NodeList* board;
 };
 
 

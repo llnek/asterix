@@ -12,30 +12,28 @@
 #if !defined(__UTILS_H__)
 #define __UTILS_H__
 
-#include "core/CCSX.h"
-#include "n/cobjs.h"
-
 #define GD_SZ BD_SZ * BD_SZ
 #define BD_SZ 3
+
+#include "core/CCSX.h"
+#include "n/cobjs.h"
 
 typedef s::array<int, GD_SZ> ArrCells;
 typedef s::array<int, BD_SZ> ArrDim;
 
-
 namespace tttoe {
 
-  const s::array<fusii::Box4, GD_SZ> MapGridPos(float scale = 1.0f);
+  const s::array<fusii::Box4, GD_SZ> mapGridPos(float scale = 1.0f);
 
-  const s::vector<ArrDim> MapGoalSpace();
+  const s::vector<ArrDim> mapGoalSpace();
 
-  const stdstr PkFlip(const stdstr& img, bool flip);
+  const stdstr pkFlip(const stdstr& img, bool flip );
 
-  const stdstr XrefImg(int value);
+  const stdstr xrefImg(int value);
 
-  c::Sprite* DrawSymbol(not_null<PlayView*> view,
+  c::Sprite* drawSymbol(not_null<PlayView*> view,
       float x, float y,
       int value, bool flip=false);
-
 
 };
 

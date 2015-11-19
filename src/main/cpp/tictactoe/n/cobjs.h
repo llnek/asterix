@@ -23,6 +23,8 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(j, json11)
 NS_BEGIN(tttoe)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL PPInfo {
   PPInfo(int n, const stdstr& s) { pnum=n; longID=s; }
   PPInfo()=delete;
@@ -31,8 +33,6 @@ struct CC_DLL PPInfo {
   int pnum;
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
 struct ViewData {
   ViewData(c::Sprite* s, float x, float y, int v) {
     sprite=s;
@@ -63,12 +63,10 @@ struct ScoreUpdate {
 class CC_DLL SmartAlgo : public a::Component {
 public:
 
+  virtual const a::COMType typeId() { return "n/SmartAlgo"; }
+
   SmartAlgo(not_null<TTTBoard*> b) {
     this->board= b;
-  }
-
-  virtual const a::COMType TypeId() {
-    return "n/SmartAlgo";
   }
 
   virtual ~SmartAlgo() {}
@@ -79,42 +77,17 @@ public:
   TTTBoard* board;
 };
 
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL Board : public a::Component {
-public:
-
-  Board() {
-    this->GOALS= MapGoalSpace();
-    this->size=BD_SZ;
-  }
-
-  virtual const a::COMType TypeId() {
-    return "n/Board";
-  }
-
-  virtual ~Board() {}
-
-  NO__CPYASS(Board);
-  Board() = delete;
-
-  s::vector<ArrDim> GOALS;
-  int size;
-};
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Grid : public a::Component {
 public:
 
-  Grid(const ArrCells& seed) {
-    s::copy(s::begin(seed), s::end(seed), s::begin(values));
-  }
+  virtual const a::COMType typeId() { return "n/Grid"; }
 
-  virtual const a::COMType TypeId() {
-    return "n/Grid";
+  Grid(const ArrCells& seed, int sz = BD_SZ) {
+    s::copy(s::begin(seed),
+        s::end(seed), s::begin(values));
+    this->GOALS= mapGoalSpace(sz);
   }
 
   virtual ~Grid() {}
@@ -122,6 +95,7 @@ public:
   NO__CPYASS(Grid);
   Grid() = delete;
 
+  s::vector<ArrDim> GOALS;
   ArrCells values;
 };
 
@@ -130,16 +104,15 @@ public:
 //
 class CC_DLL PlayView : public a::Component {
 
+  virtual const a::COMType typeId() { return "n/PlayView"; }
+
   PlayView(not_null<f::XLayer*> layer) {
-    auto sp = cx::ReifySprite("z.png");
+    auto sp = cx::reifySprite("z.png");
     auto sz= sp->getContentSize();
     this->layer= layer;
     this->size = sz;
-    this->boxes= MapGridPos(1.0f);
-  }
-
-  virtual const a::COMType TypeId() {
-    return "n/PlayView";
+    this->boxes= mapGridPos(1.0f);
+    this->pics.fill(nullptr);
   }
 
   virtual ~PlayView() {}
@@ -147,8 +120,8 @@ class CC_DLL PlayView : public a::Component {
   NO__CPYASS(PlayView)
   PlayView() = delete;
 
-  s::array<ViewData,BD_SZ * BD_SZ> cells;
-  s::array<f::Box4,BD_SZ * BD_SZ> boxes;
+  s::array<f::Box4, GD_SZ> boxes;
+  s::array<c::Sprite*> cells;
   f::XLayer* layer;
   c::Size size;
 };
@@ -159,11 +132,9 @@ class CC_DLL PlayView : public a::Component {
 class CC_DLL NetPlay : public a::Component {
 public:
 
-  NetPlay() { SNPTR(event) }
+  virtual const a::COMType typeId() { return "n/NetPlay"; }
 
-  virtual const a::COMType TypeId() {
-    return "n/NetPlay";
-  }
+  NetPlay() { SNPTR(event) }
 
   virtual ~NetPlay() {}
   NO__CPYASS(NetPlay)
@@ -176,16 +147,17 @@ public:
 class CC_DLL Player : public a::Component {
 public:
 
-  Player(int category, int value, int id, const stdstr& color) {
+  virtual const a::COMType typeId() { return "n/Player"; }
+
+  Player(int category, int value,
+      int id,
+      const stdstr& color) {
+
     this->offset = id == 1 ? 0 : 1;
     this->category= category;
     this->color= color;
     this->pnum=id;
     this->value= value;
-  }
-
-  virtual const a::COMType TypeId() {
-    return "n/Player";
   }
 
   virtual ~Player() {}
@@ -196,26 +168,27 @@ public:
   stdstr pidlong;
   stdstr pid;
   stdstr color;
-  int pnum;
+
   int category;
+  int pnum;
   int value;
   int offset;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Players : public a::Component {
 public:
 
-  virtual const a::COMType TypeId() {
-    return "n/Players";
-  }
+  virtual const a::COMType typeId() { return "n/Players"; }
 
   virtual ~Players() {}
 
   NO__CPYASS(Players)
-  Players() {}
+
+  Players() {
+    parr.fill(nullptr);
+  }
 
   s::array<Player,3> parr;
 };
@@ -225,14 +198,12 @@ public:
 class CC_DLL UISelection : public a::Component {
 public:
 
+  virtual const a::COMType typeId() { return "n/UISelection"; }
+
   UISelection() {
     this->cell = -1;
     this->px = -1;
     this->py = -1;
-  }
-
-  virtual const a::COMType TypeId() {
-    return "n/UISelection";
   }
 
   virtual ~UISelection() {}
