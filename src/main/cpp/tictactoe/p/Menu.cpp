@@ -116,7 +116,7 @@ f::XLayer* MenuLayer::realize() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::MaybeSeedGame(f::GMode m) {
+void MenuLayer::maybeSeedGame(f::GMode m) {
 
   j::Json seed = j::Json::object {
     {"ppids", j::Json::object {} },
@@ -125,17 +125,17 @@ void MenuLayer::MaybeSeedGame(f::GMode m) {
 
   switch (m) {
     case f::GMode::ONE:
-      seed["ppids"][ XCFG()->GetL10NStr("p1") ] = j::Json::array {
-        1, XCFG()->GetL10NStr("player1") };
-      seed["ppids"][ XCFG()->GetL10NStr("p2") ] = j::Json::array {
-        2, XCFG()->GetL10NStr("player2") };
+      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
+        1, XCFG()->getL10NStr("player1") };
+      seed["ppids"][ XCFG()->getL10NStr("p2") ] = j::Json::array {
+        2, XCFG()->getL10NStr("player2") };
     break;
 
     case f::GMode::TWO:
-      seed["ppids"][ XCFG()->GetL10NStr("cpu") ] = j::Json::array {
-        2, XCFG()->GetL10NStr("computer") };
-      seed["ppids"][ XCFG()->GetL10NStr("p1") ] = j::Json::array {
-        1, XCFG()->GetL10NStr("player1") };
+      seed["ppids"][ XCFG()->getL10NStr("cpu") ] = j::Json::array {
+        2, XCFG()->getL10NStr("computer") };
+      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
+        1, XCFG()->getL10NStr("player1") };
     break;
 
     case f::GMode::NET:
@@ -143,40 +143,40 @@ void MenuLayer::MaybeSeedGame(f::GMode m) {
     break;
   }
 
-  XCFG()->SetSeedData(seed);
+  XCFG()->setSeedData(seed);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnNetPlay(c::Ref* r) {
+void MenuLayer::onNetPlay(c::Ref* r) {
   // yes
-  auto y= [=]() { this->OnPlayXXX(f::GMode::NET); };
+  auto y= [=]() { this->onPlayXXX(f::GMode::NET); };
   // no
-  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
-  auto n= []() { cx::RunScene(MainMenu::ReifyWithBackAction(f)); };
+  auto f= []() { cx::runScene(XCFG()->startWith()); };
+  auto n= []() { cx::runScene(MainMenu::reifyWithBackAction(f)); };
 
-  auto s= f::Online::Reify(f::ReifyRefType<NetPlay>(), y,n);
-  cx::RunScene(s);
+  auto s= f::Online::reify(f::ReifyRefType<NetPlay>(), y,n);
+  cx::runScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnPlay(c::Ref* r) {
+void MenuLayer::onPlay(c::Ref* r) {
   auto mode = (f::GMode) SCAST(c::Node*, r)->getTag();
-  OnPlayXXX(mode);
+  onPlayXXX(mode);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnPlayXXX(f::GMode mode) {
+void MenuLayer::onPlayXXX(f::GMode mode) {
   auto g = f::ReifyRefType<Game>();
-  MaybeSeedGame(mode);
-  cx::RunScene( Game::Reify(g, mode) );
+  maybeSeedGame(mode);
+  cx::runScene( Game::reify(g, mode) );
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnQuit(c::Ref* r) {
+void MenuLayer::onQuit(c::Ref* r) {
 
 }
 
@@ -184,34 +184,32 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::ReifyWithBackAction(VOIDFN cb) {
+MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
   auto m = f::ReifyRefType<MainMenu>();
-  auto a= c::CallFunc::create(cb);
-  m->backAction= a;
-  CC_KEEP(a)
-  m->Realize();
+  m->backAction= cb;
+  m->realize();
   return m;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::OnBackAction() {
-  backAction->execute();
+void MainMenu::onBackAction() {
+  this->backAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* MainMenu::Realize() {
+f::XScene* MainMenu::realize() {
   auto y = f::ReifyRefType<MenuLayer>();
-  AddLayer(y);
-  y->Realize();
+  addLayer(y);
+  y->realize();
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu::~MainMenu() {
-  CC_DROP(backAction)
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

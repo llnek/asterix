@@ -22,8 +22,8 @@ NS_BEGIN(tttoe)
 class CC_DLL NetPlay : public f::Online {
 protected:
 
-  virtual void OnPlayReply(const ws::OdinEvent&);
-  virtual void OnStart(const ws::OdinEvent&);
+  virtual void onPlayReply(ws::OdinEvent*);
+  virtual void onStart(ws::OdinEvent*);
 
   int player;
 
@@ -31,8 +31,8 @@ protected:
 
 public:
 
-  virtual void ShowWaitOthers(f::OnlineLayer*);
-  virtual void DecoUI(f::OnlineLayer*);
+  virtual void showWaitOthers(f::OnlineLayer*);
+  virtual void decoUI(f::OnlineLayer*);
 
   DECL_CTOR(NetPlay)
 };

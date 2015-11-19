@@ -20,17 +20,17 @@ NS_BEGIN(tttoe)
 class CC_DLL Game : public f::GameScene {
 protected:
 
-  virtual f::XGameLayer* GetGLayer();
+  virtual f::GameLayer* getGLayer();
   NO__CPYASS(Game)
 
 public:
 
-  virtual f::XScene* Realize();
+  virtual f::XScene* realize();
+
+  virtual void stop();
+  virtual void play();
 
   IMPL_CTOR(Game)
-
-  virtual void Stop();
-  virtual void Play();
 };
 
 

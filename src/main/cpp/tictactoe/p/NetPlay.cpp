@@ -21,32 +21,32 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::DecoUI(f::OnlineLayer* layer) {
+void NetPlay::decoUI(f::OnlineLayer* layer) {
 
-  auto qn= cx::ReifyBmfLabel("font.OCR", XCFG()->GetL10NStr("signinplay"));
-  auto wz= cx::VisRect();
-  auto cw= cx::Center();
-  auto wb= cx::VisBox();
+  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("signinplay"));
+  auto wz= cx::visRect();
+  auto cw= cx::center();
+  auto wb= cx::visBox();
 
-  layer->CenterImage("game.bg");
+  layer->centerImage("game.bg");
 
   // test msg
-  qn->setScale(XCFG()->GetScale() * 0.3);
+  qn->setScale(XCFG()->getScale() * 0.3);
   qn->setPosition(cw.x, wb.top * 0.75);
   qn->setOpacity(0.9*255);
-  layer->AddItem(qn);
+  layer->addItem(qn);
 
   // editbox for user
   auto uid = c::ui::TextField::create();
-  auto bxz = cx::CalcSize("ok.png");
+  auto bxz = cx::calcSize("ok.png");
   uid->setMaxLengthEnabled(true);
   uid->setMaxLength(16);
   uid->setTouchEnabled(true);
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
-  uid->setPlaceHolder(XCFG()->GetL10NStr("userid"));
+  uid->setPlaceHolder(XCFG()->getL10NStr("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
-  layer->AddItem(uid);
+  layer->addItem(uid);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -56,64 +56,64 @@ void NetPlay::DecoUI(f::OnlineLayer* layer) {
   pwd->setMaxLength(16);
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
-  pwd->setPlaceHolder( XCFG()->GetL10NStr("passwd"));
+  pwd->setPlaceHolder( XCFG()->getL10NStr("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
-  layer->AddItem(pwd);
+  layer->addItem(pwd);
 
   // btns
-  auto b1= cx::ReifyMenuBtn("continue.png");
+  auto b1= cx::reifyMenuBtn("continue.png");
   b1->setCallback([=](c::Ref*) {
-        layer->Login(uid->getString(), pwd->getString());
+        layer->login(uid->getString(), pwd->getString());
       });
 
-  auto b2= cx::ReifyMenuBtn("cancel.png");
+  auto b2= cx::reifyMenuBtn("cancel.png");
   b2->setTarget(this,
-      CC_MENU_SELECTOR(f::Online::OnCancel));
+      CC_MENU_SELECTOR(f::Online::onCancel));
 
-  auto menu= cx::MkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
+  auto menu= cx::mkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
   menu->setPosition(cw.x, wb.top * 0.1);
-  layer->AddItem(menu);
+  layer->addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::ShowWaitOthers(f::OnlineLayer* layer) {
+void NetPlay::showWaitOthers(f::OnlineLayer* layer) {
 
-  auto qn= cx::ReifyBmfLabel("font.OCR", XCFG()->GetL10NStr("waitother"));
-  auto wz= cx::VisRect();
-  auto cw= cx::Center();
-  auto wb = cx::VisBox();
+  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("waitother"));
+  auto wz= cx::visRect();
+  auto cw= cx::center();
+  auto wb = cx::visBox();
 
-  qn->setScale(XCFG()->GetScale() * 0.3);
+  qn->setScale(XCFG()->getScale() * 0.3);
   qn->setPosition(cw.x, wb.top * 0.75);
   qn->setOpacity(0.9*255);
-  layer->AddItem(qn);
+  layer->addItem(qn);
 
   auto menu= f::ReifyRefType<cocos2d::Menu>();
-  auto b1= cx::ReifyMenuBtn("cancel.png");
+  auto b1= cx::reifyMenuBtn("cancel.png");
   b1->setTarget(this,
-      CC_MENU_SELECTOR(f::Online::OnCancel));
+      CC_MENU_SELECTOR(f::Online::onCancel));
   menu->addChild(b1);
   menu->setPosition(cw.x, wb.top * 0.1);
-  layer->AddItem(menu);
+  layer->addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::OnStart(const ws::OdinEvent& evt) {
-  auto s= XCFG()->GetSeedData();
-  s["ppids"] = evt.doco["source"]["ppids"];
+void NetPlay::onStart(ws::OdinEvent* evt) {
+  auto s= XCFG()->getSeedData();
+  s["ppids"] = evt->doco["source"]["ppids"];
   s["pnum"]= player;
 
-  MGMS()->SetOnlineChannel(odin);
+  MGMS()->setOnlineChannel(odin);
   SNPTR(odin)
   yes->execute();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::OnPlayReply(const ws::OdinEvent& evt) {
-  player= evt.doco["pnum"].int_value();
+void NetPlay::onPlayReply(ws::OdinEvent* evt) {
+  player= evt->doco["pnum"].int_value();
   CCLOG("player %d: ok", player);
 }
 

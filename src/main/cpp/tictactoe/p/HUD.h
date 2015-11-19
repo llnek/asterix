@@ -20,23 +20,23 @@ NS_BEGIN(tttoe)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  void ShowMenu(c::Ref*);
+  void showMenu(c::Ref*);
 
-  void InitLabels();
-  void InitIcons();
+  void initLabels();
+  void initIcons();
 
-  void ShowTimer();
-  void UpdateTimer(float);
-  void ShowCountDown(const stdstr& msg);
-  void KillTimer();
-  void UpdateScore(int pcolor,  int value);
-  void Draw(bool running,  int pnum);
-  void EndGame(int winner);
-  void DrawXXXText(obj, const stdstr& msg);
-  void DrawScores();
-  void DrawResult(int pnum);
-  void DrawStatus(int pnum);
-  void RegoPlayers(const stdstr& color1,
+  void showTimer();
+  void updateTimer(float);
+  void showCountDown(const stdstr& msg);
+  void killTimer();
+  void updateScore(int pcolor,  int value);
+  void draw(bool running,  int pnum);
+  void endGame(int winner);
+  void drawXXXText(obj, const stdstr& msg);
+  void drawScores();
+  void drawResult(int pnum);
+  void drawStatus(int pnum);
+  void regoPlayers(const stdstr& color1,
       const stdstr& p1k, const stdstr& p1n,
       const stdstr& color2,
       const stdstr& p2k, const stdstr& p2n);
@@ -59,11 +59,11 @@ protected:
 
 public:
 
-  virtual int GetIID() { return 3; }
-  virtual f::XLayer* Realize();
+  virtual int getIID() { return 3; }
+  virtual f::XLayer* realize();
 
-  void ResetAsNew();
-  void Reset();
+  void resetAsNew();
+  void reset();
 
   NO__CPYASS(HUDLayer)
   IMPL_CTOR(HUDLayer)
