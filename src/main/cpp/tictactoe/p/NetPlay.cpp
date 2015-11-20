@@ -21,7 +21,12 @@ NS_BEGIN(tttoe)
 
 BEGIN_NS_UNAMED()
 class CC_DLL UILayer : f::XLayer {
+protected:
+
+  void onCancel(c::Ref* );
+
 public:
+
   virtual f::XLayer* realize();
   ws::OdinIO* odin;
 
