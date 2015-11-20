@@ -170,6 +170,5 @@ XScene* XLayer::getSceneX() {
 }
 
 
-
 NS_END(fusii)
 

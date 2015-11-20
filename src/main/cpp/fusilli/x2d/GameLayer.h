@@ -23,8 +23,9 @@ NS_BEGIN(fusii)
 class CC_DLL GameLayer : public XLayer {
 protected:
 
-  virtual void disableEventHandlers();
-  virtual void enableEventHandlers();
+  void addListener(c::EventListener*);
+  void disableListeners();
+  void enableListeners();
 
   virtual void initMouse();
   virtual void initKeys();
@@ -33,10 +34,9 @@ protected:
   s::array<bool, 256> keyboard;
   c::Dictionary* options;
   a::Engine* engine;
-  bool paused;
 
-  c::EventListener* mouse;
-  c::EventListener* keys;
+  c::EventListenerKeyboard* keys;
+  c::EventListenerMouse* mouse;
   c::EventListener* touch;
 
   NO__CPYASS(GameLayer)
@@ -49,22 +49,14 @@ public:
     sendMsg(topic, nullptr);
   }
 
+  bool keyPoll(c::EventKeyboard::KeyCode );
   virtual const Box4 getEnclosureBox();
   virtual int getIID() { return 2; }
 
   //virtual void update(float);
-  //virtual XLayer* Realize();
+  //virtual XLayer* realize();
   virtual ~GameLayer();
 
-  void onKeyReleased(c::EventKeyboard::KeyCode, c::Event* );
-  void onKeyPressed(c::EventKeyboard::KeyCode, c::Event* );
-
-  void onMouseMove(c::Event*);
-  void onMouseDown(c::Event*);
-  void onMouseUp(c::Event*);
-  void onMouseScroll(c::Event*);
-
-  bool keyPoll(c::EventKeyboard::KeyCode );
 };
 
 

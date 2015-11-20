@@ -30,6 +30,10 @@ protected:
   int lastTag;
   int lastZ;
 
+  c::SpriteBatchNode* regoAtlas(const stdstr& name,
+      const Maybe<int>& = Maybe<int>(),
+      const Maybe<int>& = Maybe<int>() );
+
   NO__CPYASS(XLayer)
   XLayer();
 
@@ -38,10 +42,6 @@ public:
   virtual c::SpriteBatchNode* getAtlas(const stdstr& name);
   virtual void onQuit(c::Ref*);
   virtual XLayer* realize();
-
-  c::SpriteBatchNode* regoAtlas(const stdstr& name,
-      const Maybe<int>& = Maybe<int>(),
-      const Maybe<int>& = Maybe<int>() );
 
   virtual void addAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,

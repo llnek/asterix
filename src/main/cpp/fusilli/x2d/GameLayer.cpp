@@ -75,7 +75,13 @@ void GameLayer::finzGame() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::disableEventHandlers() {
+void GameLayer::addListener(c::EventListener* ln) {
+  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::disableListeners() {
   CCLOG("disabling event handlers");
 
   if (NNP(mouse)) {
@@ -97,7 +103,7 @@ void GameLayer::disableEventHandlers() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::enableEventHandlers() {
+void GameLayer::enableListeners() {
   disableEventHandlers();
   try {
     initMouse();
@@ -120,87 +126,29 @@ void GameLayer::enableEventHandlers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::initMouse() {
-  auto m = c::EventListenerMouse::create();
-
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(m, this);
-  mouse=m;
-
-  m->onMouseScroll = CC_CALLBACK_1(GameLayer::onMouseScroll, this);
-  m->onMouseMove = CC_CALLBACK_1(GameLayer::onMouseMove, this);
-  m->onMouseDown = CC_CALLBACK_1(GameLayer::onMouseDown, this);
-  m->onMouseUp = CC_CALLBACK_1(GameLayer::onMouseUp, this);
-
-  CCLOG("init-mouse: listener = %p", m);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::onMouseMove(c::Event* e) {
-  auto evt = (c::EventMouse*) e;
-  //GEvent e(evt);
-  //evt->getDelta();
-  //evt->getLocation();
-  //CCLOG("mouse moved");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::onMouseDown(c::Event* e) {
-  auto evt = (c::EventMouse*) e;
-  //GEvent e(evt);
-
-  //CCLOG("mouse down");
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::onMouseUp(c::Event* e) {
-  auto evt = (c::EventMouse*) e;
-  //GEvent e(evt);
- // CCLOG("mouse up");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::onMouseScroll(c::Event* e) {
-  auto evt = (c::EventMouse*) e;
-  //GEvent e(evt);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::onKeyReleased(c::EventKeyboard::KeyCode code, c::Event* ) {
-  //CCLOG("key released = %d", (int)code);
-  int n= (int)code;
-  if ( n >= 0 && n < 256) {
-    keyboard[n]=false;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::onKeyPressed(c::EventKeyboard::KeyCode code, c::Event* ) {
-  //CCLOG("key pressed = %d", (int)code);
-  int n= (int)code;
-  if ( n >= 0 && n < 256) {
-    keyboard[n]= true;
-  }
+  //m->onMouseScroll = CC_CALLBACK_1(GameLayer::onMouseScroll, this);
+  //m->onMouseMove = CC_CALLBACK_1(GameLayer::onMouseMove, this);
+  //m->onMouseDown = CC_CALLBACK_1(GameLayer::onMouseDown, this);
+  //m->onMouseUp = CC_CALLBACK_1(GameLayer::onMouseUp, this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::initKeys() {
 
-  auto k = c::EventListenerKeyboard::create();
+  keys = c::EventListenerKeyboard::create();
+  addListener(keys);
 
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(k, this);
-  keys=k;
+  keys->onKeyReleased = [=] (c::EventKeyboard::KeyCode k, c::Event*) {
+    int n= (int)k;
+    if (n >= 0 && n < 256) { this->keyboard[n]=false; }
+  };
+  keys->onKeyPressed = [=] (c::EventKeyboard::KeyCode k, c::Event*) {
+    int n= (int)k;
+    if (n >= 0 && n < 256) { this->keyboard[n]= true; }
+  };
 
-  k->onKeyReleased = CC_CALLBACK_2(GameLayer::onKeyReleased, this);
-  k->onKeyPressed = CC_CALLBACK_2(GameLayer::onKeyPressed, this);
-
-  CCLOG("init-keys: listener = %p", k);
+  CCLOG("init-keys: listener = %p", keys);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -208,33 +156,21 @@ void GameLayer::initKeys() {
 void GameLayer::initTouch() {
   //  Reify a "one by one" touch event listener
   // (processes one touch at a time)
-  auto t= c::EventListenerTouchOneByOne::create();
-
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(t, this);
-  touch =t;
+  //auto t= c::EventListenerTouchOneByOne::create();
+  //_eventDispatcher->addEventListenerWithSceneGraphPriority(t, this);
+  //touch =t;
 
   // trigger when you push down
-  t->onTouchBegan = [](c::Touch* t, c::Event* e){
-
-      return true; // if you are consuming it
-  };
-
+  //t->onTouchBegan = [](c::Touch* t, c::Event* e){ return true; };
   // trigger when moving touch
-  t->onTouchMoved = [](c::Touch* t, c::Event* e){
-      // your code
-  };
-
+  //t->onTouchMoved = [](c::Touch* t, c::Event* e){ }
   // trigger when you let up
-  t->onTouchEnded = [=](c::Touch* t, c::Event* e){
-      // your code
-  };
+  //t->onTouchEnded = [=](c::Touch* t, c::Event* e){ };
 
   // When "swallow touches" is true, then returning 'true' from the
   // onTouchBegan method will "swallow" the touch event, preventing
   // other listeners from using it.
-  t->setSwallowTouches(true);
-
-  CCLOG("init-touch: listener = %p", t);
+  //t->setSwallowTouches(true);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -12,14 +12,14 @@
 #if !defined(__NETPLAY_H__)
 #define __NETPLAY_H__
 
-#include "x2d/Online.h"
+#include "x2d/XScene.h"
+#include "core/odin.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NetPlay : public f::Online {
+class CC_DLL NetPlay : public f::XScene {
 protected:
 
   virtual void onPlayReply(ws::OdinEvent*);
@@ -31,8 +31,7 @@ protected:
 
 public:
 
-  virtual void showWaitOthers(f::OnlineLayer*);
-  virtual void decoUI(f::OnlineLayer*);
+  virtual f::XScene* realize();
 
   DECL_CTOR(NetPlay)
 };

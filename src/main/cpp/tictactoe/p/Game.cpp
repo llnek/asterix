@@ -21,69 +21,69 @@ BEGIN_NS_UNAMED()
 //
 class CC_DLL BGLayer : f::XLayer {
 public:
-
   virtual f::XLayer* realize() {
     centerImage("game.bg");
     return this;
   }
-
   NO__CPYASS(BGLayer)
   IMPL_CTOR(BGLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL PlayLayer : public f::GameLayer {
+class CC_DLL GLayer : public f::GameLayer {
+friend class Game;
 private:
 
+  void onGUIXXX(const Vec2& );
+  HUDLayer* getHUD();
+  void inizGame();
+  void mkAsh();
+  void reset();
+  //void onGameOver();
+
   NO__CPYASS(PlayLayer)
+
+  a::NodeList* boardNode;
   EFactory* factory;
   bool playable;
-
-  HUDLayer* getHUD();
-  void mkAsh();
 
 public:
 
   virtual void sendMsg(const stdstr& topic, void* msg);
-  virtual void reset(bool newFlag) ;
-  virtual void replay() ;
   virtual void play();
-  virtual void onGameOver();
+  virtual void stop();
+  virtual int getIID() { return 2; }
 
   virtual f::XLayer* realize();
 
-  void onPlayerKilled();
-  void onEarnScore(int);
-  void spawnPlayer();
-
-  virtual int getIID() { return 2; }
-  virtual void inizGame();
+  //void onPlayerKilled();
+  //void onEarnScore(int);
+  //void spawnPlayer();
 
   DECL_CTOR(PlayLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-PlayLayer::~PlayLayer() {
-
+GLayer::~GLayer() {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-PlayLayer::PlayLayer() {
+GLayer::GLayer() {
   playable=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-HUDLayer* PlayLayer::getHUD() {
+HUDLayer* GLayer::getHUD() {
   return static_cast<HUDLayer*>( getSceneX()->getLayer(3));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* PlayLayer::realize() {
+f::XLayer* GLayer::realize() {
   enableEventHandlers();
   cx::pauseAudio();
   playable=false;
@@ -94,7 +94,7 @@ f::XLayer* PlayLayer::realize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::inizGame() {
+void GLayer::inizGame() {
 
   CC_LOOP(it, atlases) { it->second->removeAllChildren(); }
 
@@ -135,30 +135,38 @@ void PlayLayer::inizGame() {
   CCLOG("init-game - ok");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::reset() {
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::mkAsh() {
+void GLayer::mkAsh() {
   auto e = a::Engine::reify();
   auto d = CC_DICT();
   auto f = new EFactory(e, d);
 
   CC_DROP(this->options)
   this->options= d;
-
   this->engine = e;
   this->factory=f;
+  CC_KEEP(this->options)
 
   e->regoSystem(new Resolve(f, d));
   e->regoSystem(new Stager(f, d));
   e->regoSystem(new Motion(f, d));
   e->regoSystem(new Logic(f, d));
 
-  CC_KEEP(this->options)
+  BoardNode n;
+  boardNode = e->getNodeList(n.typeId());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::replay() {
+void GLayer::replay() {
   if (MGMS()->isLive()) {
     // request server to restart a new game
     ws::netSend(MGMS()->wsock(), new ws::OdinEvent(
@@ -168,36 +176,36 @@ void PlayLayer::replay() {
   } else {
     inizGame();
     reset(false);
-    initAsh();
+    mkAsh();
     getSceneX()->resume();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::updateHUD() {
-  if (this->playable) {
-    getHUD()->drawStatus(CC_GDV(c::Integer, this->options, "pnum"));
-  } else {
+void GLayer::updateHUD() {
+  if (! this->playable) {
     getHUD()->drawResult(CC_GDV(c::Integer, this->options, "lastWinner"));
+  } else {
+    getHUD()->drawStatus(CC_GDV(c::Integer, this->options, "pnum"));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::playTimeExpired() {
+void GLayer::playTimeExpired() {
   MGMS()->msgQueue().push("forfeit");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::overAndDone(int winner) {
+void GLayer::overAndDone(int winner) {
   getHUD()->endGame(winner);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::update(float dt) {
+void GLayer::update(float dt) {
   if (playable && NNP(engine)) {
     engine->update(dt);
   }
@@ -205,70 +213,125 @@ void PlayLayer::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayLayer::sendMsg(const stdstr& topic, void* msg) {
-  auto par = CC_PCAST(Game*);
+bool GLayer::onTouchBegan(c::Touch*, c::Event*) {
+  return true;
+}
+void GLayer::onTouchMoved(c::Touch*, c::Event*) {
+}
+void GLayer::onTouchEnded(c::Touch* t, c::Event*) {
+  onGUIXXX(t->getLocation());
+}
 
-  if ("/hud/showmenu" == topic) {
-    showMenu();
-  }
-  else
-  if ("/hud/timer/show" == topic) {
-    getHUD()->showTimer();
-  }
-  else
-  if ("/net/restart" == topic) {
-    getHUD()->killTimer();
-    play(false);
-  }
-  else
-  if ("/net/stop" == topic) {
-    overAndDone(msg.status);
-  }
-  else
-  if ("/hud/timer/hide" == topic) {
-    getHUD()->killTimer();
-  }
-  else
-  if ("/hud/score/update" == topic) {
-    auto p = (j::Json*) msg;
-    getHUD()->updateScore(p["color"].int_value(), p["score"].int_value());
-  }
-  else
-  if ("/hud/end" == topic) {
-    auto p = (j::Json*) msg;
-    overAndDone( p["winner"].int_value());
-  }
-  else
-  if ("/hud/update" == topic) {
-    auto p= (j::Json*) msg;
-    getHUD()->draw(p["running"].int_value(), p["pnum"].int_value());
-  }
-  else
-  if ("/player/timer/expired" == topic) {
-    playTimeExpired();
-  }
-  else
-  if ("/game/stop" == topic) {
-    playable=false;
-  }
-  else
-  if ("/game/play" == topic) {
-    playable=true;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::initTouch() {
+  auto tc= c::EventListenerTouchOneByOne::create();
+  addListener(tc);
+
+  tc->onTouchBegan = CC_CALLBACK_2(GLayer::onTouchBegan, this);
+  tc->onTouchMoved = CC_CALLBACK_2(GLayer::onTouchMoved, this);
+  tc->onTouchEnded = CC_CALLBACK_2(GLayer::onTouchEnded, this);
+  tc->setSwallowTouches(true);
+  touch =tc;
+  CCLOG("init-touch: listener = %p", touch);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseUp(c::Event* e) {
+  auto evt = (c::EventMouse*) e;
+  onGUIXXX(evt->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::initMouse() {
+  mouse = c::EventListenerMouse::create();
+  addListener(mouse);
+  mouse->onMouseUp = CC_CALLBACK_1(GLayer::onMouseUp, this);
+  CCLOG("init-mouse: listener = %p", mouse);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onGUIXXX(const Vec2& pos) {
+  if (NNP(boardNode) &&
+      NNP(boardNode->head)) {
+    auto sel= CC_GNF(UISelection, boardNode->head, "selection");
+    sel->px= pos.x;
+    sel->py= pos.y;
+    sel->cell =  -1;
   }
 }
 
 END_NS_UNAMED()
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::sendMsg(const stdstr& topic, void* msg) {
+  auto y= (GLayer*) getGLayer();
+
+  if ("/hud/showmenu" == topic) {
+    y->showMenu();
+  }
+  else
+  if ("/hud/timer/show" == topic) {
+    y->getHUD()->showTimer();
+  }
+  else
+  if ("/net/restart" == topic) {
+    y->getHUD()->killTimer();
+    y->play();
+  }
+  else
+  if ("/net/stop" == topic) {
+    auto p= (j::Json*) msg;
+    y->overAndDone(p["status"].bool_value());
+  }
+  else
+  if ("/hud/timer/hide" == topic) {
+    y->getHUD()->killTimer();
+  }
+  else
+  if ("/hud/score/update" == topic) {
+    auto p = (j::Json*) msg;
+    y->getHUD()->updateScore(p["color"].int_value(), p["score"].int_value());
+  }
+  else
+  if ("/hud/end" == topic) {
+    auto p = (j::Json*) msg;
+    y->overAndDone( p["winner"].int_value());
+  }
+  else
+  if ("/hud/update" == topic) {
+    auto p= (j::Json*) msg;
+    y->getHUD()->draw(p["running"].bool_value(), p["pnum"].int_value());
+  }
+  else
+  if ("/player/timer/expired" == topic) {
+    y->playTimeExpired();
+  }
+  else
+  if ("/game/stop" == topic) {
+    y->playable=false;
+  }
+  else
+  if ("/game/play" == topic) {
+    y->playable=true;
+  }
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::stop() {
-  getGLayer()->sendMsg("/game/stop");
+  sendMsg("/game/stop");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::play() {
-  getGLayer()->sendMsg("/game/play");
+  sendMsg("/game/play");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -281,9 +344,9 @@ f::GameLayer* Game::getGLayer() {
 //
 f::XScene* Game::realize() {
 
-  auto g = f::ReifyRefType<GameLayer>();
-  auto b = f::ReifyRefType<BGLayer>();
   auto h = f::ReifyRefType<HUDLayer>();
+  auto g = f::ReifyRefType<GLayer>();
+  auto b = f::ReifyRefType<BGLayer>();
 
   addLayer( static_cast<f::XLayer*>(b), 1)->realize();
   addLayer( static_cast<f::XLayer*>(g), 2);

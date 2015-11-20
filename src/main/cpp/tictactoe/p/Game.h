@@ -25,6 +25,8 @@ protected:
 
 public:
 
+  virtual void sendMsg(const stdstr& topic, void* msg);
+
   virtual f::XScene* realize();
 
   virtual void stop();
