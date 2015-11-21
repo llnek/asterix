@@ -19,44 +19,100 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
 class CC_DLL UILayer : f::XLayer {
 protected:
 
+  void networkEvent(ws::OdinEvent*);
+  void sessionEvent(ws::OdinEvent*);
+  void odinEvent(ws::OdinEvent*);
+
+  void onLogin(c::Ref*);
   void onCancel(c::Ref* );
 
-public:
+  void onPlayReply(ws::OdinEvent*);
+  void showWaitOthers();
+  void onStart(ws::OdinEvent*);
 
   virtual f::XLayer* realize();
   ws::OdinIO* odin;
 
   NO__CPYASS(UILayer)
   DECL_CTOR(UILayer)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+UILayer::~UILayer() {
+  if (NNP(odin)) try { ws::close(odin); } catch (...) {}
 }
 
-END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+UILayer::UILayer() {
+  SNPTR(odin);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void UILayer::showWaitOthers() {
+
+  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("waitother"));
+  auto wz= cx::visRect();
+  auto cw= cx::center();
+  auto wb = cx::visBox();
+
+  removeAll();
+
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(cw.x, wb.top * 0.75);
+  qn->setOpacity(0.9*255);
+  addItem(qn);
+
+  auto b1= cx::reifyMenuBtn("cancel.png");
+  auto menu = cx::mkMenu(b1);
+  b1->setTarget(this, CC_MENU_SELECTOR(UILayer::onCancel));
+  menu->setPosition(cw.x, wb.top * 0.1);
+  addItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void NetPlay::onStart(ws::OdinEvent* evt) {
+
+  auto s= XCFG()->getSeedData();
+
+  s["ppids"] = evt->doco["source"]["ppids"];
+  s["pnum"]= player;
+
+  auto g = f::ReifyRefType<Game>();
+  auto io= odin;
+
+  SNPTR(odin)
+  prepareSeedData(mode);
+
+  cx::runScene( Game::reify(g, mode, io));
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref* ) {
-  try { ws::close(odin); } catch (...) {}
+  if (NNP(odin)) try { ws::close(odin); } catch (...) {}
   SNPTR(odin)
-  cx::runScene(MainMenu::reifyWithBackAction());
+  auto f= []() { cx::runScene(XCFG()->startWith()); };
+  auto m = MainMenu::reifyWithBackAction(f);
+  cx::runScene( m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::odinEvent(ws::odinEvent* evt) {
-  //CCLOG("odin event = %p", evt);
-  switch (evt->type) {
-    case ws::MType::NETWORK:
-      networkEvent(evt);
-    break;
-    case ws::MType::SESSION:
-      sessionEvent(evt);
-    break;
-  }
-  evt->release();
+void UILayer::onPlayReply(ws::OdinEvent* evt) {
+  player= evt->doco["pnum"].int_value();
+  CCLOG("player %d: ok", player);
+  showWaitOthers();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,15 +130,6 @@ void UILayer::networkEvent(ws::OdinEvent* evt) {
     break;
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlayReply(ws::OdinEvent* evt) {
-  player= evt->doco["pnum"].int_value();
-  CCLOG("player %d: ok", player);
-  showWaitOthers();
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::sessionEvent(ws::OdinEvent* evt) {
@@ -91,6 +138,21 @@ void UILayer::sessionEvent(ws::OdinEvent* evt) {
       onPlayReply(evt);
     break;
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void UILayer::odinEvent(ws::odinEvent* evt) {
+  //CCLOG("odin event = %p", evt);
+  switch (evt->type) {
+    case ws::MType::NETWORK:
+      networkEvent(evt);
+    break;
+    case ws::MType::SESSION:
+      sessionEvent(evt);
+    break;
+  }
+  evt->release();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,56 +222,42 @@ f::XLayer* UILayer::realize() {
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
+  auto b2= cx::reifyMenuBtn("cancel.png");
+  auto menu= cx::mkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
+
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onLogin));
 
-  auto b2= cx::reifyMenuBtn("cancel.png");
   b2->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onCancel));
 
-  auto menu= cx::mkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
   menu->setPosition(cw.x, wb.top * 0.1);
   tag= 117;
   addItem(menu, Option<int>(), Option<int>(tag));
 }
 
+END_NS_UNAMED()
+
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::showWaitOthers() {
-
-  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("waitother"));
-  auto wz= cx::visRect();
-  auto cw= cx::center();
-  auto wb = cx::visBox();
-
-  removeAll();
-
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setOpacity(0.9*255);
-  addItem(qn);
-
-  auto menu= f::ReifyRefType<cocos2d::Menu>();
-  auto b1= cx::reifyMenuBtn("cancel.png");
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(::onCancel));
-  menu->addChild(b1);
-  menu->setPosition(cw.x, wb.top * 0.1);
-  layer->addItem(menu);
+f::XScene* NetPlay::realize() {
+  auto y = f::ReifyRefType<UILayer>();
+  addLayer(y);
+  y->realize();
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::onStart(ws::OdinEvent* evt) {
-  auto s= XCFG()->getSeedData();
-  s["ppids"] = evt->doco["source"]["ppids"];
-  s["pnum"]= player;
+NetPlay::~NetPlay() {
 
-  MGMS()->setOnlineChannel(odin);
-  SNPTR(odin)
-  yes->execute();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+NetPlay::NetPlay() {
+
+}
 
 
 NS_END(tttoe)

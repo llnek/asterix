@@ -25,41 +25,6 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL PPInfo {
-  PPInfo(int n, const stdstr& s) { pnum=n; longID=s; }
-  PPInfo()=delete;
-  NO__CPYASS(PPInfo)
-  stdstr longID;
-  int pnum;
-};
-
-struct ViewData {
-  ViewData(c::Sprite* s, float x, float y, int v) {
-    sprite=s;
-    this->x=x;
-    this->y=y;
-    value=v;
-  }
-  c::Sprite* sprite;
-  float x;
-  float y;
-  int value;
-};
-
-struct HUDUpdate {
-  HUDUpdate(bool r, int p) { running=r; pnum=p; }
-  bool running;
-  int pnum;
-};
-
-struct ScoreUpdate {
-  ScoreUpdate(const stdstr& c, int n) { color=c; score=n; }
-  stdstr color;
-  int score;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 class CC_DLL SmartAlgo : public a::Component {
 public:
 
@@ -87,7 +52,7 @@ public:
   Grid(const ArrCells& seed, int sz = BD_SZ) {
     s::copy(s::begin(seed),
         s::end(seed), s::begin(values));
-    this->GOALS= mapGoalSpace(sz);
+    this->GOALS= mapGoalSpace();
   }
 
   virtual ~Grid() {}
@@ -112,7 +77,7 @@ class CC_DLL PlayView : public a::Component {
     this->layer= layer;
     this->size = sz;
     this->boxes= mapGridPos(1.0f);
-    this->pics.fill(nullptr);
+    this->cells.fill(nullptr);
   }
 
   virtual ~PlayView() {}
@@ -121,7 +86,7 @@ class CC_DLL PlayView : public a::Component {
   PlayView() = delete;
 
   s::array<f::Box4, GD_SZ> boxes;
-  s::array<c::Sprite*> cells;
+  s::array<c::Sprite*, GD_SZ> cells;
   f::XLayer* layer;
   c::Size size;
 };
@@ -134,12 +99,12 @@ public:
 
   virtual const a::COMType typeId() { return "n/NetPlay"; }
 
-  NetPlay() { SNPTR(event) }
+  NetPlay(not_null<ws::OdinIO*> io) { odin = io; }
 
   virtual ~NetPlay() {}
   NO__CPYASS(NetPlay)
 
-  void* event;
+  ws::OdinIO* odin;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -187,7 +152,6 @@ public:
   NO__CPYASS(Players)
 
   Players() {
-    parr.fill(nullptr);
   }
 
   s::array<Player,3> parr;

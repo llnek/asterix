@@ -24,6 +24,7 @@ protected:
 
   void initLabels();
   void initIcons();
+  void initScores();
 
   void showTimer();
   void updateTimer(float);
@@ -32,7 +33,7 @@ protected:
   void updateScore(int pcolor,  int value);
   void draw(bool running,  int pnum);
   void endGame(int winner);
-  void drawXXXText(obj, const stdstr& msg);
+  void drawXXXText(c::Label*, const stdstr& msg);
   void drawScores();
   void drawResult(int pnum);
   void drawStatus(int pnum);
@@ -48,6 +49,9 @@ protected:
   c::Label* countDown;
   c::Label* result;
   c::Label* status;
+  c::Label* title;
+  c::Label* score1;
+  c::Label* score2;
   c::Color3B  color;
 
   stdstr play2;

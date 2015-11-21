@@ -9,7 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "x2d/Funcs.h"
 #include "HUD.h"
 NS_BEGIN(tttoe)
 
@@ -17,25 +20,18 @@ NS_BEGIN(tttoe)
 //
 f::XLayer* HUDLayer::realize() {
 
-  this->color = cx::ColorRGB("#5e3178");
+  this->color = cx::colorRGB("#5e3178");
   regoAtlas("game-pics");
 
   initLabels();
   initIcons();
-
-  auto r= cx::reifyMenuBtn("icon_replay.png");
-  r->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::onReplay));
-  r->setColor(this->color);
-  //r->setScale(scale);
-  addReplayIcon(r, cx::anchorB());
 
   auto b= cx::reifyMenuBtn("icon_menu.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::showMenu));
   b->setColor(this->color);
   //b->setScale(scale);
-  addMenuIcon(b, cx::anchorB());
+  addMenuIcon(this, b, cx::anchorB());
 
   return this;
 }
@@ -60,14 +56,14 @@ void HUDLayer::initLabels() {
   //title
   title = cx::reifyBmfLabel( "font.JellyBelly", "");
   title->setScale(scale * 0.6);
-  title->setAnchor(cx::anchorT());
+  title->setAnchorPoint(cx::anchorT());
   title->setColor(this->color);
   title->setPosition(cw.x, wb.top - 2*tile);
   addItem(title);
 
   //score1
   score1= cx::reifyBmfLabel("font.SmallTypeWriting", "0");
-  score1->setAnchor(cx::anchorTL());
+  score1->setAnchorPoint(cx::anchorTL());
   score1->setColor(cx::white());
   score1->setScale(scale);
   score1->setPosition(tile + soff + 2, wb.top - tile - soff);
@@ -75,7 +71,7 @@ void HUDLayer::initLabels() {
 
   //score2
   score2= cx::reifyBmfLabel( "font.SmallTypeWriting", "0");
-  score2->setAnchor(cx::anchorTR());
+  score2->setAnchorPoint(cx::anchorTR());
   score2->setColor(cx::white());
   score2->setScale(scale);
   score2->setPosition(wb.right - tile - soff,
@@ -103,9 +99,9 @@ void HUDLayer::initLabels() {
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::showMenu));
   b->setColor(this->color);
-  auto menu = cx::MkMenu(b);
+  auto menu = cx::mkMenu(b);
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
-  addItem(menu, 10);
+  addItem(menu, f::Maybe<int>(10));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -128,16 +124,16 @@ void HUDLayer::showTimer() {
     countDown->setScale(scale * 0.5);
     countDown->setColor(cx::white());
     countDown->setPosition(cw.x, wb.top - 10*tile);
-    countDown->setAnchor(cx::anchorC());
+    countDown->setAnchorPoint(cx::anchorC());
     addItem(countDown);
   }
 
   countDownState= true;
   countDownValue= ptt;
 
-  showCountDown();
+  showCountDown("");
 
-  schedule(this->UpdateTimer, 1.0);
+  schedule(SEL_SCHEDULE(HUDLayer::updateTimer, this), 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -150,7 +146,7 @@ void HUDLayer::updateTimer(float dt) {
     killTimer();
     MGMS()->sendMsg("/player/timer/expired");
   } else {
-    showCountDown();
+    showCountDown("");
   }
 }
 
@@ -166,7 +162,7 @@ void HUDLayer::showCountDown(const stdstr& msg) {
 //
 void HUDLayer::killTimer() {
   if (countDownState) {
-    unschedule(this->updateTimer);
+    unschedule(SEL_SCHEDULE(HUDLayer::updateTimer, this));
     showCountDown(" ");
   }
   countDownValue=0;

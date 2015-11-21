@@ -38,7 +38,7 @@ Stager::Stager(not_null<EFactory*> f,
 void Stager::addToEngine(not_null<a::Engine*> e) {
 
   CCLOG("adding system: Stager");
-  factory->reifyArena( MGML());
+  factory->reifyBoard( MGML());
 
   BoardNode n;
   board = e->getNodeList(n.typeId());
@@ -89,7 +89,7 @@ void Stager::onceOnly(a::Node* node) {
 
   if (MGMS()->isOnline()) {
     CCLOG("reply to server: session started ok");
-    netSend(new ws::OdinEvent(
+    ws::netSend(nullptr, new ws::OdinEvent(
       ws::MType::SESSION,
       ws::EType::STARTED
     ));
@@ -123,7 +123,7 @@ void Stager::doIt(a::Node* node, float dt) {
     { "pnum", pnum }
   };
 
-  MGMS()->SendMsg("/hud/update", &msg);
+  MGMS()->sendMsg("/hud/update", &msg);
 }
 
 

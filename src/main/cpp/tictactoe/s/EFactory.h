@@ -30,7 +30,7 @@ public:
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
   virtual ~EFactory() {}
 
-  a::Entity* ReifyArena(not_null<f::XLayer*>);
+  a::Entity* reifyBoard(not_null<f::XLayer*>);
 
 };
 

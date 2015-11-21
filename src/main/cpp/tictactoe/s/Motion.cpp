@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "Motions.h"
+#include "Motion.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
@@ -75,15 +75,15 @@ bool Motions::onUpdate(float dt) {
   if (evQ.size() > 0) {
     auto evt= evQ.front();
     evQ.pop();
-    if (evt->getType() == c::Event::MOUSE) {
+    if (evt->getType() == c::Event::Type::MOUSE) {
       if (NNP(g)) { onGUI(g, (c::EventMouse*) evt); }
     }
     else
-    if (evt->getType() == c::Event::TOUCH) {
+    if (evt->getType() == c::Event::Type::TOUCH) {
       if (NNP(g)) { onGUI(g, (c::EventTouch*) evt); }
     }
     else
-    if (evt->getType() == c::Event::CUSTOM) {
+    if (evt->getType() == c::Event::Type::CUSTOM) {
       if (NNP(n)) { onSocket(n, (ws::OdinEvent*)evt); }
     }
 
@@ -119,7 +119,7 @@ void Motions::onNet(a::Node* node, const ws::OdinEvent* evt) {
       if (MGMS()->isLive()) {
         CCLOG("game will stop");
         MGMS()->sendMsg("/hud/timer/hide");
-        OnSess(node, evt);
+        onSess(node, evt);
         MGMS()->sendMsg("/net/stop", evt);
       }
     break;

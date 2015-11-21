@@ -50,7 +50,7 @@ TTTBoard::~TTTBoard() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool TTTBoard::IsNil(int cellv) {
+bool TTTBoard::isNil(int cellv) {
   return cellv == this->CV_Z;
 }
 

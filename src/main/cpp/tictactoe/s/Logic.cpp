@@ -74,7 +74,7 @@ void Logic::doIt(a::Node* node, float dt) {
       int rc=0;
       bd->syncState(grid->values, cp.value);
       rc= bd->getFirstMove();
-      if (rc < 0) { rc = fusii::algos::evalNegaMax<BD_SZ>(bd); }
+      if (rc < 0) { rc = fusii::algos::EvalNegaMax<BD_SZ>(bd); }
       enqueue(node, rc, cp.value, grid);
       cx::undoTimer(botTimer);
       SNPTR(botTimer)
@@ -145,7 +145,7 @@ void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
 
-  ws::netSend(new ws::OdinEvent(t,c, body));
+  ws::netSend(nullptr, new ws::OdinEvent(t,c, body));
 
   state->setObject(CC_INT(0), "pnum");
   cx::sfxPlay(snd);

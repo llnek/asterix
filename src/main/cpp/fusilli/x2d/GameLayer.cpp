@@ -104,7 +104,7 @@ void GameLayer::disableListeners() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::enableListeners() {
-  disableEventHandlers();
+  disableListeners();
   try {
     initMouse();
   } catch (...) {

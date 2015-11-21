@@ -35,6 +35,8 @@ namespace tttoe {
       float x, float y,
       int value, bool flip=false);
 
+  void prepareSeedData(f::GMode );
+
 };
 
 #endif

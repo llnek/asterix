@@ -20,22 +20,13 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL NetPlay : public f::XScene {
-protected:
-
-  virtual void onPlayReply(ws::OdinEvent*);
-  virtual void onStart(ws::OdinEvent*);
-
-  int player;
-
-  NO__CPYASS(NetPlay)
-
 public:
 
   virtual f::XScene* realize();
-
+  NO__CPYASS(NetPlay)
   DECL_CTOR(NetPlay)
-};
 
+};
 
 
 NS_END(tttoe)

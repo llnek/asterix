@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "utils.h"
 
@@ -121,6 +122,38 @@ c::Sprite* drawSymbol(not_null<PlayView*> view,
 
   view->layer->addAtlasItem("game-pics", s1);
   return s1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void prepareSeedData(f::GMode m) {
+
+  j::Json seed = j::Json::object {
+    {"ppids", j::Json::object {} },
+    {"pnum", 1 }
+  };
+
+  switch (m) {
+    case f::GMode::ONE:
+      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
+        1, XCFG()->getL10NStr("player1") };
+      seed["ppids"][ XCFG()->getL10NStr("p2") ] = j::Json::array {
+        2, XCFG()->getL10NStr("player2") };
+    break;
+
+    case f::GMode::TWO:
+      seed["ppids"][ XCFG()->getL10NStr("cpu") ] = j::Json::array {
+        2, XCFG()->getL10NStr("computer") };
+      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
+        1, XCFG()->getL10NStr("player1") };
+    break;
+
+    case f::GMode::NET:
+      seed["pnum"] = 0;
+    break;
+  }
+
+  XCFG()->setSeedData(seed);
 }
 
 

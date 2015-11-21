@@ -24,7 +24,6 @@ class CC_DLL MenuLayer : public f::XLayer {
 public:
   virtual f::XLayer* realize();
 
-  void maybeSeedGame(f::GMode);
   void onPlayXXX(f::GMode);
   void onNetPlay(c::Ref*);
   void onPlay(c::Ref*);
@@ -114,38 +113,6 @@ f::XLayer* MenuLayer::realize() {
   return this;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void MenuLayer::maybeSeedGame(f::GMode m) {
-
-  j::Json seed = j::Json::object {
-    {"ppids", j::Json::object {} },
-    {"pnum", 1 }
-  };
-
-  switch (m) {
-    case f::GMode::ONE:
-      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
-        1, XCFG()->getL10NStr("player1") };
-      seed["ppids"][ XCFG()->getL10NStr("p2") ] = j::Json::array {
-        2, XCFG()->getL10NStr("player2") };
-    break;
-
-    case f::GMode::TWO:
-      seed["ppids"][ XCFG()->getL10NStr("cpu") ] = j::Json::array {
-        2, XCFG()->getL10NStr("computer") };
-      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
-        1, XCFG()->getL10NStr("player1") };
-    break;
-
-    case f::GMode::NET:
-      seed["pnum"] = 0;
-    break;
-  }
-
-  XCFG()->setSeedData(seed);
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
 void MenuLayer::onNetPlay(c::Ref* r) {
@@ -155,7 +122,7 @@ void MenuLayer::onNetPlay(c::Ref* r) {
   auto f= []() { cx::runScene(XCFG()->startWith()); };
   auto n= []() { cx::runScene(MainMenu::reifyWithBackAction(f)); };
 
-  auto s= f::Online::reify(f::ReifyRefType<NetPlay>(), y,n);
+  auto s= f::ReifyRefType<NetPlay>();
   cx::runScene(s);
 }
 
@@ -170,7 +137,7 @@ void MenuLayer::onPlay(c::Ref* r) {
 //
 void MenuLayer::onPlayXXX(f::GMode mode) {
   auto g = f::ReifyRefType<Game>();
-  maybeSeedGame(mode);
+  prepareSeedData(mode);
   cx::runScene( Game::reify(g, mode) );
 }
 

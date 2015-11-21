@@ -20,16 +20,16 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : f::BaseSystem<EFactory> {
+class CC_DLL Resolve : public  f::BaseSystem<EFactory> {
 protected:
 
   bool checkWin(a::Node*, Player&, Grid*, ArrDim& );
   void showWinningIcons(a::Node*, const ArrDim& );
   void doWin(a::Node*, Player&, const ArrDim& );
 
-  const c::Vec2 xrefCell(int pos, PlayView*);
+  const c::Vec2 xrefCell(int pos, PlayView*, bool& found);
 
-  virtual bool onUpdate(float);
+  virtual bool onUpdate(float dt);
   void syncUp(a::Node*);
 
   void doIt(a::Node*, float);

@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "s/EFactory.h"
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "Game.h"
@@ -35,14 +36,31 @@ class CC_DLL GLayer : public f::GameLayer {
 friend class Game;
 private:
 
-  void onGUIXXX(const Vec2& );
+  void onGUIXXX(const c::Vec2& );
+  void updateHUD();
+  void playTimeExpired();
+  void overAndDone(int);
+  virtual void update(float);
+
+  bool onTouchBegan(c::Touch*, c::Event*);
+  void onTouchMoved(c::Touch*, c::Event*);
+  void onTouchEnded(c::Touch*, c::Event*);
+
+  virtual void initTouch();
+  virtual void initMouse();
+
+  void onMouseUp(c::Event*);
+  void showMenu();
+
+
+  void replay();
   HUDLayer* getHUD();
   void inizGame();
   void mkAsh();
   void reset();
   //void onGameOver();
 
-  NO__CPYASS(PlayLayer)
+  NO__CPYASS(GLayer)
 
   a::NodeList* boardNode;
   EFactory* factory;
@@ -61,7 +79,7 @@ public:
   //void onEarnScore(int);
   //void spawnPlayer();
 
-  DECL_CTOR(PlayLayer)
+  DECL_CTOR(GLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,6 +91,8 @@ GLayer::~GLayer() {
 //
 GLayer::GLayer() {
   playable=false;
+  SNPTR(factory)
+  SNPTR(boardNode)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,9 +104,9 @@ HUDLayer* GLayer::getHUD() {
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* GLayer::realize() {
-  enableEventHandlers();
   cx::pauseAudio();
   playable=false;
+  enableListeners();
   inizGame();
   scheduleUpdate();
   return this;
@@ -96,7 +116,7 @@ f::XLayer* GLayer::realize() {
 //
 void GLayer::inizGame() {
 
-  CC_LOOP(it, atlases) { it->second->removeAllChildren(); }
+  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
 
   if (atlases.empty()) {
     regoAtlas("game-pics");
@@ -109,13 +129,13 @@ void GLayer::inizGame() {
   auto seed = XCFG()->getSeedData();
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
-  auto ppids = seed["ppids"];
   stdstr p1k;
   stdstr p2k;
   stdstr p1n;
   stdstr p2n;
 
-  CC_LOOP(it, ppids) {
+  auto ppids = seed["ppids"].object_items();
+  F__LOOP(it, ppids) {
     auto arr= it->second;
     if (arr[0].int_value() == 1) {
       p1k= it->first;
@@ -144,7 +164,7 @@ void GLayer::reset() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::mkAsh() {
-  auto e = a::Engine::reify();
+  auto e = mc_new( a::Engine );
   auto d = CC_DICT();
   auto f = new EFactory(e, d);
 
@@ -156,7 +176,7 @@ void GLayer::mkAsh() {
 
   e->regoSystem(new Resolve(f, d));
   e->regoSystem(new Stager(f, d));
-  e->regoSystem(new Motion(f, d));
+  e->regoSystem(new Motions(f, d));
   e->regoSystem(new Logic(f, d));
 
   BoardNode n;
@@ -175,7 +195,7 @@ void GLayer::replay() {
     ));
   } else {
     inizGame();
-    reset(false);
+    reset();
     mkAsh();
     getSceneX()->resume();
   }
@@ -224,7 +244,7 @@ void GLayer::onTouchEnded(c::Touch* t, c::Event*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::initTouch() {
+void GLayer::initTouch() {
   auto tc= c::EventListenerTouchOneByOne::create();
   addListener(tc);
 
@@ -254,7 +274,7 @@ void GLayer::initMouse() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onGUIXXX(const Vec2& pos) {
+void GLayer::onGUIXXX(const c::Vec2& pos) {
   if (NNP(boardNode) &&
       NNP(boardNode->head)) {
     auto sel= CC_GNF(UISelection, boardNode->head, "selection");
@@ -325,13 +345,13 @@ void Game::sendMsg(const stdstr& topic, void* msg) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::stop() {
-  sendMsg("/game/stop");
+  sendMsg("/game/stop", nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::play() {
-  sendMsg("/game/play");
+  sendMsg("/game/play", nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////

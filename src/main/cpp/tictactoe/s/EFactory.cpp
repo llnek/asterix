@@ -25,23 +25,22 @@ EFactory::EFactory(not_null<a::Engine*> e,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::ReifyArena(not_null<f::XLayer*> layer) {
+a::Entity* EFactory::reifyBoard(not_null<f::XLayer*> layer) {
 
   auto nil= CC_CSV(c::Integer, "CV_Z");
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
-  auto ent= engine->ReifyEntity("game");
+  auto ent= engine->reifyEntity("game");
 
   auto bd= new TTTBoard<BD_SZ>(nil, xv, ov);
   ArrCells seed;
   seed.fill(nil);
 
-  ent->Checkin(new Grid(seed));
-  ent->Checkin(new Board());
-  ent->Checkin(new UISelection());
-  ent->Checkin(new SmartAlgo(bd));
-  ent->Checkin(new NetPlay());
-  ent->Checkin(new PlayView(layer));
+  ent->checkin(new NetPlay(MGMS()->wsock()));
+  ent->checkin(new Grid(seed));
+  ent->checkin(new UISelection());
+  ent->checkin(new SmartAlgo(bd));
+  ent->checkin(new PlayView(layer));
 
   return ent;
 };

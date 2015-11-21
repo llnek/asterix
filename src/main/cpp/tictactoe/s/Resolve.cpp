@@ -59,7 +59,7 @@ void Resolve::syncUp(a::Node* node) {
         }
         z = drawSymbol(view, c.x, c.y, v, false);
         z->setPosition(c.x, c.y);
-        z->setUserObjec(CC_INT(v));
+        z->setUserObject(CC_INT(v));
       }
     }
   }
@@ -215,7 +215,7 @@ void Resolve::doDone(a::Node* node, Player& pobj) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::CheckDraw(a::Node* node, Grid* gd) {
+bool Resolve::checkDraw(a::Node* node, Grid* gd) {
 
   auto nil= CC_CSV(c::Integer, "CV_Z");
 

@@ -61,7 +61,7 @@ public:
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> { "playcmd", "grid" },
+        s::vector<stdstr> { "wsock", "grid" },
         s::vector<a::COMType> { "n/NetPlay", "n/Grid" });
   }
 
