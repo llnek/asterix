@@ -12,7 +12,7 @@
 #if !defined(__GNODES_H__)
 #define __GNODES_H__
 
-#include "cobjs.h"
+#include "CObjs.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -25,10 +25,9 @@ public:
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
         s::vector<stdstr> {
-          "selection", "board", "robot", "grid", "view" },
+          "selection", "robot", "grid", "view" },
         s::vector<a::COMType> {
-          "n/UISelection", "n/Board", "n/SmartAlgo",
-          "n/Grid", "n/PlayView" });
+          "n/UISelection", "n/SmartAlgo", "n/Grid", "n/PlayView" });
   }
 
   NO__CPYASS(BoardNode)
@@ -51,25 +50,6 @@ public:
   NO__CPYASS(GUINode)
   IMPL_CTOR(GUINode)
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL NetPlayNode : public a::NodeFactory {
-public:
-
-  virtual const a::NodeType typeId() { return "n/NetPlayNode"; }
-
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s::vector<stdstr> { "wsock", "grid" },
-        s::vector<a::COMType> { "n/NetPlay", "n/Grid" });
-  }
-
-  NO__CPYASS(NetPlayNode)
-  IMPL_CTOR(NetPlayNode)
-};
-
-
 
 
 NS_END(tttoe)

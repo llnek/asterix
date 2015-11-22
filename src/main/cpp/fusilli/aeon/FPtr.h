@@ -6,8 +6,7 @@
 NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename _Tp1>
-struct FS_DLL FPtr_ref {
+template<typename _Tp1> struct FS_DLL FPtr_ref {
   _Tp1* _M_ptr;
   explicit
   FPtr_ref(_Tp1* __p) : _M_ptr(__p) { }
@@ -15,8 +14,7 @@ struct FS_DLL FPtr_ref {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename _Tp>
-class FS_DLL FPtr {
+template<typename _Tp> class FS_DLL FPtr {
 private:
   _Tp* _M_ptr;
 

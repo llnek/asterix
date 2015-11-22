@@ -138,9 +138,8 @@ c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text) {
 c::Label* reifyBmfLabel(float x, float y,
     const stdstr& font, const stdstr& text) {
 
-  auto f= c::Label::createWithBMFont(XCFG()->getFont(font), text);
+  auto f= reifyBmfLabel(font, text);
   f->setPosition(x,y);
-  f->setOpacity(0.9*255);
   return f;
 }
 

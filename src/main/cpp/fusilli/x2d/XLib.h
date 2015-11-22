@@ -9,19 +9,15 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__FUNCS_H__)
-#define __FUNCS_H__
+#if !defined(__XLIB_H__)
+#define __XLIB_H__
 
 #include "base/ccTypes.h"
 #include "XLayer.h"
 NS_BEGIN(fusii)
 
 
-c::Menu* addMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b,
-    const c::Vec2& where);
-
-c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
-    const c::Vec2& where);
+c::Menu* addMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b);
 
 c::Menu* addAudioIcons(not_null<XLayer*> layer,
     not_null<c::MenuItem*> off,

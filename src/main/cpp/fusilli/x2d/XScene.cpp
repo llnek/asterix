@@ -18,46 +18,44 @@ NS_BEGIN(fusii)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SimpleLayer : public XLayer {
+class CC_DLL SimLayer : public XLayer {
 public:
-
   virtual XLayer* realize();
-
-  NO__CPYASS(SimpleLayer)
-  IMPL_CTOR(SimpleLayer)
+  NO__CPYASS(SimLayer)
+  IMPL_CTOR(SimLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SimpleScene : public XScene {
+class CC_DLL SimScene : public XScene {
 public:
 
-  SimpleScene* setDecoUI(s::function<void (XLayer*)> d) {
+  SimScene* setDecoUI(s::function<void (XLayer*)> d) {
     deco=d;
     return this;
   }
 
   s::function<void (XLayer*)> deco;
-  NO__CPYASS(SimpleScene)
+  NO__CPYASS(SimScene)
 
   void decoUI(XLayer* layer) {
     deco(layer);
   }
 
   virtual XScene* realize() {
-    auto y = ReifyRefType<SimpleLayer>();
+    auto y = reifyRefType<SimLayer>();
     addLayer(y);
     y->realize();
     return this;
   }
 
-  IMPL_CTOR(SimpleScene)
+  IMPL_CTOR(SimScene)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XLayer* SimpleLayer::realize() {
-  CC_PCAST(SimpleScene*)->decoUI(this);
+XLayer* SimLayer::realize() {
+  CC_PCAST(SimScene*)->decoUI(this);
   return this;
 }
 
@@ -66,7 +64,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 XScene* XSceneFactory::reifySimple(s::function<void (XLayer*)> d) {
-  return ReifyRefType<SimpleScene>()->setDecoUI(d)->realize();
+  return reifyRefType<SimScene>()->setDecoUI(d)->realize();
 }
 
 //////////////////////////////////////////////////////////////////////////////

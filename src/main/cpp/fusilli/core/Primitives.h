@@ -86,8 +86,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-T* DictVal(not_null<c::Dictionary*> d, const stdstr& key) {
+template<typename T> T* dictVal(not_null<c::Dictionary*> d, const stdstr& key) {
   auto v= d->objectForKey(key);
   if (NNP(v)) {
     return static_cast<T*>(v);
@@ -98,8 +97,7 @@ T* DictVal(not_null<c::Dictionary*> d, const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-T* ReifyRefType() {
+template<typename T> T* reifyRefType() {
   T* pRet = new(std::nothrow) T();
   if (pRet && pRet->init()) {
     pRet->autorelease();
@@ -112,8 +110,7 @@ T* ReifyRefType() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-void EmptyQueue(s::queue<T>& q) {
+template<typename T> void emptyQueue(s::queue<T>& q) {
   while (! q.empty()) {
     q.pop();
   }

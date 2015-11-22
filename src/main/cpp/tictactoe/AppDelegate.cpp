@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/NodeRegistry.h"
-#include "n/gnodes.h"
+#include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
 NS_USING(tttoe)
@@ -25,9 +25,8 @@ AppDelegate::AppDelegate() {
   auto r= NodeRegistry::self();
   auto c= Config::reify();
 
-  r->Register( mc_new(NetPlayNode));
-  r->Register( mc_new(GUINode));
   r->Register( mc_new(BoardNode));
+  r->Register( mc_new(GUINode));
 
   // step.2: set up app-config
   XConfig::bind(c);

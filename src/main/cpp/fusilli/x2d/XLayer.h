@@ -41,7 +41,7 @@ public:
 
   virtual c::SpriteBatchNode* getAtlas(const stdstr& name);
   virtual void onQuit(c::Ref*);
-  virtual XLayer* realize();
+  virtual XLayer* realize() = 0;
 
   virtual void addAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,

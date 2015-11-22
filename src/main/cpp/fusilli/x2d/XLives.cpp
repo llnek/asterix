@@ -32,12 +32,9 @@ void XLives::reduce(int x) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::reset() {
-  F__LOOP(it, icons) {
-    auto n= *it;
-    n->removeFromParent();
-  }
-  curLives = totalLives;
+  F__LOOP(it, icons) { auto n= *it; n->removeFromParent(); }
   icons.clear();
+  curLives = totalLives;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,11 +51,11 @@ void XLives::drawLives() {
   float x;
 
   for (int n = 0; n < curLives; ++n) {
-    auto v= c::Sprite::createWithSpriteFrameName(frameId);
+    auto v= cx::reifySprite(frameId);
     if (n==0) {
       lifeSize = v->getContentSize();
-      y= refPt.y - lifeSize.height * 0.5;
-      x= refPt.x + lifeSize.width * 0.5;
+      y= refPt.y - HHZ(lifeSize);
+      x= refPt.x + HWZ(lifeSize);
     }
     v->setPosition(x,y);
     addChild(v);
@@ -66,7 +63,7 @@ void XLives::drawLives() {
     if (this->dir > 0) {
       x += lifeSize.width * 1.2f;
     } else {
-      x -= lifeSize.width - 1.2f;
+      x -= lifeSize.width * 1.2f;
     }
   }
 }
@@ -78,9 +75,9 @@ void XLives::realize(const stdstr& frame,
     float x, float y, int d) {
 
   totalLives = lives;
+  frameId = frame;
   curLives = 0;
   dir = d;
-  frameId = frame;
 
   refPt= c::Vec2(x,y);
   reset();
@@ -102,3 +99,4 @@ XLives::XLives() {
 
 
 NS_END(fusii)
+

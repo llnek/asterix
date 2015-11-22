@@ -34,12 +34,10 @@ protected:
 
 public:
 
+  virtual void realize( const stdstr& frame, int lives, float x, float y, int dir= 1);
+
   bool isDead() { return curLives < 0; }
   int getLives() { return curLives; }
-
-  virtual void realize( const stdstr& frame,
-      int lives,
-      float x, float y, int dir= 1);
 
   void reduce(int cnt = 1);
   void reset();

@@ -63,9 +63,9 @@ public:
   virtual void stop() = 0;
   virtual void play() = 0;
 
-  virtual void sendMsg(const stdstr& topic, void* msg) = 0;
+  virtual void sendMsgEx(const stdstr& topic, void* msg) = 0;
   void sendMsg(const stdstr& topic) {
-    sendMsg(topic, nullptr);
+    sendMsgEx(topic, nullptr);
   }
 
   XPool* reifyPool(const stdstr& n);

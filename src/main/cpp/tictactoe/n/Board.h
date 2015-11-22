@@ -9,34 +9,34 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__TTTBOARD_H__)
-#define __TTTBOARD_H__
+#if !defined(__BOARD_H__)
+#define __BOARD_H__
 
 #include "algos/NegaMax.h"
-#include "cobjs.h"
+#include "CObjs.h"
 #include <tuple>
 NS_ALIAS(ag, fusii::algos)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-class FS_DLL TTTBoard : public ag::GameBoard<BD_SZ> {
+class FS_DLL Board : public ag::GameBoard<BD_SZ> {
 protected:
 
-  bool testWin(const ArrCells&, int actor, const ArrDim& combo);
+  bool testWin(const ArrCells& , int actor, const ArrDim& combo);
 
   const s::vector<ArrDim>& GOALS;
   s::array<int,3> actors;
   ArrCells grid;
   int CV_Z;
 
-  NO__CPYASS(TTTBoard)
-  TTTBoard() = delete;
+  NO__CPYASS(Board)
+  Board() = delete;
 
 public:
 
-  TTTBoard(int nil,  int p1v,  int p2v);
-  virtual ~TTTBoard();
+  Board(int nil,  int p1v,  int p2v);
+  virtual ~Board();
 
   int getOtherPlayer(int pv);
   bool isNil(int cellv);

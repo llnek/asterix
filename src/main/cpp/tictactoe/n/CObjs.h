@@ -18,8 +18,8 @@
 #include "ash/Ash.h"
 #include "s/utils.h"
 
-NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(j, json11)
 NS_BEGIN(tttoe)
 
@@ -30,7 +30,7 @@ public:
 
   virtual const a::COMType typeId() { return "n/SmartAlgo"; }
 
-  SmartAlgo(not_null<TTTBoard*> b) {
+  SmartAlgo(not_null<Board*> b) {
     this->board= b;
   }
 
@@ -39,7 +39,7 @@ public:
   NO__CPYASS(SmartAlgo)
   SmartAlgo() = delete;
 
-  TTTBoard* board;
+  Board* board;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public:
 
   virtual const a::COMType typeId() { return "n/Grid"; }
 
-  Grid(const ArrCells& seed, int sz = BD_SZ) {
+  Grid(const ArrCells& seed) {
     s::copy(s::begin(seed),
         s::end(seed), s::begin(values));
     this->GOALS= mapGoalSpace();
@@ -72,12 +72,10 @@ class CC_DLL PlayView : public a::Component {
   virtual const a::COMType typeId() { return "n/PlayView"; }
 
   PlayView(not_null<f::XLayer*> layer) {
-    auto sp = cx::reifySprite("z.png");
-    auto sz= sp->getContentSize();
-    this->layer= layer;
-    this->size = sz;
+    this->size = cx::calcSize("z.png");
     this->boxes= mapGridPos(1.0f);
     this->cells.fill(nullptr);
+    this->layer= layer;
   }
 
   virtual ~PlayView() {}
@@ -85,26 +83,10 @@ class CC_DLL PlayView : public a::Component {
   NO__CPYASS(PlayView)
   PlayView() = delete;
 
-  s::array<f::Box4, GD_SZ> boxes;
   s::array<c::Sprite*, GD_SZ> cells;
+  s::array<f::Box4, GD_SZ> boxes;
   f::XLayer* layer;
   c::Size size;
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL NetPlay : public a::Component {
-public:
-
-  virtual const a::COMType typeId() { return "n/NetPlay"; }
-
-  NetPlay(not_null<ws::OdinIO*> io) { odin = io; }
-
-  virtual ~NetPlay() {}
-  NO__CPYASS(NetPlay)
-
-  ws::OdinIO* odin;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -127,7 +109,7 @@ public:
 
   virtual ~Player() {}
 
-  NO__CPYASS(Player)
+  //NO__CPYASS(Player)
   Player() = delete;
 
   stdstr pidlong;

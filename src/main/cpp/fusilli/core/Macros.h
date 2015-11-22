@@ -12,11 +12,11 @@
 #if !defined(__MACROS_H__)
 #define __MACROS_H__
 
-#define CC_GDS(d,f) fusii::DictVal<cocos2d::String>(d,f)->getCString()
-#define CC_CSS(f) fusii::CstVal<cocos2d::String>(f)->getCString()
+#define CC_GDS(d,f) fusii::dictVal<cocos2d::String>(d,f)->getCString()
+#define CC_CSS(f) fusii::cstVal<cocos2d::String>(f)->getCString()
 
-#define CC_GDV(t,d,f) fusii::DictVal<t>(d,f)->getValue()
-#define CC_CSV(t,f) fusii::CstVal<t>(f)->getValue()
+#define CC_GDV(t,d,f) fusii::dictVal<t>(d,f)->getValue()
+#define CC_CSV(t,f) fusii::cstVal<t>(f)->getValue()
 
 #define CC_DTOR() cocos2d::Director::getInstance()
 #define CC_PCAST(T) static_cast<T>(getParent())
@@ -29,7 +29,7 @@
 #define CC_INT(x) cocos2d::Integer::create(x)
 #define CC_DICT() cocos2d::Dictionary::create()
 
-#define CC_GNF(t,n,f) ash::NodeFld<t>(n,f)
+#define CC_GNF(t,n,f) ash::nodeFld<t>(n,f)
 
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;

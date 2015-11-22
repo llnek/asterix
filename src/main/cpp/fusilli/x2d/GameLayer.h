@@ -44,17 +44,10 @@ protected:
 
 public:
 
-  virtual void sendMsg(const stdstr& topic, void* msg) = 0;
-  void sendMsg(const stdstr& topic) {
-    sendMsg(topic, nullptr);
-  }
-
   bool keyPoll(c::EventKeyboard::KeyCode );
-  virtual const Box4 getEnclosureBox();
-  virtual int getIID() { return 2; }
 
-  //virtual void update(float);
-  //virtual XLayer* realize();
+  virtual const Box4 getEnclosureBox();
+
   virtual ~GameLayer();
 
 };

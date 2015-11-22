@@ -67,11 +67,12 @@ public:
 //
 n::WebSocket* connect(not_null<OdinIO*>, const stdstr& url);
 
+void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
+
 void disconnect(not_null<OdinIO*>);
 
 void close(not_null<OdinIO*>);
 
-void netSend(not_null<OdinIO*>, OdinEvent*);
 
 owner<OdinIO*> reifyPlayRequest(const stdstr& game,
     const stdstr& user, const stdstr& pwd);

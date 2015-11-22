@@ -23,8 +23,7 @@ NS_BEGIN(tttoe)
 const s::array<Box4,GD_SZ> mapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
-  auto sp = cx::reifySprite("z.png");
-  auto z = sp->getContentSize();
+  auto z = cx::calcSize("z.png");
   auto csz = cx::scaleSize(z, scale);
   auto ro= 8/72 * scale;
   auto cw = cx::center();
@@ -134,14 +133,14 @@ void prepareSeedData(f::GMode m) {
   };
 
   switch (m) {
-    case f::GMode::ONE:
+    case f::GMode::TWO:
       seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
         1, XCFG()->getL10NStr("player1") };
       seed["ppids"][ XCFG()->getL10NStr("p2") ] = j::Json::array {
         2, XCFG()->getL10NStr("player2") };
     break;
 
-    case f::GMode::TWO:
+    case f::GMode::ONE:
       seed["ppids"][ XCFG()->getL10NStr("cpu") ] = j::Json::array {
         2, XCFG()->getL10NStr("computer") };
       seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {

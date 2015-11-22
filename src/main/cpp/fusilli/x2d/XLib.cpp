@@ -11,16 +11,16 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Funcs.h"
+#include "XLib.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Menu* addMenuIcon(not_null<XLayer*> layer,
-		not_null<c::MenuItem*> b) {
+    not_null<c::MenuItem*> b) {
 
-  auto menu= ReifyRefType<cocos2d::Menu>();
+  auto menu= reifyRefType<cocos2d::Menu>();
   menu->addChild(b);
   layer->addItem(menu);
   return menu;
@@ -28,6 +28,7 @@ c::Menu* addMenuIcon(not_null<XLayer*> layer,
 
 //////////////////////////////////////////////////////////////////////////////
 //
+/*
 c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
     const c::Vec2& where ) {
 
@@ -51,7 +52,7 @@ c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
 
   return menu;
 }
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 //

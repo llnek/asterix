@@ -110,7 +110,7 @@ void Engine::notifyModify(not_null<Entity*> e) {
 void Engine::purgeEntity(not_null<Entity*> e) {
   auto it = groups.find(e->groupId());
   if (it != groups.end()) {
-    purgeEntity(it->second,e);
+    purgeEntity(it->second, e);
   }
 }
 

@@ -112,8 +112,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-T* CstVal(const stdstr& key) {
+template<typename T> T* cstVal(const stdstr& key) {
   auto r= fusii::XConfig::self()->getCst(key);
   if (NNP(r)) {
     return static_cast<T*>( r);

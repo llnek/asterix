@@ -46,8 +46,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-T* NodeFld(not_null<ash::Node*> n, const stdstr& fld) {
+template<typename T> T* nodeFld(not_null<ash::Node*> n, const stdstr& fld) {
   auto v= n->get(fld);
   if (NNP(v)) {
     return (T*) v;

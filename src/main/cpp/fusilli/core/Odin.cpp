@@ -58,7 +58,7 @@ owner<OdinEvent*> getPlayRequest(not_null<OdinIO*> wss) {
 //
 owner<OdinEvent*> json_decode(const n::WebSocket::Data& e) {
 
-  OdinEvent* evt= nullptr;
+  OdinEvent* evt= new OdinEvent();
   stdstr err;
 
   assert(!e.isBinary);
@@ -78,7 +78,10 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinIO::~OdinIO() {
-  mc_del_ptr(socket)
+  try {
+    disconnect(this);
+  }
+  catch (...) {}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,11 +117,12 @@ OdinIO::OdinIO() {
 //////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 //
-void NetSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
-  if (wss->state == CType::S_CONNECTED) {
-    auto d= evtToDoc(evt);
-    wss->socket->send(d.dump());
-  }
+void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
+	c::RefPtr ref(evt.get());
+	if (wss->state == CType::S_CONNECTED) {
+      auto d= evtToDoc(evt);
+      wss->socket->send(d.dump());
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -182,8 +186,8 @@ void OdinIO::reset() {
 // Close the connection to the socket
 //
 void close(not_null<OdinIO*> wss) {
-  wss->cancelAll();
   try {
+    wss->cancelAll();
     wss->socket->close();
   }
   catch (...)
@@ -205,20 +209,23 @@ void OdinIO::onOpen(n::WebSocket* ws) {
   // send the play game request
   state= CType::S_CONNECTED;
   socket=ws;
-  ws->send(evtToDoc(getPlayRequest(this)).dump());
+  auto evt= getPlayRequest(this);
+  c::RefPtr ref(evt);
+  ws->send(evtToDoc(evt).dump());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void OdinIO::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
   auto evt= json_decode(data);
+  c::RefPtr ref(evt);
   switch (evt->type) {
     case MType::NETWORK:
     case MType::SESSION:
       onEvent(evt);
     break;
     default:
-      CCLOG("unhandled server event: %d, code: %d", (int) evt.type, (int) evt.code);
+      CCLOG("unhandled server event: %d, code: %d", (int) evt->type, (int) evt->code);
   }
 }
 

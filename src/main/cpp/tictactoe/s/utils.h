@@ -16,7 +16,7 @@
 #define BD_SZ 3
 
 #include "core/CCSX.h"
-#include "n/cobjs.h"
+#include "n/CObjs.h"
 
 typedef s::array<int, GD_SZ> ArrCells;
 typedef s::array<int, BD_SZ> ArrDim;

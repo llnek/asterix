@@ -21,8 +21,7 @@ const int PINF = 1000000;
 
 //////////////////////////////////////////////////////////////////////////
 //
-template<int Z>
-struct FS_DLL FFrame {
+template<int Z> struct FS_DLL FFrame {
   s::array<int, Z*Z> state;
   int lastBestMove;
   int other;
@@ -30,8 +29,7 @@ struct FS_DLL FFrame {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template<int Z>
-class FS_DLL GameBoard {
+template<int Z> class FS_DLL GameBoard {
 public:
 
   virtual const s::vector<int> getNextMoves(not_null<FFrame<Z>*>) = 0;
@@ -51,8 +49,7 @@ public:
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-template <int Z>
-int NegaMax(not_null<GameBoard<Z>*> board,
+template <int Z> int negaMax(not_null<GameBoard<Z>*> board,
     not_null<FFrame<Z>*> game,
     int maxDepth, int depth, int alpha, int beta) {
 
@@ -74,7 +71,7 @@ int NegaMax(not_null<GameBoard<Z>*> board,
     //try  a move
     board->makeMove(game, move);
     board->switchPlayer(game);
-    rc = - NegaMax(board, game, maxDepth, depth-1, -beta, -alpha);
+    rc = - negaMax(board, game, maxDepth, depth-1, -beta, -alpha);
     //now, roll it back
     board->switchPlayer(game);
     board->undoMove(game, move);
@@ -96,10 +93,9 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
-template <int Z>
-int EvalNegaMax(not_null<GameBoard<Z>*> board) {
+template <int Z> int evalNegaMax(not_null<GameBoard<Z>*> board) {
   auto f= board->takeFFrame();
-  NegaMax(board, f, 10, 10, -PINF, PINF);
+  negaMax(board, &f, 10, 10, -PINF, PINF);
   return f.lastBestMove;
 }
 

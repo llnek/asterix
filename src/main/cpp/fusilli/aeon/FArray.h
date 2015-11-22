@@ -17,24 +17,11 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-class FS_DLL FArray {
-protected:
-  int sz;
+template<typename T> class FS_DLL FArray {
+private:
   T* data;
+  int sz;
 public:
-
-  void clone(const FArray<T>& other);
-  void set(int pos, T value);
-  int size() { return sz; }
-  void fill(T v);
-  bool notAny(T v);
-  int randomIndex();
-  bool some(T v);
-  bool all(T v);
-  int find(T v);
-  T operator[](int pos);
-  T get(int pos);
 
   FArray<T>& operator=(const FArray<T>&);
   FArray<T>& operator=(FArray<T>&&);
@@ -42,12 +29,27 @@ public:
   FArray(const FArray<T>&);
   FArray(FArray<T>&&);
 
+  FArray<T>* clone();
+
+  void set(int pos, T value);
+  int size() { return sz; }
+
+  int randomIndex();
+  void fill(T v);
+
+  bool notAny(T v);
+  bool some(T v);
+  bool all(T v);
+  int find(T v);
+
+  T operator[](int pos);
+  T get(int pos);
+
   explicit FArray(int z);
   FArray();
 
   virtual ~FArray();
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -76,12 +78,12 @@ FArray<T>::FArray(FArray<T>&& src) {
 template<typename T>
 FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
   mc_del_arr(data);
-  if (src.sz > 0) {
-    data= new T[src.sz];
-  }
   sz=src.sz;
-  for (int i=0; i < src.sz; ++i) {
-    data[i] = src.data[i];
+  if (sz > 0) {
+    data= new T[sz];
+    for (int i=0; i < sz; ++i) {
+      data[i] = src.data[i];
+    }
   }
   return *this;
 }
@@ -90,12 +92,13 @@ FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
 //
 template<typename T>
 FArray<T>::FArray(const FArray<T>& src) {
-  if (src.sz > 0) {
-    data= new T[src.sz];
-  }
+  data= nullptr;
   sz=src.sz;
-  for (int i=0; i < src.sz; ++i) {
-    data[i] = src.data[i];
+  if (sz > 0) {
+    data= new T[sz];
+    for (int i=0; i < sz; ++i) {
+      data[i] = src.data[i];
+    }
   }
 }
 
@@ -186,11 +189,12 @@ int FArray<T>::randomIndex() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::clone(const FArray<T>& other) {
-  assert(sz == other.sz);
-  for (int i=0; i < sz; ++i) {
-    data[i] = other.data[i];
+FArray<T>* FArray<T>::clone() {
+  auto rc= new FArray<T>(this->sz);
+  for (int i=0; i < this->sz; ++i) {
+    rc->data[i] = this->data[i];
   }
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
