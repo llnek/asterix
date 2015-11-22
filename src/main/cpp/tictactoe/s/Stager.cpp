@@ -109,6 +109,91 @@ void Stager::onceOnly(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+void Stager::onNet(ws::OdinEvent* evt) {
+
+  switch (evt->code) {
+    case ws::EType::RESTART:
+      CCLOG("restarting a new game...");
+      MGMS()->sendMsg("/net/restart");
+    break;
+    case ws::EType::STOP:
+      if (MGMS()->isLive()) {
+        CCLOG("game will stop");
+        MGMS()->sendMsg("/hud/timer/hide");
+        onSess( evt);
+        MGMS()->sendMsg("/net/stop", evt);
+      }
+    break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Stager::onSess(ws::OdinEvent* evt) {
+  auto ps= CC_GNF(Players, boardNode->head, "players");
+  auto grid= CC_GNF(Grid, boardNode->head, "grid");
+  auto snd="";
+  auto source = evt->doco["source"];
+  auto cmd= source["cmd"];
+  auto pnum= source["pnum"].int_value();
+
+  if (cmd.is_object()) {
+    auto cell= cmd["cell"].int_value();
+    auto cv= cmd["value"].int_value();
+    if (cell >= 0 &&
+        cell < GD_SZ) {//}grid->values.size()) {
+      if (ps->parr[1].value == cv) {
+        snd= "x_pick";
+      } else {
+        snd= "o_pick";
+      }
+      grid->values[cell] = cv;
+      cx::sfxPlay(snd);
+    }
+  }
+
+  if (pnum == 1 || pnum == 2) {} else { return; }
+
+  switch (evt->code) {
+    case ws::EType::POKE_MOVE:
+      CCLOG("player %d: my turn to move", pnum);
+      MGMS()->sendMsg("/hud/timer/show");
+      state->setObject(CC_INT(pnum), "pnum");
+    break;
+    case ws::EType::POKE_WAIT:
+      CCLOG("player %d: my turn to wait", pnum);
+      MGMS()->sendMsg("/hud/timer/hide");
+      // toggle color
+      auto p2= pnum == 1 ? 2 : 1;
+      state->setObject(CC_INT(p2), "pnum");
+    break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Stager::onSocket(ws::OdinEvent* evt) {
+  switch (evt->type) {
+    case ws::MType::NETWORK:
+      onNet(evt);
+    break;
+    case ws::MType::SESSION:
+      onSess(evt);
+    break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Stager::initOnline() {
+  auto ws = MGMS()->wsock();
+  ws->listen( [=](ws::OdinEvent* evt) {
+    this->onSocket(evt);
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 void Stager::doIt(a::Node* node, float dt) {
 
   auto pnum = CC_GDV(c::Integer, state, "pnum");

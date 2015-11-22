@@ -176,7 +176,6 @@ void GLayer::mkAsh() {
 
   e->regoSystem(new Resolve(f, d));
   e->regoSystem(new Stager(f, d));
-  e->regoSystem(new Motions(f, d));
   e->regoSystem(new Logic(f, d));
 
   BoardNode n;
@@ -276,12 +275,30 @@ void GLayer::initMouse() {
 //
 void GLayer::onGUIXXX(const c::Vec2& pos) {
   if (NNP(boardNode) &&
-      NNP(boardNode->head)) {
-    auto sel= CC_GNF(UISelection, boardNode->head, "selection");
-    sel->px= pos.x;
-    sel->py= pos.y;
-    sel->cell =  -1;
+      NNP(boardNode->head)) {} else { return; }
+
+  auto sel= CC_GNF(UISelection, boardNode->head, "selection");
+  auto view = CC_GNF(PlayView, boardNode->head, "view");
+  auto cur = CC_GDV(c::Integer, this->options, "pnum");
+  int n=0;
+
+  sel->cell =  -1;
+  sel->px= pos.x;
+  sel->py= pos.y;
+
+  if (cur >  0) {} else { return; }
+
+  //which cell did he click on?
+  F__LOOP(it, view->boxes) {
+    auto& bx = *it;
+    if (sel->px >= bx.left && sel->px <= bx.right &&
+        sel->py >= bx.bottom && sel->py <= bx.top) {
+      sel->cell= n;
+      break;
+    }
+    ++n;
   }
+
 }
 
 END_NS_UNAMED()
