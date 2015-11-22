@@ -12,8 +12,8 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
+#include "x2d/GameScene.h"
 #include "core/Factory.h"
-#include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -21,16 +21,16 @@ NS_BEGIN(tttoe)
 class CC_DLL EFactory  : public fusii::Factory {
 protected:
 
+  void initPlayers(Players*);
   NO__CPYASS(EFactory)
   EFactory() = delete;
-  void InitPlayers();
 
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
   virtual ~EFactory() {}
 
-  a::Entity* reifyBoard(not_null<f::XLayer*>);
+  a::Entity* reifyBoard(not_null<f::XLayer*> );
 
 };
 

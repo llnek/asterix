@@ -21,12 +21,11 @@ NS_BEGIN(tttoe)
 class CC_DLL MainMenu : public f::XScene {
 protected:
   NO__CPYASS(MainMenu)
-  VOIDFN backAction;
 public:
 
   static MainMenu* reifyWithBackAction(VOIDFN );
   virtual f::XScene* realize();
-  void onBackAction();
+  VOIDFN backAction;
 
   DECL_CTOR(MainMenu)
 };

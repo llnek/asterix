@@ -24,9 +24,10 @@ NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
 enum class GMode {
-  ONE,
+  ONE = 1,
   TWO,
-  NET
+  NET,
+  NICHTS = -1
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,6 +72,7 @@ public:
   XPool* reifyPool(const stdstr& n);
   XPool* getPool(const stdstr& n);
 
+  GMode getMode() { return mode; }
   c::Dictionary* getLCfg();
   void resetPools();
 

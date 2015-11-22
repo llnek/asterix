@@ -11,30 +11,31 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/cobjs.h"
+#include "n/CObjs.h"
+#include "s/utils.h"
 #include "Splash.h"
 NS_BEGIN(tttoe)
 
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SplashLayer : public f::XLayer {
+class CC_DLL UILayer : public f::XLayer {
 public:
   virtual f::XLayer* realize();
 
   void onPlay(c::Ref*);
   void demo();
 
-  NO__CPYASS(SplashLayer)
-  IMPL_CTOR(SplashLayer)
+  NO__CPYASS(UILayer)
+  IMPL_CTOR(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::demo() {
-  auto ps= mapGridPos(scale);
+void UILayer::demo() {
   auto scale= 0.75;
   auto fm= "";
+  auto ps= mapGridPos(scale);
 
   // we scale down the icons to make it look nicer
   for (auto i = 0; i < ps.size(); ++i) {
@@ -52,7 +53,7 @@ void SplashLayer::demo() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::onPlay(c::Ref* rr) {
+void UILayer::onPlay(c::Ref* rr) {
   auto f= []() { cx::runScene(XCFG()->startWith()); };
   auto m = MainMenu::reifyWithBackAction(f);
   cx::runScene( m);
@@ -60,7 +61,7 @@ void SplashLayer::onPlay(c::Ref* rr) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* SplashLayer::realize() {
+f::XLayer* UILayer::realize() {
 
   centerImage("game.bg");
   incIndexZ();
@@ -75,10 +76,10 @@ f::XLayer* SplashLayer::realize() {
   demo();
 
   // play button
-  auto menu= f::ReifyRefType<cocos2d::Menu>();
+  auto menu= f::reifyRefType<cocos2d::Menu>();
   auto b1= cx::reifyMenuBtn("play.png");
   b1->setTarget(getParent(),
-      CC_MENU_SELECTOR(SplashLayer::onPlay));
+      CC_MENU_SELECTOR(UILayer::onPlay));
   menu->addChild(b1);
   menu->setPosition( cw.x, wb.top * 0.1);
   addItem(menu);
@@ -90,7 +91,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XScene* Splash::realize() {
-  auto y = f::ReifyRefType<SplashLayer>();
+  auto y = f::reifyRefType<UILayer>();
   addLayer(y);
   y->realize();
   return this;

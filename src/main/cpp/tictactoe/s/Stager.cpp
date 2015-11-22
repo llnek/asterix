@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Node.h"
-#include "n/cobjs.h"
+#include "n/CObjs.h"
 #include "utils.h"
 #include "Stager.h"
 
@@ -88,13 +88,10 @@ void Stager::onceOnly(a::Node* node) {
   showGrid(node);
 
   if (MGMS()->isOnline()) {
-    CCLOG("reply to server: session started ok");
-    ws::netSend(nullptr, new ws::OdinEvent(
-      ws::MType::SESSION,
-      ws::EType::STARTED
-    ));
+    initOnline();
   } else {
-    pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2; // randomly choose
+    pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2;
+    // randomly choose
     if (ps->parr[pnum].category == human) {
       MGMS()->sendMsg("/hud/timer/show");
     }
@@ -121,7 +118,7 @@ void Stager::onNet(ws::OdinEvent* evt) {
         CCLOG("game will stop");
         MGMS()->sendMsg("/hud/timer/hide");
         onSess( evt);
-        MGMS()->sendMsg("/net/stop", evt);
+        MGMS()->sendMsgEx("/net/stop", evt);
       }
     break;
   }
@@ -130,8 +127,8 @@ void Stager::onNet(ws::OdinEvent* evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::onSess(ws::OdinEvent* evt) {
-  auto ps= CC_GNF(Players, boardNode->head, "players");
-  auto grid= CC_GNF(Grid, boardNode->head, "grid");
+  auto ps= CC_GNF(Players, board->head, "players");
+  auto grid= CC_GNF(Grid, board->head, "grid");
   auto snd="";
   auto source = evt->doco["source"];
   auto cmd= source["cmd"];
@@ -186,10 +183,16 @@ void Stager::onSocket(ws::OdinEvent* evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::initOnline() {
-  auto ws = MGMS()->wsock();
-  ws->listen( [=](ws::OdinEvent* evt) {
+
+  MGMS()->wsock()->listen( [=](ws::OdinEvent* evt) {
     this->onSocket(evt);
   });
+
+  ws::netSend(MGMS()->wsock(),
+      new ws::OdinEvent(
+        ws::MType::SESSION, ws::EType::STARTED));
+
+  CCLOG("reply to server: session started ok");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -208,7 +211,7 @@ void Stager::doIt(a::Node* node, float dt) {
     { "pnum", pnum }
   };
 
-  MGMS()->sendMsg("/hud/update", &msg);
+  MGMS()->sendMsgEx("/hud/update", &msg);
 }
 
 

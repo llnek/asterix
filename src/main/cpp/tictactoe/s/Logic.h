@@ -15,7 +15,7 @@
 #include "2d/CCActionInterval.h"
 #include "core/BaseSystem.h"
 #include "EFactory.h"
-#include "n/cobjs.h"
+#include "n/CObjs.h"
 
 NS_BEGIN(tttoe)
 

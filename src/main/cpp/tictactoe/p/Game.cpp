@@ -52,9 +52,9 @@ private:
   void onMouseUp(c::Event*);
   void showMenu();
 
+  HUDLayer* getHUD();
 
   void replay();
-  HUDLayer* getHUD();
   void inizGame();
   void mkAsh();
   void reset();
@@ -68,10 +68,9 @@ private:
 
 public:
 
-  virtual void sendMsg(const stdstr& topic, void* msg);
+  virtual int getIID() { return 2; }
   virtual void play();
   virtual void stop();
-  virtual int getIID() { return 2; }
 
   virtual f::XLayer* realize();
 
@@ -118,13 +117,12 @@ void GLayer::inizGame() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
 
+  f::emptyQueue<stdstr>( MGMS()->msgQueue() );
+
   if (atlases.empty()) {
     regoAtlas("game-pics");
     regoAtlas("lang-pics");
   }
-
-  f::EmptyQueue<stdstr>( MGMS()->msgQueue() );
-  mkAsh();
 
   auto seed = XCFG()->getSeedData();
   auto p1c= CC_CSS("P1_COLOR");
@@ -145,6 +143,8 @@ void GLayer::inizGame() {
       p2n= arr[1].string_value();
     }
   }
+
+  mkAsh();
 
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   getHUD()->reset();
@@ -305,7 +305,7 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsg(const stdstr& topic, void* msg) {
+void Game::sendMsgEx(const stdstr& topic, void* msg) {
   auto y= (GLayer*) getGLayer();
 
   if ("/hud/showmenu" == topic) {
@@ -362,13 +362,13 @@ void Game::sendMsg(const stdstr& topic, void* msg) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::stop() {
-  sendMsg("/game/stop", nullptr);
+  sendMsg("/game/stop");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::play() {
-  sendMsg("/game/play", nullptr);
+  sendMsg("/game/play");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -381,9 +381,9 @@ f::GameLayer* Game::getGLayer() {
 //
 f::XScene* Game::realize() {
 
-  auto h = f::ReifyRefType<HUDLayer>();
-  auto g = f::ReifyRefType<GLayer>();
-  auto b = f::ReifyRefType<BGLayer>();
+  auto h = f::reifyRefType<HUDLayer>();
+  auto g = f::reifyRefType<GLayer>();
+  auto b = f::reifyRefType<BGLayer>();
 
   addLayer( static_cast<f::XLayer*>(b), 1)->realize();
   addLayer( static_cast<f::XLayer*>(g), 2);

@@ -70,7 +70,7 @@ public:
   void reset();
 
   NO__CPYASS(HUDLayer)
-  IMPL_CTOR(HUDLayer)
+  DECL_CTOR(HUDLayer)
 
 };
 

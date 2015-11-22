@@ -17,20 +17,21 @@
 #include "NetPlay.h"
 
 NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
-class CC_DLL UILayer : f::XLayer {
-protected:
+class CC_DLL UILayer : public f::XLayer {
+public:
 
   void networkEvent(ws::OdinEvent*);
   void sessionEvent(ws::OdinEvent*);
   void odinEvent(ws::OdinEvent*);
 
-  void onLogin(c::Ref*);
   void onCancel(c::Ref* );
+  void onLogin(c::Ref*);
 
   void onPlayReply(ws::OdinEvent*);
   void showWaitOthers();
@@ -38,23 +39,25 @@ protected:
 
   virtual f::XLayer* realize();
   ws::OdinIO* odin;
+  int player;
 
   NO__CPYASS(UILayer)
   DECL_CTOR(UILayer)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 UILayer::~UILayer() {
-  if (NNP(odin)) try { ws::close(odin); } catch (...) {}
+  ws::disconnect(odin);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 UILayer::UILayer() {
+  player=0;
   SNPTR(odin);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -81,28 +84,28 @@ void UILayer::showWaitOthers() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::onStart(ws::OdinEvent* evt) {
+void UILayer::onStart(ws::OdinEvent* evt) {
 
   auto s= XCFG()->getSeedData();
+  auto mode = f::GMode::NET;
 
   s["ppids"] = evt->doco["source"]["ppids"];
   s["pnum"]= player;
 
-  auto g = f::ReifyRefType<Game>();
+  auto g = f::reifyRefType<Game>();
   auto io= odin;
 
-  SNPTR(odin)
   prepareSeedData(mode);
-
+  SNPTR(odin)
   cx::runScene( Game::reify(g, mode, io));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref* ) {
-  if (NNP(odin)) try { ws::close(odin); } catch (...) {}
+  ws::disconnect(odin);
   SNPTR(odin)
-  auto f= []() { cx::runScene(XCFG()->startWith()); };
+  auto f= [=]() { cx::runScene(XCFG()->startWith()); };
   auto m = MainMenu::reifyWithBackAction(f);
   cx::runScene( m);
 }
@@ -142,7 +145,7 @@ void UILayer::sessionEvent(ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::odinEvent(ws::odinEvent* evt) {
+void UILayer::odinEvent(ws::OdinEvent* evt) {
   //CCLOG("odin event = %p", evt);
   switch (evt->type) {
     case ws::MType::NETWORK:
@@ -152,7 +155,6 @@ void UILayer::odinEvent(ws::odinEvent* evt) {
       sessionEvent(evt);
     break;
   }
-  evt->release();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -205,7 +207,7 @@ f::XLayer* UILayer::realize() {
   uid->setPlaceHolder(XCFG()->getL10NStr("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
   tag= (int)'u';
-  addItem(uid, Option<int>(), Option<int>(tag));
+  addItem(uid, f::Maybe<int>(), f::Maybe<int>(tag));
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -218,7 +220,7 @@ f::XLayer* UILayer::realize() {
   pwd->setPlaceHolder( XCFG()->getL10NStr("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
   tag= (int) 'p';
-  addItem(pwd, Option<int>(), Option<int>(tag));
+  addItem(pwd, f::Maybe<int>(), f::Maybe<int>(tag));
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
@@ -233,7 +235,9 @@ f::XLayer* UILayer::realize() {
 
   menu->setPosition(cw.x, wb.top * 0.1);
   tag= 117;
-  addItem(menu, Option<int>(), Option<int>(tag));
+  addItem(menu, f::Maybe<int>(), f::Maybe<int>(tag));
+
+  return this;
 }
 
 END_NS_UNAMED()
@@ -241,7 +245,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XScene* NetPlay::realize() {
-  auto y = f::ReifyRefType<UILayer>();
+  auto y = f::reifyRefType<UILayer>();
   addLayer(y);
   y->realize();
   return this;

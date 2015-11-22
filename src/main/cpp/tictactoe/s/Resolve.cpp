@@ -15,7 +15,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<EFactory*> f,not_null<c::Dictionary*> d)
+Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   : f::BaseSystem(f, d) {
   SNPTR(board)
 }
@@ -124,7 +124,7 @@ void Resolve::doWin(a::Node* node, Player& winner, const ArrDim& combo) {
     {"color", winner.color },
     {"score", 1}
   };
-  MGMS()->sendMsg("/hud/score/update", &msg);
+  MGMS()->sendMsgEx("/hud/score/update", &msg);
 
   showWinningIcons(node, combo);
   doDone(node, winner);
@@ -152,7 +152,7 @@ void Resolve::doForfeit(a::Node* node) {
     {"color", win.color },
     {"score", 1}
   };
-  MGMS()->sendMsg("/hud/score/update", &msg);
+  MGMS()->sendMsgEx("/hud/score/update", &msg);
 
   //gray out the losing icons
   F__LOOP(it, view->cells) {
@@ -207,7 +207,7 @@ void Resolve::doDone(a::Node* node, Player& pobj) {
 
   MGMS()->sendMsg("/hud/timer/hide");
   cx::sfxPlay("game_end");
-  MGMS()->sendMsg("/hud/end", &msg);
+  MGMS()->sendMsgEx("/hud/end", &msg);
 
   state->setObject(CC_INT(pnum), "lastWinner");
   MGMS()->stop();

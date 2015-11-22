@@ -185,7 +185,8 @@ void OdinIO::reset() {
 //////////////////////////////////////////////////////////////////////////////
 // Close the connection to the socket
 //
-void close(not_null<OdinIO*> wss) {
+void close(OdinIO* wss) {
+  if (ENP(wss)) { return; }
   try {
     wss->cancelAll();
     wss->socket->close();

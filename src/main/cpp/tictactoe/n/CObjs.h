@@ -16,6 +16,7 @@
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Ash.h"
+#include "Board.h"
 #include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -110,7 +111,12 @@ public:
   virtual ~Player() {}
 
   //NO__CPYASS(Player)
-  Player() = delete;
+  Player() {
+    category= f::GMode::NICHTS;
+    pnum= -1;
+    offset=0;
+    value=0;
+  }
 
   stdstr pidlong;
   stdstr pid;

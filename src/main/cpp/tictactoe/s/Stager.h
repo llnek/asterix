@@ -23,9 +23,14 @@ protected:
 
   virtual bool onUpdate(float);
 
+  void onSocket(ws::OdinEvent*);
+  void onSess(ws::OdinEvent*);
+  void onNet(ws::OdinEvent*);
+
   void doIt(a::Node*, float);
   void onceOnly(a::Node*);
   void showGrid(a::Node*);
+  void initOnline();
 
   NO__CPYASS(Stager)
   Stager() = delete;

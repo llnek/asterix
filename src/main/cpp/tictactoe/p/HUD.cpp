@@ -12,7 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "x2d/Funcs.h"
+#include "x2d/XLib.h"
 #include "HUD.h"
 NS_BEGIN(tttoe)
 
@@ -31,7 +31,7 @@ f::XLayer* HUDLayer::realize() {
       CC_MENU_SELECTOR(HUDLayer::showMenu));
   b->setColor(this->color);
   //b->setScale(scale);
-  addMenuIcon(this, b, cx::anchorB());
+  addMenuIcon(this, b);
 
   return this;
 }
@@ -249,8 +249,8 @@ void HUDLayer::regoPlayers(const stdstr& color1,
     const stdstr& p1k, const stdstr& p1n,
     const stdstr& color2, const stdstr& p2k, const stdstr& p2n) {
 
-  scores.insert(CC_PAIR(stdstr,int, color2, 0));
-  scores.insert(CC_PAIR(stdstr,int, color1, 0));
+  scores.insert(S__PAIR(stdstr,int, color2, 0));
+  scores.insert(S__PAIR(stdstr,int, color1, 0));
   play2= color2;
   play1= color1;
   p2Long= p2n;
@@ -272,6 +272,25 @@ void HUDLayer::resetAsNew() {
 void HUDLayer::reset() {
   result->setVisible(false);
   status->setVisible(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+HUDLayer::~HUDLayer() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+HUDLayer::HUDLayer() {
+  countDownState=false;
+  countDownValue=0;
+  SNPTR(countDown)
+  SNPTR(result)
+  SNPTR(status)
+  SNPTR(title)
+  SNPTR(score1)
+  SNPTR(score2)
 }
 
 

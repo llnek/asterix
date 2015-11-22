@@ -13,7 +13,8 @@
 #define __NETPLAY_H__
 
 #include "x2d/XScene.h"
-#include "core/odin.h"
+#include "core/Odin.h"
+
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 

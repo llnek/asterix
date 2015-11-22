@@ -25,9 +25,9 @@ public:
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
         s::vector<stdstr> {
-          "selection", "robot", "grid", "view" },
+          "selection", "players", "robot", "grid", "view" },
         s::vector<a::COMType> {
-          "n/UISelection", "n/SmartAlgo", "n/Grid", "n/PlayView" });
+          "n/UISelection", "n/Players", "n/SmartAlgo", "n/Grid", "n/PlayView" });
   }
 
   NO__CPYASS(BoardNode)

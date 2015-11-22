@@ -11,16 +11,16 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "x2d/NetPlay.h"
-#include "x2d/Funcs.h"
+#include "x2d/XLib.h"
+#include "NetPlay.h"
 #include "Menu.h"
 #include "Game.h"
-#include "n/cobjs.h"
+#include "n/CObjs.h"
 NS_BEGIN(tttoe)
 
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL MenuLayer : public f::XLayer {
+class CC_DLL UILayer : public f::XLayer {
 public:
   virtual f::XLayer* realize();
 
@@ -30,14 +30,14 @@ public:
   void onBack(c::Ref*);
   void onQuit(c::Ref*);
 
-  NO__CPYASS(MenuLayer)
-  IMPL_CTOR(MenuLayer)
+  NO__CPYASS(UILayer)
+  IMPL_CTOR(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* MenuLayer::realize() {
-  //auto c= cx::ColorRGB("#f6b17f");
+f::XLayer* UILayer::realize() {
+  //auto c= cx::colorRGB("#f6b17f");
   auto c = cx::colorRGB("#5E3178");
   auto wb = cx::visBox();
   auto cw = cx::center();
@@ -55,26 +55,26 @@ f::XLayer* MenuLayer::realize() {
 
   addItem(lb);
 
-  auto menu = f::ReifyRefType<cocos2d::Menu>();
+  auto menu = f::reifyRefType<cocos2d::Menu>();
   auto tile = CC_CSV(c::Integer,"TILE");
   auto nil = CC_CSV(c::Integer,"CV_Z");
   auto b = cx::reifyMenuBtn("online.png");
   int tag = (int) f::GMode::NET;
 
   b->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::onNetPlay));
+      CC_MENU_SELECTOR(UILayer::onNetPlay));
   menu->addChild(b,0,tag);
 
   b = cx::reifyMenuBtn("player2.png");
   tag = (int) f::GMode::TWO;
   b->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::onPlay));
+      CC_MENU_SELECTOR(UILayer::onPlay));
   menu->addChild(b,0,tag);
 
   b = cx::reifyMenuBtn("player1.png");
   tag = (int) f::GMode::ONE;
   b->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::onPlay));
+      CC_MENU_SELECTOR(UILayer::onPlay));
   menu->addChild(b,0,tag);
 
   // add the menu
@@ -84,11 +84,12 @@ f::XLayer* MenuLayer::realize() {
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
   back->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::onBack));
+      CC_MENU_SELECTOR(UILayer::onBack));
   back->setColor(c);
+
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   quit->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::onQuit));
+      CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
 
   auto m2= cx::mkMenu(s::vector<c::MenuItem*> {back, quit}, false, 10.0);
@@ -101,7 +102,7 @@ f::XLayer* MenuLayer::realize() {
   // audio
   c::MenuItem* off;
   c::MenuItem* on;
-  cx::reifyAudioIcons(on,off);
+  cx::reifyAudioIcons(on, off);
   off->setColor(c);
   on->setColor(c);
 
@@ -115,36 +116,42 @@ f::XLayer* MenuLayer::realize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::onNetPlay(c::Ref* r) {
+void UILayer::onNetPlay(c::Ref* r) {
   // yes
   auto y= [=]() { this->onPlayXXX(f::GMode::NET); };
   // no
-  auto f= []() { cx::runScene(XCFG()->startWith()); };
-  auto n= []() { cx::runScene(MainMenu::reifyWithBackAction(f)); };
+  auto f= [=]() { cx::runScene(XCFG()->startWith()); };
+  auto n= [=]() { cx::runScene(MainMenu::reifyWithBackAction(f)); };
 
-  auto s= f::ReifyRefType<NetPlay>();
+  auto s= f::reifyRefType<NetPlay>();
   cx::runScene(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::onPlay(c::Ref* r) {
+void UILayer::onPlay(c::Ref* r) {
   auto mode = (f::GMode) SCAST(c::Node*, r)->getTag();
   onPlayXXX(mode);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::onPlayXXX(f::GMode mode) {
-  auto g = f::ReifyRefType<Game>();
+void UILayer::onPlayXXX(f::GMode mode) {
+  auto g = f::reifyRefType<Game>();
   prepareSeedData(mode);
   cx::runScene( Game::reify(g, mode) );
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::onQuit(c::Ref* r) {
+void UILayer::onBack(c::Ref* r) {
+  auto p= (MainMenu*) getParent();
+  p->backAction();
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onQuit(c::Ref* r) {
 }
 
 END_NS_UNAMED()
@@ -152,7 +159,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
-  auto m = f::ReifyRefType<MainMenu>();
+  auto m = f::reifyRefType<MainMenu>();
   m->backAction= cb;
   m->realize();
   return m;
@@ -160,14 +167,8 @@ MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::onBackAction() {
-  this->backAction();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 f::XScene* MainMenu::realize() {
-  auto y = f::ReifyRefType<MenuLayer>();
+  auto y = f::reifyRefType<UILayer>();
   addLayer(y);
   y->realize();
   return this;
@@ -176,7 +177,6 @@ f::XScene* MainMenu::realize() {
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu::~MainMenu() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

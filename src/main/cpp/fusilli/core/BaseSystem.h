@@ -23,7 +23,7 @@ class CC_DLL BaseSystem : public a::System {
 protected:
 
   BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
-  virtual bool onUpdate(float) = 0;
+  virtual bool onUpdate(float) { return true; }
 
   c::Dictionary* state;
   F* factory;

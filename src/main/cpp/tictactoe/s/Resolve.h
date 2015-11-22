@@ -14,7 +14,7 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
-#include "n/cobjs.h"
+#include "n/CObjs.h"
 
 NS_BEGIN(tttoe)
 
@@ -23,13 +23,14 @@ NS_BEGIN(tttoe)
 class CC_DLL Resolve : public  f::BaseSystem<EFactory> {
 protected:
 
+  const c::Vec2 xrefCell(int pos, PlayView*, bool& found);
+
+  virtual bool onUpdate(float);
+
   bool checkWin(a::Node*, Player&, Grid*, ArrDim& );
   void showWinningIcons(a::Node*, const ArrDim& );
   void doWin(a::Node*, Player&, const ArrDim& );
 
-  const c::Vec2 xrefCell(int pos, PlayView*, bool& found);
-
-  virtual bool onUpdate(float dt);
   void syncUp(a::Node*);
 
   void doIt(a::Node*, float);

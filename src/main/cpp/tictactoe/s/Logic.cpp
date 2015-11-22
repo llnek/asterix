@@ -13,6 +13,7 @@
 #include "algos/NegaMax.h"
 #include "x2d/GameScene.h"
 #include "core/Odin.h"
+#include "n/CObjs.h"
 #include "Logic.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
@@ -74,7 +75,7 @@ void Logic::doIt(a::Node* node, float dt) {
       int rc=0;
       bd->syncState(grid->values, cp.value);
       rc= bd->getFirstMove();
-      if (rc < 0) { rc = fusii::algos::EvalNegaMax<BD_SZ>(bd); }
+      if (rc < 0) { rc = fusii::algos::evalNegaMax<BD_SZ>(bd); }
       enqueue(node, rc, cp.value, grid);
       cx::undoTimer(botTimer);
       SNPTR(botTimer)
@@ -145,7 +146,7 @@ void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
 
-  ws::netSend(nullptr, new ws::OdinEvent(t,c, body));
+  ws::netSend(MGMS()->wsock(), new ws::OdinEvent(t,c, body));
 
   state->setObject(CC_INT(0), "pnum");
   cx::sfxPlay(snd);
