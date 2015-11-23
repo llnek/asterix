@@ -166,7 +166,7 @@ int XLayer::incIndexZ() {
 // Remember the parent scene object
 //
 XScene* XLayer::getSceneX() {
-  return SCAST(XScene*, getParent());
+  return (XScene*) getParent();
 }
 
 

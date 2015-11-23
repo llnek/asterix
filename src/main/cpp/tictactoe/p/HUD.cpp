@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "x2d/XLib.h"
 #include "HUD.h"
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,8 +41,8 @@ f::XLayer* HUDLayer::realize() {
 //
 void HUDLayer::initScores() {
   scores.clear();
-  scores[1]= 0;
-  scores[2]= 0;
+  scores[play1]= 0;
+  scores[play2]= 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,7 +134,7 @@ void HUDLayer::showTimer() {
 
   showCountDown("");
 
-  schedule(SEL_SCHEDULE(HUDLayer::updateTimer, this), 1.0f);
+  schedule(CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -162,7 +163,7 @@ void HUDLayer::showCountDown(const stdstr& msg) {
 //
 void HUDLayer::killTimer() {
   if (countDownState) {
-    unschedule(SEL_SCHEDULE(HUDLayer::updateTimer, this));
+    unschedule(CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer));
     showCountDown(" ");
   }
   countDownValue=0;
@@ -171,7 +172,7 @@ void HUDLayer::killTimer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::updateScore(int pcolor, int value) {
+void HUDLayer::updateScore(const stdstr& pcolor, int value) {
   scores[pcolor] += value;
   drawScores();
 }

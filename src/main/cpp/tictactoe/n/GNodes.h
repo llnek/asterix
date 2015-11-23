@@ -12,6 +12,8 @@
 #if !defined(__GNODES_H__)
 #define __GNODES_H__
 
+#include "ash/NodeRegistry.h"
+#include "ash/Node.h"
 #include "CObjs.h"
 NS_BEGIN(tttoe)
 

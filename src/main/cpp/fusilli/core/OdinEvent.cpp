@@ -24,7 +24,7 @@ OdinEvent::OdinEvent(MType t, EType c, j::Json& body) : OdinEvent() {
   this->type= t;
   this->code= c;
   if (!body.is_null()) {
-    this->doco["source"] = body;
+      auto p = this->doco["source"]; p = body;
   }
 }
 

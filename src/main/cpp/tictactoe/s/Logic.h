@@ -43,7 +43,7 @@ public:
 
   virtual int priority() { return a::Logic; }
 
-  virtual ~Logic();
+  virtual ~Logic() {}
 
   c::DelayTime* botTimer;
   a::NodeList* board;

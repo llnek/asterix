@@ -13,6 +13,7 @@
 #include "core/CCSX.h"
 #include "n/CObjs.h"
 #include "s/utils.h"
+#include "Menu.h"
 #include "Splash.h"
 NS_BEGIN(tttoe)
 
@@ -97,6 +98,12 @@ f::XScene* Splash::realize() {
   return this;
 }
 
+
+Splash* Splash::reify() {
+  auto s = f::reifyRefType<Splash>();
+  s->realize();
+  return s;
+}
 
 
 NS_END(tttoe)

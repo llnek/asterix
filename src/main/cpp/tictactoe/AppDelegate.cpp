@@ -13,23 +13,20 @@
 #include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-NS_USING(tttoe)
-NS_USING(fusii)
-NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
 
   // step.1: register all ash::node factories here
-  auto r= NodeRegistry::self();
-  auto c= Config::reify();
+  auto r= ash::NodeRegistry::self();
+  auto c= tttoe::Config::reify();
 
-  r->rego( mc_new(BoardNode));
-  r->rego( mc_new(GUINode));
+  r->rego( mc_new(tttoe::BoardNode));
+  r->rego( mc_new(tttoe::GUINode));
 
   // step.2: set up app-config
-  XConfig::bind(c);
+  fusii::XConfig::bind(c);
 }
 
 //////////////////////////////////////////////////////////////////////////////

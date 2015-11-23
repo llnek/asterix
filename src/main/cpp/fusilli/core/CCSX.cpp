@@ -32,7 +32,7 @@ NS_BEGIN(ccsx)
 c::Menu* mkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
-
+    
   F__LOOP(it, items) {
     menu->addChild( *it);
   }

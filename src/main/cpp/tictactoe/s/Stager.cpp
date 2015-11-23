@@ -11,6 +11,7 @@
 
 #include "core/Primitives.h"
 #include "x2d/GameScene.h"
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Node.h"
@@ -27,7 +28,7 @@ NS_BEGIN(tttoe)
 Stager::Stager(not_null<EFactory*> f,
     not_null<c::Dictionary*> d)
 
-  : f::BaseSystem(f, d) {
+  : f::BaseSystem<EFactory>(f, d) {
 
   this->inited=false;
   SNPTR(board)

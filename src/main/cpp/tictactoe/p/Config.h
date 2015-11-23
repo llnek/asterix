@@ -51,8 +51,8 @@ public:
   virtual void setGameId(const stdstr& );
   virtual void setRoomId(const stdstr& );
 
-  virtual const stdstr getGameId();
-  virtual const stdstr getRoomId();
+  virtual const stdstr getGameId() { return ""; }
+  virtual const stdstr getRoomId() { return ""; }
 
   virtual void runOnce();
   virtual ~Config() {}

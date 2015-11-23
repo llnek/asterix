@@ -69,9 +69,9 @@ n::WebSocket* connect(not_null<OdinIO*>, const stdstr& url);
 
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
 
-void disconnect(not_null<OdinIO*>);
+void disconnect(OdinIO*);
 
-void close(not_null<OdinIO*>);
+void close(OdinIO*);
 
 
 owner<OdinIO*> reifyPlayRequest(const stdstr& game,

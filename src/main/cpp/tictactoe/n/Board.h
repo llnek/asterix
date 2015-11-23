@@ -13,7 +13,7 @@
 #define __BOARD_H__
 
 #include "algos/NegaMax.h"
-#include "CObjs.h"
+#include "s/utils.h"
 #include <tuple>
 NS_ALIAS(ag, fusii::algos)
 NS_BEGIN(tttoe)
@@ -58,7 +58,7 @@ public:
   virtual void makeMove(not_null<ag::FFrame<BD_SZ>*>, int move);
 
   virtual void switchPlayer(not_null<ag::FFrame<BD_SZ>*>);
-  virtual ag::FFrame<BD_SZ> takeFFrame();
+  virtual owner<ag::FFrame<BD_SZ>*> takeFFrame();
 
 };
 

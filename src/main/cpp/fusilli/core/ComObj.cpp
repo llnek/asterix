@@ -36,10 +36,10 @@ void ComObj::inflate(not_null<c::Dictionary*> dict) {
     return;
   }
 
-  auto scale= fusii::DictVal<c::Float>(dict, "scale");
-  auto deg= fusii::DictVal<c::Float>(dict, "deg");
-  auto x= fusii::DictVal<c::Float>(dict, "x");
-  auto y= fusii::DictVal<c::Float>(dict, "y");
+  auto scale= fusii::dictVal<c::Float>(dict, "scale");
+  auto deg= fusii::dictVal<c::Float>(dict, "deg");
+  auto x= fusii::dictVal<c::Float>(dict, "x");
+  auto y= fusii::dictVal<c::Float>(dict, "y");
 
   if (NNP(x) && NNP(y)) {
     sprite->setPosition(x->getValue(), y->getValue());

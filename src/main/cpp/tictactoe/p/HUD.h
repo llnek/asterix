@@ -20,28 +20,6 @@ NS_BEGIN(tttoe)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  void showMenu(c::Ref*);
-
-  void initLabels();
-  void initIcons();
-  void initScores();
-
-  void showTimer();
-  void updateTimer(float);
-  void showCountDown(const stdstr& msg);
-  void killTimer();
-  void updateScore(int pcolor,  int value);
-  void draw(bool running,  int pnum);
-  void endGame(int winner);
-  void drawXXXText(c::Label*, const stdstr& msg);
-  void drawScores();
-  void drawResult(int pnum);
-  void drawStatus(int pnum);
-  void regoPlayers(const stdstr& color1,
-      const stdstr& p1k, const stdstr& p1n,
-      const stdstr& color2,
-      const stdstr& p2k, const stdstr& p2n);
-
   s::map<stdstr, int> scores;
   bool countDownState;
   int countDownValue;
@@ -66,8 +44,31 @@ public:
   virtual int getIID() { return 3; }
   virtual f::XLayer* realize();
 
+    void regoPlayers(const stdstr& color1,
+                     const stdstr& p1k, const stdstr& p1n,
+                     const stdstr& color2,
+                     const stdstr& p2k, const stdstr& p2n);
+
   void resetAsNew();
   void reset();
+    void showMenu(c::Ref*) {}
+
+    void initLabels();
+    void initIcons() {}
+    void initScores();
+
+    void showTimer();
+    void updateTimer(float);
+    void showCountDown(const stdstr& msg);
+    void killTimer();
+    void updateScore(const stdstr& pcolor,  int value);
+    void draw(bool running,  int pnum);
+    void endGame(int winner);
+    void drawXXXText(c::Label*, const stdstr& msg);
+    void drawScores();
+    void drawResult(int pnum);
+    void drawStatus(int pnum);
+
 
   NO__CPYASS(HUDLayer)
   DECL_CTOR(HUDLayer)

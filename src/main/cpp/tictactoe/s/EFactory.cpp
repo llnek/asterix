@@ -8,7 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
+#include "core/XConfig.h"
 #include "EFactory.h"
 #include "n/Board.h"
 #include "n/CObjs.h"
@@ -32,7 +32,7 @@ a::Entity* EFactory::reifyBoard(not_null<f::XLayer*> layer) {
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
 
-  auto bd= new Board<BD_SZ>(nil, xv, ov);
+  auto bd= new Board(nil, xv, ov);
   auto ps= new Players();
   ArrCells seed;
   seed.fill(nil);

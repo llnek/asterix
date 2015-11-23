@@ -15,11 +15,13 @@
 #define GD_SZ BD_SZ * BD_SZ
 #define BD_SZ 3
 
-#include "core/CCSX.h"
-#include "n/CObjs.h"
-
 typedef s::array<int, GD_SZ> ArrCells;
 typedef s::array<int, BD_SZ> ArrDim;
+
+#include "x2d/GameScene.h"
+#include "core/CCSX.h"
+//#include "n/CObjs.h"
+
 
 namespace tttoe {
 
@@ -31,11 +33,9 @@ namespace tttoe {
 
   const stdstr xrefImg(int value);
 
-  c::Sprite* drawSymbol(not_null<PlayView*> view,
-      float x, float y,
-      int value, bool flip=false);
+  c::Sprite* drawSymbol(not_null<a::Component*>  , float x, float y, int value, bool flip = false);
 
-  void prepareSeedData(f::GMode );
+  void prepareSeedData(fusii::GMode );
 
 };
 

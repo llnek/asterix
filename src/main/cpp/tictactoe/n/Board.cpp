@@ -37,9 +37,10 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
 //
-Board::Board(int nil, int p1v, int p2v) {
+Board::Board(int nil, int p1v, int p2v)
+: GOALS(mapGoalSpace()){
   this->actors = {nil, p1v, p2v};
-  this->GOALS= mapGoalSpace();
+  //this->GOALS= ();
   this->CV_Z= nil;
 }
 
@@ -112,7 +113,7 @@ void Board::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   if (isNil(snap->state[move])) {
     snap->state[move] = snap->cur;
   } else {
-    throw "Fatal Error: cell [" + move + "] is not free";
+      throw "Fatal Error: cell [" + s::to_string(move) + "] is not free";
   }
 }
 
@@ -141,13 +142,13 @@ int Board::getOtherPlayer(int pv) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-ag::FFrame<BD_SZ> Board::takeFFrame() {
-  ag::FFrame<BD_SZ> ff;
+owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
+    auto ff = new ag::FFrame<BD_SZ>();
 
-  s::copy(s::begin(grid), s::end(grid), s::begin(ff.state));
-  ff.other= getOtherPlayer(actors[0]);
-  ff.cur= actors[0];
-  ff.lastBestMove= -1;
+  s::copy(s::begin(grid), s::end(grid), s::begin(ff->state));
+  ff->other= getOtherPlayer(actors[0]);
+  ff->cur= actors[0];
+  ff->lastBestMove= -1;
 
   return ff;
 }

@@ -32,9 +32,11 @@ owner<OdinEvent*> mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
+    auto a=  j::Json::array({ game, user, pwd });
+    auto p= j::Json(a);
   return new OdinEvent(MType::SESSION,
-      EType::PLAYGAME_REQ,
-      j::Json::array({ game, user, pwd }) );
+      EType::PLAYGAME_REQ, p
+      );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,9 +45,11 @@ owner<OdinEvent*> mkJoinRequest (const stdstr& room,
     const stdstr& user,
     const stdstr& pwd) {
 
+    auto a=  j::Json::array({ room, user, pwd }) ;
+    auto p= j::Json(a);
   return new OdinEvent(MType::SESSION,
-      EType::JOINGAME_REQ,
-      j::Json::array({ room, user, pwd }) );
+      EType::JOINGAME_REQ,p
+     );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -118,7 +122,7 @@ OdinIO::OdinIO() {
 // Send this event through the socket
 //
 void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
-	c::RefPtr ref(evt.get());
+	c::RefPtr<OdinEvent> ref(evt.get());
 	if (wss->state == CType::S_CONNECTED) {
       auto d= evtToDoc(evt);
       wss->socket->send(d.dump());
@@ -199,7 +203,7 @@ void close(OdinIO* wss) {
 //////////////////////////////////////////////////////////////////////////////
 // Disconnect from the socket
 //
-void disconnect(not_null<OdinIO*> wss) {
+void disconnect(OdinIO* wss) {
   close(wss);
 }
 
@@ -211,7 +215,7 @@ void OdinIO::onOpen(n::WebSocket* ws) {
   state= CType::S_CONNECTED;
   socket=ws;
   auto evt= getPlayRequest(this);
-  c::RefPtr ref(evt);
+  c::RefPtr<OdinEvent> ref(evt);
   ws->send(evtToDoc(evt).dump());
 }
 
@@ -219,7 +223,7 @@ void OdinIO::onOpen(n::WebSocket* ws) {
 //
 void OdinIO::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
   auto evt= json_decode(data);
-  c::RefPtr ref(evt);
+  c::RefPtr<OdinEvent> ref(evt);
   switch (evt->type) {
     case MType::NETWORK:
     case MType::SESSION:

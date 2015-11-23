@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "utils.h"
+#include "CObjs.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_USING(fusii)
@@ -95,7 +96,7 @@ const stdstr pkFlip(const stdstr& img, bool flip) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr& xrefImg(int value) {
+const stdstr xrefImg(int value) {
   auto x= CC_CSV(c::Integer,"CV_X");
   auto o= CC_CSV(c::Integer,"CV_O");
   auto z= CC_CSV(c::Integer,"CV_Z");
@@ -109,11 +110,12 @@ const stdstr& xrefImg(int value) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Sprite* drawSymbol(not_null<PlayView*> view,
+c::Sprite* drawSymbol(not_null<a::Component*> c,
     float x, float y,
     int value, bool flip) {
 
   auto frame = pkFlip(xrefImg(value), flip);
+  auto view= (PlayView*) c.get();
   auto s1= cx::reifySprite(frame);
 
   s1->setAnchorPoint(cx::anchorC());
@@ -132,24 +134,29 @@ void prepareSeedData(f::GMode m) {
     {"pnum", 1 }
   };
 
-  switch (m) {
-    case f::GMode::TWO:
-      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
+  if (m == f::GMode::TWO) {
+          auto p1 = seed["ppids"][ XCFG()->getL10NStr("p1") ] ;
+          p1= j::Json::array {
         1, XCFG()->getL10NStr("player1") };
-      seed["ppids"][ XCFG()->getL10NStr("p2") ] = j::Json::array {
+          p1 = seed["ppids"][ XCFG()->getL10NStr("p2") ];
+          p1 = j::Json::array {
         2, XCFG()->getL10NStr("player2") };
-    break;
+  }
 
-    case f::GMode::ONE:
-      seed["ppids"][ XCFG()->getL10NStr("cpu") ] = j::Json::array {
+  if (m == f::GMode::ONE) {
+
+        auto p2= seed["ppids"][ XCFG()->getL10NStr("cpu") ];
+          p2 = j::Json::array {
         2, XCFG()->getL10NStr("computer") };
-      seed["ppids"][ XCFG()->getL10NStr("p1") ] = j::Json::array {
+          p2 = seed["ppids"][ XCFG()->getL10NStr("p1") ];
+          p2 = j::Json::array {
         1, XCFG()->getL10NStr("player1") };
-    break;
+  }
 
-    case f::GMode::NET:
-      seed["pnum"] = 0;
-    break;
+  if (m == f::GMode::NET) {
+
+          auto p3 = seed["pnum"];
+          p3 = j::Json(0);
   }
 
   XCFG()->setSeedData(seed);

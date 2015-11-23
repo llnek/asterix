@@ -14,6 +14,7 @@
 
 #include "x2d/GameScene.h"
 #include "core/Factory.h"
+#include "n/GNodes.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////

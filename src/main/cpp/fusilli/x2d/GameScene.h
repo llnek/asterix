@@ -46,7 +46,7 @@ protected:
 
   void setOnlineChannel(ws::OdinIO* s) { odin= s; }
   virtual GameLayer* getGLayer() = 0;
-  void setMode(GMode m) { mode= m; }
+    void setMode(GMode m);
 
   NO__CPYASS(GameScene)
   GameScene();

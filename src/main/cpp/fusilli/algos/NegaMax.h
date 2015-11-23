@@ -42,7 +42,7 @@ public:
   virtual void makeMove(not_null<FFrame<Z>*>, int move) = 0;
 
   virtual void switchPlayer(not_null<FFrame<Z>*>) = 0;
-  virtual FFrame<Z> takeFFrame() = 0;
+  virtual owner<FFrame<Z>*> takeFFrame() = 0;
   virtual ~GameBoard() {}
 };
 
@@ -95,8 +95,10 @@ END_NS_UNAMED()
 // Main method for nega-max algo
 template <int Z> int evalNegaMax(not_null<GameBoard<Z>*> board) {
   auto f= board->takeFFrame();
-  negaMax(board, &f, 10, 10, -PINF, PINF);
-  return f.lastBestMove;
+  negaMax<Z>(board, f, 10, 10, -PINF, PINF);
+  auto rc = f->lastBestMove;
+    delete f;
+    return rc;
 }
 
 NS_END(algos)

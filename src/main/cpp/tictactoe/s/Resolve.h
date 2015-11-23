@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__RESOLVE_H__)
+#if  !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
 #include "core/BaseSystem.h"
@@ -60,5 +60,5 @@ public:
 
 
 NS_END(tttoe)
-
+#endif
 

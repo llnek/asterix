@@ -12,8 +12,9 @@
 #include "dbox/json11.hpp"
 #include "algos/NegaMax.h"
 #include "x2d/GameScene.h"
+#include "core/XConfig.h"
 #include "core/Odin.h"
-#include "n/CObjs.h"
+#include "n/GNodes.h"
 #include "Logic.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
@@ -23,7 +24,7 @@ NS_BEGIN(tttoe)
 //
 Logic::Logic(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem(f,d) {
+  : f::BaseSystem<EFactory>(f,d) {
 
   SNPTR(botTimer)
   SNPTR(board)
@@ -53,7 +54,7 @@ void Logic::doIt(a::Node* node, float dt) {
   auto pnum= CC_GDV(c::Integer, state, "pnum");
   auto ps = CC_GNF(Players, node, "players");
   auto bot= CC_CSV(c::Integer, "BOT");
-  auto cp= ps->parr[pnum];
+  auto& cp= ps->parr[pnum];
 
   auto sel= CC_GNF(UISelection, node, "selection");
   auto grid= CC_GNF(Grid, node, "grid");
@@ -135,18 +136,19 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
 //
 void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto ps = CC_GNF(Players, node, "players");
-  auto body = j::Json::object {
+    auto body = j::Json::object {
     { "color", ps->parr[pnum].color },
     { "value", ps->parr[pnum].value },
     { "grid", grid->values },
     { "cell", cell }
   };
-
   auto snd = pnum == 1 ? "x_pick" : "o_pick";
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
-
-  ws::netSend(MGMS()->wsock(), new ws::OdinEvent(t,c, body));
+    auto b= j::Json(body);
+    
+  ws::netSend(MGMS()->wsock(),
+              new ws::OdinEvent(t,c, b));
 
   state->setObject(CC_INT(0), "pnum");
   cx::sfxPlay(snd);

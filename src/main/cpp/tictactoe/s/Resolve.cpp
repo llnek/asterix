@@ -10,13 +10,14 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
+#include "core/XConfig.h"
 #include "Resolve.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : f::BaseSystem(f, d) {
+  : f::BaseSystem<EFactory>(f, d) {
   SNPTR(board)
 }
 
@@ -109,9 +110,12 @@ void Resolve::doIt(a::Node* node, float dt) {
   }
   else {
     auto& q= MGMS()->msgQueue();
-    if (q.size() > 0 &&
-        "forfeit" == q.pop()) {
-      doForfeit(node);
+    if (q.size() > 0) {
+      auto s= q.front();
+      q.pop();
+      if ("forfeit" == s) {
+        doForfeit(node);
+      }
     }
   }
 }

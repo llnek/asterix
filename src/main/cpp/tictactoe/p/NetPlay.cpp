@@ -15,7 +15,9 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "NetPlay.h"
-
+#include "Game.h"
+#include "Menu.h"
+#include "s/utils.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
@@ -89,8 +91,8 @@ void UILayer::onStart(ws::OdinEvent* evt) {
   auto s= XCFG()->getSeedData();
   auto mode = f::GMode::NET;
 
-  s["ppids"] = evt->doco["source"]["ppids"];
-  s["pnum"]= player;
+    auto p = s["ppids"] ; p = evt->doco["source"]["ppids"];
+    p = s["pnum"]; p= j::Json(player);
 
   auto g = f::reifyRefType<Game>();
   auto io= odin;

@@ -22,16 +22,17 @@ protected:
 
   virtual f::GameLayer* getGLayer();
   NO__CPYASS(Game)
+  bool alive;
 
 public:
 
   virtual void sendMsgEx(const stdstr& topic, void* msg);
   virtual f::XScene* realize();
-
+  virtual bool isLive() { return alive; }
   virtual void stop();
   virtual void play();
 
-  IMPL_CTOR(Game)
+  DECL_CTOR(Game)
 };
 
 

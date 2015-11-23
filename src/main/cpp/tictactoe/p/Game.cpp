@@ -10,9 +10,13 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "s/EFactory.h"
+#include "s/Resolve.h"
+#include "s/Logic.h"
+#include "s/Stager.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
+#include "HUD.h"
 #include "Game.h"
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -20,7 +24,7 @@ NS_BEGIN(tttoe)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BGLayer : f::XLayer {
+class CC_DLL BGLayer : public f::XLayer {
 public:
   virtual f::XLayer* realize() {
     centerImage("game.bg");
@@ -33,9 +37,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GLayer : public f::GameLayer {
-friend class Game;
-private:
-
+public:
   void onGUIXXX(const c::Vec2& );
   void updateHUD();
   void playTimeExpired();
@@ -50,7 +52,7 @@ private:
   virtual void initMouse();
 
   void onMouseUp(c::Event*);
-  void showMenu();
+  void showMenu() {}
 
   HUDLayer* getHUD();
 
@@ -69,8 +71,8 @@ private:
 public:
 
   virtual int getIID() { return 2; }
-  virtual void play();
-  virtual void stop();
+  //virtual void play();
+  //virtual void stop();
 
   virtual f::XLayer* realize();
 
@@ -318,11 +320,11 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
   else
   if ("/net/restart" == topic) {
     y->getHUD()->killTimer();
-    y->play();
+    //y->play();
   }
   else
   if ("/net/stop" == topic) {
-    auto p= (j::Json*) msg;
+    auto& p= * (j::Json*) msg;
     y->overAndDone(p["status"].bool_value());
   }
   else
@@ -331,17 +333,17 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
   }
   else
   if ("/hud/score/update" == topic) {
-    auto p = (j::Json*) msg;
-    y->getHUD()->updateScore(p["color"].int_value(), p["score"].int_value());
+    auto& p = * (j::Json*) msg;
+    y->getHUD()->updateScore(p["color"].string_value(), p["score"].int_value());
   }
   else
   if ("/hud/end" == topic) {
-    auto p = (j::Json*) msg;
+    auto& p = * (j::Json*) msg;
     y->overAndDone( p["winner"].int_value());
   }
   else
   if ("/hud/update" == topic) {
-    auto p= (j::Json*) msg;
+    auto& p= * (j::Json*) msg;
     y->getHUD()->draw(p["running"].bool_value(), p["pnum"].int_value());
   }
   else
@@ -398,6 +400,13 @@ f::XScene* Game::realize() {
   return this;
 }
 
+Game::~Game() {
+
+}
+
+Game::Game() {
+  alive=false;
+}
 
 NS_END(tttoe)
 

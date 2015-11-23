@@ -73,7 +73,7 @@ enum class CC_DLL EType {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL OdinEvent : public c::EventCustom {
-protected:
+public:
 
   NO__CPYASS(OdinEvent)
 
@@ -84,7 +84,8 @@ protected:
 
 public:
 
-  OdinEvent(MType, EType, j::Json& body);
+    
+    OdinEvent(MType, EType, j::Json& body);
   OdinEvent(MType t, EType c);
   OdinEvent(j::Json& msg);
 

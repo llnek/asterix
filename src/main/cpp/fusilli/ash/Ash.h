@@ -27,7 +27,7 @@ typedef s::string NodeType;
 //
 class FS_DLL Component {
 protected:
-  NO__CPYASS(Component)
+  //NO__CPYASS(Component)
   Component() {}
 public:
   virtual const COMType typeId() = 0;

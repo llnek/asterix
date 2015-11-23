@@ -16,12 +16,13 @@
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Ash.h"
-#include "Board.h"
 #include "s/utils.h"
+#include "Board.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(j, json11)
+NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,12 +70,12 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL PlayView : public a::Component {
-
+public:
   virtual const a::COMType typeId() { return "n/PlayView"; }
 
   PlayView(not_null<f::XLayer*> layer) {
     this->size = cx::calcSize("z.png");
-    this->boxes= mapGridPos(1.0f);
+      this->boxes= mapGridPos(1.0f);
     this->cells.fill(nullptr);
     this->layer= layer;
   }
@@ -97,7 +98,7 @@ public:
 
   virtual const a::COMType typeId() { return "n/Player"; }
 
-  Player(int category, int value,
+    Player(int category, int value,
       int id,
       const stdstr& color) {
 
@@ -110,9 +111,16 @@ public:
 
   virtual ~Player() {}
 
-  //NO__CPYASS(Player)
+    Player& operator=(const Player&  other) {
+        category= other.category;
+        return *this;
+    }
+
+    Player(const Player& other) {
+    }
+
   Player() {
-    category= f::GMode::NICHTS;
+    category= (int) f::GMode::NICHTS;
     pnum= -1;
     offset=0;
     value=0;
@@ -122,7 +130,7 @@ public:
   stdstr pid;
   stdstr color;
 
-  int category;
+    int category;
   int pnum;
   int value;
   int offset;

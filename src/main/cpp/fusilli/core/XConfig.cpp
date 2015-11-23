@@ -32,7 +32,7 @@ XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
 const filepath getXXX(not_null<c::Dictionary*> d, const stdstr& key ) {
-  auto r= f::DictVal<cocos2d::String>(d,key);
+  auto r= f::dictVal<cocos2d::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
 END_NS_UNAMED()
@@ -116,9 +116,9 @@ const stdstr XConfig::getL10NStr(const stdstr& key,
 //
 const stdstr XConfig::getL10NStr(const stdstr& key) {
   stdstr lang= c::Application::getInstance()->getCurrentLanguageCode();
-  auto d = DictVal<c::Dictionary>(l10n, lang);
+  auto d = dictVal<c::Dictionary>(l10n, lang);
   auto obj=NNP(d) ?
-    DictVal<c::String>(d, key) : nullptr;
+    dictVal<c::String>(d, key) : nullptr;
 
   if (NNP(obj)) {
     return obj->getCString();
