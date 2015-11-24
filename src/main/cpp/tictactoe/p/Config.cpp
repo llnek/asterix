@@ -36,7 +36,7 @@ void Config::initCsts() {
   addCst("showFPS", CC_BOOL(false));
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
 
@@ -47,10 +47,10 @@ void Config::initAssets() {
   addImage("game.bg", CC_STR("pics/bg.png"));
   addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
 
-  addEffect("game_end", CC_STR("sfx/MineExplosion.mpg"));
-  addEffect("x_pick", CC_STR("sfx/ElevatorBeep.mpg"));
-  addEffect("o_pick", CC_STR("sfx/MineBeep.mpg"));
-  addEffect("game_quit", CC_STR("sfx/Death.mpg"));
+  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
+  addEffect("x_pick", CC_STR("sfx/ElevatorBeep.mp3"));
+  addEffect("o_pick", CC_STR("sfx/MineBeep.mp3"));
+  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
 
   addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
