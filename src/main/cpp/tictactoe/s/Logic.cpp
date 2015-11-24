@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "dbox/json11.hpp"
+#include "nlohmann/json.hpp"
 #include "algos/NegaMax.h"
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
@@ -136,17 +136,17 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
 //
 void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto ps = CC_GNF(Players, node, "players");
-    auto body = j::Json::object {
+    auto body = j::json { {
     { "color", ps->parr[pnum].color },
     { "value", ps->parr[pnum].value },
     { "grid", grid->values },
     { "cell", cell }
-  };
+    }};
   auto snd = pnum == 1 ? "x_pick" : "o_pick";
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
-    auto b= j::Json(body);
-    
+    auto b= j::json(body);
+
   ws::netSend(MGMS()->wsock(),
               new ws::OdinEvent(t,c, b));
 

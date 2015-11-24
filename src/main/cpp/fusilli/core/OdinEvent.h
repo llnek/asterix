@@ -13,9 +13,9 @@
 #define __ODINEVENT_H__
 
 #include "base/CCEventCustom.h"
-#include "dbox/json11.hpp"
+#include "nlohmann/json.hpp"
 #include "Primitives.h"
-NS_ALIAS(j, json11)
+NS_ALIAS(j, nlohmann)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
 
@@ -80,14 +80,14 @@ public:
   double tstamp;
   MType type;
   EType code;
-  j::Json doco;
+  j::json doco;
 
 public:
 
-    
-    OdinEvent(MType, EType, j::Json& body);
+
+    OdinEvent(MType, EType, j::json& body);
   OdinEvent(MType t, EType c);
-  OdinEvent(j::Json& msg);
+  OdinEvent(j::json& msg);
 
   DECL_CTOR(OdinEvent)
 };

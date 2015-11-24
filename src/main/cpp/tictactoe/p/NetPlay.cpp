@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ui/UITextField.h"
-#include "dbox/json11.hpp"
+#include "nlohmann/json.hpp"
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -92,7 +92,7 @@ void UILayer::onStart(ws::OdinEvent* evt) {
   auto mode = f::GMode::NET;
 
     auto p = s["ppids"] ; p = evt->doco["source"]["ppids"];
-    p = s["pnum"]; p= j::Json(player);
+    p = s["pnum"]; p= j::json(player);
 
   auto g = f::reifyRefType<Game>();
   auto io= odin;
@@ -115,7 +115,7 @@ void UILayer::onCancel(c::Ref* ) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayReply(ws::OdinEvent* evt) {
-  player= evt->doco["pnum"].int_value();
+  player= evt->doco["pnum"].get<j::json::number_integer_t>();
   CCLOG("player %d: ok", player);
   showWaitOthers();
 }

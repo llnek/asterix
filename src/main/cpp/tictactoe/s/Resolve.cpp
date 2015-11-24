@@ -124,10 +124,10 @@ void Resolve::doIt(a::Node* node, float dt) {
 //
 void Resolve::doWin(a::Node* node, Player& winner, const ArrDim& combo) {
 
-  j::Json msg = j::Json::object {
+    j::json msg = j::json { {
     {"color", winner.color },
     {"score", 1}
-  };
+    }};
   MGMS()->sendMsgEx("/hud/score/update", &msg);
 
   showWinningIcons(node, combo);
@@ -152,10 +152,10 @@ void Resolve::doForfeit(a::Node* node) {
   auto& loser = ps->parr[cur];
   auto& win= ps->parr[other];
 
-  j::Json msg = j::Json::object {
+    j::json msg = j::json { {
     {"color", win.color },
     {"score", 1}
-  };
+    }};
   MGMS()->sendMsgEx("/hud/score/update", &msg);
 
   //gray out the losing icons
@@ -205,9 +205,9 @@ void Resolve::showWinningIcons(a::Node* node, const ArrDim& combo) {
 void Resolve::doDone(a::Node* node, Player& pobj) {
 
   int pnum = pobj.pnum > 0 ? pobj.pnum : 0;
-  j::Json msg = j::Json::object {
+    j::json msg = j::json { {
     {"pnum", pnum  }
-  };
+    }};
 
   MGMS()->sendMsg("/hud/timer/hide");
   cx::sfxPlay("game_end");

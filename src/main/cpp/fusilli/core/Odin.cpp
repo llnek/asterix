@@ -18,12 +18,12 @@ NS_BEGIN(odin)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-j::Json evtToDoc(not_null<OdinEvent*> evt) {
-  return j::Json::object {
+j::json evtToDoc(not_null<OdinEvent*> evt) {
+    return j::json { {
     {"type", (int) evt->type },
     {"code", (int) evt->code },
     {"source", evt->doco }
-  };
+    }};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ owner<OdinEvent*> mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
-    auto a=  j::Json::array({ game, user, pwd });
-    auto p= j::Json(a);
+    auto a=  j::json::array_t { game, user, pwd };
+    auto p= j::json(a);
   return new OdinEvent(MType::SESSION,
       EType::PLAYGAME_REQ, p
       );
@@ -45,8 +45,8 @@ owner<OdinEvent*> mkJoinRequest (const stdstr& room,
     const stdstr& user,
     const stdstr& pwd) {
 
-    auto a=  j::Json::array({ room, user, pwd }) ;
-    auto p= j::Json(a);
+    auto a=  j::json::array_t { room, user, pwd };
+    auto p= j::json(a);
   return new OdinEvent(MType::SESSION,
       EType::JOINGAME_REQ,p
      );
@@ -67,8 +67,9 @@ owner<OdinEvent*> json_decode(const n::WebSocket::Data& e) {
 
   assert(!e.isBinary);
   try {
-    j::Json msg;
-    msg.parse(e.bytes, err);
+    j::json msg;
+      
+    msg.parse(e.bytes);
     evt= new OdinEvent(msg);
   } catch (...) {
     CCLOGERROR("failed to parse json: %s", err.c_str());

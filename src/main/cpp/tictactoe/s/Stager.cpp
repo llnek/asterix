@@ -133,11 +133,11 @@ void Stager::onSess(ws::OdinEvent* evt) {
   auto snd="";
   auto source = evt->doco["source"];
   auto cmd= source["cmd"];
-  auto pnum= source["pnum"].int_value();
+    auto pnum= source["pnum"].get<j::json::number_integer_t>();
 
   if (cmd.is_object()) {
-    auto cell= cmd["cell"].int_value();
-    auto cv= cmd["value"].int_value();
+      auto cell= cmd["cell"].get<j::json::number_integer_t>();
+      auto cv= cmd["value"].get<j::json::number_integer_t>();
     if (cell >= 0 &&
         cell < GD_SZ) {//}grid->values.size()) {
       if (ps->parr[1].value == cv) {
@@ -207,10 +207,10 @@ void Stager::doIt(a::Node* node, float dt) {
     pnum= CC_GDV(c::Integer, state, "lastWinner");
   }
 
-  j::Json msg = j::Json::object {
+    j::json msg = j::json { {
     { "running", active },
     { "pnum", pnum }
-  };
+    }};
 
   MGMS()->sendMsgEx("/hud/update", &msg);
 }

@@ -265,14 +265,14 @@ c::Dictionary* XConfig::getLevelCfg(const stdstr& n) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XConfig::setSeedData(j::Json& j) {
+void XConfig::setSeedData(j::json& j) {
   seed=j;
-  j= j::Json();
+  j= j::json();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-j::Json& XConfig::getSeedData() {
+j::json& XConfig::getSeedData() {
   return seed;
 }
 

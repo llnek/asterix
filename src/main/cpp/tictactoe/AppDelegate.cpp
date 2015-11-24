@@ -13,7 +13,8 @@
 #include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-
+//#include "nlohmann/json.hpp"
+//NS_ALIAS(j, nlohmann)
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
@@ -27,6 +28,19 @@ AppDelegate::AppDelegate() {
 
   // step.2: set up app-config
   fusii::XConfig::bind(c);
+
+//    auto zz = j::json::object_t {
+//        { "x", j::json::object_t  {
+//            {"z", 1}
+//        }},
+//        {"pnum", 3}
+//        };
+//    auto z= j::json(zz);
+//    z["pnum"] = 999;
+//    z["x"] =   j::json::array_t { "ww", 4};
+//    stdstr out= z.dump(0);
+//    printf("json = \n%s", out.c_str());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

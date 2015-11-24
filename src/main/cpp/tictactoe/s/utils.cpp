@@ -129,34 +129,34 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
 //
 void prepareSeedData(f::GMode m) {
 
-  j::Json seed = j::Json::object {
-    {"ppids", j::Json::object {} },
+    j::json seed = j::json { {
+    {"ppids", j::json {} },
     {"pnum", 1 }
-  };
+    }};
 
   if (m == f::GMode::TWO) {
           auto p1 = seed["ppids"][ XCFG()->getL10NStr("p1") ] ;
-          p1= j::Json::array {
+          p1= j::json::array_t {
         1, XCFG()->getL10NStr("player1") };
           p1 = seed["ppids"][ XCFG()->getL10NStr("p2") ];
-          p1 = j::Json::array {
+          p1 = j::json::array_t {
         2, XCFG()->getL10NStr("player2") };
   }
 
   if (m == f::GMode::ONE) {
 
         auto p2= seed["ppids"][ XCFG()->getL10NStr("cpu") ];
-          p2 = j::Json::array {
+          p2 = j::json::array_t {
         2, XCFG()->getL10NStr("computer") };
           p2 = seed["ppids"][ XCFG()->getL10NStr("p1") ];
-          p2 = j::Json::array {
+          p2 = j::json::array_t {
         1, XCFG()->getL10NStr("player1") };
   }
 
   if (m == f::GMode::NET) {
 
           auto p3 = seed["pnum"];
-          p3 = j::Json(0);
+          p3 = j::json(0);
   }
 
   XCFG()->setSeedData(seed);
@@ -165,4 +165,13 @@ void prepareSeedData(f::GMode m) {
 
 
 NS_END(tttoe)
+
+
+
+
+
+
+
+
+
 

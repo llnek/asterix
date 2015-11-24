@@ -134,17 +134,18 @@ void GLayer::inizGame() {
   stdstr p1n;
   stdstr p2n;
 
-  auto ppids = seed["ppids"].object_items();
-  F__LOOP(it, ppids) {
-    auto arr= it->second;
-    if (arr[0].int_value() == 1) {
-      p1k= it->first;
-      p1n= arr[1].string_value();
-    } else {
-      p2k= it->first;
-      p2n= arr[1].string_value();
+    auto ppids = seed["ppids"].object();
+    for (j::json::iterator it = ppids.begin(); it != ppids.end(); ++it) {
+        auto arr=  it.value() ;
+        if (arr[0].get<j::json::number_integer_t>() == 1) {
+            p1k= it.key();
+            p1n= arr[1].get<j::json::string_t>();
+        } else {
+            p2k= it.key();
+            p2n= arr[1].get<j::json::string_t>();
+        }
+
     }
-  }
 
   mkAsh();
 
@@ -324,8 +325,8 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
   }
   else
   if ("/net/stop" == topic) {
-    auto& p= * (j::Json*) msg;
-    y->overAndDone(p["status"].bool_value());
+    auto& p= * (j::json*) msg;
+      y->overAndDone(p["status"].get<j::json::boolean_t>());
   }
   else
   if ("/hud/timer/hide" == topic) {
@@ -333,18 +334,20 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
   }
   else
   if ("/hud/score/update" == topic) {
-    auto& p = * (j::Json*) msg;
-    y->getHUD()->updateScore(p["color"].string_value(), p["score"].int_value());
+    auto& p = * (j::json*) msg;
+      y->getHUD()->updateScore(p["color"].get<j::json::string_t>(),
+                               p["score"].get<j::json::number_integer_t>());
   }
   else
   if ("/hud/end" == topic) {
-    auto& p = * (j::Json*) msg;
-    y->overAndDone( p["winner"].int_value());
+    auto& p = * (j::json*) msg;
+      y->overAndDone( p["winner"].get<j::json::number_integer_t>());
   }
   else
   if ("/hud/update" == topic) {
-    auto& p= * (j::Json*) msg;
-    y->getHUD()->draw(p["running"].bool_value(), p["pnum"].int_value());
+    auto& p= * (j::json*) msg;
+      y->getHUD()->draw(p["running"].get<j::json::boolean_t>(),
+                        p["pnum"].get<j::json::number_integer_t>());
   }
   else
   if ("/player/timer/expired" == topic) {

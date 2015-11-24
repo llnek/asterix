@@ -16,11 +16,11 @@ NS_BEGIN(odin)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(MType t, EType c, j::Json& body) : OdinEvent() {
-  this->doco = j::Json::object {
+OdinEvent::OdinEvent(MType t, EType c, j::json& body) : OdinEvent() {
+    this->doco = j::json { {
     { "type", (int)t },
     { "code", (int)c }
-  };
+    }};
   this->type= t;
   this->code= c;
   if (!body.is_null()) {
@@ -37,15 +37,15 @@ OdinEvent::OdinEvent(MType t, EType c) : OdinEvent() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(j::Json& msg) : OdinEvent() {
+OdinEvent::OdinEvent(j::json& msg) : OdinEvent() {
   if (msg.is_object()) {
     auto v= msg["type"];
     if (v.is_number()) {
-      type = SCAST(MType, v.int_value());
+      type = SCAST(MType, v.get< j::json::number_integer_t >());
     }
     v= msg["code"];
     if (v.is_number()) {
-      code = SCAST(EType, v.int_value());
+      code = SCAST(EType, v.get<j::json::number_integer_t >());
     }
     v= msg["source"];
     if (!v.is_null()) {
@@ -60,7 +60,7 @@ OdinEvent::OdinEvent() : c::EventCustom("odin") {
   tstamp = (double) c::utils::getTimeInMilliseconds();
   type= MType::NICHTS;
   code= EType::NICHTS;
-  doco= j::Json::object{};
+  doco= j::json {};
 }
 
 //////////////////////////////////////////////////////////////////////////////

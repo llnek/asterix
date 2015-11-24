@@ -12,7 +12,7 @@
 #if !defined(__COBJS_H__)
 #define __COBJS_H__
 
-#include "dbox/json11.hpp"
+#include "nlohmann/json.hpp"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "ash/Ash.h"
@@ -21,7 +21,7 @@
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
-NS_ALIAS(j, json11)
+NS_ALIAS(j, nlohmann)
 NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 

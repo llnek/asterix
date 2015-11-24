@@ -15,9 +15,9 @@
 #define XCFG() fusii::XConfig::self()
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
-#include "dbox/json11.hpp"
+#include "nlohmann/json.hpp"
 #include "Primitives.h"
-NS_ALIAS(j, json11)
+NS_ALIAS(j, nlohmann)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ protected:
 
   c::Dictionary* frags;
   c::Dictionary* l10n;
-  j::Json seed;
+  j::json seed;
 
   float lastMusicVol;
   float lastSfxVol;
@@ -101,8 +101,8 @@ public:
   const s::vector<filepath> getEffectFiles();
   const s::vector<filepath> getMusicFiles();
 
-  void setSeedData(j::Json&);
-  j::Json& getSeedData();
+  void setSeedData(j::json&);
+  j::json& getSeedData();
 
   virtual ~XConfig();
 
