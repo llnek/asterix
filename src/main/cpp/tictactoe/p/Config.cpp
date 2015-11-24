@@ -45,6 +45,8 @@ void Config::initAssets() {
 
   addImage("gui.edit.orange", CC_STR("pics/orange_edit.png"));
   addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
   addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
 
   addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
