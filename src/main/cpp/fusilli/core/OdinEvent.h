@@ -13,9 +13,8 @@
 #define __ODINEVENT_H__
 
 #include "base/CCEventCustom.h"
-#include "nlohmann/json.hpp"
+#include "JSON.h"
 #include "Primitives.h"
-NS_ALIAS(j, nlohmann)
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
 

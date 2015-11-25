@@ -134,18 +134,17 @@ void GLayer::inizGame() {
   stdstr p1n;
   stdstr p2n;
 
-    auto ppids = seed["ppids"].object();
-    for (j::json::iterator it = ppids.begin(); it != ppids.end(); ++it) {
-        auto arr=  it.value() ;
-        if (arr[0].get<j::json::number_integer_t>() == 1) {
-            p1k= it.key();
-            p1n= arr[1].get<j::json::string_t>();
-        } else {
-            p2k= it.key();
-            p2n= arr[1].get<j::json::string_t>();
-        }
-
+  auto ppids = seed["ppids"].object();
+  J__LOOP(it, ppids) {
+    auto arr=  it.value() ;
+    if (arr[0].get<j::json::number_integer_t>() == 1) {
+        p1k= it.key();
+        p1n= arr[1].get<j::json::string_t>();
+    } else {
+        p2k= it.key();
+        p2n= arr[1].get<j::json::string_t>();
     }
+  }
 
   mkAsh();
 
