@@ -54,6 +54,7 @@ public:
   virtual const stdstr getGameId() { return ""; }
   virtual const stdstr getRoomId() { return ""; }
 
+  virtual float getScale();
   virtual void runOnce();
   virtual ~Config() {}
 

@@ -16,7 +16,7 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
-//
+/*
 c::Menu* addMenuIcon(not_null<XLayer*> layer,
     not_null<c::MenuItem*> b) {
 
@@ -25,7 +25,7 @@ c::Menu* addMenuIcon(not_null<XLayer*> layer,
   layer->addItem(menu);
   return menu;
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////////
 //
 /*

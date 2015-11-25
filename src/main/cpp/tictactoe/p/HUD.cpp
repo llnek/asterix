@@ -27,14 +27,24 @@ f::XLayer* HUDLayer::realize() {
   initLabels();
   initIcons();
 
-  auto b= cx::reifyMenuBtn("icon_menu.png");
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::initIcons() {
+  auto b = cx::reifyMenuBtn("icon_menu.png");
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto hh = cx::getHeight(b) * 0.5;
+  auto hw = cx::getWidth(b) * 0.5;
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::showMenu));
   b->setColor(this->color);
-  //b->setScale(scale);
-  addMenuIcon(this, b);
+  auto menu = cx::mkMenu(b);
+  auto wb= cx::visBox();
 
-  return this;
+  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,15 +104,6 @@ void HUDLayer::initLabels() {
   result->setVisible(false);
   addItem(result);
 
-  auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = cx::getHeight(b) * 0.5;
-  auto hw = cx::getWidth(b) * 0.5;
-  b->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::showMenu));
-  b->setColor(this->color);
-  auto menu = cx::mkMenu(b);
-  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
-  addItem(menu, f::Maybe<int>(10));
 }
 
 //////////////////////////////////////////////////////////////////////////////

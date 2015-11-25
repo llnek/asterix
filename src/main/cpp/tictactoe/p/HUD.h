@@ -54,7 +54,7 @@ public:
     void showMenu(c::Ref*) {}
 
     void initLabels();
-    void initIcons() {}
+    void initIcons();
     void initScores();
 
     void showTimer();
