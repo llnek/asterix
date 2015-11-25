@@ -45,6 +45,7 @@ const s::array<Box4,GD_SZ> mapGridPos(float scale) {
       y2 = y1 - csz.height;
       x2 = x1 + csz.width;
       boxes[r * BD_SZ + c] = Box4(y1, x2, y2, x1);
+      x1= x2 + gw;
     }
     y1 = y2 - gh;
     x1 = x0;
@@ -129,34 +130,28 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
 //
 void prepareSeedData(f::GMode m) {
 
-    j::json seed = j::json { {
+    j::json seed = j::json( {
     {"ppids", j::json {} },
     {"pnum", 1 }
-    }};
+    });
 
   if (m == f::GMode::TWO) {
-          auto p1 = seed["ppids"][ XCFG()->getL10NStr("p1") ] ;
-          p1= j::json::array_t {
-        1, XCFG()->getL10NStr("player1") };
-          p1 = seed["ppids"][ XCFG()->getL10NStr("p2") ];
-          p1 = j::json::array_t {
-        2, XCFG()->getL10NStr("player2") };
+    seed["ppids"][ XCFG()->getL10NStr("p1") ] =
+    j::json::array_t {
+    1, XCFG()->getL10NStr("player1") };
+    seed["ppids"][ XCFG()->getL10NStr("p2") ] =
+    j::json::array_t { 2, XCFG()->getL10NStr("player2") };
   }
 
   if (m == f::GMode::ONE) {
-
-        auto p2= seed["ppids"][ XCFG()->getL10NStr("cpu") ];
-          p2 = j::json::array_t {
-        2, XCFG()->getL10NStr("computer") };
-          p2 = seed["ppids"][ XCFG()->getL10NStr("p1") ];
-          p2 = j::json::array_t {
-        1, XCFG()->getL10NStr("player1") };
+    seed["ppids"][ XCFG()->getL10NStr("cpu") ] =
+          j::json::array_t { 2, XCFG()->getL10NStr("computer") };
+    seed["ppids"][ XCFG()->getL10NStr("p1") ] =
+          j::json::array_t { 1, XCFG()->getL10NStr("player1") };
   }
 
   if (m == f::GMode::NET) {
-
-          auto p3 = seed["pnum"];
-          p3 = j::json(0);
+    seed["pnum"] = 0;
   }
 
   XCFG()->setSeedData(seed);

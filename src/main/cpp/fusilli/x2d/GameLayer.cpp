@@ -137,7 +137,6 @@ void GameLayer::initMouse() {
 void GameLayer::initKeys() {
 
   keys = c::EventListenerKeyboard::create();
-  addListener(keys);
 
   keys->onKeyReleased = [=] (c::EventKeyboard::KeyCode k, c::Event*) {
     int n= (int)k;
@@ -148,6 +147,7 @@ void GameLayer::initKeys() {
     if (n >= 0 && n < 256) { this->keyboard[n]= true; }
   };
 
+  addListener(keys);
   CCLOG("init-keys: listener = %p", keys);
 }
 

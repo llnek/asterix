@@ -39,7 +39,6 @@ Stager::Stager(not_null<EFactory*> f,
 void Stager::addToEngine(not_null<a::Engine*> e) {
 
   CCLOG("adding system: Stager");
-  factory->reifyBoard( MGML());
 
   BoardNode n;
   board = e->getNodeList(n.typeId());

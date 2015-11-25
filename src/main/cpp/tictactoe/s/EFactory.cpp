@@ -35,12 +35,14 @@ a::Entity* EFactory::reifyBoard(not_null<f::XLayer*> layer) {
   auto bd= new Board(nil, xv, ov);
   auto ps= new Players();
   ArrCells seed;
+
   seed.fill(nil);
+  initPlayers(ps);
 
   ent->checkin(new PlayView(layer));
   ent->checkin(new UISelection());
   ent->checkin(new SmartAlgo(bd));
-  initPlayers(ps);
+  ent->checkin(ps);
   ent->checkin(new Grid(seed));
 
   return ent;

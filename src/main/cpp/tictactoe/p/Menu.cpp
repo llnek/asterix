@@ -58,9 +58,8 @@ f::XLayer* UILayer::realize() {
   auto menu = f::reifyRefType<cocos2d::Menu>();
   auto tile = CC_CSV(c::Integer,"TILE");
   auto nil = CC_CSV(c::Integer,"CV_Z");
-  auto b = cx::reifyMenuBtn("online.png");
   int tag = (int) f::GMode::NET;
-
+  auto b = cx::reifyMenuBtn("online.png");
   b->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onNetPlay));
   menu->addChild(b,0,tag);
@@ -78,6 +77,7 @@ f::XLayer* UILayer::realize() {
   menu->addChild(b,0,tag);
 
   // add the menu
+  menu->alignItemsVerticallyWithPadding(10.0f);
   menu->setPosition(cw);
   addItem(menu);
 

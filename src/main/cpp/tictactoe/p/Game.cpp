@@ -177,6 +177,9 @@ void GLayer::mkAsh() {
   this->factory=f;
   CC_KEEP(this->options)
 
+  f->reifyBoard( MGML());
+  e->update(0.0f);
+
   e->regoSystem(new Resolve(f, d));
   e->regoSystem(new Stager(f, d));
   e->regoSystem(new Logic(f, d));
@@ -248,13 +251,13 @@ void GLayer::onTouchEnded(c::Touch* t, c::Event*) {
 //
 void GLayer::initTouch() {
   auto tc= c::EventListenerTouchOneByOne::create();
-  addListener(tc);
 
   tc->onTouchBegan = CC_CALLBACK_2(GLayer::onTouchBegan, this);
   tc->onTouchMoved = CC_CALLBACK_2(GLayer::onTouchMoved, this);
   tc->onTouchEnded = CC_CALLBACK_2(GLayer::onTouchEnded, this);
   tc->setSwallowTouches(true);
   touch =tc;
+  addListener(tc);
   CCLOG("init-touch: listener = %p", touch);
 }
 
@@ -269,8 +272,8 @@ void GLayer::onMouseUp(c::Event* e) {
 //
 void GLayer::initMouse() {
   mouse = c::EventListenerMouse::create();
-  addListener(mouse);
   mouse->onMouseUp = CC_CALLBACK_1(GLayer::onMouseUp, this);
+  addListener(mouse);
   CCLOG("init-mouse: listener = %p", mouse);
 }
 
