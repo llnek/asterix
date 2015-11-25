@@ -12,6 +12,7 @@
 #if !defined(__GAMESCENE_H__)
 #define __GAMESCENE_H__
 
+#define MGMSOK() fusii::GameScene::self()->isLive()
 #define MGMS() fusii::GameScene::self()
 #define MGML() fusii::GameScene::get()
 

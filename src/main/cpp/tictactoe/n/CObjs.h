@@ -111,13 +111,26 @@ public:
 
   virtual ~Player() {}
 
-    Player& operator=(const Player&  other) {
-        category= other.category;
-        return *this;
-    }
+  Player& operator=(const Player&  other) {
+    category = other.category;
+    pidlong= other.pidlong;
+    pid = other.pid;
+    color = other.color;
+    pnum= other.pnum;
+    value= other.value;
+    offset= other.offset;
+    return *this;
+  }
 
-    Player(const Player& other) {
-    }
+  Player(const Player& other) {
+    category = other.category;
+    pidlong= other.pidlong;
+    pid = other.pid;
+    color = other.color;
+    pnum= other.pnum;
+    value= other.value;
+    offset= other.offset;
+  }
 
   Player() {
     category= (int) f::GMode::NICHTS;
@@ -129,8 +142,7 @@ public:
   stdstr pidlong;
   stdstr pid;
   stdstr color;
-
-    int category;
+  int category;
   int pnum;
   int value;
   int offset;

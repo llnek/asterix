@@ -71,8 +71,8 @@ public:
 public:
 
   virtual int getIID() { return 2; }
-  //virtual void play();
-  //virtual void stop();
+  void play();
+  void stop();
 
   virtual f::XLayer* realize();
 
@@ -91,9 +91,21 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 GLayer::GLayer() {
-  playable=false;
-  SNPTR(factory)
   SNPTR(boardNode)
+  SNPTR(factory)
+  playable=false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::stop() {
+  playable=false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::play() {
+  playable=true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,7 +166,6 @@ void GLayer::inizGame() {
   getHUD()->reset();
 
   this->options->setObject(CC_INT(0), "lastWinner");
-  this->playable=true;
 
   CCLOG("init-game - ok");
 }
@@ -359,11 +370,11 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
   }
   else
   if ("/game/stop" == topic) {
-    y->playable=false;
+    y->stop();
   }
   else
   if ("/game/play" == topic) {
-    y->playable=true;
+    y->play();
   }
 }
 
@@ -407,12 +418,20 @@ f::XScene* Game::realize() {
   return this;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 Game::~Game() {
-
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 Game::Game() {
-  alive=false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool Game::isLive() {
+ return ((GLayer*) getGLayer())->playable;
 }
 
 NS_END(tttoe)

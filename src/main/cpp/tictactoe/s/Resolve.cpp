@@ -18,6 +18,7 @@ NS_BEGIN(tttoe)
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   : f::BaseSystem<EFactory>(f, d) {
+
   SNPTR(board)
 }
 
@@ -32,8 +33,7 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 //
 bool Resolve::onUpdate(float dt) {
   auto node= board->head;
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  if (MGMSOK() && NNP(node)) {
     syncUp(node);
     doIt(node, dt);
   }
@@ -124,12 +124,12 @@ void Resolve::doIt(a::Node* node, float dt) {
 //
 void Resolve::doWin(a::Node* node, Player& winner, const ArrDim& combo) {
 
-    j::json msg = j::json { {
+  auto msg = j::json( {
     {"color", winner.color },
     {"score", 1}
-    }};
-  MGMS()->sendMsgEx("/hud/score/update", &msg);
+  });
 
+  MGMS()->sendMsgEx("/hud/score/update", &msg);
   showWinningIcons(node, combo);
   doDone(node, winner);
 }
@@ -152,10 +152,10 @@ void Resolve::doForfeit(a::Node* node) {
   auto& loser = ps->parr[cur];
   auto& win= ps->parr[other];
 
-    j::json msg = j::json { {
+  auto msg = j::json( {
     {"color", win.color },
     {"score", 1}
-    }};
+  });
   MGMS()->sendMsgEx("/hud/score/update", &msg);
 
   //gray out the losing icons
@@ -174,7 +174,6 @@ void Resolve::doForfeit(a::Node* node) {
 
   doDone(node, win);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -205,9 +204,9 @@ void Resolve::showWinningIcons(a::Node* node, const ArrDim& combo) {
 void Resolve::doDone(a::Node* node, Player& pobj) {
 
   int pnum = pobj.pnum > 0 ? pobj.pnum : 0;
-    j::json msg = j::json { {
-    {"pnum", pnum  }
-    }};
+  auto msg = j::json( {
+    {"winner", pnum  }
+  });
 
   MGMS()->sendMsg("/hud/timer/hide");
   cx::sfxPlay("game_end");
@@ -238,6 +237,7 @@ bool Resolve::checkWin(a::Node* node, Player& p, Grid* game, ArrDim& combo) {
 
     auto& g = *it;
     int cnt=0;
+
     for (int i=0; i < g.size(); ++i) {
       auto pos = g[i];
       if (game->values[pos] == p.value) {

@@ -41,7 +41,7 @@ void Logic::addToEngine(not_null<a::Engine*> e) {
 //
 bool Logic::onUpdate(float dt) {
   auto node= board->head;
-  if (MGMS()->isLive() && NNP(node)) {
+  if (MGMSOK() && NNP(node)) {
     doIt(node, dt);
   }
   return true;
@@ -51,17 +51,17 @@ bool Logic::onUpdate(float dt) {
 //
 void Logic::doIt(a::Node* node, float dt) {
 
+  auto sel= CC_GNF(UISelection, node, "selection");
+  auto grid= CC_GNF(Grid, node, "grid");
+  auto robot= CC_GNF(SmartAlgo, node, "robot");
+
   auto pnum= CC_GDV(c::Integer, state, "pnum");
   auto ps = CC_GNF(Players, node, "players");
   auto bot= CC_CSV(c::Integer, "BOT");
   auto& cp= ps->parr[pnum];
 
-  auto sel= CC_GNF(UISelection, node, "selection");
-  auto grid= CC_GNF(Grid, node, "grid");
-  auto robot= CC_GNF(SmartAlgo, node, "robot");
-
   //handle online play
-  if (MGMS()->isLive()) {
+  if (MGMS()->isOnline()) {
     //if the mouse click is from the valid user, handle it
     if (pnum == cp.pnum) {
       enqueue(node, sel->cell, cp.value, grid);
@@ -81,7 +81,7 @@ void Logic::doIt(a::Node* node, float dt) {
       cx::undoTimer(botTimer);
       SNPTR(botTimer)
     } else {
-      botTimer = cx::reifyTimer(MGML(), 0.6);
+      botTimer = cx::reifyTimer(MGML(), 0.6f);
     }
   }
   else
@@ -109,7 +109,7 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
 
     MGMS()->sendMsg("/hud/timer/hide");
 
-    if (MGMS()->isLive()) {
+    if (MGMS()->isOnline()) {
       onEnqueue(node, cur, pos, grid);
     } else {
       if (cur == 1) {
@@ -136,19 +136,20 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
 //
 void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto ps = CC_GNF(Players, node, "players");
-    auto body = j::json { {
+  auto body = j::json( {
     { "color", ps->parr[pnum].color },
     { "value", ps->parr[pnum].value },
     { "grid", grid->values },
     { "cell", cell }
-    }};
+  });
   auto snd = pnum == 1 ? "x_pick" : "o_pick";
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
-    auto b= j::json(body);
 
-  ws::netSend(MGMS()->wsock(),
-              new ws::OdinEvent(t,c, b));
+  auto evt= new ws::OdinEvent(t,c, body);
+  c::RefPtr<ws::OdinEvent> rp(evt);
+
+  ws::netSend(MGMS()->wsock(), evt);
 
   state->setObject(CC_INT(0), "pnum");
   cx::sfxPlay(snd);
