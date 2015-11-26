@@ -18,33 +18,37 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_USING(fusii)
 NS_BEGIN(tttoe)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
 const s::array<Box4,GD_SZ> mapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
-  auto z = cx::calcSize("z.png");
-  auto csz = cx::scaleSize(z, scale);
-  auto ro= 8/72 * scale;
-  auto cw = cx::center();
+  auto csz = cx::scaleSize(cx::calcSize("z.png"), scale);
+  auto ro= 8.0f/72.0f * scale;
   auto gh = csz.height * ro;
   auto gw = csz.width * ro;
-  auto zh= BD_SZ * csz.height + (BD_SZ-1) * gh;
-  auto zw= BD_SZ * csz.width + (BD_SZ-1) * gw;
+  auto zh= csz.height * BD_SZ + gh * (BD_SZ-1);
+  auto zw= csz.width * BD_SZ + gw * (BD_SZ-1);
 
-  auto x0 = cw.x - zw * 0.5;
-  auto y0 = cw.y + zh * 0.5;
-  auto x1= x0;
-  auto y1=y0;
-  int x2,y2;
   s::array<Box4, GD_SZ> boxes;
+  auto cw = cx::center();
+  int x2, y2;
+
+  auto x0 = cw.x - zw * 0.5f;
+  auto y0 = cw.y + zh * 0.5f;
+  auto x1= x0;
+  auto y1= y0;
 
   for (int r=0; r < BD_SZ; ++r) {
     for (int c= 0; c < BD_SZ; ++c) {
+      auto& bx= boxes[r*BD_SZ+c];
       y2 = y1 - csz.height;
       x2 = x1 + csz.width;
-      boxes[r * BD_SZ + c] = Box4(y1, x2, y2, x1);
+      bx.top= y1;
+      bx.right= x2;
+      bx.bottom= y2;
+      bx.left= x1;
       x1= x2 + gw;
     }
     y1 = y2 - gh;

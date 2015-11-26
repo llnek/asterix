@@ -139,6 +139,7 @@ void Resolve::doWin(a::Node* node, Player& winner, const ArrDim& combo) {
 //
 void Resolve::doDraw(a::Node* node) {
   auto ps= CC_GNF(Players, node, "players");
+  ps->parr[0].pnum= 0;
   doDone(node, ps->parr[0]);
 }
 
