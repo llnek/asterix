@@ -256,12 +256,13 @@ bool GLayer::onTouchBegan(c::Touch*, c::Event*) {
 void GLayer::onTouchMoved(c::Touch*, c::Event*) {
 }
 void GLayer::onTouchEnded(c::Touch* t, c::Event*) {
-  onGUIXXX(t->getLocation());
+  onGUIXXX(t->getLocationInView());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initTouch() {
+    return;
   auto tc= c::EventListenerTouchOneByOne::create();
 
   tc->onTouchBegan = CC_CALLBACK_2(GLayer::onTouchBegan, this);
@@ -277,7 +278,7 @@ void GLayer::initTouch() {
 //
 void GLayer::onMouseUp(c::Event* e) {
   auto evt = (c::EventMouse*) e;
-  onGUIXXX(evt->getLocation());
+  onGUIXXX(evt->getLocationInView());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -304,7 +305,10 @@ void GLayer::onGUIXXX(const c::Vec2& pos) {
   sel->px= pos.x;
   sel->py= pos.y;
 
-  if (cur >  0) {} else { return; }
+  if (cur <=  0) {
+    CCLOG("onGUIXXX:  OOOPS, cur ============== %d", cur);
+    return;
+  }
 
   //which cell did he click on?
   F__LOOP(it, view->boxes) {
@@ -317,6 +321,7 @@ void GLayer::onGUIXXX(const c::Vec2& pos) {
     ++n;
   }
 
+    return;
 }
 
 END_NS_UNAMED()

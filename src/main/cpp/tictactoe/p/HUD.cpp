@@ -133,7 +133,7 @@ void HUDLayer::showTimer() {
   countDownState= true;
   countDownValue= ptt;
 
-  showCountDown("");
+  showCountDown(s::to_string(ptt));
 
   schedule(CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1.0f);
 }
@@ -148,7 +148,7 @@ void HUDLayer::updateTimer(float dt) {
     killTimer();
     MGMS()->sendMsg("/player/timer/expired");
   } else {
-    showCountDown("");
+    showCountDown(s::to_string(countDownValue));
   }
 }
 
