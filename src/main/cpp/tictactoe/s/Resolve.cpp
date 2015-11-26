@@ -32,6 +32,7 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::onUpdate(float dt) {
+  CCLOG("Resolve::onUpdate");
   auto node= board->head;
   if (MGMSOK() && NNP(node)) {
     syncUp(node);

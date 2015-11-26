@@ -52,7 +52,8 @@ bool Stager::onUpdate(float dt) {
     return false;
   }
 
-  auto& n = board->head;
+  CCLOG("Stager::onUpdate()");
+  auto n = board->head;
 
   if (NNP(n)) {
 
@@ -91,11 +92,11 @@ void Stager::onceOnly(a::Node* node) {
     if (ps->parr[pnum].category == bot) {
       //noop
     }
-    ps->parr[0]= ps->parr[pnum];
   }
 
-  inited=true;
   state->setObject(CC_INT(pnum), "pnum");
+  ps->parr[0].pnum = pnum;
+  inited=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -108,10 +109,10 @@ void Stager::showGrid(a::Node* node) {
 
   F__LOOP(it, arr) {
     auto sp= cx::reifySprite("z.png");
+    view->cells[pos++]=sp;
     sp->setPosition(cx::vboxMID(*it));
     sp->setUserObject(CC_INT(nil));
     view->layer->addAtlasItem("game-pics", sp);
-    view->cells[pos++]=sp;
   }
 }
 
@@ -123,8 +124,9 @@ void Stager::initOnline() {
     this->onSocket(evt);
   });
 
-  auto evt = new ws::OdinEvent( ws::MType::SESSION, ws::EType::STARTED);
-    c::RefPtr<ws::OdinEvent> rp(evt);
+  auto evt = new ws::OdinEvent(
+      ws::MType::SESSION, ws::EType::STARTED);
+  c::RefPtr<ws::OdinEvent> rp(evt);
 
   ws::netSend(MGMS()->wsock(), evt);
   CCLOG("reply to server: session started ok");
@@ -133,7 +135,6 @@ void Stager::initOnline() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::doIt(a::Node* node, float dt) {
-
   auto pnum = CC_GDV(c::Integer, state, "pnum");
   auto active = MGMSOK();
 
@@ -180,8 +181,8 @@ void Stager::onSess(ws::OdinEvent* evt) {
   auto snd="";
 
   if (cmd.is_object()) {
-      auto cell= cmd["cell"].get<j::json::number_integer_t>();
-      auto cv= cmd["value"].get<j::json::number_integer_t>();
+    auto cell= cmd["cell"].get<j::json::number_integer_t>();
+    auto cv= cmd["value"].get<j::json::number_integer_t>();
     if (cell >= 0 &&
         cell < grid->values.size()) {
       if (ps->parr[1].value == cv) {

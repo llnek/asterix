@@ -16,6 +16,7 @@
 #include "core/Odin.h"
 #include "n/GNodes.h"
 #include "Logic.h"
+NS_ALIAS(ag, fusii::algos)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
@@ -40,6 +41,7 @@ void Logic::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Logic::onUpdate(float dt) {
+  CCLOG("Logic::onUpdate()");
   auto node= board->head;
   if (MGMSOK() && NNP(node)) {
     doIt(node, dt);
@@ -52,8 +54,8 @@ bool Logic::onUpdate(float dt) {
 void Logic::doIt(a::Node* node, float dt) {
 
   auto sel= CC_GNF(UISelection, node, "selection");
-  auto grid= CC_GNF(Grid, node, "grid");
   auto robot= CC_GNF(SmartAlgo, node, "robot");
+  auto grid= CC_GNF(Grid, node, "grid");
 
   auto pnum= CC_GDV(c::Integer, state, "pnum");
   auto ps = CC_GNF(Players, node, "players");
@@ -69,19 +71,22 @@ void Logic::doIt(a::Node* node, float dt) {
   }
   else
   if (cp.category == bot) {
-    // for the bot, create some small delay...
-    if (NNP(botTimer) &&
-        cx::timerDone(botTimer)) {
+    if (ENP(botTimer)) {
+      // for the bot, create some small delay...
+      botTimer = cx::reifyTimer(MGML(), 0.6f);
+    }
+    else
+    if ( cx::timerDone(botTimer)) {
       auto bd= robot->board;
       int rc=0;
       bd->syncState(grid->values, cp.value);
       rc= bd->getFirstMove();
-      if (rc < 0) { rc = fusii::algos::evalNegaMax<BD_SZ>(bd); }
+      if (rc < 0) {
+        rc = ag::evalNegaMax<BD_SZ>(bd);
+      }
       enqueue(node, rc, cp.value, grid);
       cx::undoTimer(botTimer);
       SNPTR(botTimer)
-    } else {
-      botTimer = cx::reifyTimer(MGML(), 0.6f);
     }
   }
   else

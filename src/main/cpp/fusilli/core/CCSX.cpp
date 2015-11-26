@@ -32,7 +32,7 @@ NS_BEGIN(ccsx)
 c::Menu* mkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
-    
+
   F__LOOP(it, items) {
     menu->addChild( *it);
   }
@@ -206,7 +206,7 @@ const c::Size scaleSize(c::Size z, float scale) {
 //////////////////////////////////////////////////////////////////////////
 //
 void undoTimer(not_null<c::DelayTime*> tm) {
-  CC_DROP(tm)
+  CC_DROP(tm.get())
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -214,15 +214,15 @@ void undoTimer(not_null<c::DelayTime*> tm) {
 //
 c::DelayTime* reifyTimer(not_null<c::Node*> par, float tm) {
   auto t= c::DelayTime::create(tm);
-  par->runAction(t);
   CC_KEEP(t)
+  par->runAction(t);
   return t;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool timerDone(not_null<c::DelayTime*> t) {
-  return NNP(t) ? t->isDone() : false;
+  return t->isDone();
 }
 
 //////////////////////////////////////////////////////////////////////////

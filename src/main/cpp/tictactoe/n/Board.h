@@ -25,7 +25,7 @@ protected:
 
   bool testWin(const ArrCells& , int actor, const ArrDim& combo);
 
-  const s::vector<ArrDim>& GOALS;
+  s::vector<ArrDim> GOALS;
   s::array<int,3> actors;
   ArrCells grid;
   int CV_Z;

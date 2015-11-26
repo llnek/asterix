@@ -37,10 +37,9 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
 //
-Board::Board(int nil, int p1v, int p2v)
-: GOALS(mapGoalSpace()){
+Board::Board(int nil, int p1v, int p2v) {
   this->actors = {nil, p1v, p2v};
-  //this->GOALS= ();
+  this->GOALS= mapGoalSpace();
   this->CV_Z= nil;
 }
 
@@ -157,17 +156,27 @@ owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
 //
 int Board::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
-  ArrDim  combo;
-  return testWin(snap->state, snap->other, combo) ? -100 : 0;
+  F__LOOP(it, GOALS) {
+    auto& t = *it;
+    if (testWin(snap->state, snap->other, t)) {
+      return -100;
+    }
+  }
+  return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Board::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
-  ArrDim combo;
-  return testWin(snap->state, snap->other, combo) ||
-         testWin(snap->state, snap->cur, combo) ||
-         isStalemate(snap);
+
+  F__LOOP(it, GOALS) {
+    auto& t = *it;
+    if (testWin(snap->state, snap->other, t) ||
+        testWin(snap->state, snap->cur, t)) {
+      return true;
+    }
+  }
+  return isStalemate(snap);
 }
 
 //////////////////////////////////////////////////////////////////////////
