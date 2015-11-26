@@ -72,6 +72,7 @@ XConfig::XConfig() {
   frags->setObject(CC_DICT(), LEVELS);
 
   loadL10NStrings();
+  audioState=true;
 
   addLevel("1");
   setCsts();

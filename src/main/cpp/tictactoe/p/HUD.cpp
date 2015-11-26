@@ -35,8 +35,8 @@ f::XLayer* HUDLayer::realize() {
 void HUDLayer::initIcons() {
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto tile = CC_CSV(c::Integer, "TILE");
-  auto hh = cx::getHeight(b) * 0.5;
-  auto hw = cx::getWidth(b) * 0.5;
+  auto hh = cx::getHeight(b) * 0.5f;
+  auto hw = cx::getWidth(b) * 0.5f;
   b->setTarget(this,
       CC_MENU_SELECTOR(HUDLayer::showMenu));
   b->setColor(this->color);
@@ -45,6 +45,12 @@ void HUDLayer::initIcons() {
 
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::showMenu(c::Ref*) {
+  MGMS()->sendMsg("/hud/showmenu");
 }
 
 //////////////////////////////////////////////////////////////////////////

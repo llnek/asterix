@@ -18,6 +18,7 @@
 #include "core/Odin.h"
 #include "HUD.h"
 #include "Game.h"
+#include "Menu.h"
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
@@ -52,7 +53,7 @@ public:
   virtual void initMouse();
 
   void onMouseUp(c::Event*);
-  void showMenu() {}
+  void showMenu();
 
   HUDLayer* getHUD();
 
@@ -123,6 +124,14 @@ f::XLayer* GLayer::realize() {
   inizGame();
   scheduleUpdate();
   return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::showMenu() {
+  auto f= [=]() { CC_DTOR()->popScene(); };
+  auto m= MainMenu::reifyWithBackAction(f);
+  CC_DTOR()->pushScene(m);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -152,6 +152,7 @@ void UILayer::onBack(c::Ref* r) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref* r) {
+  cx::runScene(XCFG()->startWith());
 }
 
 END_NS_UNAMED()

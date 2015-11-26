@@ -51,7 +51,7 @@ public:
 
   void resetAsNew();
   void reset();
-    void showMenu(c::Ref*) {}
+    void showMenu(c::Ref*);
 
     void initLabels();
     void initIcons();
