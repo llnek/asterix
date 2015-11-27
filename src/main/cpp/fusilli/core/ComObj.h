@@ -29,13 +29,13 @@ protected:
 
 public:
 
-  void inflate(not_null<c::Dictionary*> options);
-  void inflate(float x, float y);
-  void inflate();
-  void deflate();
+  virtual void inflate(not_null<c::Dictionary*> options);
+  virtual void inflate(float x, float y);
+  virtual void inflate();
+  virtual void deflate();
+  virtual void hurt(int damage=1);
 
   void setPos(float x, float y);
-  void hurt(int damage=1);
 
   const c::Size csize();
   const c::Vec2 pos();
@@ -44,7 +44,7 @@ public:
   float width();
   int pid();
 
-  void updatePosition(float x, float y);
+  virtual void updatePosition(float x, float y);
 
   ComObj(c::Sprite*, int health, int score);
   ComObj(c::Sprite*);
