@@ -50,6 +50,16 @@ protected:
   NO__CPYASS(XConfig)
   XConfig();
 
+  static const stdstr ATLASES;
+  static const stdstr LEVELS;
+  static const stdstr FONTS;
+  static const stdstr TILES;
+  static const stdstr IMAGES;
+  static const stdstr MUSIC;
+  static const stdstr EFX;
+  static const stdstr CSTS;
+  static const stdstr CFG;
+
 public:
 
   virtual void handleResolution(const c::Size& ) {}
@@ -94,9 +104,9 @@ public:
   float getMusicVolume();
   float getVolume();
 
-  c::Dictionary* getLevelCfg(const stdstr& n);
   c::Dictionary* getLevel(const stdstr& n);
   c::Dictionary* addLevel(const stdstr& n);
+  f::JsonObj* getLevelCfg(const stdstr& n);
 
   const s::vector<filepath> getEffectFiles();
   const s::vector<filepath> getMusicFiles();

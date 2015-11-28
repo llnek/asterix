@@ -18,12 +18,17 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL EndGame : public f::XScene {
+protected:
+
+  NO__CPYASS(EndGame)
+  f::GMode mode;
+
 public:
 
+  static EndGame* reify(f::GMode);
   virtual f::XScene* realize();
-  NO__CPYASS(EndGame)
-  DECL_CTOR(EndGame)
 
+  DECL_CTOR(EndGame)
 };
 
 

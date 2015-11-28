@@ -17,6 +17,7 @@
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "HUD.h"
+#include "END.h"
 #include "Game.h"
 #include "Menu.h"
 NS_ALIAS(ws, fusii::odin)
@@ -247,6 +248,7 @@ void GLayer::playTimeExpired() {
 //
 void GLayer::overAndDone(int winner) {
   getHUD()->endGame(winner);
+  //cx::runScene(EndGame::reify( MGMS()->getMode() ));
 }
 
 //////////////////////////////////////////////////////////////////////////

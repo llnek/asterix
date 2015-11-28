@@ -12,6 +12,8 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "s/utils.h"
+#include "Game.h"
 #include "End.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
@@ -26,6 +28,10 @@ public:
   NO__CPYASS(UILayer)
   DECL_CTOR(UILayer)
 
+  void onReplay(c::Ref*);
+  void onQuit(c::Ref*);
+
+  f::GMode mode;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +46,7 @@ UILayer::UILayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-UILayer::onReplay(c::Ref*) {
+void UILayer::onReplay(c::Ref*) {
   auto g = f::reifyRefType<Game>();
   prepareSeedData(mode);
   cx::runScene( Game::reify(g, mode) );
@@ -48,7 +54,7 @@ UILayer::onReplay(c::Ref*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-UILayer::onQuit(c::Ref*) {
+void UILayer::onQuit(c::Ref*) {
   cx::runScene( XCFG()->startWith() );
 }
 
@@ -67,6 +73,7 @@ f::XLayer* UILayer::realize() {
   // test msg
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setColor(cx::white());
   qn->setOpacity(0.9*255);
   addItem(qn);
 
@@ -99,18 +106,26 @@ f::XScene* EndGame::realize() {
   return this;
 }
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//
+EndGame* EndGame::reify(f::GMode m) {
+  auto g = f::reifyRefType<EndGame>();
+  g->mode= m;
+  g->realize();
+  return g;
+}
+
+//////////////////////////////////////////////////////////////////////////
 //
 EndGame::~EndGame() {
 
 }
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
 EndGame::EndGame() {
-
+  mode=f::GMode::ONE;
 }
-
 
 NS_END(tttoe)
 

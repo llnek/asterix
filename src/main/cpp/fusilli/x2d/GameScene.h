@@ -19,6 +19,7 @@
 #include "platform/CCCommon.h"
 #include "core/XPool.h"
 #include "core/Odin.h"
+#include "core/JSON.h"
 #include "XScene.h"
 #include "GameLayer.h"
 NS_ALIAS(ws, fusii::odin)
@@ -74,7 +75,7 @@ public:
   XPool* getPool(const stdstr& n);
 
   GMode getMode() { return mode; }
-  c::Dictionary* getLCfg();
+    f::JsonObj* getLCfg();
   void resetPools();
 
   s::queue<stdstr>& msgQueue() { return msgQ; }

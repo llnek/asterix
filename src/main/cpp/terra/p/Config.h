@@ -16,15 +16,42 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-enum class MOVES { RUSH, VERT, HORZ, OLAP };
+enum class Moves { RUSH, VERT, HORZ, OLAP };
 
-enum class ATTACKS { TSUIHIKIDAN, NORMAL };
+enum class Attacks { TSUIHIKIDAN, NORMAL };
+
+struct EnemyType {
+
+  EnemyType(Attacks attackMode, Moves moveType,
+    int type,
+    stdtsr textureName,
+    stdstr bulletType,
+    int HP, int scoreValue) {
+
+  this->attackMode = attackMode;
+  this->moveType= moveType;
+  this->ytpe= type;
+  this->textureName = textureName;
+  this->bulletType = bulletType;
+  this->HP= HP;
+  this->scoreValue = scoreValue;
+  }
+
+  Attacks attackMode;
+  Moves moveType;
+  int type;
+  stdtsr textureName;
+  stdstr bulletType;
+  int HP;
+  int scoreValue;
+};
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
 protected:
 
+  NO__CPYASS(Config)
   Config();
 
 public:
@@ -33,11 +60,16 @@ public:
 
   virtual void runOnce();
 
+  virtual ~Config();
+
   virtual const stdstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
 
   virtual const stdstr color() { return "yellow"; }
 
   virtual const stdstr appId() { return "terra"; }
+
+  virtual const c::Size gameSize() { return c::Size(320,480); }
+
 
   static Config* reify();
 };

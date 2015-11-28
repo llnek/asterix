@@ -44,9 +44,9 @@
 */
 
 #include "aeon/fusilli.h"
+#include "JSON.h"
 #include "cocos2d.h"
 #include "Macros.h"
-
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
@@ -209,6 +209,45 @@ private:
   float _h;
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL JsonObj : public c::Ref, public c::Clonable {
+public:
+
+  static JsonObj* create(const j::json& c) {
+    JsonObj* pRet = new JsonObj(c);
+    pRet->autorelease();
+    return pRet;
+  }
+
+  static JsonObj* create() {
+    JsonObj* pRet = new JsonObj();
+    pRet->autorelease();
+    return pRet;
+  }
+
+  JsonObj(const j::json& c)
+  : _obj(c)
+  {}
+
+  JsonObj()
+  {}
+
+  j::json getValue() const {return j::json(_obj); }
+
+  virtual ~JsonObj() {
+    CCLOGINFO("deallocing ~JsonObj: %p", this);
+  }
+
+  virtual void acceptVisitor(c::DataVisitor &visitor) {  }
+
+  virtual JsonObj* clone() const override {
+    return JsonObj::create(_obj);
+  }
+
+private:
+  j::json _obj;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //

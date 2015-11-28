@@ -12,8 +12,8 @@
 #if !defined(__JSON_H__)
 #define __JSON_H__
 
-#include "aeon/fusilli.h"
 #include "nlohmann/json.hpp"
+#include "aeon/fusilli.h"
 NS_ALIAS(j, nlohmann)
 #define J__LOOP(it,c) \
     for (j::json::iterator it= c.begin(); it != c.end(); ++it)

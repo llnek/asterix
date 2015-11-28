@@ -12,6 +12,64 @@
 #include "Config.h"
 
 
+const s::array<EnemyType, 6> enemyTypes = {
+
+  {
+    Attacks::NORMAL,
+    Moves::RUSH,
+    0,
+    "E0.png",
+    "W2.png",
+    1,
+    15
+  },
+  {
+    Attacks::NORMAL,
+    Moves::RUSH,
+    1,
+    "E1.png",
+    "W2.png",
+    2,
+    40
+  },
+  {
+    Attacks::TSUIHIKIDAN,
+    Moves::HORZ,
+    2,
+    "E2.png",
+    "W2.png",
+    4,
+    60
+  },
+  {
+    Attacks::NORMAL,
+    Moves::OLAP,
+    3,
+    "E3.png",
+    "W2.png",
+    6,
+    80
+  },
+  {
+    Attacks::TSUIHIKIDAN,
+    Moves::HORZ,
+    4,
+    "E4.png",
+    "W2.png",
+    10,
+    150
+  },
+  {
+    Attacks::NORMAL,
+    Moves::HORZ,
+    5,
+    "E5.png",
+    "W2.png",
+    15,
+    200
+  }
+};
+
 //////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +78,13 @@ owner<f::XConfig*> Config::reify() {
   auto c =  mc_new(Config);
   c->initAssets();
   c->initCsts();
+  c->initLevels();
   return c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Config::~Config() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,128 +106,88 @@ void Config::initCsts() {
   addCst("flareY", CC_INT(445));
 }
 
-  game: {
-    sd: {width:320, height:480}
-  },
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::initAssets() {
 
-  assets: {
-    atlases: {
-      'game-pics' : 'res/{{appid}}/pics/textureTransparentPack',
-      'lang-pics' : 'res/{{appid}}/l10n/{{lang}}/images',
-      'op-pics' : 'res/{{appid}}/pics/textureOpaquePack',
-      'explosions' : 'res/{{appid}}/pics/explosion',
-      'back-tiles' : 'res/{{appid}}/pics/b01'
-    },
-    sprites: {
-    },
-    tiles: {
-    },
-    images: {
-      'gui.mmenus.menu.bg' : 'res/{{appid}}/pics/bg.png',
-      'flare': 'res/{{appid}}/pics/flare.jpg',
-      'game.bg' : 'res/{{appid}}/pics/bg.png'
-    },
-    sounds: {
-      'bgMusic' : 'res/{{appid}}/sfx/bgMusic',
-      'btnEffect' : 'res/{{appid}}/sfx/buttonEffet',
-      'explodeEffect' : 'res/{{appid}}/sfx/explodeEffect',
-      'fireEffect' : 'res/{{appid}}/sfx/fireEffect',
-      'mainMusic' : 'res/{{appid}}/sfx/mainMainMusic',
-      'shipDestroyEffect' : 'res/{{appid}}/sfx/shipDestroyEffect'
-    },
-    fonts: {
-      'font.arial' : [ 'res/{{appid}}/l10n/{{lang}}', 'arial-14.png', 'arial-14.fnt' ]
-    }
-  },
+  addAtlas("game-pics", CC_STR("pics/textureTransparentPack"));
+  addAtlas("lang-pics", CC_STR("l10n/{{lang}}/images"));
+  addAtlas("op-pics", CC_STR("pics/textureOpaquePack"));
+  addAtlas("explosions", CC_STR("pics/explosion"));
+  addAtlas("back-tiles", CC_STR("pics/b01"));
 
-  EnemyTypes: [ {
-      attackMode: ATTACKS.NORMAL,
-      moveType: MOVES.RUSH,
-      type: 0,
-      textureName:"E0.png",
-      bulletType:"W2.png",
-      HP:1,
-      scoreValue:15
-    },
-    {
-      attackMode: ATTACKS.NORMAL,
-      moveType: MOVES.RUSH,
-      type:1,
-      textureName:"E1.png",
-      bulletType:"W2.png",
-      HP:2,
-      scoreValue:40
-    },
-    {
-      attackMode: ATTACKS.TSUIHIKIDAN,
-      moveType: MOVES.HORZ,
-      type:2,
-      textureName:"E2.png",
-      bulletType:"W2.png",
-      HP:4,
-      scoreValue:60
-    },
-    {
-      attackMode: ATTACKS.NORMAL,
-      moveType: MOVES.OLAP,
-      type:3,
-      textureName:"E3.png",
-      bulletType:"W2.png",
-      HP:6,
-      scoreValue:80
-    },
-    {
-      attackMode: ATTACKS.TSUIHIKIDAN,
-      moveType: MOVES.HORZ,
-      type:4,
-      textureName:"E4.png",
-      bulletType:"W2.png",
-      HP:10,
-      scoreValue:150
-    },
-    {
-      attackMode: ATTACKS.NORMAL,
-      moveType: MOVES.HORZ,
-      type:5,
-      textureName:"E5.png",
-      bulletType:"W2.png",
-      HP:15,
-      scoreValue:200
-    }
-  ],
+  addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
+  addImage("flare", CC_STR("pics/flare.jpg"));
+  addImage("game.bg", CC_STR("pics/bg.png"));
 
-  levels: {
-    "1" : {
-      sprites: {
-      },
-      tiles: {
-      },
-      images: {
-      },
-      cfg: {
-        enemyMax: 6,
-        enemies: [
-          { style:"*", time: 2, types:[0,1,2] },
-          { style:"*", time: 5, types:[3,4,5] } ]
-      }
+  addEffect("shipDestroyEffect", CC_STR("sfx/shipDestroyEffect.mp3"));
+  addEffect("bgMusic", CC_STR("sfx/bgMusic.mp3"));
+  addEffect("btnEffect", CC_STR("sfx/buttonEffet.mp3"));
+  addEffect("explodeEffect", CC_STR("sfx/explodeEffect.mp3"));
+  addEffect("fireEffect", CC_STR("sfx/fireEffect.mp3"));
+  addEffect("mainMusic", CC_STR("sfx/mainMainMusic.mp3"));
 
-    }
-  },
+  addFont("font.arial", CC_STR("fon/en/arial-14.fnt"));
 
-  handleResolution(rs) {
-    //for default font, we use 48pt
-    this.game.scale = 52/256 * rs.width /320;
-  },
+}
 
-  runOnce() {
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('game-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('lang-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('op-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('explosions'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('back-tiles'));
-  }
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::initLevels() {
+  auto d = getLevel("1");
+  assert(d != nullptr);
 
-};
+  auto cfg = j::json({
+
+      {"enemyMax" , 6},
+
+      {"enemies", j::json::array_t {
+
+          { {"style", "*"},
+            {"time",  2},
+            {"types", j::json::array_t { 0,1,2} }},
+
+          { {"style", "*"},
+            {"time",  5},
+            {"types", j::json::array_t { 3,4,5} }}
+
+      }}});
+
+  d->setObject(f::JsonObj::create(cfg), CFG);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::handleResolution(const c::Size& rs) {
+  //for default font, we use 48pt
+  scale = 52.0f/256.0f * rs.width /320.0f;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::runOnce() {
+  auto c= c::SpriteFrameCache::getInstance();
+  auto fp= getAtlas("game-pics");
+
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp = getAtlas("lang-pics");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("op-pics");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp = getAtlas("explosions");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp = getAtlas("back-tiles");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+}
 
 
 

@@ -210,6 +210,18 @@ void undoTimer(not_null<c::DelayTime*> tm) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+//
+void mergeDict(c::Dictionary* src, c::Dictionary* d2) {
+  NS_USING(cocos2d)
+  DictElement* e= nullptr;
+  CCDICT_FOREACH(d2, e) {
+    auto obj = e->getObject();
+    auto key= e->getStrKey();
+    src->setObject(obj, key);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Reify a timer action
 //
 c::DelayTime* reifyTimer(not_null<c::Node*> par, float tm) {

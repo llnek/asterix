@@ -16,18 +16,19 @@ NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
+const stdstr XConfig::ATLASES= "atlases";
+const stdstr XConfig::LEVELS= "levels";
+const stdstr XConfig::FONTS= "fonts";
+const stdstr XConfig::TILES= "tiles";
+const stdstr XConfig::IMAGES= "images";
+const stdstr XConfig::MUSIC= "music";
+const stdstr XConfig::EFX= "effects";
+const stdstr XConfig::CSTS= "csts";
+const stdstr XConfig::CFG= "cfg";
+
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
-const stdstr ATLASES= "atlases";
-const stdstr LEVELS= "levels";
-const stdstr FONTS= "fonts";
-const stdstr TILES= "tiles";
-const stdstr IMAGES= "images";
-const stdstr MUSIC= "music";
-const stdstr EFX= "effects";
-const stdstr CSTS= "csts";
-const stdstr CFG= "cfg";
 XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -87,9 +88,14 @@ void XConfig::loadL10NStrings() {
   NS_USING(cocos2d)
   DictElement* e= nullptr;
   CCDICT_FOREACH(d, e) {
-    auto obj = e->getObject();
+    auto langObj = e->getObject();
     auto key= e->getStrKey();
-    b->setObject(obj, key);
+      auto d2= b->objectForKey(key);
+    if (ENP(d2)) {
+      d2= CC_DICT();
+      b->setObject(d2, key);
+    }
+      cx::mergeDict((c::Dictionary*)d2, (c::Dictionary*)langObj);
   }
 
   CC_KEEP(b)
@@ -255,10 +261,10 @@ c::Dictionary* XConfig::getLevel(const stdstr& n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::getLevelCfg(const stdstr& n) {
+f::JsonObj* XConfig::getLevelCfg(const stdstr& n) {
   auto r= getLevel(n);
   if (NNP(r)) {
-    return SCAST(c::Dictionary*, r->objectForKey(CFG));
+    return SCAST(f::JsonObj*, r->objectForKey(CFG));
   } else {
     return nullptr;
   }
@@ -283,9 +289,9 @@ c::Dictionary* XConfig::addLevel(const stdstr& level) {
 
   auto d2= CC_DICT();
 
+  d2->setObject(f::JsonObj::create(), CFG);
   d2->setObject(CC_DICT(), IMAGES);
   d2->setObject(CC_DICT(), TILES);
-  d2->setObject(CC_DICT(), CFG);
 
   getFragment(LEVELS)->setObject(d2, level);
   return d2;

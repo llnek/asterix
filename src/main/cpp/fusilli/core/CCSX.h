@@ -124,6 +124,8 @@ namespace ccsx {
       const c::Rect& rect, const c::Vec2& vel,
       c::Vec2& outPos, c::Vec2& outVel);
 
+  void mergeDict(c::Dictionary* src, c::Dictionary* d2);
+
   /**
    * Get the sprite from the frame cache using
    * its id (e.g. ship.png)
