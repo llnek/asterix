@@ -9,138 +9,79 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires s/utils
- * @requires n/gnodes
- * @requires zotohlab/asx/pool
- * @module s/stager
- */
+#include "EFactory.h"
+#include "Stager.h"
+NS_BEGIN(terra)
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import xpool from 'zotohlab/asx/pool';
-import cobjs from 'n/cobjs';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+//////////////////////////////////////////////////////////////////////////////
+Stager::Stager(not_null<EFactory*> f,
+    not_null<c::Dictionary*> d)
 
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * class Stager */
-Stager = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/stager~Stager
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/stager~Stager
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships=null;
-  },
-  /**
-   * @memberof module:s/stager~Stager
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships = engine.getNodeList(gnodes.ShipMotionNode);
-  },
-  /**
-   * @memberof module:s/stager~Stager
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    if (ccsx.isTransitioning()) { return false; }
-    if (this.state.running &&
-        !this.inited) {
-      this.onceOnly();
-      this.inited=true;
+  : f::BaseSystem<EFactory>(f, d) {
+
+  this->inited=false;
+  SNPTR(ships)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::removeFromEngine(not_null<a::Engine*> e) {
+  SNPTR(ships)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::addToEngine(not_null<a::Engine*> e) {
+  ShipMotionNode n;
+  ships = e->getNodeList(n.typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Stager::onUpdate(float dt) {
+  if (cx::isTransitioning()) { return false; }
+  if (NNP(ships->head)) {
+    if (! inited) {
+      onceOnly();
     }
-  },
-  /**
-   * @method initBackSkies
-   * @private
-   */
-  initBackSkies() {
-    const bs = sh.pools.BackSkies.get();
-    bs.inflate({x: 0, y: 0});
-    this.state.backSkyRe = null;
-    this.state.backSky = bs;
-    this.state.backSkyDim = cc.size(bs.size());
-  },
-  /**
-   * @method sharedExplosion
-   * @private
-   */
-  sharedExplosion() {
-    let animFrames = [],
-    animation,
-    frame;
+  }
+}
 
-    for (let n = 1; n < 35; ++n) {
-      let str = "explosion_" + (n < 10 ? ("0" + n) : n) + ".png";
-      frame = ccsx.getSprite(str);
-      animFrames.push(frame);
-    }
-    animation = new cc.Animation(animFrames, 0.04);
-    cc.animationCache.addAnimation(animation, "Explosion");
-  },
-  /**
-   * @method onceOnly
-   * @private
-   */
-  onceOnly() {
-    this.state.player= sh.factory.createShip();
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::onceOnly() {
 
-    sh.pools.BackTiles= xpool.reify();
-    sh.pools.BackSkies= xpool.reify();
+  MGMS()->reifyPool("BackTiles");
+  MGMS()->reifyPool("BackSkies");
 
-    sh.pools.Missiles = xpool.reify();
-    sh.pools.Baddies = xpool.reify();
-    sh.pools.Bombs= xpool.reify();
+  MGMS()->reifyPool("Missiles");
+  MGMS()->reifyPool("Baddies");
+  MGMS()->reifyPool("Bombs");
 
-    sh.pools.Explosions= xpool.reify();
-    sh.pools.Sparks= xpool.reify();
-    sh.pools.HitEffects= xpool.reify();
+  MGMS()->reifyPool("Explosions");
+  MGMS()->reifyPool("Sparks");
+  MGMS()->reifyPool("HitEffects");
 
-    sh.factory.createBackSkies();
+  factory->createBackSkies();
 
-    this.sharedExplosion();
-    this.initBackSkies();
+  sharedExplosion();
+  initBackSkies();
 
-    sh.factory.createBackTiles();
-    sh.fire('/game/backtiles');
+  factory->createBackTiles();
+  MGMS()->sendMsg("/game/backtiles");
 
-    sh.factory.createMissiles();
-    sh.factory.createBombs();
-    sh.factory.createEnemies();
+  factory->createMissiles();
+  factory->createBombs();
+  factory->createEnemies();
 
-    sh.factory.createExplosions();
-    sh.factory.createSparks();
-    sh.factory.createHitEffects();
+  factory->createExplosions();
+  factory->createSparks();
+  factory->createHitEffects();
 
-    const node = this.ships.head;
-    if (!!node) {
-      utils.bornShip(node.ship);
-    }
+  bornShip(ships->head->ship);
+}
 
-    ccsx.onTouchOne(this);
-    ccsx.onMouse(this);
-    sh.main.pkInput();
-  },
+
   /**
    * @method fire
    * @private
@@ -169,21 +110,37 @@ Stager = sh.Ashley.sysDef({
  * @property {Number} Priority
  */
 Priority : xcfg.ftypes.PreUpdate
-});
-
-
-/** @alias module:s/stager */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Stager}  Stager
-   */
-  Stager : Stager
 };
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+  /**
+   * @method initBackSkies
+   * @private
+   */
+  initBackSkies() {
+    const bs = sh.pools.BackSkies.get();
+    bs.inflate({x: 0, y: 0});
+    this.state.backSkyRe = null;
+    this.state.backSky = bs;
+    this.state.backSkyDim = cc.size(bs.size());
+  },
+  /**
+   * @method sharedExplosion
+   * @private
+   */
+  sharedExplosion() {
+    let animFrames = [],
+    animation,
+    frame;
+
+    for (let n = 1; n < 35; ++n) {
+      let str = "explosion_" + (n < 10 ? ("0" + n) : n) + ".png";
+      frame = ccsx.getSprite(str);
+      animFrames.push(frame);
+    }
+    animation = new cc.Animation(animFrames, 0.04);
+    cc.animationCache.addAnimation(animation, "Explosion");
+  },
+
+NS_END(terra)
 

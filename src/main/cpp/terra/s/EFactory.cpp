@@ -9,223 +9,199 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @module s/factory
- */
+#include "EFactory.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
+NS_ALIAS(terra)
 
-const BackTileMap= ["lvl1_map1.png", "lvl1_map2.png",
-                    "lvl1_map3.png", "lvl1_map4.png"];
+static const s::array<stdstr,4> BackTileMap= {
+  "lvl1_map1.png", "lvl1_map2.png",
+                    "lvl1_map3.png", "lvl1_map4.png" };
 
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R=sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////
-/** * @class EntityFactory */
-EntityFactory = sh.Ashley.casDef({
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method constructor
-   * @param {Ash.Engine} engine
-   */
-  constructor(engine) {
-    this.engine=engine;
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createShip
-   * @return {Object} a ship
-   */
-  createShip() {
-    let sp= ccsx.createSprite('ship01.png'),
-    ent= sh.Ashley.newEntity(),
-    sz= sp.getContentSize(),
-    bs, player,
-    cw= ccsx.center(),
-    wz= ccsx.vrect();
-    sp.setPosition(cw.x, sz.height);
+//
+EFactory::EFactory(not_null<a::Engine*> e,
+    not_null<c::Dictionary*> options)
 
-    // set frame
-    let fr0 = ccsx.getSprite("ship01.png"),
-    fr1 = ccsx.getSprite("ship02.png"),
-    animFrames = [fr0, fr1],
-    animation = new cc.Animation(animFrames, 0.1),
-    animate = cc.animate(animation);
-    sp.runAction(animate.repeatForever());
+  : f::Factory(e, options) {
 
-    sh.main.addAtlasItem('game-pics', sp, csts.SHIP_ZX);
+}
 
-    bs = ccsx.createSprite("ship03.png");
-    bs.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-    bs.setPosition(sz.width * 0.5, 12);
-    bs.setVisible(false);
-    sp.addChild(bs, csts.SHIP_ZX, 99999);
-
-    player = new cobjs.Ship(sp, bs);
-    ent.add(player);
-    ent.add(new cobjs.Motion());
-    this.engine.addEntity(ent);
-    return player;
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createMissiles
-   * @param {Number} count
-   */
-  createMissiles(count) {
-    sh.pools.Missiles.preSet(() => {
-      const sp= ccsx.createSprite('W1.png');
-      sp.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-      sp.setVisible(false);
-      sh.main.addAtlasItem('op-pics', sp, csts.SHIP_ZX);
-      return new cobjs.Missile(sp);
-    }, count);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createBombs
-   * @param {Number} count
-   */
-  createBombs(count) {
-    sh.pools.Bombs.preSet(() => {
-      const sp= ccsx.createSprite('W2.png');
-      sp.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-      sp.setVisible(false);
-      sh.main.addAtlasItem('op-pics', sp, csts.SHIP_ZX);
-      return new cobjs.Bomb(sp);
-    }, count);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createExplosions
-   * @param {Number} count
-   */
-  createExplosions(count) {
-    sh.pools.Explosions.preSet(() => {
-      const sp = ccsx.createSprite("explosion_01.png");
-      sp.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-      sp.setVisible(false);
-      sh.main.addAtlasItem('explosions', sp);
-      return new cobjs.Explosion(sp);
-    }, count || 6);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createHitEffects
-   * @param {Number} count
-   */
-  createHitEffects(count) {
-    sh.pools.HitEffects.preSet(() => {
-      const sp = ccsx.createSprite("hit.png");
-      sp.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-      sp.setVisible(false);
-      sh.main.addAtlasItem('op-pics', sp);
-      return new cobjs.HitEffect(sp);
-    }, count || 10);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createSparks
-   * @param {Number} count
-   */
-  createSparks(count) {
-    sh.pools.Sparks.preSet(() => {
-      const sp = [ccsx.createSprite("explode2.png"),
-                  ccsx.createSprite("explode3.png")];
-      R.forEach( s => {
-        s.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-        s.setVisible(false);
-        sh.main.addAtlasItem('op-pics', s);
-      }, sp);
-      return new cobjs.Spark(sp[0], sp[1]);
-    }, count || 6);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createEnemies
-   * @param {Number} count
-   */
-  createEnemies(count) {
-    const cr= arg => {
-      const sp= ccsx.createSprite(arg.textureName);
-      sp.setVisible(false);
-      sh.main.addAtlasItem('game-pics', sp,
-                           csts.SHIP_ZX - 1); // why?
-      return new cobjs.Enemy(sp, arg);
-    },
-    ts = xcfg.EnemyTypes;
-
-    sh.pools.Baddies.preSet( pool => {
-      for (let j = 0; j < ts.length; ++j) {
-        pool.push( cr( ts[j]));
-      }
-    }, count||3);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createBackSkies
-   */
-  createBackSkies() {
-    const layer= sh.main.getBackgd();
-    sh.pools.BackSkies.preSet(() => {
-      const bg = ccsx.createSprite('bg01.png');
-      bg.setAnchorPoint(0,0);
-      bg.setVisible(false);
-      layer.addAtlasItem('game-pics', bg, -10);
-      return sh.Ashley.newObject(bg);
-    }, 2);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createBackTiles
-   * @param {Number} count
-   */
-  createBackTiles(count) {
-    let layer= sh.main.getBackgd(),
-    rc, sp,
-    cr= name => {
-      sp = ccsx.createSprite(name);
-      sp.setAnchorPoint(0.5,0);
-      sp.setVisible(false);
-      layer.addAtlasItem('back-tiles', sp, -9);
-      return sh.Ashley.newObject(sp);
-    };
-
-    let tm= BackTileMap,
-    tn= tm.length,
-    sz= count || 1;
-
-    sh.pools.BackTiles.preSet( pool => {
-      for (let n=0; n < tn; ++n) {
-        pool.push(cr(tm[sjs.rand(tn)]));
-      }
-    }, sz);
-  }
-
-});
-
-
-/** @alias module:s/factory */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {EntityFactory}  EntityFactory
-   */
-  EntityFactory : EntityFactory
-};
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+a::Entity* EFactory::createShip() {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto sp= cx::reifySprite("ship01.png");
+  auto ent= engine->reifyEntity("game");
+  auto sz= sp->getContentSize();
+  auto wz= cx::visRect();
+  auto cw= cx::center();
+
+  auto fr0 = cx::getSpriteFrame("ship01.png");
+  auto fr1 = cx::getSpriteFrame("ship02.png");
+  auto animation = c::Animation::create();
+  animation->setDelayPerUnit(0.1f);
+  animation->addSpriteFrame(fr0);
+  animation->addSpriteFrame(fr1);
+  auto animate = c::Animate::create(animation);
+
+  MGML()->addAtlasItem("game-pics", sp, f::Maybe<int>(zx));
+  sp->runAction(c::RepeatForever::create(animate));
+  sp->setPosition(cw.x, sz.height);
+
+  auto bs = cx::reifySprite("ship03.png");
+  bs->setBlendFunc(c::BlendFunc::ADD);
+  bs->setPosition(sz.width * 0.5f, 12);
+  bs->setVisible(false);
+  sp->addChild(bs, f::Maybe<int>(zx), f::Maybe<int>(99999));
+
+  auto player = new Ship(sp, bs);
+  ent->checkin(player);
+  ent->checkin(new Motion());
+
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createMissiles(int count) {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto p = MGMS()->getPool("Missiles");
+
+  p->preSet([=]() -> f::ComObj* {
+    auto sp= cx::reifySprite("W1.png");
+    sp->setBlendFunc(c::BlendFunc::ADD);
+    sp->setVisible(false);
+    MGML()->addAtlasItem("op-pics", sp, f::Maybe<int>(zx));
+    return new Missile(sp);
+  }, count);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createBombs(int count) {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto p = MGMS()->getPool("Bombs");
+
+  p->preSet([=]() -> f::ComObj* {
+    auto sp= cx::reifySprite("W2.png");
+    sp->setBlendFunc(c::BlendFunc::ADD);
+    sp->setVisible(false);
+    MGML()->addAtlasItem("op-pics", sp, f::Maybe<int>(zx));
+    return new Bomb(sp);
+  }, count);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createExplosions(int count) {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto p = MGMS()->getPool("Explosions");
+
+  p->preSet([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("explosion_01.png");
+    sp->setBlendFunc(c::BlendFunc::ADD);
+    sp->setVisible(false);
+    MGML()->addAtlasItem("explosions", sp);
+    return new Explosion(sp);
+  }, count);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createHitEffects(int count) {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto p = MGMS()->getPool("HitEffects");
+
+  p->preSet([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("hit.png");
+    sp->setBlendFunc(c::BlendFunc::ADD);
+    sp->setVisible(false);
+    MGML()->addAtlasItem("op-pics", sp);
+    return new HitEffect(sp);
+  }, count);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createSparks(int count) {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto p = MGMS()->getPool("Sparks");
+
+  p->preSet([=]() -> f::ComObj* {
+    auto sp2 = cx::reifySprite("explode2.png");
+    sp2->setBlendFunc(c::BlendFunc::ADD);
+    sp2->setVisible(false);
+    MGML()->addAtlasItem("op-pics", sp2);
+
+    auto sp3 = cx::reifySprite("explode3.png");
+    sp3->setBlendFunc(c::BlendFunc::ADD);
+    sp3->setVisible(false);
+    MGML()->addAtlasItem("op-pics", sp3);
+
+    return new Spark(sp2, sp3);
+  }, count);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createEnemies(int count) {
+
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX") -1;
+  auto p = MGMS()->getPool("Baddies");
+  auto cr= [=](const EnemyType& arg) -> f::ComObj* {
+    auto sp= cx::reifySprite(arg->textureName);
+    sp->setVisible(false);
+    MGMS()->addAtlasItem("game-pics", sp, f::Maybe<int>(zx));
+    return new Enemy(sp, arg);
+  };
+
+  for (auto j = 0; j < EnemyTypes.size(); ++j) {
+    auto& arg = EnemyTypes[j];
+    p->preSet([=]() ->  f::ComObj* {
+      return cr(arg);
+    }, count);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createBackSkies() {
+  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto p = MGMS()->getPool("BackSkies");
+  auto layer= MGMS()->getLayer(1);
+
+  p->preSet([=]() -> f::ComObj* {
+    auto bg = cx::reifySprite("bg01.png");
+    bg->setAnchorPoint(cx::anchorBL());
+    bg->setVisible(false);
+    layer->addAtlasItem("game-pics", bg, f::Maybe<int>(-10));
+    return new f::ComObj(bg);
+  }, 2);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EFactory::createBackTiles(int count) {
+  auto layer= MGMS()->getLayer(1);
+  auto cr= [=](const stdstr& name) -> f::ComObj* {
+    auto sp = cx::reifySprite(name);
+    sp->setAnchorPoint(cx::anchorL());
+    sp->setVisible(false);
+    layer->addAtlasItem("back-tiles", sp, f::Maybe<int>(-9));
+    return new f::ComObj(sp);
+  };
+
+  for (auto j=0; j < BackTileMap.size(); ++j) {
+    auto& n = BackTileMap[j];
+    p->preSet([=]() -> f::ComObj* {
+      return cr(n);
+    }, count);
+  }
+}
+
+
+
+
+NS_ALIAS(terra)
+
 

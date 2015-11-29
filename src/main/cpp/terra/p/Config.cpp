@@ -11,65 +11,6 @@
 
 #include "Config.h"
 
-
-const s::array<EnemyType, 6> enemyTypes = {
-
-  {
-    Attacks::NORMAL,
-    Moves::RUSH,
-    0,
-    "E0.png",
-    "W2.png",
-    1,
-    15
-  },
-  {
-    Attacks::NORMAL,
-    Moves::RUSH,
-    1,
-    "E1.png",
-    "W2.png",
-    2,
-    40
-  },
-  {
-    Attacks::TSUIHIKIDAN,
-    Moves::HORZ,
-    2,
-    "E2.png",
-    "W2.png",
-    4,
-    60
-  },
-  {
-    Attacks::NORMAL,
-    Moves::OLAP,
-    3,
-    "E3.png",
-    "W2.png",
-    6,
-    80
-  },
-  {
-    Attacks::TSUIHIKIDAN,
-    Moves::HORZ,
-    4,
-    "E4.png",
-    "W2.png",
-    10,
-    150
-  },
-  {
-    Attacks::NORMAL,
-    Moves::HORZ,
-    5,
-    "E5.png",
-    "W2.png",
-    15,
-    200
-  }
-};
-
 //////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////////

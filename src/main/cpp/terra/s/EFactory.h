@@ -9,43 +9,41 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__CONFIG_H__)
-#define __CONFIG_H__
+#if !defined(__EFACTORY_H__)
+#define __EFACTORY_H__
 
-#include "core/XConfig.h"
+#include "core/Factory.h"
+NS_BEGIN(terra)
 
-
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Config : public f::XConfig {
+class CC_DLL EFactory : public fusii::Factory {
 protected:
 
-  NO__CPYASS(Config)
-  Config();
+  NO__CPYASS(EFactory)
+  EFactory() = delete;
 
 public:
 
-  virtual void handleResolution(const c::Size& );
+  EFactory(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  virtual ~EFactory() {}
 
-  virtual void runOnce();
+  void createMissiles(int count);
+  void createBombs(int count);
+  void createExplosions(int count);
+  void createHitEffects(int count);
+  void createSparks(int count);
+  void createEnemies(int count);
+  void createBackSkies();
+  void createBackTiles(int count);
 
-  virtual ~Config();
+  a::Entity* createShip();
 
-  virtual const stdstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
-
-  virtual const stdstr color() { return "yellow"; }
-
-  virtual const stdstr appId() { return "terra"; }
-
-  virtual const c::Size gameSize() { return c::Size(320,480); }
-
-
-  static Config* reify();
 };
 
 
-NS_END(terra)
-#endif
 
+NS_ALIAS(terra)
+#endif
 
 

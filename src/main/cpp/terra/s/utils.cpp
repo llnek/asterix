@@ -9,129 +9,109 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @module s/utils
- */
+#include "CObjs.h"
+#include "utils.h"
+NS_BEGIN(terra)
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
 
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef;
-
-//////////////////////////////////////////////////////////////////////////
-/** @alias module:s/utils */
-const xbox = /** @lends xbox# */{
-  /**
-   * @method flareEffect
-   * @param {Object} flare
-   * @param {Function} cb
-   * @param {Object} target
-   */
-  flareEffect(flare,cb,target) {
-    flare.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-    flare.stopAllActions();
-    flare.attr({
-      y: csts.flareY,
-      x: -45,
-      visible: true,
-      opacity: 0,
-      rotation: -120,
-      scale: 0.3
-    });
-    const opacityAnim = cc.fadeTo(0.5, 255),
-    opacDim = cc.fadeTo(1, 0),
-    biggerEase = cc.scaleBy(0.7, 1.2, 1.2).easing(cc.easeSineOut()),
-    easeMove = cc.moveBy(0.5, cc.p(490, 0)).easing(cc.easeSineOut()),
-    rotateEase = cc.rotateBy(2.5, 90).easing(cc.easeExponentialOut()),
-    bigger = cc.scaleTo(0.5, 1),
-    onComplete = cc.callFunc(cb, target),
-    killflare = cc.callFunc(() => {
-      flare.removeFromParent();
-    });
-
-    flare.runAction(cc.sequence(opacityAnim, biggerEase, opacDim, killflare, onComplete));
-    flare.runAction(easeMove);
-    flare.runAction(rotateEase);
-    flare.runAction(bigger);
-  },
-  /**
-   * @method btnEffect
-   */
-  btnEffect() {
-    sh.sfxPlay('btnEffect');
-  },
-  /**
-   * @method fireMissiles
-   * @param {Object} ship
-   * @param {Number} dt
-   */
-  fireMissiles(ship, dt) {
-    let po1= sh.pools.Missiles,
-    pos = ship.pos(),
-    sz = ship.size(),
-    offy= 3 + sz.height * 0.3,
-    offx=13,
-    m2= po1.getAndSet(),
-    m1= po1.getAndSet();
-
-    if (!m1 || !m2) { sh.factory.createMissiles(); }
-
-    if (!m1) { m1= po1.getAndSet(); }
-    if (!m2) { m2= po1.getAndSet(); }
-
-    m2.inflate({ x: pos.x - offx, y: pos.y + offy });
-    m1.inflate({ x: pos.x + offx, y: pos.y + offy });
-  },
-  /**
-   * @method bornShip
-   * @param {Object} ship
-   */
-  bornShip(ship) {
-    const bsp= ship.bornSprite,
-    ssp=ship.sprite,
-    normal = cc.callFunc(() => {
-      ship.canBeAttack = true;
-      bsp.setVisible(false);
-      ssp.schedule((dt) => {
-        this.fireMissiles(ship, dt);
-      }, 1/6);
-      ship.inflate();
-    });
-
-    ship.canBeAttack = false;
-    bsp.scale = 8;
-    bsp.setVisible(true);
-    bsp.runAction(cc.scaleTo(0.5, 1, 1));
-
-    ssp.runAction(cc.sequence(cc.delayTime(0.5),
-                              cc.blink(3,9), normal));
-  },
-  /**
-   * @method processTouch
-   * @param {Object} ship
-   * @param {cc.Point} delta
-   */
-  processTouch(ship, delta) {
-    let pos = ship.pos(),
-    wz= ccsx.vrect(),
-    cur= cc.pAdd(pos, delta);
-    cur= cc.pClamp(cur, cc.p(0, 0),
-                   cc.p(wz.width, wz.height));
-    ship.setPos(cur.x, cur.y);
-    cur=null;
-  }
-
-};
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void flareEffect(c::Sprite* flare, c::SEL_CallFunc cb, c::Ref* target) {
+
+  auto flareY = CC_CSV(c::Integer, "flareY");
+
+  flare->setBlendFunc(c::BlendFunc::ADDICTIVE);
+  flare->stopAllActions();
+  flare->setPosition(-45, flareY);
+  flare->setVisible(true);
+  flare->setOpacity(0);
+  flare->setRotation(-120);
+  flare->setScale(0.3f);
+
+  auto opacityAnim = c::FadeTo::create(0.5f, 255);
+  auto opacDim = c::FadeTo::create(1, 0);
+
+  auto rotateEase = c::EaseExponentialOut::create( c::RotateBy::create(2.5f, 90));
+  auto easeMove = c::EaseSineOut::create(c::MoveBy::create(0.5f, cc.p(490, 0));
+  auto biggerEase = c::EaseSineOut::create(c::ScaleBy(0.7f, 1.2f, 1.2f));
+  auto bigger = c::ScaleTo::create(0.5f, 1);
+  auto onComplete = c::CallFunc::create(target, cb);
+  auto killflare = c::CallFunc::create([=]() {
+    flare->removeFromParent();
+  });
+
+  flare->runAction(c::Sequence::create(opacityAnim,
+      biggerEase, opacDim,
+      killflare, onComplete));
+
+  flare->runAction(easeMove);
+  flare->runAction(rotateEase);
+  flare->runAction(bigger);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void btnEffect() {
+  cx::sfxPlay("btnEffect");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void fireMissiles(f::ComObj* obj, float dt) {
+  auto po1= MGMS()->getPool("missiles");
+  auto ship = (Ship*) obj;
+  auto pos = ship->pos();
+  auto sz = ship->size();
+  auto offy= 3.0f + sz.height * 0.3f;
+  auto offx=13.0f;
+  auto m2= po1->getAndSet();
+  auto m1= po1->getAndSet();
+
+  if (!m1 || !m2) { EFactory::createMissiles(); }
+
+  if (!m1) { m1= po1->getAndSet(); }
+  if (!m2) { m2= po1->getAndSet(); }
+
+  m2->inflate( pos.x - offx, pos.y + offy );
+  m1->inflate( pos.x + offx, pos.y + offy );
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void bornShip(Ship* ship) {
+  auto bsp= ship->bornSprite;
+  auto ssp= ship->sprite;
+  auto normal = c::CallFunc::create([=]() {
+    ship->canBeAttack = true;
+    bsp->setVisible(false);
+    ssp->schedule([=](float dt) {
+      fireMissiles(ship, dt);
+    }, 1/6);
+    ship->inflate();
+  });
+
+  ship->canBeAttack = false;
+  bsp->scale = 8.0f;
+  bsp->setVisible(true);
+  bsp->runAction(c::ScaleTo::create(0.5f, 1, 1));
+
+  ssp->runAction(c::Sequence::create(c::DelayTime::create(0.5f),
+        c::Blink(3,9), normal));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void processTouch(f::ComObj* ship, const c::Vec2& delta) {
+  auto pos = ship->pos();
+  auto wz= cx::visRect();
+  auto cur= ccpAdd(pos, delta);
+  cur= ccpClamp(cur, ccp(0.0f, 0.0f),
+                 ccp(wz.width, wz.height));
+  ship->setPos(cur.x, cur.y);
+}
+
+
+
+
+NS_END(terra)
 
