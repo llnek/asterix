@@ -9,134 +9,73 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/motion
- */
+#include "Motions.h"
+NS_BEGIN(terra)
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
-import Rx from 'Rx';
-
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
 //////////////////////////////////////////////////////////////////////////
-/**
- * @class Motions
- */
-Motions = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/motions~Motions
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/motions~Motions
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships=null;
-    this.evQ=null;
-  },
-  /**
-   * @memberof module:s/motions~Motions
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships= engine.getNodeList(gnodes.ShipMotionNode);
-    this.evQ=[];
-  },
-  /**
-   * @memberof module:s/motions~Motions
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const evt = this.evQ.length > 0 ? this.evQ.shift() : undef,
-    node = this.ships.head;
+//
+Motions::Motions(not_null<a::Engine*> e, not_null<c::Dictionary*> f)
+  : f::BaseSystem<EFactory>(e, f) {
 
-    if (this.state.running &&
-       !!node) {
-      this.doit(node, evt, dt);
-    }
-  },
-  /**
-   * @method doit
-   * @private
-   */
-  doit(node, evt, dt) {
-    if (!!evt) {
-      this.ongui(node,evt,dt);
-    }
-    if (ccsx.hasKeyPad()) {
-      this.onkey(node, dt);
-    }
-  },
-  /**
-   * @method ongui
-   * @private
-   */
-  ongui(node,evt,dt) {
-    let pos = node.ship.pos(),
-    wz= ccsx.vrect(),
-    cur= cc.pAdd(pos, evt.delta);
-    cur= cc.pClamp(cur, cc.p(0, 0),
-                   cc.p(wz.width, wz.height));
-    node.ship.setPos(cur.x, cur.y);
-    cur=null;
-  },
-  /**
-   * @method onkey
-   * @private
-   */
-  onkey(node,dt) {
-    if (sh.main.keyPoll(cc.KEY.right)) {
-      node.motion.right = true;
-    }
-    if (sh.main.keyPoll(cc.KEY.left)) {
-      node.motion.left= true;
-    }
+}
 
-    if (sh.main.keyPoll(cc.KEY.down)) {
-      node.motion.down = true;
-    }
-    if (sh.main.keyPoll(cc.KEY.up)) {
-      node.motion.up= true;
-    }
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::addToEngine(not_null<a::Engine> e) {
+  ShipMotionNode n;
+  ships= e->getNodeList(n.typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool Motions::OnUpdate(float dt) {
+  //const evt = this.evQ.length > 0 ? this.evQ.shift() : undef,
+  auto node = ships->head;
+
+  if (NNP(node)) {
+    doIt(node, dt);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+
+void Motions::doIt(a::Node* node, float dt) {
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::onGui(a::Node* node, float dt) {
+  auto pos = node->ship->pos();
+  auto wc= cx::visRect();
+  auto cur= ccpAdd(pos, c::Vec2()); //evt.delta);
+  cur= ccpClamp(cur, ccp(0, 0),
+                 ccp(wz.width, wz.height));
+  node->ship->setPos(cur.x, cur.y);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Motions::onKey(a::Node* node, float dt) {
+  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_RIGHT)) {
+    node->motion->right = true;
+  }
+  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_LEFT)) {
+    node->motion->left= true;
   }
 
-}, {
-/**
-   * @memberof module:s/motions~Motions
-   * @property {Number} Priority
-   */
-Priority : xcfg.ftypes.Motion
-});
+  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_DOWN)) {
+    node->motion->down = true;
+  }
+
+  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_UP)) {
+    node->motion->up= true;
+  }
+}
 
 
-/** @alias module:s/motions */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Motions} Motions
-   */
-  Motions : Motions
-};
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(terra)
+
 

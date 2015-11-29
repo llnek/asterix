@@ -9,174 +9,112 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires s/utils
- * @requires n/gnodes
- * @module s/move
- */
+#include "Move.h"
+NS_BEGIN(terra)
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+//////////////////////////////////////////////////////////////////////////////
+//
+Move::Move(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
+  : f::BaseSystem<EFactory>(e, d) {
 
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R= sjs.ramda,
+  SNPTR(ships)
+}
+
 //////////////////////////////////////////////////////////////////////////
-undef,
-/**
- * @class MoveXXX
- */
-MoveXXX = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/move~move
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/move~move
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships=null;
-  },
-  /**
-   * @memberof module:s/move~move
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships = engine.getNodeList(gnodes.ShipMotionNode);
-  },
-  /**
-   * @memberof module:s/move~move
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const node= this.ships.head;
-    if (this.state.running &&
-       !!node) {
-      this.moveMissiles(dt);
-      this.move(dt);
-      this.onKeys(node,dt);
-    }
-  },
-  /**
-   * @method onKeys
-   * @private
-   */
-  onKeys(node,dt) {
-    let ship = node.ship,
-    wz= ccsx.vrect(),
-    mot= node.motion,
-    sp = ship.sprite,
-    ok = false,
-    pos = ship.pos(),
-    x = pos.x,
-    y = pos.y;
+//
+void Move::addToEngine(not_null<a::Engine*> e) {
+  ShipMotionNode n;
+  ships = e->getNodeList(n.typeId());
+}
 
-    if (mot.up && pos.y <= wz.height) {
-      y = pos.y + dt * csts.SHIP_SPEED;
-      ok= true;
-    }
-    if (mot.down && pos.y >= 0) {
-      y = pos.y - dt * csts.SHIP_SPEED;
-      ok= true;
-    }
-    if (mot.left && pos.x >= 0) {
-      x = pos.x - dt * csts.SHIP_SPEED;
-      ok= true;
-    }
-    if (mot.right && pos.x <= wz.width) {
-      x = pos.x + dt * csts.SHIP_SPEED;
-      ok= true;
-    }
+//////////////////////////////////////////////////////////////////////////
+//
+bool Move::onUpdate(float dt) {
+  auto node= ships->head;
+  if (MGMS()->isLive() && NNP(node)) {
+    moveMissiles(dt);
+    move(dt);
+    onKeys(node,dt);
+  }
+}
 
-    if (ok) { ship.setPos(x,y); }
+//////////////////////////////////////////////////////////////////////////
+//
+void Move::onKeys(a::Node* node, float dt) {
+  auto ssp = CC_CSV(c::Float, "SHIP_SPEED");
+  auto ship = node->ship;
+  auto wz= cx::visRect();
+  auto mot= node->motion;
+  auto sp = ship->sprite;
+  auto ok = false;
+  auto pos = ship->pos();
+  auto x = pos.x;
+  auto y = pos.y;
 
-    mot.right= false;
-    mot.left=false;
-    mot.down=false;
-    mot.up=false;
-  },
-  /**
-   * @method moveOneBomb
-   * @private
-   */
-  moveOneBomb(m, dt) {
-    const pos = m.sprite.getPosition();
-    m.sprite.setPosition(pos.x + m.vel.x * dt,
-                         pos.y + m.vel.y * dt);
-  },
-  /**
-   * @method move
-   * @private
-   */
-  move(dt) {
-    sh.pools.Bombs.iter( b => {
-      if (b.status) {
-        this.moveOneBomb(b,dt);
-      }
-    });
-  },
-  /**
-   * @method moveOneMissile
-   * @private
-   */
-  moveOneMissile(m, dt) {
-    const pos = m.sprite.getPosition();
-    m.sprite.setPosition(pos.x + m.vel.x * dt,
-                         pos.y + m.vel.y * dt);
-  },
-
-  /**
-   * @method moveMissiles
-   * @private
-   */
-  moveMissiles(dt) {
-    sh.pools.Missiles.iter( v => {
-      if (v.status) {
-        this.moveOneMissile(v,dt);
-      }
-    });
+  if (mot->up && pos.y <= wz.height) {
+    y = pos.y + dt * ssp;
+    ok= true;
+  }
+  if (mot->down && pos.y >= 0) {
+    y = pos.y - dt * ssp;
+    ok= true;
+  }
+  if (mot->left && pos.x >= 0) {
+    x = pos.x - dt * ssp;
+    ok= true;
+  }
+  if (mot->right && pos.x <= wz.width) {
+    x = pos.x + dt * ssp;
+    ok= true;
   }
 
-}, {
+  if (ok) { ship->setPos(x,y); }
 
-/**
- * @memberof module:s/move~move
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Move
-});
+  mot->right= false;
+  mot->left=false;
+  mot->down=false;
+  mot->up=false;
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+void Move::moveOneBomb(f::ComObj* m, float dt) {
+  auto pos = m->sprite->getPosition();
+  m->sprite->setPosition(pos.x + m->vel.x * dt,
+                       pos.y + m->vel.y * dt);
+}
 
-/** @alias module:s/move */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {MoveXXX} MoveXXX
-   */
-  MoveXXX : MoveXXX
-};
+//////////////////////////////////////////////////////////////////////////
+//
+void Move::move(float dt) {
+  auto p = MGMS()->getPool("Bombs");
+  p->foreach([=](f::ComObj* b) {
+    if (b->status) {
+      this->moveOneBomb(b,dt);
+    }
+  });
+}
 
+//////////////////////////////////////////////////////////////////////////
+//
+void Move::moveOneMissile(f::ComObj* m, float dt) {
+  auto pos = m->sprite->getPosition();
+  m->sprite->setPosition(pos.x + m->vel.x * dt,
+                       pos.y + m->vel.y * dt);
+}
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+//////////////////////////////////////////////////////////////////////////
+//
+void Move::moveMissiles(float dt) {
+  auto p= MGMS()->getPool("Missiles");
+  p->foreach([=](f::ComObj* v) {
+    if (v->status) {
+      this->moveOneMissile(v,dt);
+    }
+  });
+}
+
+NS_END(terra)
 
 

@@ -9,37 +9,41 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__STAGER_H__)
-#define __STAGER_H__
+#if !defined(__COLLIDE_H__)
+#define __COLLIDE_H__
 
-#include "core/BaseSystem.h"
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public f::BaseSystem<EFactory> {
+class CC_DLL Collide : public f::BaseSystem<EFactory> {
 protected:
 
+  bool collide(f::ComObj*, f::ComObj*);
   virtual bool onUpdate(float);
-  NO__CPYASS(Stager)
-  Stager() = delete;
+  void checkMissilesBombs();
+  void checkMissilesAliens();
+  void checkShipBombs(a::Node*);
+  void checkShipAliens(a::Node*);
 
-  void sharedExplosion();
-  void initBackSkies();
-  void onceOnly();
+  NO__CPYASS(Collide)
+  Collide() = delete;
 
 public:
 
-  virtual const a::SystemType typeId() { return "n/Stager"; }
+  virtual const a::SystemType typeId() { return "n/Collide"; }
 
-  Stager(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Collide(not_null<a::Engine*>, not_null<c::Dictionary*>);
+
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual ~Stager();
 
-  virtual int priority() { return a::PreUpdate; }
+  virtual int priority() { return a::Collide; }
+
 };
+
 
 
 NS_END(terra)
 #endif
+
 

@@ -81,16 +81,7 @@ void Stager::onceOnly() {
   bornShip(ships->head->ship);
 }
 
-
-  /**
-   * @method fire
-   * @private
-   */
-  fire(t, evt) {
-    if ('/touch/one/move' === t ||
-        '/mouse/move' === t) {} else {
-      return;
-    }
+/*
     if (this.state.running &&
         !!this.ships.head) {
       let ship = this.ships.head.ship,
@@ -101,46 +92,40 @@ void Stager::onceOnly() {
                      cc.p(wz.width, wz.height));
       ship.setPos(cur.x, cur.y);
     }
+*/
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Stager::initBackSkies() {
+  auto p = MGMS()->getPool("BackSkies");
+  auto y = (Game*) MGMS();
+  auto bs = p->get();
+  bs->inflate(0, 0);
+
+  y->backSkyDim = bs->size();
+  y->backSkyRe = nullptr;
+  y->backSky = bs;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Stager::sharedExplosion() {
+  c::Vector<AnimationFrame*> fs;
+
+  for (auto n = 1; n < 35; ++n) {
+    auto str = "explosion_" + (n < 10 ? ("0" + n) : n) + ".png";
+    frame = cx::getSpriteFrame(str);
+    fs.pushBack(frame);
   }
 
-}, {
+  auto a = c::Animation::create();
+  a->setFrames(fs);
+  a->setDelayPerUnit(0.04f);
 
-/**
- * @memberof module:s/stager~Stager
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.PreUpdate
-};
+  c::AnimationCache::getInstance()->addAnimation(a, "Explosion");
+}
 
 
-  /**
-   * @method initBackSkies
-   * @private
-   */
-  initBackSkies() {
-    const bs = sh.pools.BackSkies.get();
-    bs.inflate({x: 0, y: 0});
-    this.state.backSkyRe = null;
-    this.state.backSky = bs;
-    this.state.backSkyDim = cc.size(bs.size());
-  },
-  /**
-   * @method sharedExplosion
-   * @private
-   */
-  sharedExplosion() {
-    let animFrames = [],
-    animation,
-    frame;
-
-    for (let n = 1; n < 35; ++n) {
-      let str = "explosion_" + (n < 10 ? ("0" + n) : n) + ".png";
-      frame = ccsx.getSprite(str);
-      animFrames.push(frame);
-    }
-    animation = new cc.Animation(animFrames, 0.04);
-    cc.animationCache.addAnimation(animation, "Explosion");
-  },
 
 NS_END(terra)
 

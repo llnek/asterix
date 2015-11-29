@@ -9,37 +9,44 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__STAGER_H__)
-#define __STAGER_H__
+#if !defined(__ALIENS_H__)
+#define __ALIENS_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public f::BaseSystem<EFactory> {
+
+class CC_DLL Aliens : public f::BaseSystem<EFactory> {
 protected:
 
   virtual bool onUpdate(float);
-  NO__CPYASS(Stager)
-  Stager() = delete;
+  NO__CPYASS(Aliens)
+  Aliens() = delete;
 
-  void sharedExplosion();
-  void initBackSkies();
-  void onceOnly();
+  void addEnemyToGame(a::Node*, const EnemyType&);
+  void doIt(a::Node*, float);
+  void dropBombs(Enemy*);
+  Enemy* getB(const EnemyType&);
 
 public:
 
-  virtual const a::SystemType typeId() { return "n/Stager"; }
+  virtual const a::SystemType typeId() { return "n/Aliens"; }
 
-  Stager(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Aliens(not_null<a::Engine*>, not_null<c::Dictionary*>);
+
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual ~Stager();
 
-  virtual int priority() { return a::PreUpdate; }
+  virtual int priority() { return a::Motion; }
+
 };
+
+
 
 
 NS_END(terra)
 #endif
+
 

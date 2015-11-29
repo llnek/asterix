@@ -9,220 +9,173 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires s/utils
- * @requires n/gnodes
- * @module s/aliens
- */
-
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+#include "Aliens.h"
+NS_BEGIN(terra)
 
 
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
+//////////////////////////////////////////////////////////////////////////////
+//
+Aliens::Aliens(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
+
+  : f::BaseSystem<EFactory>(e, d) {
+
+}
+
 //////////////////////////////////////////////////////////////////////////
-/** * @class Aliens */
-Aliens = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships=null;
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships = engine.getNodeList(gnodes.ShipMotionNode);
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const node = this.ships.head;
-    if (this.state.running &&
-       !!node) {
-      this.doit(node, this.state.secCount);
-    }
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method doit
-   * @param {Object} node
-   * @param {Number} dt
-   */
-  doit(node, dt) {
-    let enemies= sh.pools.Baddies,
-    cfg= sh.main.getLCfg(),
-    fc;
+//
+void Aliens::addToEngine(not_null<a::Engine*> e) {
+  ShipMotionNode n;
+  ships = e->getNodeList(n.typeId());
+}
 
-    if (enemies.actives() < cfg.enemyMax) {
-      sjs.eachObj( v => {
-        fc= () => {
-          for (let t = 0; t < v.types.length; ++t) {
-            this.addEnemyToGame(node, v.types[t]);
-          }
-        };
-        if (v.style === "*" &&
-            dt % v.time === 0) {
-          fc();
-        }
-        if (v.style === "1" &&
-            v.time >= dt) {
-          v.style="0";
-          fc();
-        }
-      }, cfg.enemies);
-    }
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method dropBombs
-   * @param {Object} enemy
-   */
-  dropBombs(enemy) {
-    let bombs= sh.pools.Bombs,
-    sp= enemy.sprite,
-    sz= sp.getContentSize(),
-    pos= sp.getPosition(),
-    b = bombs.get();
+//////////////////////////////////////////////////////////////////////////
+//
+bool Aliens::onUpdate(float dt) {
+  auto cnt= CC_GDV(c::Float, options, "secCount");
+  auto node = ships->head;
+  if (NNP(node)) {
+    doIt(node, cnt);
+  }
+}
 
-    if (!b) {
-      sh.factory.createBombs();
-      b= bombs.get();
-    }
+//////////////////////////////////////////////////////////////////////////
+//
+void Aliens::doIt(a::Node* node, float dt) {
+  auto enemies= MGMS()->getPool("Baddies");
+  auto cfg= MGMS()->getLCfg()->getValue();
 
-    b.inflate({ x: pos.x, y: pos.y - sz.height * 0.2 });
-    b.attackMode=enemy.attackMode;
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method getB
-   * @param {Object} arg
-   */
-  getB(arg) {
-    let enemies = sh.pools.Baddies,
-    en,
-    pred= e => {
-      return (e.enemyType === arg.type
-              &&
-              e.status === false);
+  if (enemies->countActives() <
+      cfg["enemyMax"].get<j::json::number_integer_t>()) {
+
+    auto arr= cfg["enemies"].get<j::json::array_t>();
+    J__LOOP(it, arr) {
+      auto& a = *it;
+      auto time = a["time"].get<j::json::number_integer_t>();
+      auto style = a["style"].get<j::json::string_t>();
+      auto types = a["types"].get<j::json::array_t>();
+      if (style == "*" &&
+          dt % time == 0) {
+        fc();
+      }
+      else
+      if (style == "1" &&
+          time >= dt) {
+        style= "0";
+        fc();
+      }
+    }
+    auto fc = [=]() {
+      J__LOOP(t,types) {
+        auto& v = *t;
+        this->addEnemyToGame(node, v.get<j::json::number_integer_t>());
+      }
     };
 
-    en= enemies.select(pred);
-    if (!en) {
-      sh.factory.createEnemies(1);
-      en= enemies.select(pred);
-    }
+  }
+}
 
-    if (!!en) {
-      en.sprite.schedule(() => {
-        this.dropBombs(en);
-      }, en.delayTime);
-      en.inflate();
-    }
+//////////////////////////////////////////////////////////////////////////
+//
+void Aliens::dropBombs(Enemy* enemy) {
+  auto bombs= MGMS()->getPool("Bombs");
+  auto sp= enemy->sprite;
+  auto sz= sp->getContentSize();
+  auto pos= sp->getPosition();
+  auto b = bombs->get();
 
-    return en;
-  },
-  /**
-   * @memberof module:s/aliens~Aliens
-   * @method addEnemyToGame
-   * @param {Object} node
-   * @param {Number} enemyType
-   */
-  addEnemyToGame(node, enemyType) {
-    const arg = xcfg.EnemyTypes[enemyType],
-    wz = ccsx.vrect(),
-    en = this.getB(arg);
-
-    if (!en) {return;}
-
-    let sz= en.size(),
-    epos= en.pos(),
-    ship= node.ship,
-    pos= ship.pos(),
-    act, a0, a1;
-
-    en.setPos(sjs.rand(80 + wz.width * 0.5), wz.height);
-    switch (en.moveType) {
-
-      case csts.ENEMY_MOVES.RUSH:
-        act = cc.moveTo(1, cc.p(pos.x, pos.y));
-      break;
-
-      case csts.ENEMY_MOVES.VERT:
-        act = cc.moveBy(4, cc.p(0, -wz.height - sz.height));
-      break;
-
-      case csts.ENEMY_MOVES.HORZ:
-        a0 = cc.moveBy(0.5, cc.p(0, -100 - sjs.rand(200)));
-        a1 = cc.moveBy(1, cc.p(-50 - sjs.rand(100), 0));
-        const onComplete = cc.callFunc( p => {
-          let a2 = cc.delayTime(1);
-          let a3 = cc.moveBy(1, cc.p(100 + sjs.rand(100), 0));
-          p.runAction(cc.sequence(a2, a3,
-                                  a2.clone(),
-                                  a3.reverse()).repeatForever());
-        });
-        act = cc.sequence(a0, a1, onComplete);
-      break;
-
-      case csts.ENEMY_MOVES.OLAP:
-        const newX = (pos.x <= wz.width * 0.5) ? wz.width : -wz.width;
-        a0 = cc.moveBy(4, cc.p(newX, -wz.width * 0.75));
-        a1 = cc.moveBy(4,cc.p(-newX, -wz.width));
-        act = cc.sequence(a0,a1);
-      break;
-    }
-
-    en.sprite.runAction(act);
+  if (ENP(b)) {
+    factory->createBombs();
+    b= bombs->get();
   }
 
-}, {
+  b->inflate(pos.x, pos.y - sz.height * 0.2f);
+  b->attackMode= enemy->attackMode;
+}
 
-/**
- * @memberof module:s/aliens~Aliens
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Motion
-});
+//////////////////////////////////////////////////////////////////////////
+//
+Enemy* Aliens::getB(const EnemyType& arg) {
+  auto enemies = MGMS()->getPool("Baddies");
+  auto pred= [=](f::ComObj* c) -> bool {
+    auto e = (Enemy*)c;
+    return (e->enemyType == arg.type &&
+            e->status == false);
+  };
+
+  auto en= enemies->select(pred);
+  Enemy* y= nullptr;
+
+  if (ENP(en)) {
+    factory->createEnemies(1);
+    en= enemies->select(pred);
+  }
+
+  if (NNP(en)) {
+    y = (Enemy*) en;
+    y->sprite->schedule([=]() {
+      this->dropBombs(y);
+    }, y->delayTime);
+    y->inflate();
+  }
+
+  return y;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
+  auto& arg = EnemyTypes[enemyType];
+  auto wz = cx::visRect();
+  auto en = getB(arg);
+
+  if (ENP(en)) { return; }
+
+  auto sprite= en->sprite;
+  auto ship= node->ship;
+  auto pos= ship->pos();
+  auto sz= en->size();
+  auto epos= en->pos();
+  c::Action* act;
+
+  en->setPos(CCRANDOM_1(80 + wz.width * 0.f), wz.height);
+  switch (en->moveType) {
+
+    case Moves::RUSH:
+      act = c::MoveTo::create(1, ccp(pos.x, pos.y));
+    break;
+
+    case Moves::VERT:
+      act = c::MoveBy::create(4, ccp(0, -wz.height - sz.height));
+    break;
+
+    case Moves::HORZ:
+      auto a0 = c::MoveBy::create(0.5f, ccp(0, -100 - CCRANDOM_1(200)));
+      auto a1 = c::MoveBy::create(1, ccp(-50 - CCRANDOM_1(100), 0));
+      auto onComplete = c::CallFunc::create([=]() {
+        auto a2 = c::DelayTime::create(1);
+        auto a3 = c::MoveBy::create(1, ccp(100 + CCRANDOM_1(100), 0));
+        sprite->runAction(c::RepeatForever::create(
+              c::Sequence::create(a2, a3,
+                                a2->clone(),
+                                a3->reverse())));
+      });
+      act = c::Sequence::create(a0, a1, onComplete);
+    break;
+
+    case Moves::OLAP:
+      auto newX = (pos.x <= wz.width * 0.5f) ? wz.width : -wz.width;
+      auto a0 = c::MoveBy::create(4, ccp(newX, -wz.width * 0.75f));
+      auto a1 = c::MoveBy::create(4,ccp(-newX, -wz.width));
+      act = c::Sequence::create(a0,a1);
+    break;
+  }
+
+  sprite->runAction(act);
+}
 
 
-/** @alias module:s/aliens */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Aliens} Aliens
-   */
-  Aliens : Aliens
-};
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+NS_END(terra)
+
 
