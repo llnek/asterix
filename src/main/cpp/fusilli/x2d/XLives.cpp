@@ -52,6 +52,7 @@ void XLives::drawLives() {
 
   for (int n = 0; n < curLives; ++n) {
     auto v= cx::reifySprite(frameId);
+    v->setScale(scale);
     if (n==0) {
       lifeSize = v->getContentSize();
       y= refPt.y - HHZ(lifeSize);
@@ -72,12 +73,13 @@ void XLives::drawLives() {
 //
 void XLives::realize(const stdstr& frame,
     int lives,
-    float x, float y, int d) {
+    float x, float y, float scale, int d) {
 
   totalLives = lives;
   frameId = frame;
   curLives = 0;
   dir = d;
+  this->scale=scale;
 
   refPt= c::Vec2(x,y);
   reset();
@@ -95,6 +97,7 @@ XLives::XLives() {
   totalLives = 0;
   curLives = 0;
   dir = 1;
+  scale=1.0f;
 }
 
 

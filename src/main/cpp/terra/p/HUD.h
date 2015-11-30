@@ -12,6 +12,7 @@
 #if !defined(__HUD_H__)
 #define __HUD_H__
 
+#include "x2d/XLives.h"
 #include "x2d/XLayer.h"
 NS_BEGIN(terra)
 
@@ -25,6 +26,10 @@ protected:
 
   void resetAsNew();
   void reset();
+
+  c::Label* scoreLabel;
+  f::XLives* lives;
+  int score;
 
 public:
 

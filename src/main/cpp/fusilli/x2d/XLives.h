@@ -29,12 +29,13 @@ protected:
   int totalLives;
   int curLives;
   int dir;
+  float scale;
 
   NO__CPYASS(XLives)
 
 public:
 
-  virtual void realize( const stdstr& frame, int lives, float x, float y, int dir= 1);
+  virtual void realize( const stdstr& frame, int lives, float x, float y, float scale=1.0f, int dir= 1);
 
   bool isDead() { return curLives < 0; }
   int getLives() { return curLives; }

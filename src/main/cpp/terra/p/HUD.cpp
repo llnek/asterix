@@ -9,118 +9,66 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/scenes
- * @requires zotohlab/asx/ccsx
- * @module p/hud
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Menu.h"
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(terra)
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-
-
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R= sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////
-/** * @class HUDLayer */
-HUDLayer = scenes.XGameHUDLayer.extend({
-  /**
-   * @method initAtlases
-   * @protected
-   */
-  initAtlases() {
-    this.regoAtlas(this.hudAtlas());
-  },
-  /**
-   * @method hudAtlas
-   * @protected
-   */
-  hudAtlas() {
-    return 'game-pics';
-  },
-  /**
-   * @method initLabels
-   * @protected
-   */
-  initLabels() {
-    const wz = ccsx.vrect();
+//
+f::XLayer* HUDLayer::realize() {
+  auto soff = CC_CSV(c::Integer, "S_OFF");
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto wz = cx::visRect();
+  auto wb= cx::visBox();
 
-    this.scoreLabel = ccsx.bmfLabel({
-      fontPath: sh.getFont('font.TinyBoxBB'),
-      text: '0',
-      anchor: ccsx.acs.BottomRight,
-      scale: 12/72
-    });
-    this.scoreLabel.setPosition( wz.width - csts.TILE - csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF - ccsx.getScaledHeight(this.scoreLabel));
+  regoAtlas("game-pics");
 
-    this.addChild(this.scoreLabel, this.lastZix, ++this.lastTag);
-  },
-  /**
-   * @method initIcons
-   * @protected
-   */
-  initIcons() {
-    const wz = ccsx.vrect();
+  scoreLabel= cx::reifyBmfLabel("font.TinyBoxBB", "0");
+  scoreLabel->setAnchorPoint(cx::anchorBR());
+  scoreLabel->setScale(12.0f/72.0f);
+  scoreLabel->setPosition( wz.width - tile - soff,
+      wz.height - tile - soff - cx::getHeight(scoreLabel));
+  addItem(scoreLabel);
 
-    this.lives = new scenes.XHUDLives( this, csts.TILE + csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF, {
-      frames: ['ship01.png'],
-      scale: 0.4,
-      totalLives: 3
-    });
+  lives = f::reifyRefType<f::XLives>();
+  lives->realize("ship01.png",3,
+      tile +soff,
+      wz.height - tile - soff, 0.4);
 
-    this.lives.create();
-  },
-  /**
-   * @method resetAsNew
-   * @protected
-   */
-  resetAsNew() {
-    this.reset();
-    this.score=0;
-  },
-  /**
-   * @method ctor
-   * @constructs
-   * @param {Object} options
-   */
-  ctor(options) {
-    this._super(options);
-    this.options.i_menu= {
-      cb() { sh.fire('/hud/showmenu'); },
-      nnn: '#icon_menu.png',
-      where: ccsx.acs.Bottom,
-      scale: 32/48
-    };
-    this.options.i_replay = {
-      cb() { sh.fire('/hud/replay'); },
-      where: ccsx.acs.Bottom,
-      nnn: '#icon_replay.png',
-      scale : 32/48,
-      visible: false
-    };
-  }
+  auto b = cx::reifyMenuBtn("icon_menu.png");
+  auto hh = cx::getHeight(b) * 0.5f;
+  auto hw = cx::getWidth(b) * 0.5f;
+  b->setTarget(this,
+      CC_MENU_SELECTOR(HUDLayer::showMenu));
+  //b->setColor(this->color);
+  auto menu = cx::mkMenu(b);
 
-});
+  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  addItem(menu);
 
-/** @alias module:p/hud */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {HUDLayer} HUDLayer
-   */
-  HUDLayer : HUDLayer
-};
+  return this;
+}
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+//////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::showMenu(c::Ref*) {
+  MGMS()->sendMsg("/hud/showmenu");
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::resetAsNew() {
+  reset();
+  score=0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::reset() {
+
+}
+
+NS_END(terra)
 
