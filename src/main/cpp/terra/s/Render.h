@@ -9,12 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Render.h"
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
 class CC_DLL Render : public f::BaseSystem<EFactory> {
 protected:
 

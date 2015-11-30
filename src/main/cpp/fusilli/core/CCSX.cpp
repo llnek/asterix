@@ -64,6 +64,17 @@ const c::Color3B colorRGB(const stdstr& color) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void sfxMusic(const stdstr& music, bool repeat) {
+  auto fp= XCFG()->getMusic(music);
+  try {
+    den::SimpleAudioEngine::getInstance()->playBackgroundMusic(fp.c_str(), repeat);
+  } catch (...) {
+    CCLOG("failed to play music: %s", music.c_str());
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void sfxPlay(const stdstr& sound) {
   auto fp= XCFG()->getEffect(sound);
   try {

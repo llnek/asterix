@@ -51,7 +51,7 @@ f::XLayer* UILayer::realize() {
   lb->setColor(c);
 
   centerImage("gui.mmenu.menu.bg");
-  incIndexZ();
+  //incIndexZ();
 
   addItem(lb);
 

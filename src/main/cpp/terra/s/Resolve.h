@@ -9,221 +9,46 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires s/utils
- * @requires n/gnodes
- * @module s/resolve
- */
+#if !defined(__RESOLVE_H__)
+#define __RESOLVE_H__
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+#include "core/BaseSystem.h"
+NS_BEGIN(terra)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Resolve : public f::BaseSystem<EFactory> {
+protected:
 
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R= sjs.ramda,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/**
- * @class Resolve
- */
-Resolve = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships=null;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships = engine.getNodeList(gnodes.ShipMotionNode);
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const node = this.ships.head;
+  void onBulletDeath(f::ComObj*);
+  void checkMissiles();
+  void checkBombs();
+  void onEnemyDeath(f::ComObj*);
+  void onShipDeath(f::ComObj*);
+  void checkAliens();
+  void checkShip(a::Node*);
 
-    if (this.state.running &&
-       !!node) {
+  virtual bool onUpdate(float);
 
-      this.checkMissiles();
-      this.checkBombs();
-      this.checkAliens();
-      this.checkShip(node);
-    }
-  },
-  /**
-   * @method onBulletDeath
-   * @private
-   */
-  onBulletDeath(b) {
-    let pe= sh.pools.HitEffects,
-    pos= b.pos(),
-    e= pe.get();
+  NO__CPYASS(Resolve)
+  Resolve()=delete;
 
-    if (!e) {
-      sh.factory.createHitEffects();
-      e= pe.get();
-    }
-    e.inflate({x : pos.x, y: pos.y});
-  },
-  /**
-   * @method checkMissiles
-   * @private
-   */
-  checkMissiles() {
-    let box= sh.main.getEnclosureBox(),
-    pos;
+public:
 
-    sh.pools.Missiles.iter((m) => {
-      if (m.status) {
-        pos= m.sprite.getPosition();
-        if (m.HP <= 0 ||
-            !ccsx.pointInBox(box, pos)) {
-          this.onBulletDeath(m);
-          m.deflate();
-        }
-      }
-    });
-  },
-  /**
-   * @method checkBombs
-   * @private
-   */
-  checkBombs() {
-    let box= sh.main.getEnclosureBox(),
-    pos;
+  Resolve(not_null<a::Engine*>, not_null<c::Dictionary*>);
 
-    sh.pools.Bombs.iter((b) => {
-      if (b.status) {
-        pos= b.sprite.getPosition();
-        if (b.HP <= 0 ||
-            !ccsx.pointInBox(box, pos)) {
-          this.onBulletDeath(b);
-          b.deflate();
-        }
-      }
-    });
-  },
-  /**
-   * @method onEnemyDeath
-   * @private
-   */
-  onEnemyDeath(alien) {
-    let pe= sh.pools.Explosions,
-    ps= sh.pools.Sparks,
-    pos= alien.pos(),
-    e= pe.get(),
-    s= ps.get();
-    if (!e) {
-      sh.factory.createExplosions();
-      e= pe.get();
-    }
-    e.inflate({x : pos.x, y: pos.y});
-    if (!s) {
-      sh.factory.createSparks();
-      s=ps.get();
-    }
-    s.inflate({x : pos.x, y: pos.y});
-    sh.sfxPlay('explodeEffect');
-  },
-  /**
-   * @method onShipDeath
-   * @private
-   */
-  onShipDeath(ship) {
-    let pe= sh.pools.Explosions,
-    pos= ship.pos(),
-    e= pe.get();
+  virtual void addToEngine(not_null<a::Engine*>);
 
-    if (!e) {
-      sh.factory.createExplosions();
-      e= pe.get();
-    }
-    e.inflate({x : pos.x, y: pos.y});
-    sh.sfxPlay('shipDestroyEffect');
-  },
-  /**
-   * @method checkAliens
-   * @private
-   */
-  checkAliens() {
-    let box= sh.main.getEnclosureBox(),
-    pos;
+  virtual int priority() { return a::Resolve; }
 
-    sh.pools.Baddies.iter((a) => {
-      if (a.status) {
-        pos= a.sprite.getPosition();
-        if (a.HP <= 0 ||
-            !ccsx.pointInBox(box, pos)) {
-          this.onEnemyDeath(a);
-          a.deflate();
-          sh.fire('/game/players/earnscore', { score: a.value });
-        }
-      }
-    });
-  },
-  /**
-   * @method checkShip
-   * @private
-   */
-  checkShip(node) {
-    const ship = node.ship;
-    if (ship.status) {
-      if (ship.HP <= 0) {
-        this.onShipDeath(ship);
-        ship.deflate();
-        sh.fire('/game/players/killed');
-      }
-    }
-  }
-
-}, {
-
-/**
- * @memberof module:s/resolve~Resolve
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Resolve
-});
-
-
-/** @alias module:s/resolve */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Resolve} Resolve
-   */
-  Resolve : Resolve
+  virtual ~Resolve() {}
 };
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+
+NS_END(terra)
+#endif
+
+
+
 

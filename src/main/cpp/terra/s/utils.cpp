@@ -16,7 +16,7 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void flareEffect(c::Sprite* flare, c::SEL_CallFunc cb, c::Ref* target) {
+void flareEffect(c::Sprite* flare, VOIDFN cb) {
 
   auto flareY = CC_CSV(c::Integer, "flareY");
 
@@ -35,7 +35,7 @@ void flareEffect(c::Sprite* flare, c::SEL_CallFunc cb, c::Ref* target) {
   auto easeMove = c::EaseSineOut::create(c::MoveBy::create(0.5f, cc.p(490, 0));
   auto biggerEase = c::EaseSineOut::create(c::ScaleBy(0.7f, 1.2f, 1.2f));
   auto bigger = c::ScaleTo::create(0.5f, 1);
-  auto onComplete = c::CallFunc::create(target, cb);
+  auto onComplete = c::CallFunc::create(cb);
   auto killflare = c::CallFunc::create([=]() {
     flare->removeFromParent();
   });

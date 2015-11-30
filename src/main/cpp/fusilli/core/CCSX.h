@@ -33,6 +33,7 @@ namespace ccsx {
 
   const c::Color3B colorRGB(const stdstr& hexcolor);
 
+  void sfxMusic(const stdstr& music, bool repeat);
   void sfxPlay(const stdstr& sound);
   void pauseAudio();
 

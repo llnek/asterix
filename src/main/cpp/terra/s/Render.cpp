@@ -38,39 +38,38 @@ bool Render::onUpdate(float dt) {
 //
 void Render::processMovement(float dt) {
   // background's moving rate is 16 pixel per second
-  let locSkyHeight = this.state.backSkyDim.height,
-  locBackSkyRe = this.state.backSkyRe,
-  locBackSky = this.state.backSky,
-  posy= locBackSky.sprite.getPositionY(),
-  movingDist = 16 * dt,
-  wz = ccsx.vrect(),
-  currPosY = posy - movingDist;
+  auto locSkyHeight = MGMS()->backSkyDim.height;
+  auto locBackSkyRe = MGMS()->backSkyRe;
+  auto locBackSky = MGMS()->backSky;
+  auto posy= locBackSky->sprite->getPositionY();
+  auto movingDist = 16.0f * dt;
+  auto wz = cx::visRect();
+  auto currPosY = posy - movingDist;
 
   if (locSkyHeight + currPosY <= wz.height) {
 
-    if (!!locBackSkyRe) {
-      sjs.tne("The memory is leaking at moving background");
+    if (NNP(locBackSkyRe)) {
+      throw "The memory is leaking at moving background";
     }
 
-    this.state.backSkyRe = this.state.backSky;
-    locBackSkyRe = this.state.backSky;
+    MGMS()->backSkyRe = MGMS()->backSky;
+    locBackSkyRe = MGMS()->backSky;
 
     //create a new background
-    this.state.backSky = sh.pools.BackSkies.get();
-    locBackSky = this.state.backSky;
-    locBackSky.inflate({ x: 0,
-                         y: currPosY + locSkyHeight - 2});
+    MGMS()->backSky = MGMS()->getPool("BackSkies")->get();
+    locBackSky = MGMS()->backSky;
+    locBackSky->inflate(0, currPosY + locSkyHeight - 2);
   } else {
-    locBackSky.sprite.setPositionY(currPosY);
+    locBackSky->sprite->setPositionY(currPosY);
   }
 
-  if (!!locBackSkyRe) {
-    currPosY = locBackSkyRe.sprite.getPositionY() - movingDist;
-    if (currPosY + locSkyHeight < 0) {
-      this.state.backSkyRe = null;
-      locBackSkyRe.deflate();
+  if (NNP(locBackSkyRe)) {
+    currPosY = locBackSkyRe->sprite->getPositionY() - movingDist;
+    if (currPosY + locSkyHeight < 0.0f) {
+      MGMS()->backSkyRe = nullptr;
+      locBackSkyRe->deflate();
     } else {
-      locBackSkyRe.sprite.setPositionY(currPosY);
+      locBackSkyRe->sprite->setPositionY(currPosY);
     }
   }
 }

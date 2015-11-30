@@ -9,106 +9,126 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/scenes
- * @requires s/utils
- * @requires zotohlab/asx/ccsx
- * @module p/mmenu
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Menu.h"
+#include "Game.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import utils from 's/utils';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(terra)
 
+BEGIN_NS_UNAMED()
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class MainMenuLayer */
-MainMenuLayer = scenes.XMenuLayer.extend({
-  /**
-   * @method setup
-   * @protected
-   */
-  setup() {
-    this.centerImage(sh.getImage('gui.mmenus.menu.bg'));
-    const wb=ccsx.vbox(),
-    cw= ccsx.center(),
-    tt=ccsx.bmfLabel({
-      fontPath: sh.getFont('font.JellyBelly'),
-      text: sh.l10n('%mmenu'),
-      pos: cc.p(cw.x, wb.top * 0.9),
-      color: ccsx.white,
-      scale: xcfg.game.scale
-    }),
-    menu= ccsx.vmenu([
-      { nnn: '#player1.png',
-        target: this,
-        cb() {
-          this.onplay({mode: sh.gtypes.P1_GAME });
-        }
-    }],
-    {pos: cw});
-    this.addItem(menu);
-    this.addItem(tt);
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL UILayer : public f::XLayer {
+protected:
 
-    this.mkBackQuit(false, [{
-        nnn: '#icon_back.png',
-        cb() {
-          this.options.onback();
-        },
-        target: this },
-      { nnn: '#icon_quit.png',
-        cb() { this.onQuit(); },
-        target: this
-      }],
-      (m,z) => {
-        m.setPosition(wb.left + csts.TILE + z.width * 1.1,
-                      wb.bottom + csts.TILE + z.height * 0.45);
-    });
+  void onPlay(c::Ref*);
 
-    this.mkAudio({
-      pos: cc.p(wb.right - csts.TILE,
-                wb.bottom + csts.TILE),
-      anchor: ccsx.acs.BottomRight
-    });
-  },
-  /**
-   * @method onplay
-   * @private
-   */
-  onplay(msg) {
-    ccsx.runScene( sh.protos[sh.ptypes.game].reify(msg));
-  }
+  NO__CPYASS(UILayer)
+  UILayer()=delete;
 
-});
+public:
 
-/** @alias module:p/mmenu */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.mmenu,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    return new scenes.XSceneFactory([
-      MainMenuLayer
-    ]).reify(options);
-  }
+  virtual f::XLayer* realize();
+  IMPL_CTOR(UILayer)
 };
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+f::XLayer* UILayer::realize() {
+  auto tt= cx::reifyBmfLabel( "font.JellyBelly",
+      XCFG()->getL10NStr("mmenu"));
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto wb= cx::visBox();
+  auto cw= cx::center();
+
+  centerImage("gui.mmenus.menu.bg");
+
+  tt->setPosition( cw.x, wb.top * 0.9f);
+  tt->setColor(cx::white());
+  tt->setScale(XCFG()->getScale());
+  addItem(tt);
+
+  auto b= cx::reifyMenuBtn("player1.png");
+  b->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onPlay));
+  auto menu= cx::mkMenu(b);
+  menu->setPosition(cw);
+  addItem(menu);
+
+  // back-quit button
+  auto back= cx::reifyMenuBtn("icon_back.png");
+  back->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onBack));
+  back->setColor(c);
+
+  auto quit= cx::reifyMenuBtn("icon_quit.png");
+  quit->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onQuit));
+  quit->setColor(c);
+
+  auto m2= cx::mkMenu(s::vector<c::MenuItem*> {back, quit}, false, 10.0);
+  auto sz= back->getContentSize();
+
+  m2->setPosition(wb.left + tile + sz.width * 1.1,
+                  wb.bottom + tile + sz.height * 0.45);
+  addItem(m2);
+
+  // audio
+  c::MenuItem* off;
+  c::MenuItem* on;
+  cx::reifyAudioIcons(on, off);
+  off->setColor(c);
+  on->setColor(c);
+
+  addAudioIcons((XLayer*) this,
+      off, on,
+      cx::anchorBR(),
+      c::Vec2(wb.right - tile, wb.bottom + tile));
+
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onPlay(c::Ref* ) {
+  cx::runScene( Game::reify(f::GMode::ONE);
+}
+
+END_NS_UNAMED()
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
+  auto m = f::reifyRefType<MainMenu>();
+  m->backAction= cb;
+  m->realize();
+  return m;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+f::XScene* MainMenu::realize() {
+  auto y = f::reifyRefType<UILayer>();
+  addLayer(y);
+  y->realize();
+  return this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu::~MainMenu() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu::MainMenu() {
+  SNPTR(backAction)
+}
+
+
+
+NS_END(terra)
 
