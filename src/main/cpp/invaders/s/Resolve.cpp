@@ -9,10 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/gnodes.h"
+#include "n/GNodes.h"
 #include "Resolve.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -20,51 +20,55 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d) : f::BaseSystem<EFactory>(f, d) {
+Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+
+  : f::BaseSystem<EFactory>(f, d) {
+
   SNPTR(aliens)
   SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::AddToEngine(not_null<a::Engine*> e) {
-  CCLOG("adding system: Resolve");
+void Resolve::addToEngine(not_null<a::Engine*> e) {
+  //CCLOG("adding system: Resolve");
   AlienMotionNode a;
   ShipMotionNode s;
 
-  aliens= e->GetNodeList(a.TypeId());
-  ships= e->GetNodeList(s.TypeId());
-  CCLOG("added system: Resolve");
+  aliens= e->getNodeList(a.typeId());
+  ships= e->getNodeList(s.typeId());
+  //CCLOG("added system: Resolve");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::OnUpdate(float dt) {
+bool Resolve::onUpdate(float dt) {
   auto enemies = aliens->head;
   auto ship = ships->head;
 
-  CheckMissiles();
-  CheckBombs();
-  CheckAliens(enemies);
-  CheckShip(ship);
+  checkMissiles();
+  checkBombs();
+  checkAliens(enemies);
+  checkShip(ship);
 
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckMissiles() {
+void Resolve::checkMissiles() {
 
-  auto mss = MGMS()->GetPool("missiles");
-  auto ht = cx::VisRect().size.height;
-  auto c = mss->Elements();
+  auto mss = MGMS()->getPool("missiles");
+  auto ht = cx::visRect().size.height;
+  auto c = mss->elements();
 
-  for (auto it = c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
+
     auto m = *it;
     if (m->status) {
-      if (m->Pos().y >= ht ||
+      if (m->pos().y >= ht ||
           m->health <= 0) {
-        m->Deflate();
+        m->deflate();
       }
     }
   }
@@ -72,18 +76,19 @@ void Resolve::CheckMissiles() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckBombs() {
+void Resolve::checkBombs() {
 
-  auto bbs = MGMS()->GetPool("bombs");
-  auto c = bbs->Elements();
+  auto bbs = MGMS()->getPool("bombs");
+  auto c = bbs->elements();
   int bt = 0;
 
-  for (auto it = c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
+
     auto b = *it;
     if (b->status) {
       if (b->health <= 0 ||
-          b->Pos().y <= bt) {
-        b->Deflate();
+          b->pos().y <= bt) {
+        b->deflate();
       }
     }
   }
@@ -91,16 +96,20 @@ void Resolve::CheckBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckAliens(not_null<a::Node*> node) {
-  auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  auto c= sqad->Elements();
+void Resolve::checkAliens(not_null<a::Node*> node) {
+  auto sqad= CC_GNF(AlienSquad, node, "aliens");
+  auto c= sqad->elements();
 
-  for (auto it = c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
+
     auto en= *it;
     if (en->status) {
       if (en->health <= 0) {
-        MGML()->SendMsg("/game/player/earnscore", en);
-        en->Deflate();
+        auto msg= j::json({
+            {"score", en->value }
+            });
+        MGML()->sendMsgEx("/game/player/earnscore", &msg);
+        en->deflate();
       }
     }
   }
@@ -108,13 +117,13 @@ void Resolve::CheckAliens(not_null<a::Node*> node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::CheckShip(not_null<a::Node*> node) {
-  auto ship = a::NodeFld<Ship>(node, "ship");
+void Resolve::checkShip(not_null<a::Node*> node) {
+  auto ship = CC_GNF(Ship, node, "ship");
 
   if (ship->status &&
       ship->health <= 0) {
-    ship->Deflate();
-    MGML()->SendMsg("/game/player/killed", nullptr);
+    ship->deflate();
+    MGML()->sendMsg("/game/player/killed");
   }
 }
 

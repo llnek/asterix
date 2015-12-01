@@ -46,8 +46,8 @@ public:
 
   virtual void updatePosition(float x, float y);
 
-  ComObj(c::Sprite*, int health, int score);
-  ComObj(c::Sprite*);
+  ComObj(not_null<c::Sprite*>, int health, int score);
+  ComObj(not_nulli<c::Sprite*>);
 
   virtual ~ComObj() {}
 

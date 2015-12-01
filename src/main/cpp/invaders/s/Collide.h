@@ -12,45 +12,39 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-
 #include "core/BaseSystem.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Collide : public f::BaseSystem<EFactory> {
 protected:
-  virtual bool OnUpdate(float dt);
-private:
+  virtual bool onUpdate(float);
 
   NO__CPYASS(Collide)
   Collide()=delete;
 
   a::NodeList* aliens;
   a::NodeList* ships;
-  a::Engine* engine;
 
 public:
 
-  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual const a::SystemType typeId() { return "n/Collide"; }
 
-  virtual const a::SystemType TypeId() {
-    return "n/Collide";
-  }
+  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual ~Collide() {}
 
-  virtual void AddToEngine(not_null<a::Engine*> );
+  virtual void addToEngine(not_null<a::Engine*> );
 
-  bool MaybeCollide(not_null<f::ComObj*>, not_null<f::ComObj*>);
-  void CheckMissilesBombs();
-  void CheckMissilesAliens(not_null<a::Node*>);
-  void CheckShipBombs(not_null<a::Node*>);
-  void CheckShipAliens(not_null<a::Node*>, not_null<a::Node*>);
+  bool maybeCollide(not_null<f::ComObj*>, not_null<f::ComObj*>);
+  void checkMissilesBombs();
+  void checkMissilesAliens(not_null<a::Node*>);
+  void checkShipBombs(not_null<a::Node*>);
+  void checkShipAliens(not_null<a::Node*>, not_null<a::Node*>);
 
-  virtual int Priority() { return a::Collide; }
+  virtual int priority() { return a::Collide; }
 
 };
 

@@ -140,13 +140,13 @@ void ComObj::init(c::Sprite* sprite, int health, int score) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(c::Sprite* sprite, int health, int score) {
+ComObj::ComObj(not_null<c::Sprite*> sprite, int health, int score) {
   init(sprite, health, score);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(c::Sprite* sprite) {
+ComObj::ComObj(not_null<c::Sprite*> sprite) {
   init(sprite,1,0);
 }
 

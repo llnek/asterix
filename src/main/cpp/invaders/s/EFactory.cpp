@@ -12,10 +12,10 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/XPool.h"
-#include "x2d/XGameLayer.h"
-#include "x2d/MainGame.h"
+#include "x2d/GameLayer.h"
+#include "x2d/GameScene.h"
 #include "ash/Engine.h"
-#include "n/gnodes.h"
+#include "n/GNodes.h"
 #include "EFactory.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -25,6 +25,7 @@ NS_BEGIN(invaders)
 //
 EFactory::EFactory(not_null<a::Engine*> e,
     not_null<c::Dictionary*> options)
+
   : f::Factory(e,options) {
 
 }
@@ -36,179 +37,175 @@ EFactory::~EFactory() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::ReifyMissiles(int count) {
-  auto p= MGMS()->GetPool("missiles");
-  auto cb= []() -> f::ComObj* {
-    auto sp = cx::ReifySprite("missile.png");
+void EFactory::reifyMissiles(int count) {
+  auto p= MGMS()->getPool("missiles");
+  p->preset([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("missile.png");
     sp->setVisible(false);
-    MGML()->AddAtlasItem("game-pics", sp);
+    MGML()->addAtlasItem("game-pics", sp);
     return new Missile(sp);
-  };
-  p->Preset(cb, count);
+  }, count);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::ReifyExplosions(int count) {
-  auto p= MGMS()->GetPool("explosions");
-  auto cb= []() -> f::ComObj* {
-    auto sp = cx::ReifySprite("boom_0.png");
+void EFactory::reifyExplosions(int count) {
+  auto p= MGMS()->getPool("explosions");
+  p->preset([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("boom_0.png");
     sp->setVisible(false);
-    MGML()->AddAtlasItem("game-pics", sp);
+    MGML()->addAtlasItem("game-pics", sp);
     return new Explosion(sp);
-  };
-  p->Preset(cb, count);
+  }, count);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::ReifyBombs(int count) {
-  auto p= MGMS()->GetPool("bombs");
-  auto cb= []() -> f::ComObj* {
-    auto sp = cx::ReifySprite("bomb.png");
+void EFactory::reifyBombs(int count) {
+  auto p= MGMS()->getPool("bombs");
+  p->preset([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("bomb.png");
     sp->setVisible(false);
-    MGML()->AddAtlasItem("game-pics", sp);
+    MGML()->addAtlasItem("game-pics", sp);
     return new Bomb(sp);
-  };
-  p->Preset(cb, count);
+  }, count);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size EFactory::CalcImgSize(const stdstr& img) {
-  return cx::CalcSize(img);
+const c::Size EFactory::calcImgSize(const stdstr& img) {
+  return cx::calcSize(img);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* EFactory::GetRankInfo(int r) {
-  c::Size z= cx::CalcSize("purple_bug_0.png");
+c::Dictionary* EFactory::getRankInfo(int r) {
+  c::Size z= cx::calcSize("purple_bug_0.png");
   stdstr s0 = "purple_bug_0.png";
   stdstr s1= "purple_bug_1.png";
+  auto d = CC_DICT();
   int v= 30;
-  auto d = c::Dictionary::create();
 
   if (r < 3) {
     v= 100;
     s0 = "blue_bug_0.png";
     s1 = "blue_bug_1.png";
-    z= CalcImgSize("blue_bug_0.png");
+    z= calcImgSize("blue_bug_0.png");
   }
 
   if (r < 5) {
     v= 50;
     s0 = "green_bug_0.png";
     s1= "green_bug_1.png";
-    z = CalcImgSize("green_bug_0.png");
+    z = calcImgSize("green_bug_0.png");
   }
 
   d->setObject(f::Size2::create(z.width, z.height), "size");
-  d->setObject(c::Integer::create(v), "value");
-  d->setObject(c::String::create(s0), "img0");
-  d->setObject(c::String::create(s1), "img1");
+  d->setObject(CC_INT(v), "value");
+  d->setObject(CC_STR(s0), "img0");
+  d->setObject(CC_STR(s1), "img1");
 
   return d;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::FillSquad(not_null<f::XPool*> pool) {
+void EFactory::fillSquad(not_null<f::XPool*> pool) {
 
-  auto cells = f::CstVal<c::Integer>("CELLS")->getValue();
-  auto cols = f::CstVal<c::Integer>("COLS")->getValue();
-  auto wz= cx::VisRect();
-  auto wb= cx::VisBox();
+  auto cells = CC_CSV(c::Integer, "CELLS");
+  auto cols = CC_CSV(c::Integer, "COLS");
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
   auto cache= c::AnimationCache::getInstance();
-  auto info= GetRankInfo(0);
+  auto info= getRankInfo(0);
   float x;
   float y;
   int row=0;
 
   for (int n=0; n < cells; ++n) {
 
-    auto az= f::DictVal<f::Size2>(info, "size")->getValue();
+    auto az= CC_GDV(f::Size2, info, "size");
     if (n % cols == 0) {
-      y = (n == 0) ? wb.top * 0.9
-                   : y - az.height - wz.size.height * 4/480;
-      x = wb.left + (8/320 * wz.size.width) + HWZ(az);
+      y = (n == 0) ? wb.top * 0.9f
+                   : y - az.height - wz.size.height * 4/480.0f;
+      x = wb.left + (8/320.0f * wz.size.width) + HWZ(az);
       row += 1;
-      info= GetRankInfo(row);
-      az= f::DictVal<f::Size2>(info, "size")->getValue();
+      info= getRankInfo(row);
+      az= CC_GDV(f::Size2, info, "size");
     }
 
-    auto s = f::DictVal<c::String>(info, "img0");
-    auto aa = cx::ReifySprite(s->getCString());
+    auto s = CC_GDS(info, "img0");
+    auto aa = cx::reifySprite(s);
     aa->setPosition(x + HWZ(az), y - HHZ(az));
 
-    auto f1= f::DictVal<c::String>(info, "img0")->getCString();
-    auto f2= f::DictVal<c::String>(info, "img1")->getCString();
+    auto f1= CC_GDS(info, "img0");
+    auto f2= CC_GDS(info, "img1");
     c::Vector<c::SpriteFrame*> animFrames(2);
 
-    animFrames.pushBack( cx::GetSpriteFrame(f1));
-    animFrames.pushBack( cx::GetSpriteFrame(f2));
+    animFrames.pushBack( cx::getSpriteFrame(f1));
+    animFrames.pushBack( cx::getSpriteFrame(f2));
 
     aa->runAction(c::RepeatForever::create(
       c::Animate::create(
         c::Animation::createWithSpriteFrames( animFrames, 1))));
 
-    MGML()->AddAtlasItem("game-pics", aa);
-    x += az.width + (8/320 * wz.size.width);
-    auto v = f::DictVal<c::Integer>(info, "value")->getValue();
+    MGML()->addAtlasItem("game-pics", aa);
+    x += az.width + (8/320.0f * wz.size.width);
+    auto v = CC_GDV(c::Integer, info, "value");
     auto co= new Alien(aa, v, row);
     co->status=true;
-    pool->Checkin(co);
+    pool->checkin(co);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::ReifyAliens() {
-  auto stepx= f::DictVal<f::Size2>(state, "alienSize")->getValue().width /3;
-  auto ent= engine->ReifyEntity("baddies");
-  auto p = MGMS()->GetPool("aliens");
+a::Entity* EFactory::reifyAliens() {
+  auto stepx= CC_GDV(f::Size2, state, "alienSize").width / 3.0f;
+  auto ent= engine->reifyEntity("baddies");
+  auto p = MGMS()->getPool("aliens");
 
-  FillSquad(p);
+  fillSquad(p);
 
-  ent->Checkin(new AlienSquad(p, stepx));
-  ent->Checkin(new Looper());
+  ent->checkin(new AlienSquad(p, stepx));
+  ent->checkin(new Looper());
 
   return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::BornShip() {
+void EFactory::bornShip() {
   CCASSERT(player != nullptr, "player cannot be null");
-  player->Inflate();
+  player->inflate();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::ReifyShip() {
+a::Entity* EFactory::reifyShip() {
 
-  auto sz = f::DictVal<f::Size2>(state, "shipSize")->getValue();
-  auto ent= engine->ReifyEntity("goodies");
-  auto s= cx::ReifySprite("ship_1.png");
-  auto wz= cx::VisRect();
-  auto wb= cx::VisBox();
-  auto y = sz.height + wb.bottom + (5/60 * wz.size.height);
-  auto x = wb.left + wz.size.width * 0.5;
+  auto sz = CC_GDV(f::Size2, state, "shipSize");
+  auto ent= engine->reifyEntity("goodies");
+  auto s= cx::reifySprite("ship_1.png");
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
+  auto y = sz.height + wb.bottom + (5/60.0f * wz.size.height);
+  auto x = wb.left + wz.size.width * 0.5f;
   auto ship = new Ship(s, "ship_1.png", "ship_0.png");
 
   CCASSERT(s != nullptr, "ship sprite cannot be null");
 
-  MGML()->AddAtlasItem("game-pics", s);
-  ship->Inflate(x,y);
+  MGML()->addAtlasItem("game-pics", s);
+  ship->inflate(x,y);
   player= ship;
 
-  ent->Checkin(new Velocity(150,0));
-  ent->Checkin(new Looper());
-  ent->Checkin(new Cannon(0.3));
-  ent->Checkin(new Motion());
+  ent->checkin(new Velocity(150,0));
+  ent->checkin(new Looper());
+  ent->checkin(new Cannon(0.3));
+  ent->checkin(new Motion());
 
-  ent->Checkin(ship);
-
+  ent->checkin(ship);
   return ent;
 }
 

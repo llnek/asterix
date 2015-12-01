@@ -16,38 +16,33 @@
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
-  void Fire(const stdstr& t, void* evt);
-  virtual bool OnUpdate(float);
+  void fire(const stdstr& t, void* evt);
+  virtual bool onUpdate(float);
 
-  void InitAlienSize();
-  void InitShipSize();
+  void initAlienSize();
+  void initShipSize();
 
-  void OnceOnly(a::Engine*);
+  void onceOnly();
 
   a::NodeList* ships;
   bool inited;
-
-private:
 
   NO__CPYASS(Stager)
   Stager()=delete;
 
 public:
 
+  virtual const a::SystemType typeId() { return "s/Stager"; }
+
   Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual const a::SystemType TypeId() {
-    return "s/Stager";
-  }
+  virtual void addToEngine(not_null<a::Engine*>);
 
-  virtual void AddToEngine(not_null<a::Engine*>);
-
-  virtual int Priority() { return a::PreUpdate; }
+  virtual int priority() { return a::PreUpdate; }
 
   virtual ~Stager() {}
 

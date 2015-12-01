@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/NodeRegistry.h"
-#include "n/gnodes.h"
+#include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
 NS_USING(invaders)
@@ -20,17 +20,16 @@ NS_USING(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-    
 
     // step.1: register all ash::node factories here
-  auto r= NodeRegistry::Self();
+  auto r= NodeRegistry::self();
 
-  r->Register( mc_new(AlienMotionNode));
-  r->Register( mc_new(ShipMotionNode));
-  r->Register( mc_new(CannonCtrlNode));
+  r->register( mc_new(AlienMotionNode));
+  r->register( mc_new(ShipMotionNode));
+  r->register( mc_new(CannonCtrlNode));
 
   // step.2: set up app-config
-  XConfig::Bind(Config::Reify());
+  XConfig::bind(Config::reify());
 }
 
 //////////////////////////////////////////////////////////////////////////////

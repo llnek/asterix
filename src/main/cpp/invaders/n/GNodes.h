@@ -12,31 +12,24 @@
 #if !defined(__GNODES_H__)
 #define __GNODES_H__
 
-
 #include "ash/NodeRegistry.h"
 #include "ash/Node.h"
-#include "cobjs.h"
-NS_ALIAS(a,ash)
+#include "CObjs.h"
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AlienMotionNode : public a::NodeFactory {
 private:
   NO__CPYASS(AlienMotionNode)
-
 public:
-
-  virtual const a::NodeType TypeId() {
-    return "n/AlienMotionNode";
+  virtual const a::NodeType typeId() { return "n/AlienMotionNode"; }
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
+        s::vector<stdstr> { "aliens", "looper" },
+        s::vector<a::COMType> { "n/AlienSquad", "n/Looper" });
   }
-
-  AlienMotionNode();
-
-  virtual owner<a::Node*> ReifyNode() ;
-  virtual ~AlienMotionNode();
-
+  IMPL_CTOR( AlienMotionNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,18 +37,14 @@ public:
 class CC_DLL CannonCtrlNode : public a::NodeFactory {
 private:
   NO__CPYASS(CannonCtrlNode)
-
 public:
-
-  virtual const a::NodeType TypeId() {
-    return "n/CannonCtrlNode";
+  virtual const a::NodeType typeId() { return "n/CannonCtrlNode"; }
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
+        s::vector<stdstr> { "looper", "cannon", "ship" },
+        s::vector<a::COMType> { "n/Looper", "n/Cannon", "n/Ship" });
   }
-
-  CannonCtrlNode();
-
-  virtual owner<a::Node*> ReifyNode();
-  virtual ~CannonCtrlNode();
-
+  IMPL_CTOR( CannonCtrlNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,20 +52,15 @@ public:
 class CC_DLL ShipMotionNode : public a::NodeFactory {
 private:
   NO__CPYASS(ShipMotionNode)
-
 public:
-
-  virtual const a::NodeType TypeId() {
-    return "n/ShipMotionNode";
+  virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
+        s::vector<stdstr> { "vel", "motion", "ship" },
+        s::vector<a::COMType> { "n/Velocity", "n/Motion", "n/Ship" });
   }
-
-  ShipMotionNode();
-
-  virtual owner<a::Node*> ReifyNode();
-  virtual ~ShipMotionNode();
-
+  IMPL_CTOR(ShipMotionNode)
 };
-
 
 
 NS_END(invaders)

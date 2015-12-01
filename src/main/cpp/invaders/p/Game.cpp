@@ -123,6 +123,14 @@ void GameLayer::InitAsh() {
   e->RegoSystem(new Collide(factory, options));
   e->RegoSystem(new Resolve(factory, options));
 
+  factory->ReifyExplosions();
+  factory->ReifyMissiles();
+  factory->ReifyBombs();
+  factory->ReifyAliens();
+  factory->ReifyShip();
+
+  e->ForceSync();
+
   CCLOG("init-ash - ok");
 }
 

@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
-#include "cobjs.h"
+#include "CObjs.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -19,7 +19,6 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 AlienSquad::AlienSquad(not_null<f::XPool*> aliens, int stepx) {
-
   this->aliens=aliens;
   this->stepx=stepx;
 }
@@ -33,27 +32,17 @@ AlienSquad::~AlienSquad() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
-  : ComObj(s.get(), 1, value) {
+  : ComObj(s, 1, value) {
   this->rank=rank;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
-Alien::~Alien() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
 Bomb::Bomb(not_null<c::Sprite*> s)
-  : ComObj(s.get()) {
+  : ComObj(s) {
 
   auto wz= cx::VisRect();
   vel.x=0;
-  vel.y= -50 * wz.size.height / 480;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Bomb::~Bomb() {
+  vel.y= -50.0f * wz.size.height / 480.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,24 +54,14 @@ Cannon::Cannon(float coolDownWindow) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Cannon::~Cannon() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 Explosion::Explosion(not_null<c::Sprite*> s)
-  : ComObj(s.get()) {
+  : ComObj(s) {
   frameTime= 0.1;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-Explosion::~Explosion() {
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Explosion::Inflate(float x, float y) {
+void Explosion::inflate(float x, float y) {
 
   auto cache = c::AnimationCache::getInstance();
   auto anim= cache->getAnimation("boom!");
@@ -92,8 +71,8 @@ void Explosion::Inflate(float x, float y) {
     anim->addSpriteFrame(cx::GetSpriteFrame("boom_1.png"));
     anim->addSpriteFrame(cx::GetSpriteFrame("boom_2.png"));
     anim->addSpriteFrame(cx::GetSpriteFrame("boom_3.png"));
-    anim->setDelayPerUnit(frameTime);
     anim->setRestoreOriginalFrame(true);
+    anim->setDelayPerUnit(frameTime);
     cache->addAnimation(anim, "boom!");
     anim= cache->getAnimation("boom!");
   }
@@ -103,7 +82,7 @@ void Explosion::Inflate(float x, float y) {
 
   sprite->runAction(
     c::Sequence::createWithTwoActions(c::Animate::create(anim),
-    c::CallFunc::create([=]() { this->Deflate(); })));
+    c::CallFunc::create([=]() { this->deflate(); })));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,16 +100,11 @@ Looper::~Looper() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Missile::Missile(not_null<c::Sprite*> s)
-  : ComObj(s.get()) {
+  : ComObj(s) {
 
   auto wz= cx::VisRect();
   vel.x= 0;
-  vel.y= 150 * wz.size.height / 480;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Missile::~Missile() {
+  vel.y= 150.0f * wz.size.height / 480.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -140,25 +114,15 @@ Motion::Motion() {
   left = false;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-Motion::~Motion() {
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 Ship::Ship(not_null<c::Sprite*> s,
     const stdstr& f1, const stdstr& f2)
 
-  : ComObj(s.get()) {
+  : ComObj(s) {
 
   this->frame0 = f1;
   this->frame1= f2;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-Ship::~Ship() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,10 +132,6 @@ Velocity::Velocity(float vx, float vy) {
   y= vy;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Velocity::~Velocity() {
-}
 
 
 

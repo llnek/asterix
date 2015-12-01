@@ -13,13 +13,11 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/ComObj.h"
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "Aliens.h"
 #include <math.h>
 NS_ALIAS(cx, fusii::ccsx)
-NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -30,155 +28,148 @@ Aliens::Aliens(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::RemoveFromEngine(not_null<a::Engine*> e) {
-  SNPTR(baddies)
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Aliens::AddToEngine(not_null<a::Engine*> e) {
-  CCLOG("adding system: Aliens");
+void Aliens::addToEngine(not_null<a::Engine*> e) {
+  //CCLOG("adding system: Aliens");
   AlienMotionNode a;
-  baddies = e->GetNodeList(a.TypeId());
-  CCLOG("added system: Aliens");
+  baddies = e->getNodeList(a.TypeId());
+  //CCLOG("added system: Aliens");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::OnUpdate(float dt) {
+bool Aliens::onUpdate(float dt) {
   auto node=baddies->head;
-  if (MGMS()->IsRunning() && NNP(node)) {
-    ProcessMovement(node,dt);
-    ProcessBombs(node,dt);
+  if (MGMS()->isLive() && NNP(node)) {
+    processMovement(node,dt);
+    processBombs(node,dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::ProcessMovement(not_null<a::Node*> node, float dt) {
+void Aliens::processMovement(not_null<a::Node*> node, float dt) {
 
-  auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  auto lpr = a::NodeFld<Looper>(node, "looper");
+  auto sqad= CC_GNF(AlienSquad, node, "aliens");
+  auto lpr = CC_GNF(Looper, node, "looper");
   auto tm= lpr->timer0;
 
-  if (cx::TimerDone(tm)) {
-    MaybeShuffleAliens(sqad);
-    cx::UndoTimer(tm);
+  if (cx::timerDone(tm)) {
+    maybeShuffleAliens(sqad);
+    cx::undoTimer(tm);
     SNPTR(lpr->timer0)
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::ProcessBombs(not_null<a::Node*> node, float dt) {
+void Aliens::processBombs(not_null<a::Node*> node, float dt) {
 
-  auto sqad= a::NodeFld<AlienSquad>(node, "aliens");
-  auto lpr = a::NodeFld<Looper>(node, "looper");
+  auto sqad= CC_GNF(AlienSquad, node, "aliens");
+  auto lpr = CC_GNF(Looper, node, "looper");
   auto tm= lpr->timer1;
 
-  if (cx::TimerDone(tm)) {
-    CheckBomb(sqad);
-    cx::UndoTimer(tm);
+  if (cx::timerDone(tm)) {
+    checkBomb(sqad);
+    cx::undoTimer(tm);
     SNPTR(lpr->timer1)
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::CheckBomb(not_null<AlienSquad*> sqad) {
+void Aliens::checkBomb(not_null<AlienSquad*> sqad) {
   auto p= sqad->aliens;
-  auto sz = p->Size();
+  int sz = p->size();
   s::vector<int> rc;
 
-  auto c = sqad->Elements();
+  auto c = sqad->elements();
   int pos=0;
-  for (auto it = c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
     auto a=*it;
     if (a->status) { rc.push_back(pos); }
     ++pos;
   }
 
-  if (rc.size() > 0) {
-    pos = floor( c::rand_0_1() * rc.size());
-    int n=rc[pos];
-    auto v= p->GetAt(n)->sprite->getPosition();
-    DropBomb(v.x, v.y-4);
+  sz= rc.size();
+  if (sz > 0) {
+    pos = sz == 1 ? 0 : c::random(0, sz);
+    auto n=rc[pos];
+    auto v= p->getAt(n)->sprite->getPosition();
+    dropBomb(v.x, v.y-4);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::DropBomb(float x, float y) {
-  auto bbs = MGMS()->GetPool("bombs");
-  auto ent = bbs->Get();
+void Aliens::dropBomb(float x, float y) {
+  auto bbs = MGMS()->getPool("bombs");
+  auto ent = bbs->get();
 
   if (NNP(ent)) {
-    factory->ReifyBombs(25);
-    ent = bbs->Get();
+    factory->reifyBombs(25);
+    ent = bbs->get();
   }
 
+  ent->inflate(x, y);
   //CCLOG("got one bomb from pool");
-  ent->Inflate(x, y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::MaybeShuffleAliens(not_null<AlienSquad*> sqad) {
+void Aliens::maybeShuffleAliens(not_null<AlienSquad*> sqad) {
   auto b = sqad->stepx > 0 ?
     FindMaxX(sqad) : FindMinX(sqad);
   bool ok;
 
   if (NNP(b) && b->status) {
-    ok = TestDirX(b, sqad->stepx) ? DoShuffle(sqad) : DoForward(sqad);
+    ok = testDirX(b, sqad->stepx) ? doShuffle(sqad) : doForward(sqad);
     if (ok) {
-      cx::SfxPlay("bugs-march");
+      cx::sfxPlay("bugs-march");
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::TestDirX(not_null<f::ComObj*> b, int stepx) {
-  auto wz= cx::VisRect();
-  auto wb= cx::VisBox();
+bool Aliens::testDirX(not_null<f::ComObj*> b, int stepx) {
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
   auto sp= b->sprite;
 
   if (stepx > 0) {
-    return cx::GetRight(sp) + stepx < (wb.right - (2/40 * wz.size.width));
+    return cx::getRight(sp) + stepx < (wb.right - (2/40.0f * wz.size.width));
   } else {
-    return cx::GetLeft(sp) + stepx > (wb.left + (2/40 * wz.size.width));
+    return cx::getLeft(sp) + stepx > (wb.left + (2/40.0f * wz.size.width));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::ShuffleOneAlien(not_null<f::ComObj*> a, int stepx) {
+void Aliens::shuffleOneAlien(not_null<f::ComObj*> a, int stepx) {
   auto pos= a->sprite->getPosition();
   a->sprite->setPosition(pos.x + stepx, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::ForwardOneAlien(not_null<f::ComObj*> a, float delta) {
+void Aliens::forwardOneAlien(not_null<f::ComObj*> a, float delta) {
   auto pos= a->sprite->getPosition();
-  auto wz= cx::VisRect();
-  auto wb= cx::VisBox();
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
   a->sprite->setPosition(pos.x, pos.y - delta);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::DoShuffle(not_null<AlienSquad*> sqad) {
-  auto c= sqad->Elements();
+bool Aliens::doShuffle(not_null<AlienSquad*> sqad) {
+  auto c= sqad->elements();
   auto found=false;
 
-  for (auto it= c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
     auto e= *it;
     if (e->status) {
-      ShuffleOneAlien(e,sqad->stepx);
+      shuffleOneAlien(e, sqad->stepx);
       found=true;
     }
   }
@@ -187,15 +178,15 @@ bool Aliens::DoShuffle(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::DoForward(not_null<AlienSquad*> sqad) {
+bool Aliens::doForward(not_null<AlienSquad*> sqad) {
   auto delta= abs(sqad->stepx);
   auto found= false;
-  auto c= sqad->Elements();
+  auto c= sqad->elements();
 
-  for (auto it= c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
     auto e= *it;
     if (e->status) {
-      ForwardOneAlien(e, delta);
+      forwardOneAlien(e, delta);
       found=true;
     }
   }
@@ -205,19 +196,19 @@ bool Aliens::DoForward(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::ComObj* Aliens::FindMinX(not_null<AlienSquad*> sqad) {
+f::ComObj* Aliens::findMinX(not_null<AlienSquad*> sqad) {
   auto cur= (float) INT32_MAX;
-  auto c= sqad->Elements();
+  auto c= sqad->elements();
   f::ComObj* rc= nullptr;
   float v;
 
-  for (auto it= c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
     auto e= *it;
     if (e->status) {
-      v= cx::GetLeft(e->sprite);
+      v= cx::getLeft(e->sprite);
       if (v < cur) {
-       cur=v;
-       rc=e;
+        cur=v;
+        rc=e;
       }
     }
   }
@@ -226,16 +217,16 @@ f::ComObj* Aliens::FindMinX(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::ComObj* Aliens::FindMaxX(not_null<AlienSquad*> sqad) {
+f::ComObj* Aliens::findMaxX(not_null<AlienSquad*> sqad) {
   auto cur= (float) INT32_MIN;
-  auto c= sqad->Elements();
+  auto c= sqad->elements();
   f::ComObj* rc= nullptr;
   float v;
 
-  for (auto it= c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
     auto e= *it;
     if (e->status) {
-      v= cx::GetRight(e->sprite);
+      v= cx::getRight(e->sprite);
       if (v > cur) {
         cur = v;
         rc=e;

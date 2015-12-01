@@ -14,57 +14,45 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
-#include "n/gnodes.h"
+#include "n/GNodes.h"
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Aliens : public f::BaseSystem<EFactory> {
-
 protected:
-  virtual bool OnUpdate(float dt);
-
+  virtual bool onUpdate(float);
 private:
-
   NO__CPYASS(Aliens)
   Aliens()=delete ;
-
   a::NodeList* baddies;
-
 public:
 
+  virtual const a::SystemType typeId() { return "n/Aliens"; }
   Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual const a::SystemType TypeId() {
-    return "n/Aliens";
-  }
-
   virtual ~Aliens() {}
 
-  virtual void RemoveFromEngine(not_null<a::Engine*>);
-  virtual void AddToEngine(not_null<a::Engine*>);
+  virtual void addToEngine(not_null<a::Engine*>);
 
-  void ProcessMovement(not_null<a::Node*>, float dt);
-  void ProcessBombs(not_null<a::Node*>, float dt);
+  void processMovement(not_null<a::Node*>, float dt);
+  void processBombs(not_null<a::Node*>, float dt);
 
-  void CheckBomb(not_null<AlienSquad*> );
-  void DropBomb(float x, float y);
+  void checkBomb(not_null<AlienSquad*> );
+  void dropBomb(float x, float y);
 
-  void MaybeShuffleAliens(not_null<AlienSquad*> );
-  bool TestDirX(not_null<f::ComObj*> b, int stepx);
+  void maybeShuffleAliens(not_null<AlienSquad*> );
+  bool testDirX(not_null<f::ComObj*> b, int stepx);
 
-  void ForwardOneAlien(not_null<f::ComObj*> a, float delta);
-  void ShuffleOneAlien(not_null<f::ComObj*> a, int stepx);
+  void forwardOneAlien(not_null<f::ComObj*> a, float delta);
+  void shuffleOneAlien(not_null<f::ComObj*> a, int stepx);
 
-  bool DoShuffle(not_null<AlienSquad*> sqad);
-  bool DoForward(not_null<AlienSquad*> sqad);
+  bool doShuffle(not_null<AlienSquad*> sqad);
+  bool doForward(not_null<AlienSquad*> sqad);
 
-  f::ComObj* FindMinX(not_null<AlienSquad*> sqad);
-  f::ComObj* FindMaxX(not_null<AlienSquad*> sqad);
+  f::ComObj* findMinX(not_null<AlienSquad*> sqad);
+  f::ComObj* findMaxX(not_null<AlienSquad*> sqad);
 
-  virtual int Priority() { return a::AI; }
-
+  virtual int priority() { return a::AI; }
 };
 
 

@@ -11,8 +11,8 @@
 
 #include "core/Primitives.h"
 #include "core/CCSX.h"
-#include "x2d/MainGame.h"
-#include "n/gnodes.h"
+#include "x2d/GameScene.h"
+#include "n/GNodes.h"
 #include "EFactory.h"
 #include "Stager.h"
 NS_ALIAS(cx, fusii::ccsx)
@@ -21,88 +21,77 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d) : f::BaseSystem<EFactory>(f, d) {
+Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+
+  : f::BaseSystem<EFactory>(f, d) {
+
   inited=false;
   SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::AddToEngine(not_null<a::Engine*> e) {
-  CCLOG("adding system: Stager");
-  if (! inited) {
-    OnceOnly(e);
-    inited=true;
-  }
+void Stager::addToEngine(not_null<a::Engine*> e) {
+  //CCLOG("adding system: Stager");
   ShipMotionNode s;
-  ships = e->GetNodeList(s.TypeId());
-  CCLOG("added system: Stager");
+  ships = e->getNodeList(s.typeId());
+  //CCLOG("added system: Stager");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::InitAlienSize() {
-  auto z= cx::CalcSize("purple_bug_0.png");
+void Stager::initAlienSize() {
+  auto z= cx::calcSize("purple_bug_0.png");
   //pick purple since it is the largest
   state->setObject(f::Size2::create(z.width,z.height), "alienSize");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::InitShipSize() {
-  auto z= cx::CalcSize("ship_0.png");
+void Stager::initShipSize() {
+  auto z= cx::calcSize("ship_0.png");
   state->setObject(f::Size2::create(z.width, z.height), "shipSize");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Stager::OnUpdate(float dt) {
-  if (cx::IsTransitioning()) { return false; }
+bool Stager::onUpdate(float dt) {
+  if (cx::isTransitioning()) { return false; }
+  if (! inited) {
+    onceOnly();
+    inited=true;
+  }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::OnceOnly(a::Engine* e) {
-
-  InitAlienSize();
-  InitShipSize();
-
-  factory->ReifyExplosions();
-  factory->ReifyMissiles();
-  factory->ReifyBombs();
-  factory->ReifyAliens();
-  factory->ReifyShip();
-
-  e->ForceSync();
-
-  //cx::OnTouchOne(this);
-  //cx::OnMouse(this);
-  //TODO:
-  //g->PKInput(engine);
+void Stager::onceOnly() {
+  initAlienSize();
+  initShipSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::Fire(const stdstr& t, void* evt) {
+void Stager::fire(const stdstr& t, void* evt) {
 
   if ("/touch/one/move" == t ||
       "/mouse/move" == t) {} else {
     return;
   }
-  if (MGMS()->IsRunning() && NNP(ships->head)) {
+  if (MGMS()->isLive() && NNP(ships->head)) {
 
-    auto ship = (f::ComObj*) ships->head->Get("ship");
-    auto pos = ship->Pos();
+    auto ship = (f::ComObj*) ships->head->get("ship");
+    auto pos = ship->pos();
     auto x=pos.x;
     auto y=pos.y;
-    auto wz= cx::VisRect();
+    auto wz= cx::visRect();
 
     //TODO:
     //pos.add(c::Vec2(evt->getDelta().x, 0));
     pos.clamp(c::Vec2(0, 0),
               c::Vec2(wz.size.width, wz.size.height));
-    ship->SetPos(pos.x, pos.y);
+    ship->setPos(pos.x, pos.y);
   }
 }
 

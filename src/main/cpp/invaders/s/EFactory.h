@@ -13,36 +13,29 @@
 #define __EFACTORY_H__
 
 #include "core/Factory.h"
-NS_ALIAS(f, fusii)
-NS_ALIAS(a, ash)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL EFactory : public f::Factory {
 protected:
-
-  f::ComObj* player;
-
-private:
-
   NO__CPYASS(EFactory)
   EFactory()=delete;
-
+  f::ComObj* player;
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
-  void ReifyMissiles(int count= 36);
-  void ReifyExplosions(int count = 24);
-  void ReifyBombs(int count = 24);
+  void reifyMissiles(int count= 36);
+  void reifyExplosions(int count = 24);
+  void reifyBombs(int count = 24);
 
-  const c::Size CalcImgSize(const stdstr& img);
-  c::Dictionary* GetRankInfo(int r);
+  const c::Size calcImgSize(const stdstr& img);
+  c::Dictionary* getRankInfo(int r);
 
-  void FillSquad(not_null<f::XPool*> );
-  a::Entity* ReifyAliens();
-  void BornShip();
-  a::Entity* ReifyShip();
+  void fillSquad(not_null<f::XPool*> );
+  a::Entity* reifyAliens();
+  void bornShip();
+  a::Entity* reifyShip();
 
   virtual ~EFactory();
 };

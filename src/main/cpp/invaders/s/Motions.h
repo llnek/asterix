@@ -21,8 +21,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
-  virtual bool OnUpdate(float dt);
-private:
+  virtual bool onUpdate(float);
 
   NO__CPYASS(Motions)
   Motions()=delete;
@@ -35,20 +34,18 @@ private:
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Motions"; }
+
   Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual const a::SystemType TypeId() {
-    return "n/Motions";
-  }
+  virtual void addToEngine(not_null<a::Engine*>);
 
-  virtual void AddToEngine(not_null<a::Engine*>);
+  void processAlienMotions(not_null<a::Node*>,float dt);
+  void controlCannon(not_null<a::Node*>, float dt);
+  void fireMissile(not_null<a::Node*>, float dt);
+  void scanInput(not_null<a::Node*>, float dt);
 
-  void ProcessAlienMotions(not_null<a::Node*>,float dt);
-  void ControlCannon(not_null<a::Node*>, float dt);
-  void FireMissile(not_null<a::Node*>, float dt);
-  void ScanInput(not_null<a::Node*>, float dt);
-
-  virtual int Priority() { return a::Motion; }
+  virtual int priority() { return a::Motion; }
 
   virtual ~Motions() {}
 };

@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/Primitives.h"
-#include "x2d/MainGame.h"
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
@@ -20,42 +20,45 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d) : f::BaseSystem<EFactory>(f,d) {
+Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+
+  : f::BaseSystem<EFactory>(f,d) {
+
   SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::AddToEngine(not_null<a::Engine*> e) {
-  CCLOG("adding system: Move");
+void Move::addToEngine(not_null<a::Engine*> e) {
+  //CCLOG("adding system: Move");
   ShipMotionNode s;
-  ships = e->GetNodeList(s.TypeId());
-  CCLOG("added system: Move");
+  ships = e->getNodeList(s.typeId());
+  //CCLOG("added system: Move");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Move::OnUpdate(float dt) {
+bool Move::onUpdate(float dt) {
   auto node = ships->head;
-  if (MGMS()->IsRunning()) {
+  if (MGMS()->isLive()) {
     if (NNP(node)) {
-      ProcessShipMotions(node, dt);
+      processShipMotions(node, dt);
     }
-    MoveMissiles(dt);
-    MoveBombs(dt);
+    moveMissiles(dt);
+    moveBombs(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::ProcessShipMotions(not_null<a::Node*> node, float dt) {
+void Move::processShipMotions(not_null<a::Node*> node, float dt) {
 
-  auto motion = a::NodeFld<Motion>(node,"motion");
-  auto sv = a::NodeFld<Velocity>(node,"vel");
-  auto ship= a::NodeFld<Ship>(node,"ship");
+  auto motion = CC_GNF(Motion, node,"motion");
+  auto sv = CC_GNF(Velocity, node,"vel");
+  auto ship= CC_GNF(Ship, node,"ship");
 
-  auto pos = ship->Pos();
+  auto pos = ship->pos();
   auto x= pos.x;
   auto y= pos.y;
 
@@ -70,60 +73,60 @@ void Move::ProcessShipMotions(not_null<a::Node*> node, float dt) {
     x = pos.x - dt * sv->x;
   }
 
-  ship->SetPos(x,y);
-  Clamp(ship);
+  ship->setPos(x,y);
+  clamp(ship);
 
   motion->right=false;
   motion->left=false;
-
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::Clamp(not_null<Ship*> ship) {
+void Move::clamp(not_null<Ship*> ship) {
 
-  auto tile= f::CstVal<c::Integer>("TILE")->getValue();
   auto sz= ship->sprite->getContentSize();
-  auto pos= ship->Pos();
-  auto wz = cx::VisRect();
+  auto tile= CC_CSV(c::Integer,"TILE");
+  auto pos= ship->pos();
+  auto wz = cx::visRect();
 
-  if (cx::GetRight(ship->sprite) > wz.size.width - tile) {
-    ship->SetPos(wz.size.width - tile - sz.width * 0.5, pos.y);
+  if (cx::getRight(ship->sprite) > wz.size.width - tile) {
+    ship->setPos(wz.size.width - tile - sz.width * 0.5f, pos.y);
   }
-  if (cx::GetLeft(ship->sprite) < tile) {
-    ship->SetPos(tile + sz.width * 0.5, pos.y);
+  if (cx::getLeft(ship->sprite) < tile) {
+    ship->setPos(tile + sz.width * 0.5f, pos.y);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::MoveBombs(float dt) {
+void Move::moveBombs(float dt) {
 
-  auto bbs= MGMS()->GetPool("bombs");
-  auto c= bbs->Elements();
+  auto bbs= MGMS()->getPool("bombs");
+  auto c= bbs->elements();
 
-  for (auto it= c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
     auto b = *it;
     if (b->status) {
-      auto pos= b->Pos();
+      auto pos= b->pos();
       auto y = pos.y + dt * b->vel.y;
-      b->SetPos(pos.x, y);
+      b->setPos(pos.x, y);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::MoveMissiles(float dt) {
+void Move::moveMissiles(float dt) {
 
-  auto mss= MGMS()->GetPool("missiles");
-  auto c= mss->Elements();
+  auto mss= MGMS()->getPool("missiles");
+  auto c= mss->elements();
 
-  for (auto it= c.begin(); it != c.end(); ++it) {
+  F__LOOP(it, c) {
+
     auto m = *it;
-    auto pos= m->Pos();
+    auto pos= m->pos();
     auto y = pos.y + dt * m->vel.y;
-    m->SetPos(pos.x, y);
+    m->setPos(pos.x, y);
   }
 }
 

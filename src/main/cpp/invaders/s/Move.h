@@ -14,7 +14,7 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
-#include "n/gnodes.h"
+#include "n/GNodes.h"
 NS_BEGIN(invaders)
 
 
@@ -22,8 +22,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Move : public f::BaseSystem<EFactory> {
 protected:
-  virtual bool OnUpdate(float dt);
-private:
+  virtual bool onUpdate(float dt);
 
   NO__CPYASS(Move)
   Move()=delete;
@@ -32,23 +31,21 @@ private:
 
 public:
 
-  Move(not_null<EFactory*>, not_null<c::Dictionary*> );
+  virtual const a::SystemType typeId() { return "s/Move"; }
 
-  virtual const a::SystemType TypeId() {
-    return "s/Move";
-  }
+  Move(not_null<EFactory*>, not_null<c::Dictionary*> );
 
   virtual ~Move() {}
 
-  virtual void AddToEngine(not_null<a::Engine*>);
+  virtual void addToEngine(not_null<a::Engine*>);
 
-  void ProcessShipMotions(not_null<a::Node*>, float dt);
-  void Clamp(not_null<Ship*> ship);
+  void processShipMotions(not_null<a::Node*>, float dt);
+  void clamp(not_null<Ship*> ship);
 
-  void MoveBombs(float dt);
-  void MoveMissiles(float dt);
+  void moveBombs(float dt);
+  void moveMissiles(float dt);
 
-  virtual int Priority() { return a::Move; }
+  virtual int priority() { return a::Move; }
 
 };
 
