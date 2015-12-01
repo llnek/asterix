@@ -14,21 +14,18 @@
 
 #include "2d/CCActionInstant.h"
 #include "x2d/XScene.h"
-NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL MainMenu : public f::XScene {
 protected:
+  virtual f::XScene* realize();
   c::CallFunc* backAction;
   NO__CPYASS(MainMenu)
 public:
-
-  static MainMenu* ReifyWithBackAction(c::CallFunc* );
-  virtual f::XScene* Realize();
-  void OnBackAction();
-
+  static MainMenu* reifyWithBackAction(c::CallFunc* );
+  void onBackAction();
   DECL_CTOR(MainMenu)
 };
 

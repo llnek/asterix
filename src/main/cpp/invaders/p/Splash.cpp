@@ -16,80 +16,57 @@
 #include "Menu.h"
 #include "Splash.h"
 NS_ALIAS(cx, fusii::ccsx)
-NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SplashLayer : public f::XLayer {
+class CC_DLL UILayer : public f::XLayer {
+protected:
+  NO__CPYASS(UILayer)
 public:
-
-  virtual f::XLayer* Realize();
-
-  NO__CPYASS(SplashLayer)
-  IMPL_CTOR(SplashLayer)
-
-  void Title();
-  void Btns();
+  virtual f::XLayer* realize();
+  IMPL_CTOR(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* SplashLayer::Realize() {
-  CenterImage("game.bg");
-  Title();
-  Btns();
+f::XLayer* UILayer::realize() {
+
+  auto cw = cx::center();
+  auto wb = cx::visBox();
+
+  centerImage("game.bg");
+
+  addFrame("title.png", c::Vec2(cw.x, wb.top * 0.9f));
+
+  auto b1 = cx::reifyMenuBtn("play.png");
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onPlay));
+  auto menu = cx::mkMenu(b1);
+  menu->setPosition( cw.x, wb.top * 0.1f);
+  addItem(menu);
+
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void SplashLayer::Title() {
-  auto cw= cx::Center();
-  auto wb= cx::VisBox();
-  AddFrame("title.png", c::Vec2(cw.x, wb.top * 0.9));
+void UILayer::onPlay(c::Ref* b) {
+  auto a= c::CallFunc::create([=]() {
+      cx::runScene(XCFG()->startWith());
+      });
+  cx::runScene( MainMenu::reifyWithBackAction(a));
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-void SplashLayer::Btns() {
-  auto menu=  f::ReifyRefType<cocos2d::Menu>();
-  auto b1= cx::ReifyMenuBtn("play.png");
-  b1->setTarget(getParent(),
-      CC_MENU_SELECTOR(Splash::OnPlay));
-  auto cw= cx::Center();
-  auto wb= cx::VisBox();
-
-  menu->addChild(b1);
-  menu->setPosition( cw.x, wb.top * 0.1);
-  AddItem(menu);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Splash::OnPlay(c::Ref* b) {
-  auto f= []() { cx::RunScene(XCFG()->StartWith()); };
-  auto a= c::CallFunc::create(f);
-  auto m = MainMenu::ReifyWithBackAction(a);
-
-  cx::RunScene( m);
-}
-
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* Splash::Realize() {
-  auto y =  f::ReifyRefType<SplashLayer>();
-  AddLayer(y);
-  y->Realize();
+f::XScene* Splash::realize() {
+  auto y = f::reifyRefType<UILayer>();
+  addLayer(y);
+  y->realize();
   return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Splash* Splash::Reify() {
-  auto s =  f::ReifyRefType<Splash>();
-  s->Realize();
-  return s;
 }
 
 

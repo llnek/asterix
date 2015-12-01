@@ -19,73 +19,71 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(invaders)
 
-
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MenuLayer : public f::XLayer {
+class CC_DLL UILayer : public f::XLayer {
+protected:
+
+  virtual f::XLayer* realize();
+  void onPlay(c::Ref*);
+  void onBack(c::Ref*);
+  NO__CPYASS(UILayer)
+
 public:
 
-  virtual f::XLayer* Realize();
-  void Title();
-
-  NO__CPYASS(MenuLayer)
-  IMPL_CTOR(MenuLayer)
-
-  void OnPlay(c::Ref*);
-  void OnBack(c::Ref*);
+  IMPL_CTOR(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* MenuLayer::Realize() {
-  auto tile = f::CstVal<c::Integer>("TILE")->getValue();
+f::XLayer* UILayer::realize() {
+  auto tile = CC_CSV(c::Integer, "TILE");
   auto color= c::Color3B(94,49,120);
-  auto cw = cx::Center();
-  auto wb = cx::VisBox();
+  auto cw = cx::center();
+  auto wb = cx::visBox();
 
   // background
-  CenterImage("mmenus.bg");
+  centerImage("mmenus.bg");
 
   // title
-  auto lb= cx::ReifyBmfLabel(cw.x, wb.top * 0.9,
+  auto lb= cx::reifyBmfLabel(cw.x, wb.top * 0.9f,
                           "font.JellyBelly",
-                          "some text");
-  lb->setScale(XCFG()->GetScale());
-  lb->setColor(cx::White());
-  AddItem(lb);
+                          XCFG()->getL10NStr("mmenu"));
+  lb->setScale(XCFG()->getScale());
+  lb->setColor(cx::white());
+  addItem(lb);
 
-  auto menu=  f::ReifyRefType<cocos2d::Menu>();
   // play button
-  auto b1= cx::ReifyMenuBtn("play.png");
+  auto b1= cx::reifyMenuBtn("play.png");
   b1->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::OnPlay));
-  menu->addChild(b1);
+      CC_MENU_SELECTOR(UILayer::onPlay));
+  auto menu= cx::mkMenu(b1);
   menu->setPosition(cw);
-  AddItem(menu);
+  addItem(menu);
 
-  // back-quit button
-  auto b= cx::ReifyMenuBtn("icon_back.png");
+  // back-quit buttons
+  auto b= cx::reifyMenuBtn("icon_back.png");
   b->setTarget(this,
-      CC_MENU_SELECTOR(MenuLayer::OnBack));
-  auto q= cx::ReifyMenuBtn("icon_quit.png");
+      CC_MENU_SELECTOR(UILayer::onBack));
+  auto q= cx::reifyMenuBtn("icon_quit.png");
   q->setTarget(this,
-      CC_MENU_SELECTOR(XLayer::OnQuit));
-  auto m2= cx::MkBackQuit(b, q, false);
+      CC_MENU_SELECTOR(XLayer::onQuit));
+  auto m2= cx::mkMenu(c::Vector<c::MenuItem*> {b, q}, false, 10.0f);
   auto sz= b->getContentSize();
-
-  m2->setPosition(wb.left + tile + sz.width * 1.1,
-                  wb.bottom + tile + sz.height * 0.45);
-  AddItem(m2);
+  m2->setPosition(wb.left + tile + sz.width * 1.1f,
+                  wb.bottom + tile + sz.height * 0.45f);
+  addItem(m2);
 
   // audio
   c::MenuItem* off;
   c::MenuItem* on;
-  cx::ReifyAudioIcons(on,off);
-  off->setColor(cx::White());
-  on->setColor(cx::White());
+  cx::reifyAudioIcons(off, on);
+  off->setColor(cx::white());
+  on->setColor(cx::white());
 
-  AddAudioIcons(off, on,
-      cx::AnchorBR(),
+  addAudioIcons(this, off, on,
+      cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
 
   return this;

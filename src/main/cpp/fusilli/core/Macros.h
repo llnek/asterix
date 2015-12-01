@@ -34,7 +34,19 @@
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
 
-#define NULL_INT 977814444
+#define STATIC__REIFY(__TYPE__) \
+static __TYPE__* reify() {  \
+    __TYPE__ *pRet = new(std::nothrow) __TYPE__(); \
+    if (pRet && pRet->init()) { \
+        pRet->autorelease(); \
+        pRet->realize(); \
+        return pRet; \
+    } else { \
+        delete pRet; \
+        return nullptr; \
+    } \
+}
+
 
 #endif
 

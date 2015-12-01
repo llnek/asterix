@@ -13,23 +13,18 @@
 #define __SPLASH_H__
 
 #include "x2d/XScene.h"
-NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Splash : public f::XScene {
-public:
-
-  virtual f::XScene* Realize();
-  void OnPlay(c::Ref*);
-
-  static Splash* Reify();
-
+protected:
+  virtual f::XScene* realize();
   NO__CPYASS(Splash)
+public:
+  STATIC__REIFY(Splash)
   IMPL_CTOR(Splash)
 };
-
 
 NS_END(invaders)
 #endif
