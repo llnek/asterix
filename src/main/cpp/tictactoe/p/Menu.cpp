@@ -30,7 +30,7 @@ public:
   void onBack(c::Ref*);
   void onQuit(c::Ref*);
 
-  NO__CPYASS(UILayer)
+  NOCPYASS(UILayer)
   IMPL_CTOR(UILayer)
 };
 

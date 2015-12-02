@@ -29,7 +29,7 @@ protected:
   int _priority;
   bool active;
 
-  NO__CPYASS(System)
+  NOCPYASS(System)
 
 public:
 

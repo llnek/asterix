@@ -23,12 +23,12 @@ protected:
 
   virtual f::XScene* realizeEx(VOIDFN );
 
-  STATIC__REIFY(MainMenu)
-  NO__CPYASS(MainMenu)
+  STATIC_REIFY_SCENE(MainMenu)
+  NOCPYASS(MainMenu)
+  IMPL_CTOR(MainMenu)
 
 public:
   static MainMenu* reifyWithBackAction(VOIDFN );
-  IMPL_CTOR(MainMenu)
 };
 
 

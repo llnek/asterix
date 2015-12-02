@@ -22,7 +22,7 @@ protected:
 
   virtual f::GameLayer* getGLayer();
 
-  NO__CPYASS(Game)
+  NOCPYASS(Game)
   Game()=delete;
 
 public:

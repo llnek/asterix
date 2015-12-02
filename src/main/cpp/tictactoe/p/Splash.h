@@ -23,7 +23,7 @@ public:
   virtual f::XScene* realize();
   static Splash* reify();
 
-  NO__CPYASS(Splash)
+  NOCPYASS(Splash)
   IMPL_CTOR(Splash)
 };
 

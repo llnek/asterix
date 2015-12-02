@@ -25,7 +25,7 @@ private:
   s::map<COMType, stdstr> types;
   Entity* entity;
 
-  NO__CPYASS(Node)
+  NOCPYASS(Node)
   Node();
 
 public:

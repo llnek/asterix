@@ -21,7 +21,7 @@ NS_BEGIN(terra)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  NO__CPYASS(HUDLayer)
+  NOCPYASS(HUDLayer)
   HUDLayer()=delete;
 
   void resetAsNew();

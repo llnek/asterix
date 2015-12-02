@@ -26,7 +26,7 @@ private:
   stdstr group;
   bool dead;
 
-  NO__CPYASS(Entity)
+  NOCPYASS(Entity)
   Entity();
 
 public:

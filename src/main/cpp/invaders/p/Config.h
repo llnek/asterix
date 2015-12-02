@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 class CC_DLL Config : public f::XConfig {
 private:
 
-  NO__CPYASS(Config)
+  NOCPYASS(Config)
   Config();
 
   void initAssets();

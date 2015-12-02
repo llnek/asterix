@@ -21,7 +21,7 @@ class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
 
   virtual bool onUpdate(float);
-  NO__CPYASS(Stager)
+  NOCPYASS(Stager)
   Stager() = delete;
 
   void sharedExplosion();

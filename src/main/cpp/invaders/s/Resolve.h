@@ -23,7 +23,7 @@ protected:
   virtual bool OnUpdate(float dt);
 private:
 
-  NO__CPYASS(Resolve)
+  NOCPYASS(Resolve)
   Resolve()=delete;
 
   a::NodeList* aliens;

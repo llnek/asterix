@@ -25,26 +25,27 @@ class CC_DLL UILayer : public f::XLayer {
 protected:
   virtual f::XLayer* realize();
   void onPlay(c::Ref*);
-  NO__CPYASS(UILayer)
-public:
+  NOCPYASS(UILayer)
   IMPL_CTOR(UILayer)
+public:
+  STATIC_REIFY_LAYER(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* UILayer::realize() {
 
-  auto cw = cx::center();
   auto wb = cx::visBox();
+  auto cw = cx::center();
 
   centerImage("game.bg");
 
   addFrame("title.png", c::Vec2(cw.x, wb.top * 0.9f));
 
   auto b1 = cx::reifyMenuBtn("play.png");
+  auto menu = cx::mkMenu(b1);
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay));
-  auto menu = cx::mkMenu(b1);
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
 
@@ -64,9 +65,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XScene* Splash::realize() {
-  auto y = f::reifyRefType<UILayer>();
-  addLayer(y);
-  y->realize();
+  addLayer(UILayer::reify())->realize();
   return this;
 }
 

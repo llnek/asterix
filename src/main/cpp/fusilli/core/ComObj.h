@@ -23,7 +23,7 @@ class CC_DLL ComObj : public ash::Component {
 protected:
 
   void init(c::Sprite*, int health, int score);
-  NO__CPYASS(ComObj)
+  NOCPYASS(ComObj)
 
   ComObj();
 
@@ -47,7 +47,7 @@ public:
   virtual void updatePosition(float x, float y);
 
   ComObj(not_null<c::Sprite*>, int health, int score);
-  ComObj(not_nulli<c::Sprite*>);
+  ComObj(not_null<c::Sprite*>);
 
   virtual ~ComObj() {}
 

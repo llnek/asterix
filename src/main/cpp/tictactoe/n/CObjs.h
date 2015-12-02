@@ -38,7 +38,7 @@ public:
 
   virtual ~SmartAlgo() {}
 
-  NO__CPYASS(SmartAlgo)
+  NOCPYASS(SmartAlgo)
   SmartAlgo() = delete;
 
   Board* board;
@@ -59,7 +59,7 @@ public:
 
   virtual ~Grid() {}
 
-  NO__CPYASS(Grid);
+  NOCPYASS(Grid);
   Grid() = delete;
 
   s::vector<ArrDim> GOALS;
@@ -82,7 +82,7 @@ public:
 
   virtual ~PlayView() {}
 
-  NO__CPYASS(PlayView)
+  NOCPYASS(PlayView)
   PlayView() = delete;
 
   s::array<c::Sprite*, GD_SZ> cells;
@@ -157,7 +157,7 @@ public:
 
   virtual ~Players() {}
 
-  NO__CPYASS(Players)
+  NOCPYASS(Players)
 
   Players() {
   }
@@ -180,7 +180,7 @@ public:
 
   virtual ~UISelection() {}
 
-  NO__CPYASS(UISelection)
+  NOCPYASS(UISelection)
 
   int cell;
   int px;

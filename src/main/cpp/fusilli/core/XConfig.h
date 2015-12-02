@@ -13,6 +13,7 @@
 #define __XCONFIG_H__
 
 #define XCFG() fusii::XConfig::self()
+
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 #include "Primitives.h"
@@ -45,7 +46,7 @@ protected:
   void loadL10NStrings();
   void setCsts();
 
-  NO__CPYASS(XConfig)
+  NOCPYASS(XConfig)
   XConfig();
 
   static const stdstr ATLASES;
@@ -128,10 +129,6 @@ template<typename T> T* cstVal(const stdstr& key) {
     return nullptr;
   }
 }
-
-
-
-
 
 NS_END(fusii)
 #endif

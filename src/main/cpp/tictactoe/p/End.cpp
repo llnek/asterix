@@ -25,7 +25,7 @@ class CC_DLL UILayer : public f::XLayer {
 public:
 
   virtual f::XLayer* realize();
-  NO__CPYASS(UILayer)
+  NOCPYASS(UILayer)
   DECL_CTOR(UILayer)
 
   void onReplay(c::Ref*);

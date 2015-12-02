@@ -22,7 +22,7 @@ class CC_DLL L10NCache {
 private:
 
   s::map<stdstr, stdstr> _cache;
-  NO__CPYASS(L10NCache)
+  NOCPYASS(L10NCache)
 
 public:
 

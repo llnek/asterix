@@ -30,7 +30,7 @@ protected:
 
   virtual bool onUpdate(float);
 
-  NO__CPYASS(Logic)
+  NOCPYASS(Logic)
   Logic() = delete;
 
 public:

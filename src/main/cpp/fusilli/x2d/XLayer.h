@@ -34,14 +34,14 @@ protected:
       const MaybeInt& = MaybeInt(),
       const MaybeInt& = MaybeInt() );
 
-  NO__CPYASS(XLayer)
+  virtual XLayer* realize();
+  NOCPYASS(XLayer)
   XLayer();
 
 public:
 
   virtual c::SpriteBatchNode* getAtlas(const stdstr& name);
   virtual void onQuit(c::Ref*);
-  virtual XLayer* realize();
 
   virtual void addAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,

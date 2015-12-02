@@ -40,7 +40,7 @@ public:
   }
   ws::OdinIO* odin;
   GMode mode;
-  NO__CPYASS(GContext)
+  NOCPYASS(GContext)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ protected:
 
   static void bind(not_null<GameScene*>);
 
-  virtual f::XScene* realizeEx(GContext*) = 0;
+  virtual GameScene* realizeWithCtx(GContext*) = 0;
   virtual GameLayer* getGLayer() = 0;
 
   s::map<stdstr, XPool*> pools;
@@ -59,7 +59,7 @@ protected:
   GContext* context;
   int level;
 
-  NO__CPYASS(GameScene)
+  NOCPYASS(GameScene)
   GameScene();
 
 public:

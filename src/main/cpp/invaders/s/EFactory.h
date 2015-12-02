@@ -19,7 +19,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL EFactory : public f::Factory {
 protected:
-  NO__CPYASS(EFactory)
+  NOCPYASS(EFactory)
   EFactory()=delete;
   f::ComObj* player;
 public:

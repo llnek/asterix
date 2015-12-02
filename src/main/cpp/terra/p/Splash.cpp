@@ -25,7 +25,7 @@ protected:
 
   void onPlay(c::Ref*);
 
-  NO__CPYASS(UILayer)
+  NOCPYASS(UILayer)
   UILayer()=delete;
 
   c::Sprite* flare;

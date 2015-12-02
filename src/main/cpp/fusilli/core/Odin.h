@@ -36,7 +36,7 @@ protected:
 
   void onEvent(OdinEvent*);
 
-  NO__CPYASS(OdinIO)
+  NOCPYASS(OdinIO)
 
 public:
 

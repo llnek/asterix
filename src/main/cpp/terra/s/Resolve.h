@@ -30,7 +30,7 @@ protected:
 
   virtual bool onUpdate(float);
 
-  NO__CPYASS(Resolve)
+  NOCPYASS(Resolve)
   Resolve()=delete;
 
 public:

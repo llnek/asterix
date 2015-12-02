@@ -20,9 +20,9 @@ NS_BEGIN(invaders)
 class CC_DLL Splash : public f::XScene {
 protected:
   virtual f::XScene* realize();
-  NO__CPYASS(Splash)
+  NOCPYASS(Splash)
 public:
-  STATIC__REIFY(Splash)
+  STATIC_REIFY_SCENE(Splash)
   IMPL_CTOR(Splash)
 };
 

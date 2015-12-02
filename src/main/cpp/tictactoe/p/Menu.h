@@ -20,7 +20,7 @@ NS_BEGIN(tttoe)
 //
 class CC_DLL MainMenu : public f::XScene {
 protected:
-  NO__CPYASS(MainMenu)
+  NOCPYASS(MainMenu)
 public:
 
   static MainMenu* reifyWithBackAction(VOIDFN );

@@ -23,7 +23,7 @@ class Node;
 class FS_DLL NodeList {
 private:
 
-  NO__CPYASS(NodeList)
+  NOCPYASS(NodeList)
   NodeType nType;
   NodeList();
 

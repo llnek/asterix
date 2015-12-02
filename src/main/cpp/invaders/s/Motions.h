@@ -23,7 +23,7 @@ class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
   virtual bool onUpdate(float);
 
-  NO__CPYASS(Motions)
+  NOCPYASS(Motions)
   Motions()=delete;
 
   a::NodeList* cannons;

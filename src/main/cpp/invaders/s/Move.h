@@ -24,7 +24,7 @@ class CC_DLL Move : public f::BaseSystem<EFactory> {
 protected:
   virtual bool onUpdate(float dt);
 
-  NO__CPYASS(Move)
+  NOCPYASS(Move)
   Move()=delete;
 
   a::NodeList* ships;

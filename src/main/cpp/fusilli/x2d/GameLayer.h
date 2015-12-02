@@ -34,13 +34,14 @@ protected:
   s::array<bool, 256> keyboard;
   c::Dictionary* options;
   a::Engine* engine;
+  //bool playable;
   //f::Factory* fac;
 
   c::EventListenerKeyboard* keys;
   c::EventListenerMouse* mouse;
   c::EventListener* touch;
 
-  NO__CPYASS(GameLayer)
+  NOCPYASS(GameLayer)
   GameLayer();
 
 public:

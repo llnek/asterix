@@ -11,6 +11,7 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "s/EFactory.h"
 #include "s/Stager.h"
 #include "s/Motions.h"
 #include "s/Move.h"
@@ -28,49 +29,50 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GLayer : public f::GameLayer {
-private:
+protected:
 
   virtual f::XLayer* realize();
   void initAsh();
-
-  NO__CPYASS(GLayer)
+  HUDLayer* getHUD() { return nullptr; }
   EFactory* fac;
+
+  DECL_CTOR(GLayer)
+  NOCPYASS(GLayer)
 
 public:
 
   virtual void sendMsgEx(const stdstr& topic, void* msg);
+  virtual int getIID() { return 2; }
   virtual void reset();
   virtual void play();
-  virtual void onGameOver();
 
   void onPlayerKilled();
   void onEarnScore(int);
+  void onStop();
   void spawnPlayer();
 
-  virtual int getIID() { return 2; }
-
-  DECL_CTOR(GLayer)
+  bool playable;
+  STATIC_REIFY_LAYER(GLayer)
 };
 
-    //CenterImage("game.bg");
 //////////////////////////////////////////////////////////////////////////////
 //
 GLayer::~GLayer() {
-  delete engine;
-  delete fac;
+  mc_del_ptr(fac)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 GLayer::GLayer() {
-  SNPTR(engine)
+  playable=false;
   SNPTR(fac)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* GLayer::realize() {
-  play();
+  centerImage("game.bg");
+  reset();
   return this;
 }
 
@@ -82,7 +84,7 @@ void GLayer::reset() {
 
   mc_del_ptr(this->engine)
   mc_del_ptr(this->fac)
-  SNPTR(this->options)
+  CC_DROP(this->options)
 
   if (atlases.empty()) {
     regoAtlas("game-pics");
@@ -92,7 +94,7 @@ void GLayer::reset() {
   MGMS()->resetPools();
   getHUD()->reset();
 
-  auto e= a::Engine::reify();
+  auto e= mc_new(a::Engine);
   auto d= CC_DICT();
   auto f= new EFactory(e, d);
 
@@ -110,18 +112,11 @@ void GLayer::reset() {
   f->reifyShip();
 
   e->forceSync();
+  CC_KEEP(d)
 
   this->options= d;
   this->fac= f;
   this->engine=e;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::play() {
-  //CCLOG("play game, newflag = %s", newFlag ? "true" : "false");
-  reset();
-  MGMS()->resume();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -135,10 +130,16 @@ void GLayer::spawnPlayer() {
 void GLayer::onPlayerKilled() {
   cx::sfxPlay("xxx-explode");
   if (getHUD()->reduceLives(1)) {
-    finzGame();
+    onStop();
   } else {
     spawnPlayer();
   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onStop() {
+  MGMS()->stop();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -149,101 +150,77 @@ void GLayer::onEarnScore(int score) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onGameOver() {
-  MGMS()->pause();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::sendMsgEx(const stdstr& topic, void* msg) {
+void Game::sendMsgEx(const stdstr& topic, void* msg) {
+  auto y = SCAST(GLayer*, getGLayer());
 
   if (topic == "/game/player/earnscore") {
-    f::ComObj* i = (f::ComObj*) msg;
-    OnEarnScore(i->score);
+    j::json* js = (j::json*) msg;
+    auto n= js->operator[]("score").get<j::json::number_integer_t>();
+    y->onEarnScore(n);
   }
   else
   if (topic == "/hud/showmenu") {
-
     auto f= []() { CC_DTOR()->popScene(); };
-    auto a= c::CallFunc::create(f);
-    CC_DTOR()->pushScene(MainMenu::ReifyWithBackAction(a));
+    CC_DTOR()->pushScene(MainMenu::reifyWithBackAction(f));
   }
   else
   if (topic == "/hud/replay") {
-    Replay();
   }
   else
   if (topic == "/game/player/killed") {
-    OnPlayerKilled();
+    y->onPlayerKilled();
   }
 
 }
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::Resume() {
-  running= true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::Run() {
-  running= true;
+void Game::stop() {
+  static_cast<GLayer*>(getGLayer())->playable = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::Pause() {
-  running= false;
+void Game::play() {
+  static_cast<GLayer*>(getGLayer())->playable = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Game::IsRunning() {
-  return running;
+bool Game::isLive() {
+  return static_cast<GLayer*>(getGLayer())->playable;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Game::~Game() {
+f::GameLayer* Game::getGLayer() {
+  return (f::GameLayer*) getLayer(2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Game::Game() {
-}
+f::XScene* Game::realizeWithCtx(f::GContext* ctx) {
 
-//////////////////////////////////////////////////////////////////////////
-//
-f::XGameLayer* Game::GetGLayer() {
-  return (f::XGameLayer*) GetLayer(2);
-}
+  auto h = HUDLayer::reify();
+  auto g = GLayer::reify();
 
-//////////////////////////////////////////////////////////////////////////
-//
-f::XScene* Game::Realize() {
+  reifyPool("explosions");
+  reifyPool("aliens");
+  reifyPool("missiles");
+  reifyPool("bombs");
 
-  auto g = (f::XLayer*) f::ReifyRefType<GameLayer>();
-  auto b = (f::XLayer*) f::ReifyRefType<BGLayer>();
-  auto h = (f::XLayer*) f::ReifyRefType<HUDLayer>();
-
-  ReifyPool("explosions");
-  ReifyPool("aliens");
-  ReifyPool("missiles");
-  ReifyPool("bombs");
-
-  AddLayer(b, 1)->Realize();
-  AddLayer(g, 2);
-  AddLayer(h, 3)->Realize();
-
-  // set this to be THE main game
-  Bind(this);
+  this->context= ctx;
+  addLayer(g, 2);
+  addLayer(h, 3)->realize();
 
   // realize game layer last
-  g->Realize();
+  g->realize();
 
+  play();
   return this;
 }
+
 
 NS_END(invaders)
 

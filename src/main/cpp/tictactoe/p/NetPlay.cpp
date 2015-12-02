@@ -43,7 +43,7 @@ public:
   ws::OdinIO* odin;
   int player;
 
-  NO__CPYASS(UILayer)
+  NOCPYASS(UILayer)
   DECL_CTOR(UILayer)
 
 };

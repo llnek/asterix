@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Alien : public f::ComObj {
 private:
-  NO__CPYASS(Alien)
+  NOCPYASS(Alien)
   Alien()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Alien"; }
@@ -34,7 +34,7 @@ public:
 //
 class CC_DLL AlienSquad : public a::Component {
 private:
-  NO__CPYASS(AlienSquad)
+  NOCPYASS(AlienSquad)
   AlienSquad()=delete;
 public:
   virtual const a::COMType typeId() { return "n/AlienSquad"; }
@@ -52,7 +52,7 @@ public:
 //
 class CC_DLL Bomb : public f::ComObj {
 private:
-  NO__CPYASS(Bomb)
+  NOCPYASS(Bomb)
   Bomb()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Bomb"; }
@@ -63,7 +63,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Cannon : public a::Component {
 private:
-  NO__CPYASS(Cannon)
+  NOCPYASS(Cannon)
   Cannon()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Cannon"; }
@@ -77,7 +77,7 @@ public:
 //
 class CC_DLL Explosion : public f::ComObj {
 private:
-  NO__CPYASS(Explosion)
+  NOCPYASS(Explosion)
   Explosion()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Explosion"; }
@@ -91,7 +91,7 @@ public:
 //
 class CC_DLL Looper : public a::Component {
 private:
-  NO__CPYASS(Looper);
+  NOCPYASS(Looper);
 public:
   virtual const a::COMType typeId() { return "n/Looper"; }
   DECL_CTOR(Looper)
@@ -103,7 +103,7 @@ public:
 //
 class CC_DLL Missile : public f::ComObj {
 private:
-  NO__CPYASS(Missile)
+  NOCPYASS(Missile)
   Missile()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Missile"; }
@@ -115,7 +115,7 @@ public:
 //
 class CC_DLL Motion : public a::Component {
 private:
-  NO__CPYASS(Motion)
+  NOCPYASS(Motion)
 public:
   virtual const a::COMType typeId() { return "n/Motion"; }
   virtual ~Motion() {}
@@ -128,7 +128,7 @@ public:
 //
 class CC_DLL Ship : public f::ComObj {
 private:
-  NO__CPYASS(Ship)
+  NOCPYASS(Ship)
   Ship()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Ship"; }
@@ -142,7 +142,7 @@ public:
 //
 class CC_DLL Velocity : public a::Component {
 private:
-  NO__CPYASS(Velocity)
+  NOCPYASS(Velocity)
   Velocity()=delete;
 public:
   virtual const a::COMType typeId() { return "n/Velocity"; }

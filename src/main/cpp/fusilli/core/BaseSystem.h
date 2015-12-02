@@ -27,8 +27,8 @@ protected:
   c::Dictionary* state;
   F* factory;
 
-  NO__CPYASS(BaseSystem)
-  BaseSystem()=delete;
+  NOCPYASS(BaseSystem)
+  NODFT(BaseSystem)
 
 public:
 
@@ -59,10 +59,8 @@ BaseSystem<F>::~BaseSystem() {
 //
 template<typename F>
 bool BaseSystem<F>::update(float time) {
-  //CCLOG("update called on system: %s", this->typeId().c_str());
   return onUpdate(time);
 }
-
 
 
 

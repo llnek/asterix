@@ -70,7 +70,7 @@ public:
     void drawStatus(int pnum);
 
 
-  NO__CPYASS(HUDLayer)
+  NOCPYASS(HUDLayer)
   DECL_CTOR(HUDLayer)
 
 };

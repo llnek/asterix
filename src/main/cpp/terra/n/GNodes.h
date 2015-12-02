@@ -28,7 +28,7 @@ public:
         s::vector<a::COMType> { "n/Motion", "n/Ship" });
   }
 
-  NO__CPYASS(ShipMotionNode)
+  NOCPYASS(ShipMotionNode)
   IMPL_CTOR(ShipMotionNode)
 
 };

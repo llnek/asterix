@@ -15,15 +15,14 @@
 #include "x2d/GameScene.h"
 #include "core/Factory.h"
 #include "n/GNodes.h"
-NS_BEGIN(tttoe)
+NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL EFactory  : public fusii::Factory {
 protected:
 
-  void initPlayers(Players*);
-  NO__CPYASS(EFactory)
+  NOCPYASS(EFactory)
   EFactory() = delete;
 
 public:
@@ -31,12 +30,10 @@ public:
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
   virtual ~EFactory() {}
 
-  a::Entity* reifyBoard(not_null<f::XLayer*> );
-
 };
 
 
-NS_END(tttoe)
+NS_END(invaders)
 #endif
 
 

@@ -16,25 +16,25 @@
 #include "s/EFactory.h"
 NS_BEGIN(invaders)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::GameScene {
 protected:
 
+  virtual f::XScene* realizeWithCtx(f::GContext*);
   virtual f::GameLayer* getGLayer();
-  virtual f::XScene* realize();
 
-  NO__CPYASS(Game)
+  IMPL_CTOR(Game)
+  NOCPYASS(Game)
 
 public:
 
-  virtual void sendMsgEx(int topic, void*);
+  virtual void sendMsgEx(const stdstr& topic, void*);
   virtual bool isLive();
   virtual void play();
   virtual void stop();
 
-  DECL_CTOR(Game)
+  STATIC_REIFY_SCENE(Game)
 };
 
 

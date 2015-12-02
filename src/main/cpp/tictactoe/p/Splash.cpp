@@ -27,7 +27,7 @@ public:
   void onPlay(c::Ref*);
   void demo();
 
-  NO__CPYASS(UILayer)
+  NOCPYASS(UILayer)
   IMPL_CTOR(UILayer)
 };
 

@@ -20,7 +20,7 @@ NS_BEGIN(terra)
 class CC_DLL MainMen : public f::XScene {
 protected:
 
-  NO__CPYASS(MainMenu)
+  NOCPYASS(MainMenu)
   MainMenu()=delete;
 
   VOIDFN backAction;

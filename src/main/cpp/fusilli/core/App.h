@@ -25,7 +25,7 @@ protected:
   void preLaunch(const c::Size& designSize);
   void initAudio();
 
-  NO__CPYASS(App)
+  NOCPYASS(App)
 
   App()
   {}

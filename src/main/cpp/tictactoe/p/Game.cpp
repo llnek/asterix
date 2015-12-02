@@ -32,7 +32,7 @@ public:
     centerImage("game.bg");
     return this;
   }
-  NO__CPYASS(BGLayer)
+  NOCPYASS(BGLayer)
   IMPL_CTOR(BGLayer)
 };
 
@@ -64,7 +64,7 @@ public:
   void reset();
   //void onGameOver();
 
-  NO__CPYASS(GLayer)
+  NOCPYASS(GLayer)
 
   a::NodeList* boardNode;
   EFactory* factory;

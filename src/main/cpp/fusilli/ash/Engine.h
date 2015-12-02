@@ -21,7 +21,7 @@ NS_BEGIN(ash)
 // owns all items in this list
 template <typename T> class FS_DLL ObjList {
 private:
-  NO__CPYASS(ObjList)
+  NOCPYASS(ObjList)
 public:
   const s::vector<T*> list();
   void release(not_null<T*>);
@@ -129,7 +129,7 @@ private:
   bool updating;
   bool dirty;
 
-  NO__CPYASS(Engine)
+  NOCPYASS(Engine)
 
 public:
 

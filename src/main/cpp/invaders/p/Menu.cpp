@@ -29,12 +29,11 @@ protected:
   void onPlay(c::Ref*);
   void onBack(c::Ref*);
 
-  NO__CPYASS(UILayer)
-  VOIDFN backAction;
-
-public:
-
   DECL_CTOR(UILayer)
+  NOCPYASS(UILayer)
+  VOIDFN backAction;
+public:
+  STATIC_REIFY_LAYER(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,8 +42,8 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
 
   auto tile = CC_CSV(c::Integer, "TILE");
   auto color= c::Color3B(94,49,120);
-  auto cw = cx::center();
   auto wb = cx::visBox();
+  auto cw = cx::center();
 
   // background
   centerImage("mmenus.bg");
@@ -59,21 +58,21 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
 
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
+  auto menu= cx::mkMenu(b1);
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay));
-  auto menu= cx::mkMenu(b1);
   menu->setPosition(cw);
   addItem(menu);
 
   // back-quit buttons
   auto b= cx::reifyMenuBtn("icon_back.png");
+  auto q= cx::reifyMenuBtn("icon_quit.png");
+  auto sz= b->getContentSize();
   b->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onBack));
-  auto q= cx::reifyMenuBtn("icon_quit.png");
   q->setTarget(this,
       CC_MENU_SELECTOR(XLayer::onQuit));
   auto m2= cx::mkMenu(s::vector<c::MenuItem*> {b, q}, false, 10.0f);
-  auto sz= b->getContentSize();
   m2->setPosition(wb.left + tile + sz.width * 1.1f,
                   wb.bottom + tile + sz.height * 0.45f);
   addItem(m2);
@@ -82,8 +81,8 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
   c::MenuItem* off;
   c::MenuItem* on;
   cx::reifyAudioIcons(off, on);
-  off->setColor(cx::white());
-  on->setColor(cx::white());
+  off->setColor(color);
+  on->setColor(color);
 
   addAudioIcons(this, off, on,
       cx::anchorBR(),
@@ -97,7 +96,10 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay(c::Ref*) {
-  cx::runScene( Game::reify(f::GMode::ONE));
+  auto x= mc_new(f::GContext);
+  auto g = Game::reify();
+  g->realizeWithCtx(x);
+  cx::runScene(g);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,7 +123,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
-  auto m = f::reifyRefType<MainMenu>();
+  auto m = MainMenu::reify();
   m->realizeEx(cb);
   return m;
 }
@@ -129,7 +131,7 @@ MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XScene* MainMenu::realizeEx(VOIDFN cb) {
-  auto y = f::reifyRefType<UILayer>();
+  auto y = UILayer::reify();
   addLayer(y);
   y->realizeEx(cb);
   return this;

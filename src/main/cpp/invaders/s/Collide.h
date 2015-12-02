@@ -22,7 +22,7 @@ class CC_DLL Collide : public f::BaseSystem<EFactory> {
 protected:
   virtual bool onUpdate(float);
 
-  NO__CPYASS(Collide)
+  NOCPYASS(Collide)
   Collide()=delete;
 
   a::NodeList* aliens;

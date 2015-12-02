@@ -32,7 +32,7 @@ public:
           "n/UISelection", "n/Players", "n/SmartAlgo", "n/Grid", "n/PlayView" });
   }
 
-  NO__CPYASS(BoardNode)
+  NOCPYASS(BoardNode)
   IMPL_CTOR(BoardNode)
 };
 
@@ -49,7 +49,7 @@ public:
         s::vector<a::COMType> { "n/UISelection", "n/PlayView" });
   }
 
-  NO__CPYASS(GUINode)
+  NOCPYASS(GUINode)
   IMPL_CTOR(GUINode)
 };
 

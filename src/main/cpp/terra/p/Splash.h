@@ -20,7 +20,7 @@ NS_BEGIN(terra)
 class CC_DLL Splash : public f::XScene {
 protected:
 
-  NO__CPYASS(Splash)
+  NOCPYASS(Splash)
   Splash()=delete;
 
 public:

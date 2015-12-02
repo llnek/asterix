@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL AlienMotionNode : public a::NodeFactory {
 private:
-  NO__CPYASS(AlienMotionNode)
+  NOCPYASS(AlienMotionNode)
 public:
   virtual const a::NodeType typeId() { return "n/AlienMotionNode"; }
   virtual owner<a::Node*> reifyNode() {
@@ -36,7 +36,7 @@ public:
 //
 class CC_DLL CannonCtrlNode : public a::NodeFactory {
 private:
-  NO__CPYASS(CannonCtrlNode)
+  NOCPYASS(CannonCtrlNode)
 public:
   virtual const a::NodeType typeId() { return "n/CannonCtrlNode"; }
   virtual owner<a::Node*> reifyNode() {
@@ -51,7 +51,7 @@ public:
 //
 class CC_DLL ShipMotionNode : public a::NodeFactory {
 private:
-  NO__CPYASS(ShipMotionNode)
+  NOCPYASS(ShipMotionNode)
 public:
   virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
   virtual owner<a::Node*> reifyNode() {

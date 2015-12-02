@@ -13,7 +13,6 @@
 #define __XSCENE_H__
 
 #include "2d/CCScene.h"
-#include "core/Odin.h"
 #include "XLayer.h"
 NS_BEGIN(fusii)
 
@@ -22,10 +21,10 @@ NS_BEGIN(fusii)
 class CC_DLL XScene : public c::Scene {
 protected:
 
-  XLayer* addLayer(not_null<XLayer*>, int z=0);
+  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
   virtual XScene* realize() { return this; }
 
-  NO__CPYASS(XScene)
+  NOCPYASS(XScene)
   XScene() {}
 
 public:
@@ -34,14 +33,6 @@ public:
 
   virtual ~XScene() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XSceneFactory  {
-public:
-  static XScene* reifySimple(s::function<void (XLayer*)> );
-};
-
 
 NS_END(fusii)
 #endif

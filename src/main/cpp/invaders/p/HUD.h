@@ -24,12 +24,22 @@ protected:
   virtual f::XLayer* realize();
   void showMenu(c::Ref*);
 
-  NO__CPYASS(HUDLayer)
+  IMPL_CTOR(HUDLayer)
+  NOCPYASS(HUDLayer)
+
+  c::Label* scoreLabel;
+  f::XLives* lives;
 
 public:
 
   virtual int getIID() { return 3; }
-  IMPL_CTOR(HUDLayer)
+  void reset();
+  void reduceLives(int =1);
+  void updateScore(int);
+
+
+  STATIC_REIFY_LAYER(HUDLayer)
+
 };
 
 

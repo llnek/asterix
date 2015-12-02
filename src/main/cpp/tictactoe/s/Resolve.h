@@ -40,7 +40,7 @@ protected:
   bool checkDraw(a::Node*, Grid*);
   void doDone(a::Node*, Player&);
 
-  NO__CPYASS(Resolve)
+  NOCPYASS(Resolve)
   Resolve() = delete;
 
 public:

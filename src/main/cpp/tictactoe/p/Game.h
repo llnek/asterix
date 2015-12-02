@@ -21,7 +21,7 @@ class CC_DLL Game : public f::GameScene {
 protected:
 
   virtual f::GameLayer* getGLayer();
-  NO__CPYASS(Game)
+  NOCPYASS(Game)
 
 public:
 

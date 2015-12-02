@@ -23,7 +23,7 @@ class CC_DLL XPool {
 private:
 
   s::vector<ComObj*> objs;
-  NO__CPYASS(XPool)
+  NOCPYASS(XPool)
 
 public:
 

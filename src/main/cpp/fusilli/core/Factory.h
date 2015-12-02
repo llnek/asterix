@@ -27,7 +27,7 @@ protected:
   Factory(not_null<a::Engine*>,
       not_null<c::Dictionary*> options);
 
-  NO__CPYASS(Factory)
+  NOCPYASS(Factory)
   Factory() = delete;
 
 public:

@@ -26,7 +26,7 @@ protected:
   void onGui(a::Node*, float);
   void onKey(a::Node*, float);
 
-  NO__CPYASS(Motions)
+  NOCPYASS(Motions)
   Motions() = delete;
 
 public:

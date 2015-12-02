@@ -20,7 +20,7 @@ NS_BEGIN(tttoe)
 class CC_DLL EndGame : public f::XScene {
 protected:
 
-  NO__CPYASS(EndGame)
+  NOCPYASS(EndGame)
   f::GMode mode;
 
 public:

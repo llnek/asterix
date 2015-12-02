@@ -19,7 +19,7 @@ class CC_DLL Render : public f::BaseSystem<EFactory> {
 protected:
 
   void processMovement(float);
-  NO__CPYASS(Render)
+  NOCPYASS(Render)
 
 public:
 

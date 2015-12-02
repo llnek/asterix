@@ -34,9 +34,9 @@
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
-typedef int MsgTopic;
+typedef std::string MsgTopic;
 
-#define STATIC__REIFY(__TYPE__) \
+#define STATIC_REIFY_SCENE(__TYPE__) \
 static __TYPE__* reify() {  \
     __TYPE__ *pRet = new(std::nothrow) __TYPE__(); \
     if (pRet && pRet->init()) { \
@@ -48,6 +48,21 @@ static __TYPE__* reify() {  \
         return nullptr; \
     } \
 }
+
+#define STATIC_REIFY_LAYER(__TYPE__) \
+static __TYPE__* reify() {  \
+    __TYPE__ *pRet = new(std::nothrow) __TYPE__(); \
+    if (pRet && pRet->init()) { \
+        pRet->autorelease(); \
+        return pRet; \
+    } else { \
+        delete pRet; \
+        return nullptr; \
+    } \
+}
+
+
+
 
 
 #endif

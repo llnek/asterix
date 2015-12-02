@@ -23,7 +23,7 @@ protected:
   void initAssets();
   void initCsts();
 
-  NO__CPYASS(Config)
+  NOCPYASS(Config)
   Config();
   float scale;
 

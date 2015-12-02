@@ -32,7 +32,7 @@ protected:
   void showGrid(a::Node*);
   void initOnline();
 
-  NO__CPYASS(Stager)
+  NOCPYASS(Stager)
   Stager() = delete;
 
   a::NodeList* board;

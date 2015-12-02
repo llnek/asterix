@@ -20,7 +20,7 @@
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  NO__CPYASS(Config)
+  NOCPYASS(Config)
   Config();
 
 public:

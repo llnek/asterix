@@ -20,7 +20,7 @@ NS_BEGIN(terra)
 class CC_DLL EFactory : public fusii::Factory {
 protected:
 
-  NO__CPYASS(EFactory)
+  NOCPYASS(EFactory)
   EFactory() = delete;
 
 public:

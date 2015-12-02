@@ -31,7 +31,7 @@ protected:
   a::NodeList* ships;
   bool inited;
 
-  NO__CPYASS(Stager)
+  NOCPYASS(Stager)
   Stager()=delete;
 
 public:

@@ -74,7 +74,7 @@ enum class CC_DLL EType {
 class CC_DLL OdinEvent : public c::EventCustom {
 public:
 
-  NO__CPYASS(OdinEvent)
+  NOCPYASS(OdinEvent)
 
   double tstamp;
   MType type;

@@ -30,7 +30,7 @@ protected:
   ArrCells grid;
   int CV_Z;
 
-  NO__CPYASS(Board)
+  NOCPYASS(Board)
   Board() = delete;
 
 public:

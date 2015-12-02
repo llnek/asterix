@@ -26,7 +26,7 @@ protected:
   void checkShipBombs(a::Node*);
   void checkShipAliens(a::Node*);
 
-  NO__CPYASS(Collide)
+  NOCPYASS(Collide)
   Collide() = delete;
 
 public:

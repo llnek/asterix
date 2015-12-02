@@ -24,7 +24,7 @@ class CC_DLL NetPlay : public f::XScene {
 public:
 
   virtual f::XScene* realize();
-  NO__CPYASS(NetPlay)
+  NOCPYASS(NetPlay)
   DECL_CTOR(NetPlay)
 
 };

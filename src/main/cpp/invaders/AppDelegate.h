@@ -19,7 +19,7 @@
 //
 class CC_DLL AppDelegate : public fusii::App {
 public:
-  NO__CPYASS(AppDelegate)
+  NOCPYASS(AppDelegate)
   DECL_CTOR(AppDelegate)
 };
 

@@ -23,7 +23,7 @@ class CC_DLL ZLoader : public c::Scene {
 private:
 
   void startLoad(float delay);
-  NO__CPYASS(ZLoader)
+  NOCPYASS(ZLoader)
 
 public:
 

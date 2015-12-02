@@ -155,8 +155,8 @@ void App::initAudio() {
     den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());
   }
 
-  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
-  den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
+  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5f);
+  den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5f);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -55,10 +55,20 @@ f::XLayer* HUDLayer::realize() {
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
 
-
   return this;
 }
 
+void HUDLayer::reduceLives(int n) {
+
+}
+
+void HUDLayer::updateScore(int n) {
+
+}
+
+void HUDLayer::reset() {
+
+}
 
 NS_END(invaders)
 

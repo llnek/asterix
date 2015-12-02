@@ -23,7 +23,7 @@ class CC_DLL Aliens : public f::BaseSystem<EFactory> {
 protected:
 
   virtual bool onUpdate(float);
-  NO__CPYASS(Aliens)
+  NOCPYASS(Aliens)
   Aliens() = delete;
 
   void addEnemyToGame(a::Node*, const EnemyType&);

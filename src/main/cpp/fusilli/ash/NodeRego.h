@@ -28,7 +28,7 @@ public:
   virtual owner<Node*> reifyNode() = 0;
   virtual const NodeType typeId() = 0;
 
-  NO__CPYASS(NodeFactory)
+  NOCPYASS(NodeFactory)
   IMPL_CTOR(NodeFactory)
 };
 
@@ -39,7 +39,7 @@ private:
 
   s::map<NodeType,NodeFactory*> regos;
 
-  NO__CPYASS(NodeRegistry)
+  NOCPYASS(NodeRegistry)
   NodeRegistry();
 
 public:

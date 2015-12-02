@@ -15,58 +15,6 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SimLayer : public XLayer {
-public:
-  virtual XLayer* realize();
-  NO__CPYASS(SimLayer)
-  IMPL_CTOR(SimLayer)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SimScene : public XScene {
-public:
-
-  SimScene* setDecoUI(s::function<void (XLayer*)> d) {
-    deco=d;
-    return this;
-  }
-
-  s::function<void (XLayer*)> deco;
-  NO__CPYASS(SimScene)
-
-  void decoUI(XLayer* layer) {
-    deco(layer);
-  }
-
-  virtual XScene* realize() {
-    auto y = reifyRefType<SimLayer>();
-    addLayer(y);
-    y->realize();
-    return this;
-  }
-
-  IMPL_CTOR(SimScene)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer* SimLayer::realize() {
-  CC_PCAST(SimScene*)->decoUI(this);
-  return this;
-}
-
-END_NS_UNAMED()
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XScene* XSceneFactory::reifySimple(s::function<void (XLayer*)> d) {
-  return reifyRefType<SimScene>()->setDecoUI(d)->realize();
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer* XScene::addLayer(not_null<XLayer*> y, int z) {
