@@ -41,8 +41,8 @@ public:
   const c::Vec2 pos();
 
   float height();
-  float width();
   int pid();
+  float width();
 
   virtual void updatePosition(float x, float y);
 

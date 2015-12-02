@@ -13,7 +13,6 @@
 #include "Entity.h"
 NS_BEGIN(ash)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Entity*> Entity::reify(const stdstr& group, not_null<Engine*> e) {
@@ -34,9 +33,9 @@ Entity::~Entity() {
 //
 Entity::Entity() {
   SNPTR(previous)
+  SNPTR(engine)
   SNPTR(next)
   dead=false;
-  SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -73,11 +72,11 @@ void Entity::purge(const COMType& z) {
 //
 Component* Entity::get(const COMType& z) {
   auto it=  parts.find(z);
-  Component* c= nullptr;
   if (it != parts.end()) {
-    c= it->second;
+    return it->second;
+  } else {
+    return nullptr;
   }
-  return c;
 }
 
 //////////////////////////////////////////////////////////////////////////////

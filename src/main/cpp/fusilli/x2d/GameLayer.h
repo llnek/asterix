@@ -34,6 +34,7 @@ protected:
   s::array<bool, 256> keyboard;
   c::Dictionary* options;
   a::Engine* engine;
+  //f::Factory* fac;
 
   c::EventListenerKeyboard* keys;
   c::EventListenerMouse* mouse;
@@ -44,12 +45,10 @@ protected:
 
 public:
 
-  bool keyPoll(c::EventKeyboard::KeyCode );
-
   virtual const Box4 getEnclosureBox();
+  bool keyPoll(KEYCODE);
 
   virtual ~GameLayer();
-
 };
 
 

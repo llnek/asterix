@@ -52,8 +52,6 @@ public:
   virtual void onClose(n::WebSocket* ) ;
   virtual void onOpen(n::WebSocket*) ;
 
-  DECL_CTOR(OdinIO)
-
   n::WebSocket* socket;
   stdstr room;
   stdstr game;
@@ -61,6 +59,7 @@ public:
   stdstr passwd;
   CType state;
 
+  DECL_CTOR(OdinIO)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -79,15 +78,6 @@ owner<OdinIO*> reifyPlayRequest(const stdstr& game,
 
 owner<OdinIO*> reifyJoinRequest(const stdstr& room,
     const stdstr& user, const stdstr& pwd);
-
-
-
-
-
-
-
-
-
 
 
 

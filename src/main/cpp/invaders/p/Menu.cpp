@@ -25,19 +25,22 @@ BEGIN_NS_UNAMED()
 class CC_DLL UILayer : public f::XLayer {
 protected:
 
-  virtual f::XLayer* realize();
+  virtual f::XLayer* realizeEx(VOIDFN );
   void onPlay(c::Ref*);
   void onBack(c::Ref*);
+
   NO__CPYASS(UILayer)
+  VOIDFN backAction;
 
 public:
 
-  IMPL_CTOR(UILayer)
+  DECL_CTOR(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realize() {
+f::XLayer* UILayer::realizeEx(VOIDFN cb) {
+
   auto tile = CC_CSV(c::Integer, "TILE");
   auto color= c::Color3B(94,49,120);
   auto cw = cx::center();
@@ -69,7 +72,7 @@ f::XLayer* UILayer::realize() {
   auto q= cx::reifyMenuBtn("icon_quit.png");
   q->setTarget(this,
       CC_MENU_SELECTOR(XLayer::onQuit));
-  auto m2= cx::mkMenu(c::Vector<c::MenuItem*> {b, q}, false, 10.0f);
+  auto m2= cx::mkMenu(s::vector<c::MenuItem*> {b, q}, false, 10.0f);
   auto sz= b->getContentSize();
   m2->setPosition(wb.left + tile + sz.width * 1.1f,
                   wb.bottom + tile + sz.height * 0.45f);
@@ -86,58 +89,52 @@ f::XLayer* UILayer::realize() {
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
 
+  this->backAction= cb;
+
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnPlay(c::Ref* r) {
-  auto g = f::ReifyRefType<Game>();
-    cx::RunScene(f::MainGame::Reify(g, f::GMode::ONE));
+void UILayer::onPlay(c::Ref*) {
+  cx::runScene( Game::reify(f::GMode::ONE));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MenuLayer::OnBack(c::Ref* r) {
-  CC_PCAST(MainMenu*)->OnBackAction();
+void UILayer::onBack(c::Ref*) {
+  this->backAction();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::ReifyWithBackAction(c::CallFunc* back) {
-  auto m = f::ReifyRefType<MainMenu>();
-  m->backAction= back;
-  back->retain();
-  m->Realize();
+UILayer::~UILayer() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+UILayer::UILayer() {
+  SNPTR(backAction)
+}
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
+  auto m = f::reifyRefType<MainMenu>();
+  m->realizeEx(cb);
   return m;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::OnBackAction() {
-  backAction->execute();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-f::XScene* MainMenu::Realize() {
-  auto y = f::ReifyRefType<MenuLayer>();
-  AddLayer(y);
-  y->Realize();
+f::XScene* MainMenu::realizeEx(VOIDFN cb) {
+  auto y = f::reifyRefType<UILayer>();
+  addLayer(y);
+  y->realizeEx(cb);
   return this;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-MainMenu::~MainMenu() {
-  if (NNP(backAction)) { backAction->release(); }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MainMenu::MainMenu() {
-  SNPTR(backAction)
-}
 
 
 

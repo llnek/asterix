@@ -17,14 +17,14 @@ NS_BEGIN(odin)
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::OdinEvent(MType t, EType c, j::json& body) : OdinEvent() {
-    this->doco = j::json { {
+  this->doco = j::json( {
     { "type", (int)t },
     { "code", (int)c }
-    }};
+  });
   this->type= t;
   this->code= c;
   if (!body.is_null()) {
-      auto p = this->doco["source"]; p = body;
+    this->doco["source"] = body;
   }
 }
 
@@ -60,14 +60,13 @@ OdinEvent::OdinEvent() : c::EventCustom("odin") {
   tstamp = (double) c::utils::getTimeInMilliseconds();
   type= MType::NICHTS;
   code= EType::NICHTS;
-  doco= j::json {};
+  doco= j::json({});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::~OdinEvent() {
 }
-
 
 
 NS_END(odin)

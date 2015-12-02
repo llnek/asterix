@@ -31,8 +31,10 @@
 
 #define CC_GNF(t,n,f) ash::nodeFld<t>(n,f)
 
+typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
+typedef int MsgTopic;
 
 #define STATIC__REIFY(__TYPE__) \
 static __TYPE__* reify() {  \

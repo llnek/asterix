@@ -17,32 +17,32 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::AppKey() {
+const stdstr Config::appKey() {
   return "d39bf198-518a-4de7-88a0-5e28c88571b0";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::AppId() {
+const stdstr Config::appId() {
   return "invaders";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::Color() {
+const stdstr Config::color() {
   return "red";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ResolutionPolicy Config::Policy() {
+ResolutionPolicy Config::policy() {
   return ResolutionPolicy::FIXED_HEIGHT;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Scene* Config::StartWith() {
-  return Splash::Reify();
+c::Scene* Config::startWith() {
+  return Splash::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,100 +53,98 @@ Config::Config() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<f::XConfig*> Config::Reify() {
+owner<f::XConfig*> Config::reify() {
   auto c =  mc_new(Config);
-  c->InitAssets();
-  c->InitCsts();
+  c->initAssets();
+  c->initCsts();
   return c;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Size Config::GameSize() {
+const c::Size Config::gameSize() {
   return c::Size(320, 480);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::HandleResolution(const c::Size& rs) {
+void Config::handleResolution(const c::Size& rs) {
   //for default font, we use 48pt
   scale = 0.15;//52/256 * rs.width /320;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::RunOnce() {
+void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
-  auto fp= GetAtlas("game-pics");
+  auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
-  fp=  GetAtlas("lang-pics");
+  fp= getAtlas("lang-pics");
   c->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::InitAssets() {
+void Config::initAssets() {
 
-  AddAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
-  AddAtlas("game-pics", CC_STR("pics/images.plist"));
+  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  AddImage("mmenus.bg", CC_STR("pics/bg.png"));
-  AddImage("game.bg", CC_STR("pics/bg.png"));
-  AddImage("lang-pics", CC_STR("l10n/en/images.png"));
-  AddImage("game-pics", CC_STR("pics/images.png"));
+  addImage("mmenus.bg", CC_STR("pics/bg.png"));
+  addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
-  AddEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
-  AddEffect("game_quit", CC_STR("sfx/Death.mp3"));
-  AddEffect("ship-missile", CC_STR("sfx/missile.mp3"));
-  AddEffect("bugs-march", CC_STR("sfx/march.mp3"));
-  AddEffect("xxx-explode", CC_STR("sfx/explode.mp3"));
+  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
+  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("ship-missile", CC_STR("sfx/missile.mp3"));
+  addEffect("bugs-march", CC_STR("sfx/march.mp3"));
+  addEffect("xxx-explode", CC_STR("sfx/explode.mp3"));
 
-  AddFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  AddFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  AddFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  AddFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  AddFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  AddFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  AddFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  AddFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  AddFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  AddFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
-
+  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::InitCsts() {
+void Config::initCsts() {
 
-  AddCst("showFPS", CC_BOOL(false));
-  AddCst("CELLS",  CC_INT(42));
-  AddCst("COLS",  CC_INT(6));
-  AddCst("ROWS",  CC_INT(7));
-  AddCst("LEFT", CC_INT(2));
-  AddCst("TOP", CC_INT(6));
-  AddCst("OFF_X", CC_INT(4));
-  AddCst("OFF_Y", CC_INT(2));
-
+  addCst("showFPS", CC_BOOL(false));
+  addCst("CELLS",  CC_INT(42));
+  addCst("COLS",  CC_INT(6));
+  addCst("ROWS",  CC_INT(7));
+  addCst("LEFT", CC_INT(2));
+  addCst("TOP", CC_INT(6));
+  addCst("OFF_X", CC_INT(4));
+  addCst("OFF_Y", CC_INT(2));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr Config::GetWSUrl() {
+const stdstr Config::getWSUrl() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr GetGameId() {
+const stdstr Config::getGameId() {
   return "";
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr GetRoomId() {
+const stdstr Config::getRoomId() {
   return "";
 }
 

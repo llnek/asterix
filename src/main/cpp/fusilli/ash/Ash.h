@@ -27,7 +27,6 @@ typedef s::string NodeType;
 //
 class FS_DLL Component {
 protected:
-  //NO__CPYASS(Component)
   Component() {}
 public:
   virtual const COMType typeId() = 0;
@@ -39,8 +38,6 @@ public:
 //////////////////////////////////////////////////////////////////////////
 //
 enum SPV {
-  Error = -1,
-
   PreUpdate =  100,
   NetPlay=    200,
   AI=     300,
@@ -49,9 +46,10 @@ enum SPV {
   Logic=   600,
   Collide=  700,
   Resolve=    800,
-  Render=     900
-};
+  Render=     900,
 
+  Error = -1
+};
 
 NS_END(ash)
 NS_ALIAS(a, ash)

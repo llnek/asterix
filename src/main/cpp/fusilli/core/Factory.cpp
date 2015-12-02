@@ -26,6 +26,7 @@ Factory::Factory(not_null<a::Engine*> e,
 //
 Factory::~Factory() {
   CC_DROP(state)
+    // don't own engine
 }
 
 

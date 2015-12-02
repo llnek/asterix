@@ -31,8 +31,8 @@ protected:
   int lastZ;
 
   c::SpriteBatchNode* regoAtlas(const stdstr& name,
-      const Maybe<int>& = Maybe<int>(),
-      const Maybe<int>& = Maybe<int>() );
+      const MaybeInt& = MaybeInt(),
+      const MaybeInt& = MaybeInt() );
 
   NO__CPYASS(XLayer)
   XLayer();
@@ -41,16 +41,16 @@ public:
 
   virtual c::SpriteBatchNode* getAtlas(const stdstr& name);
   virtual void onQuit(c::Ref*);
-  virtual XLayer* realize() = 0;
+  virtual XLayer* realize();
 
   virtual void addAtlasItem(const stdstr& atlas,
       not_null<c::Node*> n,
-      const Maybe<int>& = Maybe<int>(),
-      const Maybe<int>& = Maybe<int>() );
+      const MaybeInt& = MaybeInt(),
+      const MaybeInt& = MaybeInt() );
 
   virtual void addItem(not_null<c::Node*> n,
-      const Maybe<int>& = Maybe<int>() ,
-      const Maybe<int>& = Maybe<int>() );
+      const MaybeInt& = MaybeInt() ,
+      const MaybeInt& = MaybeInt() );
 
   void addAtlasFrame(const stdstr& atlas, const stdstr& n, const c::Vec2& pos);
 

@@ -19,8 +19,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 // owns all items in this list
-template <typename T>
-class FS_DLL ObjList {
+template <typename T> class FS_DLL ObjList {
 private:
   NO__CPYASS(ObjList)
 public:

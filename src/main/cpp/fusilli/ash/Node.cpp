@@ -13,7 +13,6 @@
 #include "Node.h"
 NS_BEGIN(ash)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Node*> Node::reify(const s::map<stdstr, COMType>& s) {

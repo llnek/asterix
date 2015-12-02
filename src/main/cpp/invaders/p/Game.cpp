@@ -9,8 +9,6 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/XGameLayer.h"
-#include "x2d/MainGame.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/Stager.h"
@@ -24,151 +22,140 @@
 #include "HUD.h"
 
 NS_ALIAS(cx, fusii::ccsx)
-NS_ALIAS(cc, cocos2d)
-NS_ALIAS(s, std)
-NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
-
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BGLayer : public f::XLayer {
+class CC_DLL GLayer : public f::GameLayer {
+private:
+
+  virtual f::XLayer* realize();
+  void initAsh();
+
+  NO__CPYASS(GLayer)
+  EFactory* fac;
+
 public:
-  virtual f::XLayer* Realize() {
-    CenterImage("game.bg");
-    return this;
-  }
-  NO__CPYASS(BGLayer)
-  IMPL_CTOR(BGLayer)
+
+  virtual void sendMsgEx(const stdstr& topic, void* msg);
+  virtual void reset();
+  virtual void play();
+  virtual void onGameOver();
+
+  void onPlayerKilled();
+  void onEarnScore(int);
+  void spawnPlayer();
+
+  virtual int getIID() { return 2; }
+
+  DECL_CTOR(GLayer)
 };
 
+    //CenterImage("game.bg");
 //////////////////////////////////////////////////////////////////////////////
 //
-GameLayer::~GameLayer() {
-  delete factory;
+GLayer::~GLayer() {
+  delete engine;
+  delete fac;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GameLayer::GameLayer() {
-  SNPTR(factory)
+GLayer::GLayer() {
+  SNPTR(engine)
+  SNPTR(fac)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* GameLayer::Realize() {
-  InizGame();
-  Play();
+f::XLayer* GLayer::realize() {
+  play();
   return this;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::Reset(bool newFlag) {
+void GLayer::reset() {
 
-  for (auto it= atlases.begin(); it != atlases.end(); ++it) {
-    it->second->removeAllChildren();
-  }
+  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+
+  mc_del_ptr(this->engine)
+  mc_del_ptr(this->fac)
+  SNPTR(this->options)
 
   if (atlases.empty()) {
-    RegoAtlas("game-pics");
-    RegoAtlas("lang-pics");
+    regoAtlas("game-pics");
+    regoAtlas("lang-pics");
   }
 
-  MGMS()->ResetPools();
+  MGMS()->resetPools();
+  getHUD()->reset();
 
-  if (newFlag) {
-    GetHUD()->ResetAsNew();
-  } else {
-    GetHUD()->Reset();
-  }
+  auto e= a::Engine::reify();
+  auto d= CC_DICT();
+  auto f= new EFactory(e, d);
 
-  mc_del_ptr(factory)
-  mc_del_ptr(engine)
+  e->regoSystem(new Stager(f, d));
+  e->regoSystem(new Motions(f, d));
+  e->regoSystem(new Move(f, d));
+  e->regoSystem(new Aliens(f, d));
+  e->regoSystem(new Collide(f, d));
+  e->regoSystem(new Resolve(f, d));
+
+  f->reifyExplosions();
+  f->reifyMissiles();
+  f->reifyBombs();
+  f->reifyAliens();
+  f->reifyShip();
+
+  e->forceSync();
+
+  this->options= d;
+  this->fac= f;
+  this->engine=e;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::Replay() {
-  InizGame();
-  Reset(false);
-  InitAsh();
-  GetScene()->Resume();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::Play() {
+void GLayer::play() {
   //CCLOG("play game, newflag = %s", newFlag ? "true" : "false");
-  Reset(true);
-  InitAsh();
-  GetScene()->Resume();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::InitAsh() {
-  auto options = c::Dictionary::create();
-  auto e = a::Engine::Reify();
-
-  CCLOG("about to init-ash");
-
-  factory = new EFactory(e, options);
-  engine = e;
-
-  e->RegoSystem(new Stager(factory, options));
-  e->RegoSystem(new Motions(factory, options));
-  e->RegoSystem(new Move(factory, options));
-  e->RegoSystem(new Aliens(factory, options));
-  e->RegoSystem(new Collide(factory, options));
-  e->RegoSystem(new Resolve(factory, options));
-
-  factory->ReifyExplosions();
-  factory->ReifyMissiles();
-  factory->ReifyBombs();
-  factory->ReifyAliens();
-  factory->ReifyShip();
-
-  e->ForceSync();
-
-  CCLOG("init-ash - ok");
+  reset();
+  MGMS()->resume();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::SpawnPlayer() {
-  factory->BornShip();
+void GLayer::spawnPlayer() {
+  fac->bornShip();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnPlayerKilled() {
-  cx::SfxPlay("xxx-explode");
-  if (GetHUD()->ReduceLives(1)) {
-    FinzGame();
+void GLayer::onPlayerKilled() {
+  cx::sfxPlay("xxx-explode");
+  if (getHUD()->reduceLives(1)) {
+    finzGame();
   } else {
-    SpawnPlayer();
+    spawnPlayer();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnEarnScore(int score) {
-  GetHUD()->UpdateScore(score);
+void GLayer::onEarnScore(int score) {
+  getHUD()->updateScore(score);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::OnGameOver() {
-  //CCLOG("game over!");
-  CC_PCAST(Game*)->Pause();
-  //Reset(false);
-  GetHUD()->EnableReplay();
+void GLayer::onGameOver() {
+  MGMS()->pause();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::SendMsg(const stdstr& topic, void* msg) {
+void GLayer::sendMsgEx(const stdstr& topic, void* msg) {
 
   if (topic == "/game/player/earnscore") {
     f::ComObj* i = (f::ComObj*) msg;

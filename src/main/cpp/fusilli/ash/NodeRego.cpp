@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "NodeRegistry.h"
+#include "NodeRego.h"
 #include "Node.h"
 NS_BEGIN(ash)
 
@@ -60,12 +60,10 @@ void NodeRegistry::derego(const NodeType& t) {
 //
 owner<Node*> NodeRegistry::reifyNode(const NodeType& t) {
   auto it=regos.find(t);
-  Node* rc= nullptr;
   if (it != regos.end()) {
-    auto f= it->second;
-    rc= f->reifyNode();
+    return it->second->reifyNode();
   }
-  return rc;
+  return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////

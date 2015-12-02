@@ -21,11 +21,11 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//XLayer* XLayer::realize() { return this; }
+XLayer* XLayer::realize() { return this; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onQuit(c::Ref* rr) {
+void XLayer::onQuit(c::Ref* ) {
   cx::runScene( XCFG()->startWith());
 }
 
@@ -39,21 +39,17 @@ XLayer::XLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::~XLayer() {
-  F__LOOP(it, atlases) {
-    //it->second->release();
-  }
-  //atlases.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::SpriteBatchNode*
 XLayer::regoAtlas(const stdstr& name,
-     const Maybe<int>& zx,  const Maybe<int>& tag) {
+     const MaybeInt& zx,  const MaybeInt& tag) {
 
   auto i= c::TextureCache::getInstance()->addImage( XCFG()->getImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
-  auto t = tag.isNone()  ?  ++lastTag : tag.get();
+  auto t = tag.isNone() ?  ++lastTag : tag.get();
   auto z = zx.isNone() ? lastZ : zx.get();
 
   atlases.insert(S__PAIR(stdstr, c::SpriteBatchNode*, name, a));
@@ -98,7 +94,7 @@ void XLayer::addFrame(const stdstr& frame, const c::Vec2& pos) {
 //
 void XLayer::addAtlasItem(const stdstr& atlas,
     not_null<c::Node*> n,
-    const Maybe<int>& zx, const Maybe<int>& tag) {
+    const MaybeInt& zx, const MaybeInt& tag) {
 
   auto ptag = tag.isNone() ? ++lastTag : tag.get();
   auto pzx = zx.isNone() ? lastZ : zx.get();
@@ -116,7 +112,7 @@ void XLayer::addAtlasItem(const stdstr& atlas,
 // Add a child
 //
 void XLayer::addItem(not_null<c::Node*> n,
-    const Maybe<int>&  zx, const Maybe<int>& tag) {
+    const MaybeInt&  zx, const MaybeInt& tag) {
 
   auto ptag = tag.isNone() ?  ++lastTag : tag.get();
   auto pzx = zx.isNone() ? lastZ : zx.get();

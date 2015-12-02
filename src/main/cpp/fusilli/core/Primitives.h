@@ -52,8 +52,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T>
-class CC_DLL Maybe {
+template<typename T> class CC_DLL Maybe {
 private:
   bool isset;
   T value;
@@ -82,6 +81,9 @@ public:
   T get() const { return value; }
   bool isNone() const { return isset; }
 };
+
+typedef Maybe<float> MaybeFloat;
+typedef Maybe<int> MaybeInt;
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -18,8 +18,8 @@
 #include "ComObj.h"
 NS_BEGIN(fusii)
 
-#define HHZ(z) z.height * 0.5
-#define HWZ(z) z.width * 0.5
+#define HHZ(z) z.height * 0.5f
+#define HWZ(z) z.width * 0.5f
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -36,6 +36,8 @@ namespace ccsx {
   void sfxMusic(const stdstr& music, bool repeat);
   void sfxPlay(const stdstr& sound);
   void pauseAudio();
+
+  bool isDesktop();
 
   c::MenuItem* reifyMenuBtn(const stdstr& n);
 
@@ -81,7 +83,7 @@ namespace ccsx {
   void runScene(not_null<c::Scene*>, float delay);
   void runScene(not_null<c::Scene*>);
 
-  const c::Size scaleSize(c::Size z, float scale);
+  const c::Size scaleSize(const c::Size& z, float scale);
 
   bool isTransitioning();
 

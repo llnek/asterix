@@ -12,7 +12,7 @@
 #if !defined(__GAMESCENE_H__)
 #define __GAMESCENE_H__
 
-#define MGMSOK() fusii::GameScene::self()->isLive()
+#define MGMSLIVE() fusii::GameScene::self()->isLive()
 #define MGMS() fusii::GameScene::self()
 #define MGML() fusii::GameScene::get()
 
@@ -25,11 +25,22 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
-enum class GMode {
-  ONE = 1,
-  TWO,
-  NET,
-  NICHTS = -1
+//////////////////////////////////////////////////////////////////////////////
+//
+enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL GContext {
+public:
+  virtual ~GContext() { mc_del_ptr(odin) }
+  GContext() {
+    mode=GMode::ONE;
+    SNPTR(odin)
+  }
+  ws::OdinIO* odin;
+  GMode mode;
+  NO__CPYASS(GContext)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,47 +50,47 @@ protected:
 
   static void bind(not_null<GameScene*>);
 
+  virtual f::XScene* realizeEx(GContext*) = 0;
+  virtual GameLayer* getGLayer() = 0;
+
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
-  ws::OdinIO* odin;
 
-  GMode mode;
+  GContext* context;
   int level;
-
-  void setOnlineChannel(ws::OdinIO* s) { odin= s; }
-  virtual GameLayer* getGLayer() = 0;
-    void setMode(GMode m);
 
   NO__CPYASS(GameScene)
   GameScene();
 
 public:
 
-  static GameScene* reify(not_null<GameScene*>, GMode, not_null<ws::OdinIO*>);
-  static GameScene* reify(not_null<GameScene*>, GMode);
+  //static GameScene* reify(not_null<GameScene*>, GMode, not_null<ws::OdinIO*>);
+  //static GameScene* reify(not_null<GameScene*>, GMode);
 
   static GameScene* self();
   static GameLayer* get();
 
-  virtual bool isOnline() { return NNP(odin); }
   virtual bool isLive() = 0;
   virtual void stop() = 0;
   virtual void play() = 0;
 
-  virtual void sendMsgEx(const stdstr& topic, void* msg) = 0;
-  void sendMsg(const stdstr& topic) {
+  virtual void sendMsgEx(const MsgTopic& topic, void* msg) = 0;
+  void sendMsg(const MsgTopic& topic) {
     sendMsgEx(topic, nullptr);
   }
 
   XPool* reifyPool(const stdstr& n);
   XPool* getPool(const stdstr& n);
 
-  GMode getMode() { return mode; }
-    f::JsonObj* getLCfg();
+  ws::OdinIO* wsock();
+  GContext* getCtx();
+  GMode getMode();
+  bool isOnline();
+
+  f::JsonObj* getLCfg();
   void resetPools();
 
   s::queue<stdstr>& msgQueue() { return msgQ; }
-  ws::OdinIO* wsock() { return odin; }
 
   virtual ~GameScene();
 };

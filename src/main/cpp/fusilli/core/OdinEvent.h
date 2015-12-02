@@ -81,10 +81,7 @@ public:
   EType code;
   j::json doco;
 
-public:
-
-
-    OdinEvent(MType, EType, j::json& body);
+  OdinEvent(MType, EType, j::json& body);
   OdinEvent(MType t, EType c);
   OdinEvent(j::json& msg);
 
@@ -96,3 +93,4 @@ public:
 NS_END(odin)
 NS_END(fusii)
 #endif
+

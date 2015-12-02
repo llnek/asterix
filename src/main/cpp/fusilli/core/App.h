@@ -26,7 +26,9 @@ protected:
   void initAudio();
 
   NO__CPYASS(App)
-  App();
+
+  App()
+  {}
 
 public:
 
@@ -51,7 +53,7 @@ public:
 
   virtual void initGLContextAttrs();
 
-  virtual ~App();
+  virtual ~App() {}
 };
 
 

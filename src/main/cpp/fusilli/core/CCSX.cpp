@@ -10,15 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "audio/include/SimpleAudioEngine.h"
-/*
-#include "2d/CCSpriteFrameCache.h"
-#include "2d/CCActionInterval.h"
-#include "2d/CCMenuItem.h"
-#include "2d/CCMenu.h"
-#include "2d/CCLabel.h"
-#include "2d/CCTransition.h"
-#include "base/CCDirector.h"
-*/
 #include "cocos2d.h"
 #include "XConfig.h"
 #include "CCSX.h"
@@ -52,6 +43,16 @@ c::Menu* mkMenu(c::MenuItem* item) {
   auto menu= c::Menu::create();
   menu->addChild( item);
   return menu;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool isDesktop() {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+  return true;
+#else
+  return false;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -94,10 +95,10 @@ void pauseAudio() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void reifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
-  auto n="sound_off.png";
-  off= reifyMenuBtn(n,n,n);
-  n="sound_on.png";
-  on= reifyMenuBtn(n,n,n);
+  auto n3="sound_off.png";
+  auto n2="sound_on.png";
+  off= reifyMenuBtn(n3,n3,n3);
+  on= reifyMenuBtn(n2,n2.n2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -126,29 +127,23 @@ bool pointInBox(const Box4& box, float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B white() {
-  return c::Color3B::WHITE;
-}
+const c::Color3B white() { return c::Color3B::WHITE; }
+
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B black() {
-  return c::Color3B::BLACK;
-}
+const c::Color3B black() { return c::Color3B::BLACK; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text) {
-
   auto f= c::Label::createWithBMFont( XCFG()->getFont(font), text);
-  f->setOpacity(0.9*255);
+  f->setOpacity(0.9f * 255);
   return f;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* reifyBmfLabel(float x, float y,
-    const stdstr& font, const stdstr& text) {
-
+c::Label* reifyBmfLabel(float x, float y, const stdstr& font, const stdstr& text) {
   auto f= reifyBmfLabel(font, text);
   f->setPosition(x,y);
   return f;
@@ -157,14 +152,12 @@ c::Label* reifyBmfLabel(float x, float y,
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
 bool collide(not_null<ComObj*> a, not_null<ComObj*> b) {
-
   return (NNP(a) && NNP(b)) ? collideN(a->sprite, b->sprite) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
 bool collideN(not_null<c::Node*> a, not_null<c::Node*> b) {
-
   return (NNP(a) && NNP(b)) ? bbox(a).intersectsRect( bbox(b)) : false;
 }
 
@@ -210,7 +203,7 @@ bool outOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size scaleSize(c::Size z, float scale) {
+const c::Size scaleSize(const c::Size& z, float scale) {
   return c::Size(z.width * scale, z.height * scale);
 }
 
@@ -431,8 +424,7 @@ float centerY() { return center().y; }
 //
 const c::Vec2 center() {
   auto rc = visRect();
-  return c::Vec2( rc.origin.x + rc.size.width * 0.5,
-      rc.origin.y + rc.size.height * 0.5);
+  return c::Vec2(rc.origin.x + HWZ(rc.size), rc.origin.y + HHZ(rc.size));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -477,15 +469,15 @@ const c::Size screen() {
 //
 const c::Vec2 scenter() {
   auto sz = screen();
-  return c::Vec2(sz.width * 0.5, sz.height * 0.5);
+  return c::Vec2(HWZ(sz), HHZ(sz));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the center of this box.
 //
 const c::Vec2 vboxMID(const Box4& box) {
-  return c::Vec2(box.left + (box.right-box.left) * 0.5,
-              box.bottom + (box.top-box.bottom) * 0.5);
+  return c::Vec2(box.left + (box.right-box.left) * 0.5f,
+              box.bottom + (box.top-box.bottom) * 0.5f);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -498,10 +490,11 @@ const c::Vec2 vboxMID(const Box4& box) {
 bool traceEnclosure(float dt, const Box4& bbox,
     const c::Rect& rect, const c::Vec2& vel,
     c::Vec2& outPos, c::Vec2& outVel) {
+
   auto y = rect.origin.y + dt * vel.y;
   auto x = rect.origin.x + dt * vel.x;
-  auto sz= rect.size.height * 0.5;
-  auto sw= rect.size.width * 0.5;
+  auto sz= HHZ(rect.size);
+  auto sw= HWZ(rect.size);
   auto vx= vel.x;
   auto vy= vel.y;
   auto hit=false;
@@ -593,8 +586,8 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
   auto pos1= obj1->sprite->getPosition();
   auto sz2= obj2->sprite->getContentSize();
   auto sz1= obj1->sprite->getContentSize();
-  auto hh1= sz1.height * 0.5;
-  auto hw1= sz1.width * 0.5;
+  auto hh1= HHZ(sz1);
+  auto hw1= HWZ(sz1);
   auto x = pos1.x;
   auto y= pos1.y;
   auto bx2 = bbox4(obj2->sprite);

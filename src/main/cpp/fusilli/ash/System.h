@@ -22,15 +22,14 @@ class FS_DLL System {
 protected:
 
   System(int priority);
-
-private:
-
-  NO__CPYASS(System)
   System();
+
   void init();
 
   int _priority;
   bool active;
+
+  NO__CPYASS(System)
 
 public:
 

@@ -10,88 +10,56 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "2d/CCLabel.h"
 #include "core/CCSX.h"
+#include "2d/CCLabel.h"
+#include "x2d/GameScene.h"
 #include "x2d/XLives.h"
-#include "x2d/MainGame.h"
 #include "HUD.h"
 NS_ALIAS(cx, fusii::ccsx)
-NS_ALIAS(f, fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::ShowMenu(c::Ref* r) {
-  MGML()->SendMsg("/hud/showmenu", nullptr);
+void HUDLayer::showMenu(c::Ref* ) {
+  MGMS()->sendMsg("/hud/showmenu");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::OnReplay(c::Ref* r) {
-  MGML()->SendMsg("/hud/replay", nullptr);
-}
+f::XLayer* HUDLayer::realize() {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-f::XLayer* HUDLayer::Realize() {
+  auto soff = CC_CSV(c::Integer, "S_OFF");
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto wb = cx::visBox();
 
-  auto color=  c::Color3B::WHITE;//cx::White();
-  auto scale=1;
+  regoAtlas("game-pics");
 
-  RegoAtlas("game-pics");
-  InitLabels();
-  InitIcons();
+  scoreLabel = cx::reifyBmfLabel("font.SmallTypeWriting", "0");
+  scoreLabel->setAnchorPoint(cx::anchorTR());
+  scoreLabel->setScale(XCFG()->getScale());
+  scoreLabel->setPosition(wb.right - tile - soff, wb.top - tile);
+  addItem(scoreLabel);
 
-  auto r= cx::ReifyMenuBtn("icon_replay.png");
-  r->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::OnReplay));
-  r->setColor(color);
-  //r->setScale(scale);
-  AddReplayIcon(r, cx::AnchorB());
+  this->lives= f::reifyRefType<f::XLives>();
+  this->lives->realize("health.png", 3,
+      tile + soff,
+      wb.top - tile - soff);
+  addItem(lives);
 
-  auto b= cx::ReifyMenuBtn("icon_menu.png");
+  auto b = cx::reifyMenuBtn("icon_menu.png");
+  auto hh = cx::getHeight(b) * 0.5f;
+  auto hw = cx::getWidth(b) * 0.5f;
   b->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::ShowMenu));
-  b->setColor(color);
-  //b->setScale(scale);
-  AddMenuIcon(b, cx::AnchorB());
+      CC_MENU_SELECTOR(HUDLayer::showMenu));
+  auto menu = cx::mkMenu(b);
+  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  addItem(menu);
+
 
   return this;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::InitLabels() {
-  auto soff = f::CstVal<c::Integer>("S_OFF")->getValue();
-  auto tile = f::CstVal<c::Integer>("TILE")->getValue();
-  auto wb = cx::VisBox();
-
-  scoreLabel = cx::ReifyBmfLabel("font.SmallTypeWriting", "0");
-  scoreLabel->setAnchorPoint(cx::AnchorTR());
-  scoreLabel->setScale(XCFG()->GetScale());
-  scoreLabel->setPosition(wb.right - tile - soff,
-    wb.top - tile);// - soff - cx::GetScaledHeight(scoreLabel));
-
-  this->addChild(scoreLabel, lastZix, ++lastTag);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::InitIcons() {
-  auto soff = f::CstVal<c::Integer>("S_OFF")->getValue();
-  auto tile = f::CstVal<c::Integer>("TILE")->getValue();
-  auto wb = cx::VisBox();
-
-  lives= f::ReifyRefType<fusii::XLives>();
-  AddItem(lives);
-  lives->Realize("health.png", 3, tile + soff,
-    wb.top - tile - soff);
-}
-
-
-
 
 NS_END(invaders)
-
 
 

@@ -55,9 +55,9 @@ bool App::applicationDidFinishLaunching() {
     CC_DTOR()->setOpenGLView(glview);
   }
 
-  preLaunch(sz);
-
   register_all_packages();
+
+  preLaunch(sz);
 
   //CCLOG("about to run start scene");
   // run
@@ -157,9 +157,7 @@ void App::initAudio() {
 
   den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);
   den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5);
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 // This function will be called when the app is inactive
@@ -176,17 +174,6 @@ void App::applicationWillEnterForeground() {
 
   CC_DTOR()->startAnimation();
   den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-App::~App() {
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-App::App() {
 }
 
 

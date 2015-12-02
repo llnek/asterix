@@ -82,6 +82,8 @@ typedef std::string stdstr;
 //
 #define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
 #define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
+#define mc_new_2(T, p1, p2) new T(p1, p2)
+#define mc_new_1(T, p1) new T(p1)
 #define mc_new(T) new T()
 #define mc_free_ptr(ptr)  mc_free_mem(ptr)
 #define mc_free_str(pc)   mc_free_mem(pc)
@@ -125,7 +127,7 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define DEFCREATE_FUNC(T) static owner<T*> Reify() { return new(std::nothrow) T(); }
+#define DEFCREATE_FUNC(T) static owner<T*> reify() { return new(std::nothrow) T(); }
 #define SNPTR(x) x = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////

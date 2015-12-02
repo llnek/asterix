@@ -13,29 +13,22 @@
 #define __HUD_H__
 
 #include "platform/CCCommon.h"
-#include "x2d/XHUDLayer.h"
-
-NS_ALIAS(f, fusii)
+#include "x2d/XLayer.h"
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HUDLayer : public f::XHUDLayer {
+class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  void ShowMenu(c::Ref*);
-  void OnReplay(c::Ref*);
+  virtual f::XLayer* realize();
+  void showMenu(c::Ref*);
 
-  void InitLabels();
-  void InitIcons();
+  NO__CPYASS(HUDLayer)
 
 public:
 
-  virtual int GetIID() { return 3; }
-  virtual f::XLayer* Realize();
-
-  NO__CPYASS(HUDLayer)
+  virtual int getIID() { return 3; }
   IMPL_CTOR(HUDLayer)
 };
 

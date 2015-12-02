@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__NODEREGISTRY_H__)
-#define __NODEREGISTRY_H__
+#if !defined(__NODEREGO_H__)
+#define __NODEREGO_H__
 
 #include "Ash.h"
 NS_BEGIN(ash)

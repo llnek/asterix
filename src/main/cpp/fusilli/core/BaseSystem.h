@@ -18,8 +18,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename F>
-class CC_DLL BaseSystem : public a::System {
+template<typename F> class CC_DLL BaseSystem : public a::System {
 protected:
 
   BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
@@ -28,8 +27,6 @@ protected:
   c::Dictionary* state;
   F* factory;
 
-private:
-
   NO__CPYASS(BaseSystem)
   BaseSystem()=delete;
 
@@ -37,14 +34,15 @@ public:
 
   virtual bool update(float time);
   virtual ~BaseSystem();
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename F>
 BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d)
+
   : a::System(a::Error) {
+
   factory=f;
   state=d;
   CC_KEEP(state)

@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "NodeRegistry.h"
+#include "NodeRego.h"
 #include "Node.h"
 #include "Engine.h"
 NS_BEGIN(ash)
@@ -189,9 +189,7 @@ void Engine::update(float time) {
       if (! s->update(time)) { break; }
     }
   }
-  if (dirty) {
-    houseKeeping();
-  }
+  if (dirty) { houseKeeping(); }
   dirty=false;
   updating = false;
 }

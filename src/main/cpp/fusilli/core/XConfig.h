@@ -15,9 +15,7 @@
 #define XCFG() fusii::XConfig::self()
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
-#include "nlohmann/json.hpp"
 #include "Primitives.h"
-NS_ALIAS(j, nlohmann)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////

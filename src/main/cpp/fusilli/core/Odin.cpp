@@ -14,16 +14,15 @@
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
 
-
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 j::json evtToDoc(not_null<OdinEvent*> evt) {
-    return j::json { {
+  return j::json({
     {"type", (int) evt->type },
     {"code", (int) evt->code },
     {"source", evt->doco }
-    }};
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,11 +31,10 @@ owner<OdinEvent*> mkPlayRequest(const stdstr& game,
     const stdstr& user,
     const stdstr& pwd) {
 
-    auto a=  j::json::array_t { game, user, pwd };
-    auto p= j::json(a);
+  auto a=  j::json::array_t { game, user, pwd };
+  auto p= j::json(a);
   return new OdinEvent(MType::SESSION,
-      EType::PLAYGAME_REQ, p
-      );
+      EType::PLAYGAME_REQ, p);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,11 +43,10 @@ owner<OdinEvent*> mkJoinRequest (const stdstr& room,
     const stdstr& user,
     const stdstr& pwd) {
 
-    auto a=  j::json::array_t { room, user, pwd };
-    auto p= j::json(a);
+  auto a=  j::json::array_t { room, user, pwd };
+  auto p= j::json(a);
   return new OdinEvent(MType::SESSION,
-      EType::JOINGAME_REQ,p
-     );
+      EType::JOINGAME_REQ,p);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,22 +60,21 @@ owner<OdinEvent*> getPlayRequest(not_null<OdinIO*> wss) {
 owner<OdinEvent*> json_decode(const n::WebSocket::Data& e) {
 
   OdinEvent* evt= new OdinEvent();
-  stdstr err;
-
   assert(!e.isBinary);
+
   try {
     j::json msg;
-      
+
     msg.parse(e.bytes);
     evt= new OdinEvent(msg);
+
   } catch (...) {
-    CCLOGERROR("failed to parse json: %s", err.c_str());
+    CCLOGERROR("failed to parse json: %s", "");
   }
 
   return evt;
 }
 END_NS_UNAMED()
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -123,11 +119,10 @@ OdinIO::OdinIO() {
 // Send this event through the socket
 //
 void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
-	c::RefPtr<OdinEvent> ref(evt.get());
-	if (wss->state == CType::S_CONNECTED) {
-      auto d= evtToDoc(evt);
-      wss->socket->send(d.dump());
-    }
+  if (wss->state == CType::S_CONNECTED) {
+    auto d= evtToDoc(evt);
+    wss->socket->send(d.dump());
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -140,7 +135,6 @@ void OdinIO::listen( s::function<void (OdinEvent*)> cb) {
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
 void OdinIO::listen(MType t, s::function<void (OdinEvent*)> cb) {
-
   if (MType::ALL == t) {
     cbAll =cb;
   }
@@ -274,20 +268,6 @@ n::WebSocket* connect(not_null<OdinIO*> wss, const stdstr& url) {
   }
   return ws;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

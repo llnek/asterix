@@ -22,15 +22,16 @@ NS_BEGIN(fusii)
 class CC_DLL XScene : public c::Scene {
 protected:
 
+  XLayer* addLayer(not_null<XLayer*>, int z=0);
+  virtual XScene* realize() { return this; }
+
   NO__CPYASS(XScene)
   XScene() {}
 
 public:
 
-  XLayer* addLayer(not_null<XLayer*>, int z=0);
   XLayer* getLayer(int tag);
 
-  virtual XScene* realize() = 0;
   virtual ~XScene() {}
 };
 

@@ -9,9 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#if !defined(__CONFIG_H__)
+#define __CONFIG_H__
+
 #include "core/XConfig.h"
-NS_ALIAS(c, cocos2d)
-NS_ALIAS(f,fusii)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -22,39 +23,41 @@ private:
   NO__CPYASS(Config)
   Config();
 
-  void InitAssets();
-  void InitCsts();
-  void InitPools();
+  void initAssets();
+  void initCsts();
+  void initPools();
 
   float scale;
 
 public:
 
-  virtual void HandleResolution(const c::Size& rs);
-  virtual const c::Size GameSize();
+  virtual void handleResolution(const c::Size& );
+  virtual const c::Size gameSize();
 
-  virtual ResolutionPolicy Policy();
-  virtual const stdstr AppKey();
-  virtual const stdstr AppId();
-  virtual const stdstr Color();
+  virtual ResolutionPolicy policy();
+  virtual const stdstr appKey();
+  virtual const stdstr appId();
+  virtual const stdstr color();
 
-  virtual const stdstr GetWSUrl();
-  virtual c::Scene* StartWith();
+  virtual const stdstr getWSUrl();
+  virtual c::Scene* startWith();
 
-  virtual void SetGameId(const stdstr& s) {}
-  virtual void SetRoomId(const stdstr& s) {}
+  virtual void setGameId(const stdstr& s) {}
+  virtual void setRoomId(const stdstr& s) {}
 
-  virtual const stdstr GetGameId() { return ""; }
-  virtual const stdstr GetRoomId() { return ""; }
+  virtual const stdstr getGameId();
+  virtual const stdstr getRoomId();
 
-  virtual float GetScale()  { return scale; }
-  virtual void RunOnce() ;
+  virtual float getScale()  { return scale; }
+  virtual void runOnce() ;
 
   virtual ~Config() {}
 
-  static owner<f::XConfig*> Reify();
+  static owner<f::XConfig*> reify();
 };
 
 
 NS_END(invaders)
+#endif
+
 

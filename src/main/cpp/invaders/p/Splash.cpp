@@ -23,9 +23,10 @@ BEGIN_NS_UNAMED()
 //
 class CC_DLL UILayer : public f::XLayer {
 protected:
+  virtual f::XLayer* realize();
+  void onPlay(c::Ref*);
   NO__CPYASS(UILayer)
 public:
-  virtual f::XLayer* realize();
   IMPL_CTOR(UILayer)
 };
 
@@ -53,9 +54,9 @@ f::XLayer* UILayer::realize() {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay(c::Ref* b) {
-  auto a= c::CallFunc::create([=]() {
+  auto a= [=]() {
       cx::runScene(XCFG()->startWith());
-      });
+      };
   cx::runScene( MainMenu::reifyWithBackAction(a));
 }
 

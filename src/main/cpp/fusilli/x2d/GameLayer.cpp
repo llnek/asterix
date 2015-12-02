@@ -25,8 +25,6 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 GameLayer::~GameLayer() {
-  //SNPTR(options)
-  //SNPTR(engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,27 +49,6 @@ bool GameLayer::keyPoll(c::EventKeyboard::KeyCode key) {
 const Box4 GameLayer::getEnclosureBox() {
   return cx::visBox();
 }
-
-/*
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer* GameLayer::realize() {
-  enableEventHandlers();
-  cx::pauseAudio();
-  inizGame();
-  this->scheduleUpdate();
-  return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::finzGame() {
-  disableEventHandlers();
-  cx::pauseAudio();
-  onGameOver();
-  this->unscheduleUpdate();
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -138,13 +115,18 @@ void GameLayer::initKeys() {
 
   keys = c::EventListenerKeyboard::create();
 
-  keys->onKeyReleased = [=] (c::EventKeyboard::KeyCode k, c::Event*) {
+  keys->onKeyReleased = [=] (KEYCODE k, c::Event*) {
     int n= (int)k;
-    if (n >= 0 && n < 256) { this->keyboard[n]=false; }
+    if (n >= 0 && n < 256) {
+      this->keyboard[n]=false;
+    }
   };
-  keys->onKeyPressed = [=] (c::EventKeyboard::KeyCode k, c::Event*) {
+
+  keys->onKeyPressed = [=] (KEYCODE k, c::Event*) {
     int n= (int)k;
-    if (n >= 0 && n < 256) { this->keyboard[n]= true; }
+    if (n >= 0 && n < 256) {
+      this->keyboard[n]= true;
+    }
   };
 
   addListener(keys);
@@ -172,17 +154,6 @@ void GameLayer::initTouch() {
   // other listeners from using it.
   //t->setSwallowTouches(true);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-/*
-void GameLayer::update(float dt) {
-  if (getSceneX()->isLive() &&
-      NNP(engine)) {
-    engine->update(dt);
-  }
-}
-*/
 
 
 NS_END(fusii)
