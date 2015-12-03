@@ -9,11 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "base/ccMacros.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/ComObj.h"
-#include "x2d/GameScene.h"
 #include "Aliens.h"
 #include <math.h>
 NS_ALIAS(cx, fusii::ccsx)
@@ -22,26 +22,25 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Aliens::Aliens(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : f::BaseSystem<EFactory>(f,d) {
+  : f::BaseSystem<EFactory>(f, d) {
   SNPTR(baddies)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::addToEngine(not_null<a::Engine*> e) {
-  //CCLOG("adding system: Aliens");
   AlienMotionNode a;
   baddies = e->getNodeList(a.typeId());
-  //CCLOG("added system: Aliens");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::onUpdate(float dt) {
   auto node=baddies->head;
-  if (MGMS()->isLive() && NNP(node)) {
-    processMovement(node,dt);
-    processBombs(node,dt);
+  if (MGMS()->isLive() &&
+      NNP(node)) {
+    processMovement(node, dt);
+    processBombs(node, dt);
   }
   return true;
 }
@@ -79,14 +78,14 @@ void Aliens::processBombs(a::Node* node, float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::checkBomb(AlienSquad* sqad) {
-  auto c = sqad->elements();
+  auto c= sqad->elements();
   auto p= sqad->aliens;
   int sz = p->size();
   s::vector<int> rc;
   int pos=0;
 
   F__LOOP(it, c) {
-    auto a=*it;
+    auto a= *it;
     if (a->status) { rc.push_back(pos); }
     ++pos;
   }
@@ -112,7 +111,6 @@ void Aliens::dropBomb(float x, float y) {
   }
 
   ent->inflate(x, y);
-  //CCLOG("got one bomb from pool");
 }
 
 //////////////////////////////////////////////////////////////////////////

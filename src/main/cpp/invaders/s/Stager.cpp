@@ -35,16 +35,13 @@ Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   f->reifyShip();
 
   SNPTR(ships)
-  inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::addToEngine(not_null<a::Engine*> e) {
-  //CCLOG("adding system: Stager");
   ShipMotionNode s;
   ships = e->getNodeList(s.typeId());
-  //CCLOG("added system: Stager");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,34 +63,21 @@ void Stager::initShipSize() {
 //
 bool Stager::onUpdate(float dt) {
   if (cx::isTransitioning()) { return false; }
-  if (! inited) {
-    onceOnly();
-  }
   return true;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-void Stager::onceOnly() {
-  inited=true;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Stager::fire(const stdstr& t, void* evt) {
-
+/*
+static void _fire(const stdstr& t, void* evt) {
   if ("/touch/one/move" == t ||
       "/mouse/move" == t) {} else {
     return;
   }
   if (MGMS()->isLive() && NNP(ships->head)) {
-
     auto ship = (f::ComObj*) ships->head->get("ship");
     auto pos = ship->pos();
     auto x=pos.x;
     auto y=pos.y;
     auto wz= cx::visRect();
-
     //TODO:
     //pos.add(c::Vec2(evt->getDelta().x, 0));
     pos.clamp(c::Vec2(0, 0),
@@ -101,7 +85,7 @@ void Stager::fire(const stdstr& t, void* evt) {
     ship->setPos(pos.x, pos.y);
   }
 }
-
+*/
 
 
 NS_END(invaders)
