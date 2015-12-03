@@ -24,12 +24,12 @@ protected:
   virtual f::XScene* realizeWithCtx(f::GContext*);
   virtual f::GameLayer* getGLayer();
 
-  IMPL_CTOR(Game)
+  IMPLCZ(Game)
   NOCPYASS(Game)
 
 public:
 
-  virtual void sendMsgEx(const stdstr& topic, void*);
+  virtual void sendMsgEx(const MsgTopic& topic, void*);
   virtual bool isLive();
   virtual void play();
   virtual void stop();

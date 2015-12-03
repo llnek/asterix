@@ -10,8 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/Primitives.h"
-#include "core/CCSX.h"
 #include "x2d/GameScene.h"
+#include "core/CCSX.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 #include "Stager.h"
@@ -59,7 +59,6 @@ bool Stager::onUpdate(float dt) {
   if (cx::isTransitioning()) { return false; }
   if (! inited) {
     onceOnly();
-    inited=true;
   }
   return true;
 }
@@ -69,6 +68,7 @@ bool Stager::onUpdate(float dt) {
 void Stager::onceOnly() {
   initAlienSize();
   initShipSize();
+  inited=true;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@ public:
   static EndGame* reify(f::GMode);
   virtual f::XScene* realize();
 
-  DECL_CTOR(EndGame)
+  DECLCZ(EndGame)
 };
 
 

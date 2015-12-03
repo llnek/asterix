@@ -24,7 +24,7 @@ public:
   static Splash* reify();
 
   NOCPYASS(Splash)
-  IMPL_CTOR(Splash)
+  IMPLCZ(Splash)
 };
 
 

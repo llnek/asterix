@@ -31,7 +31,7 @@ public:
   void onQuit(c::Ref*);
 
   NOCPYASS(UILayer)
-  IMPL_CTOR(UILayer)
+  IMPLCZ(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////

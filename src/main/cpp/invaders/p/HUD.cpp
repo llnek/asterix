@@ -9,12 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "2d/CCLabel.h"
-#include "x2d/GameScene.h"
 #include "x2d/XLives.h"
+#include "2d/CCLabel.h"
 #include "HUD.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
@@ -58,17 +59,27 @@ f::XLayer* HUDLayer::realize() {
   return this;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::reduceLives(int n) {
-
+  lives->reduce(n);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::updateScore(int n) {
-
+  score += n;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::reset() {
-
+  lives->resurrect();
+  score=0;
 }
+
+
+
 
 NS_END(invaders)
 

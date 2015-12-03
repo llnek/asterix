@@ -25,19 +25,18 @@ Collide::Collide(not_null<EFactory*> f,
   : f::BaseSystem<EFactory>(f,d) {
 
   SNPTR(aliens)
-  SNPTR(engine)
   SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::addToEngine(not_null<a::Engine*> e) {
+void Collide::addToEngine(a::Engine* e) {
   //CCLOG("adding system: Collide");
   AlienMotionNode a;
   ShipMotionNode s;
 
-  aliens= e->getNodeList(a.TypeId());
-  ships= e->getNodeList(s.TypeId());
+  aliens= e->getNodeList(a.typeId());
+  ships= e->getNodeList(s.typeId());
   //CCLOG("added system: Collide");
 }
 
@@ -66,9 +65,7 @@ bool Collide::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::maybeCollide(not_null<f::ComObj*> a,
-    not_null<f::ComObj*> b) {
-
+bool Collide::maybeCollide(f::ComObj* a, f::ComObj* b) {
   return cx::collideN(a->sprite, b->sprite);
 }
 
@@ -98,7 +95,7 @@ void Collide::checkMissilesBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkMissilesAliens(not_null<a::Node*> node) {
+void Collide::checkMissilesAliens(a::Node* node) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto mss = MGMS()->getPool("missiles");
@@ -120,7 +117,7 @@ void Collide::checkMissilesAliens(not_null<a::Node*> node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkShipBombs(not_null<a::Node*> node) {
+void Collide::checkShipBombs(a::Node* node) {
 
   auto ship= CC_GNF(Ship, node, "ship");
   auto bbs= MGMS()->getPool("bombs");
@@ -139,8 +136,7 @@ void Collide::checkShipBombs(not_null<a::Node*> node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkShipAliens(not_null<a::Node*> anode,
-    not_null<a::Node*> snode) {
+void Collide::checkShipAliens(a::Node* anode, a::Node* snode) {
 
   auto sqad= CC_GNF(AlienSquad, anode, "aliens");
   auto ship = CC_GNF(Ship, snode, "ship");

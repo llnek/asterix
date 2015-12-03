@@ -32,19 +32,20 @@ class CC_DLL GLayer : public f::GameLayer {
 protected:
 
   virtual f::XLayer* realize();
-  void initAsh();
-  HUDLayer* getHUD() { return nullptr; }
+  HUDLayer* getHUD();
+
   EFactory* fac;
 
-  DECL_CTOR(GLayer)
+  DECLCZ(GLayer)
   NOCPYASS(GLayer)
 
 public:
 
-  virtual void sendMsgEx(const stdstr& topic, void* msg);
+  virtual void sendMsgEx(const MsgTopic& topic, void* msg);
   virtual int getIID() { return 2; }
-  virtual void reset();
-  virtual void play();
+
+  void reset();
+  void play();
 
   void onPlayerKilled();
   void onEarnScore(int);
@@ -54,6 +55,12 @@ public:
   bool playable;
   STATIC_REIFY_LAYER(GLayer)
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+HUDLayer* GLayer::getHUD() {
+  return (HUDLayer*) MGMS()->getLayer(3);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -98,20 +105,19 @@ void GLayer::reset() {
   auto d= CC_DICT();
   auto f= new EFactory(e, d);
 
+  f->reifyExplosions();
+  f->reifyMissiles();
+  f->reifyBombs();
+  f->reifyAliens();
+  f->reifyShip();
   e->regoSystem(new Stager(f, d));
   e->regoSystem(new Motions(f, d));
   e->regoSystem(new Move(f, d));
   e->regoSystem(new Aliens(f, d));
   e->regoSystem(new Collide(f, d));
   e->regoSystem(new Resolve(f, d));
-
-  f->reifyExplosions();
-  f->reifyMissiles();
-  f->reifyBombs();
-  f->reifyAliens();
-  f->reifyShip();
-
   e->forceSync();
+
   CC_KEEP(d)
 
   this->options= d;
@@ -151,7 +157,7 @@ void GLayer::onEarnScore(int score) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const stdstr& topic, void* msg) {
-  auto y = SCAST(GLayer*, getGLayer());
+  auto y = SCAST(GLayer*, getLayer(2));
 
   if (topic == "/game/player/earnscore") {
     j::json* js = (j::json*) msg;

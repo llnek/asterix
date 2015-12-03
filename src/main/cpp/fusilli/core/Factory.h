@@ -21,14 +21,14 @@ NS_BEGIN(fusii)
 class CC_DLL Factory {
 protected:
 
-  c::Dictionary* state;
-  a::Engine* engine;
-
   Factory(not_null<a::Engine*>,
       not_null<c::Dictionary*> options);
 
+  c::Dictionary* state;
+  a::Engine* engine;
+
   NOCPYASS(Factory)
-  Factory() = delete;
+  NODFT(Factory)
 
 public:
 

@@ -26,7 +26,7 @@ protected:
 public:
 
   virtual f::XScene* realize();
-  DECL_CTOR(Splash)
+  DECLCZ(Splash)
 };
 
 

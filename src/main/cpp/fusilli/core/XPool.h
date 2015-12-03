@@ -44,7 +44,7 @@ public:
   void checkin(not_null<ComObj*>);
   void reset();
 
-  DECL_CTOR(XPool)
+  DECLCZ(XPool)
 };
 
 

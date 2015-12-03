@@ -29,7 +29,7 @@ public:
   virtual const NodeType typeId() = 0;
 
   NOCPYASS(NodeFactory)
-  IMPL_CTOR(NodeFactory)
+  IMPLCZ(NodeFactory)
 };
 
 //////////////////////////////////////////////////////////////////////////////

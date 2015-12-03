@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "ash/NodeRegistry.h"
+#include "ash/NodeRego.h"
 #include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"

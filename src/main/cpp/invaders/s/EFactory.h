@@ -20,22 +20,24 @@ NS_BEGIN(invaders)
 class CC_DLL EFactory : public f::Factory {
 protected:
   NOCPYASS(EFactory)
-  EFactory()=delete;
+  NODFT(EFactory)
   f::ComObj* player;
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
-  void reifyMissiles(int count= 36);
+
   void reifyExplosions(int count = 24);
+  void reifyMissiles(int count= 36);
   void reifyBombs(int count = 24);
+
+  a::Entity* reifyAliens();
+  a::Entity* reifyShip();
 
   const c::Size calcImgSize(const stdstr& img);
   c::Dictionary* getRankInfo(int r);
 
-  void fillSquad(not_null<f::XPool*> );
-  a::Entity* reifyAliens();
+  void fillSquad(f::XPool* );
   void bornShip();
-  a::Entity* reifyShip();
 
   virtual ~EFactory();
 };

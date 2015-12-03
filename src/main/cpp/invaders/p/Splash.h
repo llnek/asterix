@@ -23,7 +23,7 @@ protected:
   NOCPYASS(Splash)
 public:
   STATIC_REIFY_SCENE(Splash)
-  IMPL_CTOR(Splash)
+  IMPLCZ(Splash)
 };
 
 NS_END(invaders)

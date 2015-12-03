@@ -20,31 +20,35 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Collide : public f::BaseSystem<EFactory> {
 protected:
+
+  bool maybeCollide(f::ComObj*, f::ComObj*);
+  void checkMissilesBombs();
+  void checkMissilesAliens(a::Node*);
+  void checkShipBombs(a::Node*);
+  void checkShipAliens(a::Node*, a::Node*);
+
   virtual bool onUpdate(float);
 
   NOCPYASS(Collide)
-  Collide()=delete;
+  NODFT(Collide)
 
   a::NodeList* aliens;
   a::NodeList* ships;
 
 public:
 
-  virtual const a::SystemType typeId() { return "n/Collide"; }
-
   Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual ~Collide() {}
+  virtual const a::SystemType typeId()
+  { return "n/Collide"; }
+
+  virtual ~Collide()
+  {}
 
   virtual void addToEngine(not_null<a::Engine*> );
 
-  bool maybeCollide(not_null<f::ComObj*>, not_null<f::ComObj*>);
-  void checkMissilesBombs();
-  void checkMissilesAliens(not_null<a::Node*>);
-  void checkShipBombs(not_null<a::Node*>);
-  void checkShipAliens(not_null<a::Node*>, not_null<a::Node*>);
-
-  virtual int priority() { return a::Collide; }
+  virtual int priority()
+  { return a::Collide; }
 
 };
 

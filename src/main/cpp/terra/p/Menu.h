@@ -29,7 +29,7 @@ public:
   static MainMenu* reifyWithBackAction(VOIDFN);
 
   virtual f::XScene* realize();
-  DECL_CTOR(MainMenu)
+  DECLCZ(MainMenu)
 };
 
 

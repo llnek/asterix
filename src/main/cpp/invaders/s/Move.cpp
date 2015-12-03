@@ -52,7 +52,7 @@ bool Move::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::processShipMotions(not_null<a::Node*> node, float dt) {
+void Move::processShipMotions(a::Node* node, float dt) {
 
   auto motion = CC_GNF(Motion, node,"motion");
   auto sv = CC_GNF(Velocity, node,"vel");
@@ -82,12 +82,12 @@ void Move::processShipMotions(not_null<a::Node*> node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::clamp(not_null<Ship*> ship) {
+void Move::clamp(Ship* ship) {
 
   auto sz= ship->sprite->getContentSize();
   auto tile= CC_CSV(c::Integer,"TILE");
-  auto pos= ship->pos();
   auto wz = cx::visRect();
+  auto pos= ship->pos();
 
   if (cx::getRight(ship->sprite) > wz.size.width - tile) {
     ship->setPos(wz.size.width - tile - sz.width * 0.5f, pos.y);

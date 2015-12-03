@@ -26,7 +26,7 @@ public:
 
   virtual f::XLayer* realize();
   NOCPYASS(UILayer)
-  DECL_CTOR(UILayer)
+  DECLCZ(UILayer)
 
   void onReplay(c::Ref*);
   void onQuit(c::Ref*);

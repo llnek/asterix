@@ -20,6 +20,7 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
+
   void fire(const stdstr& t, void* evt);
   virtual bool onUpdate(float);
 
@@ -32,7 +33,7 @@ protected:
   bool inited;
 
   NOCPYASS(Stager)
-  Stager()=delete;
+  NODFT(Stager)
 
 public:
 

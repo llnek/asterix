@@ -36,7 +36,7 @@ public:
   virtual f::XLayer* realize();
   virtual void update(float);
 
-  IMPL_CTOR(UILayer)
+  IMPLCZ(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////

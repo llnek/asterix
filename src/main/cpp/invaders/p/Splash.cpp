@@ -26,7 +26,7 @@ protected:
   virtual f::XLayer* realize();
   void onPlay(c::Ref*);
   NOCPYASS(UILayer)
-  IMPL_CTOR(UILayer)
+  IMPLCZ(UILayer)
 public:
   STATIC_REIFY_LAYER(UILayer)
 };

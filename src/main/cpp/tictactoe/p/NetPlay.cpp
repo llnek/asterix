@@ -44,7 +44,7 @@ public:
   int player;
 
   NOCPYASS(UILayer)
-  DECL_CTOR(UILayer)
+  DECLCZ(UILayer)
 
 };
 

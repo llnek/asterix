@@ -51,7 +51,8 @@ public:
   virtual float getScale()  { return scale; }
   virtual void runOnce() ;
 
-  virtual ~Config() {}
+  virtual ~Config()
+  {}
 
   static owner<f::XConfig*> reify();
 };

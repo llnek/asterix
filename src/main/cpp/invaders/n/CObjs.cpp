@@ -26,7 +26,7 @@ AlienSquad::AlienSquad(not_null<f::XPool*> aliens, int stepx) {
 //////////////////////////////////////////////////////////////////////////////
 //
 AlienSquad::~AlienSquad() {
-  if (NNP(aliens)) { aliens->ClearAll(); }
+  //if (NNP(aliens)) { aliens->clearAll(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
 Bomb::Bomb(not_null<c::Sprite*> s)
   : ComObj(s) {
 
-  auto wz= cx::VisRect();
+  auto wz= cx::visRect();
   vel.x=0;
   vel.y= -50.0f * wz.size.height / 480.0f;
 }
@@ -67,10 +67,10 @@ void Explosion::inflate(float x, float y) {
   auto anim= cache->getAnimation("boom!");
   if (ENP(anim)) {
     anim = c::Animation::create();
-    anim->addSpriteFrame(cx::GetSpriteFrame("boom_0.png"));
-    anim->addSpriteFrame(cx::GetSpriteFrame("boom_1.png"));
-    anim->addSpriteFrame(cx::GetSpriteFrame("boom_2.png"));
-    anim->addSpriteFrame(cx::GetSpriteFrame("boom_3.png"));
+    anim->addSpriteFrame(cx::getSpriteFrame("boom_0.png"));
+    anim->addSpriteFrame(cx::getSpriteFrame("boom_1.png"));
+    anim->addSpriteFrame(cx::getSpriteFrame("boom_2.png"));
+    anim->addSpriteFrame(cx::getSpriteFrame("boom_3.png"));
     anim->setRestoreOriginalFrame(true);
     anim->setDelayPerUnit(frameTime);
     cache->addAnimation(anim, "boom!");
@@ -102,7 +102,7 @@ Looper::~Looper() {
 Missile::Missile(not_null<c::Sprite*> s)
   : ComObj(s) {
 
-  auto wz= cx::VisRect();
+  auto wz= cx::visRect();
   vel.x= 0;
   vel.y= 150.0f * wz.size.height / 480.0f;
 }

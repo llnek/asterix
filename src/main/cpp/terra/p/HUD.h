@@ -35,7 +35,7 @@ public:
 
   virtual f::XLayer* realize();
 
-  DECL_CTOR(HUDLayer)
+  DECLCZ(HUDLayer)
 };
 
 

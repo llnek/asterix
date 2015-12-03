@@ -27,7 +27,7 @@ public:
   virtual f::XScene* realize();
   VOIDFN backAction;
 
-  DECL_CTOR(MainMenu)
+  DECLCZ(MainMenu)
 };
 
 

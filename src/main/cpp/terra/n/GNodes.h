@@ -29,7 +29,7 @@ public:
   }
 
   NOCPYASS(ShipMotionNode)
-  IMPL_CTOR(ShipMotionNode)
+  IMPLCZ(ShipMotionNode)
 
 };
 

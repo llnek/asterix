@@ -49,7 +49,7 @@ public:
   void resurrect();
   void drawLives();
 
-  DECL_CTOR(XLives)
+  DECLCZ(XLives)
 };
 
 

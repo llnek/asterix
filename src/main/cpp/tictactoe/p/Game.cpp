@@ -33,7 +33,7 @@ public:
     return this;
   }
   NOCPYASS(BGLayer)
-  IMPL_CTOR(BGLayer)
+  IMPLCZ(BGLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ public:
   //void onEarnScore(int);
   //void spawnPlayer();
 
-  DECL_CTOR(GLayer)
+  DECLCZ(GLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////

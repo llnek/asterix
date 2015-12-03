@@ -25,7 +25,7 @@ public:
 
   virtual f::XScene* realize();
   NOCPYASS(NetPlay)
-  DECL_CTOR(NetPlay)
+  DECLCZ(NetPlay)
 
 };
 

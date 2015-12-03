@@ -70,7 +70,7 @@ const c::Size Config::gameSize() {
 //
 void Config::handleResolution(const c::Size& rs) {
   //for default font, we use 48pt
-  scale = 0.15;//52/256 * rs.width /320;
+  scale = 52/256.0f * rs.width / 320.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////////

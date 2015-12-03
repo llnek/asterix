@@ -30,7 +30,7 @@ public:
   void purge();
   void init();
 
-  IMPL_CTOR( L10NCache)
+  IMPLCZ( L10NCache)
 };
 
 

@@ -29,7 +29,7 @@ public:
   void clear() ;
   T* head;
   T* tail;
-  DECL_CTOR(ObjList)
+  DECLCZ(ObjList)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ public:
 
   void update(float time);
 
-  DECL_CTOR(Engine)
+  DECLCZ(Engine)
 };
 
 

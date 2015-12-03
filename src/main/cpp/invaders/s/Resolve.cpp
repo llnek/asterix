@@ -96,7 +96,7 @@ void Resolve::checkBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkAliens(not_null<a::Node*> node) {
+void Resolve::checkAliens(a::Node* node) {
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto c= sqad->elements();
 
@@ -117,7 +117,7 @@ void Resolve::checkAliens(not_null<a::Node*> node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkShip(not_null<a::Node*> node) {
+void Resolve::checkShip(a::Node* node) {
   auto ship = CC_GNF(Ship, node, "ship");
 
   if (ship->status &&

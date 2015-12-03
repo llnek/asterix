@@ -21,38 +21,45 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Aliens : public f::BaseSystem<EFactory> {
 protected:
+
+  void forwardOneAlien(f::ComObj* a, float delta);
+  void shuffleOneAlien(f::ComObj* a, int stepx);
+
+  void processMovement(a::Node*, float dt);
+  void processBombs(a::Node*, float dt);
+
+  void dropBomb(float x, float y);
+  void checkBomb(AlienSquad* );
+
+  bool testDirX(f::ComObj* b, int stepx);
+  void maybeShuffleAliens(AlienSquad* );
+
+  bool doShuffle(AlienSquad* sqad);
+  bool doForward(AlienSquad* sqad);
+
+  f::ComObj* findMinX(AlienSquad* sqad);
+  f::ComObj* findMaxX(AlienSquad* sqad);
+
   virtual bool onUpdate(float);
-private:
+
   NOCPYASS(Aliens)
-  Aliens()=delete ;
+  NODFT(Aliens)
   a::NodeList* baddies;
+
 public:
 
-  virtual const a::SystemType typeId() { return "n/Aliens"; }
   Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
-  virtual ~Aliens() {}
 
   virtual void addToEngine(not_null<a::Engine*>);
 
-  void processMovement(not_null<a::Node*>, float dt);
-  void processBombs(not_null<a::Node*>, float dt);
+  virtual const a::SystemType typeId()
+  { return "n/Aliens"; }
 
-  void checkBomb(not_null<AlienSquad*> );
-  void dropBomb(float x, float y);
+  virtual ~Aliens()
+  {}
 
-  void maybeShuffleAliens(not_null<AlienSquad*> );
-  bool testDirX(not_null<f::ComObj*> b, int stepx);
-
-  void forwardOneAlien(not_null<f::ComObj*> a, float delta);
-  void shuffleOneAlien(not_null<f::ComObj*> a, int stepx);
-
-  bool doShuffle(not_null<AlienSquad*> sqad);
-  bool doForward(not_null<AlienSquad*> sqad);
-
-  f::ComObj* findMinX(not_null<AlienSquad*> sqad);
-  f::ComObj* findMaxX(not_null<AlienSquad*> sqad);
-
-  virtual int priority() { return a::AI; }
+  virtual int priority()
+  { return a::AI; }
 };
 
 

@@ -20,32 +20,30 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Resolve : public f::BaseSystem<EFactory> {
 protected:
-  virtual bool OnUpdate(float dt);
-private:
+
+  virtual bool onUpdate(float dt);
 
   NOCPYASS(Resolve)
-  Resolve()=delete;
+  NODFT(Resolve)
 
   a::NodeList* aliens;
   a::NodeList* ships;
 
 public:
 
+  virtual const a::SystemType typeId() { return "s/Resolve"; }
+
   Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
   virtual ~Resolve() {}
 
-  virtual const a::SystemType TypeId() {
-    return "s/Resolve";
-  }
+  virtual void addToEngine(not_null<a::Engine*> );
 
-  virtual void AddToEngine(not_null<a::Engine*> );
+  void checkMissiles();
+  void checkBombs();
+  void checkAliens(a::Node* );
+  void checkShip(a::Node* );
 
-  void CheckMissiles();
-  void CheckBombs();
-  void CheckAliens(not_null<a::Node*> );
-  void CheckShip(not_null<a::Node*> );
-
-  virtual int Priority() { return a::Resolve; }
+  virtual int priority() { return a::Resolve; }
 
 };
 

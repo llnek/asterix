@@ -85,7 +85,7 @@ public:
   OdinEvent(MType t, EType c);
   OdinEvent(j::json& msg);
 
-  DECL_CTOR(OdinEvent)
+  DECLCZ(OdinEvent)
 };
 
 

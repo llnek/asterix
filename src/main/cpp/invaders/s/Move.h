@@ -22,10 +22,16 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Move : public f::BaseSystem<EFactory> {
 protected:
+
+  void processShipMotions(a::Node*, float dt);
+  void clamp(Ship* ship);
+  void moveBombs(float dt);
+  void moveMissiles(float dt);
+
   virtual bool onUpdate(float dt);
 
   NOCPYASS(Move)
-  Move()=delete;
+  NODFT(Move)
 
   a::NodeList* ships;
 
@@ -38,12 +44,6 @@ public:
   virtual ~Move() {}
 
   virtual void addToEngine(not_null<a::Engine*>);
-
-  void processShipMotions(not_null<a::Node*>, float dt);
-  void clamp(not_null<Ship*> ship);
-
-  void moveBombs(float dt);
-  void moveMissiles(float dt);
 
   virtual int priority() { return a::Move; }
 

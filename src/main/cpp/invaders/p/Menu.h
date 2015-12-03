@@ -25,7 +25,7 @@ protected:
 
   STATIC_REIFY_SCENE(MainMenu)
   NOCPYASS(MainMenu)
-  IMPL_CTOR(MainMenu)
+  IMPLCZ(MainMenu)
 
 public:
   static MainMenu* reifyWithBackAction(VOIDFN );

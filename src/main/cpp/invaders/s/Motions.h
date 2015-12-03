@@ -21,10 +21,16 @@ NS_BEGIN(invaders)
 //
 class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
+
+  void processAlienMotions(a::Node*,float dt);
+  void controlCannon(a::Node*, float dt);
+  void fireMissile(a::Node*, float dt);
+  void scanInput(a::Node*, float dt);
+
   virtual bool onUpdate(float);
 
   NOCPYASS(Motions)
-  Motions()=delete;
+  NODFT(Motions)
 
   a::NodeList* cannons;
   a::NodeList* ships;
@@ -39,11 +45,6 @@ public:
   Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
-
-  void processAlienMotions(not_null<a::Node*>,float dt);
-  void controlCannon(not_null<a::Node*>, float dt);
-  void fireMissile(not_null<a::Node*>, float dt);
-  void scanInput(not_null<a::Node*>, float dt);
 
   virtual int priority() { return a::Motion; }
 

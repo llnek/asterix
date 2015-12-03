@@ -20,7 +20,7 @@
 class CC_DLL AppDelegate : public fusii::App {
 public:
   NOCPYASS(AppDelegate)
-  DECL_CTOR(AppDelegate)
+  DECLCZ(AppDelegate)
 };
 
 #endif

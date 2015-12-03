@@ -32,7 +32,7 @@ protected:
 public:
 
   virtual f::XLayer* realize();
-  IMPL_CTOR(UILayer)
+  IMPLCZ(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////

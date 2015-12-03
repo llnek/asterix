@@ -31,7 +31,7 @@ Aliens::Aliens(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 void Aliens::addToEngine(not_null<a::Engine*> e) {
   //CCLOG("adding system: Aliens");
   AlienMotionNode a;
-  baddies = e->getNodeList(a.TypeId());
+  baddies = e->getNodeList(a.typeId());
   //CCLOG("added system: Aliens");
 }
 
@@ -48,7 +48,7 @@ bool Aliens::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::processMovement(not_null<a::Node*> node, float dt) {
+void Aliens::processMovement(a::Node* node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");
@@ -63,7 +63,7 @@ void Aliens::processMovement(not_null<a::Node*> node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::processBombs(not_null<a::Node*> node, float dt) {
+void Aliens::processBombs(a::Node* node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");
@@ -78,13 +78,13 @@ void Aliens::processBombs(not_null<a::Node*> node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::checkBomb(not_null<AlienSquad*> sqad) {
+void Aliens::checkBomb(AlienSquad* sqad) {
+  auto c = sqad->elements();
   auto p= sqad->aliens;
   int sz = p->size();
   s::vector<int> rc;
-
-  auto c = sqad->elements();
   int pos=0;
+
   F__LOOP(it, c) {
     auto a=*it;
     if (a->status) { rc.push_back(pos); }
@@ -117,9 +117,8 @@ void Aliens::dropBomb(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::maybeShuffleAliens(not_null<AlienSquad*> sqad) {
-  auto b = sqad->stepx > 0 ?
-    FindMaxX(sqad) : FindMinX(sqad);
+void Aliens::maybeShuffleAliens(AlienSquad* sqad) {
+  auto b = sqad->stepx > 0 ? findMaxX(sqad) : findMinX(sqad);
   bool ok;
 
   if (NNP(b) && b->status) {
@@ -132,7 +131,7 @@ void Aliens::maybeShuffleAliens(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::testDirX(not_null<f::ComObj*> b, int stepx) {
+bool Aliens::testDirX(f::ComObj* b, int stepx) {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   auto sp= b->sprite;
@@ -146,14 +145,14 @@ bool Aliens::testDirX(not_null<f::ComObj*> b, int stepx) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::shuffleOneAlien(not_null<f::ComObj*> a, int stepx) {
+void Aliens::shuffleOneAlien(f::ComObj* a, int stepx) {
   auto pos= a->sprite->getPosition();
   a->sprite->setPosition(pos.x + stepx, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::forwardOneAlien(not_null<f::ComObj*> a, float delta) {
+void Aliens::forwardOneAlien(f::ComObj* a, float delta) {
   auto pos= a->sprite->getPosition();
   auto wz= cx::visRect();
   auto wb= cx::visBox();
@@ -162,7 +161,7 @@ void Aliens::forwardOneAlien(not_null<f::ComObj*> a, float delta) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::doShuffle(not_null<AlienSquad*> sqad) {
+bool Aliens::doShuffle(AlienSquad* sqad) {
   auto c= sqad->elements();
   auto found=false;
 
@@ -178,10 +177,10 @@ bool Aliens::doShuffle(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::doForward(not_null<AlienSquad*> sqad) {
+bool Aliens::doForward(AlienSquad* sqad) {
   auto delta= abs(sqad->stepx);
-  auto found= false;
   auto c= sqad->elements();
+  auto found= false;
 
   F__LOOP(it, c) {
     auto e= *it;
@@ -196,7 +195,7 @@ bool Aliens::doForward(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::ComObj* Aliens::findMinX(not_null<AlienSquad*> sqad) {
+f::ComObj* Aliens::findMinX(AlienSquad* sqad) {
   auto cur= (float) INT32_MAX;
   auto c= sqad->elements();
   f::ComObj* rc= nullptr;
@@ -217,7 +216,7 @@ f::ComObj* Aliens::findMinX(not_null<AlienSquad*> sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::ComObj* Aliens::findMaxX(not_null<AlienSquad*> sqad) {
+f::ComObj* Aliens::findMaxX(AlienSquad* sqad) {
   auto cur= (float) INT32_MIN;
   auto c= sqad->elements();
   f::ComObj* rc= nullptr;

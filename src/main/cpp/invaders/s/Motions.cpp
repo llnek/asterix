@@ -10,14 +10,13 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "base/CCEventKeyboard.h"
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "x2d/GameScene.h"
 #include "n/GNodes.h"
 #include "Motions.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -40,9 +39,9 @@ void Motions::addToEngine(not_null<a::Engine*> e) {
   ShipMotionNode s;
   CannonCtrlNode c;
 
-  aliens = e->getNodeList(a.TypeId());
-  ships = e->getNodeList(s.TypeId());
-  cannons = e->getNodeList(c.TypeId());
+  aliens = e->getNodeList(a.typeId());
+  ships = e->getNodeList(s.typeId());
+  cannons = e->getNodeList(c.typeId());
   //CCLOG("added system: Motions");
 }
 
@@ -70,7 +69,7 @@ bool Motions::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::controlCannon(not_null<a::Node*> node, float dt) {
+void Motions::controlCannon(a::Node* node, float dt) {
 
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
@@ -87,7 +86,7 @@ void Motions::controlCannon(not_null<a::Node*> node, float dt) {
     }
   } else {
     //TODO:
-    if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_SPACE)) {
+    if (MGML()->keyPoll(KEYCODE)) {
       fireMissile(node,dt);
     }
   }
@@ -95,7 +94,7 @@ void Motions::controlCannon(not_null<a::Node*> node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::fireMissile(not_null<a::Node*> node, float dt) {
+void Motions::fireMissile(a::Node* node, float dt) {
 
   auto gun= CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
@@ -122,28 +121,18 @@ void Motions::fireMissile(not_null<a::Node*> node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::scanInput(not_null<a::Node*> node, float dt) {
+void Motions::scanInput(a::Node* node, float dt) {
 
   auto m= CC_GNF(Motion, node, "motion");
   auto s= CC_GNF(Ship, node, "ship");
 
-  if (MGML()->keyPoll(
-      c::EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
-    m->right=true;
-  } else {
-    m->right=false;
-  }
-  if (MGML()->keyPoll(
-      c::EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
-    m->left=true;
-  } else {
-    m->left=false;
-  }
+  m->left = MGML()->keyPoll( KEYCODE::KEY_LEFT_ARROW);
+  m->right = MGML()->keyPoll( KEYCODE::RIGHT_ARROW);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::processAlienMotions(not_null<a::Node*> node, float dt) {
+void Motions::processAlienMotions(a::Node* node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");

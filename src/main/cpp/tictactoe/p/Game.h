@@ -31,7 +31,7 @@ public:
   virtual void stop();
   virtual void play();
 
-  DECL_CTOR(Game)
+  DECLCZ(Game)
 };
 
 

@@ -9,11 +9,11 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameLayer.h"
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/XPool.h"
-#include "x2d/GameLayer.h"
-#include "x2d/GameScene.h"
 #include "ash/Engine.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
@@ -43,7 +43,7 @@ void EFactory::reifyMissiles(int count) {
     auto sp = cx::reifySprite("missile.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return new Missile(sp);
+    return mc_new_1(Missile, sp);
   }, count);
 }
 
@@ -55,7 +55,7 @@ void EFactory::reifyExplosions(int count) {
     auto sp = cx::reifySprite("boom_0.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return new Explosion(sp);
+    return mc_new_1(Explosion, sp);
   }, count);
 }
 
@@ -67,7 +67,7 @@ void EFactory::reifyBombs(int count) {
     auto sp = cx::reifySprite("bomb.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return new Bomb(sp);
+    return mc_new_1(Bomb, sp);
   }, count);
 }
 
@@ -110,7 +110,7 @@ c::Dictionary* EFactory::getRankInfo(int r) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::fillSquad(not_null<f::XPool*> pool) {
+void EFactory::fillSquad(f::XPool* pool) {
 
   auto cells = CC_CSV(c::Integer, "CELLS");
   auto cols = CC_CSV(c::Integer, "COLS");
@@ -153,7 +153,7 @@ void EFactory::fillSquad(not_null<f::XPool*> pool) {
     MGML()->addAtlasItem("game-pics", aa);
     x += az.width + (8/320.0f * wz.size.width);
     auto v = CC_GDV(c::Integer, info, "value");
-    auto co= new Alien(aa, v, row);
+    auto co= mc_new_3(Aliena, aa, v, row);
     co->status=true;
     pool->checkin(co);
   }
@@ -168,8 +168,8 @@ a::Entity* EFactory::reifyAliens() {
 
   fillSquad(p);
 
-  ent->checkin(new AlienSquad(p, stepx));
-  ent->checkin(new Looper());
+  ent->checkin(mc_new_2(AlienSquad, p, stepx));
+  ent->checkin(mc_new(Looper));
 
   return ent;
 }
@@ -192,7 +192,7 @@ a::Entity* EFactory::reifyShip() {
   auto wb= cx::visBox();
   auto y = sz.height + wb.bottom + (5/60.0f * wz.size.height);
   auto x = wb.left + wz.size.width * 0.5f;
-  auto ship = new Ship(s, "ship_1.png", "ship_0.png");
+  auto ship = mc_new_3(Ship, s, "ship_1.png", "ship_0.png");
 
   CCASSERT(s != nullptr, "ship sprite cannot be null");
 
@@ -200,10 +200,10 @@ a::Entity* EFactory::reifyShip() {
   ship->inflate(x,y);
   player= ship;
 
-  ent->checkin(new Velocity(150,0));
-  ent->checkin(new Looper());
-  ent->checkin(new Cannon(0.3));
-  ent->checkin(new Motion());
+  ent->checkin(mc_new_2(Velocity, 150,0));
+  ent->checkin(mc_new(Looper));
+  ent->checkin(mc_new_1(Cannon,0.3));
+  ent->checkin(mc_new(Motion));
 
   ent->checkin(ship);
   return ent;

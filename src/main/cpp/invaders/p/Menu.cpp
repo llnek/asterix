@@ -29,9 +29,10 @@ protected:
   void onPlay(c::Ref*);
   void onBack(c::Ref*);
 
-  DECL_CTOR(UILayer)
+  DECLCZ(UILayer)
   NOCPYASS(UILayer)
   VOIDFN backAction;
+
 public:
   STATIC_REIFY_LAYER(UILayer)
 };

@@ -33,7 +33,7 @@ public:
   }
 
   NOCPYASS(BoardNode)
-  IMPL_CTOR(BoardNode)
+  IMPLCZ(BoardNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ public:
   }
 
   NOCPYASS(GUINode)
-  IMPL_CTOR(GUINode)
+  IMPLCZ(GUINode)
 };
 
 

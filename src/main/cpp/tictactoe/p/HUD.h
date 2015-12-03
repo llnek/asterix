@@ -71,7 +71,7 @@ public:
 
 
   NOCPYASS(HUDLayer)
-  DECL_CTOR(HUDLayer)
+  DECLCZ(HUDLayer)
 
 };
 

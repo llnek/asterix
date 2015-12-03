@@ -82,6 +82,7 @@ typedef std::string stdstr;
 //
 #define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
 #define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
+#define mc_new_3(T, p1, p2, p3) new T(p1, p2, p3)
 #define mc_new_2(T, p1, p2) new T(p1, p2)
 #define mc_new_1(T, p1) new T(p1)
 #define mc_new(T) new T()
@@ -119,13 +120,13 @@ typedef std::string stdstr;
 
 //////////////////////////////////////////////////////////////////////////
 //
-#define IMPL_CTOR(T) \
+#define IMPLCZ(T) \
   virtual ~T() {} \
   T() {}
 
 //////////////////////////////////////////////////////////////////////////
 //
-#define DECL_CTOR(T) \
+#define DECLCZ(T) \
   virtual ~T(); \
   T();
 

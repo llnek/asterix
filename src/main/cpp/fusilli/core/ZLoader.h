@@ -30,7 +30,7 @@ public:
   void initWithResources();
   virtual void onEnter() ;
 
-  IMPL_CTOR(ZLoader)
+  IMPLCZ(ZLoader)
 };
 
 
