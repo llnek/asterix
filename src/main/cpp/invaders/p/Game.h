@@ -21,14 +21,14 @@ NS_BEGIN(invaders)
 class CC_DLL Game : public f::GameScene {
 protected:
 
-  virtual f::XScene* realizeWithCtx(f::GContext*);
-  virtual f::GameLayer* getGLayer();
-
-  IMPLCZ(Game)
   NOCPYASS(Game)
+  IMPLCZ(Game)
 
 public:
 
+    virtual f::GameScene* realizeWithCtx(f::GContext*);
+    virtual f::GameLayer* getGLayer();
+    
   virtual void sendMsgEx(const MsgTopic& topic, void*);
   virtual bool isLive();
   virtual void play();

@@ -31,8 +31,6 @@ BEGIN_NS_UNAMED()
 class CC_DLL GLayer : public f::GameLayer {
 protected:
 
-  virtual f::XLayer* realize();
-  HUDLayer* getHUD();
 
   EFactory* fac;
 
@@ -41,9 +39,10 @@ protected:
 
 public:
 
-  virtual void sendMsgEx(const MsgTopic& topic, void* msg);
   virtual int getIID() { return 2; }
 
+  virtual f::XLayer* realize();
+  HUDLayer* getHUD();
   void reset();
   void play();
 
@@ -79,6 +78,8 @@ GLayer::GLayer() {
 //
 f::XLayer* GLayer::realize() {
   centerImage("game.bg");
+  enableListeners();
+    cx::resumeAudio();
   reset();
   return this;
 }
@@ -105,11 +106,6 @@ void GLayer::reset() {
   auto d= CC_DICT();
   auto f= new EFactory(e, d);
 
-  f->reifyExplosions();
-  f->reifyMissiles();
-  f->reifyBombs();
-  f->reifyAliens();
-  f->reifyShip();
   e->regoSystem(new Stager(f, d));
   e->regoSystem(new Motions(f, d));
   e->regoSystem(new Move(f, d));
@@ -123,6 +119,8 @@ void GLayer::reset() {
   this->options= d;
   this->fac= f;
   this->engine=e;
+
+  scheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -145,6 +143,8 @@ void GLayer::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onStop() {
+  disableListeners();
+  cx::pauseAudio();
   MGMS()->stop();
 }
 
@@ -154,9 +154,11 @@ void GLayer::onEarnScore(int score) {
   getHUD()->updateScore(score);
 }
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const stdstr& topic, void* msg) {
+void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
+
   auto y = SCAST(GLayer*, getLayer(2));
 
   if (topic == "/game/player/earnscore") {
@@ -179,7 +181,6 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
 
 }
 
-END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::stop() {
@@ -206,7 +207,7 @@ f::GameLayer* Game::getGLayer() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XScene* Game::realizeWithCtx(f::GContext* ctx) {
+f::GameScene* Game::realizeWithCtx(f::GContext* ctx) {
 
   auto h = HUDLayer::reify();
   auto g = GLayer::reify();

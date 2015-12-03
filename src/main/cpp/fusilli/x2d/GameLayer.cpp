@@ -16,7 +16,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "XScene.h"
-#include "GameLayer.h"
+#include "GameScene.h"
 
 NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
@@ -158,6 +158,13 @@ void GameLayer::initTouch() {
   //t->setSwallowTouches(true);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::update(float dt) {
+  if (MGMS()->isLive() && NNP(engine)) {
+    engine->update(dt);
+  }
+}
 
 NS_END(fusii)
 

@@ -27,6 +27,7 @@ protected:
   void disableListeners();
   void enableListeners();
 
+  virtual void update(float);
   virtual void initMouse();
   virtual void initKeys();
   virtual void initTouch();

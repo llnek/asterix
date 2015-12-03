@@ -24,9 +24,9 @@ AppDelegate::AppDelegate() {
     // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
-  r->register( mc_new(AlienMotionNode));
-  r->register( mc_new(ShipMotionNode));
-  r->register( mc_new(CannonCtrlNode));
+  r->rego( mc_new(AlienMotionNode));
+  r->rego( mc_new(ShipMotionNode));
+  r->rego( mc_new(CannonCtrlNode));
 
   // step.2: set up app-config
   XConfig::bind(Config::reify());

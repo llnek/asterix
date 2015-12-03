@@ -35,6 +35,8 @@ namespace ccsx {
 
   void sfxMusic(const stdstr& music, bool repeat);
   void sfxPlay(const stdstr& sound);
+
+  void resumeAudio();
   void pauseAudio();
 
   bool isDesktop();

@@ -25,8 +25,17 @@ Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
   : f::BaseSystem<EFactory>(f, d) {
 
-  inited=false;
+  initAlienSize();
+  initShipSize();
+
+  f->reifyExplosions();
+  f->reifyMissiles();
+  f->reifyBombs();
+  f->reifyAliens();
+  f->reifyShip();
+
   SNPTR(ships)
+  inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,8 +75,6 @@ bool Stager::onUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::onceOnly() {
-  initAlienSize();
-  initShipSize();
   inited=true;
 }
 

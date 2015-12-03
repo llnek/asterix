@@ -13,6 +13,7 @@
 #define __HUD_H__
 
 #include "platform/CCCommon.h"
+#include "x2d/XLives.h"
 #include "x2d/XLayer.h"
 NS_BEGIN(invaders)
 
@@ -24,8 +25,8 @@ protected:
   virtual f::XLayer* realize();
   void showMenu(c::Ref*);
 
-  IMPLCZ(HUDLayer)
   NOCPYASS(HUDLayer)
+  IMPLCZ(HUDLayer)
 
   c::Label* scoreLabel;
   int score;
@@ -34,7 +35,7 @@ protected:
 public:
 
   virtual int getIID() { return 3; }
-  void reduceLives(int =1);
+  bool reduceLives(int =1);
   void updateScore(int);
   void reset();
 

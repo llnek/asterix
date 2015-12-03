@@ -94,6 +94,13 @@ void pauseAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void resumeAudio() {
+  den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+  den::SimpleAudioEngine::getInstance()->resumeAllEffects();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void reifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
   auto n3="sound_off.png";
   auto n2="sound_on.png";

@@ -50,8 +50,6 @@ protected:
 
   static void bind(not_null<GameScene*>);
 
-  virtual GameScene* realizeWithCtx(GContext*) = 0;
-  virtual GameLayer* getGLayer() = 0;
 
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
@@ -66,6 +64,8 @@ public:
 
   //static GameScene* reify(not_null<GameScene*>, GMode, not_null<ws::OdinIO*>);
   //static GameScene* reify(not_null<GameScene*>, GMode);
+    virtual GameScene* realizeWithCtx(GContext*) = 0;
+    virtual GameLayer* getGLayer() = 0;
 
   static GameScene* self();
   static GameLayer* get();

@@ -106,9 +106,9 @@ void Resolve::checkAliens(a::Node* node) {
     if (en->status) {
       if (en->health <= 0) {
         auto msg= j::json({
-            {"score", en->value }
+            {"score", en->score }
             });
-        MGML()->sendMsgEx("/game/player/earnscore", &msg);
+        MGMS()->sendMsgEx("/game/player/earnscore", &msg);
         en->deflate();
       }
     }
@@ -123,7 +123,7 @@ void Resolve::checkShip(a::Node* node) {
   if (ship->status &&
       ship->health <= 0) {
     ship->deflate();
-    MGML()->sendMsg("/game/player/killed");
+    MGMS()->sendMsg("/game/player/killed");
   }
 }
 

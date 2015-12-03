@@ -16,6 +16,7 @@
 #include "2d/CCMenu.h"
 #include "Menu.h"
 #include "Game.h"
+#include "x2d/XLib.h"
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(invaders)
 
@@ -25,7 +26,6 @@ BEGIN_NS_UNAMED()
 class CC_DLL UILayer : public f::XLayer {
 protected:
 
-  virtual f::XLayer* realizeEx(VOIDFN );
   void onPlay(c::Ref*);
   void onBack(c::Ref*);
 
@@ -34,6 +34,7 @@ protected:
   VOIDFN backAction;
 
 public:
+     f::XLayer* realizeEx(VOIDFN );
   STATIC_REIFY_LAYER(UILayer)
 };
 

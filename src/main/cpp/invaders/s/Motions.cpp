@@ -86,7 +86,7 @@ void Motions::controlCannon(a::Node* node, float dt) {
     }
   } else {
     //TODO:
-    if (MGML()->keyPoll(KEYCODE)) {
+      if (MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
       fireMissile(node,dt);
     }
   }
@@ -127,7 +127,7 @@ void Motions::scanInput(a::Node* node, float dt) {
   auto s= CC_GNF(Ship, node, "ship");
 
   m->left = MGML()->keyPoll( KEYCODE::KEY_LEFT_ARROW);
-  m->right = MGML()->keyPoll( KEYCODE::RIGHT_ARROW);
+  m->right = MGML()->keyPoll( KEYCODE::KEY_RIGHT_ARROW);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -153,7 +153,7 @@ void EFactory::fillSquad(f::XPool* pool) {
     MGML()->addAtlasItem("game-pics", aa);
     x += az.width + (8/320.0f * wz.size.width);
     auto v = CC_GDV(c::Integer, info, "value");
-    auto co= mc_new_3(Aliena, aa, v, row);
+    auto co= mc_new_3(Alien, aa, v, row);
     co->status=true;
     pool->checkin(co);
   }

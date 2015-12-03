@@ -30,7 +30,7 @@ Collide::Collide(not_null<EFactory*> f,
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::addToEngine(a::Engine* e) {
+void Collide::addToEngine(not_null<a::Engine*> e) {
   //CCLOG("adding system: Collide");
   AlienMotionNode a;
   ShipMotionNode s;
