@@ -31,6 +31,8 @@ BEGIN_NS_UNAMED()
 class CC_DLL GLayer : public f::GameLayer {
 protected:
 
+  virtual void initTouch();
+  virtual void initMouse();
 
   EFactory* fac;
 
@@ -72,6 +74,21 @@ GLayer::~GLayer() {
 GLayer::GLayer() {
   playable=false;
   SNPTR(fac)
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMove(c::Event* event) {
+  auto e = (c::EventMouse*)event;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::initMouse() {
+  if (cx::isDesktop()) {
+    mouse = c::EventListenerMouse::create();
+    mouse->onMouseMove = CC_CALLBACK_1(GLayer::onMouseMove, this);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
