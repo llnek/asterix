@@ -30,10 +30,8 @@ Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::addToEngine(not_null<a::Engine*> e) {
-  //CCLOG("adding system: Move");
   ShipMotionNode s;
   ships = e->getNodeList(s.typeId());
-  //CCLOG("added system: Move");
 }
 
 //////////////////////////////////////////////////////////////////////////

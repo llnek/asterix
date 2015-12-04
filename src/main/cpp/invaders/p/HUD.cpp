@@ -70,6 +70,7 @@ bool HUDLayer::reduceLives(int n) {
 //
 void HUDLayer::updateScore(int n) {
   score += n;
+  scoreLabel->setString(s::to_string(score));
 }
 
 //////////////////////////////////////////////////////////////////////////////

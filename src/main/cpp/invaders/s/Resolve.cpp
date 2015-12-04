@@ -31,13 +31,11 @@ Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::addToEngine(not_null<a::Engine*> e) {
-  //CCLOG("adding system: Resolve");
   AlienMotionNode a;
   ShipMotionNode s;
 
   aliens= e->getNodeList(a.typeId());
   ships= e->getNodeList(s.typeId());
-  //CCLOG("added system: Resolve");
 }
 
 //////////////////////////////////////////////////////////////////////////

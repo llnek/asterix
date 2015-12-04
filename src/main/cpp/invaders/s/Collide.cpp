@@ -31,13 +31,11 @@ Collide::Collide(not_null<EFactory*> f,
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::addToEngine(not_null<a::Engine*> e) {
-  //CCLOG("adding system: Collide");
   AlienMotionNode a;
   ShipMotionNode s;
 
   aliens= e->getNodeList(a.typeId());
   ships= e->getNodeList(s.typeId());
-  //CCLOG("added system: Collide");
 }
 
 //////////////////////////////////////////////////////////////////////////

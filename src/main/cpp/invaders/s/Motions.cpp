@@ -34,7 +34,6 @@ Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::addToEngine(not_null<a::Engine*> e) {
-  //CCLOG("adding system: Motions");
   AlienMotionNode a;
   ShipMotionNode s;
   CannonCtrlNode c;
@@ -42,7 +41,6 @@ void Motions::addToEngine(not_null<a::Engine*> e) {
   aliens = e->getNodeList(a.typeId());
   ships = e->getNodeList(s.typeId());
   cannons = e->getNodeList(c.typeId());
-  //CCLOG("added system: Motions");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,8 +124,8 @@ void Motions::scanInput(a::Node* node, float dt) {
   auto m= CC_GNF(Motion, node, "motion");
   auto s= CC_GNF(Ship, node, "ship");
 
-  m->left = MGML()->keyPoll( KEYCODE::KEY_LEFT_ARROW);
   m->right = MGML()->keyPoll( KEYCODE::KEY_RIGHT_ARROW);
+  m->left = MGML()->keyPoll( KEYCODE::KEY_LEFT_ARROW);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -23,6 +23,11 @@ protected:
 
   virtual bool onUpdate(float dt);
 
+  void checkAliens(a::Node* );
+  void checkShip(a::Node* );
+  void checkMissiles();
+  void checkBombs();
+
   NOCPYASS(Resolve)
   NODFT(Resolve)
 
@@ -37,11 +42,6 @@ public:
   virtual ~Resolve() {}
 
   virtual void addToEngine(not_null<a::Engine*> );
-
-  void checkMissiles();
-  void checkBombs();
-  void checkAliens(a::Node* );
-  void checkShip(a::Node* );
 
   virtual int priority() { return a::Resolve; }
 

@@ -54,9 +54,9 @@ void Aliens::processMovement(a::Node* node, float dt) {
   auto tm= lpr->timer0;
 
   if (cx::timerDone(tm)) {
-    maybeShuffleAliens(sqad);
     cx::undoTimer(tm);
     SNPTR(lpr->timer0)
+    maybeShuffleAliens(sqad);
   }
 }
 
@@ -69,9 +69,9 @@ void Aliens::processBombs(a::Node* node, float dt) {
   auto tm= lpr->timer1;
 
   if (cx::timerDone(tm)) {
-    checkBomb(sqad);
     cx::undoTimer(tm);
     SNPTR(lpr->timer1)
+    checkBomb(sqad);
   }
 }
 
