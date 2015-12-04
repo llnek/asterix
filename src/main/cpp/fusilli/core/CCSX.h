@@ -147,6 +147,7 @@ namespace ccsx {
   const c::Vec2 anchorB();
   const c::Vec2 anchorBL();
 
+  int randInt(int upper);
 };
 
 NS_END(fusii)

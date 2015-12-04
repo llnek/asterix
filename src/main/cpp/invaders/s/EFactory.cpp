@@ -79,11 +79,10 @@ const c::Size EFactory::calcImgSize(const stdstr& img) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* EFactory::getRankInfo(int r) {
+const c::Size EFactory::getRankInfo(int r, c::Dictionary* out) {
   c::Size z= cx::calcSize("purple_bug_0.png");
   stdstr s0 = "purple_bug_0.png";
   stdstr s1= "purple_bug_1.png";
-  auto d = CC_DICT();
   int v= 30;
 
   if (r < 3) {
@@ -100,29 +99,58 @@ c::Dictionary* EFactory::getRankInfo(int r) {
     z = calcImgSize("green_bug_0.png");
   }
 
-  d->setObject(f::Size2::create(z.width, z.height), "size");
-  d->setObject(CC_INT(v), "value");
-  d->setObject(CC_STR(s0), "img0");
-  d->setObject(CC_STR(s1), "img1");
+  out->removeAllObjects();
+  out->setObject(f::Size2::create(z.width, z.height), "size");
+  out->setObject(CC_INT(v), "value");
+  out->setObject(CC_STR(s0), "img0");
+  out->setObject(CC_STR(s1), "img1");
 
-  return d;
+  return CC_GDV(f::Size2, out, "size");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void EFactory::fillSquad(f::XPool* pool) {
 
-  auto cells = CC_CSV(c::Integer, "CELLS");
+  auto cache= c::AnimationCache::getInstance();
+  auto rows = CC_CSV(c::Integer, "ROWS");
   auto cols = CC_CSV(c::Integer, "COLS");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
-
-  auto cache= c::AnimationCache::getInstance();
-  auto info= getRankInfo(0);
+  auto info= CC_DICT();
   float x;
   float y;
-  int row=0;
 
+  for (int r=0; r < rows; ++r) {
+    auto az = getRankInfo(r, info);
+    y = (r == 0) ? wb.top * 0.9f
+                   : y - az.height - wz.size.height * 4/480.0f;
+    x = wb.left + (8/320.0f * wz.size.width) + HWZ(az);
+    for (int c=0; c < cols; ++c) {
+      auto s = CC_GDS(info, "img0");
+      auto aa = cx::reifySprite(s);
+      aa->setPosition(x + HWZ(az), y - HHZ(az));
+
+      auto f1= CC_GDS(info, "img0");
+      auto f2= CC_GDS(info, "img1");
+      c::Vector<c::SpriteFrame*> animFrames(2);
+
+      animFrames.pushBack( cx::getSpriteFrame(f1));
+      animFrames.pushBack( cx::getSpriteFrame(f2));
+
+      aa->runAction(c::RepeatForever::create(
+        c::Animate::create(
+          c::Animation::createWithSpriteFrames( animFrames, 1))));
+
+      MGML()->addAtlasItem("game-pics", aa);
+      x += az.width + (8/320.0f * wz.size.width);
+      auto v = CC_GDV(c::Integer, info, "value");
+      auto co= mc_new_3(Alien, aa, v, r);
+      co->status=true;
+      pool->checkin(co);
+    }
+  }
+/*
   for (int n=0; n < cells; ++n) {
 
     auto az= CC_GDV(f::Size2, info, "size");
@@ -157,6 +185,7 @@ void EFactory::fillSquad(f::XPool* pool) {
     co->status=true;
     pool->checkin(co);
   }
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////

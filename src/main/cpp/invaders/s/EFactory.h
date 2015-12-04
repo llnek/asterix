@@ -33,8 +33,8 @@ public:
   a::Entity* reifyAliens();
   a::Entity* reifyShip();
 
+  const c::Size getRankInfo(int r, c::Dictionary*);
   const c::Size calcImgSize(const stdstr& img);
-  c::Dictionary* getRankInfo(int r);
 
   void fillSquad(f::XPool* );
   void bornShip();

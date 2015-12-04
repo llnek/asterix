@@ -633,6 +633,11 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
   obj1->updatePosition(x,y);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+int randInt(int upper) {
+  return (int) floor(cocos2d::rand_0_1() * upper);
+}
 
 NS_END(ccsx)
 NS_END(fusii)

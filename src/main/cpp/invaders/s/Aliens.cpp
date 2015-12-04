@@ -92,7 +92,7 @@ void Aliens::checkBomb(AlienSquad* sqad) {
 
   sz= rc.size();
   if (sz > 0) {
-    pos = sz == 1 ? 0 : c::random(0, sz);
+    pos = sz == 1 ? 0 : cx::randInt(sz);
     auto n=rc[pos];
     auto v= p->getAt(n)->sprite->getPosition();
     dropBomb(v.x, v.y-4);
