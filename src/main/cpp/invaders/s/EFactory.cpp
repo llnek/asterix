@@ -92,7 +92,7 @@ c::Dictionary* EFactory::getRankInfo(int r) {
     s1 = "blue_bug_1.png";
     z= calcImgSize("blue_bug_0.png");
   }
-
+  else
   if (r < 5) {
     v= 50;
     s0 = "green_bug_0.png";
