@@ -47,6 +47,7 @@ protected:
 
 public:
 
+  virtual const c::Rect getEnclosureRect();
   virtual const Box4 getEnclosureBox();
   bool keyPoll(KEYCODE);
 

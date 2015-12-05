@@ -31,10 +31,14 @@ BEGIN_NS_UNAMED()
 class CC_DLL GLayer : public f::GameLayer {
 protected:
 
+  void onTouchMoved(c::Touch*, c::Event*);
+  void onMouseMove(c::Event*);
+
   virtual void initTouch();
   virtual void initMouse();
 
   EFactory* fac;
+  Ship* player;
 
   DECLCZ(GLayer)
   NOCPYASS(GLayer)
@@ -74,21 +78,63 @@ GLayer::~GLayer() {
 GLayer::GLayer() {
   playable=false;
   SNPTR(fac)
+  SNPTR(player)
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMove(c::Event* event) {
-  auto e = (c::EventMouse*)event;
+  auto e= (c::EventMouse*)event;
+  auto b= e->getMouseButton();
+  if (b == MOUSE_BUTTON_LEFT) {
+    auto pos= this->player->sprite->getPosition();
+    auto y = pos.y;
+    auto loc= e->getLocationInView();
+    auto bx= getEnclosureBox();
+    //auto l0= e->getLocation(); // wrong
+    //auto delta = e->getDelta(); // bad
+    pos = ccpClamp(loc, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
+    this->player->sprite->setPosition(pos.x, y);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initMouse() {
-  if (cx::isDesktop()) {
+  if (!cx::isDesktop()) {
     mouse = c::EventListenerMouse::create();
     mouse->onMouseMove = CC_CALLBACK_1(GLayer::onMouseMove, this);
+    addListener(mouse);
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMoved(c::Touch* t, c::Event* evt){
+
+  auto pos= this->player->sprite->getPosition();
+  auto y = pos.y;
+  auto bx= getEnclosureBox();
+  pos= c::ccpAdd(pos,  t->getDelta());
+  pos = ccpClamp(pos, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
+  this->player->sprite->setPosition(pos.x, y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::initTouch() {
+  auto t= c::EventListenerTouchOneByOne::create();
+  touch =t;
+
+  t->onTouchBegan = [=](c::Touch* t, c::Event* e) -> bool { return true; };
+  t->onTouchEnded = [=](c::Touch* t, c::Event* e){ };
+  t->onTouchMoved = CC_CALLBACK_2(GLayer::onTouchMoved,this);
+
+  // When "swallow touches" is true, then returning 'true' from the
+  // onTouchBegan method will "swallow" the touch event, preventing
+  // other listeners from using it.
+  t->setSwallowTouches(true);
+  addListener(t);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,7 +142,7 @@ void GLayer::initMouse() {
 f::XLayer* GLayer::realize() {
   centerImage("game.bg");
   enableListeners();
-    cx::resumeAudio();
+  cx::resumeAudio();
   reset();
   return this;
 }
@@ -131,11 +177,14 @@ void GLayer::reset() {
   e->regoSystem(new Resolve(f, d));
   e->forceSync();
 
-  CC_KEEP(d)
-
   this->options= d;
+  CC_KEEP(d)
   this->fac= f;
   this->engine=e;
+
+  ShipMotionNode n;
+  auto nl= e->getNodeList(n.typeId());
+  this->player= CC_GNF(Ship, nl->head, "ship");
 
   scheduleUpdate();
 }

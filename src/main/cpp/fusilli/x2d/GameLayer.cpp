@@ -49,6 +49,12 @@ bool GameLayer::keyPoll(c::EventKeyboard::KeyCode key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const c::Rect GameLayer::getEnclosureRect() {
+  return cx::visRect();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const Box4 GameLayer::getEnclosureBox() {
   return cx::visBox();
 }
@@ -86,16 +92,19 @@ void GameLayer::disableListeners() {
 void GameLayer::enableListeners() {
   disableListeners();
   try {
+    if (!cx::isDesktop())
     initMouse();
   } catch (...) {
     CCLOG("failed to init-mouse");
   }
   try {
+    if (cx::isDesktop())
     initKeys();
   } catch (...) {
     CCLOG("failed to init-keys");
   }
   try {
+    if (cx::isDesktop())
     initTouch();
   } catch (...) {
     CCLOG("failed to init-touch");
