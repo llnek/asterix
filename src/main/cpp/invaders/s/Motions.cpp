@@ -135,13 +135,16 @@ void Motions::processAlienMotions(a::Node* node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");
+  auto cfg= MGMS()->getLCfg()->getValue();
 
   if (ENP(lpr->timer0)) {
-    lpr->timer0= cx::reifyTimer(MGML(), 1);
+    lpr->timer0= cx::reifyTimer(MGML(),
+        cfg["marching"].get<j::json::number_float_t>());
   }
 
   if (ENP(lpr->timer1)) {
-    lpr->timer1= cx::reifyTimer(MGML(), 2);
+    lpr->timer1= cx::reifyTimer(MGML(),
+        cfg["bombing"].get<j::json::number_float_t>());
   }
 }
 

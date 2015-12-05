@@ -76,32 +76,12 @@ void Stager::onceOnly(a::Node* node, float) {
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
   auto ship= CC_GNF(Ship, node, "ship");
-  lpr->timer7 = cx::reifyTimer( MGML(), gun->coolDownWindow);
+  auto cfg= MGMS()->getLCfg()->getValue();
+  lpr->timer7 = cx::reifyTimer( MGML(),
+    cfg["coolDownWindow"].get<j::json::number_float_t>());
   gun->hasAmmo=false;
   inited=true;
 }
-
-/*
-static void _fire(const stdstr& t, void* evt) {
-  if ("/touch/one/move" == t ||
-      "/mouse/move" == t) {} else {
-    return;
-  }
-  if (MGMS()->isLive() && NNP(ships->head)) {
-    auto ship = (f::ComObj*) ships->head->get("ship");
-    auto pos = ship->pos();
-    auto x=pos.x;
-    auto y=pos.y;
-    auto wz= cx::visRect();
-    //TODO:
-    //pos.add(c::Vec2(evt->getDelta().x, 0));
-    pos.clamp(c::Vec2(0, 0),
-              c::Vec2(wz.size.width, wz.size.height));
-    ship->setPos(pos.x, pos.y);
-  }
-}
-*/
-
 
 NS_END(invaders)
 

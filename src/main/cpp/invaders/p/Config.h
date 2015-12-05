@@ -23,6 +23,7 @@ private:
   NOCPYASS(Config)
   Config();
 
+  void initLevels();
   void initAssets();
   void initCsts();
   void initPools();

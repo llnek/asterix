@@ -44,6 +44,12 @@ GameScene::GameScene() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+c::Dictionary* GameScene::getCurLevel() {
+  return XCFG()->getLevel(s::to_string(level));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 f::JsonObj* GameScene::getLCfg() {
   return XCFG()->getLevelCfg(s::to_string(level));
 }

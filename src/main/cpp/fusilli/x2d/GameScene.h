@@ -87,6 +87,7 @@ public:
   GMode getMode();
   bool isOnline();
 
+  c::Dictionary* getCurLevel();
   f::JsonObj* getLCfg();
   void resetPools();
 

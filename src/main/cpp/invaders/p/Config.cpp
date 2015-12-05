@@ -57,6 +57,7 @@ owner<f::XConfig*> Config::reify() {
   auto c =  mc_new(Config);
   c->initAssets();
   c->initCsts();
+  c->initLevels();
   return c;
 }
 
@@ -83,6 +84,18 @@ void Config::runOnce() {
   fp= getAtlas("lang-pics");
   c->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initLevels() {
+  auto d= getLevel("1");
+  auto j= j::json({
+        {"coolDownWindow",  0.8f},
+        {"marching",  1.0f},
+        {"bombing",  2.0f}
+      });
+  d->setObject(f::JsonObj::create(j), CFG);
 }
 
 //////////////////////////////////////////////////////////////////////////////
