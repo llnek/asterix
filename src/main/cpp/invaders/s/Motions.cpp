@@ -72,7 +72,7 @@ void Motions::controlCannon(a::Node* node, float dt) {
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
   auto ship= CC_GNF(Ship, node, "ship");
-  auto t= lpr->timer0;
+  auto t= lpr->timer7;
 
   if (! gun->hasAmmo) {
     //throttle the cannon with timer
@@ -80,7 +80,8 @@ void Motions::controlCannon(a::Node* node, float dt) {
       ship->sprite->setSpriteFrame(ship->frame0);
       gun->hasAmmo=true;
       cx::undoTimer(t);
-      SNPTR(lpr->timer0)
+      SNPTR(lpr->timer7)
+      fireMissile(node,dt);
     }
   } else {
     //TODO:
@@ -110,7 +111,7 @@ void Motions::fireMissile(a::Node* node, float dt) {
 
   ent->inflate(pos.x, top+4);
 
-  lpr->timer0 = cx::reifyTimer( MGML(), gun->coolDownWindow);
+  lpr->timer7 = cx::reifyTimer( MGML(), gun->coolDownWindow);
   gun->hasAmmo=false;
   ship->sprite->setSpriteFrame(ship->frame1);
 

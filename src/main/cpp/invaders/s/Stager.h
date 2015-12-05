@@ -21,12 +21,13 @@ NS_BEGIN(invaders)
 class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool onUpdate(float);
-
+  void onceOnly(a::Node*, float);
   void initAlienSize();
   void initShipSize();
 
-  a::NodeList* ships;
+  virtual bool onUpdate(float);
+  a::NodeList* cannons;
+  bool inited;
 
   NOCPYASS(Stager)
   NODFT(Stager)

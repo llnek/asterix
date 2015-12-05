@@ -106,6 +106,7 @@ public:
   { return "n/Looper"; }
   c::DelayTime* timer0;
   c::DelayTime* timer1;
+  c::DelayTime* timer7;
   DECLCZ(Looper)
 };
 

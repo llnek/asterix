@@ -34,14 +34,15 @@ Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   f->reifyAliens();
   f->reifyShip();
 
-  SNPTR(ships)
+  SNPTR(cannons)
+  inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode s;
-  ships = e->getNodeList(s.typeId());
+  CannonCtrlNode c;
+  cannons = e->getNodeList(c.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,21 @@ void Stager::initShipSize() {
 //
 bool Stager::onUpdate(float dt) {
   if (cx::isTransitioning()) { return false; }
+  if (!inited) {
+    onceOnly(cannons->head, dt);
+  }
   return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stager::onceOnly(a::Node* node, float) {
+  auto gun = CC_GNF(Cannon, node, "cannon");
+  auto lpr= CC_GNF(Looper, node, "looper");
+  auto ship= CC_GNF(Ship, node, "ship");
+  lpr->timer7 = cx::reifyTimer( MGML(), gun->coolDownWindow);
+  gun->hasAmmo=false;
+  inited=true;
 }
 
 /*

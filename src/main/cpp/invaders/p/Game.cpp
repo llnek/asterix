@@ -101,17 +101,14 @@ void GLayer::onMouseMove(c::Event* event) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initMouse() {
-  if (!cx::isDesktop()) {
-    mouse = c::EventListenerMouse::create();
-    mouse->onMouseMove = CC_CALLBACK_1(GLayer::onMouseMove, this);
-    addListener(mouse);
-  }
+  mouse = c::EventListenerMouse::create();
+  mouse->onMouseMove = CC_CALLBACK_1(GLayer::onMouseMove, this);
+  addListener(mouse);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMoved(c::Touch* t, c::Event* evt){
-
   auto pos= this->player->sprite->getPosition();
   auto y = pos.y;
   auto bx= getEnclosureBox();

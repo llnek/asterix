@@ -92,7 +92,7 @@ void GameLayer::disableListeners() {
 void GameLayer::enableListeners() {
   disableListeners();
   try {
-    if (!cx::isDesktop())
+    if (cx::isDesktop())
     initMouse();
   } catch (...) {
     CCLOG("failed to init-mouse");
@@ -104,7 +104,7 @@ void GameLayer::enableListeners() {
     CCLOG("failed to init-keys");
   }
   try {
-    if (cx::isDesktop())
+    if (!cx::isDesktop())
     initTouch();
   } catch (...) {
     CCLOG("failed to init-touch");
