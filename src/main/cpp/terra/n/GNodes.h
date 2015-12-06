@@ -12,7 +12,7 @@
 #if !defined(__GNODES_H__)
 #define __GNODES_H__
 
-#include "ash/NodeRegistry.h"
+#include "ash/NodeRego.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -30,13 +30,7 @@ public:
 
   NOCPYASS(ShipMotionNode)
   IMPLCZ(ShipMotionNode)
-
 };
-
-
-
-
-
 
 
 NS_END(terra)

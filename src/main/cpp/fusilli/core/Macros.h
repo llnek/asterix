@@ -32,6 +32,8 @@
 #define CC_GNF(t,n,f) ash::nodeFld<t>(n,f)
 
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
+typedef cocos2d::BlendFunc BDFUNC;
+
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
 typedef std::string MsgTopic;

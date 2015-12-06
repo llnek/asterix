@@ -9,18 +9,21 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "CObjs.h"
+#include "x2d/GameScene.h"
+#include "n/CObjs.h"
 #include "utils.h"
 NS_BEGIN(terra)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void flareEffect(c::Sprite* flare, VOIDFN cb) {
+void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
 
+  auto opacityAnim = c::FadeTo::create(0.5f, 255);
+  auto opacDim = c::FadeTo::create(1, 0);
   auto flareY = CC_CSV(c::Integer, "flareY");
 
-  flare->setBlendFunc(c::BlendFunc::ADDICTIVE);
+  flare->setBlendFunc(BDFUNC::ADDITIVE);
   flare->stopAllActions();
   flare->setPosition(-45, flareY);
   flare->setVisible(true);
@@ -28,12 +31,9 @@ void flareEffect(c::Sprite* flare, VOIDFN cb) {
   flare->setRotation(-120);
   flare->setScale(0.3f);
 
-  auto opacityAnim = c::FadeTo::create(0.5f, 255);
-  auto opacDim = c::FadeTo::create(1, 0);
-
   auto rotateEase = c::EaseExponentialOut::create( c::RotateBy::create(2.5f, 90));
   auto easeMove = c::EaseSineOut::create(c::MoveBy::create(0.5f, cc.p(490, 0));
-  auto biggerEase = c::EaseSineOut::create(c::ScaleBy(0.7f, 1.2f, 1.2f));
+  auto biggerEase = c::EaseSineOut::create(c::ScaleBy::create(0.7f, 1.2f, 1.2f));
   auto bigger = c::ScaleTo::create(0.5f, 1);
   auto onComplete = c::CallFunc::create(cb);
   auto killflare = c::CallFunc::create([=]() {
@@ -57,13 +57,13 @@ void btnEffect() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void fireMissiles(f::ComObj* obj, float dt) {
+void fireMissiles(not_null<f::ComObj*> obj, float dt) {
   auto po1= MGMS()->getPool("missiles");
-  auto ship = (Ship*) obj;
+  auto ship = (Ship*) obj.get();
   auto pos = ship->pos();
   auto sz = ship->size();
   auto offy= 3.0f + sz.height * 0.3f;
-  auto offx=13.0f;
+  auto offx= 13.0f;
   auto m2= po1->getAndSet();
   auto m1= po1->getAndSet();
 
@@ -78,17 +78,17 @@ void fireMissiles(f::ComObj* obj, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void bornShip(Ship* ship) {
+void bornShip(not_null<Ship*> ship) {
   auto bsp= ship->bornSprite;
   auto ssp= ship->sprite;
-  auto normal = c::CallFunc::create([=]() {
+  auto normal = [=]() {
     ship->canBeAttack = true;
     bsp->setVisible(false);
     ssp->schedule([=](float dt) {
       fireMissiles(ship, dt);
     }, 1/6);
     ship->inflate();
-  });
+  };
 
   ship->canBeAttack = false;
   bsp->scale = 8.0f;
@@ -96,21 +96,19 @@ void bornShip(Ship* ship) {
   bsp->runAction(c::ScaleTo::create(0.5f, 1, 1));
 
   ssp->runAction(c::Sequence::create(c::DelayTime::create(0.5f),
-        c::Blink(3,9), normal));
+        c::Blink(3,9), c::CallFunc::create(normal)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void processTouch(f::ComObj* ship, const c::Vec2& delta) {
-  auto pos = ship->pos();
+void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta) {
+  auto box= MGMS()->getEnclosureBox();
   auto wz= cx::visRect();
+  auto pos= ship->pos();
   auto cur= ccpAdd(pos, delta);
-  cur= ccpClamp(cur, ccp(0.0f, 0.0f),
-                 ccp(wz.width, wz.height));
+  cur= ccpClamp(cur, ccp(box.left,box.bottom), ccp(box.right, box.top));
   ship->setPos(cur.x, cur.y);
 }
-
-
 
 
 NS_END(terra)

@@ -16,6 +16,8 @@
 #include "cocos2d.h"
 NS_ALIAS(terra)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 enum class Moves { RUSH, VERT, HORZ, OLAP };
 
 enum class Attacks { TSUIHIKIDAN, NORMAL };
@@ -25,16 +27,14 @@ struct EnemyType {
   EnemyType(Attacks attackMode, Moves moveType,
     int type,
     stdtsr textureName,
-    stdstr bulletType,
-    int HP, int scoreValue) {
-
-  this->attackMode = attackMode;
-  this->moveType= moveType;
-  this->ytpe= type;
-  this->textureName = textureName;
-  this->bulletType = bulletType;
-  this->HP= HP;
-  this->scoreValue = scoreValue;
+    stdstr bulletType, int HP, int scoreValue) {
+    this->attackMode = attackMode;
+    this->moveType= moveType;
+    this->ytpe= type;
+    this->textureName = textureName;
+    this->bulletType = bulletType;
+    this->HP= HP;
+    this->scoreValue = scoreValue;
   }
 
   Attacks attackMode;
@@ -104,18 +104,14 @@ const s::array<EnemyType, 6> EnemyTypes = {
   }
 };
 
-void flareEffect(c::Sprite* flare, c::SEL_CallFunc cb, c::Ref* target);
+void flareEffect(not_null<c::Sprite*> flare, c::SEL_CallFunc cb, c::Ref* target);
 void btnEffect();
 
-void fireMissiles(f::ComObj* ship, float dt);
+void fireMissiles(not_null<f::ComObj*> ship, float dt);
 
-void bornShip(f::ComObj* ship);
+void bornShip(not_null<f::ComObj*> ship);
 
-void processTouch(f::ComObj* ship, const c::Vec2& delta);
-
-
-
-
+void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta);
 
 NS_END(terra)
 #endif

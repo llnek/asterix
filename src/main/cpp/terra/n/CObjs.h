@@ -14,20 +14,24 @@
 
 #include "core/XConfig.h"
 #include "core/ComObj.h"
+#include "s/utils.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Missile : public f::ComObj {
 public:
-  Missile(c::Sprite* s, AttackMode m) {
+
+  Missile(not_null<c::Sprite*> s, AttackMode m)
+    : ComObj(s,1,0) {
     attackMode = m;
-    init(s, 1, 0);
     vel.x= 0;
     vel.y= CC_CSV(c::Float, "MISSILE_SPEED");
   }
-  virtual ~Missile() {}
+
   AttackMode attackMode;
+  virtual ~Missile()
+  {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,15 +39,16 @@ public:
 class CC_DLL Bomb : public f::ComObj {
 public:
 
-  Bomb(c::Sprite* s, AttackMode m) {
+  Bomb(not_null<c::Sprite*> s, AttackMode m)
+    : ComObj(s,1,0) {
     attackMode = m;
-    init(s, 1, 0);
     vel.x= 0;
     vel.y= - CC_CSV(c::Float, "BOMB_SPEED");
   }
 
-  virtual ~Bomb() {}
   AttackMode attackMode;
+  virtual ~Bomb()
+  {}
 };
 
 
@@ -52,9 +57,9 @@ public:
 class CC_DLL Enemy : public f::ComObj {
 public:
 
-  Enemy(c::Sprite* s, int health, int score) {
-    delayTime= 1 + 1.2 * CC_RANDOM();
-    init(s, health, score);
+  Enemy(not_null<c::Sprite*> s, int health, int score)
+    : ComObj(x, health, score) {
+    delayTime= 1.2 * c::rand_0_1() + 1;
   }
 
   AttackMode attackMode;
@@ -68,14 +73,13 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
 class CC_DLL Ship : public f::ComObj {
 public:
 
-  Ship(c::Sprite* s, c::Sprite x) {
+  Ship(not_null<c::Sprite*> s, not_null<c::Sprite*> x)
+    : ComObj(s, 5, 0) {
     canBeAttack = false;
     bornSprite = x;
-    init(s,5,0);
   }
 
   c::Sprite* bornSprite;
@@ -86,7 +90,6 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
 class CC_DLL Motion : public a::Component {
 public:
   virtual ~Motion() {}
@@ -105,14 +108,13 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
 class CC_DLL Spark : public f::ComObj {
 public:
 
-  Spark(c::Sprite* sp1, c::Sprite* sp2) {
+  Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
+    : ComObj(sp1,1,0) {
     duration = 0.7f;
     sprite2= sp2;
-    init(sp1, 1, 0);
     scale = 1.2f;
   }
 
@@ -122,14 +124,14 @@ public:
 
   void inflate(float x, float y, float scale) {
 
-    sprite->setOpacity(255.0f);
-    sprite->setPosition(x,y);
-    sprite->setScale(scale);
-
-    sprite2->setRotation( CCRANDOM_0_1() * 360.0f);
+    sprite2->setRotation( cx::randInt(360));
     sprite2->setOpacity(255.0f);
     sprite2->setPosition(x,y);
     sprite2->setScale(scale);
+
+    sprite->setOpacity(255.0f);
+    sprite->setPosition(x,y);
+    sprite->setScale(scale);
 
     auto scaleBy = c::ScaleBy::create(duration,3.0f,3.0f);
     auto right = c::RotateBy::create(duration, 45.0f);
@@ -145,20 +147,16 @@ public:
     sprite2->runAction(seq->clone());
 
     sprite2->setVisible(true);
-    status=true;
-    sprite->setVisible(true);
+    ComObj::inflate();
   }
 
   virtual void deflate() {
     sprite2->setVisible(false);
-    sprite->setVisible(false);
-    status=false;
     sprite2->stopAllActions();
-    sprite->stopAllActions();
+    ComObj::deflate();
   }
 
   virtual ~Spark() {}
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -166,18 +164,16 @@ public:
 class CC_DLLL Explosion : public f::ComObj {
 public:
 
-  Explosion(c::Sprite* s) {
-    animation = c::AnimationCache::getInstance()->getAnimation("Explosion");
-    init(s,0,0);
+  Explosion(not_null<c::Sprite*> s)
+    : ComObj(s) {
   }
 
   virtual void inflate(float x, float y) {
-    sprite->setPosition(x, y);
-    sprite->setVisible(true);
-    status=true;
+    auto ani = c::AnimationCache::getInstance()->getAnimation("Explosion");
     sprite->runAction(c::Sequence(
-        c::Animate::create(animation),
+        c::Animate::create(ani),
         c::CallFunc::create([=]() { this->deflate();  })));
+    ComObj::inflate(x, y);
   }
 
   virtual ~Explosion() {}
@@ -189,24 +185,21 @@ public:
 class CC_DLL HitEffect : public f::ComObj {
 public:
 
-  HitEffect(c::Sprite* s) {
+  HitEffect(not_null<c::Sprite*> s)
+    : ComObj(s) {
     scale = 0.75f;
-    init(s, 0,0);
   }
 
   virtual void inflate(float x, float y) {
-    sprite->setRotation( CCRANDOM_0_1() * 360.0f);
-    sprite->setPosition(x, y);
-    sprite->setScale(scale);
-    sprite.setVisible(true);
-    status=true;
     sprite->runAction(c::ScaleBy::create(0.3f, 2.0f, 2.0f));
     sprite->runAction(c::Sequence::create(c::FadeOut::create(0.3f),
                                c::CallFunc::create([=]() { this->deflate();  } )));
+    sprite->setRotation( cx::randInt(360));
+    sprite->setScale(scale);
+    ComObj::inflate(x,y);
   }
 
   virtual ~HitEffect() {}
-
 };
 
 
