@@ -26,7 +26,7 @@ private:
 
 public:
 
-  const s_vec<ComObj*>& elements() { return objs; }
+  const s_vec<ComObj*>& list() { return objs; }
   ComObj* select(s::function<bool (ComObj*)>);
   void preset(s::function<ComObj* ()>, int);
 

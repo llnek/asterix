@@ -20,33 +20,35 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Alien : public f::ComObj {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Alien"; }
+  Alien(not_null<c::Sprite*>, int value, int rank);
+
+  virtual ~Alien() {}
+
   NOCPYASS(Alien)
   NODFT(Alien)
-public:
-  Alien(not_null<c::Sprite*>, int value, int rank);
-  virtual const a::COMType typeId()
-  { return "n/Alien"; }
-  virtual ~Alien()
-  {}
+
   int rank;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AlienSquad : public a::Component {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/AlienSquad"; }
+  const s_vec<f::ComObj*>& list() { return aliens->list(); }
+
+  AlienSquad(not_null<f::XPool*> aliens, int step);
+  int size() { return aliens->size(); }
+
+  virtual ~AlienSquad() {}
+
   NOCPYASS(AlienSquad)
   NODFT(AlienSquad)
-public:
-  AlienSquad(not_null<f::XPool*> aliens, int step);
-  virtual const a::COMType typeId()
-  { return "n/AlienSquad"; }
-  const s::vector<f::ComObj*>& elements()
-  { return aliens->elements(); }
-  int size()
-  { return aliens->size(); }
-  virtual ~AlienSquad();
+
   f::XPool* aliens;
   int stepx;
 };
@@ -54,28 +56,31 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Bomb : public f::ComObj {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Bomb"; }
+  Bomb(not_null<c::Sprite*>);
+
+  virtual ~Bomb() {}
+
   NOCPYASS(Bomb)
   NODFT(Bomb)
-public:
-  virtual const a::COMType typeId()
-  { return "n/Bomb"; }
-  Bomb(not_null<c::Sprite*>);
-  virtual ~Bomb()
-  {}
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Cannon : public a::Component {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Cannon"; }
+
+  Cannon(float coolDownWindow);
+
+  virtual ~Cannon() {}
+
   NOCPYASS(Cannon)
   NODFT(Cannon)
-public:
-  virtual const a::COMType typeId()
-  { return "n/Cannon"; }
-  Cannon(float coolDownWindow);
-  virtual ~Cannon()
-  {}
+
   float coolDownWindow;
   bool hasAmmo;
 };
@@ -83,58 +88,62 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Explosion : public f::ComObj {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Explosion"; }
+  virtual void inflate(float x, float y);
+
+  Explosion(not_null<c::Sprite*> );
+
+  virtual ~Explosion() {}
+
   NOCPYASS(Explosion)
   NODFT(Explosion)
-public:
-  virtual void inflate(float x, float y);
-  virtual const a::COMType typeId()
-  { return "n/Explosion"; }
-  Explosion(not_null<c::Sprite*> );
-  virtual ~Explosion()
-  {}
+
   float frameTime;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Looper : public a::Component {
-private:
-  NOCPYASS(Looper);
 public:
-  virtual const a::COMType typeId()
-  { return "n/Looper"; }
+
+  virtual const a::COMType typeId() { return "n/Looper"; }
+
+  NOCPYASS(Looper)
+  DECLCZ(Looper)
+
   c::DelayTime* timer0;
   c::DelayTime* timer1;
   c::DelayTime* timer7;
-  DECLCZ(Looper)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Missile : public f::ComObj {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Missile"; }
+  Missile(not_null<c::Sprite*>);
+
   NOCPYASS(Missile)
   NODFT(Missile)
-public:
-  virtual const a::COMType typeId()
-  { return "n/Missile"; }
-  Missile(not_null<c::Sprite*>);
-  virtual ~Missile()
-  {}
+
+  virtual ~Missile() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Motion : public a::Component {
-private:
-  NOCPYASS(Motion)
 public:
-  virtual const a::COMType typeId()
-  { return "n/Motion"; }
-  virtual ~Motion()
-  {}
+
+  virtual const a::COMType typeId() { return "n/Motion"; }
+  virtual ~Motion() {}
+
+  NOCPYASS(Motion)
+
   Motion();
+
   bool right;
   bool left;
 };
@@ -142,15 +151,16 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Ship : public f::ComObj {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Ship"; }
+  Ship(not_null<c::Sprite*>, const sstr&, const sstr&);
+
+  virtual ~Ship() {}
+
   NOCPYASS(Ship)
   NODFT(Ship)
-public:
-  Ship(not_null<c::Sprite*>, const sstr&, const sstr&);
-  virtual const a::COMType typeId()
-  { return "n/Ship"; }
-  virtual ~Ship()
-  {}
+
   sstr frame0;
   sstr frame1;
 };
@@ -158,15 +168,16 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Velocity : public a::Component {
-private:
+public:
+
+  virtual const a::COMType typeId() { return "n/Velocity"; }
+  Velocity(float vx, float vy);
+
+  virtual ~Velocity() {}
+
   NOCPYASS(Velocity)
   NODFT(Velocity)
-public:
-  virtual const a::COMType typeId()
-  { return "n/Velocity"; }
-  Velocity(float vx, float vy);
-  virtual ~Velocity()
-  {}
+
   float x;
   float y;
 };

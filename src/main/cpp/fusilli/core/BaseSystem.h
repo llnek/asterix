@@ -33,7 +33,7 @@ protected:
 public:
 
   virtual bool update(float time);
-  CZDTOR(BaseSystem)
+  virtual ~BaseSystem();
 };
 
 //////////////////////////////////////////////////////////////////////////

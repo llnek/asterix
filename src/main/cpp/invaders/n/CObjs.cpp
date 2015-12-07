@@ -25,12 +25,6 @@ AlienSquad::AlienSquad(not_null<f::XPool*> aliens, int stepx) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AlienSquad::~AlienSquad() {
-  //if (NNP(aliens)) { aliens->clearAll(); }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
   : ComObj(s, 1, value) {
   this->rank=rank;
@@ -118,8 +112,7 @@ Motion::Motion() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Ship::Ship(not_null<c::Sprite*> s,
-    const sstr& f1, const sstr& f2)
+Ship::Ship(not_null<c::Sprite*> s, const sstr& f1, const sstr& f2)
 
   : ComObj(s) {
 

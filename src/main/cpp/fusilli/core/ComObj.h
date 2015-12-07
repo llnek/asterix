@@ -25,7 +25,7 @@ protected:
   void init(c::Sprite*, int health, int score);
 
   NOCPYASS(ComObj)
-  CZCTOR(ComObj)
+  ComObj();
 
 public:
 
@@ -48,7 +48,7 @@ public:
 
   ComObj(not_null<c::Sprite*>, int health, int score);
   ComObj(not_null<c::Sprite*>);
-  CZDTOR_X(ComObj)
+  virtual ~ComObj() {}
 
   c::Sprite* sprite;
   int origHealth;

@@ -141,10 +141,10 @@ typedef std::string sstr;
 
 //////////////////////////////////////////////////////////////////////////
 //
-#define CZDTOR_X(T) virtual ~T() {}
-#define CZCTOR_X(T) T() {}
-#define CZDTOR(T) virtual ~T();
-#define CZCTOR(T) T();
+//#define CZDTOR_X(T) virtual ~T() {}
+//#define CZCTOR_X(T) T() {}
+//#define CZDTOR(T) virtual ~T();
+//#define CZCTOR(T) T();
 
 //////////////////////////////////////////////////////////////////////////////
 //

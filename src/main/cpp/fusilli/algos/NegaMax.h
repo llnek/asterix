@@ -44,7 +44,7 @@ public:
   virtual void switchPlayer(not_null<FFrame<Z>*>) = 0;
   virtual owner<FFrame<Z>*> takeFFrame() = 0;
 
-  CZDTOR_X(GameBoard)
+  virtual ~GameBoard() {}
 };
 
 BEGIN_NS_UNAMED()

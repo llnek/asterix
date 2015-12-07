@@ -31,7 +31,7 @@ public:
 
   NOCPYASS(Factory)
   NODFT(Factory)
-  CZDTOR(Factory)
+  virtual ~Factory();
 };
 
 

@@ -20,48 +20,49 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AlienMotionNode : public a::NodeFactory {
-private:
-  NOCPYASS(AlienMotionNode)
 public:
-  virtual const a::NodeType typeId()
-  { return "n/AlienMotionNode"; }
+
+  virtual const a::NodeType typeId() { return "n/AlienMotionNode"; }
+
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<sstr> { "aliens", "looper" },
-        s::vector<a::COMType> { "n/AlienSquad", "n/Looper" });
+        s_vec<sstr> { "aliens", "looper" },
+        s_vec<a::COMType> { "n/AlienSquad", "n/Looper" });
   }
+
+  NOCPYASS(AlienMotionNode)
   IMPLCZ( AlienMotionNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL CannonCtrlNode : public a::NodeFactory {
-private:
-  NOCPYASS(CannonCtrlNode)
 public:
-  virtual const a::NodeType typeId()
-  { return "n/CannonCtrlNode"; }
+
+  virtual const a::NodeType typeId() { return "n/CannonCtrlNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<sstr> { "looper", "cannon", "ship" },
-        s::vector<a::COMType> { "n/Looper", "n/Cannon", "n/Ship" });
+        s_vec<sstr> { "looper", "cannon", "ship" },
+        s_vec<a::COMType> { "n/Looper", "n/Cannon", "n/Ship" });
   }
+
+  NOCPYASS(CannonCtrlNode)
   IMPLCZ( CannonCtrlNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL ShipMotionNode : public a::NodeFactory {
-private:
-  NOCPYASS(ShipMotionNode)
 public:
-  virtual const a::NodeType typeId()
-  { return "n/ShipMotionNode"; }
+
+  virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<sstr> { "vel", "motion", "ship" },
-        s::vector<a::COMType> { "n/Velocity", "n/Motion", "n/Ship" });
+        s_vec<sstr> { "vel", "motion", "ship" },
+        s_vec<a::COMType> { "n/Velocity", "n/Motion", "n/Ship" });
   }
+
+  NOCPYASS(ShipMotionNode)
   IMPLCZ(ShipMotionNode)
 };
 
