@@ -9,174 +9,41 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires s/utils
- * @requires n/gnodes
- * @module s/move
- */
+#if !defined(__MOVE_H__)
+#define __MOVE_H__
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import utils from 's/utils';
-import gnodes from 'n/gnodes';
+#include "core/BaseSystem.h"
+#include "EFactory.h"
+NS_BEGIN(terra)
 
-
-let sjs=sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R= sjs.ramda,
 //////////////////////////////////////////////////////////////////////////
-undef,
-/**
- * @class MoveXXX
- */
-MoveXXX = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/move~move
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/move~move
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships=null;
-  },
-  /**
-   * @memberof module:s/move~move
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships = engine.getNodeList(gnodes.ShipMotionNode);
-  },
-  /**
-   * @memberof module:s/move~move
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const node= this.ships.head;
-    if (this.state.running &&
-       !!node) {
-      this.moveMissiles(dt);
-      this.move(dt);
-      this.onKeys(node,dt);
-    }
-  },
-  /**
-   * @method onKeys
-   * @private
-   */
-  onKeys(node,dt) {
-    let ship = node.ship,
-    wz= ccsx.vrect(),
-    mot= node.motion,
-    sp = ship.sprite,
-    ok = false,
-    pos = ship.pos(),
-    x = pos.x,
-    y = pos.y;
+//
+class CC_DLL Move : public f::BaseSystem<EFactory> {
+protected:
 
-    if (mot.up && pos.y <= wz.height) {
-      y = pos.y + dt * csts.SHIP_SPEED;
-      ok= true;
-    }
-    if (mot.down && pos.y >= 0) {
-      y = pos.y - dt * csts.SHIP_SPEED;
-      ok= true;
-    }
-    if (mot.left && pos.x >= 0) {
-      x = pos.x - dt * csts.SHIP_SPEED;
-      ok= true;
-    }
-    if (mot.right && pos.x <= wz.width) {
-      x = pos.x + dt * csts.SHIP_SPEED;
-      ok= true;
-    }
+  void moveOneMissile(f::ComObj*, float);
+  void onKeys(a::Node*, float);
+  void moveOneBomb(f::ComObj*, float);
+  void move(float);
+  void moveMissiles(float);
 
-    if (ok) { ship.setPos(x,y); }
+  virtual bool onUpdate(float);
+  NOCPYASS(Move)
+  NODFT(Move)
 
-    mot.right= false;
-    mot.left=false;
-    mot.down=false;
-    mot.up=false;
-  },
-  /**
-   * @method moveOneBomb
-   * @private
-   */
-  moveOneBomb(m, dt) {
-    const pos = m.sprite.getPosition();
-    m.sprite.setPosition(pos.x + m.vel.x * dt,
-                         pos.y + m.vel.y * dt);
-  },
-  /**
-   * @method move
-   * @private
-   */
-  move(dt) {
-    sh.pools.Bombs.iter( b => {
-      if (b.status) {
-        this.moveOneBomb(b,dt);
-      }
-    });
-  },
-  /**
-   * @method moveOneMissile
-   * @private
-   */
-  moveOneMissile(m, dt) {
-    const pos = m.sprite.getPosition();
-    m.sprite.setPosition(pos.x + m.vel.x * dt,
-                         pos.y + m.vel.y * dt);
-  },
+public:
 
-  /**
-   * @method moveMissiles
-   * @private
-   */
-  moveMissiles(dt) {
-    sh.pools.Missiles.iter( v => {
-      if (v.status) {
-        this.moveOneMissile(v,dt);
-      }
-    });
-  }
+  Move(not_null<a::Engine*>, not_null<c::Dictionary*>);
 
-}, {
+  virtual void addToEngine(not_null<a::Engine*>);
 
-/**
- * @memberof module:s/move~move
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Move
-});
+  virtual int priority() { return a::Move; }
 
+  virtual ~Move() {}
 
-/** @alias module:s/move */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {MoveXXX} MoveXXX
-   */
-  MoveXXX : MoveXXX
 };
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
-
+NS_END(terra)
+#endif
 

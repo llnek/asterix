@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Move.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,15 +44,15 @@ bool Move::onUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::onKeys(a::Node* node, float dt) {
+  auto mot = CC_GNF(Motion, node, "motion");
   auto ssp = CC_CSV(c::Float, "SHIP_SPEED");
-  auto ship = node->ship;
-  auto wz= cx::visRect();
-  auto mot= node->motion;
+  auto ship = CC_GNF(Ship, node, "ship");
   auto sp = ship->sprite;
-  auto ok = false;
   auto pos = ship->pos();
+  auto wz= cx::visRect();
   auto x = pos.x;
   auto y = pos.y;
+  auto ok = false;
 
   if (mot->up && pos.y <= wz.height) {
     y = pos.y + dt * ssp;

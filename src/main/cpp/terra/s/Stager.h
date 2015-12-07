@@ -13,6 +13,7 @@
 #define __STAGER_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
@@ -22,7 +23,7 @@ protected:
 
   virtual bool onUpdate(float);
   NOCPYASS(Stager)
-  Stager() = delete;
+  NODFT(Stager)
 
   void sharedExplosion();
   void initBackSkies();

@@ -12,6 +12,8 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
+#include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -20,14 +22,16 @@ class CC_DLL Collide : public f::BaseSystem<EFactory> {
 protected:
 
   bool collide(f::ComObj*, f::ComObj*);
-  virtual bool onUpdate(float);
+  void checkShipAliens(a::Node*);
+  void checkShipBombs(a::Node*);
   void checkMissilesBombs();
   void checkMissilesAliens();
-  void checkShipBombs(a::Node*);
-  void checkShipAliens(a::Node*);
 
+  virtual bool onUpdate(float);
   NOCPYASS(Collide)
-  Collide() = delete;
+  NODFT(Collide)
+
+  a::NodeList* ships;
 
 public:
 
@@ -38,6 +42,8 @@ public:
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::Collide; }
+
+  virtual ~Collide() {}
 
 };
 

@@ -21,7 +21,7 @@ class CC_DLL EFactory : public fusii::Factory {
 protected:
 
   NOCPYASS(EFactory)
-  EFactory() = delete;
+  NODFT(EFactory)
 
 public:
 
@@ -40,7 +40,6 @@ public:
   a::Entity* createShip();
 
 };
-
 
 
 NS_ALIAS(terra)

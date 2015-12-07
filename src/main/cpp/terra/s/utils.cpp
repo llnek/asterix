@@ -96,7 +96,7 @@ void bornShip(not_null<Ship*> ship) {
   bsp->runAction(c::ScaleTo::create(0.5f, 1, 1));
 
   ssp->runAction(c::Sequence::create(c::DelayTime::create(0.5f),
-        c::Blink(3,9), c::CallFunc::create(normal)));
+        c::Blink::create(3,9), c::CallFunc::create(normal)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

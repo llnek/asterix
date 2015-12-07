@@ -9,23 +9,16 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "EFactory.h"
 #include "Stager.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 Stager::Stager(not_null<EFactory*> f,
     not_null<c::Dictionary*> d)
-
-  : f::BaseSystem<EFactory>(f, d) {
+  :
+  f::BaseSystem<EFactory>(f, d) {
 
   this->inited=false;
-  SNPTR(ships)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Stager::removeFromEngine(not_null<a::Engine*> e) {
   SNPTR(ships)
 }
 
@@ -45,40 +38,21 @@ bool Stager::onUpdate(float dt) {
       onceOnly();
     }
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stager::onceOnly() {
 
-  MGMS()->reifyPool("BackTiles");
-  MGMS()->reifyPool("BackSkies");
-
-  MGMS()->reifyPool("Missiles");
-  MGMS()->reifyPool("Baddies");
-  MGMS()->reifyPool("Bombs");
-
-  MGMS()->reifyPool("Explosions");
-  MGMS()->reifyPool("Sparks");
-  MGMS()->reifyPool("HitEffects");
-
   factory->createBackSkies();
+  factory->createBackTiles();
 
   sharedExplosion();
   initBackSkies();
 
-  factory->createBackTiles();
-  MGMS()->sendMsg("/game/backtiles");
-
-  factory->createMissiles();
-  factory->createBombs();
-  factory->createEnemies();
-
-  factory->createExplosions();
-  factory->createSparks();
-  factory->createHitEffects();
-
   bornShip(ships->head->ship);
+  MGMS()->sendMsg("/game/backtiles");
 }
 
 /*
@@ -100,6 +74,8 @@ void Stager::initBackSkies() {
   auto p = MGMS()->getPool("BackSkies");
   auto y = (Game*) MGMS();
   auto bs = p->get();
+
+  assert(bs != nullptr);
   bs->inflate(0, 0);
 
   y->backSkyDim = bs->size();
@@ -114,8 +90,7 @@ void Stager::sharedExplosion() {
 
   for (auto n = 1; n < 35; ++n) {
     auto str = "explosion_" + (n < 10 ? ("0" + n) : n) + ".png";
-    frame = cx::getSpriteFrame(str);
-    fs.pushBack(frame);
+    fs.pushBack( cx::getSpriteFrame(str));
   }
 
   auto a = c::Animation::create();
@@ -124,7 +99,6 @@ void Stager::sharedExplosion() {
 
   c::AnimationCache::getInstance()->addAnimation(a, "Explosion");
 }
-
 
 
 NS_END(terra)

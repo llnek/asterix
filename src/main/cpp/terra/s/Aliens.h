@@ -24,12 +24,14 @@ protected:
 
   virtual bool onUpdate(float);
   NOCPYASS(Aliens)
-  Aliens() = delete;
+  NODFT(Aliens)
 
   void addEnemyToGame(a::Node*, const EnemyType&);
+  Enemy* getB(const EnemyType&);
   void doIt(a::Node*, float);
   void dropBombs(Enemy*);
-  Enemy* getB(const EnemyType&);
+
+  a::NodeList* ships;
 
 public:
 
@@ -42,8 +44,6 @@ public:
   virtual int priority() { return a::Motion; }
 
 };
-
-
 
 
 NS_END(terra)

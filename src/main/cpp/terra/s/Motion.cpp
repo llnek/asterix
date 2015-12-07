@@ -17,6 +17,7 @@ NS_BEGIN(terra)
 Motions::Motions(not_null<a::Engine*> e, not_null<c::Dictionary*> f)
   : f::BaseSystem<EFactory>(e, f) {
 
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,6 @@ void Motions::addToEngine(not_null<a::Engine> e) {
 bool Motions::OnUpdate(float dt) {
   //const evt = this.evQ.length > 0 ? this.evQ.shift() : undef,
   auto node = ships->head;
-
   if (NNP(node)) {
     doIt(node, dt);
   }
@@ -39,40 +39,41 @@ bool Motions::OnUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-
 void Motions::doIt(a::Node* node, float dt) {
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::onGui(a::Node* node, float dt) {
-  auto pos = node->ship->pos();
+  auto ship = CC_GNF(Ship, node, "ship");
+  auto bx= MGMS()->getEnclosureBox();
+  auto loc = ship->pos();
   auto wc= cx::visRect();
-  auto cur= ccpAdd(pos, c::Vec2()); //evt.delta);
-  cur= ccpClamp(cur, ccp(0, 0),
-                 ccp(wz.width, wz.height));
-  node->ship->setPos(cur.x, cur.y);
+  auto cur= ccpAdd(loc, c::Vec2()); //evt.delta);
+  cur= ccpClamp(cur, ccp(bx.left, bx.bottom),
+                 ccp(bx.right, bx.top));
+  ship->setPos(cur.x, cur.y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::onKey(a::Node* node, float dt) {
-  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_RIGHT)) {
-    node->motion->right = true;
+  auto motion= CC_GNF(Motion, node, "motion");
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT)) {
+    motion->right = true;
   }
-  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_LEFT)) {
-    node->motion->left= true;
-  }
-
-  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_DOWN)) {
-    node->motion->down = true;
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT)) {
+    motion->left= true;
   }
 
-  if (MGML()->keyPoll(c::EventKeyboard::KeyCode::KEY_UP)) {
-    node->motion->up= true;
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN)) {
+    motion->down = true;
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_UP)) {
+    motion->up= true;
   }
 }
-
 
 
 

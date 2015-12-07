@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Collide.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -52,8 +54,8 @@ bool Collide::onUpdate(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissilesBombs() {
-  auto bombs = MGMS()->getPool("Bombs");
   auto mss = MGMS()->getPool("Missiles");
+  auto bombs = MGMS()->getPool("Bombs");
   bombs->foreach([=](f::ComObj* b) {
     mss->foreach([=](f::ComObj* m) {
       if (b->status &&
@@ -114,9 +116,6 @@ void Collide::checkShipAliens(a::Node* node) {
     }
   });
 }
-
-
-
 
 
 NS_END(terra)

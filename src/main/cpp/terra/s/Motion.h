@@ -27,7 +27,9 @@ protected:
   void onKey(a::Node*, float);
 
   NOCPYASS(Motions)
-  Motions() = delete;
+  NODFT(Motions)
+
+  a::NodeList* ships;
 
 public:
 

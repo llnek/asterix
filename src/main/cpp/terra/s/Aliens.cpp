@@ -9,7 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Aliens.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 
@@ -19,6 +21,7 @@ Aliens::Aliens(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
   : f::BaseSystem<EFactory>(e, d) {
 
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,6 +56,13 @@ void Aliens::doIt(a::Node* node, float dt) {
       auto time = a["time"].get<j::json::number_integer_t>();
       auto style = a["style"].get<j::json::string_t>();
       auto types = a["types"].get<j::json::array_t>();
+      auto fc = [=]() {
+        J__LOOP(t,types) {
+          auto& v = *t;
+          this->addEnemyToGame(node,
+              v.get<j::json::number_integer_t>());
+        }
+      };
       if (style == "*" &&
           dt % time == 0) {
         fc();
@@ -64,13 +74,6 @@ void Aliens::doIt(a::Node* node, float dt) {
         fc();
       }
     }
-    auto fc = [=]() {
-      J__LOOP(t,types) {
-        auto& v = *t;
-        this->addEnemyToGame(node, v.get<j::json::number_integer_t>());
-      }
-    };
-
   }
 }
 
@@ -81,11 +84,11 @@ void Aliens::dropBombs(Enemy* enemy) {
   auto sp= enemy->sprite;
   auto sz= sp->getContentSize();
   auto pos= sp->getPosition();
-  auto b = bombs->get();
+  Bomb* b = (Bomb*)bombs->get();
 
   if (ENP(b)) {
     factory->createBombs();
-    b= bombs->get();
+    b= (Bomb*)bombs->get();
   }
 
   b->inflate(pos.x, pos.y - sz.height * 0.2f);
@@ -130,14 +133,14 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
 
   if (ENP(en)) { return; }
 
+  auto ship= CC_GNF(Ship, node, "ship");
   auto sprite= en->sprite;
-  auto ship= node->ship;
   auto pos= ship->pos();
   auto sz= en->size();
   auto epos= en->pos();
   c::Action* act;
 
-  en->setPos(CCRANDOM_1(80 + wz.width * 0.f), wz.height);
+  en->setPos(cx::randInt(80 + wz.width *0.5f), wz.height);
   switch (en->moveType) {
 
     case Moves::RUSH:
@@ -149,31 +152,29 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
     break;
 
     case Moves::HORZ:
-      auto a0 = c::MoveBy::create(0.5f, ccp(0, -100 - CCRANDOM_1(200)));
-      auto a1 = c::MoveBy::create(1, ccp(-50 - CCRANDOM_1(100), 0));
-      auto onComplete = c::CallFunc::create([=]() {
+      auto a0 = c::MoveBy::create(0.5f, ccp(0, -100 - cx::randInt(200)));
+      auto a1 = c::MoveBy::create(1, ccp(-50 - cx::randInt(100), 0));
+      auto cb = [=]() {
         auto a2 = c::DelayTime::create(1);
-        auto a3 = c::MoveBy::create(1, ccp(100 + CCRANDOM_1(100), 0));
+        auto a3 = c::MoveBy::create(1, ccp(100 + cx::randInt(100), 0));
         sprite->runAction(c::RepeatForever::create(
               c::Sequence::create(a2, a3,
                                 a2->clone(),
                                 a3->reverse())));
-      });
-      act = c::Sequence::create(a0, a1, onComplete);
+      };
+      act = c::Sequence::create(a0, a1, cc::CallFunc::create(cb));
     break;
 
     case Moves::OLAP:
       auto newX = (pos.x <= wz.width * 0.5f) ? wz.width : -wz.width;
       auto a0 = c::MoveBy::create(4, ccp(newX, -wz.width * 0.75f));
-      auto a1 = c::MoveBy::create(4,ccp(-newX, -wz.width));
+      auto a1 = c::MoveBy::create(4, ccp(-newX, -wz.width));
       act = c::Sequence::create(a0,a1);
     break;
   }
 
   sprite->runAction(act);
 }
-
-
 
 
 NS_END(terra)

@@ -90,6 +90,39 @@ void GLayer::play() {
   },1.0f);
 }
 
+void GLayer::initAsh() {
+  MGMS()->reifyPool("BackTiles");
+  MGMS()->reifyPool("BackSkies");
+
+  MGMS()->reifyPool("Missiles");
+  MGMS()->reifyPool("Baddies");
+  MGMS()->reifyPool("Bombs");
+
+  MGMS()->reifyPool("Explosions");
+  MGMS()->reifyPool("Sparks");
+  MGMS()->reifyPool("HitEffects");
+
+  factory->createBackSkies();
+
+  sharedExplosion();
+  initBackSkies();
+
+  factory->createBackTiles();
+  MGMS()->sendMsg("/game/backtiles");
+
+  factory->createMissiles();
+  factory->createBombs();
+  factory->createEnemies();
+
+  factory->createExplosions();
+  factory->createSparks();
+  factory->createHitEffects();
+
+  bornShip(ships->head->ship);
+
+
+}
+
 void GLayer::spawnPlayer() {
   bornShip();
 }
