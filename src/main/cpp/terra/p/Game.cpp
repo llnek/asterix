@@ -16,19 +16,36 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
-//this.regoAtlas('back-tiles', 1);
-//this.regoAtlas('game-pics', 0);
+class BLayer : public f::XLayer {
+protected:
+  NOCPYASS(BLayer)
+  IMPLCZ(BLayer)
+public:
+  virtual f::XLayer* realize() {
+    regoAtlas("back-tiles", 1);
+    regoAtlas("game-pics", 0);
+    return this;
+  }
+  STATIC_REIFY_LAYER(BLayer)
+};
 
 class CC_DLL GLayer : public f::GameLayer {
 protected:
 
   void inizGame();
 
+  NOCPYASS(GLayer)
+  IMPLCZ(GLayer)
+
 public:
-
   virtual int getIID() { return 2; }
+  virtual f::XLayer* realize();
+  bool playable;
 
+  STATIC_REIFY_LAYER(GLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,11 +66,15 @@ void GLayer::inizGame() {
   getHUD()->reset();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::initBackTiles() {
   moveBackTiles();
   schedule(CC_SCHEDULE_SELECTOR(GLayer::moveBackTiles), 5.0f);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 GLayer::moveBackTiles() {
   auto ps= XCFG()->getPool("BackTiles");
   auto wz= cx::visRect();
@@ -76,6 +97,8 @@ GLayer::moveBackTiles() {
   tm->sprite->runAction(c::Sequence::create(move,fun));
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::play() {
 
   inizGame();
@@ -90,6 +113,8 @@ void GLayer::play() {
   },1.0f);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::initAsh() {
   MGMS()->reifyPool("BackTiles");
   MGMS()->reifyPool("BackSkies");
@@ -123,10 +148,14 @@ void GLayer::initAsh() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::spawnPlayer() {
   bornShip();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onPlayerKilled() {
   //sh.sfxPlay('xxx-explode');
   if ( getHUD()->reduceLives(1)) {
@@ -136,37 +165,28 @@ void GLayer::onPlayerKilled() {
   }
 }
 
-void GLayer::onNewGame(f::GMode mode) {
-  //sh.sfxPlay('start_game');
-  setMode(mode);
-  play();
-}
-
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onEarnScore(j::json* msg) {
   auto n= msg->operator[]("score").get<j::json::number_integer_t>();
   getHUD()->updateScore(n);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onDone() {
   cx::pauseAudio();
   playable=false;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 const f::Box4 GLayer::getEnclosureBox() {
   auto wb= cx::visBox();
   return Box4( wb.top + 10, wb.right, wb.bottom, wb.left);
 }
 
-GLayer::~GLayer() {
-
-}
-
-GLayer::GLayer() {
-
-}
-
 END_NS_UNAMED()
-
 //////////////////////////////////////////////////////////////////////////////
 //
 f::GameLayer* Game::getGLayer() {
@@ -175,7 +195,7 @@ f::GameLayer* Game::getGLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const stdstr& topic, void* msg) {
+void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
 
   GLayer* y = (GLayer*) getLayer(2);
   j::json* json= (j::json*) msg;
@@ -193,7 +213,7 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
   }
 
   if ("/hud/replay" == topic) {
-    y->replay();
+    //y->replay();
   }
 
   if ("/game/players/killed" == topic) {
@@ -204,33 +224,18 @@ void Game::sendMsgEx(const stdstr& topic, void* msg) {
 //////////////////////////////////////////////////////////////////////////////
 //
 Game* Game::reify(f::GMode m) {
-  auto g = f::reifyRefType<Game>();
-  g->setMove(m);
-  g->realize();
+  auto g = Game::reify();
+  g->realizeWiithCtx( mc_new_1(f::GContext, m));
   return g;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* Game::realize() {
-  auto y = f::reifyRefType<GLayer>();
-  addLayer(y);
-  y->realize();
+f::XScene* Game::realizeWithCtx(f::GContext* x) {
+  context=x;
+  addLayer(GLayer::reify())->realize();
   return this;
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::Game() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::~Game() {
-
-}
-
 
 NS_END(terra)
 

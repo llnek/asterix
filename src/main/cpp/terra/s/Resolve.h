@@ -13,6 +13,7 @@
 #define __RESOLVE_H__
 
 #include "core/BaseSystem.h"
+#include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ protected:
   virtual bool onUpdate(float);
 
   NOCPYASS(Resolve)
-  Resolve()=delete;
+  NODFT(Resolve)
 
 public:
 

@@ -23,17 +23,17 @@ protected:
   virtual f::GameLayer* getGLayer();
 
   NOCPYASS(Game)
-  Game()=delete;
+  IMPLCZ(Game)
 
 public:
 
-  virtual void sendMsgEx(const stdstr& topic, void* msg);
-  virtual f::XScene* realize();
+  virtual void sendMsgEx(const MsgTopic& topic, void* msg);
+  virtual f::XScene* realizeWithCtx(f::GContext*);
   virtual bool isLive();
   virtual void stop();
   virtual void play();
 
-  DECLCZ(Game)
+  STATIC_REIFY_SCENE(Game)
 };
 
 

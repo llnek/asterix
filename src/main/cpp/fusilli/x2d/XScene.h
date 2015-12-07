@@ -22,7 +22,6 @@ class CC_DLL XScene : public c::Scene {
 protected:
 
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  virtual XScene* realize() { return this; }
 
   NOCPYASS(XScene)
   XScene() {}
@@ -31,6 +30,8 @@ public:
 
   XLayer* getLayer(int tag);
 
+  virtual void decorate() = 0;
+  virtual bool init();
   virtual ~XScene() {}
 };
 

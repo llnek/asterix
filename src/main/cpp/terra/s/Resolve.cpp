@@ -9,7 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Resolve.h"
+
+NS_BEGIN(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -163,8 +166,6 @@ void Resolve::checkShip(a::Node* node) {
     }
   }
 }
-
-
 
 
 

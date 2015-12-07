@@ -18,26 +18,22 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 BEGIN_NS_UNAMED()
-
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL UILayer : public f::XLayer {
 protected:
 
-  void onPlay(c::Ref*);
-
+  STATIC_REIFY_LAYER(UIayer)
   NOCPYASS(UILayer)
-  UILayer()=delete;
+  IMPLCZ(UILayer)
 
 public:
-
-  virtual f::XLayer* realize();
-  IMPLCZ(UILayer)
+  f::XLayer* realizeEx(VOIDFN );
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realize() {
+f::XLayer* UILayer::realizeEx(VOIDFN cb) {
   auto tt= cx::reifyBmfLabel( "font.JellyBelly",
       XCFG()->getL10NStr("mmenu"));
   auto tile = CC_CSV(c::Integer, "TILE");
@@ -52,16 +48,16 @@ f::XLayer* UILayer::realize() {
   addItem(tt);
 
   auto b= cx::reifyMenuBtn("player1.png");
-  b->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay));
   auto menu= cx::mkMenu(b);
+  b->setCallback([=](c::Ref*) {
+        cx::runScene( Game::reify(f::GMode::ONE));
+      });
   menu->setPosition(cw);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  back->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onBack));
+  back->setCallback([=](c::Ref*) { cb(); });
   back->setColor(c);
 
   auto quit= cx::reifyMenuBtn("icon_quit.png");
@@ -91,43 +87,23 @@ f::XLayer* UILayer::realize() {
   return this;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref* ) {
-  cx::runScene( Game::reify(f::GMode::ONE);
-}
-
 END_NS_UNAMED()
-
 //////////////////////////////////////////////////////////////////////////////
 //
 MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
-  auto m = f::reifyRefType<MainMenu>();
-  m->backAction= cb;
-  m->realize();
+  auto m = MainMenu::reify();
+  m->realizeEx(cb);
   return m;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* MainMenu::realize() {
-  auto y = f::reifyRefType<UILayer>();
+f::XScene* MainMenu::realizeEx(VOIDFN cb) {
+  auto y = UILayer::reify();
   addLayer(y);
-  y->realize();
+  y->realizeEx(cb);
   return this;
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MainMenu::~MainMenu() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-MainMenu::MainMenu() {
-  SNPTR(backAction)
-}
-
 
 
 NS_END(terra)

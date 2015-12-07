@@ -36,15 +36,17 @@ f::XLayer* HUDLayer::realize() {
   lives->realize("ship01.png",3,
       tile +soff,
       wz.height - tile - soff, 0.4);
+  addItem(lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto hh = cx::getHeight(b) * 0.5f;
   auto hw = cx::getWidth(b) * 0.5f;
-  b->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::showMenu));
-  //b->setColor(this->color);
   auto menu = cx::mkMenu(b);
 
+  b->setCallback([=](c::Ref*) {
+      MGMS()->sendMsg("/hud/showmenu");
+      });
+  //b->setColor(this->color);
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
 
@@ -53,21 +55,14 @@ f::XLayer* HUDLayer::realize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::showMenu(c::Ref*) {
-  MGMS()->sendMsg("/hud/showmenu");
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 void HUDLayer::resetAsNew() {
   reset();
-  score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::reset() {
-
+  score=0;
 }
 
 NS_END(terra)

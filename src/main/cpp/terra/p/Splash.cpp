@@ -26,7 +26,7 @@ protected:
   void onPlay(c::Ref*);
 
   NOCPYASS(UILayer)
-  UILayer()=delete;
+  IMPLCZ(UILayer)
 
   c::Sprite* flare;
   c::Sprite* ship;
@@ -36,38 +36,33 @@ public:
   virtual f::XLayer* realize();
   virtual void update(float);
 
-  IMPLCZ(UILayer)
+  STATIC_REIFY_LAYER(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 f::XLayer* UILayer::realize() {
-  auto b= cx::reifyMenuBtn("play.png");
   auto wz = cx::visRect();
   auto wb = cx::visBox();
   auto cw = cx::center();
 
   centerImage("game.bg");
 
+  auto b= cx::reifyMenuBtn("play.png");
+  auto menu= cx::mkMenu(b);
   b->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay));
-
-  auto menu= cx::mkMenu(b);
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
 
   flare = cx::reifySprite("flare.png");
   flare->setVisible(false);
   ship = cx::reifySprite("ship03.png");
-  ship->setPosition(
-    CC_RANDOM_1(wz.width),
-    0
-  );
+  ship->setPosition( cx::randInt(wz.width), 0);
   addItem(flare, 15, 10);
   addItem(ship, 0, 4);
   this->update();
   cx::sfxMusic("mainMusic", true);
-  //this.schedule(this.update, 0.1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,37 +79,23 @@ void UILayer::onPlay(c::Ref*) {
 //
 void UILayer::update(float dt) {
   auto wz = cx::visRect();
-  auto g= cx::CallFunc::create([=]() {
-    this->ship->setPosition(
-      sjs.rand(wz.width),
-      10
-    );
+  auto g= [=]() {
+    this->ship->setPosition( cx::randInt(wz.width), 10);
     this->update();
-  });
+  };
   this->ship->runAction(c::Sequence::create(
-        c::MoveBy::create(2, ccp(CC_RANDOM_1(wz.width),
-                                             wz.height + 100)), g));
+        c::MoveBy::create(2,
+          ccp(cx::randInt(wz.width), wz.height + 100)),
+        c::CallFunc::create(g)));
 }
 
 END_NS_UNAMED()
-
 //////////////////////////////////////////////////////////////////////////////
 //
 f::Scene* Splash::realize() {
-  auto y = f::reifyRefType<UILayer>();
-  addLayer(y);
-  y->realize();
+  addLayer(UILayer::reify())->realize();
   return this;
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Splash* Splash::reify() {
-  auto s = f::reifyRefType<Splash>();
-  s->realize();
-  return s;
-}
-
 
 NS_END(terra)
 

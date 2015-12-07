@@ -17,19 +17,16 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainMen : public f::XScene {
+class CC_DLL MainMenu : public f::XScene {
 protected:
 
+  virtual f::XScene* realizeEx(VOIDFN );
+  STATIC_REIFY_SCENE(MainMenu)
   NOCPYASS(MainMenu)
-  MainMenu()=delete;
+  IMPLCZ(MainMenu)
 
-  VOIDFN backAction;
 public:
-
   static MainMenu* reifyWithBackAction(VOIDFN);
-
-  virtual f::XScene* realize();
-  DECLCZ(MainMenu)
 };
 
 

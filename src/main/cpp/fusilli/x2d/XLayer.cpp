@@ -43,6 +43,17 @@ XLayer::~XLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+bool XLayer::initEx(XScene* par, int zx) {
+  if (c::Layer::init()) {
+    par->addLayer(this, zx);
+    decorate();
+    return true;
+  }
+  return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 c::SpriteBatchNode*
 XLayer::regoAtlas(const stdstr& name,
      const MaybeInt& zx,  const MaybeInt& tag) {

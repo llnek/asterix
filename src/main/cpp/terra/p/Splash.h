@@ -20,13 +20,12 @@ NS_BEGIN(terra)
 class CC_DLL Splash : public f::XScene {
 protected:
 
+  virtual f::XScene* realize();
   NOCPYASS(Splash)
-  Splash()=delete;
+  IMPLCZ(Splash)
 
 public:
-
-  virtual f::XScene* realize();
-  DECLCZ(Splash)
+  STATIC_REIFY_SCENE(Splash)
 };
 
 

@@ -22,7 +22,7 @@ class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
   NOCPYASS(HUDLayer)
-  HUDLayer()=delete;
+  IMPLCZ(HUDLayer)
 
   void resetAsNew();
   void reset();
@@ -34,8 +34,7 @@ protected:
 public:
 
   virtual f::XLayer* realize();
-
-  DECLCZ(HUDLayer)
+  STATIC_REIFY_LAYER(HUDLayer)
 };
 
 

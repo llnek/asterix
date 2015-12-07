@@ -40,25 +40,24 @@ typedef std::string MsgTopic;
 
 #define STATIC_REIFY_SCENE(__TYPE__) \
 static __TYPE__* reify() {  \
-    __TYPE__ *pRet = new(std::nothrow) __TYPE__(); \
-    if (pRet && pRet->init()) { \
-        pRet->autorelease(); \
-        pRet->realize(); \
-        return pRet; \
+    __TYPE__ *p = mc_new( __TYPE__ ); \
+    if (NNP(p) && p->init()) { \
+        p->autorelease(); \
+        return p; \
     } else { \
-        delete pRet; \
+        delete p; \
         return nullptr; \
     } \
 }
 
 #define STATIC_REIFY_LAYER(__TYPE__) \
-static __TYPE__* reify() {  \
-    __TYPE__ *pRet = new(std::nothrow) __TYPE__(); \
-    if (pRet && pRet->init()) { \
-        pRet->autorelease(); \
-        return pRet; \
+  static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
+    __TYPE__ *p = mc_new( __TYPE__ ); \
+    if (NNP(p) && p->initEx(xs, zx)) { \
+        p->autorelease(); \
+        return p; \
     } else { \
-        delete pRet; \
+        delete p; \
         return nullptr; \
     } \
 }

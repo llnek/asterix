@@ -28,6 +28,17 @@ XLayer* XScene::getLayer(int tag) {
   return SCAST(XLayer*, getChildByTag(tag));
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool XScene::init() {
+  if (c::Scene::init()) {
+    decorate();
+    return true;
+  }
+  return false;
+}
+
+
 NS_END(fusii)
 
 

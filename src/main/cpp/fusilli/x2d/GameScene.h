@@ -31,16 +31,14 @@ enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GContext {
+class CC_DLL SContext {
 public:
-  virtual ~GContext() { mc_del_ptr(odin) }
-  GContext() {
-    mode=GMode::ONE;
-    SNPTR(odin)
-  }
+  SContext() { mode=GMode::ONE; SNPTR(odin) }
+  SContext(GMode m) : SContext() { mode=m; }
+  virtual ~SContext() { mc_del_ptr(odin) }
   ws::OdinIO* odin;
   GMode mode;
-  NOCPYASS(GContext)
+  NOCPYASS(SContext)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,11 +48,12 @@ protected:
 
   static void bind(not_null<GameScene*>);
 
+  void set(SContext*);
 
   s::map<stdstr, XPool*> pools;
   s::queue<stdstr> msgQ;
 
-  GContext* context;
+  SContext* context;
   int level;
 
   NOCPYASS(GameScene)
@@ -64,8 +63,8 @@ public:
 
   //static GameScene* reify(not_null<GameScene*>, GMode, not_null<ws::OdinIO*>);
   //static GameScene* reify(not_null<GameScene*>, GMode);
-    virtual GameScene* realizeWithCtx(GContext*) = 0;
-    virtual GameLayer* getGLayer() = 0;
+  virtual GameScene* realizeWithCtx(SContext*) = 0;
+  virtual GameLayer* getGLayer() = 0;
 
   static GameScene* self();
   static GameLayer* get();
