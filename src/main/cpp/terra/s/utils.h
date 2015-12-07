@@ -27,7 +27,7 @@ struct EnemyType {
   EnemyType(Attacks attackMode, Moves moveType,
     int type,
     stdtsr textureName,
-    stdstr bulletType, int HP, int scoreValue) {
+    sstr bulletType, int HP, int scoreValue) {
     this->attackMode = attackMode;
     this->moveType= moveType;
     this->ytpe= type;
@@ -41,7 +41,7 @@ struct EnemyType {
   Moves moveType;
   int type;
   stdtsr textureName;
-  stdstr bulletType;
+  sstr bulletType;
   int HP;
   int scoreValue;
 };

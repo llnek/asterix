@@ -22,30 +22,27 @@ class FS_DLL System {
 protected:
 
   System(int priority);
-  System();
-
-  void init();
 
   int _priority;
   bool active;
-
-  NOCPYASS(System)
 
 public:
 
   virtual void removeFromEngine(not_null<Engine*>);
   virtual void addToEngine(not_null<Engine*>);
   virtual bool update(float time);
-  bool isa(const SystemType& );
 
   virtual const SystemType typeId() = 0;
-  virtual ~System();
+  bool isa(const SystemType& );
 
   int priority() { return _priority; }
   bool isActive() { return active; }
 
   void restart();
   void suspend();
+
+  NOCPYASS(System)
+  DECLCZ(System)
 
   System* previous;
   System* next;

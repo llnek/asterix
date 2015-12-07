@@ -160,7 +160,7 @@ void HUDLayer::updateTimer(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::showCountDown(const stdstr& msg) {
+void HUDLayer::showCountDown(const sstr& msg) {
   if (NNP(countDown)) {
     countDown->setString(msg);
   }
@@ -179,7 +179,7 @@ void HUDLayer::killTimer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::updateScore(const stdstr& pcolor, int value) {
+void HUDLayer::updateScore(const sstr& pcolor, int value) {
   scores[pcolor] += value;
   drawScores();
 }
@@ -205,7 +205,7 @@ void HUDLayer::endGame(int winner) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::drawXXXText(c::Label* obj, const stdstr& msg) {
+void HUDLayer::drawXXXText(c::Label* obj, const sstr& msg) {
   obj->setString(msg);
 }
 
@@ -229,11 +229,11 @@ void HUDLayer::drawResult(int pnum) {
   switch (pnum) {
     case 2:
       msg= XCFG()->getL10NStr("whowin",
-          s::vector<stdstr> { this->p2Long});
+          s::vector<sstr> { this->p2Long});
       break;
     case 1:
       msg= XCFG()->getL10NStr("whowin",
-          s::vector<stdstr> { this->p1Long});
+          s::vector<sstr> { this->p1Long});
       break;
   }
 
@@ -247,18 +247,18 @@ void HUDLayer::drawStatus(int pnum) {
     auto pfx = pnum == 1 ? p1Long : p2Long;
     drawXXXText(status,
       XCFG()->getL10NStr("whosturn",
-        s::vector<stdstr> { pfx }));
+        s::vector<sstr> { pfx }));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::regoPlayers(const stdstr& color1,
-    const stdstr& p1k, const stdstr& p1n,
-    const stdstr& color2, const stdstr& p2k, const stdstr& p2n) {
+void HUDLayer::regoPlayers(const sstr& color1,
+    const sstr& p1k, const sstr& p1n,
+    const sstr& color2, const sstr& p2k, const sstr& p2n) {
 
-  scores.insert(S__PAIR(stdstr,int, color2, 0));
-  scores.insert(S__PAIR(stdstr,int, color1, 0));
+  scores.insert(S__PAIR(sstr,int, color2, 0));
+  scores.insert(S__PAIR(sstr,int, color1, 0));
   play2= color2;
   play1= color1;
   p2Long= p2n;

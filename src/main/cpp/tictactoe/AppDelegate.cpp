@@ -38,7 +38,7 @@ AppDelegate::AppDelegate() {
 //    auto z= j::json(zz);
 //    z["pnum"] = 999;
 //    z["x"] =   j::json::array_t { "ww", 4};
-//    stdstr out= z.dump(0);
+//    sstr out= z.dump(0);
 //    printf("json = \n%s", out.c_str());
 
 }

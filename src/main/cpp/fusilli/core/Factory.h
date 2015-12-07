@@ -27,12 +27,11 @@ protected:
   c::Dictionary* state;
   a::Engine* engine;
 
-  NOCPYASS(Factory)
-  NODFT(Factory)
-
 public:
 
-  virtual ~Factory();
+  NOCPYASS(Factory)
+  NODFT(Factory)
+  CZDTOR(Factory)
 };
 
 

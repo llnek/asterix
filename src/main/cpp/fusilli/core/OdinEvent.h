@@ -74,17 +74,16 @@ enum class CC_DLL EType {
 class CC_DLL OdinEvent : public c::EventCustom {
 public:
 
-  NOCPYASS(OdinEvent)
+  OdinEvent(MType, EType, j::json& body);
+  OdinEvent(MType t, EType c);
+  OdinEvent(j::json& msg);
 
   double tstamp;
   MType type;
   EType code;
   j::json doco;
 
-  OdinEvent(MType, EType, j::json& body);
-  OdinEvent(MType t, EType c);
-  OdinEvent(j::json& msg);
-
+  NOCPYASS(OdinEvent)
   DECLCZ(OdinEvent)
 };
 

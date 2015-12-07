@@ -20,7 +20,7 @@ NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
 // items should be same size
-c::Menu* mkMenu(const s::vector<c::MenuItem*>& items, bool vert, float pad) {
+c::Menu* mkMenu(const s_vec<c::MenuItem*>& items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
 
@@ -57,7 +57,7 @@ bool isDesktop() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B colorRGB(const stdstr& color) {
+const c::Color3B colorRGB(const sstr& color) {
   int r=0, g=0, b=0;
   ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
   return c::Color3B( (GLubyte)r, (GLubyte)g, (GLubyte)b);
@@ -65,7 +65,7 @@ const c::Color3B colorRGB(const stdstr& color) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void sfxMusic(const stdstr& music, bool repeat) {
+void sfxMusic(const sstr& music, bool repeat) {
   auto fp= XCFG()->getMusic(music);
   try {
     den::SimpleAudioEngine::getInstance()->playBackgroundMusic(fp.c_str(), repeat);
@@ -76,7 +76,7 @@ void sfxMusic(const stdstr& music, bool repeat) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void sfxPlay(const stdstr& sound) {
+void sfxPlay(const sstr& sound) {
   auto fp= XCFG()->getEffect(sound);
   try {
     den::SimpleAudioEngine::getInstance()->playEffect(fp.c_str());
@@ -110,15 +110,15 @@ void reifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuBtn(const stdstr& n) {
+c::MenuItem* reifyMenuBtn(const sstr& n) {
   return reifyMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuBtn(const stdstr& n,
-    const stdstr& s,
-    const stdstr& d) {
+c::MenuItem* reifyMenuBtn(const sstr& n,
+    const sstr& s,
+    const sstr& d) {
 
   return c::MenuItemSprite::create(reifySprite(n),
                                 reifySprite(s),
@@ -142,7 +142,7 @@ const c::Color3B black() { return c::Color3B::BLACK; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text) {
+c::Label* reifyBmfLabel(const sstr& font, const sstr& text) {
   auto f= c::Label::createWithBMFont( XCFG()->getFont(font), text);
   f->setOpacity(0.9f * 255);
   return f;
@@ -150,7 +150,7 @@ c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* reifyBmfLabel(float x, float y, const stdstr& font, const stdstr& text) {
+c::Label* reifyBmfLabel(float x, float y, const sstr& font, const sstr& text) {
   auto f= reifyBmfLabel(font, text);
   f->setPosition(x,y);
   return f;
@@ -183,13 +183,13 @@ bool isPortrait() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Array* readXmlAsList(const stdstr& fpath) {
+c::Array* readXmlAsList(const sstr& fpath) {
   return c::Array::createWithContentsOfFile(fpath.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* readXmlAsDict(const stdstr& fpath) {
+c::Dictionary* readXmlAsDict(const sstr& fpath) {
   return c::Dictionary::createWithContentsOfFile(fpath.c_str());
 }
 
@@ -251,7 +251,7 @@ bool timerDone(not_null<c::DelayTime*> t) {
 //////////////////////////////////////////////////////////////////////////
 // Reify a sprite from its frame name
 //
-c::Sprite* reifySprite(const stdstr& name) {
+c::Sprite* reifySprite(const sstr& name) {
   return c::Sprite::createWithSpriteFrameName(name);
 }
 
@@ -293,7 +293,7 @@ bool isTransitioning() {
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const c::Size calcSize(const stdstr& frame) {
+const c::Size calcSize(const sstr& frame) {
   return reifySprite(frame)->getContentSize();
 }
 
@@ -545,7 +545,7 @@ bool traceEnclosure(float dt, const Box4& bbox,
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-c::SpriteFrame* getSpriteFrame(const stdstr& frameid) {
+c::SpriteFrame* getSpriteFrame(const sstr& frameid) {
   return c::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 
@@ -631,6 +631,12 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
     return;
   }
   obj1->updatePosition(x,y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float randFloat(float upper) {
+  return cocos2d::rand_0_1() * upper;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -31,11 +31,11 @@ public:
 
   virtual ~Config();
 
-  virtual const stdstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
+  virtual const sstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
 
-  virtual const stdstr color() { return "yellow"; }
+  virtual const sstr color() { return "yellow"; }
 
-  virtual const stdstr appId() { return "terra"; }
+  virtual const sstr appId() { return "terra"; }
 
   virtual const c::Size gameSize() { return c::Size(320,480); }
 

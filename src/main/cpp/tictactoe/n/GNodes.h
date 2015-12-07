@@ -26,7 +26,7 @@ public:
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> {
+        s::vector<sstr> {
           "selection", "players", "robot", "grid", "view" },
         s::vector<a::COMType> {
           "n/UISelection", "n/Players", "n/SmartAlgo", "n/Grid", "n/PlayView" });
@@ -45,7 +45,7 @@ public:
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> { "selection", "view" },
+        s::vector<sstr> { "selection", "view" },
         s::vector<a::COMType> { "n/UISelection", "n/PlayView" });
   }
 

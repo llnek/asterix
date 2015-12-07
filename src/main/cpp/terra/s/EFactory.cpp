@@ -12,7 +12,7 @@
 #include "EFactory.h"
 NS_ALIAS(terra)
 
-static const s::array<stdstr,4> BackTileMap= {
+static const s::array<sstr,4> BackTileMap= {
   "lvl1_map1.png", "lvl1_map2.png",
   "lvl1_map3.png", "lvl1_map4.png"
 };
@@ -182,7 +182,7 @@ void EFactory::createBackSkies() {
 //
 void EFactory::createBackTiles(int count) {
   auto layer= MGMS()->getLayer(1);
-  auto cr= [=](const stdstr& name) -> f::ComObj* {
+  auto cr= [=](const sstr& name) -> f::ComObj* {
     auto sp = cx::reifySprite(name);
     sp->setAnchorPoint(cx::anchorL());
     sp->setVisible(false);

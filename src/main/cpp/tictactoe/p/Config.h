@@ -29,10 +29,10 @@ protected:
 
 public:
 
-  virtual const stdstr appId() { return "tictactoe"; }
-  virtual const stdstr color() { return "white"; }
+  virtual const sstr appId() { return "tictactoe"; }
+  virtual const sstr color() { return "white"; }
 
-  virtual const stdstr appKey() {
+  virtual const sstr appKey() {
     return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
   }
 
@@ -45,14 +45,14 @@ public:
   }
 
   virtual void handleResolution(const c::Size& rs);
-  virtual const stdstr getWSUrl();
+  virtual const sstr getWSUrl();
   virtual c::Scene* startWith();
 
-  virtual void setGameId(const stdstr& );
-  virtual void setRoomId(const stdstr& );
+  virtual void setGameId(const sstr& );
+  virtual void setRoomId(const sstr& );
 
-  virtual const stdstr getGameId() { return ""; }
-  virtual const stdstr getRoomId() { return ""; }
+  virtual const sstr getGameId() { return ""; }
+  virtual const sstr getRoomId() { return ""; }
 
   virtual float getScale();
   virtual void runOnce();

@@ -56,7 +56,7 @@ f::JsonObj* GameScene::getLCfg() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::getPool(const stdstr& key) {
+XPool* GameScene::getPool(const sstr& key) {
   auto it = pools.find(key);
   if (it != pools.end()) {
     return it->second;
@@ -67,14 +67,14 @@ XPool* GameScene::getPool(const stdstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::reifyPool(const stdstr& key) {
+XPool* GameScene::reifyPool(const sstr& key) {
   auto it = pools.find(key);
   auto p= mc_new( XPool);
   if (it != pools.end()) {
     delete it->second;
     pools.erase(it);
   }
-  pools.insert(S__PAIR(stdstr, XPool*, key, p));
+  pools.insert(S__PAIR(sstr, XPool*, key, p));
   return p;
 }
 
@@ -100,7 +100,7 @@ ws::OdinIO* GameScene::wsock() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GContext* GameScene::getCtx() { return context; }
+SContext* GameScene::getCtx() { return context; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -113,7 +113,6 @@ GMode GameScene::getMode() {
 bool GameScene::isOnline() {
   return context->odin != nullptr;
 }
-
 
 
 NS_END(fusii)

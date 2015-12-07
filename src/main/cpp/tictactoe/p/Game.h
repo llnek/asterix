@@ -25,7 +25,7 @@ protected:
 
 public:
 
-  virtual void sendMsgEx(const stdstr& topic, void* msg);
+  virtual void sendMsgEx(const sstr& topic, void* msg);
   virtual f::XScene* realize();
   virtual bool isLive();
   virtual void stop();

@@ -47,9 +47,9 @@ Engine::Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<Entity*> Engine::getEntities(const stdstr& group) {
-  auto it=groups.find(group);
-  s::vector<Entity*> v;
+const s_vec<Entity*> Engine::getEntities(const sstr& g) {
+  auto it=groups.find(g);
+  s_vec<Entity*> v;
   if (it != groups.end()) {
     return it->second->list();
   } else {
@@ -59,8 +59,8 @@ const s::vector<Entity*> Engine::getEntities(const stdstr& group) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<Entity*> Engine::getEntities() {
-  s::vector<Entity*> rc;
+const s_vec<Entity*> Engine::getEntities() {
+  s_vec<Entity*> rc;
   F__LOOP(it, groups) {
     auto v= it->second->list();
     rc.insert(rc.end(), v.begin(), v.end());
@@ -70,21 +70,21 @@ const s::vector<Entity*> Engine::getEntities() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<System*> Engine::getSystems() {
+const s_vec<System*> Engine::getSystems() {
   return systemList.list();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::reifyEntity(const stdstr& group) {
-  auto e= Entity::reify(group, this);
-  auto it= groups.find(group);
-  ObjList<Entity>* el;
+Entity* Engine::reifyEntity(const sstr& g) {
+  auto e= Entity::reify(g, this);
+  auto it= groups.find(g);
+  EList* el;
   if (it != groups.end()) {
     el= it->second;
   } else {
-    el= mc_new(ObjList<Entity>);
-    groups.insert(S__PAIR(stdstr, ObjList<Entity>*, group, el));
+    el= mc_new(EList);
+    groups.insert(S__PAIR(sstr, EList*, g, el));
   }
   el->add(e);
   dirty=true;
@@ -116,7 +116,7 @@ void Engine::purgeEntity(not_null<Entity*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::purgeEntity(ObjList<Entity>* el, Entity* e) {
+void Engine::purgeEntity(EList* el, Entity* e) {
   e->markDelete();
   el->release(e);
   dirty=true;
@@ -125,8 +125,8 @@ void Engine::purgeEntity(ObjList<Entity>* el, Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::purgeEntities(const stdstr& group) {
-  auto it = groups.find(group);
+void Engine::purgeEntities(const sstr& g) {
+  auto it = groups.find(g);
   if (it != groups.end()) {
     auto el=it->second;
     while (NNP(el->head)) {

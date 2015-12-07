@@ -32,18 +32,13 @@ protected:
   virtual void initKeys();
   virtual void initTouch();
 
-  s::array<bool, 256> keyboard;
+  s_arr<bool, 256> keyboard;
   c::Dictionary* options;
   a::Engine* engine;
-  //bool playable;
-  //f::Factory* fac;
 
   c::EventListenerKeyboard* keys;
   c::EventListenerMouse* mouse;
   c::EventListener* touch;
-
-  NOCPYASS(GameLayer)
-  GameLayer();
 
 public:
 
@@ -51,7 +46,9 @@ public:
   virtual const Box4 getEnclosureBox();
   bool keyPoll(KEYCODE);
 
-  virtual ~GameLayer();
+  NOCPYASS(GameLayer)
+  DECLCZ(GameLayer)
+
 };
 
 

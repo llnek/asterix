@@ -20,15 +20,14 @@ NS_BEGIN(ash)
 //////////////////////////////////////////////////////////////////////////////
 // owns all items in this list
 template <typename T> class FS_DLL ObjList {
-private:
-  NOCPYASS(ObjList)
 public:
-  const s::vector<T*> list();
   void release(not_null<T*>);
   void add(not_null<T*> );
+  const s_vec<T*> list();
   void clear() ;
   T* head;
   T* tail;
+  NOCPYASS(ObjList)
   DECLCZ(ObjList)
 };
 
@@ -84,8 +83,8 @@ void ObjList<T>::clear() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
-const s::vector<T*> ObjList<T>::list() {
-  s::vector<T*> v;
+const s_vec<T*> ObjList<T>::list() {
+  s_vec<T*> v;
   for (auto p= head; NNP(p); p=p->next) {
     v.push_back(p);
   }
@@ -111,51 +110,52 @@ ObjList<T>::ObjList() {
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Engine {
+public:
+
+  typedef ObjList<System> SList;
+  typedef ObjList<Entity> EList;
+
 private:
 
-  void purgeEntity(ObjList<Entity>*, Entity*);
+  void purgeEntity(EList*, Entity*);
   void onModifyEntity(Entity*);
   void onPurgeEntity(Entity*);
   void onAddEntity(Entity*);
   void houseKeeping();
 
-  s::map<stdstr, ObjList<Entity>*> groups;
-  s::vector<NodeList*> nodeLists;
-  s::vector<Entity*> freeList;
-  s::vector<Entity*> modList;
-  s::vector<Entity*> addList;
+  s_vec<NodeList*> nodeLists;
+  s_map<sstr, EList*> groups;
+  s_vec<Entity*> freeList;
+  s_vec<Entity*> modList;
+  s_vec<Entity*> addList;
 
-  ObjList<System> systemList;
+  SList systemList;
   bool updating;
   bool dirty;
 
-  NOCPYASS(Engine)
-
 public:
 
-  const s::vector<Entity*> getEntities(const stdstr& group);
-  const s::vector<Entity*> getEntities();
-  const s::vector<System*> getSystems();
+  const s_vec<Entity*> getEntities(const sstr& grp);
+  const s_vec<Entity*> getEntities();
+  const s_vec<System*> getSystems();
 
-  Entity* reifyEntity(const stdstr& group);
+  NodeList* getNodeList(const NodeType& );
+  Entity* reifyEntity(const sstr& grp);
 
   void notifyModify(not_null<Entity*>);
   void purgeEntity(not_null<Entity*> );
-  void purgeEntities(const stdstr& group) ;
-
-  NodeList* getNodeList(const NodeType& );
+  void purgeEntities(const sstr& grp);
 
   void purgeSystem (not_null<System*> );
   void purgeSystems();
   void forceSync();
-  void regoSystem(not_null<System*> );
 
+  void regoSystem(not_null<System*> );
   void update(float time);
 
+  NOCPYASS(Engine)
   DECLCZ(Engine)
 };
-
-
 
 
 NS_END(ash)

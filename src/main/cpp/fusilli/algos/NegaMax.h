@@ -19,10 +19,10 @@ NS_BEGIN(algos)
 
 const int PINF = 1000000;
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 template<int Z> struct FS_DLL FFrame {
-  s::array<int, Z*Z> state;
+  s_arr<int, Z*Z> state;
   int lastBestMove;
   int other;
   int cur;
@@ -32,7 +32,7 @@ template<int Z> struct FS_DLL FFrame {
 template<int Z> class FS_DLL GameBoard {
 public:
 
-  virtual const s::vector<int> getNextMoves(not_null<FFrame<Z>*>) = 0;
+  virtual const s_vec<int> getNextMoves(not_null<FFrame<Z>*>) = 0;
   virtual int evalScore(not_null<FFrame<Z>*>) = 0;
 
   virtual bool isStalemate(not_null<FFrame<Z>*>) = 0;
@@ -43,7 +43,8 @@ public:
 
   virtual void switchPlayer(not_null<FFrame<Z>*>) = 0;
   virtual owner<FFrame<Z>*> takeFFrame() = 0;
-  virtual ~GameBoard() {}
+
+  CZDTOR_X(GameBoard)
 };
 
 BEGIN_NS_UNAMED()
@@ -89,8 +90,8 @@ template <int Z> int negaMax(not_null<GameBoard<Z>*> board,
 
   return bestValue;
 }
-END_NS_UNAMED()
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
 template <int Z> int evalNegaMax(not_null<GameBoard<Z>*> board) {

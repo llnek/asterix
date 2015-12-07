@@ -15,10 +15,10 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> Node::reify(const s::map<stdstr, COMType>& s) {
+owner<Node*> Node::reify(const s_map<sstr, COMType>& s) {
   auto node= mc_new(Node);
   F__LOOP(it, s) {
-    node->types.insert(S__PAIR(COMType, stdstr, it->second, it->first));
+    node->types.insert(S__PAIR(COMType, sstr, it->second, it->first));
   }
   return node;
 }
@@ -50,7 +50,7 @@ bool Node::bindEntity(not_null<Entity*> e) {
     auto t= it->first;
     auto c= e->get(t);
     if (NNP(c)) {
-      values.insert(S__PAIR(stdstr, Component*, f, c));
+      values.insert(S__PAIR(sstr, Component*, f, c));
     } else {
       // this entity is no good, doesn't have the right
       // components
@@ -74,8 +74,8 @@ bool Node::belongsTo(not_null<Entity*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::get(const stdstr& field) {
-  auto it = values.find(field);
+Component* Node::get(const sstr& f) {
+  auto it = values.find(f);
   if (it != values.end()) {
     return it->second;
   } else {

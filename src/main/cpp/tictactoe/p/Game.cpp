@@ -141,7 +141,7 @@ void GLayer::inizGame() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
 
-  f::emptyQueue<stdstr>( MGMS()->msgQueue() );
+  f::emptyQueue<sstr>( MGMS()->msgQueue() );
 
   if (atlases.empty()) {
     regoAtlas("game-pics");
@@ -151,10 +151,10 @@ void GLayer::inizGame() {
   auto seed = XCFG()->getSeedData();
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
-  stdstr p1k;
-  stdstr p2k;
-  stdstr p1n;
-  stdstr p2n;
+  sstr p1k;
+  sstr p2k;
+  sstr p1n;
+  sstr p2n;
 
   auto ppids = seed["ppids"];
   J__LOOP(it, ppids) {
@@ -339,7 +339,7 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const stdstr& topic, void* msg) {
+void Game::sendMsgEx(const sstr& topic, void* msg) {
   auto y= (GLayer*) getGLayer();
 
   if ("/hud/showmenu" == topic) {

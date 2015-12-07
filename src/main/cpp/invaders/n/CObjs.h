@@ -146,13 +146,13 @@ private:
   NOCPYASS(Ship)
   NODFT(Ship)
 public:
-  Ship(not_null<c::Sprite*>, const stdstr&, const stdstr&);
+  Ship(not_null<c::Sprite*>, const sstr&, const sstr&);
   virtual const a::COMType typeId()
   { return "n/Ship"; }
   virtual ~Ship()
   {}
-  stdstr frame0;
-  stdstr frame1;
+  sstr frame0;
+  sstr frame1;
 };
 
 //////////////////////////////////////////////////////////////////////////////

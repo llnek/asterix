@@ -22,12 +22,11 @@ NS_BEGIN(fusii)
 class CC_DLL XPool {
 private:
 
-  s::vector<ComObj*> objs;
-  NOCPYASS(XPool)
+  s_vec<ComObj*> objs;
 
 public:
 
-  const s::vector<ComObj*>& elements() { return objs; }
+  const s_vec<ComObj*>& elements() { return objs; }
   ComObj* select(s::function<bool (ComObj*)>);
   void preset(s::function<ComObj* ()>, int);
 
@@ -44,6 +43,7 @@ public:
   void checkin(not_null<ComObj*>);
   void reset();
 
+  NOCPYASS(XPool)
   DECLCZ(XPool)
 };
 

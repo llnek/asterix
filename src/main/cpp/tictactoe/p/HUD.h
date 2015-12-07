@@ -20,7 +20,7 @@ NS_BEGIN(tttoe)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  s::map<stdstr, int> scores;
+  s::map<sstr, int> scores;
   bool countDownState;
   int countDownValue;
 
@@ -32,22 +32,22 @@ protected:
   c::Label* score2;
   c::Color3B  color;
 
-  stdstr play2;
-  stdstr play1;
-  stdstr p2Long;
-  stdstr p1Long;
-  stdstr p2ID;
-  stdstr p1ID;
+  sstr play2;
+  sstr play1;
+  sstr p2Long;
+  sstr p1Long;
+  sstr p2ID;
+  sstr p1ID;
 
 public:
 
   virtual int getIID() { return 3; }
   virtual f::XLayer* realize();
 
-    void regoPlayers(const stdstr& color1,
-                     const stdstr& p1k, const stdstr& p1n,
-                     const stdstr& color2,
-                     const stdstr& p2k, const stdstr& p2n);
+    void regoPlayers(const sstr& color1,
+                     const sstr& p1k, const sstr& p1n,
+                     const sstr& color2,
+                     const sstr& p2k, const sstr& p2n);
 
   void resetAsNew();
   void reset();
@@ -59,12 +59,12 @@ public:
 
     void showTimer();
     void updateTimer(float);
-    void showCountDown(const stdstr& msg);
+    void showCountDown(const sstr& msg);
     void killTimer();
-    void updateScore(const stdstr& pcolor,  int value);
+    void updateScore(const sstr& pcolor,  int value);
     void draw(bool running,  int pnum);
     void endGame(int winner);
-    void drawXXXText(c::Label*, const stdstr& msg);
+    void drawXXXText(c::Label*, const sstr& msg);
     void drawScores();
     void drawResult(int pnum);
     void drawStatus(int pnum);

@@ -25,11 +25,6 @@ protected:
   void preLaunch(const c::Size& designSize);
   void initAudio();
 
-  NOCPYASS(App)
-
-  App()
-  {}
-
 public:
 
   /**
@@ -53,7 +48,9 @@ public:
 
   virtual void initGLContextAttrs();
 
-  virtual ~App() {}
+  NOCPYASS(App)
+  IMPLCZ(App)
+
 };
 
 

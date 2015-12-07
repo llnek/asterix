@@ -15,7 +15,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Entity*> Entity::reify(const stdstr& group, not_null<Engine*> e) {
+owner<Entity*> Entity::reify(const sstr& group, not_null<Engine*> e) {
   auto ent= mc_new( Entity);
   ent->group=group;
   ent->engine= e;
@@ -81,8 +81,8 @@ Component* Entity::get(const COMType& z) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<Component*> Entity::getAll() {
-  s::vector<Component*> v;
+const s_vec<Component*> Entity::getAll() {
+  s_vec<Component*> v;
   F__LOOP(it, parts) {
     v.push_back(it->second);
   }

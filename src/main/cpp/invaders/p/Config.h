@@ -36,18 +36,18 @@ public:
   virtual const c::Size gameSize();
 
   virtual ResolutionPolicy policy();
-  virtual const stdstr appKey();
-  virtual const stdstr appId();
-  virtual const stdstr color();
+  virtual const sstr appKey();
+  virtual const sstr appId();
+  virtual const sstr color();
 
-  virtual const stdstr getWSUrl();
+  virtual const sstr getWSUrl();
   virtual c::Scene* startWith();
 
-  virtual void setGameId(const stdstr& s) {}
-  virtual void setRoomId(const stdstr& s) {}
+  virtual void setGameId(const sstr& s) {}
+  virtual void setRoomId(const sstr& s) {}
 
-  virtual const stdstr getGameId();
-  virtual const stdstr getRoomId();
+  virtual const sstr getGameId();
+  virtual const sstr getRoomId();
 
   virtual float getScale()  { return scale; }
   virtual void runOnce() ;

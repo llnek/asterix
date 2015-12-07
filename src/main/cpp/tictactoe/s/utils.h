@@ -29,9 +29,9 @@ namespace tttoe {
 
   const s::vector<ArrDim> mapGoalSpace();
 
-  const stdstr pkFlip(const stdstr& img, bool flip );
+  const sstr pkFlip(const sstr& img, bool flip );
 
-  const stdstr xrefImg(int value);
+  const sstr xrefImg(int value);
 
   c::Sprite* drawSymbol(not_null<a::Component*>  , float x, float y, int value, bool flip = false);
 

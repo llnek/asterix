@@ -91,7 +91,7 @@ const s::vector<ArrDim> mapGoalSpace() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr pkFlip(const stdstr& img, bool flip) {
+const sstr pkFlip(const sstr& img, bool flip) {
   if (flip) {
     return img + ".i.png";
   } else {
@@ -101,7 +101,7 @@ const stdstr pkFlip(const stdstr& img, bool flip) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const stdstr xrefImg(int value) {
+const sstr xrefImg(int value) {
   auto x= CC_CSV(c::Integer,"CV_X");
   auto o= CC_CSV(c::Integer,"CV_O");
   auto z= CC_CSV(c::Integer,"CV_Z");

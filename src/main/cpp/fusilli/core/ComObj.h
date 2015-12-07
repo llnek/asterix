@@ -23,9 +23,9 @@ class CC_DLL ComObj : public ash::Component {
 protected:
 
   void init(c::Sprite*, int health, int score);
-  NOCPYASS(ComObj)
 
-  ComObj();
+  NOCPYASS(ComObj)
+  CZCTOR(ComObj)
 
 public:
 
@@ -48,8 +48,7 @@ public:
 
   ComObj(not_null<c::Sprite*>, int health, int score);
   ComObj(not_null<c::Sprite*>);
-
-  virtual ~ComObj() {}
+  CZDTOR_X(ComObj)
 
   c::Sprite* sprite;
   int origHealth;

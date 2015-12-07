@@ -100,7 +100,7 @@ public:
 
     Player(int category, int value,
       int id,
-      const stdstr& color) {
+      const sstr& color) {
 
     this->offset = id == 1 ? 0 : 1;
     this->category= category;
@@ -139,9 +139,9 @@ public:
     value=0;
   }
 
-  stdstr pidlong;
-  stdstr pid;
-  stdstr color;
+  sstr pidlong;
+  sstr pid;
+  sstr color;
   int category;
   int pnum;
   int value;

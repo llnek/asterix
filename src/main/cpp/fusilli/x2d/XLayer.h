@@ -25,27 +25,21 @@ class XScene;
 class CC_DLL XLayer : public c::Layer {
 protected:
 
-  s::map<stdstr, c::SpriteBatchNode*> atlases;
+  c::SpriteBatchNode* regoAtlas(const sstr& name, int zx = 0);
+  s_map<sstr, c::SpriteBatchNode*> atlases;
 
   int lastTag;
   int lastZ;
 
-  c::SpriteBatchNode* regoAtlas(const stdstr& name,
-      const MaybeInt& = MaybeInt(),
-      const MaybeInt& = MaybeInt() );
-
-  NOCPYASS(XLayer)
-  XLayer();
-
 public:
 
-  virtual c::SpriteBatchNode* getAtlas(const stdstr& name);
+  virtual c::SpriteBatchNode* getAtlas(const sstr& name);
   virtual void onQuit(c::Ref*);
 
   virtual bool initEx(XScene*, int zx = 0);
   virtual void decorate() = 0;
 
-  virtual void addAtlasItem(const stdstr& atlas,
+  virtual void addAtlasItem(const sstr& atlas,
       not_null<c::Node*> n,
       const MaybeInt& = MaybeInt(),
       const MaybeInt& = MaybeInt() );
@@ -54,13 +48,13 @@ public:
       const MaybeInt& = MaybeInt() ,
       const MaybeInt& = MaybeInt() );
 
-  void addAtlasFrame(const stdstr& atlas, const stdstr& n, const c::Vec2& pos);
+  void addAtlasFrame(const sstr& atlas, const sstr& n, const c::Vec2& pos);
 
-  void addFrame(const stdstr& n, const c::Vec2& pos);
+  void addFrame(const sstr& n, const c::Vec2& pos);
 
-  void centerImage(const stdstr& n, int z= -1);
+  void centerImage(const sstr& n, int z= -1);
 
-  void removeAtlasAll(const stdstr& atlas) ;
+  void removeAtlasAll(const sstr& atlas) ;
   void removeAll();
   void removeItem(not_null<c::Node*> n);
 
@@ -69,7 +63,9 @@ public:
 
   // tag value
   virtual int getIID() { return 1; }
-  virtual ~XLayer();
+
+  NOCPYASS(XLayer)
+  DECLCZ(XLayer)
 
 };
 

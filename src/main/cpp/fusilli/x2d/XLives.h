@@ -21,23 +21,19 @@ NS_BEGIN(fusii)
 class CC_DLL XLives : public c::Node {
 protected:
 
-  s::vector<c::Node*> icons;
+  s_vec<c::Node*> icons;
   c::Size lifeSize;
   c::Vec2 refPt;
-  stdstr frameId;
+  sstr frameId;
 
   int totalLives;
   int curLives;
   int dir;
   float scale;
 
-  NOCPYASS(XLives)
-
 public:
 
-  virtual void realize(
-      const stdstr& frame,
-      int lives,
+  virtual void decorate( const sstr& frame, int lives,
       float x, float y,
       float scale=1.0f, int dir= 1);
 
@@ -49,7 +45,9 @@ public:
   void resurrect();
   void drawLives();
 
+  NOCPYASS(XLives)
   DECLCZ(XLives)
+
 };
 
 

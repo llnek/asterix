@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 typedef std::string stdstr;
+typedef std::string sstr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -102,9 +103,17 @@ typedef std::string stdstr;
 
 #define DCAST(type,expr) dynamic_cast<type>(expr)
 #define SCAST(type,expr) static_cast<type>(expr)
+
+#define SNPTR(x) x = nullptr;
 #define NNP(p) p != nullptr
 #define ENP(p) p == nullptr
 
+//////////////////////////////////////////////////////////////////////////////
+//
+#define s_vec std::vector
+#define s_que std::queue
+#define s_arr std::array
+#define s_map std::map
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -130,10 +139,12 @@ typedef std::string stdstr;
   virtual ~T(); \
   T();
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-#define DEFCREATE_FUNC(T) static owner<T*> reify() { return new(std::nothrow) T(); }
-#define SNPTR(x) x = nullptr;
+#define CZDTOR_X(T) virtual ~T() {}
+#define CZCTOR_X(T) T() {}
+#define CZDTOR(T) virtual ~T();
+#define CZCTOR(T) T();
 
 //////////////////////////////////////////////////////////////////////////////
 //

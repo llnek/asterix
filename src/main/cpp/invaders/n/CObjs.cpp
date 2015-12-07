@@ -119,7 +119,7 @@ Motion::Motion() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Ship::Ship(not_null<c::Sprite*> s,
-    const stdstr& f1, const stdstr& f2)
+    const sstr& f1, const sstr& f2)
 
   : ComObj(s) {
 

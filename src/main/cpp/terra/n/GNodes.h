@@ -24,7 +24,7 @@ public:
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> { "motion", "ship" },
+        s::vector<sstr> { "motion", "ship" },
         s::vector<a::COMType> { "n/Motion", "n/Ship" });
   }
 

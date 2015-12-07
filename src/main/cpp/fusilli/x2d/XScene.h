@@ -23,16 +23,16 @@ protected:
 
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
 
-  NOCPYASS(XScene)
-  XScene() {}
-
 public:
 
   XLayer* getLayer(int tag);
 
   virtual void decorate() = 0;
   virtual bool init();
-  virtual ~XScene() {}
+
+  NOCPYASS(XScene)
+  IMPLCZ(XScene)
+
 };
 
 NS_END(fusii)

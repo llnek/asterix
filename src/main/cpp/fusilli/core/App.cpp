@@ -77,7 +77,7 @@ void App::preLaunch(const c::Size& dz) {
   auto portrait = dz.height > dz.width;
   auto fz = glview->getFrameSize();
 
-  s::vector<stdstr> searchPaths;
+  s_vec<sstr> searchPaths;
   c::Size largeSize;
   c::Size mediumSize;
   c::Size smallSize;

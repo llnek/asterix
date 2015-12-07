@@ -27,7 +27,7 @@ public:
   { return "n/AlienMotionNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> { "aliens", "looper" },
+        s::vector<sstr> { "aliens", "looper" },
         s::vector<a::COMType> { "n/AlienSquad", "n/Looper" });
   }
   IMPLCZ( AlienMotionNode)
@@ -43,7 +43,7 @@ public:
   { return "n/CannonCtrlNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> { "looper", "cannon", "ship" },
+        s::vector<sstr> { "looper", "cannon", "ship" },
         s::vector<a::COMType> { "n/Looper", "n/Cannon", "n/Ship" });
   }
   IMPLCZ( CannonCtrlNode)
@@ -59,7 +59,7 @@ public:
   { return "n/ShipMotionNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<stdstr> { "vel", "motion", "ship" },
+        s::vector<sstr> { "vel", "motion", "ship" },
         s::vector<a::COMType> { "n/Velocity", "n/Motion", "n/Ship" });
   }
   IMPLCZ(ShipMotionNode)

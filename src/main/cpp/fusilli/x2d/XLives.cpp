@@ -71,8 +71,7 @@ void XLives::drawLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::realize(const stdstr& frame,
-    int lives,
+void XLives::decorate(const sstr& frame, int lives,
     float x, float y, float scale, int d) {
 
   totalLives = lives;

@@ -15,24 +15,18 @@
 #include "aeon/fusilli.h"
 NS_BEGIN(ash)
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 typedef s::string SystemType;
 typedef s::string COMType;
 typedef s::string NodeType;
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Component {
-protected:
-  Component() {}
 public:
   virtual const COMType typeId() = 0;
-  virtual ~Component() {
-    //printf("Component dtor\n");
-  }
+  IMPLCZ(Component)
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -23,13 +23,13 @@ class CC_DLL ZLoader : public c::Scene {
 private:
 
   void startLoad(float delay);
-  NOCPYASS(ZLoader)
 
 public:
 
   void initWithResources();
   virtual void onEnter() ;
 
+  NOCPYASS(ZLoader)
   IMPLCZ(ZLoader)
 };
 

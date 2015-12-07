@@ -25,6 +25,23 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
+//////////////////////////////////////////////////////////////////////////
+//
+#define STATIC_REIFY_GAMESCENE(__TYPE__) \
+static __TYPE__* reify(SContext* x) {  \
+    __TYPE__ *p = mc_new( __TYPE__ ); \
+    if (NNP(p)) { \
+      p->set(x); \
+      if (p->init()) { \
+          p->autorelease(); \
+          return p; \
+      } else { \
+          delete p; \
+          return nullptr; \
+      } \
+  } \
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
@@ -47,42 +64,34 @@ class CC_DLL GameScene : public XScene {
 protected:
 
   static void bind(not_null<GameScene*>);
-
   void set(SContext*);
 
-  s::map<stdstr, XPool*> pools;
-  s::queue<stdstr> msgQ;
+  s_map<sstr, XPool*> pools;
+  s_que<sstr> msgQ;
 
   SContext* context;
   int level;
 
-  NOCPYASS(GameScene)
-  GameScene();
-
 public:
 
-  //static GameScene* reify(not_null<GameScene*>, GMode, not_null<ws::OdinIO*>);
-  //static GameScene* reify(not_null<GameScene*>, GMode);
-  virtual GameScene* realizeWithCtx(SContext*) = 0;
   virtual GameLayer* getGLayer() = 0;
-
-  static GameScene* self();
-  static GameLayer* get();
-
   virtual bool isLive() = 0;
   virtual void stop() = 0;
   virtual void play() = 0;
+
+  static GameScene* self();
+  static GameLayer* get();
 
   virtual void sendMsgEx(const MsgTopic& topic, void* msg) = 0;
   void sendMsg(const MsgTopic& topic) {
     sendMsgEx(topic, nullptr);
   }
 
-  XPool* reifyPool(const stdstr& n);
-  XPool* getPool(const stdstr& n);
+  XPool* reifyPool(const sstr& n);
+  XPool* getPool(const sstr& n);
 
   ws::OdinIO* wsock();
-  GContext* getCtx();
+  SContext* getCtx();
   GMode getMode();
   bool isOnline();
 
@@ -90,9 +99,11 @@ public:
   f::JsonObj* getLCfg();
   void resetPools();
 
-  s::queue<stdstr>& msgQueue() { return msgQ; }
+  s_que<sstr>& msgQueue() { return msgQ; }
 
-  virtual ~GameScene();
+  NOCPYASS(GameScene)
+  DECLCZ(GameScene)
+
 };
 
 

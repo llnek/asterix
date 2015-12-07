@@ -33,7 +33,7 @@ protected:
 public:
 
   virtual bool update(float time);
-  virtual ~BaseSystem();
+  CZDTOR(BaseSystem)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
 template<typename F>
 BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d)
 
-  : a::System(a::Error) {
+  : System(a::Error) {
 
   factory=f;
   state=d;

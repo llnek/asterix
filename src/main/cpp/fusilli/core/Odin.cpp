@@ -27,26 +27,24 @@ j::json evtToDoc(not_null<OdinEvent*> evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> mkPlayRequest(const stdstr& game,
-    const stdstr& user,
-    const stdstr& pwd) {
+owner<OdinEvent*> mkPlayRequest(const sstr& game,
+    const sstr& user,
+    const sstr& pwd) {
 
   auto a=  j::json::array_t { game, user, pwd };
   auto p= j::json(a);
-  return new OdinEvent(MType::SESSION,
-      EType::PLAYGAME_REQ, p);
+  return new OdinEvent(MType::SESSION, EType::PLAYGAME_REQ, p);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> mkJoinRequest (const stdstr& room,
-    const stdstr& user,
-    const stdstr& pwd) {
+owner<OdinEvent*> mkJoinRequest (const sstr& room,
+    const sstr& user,
+    const sstr& pwd) {
 
   auto a=  j::json::array_t { room, user, pwd };
   auto p= j::json(a);
-  return new OdinEvent(MType::SESSION,
-      EType::JOINGAME_REQ,p);
+  return new OdinEvent(MType::SESSION, EType::JOINGAME_REQ,p);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,8 +72,8 @@ owner<OdinEvent*> json_decode(const n::WebSocket::Data& e) {
 
   return evt;
 }
-END_NS_UNAMED()
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinIO::~OdinIO() {
@@ -87,8 +85,8 @@ OdinIO::~OdinIO() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinIO*> reifyPlayRequest(const stdstr& game,
-    const stdstr& user, const stdstr& pwd) {
+owner<OdinIO*> reifyPlayRequest(const sstr& game,
+    const sstr& user, const sstr& pwd) {
   auto w= mc_new( OdinIO);
   w->game= game;
   w->user= user;
@@ -98,8 +96,8 @@ owner<OdinIO*> reifyPlayRequest(const stdstr& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinIO*> reifyJoinRequest(const stdstr& room,
-    const stdstr& user, const stdstr& pwd) {
+owner<OdinIO*> reifyJoinRequest(const sstr& room,
+    const sstr& user, const sstr& pwd) {
   auto w= mc_new( OdinIO);
   w->room= room;
   w->user= user;
@@ -127,14 +125,14 @@ void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void OdinIO::listen( s::function<void (OdinEvent*)> cb) {
+void OdinIO::listen(OEventFN cb) {
   SNPTR(cbAll)
   listen(MType::ALL , cb);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
-void OdinIO::listen(MType t, s::function<void (OdinEvent*)> cb) {
+void OdinIO::listen(MType t, OEventFN cb ) {
   if (MType::ALL == t) {
     cbAll =cb;
   }
@@ -259,7 +257,7 @@ void OdinIO::onEvent(OdinEvent* evt) {
 //////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
-n::WebSocket* connect(not_null<OdinIO*> wss, const stdstr& url) {
+n::WebSocket* connect(not_null<OdinIO*> wss, const sstr& url) {
   auto ws= new n::WebSocket();
   if (!ws->init(*wss, url)) {
     mc_del_ptr(ws);

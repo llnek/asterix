@@ -37,12 +37,11 @@ GameLayer::GameLayer() {
   SNPTR(keys)
   SNPTR(touch)
   SNPTR(engine)
-  //playable=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GameLayer::keyPoll(c::EventKeyboard::KeyCode key) {
+bool GameLayer::keyPoll(KEYCODE key) {
   int k= (int) key;
   return k >= 0 && k < 256 ? keyboard[k] : false;
 }

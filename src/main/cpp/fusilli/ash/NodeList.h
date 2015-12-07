@@ -23,16 +23,13 @@ class Node;
 class FS_DLL NodeList {
 private:
 
-  NOCPYASS(NodeList)
   NodeType nType;
-  NodeList();
 
 public:
 
   static owner<NodeList*> reify(const NodeType&);
 
   const NodeType getType() { return nType; }
-  virtual ~NodeList();
 
   bool containsWithin(not_null<Entity*>);
   bool isCompatible(not_null<Entity*>);
@@ -40,9 +37,12 @@ public:
 
   void purge(not_null<Node*> );
   void add(not_null<Node*> );
-  void clear();
   bool isEmpty();
+  void clear();
   int size();
+
+  NOCPYASS(NodeList)
+  DECLCZ(NodeList)
 
   Node* head;
   Node* tail;

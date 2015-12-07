@@ -21,23 +21,21 @@ class Entity;
 class FS_DLL Node {
 private:
 
-  s::map<stdstr, Component*> values;
-  s::map<COMType, stdstr> types;
+  s_map<sstr, Component*> values;
+  s_map<COMType, sstr> types;
   Entity* entity;
-
-  NOCPYASS(Node)
-  Node();
 
 public:
 
-  static owner<Node*> reify(const s::map<stdstr, COMType>& );
-  virtual ~Node();
-
+  static owner<Node*> reify(const s_map<sstr, COMType>& );
   Entity* getEntity() { return entity; }
 
-  Component* get(const stdstr& field);
   bool bindEntity(not_null<Entity*> );
   bool belongsTo(not_null<Entity*>);
+  Component* get(const sstr& field);
+
+  NOCPYASS(Node)
+  DECLCZ(Node)
 
   Node* previous;
   Node* next;
@@ -45,7 +43,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* nodeFld(not_null<ash::Node*> n, const stdstr& fld) {
+template<typename T> T* nodeFld(not_null<ash::Node*> n, const sstr& fld) {
   auto v= n->get(fld);
   if (NNP(v)) {
     return (T*) v;

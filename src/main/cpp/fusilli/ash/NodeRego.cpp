@@ -68,14 +68,14 @@ owner<Node*> NodeRegistry::reifyNode(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> NodeFactory::reifyXXXNode(const s::vector<stdstr>& flds,
-    const s::vector<COMType>& types) {
+owner<Node*> NodeFactory::reifyXXXNode(const s_vec<sstr>& flds,
+    const s_vec<COMType>& types) {
 
   assert(flds.size() == types.size());
-  s::map<stdstr,a::COMType> s;
+  s_map<sstr,a::COMType> s;
 
   for (int i=0; i < flds.size(); ++i) {
-    s.insert(S__PAIR(stdstr, COMType, flds[i], types[i] ));
+    s.insert(S__PAIR(sstr, COMType, flds[i], types[i] ));
   }
 
   return a::Node::reify(s);

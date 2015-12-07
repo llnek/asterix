@@ -24,16 +24,16 @@ NS_BEGIN(fusii)
 class CC_DLL XConfig {
 protected:
 
-  void addXXX(const stdstr& frag, const stdstr& key, c::Ref*);
-  c::Dictionary* getFragment(const stdstr&);
+  void addXXX(const sstr& frag, const sstr& key, c::Ref*);
+  c::Dictionary* getFragment(const sstr&);
 
-  void addAtlas(const stdstr& key, c::Ref*);
-  void addFont(const stdstr& key, c::Ref*);
-  void addTile(const stdstr& key, c::Ref*);
-  void addImage(const stdstr& key, c::Ref*);
-  void addEffect(const stdstr& key, c::Ref*);
-  void addMusic(const stdstr& key, c::Ref*);
-  void addCst(const stdstr& key, c::Ref*);
+  void addAtlas(const sstr& key, c::Ref*);
+  void addFont(const sstr& key, c::Ref*);
+  void addTile(const sstr& key, c::Ref*);
+  void addImage(const sstr& key, c::Ref*);
+  void addEffect(const sstr& key, c::Ref*);
+  void addMusic(const sstr& key, c::Ref*);
+  void addCst(const sstr& key, c::Ref*);
 
   c::Dictionary* frags;
   c::Dictionary* l10n;
@@ -46,18 +46,15 @@ protected:
   void loadL10NStrings();
   void setCsts();
 
-  NOCPYASS(XConfig)
-  XConfig();
-
-  static const stdstr ATLASES;
-  static const stdstr LEVELS;
-  static const stdstr FONTS;
-  static const stdstr TILES;
-  static const stdstr IMAGES;
-  static const stdstr MUSIC;
-  static const stdstr EFX;
-  static const stdstr CSTS;
-  static const stdstr CFG;
+  static const sstr ATLASES;
+  static const sstr LEVELS;
+  static const sstr FONTS;
+  static const sstr TILES;
+  static const sstr IMAGES;
+  static const sstr MUSIC;
+  static const sstr EFX;
+  static const sstr CSTS;
+  static const sstr CFG;
 
 public:
 
@@ -66,32 +63,32 @@ public:
   virtual void runOnce() {}
 
   virtual ResolutionPolicy policy() = 0;
-  virtual const stdstr appKey() = 0;
-  virtual const stdstr appId() = 0;
-  virtual const stdstr color() = 0;
+  virtual const sstr appKey() = 0;
+  virtual const sstr appId() = 0;
+  virtual const sstr color() = 0;
   virtual const c::Size gameSize() = 0;
 
   virtual c::Scene* startWith() = 0;
-  virtual const stdstr getWSUrl() = 0;
+  virtual const sstr getWSUrl() = 0;
 
-  virtual void setGameId(const stdstr& ) = 0;
-  virtual void setRoomId(const stdstr& ) = 0;
-  virtual const stdstr getGameId() = 0;
-  virtual const stdstr getRoomId() = 0;
+  virtual void setGameId(const sstr& ) = 0;
+  virtual void setRoomId(const sstr& ) = 0;
+  virtual const sstr getGameId() = 0;
+  virtual const sstr getRoomId() = 0;
 
-  const filepath getAtlas(const stdstr& key);
-  const filepath getFont(const stdstr& key);
-  const filepath getTile(const stdstr& key);
-  const filepath getImage(const stdstr& key);
+  const filepath getAtlas(const sstr& key);
+  const filepath getFont(const sstr& key);
+  const filepath getTile(const sstr& key);
+  const filepath getImage(const sstr& key);
 
-  const filepath getEffect(const stdstr& key);
-  const filepath getMusic(const stdstr& key);
+  const filepath getEffect(const sstr& key);
+  const filepath getMusic(const sstr& key);
 
-  const stdstr getL10NStr(const stdstr& key,
-      const s::vector<stdstr>& pms);
-  const stdstr getL10NStr(const stdstr& key);
+  const sstr getL10NStr(const sstr& key,
+      const s::vector<sstr>& pms);
+  const sstr getL10NStr(const sstr& key);
 
-  c::Ref* getCst(const stdstr& cst);
+  c::Ref* getCst(const sstr& cst);
   int getBtnPadding();
 
   void toggleAudio(bool s);
@@ -103,17 +100,18 @@ public:
   float getMusicVolume();
   float getVolume();
 
-  c::Dictionary* getLevel(const stdstr& n);
-  c::Dictionary* addLevel(const stdstr& n);
-  f::JsonObj* getLevelCfg(const stdstr& n);
+  c::Dictionary* getLevel(const sstr& n);
+  c::Dictionary* addLevel(const sstr& n);
+  f::JsonObj* getLevelCfg(const sstr& n);
 
-  const s::vector<filepath> getEffectFiles();
-  const s::vector<filepath> getMusicFiles();
+  const s_vec<filepath> getEffectFiles();
+  const s_vec<filepath> getMusicFiles();
 
   void setSeedData(j::json&);
   j::json& getSeedData();
 
-  virtual ~XConfig();
+  NOCPYASS(XConfig)
+  DECLCZ(XConfig)
 
   static void bind(not_null<XConfig*>);
   static XConfig* self();
@@ -121,7 +119,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* cstVal(const stdstr& key) {
+template<typename T> T* cstVal(const sstr& key) {
   auto r= fusii::XConfig::self()->getCst(key);
   if (NNP(r)) {
     return static_cast<T*>( r);

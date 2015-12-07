@@ -21,7 +21,7 @@ class Node;
 class FS_DLL NodeFactory {
 protected:
 
-  owner<Node*> reifyXXXNode(const s::vector<stdstr>&, const s::vector<COMType>&);
+  owner<Node*> reifyXXXNode(const s_vec<sstr>&, const s_vec<COMType>&);
 
 public:
 
@@ -37,20 +37,19 @@ public:
 class FS_DLL NodeRegistry {
 private:
 
-  s::map<NodeType,NodeFactory*> regos;
-
-  NOCPYASS(NodeRegistry)
-  NodeRegistry();
+  s_map<NodeType,NodeFactory*> regos;
 
 public:
 
+  owner<Node*> reifyNode(const NodeType&);
   static NodeRegistry* self();
-  virtual ~NodeRegistry();
 
   void rego(not_null<NodeFactory*>);
   void derego(const NodeType&);
 
-  owner<Node*> reifyNode(const NodeType&);
+  NOCPYASS(NodeRegistry)
+  DECLCZ(NodeRegistry)
+
 };
 
 

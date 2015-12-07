@@ -28,20 +28,21 @@ enum class CC_DLL CType {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL OdinIO : public n::WebSocket::Delegate {
+public:
+
+  typedef s::function<void (OdinEvent*)> OEventFN;
+
 protected:
 
-  s::function<void (OdinEvent*)> cbSession;
-  s::function<void (OdinEvent*)> cbNetwork;
-  s::function<void (OdinEvent*)> cbAll;
-
   void onEvent(OdinEvent*);
-
-  NOCPYASS(OdinIO)
+  OEventFN cbSession;
+  OEventFN cbNetwork;
+  OEventFN cbAll;
 
 public:
 
-  void listen(const MType, s::function<void (OdinEvent*)>);
-  void listen(s::function<void (OdinEvent*)>);
+  void listen(const MType, OEventFN );
+  void listen(OEventFN );
   void reset();
   void cancelAll();
   void cancel(const MType);
@@ -53,18 +54,19 @@ public:
   virtual void onOpen(n::WebSocket*) ;
 
   n::WebSocket* socket;
-  stdstr room;
-  stdstr game;
-  stdstr user;
-  stdstr passwd;
+  sstr room;
+  sstr game;
+  sstr user;
+  sstr passwd;
   CType state;
 
+  NOCPYASS(OdinIO)
   DECLCZ(OdinIO)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-n::WebSocket* connect(not_null<OdinIO*>, const stdstr& url);
+n::WebSocket* connect(not_null<OdinIO*>, const sstr& url);
 
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
 
@@ -73,12 +75,11 @@ void disconnect(OdinIO*);
 void close(OdinIO*);
 
 
-owner<OdinIO*> reifyPlayRequest(const stdstr& game,
-    const stdstr& user, const stdstr& pwd);
+owner<OdinIO*> reifyPlayRequest(const sstr& game,
+    const sstr& user, const sstr& pwd);
 
-owner<OdinIO*> reifyJoinRequest(const stdstr& room,
-    const stdstr& user, const stdstr& pwd);
-
+owner<OdinIO*> reifyJoinRequest(const sstr& room,
+    const sstr& user, const sstr& pwd);
 
 
 NS_END(odin)

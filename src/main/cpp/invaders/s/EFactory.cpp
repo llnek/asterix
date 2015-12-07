@@ -73,7 +73,7 @@ void EFactory::reifyBombs(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size EFactory::calcImgSize(const stdstr& img) {
+const c::Size EFactory::calcImgSize(const sstr& img) {
   return cx::calcSize(img);
 }
 
@@ -81,8 +81,8 @@ const c::Size EFactory::calcImgSize(const stdstr& img) {
 //
 const c::Size EFactory::getRankInfo(int r, c::Dictionary* out) {
   c::Size z= cx::calcSize("purple_bug_0.png");
-  stdstr s0 = "purple_bug_0.png";
-  stdstr s1= "purple_bug_1.png";
+  sstr s0 = "purple_bug_0.png";
+  sstr s1= "purple_bug_1.png";
   int v= 30;
 
   if (r < 3) {

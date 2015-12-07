@@ -34,7 +34,7 @@ public:
   a::Entity* reifyShip();
 
   const c::Size getRankInfo(int r, c::Dictionary*);
-  const c::Size calcImgSize(const stdstr& img);
+  const c::Size calcImgSize(const sstr& img);
 
   void fillSquad(f::XPool* );
   void bornShip();

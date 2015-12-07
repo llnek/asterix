@@ -25,31 +25,31 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  c::Dictionary* readXmlAsDict(const stdstr& fpath);
-  c::Array* readXmlAsList(const stdstr& fpath);
+  c::Dictionary* readXmlAsDict(const sstr& fpath);
+  c::Array* readXmlAsList(const sstr& fpath);
 
   void reifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
   void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
-  const c::Color3B colorRGB(const stdstr& hexcolor);
+  const c::Color3B colorRGB(const sstr& hexcolor);
 
-  void sfxMusic(const stdstr& music, bool repeat);
-  void sfxPlay(const stdstr& sound);
+  void sfxMusic(const sstr& music, bool repeat);
+  void sfxPlay(const sstr& sound);
 
   void resumeAudio();
   void pauseAudio();
 
   bool isDesktop();
 
-  c::MenuItem* reifyMenuBtn(const stdstr& n);
+  c::MenuItem* reifyMenuBtn(const sstr& n);
 
   c::MenuItem* reifyMenuBtn(
-      const stdstr& n,
-      const stdstr& s, const stdstr& d);
+      const sstr& n,
+      const sstr& s, const sstr& d);
 
   c::Menu* mkMenu(c::MenuItem*);
 
-  c::Menu* mkMenu(const s::vector<c::MenuItem*>& items,
+  c::Menu* mkMenu(const s_vec<c::MenuItem*>& items,
       bool vert = false, float padding= 10.0f);
 
   bool pointInBox(const Box4& box, float x,  float y);
@@ -71,13 +71,13 @@ namespace ccsx {
   void undoTimer(not_null<c::DelayTime*>);
   bool timerDone(not_null<c::DelayTime*>);
 
-  c::Label* reifyBmfLabel(const stdstr& font, const stdstr& text);
+  c::Label* reifyBmfLabel(const sstr& font, const sstr& text);
 
   c::Label* reifyBmfLabel(float x, float y,
-    const stdstr& font,
-    const stdstr& text);
+    const sstr& font,
+    const sstr& text);
 
-  c::Sprite* reifySprite(const stdstr& frameName);
+  c::Sprite* reifySprite(const sstr& frameName);
 
   const Box4 bbox4B4(not_null<ComObj*>);
   const Box4 bbox4(not_null<c::Node*>);
@@ -89,7 +89,7 @@ namespace ccsx {
 
   bool isTransitioning();
 
-  const c::Size calcSize(const stdstr& frame);
+  const c::Size calcSize(const sstr& frame);
 
   const c::Size halfHW(not_null<c::Node*>);
 
@@ -135,7 +135,7 @@ namespace ccsx {
    * Get the sprite from the frame cache using
    * its id (e.g. ship.png)
    */
-  c::SpriteFrame* getSpriteFrame(const stdstr& frameid);
+  c::SpriteFrame* getSpriteFrame(const sstr& frameid);
 
   const c::Vec2 anchorC();
   const c::Vec2 anchorTL();
@@ -147,6 +147,7 @@ namespace ccsx {
   const c::Vec2 anchorB();
   const c::Vec2 anchorBL();
 
+  float randFloat(float upper);
   int randInt(int upper);
 };
 

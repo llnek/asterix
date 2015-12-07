@@ -21,22 +21,20 @@ class Engine;
 class FS_DLL Entity {
 private:
 
-  s::map<stdstr, Component*> parts;
+  s_map<sstr, Component*> parts;
   Engine* engine;
-  stdstr group;
+  sstr group;
   bool dead;
-
-  NOCPYASS(Entity)
-  Entity();
 
 public:
 
-  static owner<Entity*> reify(const stdstr& group, not_null<Engine*>);
+  static owner<Entity*> reify(const sstr& group, not_null<Engine*>);
 
   Entity* previous;
   Entity* next;
 
-  virtual ~Entity();
+  NOCPYASS(Entity)
+  DECLCZ(Entity)
 
   void checkin(not_null<Component*>);
   void purge(const COMType&);
@@ -44,12 +42,12 @@ public:
   Component* get(const COMType& );
   bool has(const COMType&);
 
-  const stdstr groupId() { return group; }
+  const sstr groupId() { return group; }
 
   bool isOk() { return !dead; };
   void markDelete();
 
-  const s::vector<Component*> getAll();
+  const s_vec<Component*> getAll();
 
 };
 

@@ -16,15 +16,15 @@ NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-const stdstr XConfig::ATLASES= "atlases";
-const stdstr XConfig::LEVELS= "levels";
-const stdstr XConfig::FONTS= "fonts";
-const stdstr XConfig::TILES= "tiles";
-const stdstr XConfig::IMAGES= "images";
-const stdstr XConfig::MUSIC= "music";
-const stdstr XConfig::EFX= "effects";
-const stdstr XConfig::CSTS= "csts";
-const stdstr XConfig::CFG= "cfg";
+const sstr XConfig::ATLASES= "atlases";
+const sstr XConfig::LEVELS= "levels";
+const sstr XConfig::FONTS= "fonts";
+const sstr XConfig::TILES= "tiles";
+const sstr XConfig::IMAGES= "images";
+const sstr XConfig::MUSIC= "music";
+const sstr XConfig::EFX= "effects";
+const sstr XConfig::CSTS= "csts";
+const sstr XConfig::CFG= "cfg";
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -32,7 +32,7 @@ BEGIN_NS_UNAMED()
 XConfig* singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath getXXX(not_null<c::Dictionary*> d, const stdstr& key ) {
+const filepath getXXX(not_null<c::Dictionary*> d, const sstr& key ) {
   auto r= f::dictVal<cocos2d::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
@@ -95,7 +95,7 @@ void XConfig::loadL10NStrings() {
       d2= CC_DICT();
       b->setObject(d2, key);
     }
-      cx::mergeDict((c::Dictionary*)d2, (c::Dictionary*)langObj);
+    cx::mergeDict((c::Dictionary*)d2, (c::Dictionary*)langObj);
   }
 
   CC_KEEP(b)
@@ -105,8 +105,7 @@ void XConfig::loadL10NStrings() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::getL10NStr(const stdstr& key,
-    const s::vector<stdstr>& pms) {
+const sstr XConfig::getL10NStr(const sstr& key, const s_vec<sstr>& pms) {
   auto vs = getL10NStr(key);
   if (pms.size() == 0) { return vs; }
   auto pos= vs.find("{}");
@@ -121,8 +120,8 @@ const stdstr XConfig::getL10NStr(const stdstr& key,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const stdstr XConfig::getL10NStr(const stdstr& key) {
-  stdstr lang= c::Application::getInstance()->getCurrentLanguageCode();
+const sstr XConfig::getL10NStr(const sstr& key) {
+  sstr lang= c::Application::getInstance()->getCurrentLanguageCode();
   auto d = dictVal<c::Dictionary>(l10n, lang);
   auto obj=NNP(d) ?
     dictVal<c::String>(d, key) : nullptr;
@@ -137,7 +136,7 @@ const stdstr XConfig::getL10NStr(const stdstr& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int XConfig::getBtnPadding() {
-  return CC_CSV(c::Integer,"BTN_PADDING");
+  return CC_CSV(c::Integer, "BTN_PADDING");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -212,56 +211,56 @@ float XConfig::getVolume() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Ref* XConfig::getCst(const stdstr& key) {
+c::Ref* XConfig::getCst(const sstr& key) {
   return getFragment(CSTS)->objectForKey(key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getAtlas(const stdstr& key) {
+const filepath XConfig::getAtlas(const sstr& key) {
   return getXXX(getFragment(ATLASES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getFont(const stdstr& key) {
+const filepath XConfig::getFont(const sstr& key) {
   return getXXX(getFragment(FONTS), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getTile(const stdstr& key) {
+const filepath XConfig::getTile(const sstr& key) {
   return getXXX(getFragment(TILES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getImage(const stdstr& key) {
+const filepath XConfig::getImage(const sstr& key) {
   return getXXX(getFragment(IMAGES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getMusic(const stdstr& key) {
+const filepath XConfig::getMusic(const sstr& key) {
   return getXXX(getFragment(MUSIC), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getEffect(const stdstr& key) {
+const filepath XConfig::getEffect(const sstr& key) {
   return getXXX(getFragment(EFX), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::getLevel(const stdstr& n) {
+c::Dictionary* XConfig::getLevel(const sstr& n) {
   auto d= getFragment(LEVELS);
   return SCAST(c::Dictionary*,  d->objectForKey(n));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::JsonObj* XConfig::getLevelCfg(const stdstr& n) {
+f::JsonObj* XConfig::getLevelCfg(const sstr& n) {
   auto r= getLevel(n);
   if (NNP(r)) {
     return SCAST(f::JsonObj*, r->objectForKey(CFG));
@@ -285,7 +284,7 @@ j::json& XConfig::getSeedData() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::addLevel(const stdstr& level) {
+c::Dictionary* XConfig::addLevel(const sstr& level) {
 
   auto d2= CC_DICT();
 
@@ -299,56 +298,56 @@ c::Dictionary* XConfig::addLevel(const stdstr& level) {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::getFragment(const stdstr& key) {
+c::Dictionary* XConfig::getFragment(const sstr& key) {
   auto obj = frags->objectForKey(key);
   return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addAtlas(const stdstr& key, c::Ref* ref) {
+void XConfig::addAtlas(const sstr& key, c::Ref* ref) {
   addXXX(ATLASES, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addFont(const stdstr& key, c::Ref* ref) {
+void XConfig::addFont(const sstr& key, c::Ref* ref) {
   addXXX(FONTS, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addTile(const stdstr& key, c::Ref* ref) {
+void XConfig::addTile(const sstr& key, c::Ref* ref) {
   addXXX(TILES, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addImage(const stdstr& key, c::Ref* ref) {
+void XConfig::addImage(const sstr& key, c::Ref* ref) {
   addXXX(IMAGES, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addEffect(const stdstr& key, c::Ref* ref) {
+void XConfig::addEffect(const sstr& key, c::Ref* ref) {
   addXXX(EFX, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addMusic(const stdstr& key, c::Ref* ref) {
+void XConfig::addMusic(const sstr& key, c::Ref* ref) {
   addXXX(MUSIC, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addCst(const stdstr& key, c::Ref* ref) {
+void XConfig::addCst(const sstr& key, c::Ref* ref) {
   addXXX(CSTS, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XConfig::addXXX(const stdstr& frag, const stdstr& key, c::Ref* ref) {
+void XConfig::addXXX(const sstr& frag, const sstr& key, c::Ref* ref) {
   auto d = getFragment(frag);
   d->setObject(ref, key);
 }
@@ -359,7 +358,7 @@ const s::vector<filepath> XConfig::getEffectFiles() {
   NS_USING(cocos2d)
   DictElement* element = nullptr;
   auto d= getFragment(MUSIC);
-  s::vector<filepath> rc;
+  s_vec<filepath> rc;
 
   CCDICT_FOREACH(d, element) {
     rc.push_back( static_cast<String*>(element->getObject())->getCString());
@@ -373,7 +372,7 @@ const s::vector<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
   DictElement* element = nullptr;
   auto d= getFragment(EFX);
-  s::vector<filepath> rc;
+  s_vec<filepath> rc;
 
   CCDICT_FOREACH(d, element) {
     rc.push_back( static_cast<String*>(element->getObject())->getCString());
