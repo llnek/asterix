@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 //
 Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(f, d) {
+  : BaseSystem<EFactory>(f, d) {
 
   SNPTR(cannons)
   SNPTR(aliens)

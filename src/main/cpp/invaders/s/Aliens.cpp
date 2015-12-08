@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Aliens::Aliens(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : f::BaseSystem<EFactory>(f, d) {
+  : BaseSystem<EFactory>(f, d) {
   SNPTR(baddies)
 }
 
@@ -78,7 +78,7 @@ void Aliens::processBombs(a::Node* node, float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::checkBomb(AlienSquad* sqad) {
-  auto c= sqad->elements();
+  auto c= sqad->list();
   auto p= sqad->aliens;
   int sz = p->size();
   s::vector<int> rc;
@@ -160,7 +160,7 @@ void Aliens::forwardOneAlien(f::ComObj* a, float delta) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::doShuffle(AlienSquad* sqad) {
-  auto c= sqad->elements();
+  auto c= sqad->list();
   auto found=false;
 
   F__LOOP(it, c) {
@@ -177,7 +177,7 @@ bool Aliens::doShuffle(AlienSquad* sqad) {
 //
 bool Aliens::doForward(AlienSquad* sqad) {
   auto delta= abs(sqad->stepx);
-  auto c= sqad->elements();
+  auto c= sqad->list();
   auto found= false;
 
   F__LOOP(it, c) {
@@ -195,7 +195,7 @@ bool Aliens::doForward(AlienSquad* sqad) {
 //
 f::ComObj* Aliens::findMinX(AlienSquad* sqad) {
   auto cur= (float) INT32_MAX;
-  auto c= sqad->elements();
+  auto c= sqad->list();
   f::ComObj* rc= nullptr;
   float v;
 
@@ -216,7 +216,7 @@ f::ComObj* Aliens::findMinX(AlienSquad* sqad) {
 //
 f::ComObj* Aliens::findMaxX(AlienSquad* sqad) {
   auto cur= (float) INT32_MIN;
-  auto c= sqad->elements();
+  auto c= sqad->list();
   f::ComObj* rc= nullptr;
   float v;
 

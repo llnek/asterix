@@ -25,22 +25,6 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
 
-//////////////////////////////////////////////////////////////////////////
-//
-#define STATIC_REIFY_GAMESCENE(__TYPE__) \
-static __TYPE__* reify(SContext* x) {  \
-    __TYPE__ *p = mc_new( __TYPE__ ); \
-    if (NNP(p)) { \
-      p->set(x); \
-      if (p->init()) { \
-          p->autorelease(); \
-          return p; \
-      } else { \
-          delete p; \
-          return nullptr; \
-      } \
-  } \
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -48,14 +32,13 @@ enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SContext {
-public:
-  SContext() { mode=GMode::ONE; SNPTR(odin) }
-  SContext(GMode m) : SContext() { mode=m; }
-  virtual ~SContext() { mc_del_ptr(odin) }
+struct CC_DLL GContext : public SContext {
+  GContext() { mode=GMode::ONE; SNPTR(odin) }
+  GContext(GMode m) : GContext() { mode=m; }
+  virtual ~GContext() { mc_del_ptr(odin) }
   ws::OdinIO* odin;
   GMode mode;
-  NOCPYASS(SContext)
+  NOCPYASS(GContext)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -64,12 +47,11 @@ class CC_DLL GameScene : public XScene {
 protected:
 
   static void bind(not_null<GameScene*>);
-  void set(SContext*);
 
   s_map<sstr, XPool*> pools;
   s_que<sstr> msgQ;
 
-  SContext* context;
+  int state;
   int level;
 
 public:
@@ -91,7 +73,6 @@ public:
   XPool* getPool(const sstr& n);
 
   ws::OdinIO* wsock();
-  SContext* getCtx();
   GMode getMode();
   bool isOnline();
 

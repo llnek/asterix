@@ -19,8 +19,6 @@ NS_BEGIN(invaders)
 //
 class CC_DLL EFactory : public f::Factory {
 protected:
-  NOCPYASS(EFactory)
-  NODFT(EFactory)
   f::ComObj* player;
 public:
 
@@ -38,6 +36,9 @@ public:
 
   void fillSquad(f::XPool* );
   void bornShip();
+
+  NOCPYASS(EFactory)
+  NODFT(EFactory)
 
   virtual ~EFactory();
 };

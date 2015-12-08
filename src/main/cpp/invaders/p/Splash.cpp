@@ -22,18 +22,16 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL UILayer : public f::XLayer {
-protected:
-  virtual f::XLayer* realize();
-  void onPlay(c::Ref*);
-  NOCPYASS(UILayer)
-  IMPLCZ(UILayer)
 public:
   STATIC_REIFY_LAYER(UILayer)
+  NOCPYASS(UILayer)
+  IMPLCZ(UILayer)
+  virtual void decorate();
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realize() {
+void UILayer::decorate() {
 
   auto wb = cx::visBox();
   auto cw = cx::center();
@@ -42,31 +40,23 @@ f::XLayer* UILayer::realize() {
 
   addFrame("title.png", c::Vec2(cw.x, wb.top * 0.9f));
 
+  auto cb= [=]() { cx::runScene(XCFG()->startWith()); };
   auto b1 = cx::reifyMenuBtn("play.png");
   auto menu = cx::mkMenu(b1);
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay));
+  b1->setCallback([=](c::Ref*) {
+        cx::runScene( MainMenu::reify(mc_new_1(MContext, cb)));
+      });
+
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
 
-  return this;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref* b) {
-  auto a= [=]() {
-      cx::runScene(XCFG()->startWith());
-      };
-  cx::runScene( MainMenu::reifyWithBackAction(a));
 }
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* Splash::realize() {
-  addLayer(UILayer::reify())->realize();
-  return this;
+void Splash::decorate() {
+  UILayer::reify(this);
 }
 
 

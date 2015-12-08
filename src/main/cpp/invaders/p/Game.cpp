@@ -40,15 +40,12 @@ protected:
   EFactory* fac;
   Ship* player;
 
-  DECLCZ(GLayer)
-  NOCPYASS(GLayer)
-
 public:
 
+  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
   virtual int getIID() { return 2; }
+  virtual void decorate();
 
-  virtual f::XLayer* realize();
-  HUDLayer* getHUD();
   void reset();
   void play();
 
@@ -57,15 +54,11 @@ public:
   void onStop();
   void spawnPlayer();
 
-  bool playable;
   STATIC_REIFY_LAYER(GLayer)
-};
+  NOCPYASS(GLayer)
+  DECLCZ(GLayer)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-HUDLayer* GLayer::getHUD() {
-  return (HUDLayer*) MGMS()->getLayer(3);
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -76,7 +69,6 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 GLayer::GLayer() {
-  playable=false;
   SNPTR(fac)
   SNPTR(player)
 }
@@ -88,13 +80,9 @@ void GLayer::onMouseMove(c::Event* event) {
   auto b= e->getMouseButton();
   if (b == MOUSE_BUTTON_LEFT) {
     auto pos= this->player->sprite->getPosition();
-    auto y = pos.y;
+    auto bx= MGML()->getEnclosureBox();
     auto loc= e->getLocationInView();
-    auto bx= getEnclosureBox();
-    //auto l0= e->getLocation(); // wrong
-    //auto delta = e->getDelta(); // bad
-    pos = ccpClamp(loc, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
-    this->player->sprite->setPosition(pos.x, y);
+    this->player->sprite->setPosition(cx::clamp(loc, bx).x, pos.y);
   }
 }
 
@@ -110,10 +98,10 @@ void GLayer::initMouse() {
 //
 void GLayer::onTouchMoved(c::Touch* t, c::Event* evt){
   auto pos= this->player->sprite->getPosition();
+  auto bx= MGML()->getEnclosureBox();
   auto y = pos.y;
-  auto bx= getEnclosureBox();
   pos= c::ccpAdd(pos,  t->getDelta());
-  pos = ccpClamp(pos, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
+  pos= cx::clamp(pos, bx);
   this->player->sprite->setPosition(pos.x, y);
 }
 
@@ -124,7 +112,7 @@ void GLayer::initTouch() {
   touch =t;
 
   t->onTouchBegan = [=](c::Touch* t, c::Event* e) -> bool { return true; };
-  t->onTouchEnded = [=](c::Touch* t, c::Event* e){ };
+  t->onTouchEnded = [=](c::Touch* t, c::Event* e) {};
   t->onTouchMoved = CC_CALLBACK_2(GLayer::onTouchMoved,this);
 
   // When "swallow touches" is true, then returning 'true' from the
@@ -136,12 +124,11 @@ void GLayer::initTouch() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* GLayer::realize() {
+void GLayer::decorate() {
   centerImage("game.bg");
   enableListeners();
   cx::resumeAudio();
   reset();
-  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -231,8 +218,8 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
   }
   else
   if (topic == "/hud/showmenu") {
-    auto f= []() { CC_DTOR()->popScene(); };
-    CC_DTOR()->pushScene(MainMenu::reifyWithBackAction(f));
+    auto f= [=]() { CC_DTOR()->popScene(); };
+    CC_DTOR()->pushScene(MainMenu::reify(mc_new_1(MContext, f)));
   }
   else
   if (topic == "/hud/replay") {
@@ -247,19 +234,19 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::stop() {
-  static_cast<GLayer*>(getGLayer())->playable = false;
+  this->state = -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::play() {
-  static_cast<GLayer*>(getGLayer())->playable = true;
+  this->state= 911;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Game::isLive() {
-  return static_cast<GLayer*>(getGLayer())->playable;
+  return this->state > 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -270,25 +257,18 @@ f::GameLayer* Game::getGLayer() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::GameScene* Game::realizeWithCtx(f::GContext* ctx) {
+void Game::decorate() {
 
-  auto h = HUDLayer::reify();
-  auto g = GLayer::reify();
+  HUDLayer::reify(this, 3);
 
   reifyPool("explosions");
   reifyPool("aliens");
   reifyPool("missiles");
   reifyPool("bombs");
 
-  this->context= ctx;
-  addLayer(g, 2);
-  addLayer(h, 3)->realize();
-
-  // realize game layer last
-  g->realize();
+  GLayer::reify(this, 2);
 
   play();
-  return this;
 }
 
 

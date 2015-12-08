@@ -635,6 +635,12 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const c::Vec2 clamp(const c::Vec2& cur, const Box4& bx) {
+  return ccpClamp(cur, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 float randFloat(float upper) {
   return cocos2d::rand_0_1() * upper;
 }

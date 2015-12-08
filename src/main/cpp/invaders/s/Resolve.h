@@ -28,9 +28,6 @@ protected:
   void checkMissiles();
   void checkBombs();
 
-  NOCPYASS(Resolve)
-  NODFT(Resolve)
-
   a::NodeList* aliens;
   a::NodeList* ships;
 
@@ -39,11 +36,15 @@ public:
   virtual const a::SystemType typeId() { return "s/Resolve"; }
 
   Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
-  virtual ~Resolve() {}
 
   virtual void addToEngine(not_null<a::Engine*> );
 
   virtual int priority() { return a::Resolve; }
+
+  virtual ~Resolve() {}
+
+  NOCPYASS(Resolve)
+  NODFT(Resolve)
 
 };
 

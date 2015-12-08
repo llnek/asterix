@@ -9,11 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/Primitives.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
 #include "2d/CCMenuItem.h"
 #include "2d/CCMenu.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Menu.h"
 #include "Game.h"
 #include "x2d/XLib.h"
@@ -24,26 +23,22 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL UILayer : public f::XLayer {
-protected:
-
-  void onPlay(c::Ref*);
-  void onBack(c::Ref*);
-
-  DECLCZ(UILayer)
-  NOCPYASS(UILayer)
-  VOIDFN backAction;
-
 public:
-     f::XLayer* realizeEx(VOIDFN );
+
   STATIC_REIFY_LAYER(UILayer)
+  NOCPYASS(UILayer)
+  IMPLCZ(UILayer)
+
+  virtual void decorate();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realizeEx(VOIDFN cb) {
+void UILayer::decorate() {
 
+  auto ctx= (MContext*) getSceneX()->getCtx();
   auto tile = CC_CSV(c::Integer, "TILE");
-  auto color= c::Color3B(94,49,120);
+  c::Color3B color(94,49,120);
   auto wb = cx::visBox();
   auto cw = cx::center();
 
@@ -61,8 +56,10 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay));
+  b1->setCallback([=](c::Ref*) {
+      cx::runScene(Game::reify(mc_new(f::GContext)));
+      });
+
   menu->setPosition(cw);
   addItem(menu);
 
@@ -70,18 +67,20 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
   auto b= cx::reifyMenuBtn("icon_back.png");
   auto q= cx::reifyMenuBtn("icon_quit.png");
   auto sz= b->getContentSize();
-  b->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onBack));
-  q->setTarget(this,
-      CC_MENU_SELECTOR(XLayer::onQuit));
-  auto m2= cx::mkMenu(s::vector<c::MenuItem*> {b, q}, false, 10.0f);
-  m2->setPosition(wb.left + tile + sz.width * 1.1f,
-                  wb.bottom + tile + sz.height * 0.45f);
-  addItem(m2);
 
   // audio
   c::MenuItem* off;
   c::MenuItem* on;
+  c::Menu* m2;
+
+  q->setTarget(this, CC_MENU_SELECTOR(XLayer::onQuit));
+  b->setCallback([=](c::Ref*) { ctx->back(); });
+
+  m2= cx::mkMenu(s::vector<c::MenuItem*> {b, q}, false, 10.0f);
+  m2->setPosition(wb.left + tile + sz.width * 1.1f,
+                  wb.bottom + tile + sz.height * 0.45f);
+  addItem(m2);
+
   cx::reifyAudioIcons(off, on);
   off->setColor(color);
   on->setColor(color);
@@ -90,56 +89,14 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
 
-  this->backAction= cb;
-
-  return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref*) {
-  auto x= mc_new(f::GContext);
-  auto g = Game::reify();
-  g->realizeWithCtx(x);
-  cx::runScene(g);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onBack(c::Ref*) {
-  this->backAction();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-UILayer::~UILayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-UILayer::UILayer() {
-  SNPTR(backAction)
 }
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
-  auto m = MainMenu::reify();
-  m->realizeEx(cb);
-  return m;
+void MainMenu::decorate() {
+  UILayer::reify(this);
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-f::XScene* MainMenu::realizeEx(VOIDFN cb) {
-  auto y = UILayer::reify();
-  addLayer(y);
-  y->realizeEx(cb);
-  return this;
-}
-
-
 
 
 NS_END(invaders)

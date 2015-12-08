@@ -42,24 +42,21 @@ protected:
 
   virtual bool onUpdate(float);
 
-  NOCPYASS(Aliens)
-  NODFT(Aliens)
   a::NodeList* baddies;
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Aliens"; }
   Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 
-  virtual const a::SystemType typeId()
-  { return "n/Aliens"; }
+  virtual int priority() { return a::AI; }
+  virtual ~Aliens() {}
 
-  virtual ~Aliens()
-  {}
+  NOCPYASS(Aliens)
+  NODFT(Aliens)
 
-  virtual int priority()
-  { return a::AI; }
 };
 
 

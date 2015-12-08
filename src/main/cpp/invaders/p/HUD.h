@@ -22,12 +22,6 @@ NS_BEGIN(invaders)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  virtual f::XLayer* realize();
-  void showMenu(c::Ref*);
-
-  NOCPYASS(HUDLayer)
-  IMPLCZ(HUDLayer)
-
   c::Label* scoreLabel;
   int score;
   f::XLives* lives;
@@ -35,11 +29,17 @@ protected:
 public:
 
   virtual int getIID() { return 3; }
-  bool reduceLives(int =1);
+  virtual void decorate();
+
+  bool reduceLives(int = 1);
   void updateScore(int);
   void reset();
 
   STATIC_REIFY_LAYER(HUDLayer)
+
+  NOCPYASS(HUDLayer)
+  IMPLCZ(HUDLayer)
+
 };
 
 

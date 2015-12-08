@@ -38,6 +38,23 @@ typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;
 typedef std::string MsgTopic;
 
+//////////////////////////////////////////////////////////////////////////
+//
+#define STATIC_REIFY_SCENE_CTX(__TYPE__) \
+static __TYPE__* reify(fusii::SContext* x) {  \
+    __TYPE__ *p = mc_new( __TYPE__ ); \
+    if (NNP(p)) { \
+      p->setCtx(x); \
+      if (p->init()) { \
+          p->autorelease(); \
+          return p; \
+      } else { \
+          delete p; \
+          return nullptr; \
+      } \
+  } \
+}
+
 #define STATIC_REIFY_SCENE(__TYPE__) \
 static __TYPE__* reify() {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \

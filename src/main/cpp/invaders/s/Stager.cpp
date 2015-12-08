@@ -9,11 +9,9 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/Primitives.h"
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
 #include "n/GNodes.h"
-#include "EFactory.h"
 #include "Stager.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -23,7 +21,7 @@ NS_BEGIN(invaders)
 //
 Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(f, d) {
+  : BaseSystem<EFactory>(f, d) {
 
   initAlienSize();
   initShipSize();
@@ -65,14 +63,14 @@ void Stager::initShipSize() {
 bool Stager::onUpdate(float dt) {
   if (cx::isTransitioning()) { return false; }
   if (!inited) {
-    onceOnly(cannons->head, dt);
+    onceOnly(cannons->head);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::onceOnly(a::Node* node, float) {
+void Stager::onceOnly(a::Node* node) {
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
   auto ship= CC_GNF(Ship, node, "ship");

@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/Primitives.h"
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -22,7 +21,7 @@ NS_BEGIN(invaders)
 //
 Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(f,d) {
+  : BaseSystem<EFactory>(f,d) {
 
   SNPTR(ships)
 }
@@ -100,7 +99,7 @@ void Move::clamp(Ship* ship) {
 void Move::moveBombs(float dt) {
 
   auto bbs= MGMS()->getPool("bombs");
-  auto c= bbs->elements();
+  auto c= bbs->list();
 
   F__LOOP(it, c) {
     auto b = *it;
@@ -117,7 +116,7 @@ void Move::moveBombs(float dt) {
 void Move::moveMissiles(float dt) {
 
   auto mss= MGMS()->getPool("missiles");
-  auto c= mss->elements();
+  auto c= mss->list();
 
   F__LOOP(it, c) {
 

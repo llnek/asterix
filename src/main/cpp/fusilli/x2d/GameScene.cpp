@@ -39,6 +39,7 @@ GameScene::~GameScene() {
 GameScene::GameScene() {
   SNPTR(context)
   level = 1;
+  state=0;
   bind(this);
 }
 
@@ -95,23 +96,19 @@ void GameScene::bind(not_null<GameScene*> m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ws::OdinIO* GameScene::wsock() {
-  return context->odin;
+  return static_cast<GContext*>(context)->odin;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-SContext* GameScene::getCtx() { return context; }
-
-//////////////////////////////////////////////////////////////////////////////
-//
 GMode GameScene::getMode() {
-  return context->mode;
+  return static_cast<GContext*>(context)->mode;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GameScene::isOnline() {
-  return context->odin != nullptr;
+  return static_cast<GContext*>(context)->odin != nullptr;
 }
 
 

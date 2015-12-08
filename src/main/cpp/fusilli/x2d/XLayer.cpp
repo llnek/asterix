@@ -15,6 +15,7 @@
 #include "2d/CCMenu.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "XScene.h"
 #include "XLayer.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)

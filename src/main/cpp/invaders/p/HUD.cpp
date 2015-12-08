@@ -21,13 +21,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::showMenu(c::Ref* ) {
-  MGMS()->sendMsg("/hud/showmenu");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-f::XLayer* HUDLayer::realize() {
+void HUDLayer::decorate() {
 
   auto soff = CC_CSV(c::Integer, "S_OFF");
   auto tile = CC_CSV(c::Integer, "TILE");
@@ -42,7 +36,7 @@ f::XLayer* HUDLayer::realize() {
   addItem(scoreLabel);
 
   this->lives= f::reifyRefType<f::XLives>();
-  this->lives->realize("health.png", 3,
+  this->lives->decorate("health.png", 3,
       tile + soff,
       wb.top - tile - soff);
   addItem(lives);
@@ -50,20 +44,21 @@ f::XLayer* HUDLayer::realize() {
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto hh = cx::getHeight(b) * 0.5f;
   auto hw = cx::getWidth(b) * 0.5f;
-  b->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::showMenu));
   auto menu = cx::mkMenu(b);
-  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
-  addItem(menu);
 
-  return this;
+  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  b->setCallback([=](c::Ref*) {
+        MGMS()->sendMsg("/hud/showmenu");
+      });
+
+  addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
   lives->reduce(n);
-    return lives->isDead();
+  return lives->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -79,7 +74,6 @@ void HUDLayer::reset() {
   lives->resurrect();
   score=0;
 }
-
 
 
 

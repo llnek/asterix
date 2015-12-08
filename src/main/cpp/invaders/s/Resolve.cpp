@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(f, d) {
+  : BaseSystem<EFactory>(f, d) {
 
   SNPTR(aliens)
   SNPTR(ships)
@@ -58,7 +58,7 @@ void Resolve::checkMissiles() {
 
   auto mss = MGMS()->getPool("missiles");
   auto ht = cx::visRect().size.height;
-  auto c = mss->elements();
+  auto c = mss->list();
 
   F__LOOP(it, c) {
 
@@ -77,7 +77,7 @@ void Resolve::checkMissiles() {
 void Resolve::checkBombs() {
 
   auto bbs = MGMS()->getPool("bombs");
-  auto c = bbs->elements();
+  auto c = bbs->list();
   int bt = 0;
 
   F__LOOP(it, c) {
@@ -96,7 +96,7 @@ void Resolve::checkBombs() {
 //
 void Resolve::checkAliens(a::Node* node) {
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
-  auto c= sqad->elements();
+  auto c= sqad->list();
 
   F__LOOP(it, c) {
 

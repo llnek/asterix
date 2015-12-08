@@ -12,16 +12,18 @@
 #if !defined(__CONFIG_H__)
 #define __CONFIG_H__
 
+#include "x2d/XScene.h"
 #include "core/XConfig.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
-private:
+protected:
 
-  NOCPYASS(Config)
   Config();
+
+private:
 
   void initLevels();
   void initAssets();
@@ -40,8 +42,8 @@ public:
   virtual const sstr appId();
   virtual const sstr color();
 
+  virtual f::XScene* startWith();
   virtual const sstr getWSUrl();
-  virtual c::Scene* startWith();
 
   virtual void setGameId(const sstr& s) {}
   virtual void setRoomId(const sstr& s) {}
@@ -52,8 +54,8 @@ public:
   virtual float getScale()  { return scale; }
   virtual void runOnce() ;
 
-  virtual ~Config()
-  {}
+  virtual ~Config() {}
+  NOCPYASS(Config)
 
   static owner<f::XConfig*> reify();
 };

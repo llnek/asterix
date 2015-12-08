@@ -29,9 +29,6 @@ protected:
 
   virtual bool onUpdate(float);
 
-  NOCPYASS(Motions)
-  NODFT(Motions)
-
   a::NodeList* cannons;
   a::NodeList* ships;
   a::NodeList* aliens;
@@ -49,6 +46,10 @@ public:
   virtual int priority() { return a::Motion; }
 
   virtual ~Motions() {}
+
+  NOCPYASS(Motions)
+  NODFT(Motions)
+
 };
 
 

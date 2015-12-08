@@ -13,28 +13,27 @@
 #define __GAME_H__
 
 #include "x2d/GameScene.h"
-#include "s/EFactory.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::GameScene {
-protected:
-
-  NOCPYASS(Game)
-  IMPLCZ(Game)
-
 public:
 
-    virtual f::GameScene* realizeWithCtx(f::GContext*);
-    virtual f::GameLayer* getGLayer();
-    
   virtual void sendMsgEx(const MsgTopic& topic, void*);
+
+  virtual f::GameLayer* getGLayer();
+  virtual void decorate();
+
   virtual bool isLive();
   virtual void play();
   virtual void stop();
 
-  STATIC_REIFY_SCENE(Game)
+  STATIC_REIFY_SCENE_CTX(Game)
+  NOCPYASS(Game)
+  IMPLCZ(Game)
+
+
 };
 
 

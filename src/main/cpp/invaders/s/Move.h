@@ -30,9 +30,6 @@ protected:
 
   virtual bool onUpdate(float dt);
 
-  NOCPYASS(Move)
-  NODFT(Move)
-
   a::NodeList* ships;
 
 public:
@@ -41,11 +38,14 @@ public:
 
   Move(not_null<EFactory*>, not_null<c::Dictionary*> );
 
-  virtual ~Move() {}
-
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::Move; }
+  virtual ~Move() {}
+
+  NOCPYASS(Move)
+  NODFT(Move)
+
 
 };
 

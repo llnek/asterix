@@ -26,7 +26,7 @@ NS_BEGIN(invaders)
 EFactory::EFactory(not_null<a::Engine*> e,
     not_null<c::Dictionary*> options)
 
-  : f::Factory(e,options) {
+  : Factory(e,options) {
 
 }
 
@@ -150,42 +150,6 @@ void EFactory::fillSquad(f::XPool* pool) {
       pool->checkin(co);
     }
   }
-/*
-  for (int n=0; n < cells; ++n) {
-
-    auto az= CC_GDV(f::Size2, info, "size");
-    if (n % cols == 0) {
-      y = (n == 0) ? wb.top * 0.9f
-                   : y - az.height - wz.size.height * 4/480.0f;
-      x = wb.left + (8/320.0f * wz.size.width) + HWZ(az);
-      row += 1;
-      info= getRankInfo(row);
-      az= CC_GDV(f::Size2, info, "size");
-    }
-
-    auto s = CC_GDS(info, "img0");
-    auto aa = cx::reifySprite(s);
-    aa->setPosition(x + HWZ(az), y - HHZ(az));
-
-    auto f1= CC_GDS(info, "img0");
-    auto f2= CC_GDS(info, "img1");
-    c::Vector<c::SpriteFrame*> animFrames(2);
-
-    animFrames.pushBack( cx::getSpriteFrame(f1));
-    animFrames.pushBack( cx::getSpriteFrame(f2));
-
-    aa->runAction(c::RepeatForever::create(
-      c::Animate::create(
-        c::Animation::createWithSpriteFrames( animFrames, 1))));
-
-    MGML()->addAtlasItem("game-pics", aa);
-    x += az.width + (8/320.0f * wz.size.width);
-    auto v = CC_GDV(c::Integer, info, "value");
-    auto co= mc_new_3(Alien, aa, v, row);
-    co->status=true;
-    pool->checkin(co);
-  }
-*/
 }
 
 //////////////////////////////////////////////////////////////////////////

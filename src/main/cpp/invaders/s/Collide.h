@@ -29,26 +29,20 @@ protected:
 
   virtual bool onUpdate(float);
 
-  NOCPYASS(Collide)
-  NODFT(Collide)
-
   a::NodeList* aliens;
   a::NodeList* ships;
 
 public:
 
+  virtual const a::SystemType typeId() { return "n/Collide"; }
   Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual const a::SystemType typeId()
-  { return "n/Collide"; }
-
-  virtual ~Collide()
-  {}
-
   virtual void addToEngine(not_null<a::Engine*> );
+  virtual int priority() { return a::Collide; }
+  virtual ~Collide() {}
 
-  virtual int priority()
-  { return a::Collide; }
+  NOCPYASS(Collide)
+  NODFT(Collide)
 
 };
 

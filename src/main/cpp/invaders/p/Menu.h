@@ -18,17 +18,22 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct MContext : public f::SContext {
+  MContext(VOIDFN f) { back=f;  }
+  virtual ~MContext() {}
+  VOIDFN back;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL MainMenu : public f::XScene {
-protected:
+public:
 
-  virtual f::XScene* realizeEx(VOIDFN );
-
-  STATIC_REIFY_SCENE(MainMenu)
+  STATIC_REIFY_SCENE_CTX(MainMenu)
   NOCPYASS(MainMenu)
   IMPLCZ(MainMenu)
 
-public:
-  static MainMenu* reifyWithBackAction(VOIDFN );
+  virtual void decorate();
 };
 
 

@@ -22,7 +22,7 @@ NS_BEGIN(invaders)
 Collide::Collide(not_null<EFactory*> f,
     not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(f,d) {
+  : BaseSystem<EFactory>(f,d) {
 
   SNPTR(aliens)
   SNPTR(ships)
@@ -73,8 +73,8 @@ void Collide::checkMissilesBombs() {
 
   auto mss = MGMS()->getPool("missiles");
   auto bbs = MGMS()->getPool("bombs");
-  auto m = mss->elements();
-  auto b= bbs->elements();
+  auto m = mss->list();
+  auto b= bbs->list();
 
   F__LOOP(it, m) {
     F__LOOP(it2, b) {
@@ -97,8 +97,8 @@ void Collide::checkMissilesAliens(a::Node* node) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto mss = MGMS()->getPool("missiles");
-  auto c = sqad->elements();
-  auto c2 = mss->elements();
+  auto c = sqad->list();
+  auto c2 = mss->list();
 
   F__LOOP(it, c) {
     F__LOOP(it2, c2) {
@@ -119,7 +119,7 @@ void Collide::checkShipBombs(a::Node* node) {
 
   auto ship= CC_GNF(Ship, node, "ship");
   auto bbs= MGMS()->getPool("bombs");
-  auto c= bbs->elements();
+  auto c= bbs->list();
 
   if (ship->status)
     F__LOOP(it, c) {
@@ -138,7 +138,7 @@ void Collide::checkShipAliens(a::Node* anode, a::Node* snode) {
 
   auto sqad= CC_GNF(AlienSquad, anode, "aliens");
   auto ship = CC_GNF(Ship, snode, "ship");
-  auto c = sqad->elements();
+  auto c = sqad->list();
   auto sz= sqad->size();
 
   if (ship->status)
