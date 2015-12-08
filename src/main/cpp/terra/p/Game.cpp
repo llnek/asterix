@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Game.h"
+#include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
@@ -20,51 +21,37 @@ NS_BEGIN(terra)
 //
 BEGIN_NS_UNAMED()
 class BLayer : public f::XLayer {
-protected:
+public:
+  STATIC_REIFY_LAYER(BLayer)
   NOCPYASS(BLayer)
   IMPLCZ(BLayer)
-public:
-  virtual f::XLayer* realize() {
+  virtual void decorate() {
     regoAtlas("back-tiles", 1);
     regoAtlas("game-pics", 0);
-    return this;
   }
-  STATIC_REIFY_LAYER(BLayer)
-};
-
-class CC_DLL GLayer : public f::GameLayer {
-protected:
-
-  void inizGame();
-
-  NOCPYASS(GLayer)
-  IMPLCZ(GLayer)
-
-public:
-  virtual int getIID() { return 2; }
-  virtual f::XLayer* realize();
-  bool playable;
-
-  STATIC_REIFY_LAYER(GLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::inizGame() {
-  const arr= [['op-pics', true],
-    ['game-pics', false],
-    ['explosions', true]];
+class CC_DLL GLayer : public f::GameLayer {
+public:
 
-  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+  virtual const f::Box4 getEnclosureBox();
+  virtual int getIID() { return 2; }
+  virtual void decorate();
 
-  auto a= regoAtlas("explosions");
-  a->setBlendFunc(c::BlendFunc::ADD);
-  a= regoAtlas("game-pics");
-  a= regoAtlas("op-pics");
-  a->setBlendFunc(c::BlendFunc::ADD);
+  STATIC_REIFY_LAYER(GLayer)
+  NOCPYASS(GLayer)
+  IMPLCZ(GLayer)
 
-  getHUD()->reset();
-}
+  void onPlayerKilled();
+  void spawnPlayer();
+  void moveBackTiles();
+  void initBackTiles();
+  void onEarnScore(int );
+  void onDone();
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -75,7 +62,7 @@ void GLayer::initBackTiles() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GLayer::moveBackTiles() {
+void GLayer::moveBackTiles() {
   auto ps= XCFG()->getPool("BackTiles");
   auto wz= cx::visRect();
   auto tm = ps->get();
@@ -85,10 +72,9 @@ GLayer::moveBackTiles() {
     tm= ps->get();
   }
 
-  tm->inflate(CC_RANDOM_1(wz.width),
-               wz.height);
+  tm->inflate(cx::randFloat(wz.width), wz.height);
 
-  auto move = c::MoveBy::create(CC_RANDOM(2) + 10,
+  auto move = c::MoveBy::create(cx::randInt(2) + 10,
                    ccp(0, -wz.height - wz.height * 0.5f));
   auto fun = c::CallFunc::create([=]() {
     tm->deflate();
@@ -99,23 +85,18 @@ GLayer::moveBackTiles() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::play() {
+void GLayer::decorate() {
 
-  inizGame();
-  initAsh();
+  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
 
   options->setObject(CC_INT(0), "secCount");
-  cx::sfxMusic("bgMusic", true);
 
-  schedule([=]() {
-    // counter used to spawn enemies
-    ++this->options.secCount;
-  },1.0f);
-}
+  auto a= regoAtlas("explosions");
+  a->setBlendFunc(BLFUNC::ADDITIVE);
+  a= regoAtlas("game-pics");
+  a= regoAtlas("op-pics");
+  a->setBlendFunc(BLFUNC::ADDITIVE);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::initAsh() {
   MGMS()->reifyPool("BackTiles");
   MGMS()->reifyPool("BackSkies");
 
@@ -145,7 +126,14 @@ void GLayer::initAsh() {
 
   bornShip(ships->head->ship);
 
+  schedule([=]() {
+    // counter used to spawn enemies
+    ++this->options.secCount;
+  },1.0f);
 
+  getHUD()->reset();
+
+  cx::sfxMusic("bgMusic", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -176,7 +164,7 @@ void GLayer::onEarnScore(j::json* msg) {
 //
 void GLayer::onDone() {
   cx::pauseAudio();
-  playable=false;
+  MGMS()->stop();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -223,19 +211,29 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Game* Game::reify(f::GMode m) {
-  auto g = Game::reify();
-  g->realizeWiithCtx( mc_new_1(f::GContext, m));
-  return g;
+void Game::decorate() {
+  GLayer::reify(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* Game::realizeWithCtx(f::GContext* x) {
-  context=x;
-  addLayer(GLayer::reify())->realize();
-  return this;
+bool Game::isAlive() {
+   return state > 0;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::play() {
+  state= 911;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::stop() {
+  state= -1;
+}
+
+
 
 NS_END(terra)
 

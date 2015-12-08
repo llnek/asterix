@@ -18,7 +18,7 @@ NS_BEGIN(terra)
 //
 Collide::Collide(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(e, d) {
+  : BaseSystem<EFactory>(e, d) {
 
   SNPR(ships)
 }
@@ -41,7 +41,8 @@ bool Collide::collide(f::ComObj* a, f::ComObj* b) {
 bool Collide::onUpdate(float dt) {
   auto node = ships->head;
 
-  if (MGMS()->isLive() && NNP(node)) {
+  if (MGMS()->isLive() &&
+      NNP(node)) {
     checkMissilesAliens();
     checkShipAliens(node);
     checkShipBombs(node);

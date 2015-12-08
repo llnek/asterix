@@ -17,16 +17,21 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainMenu : public f::XScene {
-protected:
+struct CC_DLL MContext : public f::SContext {
+  MContext(VOIDFN cb) { back=cb; }
+  VOIDFN back;
+};
 
-  virtual f::XScene* realizeEx(VOIDFN );
-  STATIC_REIFY_SCENE(MainMenu)
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MainMenu : public f::XScene {
+public:
+
+  STATIC_REIFY_SCENE_CTX(MainMenu)
   NOCPYASS(MainMenu)
   IMPLCZ(MainMenu)
 
-public:
-  static MainMenu* reifyWithBackAction(VOIDFN);
+  virtual void decorate();
 };
 
 

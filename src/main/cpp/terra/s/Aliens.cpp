@@ -19,7 +19,7 @@ NS_BEGIN(terra)
 //
 Aliens::Aliens(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(e, d) {
+  : BaseSystem<EFactory>(e, d) {
 
   SNPTR(ships)
 }
@@ -140,7 +140,7 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
   auto epos= en->pos();
   c::Action* act;
 
-  en->setPos(cx::randInt(80 + wz.width *0.5f), wz.height);
+  en->setPos(cx::randFloat(wz.width *0.5f + 80.0f), wz.height);
   switch (en->moveType) {
 
     case Moves::RUSH:

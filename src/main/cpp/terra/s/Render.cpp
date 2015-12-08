@@ -16,7 +16,7 @@ NS_BEGIN(terra)
 //
 Render::Render(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(e, d) {
+  : BaseSystem<EFactory>(e, d) {
 
 }
 

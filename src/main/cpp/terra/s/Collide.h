@@ -28,8 +28,6 @@ protected:
   void checkMissilesAliens();
 
   virtual bool onUpdate(float);
-  NOCPYASS(Collide)
-  NODFT(Collide)
 
   a::NodeList* ships;
 
@@ -44,6 +42,8 @@ public:
   virtual int priority() { return a::Collide; }
 
   virtual ~Collide() {}
+  NOCPYASS(Collide)
+  NODFT(Collide)
 
 };
 

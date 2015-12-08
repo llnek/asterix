@@ -18,15 +18,13 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL EFactory : public fusii::Factory {
-protected:
-
-  NOCPYASS(EFactory)
-  NODFT(EFactory)
-
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*>);
   virtual ~EFactory() {}
+
+  NOCPYASS(EFactory)
+  NODFT(EFactory)
 
   void createMissiles(int count);
   void createBombs(int count);

@@ -17,7 +17,7 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* HUDLayer::realize() {
+void HUDLayer::decorate() {
   auto soff = CC_CSV(c::Integer, "S_OFF");
   auto tile = CC_CSV(c::Integer, "TILE");
   auto wz = cx::visRect();
@@ -33,7 +33,7 @@ f::XLayer* HUDLayer::realize() {
   addItem(scoreLabel);
 
   lives = f::reifyRefType<f::XLives>();
-  lives->realize("ship01.png",3,
+  lives->decorate("ship01.png",3,
       tile +soff,
       wz.height - tile - soff, 0.4);
   addItem(lives);
@@ -50,7 +50,6 @@ f::XLayer* HUDLayer::realize() {
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
 
-  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////

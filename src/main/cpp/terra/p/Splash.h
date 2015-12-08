@@ -18,14 +18,15 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Splash : public f::XScene {
-protected:
+public:
 
-  virtual f::XScene* realize();
+  STATIC_REIFY_SCENE(Splash)
+
+  virtual void decorate();
+
   NOCPYASS(Splash)
   IMPLCZ(Splash)
 
-public:
-  STATIC_REIFY_SCENE(Splash)
 };
 
 

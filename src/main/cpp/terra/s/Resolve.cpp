@@ -19,7 +19,7 @@ NS_BEGIN(terra)
 //
 Resolve::Resolve(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(e, d) {
+  : BaseSystem<EFactory>(e, d) {
 
   SNPTR(ships)
 }
@@ -36,7 +36,9 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 bool Resolve::onUpdate(float dt) {
   auto node = ships->head;
 
-  if (MGMS()->isLive() && NNP(node)) {
+  if (MGMS()->isLive() &&
+      NNP(node)) {
+
     checkMissiles();
     checkBombs();
     checkAliens();

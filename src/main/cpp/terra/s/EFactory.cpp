@@ -12,6 +12,8 @@
 #include "EFactory.h"
 NS_ALIAS(terra)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 static const s::array<sstr,4> BackTileMap= {
   "lvl1_map1.png", "lvl1_map2.png",
   "lvl1_map3.png", "lvl1_map4.png"
@@ -22,7 +24,7 @@ static const s::array<sstr,4> BackTileMap= {
 EFactory::EFactory(not_null<a::Engine*> e,
     not_null<c::Dictionary*> options)
 
-  : f::Factory(e, options) {
+  : Factory(e, options) {
 
 }
 
@@ -36,23 +38,26 @@ a::Entity* EFactory::createShip() {
   auto wz= cx::visRect();
   auto cw= cx::center();
 
-  auto f0 = cx::getSpriteFrame("ship01.png");
-  auto f1 = cx::getSpriteFrame("ship02.png");
-  auto ani = c::Animation::create();
-  ani->setDelayPerUnit(0.1f);
-  ani->addSpriteFrame(f0);
-  ani->addSpriteFrame(f1);
-  auto animate = c::Animate::create(ani);
-
   MGML()->addAtlasItem("game-pics", sp, f::MaybeInt(zx));
-  sp->runAction(c::RepeatForever::create(animate));
+  auto cac= c::AnimationCache::getInstance();
+  auto ani= cac->getAnimation("ShipAni");
+  if (ENP(ani)) {
+    auto f0 = cx::getSpriteFrame("ship01.png");
+    auto f1 = cx::getSpriteFrame("ship02.png");
+    ani = c::Animation::create();
+    ani->setDelayPerUnit(0.1f);
+    ani->addSpriteFrame(f0);
+    ani->addSpriteFrame(f1);
+    cac->addAnimation(ani, "ShipAni");
+  }
+  sp->runAction(c::RepeatForever::create( c::Animate::create(ani)));
   sp->setPosition(cw.x, sz.height);
 
   auto bs = cx::reifySprite("ship03.png");
   bs->setBlendFunc(BLFUNC::ADDITIVE);
   bs->setPosition(sz.width * 0.5f, 12);
   bs->setVisible(false);
-  sp->addChild(bs, f::MaybeInt(zx), f::MaybeInt(99999));
+  sp->addChild(bs, zx, 99999);
 
   ent->checkin( mc_new_2(Ship, sp, bs));
   ent->checkin( mc_new(Motion));

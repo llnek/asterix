@@ -28,8 +28,6 @@ protected:
   void moveMissiles(float);
 
   virtual bool onUpdate(float);
-  NOCPYASS(Move)
-  NODFT(Move)
 
 public:
 
@@ -40,6 +38,8 @@ public:
   virtual int priority() { return a::Move; }
 
   virtual ~Move() {}
+  NOCPYASS(Move)
+  NODFT(Move)
 
 };
 

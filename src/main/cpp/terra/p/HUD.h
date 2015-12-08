@@ -21,20 +21,20 @@ NS_BEGIN(terra)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  NOCPYASS(HUDLayer)
-  IMPLCZ(HUDLayer)
-
-  void resetAsNew();
-  void reset();
-
   c::Label* scoreLabel;
   f::XLives* lives;
   int score;
 
 public:
 
-  virtual f::XLayer* realize();
   STATIC_REIFY_LAYER(HUDLayer)
+  NOCPYASS(HUDLayer)
+  IMPLCZ(HUDLayer)
+
+  void resetAsNew();
+  void reset();
+
+  virtual void decorate();
 };
 
 

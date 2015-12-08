@@ -35,14 +35,11 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
   auto easeMove = c::EaseSineOut::create(c::MoveBy::create(0.5f, cc.p(490, 0));
   auto biggerEase = c::EaseSineOut::create(c::ScaleBy::create(0.7f, 1.2f, 1.2f));
   auto bigger = c::ScaleTo::create(0.5f, 1);
-  auto onComplete = c::CallFunc::create(cb);
-  auto killflare = c::CallFunc::create([=]() {
-    flare->removeFromParent();
-  });
+  auto kf= [=]() { flare->removeFromParent(); };
 
   flare->runAction(c::Sequence::create(opacityAnim,
       biggerEase, opacDim,
-      killflare, onComplete));
+      c::CallFunc::create(kf), c::CallFunc::create(cb)));
 
   flare->runAction(easeMove);
   flare->runAction(rotateEase);
@@ -58,7 +55,7 @@ void btnEffect() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void fireMissiles(not_null<f::ComObj*> obj, float dt) {
-  auto po1= MGMS()->getPool("missiles");
+  auto po1= MGMS()->getPool("Missiles");
   auto ship = (Ship*) obj.get();
   auto pos = ship->pos();
   auto sz = ship->size();
@@ -86,7 +83,7 @@ void bornShip(not_null<Ship*> ship) {
     bsp->setVisible(false);
     ssp->schedule([=](float dt) {
       fireMissiles(ship, dt);
-    }, 1/6);
+    }, 1.0f/6);
     ship->inflate();
   };
 
@@ -106,7 +103,7 @@ void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta) {
   auto wz= cx::visRect();
   auto pos= ship->pos();
   auto cur= ccpAdd(pos, delta);
-  cur= ccpClamp(cur, ccp(box.left,box.bottom), ccp(box.right, box.top));
+  cur= cx::clamp(cur, bx);
   ship->setPos(cur.x, cur.y);
 }
 

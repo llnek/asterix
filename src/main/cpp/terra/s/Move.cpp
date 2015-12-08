@@ -18,7 +18,7 @@ NS_BEGIN(terra)
 //
 Move::Move(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
 
-  : f::BaseSystem<EFactory>(e, d) {
+  : BaseSystem<EFactory>(e, d) {
 
   SNPTR(ships)
 }
@@ -34,7 +34,8 @@ void Move::addToEngine(not_null<a::Engine*> e) {
 //
 bool Move::onUpdate(float dt) {
   auto node= ships->head;
-  if (MGMS()->isLive() && NNP(node)) {
+  if (MGMS()->isLive() &&
+      NNP(node)) {
     moveMissiles(dt);
     move(dt);
     onKeys(node,dt);

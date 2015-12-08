@@ -29,9 +29,11 @@ public:
     vel.y= CC_CSV(c::Float, "MISSILE_SPEED");
   }
 
+  virtual ~Missile() {}
+  NOCPYASS(Missile)
+  NODFT(Missile)
+
   AttackMode attackMode;
-  virtual ~Missile()
-  {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,9 +48,11 @@ public:
     vel.y= - CC_CSV(c::Float, "BOMB_SPEED");
   }
 
+  virtual ~Bomb() {}
+  NOCPYASS(Bomb)
+  NODFT(Bomb)
+
   AttackMode attackMode;
-  virtual ~Bomb()
-  {}
 };
 
 
@@ -69,6 +73,8 @@ public:
   float speed;
 
   virtual ~Enemy() {}
+  NOCPYASS(Enemy)
+  NODFT(Enemy)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,6 +92,9 @@ public:
   bool canBeAttack;
 
   virtual ~Ship() {}
+  NOCPYASS(Ship)
+  NODFT(Ship)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -93,6 +102,7 @@ public:
 class CC_DLL Motion : public a::Component {
 public:
   virtual ~Motion() {}
+  NOCPYASS(Motion)
   Motion() {
     right=false;
     left= false;
@@ -118,6 +128,10 @@ public:
     scale = 1.2f;
   }
 
+  virtual ~Spark() {}
+  NOCPYASS(Spark)
+  NODFT(Spark)
+
   c::Sprite* sprite2;
   float duration;
   float scale;
@@ -129,25 +143,23 @@ public:
     sprite2->setPosition(x,y);
     sprite2->setScale(scale);
 
-    sprite->setOpacity(255.0f);
-    sprite->setPosition(x,y);
-    sprite->setScale(scale);
-
     auto scaleBy = c::ScaleBy::create(duration,3.0f,3.0f);
     auto right = c::RotateBy::create(duration, 45.0f);
     auto seq = c::Sequence::createWithTwoActions(
         c::FadeOut::create(duration),
         c::CallFunc::create([=]() { this->destroy(); }));
 
+    sprite->setOpacity(255.0f);
+    sprite->setScale(scale);
     sprite->runAction(right);
     sprite->runAction(scaleBy);
     sprite->runAction(seq);
 
+    ComObj::inflate(x,y);
+
     sprite2->runAction(scaleBy->clone());
     sprite2->runAction(seq->clone());
-
     sprite2->setVisible(true);
-    ComObj::inflate();
   }
 
   virtual void deflate() {
@@ -156,7 +168,6 @@ public:
     ComObj::deflate();
   }
 
-  virtual ~Spark() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -177,6 +188,8 @@ public:
   }
 
   virtual ~Explosion() {}
+  NOCPYASS(Explosion)
+  NODFT(Explosion)
 };
 
 
@@ -200,10 +213,9 @@ public:
   }
 
   virtual ~HitEffect() {}
+  NOCPYASS(HitEffect)
+  NODFT(HitEffect)
 };
-
-
-
 
 NS_END(terra)
 #endif

@@ -31,8 +31,6 @@ protected:
 
   virtual bool onUpdate(float);
 
-  NOCPYASS(Resolve)
-  NODFT(Resolve)
 
 public:
 
@@ -43,6 +41,10 @@ public:
   virtual int priority() { return a::Resolve; }
 
   virtual ~Resolve() {}
+  NOCPYASS(Resolve)
+  NODFT(Resolve)
+
+
 };
 
 

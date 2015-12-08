@@ -21,19 +21,18 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL UILayer : public f::XLayer {
-protected:
+public:
 
   STATIC_REIFY_LAYER(UIayer)
   NOCPYASS(UILayer)
   IMPLCZ(UILayer)
 
-public:
-  f::XLayer* realizeEx(VOIDFN );
+  virtual void decorate();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realizeEx(VOIDFN cb) {
+void UILayer::decorate() {
   auto tt= cx::reifyBmfLabel( "font.JellyBelly",
       XCFG()->getL10NStr("mmenu"));
   auto tile = CC_CSV(c::Integer, "TILE");
@@ -47,8 +46,11 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
   tt->setScale(XCFG()->getScale());
   addItem(tt);
 
+  auto ctx = (MContext*) getSceneX()->getCtx();
   auto b= cx::reifyMenuBtn("player1.png");
   auto menu= cx::mkMenu(b);
+  c::Menu* m2;
+
   b->setCallback([=](c::Ref*) {
         cx::runScene( Game::reify(f::GMode::ONE));
       });
@@ -57,24 +59,24 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  back->setCallback([=](c::Ref*) { cb(); });
+  auto sz= back->getContentSize();
+  back->setCallback([=](c::Ref*) { ctx->back(); });
   back->setColor(c);
+
+  // audio
+  c::MenuItem* off;
+  c::MenuItem* on;
 
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   quit->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
 
-  auto m2= cx::mkMenu(s::vector<c::MenuItem*> {back, quit}, false, 10.0);
-  auto sz= back->getContentSize();
-
+  m2= cx::mkMenu(s::vector<c::MenuItem*> {back, quit}, false, 10.0);
   m2->setPosition(wb.left + tile + sz.width * 1.1,
                   wb.bottom + tile + sz.height * 0.45);
   addItem(m2);
 
-  // audio
-  c::MenuItem* off;
-  c::MenuItem* on;
   cx::reifyAudioIcons(on, off);
   off->setColor(c);
   on->setColor(c);
@@ -84,25 +86,13 @@ f::XLayer* UILayer::realizeEx(VOIDFN cb) {
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
 
-  return this;
 }
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-MainMenu* MainMenu::reifyWithBackAction(VOIDFN cb) {
-  auto m = MainMenu::reify();
-  m->realizeEx(cb);
-  return m;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-f::XScene* MainMenu::realizeEx(VOIDFN cb) {
-  auto y = UILayer::reify();
-  addLayer(y);
-  y->realizeEx(cb);
-  return this;
+void MainMenu::decorate() {
+  UILayer::reify(this);
 }
 
 

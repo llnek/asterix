@@ -13,10 +13,11 @@
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
+//
 Stager::Stager(not_null<EFactory*> f,
     not_null<c::Dictionary*> d)
   :
-  f::BaseSystem<EFactory>(f, d) {
+  BaseSystem<EFactory>(f, d) {
 
   this->inited=false;
   SNPTR(ships)
@@ -72,15 +73,15 @@ void Stager::onceOnly() {
 //
 void Stager::initBackSkies() {
   auto p = MGMS()->getPool("BackSkies");
-  auto y = (Game*) MGMS();
+  auto g = (Game*) MGMS();
   auto bs = p->get();
 
   assert(bs != nullptr);
   bs->inflate(0, 0);
 
-  y->backSkyDim = bs->size();
-  y->backSkyRe = nullptr;
-  y->backSky = bs;
+  g->backSkyDim = bs->size();
+  g->backSkyRe = nullptr;
+  g->backSky = bs;
 }
 
 //////////////////////////////////////////////////////////////////////////

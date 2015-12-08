@@ -15,7 +15,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 Motions::Motions(not_null<a::Engine*> e, not_null<c::Dictionary*> f)
-  : f::BaseSystem<EFactory>(e, f) {
+  : BaseSystem<EFactory>(e, f) {
 
   SNPTR(ships)
 }
@@ -50,8 +50,7 @@ void Motions::onGui(a::Node* node, float dt) {
   auto loc = ship->pos();
   auto wc= cx::visRect();
   auto cur= ccpAdd(loc, c::Vec2()); //evt.delta);
-  cur= ccpClamp(cur, ccp(bx.left, bx.bottom),
-                 ccp(bx.right, bx.top));
+  cur= cx::clamp(cur, bx);
   ship->setPos(cur.x, cur.y);
 }
 
@@ -69,7 +68,6 @@ void Motions::onKey(a::Node* node, float dt) {
   if (MGML()->keyPoll(KEYCODE::KEY_DOWN)) {
     motion->down = true;
   }
-
   if (MGML()->keyPoll(KEYCODE::KEY_UP)) {
     motion->up= true;
   }

@@ -26,9 +26,6 @@ protected:
   void onGui(a::Node*, float);
   void onKey(a::Node*, float);
 
-  NOCPYASS(Motions)
-  NODFT(Motions)
-
   a::NodeList* ships;
 
 public:
@@ -40,6 +37,12 @@ public:
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::Motion; }
+
+  virtual ~Motions() {}
+
+  NOCPYASS(Motions)
+  NODFT(Motions)
+
 };
 
 

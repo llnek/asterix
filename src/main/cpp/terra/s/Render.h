@@ -18,8 +18,8 @@ NS_BEGIN(terra)
 class CC_DLL Render : public f::BaseSystem<EFactory> {
 protected:
 
+  virtual bool onUpdate(float);
   void processMovement(float);
-  NOCPYASS(Render)
 
 public:
 
@@ -29,11 +29,12 @@ public:
 
   virtual void addToEngine(not_null<a::Engine*> );
 
-  virtual bool onUpdate(float);
+  virtual int priority() { return a::Render; }
 
   virtual ~Render();
 
-  virtual int priority() { return a::Render; }
+  NOCPYASS(Render)
+  NODFT(Render)
 
 };
 

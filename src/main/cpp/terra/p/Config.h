@@ -20,8 +20,7 @@
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  NOCPYASS(Config)
-  Config();
+  Config() {}
 
 public:
 
@@ -29,7 +28,8 @@ public:
 
   virtual void runOnce();
 
-  virtual ~Config();
+  virtual ~Config() {}
+  NOCPYASS(Config)
 
   virtual const sstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
 
@@ -40,7 +40,7 @@ public:
   virtual const c::Size gameSize() { return c::Size(320,480); }
 
 
-  static Config* reify();
+  static owner<Config*> reify();
 };
 
 

@@ -22,9 +22,6 @@ class CC_DLL Stager : public f::BaseSystem<EFactory> {
 protected:
 
   virtual bool onUpdate(float);
-  NOCPYASS(Stager)
-  NODFT(Stager)
-
   void sharedExplosion();
   void initBackSkies();
   void onceOnly();
@@ -33,11 +30,16 @@ public:
 
   virtual const a::SystemType typeId() { return "n/Stager"; }
 
+  virtual int priority() { return a::PreUpdate; }
+
   Stager(not_null<a::Engine*>, not_null<c::Dictionary*>);
+
   virtual void addToEngine(not_null<a::Engine*>);
   virtual ~Stager();
 
-  virtual int priority() { return a::PreUpdate; }
+  NOCPYASS(Stager)
+  NODFT(Stager)
+
 };
 
 

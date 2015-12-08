@@ -18,22 +18,25 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::GameScene {
-protected:
-
-  virtual f::GameLayer* getGLayer();
-
-  NOCPYASS(Game)
-  IMPLCZ(Game)
-
 public:
 
   virtual void sendMsgEx(const MsgTopic& topic, void* msg);
-  virtual f::XScene* realizeWithCtx(f::GContext*);
+  virtual f::GameLayer* getGLayer();
+
+  virtual void decorate();
+
   virtual bool isLive();
   virtual void stop();
   virtual void play();
 
-  STATIC_REIFY_SCENE(Game)
+  f::ComObj* backSkyRe;
+  f::ComObj* backSky;
+  c::Size backSkyDim;
+
+  STATIC_REIFY_SCENE_CTX(Game)
+  NOCPYASS(Game)
+  IMPLCZ(Game)
+
 };
 
 

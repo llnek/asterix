@@ -22,12 +22,11 @@ NS_BEGIN(terra)
 class CC_DLL Aliens : public f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool onUpdate(float);
-  NOCPYASS(Aliens)
-  NODFT(Aliens)
-
   void addEnemyToGame(a::Node*, const EnemyType&);
   Enemy* getB(const EnemyType&);
+
+  virtual bool onUpdate(float);
+
   void doIt(a::Node*, float);
   void dropBombs(Enemy*);
 
@@ -43,6 +42,9 @@ public:
 
   virtual int priority() { return a::Motion; }
 
+  virtual ~Aliens() {}
+  NOCPYASS(Aliens)
+  NODFT(Aliens)
 };
 
 
