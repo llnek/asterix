@@ -35,7 +35,7 @@ public:
 
   virtual const a::SystemType typeId() { return "n/Collide"; }
 
-  Collide(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 

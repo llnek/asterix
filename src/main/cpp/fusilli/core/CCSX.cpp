@@ -132,6 +132,11 @@ bool pointInBox(const Box4& box, float x, float y) {
     y >= box.bottom && y <= box.top;
 }
 
+bool pointInBox(const Box4& box, const c::Vec2& pos) {
+    return pos.x >= box.left && pos.x <= box.right &&
+    pos.y >= box.bottom && pos.y <= box.top;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 const c::Color3B white() { return c::Color3B::WHITE; }

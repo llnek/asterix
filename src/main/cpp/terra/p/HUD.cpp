@@ -12,6 +12,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Menu.h"
+#include "HUD.h"
+#include "x2d/GameScene.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
@@ -28,14 +30,14 @@ void HUDLayer::decorate() {
   scoreLabel= cx::reifyBmfLabel("font.TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
   scoreLabel->setScale(12.0f/72.0f);
-  scoreLabel->setPosition( wz.width - tile - soff,
-      wz.height - tile - soff - cx::getHeight(scoreLabel));
+  scoreLabel->setPosition( wz.size.width - tile - soff,
+      wz.size.height - tile - soff - cx::getHeight(scoreLabel));
   addItem(scoreLabel);
 
   lives = f::reifyRefType<f::XLives>();
   lives->decorate("ship01.png",3,
       tile +soff,
-      wz.height - tile - soff, 0.4);
+      wz.size.height - tile - soff, 0.4);
   addItem(lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
@@ -62,6 +64,14 @@ void HUDLayer::resetAsNew() {
 //
 void HUDLayer::reset() {
   score=0;
+}
+
+bool HUDLayer::reduceLives(int n) {
+    return false;
+}
+
+void HUDLayer::updateScore(int n) {
+    
 }
 
 NS_END(terra)

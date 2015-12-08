@@ -12,7 +12,7 @@
 #if !defined(__MENU_H__)
 #define __MENU_H__
 
-#include "x2d/XLayer.h"
+#include "x2d/XScene.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////

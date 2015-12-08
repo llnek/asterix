@@ -9,12 +9,18 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Motions.h"
+#include "core/CCSX.h"
+#include "x2d/GameScene.h"
+#include "ash/Node.h"
+#include "n/GNodes.h"
+#include "Motion.h"
+
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Motions::Motions(not_null<a::Engine*> e, not_null<c::Dictionary*> f)
+Motions::Motions(not_null<EFactory*> e, not_null<c::Dictionary*> f)
   : BaseSystem<EFactory>(e, f) {
 
   SNPTR(ships)
@@ -22,19 +28,20 @@ Motions::Motions(not_null<a::Engine*> e, not_null<c::Dictionary*> f)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::addToEngine(not_null<a::Engine> e) {
+void Motions::addToEngine(not_null<a::Engine*> e) {
   ShipMotionNode n;
   ships= e->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Motions::OnUpdate(float dt) {
+bool Motions::onUpdate(float dt) {
   //const evt = this.evQ.length > 0 ? this.evQ.shift() : undef,
   auto node = ships->head;
   if (NNP(node)) {
     doIt(node, dt);
   }
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -46,7 +53,7 @@ void Motions::doIt(a::Node* node, float dt) {
 //
 void Motions::onGui(a::Node* node, float dt) {
   auto ship = CC_GNF(Ship, node, "ship");
-  auto bx= MGMS()->getEnclosureBox();
+  auto bx= MGML()->getEnclosureBox();
   auto loc = ship->pos();
   auto wc= cx::visRect();
   auto cur= ccpAdd(loc, c::Vec2()); //evt.delta);
@@ -58,17 +65,17 @@ void Motions::onGui(a::Node* node, float dt) {
 //
 void Motions::onKey(a::Node* node, float dt) {
   auto motion= CC_GNF(Motion, node, "motion");
-  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     motion->right = true;
   }
-  if (MGML()->keyPoll(KEYCODE::KEY_LEFT)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
     motion->left= true;
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_DOWN)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
     motion->down = true;
   }
-  if (MGML()->keyPoll(KEYCODE::KEY_UP)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
     motion->up= true;
   }
 }

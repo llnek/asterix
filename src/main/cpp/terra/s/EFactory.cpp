@@ -9,8 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "EFactory.h"
-NS_ALIAS(terra)
+#include "n/GNodes.h"
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -54,7 +59,7 @@ a::Entity* EFactory::createShip() {
   sp->setPosition(cw.x, sz.height);
 
   auto bs = cx::reifySprite("ship03.png");
-  bs->setBlendFunc(BLFUNC::ADDITIVE);
+  bs->setBlendFunc(BDFUNC::ADDITIVE);
   bs->setPosition(sz.width * 0.5f, 12);
   bs->setVisible(false);
   sp->addChild(bs, zx, 99999);
@@ -71,9 +76,9 @@ void EFactory::createMissiles(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Missiles");
 
-  p->preSet([=]() -> f::ComObj* {
+  p->preset([=]() -> f::ComObj* {
     auto sp= cx::reifySprite("W1.png");
-    sp->setBlendFunc(BLFUNC::ADDITIVE);
+    sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp, f::MaybeInt(zx));
     return mc_new_1(Missile, sp);
@@ -86,9 +91,9 @@ void EFactory::createBombs(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Bombs");
 
-  p->preSet([=]() -> f::ComObj* {
+  p->preset([=]() -> f::ComObj* {
     auto sp= cx::reifySprite("W2.png");
-    sp->setBlendFunc(BLFUNC::ADDITIVE);
+    sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp, f::MaybeInt(zx));
     return mc_new_1(Bomb, sp);
@@ -101,9 +106,9 @@ void EFactory::createExplosions(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Explosions");
 
-  p->preSet([=]() -> f::ComObj* {
+  p->preset([=]() -> f::ComObj* {
     auto sp = cx::reifySprite("explosion_01.png");
-    sp->setBlendFunc(BLFUNC::ADDITIVE);
+    sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("explosions", sp);
     return mc_new_1(Explosion, sp);
@@ -116,9 +121,9 @@ void EFactory::createHitEffects(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("HitEffects");
 
-  p->preSet([=]() -> f::ComObj* {
+  p->preset([=]() -> f::ComObj* {
     auto sp = cx::reifySprite("hit.png");
-    sp->setBlendFunc(BLFUNC::ADDITIVE);
+    sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp);
     return mc_new_1(HitEffect, sp);
@@ -131,14 +136,14 @@ void EFactory::createSparks(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Sparks");
 
-  p->preSet([=]() -> f::ComObj* {
+  p->preset([=]() -> f::ComObj* {
     auto sp2 = cx::reifySprite("explode2.png");
-    sp2->setBlendFunc(BLFUNC::ADDITIVE);
+    sp2->setBlendFunc(BDFUNC::ADDITIVE);
     sp2->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp2);
 
     auto sp3 = cx::reifySprite("explode3.png");
-    sp3->setBlendFunc(BLFUNC::ADDITIVE);
+    sp3->setBlendFunc(BDFUNC::ADDITIVE);
     sp3->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp3);
 
@@ -153,15 +158,17 @@ void EFactory::createEnemies(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX") - 1;
   auto p = MGMS()->getPool("Baddies");
   auto cr= [=](const EnemyType& arg) -> f::ComObj* {
-    auto sp= cx::reifySprite(arg->textureName);
+    auto sp= cx::reifySprite(arg.textureName);
     sp->setVisible(false);
-    MGMS()->addAtlasItem("game-pics", sp, f::MaybeInt(zx));
+    MGML()->addAtlasItem("game-pics",
+                         sp,
+                         f::MaybeInt(zx));
     return mc_new_2(Enemy, sp, arg);
   };
 
   for (auto j = 0; j < EnemyTypes.size(); ++j) {
     auto& arg = EnemyTypes[j];
-    p->preSet([=]() ->  f::ComObj* {
+    p->preset([=]() ->  f::ComObj* {
       return cr(arg);
     }, count);
   }
@@ -174,7 +181,7 @@ void EFactory::createBackSkies() {
   auto p = MGMS()->getPool("BackSkies");
   auto layer= MGMS()->getLayer(1);
 
-  p->preSet([=]() -> f::ComObj* {
+  p->preset([=]() -> f::ComObj* {
     auto bg = cx::reifySprite("bg01.png");
     bg->setAnchorPoint(cx::anchorBL());
     bg->setVisible(false);
@@ -194,16 +201,17 @@ void EFactory::createBackTiles(int count) {
     layer->addAtlasItem("back-tiles", sp, f::MaybeInt(-9));
     return mc_new_1(f::ComObj, sp);
   };
+    auto p = MGMS()->getPool("BackTiles");
 
   for (auto j=0; j < BackTileMap.size(); ++j) {
     auto& n = BackTileMap[j];
-    p->preSet([=]() -> f::ComObj* {
+    p->preset([=]() -> f::ComObj* {
       return cr(n);
     }, count);
   }
 }
 
 
-NS_ALIAS(terra)
+NS_END(terra)
 
 

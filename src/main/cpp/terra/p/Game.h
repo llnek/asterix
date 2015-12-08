@@ -29,13 +29,13 @@ public:
   virtual void stop();
   virtual void play();
 
-  f::ComObj* backSkyRe;
-  f::ComObj* backSky;
-  c::Size backSkyDim;
-
   STATIC_REIFY_SCENE_CTX(Game)
   NOCPYASS(Game)
   IMPLCZ(Game)
+
+  f::ComObj* backSkyRe;
+  f::ComObj* backSky;
+  c::Size backSkyDim;
 
 };
 

@@ -9,18 +9,21 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/CCSX.h"
+#include "n/GNodes.h"
+#include "ash/Node.h"
 #include "Collide.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Collide::Collide(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
+Collide::Collide(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
-  SNPR(ships)
+  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +36,7 @@ void Collide::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Collide::collide(f::ComObj* a, f::ComObj* b) {
-  return cx::collide0(a->sprite, b->sprite);
+  return cx::collideN(a->sprite, b->sprite);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -90,7 +93,7 @@ void Collide::checkMissilesAliens() {
 //
 void Collide::checkShipBombs(a::Node* node) {
   auto bombs = MGMS()->getPool("Bombs");
-  auto ship= node->ship;
+    auto ship= CC_GNF(Ship, node, "ship");
 
   if (!ship->status) { return; }
   bombs->foreach([=](f::ComObj* b) {
@@ -106,7 +109,7 @@ void Collide::checkShipBombs(a::Node* node) {
 //
 void Collide::checkShipAliens(a::Node* node) {
   auto enemies= MGMS()->getPool("Baddies");
-  auto ship= node->ship;
+  auto ship= CC_GNF(Ship, node, "ship");
 
   if (! ship->status) { return; }
   enemies->foreach([=](f::ComObj* en) {

@@ -26,21 +26,21 @@ public:
   NOCPYASS(EFactory)
   NODFT(EFactory)
 
-  void createMissiles(int count);
-  void createBombs(int count);
-  void createExplosions(int count);
-  void createHitEffects(int count);
-  void createSparks(int count);
-  void createEnemies(int count);
+  void createMissiles(int count = 36);
+  void createBombs(int count = 36);
+  void createExplosions(int count = 36);
+  void createHitEffects(int count = 36);
+  void createSparks(int count = 36);
+  void createEnemies(int count = 36);
   void createBackSkies();
-  void createBackTiles(int count);
+  void createBackTiles(int count= 4);
 
   a::Entity* createShip();
 
 };
 
 
-NS_ALIAS(terra)
+NS_END(terra)
 #endif
 
 

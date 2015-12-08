@@ -14,37 +14,42 @@
 
 #include "core/ComObj.h"
 #include "cocos2d.h"
-NS_ALIAS(terra)
+NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class Moves { RUSH, VERT, HORZ, OLAP };
-
 enum class Attacks { TSUIHIKIDAN, NORMAL };
 
 struct EnemyType {
 
   EnemyType(Attacks attackMode, Moves moveType,
     int type,
-    stdtsr textureName,
-    sstr bulletType, int HP, int scoreValue) {
+    const sstr& textureName,
+    const sstr& bulletType, int HP, int scoreValue) {
+      
     this->attackMode = attackMode;
     this->moveType= moveType;
-    this->ytpe= type;
+    this->type= type;
     this->textureName = textureName;
     this->bulletType = bulletType;
     this->HP= HP;
     this->scoreValue = scoreValue;
   }
+    
+    EnemyType() {
+        attackMode= Attacks::NORMAL;
+        moveType= Moves::RUSH;
+    }
 
   virtual ~EnemyType() {}
-  NOCPYASS(EnemyType)
-  NODFT(EnemyType)
+  //NOCPYASS(EnemyType)
+  //NODFT(EnemyType)
 
   Attacks attackMode;
   Moves moveType;
   int type;
-  stdtsr textureName;
+  sstr textureName;
   sstr bulletType;
   int HP;
   int scoreValue;
@@ -53,14 +58,17 @@ struct EnemyType {
 
 const s::array<EnemyType, 6> EnemyTypes = {
   EnemyType(Attacks::NORMAL, Moves::RUSH, 0, "E0.png", "W2.png", 1, 15),
-  EnemyType(Attacks::NORMAL, Moves::RUSH, 1, "E1.png", "W2.png", 2, 40 ),
+    EnemyType(Attacks::NORMAL, Moves::RUSH, 1, "E1.png", "W2.png", 2, 40 ),
   EnemyType(Attacks::TSUIHIKIDAN, Moves::HORZ, 2, "E2.png", "W2.png", 4, 60),
   EnemyType(Attacks::NORMAL, Moves::OLAP, 3, "E3.png", "W2.png", 6, 80 ),
   EnemyType(Attacks::TSUIHIKIDAN, Moves::HORZ, 4, "E4.png", "W2.png", 10, 150 ),
   EnemyType(Attacks::NORMAL, Moves::HORZ, 5, "E5.png", "W2.png", 15, 200 )
 };
 
-void flareEffect(not_null<c::Sprite*> flare, c::SEL_CallFunc cb, c::Ref* target);
+//void flareEffect(not_null<c::Sprite*> flare, c::SEL_CallFunc cb, c::Ref* target);
+
+void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb);
+
 void btnEffect();
 
 void fireMissiles(not_null<f::ComObj*> ship, float dt);

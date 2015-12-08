@@ -31,7 +31,9 @@ protected:
 
 public:
 
-  Move(not_null<a::Engine*>, not_null<c::Dictionary*>);
+    virtual const a::SystemType typeId() { return "n/Move"; }
+
+  Move(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 
@@ -41,6 +43,7 @@ public:
   NOCPYASS(Move)
   NODFT(Move)
 
+    a::NodeList* ships;
 };
 
 

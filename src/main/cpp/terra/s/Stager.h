@@ -32,14 +32,16 @@ public:
 
   virtual int priority() { return a::PreUpdate; }
 
-  Stager(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual ~Stager();
+  virtual ~Stager() {}
 
   NOCPYASS(Stager)
   NODFT(Stager)
 
+    bool inited;
+    a::NodeList* ships;
 };
 
 

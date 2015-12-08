@@ -9,14 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/CCSX.h"
+#include "ash/Node.h"
+#include "n/GNodes.h"
 #include "Move.h"
+#include "Game.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Move::Move(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
+Move::Move(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
@@ -55,7 +60,7 @@ void Move::onKeys(a::Node* node, float dt) {
   auto y = pos.y;
   auto ok = false;
 
-  if (mot->up && pos.y <= wz.height) {
+  if (mot->up && pos.y <= wz.size.height) {
     y = pos.y + dt * ssp;
     ok= true;
   }
@@ -67,7 +72,7 @@ void Move::onKeys(a::Node* node, float dt) {
     x = pos.x - dt * ssp;
     ok= true;
   }
-  if (mot->right && pos.x <= wz.width) {
+  if (mot->right && pos.x <= wz.size.width) {
     x = pos.x + dt * ssp;
     ok= true;
   }

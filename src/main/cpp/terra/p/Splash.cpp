@@ -50,9 +50,9 @@ void UILayer::decorate() {
   flare = cx::reifySprite("flare.png");
   flare->setVisible(false);
   ship = cx::reifySprite("ship03.png");
-  ship->setPosition( cx::randFloat(wz.width), 0);
-  addItem(flare, 15, 10);
-  addItem(ship, 0, 4);
+  ship->setPosition( cx::randFloat(wz.size.width), 0);
+  addChild(flare, 15, 10);
+  addChild(ship, 0, 4);
 
   auto f= [=]() { cx::runScene(XCFG()->startWith()); };
   auto b= cx::reifyMenuBtn("play.png");
@@ -67,7 +67,7 @@ void UILayer::decorate() {
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
 
-  this->update();
+  this->update(0);
   cx::sfxMusic("mainMusic", true);
 }
 
@@ -76,12 +76,12 @@ void UILayer::decorate() {
 void UILayer::update(float dt) {
   auto wz = cx::visRect();
   auto g= [=]() {
-    this->ship->setPosition( cx::randFloat(wz.width), 10);
-    this->update();
+    this->ship->setPosition( cx::randFloat(wz.size.width), 10);
+    this->update(0);
   };
   this->ship->runAction(c::Sequence::create(
         c::MoveBy::create(2,
-          ccp(cx::randFloat(wz.width), wz.height + 100)),
+                          c::ccp(cx::randFloat(wz.size.width), wz.size.height + 100)),
         c::CallFunc::create(g)));
 }
 

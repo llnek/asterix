@@ -25,13 +25,13 @@ public:
 
   virtual const a::SystemType typeId() { return "n/Render"; }
 
-  Render(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Render(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*> );
 
   virtual int priority() { return a::Render; }
 
-  virtual ~Render();
+  virtual ~Render() {}
 
   NOCPYASS(Render)
   NODFT(Render)

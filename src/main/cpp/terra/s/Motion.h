@@ -32,7 +32,7 @@ public:
 
   virtual const a::SystemType typeId() { return "n/Motions"; }
 
-  Motions(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 

@@ -10,13 +10,14 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "Config.h"
+NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<f::XConfig*> Config::reify() {
-  auto c =  mc_new(Config);
+owner<Config*> Config::reify() {
+    auto c =  new Config(); //mc_new(Config);
   c->initAssets();
   c->initCsts();
   c->initLevels();

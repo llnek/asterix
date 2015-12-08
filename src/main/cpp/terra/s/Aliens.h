@@ -14,6 +14,8 @@
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
+#include "utils.h"
+#include "n/GNodes.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +24,7 @@ NS_BEGIN(terra)
 class CC_DLL Aliens : public f::BaseSystem<EFactory> {
 protected:
 
-  void addEnemyToGame(a::Node*, const EnemyType&);
+  void addEnemyToGame(a::Node*, int );
   Enemy* getB(const EnemyType&);
 
   virtual bool onUpdate(float);
@@ -36,7 +38,7 @@ public:
 
   virtual const a::SystemType typeId() { return "n/Aliens"; }
 
-  Aliens(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 

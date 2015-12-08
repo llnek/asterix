@@ -9,28 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/cfg
- * @module i18n/l10n
- */
+#if !defined(__APP_DELEGATE_H__)
+#define __APP_DELEGATE_H__
 
-import sh from 'zotohlab/asx/asterix';
-import xcfg from 'zotohlab/asx/cfg';
+#include "aeon/fusilli.h"
+#include "core/App.h"
 
-let sjs=sh.skarojs;
-/** @alias module:i18n/l10n */
-const xbox = sjs.merge(xcfg.l10nTable, {
-
-  "en" : {
-  }
-
-});
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+class CC_DLL AppDelegate : public fusii::App {
+public:
+  NOCPYASS(AppDelegate)
+  DECLCZ(AppDelegate)
+};
+
+#endif
 

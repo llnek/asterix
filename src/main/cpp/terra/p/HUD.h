@@ -34,6 +34,9 @@ public:
   void resetAsNew();
   void reset();
 
+  bool reduceLives(int =1);
+  void updateScore(int);
+
   virtual void decorate();
 };
 

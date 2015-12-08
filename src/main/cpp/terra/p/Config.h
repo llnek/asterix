@@ -13,16 +13,50 @@
 #define __CONFIG_H__
 
 #include "core/XConfig.h"
-
+NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  Config() {}
+  Config() { scale=1.0f; }
+
+  void initAssets();
+  void initCsts();
+  void initLevels();
+
+  float scale;
 
 public:
+
+  virtual ResolutionPolicy policy() {
+    return ResolutionPolicy::FIXED_HEIGHT;
+  }
+
+  virtual c::Scene* startWith()  {
+    return nullptr;
+  }
+
+  virtual const sstr getWSUrl() {
+    return "";
+  }
+
+  virtual void setGameId(const sstr& ) {
+
+  }
+
+  virtual void setRoomId(const sstr& ) {
+
+  }
+
+  virtual const sstr getGameId() {
+    return "";
+  }
+
+  virtual const sstr getRoomId() {
+    return "";
+  }
 
   virtual void handleResolution(const c::Size& );
 

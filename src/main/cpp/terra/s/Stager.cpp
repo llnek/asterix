@@ -9,7 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+//#include "x2d/GameScene.h"
+#include "ash/Node.h"
+#include "core/CCSX.h"
+#include "n/GNodes.h"
 #include "Stager.h"
+#include "Game.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,13 +52,22 @@ bool Stager::onUpdate(float dt) {
 //
 void Stager::onceOnly() {
 
-  factory->createBackSkies();
-  factory->createBackTiles();
-
-  sharedExplosion();
-  initBackSkies();
-
-  bornShip(ships->head->ship);
+    factory->createBackSkies();
+    factory->createBackTiles();
+    
+    sharedExplosion();
+    initBackSkies();
+    
+    factory->createMissiles();
+    factory->createBombs();
+    factory->createEnemies();
+    
+    factory->createExplosions();
+    factory->createSparks();
+    factory->createHitEffects();
+    
+    auto ship = CC_GNF(Ship, ships->head, "ship");
+  bornShip(ship);
   MGMS()->sendMsg("/game/backtiles");
 }
 
@@ -79,7 +94,7 @@ void Stager::initBackSkies() {
   assert(bs != nullptr);
   bs->inflate(0, 0);
 
-  g->backSkyDim = bs->size();
+  g->backSkyDim = bs->csize();
   g->backSkyRe = nullptr;
   g->backSky = bs;
 }
@@ -87,11 +102,13 @@ void Stager::initBackSkies() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stager::sharedExplosion() {
-  c::Vector<AnimationFrame*> fs;
+    c::Vector<c::AnimationFrame*> fs;
 
   for (auto n = 1; n < 35; ++n) {
-    auto str = "explosion_" + (n < 10 ? ("0" + n) : n) + ".png";
-    fs.pushBack( cx::getSpriteFrame(str));
+      auto ns= s::to_string(n);
+      auto str = "explosion_" +
+      (n < 10 ? "0" + ns : ns) + ".png";
+//    fs.pushBack( cx::getSpriteFrame(str));
   }
 
   auto a = c::Animation::create();

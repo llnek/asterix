@@ -9,15 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "ash/Node.h"
+#include "core/JSON.h"
 #include "core/CCSX.h"
 #include "Aliens.h"
+#include "n/GNodes.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Aliens::Aliens(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
+Aliens::Aliens(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
@@ -34,7 +38,7 @@ void Aliens::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::onUpdate(float dt) {
-  auto cnt= CC_GDV(c::Float, options, "secCount");
+  auto cnt= CC_GDV(c::Float, state, "secCount");
   auto node = ships->head;
   if (NNP(node)) {
     doIt(node, cnt);
@@ -50,21 +54,22 @@ void Aliens::doIt(a::Node* node, float dt) {
   if (enemies->countActives() <
       cfg["enemyMax"].get<j::json::number_integer_t>()) {
 
-    auto arr= cfg["enemies"].get<j::json::array_t>();
+      j::json arr= cfg["enemies"].get<j::json::array_t>();
     J__LOOP(it, arr) {
       auto& a = *it;
       auto time = a["time"].get<j::json::number_integer_t>();
       auto style = a["style"].get<j::json::string_t>();
-      auto types = a["types"].get<j::json::array_t>();
+        j::json types =  a["types"].get<j::json::array_t>();
       auto fc = [=]() {
-        J__LOOP(t,types) {
-          auto& v = *t;
-          this->addEnemyToGame(node,
-              v.get<j::json::number_integer_t>());
-        }
+//        J__LOOP(t, types) {
+//          auto& v = *t;
+//          this->addEnemyToGame(node,
+//              v.get<j::json::number_integer_t>());
+//        }
       };
+        auto dtn = (int) dt;
       if (style == "*" &&
-          dt % time == 0) {
+          dtn % time == 0) {
         fc();
       }
       else
@@ -101,7 +106,7 @@ Enemy* Aliens::getB(const EnemyType& arg) {
   auto enemies = MGMS()->getPool("Baddies");
   auto pred= [=](f::ComObj* c) -> bool {
     auto e = (Enemy*)c;
-    return (e->enemyType == arg.type &&
+    return (e->enemyType.type == arg.type &&
             e->status == false);
   };
 
@@ -115,9 +120,9 @@ Enemy* Aliens::getB(const EnemyType& arg) {
 
   if (NNP(en)) {
     y = (Enemy*) en;
-    y->sprite->schedule([=]() {
+    y->sprite->schedule([=](float) {
       this->dropBombs(y);
-    }, y->delayTime);
+    }, y->delayTime, "dropBombs");
     y->inflate();
   }
 
@@ -136,41 +141,44 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
   auto ship= CC_GNF(Ship, node, "ship");
   auto sprite= en->sprite;
   auto pos= ship->pos();
-  auto sz= en->size();
+  auto sz= en->csize();
   auto epos= en->pos();
   c::Action* act;
 
-  en->setPos(cx::randFloat(wz.width *0.5f + 80.0f), wz.height);
+  en->setPos(cx::randFloat(wz.size.width *0.5f + 80.0f), wz.size.height);
   switch (en->moveType) {
 
-    case Moves::RUSH:
-      act = c::MoveTo::create(1, ccp(pos.x, pos.y));
+      case Moves::RUSH: {
+          act = c::MoveTo::create(1, c::ccp(pos.x, pos.y));
+      }
     break;
 
-    case Moves::VERT:
-      act = c::MoveBy::create(4, ccp(0, -wz.height - sz.height));
+      case Moves::VERT: {
+          act = c::MoveBy::create(4, c::ccp(0, -wz.size.height - sz.height)); }
     break;
 
-    case Moves::HORZ:
-      auto a0 = c::MoveBy::create(0.5f, ccp(0, -100 - cx::randInt(200)));
-      auto a1 = c::MoveBy::create(1, ccp(-50 - cx::randInt(100), 0));
+      case Moves::HORZ: {
+          auto a0 = c::MoveBy::create(0.5f, c::ccp(0, -100 - cx::randInt(200)));
+          auto a1 = c::MoveBy::create(1, c::ccp(-50 - cx::randInt(100), 0));
       auto cb = [=]() {
         auto a2 = c::DelayTime::create(1);
-        auto a3 = c::MoveBy::create(1, ccp(100 + cx::randInt(100), 0));
+          auto a3 = c::MoveBy::create(1, c::ccp(100 + cx::randInt(100), 0));
         sprite->runAction(c::RepeatForever::create(
               c::Sequence::create(a2, a3,
                                 a2->clone(),
                                 a3->reverse())));
       };
-      act = c::Sequence::create(a0, a1, cc::CallFunc::create(cb));
+          act = c::Sequence::create(a0, a1, c::CallFunc::create(cb));}
     break;
 
-    case Moves::OLAP:
-      auto newX = (pos.x <= wz.width * 0.5f) ? wz.width : -wz.width;
-      auto a0 = c::MoveBy::create(4, ccp(newX, -wz.width * 0.75f));
-      auto a1 = c::MoveBy::create(4, ccp(-newX, -wz.width));
-      act = c::Sequence::create(a0,a1);
+      case Moves::OLAP: {
+      auto newX = (pos.x <= wz.size.width * 0.5f) ? wz.size.width : -wz.size.width;
+          auto a4 = c::MoveBy::create(4, c::ccp(newX, -wz.size.width * 0.75f));
+          auto a5 = c::MoveBy::create(4, c::ccp(-newX, -wz.size.width));
+          act = c::Sequence::create(a4,a5);}
     break;
+        
+      
   }
 
   sprite->runAction(act);

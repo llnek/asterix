@@ -9,17 +9,21 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/CCSX.h"
+#include "ash/Node.h"
+#include "n/GNodes.h"
 #include "Resolve.h"
+#include "Game.h"
 
-NS_BEGIN(cx, fusii::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
+Resolve::Resolve(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(e, d) {
+: BaseSystem<EFactory>(e, d) {
 
   SNPTR(ships)
 }
@@ -70,8 +74,8 @@ void Resolve::checkMissiles() {
   p->foreach([=](f::ComObj* m) {
     if (m->status) {
       auto pos= m->sprite->getPosition();
-      if (m->HP <= 0 ||
-          !cx::pointInBox(box, pos)) {
+      if (m->health <= 0 ||
+          !cx::pointInBox(box, pos.x, pos.y)) {
         this->onBulletDeath(m);
         m->deflate();
       }
@@ -88,7 +92,7 @@ void Resolve::checkBombs() {
   p->foreach([=](f::ComObj* b) {
     if (b->status) {
       auto pos= b->sprite->getPosition();
-      if (b->HP <= 0 ||
+      if (b->health <= 0 ||
           !cx::pointInBox(box, pos)) {
         this->onBulletDeath(b);
         b->deflate();
@@ -143,12 +147,12 @@ void Resolve::checkAliens() {
   p->foreach([=](f::ComObj* a) {
     if (a->status) {
       auto pos= a->sprite->getPosition();
-      if (a->HP <= 0 ||
+      if (a->health <= 0 ||
           !cx::pointInBox(box, pos)) {
         this->onEnemyDeath(a);
         a->deflate();
         auto msg = j::json({
-            {"score", a->value}
+            {"score", a->score}
             });
         MGMS()->sendMsgEx("/game/players/earnscore", &msg);
       }
@@ -159,9 +163,9 @@ void Resolve::checkAliens() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip(a::Node* node) {
-  auto ship = node->ship;
+    auto ship = CC_GNF(Ship, node, "ship");
   if (ship->status) {
-    if (ship->HP <= 0) {
+    if (ship->health <= 0) {
       this->onShipDeath(ship);
       ship->deflate();
       MGMS()->sendMsg("/game/players/killed");

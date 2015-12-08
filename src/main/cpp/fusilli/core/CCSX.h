@@ -62,6 +62,8 @@ namespace ccsx {
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
+    bool pointInBox(const Box4& box, const c::Vec2& pos);
+
   bool isPortrait();
 
   bool outOfBound(not_null<ComObj*>, const Box4& B);

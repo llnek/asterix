@@ -11,6 +11,15 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "s/EFactory.h"
+#include "s/Stager.h"
+#include "s/Resolve.h"
+#include "s/Collide.h"
+#include "s/Move.h"
+#include "s/Aliens.h"
+#include "s/Motion.h"
+#include "s/Render.h"
+#include "HUD.h"
 #include "Game.h"
 #include "s/utils.h"
 
@@ -44,38 +53,48 @@ public:
   NOCPYASS(GLayer)
   IMPLCZ(GLayer)
 
+  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
+
+  void incSecCount(float);
+  void onEarnScore(j::json* );
   void onPlayerKilled();
-  void spawnPlayer();
-  void moveBackTiles();
+  void moveBackTiles(float);
   void initBackTiles();
-  void onEarnScore(int );
+  void showMenu();
   void onDone();
 
+    EFactory* fac;
 };
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::showMenu() {
+
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initBackTiles() {
-  moveBackTiles();
+  moveBackTiles(0);
   schedule(CC_SCHEDULE_SELECTOR(GLayer::moveBackTiles), 5.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::moveBackTiles() {
-  auto ps= XCFG()->getPool("BackTiles");
+void GLayer::moveBackTiles(float) {
+  auto ps= MGMS()->getPool("BackTiles");
   auto wz= cx::visRect();
   auto tm = ps->get();
 
   if (ENP(tm)) {
-    factory->createBackTiles();
+    fac->createBackTiles();
     tm= ps->get();
   }
 
-  tm->inflate(cx::randFloat(wz.width), wz.height);
+  tm->inflate(cx::randFloat(wz.size.width), wz.size.height);
 
   auto move = c::MoveBy::create(cx::randInt(2) + 10,
-                   ccp(0, -wz.height - wz.height * 0.5f));
+                                c::ccp(0, -wz.size.height - wz.size.height * 0.5f));
   auto fun = c::CallFunc::create([=]() {
     tm->deflate();
   });
@@ -92,10 +111,10 @@ void GLayer::decorate() {
   options->setObject(CC_INT(0), "secCount");
 
   auto a= regoAtlas("explosions");
-  a->setBlendFunc(BLFUNC::ADDITIVE);
+  a->setBlendFunc(BDFUNC::ADDITIVE);
   a= regoAtlas("game-pics");
   a= regoAtlas("op-pics");
-  a->setBlendFunc(BLFUNC::ADDITIVE);
+  a->setBlendFunc(BDFUNC::ADDITIVE);
 
   MGMS()->reifyPool("BackTiles");
   MGMS()->reifyPool("BackSkies");
@@ -108,38 +127,35 @@ void GLayer::decorate() {
   MGMS()->reifyPool("Sparks");
   MGMS()->reifyPool("HitEffects");
 
-  factory->createBackSkies();
+  auto e= mc_new(a::Engine);
+  auto d= CC_DICT();
+  auto f= new EFactory(e, d);
 
-  sharedExplosion();
-  initBackSkies();
+  e->regoSystem(new Stager(f, d));
+  e->regoSystem(new Motions(f, d));
+  e->regoSystem(new Move(f, d));
+  e->regoSystem(new Aliens(f, d));
+  e->regoSystem(new Collide(f, d));
+  e->regoSystem(new Resolve(f, d));
+  e->regoSystem(new Render(f, d));
+  e->forceSync();
 
-  factory->createBackTiles();
-  MGMS()->sendMsg("/game/backtiles");
+  this->options= d;
+  CC_KEEP(d)
+  this->fac= f;
+  this->engine=e;
 
-  factory->createMissiles();
-  factory->createBombs();
-  factory->createEnemies();
-
-  factory->createExplosions();
-  factory->createSparks();
-  factory->createHitEffects();
-
-  bornShip(ships->head->ship);
-
-  schedule([=]() {
-    // counter used to spawn enemies
-    ++this->options.secCount;
-  },1.0f);
-
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0f);
   getHUD()->reset();
 
   cx::sfxMusic("bgMusic", true);
 }
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-void GLayer::spawnPlayer() {
-  bornShip();
+void GLayer::incSecCount(float) {
+  // counter used to spawn enemies
+  //++this->options.secCount;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -149,7 +165,7 @@ void GLayer::onPlayerKilled() {
   if ( getHUD()->reduceLives(1)) {
     onDone();
   } else {
-    spawnPlayer();
+    //bornShip(nullptr);
   }
 }
 
@@ -171,7 +187,7 @@ void GLayer::onDone() {
 //
 const f::Box4 GLayer::getEnclosureBox() {
   auto wb= cx::visBox();
-  return Box4( wb.top + 10, wb.right, wb.bottom, wb.left);
+    return f::Box4( wb.top + 10, wb.right, wb.bottom, wb.left);
 }
 
 END_NS_UNAMED()
@@ -205,7 +221,7 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
   }
 
   if ("/game/players/killed" == topic) {
-    y->onPlayerKilled(json);
+    y->onPlayerKilled();
   }
 }
 
@@ -217,7 +233,7 @@ void Game::decorate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Game::isAlive() {
+bool Game::isLive() {
    return state > 0;
 }
 

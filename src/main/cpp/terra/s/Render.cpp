@@ -9,12 +9,18 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/CCSX.h"
 #include "Render.h"
+#include "Game.h"
+#include "ash/Node.h"
+
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Render::Render(not_null<a::Engine*> e, not_null<c::Dictionary*> d)
+Render::Render(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
@@ -38,26 +44,27 @@ bool Render::onUpdate(float dt) {
 //
 void Render::processMovement(float dt) {
   // background's moving rate is 16 pixel per second
-  auto locSkyHeight = MGMS()->backSkyDim.height;
-  auto locBackSkyRe = MGMS()->backSkyRe;
-  auto locBackSky = MGMS()->backSky;
+    auto g= (Game*) MGMS();
+    auto locSkyHeight = g->backSkyDim.height;
+  auto locBackSkyRe = g->backSkyRe;
+  auto locBackSky = g->backSky;
   auto posy= locBackSky->sprite->getPositionY();
   auto movingDist = 16.0f * dt;
   auto wz = cx::visRect();
   auto currPosY = posy - movingDist;
 
-  if (locSkyHeight + currPosY <= wz.height) {
+  if (locSkyHeight + currPosY <= wz.size.height) {
 
     if (NNP(locBackSkyRe)) {
       throw "The memory is leaking at moving background";
     }
 
-    MGMS()->backSkyRe = MGMS()->backSky;
-    locBackSkyRe = MGMS()->backSky;
+    g->backSkyRe = g->backSky;
+    locBackSkyRe = g->backSky;
 
     //create a new background
-    MGMS()->backSky = MGMS()->getPool("BackSkies")->get();
-    locBackSky = MGMS()->backSky;
+    g->backSky = MGMS()->getPool("BackSkies")->get();
+    locBackSky = g->backSky;
     locBackSky->inflate(0, currPosY + locSkyHeight - 2);
   } else {
     locBackSky->sprite->setPositionY(currPosY);
@@ -66,7 +73,7 @@ void Render::processMovement(float dt) {
   if (NNP(locBackSkyRe)) {
     currPosY = locBackSkyRe->sprite->getPositionY() - movingDist;
     if (currPosY + locSkyHeight < 0.0f) {
-      MGMS()->backSkyRe = nullptr;
+      g->backSkyRe = nullptr;
       locBackSkyRe->deflate();
     } else {
       locBackSkyRe->sprite->setPositionY(currPosY);

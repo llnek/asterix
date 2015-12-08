@@ -9,11 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Menu.h"
 #include "Game.h"
-
+#include "x2d/XLib.h"
+#include "s/utils.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
@@ -23,7 +25,7 @@ BEGIN_NS_UNAMED()
 class CC_DLL UILayer : public f::XLayer {
 public:
 
-  STATIC_REIFY_LAYER(UIayer)
+  STATIC_REIFY_LAYER(UILayer)
   NOCPYASS(UILayer)
   IMPLCZ(UILayer)
 
@@ -38,7 +40,7 @@ void UILayer::decorate() {
   auto tile = CC_CSV(c::Integer, "TILE");
   auto wb= cx::visBox();
   auto cw= cx::center();
-
+    auto c= cx::white();
   centerImage("gui.mmenus.menu.bg");
 
   tt->setPosition( cw.x, wb.top * 0.9f);
@@ -52,7 +54,7 @@ void UILayer::decorate() {
   c::Menu* m2;
 
   b->setCallback([=](c::Ref*) {
-        cx::runScene( Game::reify(f::GMode::ONE));
+      cx::runScene( Game::reify(mc_new(f::GContext)));
       });
   menu->setPosition(cw);
   addItem(menu);
@@ -81,7 +83,7 @@ void UILayer::decorate() {
   off->setColor(c);
   on->setColor(c);
 
-  addAudioIcons((XLayer*) this,
+    addAudioIcons((XLayer*) this,
       off, on,
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));

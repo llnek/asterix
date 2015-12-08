@@ -33,8 +33,9 @@ protected:
 
 
 public:
+    virtual const a::SystemType typeId() { return "n/Resolve"; }
 
-  Resolve(not_null<a::Engine*>, not_null<c::Dictionary*>);
+  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 
@@ -44,6 +45,7 @@ public:
   NOCPYASS(Resolve)
   NODFT(Resolve)
 
+  a::NodeList* ships;
 
 };
 

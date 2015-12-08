@@ -28,6 +28,7 @@ protected:
   ComObj();
 
 public:
+    virtual const a::COMType typeId() { return "fusii::ComObj"; }
 
   virtual void inflate(not_null<c::Dictionary*> options);
   virtual void inflate(float x, float y);
@@ -36,7 +37,8 @@ public:
   virtual void hurt(int damage=1);
 
   void setPos(float x, float y);
-
+    void destroy() {}
+    
   const c::Size csize();
   const c::Vec2 pos();
 

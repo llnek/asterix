@@ -9,32 +9,32 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__GNODES_H__)
-#define __GNODES_H__
-
 #include "ash/NodeRego.h"
-#include "CObjs.h"
-NS_BEGIN(terra)
+#include "n/GNodes.h"
+#include "p/Config.h"
+#include "AppDelegate.h"
+NS_USING(terra)
+NS_USING(fusii)
+NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ShipMotionNode : public a::NodeFactory {
-public:
+AppDelegate::AppDelegate() {
 
-  virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
+  // step.1: register all ash::node factories here
+  auto r= NodeRegistry::self();
 
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s::vector<sstr> { "motion", "ship" },
-        s::vector<a::COMType> { "n/Motion", "n/Ship" });
-  }
+  r->rego( mc_new(ShipMotionNode));
 
-  NOCPYASS(ShipMotionNode)
-  IMPLCZ(ShipMotionNode)
-};
+  // step.2: set up app-config
+  XConfig::bind(Config::reify());
+}
 
-
-NS_END(terra)
-#endif
+//////////////////////////////////////////////////////////////////////////////
+//
+AppDelegate::~AppDelegate() {
+  //delete NodeRegistry::Self();
+  //delete XConfig::Self();
+}
 
 
