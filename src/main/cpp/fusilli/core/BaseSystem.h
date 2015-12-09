@@ -26,6 +26,7 @@ protected:
 
   c::Dictionary* state;
   F* factory;
+  bool inited;
 
   NOCPYASS(BaseSystem)
   NODFT(BaseSystem)
@@ -43,9 +44,10 @@ BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d)
 
   : System(a::Error) {
 
+  inited=false;
+  CC_KEEP(d)
   factory=f;
   state=d;
-  CC_KEEP(state)
 }
 
 //////////////////////////////////////////////////////////////////////////

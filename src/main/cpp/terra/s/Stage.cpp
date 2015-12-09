@@ -9,84 +9,70 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-//#include "x2d/GameScene.h"
-#include "ash/Node.h"
 #include "core/CCSX.h"
 #include "n/GNodes.h"
-#include "Stager.h"
 #include "Game.h"
+#include "Stage.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Stager::Stager(not_null<EFactory*> f,
-    not_null<c::Dictionary*> d)
+Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   :
   BaseSystem<EFactory>(f, d) {
 
-  this->inited=false;
   SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::addToEngine(not_null<a::Engine*> e) {
+void Stage::addToEngine(not_null<a::Engine*> e) {
   ShipMotionNode n;
   ships = e->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Stager::onUpdate(float dt) {
-  if (cx::isTransitioning()) { return false; }
-  if (NNP(ships->head)) {
-    if (! inited) {
-      onceOnly();
-    }
+bool Stage::onUpdate(float dt) {
+  if (! inited) {
+    onceOnly();
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::onceOnly() {
+void Stage::onceOnly() {
 
-    factory->createBackSkies();
-    factory->createBackTiles();
-    
-    sharedExplosion();
-    initBackSkies();
-    
-    factory->createMissiles();
-    factory->createBombs();
-    factory->createEnemies();
-    
-    factory->createExplosions();
-    factory->createSparks();
-    factory->createHitEffects();
-    
-    auto ship = CC_GNF(Ship, ships->head, "ship");
-  bornShip(ship);
+  MGMS()->reifyPools(s_vec<sstr> {
+      "BackTiles", "BackSkies", "Missiles", "Baddies",
+      "Bombs", "Explosions", "Sparks", "HitEffects"
+  });
+
+  assert(ships->head != nullptr);
+
+  sharedExplosion();
+  initBackSkies();
+
+  bornShip( CC_GNF(Ship, ships->head, "ship"));
+  factory->createBackSkies();
+  factory->createBackTiles();
+  factory->createMissiles();
+  factory->createBombs();
+  factory->createEnemies();
+  factory->createExplosions();
+  factory->createSparks();
+  factory->createHitEffects();
+
+  inited=true;
   MGMS()->sendMsg("/game/backtiles");
 }
 
-/*
-    if (this.state.running &&
-        !!this.ships.head) {
-      let ship = this.ships.head.ship,
-      pos = ship.pos(),
-      wz= ccsx.vrect(),
-      cur= cc.pAdd(pos, evt.delta);
-      cur= cc.pClamp(cur, cc.p(0, 0),
-                     cc.p(wz.width, wz.height));
-      ship.setPos(cur.x, cur.y);
-    }
-*/
-
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::initBackSkies() {
+void Stage::initBackSkies() {
   auto p = MGMS()->getPool("BackSkies");
   auto g = (Game*) MGMS();
   auto bs = p->get();
@@ -101,20 +87,15 @@ void Stager::initBackSkies() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::sharedExplosion() {
-    c::Vector<c::AnimationFrame*> fs;
-
+void Stage::sharedExplosion() {
+  c::Vector<c::SpriteFrame*> fs;
+  sstr str;
   for (auto n = 1; n < 35; ++n) {
-      auto ns= s::to_string(n);
-      auto str = "explosion_" +
-      (n < 10 ? "0" + ns : ns) + ".png";
-//    fs.pushBack( cx::getSpriteFrame(str));
+    auto ns= s::to_string(n);
+    if (n < 10 ) { str= "0" + ns; } else { str= ns; }
+    fs.pushBack( cx::getSpriteFrame( "explosion_" + str + ".png"));
   }
-
-  auto a = c::Animation::create();
-  a->setFrames(fs);
-  a->setDelayPerUnit(0.04f);
-
+  auto a = c::Animation::createWithSpriteFrames(fs, 0.04f);
   c::AnimationCache::getInstance()->addAnimation(a, "Explosion");
 }
 

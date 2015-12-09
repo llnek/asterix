@@ -169,7 +169,9 @@ void GameLayer::initTouch() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::update(float dt) {
-  if (MGMS()->isLive() && NNP(engine)) {
+  if (!cx::isTransitioning() &&
+      MGMS()->isLive() &&
+      NNP(engine)) {
     engine->update(dt);
   }
 }

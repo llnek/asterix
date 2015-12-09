@@ -56,6 +56,9 @@ protected:
 
 public:
 
+  virtual const c::Rect getEnclosureRect();
+  virtual const Box4 getEnclosureBox();
+
   virtual GameLayer* getGLayer() = 0;
   virtual bool isLive() = 0;
   virtual void stop() = 0;
@@ -69,6 +72,7 @@ public:
     sendMsgEx(topic, nullptr);
   }
 
+  void reifyPools(const s_vec<sstr>& names);
   XPool* reifyPool(const sstr& n);
   XPool* getPool(const sstr& n);
 

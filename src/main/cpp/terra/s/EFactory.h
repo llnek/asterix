@@ -28,12 +28,12 @@ public:
 
   void createMissiles(int count = 36);
   void createBombs(int count = 36);
-  void createExplosions(int count = 36);
-  void createHitEffects(int count = 36);
-  void createSparks(int count = 36);
-  void createEnemies(int count = 36);
+  void createExplosions(int count = 6);
+  void createHitEffects(int count = 10);
+  void createSparks(int count = 6);
+  void createEnemies(int count = 3);
   void createBackSkies();
-  void createBackTiles(int count= 4);
+  void createBackTiles(int count= 1);
 
   a::Entity* createShip();
 

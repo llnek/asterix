@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__STAGER_H__)
-#define __STAGER_H__
+#if !defined(__STAGE_H__)
+#define __STAGE_H__
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
@@ -18,7 +18,7 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public f::BaseSystem<EFactory> {
+class CC_DLL Stage : public f::BaseSystem<EFactory> {
 protected:
 
   virtual bool onUpdate(float);
@@ -28,20 +28,19 @@ protected:
 
 public:
 
-  virtual const a::SystemType typeId() { return "n/Stager"; }
+  virtual const a::SystemType typeId() { return "n/Stage"; }
 
   virtual int priority() { return a::PreUpdate; }
 
-  Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
+  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual ~Stager() {}
+  virtual ~Stage() {}
 
-  NOCPYASS(Stager)
-  NODFT(Stager)
+  NOCPYASS(Stage)
+  NODFT(Stage)
 
-    bool inited;
-    a::NodeList* ships;
+  a::NodeList* ships;
 };
 
 

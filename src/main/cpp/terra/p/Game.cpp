@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/EFactory.h"
-#include "s/Stager.h"
+#include "s/Stage.h"
 #include "s/Resolve.h"
 #include "s/Collide.h"
 #include "s/Move.h"
@@ -116,28 +116,22 @@ void GLayer::decorate() {
   a= regoAtlas("op-pics");
   a->setBlendFunc(BDFUNC::ADDITIVE);
 
-  MGMS()->reifyPool("BackTiles");
-  MGMS()->reifyPool("BackSkies");
-
-  MGMS()->reifyPool("Missiles");
-  MGMS()->reifyPool("Baddies");
-  MGMS()->reifyPool("Bombs");
-
-  MGMS()->reifyPool("Explosions");
-  MGMS()->reifyPool("Sparks");
-  MGMS()->reifyPool("HitEffects");
+  MGMS()->reifyPools(s_vec<sstr> {
+      "BackTiles", "BackSkies", "Missiles", "Baddies",
+      "Bombs", "Explosions", "Sparks", "HitEffects"
+  });
 
   auto e= mc_new(a::Engine);
   auto d= CC_DICT();
-  auto f= new EFactory(e, d);
+  auto f= mc_new_2(EFactory, e, d);
 
-  e->regoSystem(new Stager(f, d));
-  e->regoSystem(new Motions(f, d));
-  e->regoSystem(new Move(f, d));
-  e->regoSystem(new Aliens(f, d));
-  e->regoSystem(new Collide(f, d));
-  e->regoSystem(new Resolve(f, d));
-  e->regoSystem(new Render(f, d));
+  e->regoSystem(mc_new_2(Stage, f, d));
+  e->regoSystem(mc_new_2(Motions, f, d));
+  e->regoSystem(mc_new_2(Move, f, d));
+  e->regoSystem(mc_new_2(Aliens, f, d));
+  e->regoSystem(mc_new_2(Collide, f, d));
+  e->regoSystem(mc_new_2(Resolve, f, d));
+  e->regoSystem(mc_new_2(Render, f, d));
   e->forceSync();
 
   this->options= d;
@@ -146,8 +140,9 @@ void GLayer::decorate() {
   this->engine=e;
 
   schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0f);
-  getHUD()->reset();
+  scheduleUpdate();
 
+  getHUD()->reset();
   cx::sfxMusic("bgMusic", true);
 }
 
@@ -155,7 +150,8 @@ void GLayer::decorate() {
 //
 void GLayer::incSecCount(float) {
   // counter used to spawn enemies
-  //++this->options.secCount;
+  auto n= CC_GDV(c::Integer, options, "secCount");
+  options->setObject(CC_INT(n+1), "secCount");
 }
 
 //////////////////////////////////////////////////////////////////////////////

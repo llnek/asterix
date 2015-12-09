@@ -110,6 +110,25 @@ GMode GameScene::getMode() {
 bool GameScene::isOnline() {
   return static_cast<GContext*>(context)->odin != nullptr;
 }
+//////////////////////////////////////////////////////////////////////////////
+//
+const c::Rect GameScene::getEnclosureRect() {
+  return MGML()->getEnclosureRect();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const Box4 GameScene::getEnclosureBox() {
+  return MGML()->getEnclosureBox();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameScene::reifyPools(const s_vec<sstr>& names) {
+  F__LOOP(it,names) {
+    reifyPool(*it);
+  }
+}
 
 
 NS_END(fusii)

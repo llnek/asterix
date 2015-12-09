@@ -13,6 +13,7 @@
 #define __GNODES_H__
 
 #include "ash/NodeRego.h"
+#include "ash/Node.h"
 #include "CObjs.h"
 NS_BEGIN(terra)
 
