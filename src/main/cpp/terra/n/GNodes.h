@@ -19,10 +19,10 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ShipMotionNode : public a::NodeFactory {
+class CC_DLL ShipNode : public a::NodeFactory {
 public:
 
-  virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
+  virtual const a::NodeType typeId() { return "n/ShipNode"; }
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
@@ -30,8 +30,8 @@ public:
         s::vector<a::COMType> { "n/Motion", "n/Ship" });
   }
 
-  NOCPYASS(ShipMotionNode)
-  IMPLCZ(ShipMotionNode)
+  NOCPYASS(ShipNode)
+  IMPLCZ(ShipNode)
 };
 
 

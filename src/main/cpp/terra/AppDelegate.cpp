@@ -24,10 +24,10 @@ AppDelegate::AppDelegate() {
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
-  r->rego( mc_new(ShipMotionNode));
+  r->rego( mc_new(ShipNode));
 
   // step.2: set up app-config
-  XConfig::bind(Config::reify());
+  Config::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
