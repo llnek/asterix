@@ -48,6 +48,15 @@ bool Aliens::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+void Aliens::addEnemy(a::Node* node, j::json& obj) {
+  J__LOOP(t, obj) {
+    auto& v = *t;
+    addEnemyToGame(node, v.get<j::json::number_integer_t>());
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 void Aliens::doIt(a::Node* node, int dt) {
   auto enemies= MGMS()->getPool("Baddies");
   auto cfg= MGMS()->getLCfg()->getValue();
@@ -60,22 +69,16 @@ void Aliens::doIt(a::Node* node, int dt) {
       auto& a = *it;
       auto time = a["time"].get<j::json::number_integer_t>();
       auto style = a["style"].get<j::json::string_t>();
-        j::json types =  a["types"].get<j::json::array_t>();
-      auto fc = [=]() {
-        J__LOOP(t, types) {
-          auto& v = *t;
-          this->addEnemyToGame(node, v.get<j::json::number_integer_t>());
-        }
-      };
+      j::json types =  a["types"].get<j::json::array_t>();
       if (style == "*" &&
           dt % time == 0) {
-        fc();
+        addEnemy(node, types);
       }
       else
       if (style == "1" &&
           time >= dt) {
         style= "0";
-        fc();
+        addEnemy(node, types);
       }
     }
   }
@@ -165,16 +168,16 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
         sprite->runAction(c::RepeatForever::create(
               c::Sequence::create(a2, a3,
                                 a2->clone(),
-                                a3->reverse())));
+                                a3->reverse(), nullptr)));
       };
-          act = c::Sequence::create(a0, a1, c::CallFunc::create(cb));}
+          act = c::Sequence::create(a0, a1, c::CallFunc::create(cb), nullptr);}
     break;
 
       case Moves::OLAP: {
       auto newX = (pos.x <= wz.size.width * 0.5f) ? wz.size.width : -wz.size.width;
           auto a4 = c::MoveBy::create(4, c::ccp(newX, -wz.size.width * 0.75f));
           auto a5 = c::MoveBy::create(4, c::ccp(-newX, -wz.size.width));
-          act = c::Sequence::create(a4,a5);}
+          act = c::Sequence::create(a4,a5,nullptr);}
     break;
 
 

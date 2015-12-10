@@ -29,6 +29,7 @@ protected:
 
   virtual bool onUpdate(float);
 
+  void addEnemy(a::Node*, j::json& );
   void doIt(a::Node*, int);
   void dropBombs(Enemy*);
 

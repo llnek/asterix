@@ -194,10 +194,13 @@ public:
   }
 
   virtual void inflate(float x, float y) {
-    auto ani = c::AnimationCache::getInstance()->getAnimation("Explosion");
+    auto ac = c::AnimationCache::getInstance();
+    auto ani=  ac->getAnimation("Explosion");
     sprite->runAction(c::Sequence::create(
           c::Animate::create(ani),
-          c::CallFunc::create([=]() { this->deflate();  })));
+          c::CallFunc::create([=]() {
+            this->deflate();
+          }), nullptr));
     ComObj::inflate(x, y);
   }
 
@@ -205,7 +208,6 @@ public:
   NOCPYASS(Explosion)
   NODFT(Explosion)
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -223,7 +225,7 @@ public:
     sprite->runAction(c::ScaleBy::create(0.3f, 2.0f, 2.0f));
     sprite->runAction(
         c::Sequence::create(c::FadeOut::create(0.3f),
-          c::CallFunc::create([=]() { this->deflate();  } )));
+        c::CallFunc::create([=]() { this->deflate();  } ), nullptr));
     sprite->setRotation( cx::randInt(360));
     sprite->setScale(scale);
     ComObj::inflate(x,y);
