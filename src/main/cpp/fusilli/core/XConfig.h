@@ -38,6 +38,7 @@ protected:
   c::Dictionary* frags;
   c::Dictionary* l10n;
   j::json seed;
+  float scale;
 
   float lastMusicVol;
   float lastSfxVol;

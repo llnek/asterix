@@ -74,9 +74,11 @@ XConfig::XConfig() {
 
   loadL10NStrings();
   audioState=true;
+  scale=1.0f;
 
   addLevel("1");
   setCsts();
+  bind(this);
 }
 
 

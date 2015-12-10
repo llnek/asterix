@@ -31,6 +31,7 @@ public:
   NOCPYASS(HUDLayer)
   IMPLCZ(HUDLayer)
 
+  virtual int getIID() { return 3; }
   void resetAsNew();
   void reset();
 

@@ -152,6 +152,12 @@ public:
 
   void inflate(float x, float y, float scale) {
 
+    auto scaleBy = c::ScaleBy::create(duration,3.0f,3.0f);
+    auto right = c::RotateBy::create(duration, 45.0f);
+    auto seq = c::Sequence::createWithTwoActions(
+        c::FadeOut::create(duration),
+        c::CallFunc::create([=]() { this->destroy(); }));
+
     sprite2->setRotation( cx::randInt(360));
     sprite2->setOpacity(255.0f);
     sprite2->setPosition(x,y);
@@ -159,12 +165,6 @@ public:
     sprite2->setVisible(true);
     sprite2->runAction(scaleBy->clone());
     sprite2->runAction(seq->clone());
-
-    auto scaleBy = c::ScaleBy::create(duration,3.0f,3.0f);
-    auto right = c::RotateBy::create(duration, 45.0f);
-    auto seq = c::Sequence::createWithTwoActions(
-        c::FadeOut::create(duration),
-        c::CallFunc::create([=]() { this->destroy(); }));
 
     sprite->setOpacity(255.0f);
     sprite->setScale(scale);

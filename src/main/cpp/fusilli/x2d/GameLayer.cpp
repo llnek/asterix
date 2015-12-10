@@ -32,58 +32,27 @@ GameLayer::~GameLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 GameLayer::GameLayer() {
+  SNPTR(_mouseListener)
   SNPTR(options)
-  SNPTR(mouse)
-  SNPTR(keys)
-  SNPTR(touch)
   SNPTR(engine)
+  _mouseEnabled=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GameLayer::keyPoll(KEYCODE key) {
   int k= (int) key;
-  return k >= 0 && k < 256 ? keyboard[k] : false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const c::Rect GameLayer::getEnclosureRect() {
-  return cx::visRect();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const Box4 GameLayer::getEnclosureBox() {
-  return cx::visBox();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::addListener(c::EventListener* ln) {
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(ln, this);
+  return k >= 0 && k < 256 ? keys[k] : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::disableListeners() {
-  CCLOG("disabling event handlers");
-
-  if (NNP(mouse)) {
-    _eventDispatcher->removeEventListener(mouse);
-  }
-  if (NNP(keys)) {
-    _eventDispatcher->removeEventListener(keys);
-  }
-  if (NNP(touch)) {
-    _eventDispatcher->removeEventListener(touch);
-  }
-
-  SNPTR(mouse)
-  SNPTR(keys)
-  SNPTR(touch)
-
-  keyboard.fill(false);
+  //CCLOG("disabling event handlers");
+  try { if (cx::isDesktop()) setKeyboardEnabled(false); } catch (...) { }
+  try { if (cx::isDesktop()) setMouseEnabled(false); } catch (...) { }
+  try { if (!cx::isDesktop()) setTouchEnabled(false); } catch (...) { }
+  keys.fill(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -92,78 +61,83 @@ void GameLayer::enableListeners() {
   disableListeners();
   try {
     if (cx::isDesktop())
-    initMouse();
+    setMouseEnabled(true);
   } catch (...) {
     CCLOG("failed to init-mouse");
   }
   try {
     if (cx::isDesktop())
-    initKeys();
+    setKeyboardEnabled(true);
   } catch (...) {
     CCLOG("failed to init-keys");
   }
   try {
     if (!cx::isDesktop())
-    initTouch();
+    setTouchEnabled(true);
   } catch (...) {
     CCLOG("failed to init-touch");
   }
-  CCLOG("enabled event handlers");
+  //CCLOG("enabled event handlers");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::initMouse() {
-  //m->onMouseScroll = CC_CALLBACK_1(GameLayer::onMouseScroll, this);
-  //m->onMouseMove = CC_CALLBACK_1(GameLayer::onMouseMove, this);
-  //m->onMouseDown = CC_CALLBACK_1(GameLayer::onMouseDown, this);
-  //m->onMouseUp = CC_CALLBACK_1(GameLayer::onMouseUp, this);
+void GameLayer::onKeyPressed(KEYCODE k, c::Event*) {
+  int n= (int)k;
+  if (n >= 0 && n < 256) {
+    this->keys[n]= true;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::initKeys() {
+void GameLayer::onKeyReleased(KEYCODE k, c::Event*) {
+  int n= (int)k;
+  if (n >= 0 && n < 256) {
+    this->keys[n]=false;
+  }
+}
 
-  keys = c::EventListenerKeyboard::create();
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onMouseDown(c::Event*) {
+}
 
-  keys->onKeyReleased = [=] (KEYCODE k, c::Event*) {
-    int n= (int)k;
-    if (n >= 0 && n < 256) {
-      this->keyboard[n]=false;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onMouseUp(c::Event* ) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onMouseMove(c::Event*) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onMouseScroll(c::Event*) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::setMouseEnabled(bool enabled) {
+  if (_mouseEnabled != enabled) {
+    _mouseEnabled = enabled;
+    if (enabled) {
+      if (NNP(_mouseListener)) { return; }
+      auto n = c::EventListenerMouse::create();
+      _mouseListener = n;
+      n->onMouseScroll = CC_CALLBACK_1(GameLayer::onMouseScroll, this);
+      n->onMouseMove = CC_CALLBACK_1(GameLayer::onMouseMove, this);
+      n->onMouseUp = CC_CALLBACK_1(GameLayer::onMouseUp, this);
+      n->onMouseDown = CC_CALLBACK_1(GameLayer::onMouseDown, this);
+      _eventDispatcher->addEventListenerWithSceneGraphPriority(n, this);
     }
-  };
-
-  keys->onKeyPressed = [=] (KEYCODE k, c::Event*) {
-    int n= (int)k;
-    if (n >= 0 && n < 256) {
-      this->keyboard[n]= true;
+    else {
+      _eventDispatcher->removeEventListener(_mouseListener);
+      SNPTR(_mouseListener)
     }
-  };
-
-  addListener(keys);
-  CCLOG("init-keys: listener = %p", keys);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GameLayer::initTouch() {
-  //  Reify a "one by one" touch event listener
-  // (processes one touch at a time)
-  //auto t= c::EventListenerTouchOneByOne::create();
-  //_eventDispatcher->addEventListenerWithSceneGraphPriority(t, this);
-  //touch =t;
-
-  // trigger when you push down
-  //t->onTouchBegan = [](c::Touch* t, c::Event* e){ return true; };
-  // trigger when moving touch
-  //t->onTouchMoved = [](c::Touch* t, c::Event* e){ }
-  // trigger when you let up
-  //t->onTouchEnded = [=](c::Touch* t, c::Event* e){ };
-
-  // When "swallow touches" is true, then returning 'true' from the
-  // onTouchBegan method will "swallow" the touch event, preventing
-  // other listeners from using it.
-  //t->setSwallowTouches(true);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////

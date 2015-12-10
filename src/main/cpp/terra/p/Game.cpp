@@ -34,6 +34,7 @@ public:
   STATIC_REIFY_LAYER(BLayer)
   NOCPYASS(BLayer)
   IMPLCZ(BLayer)
+
   virtual void decorate() {
     regoAtlas("back-tiles", 1);
     regoAtlas("game-pics", 0);
@@ -45,7 +46,8 @@ public:
 class CC_DLL GLayer : public f::GameLayer {
 public:
 
-  virtual const f::Box4 getEnclosureBox();
+  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
+
   virtual int getIID() { return 2; }
   virtual void decorate();
 
@@ -53,17 +55,15 @@ public:
   NOCPYASS(GLayer)
   IMPLCZ(GLayer)
 
-  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
-
-  void incSecCount(float);
   void onEarnScore(j::json* );
+  void incSecCount(float);
   void onPlayerKilled();
   void moveBackTiles(float);
   void initBackTiles();
   void showMenu();
   void onDone();
 
-    EFactory* fac;
+  EFactory* fac;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ void GLayer::moveBackTiles(float) {
     tm->deflate();
   });
 
-  tm->sprite->runAction(c::Sequence::create(move,fun));
+  tm->sprite->runAction(c::Sequence::create(move,fun,nullptr));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,8 +107,6 @@ void GLayer::moveBackTiles(float) {
 void GLayer::decorate() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
-
-  options->setObject(CC_INT(0), "secCount");
 
   auto a= regoAtlas("explosions");
   a->setBlendFunc(BDFUNC::ADDITIVE);
@@ -124,6 +122,9 @@ void GLayer::decorate() {
   auto e= mc_new(a::Engine);
   auto d= CC_DICT();
   auto f= mc_new_2(EFactory, e, d);
+
+  d->setObject(CC_INT(0), "secCount");
+  f->createShip();
 
   e->regoSystem(mc_new_2(Stage, f, d));
   e->regoSystem(mc_new_2(Motions, f, d));
@@ -179,14 +180,14 @@ void GLayer::onDone() {
   MGMS()->stop();
 }
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-const f::Box4 GLayer::getEnclosureBox() {
+const f::Box4 Game::getEnclosureBox() {
   auto wb= cx::visBox();
-    return f::Box4( wb.top + 10, wb.right, wb.bottom, wb.left);
+  return f::Box4( wb.top + 10, wb.right, wb.bottom, wb.left);
 }
 
-END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 f::GameLayer* Game::getGLayer() {
@@ -224,7 +225,10 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::decorate() {
-  GLayer::reify(this);
+  HUDLayer::reify(this, 3);
+  GLayer::reify(this, 2);
+  BLayer::reify(this, 1);
+  play();
 }
 
 //////////////////////////////////////////////////////////////////////////////

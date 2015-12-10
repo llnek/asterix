@@ -29,7 +29,7 @@ protected:
 
   virtual bool onUpdate(float);
 
-  void doIt(a::Node*, float);
+  void doIt(a::Node*, int);
   void dropBombs(Enemy*);
 
   a::NodeList* ships;

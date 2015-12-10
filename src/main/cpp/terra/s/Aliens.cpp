@@ -31,7 +31,7 @@ Aliens::Aliens(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode n;
+  ShipNode n;
   ships = e->getNodeList(n.typeId());
 }
 
@@ -43,33 +43,32 @@ bool Aliens::onUpdate(float dt) {
   if (NNP(node)) {
     doIt(node, cnt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::doIt(a::Node* node, float dt) {
+void Aliens::doIt(a::Node* node, int dt) {
   auto enemies= MGMS()->getPool("Baddies");
   auto cfg= MGMS()->getLCfg()->getValue();
 
   if (enemies->countActives() <
       cfg["enemyMax"].get<j::json::number_integer_t>()) {
 
-      j::json arr= cfg["enemies"].get<j::json::array_t>();
+    j::json arr= cfg["enemies"].get<j::json::array_t>();
     J__LOOP(it, arr) {
       auto& a = *it;
       auto time = a["time"].get<j::json::number_integer_t>();
       auto style = a["style"].get<j::json::string_t>();
         j::json types =  a["types"].get<j::json::array_t>();
       auto fc = [=]() {
-//        J__LOOP(t, types) {
-//          auto& v = *t;
-//          this->addEnemyToGame(node,
-//              v.get<j::json::number_integer_t>());
-//        }
+        J__LOOP(t, types) {
+          auto& v = *t;
+          this->addEnemyToGame(node, v.get<j::json::number_integer_t>());
+        }
       };
-        auto dtn = (int) dt;
       if (style == "*" &&
-          dtn % time == 0) {
+          dt % time == 0) {
         fc();
       }
       else
@@ -177,8 +176,8 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
           auto a5 = c::MoveBy::create(4, c::ccp(-newX, -wz.size.width));
           act = c::Sequence::create(a4,a5);}
     break;
-        
-      
+
+
   }
 
   sprite->runAction(act);

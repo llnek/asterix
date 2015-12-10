@@ -47,7 +47,7 @@ void UILayer::decorate() {
 
   centerImage("game.bg");
 
-  flare = cx::reifySprite("flare.png");
+    flare = c::Sprite::create("pics/flare.jpg");
   flare->setVisible(false);
   ship = cx::reifySprite("ship03.png");
   ship->setPosition( cx::randFloat(wz.size.width), 0);
@@ -67,7 +67,7 @@ void UILayer::decorate() {
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
 
-  this->update(0);
+  scheduleOnce(CC_SCHEDULE_SELECTOR(UILayer::update),0);
   cx::sfxMusic("mainMusic", true);
 }
 
@@ -80,9 +80,9 @@ void UILayer::update(float dt) {
     this->update(0);
   };
   this->ship->runAction(c::Sequence::create(
-        c::MoveBy::create(2,
-                          c::ccp(cx::randFloat(wz.size.width), wz.size.height + 100)),
-        c::CallFunc::create(g)));
+        c::MoveBy::create(2, c::ccp(cx::randFloat(wz.size.width),
+            wz.size.height + 100)),
+        c::CallFunc::create(g), nullptr));
 }
 
 END_NS_UNAMED()

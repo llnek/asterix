@@ -38,14 +38,15 @@ bool Render::onUpdate(float dt) {
   if (MGMS()->isLive()) {
     processMovement(dt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Render::processMovement(float dt) {
   // background's moving rate is 16 pixel per second
-    auto g= (Game*) MGMS();
-    auto locSkyHeight = g->backSkyDim.height;
+  auto g= (Game*) MGMS();
+  auto locSkyHeight = g->backSkyDim.height;
   auto locBackSkyRe = g->backSkyRe;
   auto locBackSky = g->backSky;
   auto posy= locBackSky->sprite->getPositionY();

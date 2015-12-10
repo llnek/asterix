@@ -23,6 +23,7 @@ public:
   virtual void sendMsgEx(const MsgTopic& topic, void* msg);
   virtual f::GameLayer* getGLayer();
 
+  virtual const f::Box4 getEnclosureBox();
   virtual void decorate();
 
   virtual bool isLive();

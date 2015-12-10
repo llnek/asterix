@@ -29,7 +29,7 @@ Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stage::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode n;
+  ShipNode n;
   ships = e->getNodeList(n.typeId());
 }
 
@@ -53,9 +53,6 @@ void Stage::onceOnly() {
 
   assert(ships->head != nullptr);
 
-  sharedExplosion();
-  initBackSkies();
-
   bornShip( CC_GNF(Ship, ships->head, "ship"));
   factory->createBackSkies();
   factory->createBackTiles();
@@ -65,6 +62,9 @@ void Stage::onceOnly() {
   factory->createExplosions();
   factory->createSparks();
   factory->createHitEffects();
+
+  sharedExplosion();
+  initBackSkies();
 
   inited=true;
   MGMS()->sendMsg("/game/backtiles");

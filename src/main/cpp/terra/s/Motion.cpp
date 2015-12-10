@@ -29,7 +29,7 @@ Motions::Motions(not_null<EFactory*> e, not_null<c::Dictionary*> f)
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode n;
+  ShipNode n;
   ships= e->getNodeList(n.typeId());
 }
 
@@ -53,7 +53,7 @@ void Motions::doIt(a::Node* node, float dt) {
 //
 void Motions::onGui(a::Node* node, float dt) {
   auto ship = CC_GNF(Ship, node, "ship");
-  auto bx= MGML()->getEnclosureBox();
+  auto bx= MGMS()->getEnclosureBox();
   auto loc = ship->pos();
   auto wc= cx::visRect();
   auto cur= ccpAdd(loc, c::Vec2()); //evt.delta);

@@ -23,27 +23,30 @@ NS_BEGIN(fusii)
 class CC_DLL GameLayer : public XLayer {
 protected:
 
-  void addListener(c::EventListener*);
+  virtual void update(float);
+
   void disableListeners();
   void enableListeners();
 
-  virtual void update(float);
-  virtual void initMouse();
-  virtual void initKeys();
-  virtual void initTouch();
-
-  s_arr<bool, 256> keyboard;
+  c::EventListenerMouse* _mouseListener;
+  bool _mouseEnabled;
+  s_arr<bool, 256> keys;
   c::Dictionary* options;
   a::Engine* engine;
 
-  c::EventListenerKeyboard* keys;
-  c::EventListenerMouse* mouse;
-  c::EventListener* touch;
+  virtual void onKeyReleased(KEYCODE k, c::Event*);
+  virtual void onKeyPressed(KEYCODE k, c::Event*);
+
+  virtual void onMouseScroll(c::Event*);
+  virtual void onMouseDown(c::Event*);
+  virtual void onMouseUp(c::Event*);
+  virtual void onMouseMove(c::Event*);
 
 public:
 
-  virtual const c::Rect getEnclosureRect();
-  virtual const Box4 getEnclosureBox();
+
+  bool isMouseEnabled() { return _mouseEnabled; }
+  void setMouseEnabled(bool);
   bool keyPoll(KEYCODE);
 
   NOCPYASS(GameLayer)

@@ -31,11 +31,9 @@ BEGIN_NS_UNAMED()
 class CC_DLL GLayer : public f::GameLayer {
 protected:
 
-  void onTouchMoved(c::Touch*, c::Event*);
-  void onMouseMove(c::Event*);
-
-  virtual void initTouch();
-  virtual void initMouse();
+  virtual bool onTouchBegan(c::Touch*, c::Event*) { return true; }
+  virtual void onTouchMoved(c::Touch*, c::Event*);
+  virtual void onMouseMove(c::Event*);
 
   EFactory* fac;
   Ship* player;
@@ -80,7 +78,7 @@ void GLayer::onMouseMove(c::Event* event) {
   auto b= e->getMouseButton();
   if (b == MOUSE_BUTTON_LEFT) {
     auto pos= this->player->sprite->getPosition();
-    auto bx= MGML()->getEnclosureBox();
+    auto bx= MGMS()->getEnclosureBox();
     auto loc= e->getLocationInView();
     this->player->sprite->setPosition(cx::clamp(loc, bx).x, pos.y);
   }
@@ -88,38 +86,13 @@ void GLayer::onMouseMove(c::Event* event) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::initMouse() {
-  mouse = c::EventListenerMouse::create();
-  mouse->onMouseMove = CC_CALLBACK_1(GLayer::onMouseMove, this);
-  addListener(mouse);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::onTouchMoved(c::Touch* t, c::Event* evt){
   auto pos= this->player->sprite->getPosition();
-  auto bx= MGML()->getEnclosureBox();
+  auto bx= MGMS()->getEnclosureBox();
   auto y = pos.y;
   pos= c::ccpAdd(pos,  t->getDelta());
   pos= cx::clamp(pos, bx);
   this->player->sprite->setPosition(pos.x, y);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::initTouch() {
-  auto t= c::EventListenerTouchOneByOne::create();
-  touch =t;
-
-  t->onTouchBegan = [=](c::Touch* t, c::Event* e) -> bool { return true; };
-  t->onTouchEnded = [=](c::Touch* t, c::Event* e) {};
-  t->onTouchMoved = CC_CALLBACK_2(GLayer::onTouchMoved,this);
-
-  // When "swallow touches" is true, then returning 'true' from the
-  // onTouchBegan method will "swallow" the touch event, preventing
-  // other listeners from using it.
-  t->setSwallowTouches(true);
-  addListener(t);
 }
 
 //////////////////////////////////////////////////////////////////////////

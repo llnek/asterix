@@ -20,13 +20,11 @@ NS_BEGIN(terra)
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  Config() { scale=1.0f; }
-
   void initAssets();
   void initCsts();
   void initLevels();
 
-  float scale;
+  Config() {}
 
 public:
 
@@ -34,20 +32,16 @@ public:
     return ResolutionPolicy::FIXED_HEIGHT;
   }
 
-  virtual c::Scene* startWith()  {
-    return nullptr;
-  }
+  virtual c::Scene* startWith();
 
   virtual const sstr getWSUrl() {
     return "";
   }
 
   virtual void setGameId(const sstr& ) {
-
   }
 
   virtual void setRoomId(const sstr& ) {
-
   }
 
   virtual const sstr getGameId() {

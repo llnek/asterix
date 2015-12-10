@@ -9,8 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "core/XConfig.h"
 #include "GameScene.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
 static GameScene* _singleton;
@@ -110,16 +112,17 @@ GMode GameScene::getMode() {
 bool GameScene::isOnline() {
   return static_cast<GContext*>(context)->odin != nullptr;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Rect GameScene::getEnclosureRect() {
-  return MGML()->getEnclosureRect();
+  return cx::visRect();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const Box4 GameScene::getEnclosureBox() {
-  return MGML()->getEnclosureBox();
+  return cx::visBox();
 }
 
 //////////////////////////////////////////////////////////////////////////////

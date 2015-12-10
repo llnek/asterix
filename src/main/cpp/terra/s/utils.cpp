@@ -41,7 +41,7 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
 
   flare->runAction(c::Sequence::create(opacityAnim,
       biggerEase, opacDim,
-      c::CallFunc::create(kf), c::CallFunc::create(cb)));
+      c::CallFunc::create(kf), c::CallFunc::create(cb), nullptr));
 
   flare->runAction(easeMove);
   flare->runAction(rotateEase);
@@ -96,13 +96,13 @@ void bornShip(not_null<f::ComObj*> ccc) {
   bsp->runAction(c::ScaleTo::create(0.5f, 1, 1));
 
   ssp->runAction(c::Sequence::create(c::DelayTime::create(0.5f),
-        c::Blink::create(3,9), c::CallFunc::create(normal)));
+        c::Blink::create(3,9), c::CallFunc::create(normal),nullptr));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta) {
-  auto bx= MGML()->getEnclosureBox();
+  auto bx= MGMS()->getEnclosureBox();
   auto wz= cx::visRect();
   auto pos= ship->pos();
   auto cur= ccpAdd(pos, delta);

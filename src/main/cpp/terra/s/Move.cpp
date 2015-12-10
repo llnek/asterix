@@ -31,7 +31,7 @@ Move::Move(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode n;
+  ShipNode n;
   ships = e->getNodeList(n.typeId());
 }
 
@@ -45,6 +45,7 @@ bool Move::onUpdate(float dt) {
     move(dt);
     onKeys(node,dt);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,7 @@ Collide::Collide(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode n;
+  ShipNode n;
   ships = e->getNodeList(n.typeId());
 }
 

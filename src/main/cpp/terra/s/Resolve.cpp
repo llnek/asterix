@@ -31,7 +31,7 @@ Resolve::Resolve(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::addToEngine(not_null<a::Engine*> e) {
-  ShipMotionNode n;
+  ShipNode n;
   ships = e->getNodeList(n.typeId());
 }
 
@@ -48,6 +48,7 @@ bool Resolve::onUpdate(float dt) {
     checkAliens();
     checkShip(node);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +69,7 @@ void Resolve::onBulletDeath(f::ComObj* b) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkMissiles() {
-  auto box= MGML()->getEnclosureBox();
+  auto box= MGMS()->getEnclosureBox();
   auto p = MGMS()->getPool("Missiles");
 
   p->foreach([=](f::ComObj* m) {
@@ -86,7 +87,7 @@ void Resolve::checkMissiles() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkBombs() {
-  auto box= MGML()->getEnclosureBox();
+  auto box= MGMS()->getEnclosureBox();
   auto p = MGMS()->getPool("Bombs");
 
   p->foreach([=](f::ComObj* b) {
@@ -141,7 +142,7 @@ void Resolve::onShipDeath(f::ComObj* ship) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkAliens() {
-  auto box= MGML()->getEnclosureBox();
+  auto box= MGMS()->getEnclosureBox();
   auto p= MGMS()->getPool("Baddies");
 
   p->foreach([=](f::ComObj* a) {
