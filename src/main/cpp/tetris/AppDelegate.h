@@ -9,48 +9,19 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/GNodes.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
-NS_USING(terra)
-NS_USING(fusii)
-NS_USING(ash)
+#if !defined(__APP_DELEGATE_H__)
+#define __APP_DELEGATE_H__
 
-typedef int POO[2][2];
-//////////////////////////////////////////////////////////////////////////////
-//
-AppDelegate::AppDelegate() {
-
-
-  std::array<POO,1> z;
-  z = {
-    { 7,8, 5,6 }
-  };
-
-  POO &p= z[0];
-
-  printf("0 0= %d\n", p[0][0]);
-  printf("0 1= %d\n", p[0][1]);
-  printf("1 0= %d\n", p[1][0]);
-  printf("1 1= %d\n", p[1][1]);
-
-  return;
-
-  // step.1: register all ash::node factories here
-  auto r= NodeRegistry::self();
-
-  r->rego( mc_new(ShipNode));
-
-  // step.2: set up app-config
-  Config::reify();
-}
+#include "aeon/fusilli.h"
+#include "core/App.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::~AppDelegate() {
-  //delete NodeRegistry::Self();
-  //delete XConfig::Self();
-}
+class CC_DLL AppDelegate : public fusii::App {
+public:
+  NOCPYASS(AppDelegate)
+  DECLCZ(AppDelegate)
+};
 
+#endif
 
