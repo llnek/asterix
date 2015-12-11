@@ -232,7 +232,9 @@ public:
   JsonObj()
   {}
 
-  j::json getValue() const {return j::json(_obj); }
+  j::json getValue() const { return j::json(_obj); }
+
+  void setValue(j::json n) { _obj=n; }
 
   virtual ~JsonObj() {
     CCLOGINFO("deallocing ~JsonObj: %p", this);

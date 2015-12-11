@@ -36,7 +36,7 @@ void Move::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Move::onUpdate(float dt) {
+bool Move::update(float dt) {
   auto node= ships->head;
   if (MGMS()->isLive() &&
       NNP(node)) {

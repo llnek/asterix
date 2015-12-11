@@ -63,7 +63,8 @@ public:
   void showMenu();
   void onDone();
 
-  EFactory* fac;
+  f::ComObj* ship=nullptr;
+  EFactory* fac=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,6 +144,11 @@ void GLayer::decorate() {
   schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0f);
   scheduleUpdate();
 
+  ShipNode n;
+  a::Node* s= e->getNodeList(n.typeId())->head;
+
+  ship = CC_GNF(Ship, s, "ship");
+
   getHUD()->reset();
   cx::sfxMusic("bgMusic", true);
 }
@@ -162,7 +168,7 @@ void GLayer::onPlayerKilled() {
   if ( getHUD()->reduceLives(1)) {
     onDone();
   } else {
-    //bornShip(nullptr);
+    bornShip(ship);
   }
 }
 

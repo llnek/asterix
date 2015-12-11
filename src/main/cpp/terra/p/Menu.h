@@ -19,7 +19,8 @@ NS_BEGIN(terra)
 //
 struct CC_DLL MContext : public f::SContext {
   MContext(VOIDFN cb) { back=cb; }
-  VOIDFN back;
+  NODFT(MContext)
+  VOIDFN back=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,6 @@ NS_BEGIN(terra)
 class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool onUpdate(float);
   void doIt(a::Node*, float);
   void onGui(a::Node*, float);
   void onKey(a::Node*, float);
@@ -35,6 +34,8 @@ public:
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::Motion; }
+
+  virtual bool update(float);
 
   virtual ~Motions() {}
 

@@ -18,14 +18,12 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 Aliens::Aliens(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,11 +35,10 @@ void Aliens::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::onUpdate(float dt) {
-  auto cnt= CC_GDV(c::Float, state, "secCount");
+bool Aliens::update(float dt) {
   auto node = ships->head;
   if (NNP(node)) {
-    doIt(node, cnt);
+    doIt(node);
   }
   return true;
 }
@@ -57,9 +54,11 @@ void Aliens::addEnemy(a::Node* node, j::json& obj) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::doIt(a::Node* node, int dt) {
+void Aliens::doIt(a::Node* node) {
+  auto dt= CC_GDV(c::Integer, state, "secCount");
   auto enemies= MGMS()->getPool("Baddies");
-  auto cfg= MGMS()->getLCfg()->getValue();
+  auto js= MGMS()->getLCfg();
+  auto cfg= js->getValue();
 
   if (enemies->countActives() <
       cfg["enemyMax"].get<j::json::number_integer_t>()) {
@@ -77,7 +76,7 @@ void Aliens::doIt(a::Node* node, int dt) {
       else
       if (style == "1" &&
           time >= dt) {
-        style= "0";
+        a["style"] = "0";
         addEnemy(node, types);
       }
     }
@@ -99,7 +98,7 @@ void Aliens::dropBombs(Enemy* enemy) {
   }
 
   b->inflate(pos.x, pos.y - sz.height * 0.2f);
-  b->attackMode= enemy->attackMode;
+  b->attackMode= enemy->enemyType.attackMode;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -148,39 +147,39 @@ void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
   c::Action* act;
 
   en->setPos(cx::randFloat(wz.size.width *0.5f + 80.0f), wz.size.height);
-  switch (en->moveType) {
+  switch (en->enemyType.moveType) {
 
-      case Moves::RUSH: {
-          act = c::MoveTo::create(1, c::ccp(pos.x, pos.y));
-      }
+    case Moves::RUSH: {
+      act = c::MoveTo::create(1, c::ccp(pos.x, pos.y));
+    }
     break;
 
-      case Moves::VERT: {
-          act = c::MoveBy::create(4, c::ccp(0, -wz.size.height - sz.height)); }
+    case Moves::VERT: {
+      act = c::MoveBy::create(4, c::ccp(0, -wz.size.height - sz.height));
+    }
     break;
 
-      case Moves::HORZ: {
-          auto a0 = c::MoveBy::create(0.5f, c::ccp(0, -100 - cx::randInt(200)));
-          auto a1 = c::MoveBy::create(1, c::ccp(-50 - cx::randInt(100), 0));
+    case Moves::HORZ: {
+      auto a0 = c::MoveBy::create(0.5f, c::ccp(0, -100 - cx::randInt(200)));
+      auto a1 = c::MoveBy::create(1, c::ccp(-50 - cx::randInt(100), 0));
       auto cb = [=]() {
         auto a2 = c::DelayTime::create(1);
-          auto a3 = c::MoveBy::create(1, c::ccp(100 + cx::randInt(100), 0));
+        auto a3 = c::MoveBy::create(1, c::ccp(100 + cx::randInt(100), 0));
         sprite->runAction(c::RepeatForever::create(
               c::Sequence::create(a2, a3,
-                                a2->clone(),
-                                a3->reverse(), nullptr)));
+                a2->clone(), a3->reverse(), nullptr)));
       };
-          act = c::Sequence::create(a0, a1, c::CallFunc::create(cb), nullptr);}
+      act = c::Sequence::create(a0, a1, c::CallFunc::create(cb), nullptr);
+    }
     break;
 
-      case Moves::OLAP: {
+    case Moves::OLAP: {
       auto newX = (pos.x <= wz.size.width * 0.5f) ? wz.size.width : -wz.size.width;
-          auto a4 = c::MoveBy::create(4, c::ccp(newX, -wz.size.width * 0.75f));
-          auto a5 = c::MoveBy::create(4, c::ccp(-newX, -wz.size.width));
-          act = c::Sequence::create(a4,a5,nullptr);}
+      auto a4 = c::MoveBy::create(4, c::ccp(newX, -wz.size.width * 0.75f));
+      auto a5 = c::MoveBy::create(4, c::ccp(-newX, -wz.size.width));
+      act = c::Sequence::create(a4,a5,nullptr);
+    }
     break;
-
-
   }
 
   sprite->runAction(act);

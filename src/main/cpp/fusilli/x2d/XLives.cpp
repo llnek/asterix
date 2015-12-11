@@ -54,7 +54,7 @@ void XLives::drawLives() {
     auto v= cx::reifySprite(frameId);
     v->setScale(scale);
     if (n==0) {
-      lifeSize = v->getContentSize();
+      lifeSize = cx::scaleSize(v->getContentSize(),scale);
       y= refPt.y - HHZ(lifeSize);
       x= refPt.x + HWZ(lifeSize);
     }

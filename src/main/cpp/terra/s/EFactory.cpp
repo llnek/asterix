@@ -55,8 +55,8 @@ a::Entity* EFactory::createShip() {
     ani->addSpriteFrame(f1);
     cac->addAnimation(ani, "ShipAni");
   }
-  sp->runAction(c::RepeatForever::create( c::Animate::create(ani)));
   sp->setPosition(cw.x, sz.height);
+  sp->runAction(c::RepeatForever::create( c::Animate::create(ani)));
 
   auto bs = cx::reifySprite("ship03.png");
   bs->setBlendFunc(BDFUNC::ADDITIVE);
@@ -166,11 +166,11 @@ void EFactory::createEnemies(int count) {
     return mc_new_2(Enemy, sp, arg);
   };
 
-  for (auto j = 0; j < EnemyTypes.size(); ++j) {
-    auto& arg = EnemyTypes[j];
-    p->preset([=]() ->  f::ComObj* {
-      return cr(arg);
-    }, count);
+  F__LOOP(it, EnemyTypes) {
+     auto& arg = *it;
+     p->preset([=]() ->  f::ComObj* {
+         return cr(arg);
+     }, count);
   }
 }
 
@@ -193,6 +193,7 @@ void EFactory::createBackSkies() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void EFactory::createBackTiles(int count) {
+  auto p = MGMS()->getPool("BackTiles");
   auto layer= MGMS()->getLayer(1);
   auto cr= [=](const sstr& name) -> f::ComObj* {
     auto sp = cx::reifySprite(name);
@@ -201,10 +202,9 @@ void EFactory::createBackTiles(int count) {
     layer->addAtlasItem("back-tiles", sp, f::MaybeInt(-9));
     return mc_new_1(f::ComObj, sp);
   };
-    auto p = MGMS()->getPool("BackTiles");
 
-  for (auto j=0; j < BackTileMap.size(); ++j) {
-    auto& n = BackTileMap[j];
+  F__LOOP(it, BackTileMap) {
+    auto& n = *it;
     p->preset([=]() -> f::ComObj* {
       return cr(n);
     }, count);

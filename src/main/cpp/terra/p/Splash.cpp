@@ -23,8 +23,8 @@ BEGIN_NS_UNAMED()
 class CC_DLL UILayer : public f::XLayer {
 protected:
 
-  c::Sprite* flare;
-  c::Sprite* ship;
+  c::Sprite* flare = nullptr;
+  c::Sprite* ship = nullptr;
 
 public:
 
@@ -47,7 +47,7 @@ void UILayer::decorate() {
 
   centerImage("game.bg");
 
-    flare = c::Sprite::create("pics/flare.jpg");
+  flare = c::Sprite::create("pics/flare.jpg");
   flare->setVisible(false);
   ship = cx::reifySprite("ship03.png");
   ship->setPosition( cx::randFloat(wz.size.width), 0);

@@ -183,7 +183,7 @@ public:
 
   virtual void inflate(float x, float y) {
     auto ac = c::AnimationCache::getInstance();
-    auto ani=  ac->getAnimation("Explosion");
+    auto ani= ac->getAnimation("Explosion");
     sprite->runAction(c::Sequence::create(
           c::Animate::create(ani),
           c::CallFunc::create([=]() {

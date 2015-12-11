@@ -40,7 +40,7 @@ void UILayer::decorate() {
   auto tile = CC_CSV(c::Integer, "TILE");
   auto wb= cx::visBox();
   auto cw= cx::center();
-    auto c= cx::white();
+  auto c= cx::white();
   centerImage("gui.mmenus.menu.bg");
 
   tt->setPosition( cw.x, wb.top * 0.9f);
@@ -83,11 +83,10 @@ void UILayer::decorate() {
   off->setColor(c);
   on->setColor(c);
 
-    addAudioIcons((XLayer*) this,
-      off, on,
-      cx::anchorBR(),
-      c::Vec2(wb.right - tile, wb.bottom + tile));
-
+  addAudioIcons((XLayer*) this,
+    off, on,
+    cx::anchorBR(),
+    c::Vec2(wb.right - tile, wb.bottom + tile));
 }
 
 END_NS_UNAMED()

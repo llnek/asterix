@@ -27,13 +27,9 @@ protected:
   void addEnemyToGame(a::Node*, int );
   Enemy* getB(const EnemyType&);
 
-  virtual bool onUpdate(float);
-
   void addEnemy(a::Node*, j::json& );
-  void doIt(a::Node*, int);
+  void doIt(a::Node*);
   void dropBombs(Enemy*);
-
-  a::NodeList* ships;
 
 public:
 
@@ -45,9 +41,14 @@ public:
 
   virtual int priority() { return a::Motion; }
 
+  virtual bool update(float);
+
   virtual ~Aliens() {}
   NOCPYASS(Aliens)
   NODFT(Aliens)
+
+  a::NodeList* ships= nullptr;
+
 };
 
 

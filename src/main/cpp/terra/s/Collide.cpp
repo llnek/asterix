@@ -23,7 +23,6 @@ Collide::Collide(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +40,7 @@ bool Collide::collide(f::ComObj* a, f::ComObj* b) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::onUpdate(float dt) {
+bool Collide::update(float dt) {
   auto node = ships->head;
 
   if (MGMS()->isLive() &&
@@ -93,7 +92,7 @@ void Collide::checkMissilesAliens() {
 //
 void Collide::checkShipBombs(a::Node* node) {
   auto bombs = MGMS()->getPool("Bombs");
-    auto ship= CC_GNF(Ship, node, "ship");
+  auto ship= CC_GNF(Ship, node, "ship");
 
   if (!ship->status) { return; }
   bombs->foreach([=](f::ComObj* b) {

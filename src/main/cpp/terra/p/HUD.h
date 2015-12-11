@@ -21,9 +21,9 @@ NS_BEGIN(terra)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  c::Label* scoreLabel;
-  f::XLives* lives;
-  int score;
+  c::Label* scoreLabel= nullptr;
+  f::XLives* lives=nullptr;
+  int score=0;
 
 public:
 

@@ -34,10 +34,9 @@ public:
   NOCPYASS(Game)
   IMPLCZ(Game)
 
-  f::ComObj* backSkyRe;
-  f::ComObj* backSky;
+  f::ComObj* backSkyRe=nullptr;
+  f::ComObj* backSky=nullptr;
   c::Size backSkyDim;
-
 };
 
 

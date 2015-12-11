@@ -23,7 +23,6 @@ NS_BEGIN(terra)
 Motions::Motions(not_null<EFactory*> e, not_null<c::Dictionary*> f)
   : BaseSystem<EFactory>(e, f) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,13 +34,13 @@ void Motions::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Motions::onUpdate(float dt) {
+bool Motions::update(float dt) {
   //const evt = this.evQ.length > 0 ? this.evQ.shift() : undef,
   auto node = ships->head;
   if (NNP(node)) {
     doIt(node, dt);
   }
-    return true;
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

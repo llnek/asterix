@@ -37,7 +37,7 @@ void HUDLayer::decorate() {
   lives = f::reifyRefType<f::XLives>();
   lives->decorate("ship01.png",3,
       tile +soff,
-      wz.size.height - tile - soff, 0.4);
+      wz.size.height - tile - soff, 0.4f);
   addItem(lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
@@ -66,12 +66,16 @@ void HUDLayer::reset() {
   score=0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 bool HUDLayer::reduceLives(int n) {
-    return false;
+  return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::updateScore(int n) {
-    
+
 }
 
 NS_END(terra)

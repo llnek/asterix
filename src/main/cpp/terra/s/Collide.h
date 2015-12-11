@@ -27,10 +27,6 @@ protected:
   void checkMissilesBombs();
   void checkMissilesAliens();
 
-  virtual bool onUpdate(float);
-
-  a::NodeList* ships;
-
 public:
 
   virtual const a::SystemType typeId() { return "n/Collide"; }
@@ -41,10 +37,13 @@ public:
 
   virtual int priority() { return a::Collide; }
 
+  virtual bool update(float);
+
   virtual ~Collide() {}
   NOCPYASS(Collide)
   NODFT(Collide)
 
+  a::NodeList* ships=nullptr;
 };
 
 
