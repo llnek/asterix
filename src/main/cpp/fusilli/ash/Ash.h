@@ -26,6 +26,7 @@ typedef s::string NodeType;
 class FS_DLL Component {
 public:
   virtual const COMType typeId() = 0;
+  virtual void dispose() {}
   IMPLCZ(Component)
 };
 

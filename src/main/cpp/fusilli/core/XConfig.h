@@ -35,14 +35,13 @@ protected:
   void addMusic(const sstr& key, c::Ref*);
   void addCst(const sstr& key, c::Ref*);
 
-  c::Dictionary* frags;
-  c::Dictionary* l10n;
-  j::json seed;
-  float scale;
+  c::Dictionary* frags=nullptr;
+  c::Dictionary* l10n=nullptr;
 
-  float lastMusicVol;
-  float lastSfxVol;
-  bool audioState;
+  float lastMusicVol=0.5f;
+  float lastSfxVol=0.5f;
+  float scale=1.0f;
+  bool audioState=true;
 
   void loadL10NStrings();
   void setCsts();
@@ -60,7 +59,7 @@ protected:
 public:
 
   virtual void handleResolution(const c::Size& ) {}
-  virtual float getScale() { return 1.0f; }
+  virtual float getScale() { return scale; }
   virtual void runOnce() {}
 
   virtual ResolutionPolicy policy() = 0;
@@ -107,9 +106,6 @@ public:
 
   const s_vec<filepath> getEffectFiles();
   const s_vec<filepath> getMusicFiles();
-
-  void setSeedData(j::json&);
-  j::json& getSeedData();
 
   NOCPYASS(XConfig)
   DECLCZ(XConfig)

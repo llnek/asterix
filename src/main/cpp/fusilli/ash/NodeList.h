@@ -27,9 +27,10 @@ private:
 
 public:
 
-  static owner<NodeList*> reify(const NodeType&);
-
   const NodeType getType() { return nType; }
+
+  NodeList(const NodeType&);
+  virtual ~NodeList();
 
   bool containsWithin(not_null<Entity*>);
   bool isCompatible(not_null<Entity*>);
@@ -42,10 +43,10 @@ public:
   int size();
 
   NOCPYASS(NodeList)
-  DECLCZ(NodeList)
+  NODFT(NodeList)
 
-  Node* head;
-  Node* tail;
+  Node* head=nullptr;
+  Node* tail=nullptr;
 
 };
 

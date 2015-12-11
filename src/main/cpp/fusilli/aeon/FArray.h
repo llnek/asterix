@@ -19,8 +19,8 @@ NS_BEGIN(fusii)
 //
 template<typename T> class FS_DLL FArray {
 private:
-  T* data;
-  int sz;
+  T* data = nullptr;
+  int sz = 0;
 public:
 
   FArray<T>& operator=(const FArray<T>&);
@@ -114,8 +114,6 @@ FArray<T>::FArray(int z) {
 //
 template<typename T>
 FArray<T>::FArray() {
-  data = nullptr;
-  sz=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

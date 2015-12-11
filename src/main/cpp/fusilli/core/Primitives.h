@@ -54,11 +54,10 @@ NS_BEGIN(fusii)
 //
 template<typename T> class CC_DLL Maybe {
 private:
-  bool isset;
+  bool isset=false;
   T value;
 public:
   explicit Maybe(T t) { value=t; isset=true; }
-  Maybe() { isset=false; }
   Maybe<T>& operator=(const Maybe<T>& arg) {
     value=arg.value;
     isset=arg.isset;
@@ -78,6 +77,7 @@ public:
     isset=arg.isset;
   }
   ~Maybe() {}
+  Maybe() {}
   T get() const { return value; }
   bool isNone() const { return isset; }
 };
@@ -124,14 +124,12 @@ struct CC_DLL Box4 {
     : top(t), right(r), bottom(b), left(l)
   {}
   ~Box4() {}
+  Box4() {}
   Box4(const Box4& b) {
     top=b.top;
     right=b.right;
     bottom=b.bottom;
     left=b.left;
-  }
-  Box4() {
-    top= right= bottom= left=0;
   }
   Box4& operator=(const Box4& b) {
     top=b.top;
@@ -140,10 +138,10 @@ struct CC_DLL Box4 {
     left=b.left;
     return *this;
   }
-  float top;
-  float right;
-  float bottom;
-  float left;
+  float top=0;
+  float right=0;
+  float bottom=0;
+  float left=0;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,8 +172,8 @@ public:
   }
 
 private:
-  float _x;
-  float _y;
+  float _x=0;
+  float _y=0;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -206,8 +204,8 @@ public:
   }
 
 private:
-  float _w;
-  float _h;
+  float _w=0;
+  float _h=0;
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -78,9 +78,9 @@ public:
   OdinEvent(MType t, EType c);
   OdinEvent(j::json& msg);
 
-  double tstamp;
-  MType type;
-  EType code;
+  MType type=MType::NICHTS;
+  EType code=EType::NICHTS;
+  double tstamp= 0;
   j::json doco;
 
   NOCPYASS(OdinEvent)

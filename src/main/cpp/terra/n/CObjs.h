@@ -36,7 +36,7 @@ public:
   NOCPYASS(Missile)
   NODFT(Missile)
 
-  Attacks attackMode;
+  Attacks attackMode=Attacks::NORMAL;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ public:
   NOCPYASS(Bomb)
   NODFT(Bomb)
 
-  Attacks attackMode;
+  Attacks attackMode=Attacks::NORMAL;
 };
 
 
@@ -69,15 +69,13 @@ public:
 
   Enemy(not_null<c::Sprite*> s, const EnemyType& et)
     : ComObj(s) {
-    delayTime= 1.2f * c::rand_0_1() + 1;
+    delayTime= 1.2f * c::rand_0_1() + 1.0f;
     enemyType= et;
   }
 
   EnemyType enemyType;
-  Attacks attackMode;
-  Moves moveType;
   float delayTime;
-  float speed;
+  float speed=0;
 
   virtual ~Enemy() {}
   NOCPYASS(Enemy)
@@ -94,13 +92,11 @@ public:
   Ship(not_null<c::Sprite*> s,
        not_null<c::Sprite*> x, int health=5)
     : ComObj(s, health, 0) {
-
-    canBeAttack = false;
     bornSprite = x;
   }
 
-  c::Sprite* bornSprite;
-  bool canBeAttack;
+  c::Sprite* bornSprite=nullptr;
+  bool canBeAttack=false;
 
   virtual ~Ship() {}
   NOCPYASS(Ship)
@@ -113,20 +109,14 @@ class CC_DLL Motion : public a::Component {
 public:
 
   virtual const a::COMType typeId() { return "n/Motion"; }
-  virtual ~Motion() {}
+
   NOCPYASS(Motion)
+  IMPLCZ(Motion)
 
-  Motion() {
-    right=false;
-    left= false;
-    down= false;
-    up= false;
-  }
-
-  bool right;
-  bool left;
-  bool down;
-  bool up;
+  bool right=false;
+  bool left=false;
+  bool down=false;
+  bool up=false;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,9 +126,7 @@ public:
 
   Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
     : ComObj(sp1,1,0) {
-    duration = 0.7f;
     sprite2= sp2;
-    scale = 1.2f;
   }
 
   virtual const a::COMType typeId() { return "n/Spark"; }
@@ -146,9 +134,9 @@ public:
   NOCPYASS(Spark)
   NODFT(Spark)
 
-  c::Sprite* sprite2;
-  float duration;
-  float scale;
+  c::Sprite* sprite2=nullptr;
+  float duration=0.7f;
+  float scale=1.2f;
 
   void inflate(float x, float y, float scale) {
 
@@ -156,7 +144,7 @@ public:
     auto right = c::RotateBy::create(duration, 45.0f);
     auto seq = c::Sequence::createWithTwoActions(
         c::FadeOut::create(duration),
-        c::CallFunc::create([=]() { this->destroy(); }));
+        c::CallFunc::create([=]() { this->dispose(); }));
 
     sprite2->setRotation( cx::randInt(360));
     sprite2->setOpacity(255.0f);
@@ -218,7 +206,6 @@ public:
 
   HitEffect(not_null<c::Sprite*> s)
     : ComObj(s) {
-    scale = 0.75f;
   }
 
   virtual void inflate(float x, float y) {
@@ -231,7 +218,7 @@ public:
     ComObj::inflate(x,y);
   }
 
-  float scale;
+  float scale=0.75f;
 
   virtual ~HitEffect() {}
   NOCPYASS(HitEffect)

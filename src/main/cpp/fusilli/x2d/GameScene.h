@@ -33,11 +33,11 @@ enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GContext : public SContext {
-  GContext() { mode=GMode::ONE; SNPTR(odin) }
-  GContext(GMode m) : GContext() { mode=m; }
   virtual ~GContext() { mc_del_ptr(odin) }
-  ws::OdinIO* odin;
-  GMode mode;
+  GContext(GMode m) { mode=m; }
+  GContext() {}
+  ws::OdinIO* odin=nullptr;
+  GMode mode=GMode::ONE;
   NOCPYASS(GContext)
 };
 
@@ -51,8 +51,8 @@ protected:
   s_map<sstr, XPool*> pools;
   s_que<sstr> msgQ;
 
-  int state;
-  int level;
+  int state=0;
+  int level=1;
 
 public:
 

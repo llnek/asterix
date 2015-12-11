@@ -106,14 +106,6 @@ owner<OdinIO*> reifyJoinRequest(const sstr& room,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
-OdinIO::OdinIO() {
-  cbNetwork = cbSession = cbAll = nullptr;
-  state= CType::S_NOT_CONNECTED;
-  SNPTR(socket)
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 //
 void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {

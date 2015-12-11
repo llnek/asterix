@@ -24,13 +24,14 @@ protected:
   Factory(not_null<a::Engine*>,
       not_null<c::Dictionary*> options);
 
-  c::Dictionary* state;
-  a::Engine* engine;
+  c::Dictionary* state=nullptr;
+  a::Engine* engine=nullptr;
 
 public:
 
   NOCPYASS(Factory)
   NODFT(Factory)
+
   virtual ~Factory();
 };
 

@@ -73,9 +73,6 @@ XConfig::XConfig() {
   frags->setObject(CC_DICT(), LEVELS);
 
   loadL10NStrings();
-  audioState=true;
-  scale=1.0f;
-
   addLevel("1");
   setCsts();
   bind(this);
@@ -271,19 +268,6 @@ f::JsonObj* XConfig::getLevelCfg(const sstr& n) {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-void XConfig::setSeedData(j::json& j) {
-  seed=j;
-  j= j::json();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-j::json& XConfig::getSeedData() {
-  return seed;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XConfig::addLevel(const sstr& level) {
@@ -358,12 +342,12 @@ void XConfig::addXXX(const sstr& frag, const sstr& key, c::Ref* ref) {
 //
 const s::vector<filepath> XConfig::getEffectFiles() {
   NS_USING(cocos2d)
-  DictElement* element = nullptr;
+  DictElement* em = nullptr;
   auto d= getFragment(MUSIC);
   s_vec<filepath> rc;
 
-  CCDICT_FOREACH(d, element) {
-    rc.push_back( static_cast<String*>(element->getObject())->getCString());
+  CCDICT_FOREACH(d, em) {
+    rc.push_back( static_cast<String*>(em->getObject())->getCString());
   }
   return rc;
 }
@@ -372,12 +356,12 @@ const s::vector<filepath> XConfig::getEffectFiles() {
 //
 const s::vector<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
-  DictElement* element = nullptr;
+  DictElement* em = nullptr;
   auto d= getFragment(EFX);
   s_vec<filepath> rc;
 
-  CCDICT_FOREACH(d, element) {
-    rc.push_back( static_cast<String*>(element->getObject())->getCString());
+  CCDICT_FOREACH(d, em) {
+    rc.push_back( static_cast<String*>(em->getObject())->getCString());
   }
   return rc;
 }

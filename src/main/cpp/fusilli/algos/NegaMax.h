@@ -23,9 +23,9 @@ const int PINF = 1000000;
 //
 template<int Z> struct FS_DLL FFrame {
   s_arr<int, Z*Z> state;
-  int lastBestMove;
-  int other;
-  int cur;
+  int lastBestMove=0;
+  int other=0;
+  int cur=0;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -98,9 +98,10 @@ template <int Z> int evalNegaMax(not_null<GameBoard<Z>*> board) {
   auto f= board->takeFFrame();
   negaMax<Z>(board, f, 10, 10, -PINF, PINF);
   auto rc = f->lastBestMove;
-    delete f;
-    return rc;
+  delete f;
+  return rc;
 }
+
 
 NS_END(algos)
 NS_END(fusii)

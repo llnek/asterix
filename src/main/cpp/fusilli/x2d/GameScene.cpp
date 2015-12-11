@@ -39,9 +39,6 @@ GameScene::~GameScene() {
 //////////////////////////////////////////////////////////////////////////////
 //
 GameScene::GameScene() {
-  SNPTR(context)
-  level = 1;
-  state=0;
   bind(this);
 }
 

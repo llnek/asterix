@@ -21,7 +21,6 @@ NS_BEGIN(terra)
 class CC_DLL Stage : public f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool onUpdate(float);
   void sharedExplosion();
   void initBackSkies();
   void onceOnly();
@@ -32,15 +31,17 @@ public:
 
   virtual int priority() { return a::PreUpdate; }
 
+  virtual void addToEngine(not_null<a::Engine*>);
+  virtual bool update(float);
+
   Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-  virtual void addToEngine(not_null<a::Engine*>);
   virtual ~Stage() {}
 
   NOCPYASS(Stage)
   NODFT(Stage)
 
-  a::NodeList* ships;
+  a::NodeList* ships=nullptr;
 };
 
 

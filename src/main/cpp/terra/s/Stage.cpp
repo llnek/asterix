@@ -35,7 +35,7 @@ void Stage::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Stage::onUpdate(float dt) {
+bool Stage::update(float dt) {
   if (! inited) {
     onceOnly();
   }

@@ -25,8 +25,8 @@ public:
   void add(not_null<T*> );
   const s_vec<T*> list();
   void clear() ;
-  T* head;
-  T* tail;
+  T* head= nullptr;
+  T* tail=nullptr;
   NOCPYASS(ObjList)
   DECLCZ(ObjList)
 };
@@ -129,9 +129,9 @@ private:
   s_vec<Entity*> modList;
   s_vec<Entity*> addList;
 
+  bool updating=false;
+  bool dirty=false;
   SList systemList;
-  bool updating;
-  bool dirty;
 
 public:
 

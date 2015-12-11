@@ -84,9 +84,9 @@ void bornShip(not_null<f::ComObj*> ccc) {
   auto normal = [=]() {
     ship->canBeAttack = true;
     bsp->setVisible(false);
-//    ssp->schedule([=](float dt) {
-//      fireMissiles(ship, dt);
-//    }, 1.0f/6);
+    ssp->schedule([=](float dt) {
+      fireMissiles(ship, dt);
+    }, 1.0f/6, "fm");
     ship->inflate();
   };
 
@@ -96,7 +96,8 @@ void bornShip(not_null<f::ComObj*> ccc) {
   bsp->runAction(c::ScaleTo::create(0.5f, 1, 1));
 
   ssp->runAction(c::Sequence::create(c::DelayTime::create(0.5f),
-        c::Blink::create(3,9), c::CallFunc::create(normal),nullptr));
+        c::Blink::create(3,9),
+        c::CallFunc::create(normal),nullptr));
 }
 
 //////////////////////////////////////////////////////////////////////////////

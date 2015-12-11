@@ -25,10 +25,10 @@ protected:
   void init(c::Sprite*, int health, int score);
 
   NOCPYASS(ComObj)
-  ComObj();
 
 public:
-    virtual const a::COMType typeId() { return "fusii::ComObj"; }
+
+  virtual const a::COMType typeId() { return "fusii::ComObj"; }
 
   virtual void inflate(not_null<c::Dictionary*> options);
   virtual void inflate(float x, float y);
@@ -37,8 +37,6 @@ public:
   virtual void hurt(int damage=1);
 
   void setPos(float x, float y);
-    void destroy() {}
-    
   const c::Size csize();
   const c::Vec2 pos();
 
@@ -51,12 +49,13 @@ public:
   ComObj(not_null<c::Sprite*>, int health, int score);
   ComObj(not_null<c::Sprite*>);
   virtual ~ComObj() {}
+  ComObj();
 
-  c::Sprite* sprite;
-  int origHealth;
-  bool status;
-  int health;
-  int score;
+  c::Sprite* sprite=nullptr;
+  int origHealth=0;
+  bool status=false;
+  int health=0;
+  int score=0;
 
   c::Vec2 lastPos;
   c::Vec2 vel;

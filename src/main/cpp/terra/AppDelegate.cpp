@@ -17,25 +17,10 @@ NS_USING(terra)
 NS_USING(fusii)
 NS_USING(ash)
 
-typedef int POO[2][2];
+
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-
-
-  std::array<POO,1> z;
-  z = {
-    { 7,8, 5,6 }
-  };
-
-  POO &p= z[0];
-
-  printf("0 0= %d\n", p[0][0]);
-  printf("0 1= %d\n", p[0][1]);
-  printf("1 0= %d\n", p[1][0]);
-  printf("1 1= %d\n", p[1][1]);
-
-  return;
 
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();

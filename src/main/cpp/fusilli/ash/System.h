@@ -23,14 +23,15 @@ protected:
 
   System(int priority);
 
-  int _priority;
-  bool active;
+  int _priority=ash::Error;
+  bool active=true;
 
 public:
 
   virtual void removeFromEngine(not_null<Engine*>);
   virtual void addToEngine(not_null<Engine*>);
-  virtual bool update(float time);
+  virtual bool update(float time) = 0;
+  virtual ~System() {}
 
   virtual const SystemType typeId() = 0;
   bool isa(const SystemType& );
@@ -42,10 +43,10 @@ public:
   void suspend();
 
   NOCPYASS(System)
-  DECLCZ(System)
+  NODFT(System)
 
-  System* previous;
-  System* next;
+  System* previous=nullptr;
+  System* next=nullptr;
 
 };
 

@@ -26,10 +26,10 @@ protected:
   c::Vec2 refPt;
   sstr frameId;
 
-  int totalLives;
-  int curLives;
-  int dir;
-  float scale;
+  int totalLives=0;
+  int curLives=0;
+  int dir=1;
+  float scale=1.0f;
 
 public:
 
@@ -46,7 +46,7 @@ public:
   void drawLives();
 
   NOCPYASS(XLives)
-  DECLCZ(XLives)
+  IMPLCZ(XLives)
 
 };
 

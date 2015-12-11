@@ -32,6 +32,7 @@ public:
 
   NOCPYASS(ShipNode)
   IMPLCZ(ShipNode)
+
 };
 
 

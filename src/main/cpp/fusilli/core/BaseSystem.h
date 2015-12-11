@@ -22,18 +22,16 @@ template<typename F> class CC_DLL BaseSystem : public a::System {
 protected:
 
   BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
-  virtual bool onUpdate(float) { return true; }
 
-  c::Dictionary* state;
-  F* factory;
-  bool inited;
+  c::Dictionary* state=nullptr;
+  F* factory=nullptr;
+  bool inited=false;
 
   NOCPYASS(BaseSystem)
   NODFT(BaseSystem)
 
 public:
 
-  virtual bool update(float time);
   virtual ~BaseSystem();
 };
 
@@ -56,15 +54,6 @@ template<typename F>
 BaseSystem<F>::~BaseSystem() {
   CC_DROP(state)
 }
-
-//////////////////////////////////////////////////////////////////////////
-//
-template<typename F>
-bool BaseSystem<F>::update(float time) {
-  return onUpdate(time);
-}
-
-
 
 NS_END(fusii)
 #endif

@@ -28,11 +28,11 @@ protected:
   void disableListeners();
   void enableListeners();
 
-  c::EventListenerMouse* _mouseListener;
-  bool _mouseEnabled;
+  c::EventListenerMouse* _mouseListener=nullptr;
+  c::Dictionary* options=nullptr;
+  a::Engine* engine=nullptr;
+  bool _mouseEnabled=false;
   s_arr<bool, 256> keys;
-  c::Dictionary* options;
-  a::Engine* engine;
 
   virtual void onKeyReleased(KEYCODE k, c::Event*);
   virtual void onKeyPressed(KEYCODE k, c::Event*);
@@ -43,7 +43,6 @@ protected:
   virtual void onMouseMove(c::Event*);
 
 public:
-
 
   bool isMouseEnabled() { return _mouseEnabled; }
   void setMouseEnabled(bool);

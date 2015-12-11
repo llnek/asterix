@@ -15,11 +15,9 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Entity*> Entity::reify(const sstr& group, not_null<Engine*> e) {
-  auto ent= mc_new( Entity);
-  ent->group=group;
-  ent->engine= e;
-  return ent;
+Entity::Entity(const sstr& group, not_null<Engine*> e) {
+  this->group=group;
+  this->engine= e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -27,15 +25,6 @@ owner<Entity*> Entity::reify(const sstr& group, not_null<Engine*> e) {
 Entity::~Entity() {
   F__LOOP(it, parts) { delete it->second; }
   //printf("Entity dtor\n");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Entity::Entity() {
-  SNPTR(previous)
-  SNPTR(engine)
-  SNPTR(next)
-  dead=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

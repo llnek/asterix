@@ -23,22 +23,23 @@ private:
 
   s_map<sstr, Component*> values;
   s_map<COMType, sstr> types;
-  Entity* entity;
+  Entity* entity=nullptr;
 
 public:
 
-  static owner<Node*> reify(const s_map<sstr, COMType>& );
-  Entity* getEntity() { return entity; }
+  Node(const s_map<sstr, COMType>& );
 
+  Entity* getEntity() { return entity; }
   bool bindEntity(not_null<Entity*> );
   bool belongsTo(not_null<Entity*>);
   Component* get(const sstr& field);
 
+  virtual ~Node() {}
   NOCPYASS(Node)
-  DECLCZ(Node)
+  NODFT(Node)
 
-  Node* previous;
-  Node* next;
+  Node* previous=nullptr;
+  Node* next=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////

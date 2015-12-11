@@ -78,7 +78,7 @@ owner<Node*> NodeFactory::reifyXXXNode(const s_vec<sstr>& flds,
     s.insert(S__PAIR(sstr, COMType, flds[i], types[i] ));
   }
 
-  return a::Node::reify(s);
+  return mc_new_1(Node,s);
 }
 
 

@@ -28,8 +28,8 @@ protected:
   c::SpriteBatchNode* regoAtlas(const sstr& name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
 
-  int lastTag;
-  int lastZ;
+  int lastTag=1;
+  int lastZ=0;
 
 public:
 
@@ -65,7 +65,7 @@ public:
   virtual int getIID() { return 1; }
 
   NOCPYASS(XLayer)
-  DECLCZ(XLayer)
+  IMPLCZ(XLayer)
 
 };
 

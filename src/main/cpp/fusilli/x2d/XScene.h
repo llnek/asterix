@@ -19,8 +19,6 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SContext {
-  NOCPYASS(SContext)
-  IMPLCZ(SContext)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +26,7 @@ struct CC_DLL SContext {
 class CC_DLL XScene : public c::Scene {
 protected:
 
-  SContext* context;
+  SContext* context=nullptr;
 
 public:
 

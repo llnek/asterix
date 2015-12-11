@@ -15,26 +15,10 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> Node::reify(const s_map<sstr, COMType>& s) {
-  auto node= mc_new(Node);
+Node::Node(const s_map<sstr, COMType>& s) {
   F__LOOP(it, s) {
-    node->types.insert(S__PAIR(COMType, sstr, it->second, it->first));
+    this->types.insert(S__PAIR(COMType, sstr, it->second, it->first));
   }
-  return node;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Node::~Node() {
-//  printf("Node dtor!\n");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Node::Node() {
-  SNPTR(previous)
-  SNPTR(next)
-  SNPTR(entity)
 }
 
 //////////////////////////////////////////////////////////////////////////////
