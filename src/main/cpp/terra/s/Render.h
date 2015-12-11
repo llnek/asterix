@@ -18,7 +18,6 @@ NS_BEGIN(terra)
 class CC_DLL Render : public f::BaseSystem<EFactory> {
 protected:
 
-  virtual bool onUpdate(float);
   void processMovement(float);
 
 public:
@@ -30,6 +29,8 @@ public:
   virtual void addToEngine(not_null<a::Engine*> );
 
   virtual int priority() { return a::Render; }
+
+  virtual bool update(float);
 
   virtual ~Render() {}
 

@@ -34,7 +34,7 @@ void Render::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Render::onUpdate(float dt) {
+bool Render::update(float dt) {
   if (MGMS()->isLive()) {
     processMovement(dt);
   }

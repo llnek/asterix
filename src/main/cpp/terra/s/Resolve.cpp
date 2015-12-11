@@ -25,7 +25,6 @@ Resolve::Resolve(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
 : BaseSystem<EFactory>(e, d) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +36,7 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::onUpdate(float dt) {
+bool Resolve::update(float dt) {
   auto node = ships->head;
 
   if (MGMS()->isLive() &&
@@ -152,9 +151,7 @@ void Resolve::checkAliens() {
           !cx::pointInBox(box, pos)) {
         this->onEnemyDeath(a);
         a->deflate();
-        auto msg = j::json({
-            {"score", a->score}
-            });
+        auto msg = j::json({ {"score", a->score} });
         MGMS()->sendMsgEx("/game/players/earnscore", &msg);
       }
     }
@@ -164,7 +161,7 @@ void Resolve::checkAliens() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip(a::Node* node) {
-    auto ship = CC_GNF(Ship, node, "ship");
+  auto ship = CC_GNF(Ship, node, "ship");
   if (ship->status) {
     if (ship->health <= 0) {
       this->onShipDeath(ship);

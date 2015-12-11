@@ -26,8 +26,6 @@ protected:
   void onGui(a::Node*, float);
   void onKey(a::Node*, float);
 
-  a::NodeList* ships;
-
 public:
 
   virtual const a::SystemType typeId() { return "n/Motions"; }
@@ -42,6 +40,8 @@ public:
 
   NOCPYASS(Motions)
   NODFT(Motions)
+
+  a::NodeList* ships = nullptr;
 
 };
 

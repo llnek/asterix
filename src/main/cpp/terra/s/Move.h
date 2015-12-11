@@ -27,11 +27,9 @@ protected:
   void move(float);
   void moveMissiles(float);
 
-  virtual bool onUpdate(float);
-
 public:
 
-    virtual const a::SystemType typeId() { return "n/Move"; }
+  virtual const a::SystemType typeId() { return "n/Move"; }
 
   Move(not_null<EFactory*>, not_null<c::Dictionary*>);
 
@@ -39,11 +37,13 @@ public:
 
   virtual int priority() { return a::Move; }
 
+  virtual bool update(float);
+
   virtual ~Move() {}
   NOCPYASS(Move)
   NODFT(Move)
 
-    a::NodeList* ships;
+  a::NodeList* ships=nullptr;
 };
 
 

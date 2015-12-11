@@ -29,11 +29,9 @@ protected:
   void checkAliens();
   void checkShip(a::Node*);
 
-  virtual bool onUpdate(float);
-
-
 public:
-    virtual const a::SystemType typeId() { return "n/Resolve"; }
+
+  virtual const a::SystemType typeId() { return "n/Resolve"; }
 
   Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
 
@@ -41,14 +39,14 @@ public:
 
   virtual int priority() { return a::Resolve; }
 
+  virtual bool update(float);
+
   virtual ~Resolve() {}
   NOCPYASS(Resolve)
   NODFT(Resolve)
 
-  a::NodeList* ships;
-
+  a::NodeList* ships=nullptr;
 };
-
 
 
 NS_END(terra)

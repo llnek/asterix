@@ -23,7 +23,6 @@ Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
   :
   BaseSystem<EFactory>(f, d) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////////

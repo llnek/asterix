@@ -25,7 +25,6 @@ Move::Move(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(e, d) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
