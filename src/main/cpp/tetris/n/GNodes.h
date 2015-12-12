@@ -9,79 +9,36 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires n/cobjs
- * @module n/gnodes
- */
+#if !defined(__GNODES_H__)
+#define __GNODES_H__
 
-import sh from 'zotohlab/asx/asterix';
-import cobjs from 'n/cobjs';
+#include "ash/NodeRego.h"
+#include "ash/Node.h"
+#include "CObjs.h"
 
-
-/** @alias module:n/gnodes */
-let xbox= {},
-sjs= sh.skarojs,
-undef;
+NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class ArenaNode
- */
-xbox.ArenaNode = sh.Ashley.nodeDef({
+//
+class CC_DLL ArenaNode : public a::NodeFactory {
+public:
 
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {TileGrid} collision
-   */
-  collision   : cobjs.TileGrid,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {GridBox} gbox
-   */
-  gbox        : cobjs.GridBox,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {BlockGrid} blocks
-   */
-  blocks      : cobjs.BlockGrid,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {Motion} motion
-   */
-  motion      : cobjs.Motion,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {Pauser} pauser
-   */
-  pauser      : cobjs.Pauser,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {Dropper} dropper
-   */
-  dropper     : cobjs.Dropper,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {ShapeShell} shell
-   */
-  shell       : cobjs.ShapeShell,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {FilledLines} flines
-   */
-  flines      : cobjs.FilledLines,
-  /**
-   * @memberof module:n/gnodes~ArenaNode
-   * @property {CtrlPad} cpad
-   */
-  cpad        : cobjs.CtrlPad
-});
+  virtual const a::NodeType typeId() { return "n/ArenaNode"; }
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode(
+        s_vec<sstr> { "collision", "gbox", "blocks", "motion",
+        "pauser", "dropper", "shell" , "flines", "cpad" },
+        s_vec<a::COMType> { "n/TileGrid", "n/GridBox", "n/BlockGrid", "n/Motion",
+        "n/Pauser", "n/Dropper", "n/ShapeShell" , "n/FilledLines", "n/CtrlPad" });
+  }
+
+  NOCPYASS(ArenaNode)
+  IMPLCZ(ArenaNode)
+};
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(tetris)
+#endif
+
+
 

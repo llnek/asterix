@@ -12,6 +12,8 @@
 #if !defined(__COBJS_H__)
 #define __COBJS_H__
 
+#include "core/XConfig.h"
+
 NS_BEGIN(tetris)
 
 typedef int DIM4x4[4][4];
@@ -53,10 +55,18 @@ struct CC_DLL BlockGrid {
   grid=[];
 };
 
+class CC_DLL ShapeDef {
+public:
+  virtual void* getLayout() = 0;
+  int dim=0;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL BoxShape : public XXXShape {
-  s_arr<DIM2X2,4> layout = {
+struct CC_DLL BoxShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  BoxShapeDef() { dim=2;  }
+  s_vec<DIM2X2> layout = {
     {1,1,
      1,1},
     {1,1,
@@ -66,11 +76,12 @@ struct CC_DLL BoxShape : public XXXShape {
     {1,1,
      1,1}
   };
-  int dim=2;
 };
 
-struct ElShape : public XXXShape {
-  s_arr<DIM3X3,4> layout = {
+struct CC_DLL ElShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  ElShapeDef() { dim=3; }
+  s_vec<DIM3X3> layout = {
     { 0,1,0,
       0,1,0,
       0,1,1 },
@@ -84,11 +95,12 @@ struct ElShape : public XXXShape {
       1,1,1,
       0,0,0  }
   };
-  int dim=3;
 };
 
-struct ElxShape : public XXXShape {
-  s_arr<DIM3X3,4> layout = {
+struct CC_DLL ElxShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  ElxShapeDef() { dim=3; }
+  s_vec<DIM3X3> layout = {
     { 0,1,0,
       0,1,0,
       1,1,0 },
@@ -102,11 +114,12 @@ struct ElxShape : public XXXShape {
       1,1,1,
       0,0,1 }
   };
-  int dim=3;
 };
 
-struct LineShape : public XXXShape {
-  s_arr<DIM4x4,4> layout = {
+struct CC_DLL LineShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  LineShapeDef() { dim=4; }
+  s_vec<DIM4x4> layout = {
     { 0,0,0,0,
       1,1,1,1,
       0,0,0,0,
@@ -124,11 +137,12 @@ struct LineShape : public XXXShape {
       0,1,0,0,
       0,1,0,0 }
   };
-  int dim=4;
 };
 
-struct NubShape : public XXXShape {
-  s_arr<DIM3x3,4> layout= {
+struct CC_DLL NubShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  NubShapeDef() { dim=3; }
+  s_vec<DIM3x3> layout= {
     { 0,0,0,
       0,1,0,
       1,1,1 },
@@ -142,11 +156,12 @@ struct NubShape : public XXXShape {
       0,1,1,
       0,0,1 }
   };
-  int dim= 3;
 };
 
-struct CC_DLL StShape : public XXXShape {
-  s_arr<DIM3x3,4> layout= {
+struct CC_DLL StShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  StShapeDef() { dim=3; }
+  s_vec<DIM3x3> layout= {
     { 0,1,0,
       0,1,1,
       0,0,1 },
@@ -160,11 +175,12 @@ struct CC_DLL StShape : public XXXShape {
       1,1,0,
       0,0,0 }
   };
-  int dim= 3;
 };
 
-struct CC_DLL StxShape : public XXXShape {
-  s_arr<DIM3x3,4> layout = {
+struct CC_DLL StxShapeDef : public ShapeDef {
+  virtual void* getLayout() { return &layout; }
+  StxShapeDef() { dim=3; }
+  s_vec<DIM3x3> layout = {
     { 0,1,0,
       1,1,0,
       1,0,0 },
@@ -178,7 +194,6 @@ struct CC_DLL StxShape : public XXXShape {
       1,1,0,
       0,1,1 }
   };
-  int dim= 3;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -192,162 +207,96 @@ class CC_DLL Block : public c::Sprite {
     setAnchorPoint(cx::anchorTL());
     setSpriteFrame(frame0);
   }
-  Block(float x, float y, options) {
-    this.options = options;
-    this.frame0 = ccsx.getSprite(options.frames[0]);
-    this.frame1 = ccsx.getSprite(options.frames[1]);
-    this._super();
-    this.show();
-    this.setPosition(x,y);
+  Block(float x, float y, const sstr& f0, const sstr& f1) {
+    //this.options = options;
+    frame0 = cx::getSpriteFrame(f0);
+    frame1 = cx::getSpriteFrame(f1);
+    show();
+    setPosition(x,y);
   }
 };
 
-/**
- * @class Brick
- */
-class Brick extends sjs.ES6Claxx {
-  /**
-   * @memberof module:n/cobjs~Brick
-   * @method blink
-   */
-  blink() {
-    if ( !!this.sprite) { this.sprite.blink(); }
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Brick {
+  void blink() {
+    if ( NNP(block)) {block->blink(); }
   }
-  /**
-   * @memberof module:n/cobjs~Brick
-   * @method dispose
-   */
-  dispose() {
-    if (!!this.sprite) {
-      this.sprite.removeFromParent();
-      this.sprite=null;
+
+  void dispose() {
+    if (NNP(block)) {
+      block->removeFromParent();
+      SNPTR(block)
     }
   }
-  /**
-   * @memberof module:n/cobjs~Brick
-   * @method create
-   */
-  create() {
-    return this.sprite = new Block(this.startPos.x, this.startPos.y, this.options);
+
+  Block* create() {
+    return block = new Block(startPos.x, startPos.y, frame, "0.png");
   }
-  /**
-   * @memberof module:n/cobjs~Brick
-   * @method constructor
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Object} options
-   */
-  constructor(x, y, options) {
-    super();
-    this.options = options || {};
-    this.startPos = cc.p(x,y);
-    this.options.frames= [ '' + options.frame + '.png', '0.png'];
+
+  Brick(float x, float y, const sstr& frame) {
+    startPos = c::ccp(x,y);
+    this->frame=frame;
+    //this.options.frames= [ '' + options.frame + '.png', '0.png'];
   }
-}
-xbox.Brick = Brick;
+
+  virtual ~Brick() {}
+
+  c::Vec2 startPos;
+  sstr frame;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Dropper
- */
-xbox.Dropper= sh.Ashley.casDef({
-  /**
-   * @memberof module:n/cobjs~Dropper
-   * @method constructor
-   */
-  constructor() {
-    this.dropSpeed = csts.DROPSPEED;
-    this.dropRate= 80 + 700/1 ;
-    this.timer=null;
-  }
-});
+//
+class CC_DLL Dropper {
+  float dropSpeed = CC_CSV(c::Float, "DROPSPEED");
+  float dropRate= 80 + 700/1 ;
+  c::DelayTime* timer=nullptr;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class ElShape
- */
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class ElxShape
- */
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class FilledLines
- */
-xbox.FilledLines= sh.Ashley.casDef({
-  /**
-   * @memberof module:n/cobjs~FilledLines
-   * @method constructor
-   */
-  constructor() {
-    this.lines=[];
-  }
-});
+//
+class CC_DLL FilledLines {
+
+  s_vec<> lines;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class Motion
- */
-xbox.Motion= sh.Ashley.casDef({
-  /**
-   * @memberof module:n/cobjs~Motion
-   * @method constructor
-   */
-  constructor() {
-    this.right=false;
-    this.left=false;
-    this.rotr= false;
-    this.rotl= false;
-    this.down=false;
-  }
-});
+//
+class CC_DLL Motion {
+
+  bool right=false;
+  bool left=false;
+  bool rotr= false;
+  bool rotl= false;
+  bool down=false;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class Pauser
- */
-xbox.Pauser= sh.Ashley.casDef({
+//
+class CC_DLL Pauser {
 
-  /**
-   * @memberof module:n/cobjs~Pauser
-   * @method constructor
-   */
-  constructor() {
-    this.pauseToClear=false;
-    this.timer=null;
-  }
-});
+  c::DelayTime* timer=nullptr;
+  bool pauseToClear=false;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class TileGrid
- */
-xbox.TileGrid= sh.Ashley.casDef({
-  /**
-   * @memberof module:n/cobjs~TileGrid
-   * @method constructor
-   */
-  constructor() {
-    this.tiles=[];
-  }
-});
+//
+class CC_DLL TileGrid {
+  s_vec<> tiles;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @property {Array} Shapes
- */
-xbox.Shapes = [xbox.LineShape,
-               xbox.BoxShape,
-               xbox.StShape,
-               xbox.ElShape,
-               xbox.NubShape,
-               xbox.StxShape,
-               xbox.ElxShape ];
-
+//
+s_vec<ShapeDef*> ListOfShapeDefs = {
+  mc_new(LineShapeDef),
+  mc_new(BoxShapeDef),
+  mc_new(StShapeDef),
+  mc_new(ElShapeDef),
+  mc_new(NubShapeDef),
+  mc_new(StxShapeDef),
+  mc_new(ElxShapeDef)
+};
 
 
 NS_END(tetris)
