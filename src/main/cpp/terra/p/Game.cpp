@@ -51,6 +51,9 @@ public:
   virtual int getIID() { return 2; }
   virtual void decorate();
 
+  virtual void onTouchMoved(c::Touch*, c::Event*);
+  virtual void onMouseMove(c::Event*);
+
   STATIC_REIFY_LAYER(GLayer)
   NOCPYASS(GLayer)
   IMPLCZ(GLayer)
@@ -66,6 +69,35 @@ public:
   f::ComObj* ship=nullptr;
   EFactory* fac=nullptr;
 };
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMoved(c::Touch* touch, c::Event*) {
+  auto box= ship->sprite->getBoundingBox();
+  auto pos= touch->getLocationInView();
+  auto bx= MGMS()->getEnclosureBox();
+  auto loc= ship->pos();
+  if (box.containsPoint(pos)) {
+    auto cur= ccpAdd(loc, touch->getDelta());
+    cur= cx::clamp(cur, bx);
+    ship->setPos(cur.x, cur.y);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMove(c::Event* e) {
+  auto box= ship->sprite->getBoundingBox();
+  auto evt= (c::EventMouse*) e;
+  auto pos= evt->getLocationInView();
+  auto b= evt->getMouseButton();
+  auto bx= MGMS()->getEnclosureBox();
+  if (b == MOUSE_BUTTON_LEFT &&
+      box.containsPoint(pos)) {
+    pos= cx::clamp(pos, bx);
+    ship->setPos(pos.x, pos.y);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -149,6 +181,7 @@ void GLayer::decorate() {
 
   ship = CC_GNF(Ship, s, "ship");
 
+  enableListeners();
   getHUD()->reset();
   cx::sfxMusic("bgMusic", true);
 }
@@ -182,6 +215,7 @@ void GLayer::onEarnScore(j::json* msg) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
+  disableListeners();
   cx::pauseAudio();
   MGMS()->stop();
 }

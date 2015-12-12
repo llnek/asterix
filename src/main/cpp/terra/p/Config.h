@@ -67,7 +67,6 @@ public:
 
   virtual const c::Size gameSize() { return c::Size(320,480); }
 
-
   static owner<Config*> reify();
 };
 
