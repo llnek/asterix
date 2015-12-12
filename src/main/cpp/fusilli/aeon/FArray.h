@@ -31,6 +31,9 @@ public:
 
   FArray<T>* clone();
 
+  void setFirst(T value);
+  void setLast(T value);
+
   void set(int pos, T value);
   int size() { return sz; }
 
@@ -203,6 +206,22 @@ void FArray<T>::set(int pos, T v) {
   data[pos] = v;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+void FArray::setFirst(T v) {
+  assert(sz > 0);
+  data[0]= v;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+void FArray::setLast(T v) {
+  assert(sz > 0);
+  data[sz-1]=v;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
@@ -224,10 +243,11 @@ T FArray<T>::operator[](int pos) {
 
 
 
-
-
-
-
+//////////////////////////////////////////////////////////////////////////
+//
+typedef FArray<float> FArrFloat;
+typedef FArray<int> FArrInt;
+typedef FArray<bool> FArrBool;
 
 NS_END(fusii)
 #endif
