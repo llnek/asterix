@@ -68,7 +68,7 @@ public:
   virtual const a::COMType typeId() { return "n/Enemy"; }
 
   Enemy(not_null<c::Sprite*> s, const EnemyType& et)
-    : ComObj(s) {
+    : ComObj(s, et.HP, et.scoreValue) {
     delayTime= 1.2f * c::rand_0_1() + 1.0f;
     enemyType= et;
   }
@@ -138,13 +138,13 @@ public:
   float duration=0.7f;
   float scale=1.2f;
 
-  void inflate(float x, float y, float scale) {
+  virtual void inflate(float x, float y) {
 
     auto scaleBy = c::ScaleBy::create(duration,3.0f,3.0f);
     auto right = c::RotateBy::create(duration, 45.0f);
     auto seq = c::Sequence::createWithTwoActions(
         c::FadeOut::create(duration),
-        c::CallFunc::create([=]() { this->dispose(); }));
+        c::CallFunc::create([=]() { this->deflate(); }));
 
     sprite2->setRotation( cx::randInt(360));
     sprite2->setOpacity(255.0f);

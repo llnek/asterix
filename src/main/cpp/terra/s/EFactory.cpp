@@ -36,9 +36,9 @@ EFactory::EFactory(not_null<a::Engine*> e,
 //////////////////////////////////////////////////////////////////////////////
 //
 a::Entity* EFactory::createShip() {
-  auto ent= engine->reifyEntity("goodies");
   auto zx= CC_CSV(c::Integer, "SHIP_ZX");
   auto sp= cx::reifySprite("ship01.png");
+  auto ent= engine->reifyEntity("+");
   auto sz= sp->getContentSize();
   auto wz= cx::visRect();
   auto cw= cx::center();
@@ -47,13 +47,13 @@ a::Entity* EFactory::createShip() {
   auto cac= c::AnimationCache::getInstance();
   auto ani= cac->getAnimation("ShipAni");
   if (ENP(ani)) {
-    auto f0 = cx::getSpriteFrame("ship01.png");
-    auto f1 = cx::getSpriteFrame("ship02.png");
-    ani = c::Animation::create();
-    ani->setDelayPerUnit(0.1f);
-    ani->addSpriteFrame(f0);
-    ani->addSpriteFrame(f1);
-    cac->addAnimation(ani, "ShipAni");
+      c::Vector<c::SpriteFrame*> fs;
+          fs.pushBack(cx::getSpriteFrame("ship01.png"));
+          fs.pushBack(cx::getSpriteFrame("ship02.png"));
+    
+    cac->addAnimation(
+        c::Animation::createWithSpriteFrames(fs,01.f), "ShipAni");
+    ani= cac->getAnimation("ShipAni");
   }
   sp->setPosition(cw.x, sz.height);
   sp->runAction(c::RepeatForever::create( c::Animate::create(ani)));

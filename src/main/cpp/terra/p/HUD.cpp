@@ -29,7 +29,7 @@ void HUDLayer::decorate() {
 
   scoreLabel= cx::reifyBmfLabel("font.TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
-  scoreLabel->setScale(12.0f/72.0f);
+  scoreLabel->setScale(12.0f/72.0f);// * XCFG()->getScale());
   scoreLabel->setPosition( wz.size.width - tile - soff,
       wz.size.height - tile - soff - cx::getHeight(scoreLabel));
   addItem(scoreLabel);
@@ -63,19 +63,22 @@ void HUDLayer::resetAsNew() {
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::reset() {
+  lives->resurrect();
   score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  return false;
+  lives->reduce(n);
+  return lives->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-
+  score += n;
+  scoreLabel->setString(s::to_string(score));
 }
 
 NS_END(terra)

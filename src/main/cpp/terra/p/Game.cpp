@@ -164,7 +164,7 @@ void GLayer::incSecCount(float) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onPlayerKilled() {
-  //sh.sfxPlay('xxx-explode');
+  cx::sfxPlay("explodeEffect");
   if ( getHUD()->reduceLives(1)) {
     onDone();
   } else {

@@ -52,7 +52,6 @@ void Stage::onceOnly() {
 
   assert(ships->head != nullptr);
 
-  bornShip( CC_GNF(Ship, ships->head, "ship"));
   factory->createBackSkies();
   factory->createBackTiles();
   factory->createMissiles();
@@ -65,6 +64,7 @@ void Stage::onceOnly() {
   sharedExplosion();
   initBackSkies();
 
+  bornShip( CC_GNF(Ship, ships->head, "ship"));
   inited=true;
   MGMS()->sendMsg("/game/backtiles");
 }
