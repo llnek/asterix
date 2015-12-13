@@ -32,7 +32,7 @@ EFactory::~EFactory() {
 //////////////////////////////////////////////////////////////////////////
 //
 a::Entity* reifyArena() {
-  auto ent= engine->reifyEntity("0");
+  auto ent= engine->reifyEntity("*");
   ent->checkin(mc_new (FilledLines));
   ent->checkin(mc_new(ShapeShell));
   ent->checkin(mc_new(BlockGrid));

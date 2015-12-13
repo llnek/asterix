@@ -12,323 +12,60 @@
 #if !defined(__UTILS_H__)
 #define __UTILS_H__
 
-#include ""
-
+#include "n/CObjs.h"
 NS_BEGIN(tetris)
 
-  Shape* reifyShape(not_null<f::XLayer*>, void* cmap, Shape* );
-  float topLine(not_null<a::Node*>);
-  Shape* previewShape(not_null<f::XLayer*> , Shape*);
-  void disposeShape(Shape*);
-  void clearOldBricks(bs);
+//////////////////////////////////////////////////////////////////////////////
+//
+Shape* reifyShape(not_null<f::XLayer*> layer, cmap, Shape *shape);
+Shape* previewShape(not_null<f::XLayer*> layer, Shape *shape);
 
-  reifyBricks(layer, png, x,y, bs) {
-    let pt, obj,
-    bricks=[];
+float topLine(not_null<a::Node*> node);
 
-    for (let i=0; i < bs.length; ++i) {
-      pt= bs[i];
-      obj= new cobjs.Brick( pt.x, pt.y, { frame: png } );
-      layer.addAtlasItem('game-pics',obj.create());
-      bricks.push(obj);
-    }
+const s_vec<Brick*> reifyBricks(not_null<f::XLayer*> layer,
+    const sstr& png,
+    float x, float y, const s_vec<c::Vec2>& bs);
 
-    return bricks;
-  },
-  /**
-   * @method findBBox
-   * @param {Object} cmap
-   * @param {Object} model
-   * @param {Number} left
-   * @param {Number} top
-   * @param {String} rID
-   * @param {Boolean} skipCollide
-   * @return {Array}
-   */
-  findBBox(cmap, model, left, top, rID, skipCollide) {
-    skipCollide = skipCollide || false;
-    let form= model.layout[rID],
-    x,y,
-    pt,
-    bs=[];
+void clearOldBricks(s_vec<Brick*>& bs);
+void disposeShape(Shape *shape);
 
-    for (let r=0; r < model.dim; ++r) {
-      y = top - csts.TILE * r;
-      for (let c=0; c < model.dim; ++c) {
-        x = left + csts.TILE * c;
-        if (form[r][c] === 1) {
-          if (!skipCollide &&
-              this.maybeCollide(cmap, x, y,
-                                x + csts.TILE,
-                                y - csts.TILE)) {
-            return [];
-          }
-          bs.push(cc.p(x,y));
-        }
-      }
-    }
-    return bs;
-  },
-  /**
-   * @method maybeCollide
-   * @private
-   */
-  maybeCollide(cmap, tl_x, tl_y, br_x, br_y) {
-    let tile= this.xrefTile(tl_x , tl_y),
-    r,
-    c;
+const s_vec<c::Vec2>
+findBBox(cmap, BModel *model,
+    float px, float py, int rID, bool skipCollide = false);
 
-    sjs.loggr.debug("tile = " + tile.row + ", " + tile.col);
+bool maybeCollide(cmap, float tl_x, float tl_y, float br_x, float br_y);
 
-    if (tile.row < 0 || tile.col < 0 ||
-        cmap[tile.row][tile.col] !== 0)  {
-      sjs.loggr.debug("collide! tile = " + tile.row + ", " + tile.col);
-      return true;
-    } else {
-      return false;
-    }
-  },
-  /**
-   * @method xrefTile
-   * @private
-   */
-  xrefTile(x,y) {
-    const co = csts.TILE * 0.5;
+const f::Cell2D xrefTile(float x, float y);
 
-    // find center, instead of top left
-    y -= co;
-    x += co;
+void initDropper(not_null<c::Node*> par, Dropper *dp);
 
-    // realign actual x,y
-    x -= csts.CBOX.left - csts.FENCE;
+void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s);
 
-    return { row: Math.floor(y / csts.TILE),
-             col: Math.floor(x / csts.TILE) };
-  },
-  /**
-   * @method initDropper
-   * @private
-   */
-  initDropper(par, dp) {
-    dp.timer = ccsx.createTimer(par, dp.dropRate / dp.dropSpeed);
-  },
-  /**
-   * @method setDropper
-   * @private
-   */
-  setDropper(par, dp, r, s) {
-    dp.timer = ccsx.createTimer(par, r/s);
-    dp.dropSpeed=s;
-    dp.dropRate=r;
-  },
-  /**
-   * @method lockBricks
-   * @private
-   */
-  lockBricks(cmap, emap, z) {
-    const zs = z.sprite.getPosition(),
-    t= this.xrefTile(zs.x, zs.y);
+void lockBricks(cmap, emap, Brick *z);
 
-    cmap[t.row][t.col] = 1;
-    emap[t.row][t.col] = z;
-  },
-  /**
-   * @method lock
-   * @private
-   */
-  lock(node, shape) {
-    const cmap= node.collision.tiles,
-    emap= node.blocks.grid;
+void lock(not_null<a::Node*> node, Shape *shape);
 
-    R.forEach((z) => {
-      this.lockBricks(cmap, emap, z);
-    }, shape.bricks);
+void postLock(not_null<a::Node*> node, cmap, emap);
 
-    this.postLock(node, cmap, emap);
-  },
-  /**
-   * @method postLock
-   * @private
-   */
-  postLock(node, cmap, emap) {
+bool testFilledRow(cmap, int r);
 
-    // search bottom up until top.
-    let top= cmap.length,
-    rc=[];
+void flashFilled(emap, FilledLines *flines, const s_vec<int>& lines);
 
-    // 0 is the bottom wall
-    for (let r = 1; r < top; ++r) {
-      if (this.testFilledRow(cmap, r)) {
-        rc.push(r);
-      }
-    }
+void pauseForClearance(not_null<a::Node*> node, bool b, float delay);
 
-    if (rc.length > 0) {
-      this.pauseForClearance(node, true, 0.5);
-      this.flashFilled(emap, node.flines, rc);
-    }
-  },
-  /**
-   * @method testFilledRow
-   * @private
-   */
-  testFilledRow(cmap, r) {
-    const row= cmap[r];
+bool moveDown(not_null<f::XLayer*> layer, cmap, Shape *shape);
 
-    // negative if any holes in the row
-    for (let c=0; c < row.length; ++c) {
-      if (row[c] !== 1) { return false; }
-    }
+bool shiftRight(not_null<f::XLayer*> layer, cmap, Shape *shape);
 
-    // entire row must be filled.
-    return true;
-  },
-  /**
-   * @method flashFilled
-   * @private
-   */
-  flashFilled(emap, flines, lines) {
-    R.forEach((z) => {
-      let row= emap[z];
-      for (let c=0; c < row.length; ++c) {
-        if (row[c]) {
-          row[c].blink();
-        }
-      }
-    }, lines);
+bool shiftLeft(not_null<f::XLayer*> layer, cmap, Shape *shape);
 
-    flines.lines=lines;
-  },
-  /**
-   * @method pauseForClearance
-   * @private
-   */
-  pauseForClearance(node, b, delay) {
-    const pu= node.pauser;
+bool rotateRight(not_null<f::XLayer*> layer,cmap, Shape *shape);
 
-    node.flines.lines=[];
-    pu.pauseToClear=b;
+bool rotateLeft(not_null<f::XLayer*> layer, cmap, Shape *shape);
 
-    if (b) {
-      pu.timer= ccsx.createTimer(sh.main, delay);
-    } else {
-      pu.timer=null;
-    }
-  },
-  /**
-   * @method moveDown
-   * @private
-   */
-  moveDown(layer, cmap, shape) {
-    let new_y = shape.y - csts.TILE,
-    x = shape.x,
-    bricks,
-    bs = this.findBBox(cmap, shape.model,
-                       x, new_y, shape.rot);
-
-    if (bs.length > 0) {
-      bricks=this.reifyBricks(layer,shape.png, x, new_y, bs);
-      this.clearOldBricks(shape.bricks);
-      shape.bricks=bricks;
-      shape.y= new_y;
-      return true;
-    } else {
-      return false;
-    }
-  },
-  /**
-   * @method shiftRight
-   * @private
-   */
-  shiftRight(layer, cmap, shape) {
-    let new_x= shape.x + csts.TILE,
-    y= shape.y,
-    bricks,
-    bs= this.findBBox(cmap, shape.model,
-                      new_x, y, shape.rot);
-
-    if (bs.length > 0) {
-      bricks=this.reifyBricks(layer,shape.png, new_x, y, bs);
-      this.clearOldBricks(shape.bricks);
-      shape.bricks=bricks;
-      shape.x= new_x;
-      return true;
-    } else {
-      return false;
-    }
-  },
-  /**
-   * @method shiftLeft
-   * @private
-   */
-  shiftLeft(layer, cmap, shape) {
-    let new_x= shape.x - csts.TILE,
-    y= shape.y,
-    bricks,
-    bs= this.findBBox(cmap, shape.model,
-                      new_x, y, shape.rot);
-
-    if (bs.length > 0) {
-      bricks=this.reifyBricks(layer,shape.png, new_x, y, bs);
-      this.clearOldBricks(shape.bricks);
-      shape.bricks=bricks;
-      shape.x= new_x;
-      return true;
-    } else {
-      return false;
-    }
-  },
-  /**
-   * @method rotateRight
-   * @private
-   */
-  rotateRight(layer,cmap,shape) {
-    let nF = sjs.xmod(shape.rot+1, shape.model.layout.length),
-    bricks,
-    bs= this.findBBox(cmap, shape.model,
-                      shape.x, shape.y, nF);
-
-    sjs.loggr.debug("shape.rot = " + shape.rot +
-                    ", dim = " +
-                    shape.model.dim +
-                    ", rot-right , nF = " + nF);
-    if (bs.length > 0) {
-      bricks=this.reifyBricks(layer,shape.png, shape.x, shape.y, bs);
-      this.clearOldBricks(shape.bricks);
-      shape.bricks=bricks;
-      shape.rot= nF;
-      return true;
-    } else {
-      return false;
-    }
-  },
-  /**
-   * @method rotateLeft
-   * @private
-   */
-  rotateLeft(layer,cmap,shape) {
-    let nF = sjs.xmod(shape.rot-1, shape.model.layout.length),
-    bricks,
-    bs= this.findBBox(cmap, shape.model,
-                      shape.x, shape.y, nF);
-
-    sjs.loggr.debug("shape.rot = " + shape.rot +
-                    ", dim = " +
-                    shape.model.dim +
-                    ", rot-right , nF = " + nF);
-    if (bs.length > 0) {
-      bricks=this.reifyBricks(layer,shape.png, shape.x, shape.y, bs);
-      this.clearOldBricks(shape.bricks);
-      shape.bricks=bricks;
-      shape.rot= nF;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-};
 
 NS_END(tetris)
 #endif
+
+
 

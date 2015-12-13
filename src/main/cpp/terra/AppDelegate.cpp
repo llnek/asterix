@@ -21,6 +21,11 @@ NS_USING(ash)
 //
 AppDelegate::AppDelegate() {
 
+    {
+        int x=3, y=4;
+        auto mm= new int[x][4];
+        
+    }
     typedef int POO[2][2];
     
     std::array<POO,2> qqq {

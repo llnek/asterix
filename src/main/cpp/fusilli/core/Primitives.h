@@ -312,7 +312,13 @@ private:
   c::Color4B _c;
 };
 
-
+//////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Cell2D {
+  Cell2D (int r, int c) { row=r; col=c; }
+  int row=0;
+  int col=0;
+};
 
 
 

@@ -24,16 +24,35 @@ class CC_DLL ArenaNode : public a::NodeFactory {
 public:
 
   virtual const a::NodeType typeId() { return "n/ArenaNode"; }
+
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s_vec<sstr> { "collision", "gbox", "blocks", "motion",
-        "pauser", "dropper", "shell" , "flines", "cpad" },
-        s_vec<a::COMType> { "n/TileGrid", "n/GridBox", "n/BlockGrid", "n/Motion",
-        "n/Pauser", "n/Dropper", "n/ShapeShell" , "n/FilledLines", "n/CtrlPad" });
+        s_vec<sstr> {
+        "collision",
+        "gbox",
+        "blocks",
+        "motion",
+        "pauser",
+        "dropper",
+        "shell" ,
+        "flines",
+        "cpad" },
+        s_vec<a::COMType> {
+        "n/TileGrid",
+        "n/GridBox",
+        "n/BlockGrid",
+        "n/Motion",
+        "n/Pauser",
+        "n/Dropper",
+        "n/ShapeShell" ,
+        "n/FilledLines",
+        "n/CtrlPad" });
   }
 
+  virtual ~ArenaNode() {}
+  ArenaNode() {}
+
   NOCPYASS(ArenaNode)
-  IMPLCZ(ArenaNode)
 };
 
 

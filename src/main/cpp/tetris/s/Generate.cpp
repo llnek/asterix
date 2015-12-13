@@ -9,128 +9,100 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires n/gnodes
- * @requires s/utils
- * @module s/generate
- */
+#include "core/XConfig.h"
+#include "Generate.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import gnodes from 'n/gnodes';
-import utils from 's/utils';
+NS_BEGIN(tetris)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R= sjs.ramda,
-undef,
+
 //////////////////////////////////////////////////////////////////////////
-/**
- * @class Generate
- */
-Generate = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/generate~Generate
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/generate~Generate
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.arena=null;
-  },
-  /**
-   * @memberof module:s/generate~Generate
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.arena= engine.getNodeList(gnodes.ArenaNode);
-    this.nextShapeInfo= this.randNext();
-    this.nextShape=null;
-  },
-  /**
-   * @memberof module:s/generate~Generate
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    let node = this.arena.head,
-    dp, sl;
+//
+Generate::Generate(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-    if (this.state.running &&
-       !!node) {
-      dp = node.dropper;
-      sl = node.shell;
-      if (sl.shape) {}
-      else {
-        sl.shape = this.reifyNextShape(node, sh.main);
-        if (!!sl.shape) {
-          //show new next shape in preview window
-          this.previewNextShape(node, sh.main);
-          //activate drop timer
-          dp.dropSpeed= csts.DROPSPEED;
-          utils.initDropper(sh.main, dp);
-        } else {
-          return false;
-        }
+  : BaseSystem<EFactory>(f, d) {
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Generate::addToEngine(not_null<a::Engine*> e) {
+  ArenaNode n;
+  arena= e->getNodeList(n.typeId());
+  nextShapeInfo= randNext();
+  nextShape=nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+bool Generate::update(float dt) {
+  auto node = arena->head;
+
+  if (MGMS()->isLive() &&
+      NNP(node)) {
+
+    auto sl = CC_GNF(ShapeShell, node, "shell");
+    auto dp = CC_GNF(Dropper, node, "dropper");
+    if (ENP(sl->shape)) {
+      sl->shape = reifyNextShape(node, MGML());
+      if (NNP(sl->shape)) {
+        //show new next shape in preview window
+        previewNextShape(node, MGML());
+        //activate drop timer
+        dp->dropSpeed= CC_CSV(c::Float, "DROPSPEED");
+        initDropper(MGML(), dp);
+      } else {
+        return false;
       }
     }
-  },
-  /**
-   * @method reifyNextShape
-   * @private
-   */
-  reifyNextShape(node, layer) {
-    let gbox= node.gbox,
-    wz= ccsx.vrect(),
-    shape= new cobjs.Shape(gbox.box.left + 5 * csts.TILE,
-                           gbox.box.top - csts.TILE,
-                           this.nextShapeInfo);
-    shape= utils.reifyShape(layer, node.collision.tiles, shape);
-    if (!!shape) {} else {
-      sjs.loggr.debug("game over.  you lose.");
-      node.blocks.grid=[];
-      sh.fire('/hud/end');
-    }
+  }
 
-    return shape;
-  },
-  /**
-   * @method previewNextShape
-   * @private
-   */
-  previewNextShape(node, layer) {
-    let info = this.randNext(),
-    gbox= node.gbox,
-    cw = ccsx.center(),
-    wb = ccsx.vbox(),
-    shape,
-    sz = (1 + info.model.dim) * csts.TILE,
-    x = cw.x + (wb.right - cw.x) * 0.5,
-    y = wb.top * 0.7;
+  return true;
+}
 
-    x -= sz * 0.5;
-    y += sz * 0.5;
+//////////////////////////////////////////////////////////////////////////
+//
+void Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
+  auto co= CC_GNF(TileGrid, node, "collision");
+  auto bks= CC_GNF(BlockGrid, node, "grid");
+  auto gbox= CC_GNF(GridBox, node, "gbox");
+  auto& tiles = co->tiles;
+  auto tile= MGMS()->TILE;
+  auto wz= cx::visRect();
+  auto shape= new Shape(gbox->box.left + 5 * tile,
+      gbox->box.top - tile,
+      nextShapeInfo);
+  shape= reifyShape(layer, tiles, shape);
+  if (ENP(shape)) {
+    CCLOG("game over.  you lose.");
+    bks->grid.clear();
+    MGMS()->sendMsg("/hud/end");
+  }
 
-    utils.disposeShape(this.nextShape);
-    this.nextShape= null;
-    shape= new cobjs.Shape(x,y, info);
-    this.nextShapeInfo= info;
-    this.nextShape= utils.previewShape(layer, shape);
-  },
-  /**
+  return shape;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Generate::previewNextShape(a::Node *node, f::XLayer *layer) {
+  auto info = randNext();
+  gbox= node.gbox,
+  cw = ccsx.center(),
+  wb = ccsx.vbox(),
+  shape,
+  sz = (1 + info.model.dim) * csts.TILE,
+  x = cw.x + (wb.right - cw.x) * 0.5,
+  y = wb.top * 0.7;
+
+  x -= sz * 0.5;
+  y += sz * 0.5;
+
+  utils.disposeShape(this.nextShape);
+  this.nextShape= null;
+  shape= new cobjs.Shape(x,y, info);
+  this.nextShapeInfo= info;
+  this.nextShape= utils.previewShape(layer, shape);
+},
+/**
    * @method randNext
    * @private
    */
@@ -153,17 +125,7 @@ Generate = sh.Ashley.sysDef({
 Priority: xcfg.ftypes.Generate
 });
 
-/** @alias module:s/generate */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Generate} Generate
-   */
-  Generate: Generate
-};
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
+
+NS_END(tetris)
+
 

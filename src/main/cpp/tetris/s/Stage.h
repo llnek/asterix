@@ -29,9 +29,12 @@ protected:
   void xv(const c::Size& , float);
   void onceOnly_2(a::Node*, const c::Size&,
       const c::Size& , const f::Box4&);
-  const s_vec<> initBlockMap(tiles);
 
-  const s_vec<> fakeTileMap(const c::Size&, const f::Box4&);
+  const s_vec<f::FArrBrick*>
+    initBlockMap(const s_vec<f::FArrInt*>& tiles);
+
+  const s_vec<f::FArrInt*>
+    fakeTileMap(const c::Size&, const f::Box4&);
 
 public:
 

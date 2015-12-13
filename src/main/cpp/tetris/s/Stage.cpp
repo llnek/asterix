@@ -44,13 +44,14 @@ bool Stage::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly(a::Node* node) {
+void Stage::onceOnly(a::Node *node) {
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
   auto fz= cx::calcSize("gray.png");
   auto bz= cx::calcSize("0.png");
   auto cw = cx::center();
   auto wb= cx::visBox();
   auto wz= cx::visRect();
+
   auto lf_boundary= cw.x - fld_w * bz.width - fz.width;
   auto hfzh= HHZ(fz);
   auto hfzw= HWZ(fz);
@@ -73,9 +74,9 @@ void Stage::onceOnly(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::doCtrl(a::Node* node) {
+void Stage::doCtrl(a::Node *node) {
   auto cpad= CC_GNF(CtrlPad, node, "cpad");
-  auto hsps= cpad->hotspots;
+  auto& hsps= cpad->hotspots;
   auto cw = cx::center();
   auto wb= cx::visBox();
   auto wz= cx::visRect();
@@ -94,33 +95,33 @@ void Stage::doCtrl(a::Node* node) {
 
   //calc hotspots for touch & mouse
   // rotate left right
-  hsps.rr= f::Box4(
+  hsps["rr"] = f::Box4(
       cbx.top,
       cbx.right - cw3,
       cbx.top - ch3,
       cbx.left + cw3);
 
-  hsps.rl= f::Box4(
+  hsps["rl"] = f::Box4(
       cbx.top- 2* ch3,
       cbx.right - cw3,
       cbx.bottom,
       cbx.left + cw3);
 
   // shifting left, right
-  hsps.sl= f::Box4(
+  hsps["sl"] = f::Box4(
       cbx.top - ch3,
       cbx.left + cw3,
       cbx.top - 2 * ch3,
       cbx.left );
 
-  hsps.sr= f::Box4(
+  hsps["sr"] = f::Box4(
       cbx.top - ch3,
       cbx.right,
       cbx.top - 2 * ch3,
       cbx.left + 2 * cw3);
 
   // fast drop down
-  hsps.cd= f::Box4(
+  hsps["cd"] = f::Box4(
       cbx.top - ch3,
       cbx.right - cw3,
       cbx.top - 2 * ch3,
@@ -164,17 +165,18 @@ void Stage::xv(const c::Size& fz, float x) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly_2(a::Node* node, const c::Size& fz,
+void Stage::onceOnly_2(a::Node *node, const c::Size& fz,
     const c::Size& bz,
-    const f::Box& box) {
+    const f::Box4& box) {
 
-  auto blocks= CC_GNF(BlockGrid,node, "blocks");
-  auto cs= CC_GNF(TileGrid,node, "collision");
+  auto blocks= CC_GNF(BlockGrid, node, "blocks");
+  auto cs= CC_GNF(TileGrid, node, "collision");
   auto gbox= CC_GNF(GridBox, node, "gbox");
   auto tiles= fakeTileMap(bz, box);
+  auto grids = initBlockMap(tiles);
 
-  blocks->grid = initBlockMap(tiles);
-  cs->tiles = tiles;
+  s::copy(grids.begin(), grids.end(), blocks->grid.begin());
+  s::copy(tiles.begin(), tiles.end(), cs->tiles.begin());
   gbox->box= box;
 
   MGMS()->FENCE= (int) floor(fz.width);
@@ -187,13 +189,13 @@ void Stage::onceOnly_2(a::Node* node, const c::Size& fz,
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s_vec<>
+const s_vec<FArrBrick*>
 Stage::initBlockMap(const s_vec<f::FArrInt*>& tiles) {
-  s_vec<> grid;
+  s_vec<FArrBrick*> grid;
 
   F__LOOP(it, tiles) {
     auto& e = *it;
-    auto rc= new f::FArray<>(e->size());
+    auto rc= new FArrBrick(e->size());
     grid.push_back(rc);
   }
 
@@ -209,8 +211,8 @@ Stage::fakeTileMap(const c::Size& bz, const f::Box4& box) {
   auto wlen = (int) floor((box.right - box.left) / bz.width);
   s_vec<f::FArrInt*> map;
 
-  // use 1 to indicate wall
   wlen += 2; // 2 side walls
+  // use 1 to indicate wall
   for (auto r = 0; r <= hlen; ++r) {
     auto rc= new f::FArrInt(wlen);
     if (r == 0) {
