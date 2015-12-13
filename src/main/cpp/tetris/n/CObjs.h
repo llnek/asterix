@@ -55,195 +55,219 @@ struct CC_DLL BlockGrid {
   grid=[];
 };
 
-class CC_DLL ShapeDef {
-public:
-  virtual void* getLayout() = 0;
+class CC_DLL BModel {
+protected:
+  virtual void* getLayout(int) = 0;
+  int getDim() { return dim; }
+  int size() { return sz; }
   int dim=0;
+  int sz=4;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL BoxShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  BoxShapeDef() { dim=2;  }
-  s_vec<DIM2X2> layout = {
-    {1,1,
-     1,1},
-    {1,1,
-     1,1},
-    {1,1,
-     1,1},
-    {1,1,
-     1,1}
+struct CC_DLL BoxModel : public BModel {
+
+  virtual void* getLayout(int pos) {
+    return &layout[pos];
+  }
+  BoxModel() { dim=2;  }
+
+  s_arr<DIM2X2,4> layout {
+     1,1,
+     1,1,
+
+     1,1,
+     1,1,
+
+     1,1,
+     1,1,
+
+     1,1,
+     1,1
   };
 };
 
-struct CC_DLL ElShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  ElShapeDef() { dim=3; }
-  s_vec<DIM3X3> layout = {
-    { 0,1,0,
+struct CC_DLL ElModel : public BModel {
+
+  virtual void* getLayout(int pos) {
+    return &layout[pos];
+  }
+  ElModel() { dim=3; }
+
+  s_arr<DIM3X3,4> layout {
       0,1,0,
-      0,1,1 },
-    { 0,0,0,
-      1,1,1,
-      1,0,0 },
-    { 1,1,0,
       0,1,0,
-      0,1,0 },
-    { 0,0,1,
+      0,1,1,
+
+      0,0,0,
       1,1,1,
-      0,0,0  }
+      1,0,0,
+
+      1,1,0,
+      0,1,0,
+      0,1,0,
+
+      0,0,1,
+      1,1,1,
+      0,0,0
   };
 };
 
-struct CC_DLL ElxShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  ElxShapeDef() { dim=3; }
-  s_vec<DIM3X3> layout = {
-    { 0,1,0,
+struct CC_DLL ElxModel : public BModel {
+
+  virtual void* getLayout(int pos) { return &layout[pos]; }
+  ElxModel() { dim=3; }
+
+  s_arr<DIM3X3, 4> layout {
       0,1,0,
-      1,1,0 },
-    { 1,0,0,
-      1,1,1,
-      0,0,0 },
-    { 0,1,1,
       0,1,0,
-      0,1,0 },
-    { 0,0,0,
+      1,1,0,
+
+      1,0,0,
       1,1,1,
-      0,0,1 }
+      0,0,0,
+
+      0,1,1,
+      0,1,0,
+      0,1,0,
+
+      0,0,0,
+      1,1,1,
+      0,0,1
   };
 };
 
-struct CC_DLL LineShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  LineShapeDef() { dim=4; }
-  s_vec<DIM4x4> layout = {
-    { 0,0,0,0,
+struct CC_DLL LineModel : public BModel {
+  virtual void* getLayout(int pos) { return &layout[pos]; }
+  LineModel() { dim=4; }
+  s_arr<DIM4x4, 4> layout {
+      0,0,0,0,
       1,1,1,1,
       0,0,0,0,
-      0,0,0,0 },
-    { 0,0,1,0,
+      0,0,0,0,
+
       0,0,1,0,
       0,0,1,0,
-      0,0,1,0 },
-    { 0,0,0,0,
+      0,0,1,0,
+      0,0,1,0,
+
+      0,0,0,0,
       0,0,0,0,
       1,1,1,1,
-      0,0,0,0 },
-    { 0,1,0,0,
+      0,0,0,0,
+
       0,1,0,0,
       0,1,0,0,
-      0,1,0,0 }
+      0,1,0,0,
+      0,1,0,0
   };
 };
 
-struct CC_DLL NubShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  NubShapeDef() { dim=3; }
-  s_vec<DIM3x3> layout= {
-    { 0,0,0,
+struct CC_DLL NubModel : public BModel {
+  virtual void* getLayout(int pos) { return &layout[pos]; }
+  NubModel() { dim=3; }
+  s_arr<DIM3x3, 4> layout {
+      0,0,0,
       0,1,0,
-      1,1,1 },
-    { 1,0,0,
+      1,1,1 ,
+
+      1,0,0,
       1,1,0,
-      1,0,0 },
-    { 1,1,1,
+      1,0,0 ,
+
+      1,1,1,
       0,1,0,
-      0,0,0 },
-    { 0,0,1,
+      0,0,0 ,
+
+      0,0,1,
       0,1,1,
-      0,0,1 }
+      0,0,1
   };
 };
 
-struct CC_DLL StShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  StShapeDef() { dim=3; }
-  s_vec<DIM3x3> layout= {
-    { 0,1,0,
+struct CC_DLL StModel : public BModel {
+  virtual void* getLayout(int pos) { return &layout[pos]; }
+  StModel() { dim=3; }
+
+  s_arr<DIM3x3, 4> layout {
+      0,1,0,
       0,1,1,
-      0,0,1 },
-    { 0,0,0,
+      0,0,1 ,
+
+      0,0,0,
       0,1,1,
-      1,1,0 },
-    { 1,0,0,
+      1,1,0 ,
+
+      1,0,0,
       1,1,0,
-      0,1,0 },
-    { 0,1,1,
+      0,1,0 ,
+
+      0,1,1,
       1,1,0,
-      0,0,0 }
+      0,0,0
   };
 };
 
-struct CC_DLL StxShapeDef : public ShapeDef {
-  virtual void* getLayout() { return &layout; }
-  StxShapeDef() { dim=3; }
-  s_vec<DIM3x3> layout = {
-    { 0,1,0,
+struct CC_DLL StxModel : public BModel {
+  virtual void* getLayout(int pos) { return &layout[pos]; }
+  StxModel() { dim=3; }
+  s_arr<DIM3x3, 4> layout  {
+      0,1,0,
       1,1,0,
-      1,0,0 },
-    { 1,1,0,
-      0,1,1,
-      0,0,0 },
-    { 0,0,1,
-      0,1,1,
-      0,1,0 },
-    { 0,0,0,
-      1,1,0,
-      0,1,1 }
-  };
-};
+      1,0,0 ,
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL Block : public c::Sprite {
-  void blink() {
-    setAnchorPoint(cx::anchorTL());
-    setSpriteFrame(frame1);
-  }
-  void show() {
-    setAnchorPoint(cx::anchorTL());
-    setSpriteFrame(frame0);
-  }
-  Block(float x, float y, const sstr& f0, const sstr& f1) {
-    //this.options = options;
-    frame0 = cx::getSpriteFrame(f0);
-    frame1 = cx::getSpriteFrame(f1);
-    show();
-    setPosition(x,y);
-  }
+      1,1,0,
+      0,1,1,
+      0,0,0 ,
+
+      0,0,1,
+      0,1,1,
+      0,1,0 ,
+
+      0,0,0,
+      1,1,0,
+      0,1,1
+  };
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Brick {
+class CC_DLL Brick : public c::Sprite {
+
   void blink() {
-    if ( NNP(block)) {block->blink(); }
+    this->setSpriteFrame( cx::getSpriteFrame(frame1));
+  }
+
+  void show() {
+    this->setSpriteFrame( cx::getSpriteFrame(frame0));
   }
 
   void dispose() {
-    if (NNP(block)) {
-      block->removeFromParent();
-      SNPTR(block)
+    this->removeFromParent();
+  }
+
+  static Brick * reify(float x, float y, const sstr& f0) {
+    Brick *sprite = new (std::nothrow) Brick();
+    if (NNP(sprite) && sprite->init()) {
+      sprite->setAnchorPoint(cx::anchorTL());
+      sprite->startPos = c::ccp(x,y);
+      sprite->frame0=fo;
+      sprite->setPosition(x,y);
+      sprite->autorelease();
+      sprite->show();
+      return sprite;
     }
-  }
-
-  Block* create() {
-    return block = new Block(startPos.x, startPos.y, frame, "0.png");
-  }
-
-  Brick(float x, float y, const sstr& frame) {
-    startPos = c::ccp(x,y);
-    this->frame=frame;
-    //this.options.frames= [ '' + options.frame + '.png', '0.png'];
+    CC_SAFE_DELETE(sprite);
+    return nullptr;
   }
 
   virtual ~Brick() {}
+  Brick() {}
 
+  sstr frame1= "0.png";
+  sstr frame0;
   c::Vec2 startPos;
-  sstr frame;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -288,14 +312,14 @@ class CC_DLL TileGrid {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-s_vec<ShapeDef*> ListOfShapeDefs = {
-  mc_new(LineShapeDef),
-  mc_new(BoxShapeDef),
-  mc_new(StShapeDef),
-  mc_new(ElShapeDef),
-  mc_new(NubShapeDef),
-  mc_new(StxShapeDef),
-  mc_new(ElxShapeDef)
+s_vec<Model*> ListOfModels = {
+  mc_new(LineModel),
+  mc_new(BoxModel),
+  mc_new(StModel),
+  mc_new(ElModel),
+  mc_new(NubModel),
+  mc_new(StxModel),
+  mc_new(ElxModel)
 };
 
 

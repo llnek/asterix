@@ -209,7 +209,7 @@ void FArray<T>::set(int pos, T v) {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray::setFirst(T v) {
+void FArray<T>::setFirst(T v) {
   assert(sz > 0);
   data[0]= v;
 }
@@ -217,7 +217,7 @@ void FArray::setFirst(T v) {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray::setLast(T v) {
+void FArray<T>::setLast(T v) {
   assert(sz > 0);
   data[sz-1]=v;
 }
