@@ -96,120 +96,109 @@ void Clear::resetOneRow(a::Node *node, int r) {
   row->setLast(1);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Clear::shiftDownLines(a::Node *node) {
+  auto top= topLine(node);
+  // top down search
+  auto f0= findFirstDirty(node);
+  // no lines are touched
+  if (f0==0) { return; }
+  auto e0= findFirstEmpty(node,f0);
+  if (e0==0) { return; }
+  auto e= findLastEmpty(node, e0);
+  auto f = e0 + 1; // last dirty
+  if (f > f0) {
+    throw "error while shifting lines down";
+  }
+  auto r= (e0 - e) + 1;  // number of empty lines
+  auto s=f;  // last dirty
+  auto t=e;
+  while (s <= f0) {
+    copyLine(node, s, t);
+    ++t;
+    ++s;
+  }
+}
 
-  /**
-   * @method shiftDownLines
-   * @private
-   */
-  shiftDownLines(node) {
-    let top= utils.topLine(node),
-    f0, f, e0, e, d,
-    s, t, r;
+//////////////////////////////////////////////////////////////////////////////
+//
+int Clear::findFirstDirty(a::Node *node) {
+  auto t = topLine(node);// - 1,
 
-    // top down search
-
-    f0= this.findFirstDirty(node);
-    // no lines are touched
-    if (f0===0) { return; }
-    e0= this.findFirstEmpty(node,f0);
-    if (e0===0) { return; }
-    e= this.findLastEmpty(node, e0);
-    f = e0 + 1; // last dirty
-    if (f > f0) {
-      sjs.tne("error while shifting lines down");
-      return;
-    } // error!
-    r= (e0 - e) + 1;  // number of empty lines
-
-    s=f;  // last dirty
-    t=e;
-    while (s <= f0) {
-      this.copyLine(node, s, t);
-      ++t;
-      ++s;
-    }
-  },
-  /**
-   * @method findFirstDirty
-   * @private
-   */
-  findFirstDirty(node) {
-    const t = utils.topLine(node);// - 1,
-
-    for (let r = t; r > 0; --r) {
-      if (!this.isEmptyRow(node,r)) { return r; }
-    }
-
-    return 0;
-  },
-  /**
-   * @method findFirstEmpty
-   * @private
-   */
-  findFirstEmpty(node, t) {
-    for (let r=t; r > 0; --r) {
-      if (this.isEmptyRow(node,r)) { return r; }
-    }
-    return 0;
-  },
-  /**
-   * @method findLastEmpty
-   * @private
-   */
-  findLastEmpty(node,t) {
-    for (let r=t; r >= 0; --r) {
-      if (!this.isEmptyRow(node,r)) { return r+1; }
-    }
-    //should never get here
-    sjs.tne("findLastEmpty has error.");
-    return 1;
-  },
-  /**
-   * @method isEmptyRow
-   * @private
-   */
-  isEmptyRow(node, r) {
-    const row= node.collision.tiles[r],
-    len= row.length-1;
-
-    if (r===0) { return false; }
-
-    for (let c=1; c < len; ++c) {
-      if (row[c] !== 0) { return false; }
-    }
-    return true;
-  },
-  /**
-   * @method copyLine
-   * @private
-   */
-  copyLine(node, from, to) {
-    let line_f = node.collision.tiles[from],
-    line_t = node.collision.tiles[to],
-    dlen= csts.TILE * (from - to),
-    c, pos;
-
-    for (c=0; c < line_f.length; ++c) {
-      line_t[c] = line_f[c];
-      line_f[c]= 0;
-    }
-    line_f[0]=1;
-    line_f[line_f.length-1]=1;
-
-    // deal with actual shape
-    line_f = node.blocks.grid[from];
-    line_t = node.blocks.grid[to];
-
-    for (c=0; c < line_f.length; ++c) {
-      if (line_f[c]) {
-        pos = line_f[c].sprite.getPosition();
-        line_f[c].sprite.setPosition(pos.x, pos.y - dlen);
-      }
-      line_t[c] = line_f[c];
-      line_f[c] = undef;
-    }
+  for (auto r = t; r > 0; --r) {
+    if (!isEmptyRow(node,r)) { return r; }
   }
 
+  return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+int Clear::findFirstEmpty(a::Node *node, int t) {
+  for (auto r=t; r > 0; --r) {
+    if (isEmptyRow(node,r)) { return r; }
+  }
+  return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+int Clear::findLastEmpty(a::Node *node, int t) {
+  for (auto r=t; r >= 0; --r) {
+    if (!isEmptyRow(node,r)) { return r+1; }
+  }
+  //should never get here
+  throw "findLastEmpty has error";
+  //return 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Clear::isEmptyRow(a::Node *node, int r) {
+  auto co= CC_GNF(TileGrid, node, "collision");
+  auto row= co->tiles[r];
+  auto len= row->size() - 1;
+
+  if (r==0) { return false; }
+
+  for (auto c=1; c < len; ++c) {
+    if (row.get(c) != 0) { return false; }
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Clear::copyLine(a::Node *node, int from, int to) {
+  auto co = CC_GNF(TileGrid, node, "collision");
+  auto bs = CC_GNF(BlockGrid, node, "blocks");
+  auto line_f = co->tiles[from];
+  auto line_t = co->tiles[to];
+  auto tile = MGMS()->TILE;
+  auto dlen= tile * (from - to);
+  int c;
+
+  for (c=0; c < line_f.size(); ++c) {
+    line_t->set(c, line_f->get(c));
+    line_f->set(c, 0);
+  }
+  line_f->setFirst(1);
+  line_f->setLast(1);
+
+  // deal with actual shape
+  auto g_f = bs->grid[from];
+  auto g_t = bs->grid[to];
+
+  for (c=0; c < g_f->size(); ++c) {
+    if (g_f->get(c)) {
+      auto pos = g_f->get(c)->getPosition();
+      g_f->get(c)->setPosition(pos.x, pos.y - dlen);
+    }
+    g_t->set(c, g_f->get(c));
+    g_f->set(c, nullptr);
+  }
+}
 
 
 NS_END(tetris)
