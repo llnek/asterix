@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "utils.h"
 
 NS_BEGIN(tetris)
@@ -153,8 +154,8 @@ const f::Cell2D xrefTile(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void initDropper(not_null<c::Node*> par, Dropper *dp) {
-  dp->timer = cx::createTimer(par, dp->dropRate / dp->dropSpeed);
+void initDropper(Dropper *dp) {
+  dp->timer = cx::createTimer(MGML(), dp->dropRate / dp->dropSpeed);
 }
 
 //////////////////////////////////////////////////////////////////////////

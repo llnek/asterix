@@ -9,13 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Resolve.h"
+#include "s/utils.h"
+#include "Move.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
   : BaseSystem<EFactory>(f, d) {
 
@@ -23,62 +24,59 @@ Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::addToEngine(not_null<a::Engine*> e) {
+void Move::addToEngine(not_null<a::Engine*> e) {
   ArenaNode n;
   arena = e->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::update(float dt) {
+bool Move::update(float dt) {
   auto node= arena->head;
-
   if (MGMS()->isLive() &&
       NNP(node)) {
-    doIt(node);
+    auto sh= CC_GNF(ShapeShell,node, "shell");
+    auto dp= CC_GNF(Dropper,node, "dropper");
+    if (cx::timerDone(dp->timer) &&
+        NNP(sh->shape)) {
+      dp->timer= cx::undoTimer(dp->timer);
+      doFall(node);
+    }
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doIt(a::Node *node) {
-
-  auto motion = CC_GNF(Motion, node, "motion");
-  auto sh = CC_GNF(ShellShape, node, "shell");
-  auto co= CC_GNF(TileGrid, node, "tiles");
-  auto &cmap= co->tiles;
+void Move::doFall(a::Node *node) {
+  auto co= CC_GNF(TileGrid, node, "collision");
+  auto sh= CC_GNF(ShellShape, node, "shell");
+  auto bs= CC_GNF(BlockGrid, node, "blocks");
   auto shape= sh->shape;
+  auto& cmap= co->tiles;
+  auto& emap= bs->grid;
+  auto dp= CC_GNF(Dropper, node, "dropper");
+  auto pu= CC_GNF(Pauser, node, "pauser");
 
   if (NNP(shape)) {
-    if (motion->right) {
-      shiftRight( cmap, shape);
-    }
-    if (motion->left) {
-      shiftLeft( cmap, shape);
-    }
-    if (motion->rotr) {
-      rotateRight( cmap, shape);
-    }
-    if (motion->rotl) {
-      rotateLeft( cmap, shape);
-    }
-    if (motion->down) {
-      fastDrop( node);
+    if (! moveDown(MGML(), cmap, shape)) {
+
+      // lock shape in place
+      lock(node, shape);
+
+      //TODO: what is this???
+      if (ENP(pu->timer)) {
+        sh->shape=nullptr;
+        shape->bricks.clear();
+      }
+
+      sh->shape=nullptr;
+      shape->bricks.clear();
+
+    } else {
+      initDropper(dp);
     }
   }
-  motion->right = false;
-  motion->left = false;
-  motion->rotr = false;
-  motion->rotl = false;
-  motion->down = false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Resolve::fastDrop(a::Node *node) {
-  auto dp = CC_GNF(Dropper, node, "dropper");
-  dp->timer=nullptr;
-  setDropper(dp, dp->dropRate, 9000);
 }
 
 

@@ -9,40 +9,29 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/gui/msgbox
- * @requires zotohlab/gui/ynbox
- * @requires p/splash
- * @requires p/mmenu
- * @requires p/arena
- * @module p/protos
- */
+#if !defined(__SPLASH_H__)
+#define __SPLASH_H__
 
-import msgbox from 'zotohlab/gui/msgbox';
-import ynbox from 'zotohlab/gui/ynbox';
-import sh from 'zotohlab/asx/asterix';
-import splash from 'p/splash';
-import mmenu from 'p/mmenu';
-import arena from 'p/game';
+#include "x2d/XScene.h"
+NS_BEGIN(tetris)
 
-
-let ps= [splash, mmenu, msgbox, ynbox, arena],
-protos= sh.protos,
-sjs= sh.skarojs,
-/** @alias module:p/protos */
-xbox= protos,
-R = sjs.ramda,
-undef;
-
-R.forEach( obj => {
-  protos[obj.rtti] = obj;
-}, ps);
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+class CC_DLL Splash : public f::XScene {
+public:
+
+  STATIC_REIFY_SCENE(Splash)
+  NOCPYASS(Splash)
+
+  virtual void decorate();
+
+  virtual ~Splash() {}
+  Splash() {}
+
+};
+
+
+NS_END(tetris)
+#endif
+
 

@@ -37,9 +37,9 @@ bool maybeCollide(cmap, float tl_x, float tl_y, float br_x, float br_y);
 
 const f::Cell2D xrefTile(float x, float y);
 
-void initDropper(not_null<c::Node*> par, Dropper *dp);
+void initDropper(Dropper *dp);
 
-void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s);
+void setDropper(Dropper *dp, float r, float s);
 
 void lockBricks(cmap, emap, Brick *z);
 
