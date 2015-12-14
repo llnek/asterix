@@ -9,94 +9,122 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "Clear.h"
+"use strict";/**
+ * @requires zotohlab/asx/asterix
+ * @requires zotohlab/asx/ccsx
+ * @requires s/utils
+ * @requires n/gnodes
+ * @module s/clear
+ */
 
-NS_BEGIN(tetris)
+import sh from 'zotohlab/asx/asterix';
+import ccsx from 'zotohlab/asx/ccsx';
+import utils from 's/utils';
+import gnodes from 'n/gnodes';
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Clear::Clear(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+let sjs= sh.skarojs,
+xcfg = sh.xcfg,
+csts= xcfg.csts,
+R = sjs.ramda,
+undef,
+//////////////////////////////////////////////////////////////////////////
+/**
+ * @class Clear
+ */
+Clear = sh.Ashley.sysDef({
+  /**
+   * @memberof module:s/clear~Clear
+   * @method constructor
+   * @param {Object} options
+   */
+  constructor(options) {
+    this.state = options;
+  },
+  /**
+   * @memberof module:s/clear~Clear
+   * @method removeFromEngine
+   * @param {Ash.Engine} engine
+   */
+  removeFromEngine(engine) {
+    this.arena=null;
+  },
+  /**
+   * @memberof module:s/clear~Clear
+   * @method addToEngine
+   * @param {Ash.Engine} engine
+   */
+  addToEngine(engine) {
+    this.arena= engine.getNodeList(gnodes.ArenaNode);
+  },
+  /**
+   * @memberof module:s/clear~Clear
+   * @method update
+   * @return {Number}
+   */
+  update(dt) {
+    let node = this.arena.head,
+    ps;
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Clear::addToEngine(not_null<a::Engine*> e) {
-  ArenaNode n;
-  arena= e->getNodeList(n.typeId());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Clear::update(float dt) {
-  auto node = arena->head;
-
-  if (MGMS()->isLive() &&
-      NNP(node)) {
-    auto ps= CC_GNF(Pauser, node, "pauser");
-    if (ps->pauseToClear) {
-      if (cx::timerDone(ps->timer)) {
-        clearFilled(node);
-        ps->timer=cx::undoTimer(ps->timer);
-        ps->pauseToClear=false;
+    if (this.state.running &&
+       !!node) {
+      ps= node.pauser;
+      if (ps.pauseToClear) {
+        if (ccsx.timerDone(ps.timer)) {
+          this.clearFilled(node);
+          ps.timer=ccsx.undoTimer(ps.timer);
+          ps.pauseToClear=false;
+        }
+        //stop downstream processing
+        return false;
       }
-      //stop downstream processing
-      return false;
     }
-  }
+  },
+  /**
+   * @method clearFilled
+   * @private
+   */
+  clearFilled(node) {
+    const score= node.flines.lines.length;
 
-  return true;
-}
+    R.forEach( z => {
+      this.clearOneRow(node,z);
+      this.resetOneRow(node,z);
+    },
+    node.flines.lines);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Clear::clearFilled(a::Node *node) {
-  auto flines = CC_GNF(FilledLines, node, "flines");
-  auto score= flines->lines.size();
+    this.shiftDownLines(node);
+    sh.fire('/hud/score/update', { score: score * 50 });
+  },
+  /**
+   * Dispose and get rid of blocks which are marked to be cleared
+   * @method clearOneRow
+   * @private
+   */
+  clearOneRow(node, r) {
+    const row= node.blocks.grid[r];
 
-  F__LOOP(it, flines->lines) {
-    clearOneRow(node, *it);
-    resetOneRow(node, *it);
-  }
-
-  shiftDownLines(node);
-  j::json msg({
-      { "score", score * 50 }
-      });
-  MGMS()->sendMsgEx("/hud/score/update", &msg);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Clear::clearOneRow(a::Node *node, int r) {
-  auto bks= CC_GNF(BlockGrid, node, "blocks");
-  auto& row= bks->grid[r];
-
-  for (auto c=0; c < row.size(); ++c) {
-    auto z= row->get(c);
-    if (NNP(z)) {
-      row->set(c, nullptr);
-      z->dispose();
+    for (let c=0; c < row.length; ++c) {
+      if (!!row[c]) {
+        row[c].dispose();
+        row[c]=undef;
+      }
     }
-  }
-}
+  },
+  /**
+   * Clear collision mark
+   * @method resetOneRow
+   * @private
+   */
+  resetOneRow(node, r) {
+    const row= node.collision.tiles[r];
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Clear::resetOneRow(a::Node *node, int r) {
-  auto co= CC_GNF(TileGrid, node, "collision");
-  auto row= co->tiles[r];
-
-  for (auto c=0; c < row.size(); ++c) {
-    row->set(c, r==0 ? 1 : 0);
-  }
-  row->setFirst(1);
-  row->setLast(1);
-}
-
-
+    for (let c=0; c < row.length; ++c) {
+      row[c]= r===0 ? 1 : 0;
+    }
+    row[0]=1;
+    row[row.length-1]=1;
+  },
   /**
    * @method shiftDownLines
    * @private
@@ -210,8 +238,26 @@ void Clear::resetOneRow(a::Node *node, int r) {
     }
   }
 
+}, {
+/**
+ * @memberof module:s/clear~Clear
+ * @property {Number} Priority
+ */
+Priority: xcfg.ftypes.Clear
+});
 
+/** @alias module:s/clear */
+const xbox = /** @lends xbox# */{
+  /**
+   * @property {Clear} Clear
+   */
+  Clear : Clear
+};
 
-NS_END(tetris)
-
+sjs.merge(exports, xbox);
+/*@@
+return xbox;
+@@*/
+///////////////////////////////////////////////////////////////////////////////
+//EOF
 

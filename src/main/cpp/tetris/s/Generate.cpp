@@ -28,7 +28,7 @@ Generate::Generate(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 void Generate::addToEngine(not_null<a::Engine*> e) {
   ArenaNode n;
   arena= e->getNodeList(n.typeId());
-  nextShapeInfo= randNext();
+  nextShapeInfo= randNextInfo();
   nextShape=nullptr;
 }
 
@@ -61,16 +61,16 @@ bool Generate::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
+Shape * Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
   auto co= CC_GNF(TileGrid, node, "collision");
   auto bks= CC_GNF(BlockGrid, node, "grid");
   auto gbox= CC_GNF(GridBox, node, "gbox");
   auto& tiles = co->tiles;
   auto tile= MGMS()->TILE;
   auto wz= cx::visRect();
-  auto shape= new Shape(gbox->box.left + 5 * tile,
-      gbox->box.top - tile,
-      nextShapeInfo);
+  auto shape= new Shape(*nextShapeInfo);
+  shape->x = gbox->box.left + 5 * tile;
+  shape->y = gbox->box.top - tile,
   shape= reifyShape(layer, tiles, shape);
   if (ENP(shape)) {
     CCLOG("game over.  you lose.");
@@ -84,46 +84,39 @@ void Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::previewNextShape(a::Node *node, f::XLayer *layer) {
-  auto info = randNext();
-  gbox= node.gbox,
-  cw = ccsx.center(),
-  wb = ccsx.vbox(),
-  shape,
-  sz = (1 + info.model.dim) * csts.TILE,
-  x = cw.x + (wb.right - cw.x) * 0.5,
-  y = wb.top * 0.7;
+  auto gbox= CC_GNF(GridBox, node, "gbox");
+  auto tile = MGMS()->TILE;
+  auto info = randNextInfo();
+  auto cw = cx::center();
+  auto wb = cx::visBox();
 
-  x -= sz * 0.5;
-  y += sz * 0.5;
+  auto sz = (1 + info->model->getDim()) * tile;
+  auto x = cw.x + (wb.right - cw.x) * 0.5f;
+  auto y = wb.top * 0.7f;
 
-  utils.disposeShape(this.nextShape);
-  this.nextShape= null;
-  shape= new cobjs.Shape(x,y, info);
-  this.nextShapeInfo= info;
-  this.nextShape= utils.previewShape(layer, shape);
-},
-/**
-   * @method randNext
-   * @private
-   */
-  randNext() {
-    const n= sjs.rand( cobjs.Shapes.length),
-    proto= cobjs.Shapes[n];
+  x -= sz * 0.5f;
+  y += sz * 0.5f;
 
-    return {
-      png: sjs.rand(csts.BLOCK_COLORS) + 1,
-      rot: sjs.rand(proto.layout.length),
-      model: proto
-    };
-  }
+  disposeShape(nextShape);
+  SNPTR(nextShape)
 
-}, {
-/**
- * @memberof module:s/generate~Generate
- * @property {Number} Priority
- */
-Priority: xcfg.ftypes.Generate
-});
+  shape= new Shape(*info);
+  shape->x = x;
+  shape->y = y;
+  nextShapeInfo= info;
+  nextShape= previewShape(layer, shape);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Shape * Generate::randNextInfo() {
+  auto bc= CC_CSV(c::Integer, "BLOCK_COLORS");
+  auto n= cx::randInt(ListOfModels.size());
+  auto proto= ListOfModels[n];
+  return mc_new_3(Shape, proto,
+      cx::randInt(proto->getLayouts()),
+      s::to_string(cx::randInt(bc) + 1) + ".png" );
+}
 
 
 NS_END(tetris)

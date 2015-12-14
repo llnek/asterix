@@ -29,11 +29,16 @@ struct CC_DLL ShapeShell {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Shape {
-  model= options.model;
-  rot= options.rot;
+  Shape(BModel *m, int rot, const sstr& p) {
+    this->rot=rot;
+    model=m;
+    png=p;
+  }
+  BModel *model = nullptr;
+  int rot= 0;
   sstr png;
-  float x;
-  float y;
+  float x= 0.0f;
+  float y=0.0f;
   s_vec<Brick*> bricks;
 };
 

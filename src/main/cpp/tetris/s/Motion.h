@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__GENERATE_H__)
-#define __GENERATE_H__
+#if !defined(__MOTION_H__)
+#define __MOTION_H__
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
@@ -19,31 +19,40 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Generate : public f::BaseSystem<EFactory> {
+class CC_DLL Motions : public f::BaseSystem<EFactory> {
 protected:
 
-  Shape * reifyNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
-  void previewNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
-  Shape * randNextInfo();
+  void doit(a::Node *node, float);
+  void onkey(a::Node *node, float);
+  void sftRight(a::Node *node, float);
+  void sftLeft(a::Node *node, float);
+  void sftDown(a::Node *node, float);
+  void rotRight(a::Node *node, float);
+  void rotLeft(a::Node *node, float);
+  void onceOnly();
+
+  float throttleWait= 0.0f;
 
 public:
 
-  virtual const a::SystemType typeId() { return "s/Generate"; }
+  virtual const a::SystemType typeId() { return "s/Motions"; }
 
-  Generate(not_null<EFactory*>, not_null<c::Dictionary*>);
+  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
   virtual bool update(float);
-  virtual int priority() { return Generate; }
 
-  NOCPYASS(Generate)
-  NODFT(Generate)
+  NOCPYASS(Motions)
+  NODFT(Motions)
 
-  virtual ~Generate() {}
+  virtual ~Motions() {}
+
+  a::NodeList *arena;
+
 };
+
 
 
 NS_END(tetris)
 #endif
-
 
