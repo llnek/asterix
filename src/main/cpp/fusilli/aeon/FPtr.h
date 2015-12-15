@@ -7,38 +7,38 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename _Tp1> struct FS_DLL FPtr_ref {
-  _Tp1* _M_ptr;
+  _Tp1 *_M_ptr;
   explicit
-  FPtr_ref(_Tp1* __p) : _M_ptr(__p) { }
+  FPtr_ref(_Tp1 *__p) : _M_ptr(__p) { }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename _Tp> class FS_DLL FPtr {
 private:
-  _Tp* _M_ptr;
+  _Tp *_M_ptr;
 
 public:
 
   typedef _Tp pType;
 
   explicit
-  FPtr(pType* __p = nullptr) throw() : _M_ptr(__p) { }
+  FPtr(pType *__p = nullptr) throw() : _M_ptr(__p) { }
 
-  FPtr(FPtr& __a) throw() : _M_ptr(__a.release()) { }
+  FPtr(FPtr &__a) throw() : _M_ptr(__a.release()) { }
 
   template<typename _Tp1>
-  FPtr(FPtr<_Tp1>& __a) throw() : _M_ptr(__a.release()) { }
+  FPtr(FPtr<_Tp1> &__a) throw() : _M_ptr(__a.release()) { }
 
   FPtr&
-  operator=(FPtr& __a) throw() {
+  operator=(FPtr &__a) throw() {
     reset(__a.release());
     return *this;
   }
 
   template<typename _Tp1>
   FPtr&
-  operator=(FPtr<_Tp1>& __a) throw() {
+  operator=(FPtr<_Tp1> &__a) throw() {
     reset(__a.release());
     return *this;
   }
@@ -60,7 +60,7 @@ public:
   pType* get() const throw() { return _M_ptr; }
 
   pType* release() throw() {
-    pType* __tmp = _M_ptr;
+    pType *__tmp = _M_ptr;
     _M_ptr = nullptr;
     return __tmp;
   }

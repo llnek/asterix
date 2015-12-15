@@ -25,10 +25,14 @@ public:
   void add(not_null<T*> );
   const s_vec<T*> list();
   void clear() ;
-  T* head= nullptr;
-  T* tail=nullptr;
+
+  T *head= nullptr;
+  T *tail=nullptr;
+
+  virtual ~ObjList();
+  ObjList();
+
   NOCPYASS(ObjList)
-  DECLCZ(ObjList)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -140,11 +144,11 @@ public:
   const s_vec<System*> getSystems();
 
   NodeList* getNodeList(const NodeType& );
-  Entity* reifyEntity(const sstr& grp);
+  Entity* reifyEntity(const sstr &grp);
 
   void notifyModify(not_null<Entity*>);
   void purgeEntity(not_null<Entity*> );
-  void purgeEntities(const sstr& grp);
+  void purgeEntities(const sstr &grp);
 
   void purgeSystem (not_null<System*> );
   void purgeSystems();
@@ -153,8 +157,10 @@ public:
   void regoSystem(not_null<System*> );
   void update(float time);
 
+  virtual ~Engine();
+  Engine();
+
   NOCPYASS(Engine)
-  DECLCZ(Engine)
 };
 
 

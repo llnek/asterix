@@ -15,7 +15,7 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-static GameScene* _singleton;
+static GameScene *_singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -56,7 +56,7 @@ f::JsonObj* GameScene::getLCfg() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::getPool(const sstr& key) {
+XPool* GameScene::getPool(const sstr &key) {
   auto it = pools.find(key);
   if (it != pools.end()) {
     return it->second;
@@ -67,7 +67,7 @@ XPool* GameScene::getPool(const sstr& key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::reifyPool(const sstr& key) {
+XPool* GameScene::reifyPool(const sstr &key) {
   auto it = pools.find(key);
   auto p= mc_new( XPool);
   if (it != pools.end()) {
@@ -124,7 +124,7 @@ const Box4 GameScene::getEnclosureBox() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameScene::reifyPools(const s_vec<sstr>& names) {
+void GameScene::reifyPools(const s_vec<sstr> &names) {
   F__LOOP(it,names) {
     reifyPool(*it);
   }

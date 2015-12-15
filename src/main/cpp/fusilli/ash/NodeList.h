@@ -45,8 +45,8 @@ public:
   NOCPYASS(NodeList)
   NODFT(NodeList)
 
-  Node* head=nullptr;
-  Node* tail=nullptr;
+  Node *head=nullptr;
+  Node *tail=nullptr;
 
 };
 

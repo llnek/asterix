@@ -22,16 +22,16 @@ class FS_DLL Entity {
 private:
 
   s_map<sstr, Component*> parts;
-  Engine* engine=nullptr;
+  Engine *engine=nullptr;
   sstr group;
   bool dead=false;
 
 public:
 
-  Entity(const sstr& group, not_null<Engine*>);
+  Entity(const sstr &group, not_null<Engine*>);
 
-  Entity* previous=nullptr;
-  Entity* next=nullptr;
+  Entity *previous=nullptr;
+  Entity *next=nullptr;
 
   NOCPYASS(Entity)
   NODFT(Entity)

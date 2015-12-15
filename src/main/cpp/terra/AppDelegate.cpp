@@ -28,6 +28,7 @@ AppDelegate::AppDelegate() {
     }
     typedef int POO[2][2];
     
+    
     std::array<POO,2> qqq {
         1,2,3,4,
          5,6,7,8

@@ -55,7 +55,7 @@ public:
     return "";
   }
 
-  virtual c::Scene* startWith();
+  virtual c::Scene* prelude();
 
   virtual const sstr getWSUrl() {
     return "";

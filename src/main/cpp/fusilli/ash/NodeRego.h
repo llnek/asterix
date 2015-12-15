@@ -28,8 +28,10 @@ public:
   virtual owner<Node*> reifyNode() = 0;
   virtual const NodeType typeId() = 0;
 
+  virtual ~NodeFactory() {}
+  NodeFactory() {}
+
   NOCPYASS(NodeFactory)
-  IMPLCZ(NodeFactory)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,9 +49,10 @@ public:
   void rego(not_null<NodeFactory*>);
   void derego(const NodeType&);
 
-  NOCPYASS(NodeRegistry)
-  DECLCZ(NodeRegistry)
+  virtual ~NodeRegistry();
+  NodeRegistry();
 
+  NOCPYASS(NodeRegistry)
 };
 
 

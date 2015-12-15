@@ -51,7 +51,7 @@ public:
   virtual ~ComObj() {}
   ComObj();
 
-  c::Sprite* sprite=nullptr;
+  c::Sprite *sprite=nullptr;
   int origHealth=0;
   bool status=false;
   int health=0;

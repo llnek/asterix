@@ -81,7 +81,8 @@ void XPool::clearAll(bool del) {
 int XPool::countActives() {
   auto c=0;
   F__LOOP(it, objs) {
-    if ((*it)->status) {
+    auto z= *it;
+    if (z->status) {
       ++c;
     }
   }
@@ -100,7 +101,8 @@ void XPool::foreach(s::function<void (ComObj*)> f) {
 // Hibernate (status off) all objects in the pool
 void XPool::reset() {
   F__LOOP(it, objs) {
-    (*it)->deflate();
+    auto z= *it;
+    z->deflate();
   }
 }
 

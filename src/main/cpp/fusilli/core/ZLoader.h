@@ -29,8 +29,10 @@ public:
   void initWithResources();
   virtual void onEnter() ;
 
+  virtual ~ZLoader() {}
+  ZLoader() {}
+
   NOCPYASS(ZLoader)
-  IMPLCZ(ZLoader)
 };
 
 

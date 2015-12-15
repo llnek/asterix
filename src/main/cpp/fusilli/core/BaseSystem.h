@@ -23,8 +23,8 @@ protected:
 
   BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
 
-  c::Dictionary* state=nullptr;
-  F* factory=nullptr;
+  c::Dictionary *state=nullptr;
+  F *factory=nullptr;
   bool inited=false;
 
   NOCPYASS(BaseSystem)

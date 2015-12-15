@@ -33,15 +33,18 @@ public:
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
   SContext* getCtx() { return context; }
   XLayer* getLayer(int tag);
-  void setCtx(SContext* x);
+  void setCtx(SContext *x);
 
   virtual void decorate() = 0;
   virtual bool init();
 
-  NOCPYASS(XScene)
-  DECLCZ(XScene)
+  virtual ~XSCene();
+  XScene();
 
+  NOCPYASS(XScene)
 };
+
+
 
 NS_END(fusii)
 #endif

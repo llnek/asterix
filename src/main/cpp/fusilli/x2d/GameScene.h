@@ -36,7 +36,7 @@ struct CC_DLL GContext : public SContext {
   virtual ~GContext() { mc_del_ptr(odin) }
   GContext(GMode m) { mode=m; }
   GContext() {}
-  ws::OdinIO* odin=nullptr;
+  ws::OdinIO *odin=nullptr;
   GMode mode=GMode::ONE;
   NOCPYASS(GContext)
 };
@@ -67,14 +67,14 @@ public:
   static GameScene* self();
   static GameLayer* get();
 
-  virtual void sendMsgEx(const MsgTopic& topic, void* msg) = 0;
-  void sendMsg(const MsgTopic& topic) {
+  virtual void sendMsgEx(const MsgTopic &topic, void *msg) = 0;
+  void sendMsg(const MsgTopic &topic) {
     sendMsgEx(topic, nullptr);
   }
 
-  void reifyPools(const s_vec<sstr>& names);
-  XPool* reifyPool(const sstr& n);
-  XPool* getPool(const sstr& n);
+  void reifyPools(const s_vec<sstr> &names);
+  XPool* reifyPool(const sstr &n);
+  XPool* getPool(const sstr &n);
 
   ws::OdinIO* wsock();
   GMode getMode();
@@ -86,9 +86,10 @@ public:
 
   s_que<sstr>& msgQueue() { return msgQ; }
 
-  NOCPYASS(GameScene)
-  DECLCZ(GameScene)
+  virtual ~GameScene();
+  GameScene();
 
+  NOCPYASS(GameScene)
 };
 
 

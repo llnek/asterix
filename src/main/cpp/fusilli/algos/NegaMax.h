@@ -95,11 +95,9 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
 template <int Z> int evalNegaMax(not_null<GameBoard<Z>*> board) {
-  auto f= board->takeFFrame();
+  FPtr<FFrame<Z>> f( board->takeFFrame());
   negaMax<Z>(board, f, 10, 10, -PINF, PINF);
-  auto rc = f->lastBestMove;
-  delete f;
-  return rc;
+  return f->lastBestMove;
 }
 
 

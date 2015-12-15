@@ -22,7 +22,7 @@ NS_BEGIN(tetris)
 class CC_DLL Game : public f::GameScene {
 public:
 
-  virtual void sendMsgEx(const MsgTopic& topic, void* msg);
+  virtual void sendMsgEx(const MsgTopic &topic, void *msg);
   virtual f::GameLayer* getGLayer();
 
   virtual const f::Box4 getEnclosureBox();

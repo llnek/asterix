@@ -20,7 +20,7 @@ NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
 // items should be same size
-c::Menu* mkMenu(const s_vec<c::MenuItem*>& items, bool vert, float pad) {
+c::Menu* mkMenu(const s_vec<c::MenuItem*> &items, bool vert, float pad) {
 
   auto menu= c::Menu::create();
 
@@ -39,7 +39,7 @@ c::Menu* mkMenu(const s_vec<c::MenuItem*>& items, bool vert, float pad) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* mkMenu(c::MenuItem* item) {
+c::Menu* mkMenu(c::MenuItem *item) {
   auto menu= c::Menu::create();
   menu->addChild( item);
   return menu;
@@ -57,7 +57,7 @@ bool isDesktop() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Color3B colorRGB(const sstr& color) {
+const c::Color3B colorRGB(const sstr &color) {
   int r=0, g=0, b=0;
   ::sscanf(color.c_str(), "#%2x%2x%2x", &r, &g, &b);
   return c::Color3B( (GLubyte)r, (GLubyte)g, (GLubyte)b);
@@ -65,7 +65,7 @@ const c::Color3B colorRGB(const sstr& color) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void sfxMusic(const sstr& music, bool repeat) {
+void sfxMusic(const sstr &music, bool repeat) {
   auto fp= XCFG()->getMusic(music);
   try {
     den::SimpleAudioEngine::getInstance()->playBackgroundMusic(fp.c_str(), repeat);
@@ -76,7 +76,7 @@ void sfxMusic(const sstr& music, bool repeat) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void sfxPlay(const sstr& sound) {
+void sfxPlay(const sstr &sound) {
   auto fp= XCFG()->getEffect(sound);
   try {
     den::SimpleAudioEngine::getInstance()->playEffect(fp.c_str());
@@ -101,7 +101,7 @@ void resumeAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void reifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
+void reifyAudioIcons(c::MenuItem *&on, c::MenuItem *&off) {
   auto n3="sound_off.png";
   auto n2="sound_on.png";
   off= reifyMenuBtn(n3,n3,n3);
@@ -110,15 +110,15 @@ void reifyAudioIcons(c::MenuItem*& on, c::MenuItem*& off) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuBtn(const sstr& n) {
+c::MenuItem* reifyMenuBtn(const sstr &n) {
   return reifyMenuBtn(n,n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuBtn(const sstr& n,
-    const sstr& s,
-    const sstr& d) {
+c::MenuItem* reifyMenuBtn(const sstr &n,
+    const sstr &s,
+    const sstr &d) {
 
   return c::MenuItemSprite::create(reifySprite(n),
                                 reifySprite(s),
@@ -127,14 +127,15 @@ c::MenuItem* reifyMenuBtn(const sstr& n,
 
 //////////////////////////////////////////////////////////////////////////////
 // Test if this point is inside this rectangle
-bool pointInBox(const Box4& box, float x, float y) {
+bool pointInBox(const Box4 &box, float x, float y) {
   return x >= box.left && x <= box.right &&
     y >= box.bottom && y <= box.top;
 }
 
-bool pointInBox(const Box4& box, const c::Vec2& pos) {
-    return pos.x >= box.left && pos.x <= box.right &&
-    pos.y >= box.bottom && pos.y <= box.top;
+//////////////////////////////////////////////////////////////////////////////
+//
+bool pointInBox(const Box4 &box, const c::Vec2& pos) {
+  return pointInBox(box, pos.x, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -147,7 +148,7 @@ const c::Color3B black() { return c::Color3B::BLACK; }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* reifyBmfLabel(const sstr& font, const sstr& text) {
+c::Label* reifyBmfLabel(const sstr &font, const sstr &text) {
   auto f= c::Label::createWithBMFont( XCFG()->getFont(font), text);
   f->setOpacity(0.9f * 255);
   return f;
@@ -155,7 +156,7 @@ c::Label* reifyBmfLabel(const sstr& font, const sstr& text) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Label* reifyBmfLabel(float x, float y, const sstr& font, const sstr& text) {
+c::Label* reifyBmfLabel(float x, float y, const sstr &font, const sstr &text) {
   auto f= reifyBmfLabel(font, text);
   f->setPosition(x,y);
   return f;
@@ -188,25 +189,25 @@ bool isPortrait() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Array* readXmlAsList(const sstr& fpath) {
+c::Array* readXmlAsList(const sstr &fpath) {
   return c::Array::createWithContentsOfFile(fpath.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* readXmlAsDict(const sstr& fpath) {
+c::Dictionary* readXmlAsDict(const sstr &fpath) {
   return c::Dictionary::createWithContentsOfFile(fpath.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool outOfBound(not_null<ComObj*> ent, const Box4& B) {
+bool outOfBound(not_null<ComObj*> ent, const Box4 &B) {
   return (NNP(ent) && NNP(ent->sprite)) ? outOfBound(bbox4(ent->sprite), B) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool outOfBound(const Box4& a, const Box4& B) {
+bool outOfBound(const Box4 &a, const Box4 &B) {
   return a.left > B.right    ||
          a.top < B.bottom  ||
          a.right < B.left      ||
@@ -215,7 +216,7 @@ bool outOfBound(const Box4& a, const Box4& B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size scaleSize(const c::Size& z, float scale) {
+const c::Size scaleSize(const c::Size &z, float scale) {
   return c::Size(z.width * scale, z.height * scale);
 }
 
@@ -227,9 +228,9 @@ void undoTimer(not_null<c::DelayTime*> tm) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void mergeDict(c::Dictionary* src, c::Dictionary* d2) {
+void mergeDict(c::Dictionary *src, c::Dictionary *d2) {
   NS_USING(cocos2d)
-  DictElement* e= nullptr;
+  DictElement *e= nullptr;
   CCDICT_FOREACH(d2, e) {
     auto obj = e->getObject();
     auto key= e->getStrKey();
@@ -256,7 +257,7 @@ bool timerDone(not_null<c::DelayTime*> t) {
 //////////////////////////////////////////////////////////////////////////
 // Reify a sprite from its frame name
 //
-c::Sprite* reifySprite(const sstr& name) {
+c::Sprite* reifySprite(const sstr &name) {
   return c::Sprite::createWithSpriteFrameName(name);
 }
 
@@ -298,7 +299,7 @@ bool isTransitioning() {
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const c::Size calcSize(const sstr& frame) {
+const c::Size calcSize(const sstr &frame) {
   return reifySprite(frame)->getContentSize();
 }
 
@@ -307,7 +308,7 @@ const c::Size calcSize(const sstr& frame) {
 //
 const c::Size halfHW(not_null<c::Sprite*> s) {
   auto z= s->getContentSize();
-  return c::Size(z.width * 0.5, z.height * 0.5);
+  return c::Size(z.width * 0.5f, z.height * 0.5f);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -487,7 +488,7 @@ const c::Vec2 scenter() {
 //////////////////////////////////////////////////////////////////////////
 // Get the center of this box.
 //
-const c::Vec2 vboxMID(const Box4& box) {
+const c::Vec2 vboxMID(const Box4 &box) {
   return c::Vec2(box.left + (box.right-box.left) * 0.5f,
               box.bottom + (box.top-box.bottom) * 0.5f);
 }
@@ -499,9 +500,9 @@ const c::Vec2 vboxMID(const Box4& box) {
 // If hit, the new position and velocities
 // are returned
 //
-bool traceEnclosure(float dt, const Box4& bbox,
-    const c::Rect& rect, const c::Vec2& vel,
-    c::Vec2& outPos, c::Vec2& outVel) {
+bool traceEnclosure(float dt, const Box4 &bbox,
+    const c::Rect &rect, const c::Vec2 &vel,
+    c::Vec2 &outPos, c::Vec2 &outVel) {
 
   auto y = rect.origin.y + dt * vel.y;
   auto x = rect.origin.x + dt * vel.x;
@@ -550,7 +551,7 @@ bool traceEnclosure(float dt, const Box4& bbox,
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-c::SpriteFrame* getSpriteFrame(const sstr& frameid) {
+c::SpriteFrame* getSpriteFrame(const sstr &frameid) {
   return c::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
 }
 
@@ -640,7 +641,7 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 clamp(const c::Vec2& cur, const Box4& bx) {
+const c::Vec2 clamp(const c::Vec2 &cur, const Box4 &bx) {
   return ccpClamp(cur, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
 }
 

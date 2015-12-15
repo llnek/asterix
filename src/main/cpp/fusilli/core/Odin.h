@@ -68,7 +68,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-n::WebSocket* connect(not_null<OdinIO*>, const sstr& url);
+n::WebSocket* connect(not_null<OdinIO*>, const sstr &url);
 
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
 
@@ -77,11 +77,11 @@ void disconnect(OdinIO*);
 void close(OdinIO*);
 
 
-owner<OdinIO*> reifyPlayRequest(const sstr& game,
-    const sstr& user, const sstr& pwd);
+owner<OdinIO*> reifyPlayRequest(const sstr &game,
+    const sstr &user, const sstr &pwd);
 
-owner<OdinIO*> reifyJoinRequest(const sstr& room,
-    const sstr& user, const sstr& pwd);
+owner<OdinIO*> reifyJoinRequest(const sstr &room,
+    const sstr &user, const sstr &pwd);
 
 
 NS_END(odin)

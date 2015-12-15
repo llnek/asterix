@@ -15,7 +15,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node::Node(const s_map<sstr, COMType>& s) {
+Node::Node(const s_map<sstr, COMType> &s) {
   F__LOOP(it, s) {
     this->types.insert(S__PAIR(COMType, sstr, it->second, it->first));
   }
@@ -58,7 +58,7 @@ bool Node::belongsTo(not_null<Entity*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::get(const sstr& f) {
+Component* Node::get(const sstr &f) {
   auto it = values.find(f);
   if (it != values.end()) {
     return it->second;

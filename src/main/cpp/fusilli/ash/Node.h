@@ -23,7 +23,7 @@ private:
 
   s_map<sstr, Component*> values;
   s_map<COMType, sstr> types;
-  Entity* entity=nullptr;
+  Entity *entity=nullptr;
 
 public:
 
@@ -32,19 +32,19 @@ public:
   Entity* getEntity() { return entity; }
   bool bindEntity(not_null<Entity*> );
   bool belongsTo(not_null<Entity*>);
-  Component* get(const sstr& field);
+  Component* get(const sstr &field);
 
   virtual ~Node() {}
   NOCPYASS(Node)
   NODFT(Node)
 
-  Node* previous=nullptr;
-  Node* next=nullptr;
+  Node *previous=nullptr;
+  Node *next=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* nodeFld(not_null<ash::Node*> n, const sstr& fld) {
+template<typename T> T* nodeFld(not_null<ash::Node*> n, const sstr &fld) {
   auto v= n->get(fld);
   if (NNP(v)) {
     return (T*) v;

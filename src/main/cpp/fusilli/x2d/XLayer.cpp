@@ -24,12 +24,12 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::onQuit(c::Ref* ) {
-  cx::runScene( XCFG()->startWith());
+  cx::runScene( XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XLayer::initEx(XScene* par, int zx) {
+bool XLayer::initEx(XScene *par, int zx) {
   if (c::Layer::init()) {
     par->addLayer(this, zx);
     decorate();
@@ -41,7 +41,7 @@ bool XLayer::initEx(XScene* par, int zx) {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::SpriteBatchNode*
-XLayer::regoAtlas(const sstr& name, int zx) {
+XLayer::regoAtlas(const sstr &name, int zx) {
 
   auto i= c::TextureCache::getInstance()->addImage( XCFG()->getImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
@@ -54,7 +54,7 @@ XLayer::regoAtlas(const sstr& name, int zx) {
 //////////////////////////////////////////////////////////////////////////////
 // Get the atlas
 //
-c::SpriteBatchNode* XLayer::getAtlas(const sstr& name) {
+c::SpriteBatchNode* XLayer::getAtlas(const sstr &name) {
   auto it= atlases.find(name);
   if (it != atlases.end()) {
     return it->second;
@@ -66,9 +66,9 @@ c::SpriteBatchNode* XLayer::getAtlas(const sstr& name) {
 //////////////////////////////////////////////////////////////////////////////
 // Add an image chosen from this atlas
 //
-void XLayer::addAtlasFrame(const sstr& atlas,
-                           const sstr& frame,
-                           const c::Vec2& pos) {
+void XLayer::addAtlasFrame(const sstr &atlas,
+                           const sstr &frame,
+                           const c::Vec2 &pos) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
   addAtlasItem(atlas, tt);
@@ -77,7 +77,7 @@ void XLayer::addAtlasFrame(const sstr& atlas,
 //////////////////////////////////////////////////////////////////////////////
 // Add an image
 //
-void XLayer::addFrame(const sstr& frame, const c::Vec2& pos) {
+void XLayer::addFrame(const sstr &frame, const c::Vec2 &pos) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
   addItem(tt);
@@ -86,9 +86,9 @@ void XLayer::addFrame(const sstr& frame, const c::Vec2& pos) {
 //////////////////////////////////////////////////////////////////////////////
 // Add a child to this atlas
 //
-void XLayer::addAtlasItem(const sstr& atlas,
+void XLayer::addAtlasItem(const sstr &atlas,
     not_null<c::Node*> n,
-    const MaybeInt& zx, const MaybeInt& tag) {
+    const MaybeInt &zx, const MaybeInt &tag) {
 
   auto ptag = tag.isNone() ? ++lastTag : tag.get();
   auto pzx = zx.isNone() ? lastZ : zx.get();
@@ -106,7 +106,7 @@ void XLayer::addAtlasItem(const sstr& atlas,
 // Add a child
 //
 void XLayer::addItem(not_null<c::Node*> n,
-    const MaybeInt&  zx, const MaybeInt& tag) {
+    const MaybeInt &zx, const MaybeInt &tag) {
 
   auto ptag = tag.isNone() ?  ++lastTag : tag.get();
   auto pzx = zx.isNone() ? lastZ : zx.get();
@@ -115,7 +115,7 @@ void XLayer::addItem(not_null<c::Node*> n,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::centerImage(const sstr& name, int z) {
+void XLayer::centerImage(const sstr &name, int z) {
   auto t= c::TextureCache::getInstance()->addImage(XCFG()->getImage(name));
   auto s= c::Sprite::createWithTexture(t);
   s->setPosition(cx::center());
@@ -125,7 +125,7 @@ void XLayer::centerImage(const sstr& name, int z) {
 //////////////////////////////////////////////////////////////////////////////
 // Remove all children from this atlas
 //
-void XLayer::removeAtlasAll(const sstr& atlas) {
+void XLayer::removeAtlasAll(const sstr &atlas) {
   auto a=getAtlas(atlas);
   if (NNP(a)) { a->removeAllChildren(); }
 }

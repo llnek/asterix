@@ -27,7 +27,8 @@ class FS_DLL Component {
 public:
   virtual const COMType typeId() = 0;
   virtual void dispose() {}
-  IMPLCZ(Component)
+  virtual ~Component() {}
+  Component() {}
 };
 
 //////////////////////////////////////////////////////////////////////////

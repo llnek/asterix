@@ -15,13 +15,13 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static NodeRegistry* _singleton;
+static NodeRegistry *_singleton;
 
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeRegistry* NodeRegistry::self() {
   if (ENP(_singleton)) {
-    _singleton= new NodeRegistry();
+    _singleton= mc_new(NodeRegistry);
   }
   return _singleton;
 }
@@ -47,7 +47,7 @@ void NodeRegistry::rego(not_null<NodeFactory*> f) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeRegistry::derego(const NodeType& t) {
+void NodeRegistry::derego(const NodeType &t) {
   auto it= regos.find(t);
   if (it != regos.end()) {
     auto v= it->second;
@@ -58,7 +58,7 @@ void NodeRegistry::derego(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> NodeRegistry::reifyNode(const NodeType& t) {
+owner<Node*> NodeRegistry::reifyNode(const NodeType &t) {
   auto it=regos.find(t);
   if (it != regos.end()) {
     return it->second->reifyNode();
@@ -68,8 +68,8 @@ owner<Node*> NodeRegistry::reifyNode(const NodeType& t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Node*> NodeFactory::reifyXXXNode(const s_vec<sstr>& flds,
-    const s_vec<COMType>& types) {
+owner<Node*> NodeFactory::reifyXXXNode(const s_vec<sstr> &flds,
+    const s_vec<COMType> &types) {
 
   assert(flds.size() == types.size());
   s_map<sstr,a::COMType> s;

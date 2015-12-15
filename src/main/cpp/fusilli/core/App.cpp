@@ -61,7 +61,7 @@ bool App::applicationDidFinishLaunching() {
 
   //CCLOG("about to run start scene");
   // run
-  CC_DTOR()->runWithScene( XCFG()->startWith());
+  CC_DTOR()->runWithScene( XCFG()->prelude());
 
   return true;
 }

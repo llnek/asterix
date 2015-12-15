@@ -33,7 +33,7 @@ protected:
 
 public:
 
-  virtual void decorate( const sstr& frame, int lives,
+  virtual void decorate( const sstr &frame, int lives,
       float x, float y,
       float scale=1.0f, int dir= 1);
 
@@ -45,9 +45,10 @@ public:
   void resurrect();
   void drawLives();
 
-  NOCPYASS(XLives)
-  IMPLCZ(XLives)
+  virtual ~XLives() {}
+  XLives() {}
 
+  NOCPYASS(XLives)
 };
 
 

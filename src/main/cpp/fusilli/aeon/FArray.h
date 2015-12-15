@@ -19,7 +19,7 @@ NS_BEGIN(fusii)
 //
 template<typename T> class FS_DLL FArray {
 private:
-  T* data = nullptr;
+  T *data = nullptr;
   int sz = 0;
 public:
 
@@ -57,7 +57,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray<T>& FArray<T>::operator=(FArray<T>&& src) {
+FArray<T>& FArray<T>::operator=(FArray<T> &&src) {
   mc_del_arr(data);
   data=src.data;
   sz=src.sz;
@@ -69,7 +69,7 @@ FArray<T>& FArray<T>::operator=(FArray<T>&& src) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray<T>::FArray(FArray<T>&& src) {
+FArray<T>::FArray(FArray<T> &&src) {
   data=src.data;
   sz=src.sz;
   src.data=nullptr;
@@ -79,7 +79,7 @@ FArray<T>::FArray(FArray<T>&& src) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
+FArray<T>& FArray<T>::operator=(const FArray<T> &src) {
   mc_del_arr(data);
   sz=src.sz;
   if (sz > 0) {
@@ -94,7 +94,7 @@ FArray<T>& FArray<T>::operator=(const FArray<T>& src) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-FArray<T>::FArray(const FArray<T>& src) {
+FArray<T>::FArray(const FArray<T> &src) {
   data= nullptr;
   sz=src.sz;
   if (sz > 0) {

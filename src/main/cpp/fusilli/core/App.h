@@ -22,7 +22,7 @@ NS_BEGIN(fusii)
 class CC_DLL App : public cocos2d::Application {
 protected:
 
-  void preLaunch(const c::Size& designSize);
+  void preLaunch(const c::Size &designSize);
   void initAudio();
 
 public:
@@ -48,9 +48,10 @@ public:
 
   virtual void initGLContextAttrs();
 
-  NOCPYASS(App)
-  IMPLCZ(App)
+  virtual ~App() {}
+  App() {}
 
+  NOCPYASS(App)
 };
 
 

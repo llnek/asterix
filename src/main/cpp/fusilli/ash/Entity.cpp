@@ -15,7 +15,7 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(const sstr& group, not_null<Engine*> e) {
+Entity::Entity(const sstr &group, not_null<Engine*> e) {
   this->group=group;
   this->engine= e;
 }
@@ -46,7 +46,7 @@ void Entity::markDelete() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::purge(const COMType& z) {
+void Entity::purge(const COMType &z) {
   auto it = parts.find(z);
 
   if (it != parts.end()) {
@@ -59,7 +59,7 @@ void Entity::purge(const COMType& z) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Entity::get(const COMType& z) {
+Component* Entity::get(const COMType &z) {
   auto it=  parts.find(z);
   if (it != parts.end()) {
     return it->second;
@@ -80,7 +80,7 @@ const s_vec<Component*> Entity::getAll() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Entity::has(const COMType& z) {
+bool Entity::has(const COMType &z) {
   return parts.find(z) != parts.end();
 }
 

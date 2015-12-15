@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
 
@@ -65,7 +66,7 @@ void HUDLayer::endGame() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::drawStatusText(const sstr& msg) {
+void HUDLayer::drawStatusText(const sstr &msg) {
   status->setString( msg);
 }
 
@@ -88,8 +89,6 @@ void HUDLayer::updateScore(int n) {
   score += n;
   scoreLabel->setString(s::to_string(score));
 }
-
-
 
 
 NS_END(tetris)

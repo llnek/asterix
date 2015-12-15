@@ -59,9 +59,9 @@ c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
 c::Menu* addAudioIcons(not_null<XLayer*> layer,
     not_null<c::MenuItem*> off,
     not_null<c::MenuItem*> on,
-    const c::Vec2& anchor, const c::Vec2& pos) {
+    const c::Vec2 &anchor, const c::Vec2 &pos) {
 
-  auto cb = [](c::Ref* r) {
+  auto cb = [](c::Ref *r) {
     auto t = SCAST(c::MenuItemToggle*, r);
     auto b= t->getSelectedIndex() == 0;
     XCFG()->toggleAudio( b);

@@ -16,7 +16,7 @@ NS_BEGIN(odin)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(MType t, EType c, j::json& body) : OdinEvent() {
+OdinEvent::OdinEvent(MType t, EType c, j::json &body) : OdinEvent() {
   this->doco = j::json( {
     { "type", (int)t },
     { "code", (int)c }
@@ -37,7 +37,7 @@ OdinEvent::OdinEvent(MType t, EType c) : OdinEvent() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(j::json& msg) : OdinEvent() {
+OdinEvent::OdinEvent(j::json &msg) : OdinEvent() {
   if (msg.is_object()) {
     auto v= msg["type"];
     if (v.is_number()) {

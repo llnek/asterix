@@ -20,16 +20,59 @@ typedef int DIM4x4[4][4];
 typedef int DIM3x3[3][3];
 typedef int DIM2x2[2][2];
 
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL Brick : public c::Sprite {
+
+  void blink() {
+    this->setSpriteFrame( cx::getSpriteFrame(frame1));
+  }
+
+  void show() {
+    this->setSpriteFrame( cx::getSpriteFrame(frame0));
+  }
+
+  void dispose() {
+    this->setVisible(false);
+    this->removeFromParent();
+  }
+
+  static Brick * reify(const c::Vec2 &pos, const sstr &f0) {
+    Brick * b = mc_new(Brick);
+    if (NNP(b) &&
+        b->init()) {
+      b->setAnchorPoint(cx::anchorTL());
+      b->startPos = pos;
+      b->frame0=f0;
+      b->setPosition(pos.x, pos.y);
+      b->autorelease();
+      b->show();
+      return b;
+    }
+    CC_SAFE_DELETE(b);
+    return nullptr;
+  }
+
+  virtual ~Brick() {}
+  Brick() {}
+
+  sstr frame1= "0.png";
+  sstr frame0;
+  c::Vec2 startPos;
+};
+
+typedef fusii::FArray<Brick> FArrBrick;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ShapeShell {
-  Shape *shape;
+  Shape* shape;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Shape {
-  Shape(BModel *m, int rot, const sstr& p) {
+  Shape(BModel* m, int rot, const sstr &p) {
     this->rot=rot;
     model=m;
     png=p;
@@ -57,281 +100,289 @@ struct CC_DLL GridBox {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BlockGrid {
-  s_vec<> grid;
+  s_vec<Brick*> grid;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BModel {
+template<typename T> class CC_DLL BModel {
 protected:
 
+  s_vec<T> layout;
   int dim=0;
-  int sz=4;
 
 public:
 
-  virtual void * getLayout(int) = 0;
+  int size() { return layout.size(); }
   int getDim() { return dim; }
-  int size() { return sz; }
-  int getLayouts() { return 4; }
 
+  T& getLayout(int pos) {
+    return layout[pos];
+  }
+
+  virtual ~BModel() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BoxModel : public BModel {
-protected:
-
-  s_arr<DIM2X2,4> layout {
-     1,1,
-     1,1,
-
-     1,1,
-     1,1,
-
-     1,1,
-     1,1,
-
-     1,1,
-     1,1
-  };
-
+class CC_DLL BoxModel : public BModel<DIM2x2> {
 public:
-
-  virtual void * getLayout(int pos) { return &layout[pos]; }
 
   virtual ~BoxModel() {}
-  BoxModel() { dim=2;}
+  BoxModel() {
+    DIM2x2 a1
+    {1,1,
+     1,1};
+    DIM2x2 a2
+    {1,1,
+     1,1};
+    DIM2x2 a3
+    {1,1,
+     1,1};
+    DIM2x2 a4
+    {1,1,
+     1,1};
+
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
+
+    dim=2;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ElModel : public BModel {
-protected:
-
-  s_arr<DIM3X3,4> layout {
-      0,1,0,
-      0,1,0,
-      0,1,1,
-
-      0,0,0,
-      1,1,1,
-      1,0,0,
-
-      1,1,0,
-      0,1,0,
-      0,1,0,
-
-      0,0,1,
-      1,1,1,
-      0,0,0
-  };
-
+class CC_DLL ElModel : public BModel<DIM3x3> {
 public:
 
-  virtual void * getLayout(int pos) { return &layout[pos]; }
   virtual ~ElModel() {}
-  ElModel() { dim=3; }
+
+  ElModel() {
+    DIM3x3 a1
+    { 0,1,0,
+      0,1,0,
+      0,1,1};
+    DIM3x3 a2
+    { 0,0,0,
+      1,1,1,
+      1,0,0 };
+    DIM3x3 a3
+    { 1,1,0,
+      0,1,0,
+      0,1,0 };
+    DIM3x3 a4
+    { 0,0,1,
+      1,1,1,
+      0,0,0 };
+
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
+
+    dim=3;
+  }
 
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ElxModel : public BModel {
-protected:
+class CC_DLL ElxModel : public BModel<DIM3x3> {
+public:
 
-  s_arr<DIM3X3, 4> layout {
+  virtual ~ElxModel() {}
+
+  ElxModel() {
+
+    DIM3x3 a1 {
       0,1,0,
       0,1,0,
-      1,1,0,
-
+      1,1,0
+    };
+    DIM3x3 a2 {
       1,0,0,
       1,1,1,
-      0,0,0,
-
+      0,0,0
+    };
+    DIM3x3 a3 {
       0,1,1,
       0,1,0,
-      0,1,0,
-
+      0,1,0
+    };
+    DIM3x3 a4 {
       0,0,0,
       1,1,1,
       0,0,1
-  };
+    };
 
-public:
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
 
-  virtual void * getLayout(int pos) { return &layout[pos]; }
-  virtual ~ElxModel() {}
+    dim=3;
+  }
 
-  ElxModel() { dim=3; }
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL LineModel : public BModel {
-protected:
+class CC_DLL LineModel : public BModel<DIM4x4> {
+public:
 
-  s_arr<DIM4x4, 4> layout {
+  virtual ~LineModel() {}
+  LineModel() {
+
+    DIM4x4 a1 {
       0,0,0,0,
       1,1,1,1,
       0,0,0,0,
-      0,0,0,0,
-
+      0,0,0,0
+    };
+    DIM4x4 a2 {
       0,0,1,0,
       0,0,1,0,
       0,0,1,0,
-      0,0,1,0,
-
+      0,0,1,0
+    };
+    DIM4x4 a3 {
       0,0,0,0,
       0,0,0,0,
       1,1,1,1,
-      0,0,0,0,
-
+      0,0,0,0
+    };
+    DIM4x4 a4 {
       0,1,0,0,
       0,1,0,0,
       0,1,0,0,
       0,1,0,0
-  };
+    };
 
-public:
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
 
-  virtual void * getLayout(int pos) { return &layout[pos]; }
-  virtual ~LineModel() {}
-  LineModel() { dim=4; }
+    dim=4;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NubModel : public BModel {
-protected:
+class CC_DLL NubModel : public BModel<DIM3x3> {
+public:
 
-  s_arr<DIM3x3, 4> layout {
+  virtual ~NubModel() {}
+  NubModel() {
+
+    DIM3x3 a1= {
       0,0,0,
       0,1,0,
-      1,1,1 ,
-
+      1,1,1
+    };
+    DIM3x3 a2 {
       1,0,0,
       1,1,0,
-      1,0,0 ,
-
+      1,0,0
+    };
+    DIM3x3 a3 {
       1,1,1,
       0,1,0,
-      0,0,0 ,
-
+      0,0,0
+    };
+    DIM3x3 a4 {
       0,0,1,
       0,1,1,
       0,0,1
-  };
+    };
 
-public:
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
 
-  virtual void * getLayout(int pos) { return &layout[pos]; }
-  virtual ~NubModel() {}
-  NubModel() { dim=3; }
+    dim=3;
+  }
 
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL StModel : public BModel {
-protected:
+class CC_DLL StModel : public BModel<DIM3x3> {
+public:
 
-  s_arr<DIM3x3, 4> layout {
+  virtual ~StModel() {}
+  StModel() {
+    DIM3x3 a1 {
       0,1,0,
       0,1,1,
-      0,0,1 ,
-
+      0,0,1
+    };
+    DIM3x3 a2 {
       0,0,0,
       0,1,1,
-      1,1,0 ,
-
+      1,1,0
+    };
+    DIM3x3 a3 {
       1,0,0,
       1,1,0,
-      0,1,0 ,
-
+      0,1,0
+    };
+    DIM3x3 a4 {
       0,1,1,
       1,1,0,
       0,0,0
-  };
+    };
 
-public:
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
 
-  virtual void * getLayout(int pos) { return &layout[pos]; }
-  virtual ~StModel() {}
-  StModel() { dim=3; }
+    dim=3;
+  }
 
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL StxModel : public BModel {
-protected:
+class CC_DLL StxModel : public BModel<DIM3x3> {
+public:
 
-  s_arr<DIM3x3, 4> layout  {
+  virtual ~StxModel() {}
+  StxModel() {
+    DIM3x3 a1{
       0,1,0,
       1,1,0,
-      1,0,0 ,
-
+      1,0,0
+    };
+    DIM3x3 a2 {
       1,1,0,
       0,1,1,
-      0,0,0 ,
-
+      0,0,0
+    };
+    DIM3x3 a3 {
       0,0,1,
       0,1,1,
-      0,1,0 ,
-
+      0,1,0
+    };
+    DIM3x3 a4 {
       0,0,0,
       1,1,0,
       0,1,1
-  };
+    };
 
-public:
+    layout.push_back(a1);
+    layout.push_back(a2);
+    layout.push_back(a3);
+    layout.push_back(a4);
 
-  virtual void * getLayout(int pos) { return &layout[pos]; }
-  virtual ~StxModel() {}
-  StxModel() { dim=3; }
-
-};
-
-//////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL Brick : public c::Sprite {
-
-  void blink() {
-    this->setSpriteFrame( cx::getSpriteFrame(frame1));
+    dim=3;
   }
 
-  void show() {
-    this->setSpriteFrame( cx::getSpriteFrame(frame0));
-  }
-
-  void dispose() {
-    this->setVisible(false);
-    this->removeFromParent();
-  }
-
-  static Brick * reify(const c::Vec2& pos, const sstr& f0) {
-    Brick * b = mc_new(Brick);
-    if (NNP(sprite) &&
-        b->init()) {
-      b->setAnchorPoint(cx::anchorTL());
-      b->startPos = pos;
-      b->frame0=fo;
-      b->setPosition(pos.x, pos.y);
-      b->autorelease();
-      b->show();
-      return b;
-    }
-    CC_SAFE_DELETE(b);
-    return nullptr;
-  }
-
-  virtual ~Brick() {}
-  Brick() {}
-
-  sstr frame1= "0.png";
-  sstr frame0;
-  c::Vec2 startPos;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -339,13 +390,13 @@ class CC_DLL Brick : public c::Sprite {
 class CC_DLL Dropper {
   float dropSpeed = CC_CSV(c::Float, "DROPSPEED");
   float dropRate= 80 + 700.0f/1.0f ;
-  c::DelayTime* timer=nullptr;
+  c::DelayTime *timer=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL FilledLines {
-  s_vec<> lines;
+  s_vec<int> lines;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -361,14 +412,14 @@ class CC_DLL Motion {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Pauser {
-  c::DelayTime* timer=nullptr;
+  c::DelayTime *timer=nullptr;
   bool pauseToClear=false;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL TileGrid {
-  s_vec<> tiles;
+  s_vec<FArrBrick*> tiles;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -382,12 +433,6 @@ s_arr<BModel*,7> ListOfModels = {
   mc_new(StxModel),
   mc_new(ElxModel)
 };
-
-//////////////////////////////////////////////////////////////////////////
-//
-typedef f::FArray<Brick> FArrBrick;
-
-
 
 
 

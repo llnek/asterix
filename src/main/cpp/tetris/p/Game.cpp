@@ -9,8 +9,18 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "s/Stage.h"
+#include "s/Generate.h"
+#include "s/Clear.h"
+#include "s/Motion.h"
+#include "s/Move.h"
+#include "s/Resolve.h"
+#include "s/utils.h"
 #include "Game.h"
+#include "Menu.h"
+#include "HUD.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -51,6 +61,28 @@ void GLayer::decorate() {
   regoAtlas("game-pics");
   regoAtlas("lang-pics");
 
+  auto e= mc_new(a::Engine);
+  auto d= CC_DICT();
+  auto f= mc_new_2(EFactory, e, d);
+
+  f->createArena();
+
+  e->regoSystem(mc_new_2(Stage, f, d));
+  e->regoSystem(mc_new_2(Generate, f, d));
+  e->regoSystem(mc_new_2(Clear, f, d));
+  e->regoSystem(mc_new_2(Motions, f, d));
+  e->regoSystem(mc_new_2(Move, f, d));
+  e->regoSystem(mc_new_2(Resolve, f, d));
+  e->forceSync();
+
+  this->options= d;
+  CC_KEEP(d)
+  this->fac= f;
+  this->engine=e;
+
+  scheduleUpdate();
+
+  enableListeners();
   getHUD()->reset();
 }
 
@@ -63,9 +95,9 @@ void GLayer::endGame() {
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
-  GLayer* y = (GLayer*) getLayer(2);
-  j::json* json= (j::json*) msg;
+void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
+  GLayer *y = (GLayer*) getLayer(2);
+  j::json *json= (j::json*) msg;
 
   if ("/hud/end" == topic) {
     y->endGame();
@@ -79,6 +111,18 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
   if ("/hud/showmenu" == topic) {
     y->showMenu();
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const f::Box4 Game::getEnclosureBox() {
+  return  cx::visBox();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+f::GameLayer* Game::getGLayer() {
+  return (f::GameLayer*) getLayer(2);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -129,7 +129,7 @@ int ComObj::pid() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::init(c::Sprite* sprite, int health, int score) {
+void ComObj::init(c::Sprite *sprite, int health, int score) {
   this->origHealth = health;
   this->sprite = sprite;
   this->health = health;

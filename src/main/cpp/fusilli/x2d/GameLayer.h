@@ -28,9 +28,9 @@ protected:
   void disableListeners();
   void enableListeners();
 
-  c::EventListenerMouse* _mouseListener=nullptr;
-  c::Dictionary* options=nullptr;
-  a::Engine* engine=nullptr;
+  c::EventListenerMouse *_mouseListener=nullptr;
+  c::Dictionary *options=nullptr;
+  a::Engine *engine=nullptr;
   bool _mouseEnabled=false;
   s_arr<bool, 256> keys;
 
@@ -48,9 +48,10 @@ public:
   void setMouseEnabled(bool);
   bool keyPoll(KEYCODE);
 
-  NOCPYASS(GameLayer)
-  DECLCZ(GameLayer)
+  virtual ~GameLayer();
+  GameLayer();
 
+  NOCPYASS(GameLayer)
 };
 
 

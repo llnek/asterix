@@ -27,9 +27,9 @@ j::json evtToDoc(not_null<OdinEvent*> evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> mkPlayRequest(const sstr& game,
-    const sstr& user,
-    const sstr& pwd) {
+owner<OdinEvent*> mkPlayRequest(const sstr &game,
+    const sstr &user,
+    const sstr &pwd) {
 
   auto a=  j::json::array_t { game, user, pwd };
   auto p= j::json(a);
@@ -38,9 +38,9 @@ owner<OdinEvent*> mkPlayRequest(const sstr& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> mkJoinRequest (const sstr& room,
-    const sstr& user,
-    const sstr& pwd) {
+owner<OdinEvent*> mkJoinRequest(const sstr &room,
+    const sstr &user,
+    const sstr &pwd) {
 
   auto a=  j::json::array_t { room, user, pwd };
   auto p= j::json(a);
@@ -55,7 +55,7 @@ owner<OdinEvent*> getPlayRequest(not_null<OdinIO*> wss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> json_decode(const n::WebSocket::Data& e) {
+owner<OdinEvent*> json_decode(const n::WebSocket::Data &e) {
 
   OdinEvent* evt= new OdinEvent();
   assert(!e.isBinary);
@@ -85,8 +85,8 @@ OdinIO::~OdinIO() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinIO*> reifyPlayRequest(const sstr& game,
-    const sstr& user, const sstr& pwd) {
+owner<OdinIO*> reifyPlayRequest(const sstr &game,
+    const sstr &user, const sstr &pwd) {
   auto w= mc_new( OdinIO);
   w->game= game;
   w->user= user;
@@ -96,8 +96,8 @@ owner<OdinIO*> reifyPlayRequest(const sstr& game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinIO*> reifyJoinRequest(const sstr& room,
-    const sstr& user, const sstr& pwd) {
+owner<OdinIO*> reifyJoinRequest(const sstr &room,
+    const sstr &user, const sstr &pwd) {
   auto w= mc_new( OdinIO);
   w->room= room;
   w->user= user;
@@ -174,7 +174,7 @@ void OdinIO::reset() {
 //////////////////////////////////////////////////////////////////////////////
 // Close the connection to the socket
 //
-void close(OdinIO* wss) {
+void close(OdinIO *wss) {
   if (ENP(wss)) { return; }
   try {
     wss->cancelAll();
@@ -188,13 +188,13 @@ void close(OdinIO* wss) {
 //////////////////////////////////////////////////////////////////////////////
 // Disconnect from the socket
 //
-void disconnect(OdinIO* wss) {
+void disconnect(OdinIO *wss) {
   close(wss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OdinIO::onOpen(n::WebSocket* ws) {
+void OdinIO::onOpen(n::WebSocket *ws) {
   // connection success
   // send the play game request
   state= CType::S_CONNECTED;
@@ -206,9 +206,10 @@ void OdinIO::onOpen(n::WebSocket* ws) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OdinIO::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
+void OdinIO::onMessage(n::WebSocket *ws, const n::WebSocket::Data &data) {
   auto evt= json_decode(data);
-  c::RefPtr<OdinEvent> ref(evt);
+  c::RefPtr<OdinEvent>
+  ref(evt);
   switch (evt->type) {
     case MType::NETWORK:
     case MType::SESSION:
@@ -221,19 +222,19 @@ void OdinIO::onMessage(n::WebSocket* ws, const n::WebSocket::Data& data) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OdinIO::onClose(n::WebSocket* ws) {
+void OdinIO::onClose(n::WebSocket *ws) {
   CCLOG("websocket instance (%p) closed", ws);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OdinIO::onError(n::WebSocket* ws, const n::WebSocket::ErrorCode& error) {
+void OdinIO::onError(n::WebSocket *ws, const n::WebSocket::ErrorCode &error) {
   CCLOG("websocket instance (%p) has error, code: %d", ws, (int) error);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void OdinIO::onEvent(OdinEvent* evt) {
+void OdinIO::onEvent(OdinEvent *evt) {
   switch (evt->type) {
     case MType::NETWORK:
       if (NNP(cbNetwork)) { cbNetwork(evt); }
@@ -249,7 +250,7 @@ void OdinIO::onEvent(OdinEvent* evt) {
 //////////////////////////////////////////////////////////////////////////////
 // Connect to this url and request a websocket upgrade
 //
-n::WebSocket* connect(not_null<OdinIO*> wss, const sstr& url) {
+n::WebSocket* connect(not_null<OdinIO*> wss, const sstr &url) {
   auto ws= new n::WebSocket();
   if (!ws->init(*wss, url)) {
     mc_del_ptr(ws);

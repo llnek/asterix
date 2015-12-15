@@ -24,7 +24,7 @@ NodeList::~NodeList() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList::NodeList(const NodeType& t) {
+NodeList::NodeList(const NodeType &t) {
   this->nType = t;
 }
 
@@ -92,8 +92,8 @@ bool NodeList::isEmpty() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NodeList::removeEntity(not_null<Entity*> e) {
-  Node* n = head;
-  Node* c;
+  Node *n = head;
+  Node *c;
   while (NNP(n)) {
     if (n->belongsTo(e)) {
       c= n->next;

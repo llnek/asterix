@@ -25,7 +25,7 @@ owner<Config*> Config::reify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Scene* Config::startWith() {
+c::Scene* Config::prelude() {
   return Splash::reify();
 }
 
@@ -67,7 +67,7 @@ void Config::initAssets() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size& rs) {
+void Config::handleResolution(const c::Size &rs) {
   //for default font, we use 48pt
   scale = 12.0f/72.0f * rs.width /480.0f;
 }

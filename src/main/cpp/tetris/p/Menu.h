@@ -26,14 +26,14 @@ struct CC_DLL MContext : public f::SContext {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainMenu : public f::XScene {
+class CC_DLL MMenu : public f::XScene {
 public:
 
-  STATIC_REIFY_SCENE_CTX(MainMenu)
-  NOCPYASS(MainMenu)
+  STATIC_REIFY_SCENE_CTX(MMenu)
+  NOCPYASS(MMenu)
 
-  virtual ~MainMenu() {}
-  MainMenu() {}
+  virtual ~MMenu() {}
+  MMenu() {}
 
   virtual void decorate();
 };

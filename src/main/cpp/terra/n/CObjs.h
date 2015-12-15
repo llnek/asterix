@@ -13,8 +13,8 @@
 #define __COBJS_H__
 
 #include "core/XConfig.h"
-#include "core/CCSX.h"
 #include "core/ComObj.h"
+#include "core/CCSX.h"
 #include "s/utils.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)

@@ -9,7 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Splash.h"
+#include "Menu.h"
+
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 
@@ -18,11 +23,13 @@ BEGIN_NS_UNAMED()
 //
 class CC_DLL UILayer : public f::XLayer {
 protected:
-
+  void onPlay(c::Ref*);
 public:
-
   STATIC_REIFY_LAYER(UILayer)
   virtual void decorate();
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,12 +43,11 @@ void UILayer::decorate() {
 
   centerImage("game.bg");
 
-  b->setPosition(cw.x, wb.top * 0.1);
+  b->setPosition(cw.x, wb.top * 0.1f);
   b->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay));
 
   addItem(menu);
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,9 +55,9 @@ void UILayer::decorate() {
 void UILayer::onPlay(c::Ref*) {
   auto f= [=]() {
     cx::runScene(
-        XCFG()->startWith());
+        XCFG()->prelude());
   };
-  auto m= MainMenu::reify(mc_new_1(MContext, f));
+  auto m= MMenu::reify(mc_new_1(MContext, f));
   cx::runScene(m);
 }
 

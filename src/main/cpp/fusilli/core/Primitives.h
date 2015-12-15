@@ -58,21 +58,21 @@ private:
   T value;
 public:
   explicit Maybe(T t) { value=t; isset=true; }
-  Maybe<T>& operator=(const Maybe<T>& arg) {
+  Maybe<T>& operator=(const Maybe<T> &arg) {
     value=arg.value;
     isset=arg.isset;
     return *this;
   }
-  Maybe(const Maybe<T>& arg) {
+  Maybe(const Maybe<T> &arg) {
     value=arg.value;
     isset=arg.isset;
   }
-  Maybe<T>& operator=(Maybe<T>&& arg) {
+  Maybe<T>& operator=(Maybe<T> &&arg) {
     value=arg.value;
     isset=arg.isset;
     return *this;
   }
-  Maybe(Maybe<T>&& arg) {
+  Maybe(Maybe<T> &&arg) {
     value=arg.value;
     isset=arg.isset;
   }
@@ -88,7 +88,7 @@ typedef Maybe<int> MaybeInt;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* dictVal(not_null<c::Dictionary*> d, const sstr& key) {
+template<typename T> T* dictVal(not_null<c::Dictionary*> d, const sstr &key) {
   auto v= d->objectForKey(key);
   if (NNP(v)) {
     return static_cast<T*>(v);
@@ -100,7 +100,7 @@ template<typename T> T* dictVal(not_null<c::Dictionary*> d, const sstr& key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T> T* reifyRefType() {
-  T* p = mc_new(T) ;
+  T *p = mc_new(T) ;
   if (NNP(p) && p->init()) {
     p->autorelease();
   } else {
@@ -111,7 +111,7 @@ template<typename T> T* reifyRefType() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> void emptyQueue(s_que<T>& q) {
+template<typename T> void emptyQueue(s_que<T> &q) {
   while (! q.empty()) {
     q.pop();
   }
@@ -125,13 +125,13 @@ struct CC_DLL Box4 {
   {}
   ~Box4() {}
   Box4() {}
-  Box4(const Box4& b) {
+  Box4(const Box4 &b) {
     top=b.top;
     right=b.right;
     bottom=b.bottom;
     left=b.left;
   }
-  Box4& operator=(const Box4& b) {
+  Box4& operator=(const Box4 &b) {
     top=b.top;
     right=b.right;
     bottom=b.bottom;
@@ -150,7 +150,7 @@ class CC_DLL Val2 : public c::Ref, public c::Clonable {
 public:
 
   static Val2* create(float x, float y) {
-    Val2* pRet = new Val2(x,y);
+    Val2 *pRet = new Val2(x,y);
     pRet->autorelease();
     return pRet;
   }
@@ -182,7 +182,7 @@ class CC_DLL Size2 : public c::Ref, public c::Clonable {
 public:
 
   static Size2* create(float w, float h) {
-    Size2* pRet = new Size2(w,h);
+    Size2 *pRet = new Size2(w,h);
     pRet->autorelease();
     return pRet;
   }
@@ -214,18 +214,18 @@ class CC_DLL JsonObj : public c::Ref, public c::Clonable {
 public:
 
   static JsonObj* create(const j::json& c) {
-    JsonObj* pRet = new JsonObj(c);
+    JsonObj *pRet = new JsonObj(c);
     pRet->autorelease();
     return pRet;
   }
 
   static JsonObj* create() {
-    JsonObj* pRet = new JsonObj();
+    JsonObj *pRet = new JsonObj();
     pRet->autorelease();
     return pRet;
   }
 
-  JsonObj(const j::json& c)
+  JsonObj(const j::json &c)
   : _obj(c)
   {}
 
@@ -256,12 +256,12 @@ class CC_DLL C3B : public c::Ref, public c::Clonable {
 public:
 
   static C3B* create(const c::Color3B& c) {
-    C3B* pRet = new C3B(c);
+    C3B *pRet = new C3B(c);
     pRet->autorelease();
     return pRet;
   }
 
-  C3B(const c::Color3B& c)
+  C3B(const c::Color3B &c)
   : _c(c)
   {}
 
@@ -286,13 +286,13 @@ private:
 class CC_DLL C4B : public c::Ref, public c::Clonable {
 public:
 
-  static C4B* create(const c::Color4B& c) {
-    C4B* pRet = new C4B(c);
+  static C4B* create(const c::Color4B &c) {
+    C4B *pRet = new C4B(c);
     pRet->autorelease();
     return pRet;
   }
 
-  C4B(const c::Color4B& c)
+  C4B(const c::Color4B &c)
   : _c(c)
   {}
 

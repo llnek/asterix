@@ -25,34 +25,34 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  c::Dictionary* readXmlAsDict(const sstr& fpath);
-  c::Array* readXmlAsList(const sstr& fpath);
+  c::Dictionary* readXmlAsDict(const sstr &fpath);
+  c::Array* readXmlAsList(const sstr &fpath);
 
-  void reifyAudioIcons(c::MenuItem*& off, c::MenuItem*& on);
+  void reifyAudioIcons(c::MenuItem *&off, c::MenuItem *&on);
   void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
-  const c::Color3B colorRGB(const sstr& hexcolor);
+  const c::Color3B colorRGB(const sstr &hexcolor);
 
-  void sfxMusic(const sstr& music, bool repeat);
-  void sfxPlay(const sstr& sound);
+  void sfxMusic(const sstr &music, bool repeat);
+  void sfxPlay(const sstr &sound);
 
   void resumeAudio();
   void pauseAudio();
 
   bool isDesktop();
 
-  c::MenuItem* reifyMenuBtn(const sstr& n);
+  c::MenuItem* reifyMenuBtn(const sstr &n);
 
   c::MenuItem* reifyMenuBtn(
-      const sstr& n,
-      const sstr& s, const sstr& d);
+      const sstr &n,
+      const sstr &s, const sstr &d);
 
   c::Menu* mkMenu(c::MenuItem*);
 
-  c::Menu* mkMenu(const s_vec<c::MenuItem*>& items,
+  c::Menu* mkMenu(const s_vec<c::MenuItem*> &items,
       bool vert = false, float padding= 10.0f);
 
-  bool pointInBox(const Box4& box, float x,  float y);
+  bool pointInBox(const Box4 &box, float x,  float y);
   const c::Color3B white();
   const c::Color3B black();
 
@@ -62,24 +62,24 @@ namespace ccsx {
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
-    bool pointInBox(const Box4& box, const c::Vec2& pos);
+    bool pointInBox(const Box4 &box, const c::Vec2 &pos);
 
   bool isPortrait();
 
-  bool outOfBound(not_null<ComObj*>, const Box4& B);
-  bool outOfBound(const Box4& src, const Box4& B);
+  bool outOfBound(not_null<ComObj*>, const Box4 &B);
+  bool outOfBound(const Box4 &src, const Box4 &B);
 
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
   void undoTimer(not_null<c::DelayTime*>);
   bool timerDone(not_null<c::DelayTime*>);
 
-  c::Label* reifyBmfLabel(const sstr& font, const sstr& text);
+  c::Label* reifyBmfLabel(const sstr &font, const sstr &text);
 
   c::Label* reifyBmfLabel(float x, float y,
-    const sstr& font,
-    const sstr& text);
+    const sstr &font,
+    const sstr &text);
 
-  c::Sprite* reifySprite(const sstr& frameName);
+  c::Sprite* reifySprite(const sstr &frameName);
 
   const Box4 bbox4B4(not_null<ComObj*>);
   const Box4 bbox4(not_null<c::Node*>);
@@ -87,11 +87,11 @@ namespace ccsx {
   void runScene(not_null<c::Scene*>, float delay);
   void runScene(not_null<c::Scene*>);
 
-  const c::Size scaleSize(const c::Size& z, float scale);
+  const c::Size scaleSize(const c::Size &z, float scale);
 
   bool isTransitioning();
 
-  const c::Size calcSize(const sstr& frame);
+  const c::Size calcSize(const sstr &frame);
 
   const c::Size halfHW(not_null<c::Node*>);
 
@@ -127,17 +127,17 @@ namespace ccsx {
   const c::Vec2 scenter();
   const c::Size screen();
 
-  bool traceEnclosure(float dt, const Box4& bbox,
-      const c::Rect& rect, const c::Vec2& vel,
-      c::Vec2& outPos, c::Vec2& outVel);
+  bool traceEnclosure(float dt, const Box4 &bbox,
+      const c::Rect &rect, const c::Vec2 &vel,
+      c::Vec2 &outPos, c::Vec2 &outVel);
 
-  void mergeDict(c::Dictionary* src, c::Dictionary* d2);
+  void mergeDict(c::Dictionary *src, c::Dictionary *d2);
 
   /**
    * Get the sprite from the frame cache using
    * its id (e.g. ship.png)
    */
-  c::SpriteFrame* getSpriteFrame(const sstr& frameid);
+  c::SpriteFrame* getSpriteFrame(const sstr &frameid);
 
   const c::Vec2 anchorC();
   const c::Vec2 anchorTL();
@@ -149,7 +149,7 @@ namespace ccsx {
   const c::Vec2 anchorB();
   const c::Vec2 anchorBL();
 
-  const c::Vec2 clamp(const c::Vec2& cur, const Box4&);
+  const c::Vec2 clamp(const c::Vec2 &cur, const Box4&);
 
   float randFloat(float upper);
   int randInt(int upper);

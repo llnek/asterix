@@ -49,7 +49,7 @@ bool System::update(float time) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool System::isa(const SystemType& type) {
+bool System::isa(const SystemType &type) {
   return type == typeId();
 }
 

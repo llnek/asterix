@@ -45,9 +45,8 @@ public:
   NOCPYASS(System)
   NODFT(System)
 
-  System* previous=nullptr;
-  System* next=nullptr;
-
+  System *previous=nullptr;
+  System *next=nullptr;
 };
 
 

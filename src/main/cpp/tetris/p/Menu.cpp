@@ -20,6 +20,10 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL UILayer : public f::XLayer {
+protected:
+
+  void onQuit(c::Ref*);
+
 public:
 
   STATIC_REIFY_LAYER(UILayer)
@@ -36,10 +40,10 @@ void UILayer::decorate() {
 
   auto tt= cx::reifyBmfLabel("font.JellyBelly",
       XCFG()->getL10NStr("mmenu"));
+  c::Color3B c(246,177,127);
   auto tile = MGMS()->TILE;
   auto cw= cx::center();
   auto wb= cx::visBox();
-  c::Color3B c(246,177,127);
 
   centerImage("gui.mmenu.menu.bg");
 
@@ -59,6 +63,7 @@ void UILayer::decorate() {
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
+  auto ctx= (MContext*) MGMS()->getCtx();
   auto sz= back->getContentSize();
   back->setCallback([=](c::Ref*) { ctx->back(); });
   back->setColor(c);
@@ -88,10 +93,16 @@ void UILayer::decorate() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onQuit(c::Ref*) {
+  cx::runScene(XCFG()->prelude());
+}
+
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::decorate() {
+void MMenu::decorate() {
   UILayer::reify(this);
 }
 

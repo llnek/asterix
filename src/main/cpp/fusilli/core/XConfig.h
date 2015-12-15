@@ -24,19 +24,19 @@ NS_BEGIN(fusii)
 class CC_DLL XConfig {
 protected:
 
-  void addXXX(const sstr& frag, const sstr& key, c::Ref*);
+  void addXXX(const sstr &frag, const sstr &key, c::Ref*);
   c::Dictionary* getFragment(const sstr&);
 
-  void addAtlas(const sstr& key, c::Ref*);
-  void addFont(const sstr& key, c::Ref*);
-  void addTile(const sstr& key, c::Ref*);
-  void addImage(const sstr& key, c::Ref*);
-  void addEffect(const sstr& key, c::Ref*);
-  void addMusic(const sstr& key, c::Ref*);
-  void addCst(const sstr& key, c::Ref*);
+  void addAtlas(const sstr& , c::Ref*);
+  void addFont(const sstr& , c::Ref*);
+  void addTile(const sstr& , c::Ref*);
+  void addImage(const sstr& , c::Ref*);
+  void addEffect(const sstr& , c::Ref*);
+  void addMusic(const sstr& , c::Ref*);
+  void addCst(const sstr& , c::Ref*);
 
-  c::Dictionary* frags=nullptr;
-  c::Dictionary* l10n=nullptr;
+  c::Dictionary *frags=nullptr;
+  c::Dictionary *l10n=nullptr;
 
   float lastMusicVol=0.5f;
   float lastSfxVol=0.5f;
@@ -68,7 +68,7 @@ public:
   virtual const sstr color() = 0;
   virtual const c::Size gameSize() = 0;
 
-  virtual c::Scene* startWith() = 0;
+  virtual c::Scene* prelude() = 0;
   virtual const sstr getWSUrl() = 0;
 
   virtual void setGameId(const sstr& ) = 0;
@@ -76,19 +76,18 @@ public:
   virtual const sstr getGameId() = 0;
   virtual const sstr getRoomId() = 0;
 
-  const filepath getAtlas(const sstr& key);
-  const filepath getFont(const sstr& key);
-  const filepath getTile(const sstr& key);
-  const filepath getImage(const sstr& key);
+  const filepath getAtlas(const sstr& );
+  const filepath getFont(const sstr& );
+  const filepath getTile(const sstr& );
+  const filepath getImage(const sstr& );
 
-  const filepath getEffect(const sstr& key);
-  const filepath getMusic(const sstr& key);
+  const filepath getEffect(const sstr& );
+  const filepath getMusic(const sstr& );
 
-  const sstr getL10NStr(const sstr& key,
-      const s::vector<sstr>& pms);
-  const sstr getL10NStr(const sstr& key);
+  const sstr getL10NStr(const sstr& , const s_vec<sstr>& );
+  const sstr getL10NStr(const sstr& );
 
-  c::Ref* getCst(const sstr& cst);
+  c::Ref* getCst(const sstr& );
   int getBtnPadding();
 
   void toggleAudio(bool s);
@@ -100,23 +99,25 @@ public:
   float getMusicVolume();
   float getVolume();
 
-  c::Dictionary* getLevel(const sstr& n);
-  c::Dictionary* addLevel(const sstr& n);
-  f::JsonObj* getLevelCfg(const sstr& n);
+  c::Dictionary* getLevel(const sstr& );
+  c::Dictionary* addLevel(const sstr& );
+  f::JsonObj* getLevelCfg(const sstr& );
 
   const s_vec<filepath> getEffectFiles();
   const s_vec<filepath> getMusicFiles();
 
-  NOCPYASS(XConfig)
-  DECLCZ(XConfig)
+  virtual ~XConfig();
+  XConfig();
 
-  static void bind(not_null<XConfig*>);
+  NOCPYASS(XConfig)
+
   static XConfig* self();
+  static void bind(not_null<XConfig*>);
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* cstVal(const sstr& key) {
+template<typename T> T* cstVal(const sstr &key) {
   auto r= fusii::XConfig::self()->getCst(key);
   if (NNP(r)) {
     return static_cast<T*>( r);

@@ -45,7 +45,7 @@ Engine::Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities(const sstr& g) {
+const s_vec<Entity*> Engine::getEntities(const sstr &g) {
   auto it=groups.find(g);
   s_vec<Entity*> v;
   if (it != groups.end()) {
@@ -74,10 +74,10 @@ const s_vec<System*> Engine::getSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::reifyEntity(const sstr& g) {
+Entity* Engine::reifyEntity(const sstr &g) {
   auto e= mc_new_2(Entity,g, this);
   auto it= groups.find(g);
-  EList* el;
+  EList *el;
   if (it != groups.end()) {
     el= it->second;
   } else {
@@ -123,7 +123,7 @@ void Engine::purgeEntity(EList* el, Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::purgeEntities(const sstr& g) {
+void Engine::purgeEntities(const sstr &g) {
   auto it = groups.find(g);
   if (it != groups.end()) {
     auto el=it->second;
@@ -140,7 +140,7 @@ NodeList* Engine::getNodeList( const NodeType& nodeType) {
   auto rego = NodeRegistry::self();
   F__LOOP(it, groups) {
     auto el= it->second;
-    Node* n= nullptr;
+    Node *n= nullptr;
     for (auto e= el->head; NNP(e); e=e->next) {
       if (ENP(n)) {
         n= rego->reifyNode(nodeType);
@@ -194,7 +194,7 @@ void Engine::update(float time) {
 
 //////////////////////////////////////////////////////////////////////////////
 // get rid of nodes bound to this entity
-void Engine::onPurgeEntity(Entity* e) {
+void Engine::onPurgeEntity(Entity *e) {
   F__LOOP(it, nodeLists) {
     auto nl= *it;
     nl->removeEntity(e);
@@ -203,7 +203,7 @@ void Engine::onPurgeEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 // sync existing nodes, add if necessary
-void Engine::onAddEntity(Entity* e) {
+void Engine::onAddEntity(Entity *e) {
   auto rego = NodeRegistry::self();
   F__LOOP(it, nodeLists) {
     auto nl= *it;
@@ -218,12 +218,12 @@ void Engine::onAddEntity(Entity* e) {
 
 //////////////////////////////////////////////////////////////////////////////
 // sync changes
-void Engine::onModifyEntity(Entity* e) {
+void Engine::onModifyEntity(Entity *e) {
   auto rego = NodeRegistry::self();
   F__LOOP(it, nodeLists) {
     auto nl = *it;
     auto t = nl->getType();
-    Node* n;
+    Node *n;
     if (nl->containsWithin(e)) {
       if (!nl->isCompatible(e)) {
         nl->removeEntity(e);

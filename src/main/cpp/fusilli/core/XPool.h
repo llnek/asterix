@@ -43,8 +43,10 @@ public:
   void checkin(not_null<ComObj*>);
   void reset();
 
+  virtual ~XPool();
+  XPool();
+
   NOCPYASS(XPool)
-  DECLCZ(XPool)
 };
 
 
