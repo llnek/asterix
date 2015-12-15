@@ -18,18 +18,30 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainMenu : public f::XScene {
-protected:
-  NOCPYASS(MainMenu)
+struct CC_DLL MCX : public f::SContext {
+  MCX(VOIDFN b) { back=b; }
+  NODFT(MCX)
+  virtual ~MCX() {}
+  VOIDFN back;
+};
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MMenu : public f::XScene {
 public:
 
-  static MainMenu* reifyWithBackAction(VOIDFN );
-  virtual f::XScene* realize();
-  VOIDFN backAction;
+  STATIC_REIFY_SCENE_CTX(MMenu)
 
-  DECLCZ(MainMenu)
+  virtual void decorate();
+
+  virtual ~MMenu() {}
+  MMenu() {}
+
+  NOCPYASS(MMenu)
 };
+
 
 
 NS_END(tttoe)
 #endif
+
+

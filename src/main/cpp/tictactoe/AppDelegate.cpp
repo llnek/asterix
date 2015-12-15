@@ -9,25 +9,24 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "ash/NodeRegistry.h"
+#include "ash/NodeRego.h"
 #include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-//#include "nlohmann/json.hpp"
-//NS_ALIAS(j, nlohmann)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
 
   // step.1: register all ash::node factories here
   auto r= ash::NodeRegistry::self();
-  auto c= tttoe::Config::reify();
 
   r->rego( mc_new(tttoe::BoardNode));
   r->rego( mc_new(tttoe::GUINode));
 
   // step.2: set up app-config
-  fusii::XConfig::bind(c);
+  tttoe::Config::reify();
+
 
 //    auto zz = j::json::object_t {
 //        { "x", j::json::object_t  {

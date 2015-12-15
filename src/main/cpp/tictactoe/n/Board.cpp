@@ -10,15 +10,18 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "base/ccRandom.h"
+#include "core/CCSX.h"
 #include "Board.h"
 #include "s/utils.h"
 #include <math.h>
+
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-bool not_any(const ArrCells& arr, int v) {
+bool not_any(const ArrCells &arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] == v) { return false; }
   }
@@ -27,25 +30,20 @@ bool not_any(const ArrCells& arr, int v) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool every(const ArrCells& arr, int v) {
+bool every(const ArrCells &arr, int v) {
   for (int i=0; i < arr.size(); ++i) {
     if (arr[i] != v) { return false; }
   }
   return arr.size() > 0;
 }
-END_NS_UNAMED()
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
 Board::Board(int nil, int p1v, int p2v) {
   this->actors = {nil, p1v, p2v};
   this->GOALS= mapGoalSpace();
   this->CV_Z= nil;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Board::~Board() {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,27 +65,22 @@ int Board::getFirstMove() {
     }
   }
 
-  if (virgo) {
-    return (int)
-      ::floor(c::RandomHelper::random_real<float>(0.0f, (float)sz));
-  } else {
-    return -1;
-  }
+  return virgo ? cx::randInt(sz) : -1;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Board::syncState(const ArrCells& seed, int actor) {
+void Board::syncState(const ArrCells &seed, int actor) {
   s::copy(s::begin(seed), s::end(seed), s::begin(grid));
   actors[0] = actor;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s::vector<int>
+const s_vec<int>
 Board::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 
-  s::vector<int> rc;
+  s_vec<int> rc;
 
   for (int pos= 0; pos < snap->state.size(); ++pos) {
     if (isNil(snap->state[pos])) {
@@ -130,19 +123,18 @@ int Board::getOtherPlayer(int pv) {
   if (pv == actors[1]) {
     return actors[2];
   }
-  else
+
   if (pv == actors[2]) {
     return actors[1];
   }
-  else {
-    return CV_Z;
-  }
+
+  return CV_Z;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
-    auto ff = new ag::FFrame<BD_SZ>();
+  auto ff = mc_new( ag::FFrame<BD_SZ> );
 
   s::copy(s::begin(grid), s::end(grid), s::begin(ff->state));
   ff->other= getOtherPlayer(actors[0]);
@@ -157,8 +149,7 @@ owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
 int Board::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
   F__LOOP(it, GOALS) {
-    auto& t = *it;
-    if (testWin(snap->state, snap->other, t)) {
+    if (testWin(snap->state, snap->other, *it)) {
       return -100;
     }
   }
@@ -188,7 +179,7 @@ bool Board::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim& combo) {
+int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 
   int win= -1;
   F__LOOP(it, GOALS) {
@@ -210,7 +201,9 @@ int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim& combo) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Board::testWin(const ArrCells& vs, int actor, const s::array<int,BD_SZ>& g) {
+bool Board::testWin(const ArrCells &vs,
+    int actor,
+    const s_arr<int,BD_SZ> &g) {
 
   int cnt=0;
   for (int n= 0; n < g.size(); ++n) {
@@ -221,8 +214,6 @@ bool Board::testWin(const ArrCells& vs, int actor, const s::array<int,BD_SZ>& g)
   }
   return cnt == g.size();
 }
-
-
 
 
 NS_END(tttoe)

@@ -20,35 +20,22 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-class FS_DLL Board : public ag::GameBoard<BD_SZ> {
+class CC_DLL Board : public ag::GameBoard<BD_SZ> {
 protected:
 
-  bool testWin(const ArrCells& , int actor, const ArrDim& combo);
+  bool testWin(const ArrCells& , int actor, const ArrDim&);
 
-  s::vector<ArrDim> GOALS;
-  s::array<int,3> actors;
+  s_vec<ArrDim> GOALS;
+  s_arr<int,3> actors;
   ArrCells grid;
   int CV_Z;
 
   NOCPYASS(Board)
-  Board() = delete;
+  NODFT(Board)
 
 public:
 
-  Board(int nil,  int p1v,  int p2v);
-  virtual ~Board();
-
-  int getOtherPlayer(int pv);
-  bool isNil(int cellv);
-  int getFirstMove();
-
-  int getWinner(not_null<ag::FFrame<BD_SZ>*>, ArrDim& combo);
-  void syncState(const ArrCells& seed, int actor);
-
-////
-//
-//
-  virtual const s::vector<int> getNextMoves(not_null<ag::FFrame<BD_SZ>*>);
+  virtual const s_vec<int> getNextMoves(not_null<ag::FFrame<BD_SZ>*>);
   virtual int evalScore(not_null<ag::FFrame<BD_SZ>*>);
 
   virtual bool isStalemate(not_null<ag::FFrame<BD_SZ>*>);
@@ -60,8 +47,20 @@ public:
   virtual void switchPlayer(not_null<ag::FFrame<BD_SZ>*>);
   virtual owner<ag::FFrame<BD_SZ>*> takeFFrame();
 
+  int getWinner(not_null<ag::FFrame<BD_SZ>*>, ArrDim &combo);
+  void syncState(const ArrCells &seed, int actor);
+
+  Board(int nil,  int p1v,  int p2v);
+  virtual ~Board() {}
+
+  int getOtherPlayer(int pv);
+  bool isNil(int cellv);
+  int getFirstMove();
+
 };
 
 
 NS_END(tttoe)
 #endif
+
+

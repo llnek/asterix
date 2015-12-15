@@ -12,17 +12,15 @@
 #if !defined(__COBJS_H__)
 #define __COBJS_H__
 
-#include "nlohmann/json.hpp"
 #include "core/CCSX.h"
 #include "core/Odin.h"
+#include "core/JSON.h"
 #include "ash/Ash.h"
 #include "s/utils.h"
 #include "Board.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
-NS_ALIAS(j, nlohmann)
-NS_ALIAS(f, fusii)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,9 +37,9 @@ public:
   virtual ~SmartAlgo() {}
 
   NOCPYASS(SmartAlgo)
-  SmartAlgo() = delete;
+  NODFT(SmartAlgo)
 
-  Board* board;
+  Board *board;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,7 +49,7 @@ public:
 
   virtual const a::COMType typeId() { return "n/Grid"; }
 
-  Grid(const ArrCells& seed) {
+  Grid(const ArrCells &seed) {
     s::copy(s::begin(seed),
         s::end(seed), s::begin(values));
     this->GOALS= mapGoalSpace();
@@ -60,9 +58,9 @@ public:
   virtual ~Grid() {}
 
   NOCPYASS(Grid);
-  Grid() = delete;
+  NODFT(Grid)
 
-  s::vector<ArrDim> GOALS;
+  s_vec<ArrDim> GOALS;
   ArrCells values;
 };
 
@@ -71,11 +69,12 @@ public:
 //
 class CC_DLL PlayView : public a::Component {
 public:
+
   virtual const a::COMType typeId() { return "n/PlayView"; }
 
   PlayView(not_null<f::XLayer*> layer) {
     this->size = cx::calcSize("z.png");
-      this->boxes= mapGridPos(1.0f);
+    this->boxes= mapGridPos(1.0f);
     this->cells.fill(nullptr);
     this->layer= layer;
   }
@@ -83,11 +82,11 @@ public:
   virtual ~PlayView() {}
 
   NOCPYASS(PlayView)
-  PlayView() = delete;
+  NODFT(PlayView)
 
-  s::array<c::Sprite*, GD_SZ> cells;
-  s::array<f::Box4, GD_SZ> boxes;
-  f::XLayer* layer;
+  s_arr<c::Sprite*, GD_SZ> cells;
+  s_arr<f::Box4, GD_SZ> boxes;
+  f::XLayer *layer;
   c::Size size;
 };
 
@@ -98,9 +97,9 @@ public:
 
   virtual const a::COMType typeId() { return "n/Player"; }
 
-    Player(int category, int value,
-      int id,
-      const sstr& color) {
+  Player(int category,
+      int value,
+      int id, const sstr &color) {
 
     this->offset = id == 1 ? 0 : 1;
     this->category= category;
@@ -111,7 +110,7 @@ public:
 
   virtual ~Player() {}
 
-  Player& operator=(const Player&  other) {
+  Player& operator=(const Player &other) {
     category = other.category;
     pidlong= other.pidlong;
     pid = other.pid;
@@ -122,7 +121,7 @@ public:
     return *this;
   }
 
-  Player(const Player& other) {
+  Player(const Player &other) {
     category = other.category;
     pidlong= other.pidlong;
     pid = other.pid;
@@ -162,7 +161,7 @@ public:
   Players() {
   }
 
-  s::array<Player,3> parr;
+  s_arr<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -12,7 +12,7 @@
 #if !defined(__GNODES_H__)
 #define __GNODES_H__
 
-#include "ash/NodeRegistry.h"
+#include "ash/NodeRego.h"
 #include "ash/Node.h"
 #include "CObjs.h"
 NS_BEGIN(tttoe)
@@ -26,14 +26,16 @@ public:
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<sstr> {
+        s_vec<sstr> {
           "selection", "players", "robot", "grid", "view" },
-        s::vector<a::COMType> {
+        s_vec<a::COMType> {
           "n/UISelection", "n/Players", "n/SmartAlgo", "n/Grid", "n/PlayView" });
   }
 
+  virtual ~BoardNode() {}
+  BoardNode() {}
+
   NOCPYASS(BoardNode)
-  IMPLCZ(BoardNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,13 +47,16 @@ public:
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode(
-        s::vector<sstr> { "selection", "view" },
-        s::vector<a::COMType> { "n/UISelection", "n/PlayView" });
+        s_vec<sstr> { "selection", "view" },
+        s_vec<a::COMType> { "n/UISelection", "n/PlayView" });
   }
 
+  virtual ~GUINode() {}
+  GUINode() {}
+
   NOCPYASS(GUINode)
-  IMPLCZ(GUINode)
 };
+
 
 
 NS_END(tttoe)

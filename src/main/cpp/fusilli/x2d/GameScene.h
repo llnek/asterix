@@ -32,13 +32,12 @@ enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GContext : public SContext {
-  virtual ~GContext() { mc_del_ptr(odin) }
-  GContext(GMode m) { mode=m; }
-  GContext() {}
+struct CC_DLL GCX : public SContext {
+  virtual ~GCX() { mc_del_ptr(odin) }
+  GCX(GMode m) { mode=m; }
+  GCX() {}
   ws::OdinIO *odin=nullptr;
   GMode mode=GMode::ONE;
-  NOCPYASS(GContext)
 };
 
 //////////////////////////////////////////////////////////////////////////////

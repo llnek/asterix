@@ -23,9 +23,9 @@ protected:
   void initAssets();
   void initCsts();
 
+  Config() {}
+
   NOCPYASS(Config)
-  Config();
-  float scale;
 
 public:
 
@@ -44,9 +44,9 @@ public:
     return c::Size(320,480);
   }
 
-  virtual void handleResolution(const c::Size& rs);
+  virtual void handleResolution(const c::Size &rs);
   virtual const sstr getWSUrl();
-  virtual c::Scene* startWith();
+  virtual c::Scene* prelude();
 
   virtual void setGameId(const sstr& );
   virtual void setRoomId(const sstr& );
@@ -58,7 +58,7 @@ public:
   virtual void runOnce();
   virtual ~Config() {}
 
-  static owner<f::XConfig*> reify();
+  static owner<Config*> reify();
 };
 
 

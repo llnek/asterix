@@ -10,10 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ui/UITextField.h"
-#include "nlohmann/json.hpp"
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "core/JSON.h"
 #include "NetPlay.h"
 #include "Game.h"
 #include "Menu.h"
@@ -32,34 +32,26 @@ public:
   void sessionEvent(ws::OdinEvent*);
   void odinEvent(ws::OdinEvent*);
 
-  void onCancel(c::Ref* );
-  void onLogin(c::Ref*);
-
   void onPlayReply(ws::OdinEvent*);
   void showWaitOthers();
   void onStart(ws::OdinEvent*);
 
-  virtual f::XLayer* realize();
-  ws::OdinIO* odin;
-  int player;
+  void onCancel(c::Ref* );
+  void onLogin(c::Ref*);
+
+  ws::OdinIO* odin=nullptr;
+  int player=0;
+
+  STATIC_REIFY_LAYER(UILayer)
+
+  virtual void decorate();
+  virtual ~UILayer() {
+    ws::disconnect(odin);
+  }
+  UILayer() {}
 
   NOCPYASS(UILayer)
-  DECLCZ(UILayer)
-
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-UILayer::~UILayer() {
-  ws::disconnect(odin);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-UILayer::UILayer() {
-  player=0;
-  SNPTR(odin);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -72,49 +64,45 @@ void UILayer::showWaitOthers() {
 
   removeAll();
 
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setOpacity(0.9*255);
+  qn->setScale(XCFG()->getScale() * 0.3f);
+  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setOpacity(0.9f * 255);
   addItem(qn);
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
   b1->setTarget(this, CC_MENU_SELECTOR(UILayer::onCancel));
-  menu->setPosition(cw.x, wb.top * 0.1);
+  menu->setPosition(cw.x, wb.top * 0.1f);
   addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onStart(ws::OdinEvent* evt) {
+void UILayer::onStart(ws::OdinEvent *evt) {
 
-  auto s= XCFG()->getSeedData();
-  auto mode = f::GMode::NET;
+  //auto p = s["ppids"] ; p = evt->doco["source"]["ppids"];
+  //p = s["pnum"]; p= j::json(player);
 
-    auto p = s["ppids"] ; p = evt->doco["source"]["ppids"];
-    p = s["pnum"]; p= j::json(player);
-
-  auto g = f::reifyRefType<Game>();
-  auto io= odin;
-
-  prepareSeedData(mode);
+  auto x = mc_new3(GCXX, f::GMode::NET, odin, evt->doco["source"]);
   SNPTR(odin)
-  cx::runScene( Game::reify(g, mode, io));
+  cx::runScene( Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onCancel(c::Ref* ) {
+void UILayer::onCancel(c::Ref*) {
+  auto f= [=]() { cx::runScene(XCFG()->prelude()); };
+  auto m = MMenu::reify(mc_new1(MCX, f));
+
   ws::disconnect(odin);
   SNPTR(odin)
-  auto f= [=]() { cx::runScene(XCFG()->startWith()); };
-  auto m = MainMenu::reifyWithBackAction(f);
+
   cx::runScene( m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlayReply(ws::OdinEvent* evt) {
+void UILayer::onPlayReply(ws::OdinEvent *evt) {
   player= evt->doco["pnum"].get<j::json::number_integer_t>();
   CCLOG("player %d: ok", player);
   showWaitOthers();
@@ -122,7 +110,7 @@ void UILayer::onPlayReply(ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::networkEvent(ws::OdinEvent* evt) {
+void UILayer::networkEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYER_JOINED:
       //TODO
@@ -135,9 +123,10 @@ void UILayer::networkEvent(ws::OdinEvent* evt) {
     break;
   }
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::sessionEvent(ws::OdinEvent* evt) {
+void UILayer::sessionEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
@@ -147,7 +136,7 @@ void UILayer::sessionEvent(ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::odinEvent(ws::OdinEvent* evt) {
+void UILayer::odinEvent(ws::OdinEvent *evt) {
   //CCLOG("odin event = %p", evt);
   switch (evt->type) {
     case ws::MType::NETWORK:
@@ -173,7 +162,7 @@ void UILayer::onLogin(c::Ref* ) {
 
   if (uid.length() > 0 && pwd.length() > 0) {
     odin= ws::reifyPlayRequest(game, uid, pwd);
-    odin->listen([=](ws::OdinEvent* e) {
+    odin->listen([=](ws::OdinEvent *e) {
         this->odinEvent(e);
         });
     ws::connect(odin, wsurl);
@@ -182,7 +171,7 @@ void UILayer::onLogin(c::Ref* ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realize() {
+void UILayer::decorate() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("signinplay"));
   auto wz= cx::visRect();

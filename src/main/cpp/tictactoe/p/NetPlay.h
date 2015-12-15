@@ -18,15 +18,29 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
+struct CC_DLL NPCX : public f::SContext {
+  NPCX(VOIDFN yes, VOIDFN no) {
+    this->yes=yes;
+    this->no=no;
+  }
+  NODFT(NPCX)
+  VOIDFN yes;
+  VOIDFN no;
+  virtual ~NPCX() {}
+};
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL NetPlay : public f::XScene {
 public:
 
-  virtual f::XScene* realize();
-  NOCPYASS(NetPlay)
-  DECLCZ(NetPlay)
+  STATIC_REIFY_SCENE_CTX(NetPlay)
 
+  virtual void decorate();
+
+  virtual ~NetPlay();
+  NetPlay();
+
+  NOCPYASS(NetPlay)
 };
 
 

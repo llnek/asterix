@@ -24,12 +24,6 @@ owner<f::XConfig*> Config::reify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Config::Config() {
-  scale = 1.0f;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Config::initCsts() {
   addCst("PLAYER_THINK_TIME", CC_INT(7));
   addCst("CV_Z", CC_INT(0));
@@ -69,7 +63,7 @@ void Config::initAssets() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size& rs) {
+void Config::handleResolution(const c::Size &rs) {
   //for default font, we use 48pt
   scale = 52.0f/256.0f * rs.width /320.0f;
 }
@@ -106,27 +100,22 @@ const sstr getRoomId() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::setGameId(const sstr& s) {
+void Config::setGameId(const sstr &s) {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::setRoomId(const sstr& s) {
+void Config::setRoomId(const sstr &s) {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Scene* Config::startWith() {
+c::Scene* Config::prelude() {
   return Splash::reify();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-float Config::getScale() {
-  return scale;
-}
 
 NS_END(tttoe)
 
