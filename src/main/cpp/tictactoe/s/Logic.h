@@ -28,11 +28,6 @@ protected:
   void enqueue(a::Node*, int pos, int value, Grid*);
   void doIt(a::Node*, float);
 
-  virtual bool onUpdate(float);
-
-  NOCPYASS(Logic)
-  Logic() = delete;
-
 public:
 
   virtual const a::SystemType typeId() { return "n/Logic"; }
@@ -43,10 +38,15 @@ public:
 
   virtual int priority() { return a::Logic; }
 
+  virtual bool update(float);
+
   virtual ~Logic() {}
 
-  c::DelayTime* botTimer;
-  a::NodeList* board;
+  NOCPYASS(Logic)
+  NODFT(Logic)
+
+  c::DelayTime *botTimer=nullptr;
+  a::NodeList *board=nullptr;
 };
 
 

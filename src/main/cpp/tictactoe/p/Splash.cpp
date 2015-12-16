@@ -64,7 +64,7 @@ void UILayer::demo() {
 //
 void UILayer::onPlay(c::Ref*) {
   auto f= [=]() { cx::runScene(XCFG()->prelude()); };
-  auto m = MMenu::reify(mc_new_1(MContext, f));
+  auto m = MMenu::reify(mc_new_1(MCX, f));
   cx::runScene( m);
 }
 

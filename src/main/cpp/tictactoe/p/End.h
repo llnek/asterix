@@ -18,17 +18,17 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL EndGame : public f::XScene {
-protected:
-
-  NOCPYASS(EndGame)
-  f::GMode mode;
 
 public:
 
-  static EndGame* reify(f::GMode);
-  virtual f::XScene* realize();
+  STATIC_REIFY_SCENE(EndGame)
 
-  DECLCZ(EndGame)
+  virtual void decorate();
+
+  virtual ~EndGame() {}
+  EndGame() {}
+
+  NOCPYASS(EndGame)
 };
 
 

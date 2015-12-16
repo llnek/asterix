@@ -14,32 +14,36 @@
 #include "p/Config.h"
 #include "AppDelegate.h"
 
+NS_USING(tttoe)
+NS_USING(ash)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
 
   // step.1: register all ash::node factories here
-  auto r= ash::NodeRegistry::self();
+  auto r= NodeRegistry::self();
 
-  r->rego( mc_new(tttoe::BoardNode));
-  r->rego( mc_new(tttoe::GUINode));
+  r->rego( mc_new( BoardNode));
+  r->rego( mc_new( GUINode));
 
   // step.2: set up app-config
-  tttoe::Config::reify();
-
-
-//    auto zz = j::json::object_t {
-//        { "x", j::json::object_t  {
-//            {"z", 1}
-//        }},
-//        {"pnum", 3}
-//        };
-//    auto z= j::json(zz);
-//    z["pnum"] = 999;
-//    z["x"] =   j::json::array_t { "ww", 4};
-//    sstr out= z.dump(0);
-//    printf("json = \n%s", out.c_str());
-
+  Config::reify();
+/*
+    auto zz = j::json::object_t {
+        { "x", j::json::object_t  {
+            {"z", 1}
+        }},
+        {"pnum", 3}
+        };
+    auto rrr = j::json(zz);
+    auto z= j::json(zz);
+    z["pnum"] = 999;
+    z["x"] =   j::json::array_t { "ww", 4};
+    sstr out= z.dump(0);
+    printf("json = \n%s", out.c_str());
+out="";
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////////

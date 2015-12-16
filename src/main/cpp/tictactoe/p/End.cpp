@@ -22,45 +22,38 @@ NS_BEGIN(tttoe)
 //
 BEGIN_NS_UNAMED()
 class CC_DLL UILayer : public f::XLayer {
-public:
-
-  virtual f::XLayer* realize();
-  NOCPYASS(UILayer)
-  DECLCZ(UILayer)
+protected:
 
   void onReplay(c::Ref*);
   void onQuit(c::Ref*);
 
-  f::GMode mode;
+public:
+
+  STATIC_REIFY_LAYER(UILayer)
+
+  virtual void decorate();
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-UILayer::~UILayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-UILayer::UILayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void UILayer::onReplay(c::Ref*) {
-  auto g = f::reifyRefType<Game>();
-  prepareSeedData(mode);
-  cx::runScene( Game::reify(g, mode) );
+  auto m= MGMS()->getMode();
+  auto d= fmtGameData(m);
+  //cx::runScene( Game::reify(g, mode) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runScene( XCFG()->startWith() );
+  cx::runScene( XCFG()->prelude() );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* UILayer::realize() {
+void UILayer::decorate() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("gameover"));
   auto wz= cx::visRect();
@@ -70,7 +63,7 @@ f::XLayer* UILayer::realize() {
 
   centerImage("game.bg");
 
-  // test msg
+  // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setColor(cx::white());
@@ -80,7 +73,7 @@ f::XLayer* UILayer::realize() {
   // btns
   auto b1= cx::reifyMenuBtn("play.png");
   auto b2= cx::reifyMenuBtn("quit.png");
-  auto menu= cx::mkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1, b2} );
 
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onReplay));
@@ -88,43 +81,15 @@ f::XLayer* UILayer::realize() {
   b2->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onQuit));
 
-  menu->setPosition(cw.x, wb.top * 0.5);
+  menu->setPosition(cw.x, wb.top * 0.5f);
   addItem(menu);
-
-  return this;
 }
 
 END_NS_UNAMED()
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* EndGame::realize() {
-  auto y = f::reifyRefType<UILayer>();
-  addLayer(y);
-  y->realize();
-  return this;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-EndGame* EndGame::reify(f::GMode m) {
-  auto g = f::reifyRefType<EndGame>();
-  g->mode= m;
-  g->realize();
-  return g;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-EndGame::~EndGame() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-EndGame::EndGame() {
-  mode=f::GMode::ONE;
+void EndGame::decorate() {
+  UILayer::reify(this);
 }
 
 NS_END(tttoe)

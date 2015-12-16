@@ -23,9 +23,7 @@ NS_BEGIN(tttoe)
 class CC_DLL Resolve : public  f::BaseSystem<EFactory> {
 protected:
 
-  const c::Vec2 xrefCell(int pos, PlayView*, bool& found);
-
-  virtual bool onUpdate(float);
+  bool xrefCell(int pos, PlayView*, c::Vec2 &cell);
 
   bool checkWin(a::Node*, Player&, Grid*, ArrDim& );
   void showWinningIcons(a::Node*, const ArrDim& );
@@ -40,21 +38,23 @@ protected:
   bool checkDraw(a::Node*, Grid*);
   void doDone(a::Node*, Player&);
 
-  NOCPYASS(Resolve)
-  Resolve() = delete;
-
 public:
 
   virtual const a::SystemType typeId() { return "n/Resolve"; }
 
   Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
-  virtual ~Resolve() {}
 
   virtual void addToEngine(not_null<a::Engine*> );
 
   virtual int priority() { return a::Resolve; }
 
-  a::NodeList* board;
+  virtual bool update(float);
+
+  virtual ~Resolve() {}
+  NOCPYASS(Resolve)
+  NODFT(Resolve)
+
+  a::NodeList *board;
 };
 
 

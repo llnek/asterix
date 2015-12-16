@@ -42,6 +42,8 @@ protected:
 
 public:
 
+  STATIC_REIFY_LAYER(HUDLayer)
+
   virtual int getIID() { return 3; }
   virtual void decorate();
 

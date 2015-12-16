@@ -17,9 +17,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : f::BaseSystem<EFactory>(f, d) {
-
-  SNPTR(board)
+  : BaseSystem<EFactory>(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,63 +29,61 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::onUpdate(float dt) {
-  CCLOG("Resolve::onUpdate");
-  auto node= board->head;
-  if (MGMSOK() && NNP(node)) {
-    syncUp(node);
-    doIt(node, dt);
+bool Resolve::update(float dt) {
+  CCLOG("Resolve::update");
+  auto n= board->head;
+  if (MGMS()->isLive()) {
+    syncUp(n);
+    doIt(n, dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::syncUp(a::Node* node) {
+void Resolve::syncUp(a::Node *node) {
   auto view= CC_GNF(PlayView, node, "view");
   auto grid= CC_GNF(Grid, node, "grid");
   auto nil= CC_CSV(c::Integer, "CV_Z");
 
   for (int i=0; i < grid->values.size(); ++i) {
     auto v= grid->values[i];
-    if (v != nil) {
-      auto found=false;
-      auto c= xrefCell(i, view, found);
-      if (found) {
-        auto& z= view->cells[i];
-        if (NNP(z)) {
-          z->setUserObject(nullptr);
-          z->removeFromParent();
-        }
-        z = drawSymbol(view, c.x, c.y, v, false);
-        z->setPosition(c.x, c.y);
-        z->setUserObject(CC_INT(v));
+    c::Vec2 c;
+    if (v != nil &&
+        xrefCell(i, view, c)) {
+      auto &z= view->cells[i];
+      if (NNP(z)) {
+        z->setUserObject(nullptr);
+        z->removeFromParent();
       }
+      z = drawSymbol(view, c, v, false);
+      z->setUserObject(CC_INT(v));
+      z->setPosition(c);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 Resolve::xrefCell(int pos, PlayView* view, bool& found) {
+bool Resolve::xrefCell(int pos, PlayView *view, c::Vec2 &cell) {
   auto cells = view->boxes.size();
+  auto found=false;
   auto delta=0;
-  found=false;
   if (pos >= 0 && pos < cells) {
-    auto& gg = view->boxes[pos];
-    auto x = gg.left + (gg.right - gg.left  - delta) * 0.5;
-    auto y = gg.top - (gg.top - gg.bottom - delta ) * 0.5;
-    found=true;
+    auto &gg = view->boxes[pos];
+    auto x = gg.left + (gg.right - gg.left  - delta) * 0.5f;
+    auto y = gg.top - (gg.top - gg.bottom - delta ) * 0.5f;
     // the cell's center
-    return c::Vec2(x,y);
-  } else {
-    return c::Vec2();
+    cell.x=x;
+    cell.y=y;
+    found=true;
   }
+  return found;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doIt(a::Node* node, float dt) {
+void Resolve::doIt(a::Node *node, float dt) {
 
   auto ps = CC_GNF(Players, node, "players");
   auto gd = CC_GNF(Grid, node, "grid");
@@ -110,7 +106,7 @@ void Resolve::doIt(a::Node* node, float dt) {
     doDraw(node);
   }
   else {
-    auto& q= MGMS()->msgQueue();
+    auto &q= MGMS()->msgQueue();
     if (q.size() > 0) {
       auto s= q.front();
       q.pop();
@@ -123,21 +119,20 @@ void Resolve::doIt(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doWin(a::Node* node, Player& winner, const ArrDim& combo) {
+void Resolve::doWin(a::Node *node, Player &winner, const ArrDim &combo) {
 
-  auto msg = j::json( {
+  sendEx("/hud/score/update", j::json({
     {"color", winner.color },
     {"score", 1}
-  });
+  }));
 
-  MGMS()->sendMsgEx("/hud/score/update", &msg);
   showWinningIcons(node, combo);
   doDone(node, winner);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doDraw(a::Node* node) {
+void Resolve::doDraw(a::Node *node) {
   auto ps= CC_GNF(Players, node, "players");
   ps->parr[0].pnum= 0;
   doDone(node, ps->parr[0]);
@@ -145,31 +140,30 @@ void Resolve::doDraw(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doForfeit(a::Node* node) {
+void Resolve::doForfeit(a::Node *node) {
   auto cur= CC_GDV(c::Integer, state, "pnum");
   auto other= cur == 1 ? 2 : cur == 2 ? 1 : 0;
   auto view = CC_GNF(PlayView, node, "view");
   auto ps= CC_GNF(Players, node, "players");
 
-  auto& loser = ps->parr[cur];
-  auto& win= ps->parr[other];
+  auto &loser = ps->parr[cur];
+  auto &win= ps->parr[other];
 
-  auto msg = j::json( {
+  sendEx("/hud/score/update", j::json({
     {"color", win.color },
     {"score", 1}
-  });
-  MGMS()->sendMsgEx("/hud/score/update", &msg);
+  }));
 
   //gray out the losing icons
   F__LOOP(it, view->cells) {
-    auto& z = *it;
-    if (z != nullptr) {
+    auto &z = *it;
+    if (NNP(z)) {
       auto n = (c::Integer*) z->getUserObject();
       if (n->getValue() == loser.value) {
         auto p= z->getPosition();
         z->removeFromParent();
         //TODO: why + 2????
-        z = drawSymbol(view, p.x, p.y, n->getValue()+2, false);
+        z = drawSymbol(view, p, n->getValue()+2, false);
       }
     }
   }
@@ -179,7 +173,7 @@ void Resolve::doForfeit(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::showWinningIcons(a::Node* node, const ArrDim& combo) {
+void Resolve::showWinningIcons(a::Node *node, const ArrDim &combo) {
 
   auto view = CC_GNF(PlayView, node, "view");
   auto nil = CC_CSV(c::Integer, "CV_Z");
@@ -188,13 +182,13 @@ void Resolve::showWinningIcons(a::Node* node, const ArrDim& combo) {
     if (! (s::find(s::begin(combo), s::end(combo), i)
           != combo.end())) {
       //flip the other cells to gray
-      auto& z= view->cells[i];
-      if (z != nullptr) {
+      auto &z= view->cells[i];
+      if (NNP(z) ) {
         auto n= (c::Integer*) z->getUserObject();
         auto p= z->getPosition();
         if (n->getValue() != nil) {
           z->removeFromParent();
-          z= drawSymbol(view, p.x, p.y, n->getValue(), true);
+          z= drawSymbol(view, p, n->getValue(), true);
         }
       }
     }
@@ -203,24 +197,24 @@ void Resolve::showWinningIcons(a::Node* node, const ArrDim& combo) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doDone(a::Node* node, Player& pobj) {
+void Resolve::doDone(a::Node *node, Player &pobj) {
 
   int pnum = pobj.pnum > 0 ? pobj.pnum : 0;
-  auto msg = j::json( {
-    {"winner", pnum  }
-  });
-
-  MGMS()->sendMsg("/hud/timer/hide");
-  cx::sfxPlay("game_end");
-  MGMS()->sendMsgEx("/hud/end", &msg);
 
   state->setObject(CC_INT(pnum), "lastWinner");
+
+  send("/hud/timer/hide");
+  sendEx("/hud/end", j::json({
+    {"winner", pnum  }
+  }));
+
   MGMS()->stop();
+  cx::sfxPlay("game_end");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::checkDraw(a::Node* node, Grid* gd) {
+bool Resolve::checkDraw(a::Node *node, Grid *gd) {
 
   auto nil= CC_CSV(c::Integer, "CV_Z");
 
@@ -228,16 +222,15 @@ bool Resolve::checkDraw(a::Node* node, Grid* gd) {
     != gd->values.end());
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::checkWin(a::Node* node, Player& p, Grid* game, ArrDim& combo) {
+bool Resolve::checkWin(a::Node *node, Player &p, Grid *game, ArrDim &combo) {
 
   CCLOG("checking win for %s", p.color.c_str());
 
   F__LOOP(it, game->GOALS) {
 
-    auto& g = *it;
+    auto &g = *it;
     int cnt=0;
 
     for (int i=0; i < g.size(); ++i) {
@@ -257,7 +250,6 @@ bool Resolve::checkWin(a::Node* node, Player& p, Grid* game, ArrDim& combo) {
 
 
 
-
-
 NS_END(tttoe)
+
 

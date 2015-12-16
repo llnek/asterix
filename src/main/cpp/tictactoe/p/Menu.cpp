@@ -62,7 +62,7 @@ void UILayer::decorate() {
   lb->setColor(c);
 
   centerImage("gui.mmenu.menu.bg");
-  //incIndexZ();
+  incIndexZ();
 
   addItem(lb);
 
@@ -99,18 +99,18 @@ void UILayer::decorate() {
   auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit} );
   auto sz= back->getContentSize();
 
-  m2->setPosition(wb.left + tile + sz.width * 1.1f,
-                  wb.bottom + tile + sz.height * 0.45f);
+  m2->setPosition(wb.left+tile+sz.width*1.1f,
+                  wb.bottom+tile+sz.height*0.45f);
   addItem(m2);
 
   // audio
-  auto audios= cx::reifyAudioIcons(on, off);
+  auto audios= cx::reifyAudioIcons();
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
   addAudioIcons((XLayer*) this, audios,
       cx::anchorBR(),
-      c::Vec2(wb.right - tile, wb.bottom + tile));
+      c::Vec2(wb.right-tile, wb.bottom+tile));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ void UILayer::onPlay3(c::Ref *r) {
   auto y= [=]() { this->onPlayXXX(f::GMode::NET); };
   // no
   auto f= [=]() { cx::runScene(XCFG()->prelude()); };
-  auto n= [=]() { cx::runScene(MMenu::reify(mc_new_1(MCX,f))); }
+  auto n= [=]() { cx::runScene(MMenu::reify(mc_new_1(MCX,f))); };
 
   auto p= NetPlay::reify( mc_new_2(NPCX, y,n));
   cx::runScene(p);
@@ -140,15 +140,15 @@ void UILayer::onPlay1(c::Ref *) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayXXX(f::GMode mode) {
-  auto g = Game::reify(mc_new(GCXX));
+  auto g = Game::reify(mc_new_3(GCXX, mode, nullptr, nullptr));
   cx::runScene(g);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onBack(c::Ref*) {
-  auto ctx = (MCX*) MGMS()->getCtx();
-  ctx()->back();
+  auto ctx = (MCX*) getSceneX()->getCtx();
+  ctx->back();
 }
 
 //////////////////////////////////////////////////////////////////////////

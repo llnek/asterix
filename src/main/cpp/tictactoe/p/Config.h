@@ -23,10 +23,6 @@ protected:
   void initAssets();
   void initCsts();
 
-  Config() {}
-
-  NOCPYASS(Config)
-
 public:
 
   virtual const sstr appId() { return "tictactoe"; }
@@ -54,9 +50,11 @@ public:
   virtual const sstr getGameId() { return ""; }
   virtual const sstr getRoomId() { return ""; }
 
-  virtual float getScale();
   virtual void runOnce();
+
   virtual ~Config() {}
+  Config() {}
+  NOCPYASS(Config)
 
   static owner<Config*> reify();
 };

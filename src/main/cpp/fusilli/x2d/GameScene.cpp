@@ -95,19 +95,19 @@ void GameScene::bind(not_null<GameScene*> m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ws::OdinIO* GameScene::wsock() {
-  return static_cast<GContext*>(context)->odin;
+  return static_cast<GCX*>(context)->odin;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 GMode GameScene::getMode() {
-  return static_cast<GContext*>(context)->mode;
+  return static_cast<GCX*>(context)->mode;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GameScene::isOnline() {
-  return static_cast<GContext*>(context)->odin != nullptr;
+  return static_cast<GCX*>(context)->odin != nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////

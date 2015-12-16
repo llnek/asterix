@@ -12,7 +12,9 @@
 #if !defined(__BASESYSTEM_H__)
 #define __BASESYSTEM_H__
 
+#include "x2d/GameScene.h"
 #include "ash/System.h"
+#include "core/JSON.h"
 #include "Factory.h"
 NS_BEGIN(fusii)
 
@@ -22,6 +24,14 @@ template<typename F> class CC_DLL BaseSystem : public a::System {
 protected:
 
   BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
+
+  void sendEx(const MsgTopic &t, j::json m) {
+    MGMS()->sendMsgEx(t, &m);
+  }
+
+  void send(const MsgTopic &t) {
+    MGMS()->sendMsg(t);
+  }
 
   c::Dictionary *state=nullptr;
   F *factory=nullptr;

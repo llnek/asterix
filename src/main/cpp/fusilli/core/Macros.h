@@ -41,7 +41,7 @@ typedef std::string MsgTopic;
 //////////////////////////////////////////////////////////////////////////
 //
 #define STATIC_REIFY_SCENE_CTX(__TYPE__) \
-static __TYPE__* reify(fusii::SContext* x) {  \
+static __TYPE__* reify(fusii::SCTX* x) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
     if (NNP(p)) { \
       p->setCtx(x); \

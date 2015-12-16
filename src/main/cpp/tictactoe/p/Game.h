@@ -15,25 +15,30 @@
 #include "x2d/GameScene.h"
 NS_BEGIN(tttoe)
 
+struct CC_DLL GCXX : public f::GCX {
+  GCXX(f::GMode m, ws::OdinIO *io, j::json msg) {
+
+  }
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Game : public f::GameScene {
-protected:
-
-  virtual f::GameLayer* getGLayer();
-
 public:
 
   virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual f::GameLayer* getGLayer();
+
   virtual void decorate();
 
   virtual bool isLive();
   virtual void stop();
   virtual void play();
 
-  virtual ~Game();
-  Game();
+  virtual ~Game() {}
+  Game() {}
 
+  STATIC_REIFY_SCENE_CTX(Game)
   NOCPYASS(Game)
 };
 

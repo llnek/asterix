@@ -83,7 +83,7 @@ void UILayer::onStart(ws::OdinEvent *evt) {
   //auto p = s["ppids"] ; p = evt->doco["source"]["ppids"];
   //p = s["pnum"]; p= j::json(player);
 
-  auto x = mc_new3(GCXX, f::GMode::NET, odin, evt->doco["source"]);
+  auto x = mc_new_3(GCXX, f::GMode::NET, odin, evt->doco["source"]);
   SNPTR(odin)
   cx::runScene( Game::reify(x));
 }
@@ -92,7 +92,7 @@ void UILayer::onStart(ws::OdinEvent *evt) {
 //
 void UILayer::onCancel(c::Ref*) {
   auto f= [=]() { cx::runScene(XCFG()->prelude()); };
-  auto m = MMenu::reify(mc_new1(MCX, f));
+  auto m = MMenu::reify(mc_new_1(MCX, f));
 
   ws::disconnect(odin);
   SNPTR(odin)

@@ -18,27 +18,26 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SContext {
-};
+struct CC_DLL SCTX { };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XScene : public c::Scene {
 protected:
 
-  SContext* context=nullptr;
+  SCTX* context=nullptr;
 
 public:
 
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  SContext* getCtx() { return context; }
+  SCTX* getCtx() { return context; }
   XLayer* getLayer(int tag);
-  void setCtx(SContext *x);
+  void setCtx(SCTX*);
 
   virtual void decorate() = 0;
   virtual bool init();
 
-  virtual ~XSCene();
+  virtual ~XScene();
   XScene();
 
   NOCPYASS(XScene)

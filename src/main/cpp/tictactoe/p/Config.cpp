@@ -15,7 +15,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<f::XConfig*> Config::reify() {
+owner<Config*> Config::reify() {
   auto c =  mc_new(Config);
   c->initAssets();
   c->initCsts();

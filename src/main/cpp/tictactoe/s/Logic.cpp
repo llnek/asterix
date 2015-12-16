@@ -9,26 +9,22 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "nlohmann/json.hpp"
-#include "algos/NegaMax.h"
 #include "x2d/GameScene.h"
+#include "algos/NegaMax.h"
 #include "core/XConfig.h"
 #include "core/Odin.h"
+#include "core/JSON.h"
 #include "n/GNodes.h"
 #include "Logic.h"
+
 NS_ALIAS(ag, fusii::algos)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 Logic::Logic(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : f::BaseSystem<EFactory>(f,d) {
-
-  SNPTR(botTimer)
-  SNPTR(board)
+  : BaseSystem<EFactory>(f,d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,18 +36,18 @@ void Logic::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Logic::onUpdate(float dt) {
-  CCLOG("Logic::onUpdate()");
-  auto node= board->head;
-  if (MGMSOK() && NNP(node)) {
-    doIt(node, dt);
+bool Logic::update(float dt) {
+  CCLOG("Logic::update()");
+  auto n= board->head;
+  if (MGMS()->isLive() ) {
+    doIt(n, dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Logic::doIt(a::Node* node, float dt) {
+void Logic::doIt(a::Node *node, float dt) {
 
   auto sel= CC_GNF(UISelection, node, "selection");
   auto robot= CC_GNF(SmartAlgo, node, "robot");
@@ -60,7 +56,7 @@ void Logic::doIt(a::Node* node, float dt) {
   auto pnum= CC_GDV(c::Integer, state, "pnum");
   auto ps = CC_GNF(Players, node, "players");
   auto bot= CC_CSV(c::Integer, "BOT");
-  auto& cp= ps->parr[pnum];
+  auto &cp= ps->parr[pnum];
 
   //handle online play
   if (MGMS()->isOnline()) {
@@ -76,7 +72,7 @@ void Logic::doIt(a::Node* node, float dt) {
       botTimer = cx::reifyTimer(MGML(), 0.6f);
     }
     else
-    if ( cx::timerDone(botTimer)) {
+    if (cx::timerDone(botTimer)) {
       auto bd= robot->board;
       int rc=0;
       bd->syncState(grid->values, cp.value);
@@ -100,7 +96,7 @@ void Logic::doIt(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
+void Logic::enqueue(a::Node *node, int pos, int value, Grid *grid) {
 
   auto cur = CC_GDV(c::Integer, state, "pnum");
   auto nil = CC_CSV(c::Integer, "CV_Z");
@@ -112,11 +108,12 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
   if ((pos >= 0 && pos < grid->values.size()) &&
       nil == grid->values[pos]) {
 
-    MGMS()->sendMsg("/hud/timer/hide");
+    send("/hud/timer/hide");
 
     if (MGMS()->isOnline()) {
       onEnqueue(node, cur, pos, grid);
     } else {
+
       if (cur == 1) {
         snd= "x_pick";
         other = 2;
@@ -131,7 +128,7 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
       cx::sfxPlay(snd);
 
       if (ps->parr[other].category == human) {
-        MGMS()->sendMsg("/hud/timer/show");
+        send("/hud/timer/show");
       }
     }
   }
@@ -139,9 +136,9 @@ void Logic::enqueue(a::Node* node, int pos, int value, Grid* grid) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
+void Logic::onEnqueue(a::Node *node, int pnum, int cell, Grid *grid) {
   auto ps = CC_GNF(Players, node, "players");
-  auto body = j::json( {
+  auto body = j::json({
     { "color", ps->parr[pnum].color },
     { "value", ps->parr[pnum].value },
     { "grid", grid->values },
@@ -151,18 +148,17 @@ void Logic::onEnqueue(a::Node* node, int pnum, int cell, Grid* grid) {
   auto c = ws::EType::PLAY_MOVE;
   auto t = ws::MType::SESSION;
 
-  auto evt= new ws::OdinEvent(t,c, body);
-  c::RefPtr<ws::OdinEvent> rp(evt);
-
-  ws::netSend(MGMS()->wsock(), evt);
+  auto evt= mc_new_3(ws::OdinEvent, t,c, body);
+  c::RefPtr<ws::OdinEvent>
+  rp(evt);
 
   state->setObject(CC_INT(0), "pnum");
   cx::sfxPlay(snd);
+
+  ws::netSend(MGMS()->wsock(), evt);
 }
 
 
-
-
-
 NS_END(tttoe)
+
 

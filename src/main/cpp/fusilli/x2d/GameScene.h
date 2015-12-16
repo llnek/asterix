@@ -32,7 +32,7 @@ enum class GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GCX : public SContext {
+struct CC_DLL GCX : public SCTX {
   virtual ~GCX() { mc_del_ptr(odin) }
   GCX(GMode m) { mode=m; }
   GCX() {}

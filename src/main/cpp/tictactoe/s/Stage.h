@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__STAGER_H__)
-#define __STAGER_H__
+#if !defined(__STAGE_H__)
+#define __STAGE_H__
 
 #include "core/BaseSystem.h"
 #include "EFactory.h"
@@ -18,41 +18,40 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public f::BaseSystem<EFactory> {
+class CC_DLL Stage : public f::BaseSystem<EFactory> {
 protected:
-
-  virtual bool onUpdate(float);
 
   void onSocket(ws::OdinEvent*);
   void onSess(ws::OdinEvent*);
   void onNet(ws::OdinEvent*);
 
-  void doIt(a::Node*, float);
   void onceOnly(a::Node*);
   void showGrid(a::Node*);
   void initOnline();
+  void doIt(a::Node*);
 
-  NOCPYASS(Stager)
-  Stager() = delete;
-
-  a::NodeList* board;
-  bool inited;
+  a::NodeList *board;
 
 public:
 
-  virtual const a::SystemType typeId() { return "n/Stager"; }
+  virtual const a::SystemType typeId() { return "n/Stage"; }
 
-  Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
+  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::PreUpdate; }
 
-  virtual ~Stager() {}
+  virtual bool update(float);
 
+  virtual ~Stage() {}
+  NODFT(Stage)
+
+  NOCPYASS(Stage)
 };
 
 
 NS_END(tttoe)
 #endif
+
 

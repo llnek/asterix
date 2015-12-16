@@ -33,12 +33,11 @@ const s_arr<Box4,GD_SZ> mapGridPos(float scale) {
 
   s_arr<Box4, GD_SZ> boxes;
   auto cw = cx::center();
-  int x2, y2;
-
   auto x0 = cw.x - zw * 0.5f;
   auto y0 = cw.y + zh * 0.5f;
   auto x1= x0;
   auto y1= y0;
+  int x2, y2;
 
   for (int r=0; r < BD_SZ; ++r) {
     for (int c= 0; c < BD_SZ; ++c) {
@@ -116,7 +115,7 @@ const sstr xrefImg(int value) {
 //////////////////////////////////////////////////////////////////////////
 //
 c::Sprite* drawSymbol(not_null<a::Component*> c,
-    float x, float y,
+    const c::Vec2 &pos,
     int value, bool flip) {
 
   auto frame = pkFlip(xrefImg(value), flip);
@@ -124,7 +123,7 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
   auto s1= cx::reifySprite(frame);
 
   s1->setAnchorPoint(cx::anchorC());
-  s1->setPosition(x,y);
+  s1->setPosition(pos.x, pos.y);
 
   view->layer->addAtlasItem("game-pics", s1);
   return s1;
@@ -132,7 +131,7 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-j::json mkSeedData(f::GMode m) {
+j::json fmtGameData(f::GMode m) {
 
   if (m == f::GMode::TWO) {
     return j::json({

@@ -18,7 +18,7 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
-struct CC_DLL NPCX : public f::SContext {
+struct CC_DLL NPCX : public f::SCTX {
   NPCX(VOIDFN yes, VOIDFN no) {
     this->yes=yes;
     this->no=no;

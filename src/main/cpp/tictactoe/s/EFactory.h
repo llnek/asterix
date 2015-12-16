@@ -15,25 +15,26 @@
 #include "x2d/GameScene.h"
 #include "core/Factory.h"
 #include "n/GNodes.h"
-NS_BEGIN(invaders)
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EFactory  : public fusii::Factory {
+class CC_DLL EFactory  : public f::Factory {
 protected:
-
-  NOCPYASS(EFactory)
-  EFactory() = delete;
-
+  void initPlayers(Players*);
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
-  virtual ~EFactory() {}
 
+  a::Entity* reifyBoard();
+
+  virtual ~EFactory() {}
+  NOCPYASS(EFactory)
+  NODFT(EFactory)
 };
 
 
-NS_END(invaders)
+NS_END(tttoe)
 #endif
 
 

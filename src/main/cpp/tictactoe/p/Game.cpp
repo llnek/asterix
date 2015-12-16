@@ -13,7 +13,7 @@
 #include "s/EFactory.h"
 #include "s/Resolve.h"
 #include "s/Logic.h"
-#include "s/Stager.h"
+#include "s/Stage.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "HUD.h"
@@ -50,6 +50,7 @@ public:
 
 public:
 
+    STATIC_REIFY_LAYER(GLayer)
   virtual int getIID() { return 2; }
 
   virtual void decorate();
@@ -101,6 +102,7 @@ void GLayer::deco() {
     regoAtlas("lang-pics");
   }
 
+  auto seed= fmtGameData(MGMS()->getMode());
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
@@ -132,9 +134,9 @@ void GLayer::deco() {
   this->factory=f;
   CC_KEEP(d)
 
-  f->reifyBoard( MGML());
+  f->reifyBoard();
 
-  e->regoSystem(new Stager(f, d));
+  e->regoSystem(new Stage(f, d));
   e->regoSystem(new Logic(f, d));
   e->regoSystem(new Resolve(f, d));
   e->forceSync();
@@ -295,11 +297,11 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   }
   else
   if ("/game/stop" == topic) {
-    y->stop();
+    MGMS()->stop();
   }
   else
   if ("/game/play" == topic) {
-    y->play();
+    MGMS()->play();
   }
 }
 
@@ -312,13 +314,13 @@ bool Game::isLive() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::stop() {
-  status=0;
+  state=0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::play() {
-  status=911;
+  state=911;
 }
 
 //////////////////////////////////////////////////////////////////////////

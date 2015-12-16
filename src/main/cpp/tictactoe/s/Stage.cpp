@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/Primitives.h"
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -17,7 +16,7 @@
 #include "ash/Node.h"
 #include "n/CObjs.h"
 #include "utils.h"
-#include "Stager.h"
+#include "Stage.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -25,20 +24,15 @@ NS_BEGIN(tttoe)
 
 
 //////////////////////////////////////////////////////////////////////////////
-Stager::Stager(not_null<EFactory*> f,
-    not_null<c::Dictionary*> d)
-
-  : f::BaseSystem<EFactory>(f, d) {
-
-  this->inited=false;
-  SNPTR(board)
+Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+  : BaseSystem<EFactory>(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::addToEngine(not_null<a::Engine*> e) {
+void Stage::addToEngine(not_null<a::Engine*> e) {
 
-  CCLOG("adding system: Stager");
+  CCLOG("adding system: Stage");
 
   BoardNode n;
   board = e->getNodeList(n.typeId());
@@ -46,25 +40,16 @@ void Stager::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Stager::onUpdate(float dt) {
+bool Stage::update(float dt) {
 
-  if (cx::isTransitioning()) {
-    return false;
-  }
-
-  CCLOG("Stager::onUpdate()");
+  CCLOG("Stage::update()");
   auto n = board->head;
 
-  if (NNP(n)) {
-
+  if (MGMS()->isLive()) {
     if (! inited) {
       onceOnly(n);
     }
-
-    if (MGMSOK()) {
-      doIt(n, dt);
-    }
-
+    doIt(n);
   }
 
   return true;
@@ -72,7 +57,7 @@ bool Stager::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::onceOnly(a::Node* node) {
+void Stage::onceOnly(a::Node *node) {
   auto ps = CC_GNF(Players, node, "players");
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot= CC_CSV(c::Integer,"BOT");
@@ -83,7 +68,7 @@ void Stager::onceOnly(a::Node* node) {
   if (MGMS()->isOnline()) {
     initOnline();
   } else {
-    pnum= CCRANDOM_0_1() > 0.5f ? 1 : 2;
+    pnum= c::rand_0_1() > 0.5f ? 1 : 2;
     // randomly choose
     if (ps->parr[pnum].category == human) {
       MGMS()->sendMsg("/hud/timer/show");
@@ -101,7 +86,7 @@ void Stager::onceOnly(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::showGrid(a::Node* node) {
+void Stage::showGrid(a::Node *node) {
   auto view= CC_GNF(PlayView, node, "view");
   auto nil = CC_CSV(c::Integer, "CV_Z");
   auto arr = mapGridPos(1.0f);
@@ -118,15 +103,17 @@ void Stager::showGrid(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::initOnline() {
+void Stage::initOnline() {
 
-  MGMS()->wsock()->listen( [=](ws::OdinEvent* evt) {
+  MGMS()->wsock()->listen( [=](ws::OdinEvent *evt) {
     this->onSocket(evt);
   });
 
   auto evt = new ws::OdinEvent(
-      ws::MType::SESSION, ws::EType::STARTED);
-  c::RefPtr<ws::OdinEvent> rp(evt);
+      ws::MType::SESSION ,
+      ws::EType::STARTED);
+  c::RefPtr<ws::OdinEvent>
+  rp(evt);
 
   ws::netSend(MGMS()->wsock(), evt);
   CCLOG("reply to server: session started ok");
@@ -134,37 +121,38 @@ void Stager::initOnline() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::doIt(a::Node* node, float dt) {
-  auto pnum = CC_GDV(c::Integer, state, "pnum");
-  auto active = MGMSOK();
+void Stage::doIt(a::Node *node ) {
+  auto active = MGMS()->isLive();
+  int pnum;
 
   if (! active) {
     pnum= CC_GDV(c::Integer, state, "lastWinner");
+  } else {
+    pnum = CC_GDV(c::Integer, state, "pnum");
   }
 
-  j::json msg = j::json( {
+  sendEx("/hud/update", j::json({
     { "running", active },
     { "pnum", pnum }
-  });
+  }));
 
-  MGMS()->sendMsgEx("/hud/update", &msg);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::onNet(ws::OdinEvent* evt) {
+void Stage::onNet(ws::OdinEvent *evt) {
 
   switch (evt->code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
-      MGMS()->sendMsg("/net/restart");
+      send("/net/restart");
     break;
     case ws::EType::STOP:
-      if (MGMSOK()) {
+      if (MGMS()->isLive() ) {
         CCLOG("game will stop");
-        MGMS()->sendMsg("/hud/timer/hide");
+        send("/hud/timer/hide");
         onSess( evt);
-        MGMS()->sendMsgEx("/net/stop", evt);
+        send("/net/stop");
       }
     break;
   }
@@ -172,12 +160,12 @@ void Stager::onNet(ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::onSess(ws::OdinEvent* evt) {
+void Stage::onSess(ws::OdinEvent *evt) {
   auto ps= CC_GNF(Players, board->head, "players");
   auto grid= CC_GNF(Grid, board->head, "grid");
-  auto src = evt->doco["source"];
-  auto pnum = src["pnum"].get<j::json::number_integer_t>();
-  auto cmd = src["cmd"];
+  auto src= evt->doco["source"];
+  auto pnum= src["pnum"].get<j::json::number_integer_t>();
+  auto cmd= src["cmd"];
   auto snd="";
 
   if (cmd.is_object()) {
@@ -200,12 +188,12 @@ void Stager::onSess(ws::OdinEvent* evt) {
   switch (evt->code) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
-      MGMS()->sendMsg("/hud/timer/show");
+      send("/hud/timer/show");
       state->setObject(CC_INT(pnum), "pnum");
     break;
     case ws::EType::POKE_WAIT:
       CCLOG("player %d: my turn to wait", pnum);
-      MGMS()->sendMsg("/hud/timer/hide");
+      send("/hud/timer/hide");
       // toggle color
       auto p2= pnum == 1 ? 2 : 1;
       state->setObject(CC_INT(p2), "pnum");
@@ -215,7 +203,7 @@ void Stager::onSess(ws::OdinEvent* evt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::onSocket(ws::OdinEvent* evt) {
+void Stage::onSocket(ws::OdinEvent *evt) {
   switch (evt->type) {
     case ws::MType::NETWORK:
       onNet(evt);
