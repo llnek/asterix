@@ -21,7 +21,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
-const s::array<Box4,GD_SZ> mapGridPos(float scale) {
+const s_arr<Box4,GD_SZ> mapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
   auto csz = cx::scaleSize(cx::calcSize("z.png"), scale);
@@ -31,7 +31,7 @@ const s::array<Box4,GD_SZ> mapGridPos(float scale) {
   auto zh= csz.height * BD_SZ + gh * (BD_SZ-1);
   auto zw= csz.width * BD_SZ + gw * (BD_SZ-1);
 
-  s::array<Box4, GD_SZ> boxes;
+  s_arr<Box4, GD_SZ> boxes;
   auto cw = cx::center();
   int x2, y2;
 
@@ -42,7 +42,7 @@ const s::array<Box4,GD_SZ> mapGridPos(float scale) {
 
   for (int r=0; r < BD_SZ; ++r) {
     for (int c= 0; c < BD_SZ; ++c) {
-      auto& bx= boxes[r*BD_SZ+c];
+      auto &bx= boxes[r*BD_SZ+c];
       y2 = y1 - csz.height;
       x2 = x1 + csz.width;
       bx.top= y1;
@@ -60,9 +60,9 @@ const s::array<Box4,GD_SZ> mapGridPos(float scale) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s::vector<ArrDim> mapGoalSpace() {
+const s_vec<ArrDim> mapGoalSpace() {
 
-  s::vector<ArrDim> goals;
+  s_vec<ArrDim> goals;
   ArrDim dx;
   ArrDim dy;
 
@@ -91,7 +91,7 @@ const s::vector<ArrDim> mapGoalSpace() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const sstr pkFlip(const sstr& img, bool flip) {
+const sstr pkFlip(const sstr &img, bool flip) {
   if (flip) {
     return img + ".i.png";
   } else {
@@ -110,7 +110,7 @@ const sstr xrefImg(int value) {
   if (o==value) { return "o"; }
   if (z==value) { return "z"; }
 
-  throw "bad value!";
+  throw "bad xrefImg() value!";
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,33 +132,44 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void prepareSeedData(f::GMode m) {
-
-    j::json seed = j::json( {
-    {"ppids", j::json {} },
-    {"pnum", 1 }
-    });
+j::json mkSeedData(f::GMode m) {
 
   if (m == f::GMode::TWO) {
-    seed["ppids"][ XCFG()->getL10NStr("p1") ] =
-    j::json::array_t {
-    1, XCFG()->getL10NStr("player1") };
-    seed["ppids"][ XCFG()->getL10NStr("p2") ] =
-    j::json::array_t { 2, XCFG()->getL10NStr("player2") };
+    return j::json({
+        {"ppids", j::json::object_t {
+          { XCFG()->getL10NStr("p1"), j::json::array_t {
+            1, XCFG()->getL10NStr("player1") }
+          },
+          { XCFG()->getL10NStr("p2"), j::json::array_t {
+            2, XCFG()->getL10NStr("player2") }
+          },
+      } },
+      {"pnum", 1 }
+    });
   }
 
   if (m == f::GMode::ONE) {
-    seed["ppids"][ XCFG()->getL10NStr("cpu") ] =
-          j::json::array_t { 2, XCFG()->getL10NStr("computer") };
-    seed["ppids"][ XCFG()->getL10NStr("p1") ] =
-          j::json::array_t { 1, XCFG()->getL10NStr("player1") };
+    return j::json({
+        {"ppids", j::json:: object_t {
+          { XCFG()->getL10NStr("cpu"), j::json::array_t {
+            2, XCFG()->getL10NStr("player2") }
+          },
+          { XCFG()->getL10NStr("p1"), j::json::array_t {
+            1, XCFG()->getL10NStr("player1") }
+          },
+      } },
+      {"pnum", 1 }
+    });
   }
 
   if (m == f::GMode::NET) {
-    seed["pnum"] = 0;
+    return j::json({
+        {"ppids", j::json::object_t { } },
+      {"pnum", 0 }
+    });
   }
 
-  XCFG()->setSeedData(seed);
+  throw "bad game mode!";
 }
 
 

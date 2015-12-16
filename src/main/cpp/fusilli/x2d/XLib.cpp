@@ -57,8 +57,7 @@ c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Menu* addAudioIcons(not_null<XLayer*> layer,
-    not_null<c::MenuItem*> off,
-    not_null<c::MenuItem*> on,
+    const s_arr<c::MenuItem*,2> &audios,
     const c::Vec2 &anchor, const c::Vec2 &pos) {
 
   auto cb = [](c::Ref *r) {
@@ -68,8 +67,8 @@ c::Menu* addAudioIcons(not_null<XLayer*> layer,
   };
 
   c::Vector<c::MenuItem*> items;
-  items.pushBack(on);
-  items.pushBack(off);
+  items.pushBack( audios[1]);
+  items.pushBack( audios[0]);
 
   auto audio = c::MenuItemToggle::createWithCallback(cb, items);
   audio->setSelectedIndex( XCFG()->hasAudio() ? 0 : 1);

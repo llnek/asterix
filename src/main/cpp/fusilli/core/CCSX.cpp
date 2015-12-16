@@ -19,6 +19,18 @@ NS_BEGIN(fusii)
 NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
+//
+c::Menu* mkHMenu(const s_vec<c::MenuItem*> &items, float pad) {
+  return mkMenu(items, false, pad);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Menu* mkVMenu(const s_vec<c::MenuItem*> &items, float pad) {
+  return mkMenu(items, true, pad);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // items should be same size
 c::Menu* mkMenu(const s_vec<c::MenuItem*> &items, bool vert, float pad) {
 
@@ -101,11 +113,11 @@ void resumeAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void reifyAudioIcons(c::MenuItem *&on, c::MenuItem *&off) {
+const s_arr<c::MenuItem*,2> reifyAudioIcons() {
   auto n3="sound_off.png";
   auto n2="sound_on.png";
-  off= reifyMenuBtn(n3,n3,n3);
-  on= reifyMenuBtn(n2,n2,n2);
+  return s_arr<c::MenuItem*,2> { reifyMenuBtn(n3,n3,n3),
+    reifyMenuBtn(n2,n2,n2) };
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -37,8 +37,8 @@ public:
 
   virtual void decorate();
 
-  virtual ~NetPlay();
-  NetPlay();
+  virtual ~NetPlay() {}
+  NetPlay() {}
 
   NOCPYASS(NetPlay)
 };

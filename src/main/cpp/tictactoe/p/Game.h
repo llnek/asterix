@@ -21,17 +21,20 @@ class CC_DLL Game : public f::GameScene {
 protected:
 
   virtual f::GameLayer* getGLayer();
-  NOCPYASS(Game)
 
 public:
 
-  virtual void sendMsgEx(const sstr& topic, void* msg);
-  virtual f::XScene* realize();
+  virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual void decorate();
+
   virtual bool isLive();
   virtual void stop();
   virtual void play();
 
-  DECLCZ(Game)
+  virtual ~Game();
+  Game();
+
+  NOCPYASS(Game)
 };
 
 

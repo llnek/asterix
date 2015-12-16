@@ -20,8 +20,7 @@ NS_BEGIN(fusii)
 //c::Menu* addMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b);
 
 c::Menu* addAudioIcons(not_null<XLayer*> layer,
-    not_null<c::MenuItem*> off,
-    not_null<c::MenuItem*> on,
+    const s_arr<c::MenuItem*,2>&,
     const c::Vec2 &anchor, const c::Vec2 &pos);
 
 

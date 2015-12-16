@@ -20,16 +20,17 @@ NS_BEGIN(tttoe)
 class CC_DLL HUDLayer : public f::XLayer {
 protected:
 
-  s::map<sstr, int> scores;
-  bool countDownState;
-  int countDownValue;
+  bool countDownState=false;
+  int countDownValue=0;
 
-  c::Label* countDown;
-  c::Label* result;
-  c::Label* status;
-  c::Label* title;
-  c::Label* score1;
-  c::Label* score2;
+  s::map<sstr, int> scores;
+
+  c::Label *countDown= nullptr;
+  c::Label *result=nullptr;
+  c::Label *status=nullptr;
+  c::Label *title=nullptr;
+  c::Label *score1=nullptr;
+  c::Label *score2=nullptr;
   c::Color3B  color;
 
   sstr play2;
@@ -42,40 +43,37 @@ protected:
 public:
 
   virtual int getIID() { return 3; }
-  virtual f::XLayer* realize();
+  virtual void decorate();
 
-    void regoPlayers(const sstr& color1,
-                     const sstr& p1k, const sstr& p1n,
-                     const sstr& color2,
-                     const sstr& p2k, const sstr& p2n);
+  void regoPlayers(const sstr &color1,
+                   const sstr &p1k, const sstr &p1n,
+                   const sstr &color2,
+                   const sstr &p2k, const sstr &p2n);
 
+  void showMenu(c::Ref*);
   void resetAsNew();
   void reset();
-    void showMenu(c::Ref*);
 
-    void initLabels();
-    void initIcons();
-    void initScores();
+  void updateScore(const sstr& pcolor,  int value);
+  void drawXXXText(c::Label*, const sstr&);
+  void draw(bool running,  int pnum);
+  void showCountDown(const sstr&);
+  void drawResult(int pnum);
+  void drawStatus(int pnum);
+  void endGame(int winner);
+  void updateTimer(float);
+  void drawScores();
+  void showTimer();
+  void killTimer();
 
-    void showTimer();
-    void updateTimer(float);
-    void showCountDown(const sstr& msg);
-    void killTimer();
-    void updateScore(const sstr& pcolor,  int value);
-    void draw(bool running,  int pnum);
-    void endGame(int winner);
-    void drawXXXText(c::Label*, const sstr& msg);
-    void drawScores();
-    void drawResult(int pnum);
-    void drawStatus(int pnum);
-
+  virtual ~HUDLayer() {}
+  HUDLayer() {}
 
   NOCPYASS(HUDLayer)
-  DECLCZ(HUDLayer)
-
 };
 
 
 NS_END(tttoe)
 #endif
+
 

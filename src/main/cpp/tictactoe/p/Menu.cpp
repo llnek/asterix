@@ -81,7 +81,7 @@ void UILayer::decorate() {
   b3->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay1));
 
-  auto menu= cx::mkMenu(s_vec<c::MenuItem*> {b1,b2,b3},true);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1,b2,b3});
   menu->setPosition(cw);
   addItem(menu);
 
@@ -96,7 +96,7 @@ void UILayer::decorate() {
       CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
 
-  auto m2= cx::mkMenu(s_vec<c::MenuItem*> {back, quit} );
+  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit} );
   auto sz= back->getContentSize();
 
   m2->setPosition(wb.left + tile + sz.width * 1.1f,
@@ -104,17 +104,13 @@ void UILayer::decorate() {
   addItem(m2);
 
   // audio
-  c::MenuItem *off;
-  c::MenuItem *on;
-  cx::reifyAudioIcons(on, off);
-  off->setColor(c);
-  on->setColor(c);
+  auto audios= cx::reifyAudioIcons(on, off);
+  audios[0]->setColor(c);
+  audios[1]->setColor(c);
 
-  addAudioIcons((XLayer*) this,
-      off, on,
+  addAudioIcons((XLayer*) this, audios,
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
-
 }
 
 //////////////////////////////////////////////////////////////////////////

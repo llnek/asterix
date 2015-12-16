@@ -19,71 +19,23 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
 //
-f::XLayer* HUDLayer::realize() {
+void HUDLayer::decorate() {
 
-  this->color = cx::colorRGB("#5e3178");
-  regoAtlas("game-pics");
-
-  initLabels();
-  initIcons();
-
-  return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::initIcons() {
-  auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto tile = CC_CSV(c::Integer, "TILE");
-  auto hh = cx::getHeight(b) * 0.5f;
-  auto hw = cx::getWidth(b) * 0.5f;
-  b->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::showMenu));
-  b->setColor(this->color);
-  auto menu = cx::mkMenu(b);
-  auto wb= cx::visBox();
-
-  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
-  addItem(menu);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::showMenu(c::Ref*) {
-  MGMS()->sendMsg("/hud/showmenu");
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::initScores() {
-  scores.clear();
-  scores[play1]= 0;
-  scores[play2]= 0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::initLabels() {
   auto soff= CC_CSV(c::Integer, "S_OFF");
   auto tile= CC_CSV(c::Integer, "TILE");
   auto scale= XCFG()->getScale();
   auto cw= cx::center();
   auto wb= cx::visBox();
 
-  //title
-  title = cx::reifyBmfLabel( "font.JellyBelly", "");
-  title->setScale(scale * 0.6);
-  title->setAnchorPoint(cx::anchorT());
-  title->setColor(this->color);
-  title->setPosition(cw.x, wb.top - 2*tile);
-  addItem(title);
+  this->color = cx::colorRGB("#5e3178");
+  regoAtlas("game-pics");
 
   //score1
   score1= cx::reifyBmfLabel("font.SmallTypeWriting", "0");
   score1->setAnchorPoint(cx::anchorTL());
   score1->setColor(cx::white());
   score1->setScale(scale);
-  score1->setPosition(tile + soff + 2, wb.top - tile - soff);
+  score1->setPosition(tile+soff+2, wb.top-tile-soff);
   addItem(score1);
 
   //score2
@@ -91,8 +43,7 @@ void HUDLayer::initLabels() {
   score2->setAnchorPoint(cx::anchorTR());
   score2->setColor(cx::white());
   score2->setScale(scale);
-  score2->setPosition(wb.right - tile - soff,
-              wb.top - tile - soff);
+  score2->setPosition(wb.right-tile-soff, wb.top-tile-soff);
   addItem(score2);
 
   // status
@@ -105,11 +56,35 @@ void HUDLayer::initLabels() {
   // result
   result= cx::reifyBmfLabel( "font.CoffeeBuzzed", "");
   result->setColor(cx::white());
-  result->setScale(scale * 0.3);
+  result->setScale(scale * 0.3f);
   result->setPosition(cw.x, wb.bottom + tile * 10);
   result->setVisible(false);
   addItem(result);
 
+  //title
+  title = cx::reifyBmfLabel( "font.JellyBelly", "");
+  title->setScale(scale * 0.6f);
+  title->setAnchorPoint(cx::anchorT());
+  title->setColor(this->color);
+  title->setPosition(cw.x, wb.top - 2*tile);
+  addItem(title);
+
+  auto b = cx::reifyMenuBtn("icon_menu.png");
+  auto hh = cx::getHeight(b) * 0.5f;
+  auto hw = cx::getWidth(b) * 0.5f;
+  b->setTarget(this,
+      CC_MENU_SELECTOR(HUDLayer::showMenu));
+  b->setColor(this->color);
+  auto menu = cx::mkMenu(b);
+
+  menu->setPosition(wb.right-tile-hw, wb.bottom+tile+hh);
+  addItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::showMenu(c::Ref*) {
+  MGMS()->sendMsg("/hud/showmenu");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -127,12 +102,11 @@ void HUDLayer::showTimer() {
   }
 
   if (ENP(countDown)) {
-    countDown= cx::reifyBmfLabel(
-      "font.AutoMission", "");
-    countDown->setScale(scale * 0.5);
-    countDown->setColor(cx::white());
+    countDown= cx::reifyBmfLabel( "font.AutoMission");
     countDown->setPosition(cw.x, wb.top - 10*tile);
     countDown->setAnchorPoint(cx::anchorC());
+    countDown->setScale(scale * 0.5f);
+    countDown->setColor(cx::white());
     addItem(countDown);
   }
 
@@ -160,7 +134,7 @@ void HUDLayer::updateTimer(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::showCountDown(const sstr& msg) {
+void HUDLayer::showCountDown(const sstr &msg) {
   if (NNP(countDown)) {
     countDown->setString(msg);
   }
@@ -179,7 +153,7 @@ void HUDLayer::killTimer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::updateScore(const sstr& pcolor, int value) {
+void HUDLayer::updateScore(const sstr &pcolor, int value) {
   scores[pcolor] += value;
   drawScores();
 }
@@ -205,7 +179,7 @@ void HUDLayer::endGame(int winner) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::drawXXXText(c::Label* obj, const sstr& msg) {
+void HUDLayer::drawXXXText(c::Label *obj, const sstr &msg) {
   obj->setString(msg);
 }
 
@@ -229,11 +203,11 @@ void HUDLayer::drawResult(int pnum) {
   switch (pnum) {
     case 2:
       msg= XCFG()->getL10NStr("whowin",
-          s::vector<sstr> { this->p2Long});
+          s_vec<sstr> { this->p2Long});
       break;
     case 1:
       msg= XCFG()->getL10NStr("whowin",
-          s::vector<sstr> { this->p1Long});
+          s_vec<sstr> { this->p1Long});
       break;
   }
 
@@ -247,15 +221,15 @@ void HUDLayer::drawStatus(int pnum) {
     auto pfx = pnum == 1 ? p1Long : p2Long;
     drawXXXText(status,
       XCFG()->getL10NStr("whosturn",
-        s::vector<sstr> { pfx }));
+        s_vec<sstr> { pfx }));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::regoPlayers(const sstr& color1,
-    const sstr& p1k, const sstr& p1n,
-    const sstr& color2, const sstr& p2k, const sstr& p2n) {
+void HUDLayer::regoPlayers(const sstr &color1,
+    const sstr &p1k, const sstr &p1n,
+    const sstr &color2, const sstr &p2k, const sstr &p2n) {
 
   scores.insert(S__PAIR(sstr,int, color2, 0));
   scores.insert(S__PAIR(sstr,int, color1, 0));
@@ -271,7 +245,6 @@ void HUDLayer::regoPlayers(const sstr& color1,
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::resetAsNew() {
-  initScores();
   reset();
 }
 
@@ -280,27 +253,11 @@ void HUDLayer::resetAsNew() {
 void HUDLayer::reset() {
   result->setVisible(false);
   status->setVisible(true);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-HUDLayer::~HUDLayer() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-HUDLayer::HUDLayer() {
-  countDownState=false;
-  countDownValue=0;
-  SNPTR(countDown)
-  SNPTR(result)
-  SNPTR(status)
-  SNPTR(title)
-  SNPTR(score1)
-  SNPTR(score2)
+  scores[play1]= 0;
+  scores[play2]= 0;
 }
 
 
 NS_END(tttoe)
+
 

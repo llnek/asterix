@@ -182,9 +182,9 @@ void UILayer::decorate() {
   centerImage("game.bg");
 
   // test msg
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(cw.x, wb.top * 0.75);
-  qn->setOpacity(0.9*255);
+  qn->setScale(XCFG()->getScale() * 0.3f);
+  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setOpacity(0.9f*255);
   addItem(qn);
 
   // editbox for user
@@ -196,9 +196,9 @@ void UILayer::decorate() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder(XCFG()->getL10NStr("userid"));
-  uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5 + 2));
+  uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5f + 2));
   tag= (int)'u';
-  addItem(uid, f::Maybe<int>(), f::Maybe<int>(tag));
+  addItem(uid, f::MaybeInt(), f::MaybeInt(tag));
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -209,14 +209,14 @@ void UILayer::decorate() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( XCFG()->getL10NStr("passwd"));
-  pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5 - 2));
+  pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5f - 2));
   tag= (int) 'p';
-  addItem(pwd, f::Maybe<int>(), f::Maybe<int>(tag));
+  addItem(pwd, f::MaybeInt(), f::MaybeInt(tag));
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
   auto b2= cx::reifyMenuBtn("cancel.png");
-  auto menu= cx::mkMenu(s::vector<c::MenuItem*> {b1, b2}, true, 10.0);
+  auto menu= cx::mkVMenu(s::vector<c::MenuItem*> {b1, b2});
 
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onLogin));
@@ -224,36 +224,18 @@ void UILayer::decorate() {
   b2->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onCancel));
 
-  menu->setPosition(cw.x, wb.top * 0.1);
-  tag= 117;
-  addItem(menu, f::Maybe<int>(), f::Maybe<int>(tag));
-
-  return this;
+  menu->setPosition(cw.x, wb.top * 0.1f);
+  addItem(menu);
 }
 
 END_NS_UNAMED()
-
 //////////////////////////////////////////////////////////////////////////////
 //
-f::XScene* NetPlay::realize() {
-  auto y = f::reifyRefType<UILayer>();
-  addLayer(y);
-  y->realize();
-  return this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-NetPlay::~NetPlay() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-NetPlay::NetPlay() {
-
+void NetPlay::decorate() {
+  UILayer::reify(this);
 }
 
 
 NS_END(tttoe)
+
 

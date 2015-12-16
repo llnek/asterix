@@ -28,10 +28,10 @@ namespace ccsx {
   c::Dictionary* readXmlAsDict(const sstr &fpath);
   c::Array* readXmlAsList(const sstr &fpath);
 
-  void reifyAudioIcons(c::MenuItem *&off, c::MenuItem *&on);
   void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
   const c::Color3B colorRGB(const sstr &hexcolor);
+  const s_arr<c::MenuItem*,2> reifyAudioIcons();
 
   void sfxMusic(const sstr &music, bool repeat);
   void sfxPlay(const sstr &sound);
@@ -47,10 +47,10 @@ namespace ccsx {
       const sstr &n,
       const sstr &s, const sstr &d);
 
+  c::Menu* mkMenu(const s_vec<c::MenuItem*>&, bool vert = false, float padding= 10.0f);
+  c::Menu* mkHMenu(const s_vec<c::MenuItem*>&, float padding= 10.0f);
+  c::Menu* mkVMenu(const s_vec<c::MenuItem*>&, float padding= 10.0f);
   c::Menu* mkMenu(c::MenuItem*);
-
-  c::Menu* mkMenu(const s_vec<c::MenuItem*> &items,
-      bool vert = false, float padding= 10.0f);
 
   bool pointInBox(const Box4 &box, float x,  float y);
   const c::Color3B white();
@@ -73,11 +73,11 @@ namespace ccsx {
   void undoTimer(not_null<c::DelayTime*>);
   bool timerDone(not_null<c::DelayTime*>);
 
-  c::Label* reifyBmfLabel(const sstr &font, const sstr &text);
+  c::Label* reifyBmfLabel(const sstr &font, const sstr &text="");
 
   c::Label* reifyBmfLabel(float x, float y,
     const sstr &font,
-    const sstr &text);
+    const sstr &text="");
 
   c::Sprite* reifySprite(const sstr &frameName);
 
