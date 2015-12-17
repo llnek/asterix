@@ -116,7 +116,7 @@ ObjList<T>::ObjList() {
 class FS_DLL Engine {
 public:
 
-  typedef ObjList<System> SList;
+  //typedef ObjList<System> SList;
   typedef ObjList<Entity> EList;
 
 private:
@@ -133,15 +133,14 @@ private:
   s_vec<Entity*> modList;
   s_vec<Entity*> addList;
 
+  SystemList systemList;
   bool updating=false;
   bool dirty=false;
-  SList systemList;
 
 public:
 
   const s_vec<Entity*> getEntities(const sstr& grp);
   const s_vec<Entity*> getEntities();
-  const s_vec<System*> getSystems();
 
   NodeList* getNodeList(const NodeType& );
   Entity* reifyEntity(const sstr &grp);

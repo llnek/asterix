@@ -68,12 +68,6 @@ const s_vec<Entity*> Engine::getEntities() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<System*> Engine::getSystems() {
-  return systemList.list();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 Entity* Engine::reifyEntity(const sstr &g) {
   auto e= mc_new_2(Entity,g, this);
   auto it= groups.find(g);
@@ -165,17 +159,14 @@ void Engine::regoSystem(not_null<System*> s) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystem(not_null<System*> s ) {
-  systemList.release(s);
   s->removeFromEngine(this);
-  delete s;
+  systemList.remove(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystems() {
-  while (NNP(systemList.head)) {
-    purgeSystem(systemList.head);
-  }
+  systemList.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////////

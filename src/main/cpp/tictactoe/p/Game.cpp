@@ -136,9 +136,9 @@ void GLayer::deco() {
 
   f->reifyBoard();
 
-  e->regoSystem(new Stage(f, d));
-  e->regoSystem(new Logic(f, d));
   e->regoSystem(new Resolve(f, d));
+  e->regoSystem(new Logic(f, d));
+  e->regoSystem(new Stage(f, d));
   e->forceSync();
 
   BoardNode n;
@@ -332,8 +332,9 @@ f::GameLayer* Game::getGLayer() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::decorate() {
-  HUDLayer::reify(this);
-  GLayer::reify(this);
+  HUDLayer::reify(this, 3);
+  GLayer::reify(this,2);
+  play();
 }
 
 

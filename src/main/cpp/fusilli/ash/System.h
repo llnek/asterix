@@ -21,9 +21,6 @@ class Engine;
 class FS_DLL System {
 protected:
 
-  System(int priority);
-
-  int _priority=ash::Error;
   bool active=true;
 
 public:
@@ -31,24 +28,50 @@ public:
   virtual void removeFromEngine(not_null<Engine*>);
   virtual void addToEngine(not_null<Engine*>);
   virtual bool update(float time) = 0;
-  virtual ~System() {}
 
   virtual const SystemType typeId() = 0;
   bool isa(const SystemType& );
 
-  int priority() { return _priority; }
   bool isActive() { return active; }
+  virtual int priority() = 0;
 
   void restart();
   void suspend();
 
-  NOCPYASS(System)
-  NODFT(System)
+  virtual ~System() {}
+  System() {}
 
   System *previous=nullptr;
   System *next=nullptr;
+
+  NOCPYASS(System)
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class FS_DLL SystemList {
+protected:
+
+  void clear();
+
+public:
+
+  System* get(const SystemType&);
+  void remove(not_null<System*>);
+  void add(not_null<System*>);
+  void removeAll();
+
+  virtual ~SystemList() {
+    clear();
+  }
+  SystemList() {}
+
+  System *head=nullptr;
+  System *tail=nullptr;
+
+  NOCPYASS(SystemList)
+
+};
 
 NS_END(ash)
 #endif
