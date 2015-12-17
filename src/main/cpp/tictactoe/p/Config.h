@@ -26,7 +26,7 @@ protected:
 public:
 
   virtual const sstr appId() { return "tictactoe"; }
-  virtual const sstr color() { return "white"; }
+  virtual const sstr themeColor() { return ""; }
 
   virtual const sstr appKey() {
     return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";

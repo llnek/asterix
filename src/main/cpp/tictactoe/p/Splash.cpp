@@ -17,17 +17,12 @@
 #include "Splash.h"
 NS_BEGIN(tttoe)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UILayer : public f::XLayer {
-protected:
-
-  void onPlay(c::Ref*);
-  void demo();
-
-public:
+struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
 
@@ -36,7 +31,11 @@ public:
   virtual ~UILayer() {}
   UILayer() {}
 
+  void onPlay(c::Ref*);
+  void demo();
+
   NOCPYASS(UILayer)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,7 +54,7 @@ void UILayer::demo() {
     auto sp= cx::reifySprite(fm);
     auto bx= cx::vboxMID( ps[i]);
     sp->setScale(scale);
-    sp->setPosition(bx.x, bx.y);
+    sp->setPosition(bx);
     addAtlasItem("game-pics", sp);
   }
 }
@@ -65,7 +64,7 @@ void UILayer::demo() {
 void UILayer::onPlay(c::Ref*) {
   auto f= [=]() { cx::runScene(XCFG()->prelude()); };
   auto m = MMenu::reify(mc_new_1(MCX, f));
-  cx::runScene( m);
+  cx::runScene( m, CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

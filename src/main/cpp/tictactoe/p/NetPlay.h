@@ -18,20 +18,20 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL NPCX : public f::SCTX {
   NPCX(VOIDFN yes, VOIDFN no) {
     this->yes=yes;
     this->no=no;
   }
-  NODFT(NPCX)
   VOIDFN yes;
   VOIDFN no;
-  virtual ~NPCX() {}
 };
+
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NetPlay : public f::XScene {
-public:
+struct CC_DLL NetPlay : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(NetPlay)
 

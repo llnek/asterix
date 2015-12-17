@@ -12,7 +12,7 @@
 #if  !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 #include "n/CObjs.h"
 
@@ -20,7 +20,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public  f::BaseSystem<EFactory> {
+class CC_DLL Resolve : public  f::XSystem<EFactory> {
 protected:
 
   bool xrefCell(int pos, PlayView*, c::Vec2 &cell);

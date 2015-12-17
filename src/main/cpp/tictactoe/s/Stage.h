@@ -12,13 +12,13 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stage : public f::BaseSystem<EFactory> {
+class CC_DLL Stage : public f::XSystem<EFactory> {
 protected:
 
   void onSocket(ws::OdinEvent*);

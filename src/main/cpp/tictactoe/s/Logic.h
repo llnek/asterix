@@ -13,7 +13,7 @@
 #define __LOGIC_H__
 
 #include "2d/CCActionInterval.h"
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 #include "n/CObjs.h"
 
@@ -21,7 +21,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Logic : public f::BaseSystem<EFactory> {
+class CC_DLL Logic : public f::XSystem<EFactory> {
 protected:
 
   void onEnqueue(a::Node*, int pnum, int cell, Grid*);

@@ -26,8 +26,12 @@ owner<Config*> Config::reify() {
 //
 void Config::initCsts() {
   addCst("PLAYER_THINK_TIME", CC_INT(7));
+  addCst("SCENE_DELAY", CC_FLOAT(0.5f));
   addCst("CV_Z", CC_INT(0));
   addCst("showFPS", CC_BOOL(false));
+
+  addColor("default", CC_STR("#5e3178"));
+  addColor("x", CC_STR("#f6b17f"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

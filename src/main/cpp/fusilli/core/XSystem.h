@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__BASESYSTEM_H__)
-#define __BASESYSTEM_H__
+#if !defined(__XSYSTEM_H__)
+#define __XSYSTEM_H__
 
 #include "x2d/GameScene.h"
 #include "ash/System.h"
@@ -20,10 +20,10 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename F> class CC_DLL BaseSystem : public a::System {
+template<typename F> class CC_DLL XSystem : public a::System {
 protected:
 
-  BaseSystem(not_null<F*>, not_null<c::Dictionary*>);
+  XSystem(not_null<F*>, not_null<c::Dictionary*>);
 
   void sendEx(const MsgTopic &t, j::json m) {
     MGMS()->sendMsgEx(t, &m);
@@ -37,18 +37,18 @@ protected:
   F *factory=nullptr;
   bool inited=false;
 
-  NOCPYASS(BaseSystem)
-  NODFT(BaseSystem)
+  NOCPYASS(XSystem)
+  NODFT(XSystem)
 
 public:
 
-  virtual ~BaseSystem();
+  virtual ~XSystem();
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename F>
-BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d) {
+XSystem<F>::XSystem(not_null<F*> f, not_null<c::Dictionary*> d) {
 
   inited=false;
   CC_KEEP(d)
@@ -59,7 +59,7 @@ BaseSystem<F>::BaseSystem(not_null<F*> f, not_null<c::Dictionary*> d) {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename F>
-BaseSystem<F>::~BaseSystem() {
+XSystem<F>::~XSystem() {
   CC_DROP(state)
 }
 

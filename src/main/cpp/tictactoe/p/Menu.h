@@ -24,8 +24,7 @@ struct CC_DLL MCX : public f::SCTX {
 };
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MMenu : public f::XScene {
-public:
+struct CC_DLL MMenu : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(MMenu)
 

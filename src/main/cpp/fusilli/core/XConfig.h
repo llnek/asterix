@@ -34,6 +34,7 @@ protected:
   void addEffect(const sstr& , c::Ref*);
   void addMusic(const sstr& , c::Ref*);
   void addCst(const sstr& , c::Ref*);
+  void addColor(const sstr& , c::Ref*);
 
   c::Dictionary *frags=nullptr;
   c::Dictionary *l10n=nullptr;
@@ -51,9 +52,10 @@ protected:
   static const sstr FONTS;
   static const sstr TILES;
   static const sstr IMAGES;
+  static const sstr COLORS;
   static const sstr MUSIC;
-  static const sstr EFX;
   static const sstr CSTS;
+  static const sstr EFX;
   static const sstr CFG;
 
 public:
@@ -63,13 +65,13 @@ public:
   virtual void runOnce() {}
 
   virtual ResolutionPolicy policy() = 0;
+  virtual const sstr themeColor() = 0;
   virtual const sstr appKey() = 0;
   virtual const sstr appId() = 0;
-  virtual const sstr color() = 0;
   virtual const c::Size gameSize() = 0;
 
-  virtual c::Scene* prelude() = 0;
   virtual const sstr getWSUrl() = 0;
+  virtual c::Scene* prelude() = 0;
 
   virtual void setGameId(const sstr& ) = 0;
   virtual void setRoomId(const sstr& ) = 0;
@@ -87,7 +89,11 @@ public:
   const sstr getL10NStr(const sstr& , const s_vec<sstr>& );
   const sstr getL10NStr(const sstr& );
 
+  const c::Color3B getColor(const sstr&);
+  const sstr getColorStr(const sstr& );
+
   c::Ref* getCst(const sstr& );
+
   int getBtnPadding();
 
   void toggleAudio(bool s);

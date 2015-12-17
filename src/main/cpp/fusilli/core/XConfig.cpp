@@ -21,6 +21,7 @@ const sstr XConfig::LEVELS= "levels";
 const sstr XConfig::FONTS= "fonts";
 const sstr XConfig::TILES= "tiles";
 const sstr XConfig::IMAGES= "images";
+const sstr XConfig::COLORS= "colors";
 const sstr XConfig::MUSIC= "music";
 const sstr XConfig::EFX= "effects";
 const sstr XConfig::CSTS= "csts";
@@ -29,15 +30,17 @@ const sstr XConfig::CFG= "cfg";
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
+
 XConfig *singleton;
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath getXXX(not_null<c::Dictionary*> d, const sstr &key ) {
+const sstr getXXX(not_null<c::Dictionary*> d, const sstr &key ) {
   auto r= f::dictVal<cocos2d::String>(d,key);
   return NNP(r) ? r->getCString() : "";
 }
-END_NS_UNAMED()
 
+
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::bind(not_null<XConfig*> c) {
@@ -67,6 +70,7 @@ XConfig::XConfig() {
   frags->setObject(CC_DICT(), TILES);
   frags->setObject(CC_DICT(), CSTS);
   frags->setObject(CC_DICT(), IMAGES);
+  frags->setObject(CC_DICT(), COLORS);
   frags->setObject(CC_DICT(), FONTS);
   frags->setObject(CC_DICT(), MUSIC);
   frags->setObject(CC_DICT(), EFX);
@@ -77,7 +81,6 @@ XConfig::XConfig() {
   setCsts();
   bind(this);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -210,49 +213,61 @@ float XConfig::getVolume() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Ref* XConfig::getCst(const sstr& key) {
+c::Ref* XConfig::getCst(const sstr &key) {
   return getFragment(CSTS)->objectForKey(key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getAtlas(const sstr& key) {
+const filepath XConfig::getAtlas(const sstr &key) {
   return getXXX(getFragment(ATLASES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getFont(const sstr& key) {
+const filepath XConfig::getFont(const sstr &key) {
   return getXXX(getFragment(FONTS), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getTile(const sstr& key) {
+const filepath XConfig::getTile(const sstr &key) {
   return getXXX(getFragment(TILES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getImage(const sstr& key) {
+const c::Color3B XConfig::getColor(const sstr &key) {
+  return cx::colorRGB(  getXXX(getFragment(COLORS), key));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const sstr XConfig::getColorStr(const sstr &key) {
+  return getXXX(getFragment(COLORS), key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const filepath XConfig::getImage(const sstr &key) {
   return getXXX(getFragment(IMAGES), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getMusic(const sstr& key) {
+const filepath XConfig::getMusic(const sstr &key) {
   return getXXX(getFragment(MUSIC), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const filepath XConfig::getEffect(const sstr& key) {
+const filepath XConfig::getEffect(const sstr &key) {
   return getXXX(getFragment(EFX), key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Dictionary* XConfig::getLevel(const sstr& n) {
+c::Dictionary* XConfig::getLevel(const sstr &n) {
   auto d= getFragment(LEVELS);
   return SCAST(c::Dictionary*,  d->objectForKey(n));
 }
@@ -329,6 +344,12 @@ void XConfig::addMusic(const sstr &key, c::Ref *ref) {
 //
 void XConfig::addCst(const sstr &key, c::Ref *ref) {
   addXXX(CSTS, key, ref);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::addColor(const sstr &key, c::Ref *ref) {
+  addXXX(COLORS, key, ref);
 }
 
 //////////////////////////////////////////////////////////////////////////////

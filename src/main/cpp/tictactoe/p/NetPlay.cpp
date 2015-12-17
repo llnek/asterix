@@ -25,8 +25,9 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
-class CC_DLL UILayer : public f::XLayer {
-public:
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL UILayer : public f::XLayer {
 
   void networkEvent(ws::OdinEvent*);
   void sessionEvent(ws::OdinEvent*);
@@ -71,7 +72,8 @@ void UILayer::showWaitOthers() {
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
-  b1->setTarget(this, CC_MENU_SELECTOR(UILayer::onCancel));
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onCancel));
   menu->setPosition(cw.x, wb.top * 0.1f);
   addItem(menu);
 }
@@ -79,31 +81,36 @@ void UILayer::showWaitOthers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onStart(ws::OdinEvent *evt) {
+  auto obj= fmtGameData(f::GMode::NET);
 
-  //auto p = s["ppids"] ; p = evt->doco["source"]["ppids"];
-  //p = s["pnum"]; p= j::json(player);
+  obj["ppids"] = evt->doco["source"]["ppids"];
+  obj["pnum"]= j::json(player);
 
-  auto x = mc_new_3(GCXX, f::GMode::NET, odin, evt->doco["source"]);
+  auto x = mc_new_3(GCXX, f::GMode::NET, odin, obj);
   SNPTR(odin)
-  cx::runScene( Game::reify(x));
+  cx::runScene(
+      Game::reify(x),
+      CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref*) {
-  auto f= [=]() { cx::runScene(XCFG()->prelude()); };
+  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
+  auto f= [=]() {
+      cx::runScene(XCFG()->prelude(), dx); };
   auto m = MMenu::reify(mc_new_1(MCX, f));
 
   ws::disconnect(odin);
   SNPTR(odin)
 
-  cx::runScene( m);
+  cx::runScene( m, dx);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayReply(ws::OdinEvent *evt) {
-  player= evt->doco["pnum"].get<j::json::number_integer_t>();
+  player= JS_INT(  evt->doco["pnum"]);
   CCLOG("player %d: ok", player);
   showWaitOthers();
 }
@@ -180,8 +187,9 @@ void UILayer::decorate() {
   int tag;
 
   centerImage("game.bg");
+  incIndexZ();
 
-  // test msg
+  // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f*255);
@@ -196,7 +204,7 @@ void UILayer::decorate() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder(XCFG()->getL10NStr("userid"));
-  uid->setPosition(c::Vec2(cw.x, cw.y + bxz.height * 0.5f + 2));
+  uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
   tag= (int)'u';
   addItem(uid, f::MaybeInt(), f::MaybeInt(tag));
 
@@ -209,7 +217,7 @@ void UILayer::decorate() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( XCFG()->getL10NStr("passwd"));
-  pwd->setPosition(c::Vec2(cw.x, cw.y - bxz.height * 0.5f - 2));
+  pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
   tag= (int) 'p';
   addItem(pwd, f::MaybeInt(), f::MaybeInt(tag));
 

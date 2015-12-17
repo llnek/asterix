@@ -20,20 +20,12 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL UILayer : public f::XLayer {
-protected:
-
-  void onPlayXXX(f::GMode);
-  void onPlay3(c::Ref*);
-  void onPlay2(c::Ref*);
-  void onPlay1(c::Ref*);
-  void onBack(c::Ref*);
-  void onQuit(c::Ref*);
-
-public:
+//
+struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
 
@@ -42,14 +34,22 @@ public:
   virtual ~UILayer() {}
   UILayer() {}
 
+  void onPlayXXX(f::GMode);
+  void onPlay3(c::Ref*);
+  void onPlay2(c::Ref*);
+  void onPlay1(c::Ref*);
+  void onBack(c::Ref*);
+  void onQuit(c::Ref*);
+
   NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
-  //auto c= cx::colorRGB("#f6b17f");
-  auto c = cx::colorRGB("#5E3178");
+  auto tile = CC_CSV(c::Integer,"TILE");
+  auto nil = CC_CSV(c::Integer,"CV_Z");
+  auto c = XCFG()->getColor("default");
   auto wb = cx::visBox();
   auto cw = cx::center();
   auto lb = cx::reifyBmfLabel(
@@ -58,16 +58,12 @@ void UILayer::decorate() {
       "font.JellyBelly",
       XCFG()->getL10NStr("mmenu"));
 
-  lb->setScale(XCFG()->getScale());
-  lb->setColor(c);
-
   centerImage("gui.mmenu.menu.bg");
   incIndexZ();
 
+  lb->setScale(XCFG()->getScale());
+  lb->setColor(c);
   addItem(lb);
-
-  auto tile = CC_CSV(c::Integer,"TILE");
-  auto nil = CC_CSV(c::Integer,"CV_Z");
 
   auto b1 = cx::reifyMenuBtn("online.png");
   b1->setTarget(this,
@@ -81,7 +77,8 @@ void UILayer::decorate() {
   b3->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay1));
 
-  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1,b2,b3});
+  auto menu= cx::mkVMenu(
+      s_vec<c::MenuItem*> {b1,b2,b3});
   menu->setPosition(cw);
   addItem(menu);
 
@@ -96,7 +93,8 @@ void UILayer::decorate() {
       CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
 
-  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit} );
+  auto m2= cx::mkHMenu(
+      s_vec<c::MenuItem*> {back, quit} );
   auto sz= back->getContentSize();
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
@@ -108,7 +106,7 @@ void UILayer::decorate() {
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons((XLayer*) this, audios,
+  addAudioIcons(this, audios,
       cx::anchorBR(),
       c::Vec2(wb.right-tile, wb.bottom+tile));
 }
@@ -118,12 +116,18 @@ void UILayer::decorate() {
 void UILayer::onPlay3(c::Ref *r) {
   // yes
   auto y= [=]() { this->onPlayXXX(f::GMode::NET); };
+  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
   // no
-  auto f= [=]() { cx::runScene(XCFG()->prelude()); };
-  auto n= [=]() { cx::runScene(MMenu::reify(mc_new_1(MCX,f))); };
+  auto f= [=]() {
+    cx::runScene(XCFG()->prelude(), dx);
+  };
+  auto n= [=]() {
+    cx::runScene(
+        MMenu::reify(mc_new_1(MCX,f)), dx);
+  };
 
-  auto p= NetPlay::reify( mc_new_2(NPCX, y,n));
-  cx::runScene(p);
+  cx::runScene(
+      NetPlay::reify( mc_new_2(NPCX, y,n)), dx);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -140,8 +144,9 @@ void UILayer::onPlay1(c::Ref *) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayXXX(f::GMode mode) {
-  auto g = Game::reify(mc_new_3(GCXX, mode, nullptr, nullptr));
-  cx::runScene(g);
+  cx::runScene(
+      Game::reify(mc_new_3(GCXX, mode, nullptr, nullptr)),
+      CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,7 +159,9 @@ void UILayer::onBack(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runScene(XCFG()->prelude());
+  cx::runScene(
+      XCFG()->prelude(),
+      CC_CSV(c::Float,"SCENE_DELAY"));
 }
 
 END_NS_UNAMED()
@@ -163,7 +170,6 @@ END_NS_UNAMED()
 void MMenu::decorate() {
   UILayer::reify(this);
 }
-
 
 
 NS_END(tttoe)
