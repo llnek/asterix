@@ -68,6 +68,12 @@ owner<Node*> NodeRegistry::reifyNode(const NodeType &t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+owner<Node*> NodeFactory::reifyXXXNode(const s_map<sstr,COMType> &s) {
+  return mc_new_1(Node,s);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 owner<Node*> NodeFactory::reifyXXXNode(const s_vec<sstr> &flds,
     const s_vec<COMType> &types) {
 

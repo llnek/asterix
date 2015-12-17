@@ -22,6 +22,7 @@ class FS_DLL NodeFactory {
 protected:
 
   owner<Node*> reifyXXXNode(const s_vec<sstr>&, const s_vec<COMType>&);
+  owner<Node*> reifyXXXNode(const s_map<sstr,COMType>&);
 
 public:
 

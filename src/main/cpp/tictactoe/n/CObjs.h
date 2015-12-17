@@ -109,6 +109,7 @@ public:
   }
 
   virtual ~Player() {}
+  Player() {}
 
   Player& operator=(const Player &other) {
     category = other.category;
@@ -131,20 +132,14 @@ public:
     offset= other.offset;
   }
 
-  Player() {
-    category= (int) f::GMode::NICHTS;
-    pnum= -1;
-    offset=0;
-    value=0;
-  }
-
+  int category= (int) f::GMode::NICHTS;
+  int pnum= -1;
+  int offset=0;
+  int value=0;
   sstr pidlong;
   sstr pid;
   sstr color;
-  int category;
-  int pnum;
-  int value;
-  int offset;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -155,11 +150,9 @@ public:
   virtual const a::COMType typeId() { return "n/Players"; }
 
   virtual ~Players() {}
+  Players() {}
 
   NOCPYASS(Players)
-
-  Players() {
-  }
 
   s_arr<Player,3> parr;
 };
@@ -171,21 +164,15 @@ public:
 
   virtual const a::COMType typeId() { return "n/UISelection"; }
 
-  UISelection() {
-    this->cell = -1;
-    this->px = -1;
-    this->py = -1;
-  }
-
   virtual ~UISelection() {}
+  UISelection() {}
 
   NOCPYASS(UISelection)
 
-  int cell;
-  int px;
-  int py;
+  int cell = -1;
+  int px = -1;
+  int py = -1;
 };
-
 
 
 NS_END(tttoe)

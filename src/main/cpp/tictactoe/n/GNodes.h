@@ -25,11 +25,13 @@ public:
   virtual const a::NodeType typeId() { return "n/BoardNode"; }
 
   virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s_vec<sstr> {
-          "selection", "players", "robot", "grid", "view" },
-        s_vec<a::COMType> {
-          "n/UISelection", "n/Players", "n/SmartAlgo", "n/Grid", "n/PlayView" });
+    return reifyXXXNode({
+          {"selection", "n/UISelection"},
+          {"players", "n/Players" },
+          {"robot", "n/SmartAlgo"},
+          {"grid", "n/Grid"},
+          {"view", "n/PlayView" }
+    });
   }
 
   virtual ~BoardNode() {}
@@ -46,9 +48,10 @@ public:
   virtual const a::NodeType typeId() { return "n/GUINode"; }
 
   virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s_vec<sstr> { "selection", "view" },
-        s_vec<a::COMType> { "n/UISelection", "n/PlayView" });
+    return reifyXXXNode({
+        { "selection", "n/UISelection"},
+        { "view", "n/PlayView" }
+    });
   }
 
   virtual ~GUINode() {}

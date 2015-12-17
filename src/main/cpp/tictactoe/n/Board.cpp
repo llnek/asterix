@@ -38,7 +38,7 @@ bool every(const ArrCells &arr, int v) {
 }
 
 END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 Board::Board(int nil, int p1v, int p2v) {
   this->actors = {nil, p1v, p2v};
@@ -46,14 +46,14 @@ Board::Board(int nil, int p1v, int p2v) {
   this->CV_Z= nil;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 bool Board::isNil(int cellv) {
   return cellv == this->CV_Z;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
+//////////////////////////////////////////////////////////////////////////////
+// if brand new game, just make a random move
 int Board::getFirstMove() {
   auto sz= grid.size();
   bool virgo=true;
@@ -68,21 +68,22 @@ int Board::getFirstMove() {
   return virgo ? cx::randInt(sz) : -1;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 void Board::syncState(const ArrCells &seed, int actor) {
   s::copy(s::begin(seed), s::end(seed), s::begin(grid));
   actors[0] = actor;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
+//////////////////////////////////////////////////////////////////////////////
+// find set of empty slots
 const s_vec<int>
 Board::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 
+  auto sz= snap->state.size();
   s_vec<int> rc;
 
-  for (int pos= 0; pos < snap->state.size(); ++pos) {
+  for (int pos= 0; pos < sz; ++pos) {
     if (isNil(snap->state[pos])) {
       rc.push_back(pos);
     }
@@ -91,25 +92,25 @@ Board::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
   return rc;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 void Board::undoMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
-  assert(move >= 0 && snap->state.size());
+  assert(move >= 0 && move < snap->state.size());
   snap->state[move] = CV_Z;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 void Board::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
-  assert(move >= 0 && snap->state.size());
+  assert(move >= 0 && move < snap->state.size());
   if (isNil(snap->state[move])) {
     snap->state[move] = snap->cur;
   } else {
-      throw "Fatal Error: cell [" + s::to_string(move) + "] is not free";
+    throw "Fatal Error: cell [" + s::to_string(move) + "] is not free";
   }
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 void Board::switchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
   auto t = snap->cur;
@@ -117,7 +118,7 @@ void Board::switchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
   snap->other=t;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 int Board::getOtherPlayer(int pv) {
   if (pv == actors[1]) {
@@ -131,7 +132,7 @@ int Board::getOtherPlayer(int pv) {
   return CV_Z;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
   auto ff = mc_new( ag::FFrame<BD_SZ> );
@@ -144,7 +145,7 @@ owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
   return ff;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 int Board::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
@@ -156,12 +157,12 @@ int Board::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 bool Board::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
 
   F__LOOP(it, GOALS) {
-    auto& t = *it;
+    auto &t = *it;
     if (testWin(snap->state, snap->other, t) ||
         testWin(snap->state, snap->cur, t)) {
       return true;
@@ -170,20 +171,19 @@ bool Board::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
   return isStalemate(snap);
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 bool Board::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
   return not_any(snap->state, CV_Z);
-  //return not_any(grid, CV_Z);
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 
   int win= -1;
   F__LOOP(it, GOALS) {
-    auto& t= *it;
+    auto &t= *it;
     if (testWin(snap->state, snap->other, t)) {
       win=snap->other;
     }
@@ -201,18 +201,16 @@ int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Board::testWin(const ArrCells &vs,
-    int actor,
-    const s_arr<int,BD_SZ> &g) {
+bool Board::testWin(const ArrCells &vs, int actor, const ArrDim &g) {
 
-  int cnt=0;
+  int cnt=g.size();
   for (int n= 0; n < g.size(); ++n) {
     auto pos= g[n];
     if (actor == vs[pos]) {
-      ++cnt;
+      --cnt;
     }
   }
-  return cnt == g.size();
+  return cnt == 0;
 }
 
 
