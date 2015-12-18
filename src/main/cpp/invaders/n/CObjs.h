@@ -19,24 +19,21 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Alien : public f::ComObj {
-public:
+struct CC_DLL Alien : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Alien"; }
   Alien(not_null<c::Sprite*>, int value, int rank);
 
   virtual ~Alien() {}
-
-  NOCPYASS(Alien)
   NODFT(Alien)
+  NOCPYASS(Alien)
 
   int rank;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AlienSquad : public a::Component {
-public:
+struct CC_DLL AlienSquad : public a::Component {
 
   virtual const a::COMType typeId() { return "n/AlienSquad"; }
   const s_vec<f::ComObj*>& list() { return aliens->list(); }
@@ -45,41 +42,35 @@ public:
   int size() { return aliens->size(); }
 
   virtual ~AlienSquad() {}
-
-  NOCPYASS(AlienSquad)
   NODFT(AlienSquad)
+  NOCPYASS(AlienSquad)
 
-  f::XPool* aliens;
+  f::XPool *aliens;
   int stepx;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Bomb : public f::ComObj {
-public:
+struct CC_DLL Bomb : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Bomb"; }
   Bomb(not_null<c::Sprite*>);
 
   virtual ~Bomb() {}
-
-  NOCPYASS(Bomb)
   NODFT(Bomb)
-
+  NOCPYASS(Bomb)
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Cannon : public a::Component {
-public:
+struct CC_DLL Cannon : public a::Component {
 
   virtual const a::COMType typeId() { return "n/Cannon"; }
 
   Cannon(float coolDownWindow);
 
   virtual ~Cannon() {}
-
-  NOCPYASS(Cannon)
   NODFT(Cannon)
+  NOCPYASS(Cannon)
 
   float coolDownWindow;
   bool hasAmmo;
@@ -87,8 +78,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Explosion : public f::ComObj {
-public:
+struct CC_DLL Explosion : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Explosion"; }
   virtual void inflate(float x, float y);

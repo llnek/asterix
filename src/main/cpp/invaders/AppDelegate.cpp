@@ -29,7 +29,8 @@ AppDelegate::AppDelegate() {
   r->rego( mc_new(CannonCtrlNode));
 
   // step.2: set up app-config
-  XConfig::bind(Config::reify());
+  Config::reify();
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

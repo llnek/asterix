@@ -17,10 +17,10 @@
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AppDelegate : public fusii::App {
-public:
+struct CC_DLL AppDelegate : public fusii::App {
+  virtual ~AppDelegate();
+  AppDelegate();
   NOCPYASS(AppDelegate)
-  DECLCZ(AppDelegate)
 };
 
 #endif
