@@ -21,6 +21,7 @@ NS_ALIAS(j, nlohmann)
 
 #define JS_FLOAT(obj) obj.get<j::json::number_float_t>()
 #define JS_INT(obj) obj.get<j::json::number_integer_t>()
+#define JS_STR(obj) obj.get<j::json::string_t>()
 #define JS_BOOL(obj) obj.get<j::json::boolean_t>()
 #define JS_ARR(obj) obj.get<j::json::array_t>()
 #define JS_OBJ(obj) obj.get<j::json::object_t>()

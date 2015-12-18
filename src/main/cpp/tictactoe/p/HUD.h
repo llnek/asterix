@@ -17,13 +17,13 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HUDLayer : public f::XLayer {
-protected:
+struct CC_DLL HUDLayer : public f::XLayer {
+public:
+
+  STATIC_REIFY_LAYER(HUDLayer)
 
   bool countDownState=false;
   int countDownValue=0;
-
-  s::map<sstr, int> scores;
 
   c::Label *countDown= nullptr;
   c::Label *result=nullptr;
@@ -31,18 +31,14 @@ protected:
   c::Label *title=nullptr;
   c::Label *score1=nullptr;
   c::Label *score2=nullptr;
-  c::Color3B  color;
 
+  s_arr<int, 3> scores;
   sstr play2;
   sstr play1;
   sstr p2Long;
   sstr p1Long;
   sstr p2ID;
   sstr p1ID;
-
-public:
-
-  STATIC_REIFY_LAYER(HUDLayer)
 
   virtual int getIID() { return 3; }
   virtual void decorate();
@@ -56,8 +52,8 @@ public:
   void resetAsNew();
   void reset();
 
-  void updateScore(const sstr& pcolor,  int value);
   void drawXXXText(c::Label*, const sstr&);
+  void updateScore(int pnum, int value);
   void draw(bool running,  int pnum);
   void showCountDown(const sstr&);
   void drawResult(int pnum);

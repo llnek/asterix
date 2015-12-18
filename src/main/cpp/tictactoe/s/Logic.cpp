@@ -37,7 +37,7 @@ void Logic::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Logic::update(float dt) {
-  CCLOG("Logic::update()");
+  //CCLOG("Logic::update()");
   auto n= board->head;
   if (MGMS()->isLive() ) {
     doIt(n, dt);

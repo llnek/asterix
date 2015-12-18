@@ -11,12 +11,14 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "core/odin.h"
 #include "x2d/XLib.h"
 #include "NetPlay.h"
 #include "Menu.h"
 #include "Game.h"
 #include "n/GNodes.h"
 
+NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
@@ -34,7 +36,7 @@ struct CC_DLL UILayer : public f::XLayer {
   virtual ~UILayer() {}
   UILayer() {}
 
-  void onPlayXXX(f::GMode);
+  void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
   void onPlay3(c::Ref*);
   void onPlay2(c::Ref*);
   void onPlay1(c::Ref*);
@@ -114,8 +116,10 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay3(c::Ref *r) {
-  // yes
-  auto y= [=]() { this->onPlayXXX(f::GMode::NET); };
+  // ye
+  auto y= [=](ws::OdinIO* io, j::json obj) {
+    this->onPlayXXX(f::GMode::NET, io, obj);
+  };
   auto dx = CC_CSV(c::Float, "SCENE_DELAY");
   // no
   auto f= [=]() {
@@ -133,19 +137,21 @@ void UILayer::onPlay3(c::Ref *r) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay2(c::Ref *) {
-  onPlayXXX(f::GMode::TWO);
+  auto m= f::GMode::TWO;
+  onPlayXXX(m, nullptr, fmtGameData(m));
 }
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay1(c::Ref *) {
-  onPlayXXX(f::GMode::ONE);
+  auto m= f::GMode::ONE;
+  onPlayXXX(m, nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlayXXX(f::GMode mode) {
+void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
   cx::runScene(
-      Game::reify(mc_new_3(GCXX, mode, nullptr, nullptr)),
+      Game::reify(mc_new_3(GCXX, mode, io, obj)),
       CC_CSV(c::Float, "SCENE_DELAY"));
 }
 

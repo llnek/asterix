@@ -21,7 +21,6 @@ EFactory::EFactory(not_null<a::Engine*> e,
     not_null<c::Dictionary*> options)
 
   : Factory(e, options) {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,8 +31,8 @@ a::Entity* EFactory::reifyBoard() {
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
 
-  auto ent= engine->reifyEntity("*");
   auto bd= mc_new_3( Board, nil, xv, ov);
+  auto ent= engine->reifyEntity("*");
   auto ps= mc_new( Players);
   ArrCells seed;
 

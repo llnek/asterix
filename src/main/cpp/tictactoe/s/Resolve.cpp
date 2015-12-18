@@ -30,7 +30,7 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
-  CCLOG("Resolve::update");
+  //CCLOG("Resolve::update");
   auto n= board->head;
   if (MGMS()->isLive()) {
     syncUp(n);
@@ -122,7 +122,7 @@ void Resolve::doIt(a::Node *node, float dt) {
 void Resolve::doWin(a::Node *node, Player &winner, const ArrDim &combo) {
 
   sendEx("/hud/score/update", j::json({
-    {"color", winner.color },
+    {"pnum", winner.pnum },
     {"score", 1}
   }));
 
@@ -150,7 +150,7 @@ void Resolve::doForfeit(a::Node *node) {
   auto &win= ps->parr[other];
 
   sendEx("/hud/score/update", j::json({
-    {"color", win.color },
+    {"pnum", win.pnum },
     {"score", 1}
   }));
 
@@ -162,8 +162,7 @@ void Resolve::doForfeit(a::Node *node) {
       if (n->getValue() == loser.value) {
         auto p= z->getPosition();
         z->removeFromParent();
-        //TODO: why + 2????
-        z = drawSymbol(view, p, n->getValue()+2, false);
+        z = drawSymbol(view, p, n->getValue(), true);
       }
     }
   }

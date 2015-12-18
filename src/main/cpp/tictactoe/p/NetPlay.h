@@ -18,14 +18,16 @@
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
+typedef std::function<void (ws::OdinIO*,j::json)> NPCX_Yes;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL NPCX : public f::SCTX {
-  NPCX(VOIDFN yes, VOIDFN no) {
+  NPCX(NPCX_Yes yes, VOIDFN no) {
     this->yes=yes;
     this->no=no;
   }
-  VOIDFN yes;
+  NPCX_Yes yes;
   VOIDFN no;
 };
 

@@ -28,13 +28,14 @@ NS_BEGIN(tttoe)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GLayer : public f::GameLayer {
-public:
+struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onTouchEnded(c::Touch*, c::Event*);
   virtual void onMouseUp(c::Event*);
 
-  HUDLayer* getHUD();
+  HUDLayer* getHUD() {
+    return static_cast<HUDLayer*>( getSceneX()->getLayer(3));
+  }
 
   void onGUIXXX(const c::Vec2& );
   void playTimeExpired();
@@ -45,31 +46,17 @@ public:
   void reset();
   void deco();
 
-  a::NodeList* boardNode=nullptr;
-  EFactory* factory=nullptr;
+  a::NodeList *boardNode=nullptr;
+  EFactory *factory=nullptr;
 
-public:
-
-    STATIC_REIFY_LAYER(GLayer)
   virtual int getIID() { return 2; }
-
   virtual void decorate();
 
-  //void onPlayerKilled();
-  //void onEarnScore(int);
-  //void spawnPlayer();
-
+  STATIC_REIFY_LAYER(GLayer)
   virtual ~GLayer() {}
   GLayer() {}
-
   NOCPYASS(GLayer)
 };
-
-//////////////////////////////////////////////////////////////////////////
-//
-HUDLayer* GLayer::getHUD() {
-  return static_cast<HUDLayer*>( getSceneX()->getLayer(3));
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -100,29 +87,30 @@ void GLayer::deco() {
   if (atlases.empty()) {
     regoAtlas("game-pics");
     regoAtlas("lang-pics");
+    incIndexZ();
   }
 
-  auto seed= fmtGameData(MGMS()->getMode());
+  auto ctx = (GCXX*) getSceneX()->getCtx();
+  auto ppids = ctx->data["ppids"];
+  auto pnum= ctx->data["pnum"];
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
   sstr p2k;
   sstr p1n;
   sstr p2n;
-
-  auto ppids = seed["ppids"];
   J__LOOP(it, ppids) {
-    auto arr=  it.value() ;
-    if (arr[0].get<j::json::number_integer_t>() == 1) {
+    auto &arr=  it.value() ;
+    if (JS_INT(arr[0]) == 1) {
+      p1n= JS_STR(arr[1]);
       p1k= it.key();
-      p1n= arr[1].get<j::json::string_t>();
     } else {
+      p2n= JS_STR(arr[1]);
       p2k= it.key();
-      p2n= arr[1].get<j::json::string_t>();
     }
   }
 
-  CCLOG("seed =\n%s", seed.dump(0).c_str());
+  CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 
   auto e = mc_new(a::Engine);
   auto d = CC_DICT();
@@ -148,13 +136,14 @@ void GLayer::deco() {
   getHUD()->reset();
 
   this->options->setObject(CC_INT(0), "lastWinner");
+  this->options->setObject(CC_INT(pnum), "pnum");
   CCLOG("init-game - ok");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::reset() {
-  //getHUD()->reset();
+  getHUD()->reset();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -264,8 +253,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   else
   if ("/net/stop" == topic) {
     auto p= (j::json*) msg;
-    y->overAndDone(
-      p->operator[]("status").get<j::json::boolean_t>());
+    y->overAndDone( JS_BOOL(p->operator[]("status")));
   }
   else
   if ("/hud/timer/hide" == topic) {
@@ -275,21 +263,20 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   if ("/hud/score/update" == topic) {
     auto p = (j::json*) msg;
     y->getHUD()->updateScore(
-        p->operator[]("color").get<j::json::string_t>(),
-        p->operator[]("score").get<j::json::number_integer_t>());
+        JS_INT(p->operator[]("pnum")),
+        JS_INT(p->operator[]("score")));
   }
   else
   if ("/hud/end" == topic) {
     auto p = (j::json*) msg;
-    y->overAndDone(
-        p->operator[]("winner").get<j::json::number_integer_t>());
+    y->overAndDone( JS_INT(p->operator[]("winner")));
   }
   else
   if ("/hud/update" == topic) {
     auto p= (j::json*) msg;
     y->getHUD()->draw(
-        p->operator[]("running").get<j::json::boolean_t>(),
-        p->operator[]("pnum").get<j::json::number_integer_t>());
+        JS_BOOL(p->operator[]("running")),
+        JS_INT(p->operator[]("pnum")));
   }
   else
   if ("/player/timer/expired" == topic) {

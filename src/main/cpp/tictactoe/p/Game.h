@@ -15,15 +15,19 @@
 #include "x2d/GameScene.h"
 NS_BEGIN(tttoe)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL GCXX : public f::GCX {
-  GCXX(f::GMode m, ws::OdinIO *io, j::json msg) {
-
+  GCXX(f::GMode m, ws::OdinIO *io, j::json msg) : GCX(m) {
+    data=msg;
+    odin=io;
   }
+  j::json data;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Game : public f::GameScene {
+struct CC_DLL Game : public f::GameScene {
 public:
 
   virtual void sendMsgEx(const MsgTopic&, void*);
@@ -35,10 +39,9 @@ public:
   virtual void stop();
   virtual void play();
 
+  STATIC_REIFY_SCENE_CTX(Game)
   virtual ~Game() {}
   Game() {}
-
-  STATIC_REIFY_SCENE_CTX(Game)
   NOCPYASS(Game)
 };
 

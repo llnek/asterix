@@ -16,6 +16,9 @@
 #define MGMS() fusii::GameScene::self()
 #define MGML() fusii::GameScene::get()
 
+#define SENDMSGEX(t,m) MGMS()->sendMsgEx(t,m)
+#define SENDMSG(t) MGMS()->sendMsg(t)
+
 #include "platform/CCCommon.h"
 #include "core/XPool.h"
 #include "core/Odin.h"

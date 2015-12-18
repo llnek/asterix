@@ -31,6 +31,7 @@ void Config::initCsts() {
   addCst("showFPS", CC_BOOL(false));
 
   addColor("default", CC_STR("#5e3178"));
+  addColor("text", CC_STR("#ffffff"));
   addColor("x", CC_STR("#f6b17f"));
 }
 
