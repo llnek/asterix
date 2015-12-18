@@ -40,8 +40,8 @@ bool XScene::init() {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-void XScene:: setCtx(SCTX *x) {
-  mc_del_ptr(context);
+void XScene:: setCtx(SCTX *x, bool clean) {
+  if (clean) { mc_del_ptr(context); }
   context=x;
 }
 

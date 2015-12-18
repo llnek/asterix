@@ -20,6 +20,8 @@
 #include "END.h"
 #include "Game.h"
 #include "Menu.h"
+#include "End.h"
+
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
@@ -185,7 +187,9 @@ void GLayer::playTimeExpired() {
 //
 void GLayer::overAndDone(int winner) {
   getHUD()->endGame(winner);
-  //cx::runScene(EndGame::reify( MGMS()->getMode() ));
+  unscheduleUpdate();
+  cx::pauseAudio();
+  ELayer::reify(getSceneX(),999);
 }
 
 //////////////////////////////////////////////////////////////////////////////

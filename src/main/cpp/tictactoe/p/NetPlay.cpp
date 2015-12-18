@@ -81,16 +81,15 @@ void UILayer::showWaitOthers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onStart(ws::OdinEvent *evt) {
-  auto obj= fmtGameData(f::GMode::NET);
+  auto m= f::GMode::NET;
+  auto obj= fmtGameData(m);
 
   obj["ppids"] = evt->doco["source"]["ppids"];
   obj["pnum"]= j::json(player);
 
-  auto x = mc_new_3(GCXX, f::GMode::NET, odin, obj);
+  auto ctx = (NPCX*) getSceneX()->getCtx();
+  ctx->yes(odin,obj);
   SNPTR(odin)
-  cx::runScene(
-      Game::reify(x),
-      CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

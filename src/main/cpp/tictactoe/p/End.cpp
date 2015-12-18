@@ -20,54 +20,38 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
-class CC_DLL UILayer : public f::XLayer {
-protected:
-
-  void onReplay(c::Ref*);
-  void onQuit(c::Ref*);
-
-public:
-
-  STATIC_REIFY_LAYER(UILayer)
-
-  virtual void decorate();
-  virtual ~UILayer() {}
-  UILayer() {}
-  NOCPYASS(UILayer)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onReplay(c::Ref*) {
+void ELayer::onReplay(c::Ref*) {
+  auto x= (GCXX*)getSceneX()->getCtx();
   auto m= MGMS()->getMode();
-  auto d= fmtGameData(m);
-  //cx::runScene( Game::reify(g, mode) );
+  getSceneX()->setCtx(nullptr,false);
+  cx::runScene(
+      Game::reify(mc_new_3(GCXX, m, x->odin, x->data)),
+      CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onQuit(c::Ref*) {
-  cx::runScene( XCFG()->prelude() );
+void ELayer::onQuit(c::Ref*) {
+  cx::runScene(
+      XCFG()->prelude(),
+      CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::decorate() {
+void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel("font.OCR",XCFG()->getL10NStr("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
   int tag;
 
-  centerImage("game.bg");
-
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
-  qn->setColor(cx::white());
-  qn->setOpacity(0.9*255);
+  qn->setColor(XCFG()->getColor("text"));
+  qn->setOpacity(0.9f*255);
   addItem(qn);
 
   // btns
@@ -76,21 +60,16 @@ void UILayer::decorate() {
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1, b2} );
 
   b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onReplay));
+      CC_MENU_SELECTOR(ELayer::onReplay));
 
   b2->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onQuit));
+      CC_MENU_SELECTOR(ELayer::onQuit));
 
   menu->setPosition(cw.x, wb.top * 0.5f);
   addItem(menu);
 }
 
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void EndGame::decorate() {
-  UILayer::reify(this);
-}
 
 NS_END(tttoe)
+
 

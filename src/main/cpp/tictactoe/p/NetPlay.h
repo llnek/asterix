@@ -12,13 +12,14 @@
 #if !defined(__NETPLAY_H__)
 #define __NETPLAY_H__
 
+//#include "x2d/GameScene.h"
 #include "x2d/XScene.h"
 #include "core/Odin.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
-typedef std::function<void (ws::OdinIO*,j::json)> NPCX_Yes;
+typedef std::function<void (ws::OdinIO*, j::json)> NPCX_Yes;
 
 //////////////////////////////////////////////////////////////////////////////
 //

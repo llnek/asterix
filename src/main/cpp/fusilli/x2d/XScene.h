@@ -32,7 +32,7 @@ public:
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
   SCTX* getCtx() { return context; }
   XLayer* getLayer(int tag);
-  void setCtx(SCTX*);
+  void setCtx(SCTX*, bool clean=true);
 
   virtual void decorate() = 0;
   virtual bool init();

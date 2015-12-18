@@ -12,25 +12,25 @@
 #if !defined(__END_H__)
 #define __END_H__
 
-#include "x2d/XScene.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EndGame : public f::XScene {
+struct CC_DLL ELayer : public f::XLayer {
 
-public:
-
-  STATIC_REIFY_SCENE(EndGame)
+  STATIC_REIFY_LAYER(ELayer)
 
   virtual void decorate();
 
-  virtual ~EndGame() {}
-  EndGame() {}
+  void onReplay(c::Ref*);
+  void onQuit(c::Ref*);
 
-  NOCPYASS(EndGame)
+  virtual ~ELayer() {}
+  ELayer() {}
+
+  NOCPYASS(ELayer)
 };
-
 
 NS_END(tttoe)
 #endif
