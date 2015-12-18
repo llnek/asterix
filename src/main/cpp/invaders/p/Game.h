@@ -17,10 +17,9 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Game : public f::GameScene {
-public:
+struct CC_DLL Game : public f::GameScene {
 
-  virtual void sendMsgEx(const MsgTopic& topic, void*);
+  virtual void sendMsgEx(const MsgTopic &topic, void*);
 
   virtual f::GameLayer* getGLayer();
   virtual void decorate();
@@ -30,9 +29,10 @@ public:
   virtual void stop();
 
   STATIC_REIFY_SCENE_CTX(Game)
-  NOCPYASS(Game)
-  IMPLCZ(Game)
 
+  virtual ~Game() {}
+  Game() {}
+  NOCPYASS(Game)
 
 };
 

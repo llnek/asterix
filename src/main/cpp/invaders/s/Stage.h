@@ -9,41 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__STAGER_H__)
-#define __STAGER_H__
+#if !defined(__STAGE_H__)
+#define __STAGE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stager : public f::BaseSystem<EFactory> {
-protected:
-
-  void onceOnly(a::Node*);
-  void initAlienSize();
-  void initShipSize();
-
-  virtual bool onUpdate(float);
-  a::NodeList* cannons;
-  bool inited;
-
+struct CC_DLL Stage : public f::XSystem<EFactory> {
 public:
 
-  virtual const a::SystemType typeId() { return "s/Stager"; }
+  virtual const a::SystemType typeId() { return "s/Stage"; }
 
-  Stager(not_null<EFactory*>, not_null<c::Dictionary*>);
+  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
 
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::PreUpdate; }
 
-  NOCPYASS(Stager)
-  NODFT(Stager)
+  void onceOnly(a::Node*);
+  void initAlienSize();
+  void initShipSize();
 
-  virtual ~Stager() {}
+  virtual bool update(float);
 
+  virtual ~Stage() {}
+  NOCPYASS(Stage)
+  NODFT(Stage)
+
+  a::NodeList *cannons=nullptr;
 };
 
 

@@ -12,38 +12,14 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 #include "n/GNodes.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Aliens : public f::BaseSystem<EFactory> {
-protected:
-
-  void forwardOneAlien(f::ComObj* a, float delta);
-  void shuffleOneAlien(f::ComObj* a, int stepx);
-
-  void processMovement(a::Node*, float dt);
-  void processBombs(a::Node*, float dt);
-
-  void dropBomb(float x, float y);
-  void checkBomb(AlienSquad* );
-
-  bool testDirX(f::ComObj* b, int stepx);
-  void maybeShuffleAliens(AlienSquad* );
-
-  bool doShuffle(AlienSquad* sqad);
-  bool doForward(AlienSquad* sqad);
-
-  f::ComObj* findMinX(AlienSquad* sqad);
-  f::ComObj* findMaxX(AlienSquad* sqad);
-
-  virtual bool onUpdate(float);
-
-  a::NodeList* baddies;
-
+struct CC_DLL Aliens : public f::XSystem<EFactory> {
 public:
 
   virtual const a::SystemType typeId() { return "n/Aliens"; }
@@ -52,11 +28,32 @@ public:
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::AI; }
+
+  virtual bool update(float);
+
+  void forwardOneAlien(f::ComObj*, float delta);
+  void shuffleOneAlien(f::ComObj*, int stepx);
+
+  void processMovement(a::Node*, float dt);
+  void processBombs(a::Node*, float dt);
+
+  void dropBomb(float x, float y);
+  void checkBomb(AlienSquad* );
+
+  bool testDirX(f::ComObj* , int stepx);
+  void maybeShuffleAliens(AlienSquad* );
+
+  bool doShuffle(AlienSquad* );
+  bool doForward(AlienSquad* );
+
+  f::ComObj* findMinX(AlienSquad* );
+  f::ComObj* findMaxX(AlienSquad* );
+
   virtual ~Aliens() {}
-
-  NOCPYASS(Aliens)
   NODFT(Aliens)
+  NOCPYASS(Aliens)
 
+  a::NodeList *baddies=nullptr;
 };
 
 

@@ -22,10 +22,7 @@ NS_BEGIN(invaders)
 Collide::Collide(not_null<EFactory*> f,
     not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f,d) {
-
-  SNPTR(aliens)
-  SNPTR(ships)
+  : XSystem<EFactory>(f,d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,7 +37,7 @@ void Collide::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::onUpdate(float dt) {
+bool Collide::update(float dt) {
   auto enemies= aliens->head;
   auto ship = ships->head;
 
@@ -49,21 +46,17 @@ bool Collide::onUpdate(float dt) {
   // 2. kill aliens
   checkMissilesAliens(enemies);
 
-  if (NNP(ship)) {
-    // 3. ship ok?
-    checkShipBombs(ship);
-    // 4. overruned by aliens ?
-    if (NNP(enemies)) {
-      checkShipAliens(enemies, ship);
-    }
-  }
+  // 3. ship ok?
+  checkShipBombs(ship);
+  // 4. overruned by aliens ?
+  checkShipAliens(enemies, ship);
 
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Collide::maybeCollide(f::ComObj* a, f::ComObj* b) {
+bool Collide::maybeCollide(f::ComObj *a, f::ComObj *b) {
   return cx::collideN(a->sprite, b->sprite);
 }
 
@@ -79,8 +72,8 @@ void Collide::checkMissilesBombs() {
   F__LOOP(it, m) {
     F__LOOP(it2, b) {
 
-      auto e2 = *it2;
-      auto e= *it;
+      auto &e2 = *it2;
+      auto &e= *it;
       if (e2->status &&
           e->status &&
           maybeCollide(e2,e)) {
@@ -93,7 +86,7 @@ void Collide::checkMissilesBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkMissilesAliens(a::Node* node) {
+void Collide::checkMissilesAliens(a::Node *node) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto mss = MGMS()->getPool("missiles");
@@ -102,8 +95,8 @@ void Collide::checkMissilesAliens(a::Node* node) {
 
   F__LOOP(it, c) {
     F__LOOP(it2, c2) {
-      auto e2= *it2;
-      auto e = *it;
+      auto &e2= *it2;
+      auto &e = *it;
       if (e->status && e2->status &&
           maybeCollide(e,e2)) {
         e->hurt();
@@ -115,7 +108,7 @@ void Collide::checkMissilesAliens(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkShipBombs(a::Node* node) {
+void Collide::checkShipBombs(a::Node *node) {
 
   auto ship= CC_GNF(Ship, node, "ship");
   auto bbs= MGMS()->getPool("bombs");
@@ -123,7 +116,7 @@ void Collide::checkShipBombs(a::Node* node) {
 
   if (ship->status)
     F__LOOP(it, c) {
-      auto b = *it;
+      auto &b = *it;
       if (b->status &&
           maybeCollide(ship, b)) {
         ship->hurt();
@@ -134,7 +127,7 @@ void Collide::checkShipBombs(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkShipAliens(a::Node* anode, a::Node* snode) {
+void Collide::checkShipAliens(a::Node *anode, a::Node *snode) {
 
   auto sqad= CC_GNF(AlienSquad, anode, "aliens");
   auto ship = CC_GNF(Ship, snode, "ship");
@@ -143,7 +136,7 @@ void Collide::checkShipAliens(a::Node* anode, a::Node* snode) {
 
   if (ship->status)
     F__LOOP(it, c) {
-      auto a = *it;
+      auto &a = *it;
       if (a->status &&
           maybeCollide(ship, a)) {
         ship->hurt();

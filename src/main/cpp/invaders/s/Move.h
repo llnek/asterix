@@ -12,7 +12,7 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 #include "n/GNodes.h"
 NS_BEGIN(invaders)
@@ -20,18 +20,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public f::BaseSystem<EFactory> {
-protected:
-
-  void processShipMotions(a::Node*, float dt);
-  void clamp(Ship* ship);
-  void moveBombs(float dt);
-  void moveMissiles(float dt);
-
-  virtual bool onUpdate(float dt);
-
-  a::NodeList* ships;
-
+struct CC_DLL Move : public f::XSystem<EFactory> {
 public:
 
   virtual const a::SystemType typeId() { return "s/Move"; }
@@ -41,15 +30,20 @@ public:
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::Move; }
+
+  void processShipMotions(a::Node*, float dt);
+  void clamp(Ship* );
+  void moveBombs(float dt);
+  void moveMissiles(float dt);
+
+  virtual bool update(float dt);
+
   virtual ~Move() {}
-
-  NOCPYASS(Move)
   NODFT(Move)
+  NOCPYASS(Move)
 
-
+  a::NodeList *ships=nullptr;
 };
-
-
 
 
 NS_END(invaders)

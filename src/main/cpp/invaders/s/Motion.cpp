@@ -15,6 +15,7 @@
 #include "core/CCSX.h"
 #include "n/GNodes.h"
 #include "Motions.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
@@ -22,13 +23,7 @@ NS_BEGIN(invaders)
 //
 Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
-
-  SNPTR(cannons)
-  SNPTR(aliens)
-  SNPTR(ships)
-  right=false;
-  left= false;
+  : XSystem<EFactory>(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,21 +40,15 @@ void Motions::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Motions::onUpdate(float dt) {
+bool Motions::update(float dt) {
   auto enemy = aliens->head;
   auto ship=ships->head;
   auto cns= cannons->head;
 
   if (MGMS()->isLive()) {
-    if (NNP(enemy)) {
-      processAlienMotions(enemy,dt);
-    }
-    if (NNP(cns)) {
-      controlCannon(cns,dt);
-    }
-    if (NNP(ship)) {
-      scanInput(ship,dt);
-    }
+    processAlienMotions(enemy,dt);
+    controlCannon(cns,dt);
+    scanInput(ship,dt);
   }
 
   return true;
@@ -67,7 +56,7 @@ bool Motions::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::controlCannon(a::Node* node, float dt) {
+void Motions::controlCannon(a::Node *node, float dt) {
 
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
@@ -93,7 +82,7 @@ void Motions::controlCannon(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::fireMissile(a::Node* node, float dt) {
+void Motions::fireMissile(a::Node *node, float dt) {
 
   auto gun= CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
@@ -120,7 +109,7 @@ void Motions::fireMissile(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::scanInput(a::Node* node, float dt) {
+void Motions::scanInput(a::Node *node, float dt) {
 
   auto m= CC_GNF(Motion, node, "motion");
   auto s= CC_GNF(Ship, node, "ship");
@@ -131,24 +120,20 @@ void Motions::scanInput(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::processAlienMotions(a::Node* node, float dt) {
+void Motions::processAlienMotions(a::Node *node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");
   auto cfg= MGMS()->getLCfg()->getValue();
 
   if (ENP(lpr->timer0)) {
-    lpr->timer0= cx::reifyTimer(MGML(),
-        cfg["marching"].get<j::json::number_float_t>());
+    lpr->timer0= cx::reifyTimer(MGML(), JS_FLOAT(cfg["marching"]));
   }
 
   if (ENP(lpr->timer1)) {
-    lpr->timer1= cx::reifyTimer(MGML(),
-        cfg["bombing"].get<j::json::number_float_t>());
+    lpr->timer1= cx::reifyTimer(MGML(), JS_FLOAT(cfg["bombing"]));
   }
 }
-
-
 
 
 NS_END(invaders)

@@ -18,25 +18,25 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct MContext : public f::SContext {
-  MContext(VOIDFN f) { back=f;  }
-  virtual ~MContext() {}
+struct CC_DLL MCX : public f::SCX {
+  MCX(VOIDFN f) { back=f;  }
   VOIDFN back;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainMenu : public f::XScene {
-public:
+struct CC_DLL MMenu : public f::XScene {
 
-  STATIC_REIFY_SCENE_CTX(MainMenu)
-  NOCPYASS(MainMenu)
-  IMPLCZ(MainMenu)
+  STATIC_REIFY_SCENE_CTX(MMenu)
 
   virtual void decorate();
-};
+  virtual ~MMenu() {}
+  MMenu() {}
+  NOCPYASS(MMenu)
 
+};
 
 NS_END(invaders)
 #endif
+
 

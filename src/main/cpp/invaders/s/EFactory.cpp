@@ -17,6 +17,7 @@
 #include "ash/Engine.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
@@ -28,11 +29,6 @@ EFactory::EFactory(not_null<a::Engine*> e,
 
   : Factory(e,options) {
 
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-EFactory::~EFactory() {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,13 +69,13 @@ void EFactory::reifyBombs(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size EFactory::calcImgSize(const sstr& img) {
+const c::Size EFactory::calcImgSize(const sstr &img) {
   return cx::calcSize(img);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size EFactory::getRankInfo(int r, c::Dictionary* out) {
+const c::Size EFactory::getRankInfo(int r, c::Dictionary *out) {
   c::Size z= cx::calcSize("purple_bug_0.png");
   sstr s0 = "purple_bug_0.png";
   sstr s1= "purple_bug_1.png";
@@ -110,7 +106,7 @@ const c::Size EFactory::getRankInfo(int r, c::Dictionary* out) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::fillSquad(f::XPool* pool) {
+void EFactory::fillSquad(f::XPool *pool) {
 
   auto cache= c::AnimationCache::getInstance();
   auto rows = CC_CSV(c::Integer, "ROWS");

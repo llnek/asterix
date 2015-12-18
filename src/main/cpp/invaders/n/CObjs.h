@@ -95,61 +95,56 @@ struct CC_DLL Explosion : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Looper : public a::Component {
-public:
+struct CC_DLL Looper : public a::Component {
 
   virtual const a::COMType typeId() { return "n/Looper"; }
 
+  virtual ~Looper();
+  Looper();
   NOCPYASS(Looper)
-  DECLCZ(Looper)
 
-  c::DelayTime* timer0;
-  c::DelayTime* timer1;
-  c::DelayTime* timer7;
+  c::DelayTime *timer7=nullptr;
+  c::DelayTime *timer0=nullptr;
+  c::DelayTime *timer1=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Missile : public f::ComObj {
-public:
+struct CC_DLL Missile : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Missile"; }
   Missile(not_null<c::Sprite*>);
 
+  virtual ~Missile() {}
   NOCPYASS(Missile)
   NODFT(Missile)
 
-  virtual ~Missile() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motion : public a::Component {
-public:
+struct CC_DLL Motion : public a::Component {
 
   virtual const a::COMType typeId() { return "n/Motion"; }
-  virtual ~Motion() {}
 
+  virtual ~Motion() {}
+  Motion() {}
   NOCPYASS(Motion)
 
-  Motion();
-
-  bool right;
-  bool left;
+  bool right=false;
+  bool left=false;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Ship : public f::ComObj {
-public:
+struct CC_DLL Ship : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Ship"; }
   Ship(not_null<c::Sprite*>, const sstr&, const sstr&);
 
   virtual ~Ship() {}
-
-  NOCPYASS(Ship)
   NODFT(Ship)
+  NOCPYASS(Ship)
 
   sstr frame0;
   sstr frame1;
@@ -157,22 +152,20 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Velocity : public a::Component {
-public:
+struct CC_DLL Velocity : public a::Component {
 
   virtual const a::COMType typeId() { return "n/Velocity"; }
-  Velocity(float vx, float vy);
+  Velocity(float vx, float vy) {
+    x=vx; y=vy;
+  }
 
   virtual ~Velocity() {}
-
-  NOCPYASS(Velocity)
   NODFT(Velocity)
+  NOCPYASS(Velocity)
 
-  float x;
-  float y;
+  float x=0;
+  float y=0;
 };
-
-
 
 NS_END(invaders)
 #endif

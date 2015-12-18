@@ -19,51 +19,56 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AlienMotionNode : public a::NodeFactory {
-public:
+struct CC_DLL AlienMotionNode : public a::NodeFactory {
 
   virtual const a::NodeType typeId() { return "n/AlienMotionNode"; }
 
   virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s_vec<sstr> { "aliens", "looper" },
-        s_vec<a::COMType> { "n/AlienSquad", "n/Looper" });
+    return reifyXXXNode({
+        { "aliens", "n/AlienSquad" },
+        {"looper",  "n/Looper" }
+    });
   }
 
+  virtual ~AlienMotionNode() {}
+  AlienMotionNode() {}
   NOCPYASS(AlienMotionNode)
-  IMPLCZ( AlienMotionNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL CannonCtrlNode : public a::NodeFactory {
-public:
+struct CC_DLL CannonCtrlNode : public a::NodeFactory {
 
   virtual const a::NodeType typeId() { return "n/CannonCtrlNode"; }
   virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s_vec<sstr> { "looper", "cannon", "ship" },
-        s_vec<a::COMType> { "n/Looper", "n/Cannon", "n/Ship" });
+    return reifyXXXNode({
+        { "looper", "n/Looper" },
+        { "cannon", "n/Cannon" },
+        { "ship", "n/Ship" }
+    });
   }
 
+  virtual ~CannonCtrlNode() {}
+  CannonCtrlNode() {}
   NOCPYASS(CannonCtrlNode)
-  IMPLCZ( CannonCtrlNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ShipMotionNode : public a::NodeFactory {
-public:
+struct CC_DLL ShipMotionNode : public a::NodeFactory {
 
   virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
   virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s_vec<sstr> { "vel", "motion", "ship" },
-        s_vec<a::COMType> { "n/Velocity", "n/Motion", "n/Ship" });
+    return reifyXXXNode({
+        { "vel", "n/Velocity" },
+        { "motion", "n/Motion"},
+        { "ship", "n/Ship" }
+    });
   }
 
+  virtual ~ShipMotionNode() {}
+  ShipMotionNode() {}
   NOCPYASS(ShipMotionNode)
-  IMPLCZ(ShipMotionNode)
 };
 
 

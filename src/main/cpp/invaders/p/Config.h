@@ -12,8 +12,8 @@
 #if !defined(__CONFIG_H__)
 #define __CONFIG_H__
 
-#include "x2d/XScene.h"
 #include "core/XConfig.h"
+#include "x2d/XScene.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -21,29 +21,23 @@ NS_BEGIN(invaders)
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  Config();
-
-private:
-
   void initLevels();
   void initAssets();
   void initCsts();
   void initPools();
 
-  float scale;
-
 public:
 
+  virtual const c::Size gameSize() { return c::Size(320,480); }
   virtual void handleResolution(const c::Size& );
-  virtual const c::Size gameSize();
 
-  virtual ResolutionPolicy policy();
-  virtual const sstr appKey();
-  virtual const sstr appId();
-  virtual const sstr color();
+  virtual const sstr appKey() { return "d39bf198-518a-4de7-88a0-5e28c88571b0"; }
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
+  virtual const sstr appId() { return "invaders"; }
+  virtual const sstr themeColor() { return "red"; }
 
-  virtual f::XScene* startWith();
   virtual const sstr getWSUrl();
+  virtual c::Cscene* prelude();
 
   virtual void setGameId(const sstr& s) {}
   virtual void setRoomId(const sstr& s) {}
@@ -51,13 +45,13 @@ public:
   virtual const sstr getGameId();
   virtual const sstr getRoomId();
 
-  virtual float getScale()  { return scale; }
   virtual void runOnce() ;
 
   virtual ~Config() {}
+  Config() {}
   NOCPYASS(Config)
 
-  static owner<f::XConfig*> reify();
+  static owner<Config*> reify();
 };
 
 

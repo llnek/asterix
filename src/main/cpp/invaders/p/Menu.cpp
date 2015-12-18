@@ -19,26 +19,40 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(invaders)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UILayer : public f::XLayer {
-public:
+struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
-  NOCPYASS(UILayer)
-  IMPLCZ(UILayer)
 
   virtual void decorate();
+
+  void onQuit(c::Ref*);
+
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
+
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onQuit(c::Ref*) {
+  cx::runScene(
+      XCFG()->prelude(),
+      CC_CSV(c::Float, "SCENE_DELAY"));
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
 
-  auto ctx= (MContext*) getSceneX()->getCtx();
+  auto ctx = (MCX*) getSceneX()->getCtx();
   auto tile = CC_CSV(c::Integer, "TILE");
-  c::Color3B color(94,49,120);
+  auto dfc= XCFG()->getColor("default");
   auto wb = cx::visBox();
   auto cw = cx::center();
 
@@ -50,14 +64,14 @@ void UILayer::decorate() {
                           "font.JellyBelly",
                           XCFG()->getL10NStr("mmenu"));
   lb->setScale(XCFG()->getScale());
-  lb->setColor(cx::white());
+  lb->setColor(XCFG()->getColor("text"));
   addItem(lb);
 
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-      cx::runScene(Game::reify(mc_new(f::GContext)));
+      cx::runScene(Game::reify(mc_new(f::GCX)));
       });
 
   menu->setPosition(cw);
@@ -68,33 +82,27 @@ void UILayer::decorate() {
   auto q= cx::reifyMenuBtn("icon_quit.png");
   auto sz= b->getContentSize();
 
-  // audio
-  c::MenuItem* off;
-  c::MenuItem* on;
-  c::Menu* m2;
-
-  q->setTarget(this, CC_MENU_SELECTOR(XLayer::onQuit));
+  q->setTarget(this, CC_MENU_SELECTOR(UILayer::onQuit));
   b->setCallback([=](c::Ref*) { ctx->back(); });
 
-  m2= cx::mkMenu(s::vector<c::MenuItem*> {b, q}, false, 10.0f);
+  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {b, q} );
   m2->setPosition(wb.left + tile + sz.width * 1.1f,
                   wb.bottom + tile + sz.height * 0.45f);
   addItem(m2);
 
-  cx::reifyAudioIcons(off, on);
-  off->setColor(color);
-  on->setColor(color);
+  auto audios = cx::reifyAudioIcons();
+  off->setColor(dfc);
+  on->setColor(dfc);
 
-  addAudioIcons(this, off, on,
+  addAudioIcons(this, audios,
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
-
 }
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::decorate() {
+void MMenu::decorate() {
   UILayer::reify(this);
 }
 

@@ -13,17 +13,16 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
 
 //////////////////////////////////////////////////////////////////////////
 //
 Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f,d) {
+  : XSystem<EFactory>(f,d) {
 
-  SNPTR(ships)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,12 +34,10 @@ void Move::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Move::onUpdate(float dt) {
+bool Move::update(float dt) {
   auto node = ships->head;
   if (MGMS()->isLive()) {
-    if (NNP(node)) {
-      processShipMotions(node, dt);
-    }
+    processShipMotions(node, dt);
     moveMissiles(dt);
     moveBombs(dt);
   }
@@ -49,7 +46,7 @@ bool Move::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::processShipMotions(a::Node* node, float dt) {
+void Move::processShipMotions(a::Node *node, float dt) {
 
   auto motion = CC_GNF(Motion, node,"motion");
   auto sv = CC_GNF(Velocity, node,"vel");
@@ -79,7 +76,7 @@ void Move::processShipMotions(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::clamp(Ship* ship) {
+void Move::clamp(Ship *ship) {
 
   auto sz= ship->sprite->getContentSize();
   auto tile= CC_CSV(c::Integer,"TILE");
@@ -102,7 +99,7 @@ void Move::moveBombs(float dt) {
   auto c= bbs->list();
 
   F__LOOP(it, c) {
-    auto b = *it;
+    auto &b = *it;
     if (b->status) {
       auto pos= b->pos();
       auto y = pos.y + dt * b->vel.y;
@@ -120,7 +117,7 @@ void Move::moveMissiles(float dt) {
 
   F__LOOP(it, c) {
 
-    auto m = *it;
+    auto &m = *it;
     auto pos= m->pos();
     auto y = pos.y + dt * m->vel.y;
     m->setPos(pos.x, y);

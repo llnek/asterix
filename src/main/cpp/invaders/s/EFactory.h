@@ -17,9 +17,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EFactory : public f::Factory {
-protected:
-  f::ComObj* player;
+struct CC_DLL EFactory : public f::Factory {
 public:
 
   EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
@@ -32,15 +30,16 @@ public:
   a::Entity* reifyShip();
 
   const c::Size getRankInfo(int r, c::Dictionary*);
-  const c::Size calcImgSize(const sstr& img);
+  const c::Size calcImgSize(const sstr &img);
 
   void fillSquad(f::XPool* );
   void bornShip();
 
-  NOCPYASS(EFactory)
+  virtual ~EFactory() {}
   NODFT(EFactory)
+  NOCPYASS(EFactory)
 
-  virtual ~EFactory();
+  f::ComObj* player=nullptr;
 };
 
 

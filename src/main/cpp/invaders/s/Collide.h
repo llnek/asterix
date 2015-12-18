@@ -12,26 +12,13 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide : public f::BaseSystem<EFactory> {
-protected:
-
-  bool maybeCollide(f::ComObj*, f::ComObj*);
-  void checkMissilesBombs();
-  void checkMissilesAliens(a::Node*);
-  void checkShipBombs(a::Node*);
-  void checkShipAliens(a::Node*, a::Node*);
-
-  virtual bool onUpdate(float);
-
-  a::NodeList* aliens;
-  a::NodeList* ships;
-
+struct CC_DLL Collide : public f::XSystem<EFactory> {
 public:
 
   virtual const a::SystemType typeId() { return "n/Collide"; }
@@ -39,10 +26,21 @@ public:
 
   virtual void addToEngine(not_null<a::Engine*> );
   virtual int priority() { return a::Collide; }
-  virtual ~Collide() {}
 
-  NOCPYASS(Collide)
+  virtual bool update(float);
+
+  bool maybeCollide(f::ComObj*, f::ComObj*);
+  void checkMissilesBombs();
+  void checkMissilesAliens(a::Node*);
+  void checkShipBombs(a::Node*);
+  void checkShipAliens(a::Node*, a::Node*);
+
+  virtual ~Collide() {}
   NODFT(Collide)
+  NOCPYASS(Collide)
+
+  a::NodeList *aliens=nullptr;
+  a::NodeList *ships=nullptr;
 
 };
 

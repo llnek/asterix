@@ -17,16 +17,20 @@
 #include "Splash.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UILayer : public f::XLayer {
-public:
+struct CC_DLL UILayer : public f::XLayer {
+
   STATIC_REIFY_LAYER(UILayer)
-  NOCPYASS(UILayer)
-  IMPLCZ(UILayer)
+
   virtual void decorate();
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
+
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,16 +44,15 @@ void UILayer::decorate() {
 
   addFrame("title.png", c::Vec2(cw.x, wb.top * 0.9f));
 
-  auto cb= [=]() { cx::runScene(XCFG()->startWith()); };
+  auto cb= [=]() { cx::runScene(XCFG()->prelude()); };
   auto b1 = cx::reifyMenuBtn("play.png");
   auto menu = cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-        cx::runScene( MainMenu::reify(mc_new_1(MContext, cb)));
+        cx::runScene( MMenu::reify(mc_new_1(MCX, cb)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
-
 }
 
 END_NS_UNAMED()

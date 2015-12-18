@@ -12,8 +12,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/EFactory.h"
-#include "s/Stager.h"
-#include "s/Motions.h"
+#include "s/Stage.h"
+#include "s/Motion.h"
 #include "s/Move.h"
 #include "s/Collide.h"
 #include "s/Resolve.h"
@@ -24,28 +24,22 @@
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GLayer : public f::GameLayer {
-protected:
+BEGIN_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GLayer : public f::GameLayer {
 
-  virtual bool onTouchBegan(c::Touch*, c::Event*) { return true; }
+  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
+
   virtual void onTouchMoved(c::Touch*, c::Event*);
   virtual void onMouseMove(c::Event*);
 
-  EFactory* fac;
-  Ship* player;
-
-public:
-
-  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
   virtual int getIID() { return 2; }
   virtual void decorate();
 
-  void reset();
-  void play();
+  void deco();
 
   void onPlayerKilled();
   void onEarnScore(int);
@@ -53,27 +47,20 @@ public:
   void spawnPlayer();
 
   STATIC_REIFY_LAYER(GLayer)
+
+  virtual ~GLayer() {
+    mc_del_ptr(fac)
+  }
+  GLayer() {}
   NOCPYASS(GLayer)
-  DECLCZ(GLayer)
 
+  EFactory *fac=nullptr;
+  Ship *player=nullptr;
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-  mc_del_ptr(fac)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::GLayer() {
-  SNPTR(fac)
-  SNPTR(player)
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMove(c::Event* event) {
+void GLayer::onMouseMove(c::Event *event) {
   auto e= (c::EventMouse*)event;
   auto b= e->getMouseButton();
   if (b == MOUSE_BUTTON_LEFT) {
@@ -86,7 +73,7 @@ void GLayer::onMouseMove(c::Event* event) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMoved(c::Touch* t, c::Event* evt){
+void GLayer::onTouchMoved(c::Touch *t, c::Event *evt){
   auto pos= this->player->sprite->getPosition();
   auto bx= MGMS()->getEnclosureBox();
   auto y = pos.y;
@@ -101,37 +88,34 @@ void GLayer::decorate() {
   centerImage("game.bg");
   enableListeners();
   cx::resumeAudio();
-  reset();
+  deco();
+  scheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::reset() {
+void GLayer::deco() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
-
-  mc_del_ptr(this->engine)
-  mc_del_ptr(this->fac)
-  CC_DROP(this->options)
 
   if (atlases.empty()) {
     regoAtlas("game-pics");
     regoAtlas("lang-pics");
+    incIndexZ();
   }
 
   MGMS()->resetPools();
-  getHUD()->reset();
 
   auto e= mc_new(a::Engine);
   auto d= CC_DICT();
-  auto f= new EFactory(e, d);
+  auto f= mc_new_2(EFactory, e, d);
 
-  e->regoSystem(new Stager(f, d));
-  e->regoSystem(new Motions(f, d));
-  e->regoSystem(new Move(f, d));
-  e->regoSystem(new Aliens(f, d));
-  e->regoSystem(new Collide(f, d));
-  e->regoSystem(new Resolve(f, d));
+  e->regoSystem(mc_new_2( Stage, f, d));
+  e->regoSystem(mc_new_2( Motions, f, d));
+  e->regoSystem(mc_new_2( Move, f, d));
+  e->regoSystem(mc_new_2( Aliens, f, d));
+  e->regoSystem(mc_new_2( Collide, f, d));
+  e->regoSystem(mc_new_2( Resolve, f, d));
   e->forceSync();
 
   this->options= d;
@@ -143,7 +127,7 @@ void GLayer::reset() {
   auto nl= e->getNodeList(n.typeId());
   this->player= CC_GNF(Ship, nl->head, "ship");
 
-  scheduleUpdate();
+  getHUD()->reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -169,6 +153,7 @@ void GLayer::onStop() {
   disableListeners();
   cx::pauseAudio();
   MGMS()->stop();
+  unscheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,19 +165,19 @@ void GLayer::onEarnScore(int score) {
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
+void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
 
   auto y = SCAST(GLayer*, getLayer(2));
 
   if (topic == "/game/player/earnscore") {
     j::json* js = (j::json*) msg;
-    auto n= js->operator[]("score").get<j::json::number_integer_t>();
+    auto n= JS_INT(js->operator[]("score"));
     y->onEarnScore(n);
   }
   else
   if (topic == "/hud/showmenu") {
     auto f= [=]() { CC_DTOR()->popScene(); };
-    CC_DTOR()->pushScene(MainMenu::reify(mc_new_1(MContext, f)));
+    CC_DTOR()->pushScene(MMenu::reify(mc_new_1(MCX, f)));
   }
   else
   if (topic == "/hud/replay") {

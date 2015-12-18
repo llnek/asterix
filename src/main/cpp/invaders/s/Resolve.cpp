@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "n/GNodes.h"
 #include "Resolve.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
@@ -22,10 +23,7 @@ NS_BEGIN(invaders)
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
-
-  SNPTR(aliens)
-  SNPTR(ships)
+  : XSystem<EFactory>(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,7 +38,7 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::onUpdate(float dt) {
+bool Resolve::update(float dt) {
   auto enemies = aliens->head;
   auto ship = ships->head;
 
@@ -61,8 +59,7 @@ void Resolve::checkMissiles() {
   auto c = mss->list();
 
   F__LOOP(it, c) {
-
-    auto m = *it;
+    auto &m = *it;
     if (m->status) {
       if (m->pos().y >= ht ||
           m->health <= 0) {
@@ -82,7 +79,7 @@ void Resolve::checkBombs() {
 
   F__LOOP(it, c) {
 
-    auto b = *it;
+    auto &b = *it;
     if (b->status) {
       if (b->health <= 0 ||
           b->pos().y <= bt) {
@@ -94,19 +91,19 @@ void Resolve::checkBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkAliens(a::Node* node) {
+void Resolve::checkAliens(a::Node *node) {
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto c= sqad->list();
 
   F__LOOP(it, c) {
 
-    auto en= *it;
+    auto &en= *it;
     if (en->status) {
       if (en->health <= 0) {
-        auto msg= j::json({
-            {"score", en->score }
-            });
-        MGMS()->sendMsgEx("/game/player/earnscore", &msg);
+        sendEx("/game/player/earnscore",
+            j::json({
+              {"score", en->score }
+            }));
         en->deflate();
       }
     }
@@ -115,16 +112,15 @@ void Resolve::checkAliens(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkShip(a::Node* node) {
+void Resolve::checkShip(a::Node *node) {
   auto ship = CC_GNF(Ship, node, "ship");
 
   if (ship->status &&
       ship->health <= 0) {
     ship->deflate();
-    MGMS()->sendMsg("/game/player/killed");
+    send("/game/player/killed");
   }
 }
-
 
 NS_END(invaders)
 

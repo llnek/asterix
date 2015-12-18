@@ -22,8 +22,7 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 Aliens::Aliens(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : BaseSystem<EFactory>(f, d) {
-  SNPTR(baddies)
+  : XSystem<EFactory>(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,10 +34,9 @@ void Aliens::addToEngine(not_null<a::Engine*> e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::onUpdate(float dt) {
+bool Aliens::update(float dt) {
   auto node=baddies->head;
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  if (MGMS()->isLive()) {
     processMovement(node, dt);
     processBombs(node, dt);
   }
@@ -47,7 +45,7 @@ bool Aliens::onUpdate(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::processMovement(a::Node* node, float dt) {
+void Aliens::processMovement(a::Node *node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");
@@ -62,7 +60,7 @@ void Aliens::processMovement(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::processBombs(a::Node* node, float dt) {
+void Aliens::processBombs(a::Node *node, float dt) {
 
   auto sqad= CC_GNF(AlienSquad, node, "aliens");
   auto lpr = CC_GNF(Looper, node, "looper");
@@ -77,15 +75,15 @@ void Aliens::processBombs(a::Node* node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::checkBomb(AlienSquad* sqad) {
+void Aliens::checkBomb(AlienSquad *sqad) {
   auto c= sqad->list();
   auto p= sqad->aliens;
   int sz = p->size();
-  s::vector<int> rc;
+  s_vec<int> rc;
   int pos=0;
 
   F__LOOP(it, c) {
-    auto a= *it;
+    auto &a= *it;
     if (a->status) { rc.push_back(pos); }
     ++pos;
   }
@@ -115,7 +113,7 @@ void Aliens::dropBomb(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::maybeShuffleAliens(AlienSquad* sqad) {
+void Aliens::maybeShuffleAliens(AlienSquad *sqad) {
   auto b = sqad->stepx > 0 ? findMaxX(sqad) : findMinX(sqad);
   bool ok;
 
@@ -129,7 +127,7 @@ void Aliens::maybeShuffleAliens(AlienSquad* sqad) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::testDirX(f::ComObj* b, int stepx) {
+bool Aliens::testDirX(f::ComObj *b, int stepx) {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   auto sp= b->sprite;
@@ -143,14 +141,14 @@ bool Aliens::testDirX(f::ComObj* b, int stepx) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::shuffleOneAlien(f::ComObj* a, int stepx) {
+void Aliens::shuffleOneAlien(f::ComObj *a, int stepx) {
   auto pos= a->sprite->getPosition();
   a->sprite->setPosition(pos.x + stepx, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::forwardOneAlien(f::ComObj* a, float delta) {
+void Aliens::forwardOneAlien(f::ComObj *a, float delta) {
   auto pos= a->sprite->getPosition();
   auto wz= cx::visRect();
   auto wb= cx::visBox();
@@ -159,12 +157,12 @@ void Aliens::forwardOneAlien(f::ComObj* a, float delta) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Aliens::doShuffle(AlienSquad* sqad) {
+bool Aliens::doShuffle(AlienSquad *sqad) {
   auto c= sqad->list();
   auto found=false;
 
   F__LOOP(it, c) {
-    auto e= *it;
+    auto &e= *it;
     if (e->status) {
       shuffleOneAlien(e, sqad->stepx);
       found=true;

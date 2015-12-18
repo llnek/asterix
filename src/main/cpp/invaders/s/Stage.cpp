@@ -12,40 +12,30 @@
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
 #include "n/GNodes.h"
-#include "Stager.h"
+#include "Stage.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stager::Stager(not_null<EFactory*> f, not_null<c::Dictionary*> d)
+Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+  : XSystem<EFactory>(f, d) {
 
-  initAlienSize();
-  initShipSize();
-
-  f->reifyExplosions();
-  f->reifyMissiles();
-  f->reifyBombs();
-  f->reifyAliens();
-  f->reifyShip();
-
-  SNPTR(cannons)
-  inited=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::addToEngine(not_null<a::Engine*> e) {
+void Stage::addToEngine(not_null<a::Engine*> e) {
   CannonCtrlNode c;
   cannons = e->getNodeList(c.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::initAlienSize() {
+void Stage::initAlienSize() {
   auto z= cx::calcSize("purple_bug_0.png");
   //pick purple since it is the largest
   state->setObject(f::Size2::create(z.width,z.height), "alienSize");
@@ -53,30 +43,42 @@ void Stager::initAlienSize() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stager::initShipSize() {
+void Stage::initShipSize() {
   auto z= cx::calcSize("ship_0.png");
   state->setObject(f::Size2::create(z.width, z.height), "shipSize");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool Stager::onUpdate(float dt) {
-  if (cx::isTransitioning()) { return false; }
-  if (!inited) {
-    onceOnly(cannons->head);
+bool Stage::update(float dt) {
+  auto n= cannons->head;
+  if (MGMS()->isLive()) {
+    if (!inited) {
+      onceOnly(n);
+    }
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stager::onceOnly(a::Node* node) {
+void Stage::onceOnly(a::Node *node) {
+
+  initAlienSize();
+  initShipSize();
+
+  factory->reifyExplosions();
+  factory->reifyMissiles();
+  factory->reifyBombs();
+  factory->reifyAliens();
+  factory->reifyShip();
+
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");
-  auto ship= CC_GNF(Ship, node, "ship");
+  //auto ship= CC_GNF(Ship, node, "ship");
   auto cfg= MGMS()->getLCfg()->getValue();
-  lpr->timer7 = cx::reifyTimer( MGML(),
-    cfg["coolDownWindow"].get<j::json::number_float_t>());
+
+  lpr->timer7 = cx::reifyTimer( MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   gun->hasAmmo=false;
   inited=true;
 }

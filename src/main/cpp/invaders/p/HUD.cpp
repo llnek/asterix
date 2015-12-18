@@ -28,11 +28,12 @@ void HUDLayer::decorate() {
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
+  incIndexZ();
 
   scoreLabel = cx::reifyBmfLabel("font.SmallTypeWriting", "0");
   scoreLabel->setAnchorPoint(cx::anchorTR());
   scoreLabel->setScale(XCFG()->getScale());
-  scoreLabel->setPosition(wb.right - tile - soff, wb.top - tile);
+  scoreLabel->setPosition(wb.right-tile-soff, wb.top-tile);
   addItem(scoreLabel);
 
   this->lives= f::reifyRefType<f::XLives>();
@@ -46,9 +47,9 @@ void HUDLayer::decorate() {
   auto hw = cx::getWidth(b) * 0.5f;
   auto menu = cx::mkMenu(b);
 
-  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  menu->setPosition(wb.right-tile-hw, wb.bottom + tile + hh);
   b->setCallback([=](c::Ref*) {
-        MGMS()->sendMsg("/hud/showmenu");
+        SENDMSG("/hud/showmenu");
       });
 
   addItem(menu);
@@ -74,7 +75,6 @@ void HUDLayer::reset() {
   lives->resurrect();
   score=0;
 }
-
 
 
 NS_END(invaders)

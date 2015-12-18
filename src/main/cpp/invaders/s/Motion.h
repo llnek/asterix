@@ -12,29 +12,14 @@
 #if !defined(__MOTIONS_H__)
 #define __MOTIONS_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public f::BaseSystem<EFactory> {
-protected:
-
-  void processAlienMotions(a::Node*,float dt);
-  void controlCannon(a::Node*, float dt);
-  void fireMissile(a::Node*, float dt);
-  void scanInput(a::Node*, float dt);
-
-  virtual bool onUpdate(float);
-
-  a::NodeList* cannons;
-  a::NodeList* ships;
-  a::NodeList* aliens;
-  bool right;
-  bool left;
-
+struct CC_DLL Motions : public f::XSystem<EFactory> {
 public:
 
   virtual const a::SystemType typeId() { return "n/Motions"; }
@@ -45,13 +30,23 @@ public:
 
   virtual int priority() { return a::Motion; }
 
+  virtual bool update(float);
+
+  void processAlienMotions(a::Node*,float dt);
+  void controlCannon(a::Node*, float dt);
+  void fireMissile(a::Node*, float dt);
+  void scanInput(a::Node*, float dt);
+
   virtual ~Motions() {}
-
-  NOCPYASS(Motions)
   NODFT(Motions)
+  NOCPYASS(Motions)
 
+  a::NodeList *cannons=nullptr;
+  a::NodeList *ships=nullptr;
+  a::NodeList *aliens=nullptr;
+  bool right=false;
+  bool left=false;
 };
-
 
 
 NS_END(invaders)
