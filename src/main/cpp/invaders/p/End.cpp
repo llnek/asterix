@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/utils.h"
 #include "Game.h"
 #include "End.h"
 NS_ALIAS(cx, fusii::ccsx)
@@ -21,11 +20,11 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onReplay(c::Ref*) {
-  auto x= (GCX*)getSceneX()->getCtx();
+  auto x= (f::GCX*)getSceneX()->getCtx();
   auto m= MGMS()->getMode();
   getSceneX()->setCtx(nullptr,false);
   cx::runScene(
-      Game::reify(mc_new(GCX)),
+      Game::reify(mc_new(f::GCX)),
       CC_CSV(c::Float, "SCENE_DELAY"));
 }
 

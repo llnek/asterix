@@ -62,25 +62,31 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMove(c::Event *event) {
+  auto box= this->player->sprite->getBoundingBox();
   auto e= (c::EventMouse*)event;
+  auto loc= e->getLocationInView();
   auto b= e->getMouseButton();
-  if (b == MOUSE_BUTTON_LEFT) {
+  if (b == MOUSE_BUTTON_LEFT &&
+      box.containsPoint(loc)) {
     auto pos= this->player->sprite->getPosition();
     auto bx= MGMS()->getEnclosureBox();
-    auto loc= e->getLocationInView();
     this->player->sprite->setPosition(cx::clamp(loc, bx).x, pos.y);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMoved(c::Touch *t, c::Event *evt){
-  auto pos= this->player->sprite->getPosition();
+void GLayer::onTouchMoved(c::Touch *t, c::Event *evt) {
+  auto box= this->player->sprite->getBoundingBox();
+  auto loc= t->getLocationInView();
   auto bx= MGMS()->getEnclosureBox();
-  auto y = pos.y;
-  pos= c::ccpAdd(pos,  t->getDelta());
-  pos= cx::clamp(pos, bx);
-  this->player->sprite->setPosition(pos.x, y);
+  if (box.containsPoint(loc)) {
+    auto pos= this->player->sprite->getPosition();
+    auto y = pos.y;
+    pos= c::ccpAdd(pos,  t->getDelta());
+    pos= cx::clamp(pos, bx);
+    this->player->sprite->setPosition(pos.x, y);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,7 +170,7 @@ void GLayer::onStop() {
   cx::pauseAudio();
   MGMS()->stop();
   unscheduleUpdate();
-  ELayer::reify(this,999);
+  ELayer::reify(getSceneX(),999);
 }
 
 //////////////////////////////////////////////////////////////////////////
