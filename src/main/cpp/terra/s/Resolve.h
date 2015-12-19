@@ -12,13 +12,13 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public f::BaseSystem<EFactory> {
+class CC_DLL Resolve : public f::XSystem<EFactory> {
 protected:
 
   void onBulletDeath(f::ComObj*);

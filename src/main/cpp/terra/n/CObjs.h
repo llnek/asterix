@@ -21,8 +21,7 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Missile : public f::ComObj {
-public:
+struct CC_DLL Missile : public f::ComObj {
 
   Missile(not_null<c::Sprite*> s, Attacks m = Attacks::NORMAL)
     : ComObj(s,1,0) {
@@ -33,16 +32,15 @@ public:
 
   virtual const a::COMType typeId() { return "n/Missile"; }
   virtual ~Missile() {}
-  NOCPYASS(Missile)
   NODFT(Missile)
+  NOCPYASS(Missile)
 
   Attacks attackMode=Attacks::NORMAL;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Bomb : public f::ComObj {
-public:
+struct CC_DLL Bomb : public f::ComObj {
 
   Bomb(not_null<c::Sprite*> s, Attacks m = Attacks::NORMAL)
     : ComObj(s,1,0) {
@@ -53,39 +51,36 @@ public:
 
   virtual const a::COMType typeId() { return "n/Bomb"; }
   virtual ~Bomb() {}
-  NOCPYASS(Bomb)
   NODFT(Bomb)
+  NOCPYASS(Bomb)
 
   Attacks attackMode=Attacks::NORMAL;
 };
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Enemy : public f::ComObj {
-public:
+struct CC_DLL Enemy : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Enemy"; }
 
-  Enemy(not_null<c::Sprite*> s, const EnemyType& et)
+  Enemy(not_null<c::Sprite*> s, const EnemyType &et)
     : ComObj(s, et.HP, et.scoreValue) {
     delayTime= 1.2f * c::rand_0_1() + 1.0f;
     enemyType= et;
   }
 
   EnemyType enemyType;
-  float delayTime;
+  float delayTime= 0;
   float speed=0;
 
   virtual ~Enemy() {}
-  NOCPYASS(Enemy)
   NODFT(Enemy)
+  NOCPYASS(Enemy)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Ship : public f::ComObj {
-public:
+struct CC_DLL Ship : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Ship"; }
 
@@ -95,23 +90,23 @@ public:
     bornSprite = x;
   }
 
-  c::Sprite* bornSprite=nullptr;
+  c::Sprite *bornSprite=nullptr;
   bool canBeAttack=false;
 
   virtual ~Ship() {}
-  NOCPYASS(Ship)
   NODFT(Ship)
+  NOCPYASS(Ship)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motion : public a::Component {
-public:
+struct CC_DLL Motion : public a::Component {
 
   virtual const a::COMType typeId() { return "n/Motion"; }
 
+  virtual ~Motion() {}
+  Motion() {}
   NOCPYASS(Motion)
-  IMPLCZ(Motion)
 
   bool right=false;
   bool left=false;
@@ -121,8 +116,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Spark : public f::ComObj {
-public:
+struct CC_DLL Spark : public f::ComObj {
 
   Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
     : ComObj(sp1,1,0) {
@@ -131,10 +125,10 @@ public:
 
   virtual const a::COMType typeId() { return "n/Spark"; }
   virtual ~Spark() {}
-  NOCPYASS(Spark)
   NODFT(Spark)
+  NOCPYASS(Spark)
 
-  c::Sprite* sprite2=nullptr;
+  c::Sprite *sprite2=nullptr;
   float duration=0.7f;
   float scale=1.2f;
 
@@ -172,8 +166,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Explosion : public f::ComObj {
-public:
+struct CC_DLL Explosion : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/Explosion"; }
 
@@ -193,14 +186,13 @@ public:
   }
 
   virtual ~Explosion() {}
-  NOCPYASS(Explosion)
   NODFT(Explosion)
+  NOCPYASS(Explosion)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HitEffect : public f::ComObj {
-public:
+struct CC_DLL HitEffect : public f::ComObj {
 
   virtual const a::COMType typeId() { return "n/HitEffect"; }
 
@@ -221,8 +213,8 @@ public:
   float scale=0.75f;
 
   virtual ~HitEffect() {}
-  NOCPYASS(HitEffect)
   NODFT(HitEffect)
+  NOCPYASS(HitEffect)
 };
 
 NS_END(terra)

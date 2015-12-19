@@ -21,7 +21,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 Motions::Motions(not_null<EFactory*> e, not_null<c::Dictionary*> f)
-  : BaseSystem<EFactory>(e, f) {
+  : XSystem<EFactory>(e, f) {
 
 }
 

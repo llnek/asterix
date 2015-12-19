@@ -20,21 +20,19 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
-class CC_DLL UILayer : public f::XLayer {
-protected:
-
-  c::Sprite* flare = nullptr;
-  c::Sprite* ship = nullptr;
-
-public:
+struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
 
-  NOCPYASS(UILayer)
-  IMPLCZ(UILayer)
+  c::Sprite *flare = nullptr;
+  c::Sprite *ship = nullptr;
 
   virtual void update(float);
   virtual void decorate();
+
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
 
 };
 
@@ -46,6 +44,7 @@ void UILayer::decorate() {
   auto cw = cx::center();
 
   centerImage("game.bg");
+  incIndexZ();
 
   flare = c::Sprite::create("pics/flare.jpg");
   flare->setVisible(false);
@@ -54,13 +53,15 @@ void UILayer::decorate() {
   addChild(flare, 15, 10);
   addChild(ship, 0, 4);
 
-  auto f= [=]() { cx::runScene(XCFG()->startWith()); };
+  auto f= [=]() { cx::runScene(XCFG()->prelude()); };
   auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
   b->setCallback([=](c::Ref*) {
     btnEffect();
     flareEffect(flare, [=]() {
-      cx::runScene(MainMenu::reify(mc_new_1(MContext, f)));
+      cx::runScene(
+          MMenu::reify(mc_new_1(MCX, f)),
+          CC_CSV(c::Float,"SCENE_DELAY"));
     });
   });
 

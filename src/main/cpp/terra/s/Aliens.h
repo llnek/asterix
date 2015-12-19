@@ -12,7 +12,7 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 #include "utils.h"
 #include "n/GNodes.h"
@@ -21,7 +21,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 
-class CC_DLL Aliens : public f::BaseSystem<EFactory> {
+class CC_DLL Aliens : public f::XSystem<EFactory> {
 protected:
 
   void addEnemyToGame(a::Node*, int );

@@ -29,11 +29,13 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
-class BLayer : public f::XLayer {
-public:
+struct CC_DLL BLayer : public f::XLayer {
+
   STATIC_REIFY_LAYER(BLayer)
+
+  virtual ~BLayer() {}
+  BLayer() {}
   NOCPYASS(BLayer)
-  IMPLCZ(BLayer)
 
   virtual void decorate() {
     regoAtlas("back-tiles", 1);
@@ -43,20 +45,21 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GLayer : public f::GameLayer {
-public:
+struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
-
-  virtual int getIID() { return 2; }
-  virtual void decorate();
 
   virtual void onTouchMoved(c::Touch*, c::Event*);
   virtual void onMouseMove(c::Event*);
 
+  virtual int getIID() { return 2; }
+  virtual void decorate();
+
   STATIC_REIFY_LAYER(GLayer)
+
+  virtual ~GLayer() {}
+  GLayer() {}
   NOCPYASS(GLayer)
-  IMPLCZ(GLayer)
 
   void onEarnScore(j::json* );
   void incSecCount(float);
@@ -65,14 +68,15 @@ public:
   void initBackTiles();
   void showMenu();
   void onDone();
+  void deco();
 
-  f::ComObj* ship=nullptr;
-  EFactory* fac=nullptr;
+  f::ComObj *ship=nullptr;
+  EFactory *fac=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMoved(c::Touch* touch, c::Event*) {
+void GLayer::onTouchMoved(c::Touch *touch, c::Event*) {
   auto box= ship->sprite->getBoundingBox();
   auto pos= touch->getLocationInView();
   auto bx= MGMS()->getEnclosureBox();
@@ -86,7 +90,7 @@ void GLayer::onTouchMoved(c::Touch* touch, c::Event*) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMove(c::Event* e) {
+void GLayer::onMouseMove(c::Event *e) {
   auto box= ship->sprite->getBoundingBox();
   auto evt= (c::EventMouse*) e;
   auto pos= evt->getLocationInView();
@@ -138,6 +142,15 @@ void GLayer::moveBackTiles(float) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
+  enableListeners();
+  cx::resumeAudio();
+  deco();
+  scheduleUpdate();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::deco() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
 
@@ -146,6 +159,7 @@ void GLayer::decorate() {
   a= regoAtlas("game-pics");
   a= regoAtlas("op-pics");
   a->setBlendFunc(BDFUNC::ADDITIVE);
+  incIndexZ();
 
   MGMS()->reifyPools(s_vec<sstr> {
       "BackTiles", "BackSkies", "Missiles", "Baddies",
@@ -174,14 +188,12 @@ void GLayer::decorate() {
   this->engine=e;
 
   schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0f);
-  scheduleUpdate();
 
   ShipNode n;
   a::Node* s= e->getNodeList(n.typeId())->head;
 
   ship = CC_GNF(Ship, s, "ship");
 
-  enableListeners();
   getHUD()->reset();
   cx::sfxMusic("bgMusic", true);
 }
@@ -207,8 +219,8 @@ void GLayer::onPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onEarnScore(j::json* msg) {
-  auto n= msg->operator[]("score").get<j::json::number_integer_t>();
+void GLayer::onEarnScore(j::json *msg) {
+  auto n= JS_INT(msg->operator[]("score"));
   getHUD()->updateScore(n);
 }
 
@@ -218,6 +230,8 @@ void GLayer::onDone() {
   disableListeners();
   cx::pauseAudio();
   MGMS()->stop();
+  unscheduleUpdate();
+  //ELayer::reify(getSceneX(), 999);
 }
 
 END_NS_UNAMED()
@@ -236,7 +250,7 @@ f::GameLayer* Game::getGLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
+void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
 
   GLayer* y = (GLayer*) getLayer(2);
   j::json* json= (j::json*) msg;
@@ -244,19 +258,19 @@ void Game::sendMsgEx(const MsgTopic& topic, void* msg) {
   if ("/game/players/earnscore" == topic) {
     y->onEarnScore(json);
   }
-
+  else
   if ("/game/backtiles" == topic) {
     y->initBackTiles();
   }
-
+  else
   if ("/hud/showmenu" == topic) {
     y->showMenu();
   }
-
+  else
   if ("/hud/replay" == topic) {
     //y->replay();
   }
-
+  else
   if ("/game/players/killed" == topic) {
     y->onPlayerKilled();
   }

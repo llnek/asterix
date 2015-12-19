@@ -17,10 +17,9 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Game : public f::GameScene {
-public:
+struct CC_DLL Game : public f::GameScene {
 
-  virtual void sendMsgEx(const MsgTopic& topic, void* msg);
+  virtual void sendMsgEx(const MsgTopic &topic, void *msg);
   virtual f::GameLayer* getGLayer();
 
   virtual const f::Box4 getEnclosureBox();
@@ -31,14 +30,15 @@ public:
   virtual void play();
 
   STATIC_REIFY_SCENE_CTX(Game)
+
+  virtual ~Game() {}
+  Game() {}
   NOCPYASS(Game)
-  IMPLCZ(Game)
 
   f::ComObj* backSkyRe=nullptr;
   f::ComObj* backSky=nullptr;
   c::Size backSkyDim;
 };
-
 
 
 NS_END(terra)

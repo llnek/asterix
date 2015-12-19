@@ -22,7 +22,7 @@ NS_BEGIN(terra)
 //
 Render::Render(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(e, d) {
+  : XSystem<EFactory>(e, d) {
 
 }
 

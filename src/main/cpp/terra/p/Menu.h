@@ -17,22 +17,23 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MContext : public f::SContext {
-  MContext(VOIDFN cb) { back=cb; }
-  NODFT(MContext)
+struct CC_DLL MCX : public f::SCTX {
+  MCX(VOIDFN cb) { back=cb; }
   VOIDFN back=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MainMenu : public f::XScene {
+struct CC_DLL MMenu : public f::XScene {
 public:
 
-  STATIC_REIFY_SCENE_CTX(MainMenu)
-  NOCPYASS(MainMenu)
-  IMPLCZ(MainMenu)
+  STATIC_REIFY_SCENE_CTX(MMenu)
 
   virtual void decorate();
+  virtual ~MMenu() {}
+  MMenu() {}
+  NOCPYASS(MMenu)
+
 };
 
 

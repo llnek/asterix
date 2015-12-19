@@ -22,14 +22,16 @@ NS_BEGIN(terra)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UILayer : public f::XLayer {
+struct CC_DLL UILayer : public f::XLayer {
 public:
 
   STATIC_REIFY_LAYER(UILayer)
-  NOCPYASS(UILayer)
-  IMPLCZ(UILayer)
 
   virtual void decorate();
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,21 +42,22 @@ void UILayer::decorate() {
   auto tile = CC_CSV(c::Integer, "TILE");
   auto wb= cx::visBox();
   auto cw= cx::center();
-  auto c= cx::white();
+  auto c= XCFG()->getColor("text");
+
   centerImage("gui.mmenus.menu.bg");
 
   tt->setPosition( cw.x, wb.top * 0.9f);
-  tt->setColor(cx::white());
+  tt->setColor(c);
   tt->setScale(XCFG()->getScale());
   addItem(tt);
 
-  auto ctx = (MContext*) getSceneX()->getCtx();
+  auto ctx = (MCX*) getSceneX()->getCtx();
   auto b= cx::reifyMenuBtn("player1.png");
   auto menu= cx::mkMenu(b);
-  c::Menu* m2;
 
   b->setCallback([=](c::Ref*) {
-      cx::runScene( Game::reify(mc_new(f::GContext)));
+      cx::runScene(Game::reify(mc_new(f::GCX)),
+          CC_CSV(c::Float,"SCENE_DELAY"));
       });
   menu->setPosition(cw);
   addItem(menu);
@@ -65,26 +68,21 @@ void UILayer::decorate() {
   back->setCallback([=](c::Ref*) { ctx->back(); });
   back->setColor(c);
 
-  // audio
-  c::MenuItem* off;
-  c::MenuItem* on;
-
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   quit->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
 
-  m2= cx::mkMenu(s::vector<c::MenuItem*> {back, quit}, false, 10.0);
+  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit});
   m2->setPosition(wb.left + tile + sz.width * 1.1,
                   wb.bottom + tile + sz.height * 0.45);
   addItem(m2);
 
-  cx::reifyAudioIcons(on, off);
-  off->setColor(c);
-  on->setColor(c);
+  auto audios = cx::reifyAudioIcons();
+  audios[0]->setColor(c);
+  audios[1]->setColor(c);
 
-  addAudioIcons((XLayer*) this,
-    off, on,
+  addAudioIcons(this, audios,
     cx::anchorBR(),
     c::Vec2(wb.right - tile, wb.bottom + tile));
 }
@@ -92,7 +90,7 @@ void UILayer::decorate() {
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-void MainMenu::decorate() {
+void MMenu::decorate() {
   UILayer::reify(this);
 }
 

@@ -12,13 +12,13 @@
 #if !defined(__MOTION_H__)
 #define __MOTION_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public f::BaseSystem<EFactory> {
+class CC_DLL Motions : public f::XSystem<EFactory> {
 protected:
 
   void doIt(a::Node*, float);

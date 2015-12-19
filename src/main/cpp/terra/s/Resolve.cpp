@@ -23,7 +23,7 @@ NS_BEGIN(terra)
 //
 Resolve::Resolve(not_null<EFactory*> e, not_null<c::Dictionary*> d)
 
-: BaseSystem<EFactory>(e, d) {
+: XSystem<EFactory>(e, d) {
 
 }
 

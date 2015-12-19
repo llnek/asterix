@@ -9,13 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Render : public f::BaseSystem<EFactory> {
+class CC_DLL Render : public f::XSystem<EFactory> {
 protected:
 
   void processMovement(float);

@@ -20,11 +20,9 @@ NS_BEGIN(terra)
 class CC_DLL Config : public f::XConfig {
 protected:
 
-  void initAssets();
-  void initCsts();
   void initLevels();
-
-  Config() {}
+  void initCsts();
+  void initAssets();
 
 public:
 
@@ -32,7 +30,7 @@ public:
     return ResolutionPolicy::FIXED_HEIGHT;
   }
 
-  virtual c::Scene* startWith();
+  virtual c::Scene* prelude();
 
   virtual const sstr getWSUrl() {
     return "";
@@ -57,17 +55,19 @@ public:
   virtual void runOnce();
 
   virtual ~Config() {}
+  Config() {}
   NOCPYASS(Config)
 
   virtual const sstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
 
-  virtual const sstr color() { return "yellow"; }
+  virtual const sstr themeColor() { return "yellow"; }
 
   virtual const sstr appId() { return "terra"; }
 
   virtual const c::Size gameSize() { return c::Size(320,480); }
 
   static owner<Config*> reify();
+
 };
 
 

@@ -12,13 +12,13 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide : public f::BaseSystem<EFactory> {
+class CC_DLL Collide : public f::XSystem<EFactory> {
 protected:
 
   bool collide(f::ComObj*, f::ComObj*);

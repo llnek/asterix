@@ -26,6 +26,7 @@ void HUDLayer::decorate() {
   auto wb= cx::visBox();
 
   regoAtlas("game-pics");
+  incIndexZ();
 
   scoreLabel= cx::reifyBmfLabel("font.TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
@@ -46,12 +47,11 @@ void HUDLayer::decorate() {
   auto menu = cx::mkMenu(b);
 
   b->setCallback([=](c::Ref*) {
-      MGMS()->sendMsg("/hud/showmenu");
+      SENDMSG("/hud/showmenu");
       });
   //b->setColor(this->color);
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
-
 }
 
 //////////////////////////////////////////////////////////////////////////

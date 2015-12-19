@@ -27,7 +27,7 @@ owner<Config*> Config::reify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Scene* Config::startWith() {
+c::Scene* Config::prelude() {
   return Splash::reify();
 }
 
@@ -43,6 +43,8 @@ void Config::initCsts() {
   addCst("menuHeight", CC_INT(36));
   addCst("menuWidth", CC_INT(123));
   addCst("flareY", CC_INT(445));
+
+  addColor("text", CC_STR("#ffffff"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,11 +154,6 @@ void Config::runOnce() {
   c->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
-
-
-
-
-
 
 
 NS_END(terra)

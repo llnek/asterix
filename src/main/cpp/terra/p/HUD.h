@@ -18,18 +18,18 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HUDLayer : public f::XLayer {
-protected:
-
-  c::Label* scoreLabel= nullptr;
-  f::XLives* lives=nullptr;
-  int score=0;
-
+struct CC_DLL HUDLayer : public f::XLayer {
 public:
 
   STATIC_REIFY_LAYER(HUDLayer)
+
+  c::Label *scoreLabel= nullptr;
+  f::XLives *lives=nullptr;
+  int score=0;
+
+  virtual ~HUDLayer() {}
+  HUDLayer() {}
   NOCPYASS(HUDLayer)
-  IMPLCZ(HUDLayer)
 
   virtual int getIID() { return 3; }
   void resetAsNew();

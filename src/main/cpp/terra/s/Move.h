@@ -12,13 +12,13 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public f::BaseSystem<EFactory> {
+class CC_DLL Move : public f::XSystem<EFactory> {
 protected:
 
   void moveOneMissile(f::ComObj*, float);
