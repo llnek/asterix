@@ -70,8 +70,8 @@ namespace ccsx {
   bool outOfBound(const Box4 &src, const Box4 &B);
 
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
-  void undoTimer(not_null<c::DelayTime*>);
-  bool timerDone(not_null<c::DelayTime*>);
+  void undoTimer(c::DelayTime*);
+  bool timerDone(c::DelayTime*);
 
   c::Label* reifyBmfLabel(const sstr &font, const sstr &text="");
 

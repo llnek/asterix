@@ -64,14 +64,9 @@ bool Stage::update(float dt) {
 //
 void Stage::onceOnly(a::Node *node) {
 
-  initAlienSize();
-  initShipSize();
-
   factory->reifyExplosions();
   factory->reifyMissiles();
   factory->reifyBombs();
-  factory->reifyAliens();
-  factory->reifyShip();
 
   auto gun = CC_GNF(Cannon, node, "cannon");
   auto lpr= CC_GNF(Looper, node, "looper");

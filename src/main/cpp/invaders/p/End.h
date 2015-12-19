@@ -9,34 +9,29 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MENU_H__)
-#define __MENU_H__
+#if !defined(__END_H__)
+#define __END_H__
 
-#include "2d/CCActionInstant.h"
-#include "x2d/XScene.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MCX : public f::SCTX {
-  MCX(VOIDFN f) { back=f;  }
-  VOIDFN back;
-};
+struct CC_DLL ELayer : public f::XLayer {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL MMenu : public f::XScene {
-
-  STATIC_REIFY_SCENE_CTX(MMenu)
+  STATIC_REIFY_LAYER(ELayer)
 
   virtual void decorate();
-  virtual ~MMenu() {}
-  MMenu() {}
-  NOCPYASS(MMenu)
 
+  void onReplay(c::Ref*);
+  void onQuit(c::Ref*);
+
+  virtual ~ELayer() {}
+  ELayer() {}
+
+  NOCPYASS(ELayer)
 };
 
 NS_END(invaders)
 #endif
-
 

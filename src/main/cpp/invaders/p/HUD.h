@@ -35,8 +35,8 @@ public:
 
   STATIC_REIFY_LAYER(HUDLayer)
 
-  virtual ~HUDLayer();
-  HUDLayer();
+  virtual ~HUDLayer() {}
+  HUDLayer() {}
   NOCPYASS(HUDLayer)
 
 };

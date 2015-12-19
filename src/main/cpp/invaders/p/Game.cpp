@@ -21,6 +21,7 @@
 #include "Menu.h"
 #include "Game.h"
 #include "HUD.h"
+#include "END.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -106,9 +107,18 @@ void GLayer::deco() {
 
   MGMS()->resetPools();
 
+  //pick purple since it is the largest
+  auto z0= cx::calcSize("purple_bug_0.png");
+  auto s0= cx::calcSize("ship_0.png");
   auto e= mc_new(a::Engine);
   auto d= CC_DICT();
   auto f= mc_new_2(EFactory, e, d);
+
+  d->setObject(f::Size2::create(z0.width,z0.height), "alienSize");
+  d->setObject(f::Size2::create(s0.width, s0.height), "shipSize");
+
+  f->reifyAliens();
+  f->reifyShip();
 
   e->regoSystem(mc_new_2( Stage, f, d));
   e->regoSystem(mc_new_2( Motions, f, d));
@@ -154,6 +164,7 @@ void GLayer::onStop() {
   cx::pauseAudio();
   MGMS()->stop();
   unscheduleUpdate();
+  ELayer::reify(this,999);
 }
 
 //////////////////////////////////////////////////////////////////////////

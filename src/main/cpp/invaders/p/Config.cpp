@@ -16,7 +16,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Cscene* Config::prelude() {
+c::Scene* Config::prelude() {
   return Splash::reify();
 }
 

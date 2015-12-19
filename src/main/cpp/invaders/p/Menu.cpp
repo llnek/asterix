@@ -91,8 +91,8 @@ void UILayer::decorate() {
   addItem(m2);
 
   auto audios = cx::reifyAudioIcons();
-  off->setColor(dfc);
-  on->setColor(dfc);
+  audios[0]->setColor(dfc);
+  audios[1]->setColor(dfc);
 
   addAudioIcons(this, audios,
       cx::anchorBR(),

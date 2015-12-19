@@ -14,7 +14,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "n/GNodes.h"
-#include "Motions.h"
+#include "Motion.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)

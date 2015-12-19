@@ -37,7 +37,7 @@ public:
   virtual const sstr themeColor() { return "red"; }
 
   virtual const sstr getWSUrl();
-  virtual c::Cscene* prelude();
+  virtual c::Scene* prelude();
 
   virtual void setGameId(const sstr& s) {}
   virtual void setRoomId(const sstr& s) {}
