@@ -10,8 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Generate.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 
@@ -19,7 +21,7 @@ NS_BEGIN(tetris)
 //
 Generate::Generate(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+  : XSystem<EFactory>(f, d) {
 
 }
 
@@ -35,18 +37,17 @@ void Generate::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Generate::update(float dt) {
-  auto node = arena->head;
+  auto n = arena->head;
 
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  if (MGMS()->isLive()) {
 
-    auto sl = CC_GNF(ShapeShell, node, "shell");
-    auto dp = CC_GNF(Dropper, node, "dropper");
+    auto sl = CC_GNF(ShapeShell, n, "shell");
+    auto dp = CC_GNF(Dropper, n, "dropper");
     if (ENP(sl->shape)) {
-      sl->shape = reifyNextShape(node, MGML());
+      sl->shape = reifyNextShape(n, MGML());
       if (NNP(sl->shape)) {
         //show new next shape in preview window
-        previewNextShape(node, MGML());
+        previewNextShape(n, MGML());
         //activate drop timer
         dp->dropSpeed= CC_CSV(c::Float, "DROPSPEED");
         initDropper(MGML(), dp);
@@ -61,11 +62,11 @@ bool Generate::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Shape * Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
+Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
   auto co= CC_GNF(TileGrid, node, "collision");
   auto bks= CC_GNF(BlockGrid, node, "grid");
   auto gbox= CC_GNF(GridBox, node, "gbox");
-  auto& tiles = co->tiles;
+  auto &tiles = co->tiles;
   auto tile= MGMS()->TILE;
   auto wz= cx::visRect();
   auto shape= new Shape(*nextShapeInfo);
@@ -75,7 +76,7 @@ Shape * Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
   if (ENP(shape)) {
     CCLOG("game over.  you lose.");
     bks->grid.clear();
-    MGMS()->sendMsg("/hud/end");
+    SENDMSG("/hud/end");
   }
 
   return shape;
@@ -83,7 +84,7 @@ Shape * Generate::reifyNextShape(a::Node *node, f::XLayer *layer) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Generate::previewNextShape(a::Node *node, f::XLayer *layer) {
+void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
   auto gbox= CC_GNF(GridBox, node, "gbox");
   auto tile = MGMS()->TILE;
   auto info = randNextInfo();
@@ -114,7 +115,7 @@ Shape * Generate::randNextInfo() {
   auto n= cx::randInt(ListOfModels.size());
   auto proto= ListOfModels[n];
   return mc_new_3(Shape, proto,
-      cx::randInt(proto->getLayouts()),
+      cx::randInt(proto->size()),
       s::to_string(cx::randInt(bc) + 1) + ".png" );
 }
 

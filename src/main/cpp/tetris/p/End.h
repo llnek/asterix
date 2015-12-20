@@ -9,42 +9,29 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#if !defined(__END_H__)
+#define __END_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
-#include "n/GNodes.h"
-
+#include "x2d/XLayer.h"
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public f::XSystem<EFactory> {
+struct CC_DLL ELayer : public f::XLayer {
 
-  virtual const a::SystemType typeId() { return "s/Resolve"; }
+  STATIC_REIFY_LAYER(ELayer)
 
-  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual void decorate();
 
-  virtual int priority() { return a::Resolve; }
+  void onReplay(c::Ref*);
+  void onQuit(c::Ref*);
 
-  virtual void addToEngine(not_null<a::Engine*> );
-  virtual bool update(float);
+  virtual ~ELayer() {}
+  ELayer() {}
 
-  void fastDrop(a::Node*);
-  void doIt(a::Node*);
-
-  virtual ~Resolve() {}
-  NODFT(Resolve)
-  NOCPYASS(Resolve)
-
-  a::NodeList *arena;
+  NOCPYASS(ELayer)
 };
-
-
 
 NS_END(tetris)
 #endif
-
-
 

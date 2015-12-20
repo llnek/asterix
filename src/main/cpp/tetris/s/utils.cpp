@@ -17,7 +17,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 Shape* reifyShape(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt>& cmap, Shape *shape) {
+    const s_vec<f::FArrInt*>& cmap, Shape *shape) {
 
   auto bbox= findBBox(cmap, shape->model, shape->x, shape->y, shape->rot);
   Shape *rc=nullptr;
@@ -42,7 +42,7 @@ float topLine(not_null<a::Node*> node) {
 //////////////////////////////////////////////////////////////////////////
 //
 Shape* previewShape(not_null<f::XLayer*> layer, Shape *shape) {
-  auto bbox= findBBox(s_vec<f::FArrInt>{},shape->model,
+  auto bbox= findBBox(s_vec<f::FArrInt*>{},shape->model,
                           shape->x, shape->y, shape->rot, true);
   if (bbox.size() > 0) {
     auto bs= reifyBricks(layer,shape.png, shape->x, shape->y, bbox);
@@ -62,7 +62,7 @@ void disposeShape(Shape *shape) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void clearOldBricks(s_vec<Brick*>& bs) {
+void clearOldBricks(s_vec<Brick*> &bs) {
   F__LOOP(it, bs) {
     auto& z= *it;
     z->dispose()
@@ -92,7 +92,7 @@ const s_vec<Brick*> reifyBricks(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 const s_vec<c::Vec2>
-findBBox(const s_vec<f::FArrInt> &cmap, BModel *model,
+findBBox(const s_vec<f::FArrInt*> &cmap, BModel *model,
     float px, float py, int rID, bool skipCollide) {
 
   s_vec<c::Vec2> bs;
@@ -119,7 +119,7 @@ findBBox(const s_vec<f::FArrInt> &cmap, BModel *model,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool maybeCollide(const s_vec<f::FArrInt> &cmap,
+bool maybeCollide(const s_vec<f::FArrInt*> &cmap,
     float tl_x, float tl_y, float br_x, float br_y) {
 
   auto tile= xrefTile(tl_x , tl_y);
@@ -199,7 +199,7 @@ void postLock(not_null<a::Node*> node,
 
   auto flines = CC_GNF(FilledLines, node, "flines");
   // search bottom up until top.
-  auto top= cmap.length;
+  auto top= cmap.size();
   s_vec<int> rc;
 
   // 0 is the bottom wall

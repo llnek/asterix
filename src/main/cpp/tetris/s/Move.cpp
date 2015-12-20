@@ -18,7 +18,7 @@ NS_BEGIN(tetris)
 //
 Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+  : XSystem<EFactory>(f, d) {
 
 }
 
@@ -32,14 +32,14 @@ void Move::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  auto node= arena->head;
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  auto n= arena->head;
+  if (MGMS()->isLive()) {
     auto sh= CC_GNF(ShapeShell,node, "shell");
     auto dp= CC_GNF(Dropper,node, "dropper");
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
-      dp->timer= cx::undoTimer(dp->timer);
+      cx::undoTimer(dp->timer);
+      dp->timer=nullptr;
       doFall(node);
     }
   }
@@ -53,8 +53,8 @@ void Move::doFall(a::Node *node) {
   auto sh= CC_GNF(ShellShape, node, "shell");
   auto bs= CC_GNF(BlockGrid, node, "blocks");
   auto shape= sh->shape;
-  auto& cmap= co->tiles;
-  auto& emap= bs->grid;
+  auto &cmap= co->tiles;
+  auto &emap= bs->grid;
   auto dp= CC_GNF(Dropper, node, "dropper");
   auto pu= CC_GNF(Pauser, node, "pauser");
 

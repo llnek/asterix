@@ -12,7 +12,7 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 #include "n/GNodes.h"
 
@@ -20,12 +20,7 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public f::BaseSystem<EFactory> {
-protected:
-
-  void doFall(a::Node*);
-
-public:
+struct CC_DLL Move : public f::XSystem<EFactory> {
 
   virtual const a::SystemType typeId() { return "s/Move"; }
 
@@ -37,13 +32,13 @@ public:
 
   virtual bool update(float);
 
-  virtual ~Move() {}
+  void doFall(a::Node*);
 
-  NOCPYASS(Move)
+  virtual ~Move() {}
   NODFT(Move)
+  NOCPYASS(Move)
 
   a::NodeList *arena;
-
 };
 
 

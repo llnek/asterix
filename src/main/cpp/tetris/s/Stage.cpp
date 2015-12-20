@@ -18,8 +18,7 @@ NS_BEGIN(tetris)
 //
 Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
-
+  : XSystem<EFactory>(f, d) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,11 +31,10 @@ void Stage::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
-  auto node = arena->head;
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  auto n = arena->head;
+  if (MGMS()->isLive()) {
     if (! inited) {
-      onceOnly(node);
+      onceOnly(n);
     }
   }
   return true;
@@ -70,6 +68,7 @@ void Stage::onceOnly(a::Node *node) {
   ));
 
   doCtrl(node);
+  inited=true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,8 +86,8 @@ void Stage::doCtrl(a::Node *node) {
   auto ch3= cz.height / 3;
   auto cw3= cz.width / 3;
   //x= cw.x + (wb.right - cw.x) * 0.5,
-  auto x= wb.right * 0.75;
-  auto y= wb.top * 0.25;
+  auto x= wb.right * 0.75f;
+  auto y= wb.top * 0.25f;
 
   sp->setPosition(x,y);
   MGML()->addAtlasItem("game-pics", sp);
@@ -130,7 +129,7 @@ void Stage::doCtrl(a::Node *node) {
 
 //////////////////////////////////////////////////////////////////////////
 // draw horizontal
-void Stage::xh(const c::Size& fz, float lf_bdy, float rt_bdy, float ypos) {
+void Stage::xh(const c::Size &fz, float lf_bdy, float rt_bdy, float ypos) {
   auto cw = cx::center();
   auto wb= cx::visBox();
   auto wz= cx::visRect();
@@ -148,10 +147,10 @@ void Stage::xh(const c::Size& fz, float lf_bdy, float rt_bdy, float ypos) {
 
 //////////////////////////////////////////////////////////////////////////
 // Draw vertical wall
-void Stage::xv(const c::Size& fz, float x) {
+void Stage::xv(const c::Size &fz, float x) {
+  auto wz= cx::visRect();
   auto cw = cx::center();
   auto wb= cx::visBox();
-  auto wz= cx::visRect();
   auto y= wb.bottom;
   y += HHZ(fz);
 
@@ -165,9 +164,9 @@ void Stage::xv(const c::Size& fz, float x) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly_2(a::Node *node, const c::Size& fz,
-    const c::Size& bz,
-    const f::Box4& box) {
+void Stage::onceOnly_2(a::Node *node, const c::Size &fz,
+    const c::Size &bz,
+    const f::Box4 &box) {
 
   auto blocks= CC_GNF(BlockGrid, node, "blocks");
   auto cs= CC_GNF(TileGrid, node, "collision");
@@ -190,12 +189,13 @@ void Stage::onceOnly_2(a::Node *node, const c::Size& fz,
 //////////////////////////////////////////////////////////////////////////
 //
 const s_vec<FArrBrick*>
-Stage::initBlockMap(const s_vec<f::FArrInt*>& tiles) {
+Stage::initBlockMap(const s_vec<f::FArrInt*> &tiles) {
   s_vec<FArrBrick*> grid;
 
   F__LOOP(it, tiles) {
-    auto& e = *it;
+    auto &e = *it;
     auto rc= new FArrBrick(e->size());
+    rc->fill(nullptr);
     grid.push_back(rc);
   }
 
@@ -205,7 +205,7 @@ Stage::initBlockMap(const s_vec<f::FArrInt*>& tiles) {
 //////////////////////////////////////////////////////////////////////////
 // Create our own collision map using cells.
 const s_vec<f::FArrInt*>
-Stage::fakeTileMap(const c::Size& bz, const f::Box4& box) {
+Stage::fakeTileMap(const c::Size &bz, const f::Box4 &box) {
 
   auto hlen = (int) floor((box.top - box.bottom) / bz.height);
   auto wlen = (int) floor((box.right - box.left) / bz.width);

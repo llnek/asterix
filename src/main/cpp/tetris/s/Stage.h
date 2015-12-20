@@ -12,7 +12,7 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 
@@ -20,8 +20,7 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stage : public f::BaseSystem<EFactory> {
-protected:
+struct CC_DLL Stage : public f::XSystem<EFactory> {
 
   void xh(const c::Size& , float, float, float);
   void onceOnly(a::Node*);
@@ -36,8 +35,6 @@ protected:
   const s_vec<f::FArrInt*>
     fakeTileMap(const c::Size&, const f::Box4&);
 
-public:
-
   virtual const a::SystemType typeId() { return "s/Stage"; }
 
   Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
@@ -48,10 +45,9 @@ public:
 
   virtual int priority() { return a::PreUpdate; }
 
-  NOCPYASS(Stage)
-  NODFT(Stage)
-
   virtual ~Stage() {}
+  NODFT(Stage)
+  NOCPYASS(Stage)
 
 };
 

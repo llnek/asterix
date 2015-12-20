@@ -9,15 +9,17 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Clear.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Clear::Clear(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+  : XSystem<EFactory>(f, d) {
 
 }
 
@@ -31,15 +33,16 @@ void Clear::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Clear::update(float dt) {
-  auto node = arena->head;
+  auto n= arena->head;
 
-  if (MGMS()->isLive() &&
-      NNP(node)) {
-    auto ps= CC_GNF(Pauser, node, "pauser");
+  if (MGMS()->isLive()) {
+
+    auto ps= CC_GNF(Pauser, n, "pauser");
     if (ps->pauseToClear) {
       if (cx::timerDone(ps->timer)) {
         clearFilled(node);
-        ps->timer=cx::undoTimer(ps->timer);
+        cx::undoTimer(ps->timer);
+        ps->timer=nullptr;
         ps->pauseToClear=false;
       }
       //stop downstream processing
@@ -62,10 +65,9 @@ void Clear::clearFilled(a::Node *node) {
   }
 
   shiftDownLines(node);
-  j::json msg({
+  sendEx("/hud/score/update", j::json({
       { "score", score * 50 }
-      });
-  MGMS()->sendMsgEx("/hud/score/update", &msg);
+      }));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +89,7 @@ void Clear::clearOneRow(a::Node *node, int r) {
 //
 void Clear::resetOneRow(a::Node *node, int r) {
   auto co= CC_GNF(TileGrid, node, "collision");
-  auto row= co->tiles[r];
+  auto &row= co->tiles[r];
 
   for (auto c=0; c < row.size(); ++c) {
     row->set(c, r==0 ? 1 : 0);
@@ -157,13 +159,13 @@ int Clear::findLastEmpty(a::Node *node, int t) {
 //
 bool Clear::isEmptyRow(a::Node *node, int r) {
   auto co= CC_GNF(TileGrid, node, "collision");
-  auto row= co->tiles[r];
+  auto &row= co->tiles[r];
   auto len= row->size() - 1;
 
   if (r==0) { return false; }
 
   for (auto c=1; c < len; ++c) {
-    if (row.get(c) != 0) { return false; }
+    if (row->get(c) != 0) { return false; }
   }
   return true;
 }
@@ -173,13 +175,13 @@ bool Clear::isEmptyRow(a::Node *node, int r) {
 void Clear::copyLine(a::Node *node, int from, int to) {
   auto co = CC_GNF(TileGrid, node, "collision");
   auto bs = CC_GNF(BlockGrid, node, "blocks");
-  auto line_f = co->tiles[from];
-  auto line_t = co->tiles[to];
+  auto &line_f = co->tiles[from];
+  auto &line_t = co->tiles[to];
   auto tile = MGMS()->TILE;
   auto dlen= tile * (from - to);
   int c;
 
-  for (c=0; c < line_f.size(); ++c) {
+  for (c=0; c < line_f->size(); ++c) {
     line_t->set(c, line_f->get(c));
     line_f->set(c, 0);
   }

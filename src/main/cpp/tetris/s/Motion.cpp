@@ -9,17 +9,20 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Motion.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////
 //
 Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+  : XSystem<EFactory>(f, d) {
 
-  //this.throttleWait= csts.THROTTLEWAIT;
+  throttleWait= CC_CSV(c::Float, "THROTTLEWAIT");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,14 +36,14 @@ void Motions::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::onceOnly() {
+  inited=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Motions::update(float dt) {
-  auto node= arena->head;
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  auto n= arena->head;
+  if (MGMS()->isLive()) {
 
     if (!this.inited) {
       onceOnly();

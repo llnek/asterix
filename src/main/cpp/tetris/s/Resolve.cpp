@@ -9,15 +9,18 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Resolve.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  : BaseSystem<EFactory>(f, d) {
+  :XSystem<EFactory>(f, d) {
 
 }
 
@@ -31,11 +34,10 @@ void Resolve::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
-  auto node= arena->head;
+  auto n= arena->head;
 
-  if (MGMS()->isLive() &&
-      NNP(node)) {
-    doIt(node);
+  if (MGMS()->isLive()) {
+    doIt(n);
   }
 }
 

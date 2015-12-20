@@ -12,15 +12,22 @@
 #if !defined(__CLEAR_H__)
 #define __CLEAR_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Clear : public f::BaseSystem<EFactory> {
-protected:
+struct CC_DLL Clear : public f::XSystem<EFactory> {
+
+  virtual const a::SystemType typeId() { return "s/Clear"; }
+
+  Clear(not_null<EFactory*>, not_null<c::Dictionary*>);
+
+  virtual void addToEngine(not_null<a::Engine*>);
+  virtual bool update(float);
+  virtual int priority() { return a::AI + 50; }
 
   void clearFilled(a::Node*);
   void clearOneRow(a::Node*, int);
@@ -32,22 +39,11 @@ protected:
   bool isEmptyRow(a::Node*, int);
   void copyLine(a::Node*, int, int);
 
-public:
-
-  virtual const a::SystemType typeId() { return "s/Clear"; }
-
-  Clear(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
-  virtual int priority() { return a::AI + 50; }
-
-  NOCPYASS(Clear)
+  virtual ~Clear() {}
   NODFT(Clear)
+  NOCPYASS(Clear)
 
   a::NodeList *arena;
-
-  virtual ~Clear() {}
 };
 
 

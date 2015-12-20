@@ -12,21 +12,14 @@
 #if !defined(__GENERATE_H__)
 #define __GENERATE_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Generate : public f::BaseSystem<EFactory> {
-protected:
-
-  Shape * reifyNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
-  void previewNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
-  Shape * randNextInfo();
-
-public:
+struct CC_DLL Generate : public f::XSystem<EFactory> {
 
   virtual const a::SystemType typeId() { return "s/Generate"; }
 
@@ -36,10 +29,13 @@ public:
   virtual bool update(float);
   virtual int priority() { return a::AI + 60; }
 
-  NOCPYASS(Generate)
-  NODFT(Generate)
+  Shape * reifyNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
+  void previewNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
+  Shape * randNextInfo();
 
   virtual ~Generate() {}
+  NODFT(Generate)
+  NOCPYASS(Generate)
 };
 
 

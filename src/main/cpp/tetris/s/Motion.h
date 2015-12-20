@@ -12,15 +12,21 @@
 #if !defined(__MOTION_H__)
 #define __MOTION_H__
 
-#include "core/BaseSystem.h"
+#include "core/XSystem.h"
 #include "EFactory.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public f::BaseSystem<EFactory> {
-protected:
+struct CC_DLL Motions : public f::XSystem<EFactory> {
+
+  virtual const a::SystemType typeId() { return "s/Motions"; }
+
+  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
+
+  virtual void addToEngine(not_null<a::Engine*>);
+  virtual bool update(float);
 
   void doit(a::Node *node, float);
   void onkey(a::Node *node, float);
@@ -33,22 +39,12 @@ protected:
 
   float throttleWait= 0.0f;
 
-public:
-
-  virtual const a::SystemType typeId() { return "s/Motions"; }
-
-  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
-
-  NOCPYASS(Motions)
+  virtual ~Motions() {}
   NODFT(Motions)
 
-  virtual ~Motions() {}
+  NOCPYASS(Motions)
 
   a::NodeList *arena;
-
 };
 
 
