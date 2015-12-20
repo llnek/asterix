@@ -20,41 +20,28 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ArenaNode : public a::NodeFactory {
-public:
+struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual const a::NodeType typeId() { return "n/ArenaNode"; }
 
   virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode(
-        s_vec<sstr> {
-        "collision",
-        "gbox",
-        "blocks",
-        "motion",
-        "pauser",
-        "dropper",
-        "shell" ,
-        "flines",
-        "cpad" },
-        s_vec<a::COMType> {
-        "n/TileGrid",
-        "n/GridBox",
-        "n/BlockGrid",
-        "n/Motion",
-        "n/Pauser",
-        "n/Dropper",
-        "n/ShapeShell" ,
-        "n/FilledLines",
-        "n/CtrlPad" });
+    return reifyXXXNode({
+        { "collision", "n/TileGrid"},
+        { "gbox", "n/GridBox" },
+        { "blocks", "n/BlockGrid" },
+        { "motion", "n/Motion" },
+        { "pauser", "n/Pauser" },
+        { "dropper", "n/Dropper" },
+        { "shell" , "n/ShapeShell" },
+        { "flines", "n/FilledLines" },
+        { "cpad" , "n/CtrlPad" }
+    });
   }
 
   virtual ~ArenaNode() {}
   ArenaNode() {}
-
   NOCPYASS(ArenaNode)
 };
-
 
 NS_END(tetris)
 #endif

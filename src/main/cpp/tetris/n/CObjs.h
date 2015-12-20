@@ -22,7 +22,7 @@ typedef int DIM2x2[2][2];
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Brick : public c::Sprite {
+struct CC_DLL Brick : public c::Sprite {
 
   void blink() {
     this->setSpriteFrame( cx::getSpriteFrame(frame1));
@@ -37,16 +37,16 @@ class CC_DLL Brick : public c::Sprite {
     this->removeFromParent();
   }
 
-  static Brick * reify(const c::Vec2 &pos, const sstr &f0) {
-    Brick * b = mc_new(Brick);
+  static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
+    Brick *b = mc_new(Brick);
     if (NNP(b) &&
         b->init()) {
       b->setAnchorPoint(cx::anchorTL());
+      b->setPosition(pos);
       b->startPos = pos;
       b->frame0=f0;
-      b->setPosition(pos.x, pos.y);
-      b->autorelease();
       b->show();
+      b->autorelease();
       return b;
     }
     CC_SAFE_DELETE(b);
@@ -66,13 +66,13 @@ typedef fusii::FArray<Brick> FArrBrick;
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ShapeShell {
-  Shape* shape;
+  Shape *shape;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Shape {
-  Shape(BModel* m, int rot, const sstr &p) {
+  Shape(BModel *m, int rot, const sstr &p) {
     this->rot=rot;
     model=m;
     png=p;
@@ -125,8 +125,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BoxModel : public BModel<DIM2x2> {
-public:
+struct CC_DLL BoxModel : public BModel<DIM2x2> {
 
   virtual ~BoxModel() {}
   BoxModel() {
@@ -154,8 +153,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ElModel : public BModel<DIM3x3> {
-public:
+struct CC_DLL ElModel : public BModel<DIM3x3> {
 
   virtual ~ElModel() {}
 
@@ -189,8 +187,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ElxModel : public BModel<DIM3x3> {
-public:
+struct CC_DLL ElxModel : public BModel<DIM3x3> {
 
   virtual ~ElxModel() {}
 
@@ -229,8 +226,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL LineModel : public BModel<DIM4x4> {
-public:
+struct CC_DLL LineModel : public BModel<DIM4x4> {
 
   virtual ~LineModel() {}
   LineModel() {
@@ -272,8 +268,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL NubModel : public BModel<DIM3x3> {
-public:
+struct CC_DLL NubModel : public BModel<DIM3x3> {
 
   virtual ~NubModel() {}
   NubModel() {
@@ -311,8 +306,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL StModel : public BModel<DIM3x3> {
-public:
+struct CC_DLL StModel : public BModel<DIM3x3> {
 
   virtual ~StModel() {}
   StModel() {
@@ -349,8 +343,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL StxModel : public BModel<DIM3x3> {
-public:
+struct CC_DLL StxModel : public BModel<DIM3x3> {
 
   virtual ~StxModel() {}
   StxModel() {
@@ -387,7 +380,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Dropper {
+struct CC_DLL Dropper {
   float dropSpeed = CC_CSV(c::Float, "DROPSPEED");
   float dropRate= 80 + 700.0f/1.0f ;
   c::DelayTime *timer=nullptr;
@@ -395,13 +388,13 @@ class CC_DLL Dropper {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL FilledLines {
+struct CC_DLL FilledLines {
   s_vec<int> lines;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motion {
+struct CC_DLL Motion {
   bool right=false;
   bool left=false;
   bool rotr= false;
@@ -411,14 +404,14 @@ class CC_DLL Motion {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Pauser {
+struct CC_DLL Pauser {
   c::DelayTime *timer=nullptr;
   bool pauseToClear=false;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL TileGrid {
+struct CC_DLL TileGrid {
   s_vec<FArrBrick*> tiles;
 };
 
