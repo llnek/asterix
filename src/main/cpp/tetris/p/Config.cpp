@@ -40,9 +40,8 @@ void Config::initCsts() {
     //CBOX: null,
     //FENCE: 0,
     //TILE: 0
+  addColor("default", CC_STR("#f6b17f"));
 }
-
-  //ftypes : { Clear: 350, Generate: 360 },
 
 //////////////////////////////////////////////////////////////////////////////
 //

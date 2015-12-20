@@ -20,12 +20,13 @@ NS_BEGIN(tetris)
 //
 void HUDLayer::decorate() {
 
-  regoAtlas("game-pics");
-
   auto tile = MGMS()->TILE;
   auto wz = cx::visRect();
   auto cw = cx::center();
   auto wb = cx::visBox();
+
+  regoAtlas("game-pics");
+  incIndexZ();
 
   scoreLabel = cx::reifyBmfLabel( "font.SmallTypeWriting", "0");
   scoreLabel->setAnchorPoint(cx::anchorTR());
@@ -37,7 +38,7 @@ void HUDLayer::decorate() {
 
   addItem(scoreLabel);
 
-  status= cx::reifyBmfLabel("font.CoffeeBuzzed", "");
+  status= cx::reifyBmfLabel("font.CoffeeBuzzed");
   status->setScale( XCFG()->getScale() * 0.5f );
   status->setPosition(cw.x * 1.5f, cw.y);
 
@@ -49,7 +50,7 @@ void HUDLayer::decorate() {
   auto menu = cx::mkMenu(b);
 
   b->setCallback([=](c::Ref*) {
-      MGMS()->sendMsg("/hud/showmenu");
+      SENDMSG("/hud/showmenu");
       });
   //b->setColor(this->color);
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
@@ -60,8 +61,8 @@ void HUDLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::endGame() {
-  status->setVisible(true);
   drawStatusText(XCFG()->getL10NStr("gameover"));
+  status->setVisible(true);
 }
 
 //////////////////////////////////////////////////////////////////////////////

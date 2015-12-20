@@ -28,38 +28,50 @@ NS_BEGIN(tetris)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GLayer : public f::XLayer {
-public:
+struct CC_DLL GLayer : public f::XLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
-
-  virtual int getIID() { return 2; }
-  virtual void decorate();
 
   virtual void onTouchEnded(c::Touch*, c::Event*);
   virtual void onMouseUp(c::Event*);
 
+  virtual int getIID() { return 2; }
+  virtual void decorate();
+
+  void endGame();
+  void deco();
+  void reset();
+
   STATIC_REIFY_LAYER(GLayer)
-  NOCPYASS(GLayer)
 
   virtual ~GLayer() {}
   GLayer() {}
 
-  void endGame();
-  void reset();
-
+  NOCPYASS(GLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
+  enableListeners();
+  cx::resumeAudio();
+  deco();
+  scheduleUpdate();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::deco() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
 
   centerImage("game.bg");
 
-  regoAtlas("game-pics");
-  regoAtlas("lang-pics");
+  if (atlases.empty()) {
+    regoAtlas("game-pics");
+    regoAtlas("lang-pics");
+    incIndexZ();
+  }
 
   auto e= mc_new(a::Engine);
   auto d= CC_DICT();
@@ -80,9 +92,6 @@ void GLayer::decorate() {
   this->fac= f;
   this->engine=e;
 
-  scheduleUpdate();
-
-  enableListeners();
   getHUD()->reset();
 }
 
@@ -104,7 +113,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   }
 
   if ("/hud/score/update" == topic) {
-    auto v= json->operator[]("score").get<j::json::number_integer_t>();
+    auto v= JS_INT(json->operator[]("score"));
     y->getHUD()->updateScore(v);
   }
 

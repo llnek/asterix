@@ -19,19 +19,17 @@ NS_BEGIN(tetris)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UILayer : public f::XLayer {
-protected:
-
-  void onQuit(c::Ref*);
-
-public:
+struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
-  NOCPYASS(UILayer)
 
   virtual void decorate();
+  void onQuit(c::Ref*);
+
   virtual ~UILayer() {}
   UILayer() {}
+
+  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,7 +38,7 @@ void UILayer::decorate() {
 
   auto tt= cx::reifyBmfLabel("font.JellyBelly",
       XCFG()->getL10NStr("mmenu"));
-  c::Color3B c(246,177,127);
+  auto c= XCFG()->getColor("default");
   auto tile = MGMS()->TILE;
   auto cw= cx::center();
   auto wb= cx::visBox();
@@ -56,38 +54,34 @@ void UILayer::decorate() {
   auto menu= cx::mkMenu(b);
   b->setCallback([=]() {
         cx::runScene(
-            Game::reify(mc_new(f::GContext)));
+            Game::reify(mc_new(f::GCX)),
+            CC_CSV(c::Float,"SCENE_DELAY"));
       });
   b->setPosition(cw);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto ctx= (MContext*) MGMS()->getCtx();
+  auto ctx= (MCX*) MGMS()->getCtx();
   auto sz= back->getContentSize();
   back->setCallback([=](c::Ref*) { ctx->back(); });
   back->setColor(c);
-
-  // audio
-  c::MenuItem* off;
-  c::MenuItem* on;
 
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   quit->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
 
-  auto m2= cx::mkMenu(s_vec<c::MenuItem*> {back, quit}, false, 10.0);
+  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit});
   m2->setPosition(wb.left + tile + sz.width * 1.1,
                   wb.bottom + tile + sz.height * 0.45);
   addItem(m2);
 
-  cx::reifyAudioIcons(on, off);
-  off->setColor(c);
-  on->setColor(c);
+  auto audios= cx::reifyAudioIcons();
+  audios[0]->setColor(c);
+  audios[1]->setColor(c);
 
-  addAudioIcons((XLayer*) this,
-    off, on,
+  addAudioIcons(this, audios,
     cx::anchorBR(),
     c::Vec2(wb.right - tile, wb.bottom + tile));
 
@@ -96,7 +90,9 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runScene(XCFG()->prelude());
+  cx::runScene(
+      XCFG()->prelude(),
+      CC_CSV(c::Float,"SCENE_DELAY"));
 }
 
 END_NS_UNAMED()

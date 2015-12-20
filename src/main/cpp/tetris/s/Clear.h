@@ -40,7 +40,7 @@ public:
 
   virtual void addToEngine(not_null<a::Engine*>);
   virtual bool update(float);
-  virtual int priority() { return Clear; }
+  virtual int priority() { return a::AI + 50; }
 
   NOCPYASS(Clear)
   NODFT(Clear)

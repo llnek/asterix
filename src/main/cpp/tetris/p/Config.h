@@ -23,8 +23,6 @@ protected:
   void initAssets();
   void initCsts();
 
-  Config() {}
-
 public:
 
   virtual const sstr appKey() { return  "fb0fdd0b-1821-42d9-b6f7-26b11218b40d"; }
@@ -64,8 +62,9 @@ public:
   virtual void runOnce();
 
   virtual ~Config() {}
-
+  Config() {}
   NOCPYASS(Config)
+
   static owner<Config*> reify();
 
 };

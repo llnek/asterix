@@ -18,24 +18,23 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MContext : public f::SContext {
-  MContext(VOIDFN cb) { back=cb; }
-  NODFT(MContext)
+struct CC_DLL MCX : public f::SCTX {
+  MCX(VOIDFN cb) { back=cb; }
   VOIDFN back=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MMenu : public f::XScene {
-public:
+struct CC_DLL MMenu : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(MMenu)
-  NOCPYASS(MMenu)
+
+  virtual void decorate();
 
   virtual ~MMenu() {}
   MMenu() {}
 
-  virtual void decorate();
+  NOCPYASS(MMenu)
 };
 
 

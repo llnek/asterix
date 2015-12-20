@@ -17,52 +17,54 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Shape* reifyShape(not_null<f::XLayer*> layer, cmap, Shape *shape);
-Shape* previewShape(not_null<f::XLayer*> layer, Shape *shape);
+Shape* reifyShape(not_null<f::XLayer*>, const s_vec<f::FArrInt>& , Shape*);
 
-float topLine(not_null<a::Node*> node);
+Shape* previewShape(not_null<f::XLayer*>, Shape*);
 
-const s_vec<Brick*> reifyBricks(not_null<f::XLayer*> layer,
-    const sstr& png,
-    float x, float y, const s_vec<c::Vec2>& bs);
+float topLine(not_null<a::Node*>);
 
-void clearOldBricks(s_vec<Brick*>& bs);
-void disposeShape(Shape *shape);
+const s_vec<Brick*> reifyBricks(not_null<f::XLayer*>,
+    const sstr &png,
+    float x, float y, const s_vec<c::Vec2> &bs);
+
+void clearOldBricks(s_vec<Brick*>&);
+void disposeShape(Shape*);
 
 const s_vec<c::Vec2>
-findBBox(cmap, BModel *model,
+findBBox(const s_vec<f::FArrInt>&, BModel*,
     float px, float py, int rID, bool skipCollide = false);
 
-bool maybeCollide(cmap, float tl_x, float tl_y, float br_x, float br_y);
+bool maybeCollide(const s_vec<f::FArrInt>&,
+    float tl_x, float tl_y, float br_x, float br_y);
 
 const f::Cell2D xrefTile(float x, float y);
 
-void initDropper(Dropper *dp);
+void initDropper(Dropper*);
 
-void setDropper(Dropper *dp, float r, float s);
+void setDropper(Dropper*, float r, float s);
 
-void lockBricks(cmap, emap, Brick *z);
+void lockBricks(const s_vec<f::FArrInt>&, const s_vec<FArrBrick>&, Brick*);
 
-void lock(not_null<a::Node*> node, Shape *shape);
+void lock(not_null<a::Node*>, Shape*);
 
-void postLock(not_null<a::Node*> node, cmap, emap);
+void postLock(not_null<a::Node*>,
+    const s_vec<f::FArrInt>&,
+    const s_vec<FArrBrick>&);
 
-bool testFilledRow(cmap, int r);
+bool testFilledRow(const s_vec<f::FArrInt>&, int r);
 
-void flashFilled(emap, FilledLines *flines, const s_vec<int>& lines);
+void flashFilled(const s_vec<FArrBrick>&,
+    FilledLines*, const s_vec<int>& lines);
 
-void pauseForClearance(not_null<a::Node*> node, bool b, float delay);
+void pauseForClearance(not_null<a::Node*>, bool b, float delay);
 
-bool moveDown(not_null<f::XLayer*> layer, cmap, Shape *shape);
+bool moveDown(not_null<f::XLayer*> , const s_vec<f::FArrInt>&, Shape*);
 
-bool shiftRight(not_null<f::XLayer*> layer, cmap, Shape *shape);
+bool shiftRight(not_null<f::XLayer*>, const s_vec<f::FArrInt>&, Shape*);
+bool shiftLeft(not_null<f::XLayer*>, const s_vec<f::FArrInt>&, Shape*);
 
-bool shiftLeft(not_null<f::XLayer*> layer, cmap, Shape *shape);
-
-bool rotateRight(not_null<f::XLayer*> layer,cmap, Shape *shape);
-
-bool rotateLeft(not_null<f::XLayer*> layer, cmap, Shape *shape);
-
+bool rotateRight(not_null<f::XLayer*>, const s_vec<f::FArrInt>&, Shape*);
+bool rotateLeft(not_null<f::XLayer*>, const s_vec<f::FArrInt>&, Shape*);
 
 NS_END(tetris)
 #endif

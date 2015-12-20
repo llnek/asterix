@@ -18,21 +18,16 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HUDLayer : public f::XLayer {
-protected:
-
-  c::Label *scoreLabel;
-  c::Label *status;
-  int score;
-
-public:
+struct CC_DLL HUDLayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(HUDLayer)
-  NOCPYASS(HUDLayer)
+
+  c::Label *scoreLabel=nullptr;
+  c::Label *status=nullptr;
+  int score=0;
 
   virtual int getIID() { return 3; }
-  virtual ~HUDLayer() {}
-  HUDLayer() {}
+  virtual void decorate();
 
   void drawStatusText(const sstr&);
   void endGame();
@@ -40,7 +35,11 @@ public:
   void reset();
   void updateScore(int );
 
-  virtual void decorate();
+  virtual ~HUDLayer() {}
+  HUDLayer() {}
+
+  NOCPYASS(HUDLayer)
+
 };
 
 

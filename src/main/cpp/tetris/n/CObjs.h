@@ -113,12 +113,15 @@ protected:
 
 public:
 
-  int size() { return layout.size(); }
-  int getDim() { return dim; }
-
+  /*
   T& getLayout(int pos) {
+    assert(pos >=0 && pos < layout.size());
     return layout[pos];
   }
+  */
+  bool test(int rID, int row, int col) = 0;
+  int size() { return layout.size(); }
+  int getDim() { return dim; }
 
   virtual ~BModel() {}
 };

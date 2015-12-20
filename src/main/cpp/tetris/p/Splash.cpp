@@ -17,16 +17,18 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UILayer : public f::XLayer {
-protected:
-  void onPlay(c::Ref*);
-public:
+struct CC_DLL UILayer : public f::XLayer {
+
   STATIC_REIFY_LAYER(UILayer)
+
   virtual void decorate();
+  void onPlay(c::Ref*);
+
   virtual ~UILayer() {}
   UILayer() {}
   NOCPYASS(UILayer)
@@ -55,10 +57,12 @@ void UILayer::decorate() {
 void UILayer::onPlay(c::Ref*) {
   auto f= [=]() {
     cx::runScene(
-        XCFG()->prelude());
+        XCFG()->prelude(),
+        CC_CSV(c::Float,"SCENE_DELAY"));
   };
-  auto m= MMenu::reify(mc_new_1(MContext, f));
-  cx::runScene(m);
+  auto m= MMenu::reify(mc_new_1(MCX, f));
+  cx::runScene(m,
+      CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 END_NS_UNAMED()
