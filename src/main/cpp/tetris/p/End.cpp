@@ -15,7 +15,7 @@
 #include "Game.h"
 #include "End.h"
 NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(invaders)
+NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -69,6 +69,6 @@ void ELayer::decorate() {
 }
 
 
-NS_END(invaders)
+NS_END(tetris)
 
 

@@ -13,12 +13,30 @@
 #define __COBJS_H__
 
 #include "core/XConfig.h"
+#include "core/CCSX.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tetris)
 
 typedef int DIM4x4[4][4];
 typedef int DIM3x3[3][3];
 typedef int DIM2x2[2][2];
+
+//////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL BModel {
+protected:
+
+  int dim=0;
+
+public:
+
+  virtual bool test(int rID, int row, int col) = 0;
+  virtual int size() = 0;
+
+  int getDim() { return dim; }
+  virtual ~BModel() {}
+};
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -65,12 +83,6 @@ typedef fusii::FArray<Brick> FArrBrick;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL ShapeShell {
-  Shape *shape;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Shape {
   Shape(BModel *m, int rot, const sstr &p) {
     this->rot=rot;
@@ -83,6 +95,12 @@ struct CC_DLL Shape {
   float x= 0.0f;
   float y=0.0f;
   s_vec<Brick*> bricks;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ShapeShell {
+  Shape *shape;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -103,34 +121,14 @@ struct CC_DLL BlockGrid {
   s_vec<Brick*> grid;
 };
 
-//////////////////////////////////////////////////////////////////////////
-//
-template<typename T> class CC_DLL BModel {
-protected:
-
-  s_vec<T> layout;
-  int dim=0;
-
-public:
-
-  /*
-  T& getLayout(int pos) {
-    assert(pos >=0 && pos < layout.size());
-    return layout[pos];
-  }
-  */
-  bool test(int rID, int row, int col) = 0;
-  int size() { return layout.size(); }
-  int getDim() { return dim; }
-
-  virtual ~BModel() {}
-};
-
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL BoxModel : public BModel<DIM2x2> {
+struct CC_DLL BoxModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~BoxModel() {}
+
   BoxModel() {
     DIM2x2 a1
     {1,1,
@@ -152,11 +150,21 @@ struct CC_DLL BoxModel : public BModel<DIM2x2> {
 
     dim=2;
   }
+
+  virtual bool test(int rID, int row, int col) {
+    auto &d= layout[rID];
+    return d[row][col] == 1;
+  }
+
+private:
+  s_vec<DIM2x2> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL ElModel : public BModel<DIM3x3> {
+struct CC_DLL ElModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~ElModel() {}
 
@@ -186,11 +194,20 @@ struct CC_DLL ElModel : public BModel<DIM3x3> {
     dim=3;
   }
 
+  virtual bool test(int rID, int row, int col) {
+     auto &d = layout[rID];
+     return d[row][col] == 1 ;
+  }
+
+private:
+  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL ElxModel : public BModel<DIM3x3> {
+struct CC_DLL ElxModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~ElxModel() {}
 
@@ -225,11 +242,20 @@ struct CC_DLL ElxModel : public BModel<DIM3x3> {
     dim=3;
   }
 
+  virtual bool test(int rID, int row, int col) {
+     auto &d= layout[rID];
+     return d[row][col] == 1;
+  }
+
+private:
+  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL LineModel : public BModel<DIM4x4> {
+struct CC_DLL LineModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~LineModel() {}
   LineModel() {
@@ -267,11 +293,20 @@ struct CC_DLL LineModel : public BModel<DIM4x4> {
     dim=4;
   }
 
+  virtual bool test(int rID, int row, int col) {
+     auto &d= layout[rID];
+     return d[row][col] == 1;
+  }
+
+private:
+  s_vec<DIM4x4> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL NubModel : public BModel<DIM3x3> {
+struct CC_DLL NubModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~NubModel() {}
   NubModel() {
@@ -305,11 +340,20 @@ struct CC_DLL NubModel : public BModel<DIM3x3> {
     dim=3;
   }
 
+  virtual bool test(int rID, int row, int col) {
+     auto &d=layout[rID];
+     return d[row][col] == 1 ;
+  }
+
+private:
+  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL StModel : public BModel<DIM3x3> {
+struct CC_DLL StModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~StModel() {}
   StModel() {
@@ -342,11 +386,20 @@ struct CC_DLL StModel : public BModel<DIM3x3> {
     dim=3;
   }
 
+  virtual bool test(int rID, int row, int col) {
+     auto &d=layout[rID];
+     return d[row][col] == 1;
+  }
+
+private:
+  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL StxModel : public BModel<DIM3x3> {
+struct CC_DLL StxModel : public BModel {
+
+  virtual int size() { return layout.size(); }
 
   virtual ~StxModel() {}
   StxModel() {
@@ -379,6 +432,13 @@ struct CC_DLL StxModel : public BModel<DIM3x3> {
     dim=3;
   }
 
+  virtual bool test(int rID, int row, int col) {
+    auto &d = layout[rID];
+    return d[row][col] == 1;
+  }
+
+private:
+  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -415,7 +475,7 @@ struct CC_DLL Pauser {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL TileGrid {
-  s_vec<FArrBrick*> tiles;
+    s_vec<f::FArrInt*> tiles;
 };
 
 //////////////////////////////////////////////////////////////////////////////

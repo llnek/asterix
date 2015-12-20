@@ -347,6 +347,12 @@ void XConfig::addCst(const sstr &key, c::Ref *ref) {
   addXXX(CSTS, key, ref);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void XConfig::resetCst(const sstr &key, c::Ref *ref) {
+  addXXX(CSTS, key, ref);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::addColor(const sstr &key, c::Ref *ref) {

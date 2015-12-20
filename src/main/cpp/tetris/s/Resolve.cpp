@@ -11,6 +11,7 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "s/utils.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -20,7 +21,7 @@ NS_BEGIN(tetris)
 //
 Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
-  :XSystem<EFactory>(f, d) {
+: XSystem<EFactory>(f, d) {
 
 }
 
@@ -46,23 +47,23 @@ bool Resolve::update(float dt) {
 void Resolve::doIt(a::Node *node) {
 
   auto motion = CC_GNF(Motion, node, "motion");
-  auto sh = CC_GNF(ShellShape, node, "shell");
+  auto sh = CC_GNF(ShapeShell, node, "shell");
   auto co= CC_GNF(TileGrid, node, "tiles");
   auto &cmap= co->tiles;
   auto shape= sh->shape;
 
   if (NNP(shape)) {
     if (motion->right) {
-      shiftRight( cmap, shape);
+      shiftRight( MGML(), cmap, shape);
     }
     if (motion->left) {
-      shiftLeft( cmap, shape);
+      shiftLeft( MGML(), cmap, shape);
     }
     if (motion->rotr) {
-      rotateRight( cmap, shape);
+      rotateRight( MGML(), cmap, shape);
     }
     if (motion->rotl) {
-      rotateLeft( cmap, shape);
+      rotateLeft( MGML(), cmap, shape);
     }
     if (motion->down) {
       fastDrop( node);

@@ -9,9 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Menu.h"
+#include "Game.h"
+#include "x2d/XLib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -39,7 +42,7 @@ void UILayer::decorate() {
   auto tt= cx::reifyBmfLabel("font.JellyBelly",
       XCFG()->getL10NStr("mmenu"));
   auto c= XCFG()->getColor("default");
-  auto tile = MGMS()->TILE;
+    auto tile = CC_CSV(c::Integer, "TILE");
   auto cw= cx::center();
   auto wb= cx::visBox();
 
@@ -52,7 +55,7 @@ void UILayer::decorate() {
 
   auto b= cx::reifyMenuBtn("player1.png");
   auto menu= cx::mkMenu(b);
-  b->setCallback([=]() {
+    b->setCallback([=](c::Ref*) {
         cx::runScene(
             Game::reify(mc_new(f::GCX)),
             CC_CSV(c::Float,"SCENE_DELAY"));

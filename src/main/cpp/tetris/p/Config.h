@@ -29,7 +29,7 @@ public:
 
   virtual const sstr appId() { return "tetris"; }
 
-  virtual const sstr color() { return "silver"; }
+  virtual const sstr themeColor() { return "silver"; }
 
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_WIDTH;

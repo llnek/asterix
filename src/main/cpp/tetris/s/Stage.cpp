@@ -178,12 +178,13 @@ void Stage::onceOnly_2(a::Node *node, const c::Size &fz,
   s::copy(tiles.begin(), tiles.end(), cs->tiles.begin());
   gbox->box= box;
 
-  MGMS()->FENCE= (int) floor(fz.width);
-  MGMS()->TILE= (int) floor(bz.width);
-  MGMS()->CBOX= box;
+  XCFG()->resetCst("FENCE", CC_INT( (int) floor(fz.width)));
+  XCFG()->resetCst("TILE", CC_INT( (int) floor(bz.width)));
+  XCFG()->resetCst("CBOX", f::Box4R::create(box));
 
   CCLOG("collision tiles and blocks init'ed.");
-  CCLOG("tile size = %d", MGMS()->TILE);
+  CCLOG("fence size = %d", CC_CSV(c::Integer,"FENCE"));
+  CCLOG("tile size = %d", CC_CSV(c::Integer,"TILE"));
 }
 
 //////////////////////////////////////////////////////////////////////////

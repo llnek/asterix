@@ -210,6 +210,53 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class CC_DLL Box4R : public c::Ref, public c::Clonable {
+public:
+
+  static Box4R* create(float t, float r, float b, float lf) {
+    Box4R *pRet = new Box4R(t,r,b,lf);
+    pRet->autorelease();
+    return pRet;
+  }
+
+  static Box4R* create(const Box4& x) {
+    Box4R *pRet = new Box4R(x);
+    pRet->autorelease();
+    return pRet;
+  }
+
+  Box4R(float t, float r, float b, float lf)
+  : _t(t), _r(r), _b(b), _lf(lf)
+  {}
+
+  Box4R(const Box4& x) {
+    _t= x.top;
+    _r= x.right;
+    _b= x.bottom;
+    _lf= x.left;
+  }
+
+  Box4 getValue() const { return Box4(_t,_r,_b,_lf); }
+
+  virtual ~Box4R() {
+    CCLOGINFO("deallocing ~Box4R: %p", this);
+  }
+
+  virtual void acceptVisitor(c::DataVisitor &visitor) { }
+
+  virtual Box4R* clone() const override {
+    return Box4R::create(_t,_r,_b,_lf);
+  }
+
+private:
+  float _t=0;
+  float _r=0;
+  float _b=0;
+  float _lf=0;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL JsonObj : public c::Ref, public c::Clonable {
 public:
 

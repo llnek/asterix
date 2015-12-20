@@ -92,6 +92,7 @@ public:
   const c::Color3B getColor(const sstr&);
   const sstr getColorStr(const sstr& );
 
+  void resetCst(const sstr&, c::Ref*);
   c::Ref* getCst(const sstr& );
 
   int getBtnPadding();

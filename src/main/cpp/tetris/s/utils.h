@@ -12,7 +12,9 @@
 #if !defined(__UTILS_H__)
 #define __UTILS_H__
 
-#include "n/CObjs.h"
+#include "x2d/XLayer.h"
+#include "n/GNodes.h"
+
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////

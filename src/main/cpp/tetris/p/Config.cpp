@@ -37,6 +37,8 @@ void Config::initCsts() {
   addCst("FIELD_W", CC_INT(12));
   addCst("THROTTLEWAIT", CC_INT(100));
   addCst("BTN_SIZE", CC_INT(32));
+
+  addCst("TILE", CC_INT(16));
     //CBOX: null,
     //FENCE: 0,
     //TILE: 0
