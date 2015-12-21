@@ -45,7 +45,7 @@ void UILayer::decorate() {
 
   centerImage("game.bg");
 
-  b->setPosition(cw.x, wb.top * 0.1f);
+  menu->setPosition(cw.x, wb.top * 0.1f);
   b->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay));
 

@@ -196,7 +196,7 @@ Stage::initBlockMap(const s_vec<f::FArrInt*> &tiles) {
   F__LOOP(it, tiles) {
     auto &e = *it;
     auto rc= new FArrBrick(e->size());
-    //rc->fill(nullptr);
+    rc->fill(nullptr);
     grid.push_back(rc);
   }
 

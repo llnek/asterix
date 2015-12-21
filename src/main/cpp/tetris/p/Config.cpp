@@ -38,10 +38,10 @@ void Config::initCsts() {
   addCst("THROTTLEWAIT", CC_INT(100));
   addCst("BTN_SIZE", CC_INT(32));
 
+  addCst("FENCE", CC_INT(0));
   addCst("TILE", CC_INT(16));
     //CBOX: null,
-    //FENCE: 0,
-    //TILE: 0
+
   addColor("default", CC_STR("#f6b17f"));
   addColor("text", CC_STR("#ffffff"));
 }
@@ -50,20 +50,29 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("lang-pics", CC_STR("fon/en/images.plist"));
+  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
   addAtlas("game-pics", CC_STR("pics/images.plist"));
 
   addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
   addImage("game.bg", CC_STR("pics/bg.png"));
 
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
+
   addEffect("game_end", CC_STR("sfx/MineExplosion.mpg"));
   addEffect("game_quit", CC_STR("sfx/Death.mpg"));
-
 
   addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
   addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
   addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+
+  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
 

@@ -60,12 +60,12 @@ void UILayer::decorate() {
             Game::reify(mc_new(f::GCX)),
             CC_CSV(c::Float,"SCENE_DELAY"));
       });
-  b->setPosition(cw);
+  menu->setPosition(cw);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto ctx= (MCX*) MGMS()->getCtx();
+  auto ctx= (MCX*) getSceneX()->getCtx();
   auto sz= back->getContentSize();
   back->setCallback([=](c::Ref*) { ctx->back(); });
   back->setColor(c);

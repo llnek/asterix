@@ -73,6 +73,8 @@ public:
   virtual const sstr getWSUrl() = 0;
   virtual c::Scene* prelude() = 0;
 
+  virtual bool isPortrait() { return true; }
+
   virtual void setGameId(const sstr& ) = 0;
   virtual void setRoomId(const sstr& ) = 0;
   virtual const sstr getGameId() = 0;

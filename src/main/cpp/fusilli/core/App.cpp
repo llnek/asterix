@@ -68,13 +68,13 @@ bool App::applicationDidFinishLaunching() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void App::preLaunch(const c::Size& dz) {
+void App::preLaunch(const c::Size &dz) {
 
   auto glview = CC_DTOR()->getOpenGLView();
   auto dispFPS= CC_CSV(c::Bool,"showFPS");
   auto fps = CC_CSV(c::Integer,"FPS");
 
-  auto portrait = dz.height > dz.width;
+  auto portrait = XCFG()->isPortrait();
   auto fz = glview->getFrameSize();
 
   s_vec<sstr> searchPaths;

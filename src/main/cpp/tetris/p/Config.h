@@ -53,6 +53,8 @@ public:
     return "";
   }
 
+  virtual bool isPortrait() { return false; }
+
   virtual c::Scene* prelude();
 
   virtual const sstr getWSUrl() {

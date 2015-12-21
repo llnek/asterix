@@ -173,6 +173,7 @@ enum class Locale {
 };
 
 NS_END(fusii)
+#include "FArrayPtr.h"
 #include "FArray.h"
 #include "FPtr.h"
 NS_ALIAS(f,fusii)
