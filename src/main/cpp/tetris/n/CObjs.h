@@ -124,182 +124,149 @@ struct CC_DLL BlockGrid {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BoxModel : public BModel {
+private:
+  s_arr<int, 2*2*4> layout {
+     1,1,
+     1,1,
 
-  virtual int size() { return layout.size(); }
+     1,1,
+     1,1,
+
+     1,1,
+     1,1,
+
+     1,1,
+     1,1
+  };
+
+public:
+
+  virtual int size() { return 4; }
 
   virtual ~BoxModel() {}
 
   BoxModel() {
-    DIM2x2 a1
-    {1,1,
-     1,1};
-    DIM2x2 a2
-    {1,1,
-     1,1};
-    DIM2x2 a3
-    {1,1,
-     1,1};
-    DIM2x2 a4
-    {1,1,
-     1,1};
-
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
-
     dim=2;
   }
 
   virtual bool test(int rID, int row, int col) {
-    auto &d= layout[rID];
-    return d[row][col] == 1;
+    return layout[rID * size() + row * dim + col] == 1;
   }
 
-private:
-  s_vec<DIM2x2> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ElModel : public BModel {
+private:
+  s_arr<int, 4 * 3 * 3> layout {
+      0,1,0,
+      0,1,0,
+      0,1,1,
 
-  virtual int size() { return layout.size(); }
+      0,0,0,
+      1,1,1,
+      1,0,0,
+
+      1,1,0,
+      0,1,0,
+      0,1,0,
+
+      0,0,1,
+      1,1,1,
+      0,0,0
+  };
+
+public:
+
+  virtual int size() { return 4; }
 
   virtual ~ElModel() {}
 
   ElModel() {
-    DIM3x3 a1
-    { 0,1,0,
-      0,1,0,
-      0,1,1};
-    DIM3x3 a2
-    { 0,0,0,
-      1,1,1,
-      1,0,0 };
-    DIM3x3 a3
-    { 1,1,0,
-      0,1,0,
-      0,1,0 };
-    DIM3x3 a4
-    { 0,0,1,
-      1,1,1,
-      0,0,0 };
-
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
-
     dim=3;
   }
 
   virtual bool test(int rID, int row, int col) {
-     auto &d = layout[rID];
-     return d[row][col] == 1 ;
+     return layout[rID * size() + row * dim + col] == 1;
   }
 
-private:
-  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ElxModel : public BModel {
+private:
+  s_arr<int, 4*3*3> layout {
+      0,1,0,
+      0,1,0,
+      1,1,0
 
-  virtual int size() { return layout.size(); }
+      1,0,0,
+      1,1,1,
+      0,0,0
+
+      0,1,1,
+      0,1,0,
+      0,1,0
+
+      0,0,0,
+      1,1,1,
+      0,0,1
+  };
+public:
+  virtual int size() { return 4; }
 
   virtual ~ElxModel() {}
 
   ElxModel() {
-
-    DIM3x3 a1 {
-      0,1,0,
-      0,1,0,
-      1,1,0
-    };
-    DIM3x3 a2 {
-      1,0,0,
-      1,1,1,
-      0,0,0
-    };
-    DIM3x3 a3 {
-      0,1,1,
-      0,1,0,
-      0,1,0
-    };
-    DIM3x3 a4 {
-      0,0,0,
-      1,1,1,
-      0,0,1
-    };
-
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
-
     dim=3;
   }
 
   virtual bool test(int rID, int row, int col) {
-     auto &d= layout[rID];
-     return d[row][col] == 1;
+     return layout[rID * size() + row * dim + col] == 1;
   }
-
-private:
-  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL LineModel : public BModel {
-
-  virtual int size() { return layout.size(); }
-
-  virtual ~LineModel() {}
-  LineModel() {
-
-    DIM4x4 a1 {
+private:
+  s_arr<int, 4*4*4> layout {
       0,0,0,0,
       1,1,1,1,
       0,0,0,0,
-      0,0,0,0
-    };
-    DIM4x4 a2 {
+      0,0,0,0,
+
       0,0,1,0,
       0,0,1,0,
       0,0,1,0,
-      0,0,1,0
-    };
-    DIM4x4 a3 {
+      0,0,1,0,
+
       0,0,0,0,
       0,0,0,0,
       1,1,1,1,
-      0,0,0,0
-    };
-    DIM4x4 a4 {
+      0,0,0,0,
+
       0,1,0,0,
       0,1,0,0,
       0,1,0,0,
       0,1,0,0
-    };
+  };
 
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
+public:
 
+  virtual int size() { return 4; }
+  virtual ~LineModel() {}
+  LineModel() {
     dim=4;
   }
 
   virtual bool test(int rID, int row, int col) {
      auto &d= layout[rID];
-     return d[row][col] == 1;
+     return layout[rID*size() + row * dim + col] == 1;
   }
 
-private:
-  s_vec<DIM4x4> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
