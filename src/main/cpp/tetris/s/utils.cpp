@@ -17,7 +17,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 Shape* reifyShape(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt*>& cmap, Shape *shape) {
+    s_vec<f::FArrInt> &cmap, Shape *shape) {
 
   auto bbox= findBBox(cmap, shape->model, shape->x, shape->y, shape->rot);
   Shape *rc=nullptr;
@@ -36,13 +36,14 @@ Shape* reifyShape(not_null<f::XLayer*> layer,
 //
 float topLine(not_null<a::Node*> node) {
   auto gx= CC_GNF(GridBox, node, "gbox");
-    return floor((gx->box.top - gx->box.bottom) / CC_CSV(c::Float, "TILE"));
+  return floor((gx->box.top - gx->box.bottom) / CC_CSV(c::Integer, "TILE"));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 Shape* previewShape(not_null<f::XLayer*> layer, Shape *shape) {
-  auto bbox= findBBox(s_vec<f::FArrInt*>{},shape->model,
+    s_vec<f::FArrInt> dummy;
+  auto bbox= findBBox(dummy,shape->model,
                           shape->x, shape->y, shape->rot, true);
   if (bbox.size() > 0) {
     auto bs= reifyBricks(layer,shape->png, shape->x, shape->y, bbox);
@@ -65,7 +66,7 @@ void disposeShape(Shape *shape) {
 void clearOldBricks(s_vec<Brick*> &bs) {
   F__LOOP(it, bs) {
     auto& z= *it;
-      z->dispose();
+    z->dispose();
   }
   bs.clear();
 }
@@ -92,11 +93,11 @@ const s_vec<Brick*> reifyBricks(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 const s_vec<c::Vec2>
-findBBox(const s_vec<f::FArrInt*> &cmap, BModel *model,
+findBBox(s_vec<f::FArrInt> &cmap, BModel *model,
     float px, float py, int rID, bool skipCollide) {
 
+  auto tile = CC_CSV(c::Integer, "TILE");
   s_vec<c::Vec2> bs;
-    auto tile = CC_CSV(c::Integer, "TILE");
   float x,y;
 
   for (auto r=0; r < model->getDim(); ++r) {
@@ -120,34 +121,34 @@ findBBox(const s_vec<f::FArrInt*> &cmap, BModel *model,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool maybeCollide(const s_vec<f::FArrInt*> &cmap,
+bool maybeCollide(s_vec<f::FArrInt> &cmap,
     float tl_x, float tl_y, float br_x, float br_y) {
 
   auto tile= xrefTile(tl_x , tl_y);
-
   CCLOG("tile = %d, %d", tile.row , tile.col);
 
-  if (tile.row < 0 || tile.col < 0 ||
-      cmap[tile.row]->get(tile.col) != 0)  {
-    CCLOG("collide! tile = %d, %d", tile.row , tile.col);
-    return true;
-  } else {
-    return false;
+  if (tile.row < 0 || tile.col < 0 ) {
+    auto &cm= cmap[tile.row];
+    if (cm.get(tile.col) != 0)  {
+      CCLOG("collide! tile = %d, %d", tile.row , tile.col);
+      return true;
+    }
   }
+  return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 const f::Cell2D xrefTile(float x, float y) {
   // find center, instead of top left
-    auto tile = CC_CSV(c::Integer, "TILE") ;
-    auto co = tile * 0.5f;
-    auto bx= CC_CSV(f::Box4R, "CBOX");
+  auto tile = CC_CSV(c::Integer, "TILE") ;
+  auto co = tile * 0.5f;
+  auto bx= CC_CSV(f::Box4R, "CBOX");
   y -= co;
   x += co;
 
   // realign actual x,y
-    x -= bx.left - CC_CSV(c::Integer, "FENCE");
+  x -= bx.left - CC_CSV(c::Integer, "FENCE");
 
   return f::Cell2D(
            floor(y / tile),
@@ -170,13 +171,15 @@ void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void lockBricks(const s_vec<f::FArrInt*> &cmap,
-    const s_vec<FArrBrick*> &emap, Brick *z) {
+void lockBricks(s_vec<f::FArrInt> &cmap,
+    s_vec<FArrBrick> &emap, Brick *z) {
   auto zs = z->getPosition();
   auto t= xrefTile(zs.x, zs.y);
 
-  cmap[t.row]->set(t.col, 1);
-  emap[t.row]->set(t.col, z);
+  auto &cm= cmap[t.row];
+  cm.set(t.col, 1);
+  auto &em= emap[t.row];
+  em.set(t.col, z);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -197,8 +200,8 @@ void lock(not_null<a::Node*> node, Shape *shape) {
 //////////////////////////////////////////////////////////////////////////
 //
 void postLock(not_null<a::Node*> node,
-    const s_vec<f::FArrInt*> &cmap,
-    const s_vec<FArrBrick*> &emap) {
+    s_vec<f::FArrInt> &cmap,
+    s_vec<FArrBrick> &emap) {
 
   auto flines = CC_GNF(FilledLines, node, "flines");
   // search bottom up until top.
@@ -220,12 +223,12 @@ void postLock(not_null<a::Node*> node,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool testFilledRow(const s_vec<f::FArrInt*> &cmap, int r) {
+bool testFilledRow(s_vec<f::FArrInt> &cmap, int r) {
   auto &row= cmap[r];
 
   // negative if any holes in the row
-  for (auto c=0; c < row->size(); ++c) {
-    if (row->get(c) != 1) { return false; }
+  for (auto c=0; c < row.size(); ++c) {
+    if (row.get(c) != 1) { return false; }
   }
 
   // entire row must be filled.
@@ -234,15 +237,15 @@ bool testFilledRow(const s_vec<f::FArrInt*> &cmap, int r) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void flashFilled(const s_vec<FArrBrick*> &emap,
+void flashFilled(s_vec<FArrBrick> &emap,
     FilledLines *flines,
     const s_vec<int> &lines) {
 
   F__LOOP(it, lines) {
     auto &row= emap[*it];
-    for (auto c=0; c < row->size(); ++c) {
-      if (row->get(c) != nullptr) {
-        row->get(c)->blink();
+    for (auto c=0; c < row.size(); ++c) {
+      if (row.get(c) != nullptr) {
+        row.get(c)->blink();
       }
     }
   }
@@ -269,9 +272,9 @@ void pauseForClearance(not_null<a::Node*> node, bool b, float delay) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool moveDown(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt*> &cmap, Shape *shape) {
+    s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-    auto new_y = shape->y - CC_CSV(c::Integer, "TILE");
+  auto new_y = shape->y - CC_CSV(c::Integer, "TILE");
   auto x = shape->x;
   auto bs = findBBox(cmap, shape->model, x, new_y, shape->rot);
 
@@ -289,9 +292,9 @@ bool moveDown(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool shiftRight(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt*> &cmap, Shape *shape) {
+    s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-    auto new_x= shape->x + CC_CSV(c::Integer, "TILE");
+  auto new_x= shape->x + CC_CSV(c::Integer, "TILE");
   auto y= shape->y;
   auto bs= findBBox(cmap, shape->model, new_x, y, shape->rot);
 
@@ -309,9 +312,9 @@ bool shiftRight(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool shiftLeft(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt*> &cmap, Shape *shape) {
+    s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-    auto new_x= shape->x - CC_CSV(c::Integer, "TILE");
+  auto new_x= shape->x - CC_CSV(c::Integer, "TILE");
   auto y= shape->y;
   auto bs= findBBox(cmap, shape->model, new_x, y, shape->rot);
 
@@ -329,7 +332,7 @@ bool shiftLeft(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool rotateRight(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt*> &cmap, Shape *shape) {
+    s_vec<f::FArrInt> &cmap, Shape *shape) {
 
   auto nF = (shape->rot+1) % shape->model->size();
   auto bs= findBBox(cmap, shape->model,
@@ -353,7 +356,7 @@ bool rotateRight(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool rotateLeft(not_null<f::XLayer*> layer,
-    const s_vec<f::FArrInt*> &cmap, Shape *shape) {
+    s_vec<f::FArrInt> &cmap, Shape *shape) {
 
   auto nF = (shape->rot-1) % shape->model->size();
   auto bs= findBBox(cmap, shape->model, shape->x, shape->y, nF);

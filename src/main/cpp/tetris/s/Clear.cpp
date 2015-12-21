@@ -77,10 +77,10 @@ void Clear::clearOneRow(a::Node *node, int r) {
   auto bks= CC_GNF(BlockGrid, node, "blocks");
   auto& row= bks->grid[r];
 
-  for (auto c=0; c < row->size(); ++c) {
-    auto z= row->get(c);
+  for (auto c=0; c < row.size(); ++c) {
+    auto z= row.get(c);
     if (NNP(z)) {
-      row->set(c, nullptr);
+      row.set(c, nullptr);
       z->dispose();
     }
   }
@@ -92,11 +92,11 @@ void Clear::resetOneRow(a::Node *node, int r) {
   auto co= CC_GNF(TileGrid, node, "collision");
   auto &row= co->tiles[r];
 
-  for (auto c=0; c < row->size(); ++c) {
-    row->set(c, r==0 ? 1 : 0);
+  for (auto c=0; c < row.size(); ++c) {
+    row.set(c, r==0 ? 1 : 0);
   }
-  row->setFirst(1);
-  row->setLast(1);
+  row.setFirst(1);
+  row.setLast(1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -161,12 +161,12 @@ int Clear::findLastEmpty(a::Node *node, int t) {
 bool Clear::isEmptyRow(a::Node *node, int r) {
   auto co= CC_GNF(TileGrid, node, "collision");
   auto &row= co->tiles[r];
-  auto len= row->size() - 1;
+  auto len= row.size() - 1;
 
   if (r==0) { return false; }
 
   for (auto c=1; c < len; ++c) {
-    if (row->get(c) != 0) { return false; }
+    if (row.get(c) != 0) { return false; }
   }
   return true;
 }
@@ -176,30 +176,30 @@ bool Clear::isEmptyRow(a::Node *node, int r) {
 void Clear::copyLine(a::Node *node, int from, int to) {
   auto co = CC_GNF(TileGrid, node, "collision");
   auto bs = CC_GNF(BlockGrid, node, "blocks");
+  auto tile = CC_CSV(c::Integer, "TILE");
   auto &line_f = co->tiles[from];
   auto &line_t = co->tiles[to];
-    auto tile = CC_CSV(c::Integer, "TILE");
-    auto dlen= tile * (from - to);
+  auto dlen= tile * (from - to);
   int c;
 
-  for (c=0; c < line_f->size(); ++c) {
-    line_t->set(c, line_f->get(c));
-    line_f->set(c, 0);
+  for (c=0; c < line_f.size(); ++c) {
+    line_t.set(c, line_f.get(c));
+    line_f.set(c, 0);
   }
-  line_f->setFirst(1);
-  line_f->setLast(1);
+  line_f.setFirst(1);
+  line_f.setLast(1);
 
   // deal with actual shape
-  auto g_f = bs->grid[from];
-  auto g_t = bs->grid[to];
+  auto &g_f = bs->grid[from];
+  auto &g_t = bs->grid[to];
 
-  for (c=0; c < g_f->size(); ++c) {
-    if (g_f->get(c)) {
-      auto pos = g_f->get(c)->getPosition();
-      g_f->get(c)->setPosition(pos.x, pos.y - dlen);
+  for (c=0; c < g_f.size(); ++c) {
+    if (g_f.get(c)) {
+      auto pos = g_f.get(c)->getPosition();
+      g_f.get(c)->setPosition(pos.x, pos.y - dlen);
     }
-    g_t->set(c, g_f->get(c));
-    g_f->set(c, nullptr);
+    g_t.set(c, g_f.get(c));
+    g_f.set(c, nullptr);
   }
 }
 

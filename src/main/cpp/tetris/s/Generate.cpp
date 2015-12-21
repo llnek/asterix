@@ -31,8 +31,8 @@ Generate::Generate(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 void Generate::addToEngine(not_null<a::Engine*> e) {
   ArenaNode n;
   arena= e->getNodeList(n.typeId());
-  nextShapeInfo= randNextInfo();
   nextShape=nullptr;
+  nextShapeInfo= randNextInfo();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,8 +67,8 @@ Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> l
   auto co= CC_GNF(TileGrid, node, "collision");
   auto bks= CC_GNF(BlockGrid, node, "grid");
   auto gbox= CC_GNF(GridBox, node, "gbox");
+  auto tile= CC_CSV(c::Integer, "TILE");
   auto &tiles = co->tiles;
-    auto tile= CC_CSV(c::Integer, "TILE");
   auto wz= cx::visRect();
   auto shape= new Shape(*nextShapeInfo);
   shape->x = gbox->box.left + 5 * tile;
@@ -87,7 +87,7 @@ Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> l
 //
 void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
   auto gbox= CC_GNF(GridBox, node, "gbox");
-    auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Integer, "TILE");
   auto info = randNextInfo();
   auto cw = cx::center();
   auto wb = cx::visBox();

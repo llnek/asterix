@@ -189,14 +189,14 @@ void Stage::onceOnly_2(a::Node *node, const c::Size &fz,
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s_vec<FArrBrick*>
-Stage::initBlockMap(const s_vec<f::FArrInt*> &tiles) {
-  s_vec<FArrBrick*> grid;
+const s_vec<FArrBrick>
+Stage::initBlockMap(s_vec<f::FArrInt> &tiles) {
+  s_vec<FArrBrick> grid;
 
   F__LOOP(it, tiles) {
     auto &e = *it;
-    auto rc= new FArrBrick(e->size());
-    rc->fill(nullptr);
+    FArrBrick rc(e.size());
+    rc.fill(nullptr);
     grid.push_back(rc);
   }
 
@@ -205,23 +205,23 @@ Stage::initBlockMap(const s_vec<f::FArrInt*> &tiles) {
 
 //////////////////////////////////////////////////////////////////////////
 // Create our own collision map using cells.
-const s_vec<f::FArrInt*>
+const s_vec<f::FArrInt>
 Stage::fakeTileMap(const c::Size &bz, const f::Box4 &box) {
 
   auto hlen = (int) floor((box.top - box.bottom) / bz.height);
   auto wlen = (int) floor((box.right - box.left) / bz.width);
-  s_vec<f::FArrInt*> map;
+  s_vec<f::FArrInt> map;
 
   wlen += 2; // 2 side walls
   // use 1 to indicate wall
   for (auto r = 0; r <= hlen; ++r) {
-    auto rc= new f::FArrInt(wlen);
+    f::FArrInt rc(wlen);
     if (r == 0) {
-      rc->fill(1);
+      rc.fill(1);
     } else {
-      rc->fill(0);
-      rc->setFirst(1);
-      rc->setLast(1);
+      rc.fill(0);
+      rc.setFirst(1);
+      rc.setLast(1);
     }
     map.push_back(rc);
   }

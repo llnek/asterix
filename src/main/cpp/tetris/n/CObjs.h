@@ -100,33 +100,29 @@ struct CC_DLL Shape {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ShapeShell : public a::Component {
+  virtual const a::COMType typeId() { return "n/ShapeShell"; }
   Shape *shape;
-    virtual const a::COMType typeId() { return "n/ShapeShell"; }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CtrlPad : public a::Component {
+  virtual const a::COMType typeId() { return "n/CtrlPad"; }
   s::map<sstr,f::Box4> hotspots;
-    virtual const a::COMType typeId() { return "n/CtrlPad"; }
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GridBox : public a::Component {
+  virtual const a::COMType typeId() { return "n/GridBox"; }
   f::Box4 box;
-    virtual const a::COMType typeId() { return "n/GridBox"; }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BlockGrid  : public a::Component {
-  s_vec<FArrBrick*> grid;
-    virtual const a::COMType typeId() { return "n/BlockGrid"; }
-
+  virtual const a::COMType typeId() { return "n/BlockGrid"; }
+  s_vec<FArrBrick> grid;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -376,47 +372,43 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Dropper : public a::Component {
+  virtual const a::COMType typeId() { return "n/Dropper"; }
   float dropSpeed = CC_CSV(c::Float, "DROPSPEED");
   float dropRate= 80 + 700.0f/1.0f ;
   c::DelayTime *timer=nullptr;
-    virtual const a::COMType typeId() { return "n/Dropper"; }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL FilledLines : public a::Component {
-    virtual const a::COMType typeId() { return "n/FilledLines"; }
+  virtual const a::COMType typeId() { return "n/FilledLines"; }
   s_vec<int> lines;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Motion : public a::Component {
+  virtual const a::COMType typeId() { return "n/Motion"; }
   bool right=false;
   bool left=false;
   bool rotr= false;
   bool rotl= false;
   bool down=false;
-    virtual const a::COMType typeId() { return "n/Motion"; }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Pauser  : public a::Component {
+  virtual const a::COMType typeId() { return "n/Pauser"; }
   c::DelayTime *timer=nullptr;
   bool pauseToClear=false;
-    virtual const a::COMType typeId() { return "n/Pauser"; }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL TileGrid  : public a::Component {
-    s_vec<f::FArrInt*> tiles;
-    virtual const a::COMType typeId() { return "n/TileGrid"; }
-
+  virtual const a::COMType typeId() { return "n/TileGrid"; }
+  s_vec<f::FArrInt> tiles;
 };
 
 BEGIN_NS_UNAMED()

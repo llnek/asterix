@@ -29,10 +29,10 @@ struct CC_DLL Stage : public f::XSystem<EFactory> {
   void onceOnly_2(a::Node*, const c::Size&,
       const c::Size& , const f::Box4&);
 
-  const s_vec<FArrBrick*>
-    initBlockMap(const s_vec<f::FArrInt*>& tiles);
+  const s_vec<FArrBrick>
+    initBlockMap(s_vec<f::FArrInt> &tiles);
 
-  const s_vec<f::FArrInt*>
+  const s_vec<f::FArrInt>
     fakeTileMap(const c::Size&, const f::Box4&);
 
   virtual const a::SystemType typeId() { return "s/Stage"; }
@@ -49,7 +49,7 @@ struct CC_DLL Stage : public f::XSystem<EFactory> {
   NODFT(Stage)
   NOCPYASS(Stage)
 
-    a::NodeList *arena;
+  a::NodeList *arena;
 };
 
 
