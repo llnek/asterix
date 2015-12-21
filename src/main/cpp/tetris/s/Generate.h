@@ -14,7 +14,7 @@
 
 #include "core/XSystem.h"
 #include "EFactory.h"
-
+#include "n/GNodes.h"
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,9 @@ struct CC_DLL Generate : public f::XSystem<EFactory> {
   Shape * reifyNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
   void previewNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
   Shape * randNextInfo();
-
+    a::NodeList *arena = nullptr;
+    Shape *nextShapeInfo=nullptr;
+    Shape *nextShape=nullptr;
   virtual ~Generate() {}
   NODFT(Generate)
   NOCPYASS(Generate)

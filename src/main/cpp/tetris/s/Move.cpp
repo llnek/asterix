@@ -32,7 +32,7 @@ void Move::addToEngine(not_null<a::Engine*> e) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  auto n= arena->head;
+  auto node= arena->head;
   if (MGMS()->isLive()) {
     auto sh= CC_GNF(ShapeShell,node, "shell");
     auto dp= CC_GNF(Dropper,node, "dropper");
@@ -50,7 +50,7 @@ bool Move::update(float dt) {
 //
 void Move::doFall(a::Node *node) {
   auto co= CC_GNF(TileGrid, node, "collision");
-  auto sh= CC_GNF(ShellShape, node, "shell");
+  auto sh= CC_GNF(ShapeShell, node, "shell");
   auto bs= CC_GNF(BlockGrid, node, "blocks");
   auto shape= sh->shape;
   auto &cmap= co->tiles;

@@ -23,7 +23,7 @@ Shape* reifyShape(not_null<f::XLayer*> layer,
   Shape *rc=nullptr;
 
   if (bbox.size() > 0) {
-    auto bs= reifyBricks(layer, shape.png, shape->x, shape->y, bbox);
+    auto bs= reifyBricks(layer, shape->png, shape->x, shape->y, bbox);
     clearOldBricks(shape->bricks);
     s::copy(bs.begin(), bs.end(), shape->bricks.begin());
     rc=shape;
@@ -36,7 +36,7 @@ Shape* reifyShape(not_null<f::XLayer*> layer,
 //
 float topLine(not_null<a::Node*> node) {
   auto gx= CC_GNF(GridBox, node, "gbox");
-  return floor((gx->box.top - gx->box.bottom) / MGMS()->TILE);
+    return floor((gx->box.top - gx->box.bottom) / CC_CSV(c::Float, "TILE"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ Shape* previewShape(not_null<f::XLayer*> layer, Shape *shape) {
   auto bbox= findBBox(s_vec<f::FArrInt*>{},shape->model,
                           shape->x, shape->y, shape->rot, true);
   if (bbox.size() > 0) {
-    auto bs= reifyBricks(layer,shape.png, shape->x, shape->y, bbox);
+    auto bs= reifyBricks(layer,shape->png, shape->x, shape->y, bbox);
     clearOldBricks(shape->bricks);
     s::copy(bs.begin(), bs.end(), shape->bricks.begin());
   }
@@ -65,7 +65,7 @@ void disposeShape(Shape *shape) {
 void clearOldBricks(s_vec<Brick*> &bs) {
   F__LOOP(it, bs) {
     auto& z= *it;
-    z->dispose()
+      z->dispose();
   }
   bs.clear();
 }
@@ -96,17 +96,18 @@ findBBox(const s_vec<f::FArrInt*> &cmap, BModel *model,
     float px, float py, int rID, bool skipCollide) {
 
   s_vec<c::Vec2> bs;
+    auto tile = CC_CSV(c::Integer, "TILE");
   float x,y;
 
   for (auto r=0; r < model->getDim(); ++r) {
-    y = py - MGMS()->TILE * r;
+    y = py - tile * r;
     for (auto c=0; c < model->getDim(); ++c) {
-      x = px + MGMS()->TILE * c;
+      x = px + tile * c;
       if (model->test(rID,r,c)) {
         if (!skipCollide &&
             maybeCollide(cmap, x, y,
-                              x + MGMS()->TILE,
-                              y - MGMS()->TILE)) {
+                              x + tile,
+                              y - tile)) {
           return s_vec<c::Vec2> {};
         }
         bs.push_back(c::ccp(x,y));
@@ -139,28 +140,30 @@ bool maybeCollide(const s_vec<f::FArrInt*> &cmap,
 //
 const f::Cell2D xrefTile(float x, float y) {
   // find center, instead of top left
-  auto co = MGMS()->TILE * 0.5f;
-  auto y -= co;
-  auto x += co;
+    auto tile = CC_CSV(c::Integer, "TILE") ;
+    auto co = tile * 0.5f;
+    auto bx= CC_CSV(f::Box4R, "CBOX");
+  y -= co;
+  x += co;
 
   // realign actual x,y
-  x -= MGMS()->CBOX.left - MGMS()->FENCE;
+    x -= bx.left - CC_CSV(c::Integer, "FENCE");
 
   return f::Cell2D(
-           floor(y / MGMS()->TILE)
-           floor(x / MGMS()->TILE));
+           floor(y / tile),
+           floor(x / tile));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void initDropper(Dropper *dp) {
-  dp->timer = cx::createTimer(MGML(), dp->dropRate / dp->dropSpeed);
+  dp->timer = cx::reifyTimer(MGML(), dp->dropRate / dp->dropSpeed);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s) {
-  dp->timer = cx::createTimer(par, r/s);
+  dp->timer = cx::reifyTimer(par, r/s);
   dp->dropSpeed=s;
   dp->dropRate=r;
 }
@@ -168,7 +171,7 @@ void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s) {
 //////////////////////////////////////////////////////////////////////////
 //
 void lockBricks(const s_vec<f::FArrInt*> &cmap,
-    const s_vec<f::FArrBrick*> &emap, Brick *z) {
+    const s_vec<FArrBrick*> &emap, Brick *z) {
   auto zs = z->getPosition();
   auto t= xrefTile(zs.x, zs.y);
 
@@ -195,7 +198,7 @@ void lock(not_null<a::Node*> node, Shape *shape) {
 //
 void postLock(not_null<a::Node*> node,
     const s_vec<f::FArrInt*> &cmap,
-    const s_vec<f::FArrBrick*> &emap) {
+    const s_vec<FArrBrick*> &emap) {
 
   auto flines = CC_GNF(FilledLines, node, "flines");
   // search bottom up until top.
@@ -231,7 +234,7 @@ bool testFilledRow(const s_vec<f::FArrInt*> &cmap, int r) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void flashFilled(const s_vec<f::FArrBrick*> &emap,
+void flashFilled(const s_vec<FArrBrick*> &emap,
     FilledLines *flines,
     const s_vec<int> &lines) {
 
@@ -257,7 +260,7 @@ void pauseForClearance(not_null<a::Node*> node, bool b, float delay) {
   pu->pauseToClear=b;
 
   if (b) {
-    pu->timer= cx::createTimer(MGML(), delay);
+    pu->timer= cx::reifyTimer(MGML(), delay);
   } else {
     pu->timer=nullptr;
   }
@@ -268,14 +271,14 @@ void pauseForClearance(not_null<a::Node*> node, bool b, float delay) {
 bool moveDown(not_null<f::XLayer*> layer,
     const s_vec<f::FArrInt*> &cmap, Shape *shape) {
 
-  auto new_y = shape->y - MGMS()->TILE;
+    auto new_y = shape->y - CC_CSV(c::Integer, "TILE");
   auto x = shape->x;
   auto bs = findBBox(cmap, shape->model, x, new_y, shape->rot);
 
   if (bs.size() > 0) {
-    auto bs= reifyBricks(layer,shape->png, x, new_y, bs);
+    auto bricks= reifyBricks(layer,shape->png, x, new_y, bs);
     clearOldBricks(shape->bricks);
-    s::copy(bs.begin(), bs.end(), shape->bricks.begin());
+    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->y= new_y;
     return true;
   } else {
@@ -288,14 +291,14 @@ bool moveDown(not_null<f::XLayer*> layer,
 bool shiftRight(not_null<f::XLayer*> layer,
     const s_vec<f::FArrInt*> &cmap, Shape *shape) {
 
-  auto new_x= shape->x + csts.TILE;
+    auto new_x= shape->x + CC_CSV(c::Integer, "TILE");
   auto y= shape->y;
   auto bs= findBBox(cmap, shape->model, new_x, y, shape->rot);
 
   if (bs.size() > 0) {
-    auto bs= reifyBricks(layer,shape->png, new_x, y, bs);
+    auto bricks= reifyBricks(layer,shape->png, new_x, y, bs);
     clearOldBricks(shape->bricks);
-    s::copy(bs.begin(), bs.end(), shape->bricks.begin());
+    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->x= new_x;
     return true;
   } else {
@@ -308,14 +311,14 @@ bool shiftRight(not_null<f::XLayer*> layer,
 bool shiftLeft(not_null<f::XLayer*> layer,
     const s_vec<f::FArrInt*> &cmap, Shape *shape) {
 
-  auto new_x= shape->x - MGMS()->TILE;
+    auto new_x= shape->x - CC_CSV(c::Integer, "TILE");
   auto y= shape->y;
   auto bs= findBBox(cmap, shape->model, new_x, y, shape->rot);
 
   if (bs.size() > 0) {
-    auto bs= reifyBricks(layer,shape->png, new_x, y, bs);
+    auto bricks= reifyBricks(layer,shape->png, new_x, y, bs);
     clearOldBricks(shape->bricks);
-    s::copy(bs.begin(), bs.end(), shape->bricks);
+    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->x= new_x;
     return true;
   } else {
@@ -338,8 +341,8 @@ bool rotateRight(not_null<f::XLayer*> layer,
 
   if (bs.size() > 0) {
     auto bricks= reifyBricks(layer,shape->png, shape->x, shape->y, bs);
-    clearOldBricks(shape.bricks);
-    s::copy(bricks.begin(), bricks.end(), shape->bricks);
+    clearOldBricks(shape->bricks);
+    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->rot= nF;
     return true;
   } else {
@@ -361,7 +364,7 @@ bool rotateLeft(not_null<f::XLayer*> layer,
 
   if (bs.size() > 0) {
     auto bricks= reifyBricks(layer,shape->png, shape->x, shape->y, bs);
-    clearOldBricks(shape.bricks);
+    clearOldBricks(shape->bricks);
     s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->rot= nF;
     return true;

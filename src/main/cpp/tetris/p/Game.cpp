@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameLayer.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/Stage.h"
@@ -28,7 +29,7 @@ NS_BEGIN(tetris)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GLayer : public f::XLayer {
+struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
 
@@ -39,8 +40,11 @@ struct CC_DLL GLayer : public f::XLayer {
   virtual void decorate();
 
   void endGame();
+    void showMenu();
   void deco();
   void reset();
+
+  EFactory* factory=nullptr;
 
   STATIC_REIFY_LAYER(GLayer)
 
@@ -49,6 +53,18 @@ struct CC_DLL GLayer : public f::XLayer {
 
   NOCPYASS(GLayer)
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchEnded(c::Touch*, c::Event*) {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseUp(c::Event*) {
+
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -77,7 +93,7 @@ void GLayer::deco() {
   auto d= CC_DICT();
   auto f= mc_new_2(EFactory, e, d);
 
-  f->createArena();
+  f->reifyArena();
 
   e->regoSystem(mc_new_2(Stage, f, d));
   e->regoSystem(mc_new_2(Generate, f, d));
@@ -89,12 +105,15 @@ void GLayer::deco() {
 
   this->options= d;
   CC_KEEP(d)
-  this->fac= f;
+  this->factory= f;
   this->engine=e;
 
   getHUD()->reset();
 }
 
+void GLayer::showMenu() {
+
+}
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::endGame() {

@@ -18,9 +18,9 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tetris)
 
-typedef int DIM4x4[4][4];
-typedef int DIM3x3[3][3];
-typedef int DIM2x2[2][2];
+//typedef int DIM4x4[4][4];
+//typedef int DIM3x3[3][3];
+//typedef int DIM2x2[2][2];
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -79,7 +79,7 @@ struct CC_DLL Brick : public c::Sprite {
   c::Vec2 startPos;
 };
 
-typedef fusii::FArray<Brick> FArrBrick;
+typedef fusii::FArray<Brick*> FArrBrick;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -99,26 +99,34 @@ struct CC_DLL Shape {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL ShapeShell {
+struct CC_DLL ShapeShell : public a::Component {
   Shape *shape;
+    virtual const a::COMType typeId() { return "n/ShapeShell"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CtrlPad {
+struct CC_DLL CtrlPad : public a::Component {
   s::map<sstr,f::Box4> hotspots;
+    virtual const a::COMType typeId() { return "n/CtrlPad"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GridBox {
+struct CC_DLL GridBox : public a::Component {
   f::Box4 box;
+    virtual const a::COMType typeId() { return "n/GridBox"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL BlockGrid {
-  s_vec<Brick*> grid;
+struct CC_DLL BlockGrid  : public a::Component {
+  s_vec<FArrBrick*> grid;
+    virtual const a::COMType typeId() { return "n/BlockGrid"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -145,9 +153,7 @@ public:
 
   virtual ~BoxModel() {}
 
-  BoxModel() {
-    dim=2;
-  }
+  BoxModel() { dim=2; }
 
   virtual bool test(int rID, int row, int col) {
     return layout[rID * size() + row * dim + col] == 1;
@@ -183,9 +189,7 @@ public:
 
   virtual ~ElModel() {}
 
-  ElModel() {
-    dim=3;
-  }
+  ElModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
      return layout[rID * size() + row * dim + col] == 1;
@@ -200,15 +204,15 @@ private:
   s_arr<int, 4*3*3> layout {
       0,1,0,
       0,1,0,
-      1,1,0
+      1,1,0,
 
       1,0,0,
       1,1,1,
-      0,0,0
+      0,0,0,
 
       0,1,1,
       0,1,0,
-      0,1,0
+      0,1,0,
 
       0,0,0,
       1,1,1,
@@ -219,9 +223,7 @@ public:
 
   virtual ~ElxModel() {}
 
-  ElxModel() {
-    dim=3;
-  }
+  ElxModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
      return layout[rID * size() + row * dim + col] == 1;
@@ -258,12 +260,9 @@ public:
 
   virtual int size() { return 4; }
   virtual ~LineModel() {}
-  LineModel() {
-    dim=4;
-  }
+  LineModel() { dim=4; }
 
   virtual bool test(int rID, int row, int col) {
-     auto &d= layout[rID];
      return layout[rID*size() + row * dim + col] == 1;
   }
 
@@ -272,179 +271,155 @@ public:
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL NubModel : public BModel {
-
-  virtual int size() { return layout.size(); }
-
-  virtual ~NubModel() {}
-  NubModel() {
-
-    DIM3x3 a1= {
+private:
+  s_arr<int, 4 * 3 * 3> layout {
       0,0,0,
       0,1,0,
-      1,1,1
-    };
-    DIM3x3 a2 {
+      1,1,1,
+
       1,0,0,
       1,1,0,
-      1,0,0
-    };
-    DIM3x3 a3 {
+      1,0,0,
+
       1,1,1,
       0,1,0,
-      0,0,0
-    };
-    DIM3x3 a4 {
+      0,0,0,
+
       0,0,1,
       0,1,1,
       0,0,1
-    };
+  };
 
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
+public:
 
-    dim=3;
-  }
+  virtual int size() { return 4; }
+
+  virtual ~NubModel() {}
+  NubModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-     auto &d=layout[rID];
-     return d[row][col] == 1 ;
+     return layout[rID * size() + dim * row + col] == 1 ;
   }
 
-private:
-  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL StModel : public BModel {
-
-  virtual int size() { return layout.size(); }
-
-  virtual ~StModel() {}
-  StModel() {
-    DIM3x3 a1 {
+private:
+  s_arr<int,4*3*3> layout {
       0,1,0,
       0,1,1,
-      0,0,1
-    };
-    DIM3x3 a2 {
+      0,0,1,
+
       0,0,0,
       0,1,1,
-      1,1,0
-    };
-    DIM3x3 a3 {
+      1,1,0,
+
       1,0,0,
       1,1,0,
-      0,1,0
-    };
-    DIM3x3 a4 {
+      0,1,0,
+
       0,1,1,
       1,1,0,
       0,0,0
-    };
+  };
 
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
+public:
 
-    dim=3;
-  }
+  virtual int size() { return 4; }
+
+  virtual ~StModel() {}
+  StModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-     auto &d=layout[rID];
-     return d[row][col] == 1;
+     return layout[rID * size() + row * dim + col] == 1;
   }
 
-private:
-  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL StxModel : public BModel {
-
-  virtual int size() { return layout.size(); }
-
-  virtual ~StxModel() {}
-  StxModel() {
-    DIM3x3 a1{
+private:
+  s_arr<int,4*3*3> layout {
       0,1,0,
       1,1,0,
-      1,0,0
-    };
-    DIM3x3 a2 {
+      1,0,0,
+
       1,1,0,
       0,1,1,
-      0,0,0
-    };
-    DIM3x3 a3 {
+      0,0,0,
+
       0,0,1,
       0,1,1,
-      0,1,0
-    };
-    DIM3x3 a4 {
+      0,1,0,
+
       0,0,0,
       1,1,0,
       0,1,1
-    };
+  };
 
-    layout.push_back(a1);
-    layout.push_back(a2);
-    layout.push_back(a3);
-    layout.push_back(a4);
+public:
 
-    dim=3;
-  }
+  virtual int size() { return 4; }
+
+  virtual ~StxModel() {}
+  StxModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-    auto &d = layout[rID];
-    return d[row][col] == 1;
+    return layout[rID * size() + dim * row + col] == 1;
   }
 
-private:
-  s_vec<DIM3x3> layout;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Dropper {
+struct CC_DLL Dropper : public a::Component {
   float dropSpeed = CC_CSV(c::Float, "DROPSPEED");
   float dropRate= 80 + 700.0f/1.0f ;
   c::DelayTime *timer=nullptr;
+    virtual const a::COMType typeId() { return "n/Dropper"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL FilledLines {
+struct CC_DLL FilledLines : public a::Component {
+    virtual const a::COMType typeId() { return "n/FilledLines"; }
   s_vec<int> lines;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motion {
+struct CC_DLL Motion : public a::Component {
   bool right=false;
   bool left=false;
   bool rotr= false;
   bool rotl= false;
   bool down=false;
+    virtual const a::COMType typeId() { return "n/Motion"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Pauser {
+struct CC_DLL Pauser  : public a::Component {
   c::DelayTime *timer=nullptr;
   bool pauseToClear=false;
+    virtual const a::COMType typeId() { return "n/Pauser"; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL TileGrid {
+struct CC_DLL TileGrid  : public a::Component {
     s_vec<f::FArrInt*> tiles;
+    virtual const a::COMType typeId() { return "n/TileGrid"; }
+
 };
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 s_arr<BModel*,7> ListOfModels = {
@@ -456,6 +431,8 @@ s_arr<BModel*,7> ListOfModels = {
   mc_new(StxModel),
   mc_new(ElxModel)
 };
+
+END_NS_UNAMED()
 
 
 

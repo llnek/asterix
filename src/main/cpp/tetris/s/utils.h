@@ -43,7 +43,7 @@ const f::Cell2D xrefTile(float x, float y);
 
 void initDropper(Dropper*);
 
-void setDropper(Dropper*, float r, float s);
+void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
 
 void lockBricks(const s_vec<f::FArrInt*>&, const s_vec<FArrBrick*>&, Brick*);
 

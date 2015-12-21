@@ -81,7 +81,7 @@ void Resolve::doIt(a::Node *node) {
 void Resolve::fastDrop(a::Node *node) {
   auto dp = CC_GNF(Dropper, node, "dropper");
   dp->timer=nullptr;
-  setDropper(dp, dp->dropRate, 9000);
+  setDropper(MGML(), dp, dp->dropRate, 9000.0f);
 }
 
 

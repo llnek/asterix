@@ -14,7 +14,7 @@
 
 #include "core/XSystem.h"
 #include "EFactory.h"
-
+#include "n/GNodes.h"
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,6 +39,7 @@ struct CC_DLL Motions : public f::XSystem<EFactory> {
 
   float throttleWait= 0.0f;
 
+  virtual int priority() { return a::Motion; }
   virtual ~Motions() {}
   NODFT(Motions)
 

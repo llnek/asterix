@@ -11,6 +11,7 @@
 
 #include "core/CCSX.h"
 #include "Clear.h"
+#include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -40,7 +41,7 @@ bool Clear::update(float dt) {
     auto ps= CC_GNF(Pauser, n, "pauser");
     if (ps->pauseToClear) {
       if (cx::timerDone(ps->timer)) {
-        clearFilled(node);
+        clearFilled(n);
         cx::undoTimer(ps->timer);
         ps->timer=nullptr;
         ps->pauseToClear=false;
@@ -76,7 +77,7 @@ void Clear::clearOneRow(a::Node *node, int r) {
   auto bks= CC_GNF(BlockGrid, node, "blocks");
   auto& row= bks->grid[r];
 
-  for (auto c=0; c < row.size(); ++c) {
+  for (auto c=0; c < row->size(); ++c) {
     auto z= row->get(c);
     if (NNP(z)) {
       row->set(c, nullptr);
@@ -91,7 +92,7 @@ void Clear::resetOneRow(a::Node *node, int r) {
   auto co= CC_GNF(TileGrid, node, "collision");
   auto &row= co->tiles[r];
 
-  for (auto c=0; c < row.size(); ++c) {
+  for (auto c=0; c < row->size(); ++c) {
     row->set(c, r==0 ? 1 : 0);
   }
   row->setFirst(1);
@@ -177,8 +178,8 @@ void Clear::copyLine(a::Node *node, int from, int to) {
   auto bs = CC_GNF(BlockGrid, node, "blocks");
   auto &line_f = co->tiles[from];
   auto &line_t = co->tiles[to];
-  auto tile = MGMS()->TILE;
-  auto dlen= tile * (from - to);
+    auto tile = CC_CSV(c::Integer, "TILE");
+    auto dlen= tile * (from - to);
   int c;
 
   for (c=0; c < line_f->size(); ++c) {

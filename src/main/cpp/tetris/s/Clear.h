@@ -14,7 +14,7 @@
 
 #include "core/XSystem.h"
 #include "EFactory.h"
-
+#include "n/GNodes.h"
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////

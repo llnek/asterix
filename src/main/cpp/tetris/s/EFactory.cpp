@@ -11,7 +11,7 @@
 
 #include "core/CCSX.h"
 #include "EFactory.h"
-
+#include "n/CObjs.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
@@ -26,7 +26,7 @@ EFactory::EFactory(not_null<a::Engine*> e,
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* reifyArena() {
+a::Entity* EFactory::reifyArena() {
   auto ent= engine->reifyEntity("*");
   ent->checkin(mc_new (FilledLines));
   ent->checkin(mc_new(ShapeShell));

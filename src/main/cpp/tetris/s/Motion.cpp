@@ -45,10 +45,10 @@ bool Motions::update(float dt) {
   auto n= arena->head;
   if (MGMS()->isLive()) {
 
-    if (!this.inited) {
+    if (!this->inited) {
       onceOnly();
     } else {
-      doit(node, dt);
+      doit(n, dt);
     }
   }
   return true;

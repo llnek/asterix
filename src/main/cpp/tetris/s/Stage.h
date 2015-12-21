@@ -29,7 +29,7 @@ struct CC_DLL Stage : public f::XSystem<EFactory> {
   void onceOnly_2(a::Node*, const c::Size&,
       const c::Size& , const f::Box4&);
 
-  const s_vec<f::FArrBrick*>
+  const s_vec<FArrBrick*>
     initBlockMap(const s_vec<f::FArrInt*>& tiles);
 
   const s_vec<f::FArrInt*>
@@ -49,6 +49,7 @@ struct CC_DLL Stage : public f::XSystem<EFactory> {
   NODFT(Stage)
   NOCPYASS(Stage)
 
+    a::NodeList *arena;
 };
 
 

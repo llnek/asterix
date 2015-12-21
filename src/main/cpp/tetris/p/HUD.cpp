@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
@@ -20,7 +21,7 @@ NS_BEGIN(tetris)
 //
 void HUDLayer::decorate() {
 
-  auto tile = MGMS()->TILE;
+    auto tile = CC_CSV(c::Integer, "TILE");
   auto wz = cx::visRect();
   auto cw = cx::center();
   auto wb = cx::visBox();
@@ -33,8 +34,8 @@ void HUDLayer::decorate() {
   scoreLabel->setScale(XCFG()->getScale());
 
   scoreLabel->setPosition(
-      wb.right - (tile * wz.width/480.0f),
-      wb.top - (wz.height/320.0f * tile));
+      wb.right - (tile * wz.size.width/480.0f),
+      wb.top - (wz.size.height/320.0f * tile));
 
   addItem(scoreLabel);
 

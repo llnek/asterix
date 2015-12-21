@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Generate.h"
+#include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -50,7 +51,7 @@ bool Generate::update(float dt) {
         previewNextShape(n, MGML());
         //activate drop timer
         dp->dropSpeed= CC_CSV(c::Float, "DROPSPEED");
-        initDropper(MGML(), dp);
+        initDropper( dp);
       } else {
         return false;
       }
@@ -67,7 +68,7 @@ Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> l
   auto bks= CC_GNF(BlockGrid, node, "grid");
   auto gbox= CC_GNF(GridBox, node, "gbox");
   auto &tiles = co->tiles;
-  auto tile= MGMS()->TILE;
+    auto tile= CC_CSV(c::Integer, "TILE");
   auto wz= cx::visRect();
   auto shape= new Shape(*nextShapeInfo);
   shape->x = gbox->box.left + 5 * tile;
@@ -86,7 +87,7 @@ Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> l
 //
 void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
   auto gbox= CC_GNF(GridBox, node, "gbox");
-  auto tile = MGMS()->TILE;
+    auto tile = CC_CSV(c::Integer, "TILE");
   auto info = randNextInfo();
   auto cw = cx::center();
   auto wb = cx::visBox();
@@ -101,7 +102,7 @@ void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> la
   disposeShape(nextShape);
   SNPTR(nextShape)
 
-  shape= new Shape(*info);
+  auto shape= new Shape(*info);
   shape->x = x;
   shape->y = y;
   nextShapeInfo= info;
