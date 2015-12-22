@@ -26,16 +26,13 @@ NS_BEGIN(tetris)
 //
 class CC_DLL BModel {
 protected:
-
   int dim=0;
-
 public:
-
   virtual bool test(int rID, int row, int col) = 0;
   virtual int size() = 0;
-
-  int getDim() { return dim; }
   virtual ~BModel() {}
+  int square() { return dim * dim; }
+  int getDim() { return dim; }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,16 +40,16 @@ public:
 struct CC_DLL Brick : public c::Sprite {
 
   void blink() {
-    this->setSpriteFrame( cx::getSpriteFrame(frame1));
+    setSpriteFrame( cx::getSpriteFrame(frame1));
   }
 
   void show() {
-    this->setSpriteFrame( cx::getSpriteFrame(frame0));
+    setSpriteFrame( cx::getSpriteFrame(frame0));
   }
 
   void dispose() {
-    this->setVisible(false);
-    this->removeFromParent();
+    setVisible(false);
+    removeFromParent();
   }
 
   static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
@@ -89,7 +86,7 @@ struct CC_DLL ShapeInfo {
     model=m;
     png=p;
   }
-    ShapeInfo() {}
+  ShapeInfo() {}
   BModel *model = nullptr;
   int rot= 0;
   sstr png;
@@ -162,7 +159,7 @@ public:
   BoxModel() { dim=2; }
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * size() + row * dim + col] == 1;
+    return layout[rID * square() + row * dim + col] == 1;
   }
 
 };
@@ -198,7 +195,7 @@ public:
   ElModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID * size() + row * dim + col] == 1;
+     return layout[rID * square() + row * dim + col] == 1;
   }
 
 };
@@ -232,7 +229,7 @@ public:
   ElxModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID * size() + row * dim + col] == 1;
+    return layout[rID * square() + row * dim + col] == 1;
   }
 };
 
@@ -269,7 +266,7 @@ public:
   LineModel() { dim=4; }
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID*size() + row * dim + col] == 1;
+    return layout[rID*square() + row * dim + col] == 1;
   }
 
 };
@@ -304,7 +301,7 @@ public:
   NubModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID * size() + dim * row + col] == 1 ;
+     return layout[rID * square() + dim * row + col] == 1 ;
   }
 
 };
@@ -339,7 +336,7 @@ public:
   StModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID * size() + row * dim + col] == 1;
+    return layout[rID * square() + row * dim + col] == 1;
   }
 
 };
@@ -374,7 +371,7 @@ public:
   StxModel() { dim=3; }
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * size() + dim * row + col] == 1;
+    return layout[rID * square() + dim * row + col] == 1;
   }
 
 };

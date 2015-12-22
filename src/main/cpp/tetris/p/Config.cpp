@@ -32,7 +32,7 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  addCst("DROPSPEED", CC_FLOAT(100.0f));
+  addCst("DROPSPEED", CC_FLOAT(1000.0f));
   addCst("BLOCK_COLORS", CC_INT(8));
   addCst("FIELD_W", CC_INT(12));
   addCst("THROTTLEWAIT", CC_INT(100));

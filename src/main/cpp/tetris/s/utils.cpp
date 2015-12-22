@@ -108,12 +108,13 @@ findBBox(s_vec<f::FArrInt> &cmap, BModel *model,
     float px, float py, int rID, bool skipCollide) {
 
   auto tile = CC_CSV(c::Integer, "TILE");
+  auto dim= model->getDim();
   s_vec<c::Vec2> bs;
   float x,y;
 
-  for (auto r=0; r < model->getDim(); ++r) {
+  for (auto r=0; r < dim; ++r) {
     y = py - tile * r;
-    for (auto c=0; c < model->getDim(); ++c) {
+    for (auto c=0; c < dim; ++c) {
       x = px + tile * c;
       if (model->test(rID,r,c)) {
         if (!skipCollide &&
