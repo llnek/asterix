@@ -82,7 +82,6 @@ void Stage::doCtrl(a::Node *node) {
   //sp= ccsx.createSprite('shadedLight09.png'),
   auto sp= cx::reifySprite("shadedDark09.png");
   auto cz= sp->getContentSize();
-  auto cbx= cx::bbox4(sp);
   auto ch3= cz.height / 3;
   auto cw3= cz.width / 3;
   //x= cw.x + (wb.right - cw.x) * 0.5,
@@ -92,6 +91,7 @@ void Stage::doCtrl(a::Node *node) {
   sp->setPosition(x,y);
   MGML()->addAtlasItem("game-pics", sp);
 
+  auto cbx= cx::bbox4(sp);
   //calc hotspots for touch & mouse
   // rotate left right
   hsps["rr"] = f::Box4(

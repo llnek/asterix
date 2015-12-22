@@ -39,20 +39,8 @@ public:
 //
 struct CC_DLL Brick : public c::Sprite {
 
-  void blink() {
-    setSpriteFrame( cx::getSpriteFrame(frame1));
-  }
-
-  void show() {
-    setSpriteFrame( cx::getSpriteFrame(frame0));
-  }
-
-  void dispose() {
-    setVisible(false);
-    removeFromParent();
-  }
-
-  static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
+  static Brick* reify(const c::Vec2 &pos,
+      const sstr &f0) {
     Brick *b = mc_new(Brick);
     if (NNP(b) &&
         b->init()) {
@@ -68,6 +56,18 @@ struct CC_DLL Brick : public c::Sprite {
     return nullptr;
   }
 
+  void blink() {
+    setSpriteFrame( cx::getSpriteFrame(frame1));
+  }
+
+  void show() {
+    setSpriteFrame( cx::getSpriteFrame(frame0));
+  }
+
+  void dispose() {
+    removeFromParent();
+  }
+
   virtual ~Brick() {}
   Brick() {}
 
@@ -76,7 +76,7 @@ struct CC_DLL Brick : public c::Sprite {
   c::Vec2 startPos;
 };
 
-typedef fusii::FArrayPtr<Brick> FArrBrick;
+typedef fusii::FPtrs<Brick> FArrBrick;
 
 //////////////////////////////////////////////////////////////////////////////
 //

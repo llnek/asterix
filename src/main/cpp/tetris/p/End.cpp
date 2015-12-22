@@ -20,9 +20,9 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onReplay(c::Ref*) {
-  auto x= (f::GCX*)getSceneX()->getCtx();
-  auto m= MGMS()->getMode();
-  getSceneX()->setCtx(nullptr,false);
+  //auto x= (f::GCX*)getSceneX()->getCtx();
+  //auto m= MGMS()->getMode();
+  getSceneX()->setCtx(nullptr);
   cx::runScene(
       Game::reify(mc_new(f::GCX)),
       CC_CSV(c::Float, "SCENE_DELAY"));
@@ -40,7 +40,8 @@ void ELayer::onQuit(c::Ref*) {
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR",XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel("font.OCR",
+      XCFG()->getL10NStr("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();

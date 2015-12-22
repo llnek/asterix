@@ -62,12 +62,14 @@ namespace ccsx {
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
-    bool pointInBox(const Box4 &box, const c::Vec2 &pos);
+  bool pointInBox(const Box4 &box, const c::Vec2 &pos);
 
   bool isPortrait();
 
   bool outOfBound(not_null<ComObj*>, const Box4 &B);
   bool outOfBound(const Box4 &src, const Box4 &B);
+
+  int modulo(int x, int m);
 
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
   void undoTimer(c::DelayTime*);

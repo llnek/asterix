@@ -561,6 +561,17 @@ bool traceEnclosure(float dt, const Box4 &bbox,
 }
 
 //////////////////////////////////////////////////////////////////////////
+//
+int modulo(int x, int m) {
+  int r = x%m;
+  return r<0 ? r+m : r;
+}
+/*
+int mod(int x, int m) {
+    return (x%m + m)%m;
+}
+*/
+//////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
 c::SpriteFrame* getSpriteFrame(const sstr &frameid) {

@@ -17,6 +17,21 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////
+//
+void reifyBricks(not_null<f::XLayer*> layer,
+    const s_vec<c::Vec2> &bs,
+    const sstr &png,
+    s_vec<Brick*> &bricks) {
+
+  F__LOOP(it, bs) {
+    auto obj= Brick::reify( *it, png );
+    bricks.push_back(obj);
+    layer->addAtlasItem("game-pics", obj);
+  }
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> mkShape(not_null<f::XLayer*> layer,
@@ -26,27 +41,25 @@ owner<Shape*> mkShape(not_null<f::XLayer*> layer,
   Shape *rc=nullptr;
 
   if (bbox.size() > 0) {
-    auto bs= reifyBricks(layer, info.png, bbox);
     rc= mc_new_1(Shape, info);
     rc->x=x;
     rc->y=y;
-    rc->bricks.resize(bs.size());
-    s::copy(bs.begin(), bs.end(), rc->bricks.begin());
+    reifyBricks(layer, bbox, info.png, rc->bricks);
   }
 
   return rc;
 }
 
-END_NS_UNAMED()
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> reifyShape(not_null<f::XLayer*> layer,
     s_vec<f::FArrInt> &cmap,
     float x, float y, const ShapeInfo &info) {
 
-  auto bbox= findBBox(cmap, info.model, x, y, info.rot);
-  return mkShape(layer, x, y, info, bbox);
+  return mkShape(layer, x, y, info,
+      findBBox(cmap, info.model, x, y, info.rot));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,16 +67,17 @@ owner<Shape*> reifyShape(not_null<f::XLayer*> layer,
 owner<Shape*> previewShape(not_null<f::XLayer*> layer,
     float x, float y,
     const ShapeInfo& info) {
-    s_vec<f::FArrInt> dummy;
-  auto bbox= findBBox(dummy, info.model, x, y, info.rot, true);
-  return mkShape(layer, x, y, info, bbox);
+
+  s_vec<f::FArrInt> dummy;
+  return mkShape(layer, x, y, info,
+      findBBox(dummy, info.model, x, y, info.rot, true));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-float topLine(not_null<a::Node*> node) {
+int topLine(not_null<a::Node*> node) {
   auto gx= CC_GNF(GridBox, node, "gbox");
-  return floor((gx->box.top - gx->box.bottom) / CC_CSV(c::Integer, "TILE"));
+  return (int) floor((gx->box.top - gx->box.bottom) / CC_CSV(c::Integer, "TILE"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,26 +100,11 @@ void clearOldBricks(s_vec<Brick*> &bs) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Brick*> reifyBricks(not_null<f::XLayer*> layer,
-    const sstr &png,
-    const s_vec<c::Vec2> &bs) {
-
-  s_vec<Brick*> bricks;
-
-  F__LOOP(it, bs) {
-    auto obj= Brick::reify( *it, png );
-    bricks.push_back(obj);
-    layer->addAtlasItem("game-pics", obj);
-  }
-
-  return bricks;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 const s_vec<c::Vec2>
-findBBox(s_vec<f::FArrInt> &cmap, BModel *model,
-    float px, float py, int rID, bool skipCollide) {
+findBBox(s_vec<f::FArrInt> &cmap,
+    BModel *model,
+    float px, float py,
+    int rID, bool skipCollide) {
 
   auto tile = CC_CSV(c::Integer, "TILE");
   auto dim= model->getDim();
@@ -128,13 +127,15 @@ findBBox(s_vec<f::FArrInt> &cmap, BModel *model,
     }
   }
 
+  CCLOG("found valid bboxes = %d", bs.size());
   return bs;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool maybeCollide(s_vec<f::FArrInt> &cmap,
-    float tl_x, float tl_y, float br_x, float br_y) {
+    float tl_x, float tl_y,
+    float br_x, float br_y) {
 
   auto tile= xrefTile(tl_x , tl_y);
   CCLOG("tile = %d, %d", tile.row , tile.col);
@@ -185,6 +186,7 @@ void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s) {
 //
 void lockBricks(s_vec<f::FArrInt> &cmap,
     s_vec<FArrBrick> &emap, Brick *z) {
+
   auto zs = z->getPosition();
   auto t= xrefTile(zs.x, zs.y);
 
@@ -290,11 +292,9 @@ bool moveDown(not_null<f::XLayer*> layer,
   auto bs = findBBox(cmap, shape->info.model, x, new_y, shape->info.rot);
 
   if (bs.size() > 0) {
-    auto bricks= reifyBricks(layer,shape->info.png, bs);
     clearOldBricks(shape->bricks);
-    shape->bricks.resize(bricks.size());
-    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->y= new_y;
+    reifyBricks(layer, bs, shape->info.png, shape->bricks);
     return true;
   } else {
     return false;
@@ -311,11 +311,9 @@ bool shiftRight(not_null<f::XLayer*> layer,
   auto bs= findBBox(cmap, shape->info.model, new_x, y, shape->info.rot);
 
   if (bs.size() > 0) {
-    auto bricks= reifyBricks(layer,shape->info.png, bs);
     clearOldBricks(shape->bricks);
-    shape->bricks.resize(bricks.size());
-    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->x= new_x;
+    reifyBricks(layer, bs, shape->info.png, shape->bricks);
     return true;
   } else {
     return false;
@@ -332,11 +330,9 @@ bool shiftLeft(not_null<f::XLayer*> layer,
   auto bs= findBBox(cmap, shape->info.model, new_x, y, shape->info.rot);
 
   if (bs.size() > 0) {
-    auto bricks= reifyBricks(layer,shape->info.png, bs);
     clearOldBricks(shape->bricks);
-    shape->bricks.resize(bricks.size());
-    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->x= new_x;
+    reifyBricks(layer, bs, shape->info.png, shape->bricks);
     return true;
   } else {
     return false;
@@ -348,7 +344,9 @@ bool shiftLeft(not_null<f::XLayer*> layer,
 bool rotateRight(not_null<f::XLayer*> layer,
     s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-  auto nF = (shape->info.rot+1) % shape->info.model->size();
+  auto nF = cx::modulo( (shape->info.rot+1),
+      shape->info.model->size());
+
   auto bs= findBBox(cmap, shape->info.model,
                     shape->x, shape->y, nF);
 
@@ -357,11 +355,9 @@ bool rotateRight(not_null<f::XLayer*> layer,
       shape->info.model->getDim(), nF);
 
   if (bs.size() > 0) {
-    auto bricks= reifyBricks(layer,shape->info.png, bs);
     clearOldBricks(shape->bricks);
-    shape->bricks.resize(bricks.size());
-    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->info.rot= nF;
+    reifyBricks(layer, bs, shape->info.png, shape->bricks);
     return true;
   } else {
     return false;
@@ -373,7 +369,9 @@ bool rotateRight(not_null<f::XLayer*> layer,
 bool rotateLeft(not_null<f::XLayer*> layer,
     s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-  auto nF = (shape->info.rot-1) % shape->info.model->size();
+  auto nF = cx::modulo( (shape->info.rot-1) ,
+      shape->info.model->size());
+
   auto bs= findBBox(cmap, shape->info.model, shape->x, shape->y, nF);
 
   CCLOG("shape.rot = %d , dim = %d , rot-left , nF = %d",
@@ -381,11 +379,9 @@ bool rotateLeft(not_null<f::XLayer*> layer,
       shape->info.model->getDim(), nF);
 
   if (bs.size() > 0) {
-    auto bricks= reifyBricks(layer,shape->info.png, bs);
     clearOldBricks(shape->bricks);
-    shape->bricks.resize(bricks.size());
-    s::copy(bricks.begin(), bricks.end(), shape->bricks.begin());
     shape->info.rot= nF;
+    reifyBricks(layer, bs, shape->info.png, shape->bricks);
     return true;
   } else {
     return false;

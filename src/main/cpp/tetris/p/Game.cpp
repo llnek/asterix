@@ -31,7 +31,8 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
 
   virtual void onTouchEnded(c::Touch*, c::Event*);
   virtual void onMouseUp(c::Event*);
@@ -39,30 +40,66 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual int getIID() { return 2; }
   virtual void decorate();
 
+  void onGUI(const c::Vec2&);
+  void showMenu();
   void endGame();
-    void showMenu();
   void deco();
   void reset();
-
-  EFactory* factory=nullptr;
 
   STATIC_REIFY_LAYER(GLayer)
 
   virtual ~GLayer() {}
   GLayer() {}
-
   NOCPYASS(GLayer)
+
+
+  EFactory *factory = nullptr;
+  CtrlPad *cpad = nullptr;
+  Motion *motion = nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnded(c::Touch*, c::Event*) {
-
+void GLayer::onTouchEnded(c::Touch* t, c::Event*) {
+  auto pos= t->getLocationInView();
+  onGUI(pos);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseUp(c::Event*) {
+void GLayer::onMouseUp(c::Event* e) {
+  auto evt= (c::EventMouse*)e;
+  auto pos= evt->getLocationInView();
+  auto b= evt->getMouseButton();
+  if (b == MOUSE_BUTTON_LEFT) {
+    onGUI(pos);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onGUI(const c::Vec2& pos) {
+  auto hsps= cpad->hotspots;
+
+  if (cx::pointInBox(hsps["rr"], pos)) {
+    motion->rotr=true;
+  }
+
+  if (cx::pointInBox(hsps["rl"], pos)) {
+    motion->rotl=true;
+  }
+
+  if (cx::pointInBox(hsps["sr"], pos)) {
+    motion->right=true;
+  }
+
+  if (cx::pointInBox(hsps["sl"], pos)) {
+    motion->left=true;
+  }
+
+  if (cx::pointInBox(hsps["cd"], pos)) {
+    motion->down=true;
+  }
 
 }
 
@@ -91,6 +128,7 @@ void GLayer::deco() {
 
   auto e= mc_new(a::Engine);
   auto d= CC_DICT();
+  CC_KEEP(d)
   auto f= mc_new_2(EFactory, e, d);
 
   f->reifyArena();
@@ -103,8 +141,12 @@ void GLayer::deco() {
   e->regoSystem(mc_new_2(Resolve, f, d));
   e->forceSync();
 
+  ArenaNode a;
+  auto nl= e->getNodeList(a.typeId());
+  motion= CC_GNF(Motion, nl->head, "motion");
+  cpad= CC_GNF(CtrlPad, nl->head, "cpad");
+
   this->options= d;
-  CC_KEEP(d)
   this->factory= f;
   this->engine=e;
 

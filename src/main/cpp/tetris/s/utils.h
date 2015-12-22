@@ -27,11 +27,7 @@ owner<Shape*> previewShape(not_null<f::XLayer*>,
     float x, float y,
     const ShapeInfo&);
 
-float topLine(not_null<a::Node*>);
-
-const s_vec<Brick*> reifyBricks(not_null<f::XLayer*>,
-    const sstr &png,
-    const s_vec<c::Vec2> &bs);
+int topLine(not_null<a::Node*>);
 
 void clearOldBricks(s_vec<Brick*>&);
 void disposeShape(Shape*);
