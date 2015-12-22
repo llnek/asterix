@@ -20,7 +20,7 @@ NS_USING(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-
+    
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 

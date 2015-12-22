@@ -68,10 +68,12 @@ void Move::doFall(a::Node *node) {
       if (ENP(pu->timer)) {
         sh->shape=nullptr;
         shape->bricks.clear();
+        delete shape;
       }
 
       sh->shape=nullptr;
       shape->bricks.clear();
+      delete shape;
 
     } else {
       initDropper(dp);

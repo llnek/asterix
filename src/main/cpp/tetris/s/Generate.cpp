@@ -17,6 +17,29 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+BEGIN_NS_UNAMED()
+
+LineModel m1;
+BoxModel m2;
+StModel m3;
+ElModel m4;
+NubModel m5;
+StxModel m6;
+ElxModel m7;
+
+s_arr<BModel*,7> ListOfModels = {
+  &m1,
+  &m2,
+  &m3,
+  &m4,
+  &m5,
+  &m6,
+  &m7
+};
+
+END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -70,10 +93,11 @@ Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> l
   auto tile= CC_CSV(c::Integer, "TILE");
   auto &tiles = co->tiles;
   auto wz= cx::visRect();
-  auto shape= new Shape(*nextShapeInfo);
-  shape->x = gbox->box.left + 5 * tile;
-  shape->y = gbox->box.top - tile,
-  shape= reifyShape(layer, tiles, shape);
+  auto x = gbox->box.left + 5 * tile;
+    auto y = gbox->box.top - tile;
+  auto shape= reifyShape(layer, tiles,
+      x,y,
+      nextShapeInfo);
   if (ENP(shape)) {
     CCLOG("game over.  you lose.");
     bks->grid.clear();
@@ -92,7 +116,7 @@ void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> la
   auto cw = cx::center();
   auto wb = cx::visBox();
 
-  auto sz = (1 + info->model->getDim()) * tile;
+  auto sz = (1 + info.model->getDim()) * tile;
   auto x = cw.x + (wb.right - cw.x) * 0.5f;
   auto y = wb.top * 0.7f;
 
@@ -102,20 +126,17 @@ void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> la
   disposeShape(nextShape);
   SNPTR(nextShape)
 
-  auto shape= new Shape(*info);
-  shape->x = x;
-  shape->y = y;
+  nextShape= previewShape(layer, x, y, info);
   nextShapeInfo= info;
-  nextShape= previewShape(layer, shape);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Shape * Generate::randNextInfo() {
+const ShapeInfo Generate::randNextInfo() {
   auto bc= CC_CSV(c::Integer, "BLOCK_COLORS");
   auto n= cx::randInt(ListOfModels.size());
   auto proto= ListOfModels[n];
-  return mc_new_3(Shape, proto,
+  return ShapeInfo(proto,
       cx::randInt(proto->size()),
       s::to_string(cx::randInt(bc) + 1) + ".png" );
 }

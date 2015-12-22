@@ -83,18 +83,28 @@ typedef fusii::FArrayPtr<Brick> FArrBrick;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Shape {
-  Shape(BModel *m, int rot, const sstr &p) {
+struct CC_DLL ShapeInfo {
+  ShapeInfo(BModel *m, int rot, const sstr &p) {
     this->rot=rot;
     model=m;
     png=p;
   }
+    ShapeInfo() {}
   BModel *model = nullptr;
   int rot= 0;
   sstr png;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Shape {
+  Shape(const ShapeInfo& si) {
+    info=si;
+  }
+  s_vec<Brick*> bricks;
   float x= 0.0f;
   float y=0.0f;
-  s_vec<Brick*> bricks;
+  ShapeInfo info;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -410,22 +420,6 @@ struct CC_DLL TileGrid  : public a::Component {
   virtual const a::COMType typeId() { return "n/TileGrid"; }
   s_vec<f::FArrInt> tiles;
 };
-
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-s_arr<BModel*,7> ListOfModels = {
-  mc_new(LineModel),
-  mc_new(BoxModel),
-  mc_new(StModel),
-  mc_new(ElModel),
-  mc_new(NubModel),
-  mc_new(StxModel),
-  mc_new(ElxModel)
-};
-
-END_NS_UNAMED()
-
 
 
 NS_END(tetris)

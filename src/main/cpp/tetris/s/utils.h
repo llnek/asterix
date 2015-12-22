@@ -19,15 +19,19 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Shape* reifyShape(not_null<f::XLayer*>, s_vec<f::FArrInt>& , Shape*);
+owner<Shape*> reifyShape(not_null<f::XLayer*>,
+    s_vec<f::FArrInt>& ,
+    float x, float y, const ShapeInfo&);
 
-Shape* previewShape(not_null<f::XLayer*>, Shape*);
+owner<Shape*> previewShape(not_null<f::XLayer*>,
+    float x, float y,
+    const ShapeInfo&);
 
 float topLine(not_null<a::Node*>);
 
 const s_vec<Brick*> reifyBricks(not_null<f::XLayer*>,
     const sstr &png,
-    float x, float y, const s_vec<c::Vec2> &bs);
+    const s_vec<c::Vec2> &bs);
 
 void clearOldBricks(s_vec<Brick*>&);
 void disposeShape(Shape*);

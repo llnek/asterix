@@ -31,11 +31,11 @@ struct CC_DLL Generate : public f::XSystem<EFactory> {
 
   Shape * reifyNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
   void previewNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
-  Shape * randNextInfo();
+  const ShapeInfo randNextInfo();
 
-  Shape *nextShapeInfo=nullptr;
-  Shape *nextShape=nullptr;
   a::NodeList *arena = nullptr;
+  ShapeInfo nextShapeInfo;
+  Shape *nextShape=nullptr;
 
   virtual ~Generate() {}
   NODFT(Generate)

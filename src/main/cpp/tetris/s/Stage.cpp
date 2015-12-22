@@ -174,6 +174,8 @@ void Stage::onceOnly_2(a::Node *node, const c::Size &fz,
   auto tiles= fakeTileMap(bz, box);
   auto grids = initBlockMap(tiles);
 
+  blocks->grid.resize(grids.size(), FArrBrick());
+  cs->tiles.resize(tiles.size(), f::FArrInt());
   s::copy(grids.begin(), grids.end(), blocks->grid.begin());
   s::copy(tiles.begin(), tiles.end(), cs->tiles.begin());
   gbox->box= box;
