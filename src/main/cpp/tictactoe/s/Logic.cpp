@@ -69,7 +69,7 @@ void Logic::doIt(a::Node *node, float dt) {
   if (cp.category == bot) {
     if (ENP(botTimer)) {
       // for the bot, create some small delay...
-      botTimer = cx::reifyTimer(MGML(), 0.6f);
+      botTimer = cx::reifyTimer(MGML(), 600.0f);
     }
     else
     if (cx::timerDone(botTimer)) {
