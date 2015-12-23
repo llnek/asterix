@@ -76,7 +76,7 @@ struct CC_DLL Brick : public c::Sprite {
   c::Vec2 startPos;
 };
 
-typedef fusii::FPtrs<Brick> FArrBrick;
+typedef fusii::FArrayPtr<Brick> FArrBrick;
 
 //////////////////////////////////////////////////////////////////////////////
 //

@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__FARRAY_H__)
-#define __FARRAY_H__
+#if !defined(__FARRAYOBJ_H__)
+#define __FARRAYOBJ_H__
 
 #include "fusilli.h"
 NS_BEGIN(fusii)
