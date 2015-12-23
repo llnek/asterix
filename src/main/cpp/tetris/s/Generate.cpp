@@ -67,14 +67,16 @@ bool Generate::update(float dt) {
 
     auto sl = CC_GNF(ShapeShell, n, "shell");
     auto dp = CC_GNF(Dropper, n, "dropper");
+    auto cfg= MGMS()->getLCfg()->getValue();
     if (ENP(sl->shape)) {
       sl->shape = reifyNextShape(n, MGML());
       if (NNP(sl->shape)) {
         //show new next shape in preview window
         previewNextShape(n, MGML());
         //activate drop timer
-        dp->dropSpeed= CC_CSV(c::Float, "DROPSPEED");
-        initDropper( dp);
+        dp->dropSpeed= JS_FLOAT(cfg["speed"]);
+        dp->dropRate= JS_FLOAT(cfg["nrate"]);
+        initDropper(dp);
       } else {
         return false;
       }
@@ -88,7 +90,7 @@ bool Generate::update(float dt) {
 //
 Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
   auto co= CC_GNF(TileGrid, node, "collision");
-  auto bks= CC_GNF(BlockGrid, node, "grid");
+  auto bks= CC_GNF(BlockGrid, node, "blocks");
   auto gbox= CC_GNF(GridBox, node, "gbox");
   auto tile= CC_CSV(c::Integer, "TILE");
   auto &tiles = co->tiles;

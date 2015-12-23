@@ -20,6 +20,7 @@ owner<Config*> Config::reify() {
   auto c = mc_new(Config);
   c->initAssets();
   c->initCsts();
+  c->initLevels();
   return c;
 }
 
@@ -32,15 +33,14 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  addCst("DROPSPEED", CC_FLOAT(1000.0f));
+  addCst("THROTTLEWAIT", CC_FLOAT(80.0f));
   addCst("BLOCK_COLORS", CC_INT(8));
   addCst("FIELD_W", CC_INT(12));
-  addCst("THROTTLEWAIT", CC_INT(100));
   addCst("BTN_SIZE", CC_INT(32));
 
+  addCst("showFPS", CC_BOOL(false));
   addCst("FENCE", CC_INT(0));
   addCst("TILE", CC_INT(16));
-    //CBOX: null,
 
   addColor("default", CC_STR("#f6b17f"));
   addColor("text", CC_STR("#ffffff"));
@@ -75,6 +75,24 @@ void Config::initAssets() {
   addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
+
+//////////////////////////////////////////////////////////////////////////
+//
+void Config::initLevels() {
+  auto d = getLevel("1");
+  assert(d != nullptr);
+
+  auto cfg = j::json({
+
+      {"speed" , 1000.0f},
+      {"nrate" , 1.0f},
+      {"drate" , 6.0f}
+
+      });
+
+  d->setObject(f::JsonObj::create(cfg), CFG);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

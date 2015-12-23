@@ -22,6 +22,7 @@ protected:
 
   void initAssets();
   void initCsts();
+  void initLevels();
 
 public:
 

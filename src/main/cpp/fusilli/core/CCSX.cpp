@@ -253,8 +253,8 @@ void mergeDict(c::Dictionary *src, c::Dictionary *d2) {
 //////////////////////////////////////////////////////////////////////////
 // Reify a timer action
 //
-c::DelayTime* reifyTimer(not_null<c::Node*> par, float tm) {
-  auto t= c::DelayTime::create(tm);
+c::DelayTime* reifyTimer(not_null<c::Node*> par, float millis) {
+  auto t= c::DelayTime::create(millis/1000.0f);// in secs
   CC_KEEP(t)
   par->runAction(t);
   return t;

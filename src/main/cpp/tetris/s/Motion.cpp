@@ -22,7 +22,12 @@ Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 
   : XSystem<EFactory>(f, d) {
 
-  throttleWait= CC_CSV(c::Float, "THROTTLEWAIT");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Motions::~Motions() {
+  cx::undoTimer(timer);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -30,12 +35,12 @@ Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
 void Motions::addToEngine(not_null<a::Engine*> e) {
   ArenaNode n;
   arena= e->getNodeList(n.typeId());
-  //this.ops={};
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::onceOnly() {
+  mkThrottler();
   inited=true;
 }
 
@@ -64,6 +69,11 @@ void Motions::doit(a::Node *node, float dt) {
 //
 void Motions::onkey(a::Node *node, float dt) {
 
+  if (!cx::timerDone(timer)) {
+    return;
+  } else {
+  }
+
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     sftRight(node, dt);
   }
@@ -80,6 +90,15 @@ void Motions::onkey(a::Node *node, float dt) {
     sftDown(node, dt);
   }
 
+  mkThrottler();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Motions::mkThrottler() {
+  auto w= CC_CSV(c::Float, "THROTTLEWAIT");
+  cx::undoTimer(timer);
+  timer= cx::reifyTimer(MGML(),w);
 }
 
 //////////////////////////////////////////////////////////////////////////////

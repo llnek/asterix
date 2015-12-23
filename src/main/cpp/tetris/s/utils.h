@@ -45,13 +45,15 @@ void initDropper(Dropper*);
 
 void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
 
-void lockBricks(s_vec<f::FArrInt>&, s_vec<FArrBrick>&, Brick*);
+//void lockBricks(s_vec<f::FArrInt>&, s_vec<FArrBrick>&, Brick*);
 
 void lock(not_null<a::Node*>, Shape*);
 
+/*
 void postLock(not_null<a::Node*>,
     s_vec<f::FArrInt>&,
     s_vec<FArrBrick>&);
+*/
 
 bool testFilledRow(s_vec<f::FArrInt>&, int r);
 

@@ -50,6 +50,47 @@ owner<Shape*> mkShape(not_null<f::XLayer*> layer,
   return rc;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void lockBrick(s_vec<f::FArrInt> &cmap,
+    s_vec<FArrBrick> &emap, Brick *z) {
+
+  auto zs = z->getPosition();
+  auto t= xrefTile(zs.x, zs.y);
+
+  assert(t.row >= 0 && t.col >= 0);
+
+  auto &cm= cmap[t.row];
+  auto &em= emap[t.row];
+
+  cm.set(t.col, 1);
+  assert( em.get(t.col) == nullptr);
+  em.set(t.col, z);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void postLock(not_null<a::Node*> node,
+    s_vec<f::FArrInt> &cmap,
+    s_vec<FArrBrick> &emap) {
+
+  auto flines = CC_GNF(FilledLines, node, "flines");
+  // search bottom up until top.
+  auto top= cmap.size();
+  s_vec<int> rc;
+
+  // 0 is the bottom wall
+  for (auto r = 1; r < top; ++r) {
+    if (testFilledRow(cmap, r)) {
+      rc.push_back(r);
+    }
+  }
+
+  if (rc.size() > 0) {
+    pauseForClearance(node, true, 0.5f);
+    flashFilled(emap, flines, rc);
+  }
+}
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
@@ -138,15 +179,17 @@ bool maybeCollide(s_vec<f::FArrInt> &cmap,
     float br_x, float br_y) {
 
   auto tile= xrefTile(tl_x , tl_y);
-  CCLOG("tile = %d, %d", tile.row , tile.col);
 
-  if (tile.row < 0 || tile.col < 0 ) {
-    auto &cm= cmap[tile.row];
-    if (cm.get(tile.col) != 0)  {
-      CCLOG("collide! tile = %d, %d", tile.row , tile.col);
-      return true;
-    }
+  if (tile.row < 0 ||
+      tile.col < 0 ) { return true; }
+
+  auto &cm= cmap[tile.row];
+
+  if (cm.get(tile.col) != 0)  {
+    CCLOG("collide! tile = %d, %d", tile.row , tile.col);
+    return true;
   }
+
   return false;
 }
 
@@ -163,37 +206,24 @@ const f::Cell2D xrefTile(float x, float y) {
   // realign actual x,y
   x -= bx.left - CC_CSV(c::Integer, "FENCE");
 
-  return f::Cell2D(
-           floor(y / tile),
-           floor(x / tile));
+  auto rc= f::Cell2D( floor(y / tile), floor(x / tile));
+  CCLOG("tile = %d, %d", rc.row , rc.col);
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void initDropper(Dropper *dp) {
-  dp->timer = cx::reifyTimer(MGML(), dp->dropRate / dp->dropSpeed);
+  // drop at normal rate
+  setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void setDropper(not_null<c::Node*> par, Dropper *dp, float r, float s) {
-  dp->timer = cx::reifyTimer(par, r/s);
-  dp->dropSpeed=s;
-  dp->dropRate=r;
-}
+void setDropper(not_null<c::Node*> par,
+    Dropper *dp, float r, float s) {
 
-//////////////////////////////////////////////////////////////////////////
-//
-void lockBricks(s_vec<f::FArrInt> &cmap,
-    s_vec<FArrBrick> &emap, Brick *z) {
-
-  auto zs = z->getPosition();
-  auto t= xrefTile(zs.x, zs.y);
-
-  auto &cm= cmap[t.row];
-  cm.set(t.col, 1);
-  auto &em= emap[t.row];
-  em.set(t.col, z);
+  dp->timer = cx::reifyTimer(par, s/r);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -205,34 +235,10 @@ void lock(not_null<a::Node*> node, Shape *shape) {
   auto &emap= bs->grid;
 
   F__LOOP(it, shape->bricks) {
-    lockBricks(cmap, emap, *it);
+    lockBrick(cmap, emap, *it);
   }
 
   postLock(node, cmap, emap);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void postLock(not_null<a::Node*> node,
-    s_vec<f::FArrInt> &cmap,
-    s_vec<FArrBrick> &emap) {
-
-  auto flines = CC_GNF(FilledLines, node, "flines");
-  // search bottom up until top.
-  auto top= cmap.size();
-  s_vec<int> rc;
-
-  // 0 is the bottom wall
-  for (auto r = 1; r < top; ++r) {
-    if (testFilledRow(cmap, r)) {
-      rc.push_back(r);
-    }
-  }
-
-  if (rc.size() > 0) {
-    pauseForClearance(node, true, 0.5f);
-    flashFilled(emap, flines, rc);
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////

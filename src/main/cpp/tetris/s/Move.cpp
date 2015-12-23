@@ -64,19 +64,22 @@ void Move::doFall(a::Node *node) {
       // lock shape in place
       lock(node, shape);
 
+      /*
       //TODO: what is this???
       if (ENP(pu->timer)) {
         sh->shape=nullptr;
         shape->bricks.clear();
         delete shape;
       }
+      */
 
-      sh->shape=nullptr;
       shape->bricks.clear();
-      delete shape;
+      sh->shape=nullptr;
+      mc_del_ptr(shape);
 
     } else {
-      initDropper(dp);
+      // drop at fast-drop rate
+      setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
     }
   }
 }

@@ -35,17 +35,17 @@ struct CC_DLL Motions : public f::XSystem<EFactory> {
   void sftDown(a::Node *node, float);
   void rotRight(a::Node *node, float);
   void rotLeft(a::Node *node, float);
+  void mkThrottler();
   void onceOnly();
 
-  float throttleWait= 0.0f;
-
   virtual int priority() { return a::Motion; }
-  virtual ~Motions() {}
+  virtual ~Motions();
   NODFT(Motions)
 
   NOCPYASS(Motions)
 
-  a::NodeList *arena;
+  c::DelayTime *timer=nullptr;
+  a::NodeList *arena=nullptr;
 };
 
 

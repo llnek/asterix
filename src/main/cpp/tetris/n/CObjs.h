@@ -380,8 +380,8 @@ public:
 //
 struct CC_DLL Dropper : public a::Component {
   virtual const a::COMType typeId() { return "n/Dropper"; }
-  float dropSpeed = CC_CSV(c::Float, "DROPSPEED");
-  float dropRate= 80 + 700.0f/1.0f ;
+  float dropSpeed = 0;
+  float dropRate= 0;
   c::DelayTime *timer=nullptr;
 };
 

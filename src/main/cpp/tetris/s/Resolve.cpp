@@ -48,7 +48,7 @@ void Resolve::doIt(a::Node *node) {
 
   auto motion = CC_GNF(Motion, node, "motion");
   auto sh = CC_GNF(ShapeShell, node, "shell");
-  auto co= CC_GNF(TileGrid, node, "tiles");
+  auto co= CC_GNF(TileGrid, node, "collision");
   auto &cmap= co->tiles;
   auto shape= sh->shape;
 
@@ -80,8 +80,12 @@ void Resolve::doIt(a::Node *node) {
 //
 void Resolve::fastDrop(a::Node *node) {
   auto dp = CC_GNF(Dropper, node, "dropper");
-  dp->timer=nullptr;
-  setDropper(MGML(), dp, dp->dropRate, 9000.0f);
+  auto cfg = MGMS()->getLCfg()->getValue();
+  cx::undoTimer(dp->timer);
+  // drop at fast-drop rate
+  dp->dropSpeed= JS_FLOAT(cfg["speed"]);
+  dp->dropRate = JS_FLOAT(cfg["drate"]);
+  setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
 }
 
 
