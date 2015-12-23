@@ -66,14 +66,11 @@ struct CC_DLL Cannon : public a::Component {
 
   virtual const a::COMType typeId() { return "n/Cannon"; }
 
-  Cannon(float coolDownWindow);
-
   virtual ~Cannon() {}
-  NODFT(Cannon)
+  Cannon() {}
   NOCPYASS(Cannon)
 
-  float coolDownWindow;
-  bool hasAmmo;
+  bool hasAmmo=true;
 };
 
 //////////////////////////////////////////////////////////////////////////////

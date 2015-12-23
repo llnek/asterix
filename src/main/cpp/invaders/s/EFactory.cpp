@@ -191,7 +191,7 @@ a::Entity* EFactory::reifyShip() {
 
   ent->checkin(mc_new_2(Velocity, 150,0));
   ent->checkin(mc_new(Looper));
-  ent->checkin(mc_new_1(Cannon,1.0f));
+  ent->checkin(mc_new(Cannon));
   ent->checkin(mc_new(Motion));
 
   ent->checkin(ship);

@@ -88,6 +88,7 @@ void Motions::fireMissile(a::Node *node, float dt) {
   auto lpr= CC_GNF(Looper, node, "looper");
   auto ship= CC_GNF(Ship, node, "ship");
 
+  auto cfg= MGMS()->getLCfg()->getValue();
   auto p= MGMS()->getPool("missiles");
   auto top= cx::getTop(ship->sprite);
   auto pos= ship->pos();
@@ -100,7 +101,7 @@ void Motions::fireMissile(a::Node *node, float dt) {
 
   ent->inflate(pos.x, top+4);
 
-  lpr->timer7 = cx::reifyTimer( MGML(), gun->coolDownWindow);
+  lpr->timer7 = cx::reifyTimer( MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   gun->hasAmmo=false;
   ship->sprite->setSpriteFrame(ship->frame1);
 

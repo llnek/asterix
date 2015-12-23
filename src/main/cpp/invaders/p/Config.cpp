@@ -54,9 +54,9 @@ void Config::runOnce() {
 void Config::initLevels() {
   auto d= getLevel("1");
   auto j= j::json({
-        {"coolDownWindow",  0.8f},
-        {"marching",  1.0f},
-        {"bombing",  2.0f}
+        {"coolDownWindow",  800.0f},
+        {"marching",  1000.0f},
+        {"bombing",  2000.0f}
       });
   d->setObject(f::JsonObj::create(j), CFG);
 }
