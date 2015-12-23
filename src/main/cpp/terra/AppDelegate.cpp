@@ -20,44 +20,7 @@ NS_USING(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-
-    {
-        int x=3, y=4;
-        auto mm= new int[x][4];
-        
-    }
-    typedef int POO[2][2];
     
-    
-    std::array<POO,2> qqq {
-        1,2,3,4,
-         5,6,7,8
-    };
-    void*  rk= &qqq[0];
-    auto www= (int (*)[2][2] )rk;
-    int ggg[]= {7,8};
-    auto hh = &ggg;
-    printf("%d %d %d %d\n",
-           qqq[1][0][0],
-           qqq[1][0][1],
-           qqq[1][1][0],
-           qqq[1][1][1]);
-    
-//    int pp[2][2]= {1, 2, 3, 4};
-//    auto kkk= new int[2][2];
-//    auto ppp= &pp;
-//    printf("%p %p", ppp, kkk);
-//        printf("%d %d %d %d\n", p[0][0], p[0][1],
-//               p[1][0], p[1][1]
-//               );
-    
-//    int (*p)[2] =new int[2][2];
-//    p[0][0]=1; p[0][1]=2;
-//    p[1][0]=3; p[1][1]=4;
-//    int i=1;
-//    printf("%d %d %d %d\n", (*p)[0], (*p)[1],
-//           (*(p+i))[0], (*(p+i))[1]
-//           );
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
