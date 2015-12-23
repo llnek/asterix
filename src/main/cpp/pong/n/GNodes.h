@@ -9,110 +9,59 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires n/cobjs
- * @module n/gnodes
- */
+#if !defined(__GNODES_H__)
+#define __GNODES_H__
 
-import sh from 'zotohlab/asx/asterix';
-import cobjs from 'n/cobjs';
+#include "ash/NodeRego.h"
+#include "ash/Node.h"
+#include "CObjs.h"
 
-
-/** @alias module:n/gnodes */
-let xbox= {},
-sjs= sh.skarojs,
-undef;
+NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class BallNode
- */
-const BallNode = sh.Ashley.nodeDef({
-  /**
-   * @memberof module:n/gnodes~BallNode
-   * @property {Velocity} velocity
-   */
-  velocity    : cobjs.Velocity,
-  /**
-   * @memberof module:n/gnodes~BallNode
-   * @property {Ball} ball
-   */
-  ball        : cobjs.Ball
-});
-/**
- * @property {BallNode} BallNode
- */
-xbox.BallNode = BallNode;
+//
+struct CC_DLL BallNode : public a::NodeFactory {
+
+  virtual const NodeType typeId() { return "n/BallNode"; }
+  virtual owner<Node*> reifyNode() {
+    return reifyXXXNode({
+        { "velocity", "n/Velocity" },
+        {"ball", "n/Ball" }
+    });
+  }
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class FauxPaddleNode
- */
-const FauxPaddleNode = sh.Ashley.nodeDef({
-  /**
-   * @memberof module:n/gnodes~FauxPaddleNode
-   * @property {Position} lastpos
-   */
-  lastpos   : cobjs.Position,
-  /**
-   * @memberof module:n/gnodes~FauxPaddleNode
-   * @property {Paddle} paddle
-   */
-  paddle    : cobjs.Paddle,
-  /**
-   * @memberof module:n/gnodes~FauxPaddleNode
-   * @property {Faux} faux
-   */
-  faux      : cobjs.Faux,
-  /**
-   * @memberof module:n/gnodes~FauxPaddleNode
-   * @property {Player} player
-   */
-  player    : cobjs.Player
-});
-/**
- * @property {FauxPaddleNode} FauxPaddleNode
- */
-xbox.FauxPaddleNode = FauxPaddleNode;
+//
+struct CC_DLL FauxPaddleNode : public a::NodeFactory {
 
-/**
- * @class PaddleNode
- */
-const PaddleNode = sh.Ashley.nodeDef({
-  /**
-   * @memberof module:n/gnodes~PaddleNode
-   * @property {Position} lastpos
-   */
-  lastpos   : cobjs.Position,
-  /**
-   * @memberof module:n/gnodes~PaddleNode
-   * @property {Motion} motion
-   */
-  motion    : cobjs.Motion,
-  /**
-   * @memberof module:n/gnodes~PaddleNode
-   * @property {Paddle} paddle
-   */
-  paddle    : cobjs.Paddle,
-  /**
-   * @memberof module:n/gnodes~PaddleNode
-   * @property {Player} player
-   */
-  player    : cobjs.Player
-});
-/**
- * @property {PaddleNode} PaddleNode
- */
-xbox.PaddleNode = PaddleNode;
+  virtual const NodeType typeId() { return "n/FauxPaddleNode"; }
+  virtual owner<Node*> reifyNode() {
+    return reifyXXXNode({
+        {"lastpos", "n/Position" },
+        {"paddle", "n/Paddle" },
+        {"faux", "n/Faux" },
+        {"player" , "n/Player" }
+    });
+};
 
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+struct CC_DLL PaddleNode : public a::NodeFactory {
+
+  virtual const NodeType typeId() { return "n/PaddleNode"; }
+  virtual owner<Node*> reifyNode() {
+    return reifyXXXNode({
+      {"lastpos" , "n/Position" },
+      {"motion", "n/Motion" },
+      {"paddle" , "n/Paddle" },
+      {"player" , "n/Player" }
+    });
+};
+
+
+NS_END(pong)
+#endif
+
 

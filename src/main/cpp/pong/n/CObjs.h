@@ -9,226 +9,132 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @module n/cobjs
- */
+#if !defined(__COBJS_H__)
+#define __COBJS_H__
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+#include "core/ComObj.h"
 
-
-/** @alias module:n/cobjs */
-let xbox= {},
-sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef;
+NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Ball
- */
-const Ball = sh.Ashley.compDef({
-  /**
-   * @memberof module:n/cobjs~Ball
-   * @constructor
-   * @param {cc.Sprite} sprite
-   * @param {Number} speed
-   */
-  constructor(sprite, speed) {
-    this.ctor(sprite);
-    this.speed= speed;
+//
+struct CC_DLL Ball : public f::ComObj {
+  Ball(c::Sprite *s, float v)
+    : ComObj(s) {
+    speed=v;
   }
-});
-/**
- * @property {Ball} Ball
- */
-xbox.Ball = Ball;
+  float speed=0;
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Motion
- */
-const Motion = sh.Ashley.casDef({
+//
+struct CC_DLL Motion : public a::Component {
+  virtual const a::COMType typeId() { return "n/Motion"; }
+  bool right = false;
+  bool left = false;
+};
 
-  /**
-   * @memberof module:n/cobjs~Motion
-   * @method constructor
-   */
-  constructor() {
-    this.right = false;
-    this.left= false;
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Paddle : public f::ComObj {
+private:
+
+  void onColor(const s_arr<int,2> &cs, const sstr &snd) {
+    s::copy(cs.begin(), cs.end(), this->kcodes.begin());
+    this->snd= snd;
   }
-});
-/**
- * @property {Motion} Motion
- */
-xbox.Motion= Motion;
 
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class Paddle
- */
-const Paddle = sh.Ashley.compDef({
+public:
 
-  /**
-   * @memberof module:n/cobjs~Paddle
-   * @method p1Keys
-   * @return {Array}
-   */
-  p1Keys() {
-    return ccsx.isPortrait() ?
-      [cc.KEY.left, cc.KEY.right] : [cc.KEY.down, cc.KEY.up];
-  },
+  const s_arr<int,2> p1Keys() {
+    return cx::isPortrait()
+      ? s_arr<int,2> {KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ALLOW}
+      : s_arr<int,2> {KEYCODE::KEY_DOWN_ARROW,,KEYCODE::KEY_UP_ARROW };
+  }
 
-  /**
-   * @memberof module:n/cobjs~Paddle
-   * @method p2Keys
-   * @return {Array}
-   */
-  p2Keys() {
-    return ccsx.isPortrait() ?
-      [cc.KEY.a, cc.KEY.d] : [cc.KEY.s, cc.KEY.w];
-  },
+  const s_arr<int,2> p2Keys() {
+    return cx::isPortrait()
+      ? s_arr<int,2> {KEYCODE::KEY_A , KEYCODE::KEY_D }
+      : s_arr<int,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
+  }
 
-  /**
-   * @memberof module:n/cobjs~Paddle
-   * @method onColor
-   * @param {Array} keycodes
-   * @param {String} snd
-   */
-  onColor(keycodes, snd) {
-    this.kcodes = keycodes;
-    this.snd= snd;
-  },
+  Paddle(c::Sprite *s, const sstr &color, float v) : ComObj(s) {
 
-  /**
-   * @memberof module:n/cobjs~Paddle
-   * @method constructor
-   * @param {cc.Sprite} sprite
-   * @param {Number} color
-   * @param {Number} speed
-   */
-  constructor(sprite, color, speed) {
-
-    this.ctor(sprite);
-    this.color= color;
-    this.speed= speed;
-
-    if (this.color === csts.P1_COLOR) {
-      this.onColor(this.p1Keys(), 'x_hit' );
+    if (color == CC_CSS("P1_COLOR")) {
+      onColor(p1Keys(), "x_hit" );
     } else {
-      this.onColor(this.p2Keys(), 'o_hit');
+      onColor(p2Keys(), "o_hit");
     }
+
+    this->color= color;
+    this->speed=v;
   }
 
-});
-/**
- * @property {Paddle} Paddle
- */
-xbox.Paddle= Paddle;
+  s_arr<int,2> kcodes;
+  float speed=0;
+  sstr color;
+  sstr snd;
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Player
- */
-const Player = sh.Ashley.casDef({
+//
+struct CC_DLL Player : public a::Component {
 
-  /**
-   * @memberof module:n/cobjs~Player
-   * @method constructor
-   * @param {Number} category
-   * @param {Number} value
-   * @param {Number} id
-   * @param {Number} color
-   */
-  constructor(category,value,id,color) {
-    this.color= color;
-    this.pnum=id;
-    this.category= category;
-    this.value= value;
+  Player(int category, int value, int id, const sstr &color) {
+    this->color= color;
+    this->pnum=id;
+    this->category= category;
+    this->value= value;
   }
 
-});
-/**
- * @property {Player} Player
- */
-xbox.Player= Player;
+  virtual const a::COMType typeId() { return "n/Player"; }
+
+  int category=0;
+  int pnum=0;
+  int value=0;
+  sstr color;
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Faux
- */
-const Faux= sh.Ashley.casDef({
+//
+struct CC_DLL Faux : public a::Component {
 
-  /**
-   * @memberof module:n/cobjs~Faux
-   * @method constructor
-   */
-  constructor() {
+  virtual const COMType typeId() { return "n/Faux"; }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Position : public a::Component {
+
+  virtual const COMType typeId() { return "n/Position"; }
+
+  Position(float lp) {
+    lastP= lp;
   }
 
-});
-/**
- * @property {Faux} Faux
- */
-xbox.Faux = Faux;
+  int lastDir = 0;
+  float lastP= 0;
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class Position
- */
-const Position = sh.Ashley.casDef({
+//
+struct CC_DLL Velocity : public a::Component {
 
-  /**
-   * @memberof module:n/cobjs~Position
-   * @method constructor
-   * @param {cc.Point} lp
-   */
-  constructor(lp) {
-    this.lastDir= 0;
-    this.lastP= lp;
+  virtual const COMType typeId() { return "n/Velocity"; }
+
+  Velocity(float vx, float vy) {
+    vel.x = vx;
+    vel.y = vy;
   }
 
-});
-/**
- * @property {Position} Position
- */
-xbox.Position= Position;
-
-//////////////////////////////////////////////////////////////////////////////
-/**
- * @class Velocity
- */
-const Velocity = sh.Ashley.casDef({
-
-  /**
-   * @memberof module:n/cobjs~Velocity
-   * @method constructor
-   * @param {Number} vx
-   * @param {Number} vy
-   */
-  constructor(vx,vy) {
-    this.vel = {
-      x: vx,
-      y: vy
-    };
-  }
-
-});
-/**
- * @property {Velocity} Velocity
- */
-xbox.Velocity= Velocity;
+  c::Vel2 vel;
+};
 
 
+NS_END(pong)
+#endif
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
 

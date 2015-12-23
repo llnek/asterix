@@ -155,6 +155,7 @@ namespace ccsx {
 
   float randFloat(float upper);
   int randInt(int upper);
+  int randSign();
 };
 
 NS_END(fusii)

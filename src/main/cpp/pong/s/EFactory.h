@@ -9,139 +9,30 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @module s/factory
- */
+#if !defined(__EFACTORY_H__)
+#define __EFACTORY_H__
 
-import sh from 'zotohlab/asx/asterix';
-import cobjs from 'n/cobjs';
-import ccsx from 'zotohlab/asx/ccsx';
+#include "core/Factory.h"
 
+NS_BEGIN(pong)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/**
- * @class EntityFactory
- */
-EntityFactory = sh.Ashley.casDef({
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method constructor
-   * @param {Ash.Engine} engine
-   */
-  constructor(engine) {
-    this.engine=engine;
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createPaddles
-   * @param {cc.Layer} layer
-   * @param {Object} options
-   */
-  createPaddles(layer, options) {
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL EFactory : public f::Factory {
 
-    this.createOnePaddle(layer, options.players[1],
-                         options.p1,
-                         options.paddle.speed,
-                         options);
+  EFactory(not_null<a::Engine*> e, not_null<c::Dictionary*>);
 
-    this.createOnePaddle(layer, options.players[2],
-                         options.p2,
-                         options.paddle.speed,
-                         options);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createBall
-   * @param {cc.Layer} layer
-   * @param {Object} options
-   */
-  createBall(layer, options) {
-    let ent = sh.Ashley.newEntity(),
-    info = options.ball,
-    vy = info.speed * sjs.randSign(),
-    vx = info.speed * sjs.randSign(),
-    sp;
+  a::Entity* createOnePaddle(Player*, int pnum, float x, float y);
+  a::Entity* createBall(float x, float y);
+  a::Entity* createPaddles();
 
-    if (options.mode === sh.gtypes.ONLINE_GAME) {
-      vx = vy = 0;
-    }
+  virtual EFactory() {}
+  NODFT(EFactory)
+  NOCPYASS(EFactory)
 
-    sp= new cc.Sprite('#pongball.png');
-    sp.setPosition(info.x, info.y);
-    layer.addAtlasItem('game-pics', sp);
-
-    ent.add(new cobjs.Ball(sp, info.speed));
-    ent.add(new cobjs.Velocity(vx, vy));
-    this.engine.addEntity(ent);
-  },
-  /**
-   * @method createOnePaddle
-   * @param {cc.Layer} layer
-   * @param {Object} p
-   * @param {Object} info
-   * @param {Number} speed
-   * @param {Object} options
-   */
-  createOnePaddle(layer, p, info, speed, options) {
-    let res1 = '#red_paddle.png',
-    res2= '#green_paddle.png',
-    ent = sh.Ashley.newEntity(),
-    res,
-    sp, lp;
-
-    if (p.color === csts.P1_COLOR) {
-      res= res1;
-    } else {
-      res= res2;
-    }
-
-    sp = new cc.Sprite(res);
-    sp.setPosition(info.x, info.y);
-    layer.addAtlasItem('game-pics', sp);
-
-    ent.add(new cobjs.Paddle(sp, p.color, speed));
-    ent.add(p);
-
-    if (ccsx.isPortrait()) { lp = info.x; } else { lp= info.y; }
-    ent.add(new cobjs.Position(lp));
-
-    if (options.wsock && options.pnum !== p.pnum) {
-      ent.add(new cobjs.Faux());
-      //only simulate move
-    }
-    else
-    if (p.category === csts.BOT) {
-      ent.add(new cobjs.Faux());
-    } else {
-      ent.add(new cobjs.Motion());
-    }
-
-    this.engine.addEntity(ent);
-  }
-
-});
-
-/** @alias module:s/factory */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {EntityFactory}  EntityFactory
-   */
-  EntityFactory : EntityFactory
 };
 
+NS_END(pong)
+#endif
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
 

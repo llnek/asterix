@@ -670,15 +670,23 @@ const c::Vec2 clamp(const c::Vec2 &cur, const Box4 &bx) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+int randInt(int upper) {
+  return (int) floor(cocos2d::rand_0_1() * upper);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 float randFloat(float upper) {
   return cocos2d::rand_0_1() * upper;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int randInt(int upper) {
-  return (int) floor(cocos2d::rand_0_1() * upper);
+int randSign() {
+  return cocos2d::rand_0_1() > 0.5 ? 1 : -1;
 }
+
+
 
 NS_END(ccsx)
 NS_END(fusii)
