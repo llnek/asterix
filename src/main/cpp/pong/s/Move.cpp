@@ -9,163 +9,131 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/odin
- * @requires n/gnodes
- * @module s/move
- */
+#include "Move.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
-import odin from 'zotohlab/asx/odin';
+NS_BEGIN(pong)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> o)
+  : XSystem<EFactory>(f,o) {
+}
 
-let evts= odin.Events,
-sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/**
- * @class Move
- */
-Move = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/moves~Move
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/moves~Move
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.fauxpads= null;
-    this.paddles=null;
-    this.balls= null;
-  },
-  /**
-   * @memberof module:s/moves~Move
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.fauxs= engine.getNodeList(gnodes.FauxPaddleNode);
-    this.paddles= engine.getNodeList(gnodes.PaddleNode);
-    this.balls= engine.getNodeList(gnodes.BallNode);
-  },
-  /**
-   * @memberof module:s/moves~Move
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    let bnode= this.balls.head,
-    node;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::addToEngine(not_null<a::Engine*> e) {
+  FauxPaddleNode f;
+  fauxs= e->getNodeList(f.typeId());
+  PaddleNode p;
+  paddles= e->getNodeList(p.typeId());
+  BallNode b;
+  balls= e->getNodeList(b.typeId());
+}
 
-    if (this.state.running &&
-        !!bnode) {
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::update(float dt) {
+  auto bnode= balls->head;
 
-      for (node= this.paddles.head; node; node=node.next) {
-        this.doit(node, dt);
-      }
+  if (MGMS()->isLive()) {
 
-      for (node= this.fauxs.head; node; node=node.next) {
-        if (node.player.category === csts.BOT) {
-          this.moveRobot(node, bnode, dt);
-        }
-        else
-        if (node.player.category === csts.NETP) {
-          this.simuMove(node, bnode, dt);
-        }
-      }
-
-      this.processBall(bnode, dt);
+    for (auto node= paddles->head; node; node=node->next) {
+      doit(node, dt);
     }
-  },
-  /**
-   * @method simuMove
-   * @private
-   */
-  simuMove(node, bnode, dt) {
-    let hw2 = ccsx.halfHW(node.paddle.sprite),
-    pos = node.paddle.sprite.getPosition(),
-    world= this.state.world,
-    lastpos= node.lastpos,
-    x= undef,
-    y= undef,
-    delta= dt * this.state.paddle.speed;
 
-    if (lastpos.lastDir > 0) {
-      if (ccsx.isPortrait()) {
-        x = pos.x + delta;
-      } else {
-        y = pos.y + delta;
+    for (auto node= fauxs->head; node; node=node->next) {
+      auto p = CC_GNF(Player,node, "player");
+      if (p->category == CC_CSV(c::Integer, "BOT")) {
+        moveRobot(node, bnode, dt);
       }
-    }
-    else
-    if (lastpos.lastDir < 0) {
-      if (ccsx.isPortrait()) {
-        x = pos.x - delta;
-      } else {
-        y = pos.y - delta;
+      else
+      if (p->category == CC_CSV(c::Integer, "NET")) {
+        simuMove(node, bnode, dt);
       }
     }
 
-    if (sjs.echt(x)) {
-      node.paddle.sprite.setPosition(x,pos.y);
-      this.clamp(node.paddle.sprite);
-    }
-    if (sjs.echt(y)) {
-      node.paddle.sprite.setPosition(pos.x,y);
-      this.clamp(node.paddle.sprite);
-    }
-  },
-  //TODO: better AI please
-  /**
-   * @method moveRobot
-   * @private
-   */
-  moveRobot(node, bnode, dt) {
-    let bp= bnode.ball.sprite.getPosition(),
-    pos = node.paddle.sprite.getPosition(),
-    speed= this.state.paddle.speed,
-    velo = bnode.velocity,
-    y= undef,
-    x= undef;
+    processBall(bnode, dt);
+  }
 
-    if (ccsx.isPortrait()) {
+  return true;
+}
 
-      if (bp.x > pos.x) {
-        if (velo.vel.x > 0) {
-          x = pos.x + dt * speed;
-        }
-      } else {
-        if (velo.vel.x < 0) {
-          x = pos.x - dt * speed;
-        }
-      }
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
+  auto paddle = CC_GNF(Paddle,node,"paddle");
+  auto world= MGMS()->getEnclosureBox();
+  auto hw2 = cx::halfHW(paddle->sprite),
+  auto pos = paddle->pos();
+  auto lastpos= CC_GNF(Position, node, "lastpos");
+  auto delta= dt * paddle->speed;
+  f::MaybeFloat x;
+  f::MaybeFloat y;
 
+  if (lastpos->lastDir > 0) {
+    if (cx::isPortrait()) {
+      x = f::MaybeFloat(pos.x + delta);
     } else {
-
-      if (bp.y > pos.y) {
-        if (velo.vel.y > 0) {
-          y = pos.y + dt * speed;
-        }
-      } else {
-        if (velo.vel.y < 0) {
-          y = pos.y - dt * speed;
-        }
-      }
-
+      y = f::MaybeFloat(pos.y + delta);
     }
+  }
+  else
+  if (lastpos->lastDir < 0) {
+    if (cx::isPortrait()) {
+      x = f::MaybeFloat(pos.x - delta);
+    } else {
+      y = f::MaybeFloat(pos.y - delta);
+    }
+  }
+
+  if (! x.isNone()) {
+    paddle->setPos(x.get(), pos.y);
+    clamp(paddle->sprite);
+  }
+  if (! y.isNone()) {
+    paddle->setPos(pos.x, y.get());
+    clamp(paddle->sprite);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//TODO: better AI please
+void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
+  auto velo = CC_GNF(Velocity,bnode,"velocity");
+  auto ball = CC_GNF(Ball,bnode,"ball");
+  auto pad= CC_GNF(Paddle,node, "paddle");
+  auto bp= ball->getPos();
+  auto pos = pad->getPos();
+  auto speed= pad->speed;
+  f::MaybeFloat y;
+  f::MaybeFloat x;
+
+  if (cx::isPortrait()) {
+
+    if (bp.x > pos.x) {
+      if (velo->vel.x > 0) {
+        x = f::MaybeFloat(pos.x + dt * speed);
+      }
+    } else {
+      if (velo->vel.x < 0) {
+        x = f::MaybeFloat(pos.x - dt * speed);
+      }
+    }
+
+  } else {
+
+    if (bp.y > pos.y) {
+      if (velo.vel.y > 0) {
+        y = pos.y + dt * speed;
+      }
+    } else {
+      if (velo.vel.y < 0) {
+        y = pos.y - dt * speed;
+      }
+    }
+
+  }
 
     if (sjs.echt(x)) {
       node.paddle.sprite.setPosition(x,pos.y);

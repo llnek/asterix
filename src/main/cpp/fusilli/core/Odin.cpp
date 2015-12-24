@@ -17,6 +17,16 @@ NS_BEGIN(odin)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
+j::json evtToDoc(MType type, EType code, j::json body) {
+  return j::json({
+    {"type", (int) type },
+    {"code", (int) code },
+    {"source", body }
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 j::json evtToDoc(not_null<OdinEvent*> evt) {
   return j::json({
     {"type", (int) evt->type },
@@ -112,6 +122,25 @@ void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
   if (wss->state == CType::S_CONNECTED) {
     auto d= evtToDoc(evt);
     wss->socket->send(d.dump());
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Send this msg through the socket
+//
+void netSend(not_null<OdinIO*> wss, MType m, EType e, j::json body) {
+  if (wss->state == CType::S_CONNECTED) {
+    auto d = evtToDoc(m,e,body);
+    wss->socket->send(d.dump());
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Send this msg through the socket
+//
+void netSend(not_null<OdinIO*> wss, j::json msg) {
+  if (wss->state == CType::S_CONNECTED) {
+    wss->socket->send(msg.dump());
   }
 }
 

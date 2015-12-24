@@ -70,6 +70,8 @@ public:
 //
 n::WebSocket* connect(not_null<OdinIO*>, const sstr &url);
 
+void netSend(not_null<OdinIO*>, const MType, const EType, j::json body);
+void netSend(not_null<OdinIO*>, j::json fullmsg);
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
 
 void disconnect(OdinIO*);

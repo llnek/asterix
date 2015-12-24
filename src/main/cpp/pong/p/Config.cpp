@@ -9,30 +9,26 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/cfg
- * @module p/config
- */
+#include "core/CCSX.h"
+#include "Config.h"
 
-import sh from 'zotohlab/asx/asterix';
-import xcfg from 'zotohlab/asx/cfg';
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(pong)
 
-let sjs= sh.skarojs,
-/** @alias module:p/config */
-xbox = sjs.merge( xcfg, {
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Config*> Config::reify() {
+  auto c = mc_new(Config);
+  c->initAssets();
+  c->initCsts();
+  c->initLevels();
+  return c;
+}
 
-  appKey: "fa0860f9-76dc-4135-8bc7-bd5af3147d55",
-
-  appid: 'pong',
-  color: 'green',
-
-  resolution: {
-    policy: cc.ResolutionPolicy.FIXED_HEIGHT,
-    resSize: [0,0]
-  },
-
-  csts: {
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initCsts() {
+  addCst("syncMillis", CC_INT(3000));
 
     BALL_SPEED: 150, // 25 incremental
     PADDLE_SPEED: 200, // 300
@@ -40,7 +36,7 @@ xbox = sjs.merge( xcfg, {
 
     GRID_W: 40,
     GRID_H: 60
-  },
+}
 
   assets: {
     atlases: {
@@ -100,10 +96,7 @@ xbox = sjs.merge( xcfg, {
 });
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+NS_END(pong)
+
 

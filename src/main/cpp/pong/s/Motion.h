@@ -9,126 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/motion
- */
+#if !defined(__MOTION_H__)
+#define __MOTION_H__
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
+#include "core/XSystem.h"
+#include "EFactory.h"
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class Motions */
-Motions = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/motion~Motions
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.nodeList=null;
-    this.evQ=null;
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.nodeList= engine.getNodeList(gnodes.PaddleNode);
-    this.evQ=[];
-  },
-  /**
-   * @memberof module:s/motions~Motions
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const evt = this.evQ.length > 0 ? this.evQ.shift() : undef;
-    if (this.state.running) {
-      for (let node= this.nodeList.head; node; node=node.next) {
-        this.doit(node, evt, dt);
-      }
-    }
-  },
-  /**
-   * @method doit
-   * @private
-   */
-  doit(node, evt, dt) {
-    if ( !!node) {
-      if (!!evt) {
-        this.ongui(node,evt,dt);
-      }
-      if (ccsx.hasKeyPad()) {
-        this.onkey(node, dt);
-      }
-    }
-  },
-  /**
-   * @method ongui
-   * @private
-   */
-  ongui(node,evt,dt) {
-  },
-  /**
-   * @method onkey
-   * @private
-   */
-  onkey(node, dt) {
-    const p= node.paddle,
-    m= node.motion,
-    cs = p.kcodes;
+NS_BEGIN(pong)
 
-    if (sh.main.keyPoll(cs[0])) {
-      m.left=true;
-    }
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Motions : public f::XSystem<EFactory> {
 
-    if (sh.main.keyPoll(cs[1])) {
-      m.right=true;
-    }
+  virtual const a::SystemType typeId() { return "s/Motions"; }
 
-  }
+  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
 
-}, {
+  virtual void addToEngine(not_null<a::Engine*>);
+  virtual bool update(float);
+  void doit(a::Node*, float);
+  void ongui(a::Node*, float);
+  void onkey(a::Node*, float);
+  virtual int priority() { return a::Motion; }
 
-/**
- * @memberof module:s/motion~Motions
- * @property {Number} Priority
- * @static
- */
-Priority : xcfg.ftypes.Motion
-});
+  virtual ~Motions() {}
+  NODFT(Motions)
+  NOCPYASS(Motions)
 
-
-/** @alias module:s/motion */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {Motions} Motions
-   */
-  Motions : Motions
 };
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
+
+NS_END(pong)
+#endif
+
 

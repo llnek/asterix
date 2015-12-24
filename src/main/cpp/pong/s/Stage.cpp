@@ -41,6 +41,7 @@ bool Stage::update(float dt) {
 //
 void Stage::onceOnly() {
   auto world = MGMS()->getEnclosureBox();
+  auto fps = CC_CSV(c::Integer,"FPS");
   auto cw= cx::center();
   auto ps = initPaddleSize();
   auto bs = initBallSize();
@@ -53,8 +54,6 @@ void Stage::onceOnly() {
   auto p1x = floor(world.left + bs.width + HWZ(ps));
 
   // game defaults for entities and timers.
-  this->state.framespersec= cc.game.config[cc.game.CONFIG_KEY.frameRate];
-  this.state.syncMillis= 3000;
   this.state.paddle= {height: Math.floor(ps.height),
            width: Math.floor(ps.width),
            speed: Math.floor(csts.PADDLE_SPEED)};
@@ -74,14 +73,8 @@ void Stage::onceOnly() {
 
   sh.factory.createPaddles(sh.main, this.state);
   sh.factory.createBall(sh.main, this.state);
+}
 
-  // mouse only for 1p or netplay
-  if (xcfg.csts.GAME_MODE !== sh.gtypes.P2_GAME) {
-    ccsx.onMouse(this);
-  }
-  ccsx.onTouchOne(this);
-  sh.main.pkInput();
-},
 /**
  * @method fire
  * @private
@@ -144,32 +137,19 @@ processL(node, evt) {
                      cc.p(wz.width, wz.height));
       p.setPos(cur.x, cur.y);
     }
-  },
-  /**
-   * @method initPaddleSize
-   * @private
-   */
-  initPaddleSize() {
-    return ccsx.csize('red_paddle.png');
-  },
-  /**
-   * @method initBallSize
-   * @private
-   */
-  initBallSize() {
-    return ccsx.csize('pongball.png');
   }
 
-}, {
-/**
- * @memberof module:s/stager~Stager
- * @property {Number} Priority
- * @static
- */
-Priority : xcfg.ftypes.PreUpdate
-};
+//////////////////////////////////////////////////////////////////////////////
+//
+const c::Size Stage::initPaddleSize() {
+  return cx::calcSize("red_paddle.png");
+}
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
+const c::Size Stage::initBallSize() {
+  return cx::calcSize("pongball.png");
+}
 
 
 NS_END(pong)

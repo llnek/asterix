@@ -9,126 +9,66 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/motion
- */
+#include "x2d/GameScene.h"
+#include "Motion.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
+NS_BEGIN(pong)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class Motions */
-Motions = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/motion~Motions
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.nodeList=null;
-    this.evQ=null;
-  },
-  /**
-   * @memberof module:s/motion~Motions
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.nodeList= engine.getNodeList(gnodes.PaddleNode);
-    this.evQ=[];
-  },
-  /**
-   * @memberof module:s/motions~Motions
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const evt = this.evQ.length > 0 ? this.evQ.shift() : undef;
-    if (this.state.running) {
-      for (let node= this.nodeList.head; node; node=node.next) {
-        this.doit(node, evt, dt);
-      }
+//////////////////////////////////////////////////////////////////////////////
+//
+Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> o)
+  : XSystem<EFactory>(f,o) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Motions::addToEngine(not_null<a::Engine*> e) {
+  PaddleNode n;
+  nodeList= e->getNodeList(n.typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Motions::update(float dt) {
+  if (MGMS()->isLive()) {
+    for (auto node= nodeList->head; node; node=node->next) {
+      doit(node, dt);
     }
-  },
-  /**
-   * @method doit
-   * @private
-   */
-  doit(node, evt, dt) {
-    if ( !!node) {
-      if (!!evt) {
-        this.ongui(node,evt,dt);
-      }
-      if (ccsx.hasKeyPad()) {
-        this.onkey(node, dt);
-      }
-    }
-  },
-  /**
-   * @method ongui
-   * @private
-   */
-  ongui(node,evt,dt) {
-  },
-  /**
-   * @method onkey
-   * @private
-   */
-  onkey(node, dt) {
-    const p= node.paddle,
-    m= node.motion,
-    cs = p.kcodes;
+  }
+  return true;
+}
 
-    if (sh.main.keyPoll(cs[0])) {
-      m.left=true;
-    }
+//////////////////////////////////////////////////////////////////////////////
+//
+void Motions::doit(a::Node *node, float dt) {
+  ongui(node,dt);
+  onkey(node, dt);
+}
 
-    if (sh.main.keyPoll(cs[1])) {
-      m.right=true;
-    }
+//////////////////////////////////////////////////////////////////////////////
+//
+void ongui(a::Node *node, float dt) {
 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Motions::onkey(a::Node *node, float dt) {
+  auto p= node->paddle;
+  auto m= node->motion;
+  auto &cs = p->kcodes;
+
+  if (MGMS()->keyPoll(cs[0])) {
+    m->left=true;
   }
 
-}, {
+  if (MGMS()->keyPoll(cs[1])) {
+    m->right=true;
+  }
 
-/**
- * @memberof module:s/motion~Motions
- * @property {Number} Priority
- * @static
- */
-Priority : xcfg.ftypes.Motion
-});
+}
 
 
-/** @alias module:s/motion */
-const xbox = /** @lends xbox# */{
+NS_END(pong)
 
-  /**
-   * @property {Motions} Motions
-   */
-  Motions : Motions
-};
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
 
