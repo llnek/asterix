@@ -9,101 +9,57 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/cfg
- * @module p/config
- */
+#if !defined(__CONFIG_H__)
+#define __CONFIG_H__
 
-import sh from 'zotohlab/asx/asterix';
-import xcfg from 'zotohlab/asx/cfg';
+#include "core/XConfig.h"
 
-let sjs= sh.skarojs,
-/** @alias module:p/config */
-xbox = sjs.merge( xcfg, {
+NS_BEGIN(pong)
 
-  appKey: "fa0860f9-76dc-4135-8bc7-bd5af3147d55",
-
-  appid: 'pong',
-  color: 'green',
-
-  resolution: {
-    policy: cc.ResolutionPolicy.FIXED_HEIGHT,
-    resSize: [0,0]
-  },
-
-  csts: {
-
-    BALL_SPEED: 150, // 25 incremental
-    PADDLE_SPEED: 200, // 300
-    NUM_POINTS: 4,
-
-    GRID_W: 40,
-    GRID_H: 60
-  },
-
-  assets: {
-    atlases: {
-      'lang-pics' : 'res/{{appid}}/l10n/{{lang}}/images',
-      'game-pics' : 'res/{{appid}}/pics/images'
-    },
-    tiles: {
-    },
-    images: {
-      'gui.mmenu.menu.bg' : 'res/{{appid}}/pics/bg.png',
-      'game.bg' : 'res/{{appid}}/pics/bg.png'
-    },
-    sounds: {
-      'game_end' : 'res/cocos2d/sfx/MineExplosion',
-      'x_hit' : 'res/cocos2d/sfx/ElevatorBeep',
-      'o_hit' : 'res/cocos2d/sfx/MineBeep' ,
-      'game_quit' : 'res/cocos2d/sfx/Death'
-    },
-    fonts: {
-      'font.SmallTypeWriting' : [ 'res/cocos2d/fon/{{lang}}', 'SmallTypeWriting.png', 'SmallTypeWriting.fnt' ],
-      'font.AutoMission' : [ 'res/cocos2d/fon/{{lang}}', 'AutoMission.png', 'AutoMission.fnt' ],
-      'font.Subito' : [ 'res/cocos2d/fon/{{lang}}', 'Subito.png', 'Subito.fnt' ],
-      'font.CoffeeBuzzed' : [ 'res/cocos2d/fon/{{lang}}', 'CoffeeBuzzed.png', 'CoffeeBuzzed.fnt' ]
-    }
-  },
-
-  game: {
-    sd: {width:320, height: 480}
-  },
-
-  levels: {
-    "1" : {
-      'tiles' : {
-        //'arena' : 'game/{{appid}}/levels/arena.tmx'
-      },
-      'images' : {
-        //'p.paddle2' : 'res/{{appid}}/pics/green_paddle.png',
-        //'p.paddle1' : 'res/{{appid}}/pics/red_paddle.png',
-        //'ball' : 'res/{{appid}}/pics/pongball.png',
-        //'arena' : 'game/{{appid}}/levels/arena.png'
-      },
-      'sprites' : {
-      }
-    }
-  },
-
-  handleResolution(rs) {
-    //for default font, we use 48pt
-    this.game.scale = 52/256 * rs.width /320;
-  },
-
-  runOnce() {
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('game-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('lang-pics'));
-  }
-
-});
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+class CC_DLL Config : public f::XConfig {
+protected:
+
+  void initAssets();
+  void initCsts();
+  void initLevels();
+
+  Config() {}
+
+public:
+
+  virtual const sstr appKey() { return "fa0860f9-76dc-4135-8bc7-bd5af3147d55"; }
+
+  virtual const sstr appId() { return "pong"; }
+
+  virtual const sstr themeColor() { return "green"; }
+
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
+
+  virtual void handleResolution(const c::Size&);
+
+  virtual void runOnce();
+
+  virtual const c::Size gameSize() { return c::Size(320,480); }
+
+  virtual const sstr getWSUrl() { return ""; }
+  virtual c::Scene* prelude();
+
+  virtual void setGameId(const sstr& ) {}
+  virtual void setRoomId(const sstr& ) {}
+  virtual const sstr getGameId() {}
+  virtual const sstr getRoomId() {}
+
+  static owner<Config*> reify();
+
+  virtual ~Config() {}
+  NOCPYASS(Config);
+};
+
+
+
+NS_END(pong)
+#endif
+
 

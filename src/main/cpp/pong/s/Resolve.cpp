@@ -9,162 +9,109 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/resolve
- */
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Resolve.h"
 
-import sh from 'zotohlab/asx/asterix';
-import gnodes from 'n/gnodes';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(pong)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class Resolve */
-Resolve = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.nodeList=null;
-    this.fauxs=null;
-    this.balls=null;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.fauxs= engine.getNodeList(gnodes.FauxPaddleNode);
-    this.nodeList= engine.getNodeList(gnodes.PaddleNode);
-    this.balls= engine.getNodeList(gnodes.BallNode);
-    this.engine=engine;
-  },
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    let bnode = this.balls.head,
-    rc;
+//////////////////////////////////////////////////////////////////////////////
+//
+Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> o)
+  : XSystem<EFactory>(f,o) {
+}
 
-    if (this.state.mode === sh.gtypes.ONLINE_GAME) {
-      return;
-    }
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::addToEngine(not_null<a::Engine*> e) {
+  FauxPaddleNode f;
+  fauxs= e->getNodeList(f.typeId());
+  PaddleNode p;
+  nodeList= e->getNodeList(p.typeId());
+  BallNode b;
+  balls= e->getNodeList(b.typeId());
+}
 
-    if (this.state.running &&
-       !!bnode) {
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::update(float dt) {
+  auto bnode = balls->head;
 
-      rc=this.checkNodes(this.nodeList, bnode);
-      if (rc !== false) {
-        rc=this.checkNodes(this.fauxs, bnode);
-      }
-    }
+  if (MGMS()->isOnline()) { return; }
 
-    return rc;
-  },
-  /**
-   * @method checkNodes
-   * @private
-   */
-  checkNodes(nl, bnode) {
-    for (let node=nl.head; node; node=node.next) {
-      const winner =this.check(node,bnode);
-      if (winner) {
-        this.onWin(winner);
-        return false;
-      }
-    }
-  },
-  /**
-   * @method onWin
-   * @private
-   */
-  onWin(winner) {
-    const bnode= this.balls.head;
-    //sjs.loggr.debug("winner ====== " + winner);
-    bnode.ball.sprite.setPosition(
-      this.state.ball.x,
-      this.state.ball.y);
-    bnode.velocity.vel.x = this.state.ball.speed * sjs.randSign();
-    bnode.velocity.vel.y = this.state.ball.speed * sjs.randSign();
-    sh.fire('/hud/score/update', { score: 1, color: winner });
-  },
-  //check win
-  /**
-   * @method check
-   * @private
-   */
-  check(node,bnode) {
-    const b= bnode.ball,
-    pd= node.paddle,
-    pc= pd.color,
-    bp= b.sprite.getPosition();
+  if (MGMS()->isLive()) {
 
-    if (ccsx.isPortrait()) {
-
-      if (pc === csts.P1_COLOR) {
-        return bp.y < ccsx.getBottom(pd.sprite) ?
-          csts.P2_COLOR : undef;
-      } else {
-        return bp.y > ccsx.getTop(pd.sprite) ?
-          csts.P1_COLOR : undef;
-      }
-
-    } else {
-
-      if (pc === csts.P1_COLOR) {
-        return bp.x < ccsx.getLeft(pd.sprite) ?
-          csts.P2_COLOR : undef;
-      } else {
-        return bp.x > ccsx.getRight(pd.sprite) ?
-          csts.P1_COLOR : undef;
-      }
-
+    rc= checkNodes(nodeList, bnode);
+    if (rc) {
+      rc= checkNodes(fauxs, bnode);
     }
   }
 
-}, {
+  return true;
+}
 
-/**
- * @memberof module:s/resolve~Resolve
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Resolve
-});
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
+  for (auto node=nl->head; node; node=node->next) {
+    auto winner = check(node,bnode);
+    if (winner.length() > 0) {
+      onWin(winner);
+      return false;
+    }
+  }
+  return true;
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::onWin(const sstr &winner) {
+  auto velo= CC_GNF(Velocity, balls->head, "velocity");
+  auto ball= CC_GNF(Ball, balls->head, "ball");
+  CCLOG("winner ====== %s", winner.c_str());
+  ball->setPos( BALL.x, BALL.y);
+  velo->vel.x = BALL.speed * cx::randSign();
+  velo->vel.y = BALL.speed * cx::randSign();
+  sendEx("/hud/score/update",
+      j::json({
+        { "score", 1},
+        {"color", winner }
+      }));
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+const sstr Resolve::check(a::Node *node, a::Node *bnode) {
+  auto pd= CC_GNF(Paddle, node, "paddle");
+  auto b= CC_GNF(Ball, bnode, "ball");
+  auto pc= pd->color;
+  auto bp= b->getPos();
 
-/** @alias module:s/resolve */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Resolve}  Resolve
-   */
-  Resolve : Resolve
-};
+  if (cx::isPortrait()) {
 
+    if (pc == CC_CSS("P1_COLOR")) {
+      return bp.y < cx::getBottom(pd->sprite) ?
+        CC_CSS("P2_COLOR") : "";
+    } else {
+      return bp.y > cx::getTop(pd->sprite) ?
+        CC_CSS("P1_COLOR") : "";
+    }
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
+  } else {
+
+    if (pc == CC_CSS("P1_COLOR")) {
+      return bp.x < cx::getLeft(pd->sprite) ?
+        CC_CSS("P2_COLOR") : "";
+    } else {
+      return bp.x > cx::getRight(pd->sprite) ?
+        CC_CSS("P1_COLOR") : "";
+    }
+
+  }
+}
+
+NS_END(pong)
+
 

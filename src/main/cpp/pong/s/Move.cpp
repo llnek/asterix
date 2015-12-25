@@ -110,7 +110,6 @@ void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
   f::MaybeFloat x;
 
   if (cx::isPortrait()) {
-
     if (bp.x > pos.x) {
       if (velo->vel.x > 0) {
         x = f::MaybeFloat(pos.x + dt * speed);
@@ -120,206 +119,173 @@ void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
         x = f::MaybeFloat(pos.x - dt * speed);
       }
     }
-
   } else {
-
     if (bp.y > pos.y) {
-      if (velo.vel.y > 0) {
-        y = pos.y + dt * speed;
+      if (velo->vel.y > 0) {
+        y = f::MaybeFloat(pos.y + dt * speed);
       }
     } else {
-      if (velo.vel.y < 0) {
-        y = pos.y - dt * speed;
+      if (velo->vel.y < 0) {
+        y = f::MaybeFloat(pos.y - dt * speed);
       }
-    }
-
-  }
-
-    if (sjs.echt(x)) {
-      node.paddle.sprite.setPosition(x,pos.y);
-      this.clamp(node.paddle.sprite);
-    }
-
-    if (sjs.echt(y)) {
-      node.paddle.sprite.setPosition(pos.x,y);
-      this.clamp(node.paddle.sprite);
-    }
-  },
-  /**
-   * @method processBall
-   * @private
-   */
-  processBall(node, dt) {
-    let v = node.velocity,
-    b= node.ball,
-    rc,
-    pos= b.sprite.getPosition(),
-    rect= ccsx.bbox(b.sprite);
-
-    rect.x = pos.x;
-    rect.y = pos.y;
-
-    rc=ccsx.traceEnclosure(dt,this.state.world,
-                           rect,
-                           v.vel);
-    if (rc.hit) {
-      v.vel.x = rc.vx;
-      v.vel.y = rc.vy;
-    } else {
-    }
-    b.sprite.setPosition(rc.x, rc.y);
-  },
-  /**
-   * @method doit
-   * @private
-   */
-  doit(node, dt) {
-    let p= node.paddle,
-    s= p.speed * dt,
-    m= node.motion,
-    nv, x,y,
-    ld = node.lastpos.lastDir,
-    lp = node.lastpos.lastP,
-    pos= p.sprite.getPosition();
-
-    if (m.right) {
-      if (ccsx.isPortrait()) {
-        x = pos.x + s;
-        y = pos.y;
-      } else {
-        y = pos.y + s;
-        x= pos.x;
-      }
-      p.sprite.setPosition(x,y);
-    }
-
-    if (m.left) {
-      if (ccsx.isPortrait()) {
-        x = pos.x - s;
-        y = pos.y;
-      } else {
-        y = pos.y - s;
-        x= pos.x;
-      }
-      p.sprite.setPosition(x,y);
-    }
-
-    m.right = false;
-    m.left= false;
-
-    this.clamp(p.sprite);
-
-    // below is really for wsock stuff
-
-    if (ccsx.isPortrait()) {
-      nv = p.sprite.getPosition().x;
-    } else {
-      nv = p.sprite.getPosition().y;
-    }
-
-    let delta= Math.abs(nv - lp),
-    dir=0;
-    if (delta >= 1) {
-      if (nv > lp) {
-        dir=1;
-        // moving up or right
-      } else if (nv < lp) {
-        dir= -1;
-      }
-    }
-    node.lastpos.lastP=nv;
-    if (ld !== dir) {
-      if(this.state.wsock) { this.notifyServer(node,dir); }
-      node.lastpos.lastDir=dir;
-    }
-  },
-  /**
-   * Inform the server that paddle has changed direction: up , down or stopped.
-   * @method notifyServer
-   * @private
-   */
-  notifyServer(node, direction) {
-    let vv = direction * this.state.paddle.speed,
-    pos = node.paddle.sprite.getPosition(),
-    pnum= this.state.pnum,
-    src,
-    cmd = {
-      x: Math.floor(pos.x),
-      y: Math.floor(pos.y),
-      dir: direction,
-      pv: vv
-    };
-    if (pnum === 2) {
-      src = { p2: cmd };
-    } else {
-      src = { p1: cmd };
-    }
-    this.state.wsock.send({
-      source: sjs.jsonfy(src),
-      type: evts.MSG_SESSION,
-      code: evts.PLAY_MOVE
-    });
-  },
-  /**
-   * @method clamp
-   * @private
-   */
-  clamp(sprite) {
-    let pos= sprite.getPosition(),
-    world= this.state.world,
-    x= undef,
-    y= undef,
-    hw2= ccsx.halfHW(sprite),
-    bb4= ccsx.bbox4(sprite);
-
-    if (ccsx.isPortrait()) {
-      if (bb4.right > world.right) {
-        x = world.right - hw2[0];
-      }
-      if (bb4.left < world.left) {
-        x = world.left + hw2[0];
-      }
-    } else {
-      if (bb4.top > world.top) {
-        y = world.top - hw2[1];
-      }
-      if (bb4.bottom < world.bottom) {
-        y = world.bottom + hw2[1];
-      }
-    }
-
-    if (sjs.echt(x)) {
-      sprite.setPosition(x, pos.y);
-    }
-
-    if (sjs.echt(y)) {
-      sprite.setPosition(pos.x, y);
     }
   }
 
-}, {
+  if (! x.isNone()) {
+    paddle->setPos(x.get(),pos.y);
+    clamp(paddle->sprite);
+  }
 
-/**
- * @memberof module:s/move~Move
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Move
-});
+  if (! y.isNone()) {
+    paddle->setPos(pos.x, y.get());
+    clamp(paddle->sprite);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::processBall(a::Node *node, float dt) {
+  auto v = CC_GNF(Velocity, node, "velocity");
+  auto b= CC_GNF(Ball, node, "ball");
+  auto pos= b->getPos();
+  c::Rect rect( cx::bbox(b->sprite));
+
+  rect.x = pos.x;
+  rect.y = pos.y;
+
+  c::Vec2 outVel;
+  c::Vec2 outPos;
+  auto rc= cx::traceEnclosure(dt,MGMS()->getEnclosureBox(),
+                         rect,
+                         v->vel, outPos, outVel);
+  if (rc) {
+    v->vel.x = outVel.x;
+    v->vel.y = outVel.y;
+  }
+  b->setPos(outPos.x,outPos.y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::doit(a::Node *node, float dt) {
+  auto last= CC_GNF(Position, node, "lastpos");
+  auto p= CC_GNF(Paddle, node, "paddle");
+  auto s= p->speed * dt;
+  auto m= CC_GNF(Motion, node, "motion");
+  auto ld = last->lastDir;
+  auto lp = last->lastP;
+  auto pos= p->getPos();
+  float nv, x,y;
+
+  if (m->right) {
+    if (cx::isPortrait()) {
+      x = pos.x + s;
+      y = pos.y;
+    } else {
+      y = pos.y + s;
+      x= pos.x;
+    }
+    p->setPos(x,y);
+  }
+
+  if (m->left) {
+    if (cx::isPortrait()) {
+      x = pos.x - s;
+      y = pos.y;
+    } else {
+      y = pos.y - s;
+      x= pos.x;
+    }
+    p->setPos(x,y);
+  }
+
+  m->right = false;
+  m->left= false;
+
+  clamp(p->sprite);
+
+  // below is really for wsock stuff
+  if (cx::isPortrait()) {
+    nv = p->getPos().x;
+  } else {
+    nv = p->getPos().y;
+  }
+
+  auto delta= abs(nv - lp);
+  auto dir=0;
+  if (delta >= 1) {
+    if (nv > lp) {
+      dir=1;
+      // moving up or right
+    } else if (nv < lp) {
+      dir= -1;
+    }
+  }
+  last->lastP=nv;
+  if (ld != dir) {
+    if (MGMS()->isOnline()) { notifyServer(node,dir); }
+    last->lastDir=dir;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::notifyServer(a::Node *node, int direction) {
+  auto pnum= CC_GDV(c::Integer, this->state);
+  auto pad = CC_GNF(Paddle, node, "paddle");
+  auto vv = direction * pad->speed;
+  auto pos = pad->getPos();
+  auto key= pnum==2 ? "p2" : "p1";
+  auto body= j::json({
+      {"pnum", pnum},
+      {key, j::json({
+          {"x", floor(pos.x) },
+          {"y", floor(pos.y) },
+          {"dir", direction },
+          {"pv", vv } }) }
+  });
+
+  ws::netsend(ws::MType::SESSION,
+      ws::EType::PLAY_MOVE,
+      body);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::clamp(c::Sprite *sprite) {
+  auto world = MGMS()->getEnclosureBox();
+  auto pos= sprite->getPosition();
+  auto hw2= cx::halfHW(sprite);
+  auto bb4= cx::bbox4(sprite);
+  f::MaybeFloat x;
+  f::MaybeFloat y;
+
+  if (cx::isPortrait()) {
+    if (bb4.right > world.right) {
+      x = world.right - hw2.x;
+    }
+    if (bb4.left < world.left) {
+      x = world.left + hw2.x;
+    }
+  } else {
+    if (bb4.top > world.top) {
+      y = world.top - hw2.y;
+    }
+    if (bb4.bottom < world.bottom) {
+      y = world.bottom + hw2.y;
+    }
+  }
+
+  if (!x.isNpne()) {
+    sprite->setPosition(x.get(), pos.y);
+  }
+
+  if (!y.isNone()) {
+    sprite->setPosition(pos.x, y.get());
+  }
+}
 
 
-/** @alias module:s/move */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Move}  Move
-   */
-  Move : Move
-};
+NS_END(pong)
 
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
 

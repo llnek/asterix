@@ -9,141 +9,35 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/collide
- */
+#if !defined(__COLLIDE_H__)
+#define __COLLIDE_H__
 
-import sh from 'zotohlab/asx/asterix';
-import gnodes from 'n/gnodes';
-import ccsx from 'zotohlab/asx/ccsx';
+#include "core/XSystem.h"
+#include "EFactory.h"
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/**
- * @class Collide
- */
-Collide = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/collide~Collide
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.nodeList=null;
-    this.fauxs=null;
-    this.balls=null;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.fauxs= engine.getNodeList(gnodes.FauxPaddleNode);
-    this.nodeList= engine.getNodeList(gnodes.PaddleNode);
-    this.balls= engine.getNodeList(gnodes.BallNode);
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const bnode = this.balls.head;
+NS_BEGIN(pong)
 
-    if (this.state.running &&
-       !!bnode) {
-      this.checkNodes(this.nodeList, bnode);
-      this.checkNodes(this.fauxs, bnode);
-    }
-  },
-  /**
-   * @method checkNodes
-   * @private
-   */
-  checkNodes(nl, bnode) {
-    for (let node=nl.head; node; node=node.next) {
-      if (ccsx.collide0(node.paddle.sprite,
-                        bnode.ball.sprite)) {
-        this.check(node, bnode);
-      }
-    }
-  },
-  /**
-   * Ball hits paddle.
-   * @method check
-   * @private
-   */
-  check(node, bnode) {
-    let pos = bnode.ball.sprite.getPosition(),
-    bb4 = ccsx.bbox4(node.paddle.sprite),
-    velo = bnode.velocity,
-    x= pos.x,
-    y= pos.y,
-    hw2= ccsx.halfHW(bnode.ball.sprite);
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Collide : public f::XSystem<EFactory> {
 
-    if (ccsx.isPortrait()) {
-      velo.vel.y = - velo.vel.y;
-    } else {
-      velo.vel.x = - velo.vel.x;
-    }
+  virtual const a::SystemType typeId() { return "s/Collide"; }
 
-    if (node.paddle.color === csts.P1_COLOR) {
-      if (ccsx.isPortrait()) {
-        y=bb4.top + hw2[1];
-      } else {
-        x=bb4.right + hw2[0];
-      }
-    } else {
-      if (ccsx.isPortrait()) {
-        y = bb4.bottom - hw2[1];
-      } else {
-        x = bb4.left - hw2[0];
-      }
-    }
+  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual void addToEngine(not_null<a::Engine*>);
+  virtual int priority() { return a::Collide; }
+  virtual bool update(float);
 
-    bnode.ball.sprite.setPosition(x,y);
-    sh.sfxPlay(node.paddle.snd);
-  }
+  void checkNodes(a::NodeList*, a::Node*);
+  void check(a::Node*, a::Node*);
 
-}, {
+  virtual ~Collide() {}
+  NODFT(Collide)
+  NOCPYASS(Collide)
 
-/**
- * @memberof module:s/collide~Collide
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Collide
-});
-
-
-/** @alias module:s/collide */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Collide} Collide
-   */
-  Collide : Collide
 };
 
+NS_END(pong)
+#endif
 
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
 

@@ -9,35 +9,44 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/GNodes.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
-NS_USING(fusii)
-NS_USING(pong)
-NS_USING(ash)
+#if !defined(__NETPLAY_H__)
+#define __NETPLAY_H__
+
+//#include "x2d/GameScene.h"
+#include "x2d/XScene.h"
+#include "core/Odin.h"
+
+NS_ALIAS(ws, fusii::odin)
+NS_BEGIN(tttoe)
+
+typedef std::function<void (ws::OdinIO*, j::json)> NPCX_Yes;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
-
-  // step.1: register all ash::node factories here
-  auto r= NodeRegistry::self();
-
-  r->rego( mc_new(FauxPaddleNode));
-  r->rego( mc_new(PaddleNode));
-  r->rego( mc_new(BallNode));
-
-  // step.2: set up app-config
-  Config::reify();
-
-}
+struct CC_DLL NPCX : public f::SCTX {
+  NPCX(NPCX_Yes yes, VOIDFN no) {
+    this->yes=yes;
+    this->no=no;
+  }
+  NPCX_Yes yes;
+  VOIDFN no;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::~AppDelegate() {
-  //delete NodeRegistry::Self();
-  //delete XConfig::Self();
-}
+struct CC_DLL NetPlay : public f::XScene {
 
+  STATIC_REIFY_SCENE_CTX(NetPlay)
+
+  virtual void decorate();
+
+  virtual ~NetPlay() {}
+  NetPlay() {}
+
+  NOCPYASS(NetPlay)
+};
+
+
+NS_END(tttoe)
+#endif
 

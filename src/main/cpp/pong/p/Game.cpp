@@ -9,53 +9,55 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/odin
- * @requires zotohlab/asx/scenes
- * @requires n/cobjs
- * @requires s/sysobjs
- * @requires p/hud
- * @module p/game
- */
+#include "core/XConfig.h"
+#include "s/EFactory.h"
+#include "s/Resolve.h"
+#include "s/Collide.h"
+#include "s/Motion.h"
+#include "s/Move.h"
+#include "s/Net.h"
+#include "s/Stage.h"
+#include "core/CCSX.h"
+#include "core/Odin.h"
+#include "HUD.h"
+#include "Game.h"
+#include "Menu.h"
+//#include "End.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import odin from 'zotohlab/asx/odin';
-import cobjs from 'n/cobjs';
-import sobjs from 's/sysobjs';
-import huds from 'p/hud';
+NS_ALIAS(ws, fusii::odin)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(pong)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+BEGIN_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
 
-let evts= odin.Events,
-sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R= sjs.ramda,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class BackLayer */
-BackLayer = scenes.XLayer.extend({
-  setup() {
-    this.centerImage(sh.getImage('game.bg'));
-  },
-  rtti() { return 'BackLayer'; }
-}),
-//////////////////////////////////////////////////////////////////////////
-/** * @class GameLayer */
-GameLayer = scenes.XGameLayer.extend({
-  /**
-   * @method pkInput
-   * @protected
-   */
-  pkInput() {
-    ccsx.onKeyPolls(this.keyboard);
-  },
-  /**
-   * @method replay
-   */
+//////////////////////////////////////////////////////////////////////////////
+//
+
+struct CC_DLL GLayer : public f::GameLayer {
+
+  virtual void onTouchMoved(c::Touch*, c::Event*);
+  virtual void onMouseMove(c::Event*);
+
+  HUDLayer* getHUD() {
+    return static_cast<HUDLayer*>( getSceneX()->getLayer(3));
+  }
+
+  virtual int getIID() { return 2; }
+  virtual void decorate();
+
+  EFactory *factory;
+
+  virtual ~GLayer();
+  GLayer();
+  NOCPYASS(GLayer)
+
+  STATIC_REIFY_LAYER(GLayer)
+};
+/*
   replay() {
     sjs.loggr.debug('replay game called');
     if (sjs.isobj(this.options.wsock)) {
@@ -68,187 +70,181 @@ GameLayer = scenes.XGameLayer.extend({
     } else {
       this.play(false);
     }
-  },
-  /**
-   * @method play
-   */
-  play(newFlag) {
-    // sort out names of players
-    let p1ids,
-    p2ids;
-    sjs.eachObj((v,k) => {
-      if (v[0] === 1) {
-        p1ids= [k, v[1] ];
-      } else {
-        p2ids= [k, v[1] ];
-      }
-    }, this.options.ppids);
-
-    this.initEngine(sobjs.systems, sobjs.entityFactory);
-    this.reset(newFlag);
-    this.initPlayers();
-    this.getHUD().regoPlayers(csts.P1_COLOR,p1ids,
-                              csts.P2_COLOR,p2ids);
-
-    this.options.world = this.getEnclosureBox();
-    this.options.running=true;
-    this.options.poked=false;
-  },
-  /**
-   * @method onNewGame
-   * @private
-   */
-  onNewGame(mode) {
-    //sh.xcfg.sfxPlay('start_game');
-    this.setGameMode(mode);
-    this.play(true);
-  },
-  /**
-   * @method reset
-   */
-  reset(newFlag) {
-    if (!sjs.isempty(this.atlases)) {
-      sjs.eachObj( v => { v.removeAllChildren(); }, this.atlases);
-    } else {
-      this.regoAtlas('game-pics');
-      this.regoAtlas('lang-pics');
-    }
-    R.forEach( z => {
-      if (!!z) { z.dispose(); }
-    }, this.players);
-    if (newFlag) {
-      this.getHUD().resetAsNew();
-    } else {
-      this.getHUD().reset();
-    }
-    this.players.length=0;
-  },
-  /**
-   * @method operational
-   * @protected
-   */
-  operational() {
-    return this.options.running;
-  },
-  /**
-   * @method initPlayers
-   * @private
-   */
-  initPlayers() {
-    let p2cat, p1cat,
-    p2, p1;
-
-    switch (this.options.mode) {
-      case sh.gtypes.ONLINE_GAME:
-        p2cat = csts.NETP;
-        p1cat = csts.NETP;
-      break;
-      case sh.gtypes.P1_GAME:
-        p1cat= csts.HUMAN;
-        p2cat= csts.BOT;
-      break;
-      case sh.gtypes.P2_GAME:
-        p2cat= csts.HUMAN;
-        p1cat= csts.HUMAN;
-      break;
-    }
-    p1= new cobjs.Player(p1cat, csts.CV_X, 1, csts.P1_COLOR);
-    p2= new cobjs.Player(p2cat, csts.CV_O, 2, csts.P2_COLOR);
-    this.options.players = [null, p1, p2];
-    this.options.colors={};
-    this.options.colors[csts.P1_COLOR] = p1;
-    this.options.colors[csts.P2_COLOR] = p2;
-  },
-  /**
-   * Scores is a map {'o': 0, 'x': 0}
-   * @method updatePoints
-   * @private
-   */
-  updatePoints(scores) {
-    this.getHUD().updateScores(scores);
-  },
-  /**
-   * @method onWinner
-   * @private
-   */
-  onWinner(p,score) {
-    this.getHUD().updateScore(p,score || 1);
-    const rc= this.getHUD().isDone();
-    if (rc[0]) {
-      this.doDone( rc[1] );
-    } else {
-    }
-  },
-  /**
-   * @method doDone
-   * @private
-   */
-  doDone(p) {
-    this.getHUD().drawResult(p);
-    this.getHUD().endGame();
-    //this.removeAll();
-    sh.sfxPlay('game_end');
-    this.options.running=false;
-  },
-  /**
-   * @method getEnclosureBox
-   * @private
-   */
-  getEnclosureBox() {
-    return ccsx.vbox();
   }
+*/
 
-});
-
-/** @alias module:p/game */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti: sh.ptypes.game,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    const scene = new scenes.XSceneFactory([
-      BackLayer,
-      GameLayer,
-      huds.HUDLayer
-    ]).reify(options);
-
-    scene.onmsg('/hud/showmenu', msg => {
-      scenes.showMenu();
-    }).
-    onmsg('/game/restart', msg => {
-      sh.main.play(false);
-    }).
-    onmsg('/game/stop', msg => {
-    }).
-    onmsg('/hud/replay', msg => {
-      sh.main.replay();
-    }).
-    onmsg('/hud/score/update', msg => {
-      sh.main.onWinner(msg.color, msg.score);
-    }).
-    onmsg('/hud/score/sync', msg => {
-      sh.main.updatePoints(msg.points);
-    }).
-    onmsg('/hud/end', msg => {
-      sh.main.doDone(msg.winner);
-    });
-
-    return scene;
-  }
-};
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void GLayer::decorate() {
+  centerImage("game.bg");
+  cx::resumeAudio();
+  enableListeners();
+  deco();
+  scheduleUpdate();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::deco() {
+
+  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+
+  if (atlases.empty()) {
+    regoAtlas("game-pics");
+    regoAtlas("lang-pics");
+    incIndexZ();
+  }
+
+  auto ctx = (GCXX*) getSceneX()->getCtx();
+  auto ppids = ctx->data["ppids"];
+  auto pnum= ctx->data["pnum"];
+  auto p1c= CC_CSS("P1_COLOR");
+  auto p2c= CC_CSS("P2_COLOR");
+  sstr p1k;
+  sstr p2k;
+  sstr p1n;
+  sstr p2n;
+  J__LOOP(it, ppids) {
+    auto &arr=  it.value() ;
+    if (JS_INT(arr[0]) == 1) {
+      p1n= JS_STR(arr[1]);
+      p1k= it.key();
+    } else {
+      p2n= JS_STR(arr[1]);
+      p2k= it.key();
+    }
+  }
+
+  CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
+
+  auto e = mc_new(a::Engine);
+  auto d = CC_DICT();
+  auto f = new EFactory(e, d);
+
+  CC_DROP(this->options)
+  this->options= d;
+  this->engine = e;
+  this->factory=f;
+  CC_KEEP(d)
+
+  //f->reifyBoard();
+
+  e->regoSystem(new Resolve(f, d));
+  e->regoSystem(new Collide(f, d));
+  e->regoSystem(new Move(f, d));
+  e->regoSystem(new Motion(f, d));
+  e->regoSystem(new Net(f, d));
+  e->regoSystem(new Stage(f, d));
+  e->forceSync();
+
+  initPlayers();
+
+  getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
+  getHUD()->reset();
+
+  this->options->setObject(CC_BOOL(false), "poked");
+  this->options->setObject(CC_INT(pnum), "pnum");
+  CCLOG("init-game - ok");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::initPlayers() {
+
+  int p1cat,p2cat;
+
+  switch (MGMS()->getMode()) {
+    case f::GMode::NET:
+      p2cat = CC_CSV(c::Integer, "NETP");
+      p1cat = CC_CSV(c::Integer, "NETP");
+    break;
+    case f::GMode::ONE:
+      p1cat= CC_CSV(c::Integer, "HUMAN");
+      p2cat= CC_CSV(c::Integer, "BOT");
+    break;
+    case f::GMode::TWO:
+      p2cat= CC_CSV(c::Integer, "HUMAN");
+      p1cat= CC_CSV(c::Integer, "HUMAN");
+    break;
+  }
+
+  p1= new cobjs.Player(p1cat, csts.CV_X, 1, csts.P1_COLOR);
+  p2= new cobjs.Player(p2cat, csts.CV_O, 2, csts.P2_COLOR);
+  this.options.players = [null, p1, p2];
+  this.options.colors={};
+  this.options.colors[csts.P1_COLOR] = p1;
+  this.options.colors[csts.P2_COLOR] = p2;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::updatePoints(scores) {
+  getHUD()->updateScores(scores);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onWinner(p, int score) {
+  getHUD()->updateScore(p,score);
+  int win=0;
+  if (getHUD()->isDone(&win)) {
+    doDone( win);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::doDone(p) {
+  getHUD()->drawResult(p);
+  getHUD()->endGame();
+  //this.removeAll();
+  sh.sfxPlay("game_end");
+  stop();
+}
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+const f::Box4 Game::getEnclosureBox() {
+  return cx::visBox();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
+
+  auto y = (GLayer*) getLayer(3);
+  if (topic == "/hud/showmenu") {
+    y->showMenu();
+  }
+  else
+  if (topic == "/game/restart") {
+    //play();
+  }
+  else
+  if (topic == "/game/stop") {
+  }
+  else
+  if (topic == "/hud/replay") {
+    y->replay();
+  }
+  else
+  if (topic == "/hud/score/update") {
+    y->onWinner(msg.color, msg.score);
+  }
+  if ("/hud/score/sync") {
+    y->updatePoints(msg.points);
+  }
+  else
+  if (topic == "/hud/end") {
+    y->doDone(msg.winner);
+  }
+
+}
+
+
+
+
+
+NS_END(pong)
 

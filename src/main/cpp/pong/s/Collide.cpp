@@ -9,141 +9,93 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/collide
- */
+#include "Collide.h"
 
-import sh from 'zotohlab/asx/asterix';
-import gnodes from 'n/gnodes';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_BEGIN(pong)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/**
- * @class Collide
- */
-Collide = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/collide~Collide
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.nodeList=null;
-    this.fauxs=null;
-    this.balls=null;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.fauxs= engine.getNodeList(gnodes.FauxPaddleNode);
-    this.nodeList= engine.getNodeList(gnodes.PaddleNode);
-    this.balls= engine.getNodeList(gnodes.BallNode);
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const bnode = this.balls.head;
+//////////////////////////////////////////////////////////////////////////////
+//
+Collide::Collide(not_null<EFactory*> f, not_null<c::Dictionary*> o)
+: XSystem<EFactory>(f,o) {
 
-    if (this.state.running &&
-       !!bnode) {
-      this.checkNodes(this.nodeList, bnode);
-      this.checkNodes(this.fauxs, bnode);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::addToEngine(not_null<a::Engine*> e) {
+  FauxPaddleNode f;
+  fauxs= e->getNodeList(f.typeId());
+  PaddleNode p;
+  nodeList= e->getNodeList(p.typeId());
+  BallNode b;
+  balls= e->getNodeList(b.typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Collide::update(float dt) {
+  auto bnode = balls->head;
+
+  if (MGMS()->isLive()) {
+    checkNodes(nodeList, bnode);
+    checkNodes(fauxs, bnode);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::checkNodes(a::NodeList *nl, a::Node *bnode) {
+  auto ball = CC_GNF(Ball,bnode,"ball");
+  for (auto node=nl->head; node; node=node->next) {
+    if (cx::collide(CC_GNF(Paddle,node, "paddle"), ball)) {
+      check(node, bnode);
     }
-  },
-  /**
-   * @method checkNodes
-   * @private
-   */
-  checkNodes(nl, bnode) {
-    for (let node=nl.head; node; node=node.next) {
-      if (ccsx.collide0(node.paddle.sprite,
-                        bnode.ball.sprite)) {
-        this.check(node, bnode);
-      }
-    }
-  },
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
   /**
    * Ball hits paddle.
    * @method check
    * @private
    */
-  check(node, bnode) {
-    let pos = bnode.ball.sprite.getPosition(),
-    bb4 = ccsx.bbox4(node.paddle.sprite),
-    velo = bnode.velocity,
-    x= pos.x,
-    y= pos.y,
-    hw2= ccsx.halfHW(bnode.ball.sprite);
+void Collide::check(a::Node *node, a::Node *bnode) {
+  auto velo = CC_GNF(Velocity, bnode, "velocity");
+  auto pad = CC_GNF(Paddle,node,"paddle");
+  auto ball = CC_GNF(Ball,bnode,"ball");
+  auto pos = ball->getPos();
+  auto bb4 = cx::bbox4(pad->sprite);
+  auto x= pos.x,
+  auto y= pos.y,
+  auto hw2= cx::halfHW(ball->sprite);
 
-    if (ccsx.isPortrait()) {
-      velo.vel.y = - velo.vel.y;
-    } else {
-      velo.vel.x = - velo.vel.x;
-    }
-
-    if (node.paddle.color === csts.P1_COLOR) {
-      if (ccsx.isPortrait()) {
-        y=bb4.top + hw2[1];
-      } else {
-        x=bb4.right + hw2[0];
-      }
-    } else {
-      if (ccsx.isPortrait()) {
-        y = bb4.bottom - hw2[1];
-      } else {
-        x = bb4.left - hw2[0];
-      }
-    }
-
-    bnode.ball.sprite.setPosition(x,y);
-    sh.sfxPlay(node.paddle.snd);
+  if (cx::isPortrait()) {
+    velo->vel.y = - velo->vel.y;
+  } else {
+    velo->vel.x = - velo->vel.x;
   }
 
-}, {
+  if (pad->color == CC_CSS("P1_COLOR")) {
+    if (cx::isPortrait()) {
+      y=bb4.top + hw2.y;
+    } else {
+      x=bb4.right + hw2.x;
+    }
+  } else {
+    if (cx::isPortrait()) {
+      y = bb4.bottom - hw2.y;
+    } else {
+      x = bb4.left - hw2.x;
+    }
+  }
 
-/**
- * @memberof module:s/collide~Collide
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Collide
-});
-
-
-/** @alias module:s/collide */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Collide} Collide
-   */
-  Collide : Collide
-};
+  ball->setPos(x,y);
+  cx::sfxPlay(pad->snd);
+}
 
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(pong)
+
 

@@ -9,161 +9,178 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/scenes
- * @module p/mmenu
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "core/odin.h"
+#include "x2d/XLib.h"
+#include "NetPlay.h"
+#include "Menu.h"
+#include "Game.h"
+#include "n/GNodes.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_ALIAS(ws, fusii::odin)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(pong)
 
-
-let SEED= { ppids: { }, pnum: 1, mode: 0 },
-sjs= sh.skarojs,
-xcfg = sh.xcfg,
-R=sjs.ramda,
-csts= xcfg.csts,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class MainMenuLayer */
-MainMenuLayer = scenes.XMenuLayer.extend({
-  /**
-   * @method title
-   * @private
-   */
-  title() {
-    const wb=ccsx.vbox(),
-    cw= ccsx.center(),
-    tt=ccsx.bmfLabel({
-      fontPath: sh.getFont('font.JellyBelly'),
-      text: sh.l10n('%mmenu'),
-      pos: cc.p(cw.x, wb.top * 0.9),
-      color: cc.color('#EDFF90'),
-      scale: xcfg.game.scale
-    });
-    this.addItem(tt);
-  },
-  /**
-   * @method onplaynet
-   * @private
-   */
-  onplaynet(msg) {
-    const net = sh.protos[sh.ptypes.online],
-    game = sh.protos[sh.ptypes.game],
-    mm = sh.protos[sh.ptypes.mmenu];
+//
+BEGIN_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL UILayer : public f::XLayer {
 
-    msg.onback=() => {
-      ccsx.runScene( mm.reify());
-    };
-    msg.yes= (wss,pnum,startmsg) => {
-      const m= sjs.mergeEx(R.omit(['yes','onback'], msg),
-                           { wsock: wss, pnum: pnum });
-      m.ppids = startmsg.ppids;
-      ccsx.runScene( game.reify(m));
-    }
-    ccsx.runScene(net.reify(msg));
-  },
-  /**
-   * @method onplay
-   * @private
-   */
-  onplay(msg) {
-    ccsx.runScene(sh.protos[sh.ptypes.game].reify(msg));
-  },
-  /**
-   * @method setup
-   * @protected
-   */
-  setup() {
-    this.centerImage(sh.getImage('gui.mmenu.menu.bg'));
-    this.title();
-    const color= cc.color('#32baf4'),
-    cw= ccsx.center(),
-    wb= ccsx.vbox(),
-    p={},
-    menu = ccsx.vmenu([
-      { nnn: '#online.png',
-        target: this,
-        cb() {
-          this.onplaynet(sjs.mergeEx(SEED,
-                                     {mode: sh.gtypes.ONLINE_GAME }));
-        }
-      },
-      { nnn: '#player2.png',
-        target: this,
-        cb() {
-          p[ sh.l10n('%p1') ] = [ 1, sh.l10n('%player1') ];
-          p[ sh.l10n('%p2') ] = [ 2, sh.l10n('%player2') ];
-          this.onplay(sjs.mergeEx(SEED,
-                                  {ppids: p,
-                                   mode: sh.gtypes.P2_GAME }));
-        }
-      },
-      { nnn: '#player1.png',
-        target: this,
-        cb() {
-          p[ sh.l10n('%cpu') ] = [ 2, sh.l10n('%computer') ];
-          p[ sh.l10n('%p1') ] = [ 1,  sh.l10n('%player1') ];
-          this.onplay(sjs.mergeEx(SEED,
-                                  { ppids: p,
-                                    mode: sh.gtypes.P1_GAME }));
-        }
-      }], { pos: cw });
-    this.addItem(menu);
+  STATIC_REIFY_LAYER(UILayer)
 
-    this.mkBackQuit(false, [
-      { nnn: '#icon_back.png',
-        color: color,
-        cb() {
-          this.options.onback();
-        },
-        target: this },
-      { nnn: '#icon_quit.png',
-        color: color,
-        cb() { this.onQuit(); },
-        target: this }
-    ],
-    (m,z) => {
-      m.setPosition(wb.left + csts.TILE + z.width * 1.1,
-                    wb.bottom + csts.TILE + z.height * 0.45);
-    });
+  virtual void decorate();
 
-    this.mkAudio({
-      pos: cc.p(wb.right - csts.TILE,
-                wb.bottom + csts.TILE),
-      color: color,
-      anchor: ccsx.acs.BottomRight
-    });
-  }
+  virtual ~UILayer() {}
+  UILayer() {}
 
-});
+  void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
+  void onPlay3(c::Ref*);
+  void onPlay2(c::Ref*);
+  void onPlay1(c::Ref*);
+  void onBack(c::Ref*);
+  void onQuit(c::Ref*);
 
-/** @alias zotohlab/p/mmenu */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.mmenu,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    return new scenes.XSceneFactory([
-      MainMenuLayer
-    ]).reify(options);
-  }
+  NOCPYASS(UILayer)
 };
 
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void UILayer::decorate() {
+  auto tile = CC_CSV(c::Integer,"TILE");
+  auto nil = CC_CSV(c::Integer,"CV_Z");
+  auto c = XCFG()->getColor("default");
+  auto wb = cx::visBox();
+  auto cw = cx::center();
+  auto lb = cx::reifyBmfLabel(
+      cw.x,
+      wb.top * 0.9f,
+      "font.JellyBelly",
+      XCFG()->getL10NStr("mmenu"));
+
+  centerImage("gui.mmenu.menu.bg");
+  incIndexZ();
+
+  lb->setScale(XCFG()->getScale());
+  lb->setColor(c);
+  addItem(lb);
+
+  auto b1 = cx::reifyMenuBtn("online.png");
+  b1->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onPlay3));
+
+  auto b2 = cx::reifyMenuBtn("player2.png");
+  b2->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onPlay2));
+
+  auto b3 = cx::reifyMenuBtn("player1.png");
+  b3->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onPlay1));
+
+  auto menu= cx::mkVMenu(
+      s_vec<c::MenuItem*> {b1,b2,b3});
+  menu->setPosition(cw);
+  addItem(menu);
+
+  // back-quit button
+  auto back= cx::reifyMenuBtn("icon_back.png");
+  back->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onBack));
+  back->setColor(c);
+
+  auto quit= cx::reifyMenuBtn("icon_quit.png");
+  quit->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onQuit));
+  quit->setColor(c);
+
+  auto m2= cx::mkHMenu(
+      s_vec<c::MenuItem*> {back, quit} );
+  auto sz= back->getContentSize();
+
+  m2->setPosition(wb.left+tile+sz.width*1.1f,
+                  wb.bottom+tile+sz.height*0.45f);
+  addItem(m2);
+
+  // audio
+  auto audios= cx::reifyAudioIcons();
+  audios[0]->setColor(c);
+  audios[1]->setColor(c);
+
+  addAudioIcons(this, audios,
+      cx::anchorBR(),
+      c::Vec2(wb.right-tile, wb.bottom+tile));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onPlay3(c::Ref *r) {
+  // ye
+  auto y= [=](ws::OdinIO* io, j::json obj) {
+    this->onPlayXXX(f::GMode::NET, io, obj);
+  };
+  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
+  // no
+  auto f= [=]() {
+    cx::runScene(XCFG()->prelude(), dx);
+  };
+  auto n= [=]() {
+    cx::runScene(
+        MMenu::reify(mc_new_1(MCX,f)), dx);
+  };
+
+  cx::runScene(
+      NetPlay::reify( mc_new_2(NPCX, y,n)), dx);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onPlay2(c::Ref *) {
+  auto m= f::GMode::TWO;
+  onPlayXXX(m, nullptr, fmtGameData(m));
+}
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onPlay1(c::Ref *) {
+  auto m= f::GMode::ONE;
+  onPlayXXX(m, nullptr, fmtGameData(m));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
+  cx::runScene(
+      Game::reify(mc_new_3(GCXX, mode, io, obj)),
+      CC_CSV(c::Float, "SCENE_DELAY"));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onBack(c::Ref*) {
+  auto ctx = (MCX*) getSceneX()->getCtx();
+  ctx->back();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onQuit(c::Ref*) {
+  cx::runScene(
+      XCFG()->prelude(),
+      CC_CSV(c::Float,"SCENE_DELAY"));
+}
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+void MMenu::decorate() {
+  UILayer::reify(this);
+}
+
+
+NS_END(pong)
+
+
+
+
 

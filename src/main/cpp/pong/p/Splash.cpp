@@ -9,101 +9,62 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/scenes
- * @requires zotohlab/asx/ccsx
- * @module p/splash
- */
+#include "Splash.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_BEGIN(pong)
 
-
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class SplashLayer */
-SplashLayer = scenes.XLayer.extend({
-  /**
-   * @method title
-   * @private
-   */
-  title() {
-    const cw = ccsx.center(),
-    wb = ccsx.vbox();
-    this.addFrame('#title.png',
-                  cc.p(cw.x, wb.top * 0.9));
-  },
-  /**
-   * @method btns
-   * @private
-   */
-  btns() {
-    const cw = ccsx.center(),
-    wb = ccsx.vbox(),
-    menu = ccsx.vmenu([{
-      nnn: '#play.png',
-      target: this,
-      cb() {
-        this.onplay();
-      }
-    }],
-    { pos: cc.p(cw.x, wb.top * 0.1) });
-    this.addItem(menu);
-  },
-  /**
-   * @method onplay
-   * @private
-   */
-  onplay() {
-    const ss= sh.protos[sh.ptypes.start],
-    mm= sh.protos[sh.ptypes.mmenu];
-
-    ccsx.runScene( mm.reify({
-      onback() { ccsx.runScene( ss.reify() ); }
-    }));
-  },
-  /**
-   * @method setup
-   * @protected
-   */
-  setup() {
-    this.centerImage(sh.getImage('game.bg'));
-    this.title();
-    this.btns();
-  }
-
-});
-
-/** @alias module:p/splash */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.start,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    return new scenes.XSceneFactory([
-      SplashLayer
-    ]).reify(options);
-  }
-
+//////////////////////////////////////////////////////////////////////////////
+//
+BEGIN_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL UILayer : public f::XLayer {
+  STATIC_REIFY_LAYER(UILayer)
+  virtual ~UILayer() {}
+  UILayer() {}
+  NOCPYASS(UILayer)
+  virtual void decorate();
 };
 
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void UILayer::decorate() {
+  auto cw = cx::center();
+  auto wb = cx::visBox();
+
+  centerImage("game.bg");
+
+  addFrame("title.png",
+      c::ccp(cw.x, wb.top * 0.9f));
+
+  auto b = cx::reifyMenuBtn("play.png");
+  auto menu = cx::mkMenu(b);
+  b->setTarget(this,
+      CC_MENU_SELECTOR(UILayer::onPlay));
+  menu->setPosition(cw.x, wb.top * 0.1f);
+  addItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void UILayer::onPlay() {
+  auto f = [=]() {
+    cx::runScene(XCFG()->prelude(),
+        CC_CSV(c::Float,"SCENE_DELAY"));
+  };
+  cx::runScene(MMenu::reify(mc_new_1(MCX,f)),
+      CC_CSV(c::Float,"SCENE_DELAY"));
+}
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::decorate() {
+  UILayer::reify(this);
+}
+
+
+
+
+NS_END(pong)
 

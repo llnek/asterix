@@ -28,73 +28,58 @@ owner<Config*> Config::reify() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
+
+  addCst("BALL_SPEED", CC_FLOAT(150.0f)); // 25 increment
+  addCst("PADDLE_SPEED", CC_FLOAT(200.0f));
+  addCst("NUM_POINTS", CC_INT(4));
+
+  addCst("GRID_W", CC_INT(40));
+  addCst("GRID_H", CC_INT(60));
+
+  addColor("default", CC_STR("#edff90"));
+  addColor("text", CC_STR("#32baf4"));
+  addColor("hud", CC_STR("#ffffff"));
+
   addCst("syncMillis", CC_INT(3000));
-
-    BALL_SPEED: 150, // 25 incremental
-    PADDLE_SPEED: 200, // 300
-    NUM_POINTS: 4,
-
-    GRID_W: 40,
-    GRID_H: 60
 }
 
-  assets: {
-    atlases: {
-      'lang-pics' : 'res/{{appid}}/l10n/{{lang}}/images',
-      'game-pics' : 'res/{{appid}}/pics/images'
-    },
-    tiles: {
-    },
-    images: {
-      'gui.mmenu.menu.bg' : 'res/{{appid}}/pics/bg.png',
-      'game.bg' : 'res/{{appid}}/pics/bg.png'
-    },
-    sounds: {
-      'game_end' : 'res/cocos2d/sfx/MineExplosion',
-      'x_hit' : 'res/cocos2d/sfx/ElevatorBeep',
-      'o_hit' : 'res/cocos2d/sfx/MineBeep' ,
-      'game_quit' : 'res/cocos2d/sfx/Death'
-    },
-    fonts: {
-      'font.SmallTypeWriting' : [ 'res/cocos2d/fon/{{lang}}', 'SmallTypeWriting.png', 'SmallTypeWriting.fnt' ],
-      'font.AutoMission' : [ 'res/cocos2d/fon/{{lang}}', 'AutoMission.png', 'AutoMission.fnt' ],
-      'font.Subito' : [ 'res/cocos2d/fon/{{lang}}', 'Subito.png', 'Subito.fnt' ],
-      'font.CoffeeBuzzed' : [ 'res/cocos2d/fon/{{lang}}', 'CoffeeBuzzed.png', 'CoffeeBuzzed.fnt' ]
-    }
-  },
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initAssets() {
 
-  game: {
-    sd: {width:320, height: 480}
-  },
+  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  levels: {
-    "1" : {
-      'tiles' : {
-        //'arena' : 'game/{{appid}}/levels/arena.tmx'
-      },
-      'images' : {
-        //'p.paddle2' : 'res/{{appid}}/pics/green_paddle.png',
-        //'p.paddle1' : 'res/{{appid}}/pics/red_paddle.png',
-        //'ball' : 'res/{{appid}}/pics/pongball.png',
-        //'arena' : 'game/{{appid}}/levels/arena.png'
-      },
-      'sprites' : {
-      }
-    }
-  },
+  addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
+  addImage("game.bg", CC_STR("pics/bg.png"));
 
-  handleResolution(rs) {
-    //for default font, we use 48pt
-    this.game.scale = 52/256 * rs.width /320;
-  },
+  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
+  addEffect("x_hit", CC_STR("sfx/ElevatorBeep.mp3"));
+  addEffect("o_hit", CC_STR("sfx/MineBeep.mp3"));
+  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
 
-  runOnce() {
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('game-pics'));
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('lang-pics'));
-  }
+  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-});
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::handleResolution(const c::Size &rs) {
+  //for default font, we use 48pt
+  scale = 52.0f / 256 * rs.width /320.0f;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::runOnce() {
+  auto g= c::spriteFrameCache::getInstance();
+  g->addSpriteFrames( "game-pics");
+
+  g->addSpriteFrames( "lang-pics");
+}
 
 
 NS_END(pong)
