@@ -22,42 +22,54 @@ NS_BEGIN(pong)
 //
 struct CC_DLL BallNode : public a::NodeFactory {
 
-  virtual const NodeType typeId() { return "n/BallNode"; }
-  virtual owner<Node*> reifyNode() {
+  virtual const a::NodeType typeId() { return "n/BallNode"; }
+  virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "velocity", "n/Velocity" },
         {"ball", "n/Ball" }
     });
   }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL FauxPaddleNode : public a::NodeFactory {
 
-  virtual const NodeType typeId() { return "n/FauxPaddleNode"; }
-  virtual owner<Node*> reifyNode() {
+  virtual const a::NodeType typeId() { return "n/FauxPaddleNode"; }
+  virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         {"lastpos", "n/Position" },
         {"paddle", "n/Paddle" },
         {"faux", "n/Faux" },
         {"player" , "n/Player" }
     });
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL PaddleNode : public a::NodeFactory {
 
-  virtual const NodeType typeId() { return "n/PaddleNode"; }
-  virtual owner<Node*> reifyNode() {
+  virtual const a::NodeType typeId() { return "n/PaddleNode"; }
+  virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
       {"lastpos" , "n/Position" },
       {"motion", "n/Motion" },
       {"paddle" , "n/Paddle" },
       {"player" , "n/Player" }
     });
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ArenaNode : public a::NodeFactory {
+
+  virtual const a::NodeType typeId() { return "n/ArenaNode"; }
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+      {"players" , "n/Players" }
+    });
+  }
 };
 
 

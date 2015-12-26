@@ -12,9 +12,7 @@
 #if !defined(__XSYSTEM_H__)
 #define __XSYSTEM_H__
 
-#include "x2d/GameScene.h"
 #include "ash/System.h"
-#include "core/JSON.h"
 #include "Factory.h"
 NS_BEGIN(fusii)
 
@@ -23,45 +21,19 @@ NS_BEGIN(fusii)
 template<typename F> class CC_DLL XSystem : public a::System {
 protected:
 
-  XSystem(not_null<F*>, not_null<c::Dictionary*>);
+  XSystem(not_null<F*> f) { factory=f;  }
 
-  void sendEx(const MsgTopic &t, j::json m) {
-    MGMS()->sendMsgEx(t, &m);
-  }
-
-  void send(const MsgTopic &t) {
-    MGMS()->sendMsg(t);
-  }
-
-  c::Dictionary *state=nullptr;
   F *factory=nullptr;
   bool inited=false;
 
-  NOCPYASS(XSystem)
-  NODFT(XSystem)
-
 public:
 
-  virtual ~XSystem();
+  virtual ~XSystem() {}
+  NODFT(XSystem)
+  NOCPYASS(XSystem)
+
 };
 
-//////////////////////////////////////////////////////////////////////////
-//
-template<typename F>
-XSystem<F>::XSystem(not_null<F*> f, not_null<c::Dictionary*> d) {
-
-  inited=false;
-  CC_KEEP(d)
-  factory=f;
-  state=d;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-template<typename F>
-XSystem<F>::~XSystem() {
-  CC_DROP(state)
-}
 
 NS_END(fusii)
 #endif

@@ -29,18 +29,26 @@ owner<Config*> Config::reify() {
 //
 void Config::initCsts() {
 
-  addCst("BALL_SPEED", CC_FLOAT(150.0f)); // 25 increment
-  addCst("PADDLE_SPEED", CC_FLOAT(200.0f));
-  addCst("NUM_POINTS", CC_INT(4));
-
-  addCst("GRID_W", CC_INT(40));
-  addCst("GRID_H", CC_INT(60));
-
   addColor("default", CC_STR("#edff90"));
   addColor("text", CC_STR("#32baf4"));
   addColor("hud", CC_STR("#ffffff"));
 
+  addCst("GRID_W", CC_INT(40));
+  addCst("GRID_H", CC_INT(60));
+
   addCst("syncMillis", CC_INT(3000));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initLevels() {
+  auto d= getLevel("1");
+  auto j= j::json({
+        {"PADDLE+SPEED",  200.0f},
+        {"BALL+SPEED",  150.0f},
+        {"NUM+POINTS",  4}
+      });
+  d->setObject(f::JsonObj::create(j), CFG);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,6 +70,13 @@ void Config::initAssets() {
   addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
   addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
   addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+
+  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
 

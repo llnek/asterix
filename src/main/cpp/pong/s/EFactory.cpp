@@ -19,28 +19,6 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EFactory::EFactory(not_null<a::Engine*> e, not_null<c::Dictoryary*> o)
-  : Factory(e, o) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void EFactory::createPaddles() {
-
-    createOnePaddle(layer, options.players[1],
-                         options.p1,
-                         options.paddle.speed,
-                         options);
-
-    createOnePaddle(layer, options.players[2],
-                         options.p2,
-                         options.paddle.speed,
-                         options);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 a::Entity* createBall(float x, float y) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["ball+speed"]);

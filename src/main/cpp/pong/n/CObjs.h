@@ -19,6 +19,7 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ball : public f::ComObj {
+  virtual const a::COMType typeId() { return "n/Ball"; }
   Ball(c::Sprite *s, float v)
     : ComObj(s) {
     speed=v;
@@ -39,13 +40,6 @@ struct CC_DLL Motion : public a::Component {
 struct CC_DLL Paddle : public f::ComObj {
 private:
 
-  void onColor(const s_arr<int,2> &cs, const sstr &snd) {
-    s::copy(cs.begin(), cs.end(), this->kcodes.begin());
-    this->snd= snd;
-  }
-
-public:
-
   const s_arr<int,2> p1Keys() {
     return cx::isPortrait()
       ? s_arr<int,2> {KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ALLOW}
@@ -58,6 +52,13 @@ public:
       : s_arr<int,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
   }
 
+  void onColor(const s_arr<int,2> &cs, const sstr &snd) {
+    s::copy(cs.begin(), cs.end(), this->kcodes.begin());
+    this->snd= snd;
+  }
+
+public:
+
   Paddle(c::Sprite *s, const sstr &color, float v) : ComObj(s) {
 
     if (color == CC_CSS("P1_COLOR")) {
@@ -69,6 +70,8 @@ public:
     this->color= color;
     this->speed=v;
   }
+
+  virtual const a::COMType typeId() { return "n/Paddle"; }
 
   s_arr<int,2> kcodes;
   float speed=0;
@@ -99,16 +102,22 @@ struct CC_DLL Player : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Faux : public a::Component {
+struct CC_DLL Players : public a::Component {
+  virtual const a::COMType typeId() { return "n/Players"; }
+  s_arr<Player,3> parr;
+};
 
-  virtual const COMType typeId() { return "n/Faux"; }
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Faux : public a::Component {
+  virtual const a::COMType typeId() { return "n/Faux"; }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Position : public a::Component {
 
-  virtual const COMType typeId() { return "n/Position"; }
+  virtual const a::COMType typeId() { return "n/Position"; }
 
   Position(float lp) {
     lastP= lp;
@@ -117,20 +126,6 @@ struct CC_DLL Position : public a::Component {
   int lastDir = 0;
   float lastP= 0;
 
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Velocity : public a::Component {
-
-  virtual const COMType typeId() { return "n/Velocity"; }
-
-  Velocity(float vx, float vy) {
-    vel.x = vx;
-    vel.y = vy;
-  }
-
-  c::Vel2 vel;
 };
 
 

@@ -20,11 +20,11 @@ NS_BEGIN(pong)
 //
 struct CC_DLL EFactory : public f::Factory {
 
-  EFactory(not_null<a::Engine*> e, not_null<c::Dictionary*>);
-
   a::Entity* createOnePaddle(Player*, int pnum, float x, float y);
   a::Entity* createBall(float x, float y);
-  a::Entity* createPaddles();
+  a::Entity* createArena();
+
+  EFactory(not_null<a::Engine*> e) : Factory(e) {}
 
   virtual EFactory() {}
   NODFT(EFactory)
