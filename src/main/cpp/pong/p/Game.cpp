@@ -36,15 +36,10 @@ BEGIN_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
 struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onTouchMoved(c::Touch*, c::Event*);
   virtual void onMouseMove(c::Event*);
-
-  HUDLayer* getHUD() {
-    return static_cast<HUDLayer*>( getSceneX()->getLayer(3));
-  }
 
   virtual int getIID() { return 2; }
   virtual void decorate();
@@ -55,6 +50,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   GLayer();
   NOCPYASS(GLayer)
 
+  DECL_GETLAYER(HUDLayer,getHUD,3)
   STATIC_REIFY_LAYER(GLayer)
 };
 /*
@@ -118,23 +114,19 @@ void GLayer::deco() {
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 
   auto e = mc_new(a::Engine);
-  auto d = CC_DICT();
-  auto f = new EFactory(e, d);
+  auto f = mc_new_1(EFactory, e);
 
-  CC_DROP(this->options)
-  this->options= d;
   this->engine = e;
   this->factory=f;
-  CC_KEEP(d)
 
   //f->reifyBoard();
 
-  e->regoSystem(new Resolve(f, d));
-  e->regoSystem(new Collide(f, d));
-  e->regoSystem(new Move(f, d));
-  e->regoSystem(new Motion(f, d));
-  e->regoSystem(new Net(f, d));
-  e->regoSystem(new Stage(f, d));
+  e->regoSystem(mc_new_1(Resolve, f));
+  e->regoSystem(mc_new_1(Collide, f));
+  e->regoSystem(mc_new_1(Move, f));
+  e->regoSystem(mc_new_1(Motion, f));
+  e->regoSystem(mc_new_1(Net, f));
+  e->regoSystem(mc_new_1(Stage, f));
   e->forceSync();
 
   initPlayers();

@@ -23,6 +23,9 @@ NS_BEGIN(fusii)
 class CC_DLL GameLayer : public XLayer {
 protected:
 
+  virtual void onKeyReleased(KEYCODE k, c::Event*);
+  virtual void onKeyPressed(KEYCODE k, c::Event*);
+
   virtual void update(float);
 
   void disableListeners();
@@ -33,9 +36,6 @@ protected:
   a::Engine *engine=nullptr;
   bool _mouseEnabled=false;
   s_arr<bool, 256> keys;
-
-  virtual void onKeyReleased(KEYCODE k, c::Event*);
-  virtual void onKeyPressed(KEYCODE k, c::Event*);
 
   virtual void onMouseScroll(c::Event*);
   virtual void onMouseDown(c::Event*);
@@ -54,7 +54,8 @@ public:
   NOCPYASS(GameLayer)
 };
 
-
+#define DECL_GETLAYER(T,n,x) \
+  T* n() { return static_cast<T*>(getSceneX()->getLayer(x)); }
 
 
 
