@@ -84,19 +84,27 @@ public:
 //
 struct CC_DLL Player : public a::Component {
 
-  Player(int category, int value, int id, const sstr &color) {
-    this->color= color;
-    this->pnum=id;
+  Player(int category, int value, int pnum, const sstr &color) {
     this->category= category;
+    this->color= color;
+    this->pnum=pnum;
     this->value= value;
   }
 
   virtual const a::COMType typeId() { return "n/Player"; }
 
+  setName(const sstr &id, const sstr &name) {
+     this->pid=id;
+     this->name=name;
+  }
+
   int category=0;
   int pnum=0;
   int value=0;
   sstr color;
+
+  sstr pid
+  sstr name;
 
 };
 

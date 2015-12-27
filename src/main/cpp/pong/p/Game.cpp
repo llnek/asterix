@@ -81,6 +81,24 @@ void GLayer::decorate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::ignite() {
+  auto ctx = (GCXX*) getSceneX()->getCtx();
+  auto e = mc_new(a::Engine);
+  auto f = mc_new_1(EFactory, e);
+  this->engine = e;
+  this->factory=f;
+
+  e->regoSystem(mc_new_1(Resolve, f));
+  e->regoSystem(mc_new_1(Collide, f));
+  e->regoSystem(mc_new_1(Move, f));
+  e->regoSystem(mc_new_1(Motion, f));
+  e->regoSystem(mc_new_1(Net, f));
+  e->regoSystem(mc_new_1(Stage, f));
+  e->forceSync();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::deco() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
@@ -91,7 +109,8 @@ void GLayer::deco() {
     incIndexZ();
   }
 
-  auto ctx = (GCXX*) getSceneX()->getCtx();
+  ignite();
+
   auto ppids = ctx->data["ppids"];
   auto pnum= ctx->data["pnum"];
   auto p1c= CC_CSS("P1_COLOR");
@@ -112,22 +131,6 @@ void GLayer::deco() {
   }
 
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
-
-  auto e = mc_new(a::Engine);
-  auto f = mc_new_1(EFactory, e);
-
-  this->engine = e;
-  this->factory=f;
-
-  //f->reifyBoard();
-
-  e->regoSystem(mc_new_1(Resolve, f));
-  e->regoSystem(mc_new_1(Collide, f));
-  e->regoSystem(mc_new_1(Move, f));
-  e->regoSystem(mc_new_1(Motion, f));
-  e->regoSystem(mc_new_1(Net, f));
-  e->regoSystem(mc_new_1(Stage, f));
-  e->forceSync();
 
   initPlayers();
 

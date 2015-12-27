@@ -19,7 +19,7 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* createBall(float x, float y) {
+  a::Entity* EFactory::createBall(float x, float y) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["ball+speed"]);
   auto ent = engine->reifyEntity("*");
