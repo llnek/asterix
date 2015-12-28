@@ -20,9 +20,7 @@ class Engine;
 //
 class FS_DLL System {
 protected:
-
-  bool active=true;
-
+  DECL_BT(active)
 public:
 
   virtual void removeFromEngine(not_null<Engine*>);
@@ -41,8 +39,8 @@ public:
   virtual ~System() {}
   System() {}
 
-  System *previous=nullptr;
-  System *next=nullptr;
+  DECL_PTR(System ,previous)
+  DECL_PTR(System ,next)
 
   NOCPYASS(System)
 };
@@ -66,11 +64,10 @@ public:
   }
   SystemList() {}
 
-  System *head=nullptr;
-  System *tail=nullptr;
+  DECL_PTR(System ,head)
+  DECL_PTR(System ,tail)
 
   NOCPYASS(SystemList)
-
 };
 
 NS_END(ash)

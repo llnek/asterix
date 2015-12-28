@@ -51,14 +51,14 @@ public:
   virtual ~ComObj() {}
   ComObj();
 
-  c::Sprite *sprite=nullptr;
-  int origHealth=0;
-  bool status=false;
-  int health=0;
-  int score=0;
+  DECL_PTR(c::Sprite ,sprite)
+  DECL_IZ(origHealth)
+  DECL_BF(status)
+  DECL_IZ(health)
+  DECL_IZ(score)
 
-  c::Vec2 lastPos;
-  c::Vec2 vel;
+  DECL_TD(c::Vec2, lastPos)
+  DECL_TD(c::Vec2, vel)
 
 };
 

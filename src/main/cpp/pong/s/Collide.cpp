@@ -9,6 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Collide.h"
 
 NS_BEGIN(pong)

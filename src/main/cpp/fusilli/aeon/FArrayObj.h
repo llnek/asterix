@@ -19,8 +19,8 @@ NS_BEGIN(fusii)
 //
 template<typename T> class FS_DLL FArray {
 private:
-  T *data = nullptr;
-  int sz = 0;
+  DECL_PTR(T,data)
+  DECL_IZ(sz)
 public:
 
   FArray<T>& operator=(const FArray<T>&);
@@ -37,13 +37,11 @@ public:
   void set(int pos, T value);
   int size() { return sz; }
 
-  int randomIndex();
-  void fill(T v);
-
   bool notAny(T v);
   bool some(T v);
   bool all(T v);
   int find(T v);
+  void fill(T v);
 
   T operator[](int pos);
   T get(int pos);
@@ -61,7 +59,7 @@ FArray<T>& FArray<T>::operator=(FArray<T> &&src) {
   mc_del_arr(data);
   data=src.data;
   sz=src.sz;
-  src.data=nullptr;
+  SNPTR(src.data)
   src.sz=0;
   return *this;
 }
@@ -72,7 +70,7 @@ template<typename T>
 FArray<T>::FArray(FArray<T> &&src) {
   data=src.data;
   sz=src.sz;
-  src.data=nullptr;
+  SNPTR(src.data)
   src.sz=0;
 }
 
@@ -95,7 +93,7 @@ FArray<T>& FArray<T>::operator=(const FArray<T> &src) {
 //
 template<typename T>
 FArray<T>::FArray(const FArray<T> &src) {
-  data= nullptr;
+  SNPTR(data)
   sz=src.sz;
   if (sz > 0) {
     data= new T[sz];
@@ -173,18 +171,6 @@ bool FArray<T>::all(T v) {
     if (v != data[i]) { return false; }
   }
   return sz > 0 ;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template<typename T>
-int FArray<T>::randomIndex() {
-  auto pos= sz > 0 ? rand() % sz : -1;
-  if (pos >= sz) {
-    return (int) sz/2;
-  } else {
-    return pos;
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

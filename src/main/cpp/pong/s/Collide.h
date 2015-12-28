@@ -23,7 +23,6 @@ struct CC_DLL Collide : public f::XSystem<EFactory> {
 
   virtual const a::SystemType typeId() { return "s/Collide"; }
 
-  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
   virtual void addToEngine(not_null<a::Engine*>);
   virtual int priority() { return a::Collide; }
   virtual bool update(float);
@@ -32,9 +31,12 @@ struct CC_DLL Collide : public f::XSystem<EFactory> {
   void check(a::Node*, a::Node*);
 
   virtual ~Collide() {}
-  NODFT(Collide)
+  Collide() {}
   NOCPYASS(Collide)
 
+  DECL_PTR(a::NodeList, nodeList)
+  DECL_PTR(a::NodeList, fauxs)
+  DECL_PTR(a::NodeList, Balls)
 };
 
 NS_END(pong)

@@ -22,9 +22,7 @@ class Node;
 //
 class FS_DLL NodeList {
 private:
-
-  NodeType nType;
-
+  DECL_TD(NodeType, nType)
 public:
 
   const NodeType getType() { return nType; }
@@ -45,8 +43,8 @@ public:
   NOCPYASS(NodeList)
   NODFT(NodeList)
 
-  Node *head=nullptr;
-  Node *tail=nullptr;
+  DECL_PTR(Node ,head)
+  DECL_PTR(Node ,tail)
 
 };
 

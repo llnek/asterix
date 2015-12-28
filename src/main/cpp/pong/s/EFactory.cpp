@@ -25,20 +25,21 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EFactory::EFactory(not_null<a::Engine*> e)
-  : Factory(e) {
+void GEngine::ignite() {
+
+  e->forceSync();
+
   e->regoSystem(mc_new_1(Resolve, this));
   e->regoSystem(mc_new_1(Collide, this));
   e->regoSystem(mc_new_1(Move, this));
   e->regoSystem(mc_new_1(Motion, this));
   e->regoSystem(mc_new_1(Net, this));
   e->regoSystem(mc_new_1(Stage, this));
-  e->forceSync();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::createArena(int cur) {
+a::Entity* GEngine::mkArena(int cur) {
   auto ent= engine->reifyEntity("*");
   auto ss= mc_new(Slots);
 
@@ -53,7 +54,7 @@ a::Entity* EFactory::createArena(int cur) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::createBall(float x, float y) {
+a::Entity* GEngine::mkBall(float x, float y) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["ball+speed"]);
   auto ent = engine->reifyEntity("*");
@@ -79,7 +80,7 @@ a::Entity* EFactory::createBall(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::createOnePaddle(int cur, const Player &p, float x, float y) {
+a::Entity* GEngine::mkOnePaddle(int cur, const Player &p, float x, float y) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["paddle+speed"]);

@@ -80,12 +80,12 @@ public:
 
   MType type=MType::NICHTS;
   EType code=EType::NICHTS;
-  double tstamp= 0;
-  j::json doco;
+
+  DECL_TD(j::json, doco)
+  DECL_DZ(tstamp)
 
   virtual ~OdinEvent();
   OdinEvent();
-
   NOCPYASS(OdinEvent)
 };
 

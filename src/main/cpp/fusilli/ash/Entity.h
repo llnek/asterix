@@ -22,16 +22,16 @@ class FS_DLL Entity {
 private:
 
   s_map<sstr, Component*> parts;
-  Engine *engine=nullptr;
+  DECL_PTR(Engine,engine)
   sstr group;
-  bool dead=false;
+  DECL_BF(dead)
 
 public:
 
   Entity(const sstr &group, not_null<Engine*>);
 
-  Entity *previous=nullptr;
-  Entity *next=nullptr;
+  DECL_PTR(Entity ,previous)
+  DECL_PTR(Entity ,next)
 
   NOCPYASS(Entity)
   NODFT(Entity)
@@ -53,7 +53,7 @@ public:
 };
 
 
-
 NS_END(ash)
 #endif
+
 

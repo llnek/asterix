@@ -22,14 +22,14 @@ class CC_DLL XLives : public c::Node {
 protected:
 
   s_vec<c::Node*> icons;
-  c::Size lifeSize;
-  c::Vec2 refPt;
-  sstr frameId;
+  DECL_TD(c::Size, lifeSize)
+  DECL_TD(c::Vec2, refPt)
+  DECL_TD(sstr, frameId)
 
-  int totalLives=0;
-  int curLives=0;
-  int dir=1;
-  float scale=1.0f;
+  DECL_IZ(totalLives)
+  DECL_IZ(curLives)
+  DECL_TV(int, dir, 1)
+  DECL_TV(float, scale, 1.0f)
 
 public:
 

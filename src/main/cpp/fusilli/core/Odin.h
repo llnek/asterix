@@ -54,15 +54,14 @@ public:
   virtual void onOpen(n::WebSocket*) ;
 
   CType state= CType::S_NOT_CONNECTED;
-  n::WebSocket* socket=nullptr;
-  sstr room;
-  sstr game;
-  sstr user;
-  sstr passwd;
+  DECL_PTR(n::WebSocket, socket)
+  DECL_TD(sstr, room)
+  DECL_TD(sstr, game)
+  DECL_TD(sstr, user)
+  DECL_TD(sstr, passwd)
 
   virtual ~OdinIO();
   OdinIO() {}
-
   NOCPYASS(OdinIO)
 };
 

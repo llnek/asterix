@@ -26,12 +26,11 @@ public:
   const s_vec<T*> list();
   void clear() ;
 
-  T *head= nullptr;
-  T *tail=nullptr;
+  DECL_PTR(T,head)
+  DECL_PTR(T,tail)
 
   virtual ~ObjList();
   ObjList();
-
   NOCPYASS(ObjList)
 };
 
@@ -116,7 +115,6 @@ ObjList<T>::ObjList() {
 class FS_DLL Engine {
 public:
 
-  //typedef ObjList<System> SList;
   typedef ObjList<Entity> EList;
 
 private:
@@ -134,12 +132,12 @@ private:
   s_vec<Entity*> addList;
 
   SystemList systemList;
-  bool updating=false;
-  bool dirty=false;
+  DECL_BF(updating)
+  DECL_BF(dirty)
 
 public:
 
-  const s_vec<Entity*> getEntities(const sstr& grp);
+  const s_vec<Entity*> getEntities(const sstr &grp);
   const s_vec<Entity*> getEntities();
 
   NodeList* getNodeList(const NodeType& );
@@ -156,6 +154,7 @@ public:
   void regoSystem(not_null<System*> );
   void update(float time);
 
+  virtual void ignite() = 0;
   virtual ~Engine();
   Engine();
 

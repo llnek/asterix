@@ -19,8 +19,8 @@ NS_BEGIN(fusii)
 //
 template<typename T> class FS_DLL FArrayPtr {
 private:
-  T **data = nullptr;
-  int sz = 0;
+  DECL_PTR(T*,data)
+  DECL_IZ(sz)
 public:
 
   FArrayPtr<T>& operator=(const FArrayPtr<T>&);
@@ -37,13 +37,11 @@ public:
   void set(int pos, T *value);
   int size() { return sz; }
 
-  int randomIndex();
-  void fill(T *v);
-
   bool notAny(T *v);
   bool some(T *v);
   bool all(T *v);
   int find(T *v);
+  void fill(T *v);
 
   T* operator[](int pos);
   T* get(int pos);
@@ -61,7 +59,7 @@ FArrayPtr<T>& FArrayPtr<T>::operator=(FArrayPtr<T> &&src) {
   mc_del_arr(data);
   data=src.data;
   sz=src.sz;
-  src.data=nullptr;
+  SNPTR(src.data)
   src.sz=0;
   return *this;
 }
@@ -72,7 +70,7 @@ template<typename T>
 FArrayPtr<T>::FArrayPtr(FArrayPtr<T> &&src) {
   data=src.data;
   sz=src.sz;
-  src.data=nullptr;
+  SNPTR(src.data)
   src.sz=0;
 }
 
@@ -95,7 +93,7 @@ FArrayPtr<T>& FArrayPtr<T>::operator=(const FArrayPtr<T> &src) {
 //
 template<typename T>
 FArrayPtr<T>::FArrayPtr(const FArrayPtr<T> &src) {
-  data= nullptr;
+  SNPTR(data)
   sz=src.sz;
   if (sz > 0) {
     data= new T* [sz];
@@ -173,15 +171,6 @@ bool FArrayPtr<T>::all(T *v) {
     if (v != data[i]) { return false; }
   }
   return sz > 0 ;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template<typename T>
-int FArrayPtr<T>::randomIndex() {
-  if (sz == 0) { return -1;  }
-  if (sz == 1) { return 0; }
-  return rand() % sz;
 }
 
 //////////////////////////////////////////////////////////////////////////////

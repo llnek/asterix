@@ -9,37 +9,29 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__FACTORY_H__)
-#define __FACTORY_H__
+#if !defined(__END_H__)
+#define __END_H__
 
-#include "ash/Engine.h"
-#include "XPool.h"
-NS_BEGIN(fusii)
+#include "x2d/XLayer.h"
+NS_BEGIN(pong)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Factory {
-protected:
+struct CC_DLL ELayer : public f::XLayer {
 
-  Factory(not_null<a::Engine*> e) { engine=e; }
+  STATIC_REIFY_LAYER(ELayer)
 
-  a::Engine *engine=nullptr;
+  virtual void decorate();
 
-public:
+  void onReplay(c::Ref*);
+  void onQuit(c::Ref*);
 
-  virtual ~Factory() {}
-  NODFT(Factory)
-  NOCPYASS(Factory)
+  virtual ~ELayer() {}
+  ELayer() {}
 
+  NOCPYASS(ELayer)
 };
 
-
-
-
-
-
-
-NS_END(fusii)
+NS_END(pong)
 #endif
-
 

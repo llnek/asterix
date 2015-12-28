@@ -31,10 +31,9 @@ protected:
   void disableListeners();
   void enableListeners();
 
-  c::EventListenerMouse *_mouseListener=nullptr;
-  //c::Dictionary *options=nullptr;
-  a::Engine *engine=nullptr;
-  bool _mouseEnabled=false;
+  DECL_PTR(c::EventListenerMouse ,_mouseListener)
+  DECL_PTR(a::Engine ,engine)
+  DECL_BF(_mouseEnabled)
   s_arr<bool, 256> keys;
 
   virtual void onMouseScroll(c::Event*);

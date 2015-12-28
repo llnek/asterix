@@ -36,13 +36,13 @@ protected:
   void addCst(const sstr& , c::Ref*);
   void addColor(const sstr& , c::Ref*);
 
-  c::Dictionary *frags=nullptr;
-  c::Dictionary *l10n=nullptr;
+  DECL_PTR(c::Dictionary ,frags)
+  DECL_PTR(c::Dictionary ,l10n)
 
-  float lastMusicVol=0.5f;
-  float lastSfxVol=0.5f;
-  float scale=1.0f;
-  bool audioState=true;
+  DECL_TV(float, lastMusicVol,0.5f)
+  DECL_TV(float, lastSfxVol, 0.5f)
+  DECL_TV(float, scale, 1.0f)
+  DECL_BT(audioState)
 
   void loadL10NStrings();
   void setCsts();

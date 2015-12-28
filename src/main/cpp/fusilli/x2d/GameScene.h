@@ -39,8 +39,8 @@ struct CC_DLL GCX : public SCTX {
   virtual ~GCX() { mc_del_ptr(odin) }
   GCX(GMode m) { mode=m; }
   GCX() {}
-  ws::OdinIO *odin=nullptr;
-  GMode mode=GMode::ONE;
+  DECL_PTR(ws::OdinIO ,odin)
+  DECL_TV(GMode,mode,GMode::ONE)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ protected:
   s_map<sstr, XPool*> pools;
   s_que<sstr> msgQ;
 
-  int state=0;
-  int level=1;
+  DECL_TV(int, state, 0)
+  DECL_TV(int, level, 1)
 
 public:
 

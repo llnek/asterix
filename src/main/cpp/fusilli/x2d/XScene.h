@@ -25,7 +25,7 @@ struct CC_DLL SCTX { };
 class CC_DLL XScene : public c::Scene {
 protected:
 
-  SCTX* context=nullptr;
+  DECL_PTR(SCTX, context)
 
 public:
 

@@ -23,7 +23,7 @@ private:
 
   s_map<sstr, Component*> values;
   s_map<COMType, sstr> types;
-  Entity *entity=nullptr;
+  DECL_PTR(Entity ,entity)
 
 public:
 
@@ -38,8 +38,8 @@ public:
   NOCPYASS(Node)
   NODFT(Node)
 
-  Node *previous=nullptr;
-  Node *next=nullptr;
+  DECL_PTR(Node ,previous)
+  DECL_PTR(Node ,next)
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -12,24 +12,22 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
-#include "core/Factory.h"
+#include "ash/Engine.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL EFactory : public f::Factory {
+struct CC_DLL GEngine : public a::Engine {
 
-  a::Entity* createOnePaddle(int cur, const Player&, float x, float y);
-  a::Entity* createBall(float x, float y);
-  a::Entity* createArena(int cur);
+  a::Entity* mkOnePaddle(int cur, const Player&, float x, float y);
+  a::Entity* mkBall(float x, float y);
+  a::Entity* mkArena(int cur);
 
-  EFactory(not_null<a::Engine*> e);
-
-  virtual EFactory() {}
-  NODFT(EFactory)
-  NOCPYASS(EFactory)
-
+  virtual void ignite();
+  virtual GEngine() {}
+  GEngine() {}
+  NOCPYASS(GEngine)
 };
 
 NS_END(pong)

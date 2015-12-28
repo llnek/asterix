@@ -24,15 +24,15 @@ struct CC_DLL Ball : public f::ComObj {
     : ComObj(s) {
     speed=v;
   }
-  float speed=0;
+  DECL_FZ(speed)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Motion : public a::Component {
   virtual const a::COMType typeId() { return "n/Motion"; }
-  bool right = false;
-  bool left = false;
+  DECL_BF(right )
+  DECL_BF(left )
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,9 +74,9 @@ public:
   virtual const a::COMType typeId() { return "n/Paddle"; }
 
   s_arr<int,2> kcodes;
-  float speed=0;
-  int pnum=0;
-  sstr snd;
+  DECL_FZ(speed)
+  DECL_FZ(pnum)
+  DECL_TD(sstr, snd)
 
 };
 
@@ -98,12 +98,12 @@ struct CC_DLL Player : public a::Component {
     this->pid=id;
   }
 
-  int category=0;
-  int pnum=0;
-  int value=0;
-  sstr color;
-  sstr pid
-  sstr pname;
+  DECL_IZ(category)
+  DECL_IZ(pnum)
+  DECL_IZ(value)
+  DECL_TD(sstr, color)
+  DECL_TD(sstr, pid)
+  DECL_TD(sstr, pname)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -129,21 +129,21 @@ struct CC_DLL Position : public a::Component {
     lastP= lp;
   }
 
-  int lastDir = 0;
-  float lastP= 0;
+  DECL_IZ(lastDir )
+  DECL_FZ(lastP)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Slots : public a::Component {
-  bool poked=false;
-  int pnum = 0;
-  c::Vec2 p2p;
-  c::Vec2 p1p;
-  c::Size pz;
-  c::Size bz;
-  c::Vec2 bp;
+  DECL_BF(poked)
+  DECL_IZ(pnum )
+  DECL_TD(c::Vec2, p2p)
+  DECL_TD(c::Vec2, p1p)
+  DECL_TD(c::Size, pz)
+  DECL_TD(c::Size, bz)
+  DECL_TD(c::Vec2, bp)
   virtual const a::COMType typeId() { return "n/Slots"; }
 }
 

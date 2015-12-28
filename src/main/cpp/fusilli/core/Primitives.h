@@ -54,8 +54,8 @@ NS_BEGIN(fusii)
 //
 template<typename T> class CC_DLL Maybe {
 private:
-  bool isset=false;
-  T value;
+  DECL_TD(T, value)
+  DECL_BF(isset)
 public:
   explicit Maybe(T t) { value=t; isset=true; }
   Maybe<T>& operator=(const Maybe<T> &arg) {
@@ -138,10 +138,10 @@ struct CC_DLL Box4 {
     left=b.left;
     return *this;
   }
-  float top=0;
-  float right=0;
-  float bottom=0;
-  float left=0;
+  DECL_FZ(top)
+  DECL_FZ(right)
+  DECL_FZ(bottom)
+  DECL_FZ(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -172,8 +172,8 @@ public:
   }
 
 private:
-  float _x=0;
-  float _y=0;
+  DECL_FZ(_x)
+  DECL_FZ(_y)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -204,8 +204,8 @@ public:
   }
 
 private:
-  float _w=0;
-  float _h=0;
+  DECL_FZ(_w)
+  DECL_FZ(_h)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -249,10 +249,10 @@ public:
   }
 
 private:
-  float _t=0;
-  float _r=0;
-  float _b=0;
-  float _lf=0;
+  DECL_FZ(_t)
+  DECL_FZ(_r)
+  DECL_FZ(_b)
+  DECL_FZ(_lf)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -294,7 +294,7 @@ public:
   }
 
 private:
-  j::json _obj;
+  DECL_TD(j::json, _obj)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ public:
   }
 
 private:
-  c::Color3B _c;
+  DECL_TD(c::Color3B, _c)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -356,15 +356,15 @@ public:
   }
 
 private:
-  c::Color4B _c;
+  DECL_TD(c::Color4B, _c)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Cell2D {
   Cell2D (int r, int c) { row=r; col=c; }
-  int row=0;
-  int col=0;
+  DECL_IZ(row)
+  DECL_IZ(col)
 };
 
 

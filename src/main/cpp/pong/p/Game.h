@@ -27,7 +27,7 @@ struct CC_DLL GCXX : public f::GCX {
     data=pms;
   }
   virtual ~GCXX() {}
-  j::json data;
+  DECL_TD(j::json, data)
 };
 
 //////////////////////////////////////////////////////////////////////////////

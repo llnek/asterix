@@ -28,8 +28,8 @@ protected:
   c::SpriteBatchNode* regoAtlas(const sstr &name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
 
-  int lastTag=1;
-  int lastZ=0;
+  DECL_TV(int, lastTag, 1)
+  DECL_TV(int, lastZ, 0)
 
 public:
 

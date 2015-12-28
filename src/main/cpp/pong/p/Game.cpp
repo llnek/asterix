@@ -35,12 +35,12 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual int getIID() { return 2; }
   virtual void decorate();
 
-  void deco_2(const sstr&, const sstr&,
-      const sstr&, const sstr&);
-  void deco_1();
+  void deco(int pnum, const sstr &p1k, const sstr &p1n,
+      const sstr &p2k, const sstr &p2n);
   void deco();
 
-  EFactory *factory;
+  DECL_PTR(a::NodeList, paddleNode)
+  DECL_PTR(a::NodeList, arenaNode)
 
   virtual ~GLayer();
   GLayer();
@@ -85,15 +85,18 @@ void GLayer::onMouseMove(c::Event *event) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMoved(c::Touch *t, c::Event *evt) {
-  auto box= this->player->sprite->getBoundingBox();
-  auto loc= t->getLocationInView();
   auto bx= MGMS()->getEnclosureBox();
-  if (box.containsPoint(loc)) {
-    auto pos= this->player->sprite->getPosition();
-    auto y = pos.y;
-    pos= c::ccpAdd(pos,  t->getDelta());
-    pos= cx::clamp(pos, bx);
-    this->player->sprite->setPosition(pos.x, y);
+  auto loc= t->getLocationInView();
+  for (auto node=paddles->head; node; node=node->next) {
+    auto p= CC_GNF(Paddle,node,"paddle");
+    auto box= p->sprite->getBoundingBox();
+    if (box.containsPoint(loc)) {
+      auto pos= p->getPos();
+      auto y = pos.y;
+      pos= c::ccpAdd(pos,  t->getDelta());
+      pos= cx::clamp(pos, bx);
+      p->setPos(pos.x, y);
+    }
   }
 }
 
@@ -121,12 +124,10 @@ void GLayer::deco() {
 
   auto ppids = ctx->data["ppids"];
   auto pnum= ctx->data["pnum"];
-  sstr p1k;
   sstr p2k;
-  sstr p1n;
+  sstr p1k;
   sstr p2n;
-
-  deco_1(pnum);
+  sstr p1n;
 
   J__LOOP(it, ppids) {
     auto &arr=  it.value() ;
@@ -139,7 +140,7 @@ void GLayer::deco() {
     }
   }
 
-  deco_2( p1k, p1n, p2k, p2n);
+  deco(pnum, p1k, p1n, p2k, p2n);
   getHUD()->reset();
 
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
@@ -147,25 +148,10 @@ void GLayer::deco() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::deco_1(int cur) {
-  ArenaNode n;
-
-  this->engine= mc_new(a::Engine);
-  this->engine->createOnePaddle(cur, p2, 0, 0);
-  this->engine->createOnePaddle(cur, p1, 0, 0);
-  this->engine->createBall(0,0);
-  this->engine->createArena(cur);
-  this->factory = mc_new_1(EFactory, this->engine);
-  this->arenaNode= this->engine->getNodeList(n.typeId());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::deco_2( const sstr &p1k, const sstr &p1n,
+void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
     const sstr &p2k, const sstr &p2n) {
-
-  auto ps= CC_GNF(Players, arena->head, "players");
-  auto ss= CC_GNF(Slots, arena->head, "slots");
+  auto e= mc_new(GEngine);
+  auto a= e->mkArena(cur);
   int p1cat,p2cat;
 
   switch (MGMS()->getMode()) {
@@ -183,14 +169,25 @@ void GLayer::deco_2( const sstr &p1k, const sstr &p1n,
     break;
   }
 
-  Player p1(p1cat, csts.CV_X, 1, csts.P1_COLOR);
-  Player p2(p2cat, csts.CV_O, 2, csts.P2_COLOR);
+  Player p1(p1cat, CC_CSV(c::Integer, "CV_X"), 1, CC_CSS("P1_COLOR"));
+  Player p2(p2cat, CC_CSV(c::Integer, "CV_O"), 2, CC_CSS("P2_COLOR"));
+  auto ps= a->get("n/Players");
+
   p1.setName(p1k,p1n);
   p2.setName(p2k,p2n);
   ps->parr[1]=p1;
   ps->parr[2]=p2;
 
+  e->mkOnePaddle(cur, p2, 0, 0);
+  e->mkBall(0,0);
+  e->mkOnePaddle(cur, p1, 0, 0);
+
   getHUD()->regoPlayers(p1,p2);
+
+  this->paddleNode= e->getNodeList(PaddleNode().typeId());
+  this->arenaNode= e->getNodeList(ArenaNode().typeId());
+
+  this->engine=e;
 }
 
 //////////////////////////////////////////////////////////////////////////////

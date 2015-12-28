@@ -129,15 +129,14 @@ typedef std::string sstr;
 
 //////////////////////////////////////////////////////////////////////////
 //
-#define XXXXXIMPLCZ(T) \
-  virtual ~T() {} \
-  T() {}
-
-//////////////////////////////////////////////////////////////////////////
-//
-#define XXXXXDECLCZ(T) \
-  virtual ~T(); \
-  T();
+#define DECL_PTR(T,p) T *p=nullptr;
+#define DECL_DZ(d) double d=0;
+#define DECL_FZ(f) float f=0;
+#define DECL_IZ(i) int i=0;
+#define DECL_BF(b) bool b=false;
+#define DECL_BT(b) bool b=true;
+#define DECL_TD(T,m) T m;
+#define DECL_TV(T,m,v) T m=v;
 
 //////////////////////////////////////////////////////////////////////////
 //

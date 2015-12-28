@@ -13,25 +13,17 @@
 #define __XSYSTEM_H__
 
 #include "ash/System.h"
-#include "Factory.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename F> class CC_DLL XSystem : public a::System {
 protected:
-
-  XSystem(not_null<F*> f) { factory=f;  }
-
-  F *factory=nullptr;
-  bool inited=false;
-
+  DECL_BF(inited)
+  XSystem() {}
 public:
-
   virtual ~XSystem() {}
-  NODFT(XSystem)
   NOCPYASS(XSystem)
-
 };
 
 
