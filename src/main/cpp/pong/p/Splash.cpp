@@ -9,8 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "x2d/XLayer.h"
 #include "Splash.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////

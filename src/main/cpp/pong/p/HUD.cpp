@@ -9,29 +9,20 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "HUD.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::regoPlayers(int p1,
-    const sstr &p1k, const sstr &p1n,
-    int p2,
-    const sstr &p2k, const sstr &p2n) {
+void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
 
   auto tile= CC_CSV(c::Integer, "TILE");
   auto cw= cx::center();
   auto wb= cx::visBox();
-
-  play2= p2;
-  play1= p1;
-  p2Long= p2n;
-  p1Long= p1n;
-  p2ID= p2k;
-  p1ID= p1k;
-
-  title->setString(p1ID + " / " + p2ID);
 
   score1->setPosition( cw.x - cx::getScaledWidth(title)/2 -
                            cx::getScaledWidth(score1)/2 - 10,
@@ -39,6 +30,10 @@ void HUDLayer::regoPlayers(int p1,
   score2->setPosition( cw.x + cx::getScaledWidth(title)/2 +
                            cx::getScaledWidth(score2)/2 + 6,
                            wb.top - tile * 6 /2 - 2);
+
+  title->setString(p1.pid + " / " + p2.pid);
+  parr[2]= p2;
+  parr[1]= p1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,19 +45,14 @@ void HUDLayer::resetAsNew() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::reset() {
-  scores.fill(0);
-  //scores[csts.P2_COLOR] = 0;
-  //scores[csts.P1_COLOR] = 0;
-
-  replayBtn->setVisible(false);
   resultMsg->setVisible(false);
+  scores.fill(0);
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::endGame() {
-  replayBtn->setVisible(true);
   resultMsg->setVisible(true);
 }
 
@@ -95,49 +85,63 @@ void HUDLayer::decorate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::isDone() {
-  auto pts = CC_CSV(c::Integer, "NUM_POINTS");
-  auto s2= scores[play2];
-  auto s1= scores[play1];
-  rc= [false, null];
+int HUDLayer::isDone() {
+  auto cfg = MGMS()->getLCfg()->getValue();
+  auto pts = JS_INT(cfg["NUM+POINTS"]);
+  auto s2= scores[2];
+  auto s1= scores[1];
+  int rc= -1;
 
-  if (s2 >= pts) { rc = [ true, this.play2]; }
-  if (s1 >= pts) { rc = [ true, this.play1]; }
+  if (s2 >= pts) { rc = 2; }
+  if (s1 >= pts) { rc = 1; }
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScores(j::json scs) {
-  scores[play2] = JS_INT(scs[play2]);
-  scores[play1] = JS_INT(scs[play1]);
+  scores[2] = JS_INT(scs[play2]);
+  scores[1] = JS_INT(scs[play1]);
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(const sstr &color, int value) {
-  scores[color] += value;
+  int pnum=0;
+  if (color == CSS("P2_COLOR")) {
+    pnum=2;
+  }
+  else
+  if (color == CSS("P1_COLOR")) {
+    pnum=1;
+  }
+  scores[pnum] += value;
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawScores() {
-  auto s2 = scores[play2];
-  auto s1 = scores[play1];
+  auto s2 = scores[2];
+  auto s1 = scores[1];
   score1->setString(s::to_string(s1));
   score2->setString(s::to_string(s2));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::drawResult(const sstr &winner) {
+void HUDLayer::drawResult(int winner) {
   sstr msg;
-  if (winner == CC_CSS("P2_COLOR")) {
-    msg= XCFG()->getL1oNStr("whowin", s_vec<sstr> { p2n });
-  } else {
-    msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { p1n });
+  sstr pn;
+  if (winner == 2) {
+    pn= parr[2].pname;
+    msg= XCFG()->getL1oNStr("whowin", s_vec<sstr> { pn });
+  }
+  else
+  if (winner == 1) {
+    pn= parr[2].pname;
+    msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { pn });
   }
   resultMsg->setString(msg);
 }

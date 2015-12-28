@@ -22,8 +22,6 @@ Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> o)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stage::addToEngine(not_null<a::Engine*> e) {
-  PaddleNode n;
-  paddle = e->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,11 +38,13 @@ bool Stage::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stage::onceOnly() {
+  auto slots= CC_GNF(Slots, arenaNode->head, "slots");
   auto world = MGMS()->getEnclosureBox();
-  auto fps = CC_CSV(c::Integer,"FPS");
-  auto cw= cx::center();
+  //auto fps = CC_CSV(c::Integer,"FPS");
   auto ps = initPaddleSize();
   auto bs = initBallSize();
+  auto cw= cx::center();
+
   // position of paddles
   // portrait
   auto p1y = floor(world.top * 0.1f + bs.height + HHZ(ps));
@@ -53,26 +53,19 @@ void Stage::onceOnly() {
   auto p2x = floor(world.right - bs.width - HWZ(ps));
   auto p1x = floor(world.left + bs.width + HWZ(ps));
 
-  // game defaults for entities and timers.
-  this.state.paddle= {height: Math.floor(ps.height),
-           width: Math.floor(ps.width),
-           speed: Math.floor(csts.PADDLE_SPEED)};
-  this.state.ball= {height: Math.floor(bs.height),
-         width: Math.floor(bs.width),
-         x: Math.floor(cw.x),
-         y: Math.floor(cw.y),
-         speed: Math.floor(csts.BALL_SPEED) };
-  if (ccsx.isPortrait()) {
-    this.state.p1= {y: p1y, x: Math.floor(cw.x) };
-    this.state.p2= {y: p2y, x: Math.floor(cw.x) };
-  } else {
-    this.state.p1= {x: p1x, y: Math.floor(cw.y) };
-    this.state.p2= {x: p2x, y: Math.floor(cw.y) };
-  }
-  this.state.numpts= csts.NUM_POINTS;
+  slots->pz= c::Size( Math.floor(ps.width), Math.floor(ps.height));
+  slots->bz= c::Size( Math.floor(bs.width), Math.floor(bs.height));
+  slots->bp= c::Vec2( Math.floor(cw.x), Math.floor(cw.y));
 
-  sh.factory.createPaddles(sh.main, this.state);
-  sh.factory.createBall(sh.main, this.state);
+  if (ccsx.isPortrait()) {
+    slots->p1p= c::Vec2(Math.floor(cw.x), p1y);
+    slots->p2p= c::Vec2(Math.floor(cw.x), p2y);
+  } else {
+    slots->p1p= c::Vec2(p1x, Math.floor(cw.y));
+    slots->p2p= c::Vec2(p2x, Math.floor(cw.y));
+  }
+
+  inited=true;
 }
 
 /**

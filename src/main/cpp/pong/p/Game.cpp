@@ -11,12 +11,6 @@
 
 #include "core/XConfig.h"
 #include "s/EFactory.h"
-#include "s/Resolve.h"
-#include "s/Collide.h"
-#include "s/Motion.h"
-#include "s/Move.h"
-#include "s/Net.h"
-#include "s/Stage.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "HUD.h"
@@ -33,9 +27,6 @@ NS_BEGIN(pong)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onTouchMoved(c::Touch*, c::Event*);
@@ -43,6 +34,11 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual int getIID() { return 2; }
   virtual void decorate();
+
+  void deco_2(const sstr&, const sstr&,
+      const sstr&, const sstr&);
+  void deco_1();
+  void deco();
 
   EFactory *factory;
 
@@ -68,6 +64,38 @@ struct CC_DLL GLayer : public f::GameLayer {
     }
   }
 */
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMove(c::Event *event) {
+  auto bx= MGMS()->getEnclosureBox();
+  auto e= (c::EventMouse*)event;
+  auto loc= e->getLocationInView();
+  auto b= e->getMouseButton();
+  for (auto node= paddles->head; node; node=node->next) {
+    auto p= CC_GNF(Paddle,node,"paddle");
+    auto box= p->sprite->getBoundingBox();
+    if (b == MOUSE_BUTTON_LEFT &&
+        box.containsPoint(loc)) {
+      auto pos= p->getPos();
+      p->setPos(cx::clamp(loc, bx).x, pos.y);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMoved(c::Touch *t, c::Event *evt) {
+  auto box= this->player->sprite->getBoundingBox();
+  auto loc= t->getLocationInView();
+  auto bx= MGMS()->getEnclosureBox();
+  if (box.containsPoint(loc)) {
+    auto pos= this->player->sprite->getPosition();
+    auto y = pos.y;
+    pos= c::ccpAdd(pos,  t->getDelta());
+    pos= cx::clamp(pos, bx);
+    this->player->sprite->setPosition(pos.x, y);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -77,24 +105,6 @@ void GLayer::decorate() {
   enableListeners();
   deco();
   scheduleUpdate();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::ignite() {
-  auto ctx = (GCXX*) getSceneX()->getCtx();
-  auto e = mc_new(a::Engine);
-  auto f = mc_new_1(EFactory, e);
-  this->engine = e;
-  this->factory=f;
-
-  e->regoSystem(mc_new_1(Resolve, f));
-  e->regoSystem(mc_new_1(Collide, f));
-  e->regoSystem(mc_new_1(Move, f));
-  e->regoSystem(mc_new_1(Motion, f));
-  e->regoSystem(mc_new_1(Net, f));
-  e->regoSystem(mc_new_1(Stage, f));
-  e->forceSync();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -109,16 +119,15 @@ void GLayer::deco() {
     incIndexZ();
   }
 
-  ignite();
-
   auto ppids = ctx->data["ppids"];
   auto pnum= ctx->data["pnum"];
-  auto p1c= CC_CSS("P1_COLOR");
-  auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
   sstr p2k;
   sstr p1n;
   sstr p2n;
+
+  deco_1(pnum);
+
   J__LOOP(it, ppids) {
     auto &arr=  it.value() ;
     if (JS_INT(arr[0]) == 1) {
@@ -130,22 +139,33 @@ void GLayer::deco() {
     }
   }
 
-  CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
-
-  initPlayers();
-
-  getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
+  deco_2( p1k, p1n, p2k, p2n);
   getHUD()->reset();
 
-  this->options->setObject(CC_BOOL(false), "poked");
-  this->options->setObject(CC_INT(pnum), "pnum");
-  CCLOG("init-game - ok");
+  CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::initPlayers() {
+void GLayer::deco_1(int cur) {
+  ArenaNode n;
 
+  this->engine= mc_new(a::Engine);
+  this->engine->createOnePaddle(cur, p2, 0, 0);
+  this->engine->createOnePaddle(cur, p1, 0, 0);
+  this->engine->createBall(0,0);
+  this->engine->createArena(cur);
+  this->factory = mc_new_1(EFactory, this->engine);
+  this->arenaNode= this->engine->getNodeList(n.typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::deco_2( const sstr &p1k, const sstr &p1n,
+    const sstr &p2k, const sstr &p2n) {
+
+  auto ps= CC_GNF(Players, arena->head, "players");
+  auto ss= CC_GNF(Slots, arena->head, "slots");
   int p1cat,p2cat;
 
   switch (MGMS()->getMode()) {
@@ -163,33 +183,35 @@ void GLayer::initPlayers() {
     break;
   }
 
-  p1= new cobjs.Player(p1cat, csts.CV_X, 1, csts.P1_COLOR);
-  p2= new cobjs.Player(p2cat, csts.CV_O, 2, csts.P2_COLOR);
-  this.options.players = [null, p1, p2];
-  this.options.colors={};
-  this.options.colors[csts.P1_COLOR] = p1;
-  this.options.colors[csts.P2_COLOR] = p2;
+  Player p1(p1cat, csts.CV_X, 1, csts.P1_COLOR);
+  Player p2(p2cat, csts.CV_O, 2, csts.P2_COLOR);
+  p1.setName(p1k,p1n);
+  p2.setName(p2k,p2n);
+  ps->parr[1]=p1;
+  ps->parr[2]=p2;
+
+  getHUD()->regoPlayers(p1,p2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::updatePoints(scores) {
+void GLayer::updatePoints(j::json scores) {
   getHUD()->updateScores(scores);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onWinner(p, int score) {
+void GLayer::onWinner(const sstr &p, int score) {
   getHUD()->updateScore(p,score);
-  int win=0;
-  if (getHUD()->isDone(&win)) {
+  int win= getHUD()->isDone();
+  if (win > 0) {
     doDone( win);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::doDone(p) {
+void GLayer::doDone(int p) {
   getHUD()->drawResult(p);
   getHUD()->endGame();
   //this.removeAll();
@@ -206,9 +228,11 @@ const f::Box4 Game::getEnclosureBox() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
+void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
   auto y = (GLayer*) getLayer(3);
+  auto msg= (j::json*) m;
+
   if (topic == "/hud/showmenu") {
     y->showMenu();
   }
@@ -221,24 +245,48 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   }
   else
   if (topic == "/hud/replay") {
-    y->replay();
+    //y->replay();
   }
   else
   if (topic == "/hud/score/update") {
-    y->onWinner(msg.color, msg.score);
+    y->onWinner(
+        JS_STR(msg->operator[]("color")),
+        JS_INT(msg->operator[]("score")));
   }
-  if ("/hud/score/sync") {
-    y->updatePoints(msg.points);
+  else
+  if (topic == "/hud/score/sync") {
+    y->updatePoints(msg->operator[]("points"));
   }
   else
   if (topic == "/hud/end") {
-    y->doDone(msg.winner);
+    y->doDone(JS_INT(msg->operator[]("winner")));
   }
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::decorate() {
+  GLayer::reify(this,2);
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Game::isLive() {
+  return state > 0;
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::stop() {
+  state= 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::play() {
+  state = 911;
+}
 
 
 NS_END(pong)

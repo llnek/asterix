@@ -13,13 +13,23 @@
 #define __GAME_H__
 
 #include "x2d/GameScene.h"
+#include "core/JSON.h"
+#include "core/Odin.h"
 
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GCXX : public f::GCX {
-
+  GCXX(f::GMode m, ws::OdinIO* io, j::json pms)
+    : GCX(m,io) {
+    data=pms;
+  }
+  virtual ~GCXX() {}
+  j::json data;
 };
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : f::GameScene {
@@ -27,8 +37,12 @@ struct CC_DLL Game : f::GameScene {
   STATIC_REIFY_SCENE_CTX(Game)
 
   virtual void decorate();
-  virtual ~Game();
-  Game();
+  virtual bool isLive();
+  virtual void play();
+  virtual void stop();
+
+  virtual ~Game() {}
+  Game() {}
   NOCPYASS(Game);
 
 };

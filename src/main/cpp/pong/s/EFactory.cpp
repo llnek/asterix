@@ -12,6 +12,12 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "s/Resolve.h"
+#include "s/Collide.h"
+#include "s/Motion.h"
+#include "s/Move.h"
+#include "s/Net.h"
+#include "s/Stage.h"
 #include "EFactory.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -19,7 +25,35 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  a::Entity* EFactory::createBall(float x, float y) {
+EFactory::EFactory(not_null<a::Engine*> e)
+  : Factory(e) {
+  e->regoSystem(mc_new_1(Resolve, this));
+  e->regoSystem(mc_new_1(Collide, this));
+  e->regoSystem(mc_new_1(Move, this));
+  e->regoSystem(mc_new_1(Motion, this));
+  e->regoSystem(mc_new_1(Net, this));
+  e->regoSystem(mc_new_1(Stage, this));
+  e->forceSync();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+a::Entity* EFactory::createArena(int cur) {
+  auto ent= engine->reifyEntity("*");
+  auto ss= mc_new(Slots);
+
+  ent->checkin(mc_new(Players));
+  ent->checkin(ss);
+
+  ss->poked=false;
+  ss->pnum=cur;
+
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+a::Entity* EFactory::createBall(float x, float y) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["ball+speed"]);
   auto ent = engine->reifyEntity("*");
@@ -32,19 +66,20 @@ NS_BEGIN(pong)
   }
 
   auto sp= cx::reifySprite("pongball.png");
-  sp->setPosition(x,y);
-  MGML()->addAtlasItem("game-pics", sp);
+  auto b= mc_new_2(Ball, sp, sd);
 
-  ent->checkin(mc_new_2(Velocity, vx, vy));
-  ent->checkin(mc_new_1(Ball, sp, sd));
+  MGML()->addAtlasItem("game-pics", sp);
+  sp->setPosition(x,y);
+  b->vel.x=vx;
+  b->vel.y=vy;
+  ent->checkin(b);
 
   return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::createOnePaddle(
-    Player* p, int pnum, float x, float y) {
+a::Entity* EFactory::createOnePaddle(int cur, const Player &p, float x, float y) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["paddle+speed"]);
@@ -52,7 +87,7 @@ a::Entity* EFactory::createOnePaddle(
   float lp;
   sstr res;
 
-  if (p->color == CC_CSS("P2_COLOR")) {
+  if (p.color == CC_CSS("P2_COLOR")) {
     res= "green_paddle.png";
   } else {
     res= "red_paddle.png";
@@ -60,21 +95,21 @@ a::Entity* EFactory::createOnePaddle(
 
   auto sp = cx::reifySprite(res);
   sp->setPosition(x, y);
-  MGML()->addAtlasItem("game-pics", sp);
 
-  ent->checkin(mc_new_2(Paddle, sp, p->color, sd));
-  ent->checkin(p);
+  ent->checkin(mc_new_3(Paddle, sp, p.pnum, sd));
+  ent->checkin(mc_new_1(Player, p));
+  MGML()->addAtlasItem("game-pics", sp);
 
   if (cx::isPortrait()) { lp = x; } else { lp= y; }
   ent->checkin(mc_new_1(Position, lp));
 
   if (MGMS()->isOnline() &&
-      pnum != p->pnum) {
+      cur != p.pnum) {
     ent->checkin(mc_new(Faux));
     //only simulate move
   }
   else
-  if (p->category == CC_CSV(c::Integer, "BOT")) {
+  if (p.category == CC_CSV(c::Integer, "BOT")) {
     ent->checkin(mc_new(Faux));
   } else {
     ent->checkin(mc_new(Motion));

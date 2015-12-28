@@ -27,10 +27,10 @@ AppDelegate::AppDelegate() {
   r->rego( mc_new(FauxPaddleNode));
   r->rego( mc_new(PaddleNode));
   r->rego( mc_new(BallNode));
+  r->rego( mc_new(ArenaNode));
 
   // step.2: set up app-config
   Config::reify();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

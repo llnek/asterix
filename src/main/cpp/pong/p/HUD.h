@@ -13,6 +13,7 @@
 #define __HUD_H_
 
 #include "x2d/XLayer.h"
+#include "n/CObjs.h"
 
 NS_BEGIN(pong)
 
@@ -27,23 +28,20 @@ struct CC_DLL HUDLayer : public f::XLayer {
 
   virtual void decorate();
 
-  void regoPlayers(p1,p1ids,p2,p2ids);
+  void regoPlayers(const Player&, const Player&);
+  void updateScore(const sstr&, int score);
+  void updateScores(j::json);
   void resetAsNew();
   void reset();
   void endGame();
-  bool isDone();
-  void updateScores(scores);
-  void updateScore(color,value);
+  int isDone();
   void drawScores();
-  void drawResult(winner);
 
-  s_arr<sstr,3> scores;
-  sstr p1Color;
-  sstr p2Color;
-  sstr p2Long;
-  sstr p1Long;
-  sstr p2ID;
-  sstr p1ID;
+  //void drawResult(const sstr &winner);
+  void drawResult(int winner);
+
+  s_arr<Player,3> parr;
+  s_arr<int,3> scores;
 
 };
 

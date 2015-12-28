@@ -39,8 +39,7 @@ struct CC_DLL FauxPaddleNode : public a::NodeFactory {
     return reifyXXXNode({
         {"lastpos", "n/Position" },
         {"paddle", "n/Paddle" },
-        {"faux", "n/Faux" },
-        {"player" , "n/Player" }
+        {"faux", "n/Faux" }
     });
   }
 };
@@ -54,8 +53,7 @@ struct CC_DLL PaddleNode : public a::NodeFactory {
     return reifyXXXNode({
       {"lastpos" , "n/Position" },
       {"motion", "n/Motion" },
-      {"paddle" , "n/Paddle" },
-      {"player" , "n/Player" }
+      {"paddle" , "n/Paddle" }
     });
   }
 };
@@ -67,7 +65,8 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
   virtual const a::NodeType typeId() { return "n/ArenaNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-      {"players" , "n/Players" }
+      {"players" , "n/Players" },
+      {"slots", "n/Slots"}
     });
   }
 };

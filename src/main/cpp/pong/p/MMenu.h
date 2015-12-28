@@ -22,6 +22,7 @@ struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN b) { back=b; }
   VOIDFN back;
 };
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MMenu : public f::XScene {

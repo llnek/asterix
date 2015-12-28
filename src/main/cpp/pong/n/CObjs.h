@@ -59,15 +59,15 @@ private:
 
 public:
 
-  Paddle(c::Sprite *s, const sstr &color, float v) : ComObj(s) {
+  Paddle(c::Sprite *s, int pnum, float v) : ComObj(s) {
 
-    if (color == CC_CSS("P1_COLOR")) {
+    if (pnum == 1) {
       onColor(p1Keys(), "x_hit" );
     } else {
       onColor(p2Keys(), "o_hit");
     }
 
-    this->color= color;
+    this->pnum= pnum;
     this->speed=v;
   }
 
@@ -75,7 +75,7 @@ public:
 
   s_arr<int,2> kcodes;
   float speed=0;
-  sstr color;
+  int pnum=0;
   sstr snd;
 
 };
@@ -94,18 +94,16 @@ struct CC_DLL Player : public a::Component {
   virtual const a::COMType typeId() { return "n/Player"; }
 
   setName(const sstr &id, const sstr &name) {
-     this->pid=id;
-     this->name=name;
+    this->pname=name;
+    this->pid=id;
   }
 
   int category=0;
   int pnum=0;
   int value=0;
   sstr color;
-
   sstr pid
-  sstr name;
-
+  sstr pname;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,6 +133,20 @@ struct CC_DLL Position : public a::Component {
   float lastP= 0;
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Slots : public a::Component {
+  bool poked=false;
+  int pnum = 0;
+  c::Vec2 p2p;
+  c::Vec2 p1p;
+  c::Size pz;
+  c::Size bz;
+  c::Vec2 bp;
+  virtual const a::COMType typeId() { return "n/Slots"; }
+}
+
 
 
 NS_END(pong)
