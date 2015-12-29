@@ -12,29 +12,32 @@
 #if !defined(__MOTION_H__)
 #define __MOTION_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motions : public f::XSystem<EFactory> {
+struct CC_DLL Motions : public a::System {
 
   virtual const a::SystemType typeId() { return "s/Motions"; }
 
-  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
-
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
-  void doit(a::Node*, float);
-  void ongui(a::Node*, float);
-  void onkey(a::Node*, float);
+
   virtual int priority() { return a::Motion; }
 
+  virtual bool update(float);
+
   virtual ~Motions() {}
-  NODFT(Motions)
+  Motions() {}
   NOCPYASS(Motions)
+
+private:
+
+  DECL_PTR(a::NodeList, paddleNode)
+
+  void onkey(a::Node*, float);
+  void doit(a::Node*, float);
 
 };
 

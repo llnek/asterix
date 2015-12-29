@@ -50,6 +50,8 @@
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
+#define ZEROPT c::ccp(0,0)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T> class CC_DLL Maybe {

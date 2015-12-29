@@ -16,22 +16,16 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> o)
-  : XSystem<EFactory>(f,o) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Motions::addToEngine(not_null<a::Engine*> e) {
   PaddleNode n;
-  nodeList= e->getNodeList(n.typeId());
+  paddleNode = e->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Motions::update(float dt) {
   if (MGMS()->isLive()) {
-    for (auto node= nodeList->head; node; node=node->next) {
+    for (auto node= paddleNode->head; node; node=node->next) {
       doit(node, dt);
     }
   }
@@ -41,21 +35,14 @@ bool Motions::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::doit(a::Node *node, float dt) {
-  ongui(node,dt);
   onkey(node, dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ongui(a::Node *node, float dt) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Motions::onkey(a::Node *node, float dt) {
-  auto p= node->paddle;
-  auto m= node->motion;
+  auto p= CC_GNF(Paddle,node,"paddle");
+  auto m= CC_GNF(Motion,node,"motion");
   auto &cs = p->kcodes;
 
   if (MGMS()->keyPoll(cs[0])) {

@@ -12,34 +12,33 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public f::XSystem<EFactory> {
+struct CC_DLL Resolve : public a::System {
 
   virtual const a::SystemType typeId() { return "s/Resolve"; }
 
-  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
   virtual void addToEngine(not_null<a::Engine*>);
 
   virtual int priority() { return a::Resolve; }
+
   virtual bool update(float);
+
+  virtual ~Resolve() {}
+  Resolve() {}
+  NOCPYASS(Resolve)
+
+private:
 
   void checkNodes(a::NodeList*, a::Node*);
   void onWin(const sstr&);
   const sstr check(a::Node* , a::Node* );
 
-  virtual ~Resolve() {}
-  NODFT(Resolve)
-  NOCPYASS(Resolve)
-
 };
-
-
 
 
 NS_END(pong)

@@ -12,31 +12,36 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public f::XSystem<EFactory> {
+struct CC_DLL Collide : public a::System {
 
   virtual const a::SystemType typeId() { return "s/Collide"; }
 
   virtual void addToEngine(not_null<a::Engine*>);
-  virtual int priority() { return a::Collide; }
-  virtual bool update(float);
 
-  void checkNodes(a::NodeList*, a::Node*);
-  void check(a::Node*, a::Node*);
+  virtual int priority() { return a::Collide; }
+
+  virtual bool update(float);
 
   virtual ~Collide() {}
   Collide() {}
   NOCPYASS(Collide)
 
-  DECL_PTR(a::NodeList, nodeList)
-  DECL_PTR(a::NodeList, fauxs)
-  DECL_PTR(a::NodeList, Balls)
+private:
+
+  void checkNodes(a::NodeList*, a::Node*);
+  void check(a::Node*, a::Node*);
+
+  DECL_PTR(a::NodeList, paddleNode)
+  DECL_PTR(a::NodeList, fauxNode)
+  DECL_PTR(a::NodeList, ballNode)
+  DECL_PTR(a::NodeList, arenaNode)
+
 };
 
 NS_END(pong)

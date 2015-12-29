@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Net.h"
@@ -19,29 +20,26 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Net::Net(not_null<EFactory*> f, not_null<c::Dictionary*> o)
-  : XSystem<EFactory>(f,o) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Net::addToEngine(not_null<a::Engine*> e) {
-  PaddleNode p;
-  paddles= e->getNodeList(p.typeId());
-  BallNode b;
-  balls= e->getNodeList(b.typeId());
   FauxPaddleNode f;
-  fauxs= e->getNodeList(f.typeId());
+  PaddleNode p;
+  BallNode b;
+  AreanNode a;
+  paddleNode= e->getNodeList(p.typeId());
+  ballNode= e->getNodeList(b.typeId());
+  fauxNode= e->getNodeList(f.typeId());
+  arenaNode= e->getNodeList(a.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Net::update(float dt) {
-  if (MGMS()->isLive()) {
+  if (MGMS()->isLive() &&
+      MGMS()->isOnline()) {
     if (! inited) {
       onceOnly();
     } else {
-       doit(dt);
+      doit(dt);
     }
   }
   return true;
@@ -59,25 +57,42 @@ void Net::doit(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onceOnly() {
-  if (MGMS()->isOnline()) {
-    CCLOG("reply to server: session started ok");
-    auto wsock = MGMS()->wsock();
-    const src= R.pick(['framespersec',
-                       'world',
-                       'syncMillis',
-                       'paddle',
-                       'ball',
-                       'p1',
-                       'p2',
-                       'numpts'], this.state);
-    wsock->cancenlAll();
-    ws::netsend(
-        MType::SESSION,
-        EType::STARTED, src);
-    wsock->listen([=](ws::OdinEvent *e) {
-        this->onEvent(e);
-      });
-  }
+  CCLOG("reply to server: session started ok");
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto wsock = MGMS()->wsock();
+  auto src= j::json({
+      {"framespersec",CC_CSV(c::Integer,"FPS") },
+      {"world", j::json({}) },
+      {"syncMillis", CC_CSV(c::Float, "syncMillis")},
+      {"paddle", j::json({
+          {"height", floor(ss->pz.height) },
+          {"width", floor(ss->pz.width) },
+          {"speed", floor(JS_FLOAT(cfg["PADDLE+SPEED"])) }
+          }) },
+      {"ball", j::json({
+          {"height", floor(ss->bz.height) },
+          {"width", floor(ss->bz.width) },
+          {"x", floor(ss->bp.x) },
+          {"y", floor(ss->bp.y) },
+          {"speed", floor(JS_FLOAT(cfg["BALL+SPEED"])) },
+          }) },
+      {"p2", j::json({
+          {"x", floor(ss->p2p.x)},
+          {"y", floor(ss->p2p.y) }
+          }) },
+      {"p1", j::json({
+          {"x", floor(ss->p1p.x)},
+          {"y", floor(ss->p1p.y)}
+          }) },
+      {"numpts", JS_INT(cfg["NUM+POINTS"]) }
+  });
+
+  wsock->cancenlAll();
+  ws::netsend( ws::MType::SESSION, ws::EType::STARTED, src);
+  wsock->listen([=](ws::OdinEvent *e) {
+      this->onEvent(e);
+    });
   inited=true;
 }
 
@@ -85,10 +100,10 @@ void Net::onceOnly() {
 //
 void Net::onEvent(ws::OdinEvent *evt) {
   switch (evt->type) {
-    case MType::NETWORK:
+    case ws::MType::NETWORK:
       onnetw(evt);
     break;
-    case MType::SESSION:
+    case ws::MType::SESSION:
       onsess(evt);
     break;
   }
@@ -97,69 +112,79 @@ void Net::onEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onnetw(ws::OdinEvent *evt) {
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
+  j::json msg;
   switch (evt->code) {
-    case EType::RESTART:
+    case ws::EType::RESTART:
       CCLOG("restarting a new game...");
-      send("/game/restart");
+      SENDMSG("/game/restart");
     break;
-    case EType::STOP:
+    case ws::EType::STOP:
       CCLOG("game will stop");
-      sendEx("/game/stop", nullptr);//evt);
+      msg= evt->doco;
+      SENDMSGEX("/game/stop", &msg);
     break;
-    case EType::SYNC_ARENA:
+    case ws::EType::SYNC_ARENA:
       CCLOG("synchronize ui as defined by server");
       process(evt);
-      state->setObject(CC_BOOL(true), "poked");
+      ss->poked=true;
     break;
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Net::onsess(ws::OdinEvent *evt) {
-  if (!sjs.isobj(evt.source)) { return; }
-  switch (evt.code) {
-    case evts.POKE_MOVE:
-      sjs.loggr.debug("activate arena, start to rumble!");
-      if (this.state.pnum === evt.source.pnum) {
-        this.state.poked=true;
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
+  auto msg= evt->doco;
+  if (!msg.is_object()) { return; }
+  switch (evt->code) {
+    case ws::EType::POKE_MOVE:
+      CCLOG("activate arena, start to rumble!");
+      if (ss->pnum == JS_INT(msg["pnum"])) {
+        ss->poked=true;
       } else {
-        sjs.loggr.error("Got POKED but with wrong player number. " +
-                        evt.source.pnum);
+        CCLOG("POKED with wrong player: %d", JS_INT(msg["pnum"]));
       }
     break;
-    case evts.SYNC_ARENA:
-      sjs.loggr.debug("synchronize ui as defined by server.");
-      this.process(evt);
-      this.state.poked=true;
-    break;}
+    case ws::EType::SYNC_ARENA:
+      CCLOG("synchronize ui as defined by server.");
+      process(evt);
+      ss->poked=true;
+    break;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::syncScores(scores) {
-  const actors= this.state.players,
-  rc= {};
-  rc[actors[2].color] = scores.p2;
-  rc[actors[1].color] = scores.p1;
-  sh.fire('/hud/score/sync', { points: rc});
+void Net::syncScores(j::json scores) {
+  auto ps= CC_GNF(Players,arenaNode,"players");
+  auto rc = j::json({
+      { ps->parr[2].color, JS_INT(scores["p2"]) },
+      { ps->parr[1].color, js_INT(scores["p1"]) }
+  });
+  SENDMSGEX("/hud/score/sync", &rc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::process(ws::OdinEvent *evt) {
   CCLOG("process: => %s", evt->doco.dump().c_str());
+  auto ps= CC_GNF(Players,arenaNode,"players");
   auto source = evt->doco["source"];
-  //let actors= this.state.players,
   auto ok= true;
 
   if (source["winner"].is_object()) {
     auto pnum = JS_INT(source["winner"]["pnum"]);
-    auto &win= actors[pnum];
-    CCLOG("server sent us new winner ==> %s", win->color);
+    assert(pnum > 0 && pnum < ps->parr.size());
+    auto &win= ps->parr[pnum];
+    CCLOG("server sent us new winner ==> %s", win.color);
     syncScores(source["winner"]["scores"]);
-    sendEx("/hud/end",
-        j::json({
-          { "winner", win->color }
-    }));
+    auto msg= j::json({
+        {"winner", win.color},
+        {"pnum", win.pnum}
+        });
+    SENDMSGEX("/hud/end", &msg);
   }
 
   if (source["scores"].is_object()) {
@@ -170,22 +195,20 @@ void Net::process(ws::OdinEvent *evt) {
     // tells us to begin a new point.
     reposEntities();
     ok=false;
-    //this.state.poked=false;
+    //ss->poked=false;
   }
 
   if (source["ball"].is_object()) {
-    CCLOG("server says: Ball got SYNC'ED !!!");
+    auto ball= CC_GNF(Ball,ballNode->head,"ball");
     auto c = source["ball"];
-    auto node= balls->head;
-    auto &vel= node->velocity;
-    auto &ball = node->ball;
-    ball->sprite->setPosition(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
-    vel->vel.y= JS_FLOAT(c["vy"]);
-    vel->vel.x= JS_FLOAT(c["vx"]);
+    CCLOG("server says: Ball got SYNC'ED !!!");
+    ball->setPos(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
+    ball->vel.y= JS_FLOAT(c["vy"]);
+    ball->vel.x= JS_FLOAT(c["vx"]);
   }
 
-  syncPaddles(paddles, evt);
-  syncPaddles(fauxs, evt);
+  syncPaddles(paddleNode, evt);
+  syncPaddles(fauxNode, evt);
 
   return ok;
 }
@@ -193,18 +216,18 @@ void Net::process(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::reposPaddles(a::NodeList *nl) {
+  auto ss= CC_GNF(Slots,arenaNode-head,"slots");
   for (auto node=nl->head; node; node=node->next) {
-    if (node->player->pnum == 2) {
-      node->paddle->sprite->setPosition(
-        PLAYER2.x,
-        PLAYER2.y);
-      node->lastpos->lastDir=0;
+    auto last= CC_GNF(Position,node,"lastpos");
+    auto p= CC_GNF(Paddle,node,"paddle");
+    if (p->pnum == 2) {
+      p->setPos(ss->p2p.x, ss->p2p.y);
+      last->lastDir=0;
     }
-    if (node->player->pnum == 1) {
-      node->paddle->sprite->setPosition(
-        PLAYER1.x,
-        PLAYER1.y);
-      node->lastpos->lastDir=0;
+    else
+    if (p->pnum == 1) {
+      p->setPos(ss->p1p.x, ss->p1p.y);
+      last->lastDir=0;
     }
   }
 }
@@ -212,16 +235,15 @@ void Net::reposPaddles(a::NodeList *nl) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::reposEntities() {
-  auto node=balls->head;
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
+  auto ball= CC_GNF(Ball,ballNode->head,"ball");
 
-  reposPaddles(paddles);
-  reposPaddles(fauxs);
+  reposPaddles(paddleNode);
+  reposPaddles(fauxNode);
 
-  node->ball->sprite->setPosition(
-    BALL.x,
-    BALL.y);
-  node->velocity->vel.y=0;
-  node->velocity->vel.x=0;
+  ball->setPos(ss->bp.x, ss->bp.y);
+  ball->vel.y=0;
+  ball->vel.x=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -229,15 +251,16 @@ void Net::reposEntities() {
 void Net::syncPaddles(a::NodeList *nl, ws::OdinEvent *evt) {
   auto source = evt->doco["source"];
   for (auto node = nl->head; node; node=node->next) {
+    auto p= CC_GNF(Paddle,node,"paddle");
 
     if (source["p2"].is_object() &&
-        node->player->pnum == 2) {
+        p->pnum == 2) {
       CCLOG("server says: P2 got SYNC'ED !!!");
       syncOnePaddle(node, source["p2"]);
     }
 
     if (source["p1"].is_object() &&
-        node->player->pnum == 1) {
+        p->pnum == 1) {
       CCLOG("server says: P1 got SYNC'ED !!!");
       syncOnePaddle(node, source["p1"]);
     }
@@ -246,13 +269,18 @@ void Net::syncPaddles(a::NodeList *nl, ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::syncOnePaddle(node, j::json c) {
+void Net::syncOnePaddle(a::Node *node, j::json c) {
+  auto last= CC_GNF(Position,node,"lastpos");
+  auto p= CC_GNF(Paddle,node,"paddle");
   auto dir=0;
-  node->paddle->sprite->setPosition(JS_INT(c["x"]), JS_INT(c["y"]));
-  if (JS_INT(c["pv"] > 0) { dir = 1;}
-  if (JS_INT(c["pv"] < 0) { dir = -1;}
-  node->lastpos->lastDir = dir;
+
+  p->setPos(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
+  if (JS_FLOAT(c["pv"]) > 0) { dir = 1;}
+  if (JS_FLOAT(c["pv"]) < 0) { dir = -1;}
+  last->lastDir = dir;
 }
+
+
 
 NS_END(pong)
 

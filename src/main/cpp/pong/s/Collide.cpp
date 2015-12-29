@@ -9,39 +9,36 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Collide::Collide(not_null<EFactory*> f, not_null<c::Dictionary*> o)
-: XSystem<EFactory>(f,o) {
-
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::addToEngine(not_null<a::Engine*> e) {
   FauxPaddleNode f;
-  fauxs= e->getNodeList(f.typeId());
   PaddleNode p;
-  nodeList= e->getNodeList(p.typeId());
   BallNode b;
-  balls= e->getNodeList(b.typeId());
+  ArenaNode a;
+
+  arenaNode = e->getNodeList(a.typeId());
+  fauxNode = e->getNodeList(f.typeId());
+  paddleNode = e->getNodeList(p.typeId());
+  ballNode = e->getNodeList(b.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Collide::update(float dt) {
-  auto bnode = balls->head;
-
   if (MGMS()->isLive()) {
-    checkNodes(nodeList, bnode);
-    checkNodes(fauxs, bnode);
+    checkNodes(paddleNode, ballNode);
+    checkNodes(fauxNode, ballNode);
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,13 +54,7 @@ void Collide::checkNodes(a::NodeList *nl, a::Node *bnode) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  /**
-   * Ball hits paddle.
-   * @method check
-   * @private
-   */
 void Collide::check(a::Node *node, a::Node *bnode) {
-  auto velo = CC_GNF(Velocity, bnode, "velocity");
   auto pad = CC_GNF(Paddle,node,"paddle");
   auto ball = CC_GNF(Ball,bnode,"ball");
   auto pos = ball->getPos();
@@ -73,9 +64,9 @@ void Collide::check(a::Node *node, a::Node *bnode) {
   auto hw2= cx::halfHW(ball->sprite);
 
   if (cx::isPortrait()) {
-    velo->vel.y = - velo->vel.y;
+    ball->vel.y = - ball->vel.y;
   } else {
-    velo->vel.x = - velo->vel.x;
+    ball->vel.x = - ball->vel.x;
   }
 
   if (pad->color == CC_CSS("P1_COLOR")) {
@@ -95,7 +86,6 @@ void Collide::check(a::Node *node, a::Node *bnode) {
   ball->setPos(x,y);
   cx::sfxPlay(pad->snd);
 }
-
 
 
 NS_END(pong)

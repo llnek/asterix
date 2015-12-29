@@ -12,22 +12,27 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public f::XSystem<EFactory> {
+struct CC_DLL Move : public a::System {
 
   virtual const a::SystemType typeId() { return "s/Move"; }
 
-  Move(not_null<EFactory*>, not_null<c::Dictionary*>);
-
   virtual void addToEngine(not_null<a::Engine*>);
+
   virtual int priority() { return a::Move; }
+
   virtual bool update(float dt);
+
+  virtual ~Move() {}
+  Move() {}
+  NOCPYASS(Move)
+
+private:
 
   void simuMove(a::Node*, a::Node*, float);
   void moveRobot(a::Node*, a::Node*, float);
@@ -36,9 +41,10 @@ struct CC_DLL Move : public f::XSystem<EFactory> {
   void notifyServer(a::Node*, int);
   void clamp(c::Sprite*);
 
-  virtual ~Move() {}
-  NODFT(Move)
-  NOCPYASS(Move)
+  DECL_PTR(a::NodeList, paddleNode)
+  DECL_PTR(a::NodeList, fauxNode)
+  DECL_PTR(a::NodeList, ballNode)
+  DECL_PTR(a::NodeList, arenaNode)
 
 };
 

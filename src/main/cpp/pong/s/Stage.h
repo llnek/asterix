@@ -12,27 +12,33 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
+#include "n/GNodes.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stage : public f::XSystem<EFactory> {
+struct CC_DLL Stage : public a::System {
 
-  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual const a::SystemType typeId() { return "s/Stage"; }
+  virtual int priority() { return a::PreUpdate; }
 
   virtual void addToEngine(not_null<a::Engine*>);
   virtual bool update(float dt);
-  void onceOnly();
+
+  virtual ~Stage() {}
+  Stage() {}
+  NOCPYASS(Stage)
+
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_BF(inited)
+
+protected:
+
   const c::Size initPaddleSize();
   const c::Size initBallSize();
-  virtual int priority() { return a::PreUpdate; }
-
-  virtual ~Stage();
-  NODFT(Stage)
-  NOCPYASS(Stage)
+  void onceOnly();
 };
 
 

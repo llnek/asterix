@@ -9,50 +9,46 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Move.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> o)
-  : XSystem<EFactory>(f,o) {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::addToEngine(not_null<a::Engine*> e) {
   FauxPaddleNode f;
-  fauxs= e->getNodeList(f.typeId());
   PaddleNode p;
-  paddles= e->getNodeList(p.typeId());
   BallNode b;
-  balls= e->getNodeList(b.typeId());
+  fauxNode= e->getNodeList(f.typeId());
+  paddleNode= e->getNodeList(p.typeId());
+  ballNode= e->getNodeList(b.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  auto bnode= balls->head;
-
   if (MGMS()->isLive()) {
 
-    for (auto node= paddles->head; node; node=node->next) {
+    for (auto node= paddleNode->head; node; node=node->next) {
       doit(node, dt);
     }
 
-    for (auto node= fauxs->head; node; node=node->next) {
-      auto p = CC_GNF(Player,node, "player");
+    for (auto node= fauxNode->head; node; node=node->next) {
+      auto p = CC_GNF(Paddle,node,"paddle");
       if (p->category == CC_CSV(c::Integer, "BOT")) {
-        moveRobot(node, bnode, dt);
+        moveRobot(node, ballNode->head, dt);
       }
       else
       if (p->category == CC_CSV(c::Integer, "NET")) {
-        simuMove(node, bnode, dt);
+        simuMove(node, ballNode->head, dt);
       }
     }
 
-    processBall(bnode, dt);
+    processBall(ballNode->head, dt);
   }
 
   return true;
@@ -61,12 +57,13 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
+  auto lastpos= CC_GNF(Position, node, "lastpos");
   auto paddle = CC_GNF(Paddle,node,"paddle");
+  auto cfg = MGMS()->getLCfg()->getValue();
   auto world= MGMS()->getEnclosureBox();
   auto hw2 = cx::halfHW(paddle->sprite),
   auto pos = paddle->pos();
-  auto lastpos= CC_GNF(Position, node, "lastpos");
-  auto delta= dt * paddle->speed;
+  auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   f::MaybeFloat x;
   f::MaybeFloat y;
 
@@ -100,32 +97,32 @@ void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
 //
 //TODO: better AI please
 void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
-  auto velo = CC_GNF(Velocity,bnode,"velocity");
-  auto ball = CC_GNF(Ball,bnode,"ball");
   auto pad= CC_GNF(Paddle,node, "paddle");
+  auto ball = CC_GNF(Ball,bnode,"ball");
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto speed= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto bp= ball->getPos();
   auto pos = pad->getPos();
-  auto speed= pad->speed;
   f::MaybeFloat y;
   f::MaybeFloat x;
 
   if (cx::isPortrait()) {
     if (bp.x > pos.x) {
-      if (velo->vel.x > 0) {
+      if (ball->vel.x > 0) {
         x = f::MaybeFloat(pos.x + dt * speed);
       }
     } else {
-      if (velo->vel.x < 0) {
+      if (ball->vel.x < 0) {
         x = f::MaybeFloat(pos.x - dt * speed);
       }
     }
   } else {
     if (bp.y > pos.y) {
-      if (velo->vel.y > 0) {
+      if (ball->vel.y > 0) {
         y = f::MaybeFloat(pos.y + dt * speed);
       }
     } else {
-      if (velo->vel.y < 0) {
+      if (ball->vel.y < 0) {
         y = f::MaybeFloat(pos.y - dt * speed);
       }
     }
@@ -145,23 +142,19 @@ void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processBall(a::Node *node, float dt) {
-  auto v = CC_GNF(Velocity, node, "velocity");
+  auto world= MGMS()->getEnclosureBox();
   auto b= CC_GNF(Ball, node, "ball");
-  auto pos= b->getPos();
-  c::Rect rect( cx::bbox(b->sprite));
-
-  rect.x = pos.x;
-  rect.y = pos.y;
-
   c::Vec2 outVel;
   c::Vec2 outPos;
-  auto rc= cx::traceEnclosure(dt,MGMS()->getEnclosureBox(),
-                         rect,
-                         v->vel, outPos, outVel);
+  auto rc= cx::traceEnclosure(
+      dt,world, cx::bbox4(b->sprite),
+      ball->vel, outPos, outVel);
+
   if (rc) {
     v->vel.x = outVel.x;
     v->vel.y = outVel.y;
   }
+
   b->setPos(outPos.x,outPos.y);
 }
 
@@ -170,8 +163,9 @@ void Move::processBall(a::Node *node, float dt) {
 void Move::doit(a::Node *node, float dt) {
   auto last= CC_GNF(Position, node, "lastpos");
   auto p= CC_GNF(Paddle, node, "paddle");
-  auto s= p->speed * dt;
   auto m= CC_GNF(Motion, node, "motion");
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto s= JS_FLOAT(cfg["PADDLE+SPEED"]) * dt;
   auto ld = last->lastDir;
   auto lp = last->lastP;
   auto pos= p->getPos();
@@ -231,9 +225,11 @@ void Move::doit(a::Node *node, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::notifyServer(a::Node *node, int direction) {
-  auto pnum= CC_GDV(c::Integer, this->state);
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
   auto pad = CC_GNF(Paddle, node, "paddle");
-  auto vv = direction * pad->speed;
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto pnum= ss->pnum;
+  auto vv = direction * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto pos = pad->getPos();
   auto key= pnum==2 ? "p2" : "p1";
   auto body= j::json({

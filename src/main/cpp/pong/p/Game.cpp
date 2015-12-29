@@ -31,6 +31,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onTouchMoved(c::Touch*, c::Event*);
   virtual void onMouseMove(c::Event*);
+  void onGUI(const c::Vec2&, const c::Vec2&);
 
   virtual int getIID() { return 2; }
   virtual void decorate();
@@ -67,36 +68,67 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMove(c::Event *event) {
-  auto bx= MGMS()->getEnclosureBox();
   auto e= (c::EventMouse*)event;
-  auto loc= e->getLocationInView();
-  auto b= e->getMouseButton();
-  for (auto node= paddles->head; node; node=node->next) {
-    auto p= CC_GNF(Paddle,node,"paddle");
-    auto box= p->sprite->getBoundingBox();
-    if (b == MOUSE_BUTTON_LEFT &&
-        box.containsPoint(loc)) {
-      auto pos= p->getPos();
-      p->setPos(cx::clamp(loc, bx).x, pos.y);
-    }
+  if (MOUSE_BUTTON_LEFT == e->getMouseButton()) {
+    onGUI(e->getLocationInView(), e->getDelta());
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMoved(c::Touch *t, c::Event *evt) {
-  auto bx= MGMS()->getEnclosureBox();
-  auto loc= t->getLocationInView();
-  for (auto node=paddles->head; node; node=node->next) {
-    auto p= CC_GNF(Paddle,node,"paddle");
+  onGUI(t->getLocationInView(), t->getDelta());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onGUI(const c::Vec2 &loc, const c::Vec2 &dt) {
+  for (auto node=paddleNode->head; node; node=node->next) {
+    auto p= CC_GNF(Paddle,node, "paddle");
     auto box= p->sprite->getBoundingBox();
     if (box.containsPoint(loc)) {
-      auto pos= p->getPos();
-      auto y = pos.y;
-      pos= c::ccpAdd(pos,  t->getDelta());
-      pos= cx::clamp(pos, bx);
-      p->setPos(pos.x, y);
+      if (cx::isPortrait()) {
+        processP(p,loc,dt);
+      } else {
+        processL(p,loc,dt);
+      }
     }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::processP(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
+  auto wz= MGMS()->getEnclosureRect();
+  auto pos = p->pos();
+  auto pnum=p->pnum;
+  float x,y;
+
+  if ((pnum == 2 && loc.y > pos.y) ||
+      (pnum == 1 && loc.y < pos.y)) {
+    x= pos.x + delta.x;
+    y= pos.y;
+    auto cur= cx::clamp(
+        c::ccp(x,y), ZEROPT, c::ccp(wz.width, wz.height));
+    p->setPos(cur.x, cur.y);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::processL(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
+  auto wz= MGMS()->getEnclosureRect();
+  auto pnum= p->pnum;
+  auto pos = p->pos();
+  float x,y;
+
+  if ((pnum == 2 && loc.x > pos.x) ||
+      (pnum == 1 && loc.x < pos.x)) {
+      y = pos.y + evt.delta.y;
+      x=pos.x;
+      auto cur= cx::clamp(
+          c::ccp(x,y), ZEROPT, c::ccp(wz.width, wz.height));
+      p->setPos(cur.x, cur.y);
   }
 }
 

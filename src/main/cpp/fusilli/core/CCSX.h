@@ -130,7 +130,7 @@ namespace ccsx {
   const c::Size screen();
 
   bool traceEnclosure(float dt, const Box4 &bbox,
-      const c::Rect &rect, const c::Vec2 &vel,
+      const Box4 &rect, const c::Vec2 &vel,
       c::Vec2 &outPos, c::Vec2 &outVel);
 
   void mergeDict(c::Dictionary *src, c::Dictionary *d2);

@@ -19,33 +19,28 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> o)
-  : XSystem<EFactory>(f,o) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Resolve::addToEngine(not_null<a::Engine*> e) {
   FauxPaddleNode f;
-  fauxs= e->getNodeList(f.typeId());
   PaddleNode p;
-  nodeList= e->getNodeList(p.typeId());
   BallNode b;
-  balls= e->getNodeList(b.typeId());
+  ArenaNode a;
+
+  arenaNode = e->getNodeList(a.typeId());
+  fauxNode= e->getNodeList(f.typeId());
+  paddleNode = e->getNodeList(p.typeId());
+  ballNode = e->getNodeList(b.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
-  auto bnode = balls->head;
 
-  if (MGMS()->isOnline()) { return; }
+  if (!MGMS()->isOnline() &&
+      MGMS()->isLive()) {
 
-  if (MGMS()->isLive()) {
-
-    rc= checkNodes(nodeList, bnode);
+    rc= checkNodes(paddleNode, ballNode->head);
     if (rc) {
-      rc= checkNodes(fauxs, bnode);
+      rc= checkNodes(fauxNode, ballNode->head);
     }
   }
 
@@ -57,7 +52,7 @@ bool Resolve::update(float dt) {
 bool Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
   for (auto node=nl->head; node; node=node->next) {
     auto winner = check(node,bnode);
-    if (winner.length() > 0) {
+    if (winner > 0) {
       onWin(winner);
       return false;
     }
@@ -67,18 +62,25 @@ bool Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onWin(const sstr &winner) {
-  auto velo= CC_GNF(Velocity, balls->head, "velocity");
+void Resolve::onWin(int winner) {
+  auto ps= CC_GNF(Players,arenaNode->head, "players");
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
   auto ball= CC_GNF(Ball, balls->head, "ball");
-  CCLOG("winner ====== %s", winner.c_str());
-  ball->setPos( BALL.x, BALL.y);
-  velo->vel.x = BALL.speed * cx::randSign();
-  velo->vel.y = BALL.speed * cx::randSign();
-  sendEx("/hud/score/update",
-      j::json({
-        { "score", 1},
-        {"color", winner }
-      }));
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto speed= JS_FLOAT(cfg["BALL+SPEED"]);
+
+  CCLOG("winner ====== %d", winner);
+  ball->setPos( ss->bp.x, ss->bp.y);
+  ball->vel.x = speed * cx::randSign();
+  ball->vel.y = speed * cx::randSign();
+
+  auto msg= j::json({
+        {"score", 1},
+        {"pnum", winner},
+        {"color", ps->parr[pnum].color }
+  });
+
+  SENDMSGEX("/hud/score/update", &msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////

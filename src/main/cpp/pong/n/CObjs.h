@@ -75,7 +75,7 @@ public:
 
   s_arr<int,2> kcodes;
   DECL_FZ(speed)
-  DECL_FZ(pnum)
+  DECL_IZ(pnum)
   DECL_TD(sstr, snd)
 
 };

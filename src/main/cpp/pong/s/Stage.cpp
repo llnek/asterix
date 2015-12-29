@@ -9,19 +9,22 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Stage.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> o)
-  : XSystem<EFactory>(f,o) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Stage::addToEngine(not_null<a::Engine*> e) {
+  PaddleNode p;
+  ArenaNode a;
+
+  arenaNode = e->getNodeList(a.typeId());
+  paddleNode=e->getNodeList(p.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +43,6 @@ bool Stage::update(float dt) {
 void Stage::onceOnly() {
   auto slots= CC_GNF(Slots, arenaNode->head, "slots");
   auto world = MGMS()->getEnclosureBox();
-  //auto fps = CC_CSV(c::Integer,"FPS");
   auto ps = initPaddleSize();
   auto bs = initBallSize();
   auto cw= cx::center();
@@ -53,84 +55,20 @@ void Stage::onceOnly() {
   auto p2x = floor(world.right - bs.width - HWZ(ps));
   auto p1x = floor(world.left + bs.width + HWZ(ps));
 
-  slots->pz= c::Size( Math.floor(ps.width), Math.floor(ps.height));
-  slots->bz= c::Size( Math.floor(bs.width), Math.floor(bs.height));
-  slots->bp= c::Vec2( Math.floor(cw.x), Math.floor(cw.y));
+  slots->pz= c::Size( floor(ps.width), floor(ps.height));
+  slots->bz= c::Size( floor(bs.width), floor(bs.height));
+  slots->bp= c::Vec2( floor(cw.x), floor(cw.y));
 
   if (ccsx.isPortrait()) {
-    slots->p1p= c::Vec2(Math.floor(cw.x), p1y);
-    slots->p2p= c::Vec2(Math.floor(cw.x), p2y);
+    slots->p1p= c::Vec2(floor(cw.x), p1y);
+    slots->p2p= c::Vec2(floor(cw.x), p2y);
   } else {
-    slots->p1p= c::Vec2(p1x, Math.floor(cw.y));
-    slots->p2p= c::Vec2(p2x, Math.floor(cw.y));
+    slots->p1p= c::Vec2(p1x, floor(cw.y));
+    slots->p2p= c::Vec2(p2x, floor(cw.y));
   }
 
   inited=true;
 }
-
-/**
- * @method fire
- * @private
- */
-fire(t, evt) {
-  if (('/touch/one/move' === t ||
-       '/mouse/move' === t) &&
-      this.state.running) {}
-  else
-  { return; }
-
-  for (let node= this.nodeList.head; node; node=node.next) {
-    if (ccsx.isPortrait()) {
-      this.processP(node,evt);
-    } else {
-      this.processL(node,evt);
-    }
-  }
-},
-/**
- * @method processP
- * @private
- */
-processP(node, evt) {
-  let pnum= node.player.pnum,
-  p = node.paddle,
-  pos = p.pos(),
-  loc= evt.loc,
-  cur,
-  x=pos.x,
-  y=pos.y,
-  wz= ccsx.vrect();
-
-  if (pnum === 2 && loc.y > pos.y ||
-      pnum === 1 && loc.y < pos.y) {
-    x = pos.x + evt.delta.x;
-    cur= cc.pClamp(cc.p(x,y), cc.p(0, 0),
-                   cc.p(wz.width, wz.height));
-    p.setPos(cur.x, cur.y);
-  }
-},
-/**
- * @method processL
- * @private
- */
-processL(node, evt) {
-  let pnum= node.player.pnum,
-  p = node.paddle,
-  pos = p.pos(),
-  loc= evt.loc,
-  cur,
-  x=pos.x,
-  y=pos.y,
-  wz= ccsx.vrect();
-
-  if (pnum === 2 && loc.x > pos.x ||
-      pnum === 1 && loc.x < pos.x) {
-      y = pos.y + evt.delta.y;
-      cur= cc.pClamp(cc.p(x,y), cc.p(0, 0),
-                     cc.p(wz.width, wz.height));
-      p.setPos(cur.x, cur.y);
-    }
-  }
 
 //////////////////////////////////////////////////////////////////////////////
 //

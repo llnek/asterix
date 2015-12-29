@@ -12,20 +12,17 @@
 #if !defined(__NET_H__)
 #define __NET_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "core/Odin.h"
-#include "EFactory.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Net : public f::XSystem<EFactory> {
+struct CC_DLL Net : public a::System {
 
-  virtual const a::SystemType typeId { return "s/Net"; }
-
-  Net(not_null<EFactory*>, not_null<c::Dictionary*>);
+  virtual const a::SystemType typeId() { return "s/Net"; }
 
   virtual void addToEngine(not_null<a::Engine*>);
 
@@ -33,21 +30,28 @@ struct CC_DLL Net : public f::XSystem<EFactory> {
 
   virtual bool update(float);
 
-  void doit(float);
+  virtual ~Net() {}
+  Net() {}
+  NOCPYASS(Net)
+
+  DECL_PTR(a::NodeList,paddleNode)
+  DECL_PTR(a::NodeList,fauxNode)
+  DECL_PTR(a::NodeList,ballNode)
+  DECL_PTR(a::NodeList,arenaNode)
+  DECL_BF(inited)
+
+private:
+
+  void syncPaddles(a::NodeList*, ws::OdinEvent*);
+  void syncOnePaddle(a::Node*, j::json);
   void onceOnly();
   void onEvent(ws::OdinEvent*);
   void onnetw(ws::OdinEvent*);
   void onsess(ws::OdinEvent*);
-  void syncScores(j::json scores);
+  void syncScores(j::json);
   void process(ws::OdinEvent*);
   void reposPaddles(a::NodeList*);
   void reposEntities();
-  void syncPaddles(a::NodeList*, ws::OdinEvent*);
-  void syncOnePaddle(a::Node*, j::json);
-
-  virtual ~Net() {}
-  NODFT(Net)
-  NOCPYASS(Net)
 
 };
 

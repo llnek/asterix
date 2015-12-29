@@ -513,13 +513,13 @@ const c::Vec2 vboxMID(const Box4 &box) {
 // are returned
 //
 bool traceEnclosure(float dt, const Box4 &bbox,
-    const c::Rect &rect, const c::Vec2 &vel,
+    const Box4 &rect, const c::Vec2 &vel,
     c::Vec2 &outPos, c::Vec2 &outVel) {
 
-  auto y = rect.origin.y + dt * vel.y;
-  auto x = rect.origin.x + dt * vel.x;
-  auto sz= HHZ(rect.size);
-  auto sw= HWZ(rect.size);
+  auto sz= rect.top-rect.bottom;//height
+  auto sw= rect.right-rect.left;//width
+  auto y = rect.bottom+(sz*0.5f) + dt * vel.y;// new y
+  auto x = rect.left+(sw*0.5f) + dt * vel.x;// new x
   auto vx= vel.x;
   auto vy= vel.y;
   auto hit=false;
