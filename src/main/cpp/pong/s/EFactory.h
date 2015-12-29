@@ -13,6 +13,7 @@
 #define __EFACTORY_H__
 
 #include "ash/Engine.h"
+#include "n/CObjs.h"
 
 NS_BEGIN(pong)
 
@@ -25,7 +26,7 @@ struct CC_DLL GEngine : public a::Engine {
   a::Entity* mkArena(int cur);
 
   virtual void ignite();
-  virtual GEngine() {}
+  virtual ~GEngine() {}
   GEngine() {}
   NOCPYASS(GEngine)
 };

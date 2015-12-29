@@ -13,7 +13,9 @@
 #define __COBJS_H__
 
 #include "core/ComObj.h"
+#include "core/CCSX.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,19 +42,19 @@ struct CC_DLL Motion : public a::Component {
 struct CC_DLL Paddle : public f::ComObj {
 private:
 
-  const s_arr<int,2> p1Keys() {
+  const s_arr<KEYCODE,2> p1Keys() {
     return cx::isPortrait()
-      ? s_arr<int,2> {KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ALLOW}
-      : s_arr<int,2> {KEYCODE::KEY_DOWN_ARROW,,KEYCODE::KEY_UP_ARROW };
+      ? s_arr<KEYCODE,2> { KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ARROW}
+      : s_arr<KEYCODE,2> {KEYCODE::KEY_DOWN_ARROW,KEYCODE::KEY_UP_ARROW };
   }
 
-  const s_arr<int,2> p2Keys() {
+  const s_arr<KEYCODE,2> p2Keys() {
     return cx::isPortrait()
-      ? s_arr<int,2> {KEYCODE::KEY_A , KEYCODE::KEY_D }
-      : s_arr<int,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
+      ? s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D }
+      : s_arr<KEYCODE,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
   }
 
-  void onColor(const s_arr<int,2> &cs, const sstr &snd) {
+  void onColor(const s_arr<KEYCODE,2> &cs, const sstr &snd) {
     s::copy(cs.begin(), cs.end(), this->kcodes.begin());
     this->snd= snd;
   }
@@ -73,7 +75,7 @@ public:
 
   virtual const a::COMType typeId() { return "n/Paddle"; }
 
-  s_arr<int,2> kcodes;
+  s_arr<KEYCODE,2> kcodes;
   DECL_FZ(speed)
   DECL_IZ(pnum)
   DECL_TD(sstr, snd)
@@ -91,9 +93,11 @@ struct CC_DLL Player : public a::Component {
     this->value= value;
   }
 
+  Player() {}
+    
   virtual const a::COMType typeId() { return "n/Player"; }
 
-  setName(const sstr &id, const sstr &name) {
+  void setName(const sstr &id, const sstr &name) {
     this->pname=name;
     this->pid=id;
   }
@@ -145,7 +149,7 @@ struct CC_DLL Slots : public a::Component {
   DECL_TD(c::Size, bz)
   DECL_TD(c::Vec2, bp)
   virtual const a::COMType typeId() { return "n/Slots"; }
-}
+};
 
 
 

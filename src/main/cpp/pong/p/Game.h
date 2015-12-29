@@ -23,7 +23,7 @@ NS_BEGIN(pong)
 //
 struct CC_DLL GCXX : public f::GCX {
   GCXX(f::GMode m, ws::OdinIO* io, j::json pms)
-    : GCX(m,io) {
+    : f::GCX(m,io) {
     data=pms;
   }
   virtual ~GCXX() {}
@@ -36,6 +36,10 @@ struct CC_DLL Game : f::GameScene {
 
   STATIC_REIFY_SCENE_CTX(Game)
 
+    virtual void sendMsgEx(const MsgTopic&, void*);
+    virtual f::GameLayer* getGLayer() {
+        return (f::GameLayer*) getLayer(2);
+    }
   virtual void decorate();
   virtual bool isLive();
   virtual void play();

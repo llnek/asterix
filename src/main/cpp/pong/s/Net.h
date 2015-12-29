@@ -14,6 +14,7 @@
 
 #include "ash/System.h"
 #include "core/Odin.h"
+#include "n/GNodes.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
@@ -26,7 +27,7 @@ struct CC_DLL Net : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*>);
 
-  virtual int priority() { return a::Net; }
+  virtual int priority() { return a::NetPlay; }
 
   virtual bool update(float);
 
