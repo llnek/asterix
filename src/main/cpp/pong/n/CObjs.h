@@ -94,7 +94,7 @@ struct CC_DLL Player : public a::Component {
   }
 
   Player() {}
-    
+
   virtual const a::COMType typeId() { return "n/Player"; }
 
   void setName(const sstr &id, const sstr &name) {
