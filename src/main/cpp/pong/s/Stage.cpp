@@ -59,7 +59,7 @@ void Stage::onceOnly() {
   slots->bz= c::Size( floor(bs.width), floor(bs.height));
   slots->bp= c::Vec2( floor(cw.x), floor(cw.y));
 
-  if (ccsx.isPortrait()) {
+    if (cx::isPortrait()) {
     slots->p1p= c::Vec2(floor(cw.x), p1y);
     slots->p2p= c::Vec2(floor(cw.x), p2y);
   } else {

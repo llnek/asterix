@@ -16,11 +16,11 @@
 #include "core/JSON.h"
 #include "NetPlay.h"
 #include "Game.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "s/utils.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
-NS_BEGIN(tttoe)
+NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -243,6 +243,6 @@ void NetPlay::decorate() {
 }
 
 
-NS_END(tttoe)
+NS_END(pong)
 
 

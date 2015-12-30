@@ -11,6 +11,7 @@
 
 #include "core/CCSX.h"
 #include "Config.h"
+#include "Splash.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pong)
@@ -23,6 +24,12 @@ owner<Config*> Config::reify() {
   c->initCsts();
   c->initLevels();
   return c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Scene* Config::prelude() {
+  return Splash::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,10 +97,13 @@ void Config::handleResolution(const c::Size &rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto g= c::spriteFrameCache::getInstance();
-  g->addSpriteFrames( "game-pics");
-
-  g->addSpriteFrames( "lang-pics");
+    auto c= c::SpriteFrameCache::getInstance();
+    auto fp= getAtlas("game-pics");
+    c->addSpriteFramesWithFile( fp);
+    CCLOG("loaded sprite-sheet: %s", fp.c_str());
+    fp= getAtlas("lang-pics");
+    c->addSpriteFramesWithFile(fp);
+    CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 

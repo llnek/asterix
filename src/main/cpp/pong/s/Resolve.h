@@ -34,10 +34,14 @@ struct CC_DLL Resolve : public a::System {
 
 private:
 
-  void checkNodes(a::NodeList*, a::Node*);
-  void onWin(const sstr&);
-  const sstr check(a::Node* , a::Node* );
+  bool checkNodes(a::NodeList*, a::Node*);
+  void onWin(int);
+  int check(a::Node* , a::Node* );
 
+  DECL_PTR(a::NodeList, paddleNode);
+  DECL_PTR(a::NodeList, ballNode);
+  DECL_PTR(a::NodeList, fauxNode);
+  DECL_PTR(a::NodeList, arenaNode);
 };
 
 

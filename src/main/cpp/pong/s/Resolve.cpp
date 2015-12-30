@@ -12,6 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "n/GNodes.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -38,7 +39,7 @@ bool Resolve::update(float dt) {
   if (!MGMS()->isOnline() &&
       MGMS()->isLive()) {
 
-    rc= checkNodes(paddleNode, ballNode->head);
+    bool rc= checkNodes(paddleNode, ballNode->head);
     if (rc) {
       rc= checkNodes(fauxNode, ballNode->head);
     }
@@ -65,7 +66,7 @@ bool Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
 void Resolve::onWin(int winner) {
   auto ps= CC_GNF(Players,arenaNode->head, "players");
   auto ss= CC_GNF(Slots,arenaNode->head,"slots");
-  auto ball= CC_GNF(Ball, balls->head, "ball");
+  auto ball= CC_GNF(Ball, ballNode->head, "ball");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["BALL+SPEED"]);
 
@@ -77,7 +78,7 @@ void Resolve::onWin(int winner) {
   auto msg= j::json({
         {"score", 1},
         {"pnum", winner},
-        {"color", ps->parr[pnum].color }
+        {"color", ps->parr[winner].color }
   });
 
   SENDMSGEX("/hud/score/update", &msg);
@@ -85,30 +86,30 @@ void Resolve::onWin(int winner) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const sstr Resolve::check(a::Node *node, a::Node *bnode) {
+int Resolve::check(a::Node *node, a::Node *bnode) {
   auto pd= CC_GNF(Paddle, node, "paddle");
   auto b= CC_GNF(Ball, bnode, "ball");
-  auto pc= pd->color;
-  auto bp= b->getPos();
+  auto pc= pd->pnum;
+  auto bp= b->pos();
 
   if (cx::isPortrait()) {
 
-    if (pc == CC_CSS("P1_COLOR")) {
+    if (pc == 1) {
       return bp.y < cx::getBottom(pd->sprite) ?
-        CC_CSS("P2_COLOR") : "";
+        2 : 0;
     } else {
       return bp.y > cx::getTop(pd->sprite) ?
-        CC_CSS("P1_COLOR") : "";
+        1 : 0;
     }
 
   } else {
 
-    if (pc == CC_CSS("P1_COLOR")) {
+    if (pc == 1) {
       return bp.x < cx::getLeft(pd->sprite) ?
-        CC_CSS("P2_COLOR") : "";
+        2 : 0;
     } else {
       return bp.x > cx::getRight(pd->sprite) ?
-        CC_CSS("P1_COLOR") : "";
+        1 : 0;
     }
 
   }

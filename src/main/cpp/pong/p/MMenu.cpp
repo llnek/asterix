@@ -14,10 +14,10 @@
 #include "core/odin.h"
 #include "x2d/XLib.h"
 #include "NetPlay.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "Game.h"
 #include "n/GNodes.h"
-
+#include "s/utils.h"
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pong)
@@ -50,7 +50,7 @@ struct CC_DLL UILayer : public f::XLayer {
 //
 void UILayer::decorate() {
   auto tile = CC_CSV(c::Integer,"TILE");
-  auto nil = CC_CSV(c::Integer,"CV_Z");
+  //auto nil = CC_CSV(c::Integer,"CV_Z");
   auto c = XCFG()->getColor("default");
   auto wb = cx::visBox();
   auto cw = cx::center();

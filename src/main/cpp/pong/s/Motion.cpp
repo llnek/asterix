@@ -11,6 +11,7 @@
 
 #include "x2d/GameScene.h"
 #include "Motion.h"
+#include "n/GNodes.h"
 
 NS_BEGIN(pong)
 
@@ -45,11 +46,11 @@ void Motions::onkey(a::Node *node, float dt) {
   auto m= CC_GNF(Motion,node,"motion");
   auto &cs = p->kcodes;
 
-  if (MGMS()->keyPoll(cs[0])) {
+  if (MGML()->keyPoll(cs[0])) {
     m->left=true;
   }
 
-  if (MGMS()->keyPoll(cs[1])) {
+  if (MGML()->keyPoll(cs[1])) {
     m->right=true;
   }
 

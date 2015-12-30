@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
+#include "n/GNodes.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
@@ -32,6 +33,7 @@ void Move::addToEngine(not_null<a::Engine*> e) {
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
+    auto ps = CC_GNF(Players,arenaNode->head,"players");
 
     for (auto node= paddleNode->head; node; node=node->next) {
       doit(node, dt);
@@ -39,11 +41,12 @@ bool Move::update(float dt) {
 
     for (auto node= fauxNode->head; node; node=node->next) {
       auto p = CC_GNF(Paddle,node,"paddle");
-      if (p->category == CC_CSV(c::Integer, "BOT")) {
+      auto &y= ps->parr[p->pnum];
+      if (y.category == CC_CSV(c::Integer, "BOT")) {
         moveRobot(node, ballNode->head, dt);
       }
       else
-      if (p->category == CC_CSV(c::Integer, "NET")) {
+      if (y.category == CC_CSV(c::Integer, "NET")) {
         simuMove(node, ballNode->head, dt);
       }
     }
@@ -61,7 +64,7 @@ void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
   auto paddle = CC_GNF(Paddle,node,"paddle");
   auto cfg = MGMS()->getLCfg()->getValue();
   auto world= MGMS()->getEnclosureBox();
-  auto hw2 = cx::halfHW(paddle->sprite),
+    auto hw2 = cx::halfHW(paddle->sprite);
   auto pos = paddle->pos();
   auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   f::MaybeFloat x;
@@ -101,8 +104,8 @@ void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
   auto ball = CC_GNF(Ball,bnode,"ball");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto bp= ball->getPos();
-  auto pos = pad->getPos();
+  auto bp= ball->pos();
+  auto pos = pad->pos();
   f::MaybeFloat y;
   f::MaybeFloat x;
 
@@ -129,13 +132,13 @@ void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
   }
 
   if (! x.isNone()) {
-    paddle->setPos(x.get(),pos.y);
-    clamp(paddle->sprite);
+    pad->setPos(x.get(),pos.y);
+    clamp(pad->sprite);
   }
 
   if (! y.isNone()) {
-    paddle->setPos(pos.x, y.get());
-    clamp(paddle->sprite);
+    pad->setPos(pos.x, y.get());
+    clamp(pad->sprite);
   }
 }
 
@@ -148,11 +151,11 @@ void Move::processBall(a::Node *node, float dt) {
   c::Vec2 outPos;
   auto rc= cx::traceEnclosure(
       dt,world, cx::bbox4(b->sprite),
-      ball->vel, outPos, outVel);
+      b->vel, outPos, outVel);
 
   if (rc) {
-    v->vel.x = outVel.x;
-    v->vel.y = outVel.y;
+    b->vel.x = outVel.x;
+    b->vel.y = outVel.y;
   }
 
   b->setPos(outPos.x,outPos.y);
@@ -168,7 +171,7 @@ void Move::doit(a::Node *node, float dt) {
   auto s= JS_FLOAT(cfg["PADDLE+SPEED"]) * dt;
   auto ld = last->lastDir;
   auto lp = last->lastP;
-  auto pos= p->getPos();
+  auto pos= p->pos();
   float nv, x,y;
 
   if (m->right) {
@@ -200,9 +203,9 @@ void Move::doit(a::Node *node, float dt) {
 
   // below is really for wsock stuff
   if (cx::isPortrait()) {
-    nv = p->getPos().x;
+    nv = p->pos().x;
   } else {
-    nv = p->getPos().y;
+    nv = p->pos().y;
   }
 
   auto delta= abs(nv - lp);
@@ -230,7 +233,7 @@ void Move::notifyServer(a::Node *node, int direction) {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto pnum= ss->pnum;
   auto vv = direction * JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto pos = pad->getPos();
+  auto pos = pad->pos();
   auto key= pnum==2 ? "p2" : "p1";
   auto body= j::json({
       {"pnum", pnum},
@@ -241,7 +244,7 @@ void Move::notifyServer(a::Node *node, int direction) {
           {"pv", vv } }) }
   });
 
-  ws::netsend(ws::MType::SESSION,
+  ws::netSend(MGMS()->wsock(), ws::MType::SESSION,
       ws::EType::PLAY_MOVE,
       body);
 }
@@ -258,21 +261,21 @@ void Move::clamp(c::Sprite *sprite) {
 
   if (cx::isPortrait()) {
     if (bb4.right > world.right) {
-      x = world.right - hw2.x;
+        x = f::MaybeFloat(world.right - hw2.width);
     }
     if (bb4.left < world.left) {
-      x = world.left + hw2.x;
+        x = f::MaybeFloat(world.left + hw2.width);
     }
   } else {
     if (bb4.top > world.top) {
-      y = world.top - hw2.y;
+        y = f::MaybeFloat(world.top - hw2.height);
     }
     if (bb4.bottom < world.bottom) {
-      y = world.bottom + hw2.y;
+        y = f::MaybeFloat(world.bottom + hw2.height);
     }
   }
 
-  if (!x.isNpne()) {
+  if (!x.isNone()) {
     sprite->setPosition(x.get(), pos.y);
   }
 

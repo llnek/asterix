@@ -318,7 +318,14 @@ const c::Size calcSize(const sstr &frame) {
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size halfHW(not_null<c::Sprite*> s) {
+const c::Size halfHW(not_null<ComObj*> n) {
+  return halfHW(n->sprite);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Calculate halves of width and height of this sprite
+//
+const c::Size halfHW(not_null<c::Node*> s) {
   auto z= s->getContentSize();
   return c::Size(z.width * 0.5f, z.height * 0.5f);
 }

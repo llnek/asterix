@@ -42,6 +42,10 @@ struct CC_DLL HUDLayer : public f::XLayer {
 
   s_arr<Player,3> parr;
   s_arr<int,3> scores;
+  DECL_PTR(c::Label, score2)
+  DECL_PTR(c::Label, score1)
+  DECL_PTR(c::Label, title)
+  DECL_PTR(c::Label, resultMsg)
 
 };
 

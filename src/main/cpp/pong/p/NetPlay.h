@@ -17,7 +17,7 @@
 #include "core/Odin.h"
 
 NS_ALIAS(ws, fusii::odin)
-NS_BEGIN(tttoe)
+NS_BEGIN(pong)
 
 typedef std::function<void (ws::OdinIO*, j::json)> NPCX_Yes;
 
@@ -47,6 +47,6 @@ struct CC_DLL NetPlay : public f::XScene {
 };
 
 
-NS_END(tttoe)
+NS_END(pong)
 #endif
 

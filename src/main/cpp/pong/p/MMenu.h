@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MENU_H__)
-#define __MENU_H__
+#if !defined(__MMENU_H__)
+#define __MMENU_H__
 
 #include "2d/CCActionInstant.h"
 #include "x2d/XScene.h"

@@ -24,7 +24,7 @@ void Net::addToEngine(not_null<a::Engine*> e) {
   FauxPaddleNode f;
   PaddleNode p;
   BallNode b;
-  AreanNode a;
+  ArenaNode a;
   paddleNode= e->getNodeList(p.typeId());
   ballNode= e->getNodeList(b.typeId());
   fauxNode= e->getNodeList(f.typeId());
@@ -38,21 +38,12 @@ bool Net::update(float dt) {
       MGMS()->isOnline()) {
     if (! inited) {
       onceOnly();
-    } else {
-      doit(dt);
-    }
-  }
+    }   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::doit(float dt) {
-  const evt = this.evQ.length > 0 ? this.evQ.shift() : undef;
-  if (!!evt) {
-    this.onevent(evt.event);
-  }
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -88,8 +79,8 @@ void Net::onceOnly() {
       {"numpts", JS_INT(cfg["NUM+POINTS"]) }
   });
 
-  wsock->cancenlAll();
-  ws::netsend( ws::MType::SESSION, ws::EType::STARTED, src);
+  wsock->cancelAll();
+  ws::netSend( wsock, ws::MType::SESSION, ws::EType::STARTED, src);
   wsock->listen([=](ws::OdinEvent *e) {
       this->onEvent(e);
     });
@@ -158,10 +149,10 @@ void Net::onsess(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::syncScores(j::json scores) {
-  auto ps= CC_GNF(Players,arenaNode,"players");
+  auto ps= CC_GNF(Players,arenaNode->head,"players");
   auto rc = j::json({
       { ps->parr[2].color, JS_INT(scores["p2"]) },
-      { ps->parr[1].color, js_INT(scores["p1"]) }
+      { ps->parr[1].color, JS_INT(scores["p1"]) }
   });
   SENDMSGEX("/hud/score/sync", &rc);
 }
@@ -170,7 +161,7 @@ void Net::syncScores(j::json scores) {
 //
 void Net::process(ws::OdinEvent *evt) {
   CCLOG("process: => %s", evt->doco.dump().c_str());
-  auto ps= CC_GNF(Players,arenaNode,"players");
+  auto ps= CC_GNF(Players,arenaNode->head,"players");
   auto source = evt->doco["source"];
   auto ok= true;
 
@@ -178,7 +169,7 @@ void Net::process(ws::OdinEvent *evt) {
     auto pnum = JS_INT(source["winner"]["pnum"]);
     assert(pnum > 0 && pnum < ps->parr.size());
     auto &win= ps->parr[pnum];
-    CCLOG("server sent us new winner ==> %s", win.color);
+    CCLOG("server sent us new winner ==> %s", win.color.c_str());
     syncScores(source["winner"]["scores"]);
     auto msg= j::json({
         {"winner", win.color},
@@ -210,13 +201,13 @@ void Net::process(ws::OdinEvent *evt) {
   syncPaddles(paddleNode, evt);
   syncPaddles(fauxNode, evt);
 
-  return ok;
+  //return ok;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::reposPaddles(a::NodeList *nl) {
-  auto ss= CC_GNF(Slots,arenaNode-head,"slots");
+  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
   for (auto node=nl->head; node; node=node->next) {
     auto last= CC_GNF(Position,node,"lastpos");
     auto p= CC_GNF(Paddle,node,"paddle");

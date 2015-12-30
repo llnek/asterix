@@ -35,8 +35,8 @@ void Collide::addToEngine(not_null<a::Engine*> e) {
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
-    checkNodes(paddleNode, ballNode);
-    checkNodes(fauxNode, ballNode);
+    checkNodes(paddleNode, ballNode->head);
+    checkNodes(fauxNode, ballNode->head);
   }
   return true;
 }
@@ -57,10 +57,10 @@ void Collide::checkNodes(a::NodeList *nl, a::Node *bnode) {
 void Collide::check(a::Node *node, a::Node *bnode) {
   auto pad = CC_GNF(Paddle,node,"paddle");
   auto ball = CC_GNF(Ball,bnode,"ball");
-  auto pos = ball->getPos();
+  auto pos = ball->pos();
   auto bb4 = cx::bbox4(pad->sprite);
-  auto x= pos.x,
-  auto y= pos.y,
+    auto x= pos.x;
+    auto y= pos.y;
   auto hw2= cx::halfHW(ball->sprite);
 
   if (cx::isPortrait()) {
@@ -69,17 +69,17 @@ void Collide::check(a::Node *node, a::Node *bnode) {
     ball->vel.x = - ball->vel.x;
   }
 
-  if (pad->color == CC_CSS("P1_COLOR")) {
+  if (pad->pnum == 1) {
     if (cx::isPortrait()) {
-      y=bb4.top + hw2.y;
+      y=bb4.top + hw2.height;
     } else {
-      x=bb4.right + hw2.x;
+      x=bb4.right + hw2.width;
     }
   } else {
     if (cx::isPortrait()) {
-      y = bb4.bottom - hw2.y;
+      y = bb4.bottom - hw2.height;
     } else {
-      x = bb4.left - hw2.x;
+      x = bb4.left - hw2.width;
     }
   }
 

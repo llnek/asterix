@@ -13,6 +13,7 @@
 #include "s/EFactory.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
+#include "n/GNodes.h"
 #include "HUD.h"
 #include "Game.h"
 #include "Menu.h"
@@ -39,12 +40,18 @@ struct CC_DLL GLayer : public f::GameLayer {
   void deco(int pnum, const sstr &p1k, const sstr &p1n,
       const sstr &p2k, const sstr &p2n);
   void deco();
+    void showMenu() {}
+  void processP(Paddle*, const c::Vec2 &loc, const c::Vec2 &delta );
+  void processL(Paddle*, const c::Vec2 &loc, const c::Vec2 &delta );
+  void doDone(int);
+  void onWinner(const sstr&, int );
+  void updatePoints(j::json);
 
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, arenaNode)
 
-  virtual ~GLayer();
-  GLayer();
+  virtual ~GLayer() {}
+  GLayer() {}
   NOCPYASS(GLayer)
 
   DECL_GETLAYER(HUDLayer,getHUD,3)
@@ -99,7 +106,7 @@ void GLayer::onGUI(const c::Vec2 &loc, const c::Vec2 &dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::processP(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
-  auto wz= MGMS()->getEnclosureRect();
+    auto box= MGMS()->getEnclosureBox();
   auto pos = p->pos();
   auto pnum=p->pnum;
   float x,y;
@@ -108,8 +115,7 @@ void GLayer::processP(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
       (pnum == 1 && loc.y < pos.y)) {
     x= pos.x + delta.x;
     y= pos.y;
-    auto cur= cx::clamp(
-        c::ccp(x,y), ZEROPT, c::ccp(wz.width, wz.height));
+    auto cur= cx::clamp(c::ccp(x,y), box);
     p->setPos(cur.x, cur.y);
   }
 }
@@ -117,17 +123,16 @@ void GLayer::processP(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::processL(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
-  auto wz= MGMS()->getEnclosureRect();
+  auto box= MGMS()->getEnclosureBox();
   auto pnum= p->pnum;
   auto pos = p->pos();
   float x,y;
 
   if ((pnum == 2 && loc.x > pos.x) ||
       (pnum == 1 && loc.x < pos.x)) {
-      y = pos.y + evt.delta.y;
+      y = pos.y + delta.y;
       x=pos.x;
-      auto cur= cx::clamp(
-          c::ccp(x,y), ZEROPT, c::ccp(wz.width, wz.height));
+      auto cur= cx::clamp(c::ccp(x,y), box);
       p->setPos(cur.x, cur.y);
   }
 }
@@ -154,6 +159,7 @@ void GLayer::deco() {
     incIndexZ();
   }
 
+    auto ctx = (GCXX*) MGMS()->getCtx();
   auto ppids = ctx->data["ppids"];
   auto pnum= ctx->data["pnum"];
   sstr p2k;
@@ -203,7 +209,7 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
 
   Player p1(p1cat, CC_CSV(c::Integer, "CV_X"), 1, CC_CSS("P1_COLOR"));
   Player p2(p2cat, CC_CSV(c::Integer, "CV_O"), 2, CC_CSS("P2_COLOR"));
-  auto ps= a->get("n/Players");
+  auto ps= (Players*) a->get("n/Players");
 
   p1.setName(p1k,p1n);
   p2.setName(p2k,p2n);
@@ -244,16 +250,12 @@ void GLayer::doDone(int p) {
   getHUD()->drawResult(p);
   getHUD()->endGame();
   //this.removeAll();
-  sh.sfxPlay("game_end");
-  stop();
+    cx::sfxPlay("game_end");
+
 }
 
 END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-const f::Box4 Game::getEnclosureBox() {
-  return cx::visBox();
-}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

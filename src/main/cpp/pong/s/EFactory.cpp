@@ -26,21 +26,21 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::ignite() {
-
+    auto e = this;
   e->forceSync();
 
-  e->regoSystem(mc_new_1(Resolve, this));
-  e->regoSystem(mc_new_1(Collide, this));
-  e->regoSystem(mc_new_1(Move, this));
-  e->regoSystem(mc_new_1(Motion, this));
-  e->regoSystem(mc_new_1(Net, this));
-  e->regoSystem(mc_new_1(Stage, this));
+  e->regoSystem(mc_new(Resolve));
+  e->regoSystem(mc_new(Collide));
+  e->regoSystem(mc_new(Move));
+  e->regoSystem(mc_new(Motions));
+  e->regoSystem(mc_new(Net));
+  e->regoSystem(mc_new(Stage));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 a::Entity* GEngine::mkArena(int cur) {
-  auto ent= engine->reifyEntity("*");
+  auto ent= this->reifyEntity("*");
   auto ss= mc_new(Slots);
 
   ent->checkin(mc_new(Players));
@@ -57,7 +57,7 @@ a::Entity* GEngine::mkArena(int cur) {
 a::Entity* GEngine::mkBall(float x, float y) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["ball+speed"]);
-  auto ent = engine->reifyEntity("*");
+  auto ent = this->reifyEntity("*");
   auto vy = sd * cx::randSign();
   auto vx = sd * cx::randSign();
 
@@ -84,7 +84,7 @@ a::Entity* GEngine::mkOnePaddle(int cur, const Player &p, float x, float y) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["paddle+speed"]);
-  auto ent = engine->reifyEntity("*");
+  auto ent = this->reifyEntity("*");
   float lp;
   sstr res;
 

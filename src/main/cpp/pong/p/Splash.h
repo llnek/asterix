@@ -12,7 +12,7 @@
 #if !defined(__SPLASH_H__)
 #define __SPLASH_H__
 
-#include "x2d/XLayer.h"
+#include "x2d/XScene.h"
 
 NS_BEGIN(pong)
 

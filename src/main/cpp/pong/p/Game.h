@@ -49,6 +49,9 @@ struct CC_DLL Game : f::GameScene {
   Game() {}
   NOCPYASS(Game);
 
+  //virtual const c::Rect getEnclosureRect();
+  //virtual const f::Box4 getEnclosureBox();
+
 };
 
 

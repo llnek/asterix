@@ -95,6 +95,7 @@ namespace ccsx {
 
   const c::Size calcSize(const sstr &frame);
 
+  const c::Size halfHW(not_null<ComObj*>);
   const c::Size halfHW(not_null<c::Node*>);
 
   const c::Rect bbox(not_null<c::Node*>);

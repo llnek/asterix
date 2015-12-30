@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
@@ -100,8 +101,8 @@ int HUDLayer::isDone() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScores(j::json scs) {
-  scores[2] = JS_INT(scs[play2]);
-  scores[1] = JS_INT(scs[play1]);
+  scores[2] = JS_INT(scs["p2"]);
+  scores[1] = JS_INT(scs["p1"]);
   drawScores();
 }
 
@@ -109,11 +110,11 @@ void HUDLayer::updateScores(j::json scs) {
 //
 void HUDLayer::updateScore(const sstr &color, int value) {
   int pnum=0;
-  if (color == CSS("P2_COLOR")) {
+  if (color == CC_CSS("P2_COLOR")) {
     pnum=2;
   }
   else
-  if (color == CSS("P1_COLOR")) {
+  if (color == CC_CSS("P1_COLOR")) {
     pnum=1;
   }
   scores[pnum] += value;
@@ -136,7 +137,7 @@ void HUDLayer::drawResult(int winner) {
   sstr pn;
   if (winner == 2) {
     pn= parr[2].pname;
-    msg= XCFG()->getL1oNStr("whowin", s_vec<sstr> { pn });
+    msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { pn });
   }
   else
   if (winner == 1) {

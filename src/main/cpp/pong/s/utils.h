@@ -9,39 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__STAGE_H__)
-#define __STAGE_H__
+#if !defined(__UTILS_H__)
+#define __UTILS_H__
 
-#include "ash/System.h"
-#include "n/GNodes.h"
-
+#include "x2d/GameScene.h"
+#include "core/CCSX.h"
 NS_BEGIN(pong)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Stage : public a::System {
-
-  virtual const a::SystemType typeId() { return "s/Stage"; }
-  virtual int priority() { return a::PreUpdate; }
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float dt);
-
-  virtual ~Stage() {}
-  Stage() {}
-  NOCPYASS(Stage)
-    DECL_PTR(a::NodeList, paddleNode)
-
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_BF(inited)
-
-protected:
-
-  const c::Size initPaddleSize();
-  const c::Size initBallSize();
-  void onceOnly();
-};
-
+  j::json fmtGameData(fusii::GMode );
 
 NS_END(pong)
 #endif
