@@ -40,6 +40,7 @@ void Config::initCsts() {
   addColor("text", CC_STR("#32baf4"));
   addColor("hud", CC_STR("#ffffff"));
 
+  addCst("showFPS", CC_BOOL(false));
   addCst("GRID_W", CC_INT(40));
   addCst("GRID_H", CC_INT(60));
 
@@ -97,13 +98,13 @@ void Config::handleResolution(const c::Size &rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-    auto c= c::SpriteFrameCache::getInstance();
-    auto fp= getAtlas("game-pics");
-    c->addSpriteFramesWithFile( fp);
-    CCLOG("loaded sprite-sheet: %s", fp.c_str());
-    fp= getAtlas("lang-pics");
-    c->addSpriteFramesWithFile(fp);
-    CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  auto c= c::SpriteFrameCache::getInstance();
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  fp= getAtlas("lang-pics");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 

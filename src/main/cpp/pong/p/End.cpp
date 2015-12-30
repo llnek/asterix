@@ -20,11 +20,10 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onReplay(c::Ref*) {
-  auto x= (f::GCX*)getSceneX()->getCtx();
+  auto x= (GCXX*) getSceneX()->emitCtx();
   auto m= MGMS()->getMode();
-  getSceneX()->setCtx(nullptr,false);
   cx::runScene(
-      Game::reify(mc_new(f::GCX)),
+      Game::reify(x),
       CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
@@ -40,7 +39,9 @@ void ELayer::onQuit(c::Ref*) {
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR",XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel(
+      "font.OCR",
+      XCFG()->getL10NStr("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
@@ -56,7 +57,8 @@ void ELayer::decorate() {
   // btns
   auto b1= cx::reifyMenuBtn("play.png");
   auto b2= cx::reifyMenuBtn("quit.png");
-  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1, b2} );
+  auto menu= cx::mkVMenu(
+      s_vec<c::MenuItem*> {b1, b2} );
 
   b1->setTarget(this,
       CC_MENU_SELECTOR(ELayer::onReplay));

@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ComObj.h"
+
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -99,6 +100,12 @@ float ComObj::height() {
 //
 float ComObj::width() {
   return NNP(sprite) ? sprite->getContentSize().width : 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const c::Rect ComObj::bbox() {
+  return NNP(sprite) ? sprite->getBoundingBox() : c::Rect(0,0,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

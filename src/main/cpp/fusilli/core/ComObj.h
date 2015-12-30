@@ -39,6 +39,7 @@ public:
   void setPos(float x, float y);
   const c::Size csize();
   const c::Vec2 pos();
+  const c::Rect bbox();
 
   float height();
   int pid();
@@ -59,7 +60,7 @@ public:
 
   DECL_TD(c::Vec2, lastPos)
   DECL_TD(c::Vec2, vel)
-
+  DECL_TD(c::Vec2, speed)
 };
 
 

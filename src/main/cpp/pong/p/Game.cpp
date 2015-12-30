@@ -16,8 +16,8 @@
 #include "n/GNodes.h"
 #include "HUD.h"
 #include "Game.h"
-#include "Menu.h"
-//#include "End.h"
+#include "MMenu.h"
+#include "End.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -34,17 +34,25 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onMouseMove(c::Event*);
   void onGUI(const c::Vec2&, const c::Vec2&);
 
+  virtual void onTouchMotion(ComObj*,
+      const c::Vec2&, const c::Vec2&);
+  virtual void onMouseMotion(ComObj*,
+      const c::Vec2&, const c::Vec2&);
+
   virtual int getIID() { return 2; }
   virtual void decorate();
 
-  void deco(int pnum, const sstr &p1k, const sstr &p1n,
+  void deco(int pnum,
+      const sstr &p1k, const sstr &p1n,
       const sstr &p2k, const sstr &p2n);
+
+  void showMenu();
   void deco();
-    void showMenu() {}
+  void doDone(int);
+
   void processP(Paddle*, const c::Vec2 &loc, const c::Vec2 &delta );
   void processL(Paddle*, const c::Vec2 &loc, const c::Vec2 &delta );
-  void doDone(int);
-  void onWinner(const sstr&, int );
+  void onWinner(const sstr&, int, int );
   void updatePoints(j::json);
 
   DECL_PTR(a::NodeList, paddleNode)
@@ -105,19 +113,54 @@ void GLayer::onGUI(const c::Vec2 &loc, const c::Vec2 &dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::processP(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
-    auto box= MGMS()->getEnclosureBox();
+void GLayer::onTouchMotion(ComObj* c,
+    const c::Vec2 &loc, const c::Vec2 &dt) {
+  if (cx::isPortrait()) {
+    processP(c,loc,dt);
+  } else {
+    processL(c,loc,dt);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(ComObj* c,
+      const c::Vec2 &loc, const c::Vec2 &dt) {
+  if (cx::isPortrait()) {
+    processP(c,loc,dt);
+  } else {
+    processL(c,loc,dt);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::processP(Paddle *p,
+    const c::Vec2 &loc, const c::Vec2 &delta) {
+
+  auto box= MGMS()->getEnclosureBox();
   auto pos = p->pos();
   auto pnum=p->pnum;
   float x,y;
 
-  if ((pnum == 2 && loc.y > pos.y) ||
-      (pnum == 1 && loc.y < pos.y)) {
-    x= pos.x + delta.x;
-    y= pos.y;
+  if (cx::isPortrait()) {
+    if ((pnum == 2 && loc.x > pos.x) ||
+        (pnum == 1 && loc.x < pos.x)) {
+        x=pos.x;
+        y = pos.y + delta.y;
+    }
+  } else {
+    if ((pnum == 2 && loc.y > pos.y) ||
+        (pnum == 1 && loc.y < pos.y)) {
+      x= pos.x + delta.x;
+      y= pos.y;
+    }
+  }
+
     auto cur= cx::clamp(c::ccp(x,y), box);
     p->setPos(cur.x, cur.y);
-  }
+      auto cur= cx::clamp(c::ccp(x,y), box);
+      p->setPos(cur.x, cur.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,7 +202,7 @@ void GLayer::deco() {
     incIndexZ();
   }
 
-    auto ctx = (GCXX*) MGMS()->getCtx();
+  auto ctx = (GCXX*) MGMS()->getCtx();
   auto ppids = ctx->data["ppids"];
   auto pnum= ctx->data["pnum"];
   sstr p2k;
@@ -225,6 +268,12 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
   this->paddleNode= e->getNodeList(PaddleNode().typeId());
   this->arenaNode= e->getNodeList(ArenaNode().typeId());
 
+  //add the motionables
+  for (auto n=paddleNode->head;n;n=n->next) {
+    auto p= CC_GNF(Paddle,n,"paddle");
+    this->motionees.push_back(p);
+  }
+
   this->engine=e;
 }
 
@@ -250,13 +299,10 @@ void GLayer::doDone(int p) {
   getHUD()->drawResult(p);
   getHUD()->endGame();
   //this.removeAll();
-    cx::sfxPlay("game_end");
-
+  cx::sfxPlay("game_end");
 }
 
 END_NS_UNAMED()
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
@@ -282,6 +328,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   if (topic == "/hud/score/update") {
     y->onWinner(
         JS_STR(msg->operator[]("color")),
+        JS_INT(msg->operator[]("pnum")),
         JS_INT(msg->operator[]("score")));
   }
   else
@@ -290,7 +337,9 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
   else
   if (topic == "/hud/end") {
-    y->doDone(JS_INT(msg->operator[]("winner")));
+    y->doDone(
+        //JS_STR(msg->operator[]("winner")),
+        JS_INT(msg->operator[]("winner")));
   }
 
 }

@@ -62,7 +62,6 @@ public:
   virtual const c::Rect getEnclosureRect();
   virtual const Box4 getEnclosureBox();
 
-  virtual GameLayer* getGLayer() = 0;
   virtual bool isLive() = 0;
   virtual void stop() = 0;
   virtual void play() = 0;

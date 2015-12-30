@@ -24,62 +24,40 @@ struct CC_DLL Ball : public f::ComObj {
   virtual const a::COMType typeId() { return "n/Ball"; }
   Ball(c::Sprite *s, float v)
     : ComObj(s) {
-    speed=v;
+    speed.x=v;
+    speed.y=v;
   }
-  DECL_FZ(speed)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Motion : public a::Component {
-  virtual const a::COMType typeId() { return "n/Motion"; }
-  DECL_BF(right )
-  DECL_BF(left )
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Paddle : public f::ComObj {
-private:
 
+  virtual const a::COMType typeId() { return "n/Paddle"; }
+
+  Paddle(c::Sprite *s, int pnum, float v) : ComObj(s) {
+    this->kcodes = pnum == 1 ? p1keys() : p2keys();
+    this->snd = pnum == 1 ? "x_hit" : "o_hit";
+    this->pnum= pnum;
+    speed.x=v;
+    speed.y=v;
+  }
+
+  s_arr<KEYCODE,2> kcodes;
+  DECL_IZ(pnum)
+  DECL_TD(sstr, snd)
+
+private:
   const s_arr<KEYCODE,2> p1Keys() {
     return cx::isPortrait()
       ? s_arr<KEYCODE,2> { KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ARROW}
       : s_arr<KEYCODE,2> {KEYCODE::KEY_DOWN_ARROW,KEYCODE::KEY_UP_ARROW };
   }
-
   const s_arr<KEYCODE,2> p2Keys() {
     return cx::isPortrait()
       ? s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D }
       : s_arr<KEYCODE,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
   }
-
-  void onColor(const s_arr<KEYCODE,2> &cs, const sstr &snd) {
-    s::copy(cs.begin(), cs.end(), this->kcodes.begin());
-    this->snd= snd;
-  }
-
-public:
-
-  Paddle(c::Sprite *s, int pnum, float v) : ComObj(s) {
-
-    if (pnum == 1) {
-      onColor(p1Keys(), "x_hit" );
-    } else {
-      onColor(p2Keys(), "o_hit");
-    }
-
-    this->pnum= pnum;
-    this->speed=v;
-  }
-
-  virtual const a::COMType typeId() { return "n/Paddle"; }
-
-  s_arr<KEYCODE,2> kcodes;
-  DECL_FZ(speed)
-  DECL_IZ(pnum)
-  DECL_TD(sstr, snd)
-
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -77,6 +77,55 @@ void GameLayer::enableListeners() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+bool GameLayer::onTouchBegan(c::Touch *t, c::Event *e) {
+  auto loc= t->getLocationInView();
+  auto ok=false;
+  F__LOOP(it,motionees) {
+    auto &c = *it;
+    if (c->bbox().containsPoint(loc)) {
+      ok=true;
+    }
+  }
+  return ok;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchMoved(c::Touch *t, c::Event *e) {
+  auto bx= MGMS()->getEnclosureBox();
+  auto loc= t->getLocationInView();
+  F__LOOP(it,motionees) {
+    auto &c = *it;
+    auto x= c->bbox();
+    if (x.containsPoint(loc)) {
+      onTouchMotion(c,loc,t->getDelta());
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onMouseMotion(ComObj *c,
+    const c::Vec2 &loc, const c::Vec2 &delta) {
+  auto bx= MGMS()->getEnclosureBox();
+  auto pos= c->pos();
+  c->setPos(cx::clamp(loc, bx).x, pos.y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchMotion(ComObj *c,
+    const c::Vec2 &loc, const c::Vec2 &delta) {
+  auto bx= MGMS()->getEnclosureBox();
+  auto pos= c->pos();
+  auto y = pos.y;
+  pos= c::ccpAdd(pos, delta);
+  pos= cx::clamp(pos, bx);
+  c->setPos(pos.x, y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GameLayer::onKeyPressed(KEYCODE k, c::Event*) {
   int n= (int)k;
   if (n >= 0 && n < 256) {
@@ -105,7 +154,20 @@ void GameLayer::onMouseUp(c::Event* ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::onMouseMove(c::Event*) {
+void GameLayer::onMouseMove(c::Event* event) {
+  auto bx= MGMS()->getEnclosureBox();
+  auto e= (c::EventMouse*)event;
+  auto loc= e->getLocationInView();
+  auto b= e->getMouseButton();
+
+  F__LOOP(it,motionees) {
+    auto &c = *it;
+    auto x= c->bbox();
+    if (b == MOUSE_BUTTON_LEFT &&
+        x.containsPoint(loc)) {
+      onMouseMotion(c,loc,e->getDelta());
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
