@@ -35,6 +35,8 @@ protected:
       const c::Vec2&, const c::Vec2&);
 
   virtual void update(float);
+  virtual void surcease();
+  virtual void decoUI()= 0;
 
   void disableListeners();
   void enableListeners();
@@ -57,6 +59,7 @@ public:
   void setMouseEnabled(bool);
   bool keyPoll(KEYCODE);
 
+  virtual void decorate();
   virtual ~GameLayer();
   GameLayer();
 
@@ -64,7 +67,7 @@ public:
 };
 
 #define DECL_GETLAYER(T,n,x) \
-  virtual T* n() \
+  T* n() \
     { return static_cast<T*>(getSceneX()->getLayer(x)); }
 
 

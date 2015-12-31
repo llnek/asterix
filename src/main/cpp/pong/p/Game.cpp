@@ -39,14 +39,13 @@ struct CC_DLL GLayer : public f::GameLayer {
       const c::Vec2&, const c::Vec2&);
 
   virtual int getIID() { return 2; }
-  virtual void decorate();
+  virtual void decoUI();
 
   void deco(int pnum,
       const sstr &p1k, const sstr &p1n,
       const sstr &p2k, const sstr &p2n);
 
   void showMenu();
-  void deco();
   void doDone(int);
 
   void onWinner(const sstr&, int, int );
@@ -121,19 +120,11 @@ void GLayer::onMotion(f::ComObj *co,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
-  centerImage("game.bg");
-  cx::resumeAudio();
-  enableListeners();
-  deco();
-  scheduleUpdate();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::deco() {
+void GLayer::decoUI() {
 
   F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+
+  centerImage("game.bg");
 
   if (atlases.empty()) {
     regoAtlas("game-pics");
@@ -210,11 +201,11 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
   e->mkOnePaddle(cur, p2, 0, 0);
   e->mkBall(0,0);
   e->mkOnePaddle(cur, p1, 0, 0);
-
-  getHUD()->regoPlayers(p1,p2);
+  e->forceSync();
 
   this->paddleNode= e->getNodeList(PaddleNode().typeId());
   this->arenaNode= e->getNodeList(ArenaNode().typeId());
+  this->engine=e;
 
   //add the motionables
   for (auto n=paddleNode->head;n;n=n->next) {
@@ -222,7 +213,7 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
     this->motionees.push_back(p);
   }
 
-  this->engine=e;
+  getHUD()->regoPlayers(p1,p2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -246,7 +237,7 @@ void GLayer::onWinner(const sstr &color, int pnum, int score) {
 void GLayer::doDone(int p) {
   getHUD()->drawResult(p);
   getHUD()->endGame();
-  //this.removeAll();
+  surcease();
   cx::sfxPlay("game_end");
 }
 
@@ -301,7 +292,9 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::decorate() {
+  HUDLayer::reify(this,3);
   GLayer::reify(this,2);
+  play();
 }
 
 //////////////////////////////////////////////////////////////////////////////

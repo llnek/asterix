@@ -39,9 +39,11 @@ bool Resolve::update(float dt) {
   if (!MGMS()->isOnline() &&
       MGMS()->isLive()) {
 
-    bool rc= checkNodes(paddleNode, ballNode->head);
-    if (rc) {
-      rc= checkNodes(fauxNode, ballNode->head);
+    int win= checkNodes(paddleNode, ballNode->head);
+    if (win > 0) {
+      onWin(win);
+    } else {
+      checkNodes(fauxNode, ballNode->head);
     }
   }
 
@@ -50,15 +52,14 @@ bool Resolve::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
+int Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
   for (auto node=nl->head; node; node=node->next) {
     auto winner = check(node,bnode);
     if (winner > 0) {
-      onWin(winner);
-      return false;
+      return winner;
     }
   }
-  return true;
+  return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,10 +71,12 @@ void Resolve::onWin(int winner) {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["BALL+SPEED"]);
 
+  assert(winner > 0 && winner < ps->parr.size());
   CCLOG("winner ====== %d", winner);
-  ball->setPos( ss->bp.x, ss->bp.y);
+
   ball->vel.x = speed * cx::randSign();
   ball->vel.y = speed * cx::randSign();
+  ball->setPos( ss->bp.x, ss->bp.y);
 
   auto msg= j::json({
         {"score", 1},
@@ -95,21 +98,20 @@ int Resolve::check(a::Node *node, a::Node *bnode) {
   if (cx::isPortrait()) {
 
     if (pc == 1) {
-      return bp.y < cx::getBottom(pd->sprite) ?
-        2 : 0;
-    } else {
-      return bp.y > cx::getTop(pd->sprite) ?
-        1 : 0;
+      return bp.y < cx::getBottom(pd->sprite) ? 2 : 0;
+    }
+
+    if (pc == 2) {
+      return bp.y > cx::getTop(pd->sprite) ? 1 : 0;
     }
 
   } else {
 
     if (pc == 1) {
-      return bp.x < cx::getLeft(pd->sprite) ?
-        2 : 0;
-    } else {
-      return bp.x > cx::getRight(pd->sprite) ?
-        1 : 0;
+      return bp.x < cx::getLeft(pd->sprite) ? 2 : 0;
+    }
+    if (pc == 2) {
+      return bp.x > cx::getRight(pd->sprite) ? 1 : 0;
     }
 
   }

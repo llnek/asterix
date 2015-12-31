@@ -34,7 +34,7 @@ struct CC_DLL Resolve : public a::System {
 
 private:
 
-  bool checkNodes(a::NodeList*, a::Node*);
+  int checkNodes(a::NodeList*, a::Node*);
   void onWin(int);
   int check(a::Node* , a::Node* );
 

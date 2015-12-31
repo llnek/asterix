@@ -26,6 +26,7 @@ struct CC_DLL HUDLayer : public f::XLayer {
   HUDLayer() {}
   NOCPYASS(HUDLayer)
 
+  virtual int getIID() { return 3; }
   virtual void decorate();
 
   void regoPlayers(const Player&, const Player&);

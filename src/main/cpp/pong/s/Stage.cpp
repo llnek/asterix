@@ -20,9 +20,13 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stage::addToEngine(not_null<a::Engine*> e) {
+  FauxPaddleNode f;
   PaddleNode p;
+  BallNode b;
   ArenaNode a;
 
+  fauxNode = e->getNodeList(f.typeId());
+  ballNode=e->getNodeList(b.typeId());
   arenaNode = e->getNodeList(a.typeId());
   paddleNode=e->getNodeList(p.typeId());
 }
@@ -49,24 +53,31 @@ void Stage::onceOnly() {
 
   // position of paddles
   // portrait
-  auto p1y = floor(world.top * 0.1f + bs.height + HHZ(ps));
-  auto p2y = floor(world.top * 0.9f - bs.height - HHZ(ps));
+  auto p1y = world.top * 0.1f + bs.height + HHZ(ps);
+  auto p2y = world.top * 0.9f - bs.height - HHZ(ps);
   // landscape
-  auto p2x = floor(world.right - bs.width - HWZ(ps));
-  auto p1x = floor(world.left + bs.width + HWZ(ps));
+  auto p2x = world.right - bs.width - HWZ(ps);
+  auto p1x = world.left + bs.width + HWZ(ps);
 
-  slots->pz= c::Size( floor(ps.width), floor(ps.height));
-  slots->bz= c::Size( floor(bs.width), floor(bs.height));
-  slots->bp= c::Vec2( floor(cw.x), floor(cw.y));
+  slots->pz= c::Size( ps.width, ps.height);
+  slots->bz= c::Size( bs.width, bs.height);
+  slots->bp= c::Vec2( cw.x, cw.y);
 
   if (cx::isPortrait()) {
-    slots->p1p= c::Vec2(floor(cw.x), p1y);
-    slots->p2p= c::Vec2(floor(cw.x), p2y);
+    slots->p1p= c::Vec2(cw.x, p1y);
+    slots->p2p= c::Vec2(cw.x, p2y);
   } else {
-    slots->p1p= c::Vec2(p1x, floor(cw.y));
-    slots->p2p= c::Vec2(p2x, floor(cw.y));
+    slots->p1p= c::Vec2(p1x, cw.y);
+    slots->p2p= c::Vec2(p2x, cw.y);
   }
 
+  for (auto node=paddleNode->head;node;node=node->next) {
+    auto p= CC_GNF(Paddle,node,"paddle");
+    if (p->pnum == 2) { p->inflate(slots->p2p.x, slots->p2p.y); }
+    if (p->pnum == 1) { p->inflate(slots->p1p.x, slots->p1p.y); }
+  }
+
+  CC_GNF(Ball,ballNode->head, "ball")->inflate(slots->bp.x, slots->bp.y);
   inited=true;
 }
 

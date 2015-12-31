@@ -24,9 +24,12 @@ void Move::addToEngine(not_null<a::Engine*> e) {
   FauxPaddleNode f;
   PaddleNode p;
   BallNode b;
+  ArenaNode a;
+
   fauxNode= e->getNodeList(f.typeId());
   paddleNode= e->getNodeList(p.typeId());
   ballNode= e->getNodeList(b.typeId());
+  arenaNode= e->getNodeList(a.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -64,7 +67,7 @@ void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
   auto paddle = CC_GNF(Paddle,node,"paddle");
   auto cfg = MGMS()->getLCfg()->getValue();
   auto world= MGMS()->getEnclosureBox();
-    auto hw2 = cx::halfHW(paddle->sprite);
+  auto hw2 = cx::halfHW(paddle->sprite);
   auto pos = paddle->pos();
   auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   f::MaybeFloat x;
@@ -170,10 +173,11 @@ void Move::doit(a::Node *node, float dt) {
   auto s= JS_FLOAT(cfg["PADDLE+SPEED"]) * dt;
   auto ld = last->lastDir;
   auto lp = last->lastP;
+  auto &cs = p->kcodes;
   auto pos= p->pos();
   float nv, x,y;
 
-    if (1){//m->right) {
+  if (MGML()->keyPoll(cs[1])) {
     if (cx::isPortrait()) {
       x = pos.x + s;
       y = pos.y;
@@ -184,7 +188,7 @@ void Move::doit(a::Node *node, float dt) {
     p->setPos(x,y);
   }
 
-    if (1){//m->left) {
+  if (MGML()->keyPoll(cs[0])) {
     if (cx::isPortrait()) {
       x = pos.x - s;
       y = pos.y;
@@ -194,9 +198,6 @@ void Move::doit(a::Node *node, float dt) {
     }
     p->setPos(x,y);
   }
-
-  //m->right = false;
-  //m->left= false;
 
   clamp(p->sprite);
 
@@ -227,23 +228,27 @@ void Move::doit(a::Node *node, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::notifyServer(a::Node *node, int direction) {
+  auto ps= CC_GNF(Players,arenaNode->head,"players");
+  auto p2= ps->parr[2].color;
+  auto p1= ps->parr[1].color;
   auto ss= CC_GNF(Slots,arenaNode->head,"slots");
   auto pad = CC_GNF(Paddle, node, "paddle");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto pnum= ss->pnum;
   auto vv = direction * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto pos = pad->pos();
-  auto key= pnum==2 ? "p2" : "p1";
+  auto key= pnum==2 ? p2 : p1;
   auto body= j::json({
       {"pnum", pnum},
       {key, j::json({
-          {"x", floor(pos.x) },
-          {"y", floor(pos.y) },
+          {"x", pos.x },
+          {"y", pos.y },
           {"dir", direction },
           {"pv", vv } }) }
   });
 
-  ws::netSend(MGMS()->wsock(), ws::MType::SESSION,
+  ws::netSend(MGMS()->wsock(),
+      ws::MType::SESSION,
       ws::EType::PLAY_MOVE,
       body);
 }

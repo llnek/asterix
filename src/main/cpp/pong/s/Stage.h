@@ -31,8 +31,11 @@ struct CC_DLL Stage : public a::System {
   Stage() {}
   NOCPYASS(Stage)
 
+
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, ballNode)
+  DECL_PTR(a::NodeList, fauxNode)
   DECL_BF(inited)
 
 protected:

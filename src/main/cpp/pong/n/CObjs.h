@@ -64,8 +64,6 @@ private:
 //
 struct CC_DLL Motion : public a::Component {
   virtual const a::COMType typeId() { return "n/Motion"; }
-  DECL_BF(right)
-  DECL_BF(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////

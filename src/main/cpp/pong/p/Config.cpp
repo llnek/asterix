@@ -54,7 +54,7 @@ void Config::initLevels() {
   auto j= j::json({
         {"PADDLE+SPEED",  200.0f},
         {"BALL+SPEED",  150.0f},
-        {"NUM+POINTS",  4}
+        {"NUM+POINTS",  999994}
       });
   d->setObject(f::JsonObj::create(j), CFG);
 }
@@ -68,6 +68,8 @@ void Config::initAssets() {
 
   addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
   addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
   addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
   addEffect("x_hit", CC_STR("sfx/ElevatorBeep.mp3"));

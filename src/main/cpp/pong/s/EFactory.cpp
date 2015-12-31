@@ -14,7 +14,6 @@
 #include "core/CCSX.h"
 #include "s/Resolve.h"
 #include "s/Collide.h"
-#include "s/Motion.h"
 #include "s/Move.h"
 #include "s/Net.h"
 #include "s/Stage.h"
@@ -26,15 +25,11 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::ignite() {
-    auto e = this;
-  e->forceSync();
-
-  e->regoSystem(mc_new(Resolve));
-  e->regoSystem(mc_new(Collide));
-  e->regoSystem(mc_new(Move));
-  e->regoSystem(mc_new(Motions));
-  e->regoSystem(mc_new(Net));
-  e->regoSystem(mc_new(Stage));
+  this->regoSystem(mc_new(Resolve));
+  this->regoSystem(mc_new(Collide));
+  this->regoSystem(mc_new(Move));
+  this->regoSystem(mc_new(Net));
+  this->regoSystem(mc_new(Stage));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,14 +51,14 @@ a::Entity* GEngine::mkArena(int cur) {
 //
 a::Entity* GEngine::mkBall(float x, float y) {
   auto cfg = MGMS()->getLCfg()->getValue();
-  auto sd= JS_FLOAT(cfg["ball+speed"]);
+  auto sd= JS_FLOAT(cfg["BALL+SPEED"]);
   auto ent = this->reifyEntity("*");
   auto vy = sd * cx::randSign();
   auto vx = sd * cx::randSign();
 
   if (MGMS()->isOnline()) {
-    vx = 0;
     vy = 0;
+    vx = 0;
   }
 
   auto sp= cx::reifySprite("pongball.png");
@@ -80,15 +75,16 @@ a::Entity* GEngine::mkBall(float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* GEngine::mkOnePaddle(int cur, const Player &p, float x, float y) {
+a::Entity* GEngine::mkOnePaddle(
+    int cur, const Player &p, float x, float y) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
-  auto sd= JS_FLOAT(cfg["paddle+speed"]);
+  auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto ent = this->reifyEntity("*");
   float lp;
   sstr res;
 
-  if (p.color == CC_CSS("P2_COLOR")) {
+  if (p.pnum == 2) {
     res= "green_paddle.png";
   } else {
     res= "red_paddle.png";
@@ -104,16 +100,16 @@ a::Entity* GEngine::mkOnePaddle(int cur, const Player &p, float x, float y) {
   if (cx::isPortrait()) { lp = x; } else { lp= y; }
   ent->checkin(mc_new_1(Position, lp));
 
-  if (MGMS()->isOnline() &&
-      cur != p.pnum) {
+  if (MGMS()->isOnline() && cur != p.pnum) {
     ent->checkin(mc_new(Faux));
     //only simulate move
   }
   else
   if (p.category == CC_CSV(c::Integer, "BOT")) {
     ent->checkin(mc_new(Faux));
-  } else {
-    //ent->checkin(mc_new(Motion));
+  }
+  else {
+    ent->checkin(mc_new(Motion));
   }
 
   return ent;

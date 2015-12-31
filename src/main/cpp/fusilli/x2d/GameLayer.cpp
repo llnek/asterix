@@ -35,6 +35,27 @@ GameLayer::GameLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GameLayer::decorate() {
+  cx::resumeAudio();
+  enableListeners();
+  decoUI();
+  if (NNP(engine)) {
+    engine->forceSync();
+    engine->ignite();
+  }
+  scheduleUpdate();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::surcease() {
+  unscheduleUpdate();
+  disableListeners();
+  cx::pauseAudio();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 bool GameLayer::keyPoll(KEYCODE key) {
   int k= (int) key;
   return k >= 0 && k < 256 ? keys[k] : false;

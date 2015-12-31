@@ -59,8 +59,8 @@ void Collide::check(a::Node *node, a::Node *bnode) {
   auto ball = CC_GNF(Ball,bnode,"ball");
   auto pos = ball->pos();
   auto bb4 = cx::bbox4(pad->sprite);
-    auto x= pos.x;
-    auto y= pos.y;
+  auto x= pos.x;
+  auto y= pos.y;
   auto hw2= cx::halfHW(ball->sprite);
 
   if (cx::isPortrait()) {
@@ -75,7 +75,9 @@ void Collide::check(a::Node *node, a::Node *bnode) {
     } else {
       x=bb4.right + hw2.width;
     }
-  } else {
+  }
+
+  if (pad->pnum == 2) {
     if (cx::isPortrait()) {
       y = bb4.bottom - hw2.height;
     } else {

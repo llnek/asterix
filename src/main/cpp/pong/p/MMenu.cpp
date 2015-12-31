@@ -136,17 +136,15 @@ void UILayer::onPlay3(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay2(c::Ref *) {
-  onPlayXXX(
-      f::GMode::TWO,
-      nullptr, fmtGameData(m));
+  auto m=f::GMode::TWO;
+  onPlayXXX(m, nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay1(c::Ref *) {
-  onPlayXXX(
-      f::GMode::ONE,
-      nullptr, fmtGameData(m));
+  auto m= f::GMode::ONE;
+  onPlayXXX(m, nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
