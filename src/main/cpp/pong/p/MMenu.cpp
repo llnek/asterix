@@ -11,7 +11,7 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "core/odin.h"
+#include "core/Odin.h"
 #include "x2d/XLib.h"
 #include "NetPlay.h"
 #include "MMenu.h"
@@ -35,6 +35,7 @@ struct CC_DLL UILayer : public f::XLayer {
 
   virtual ~UILayer() {}
   UILayer() {}
+  NOCPYASS(UILayer)
 
   void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
   void onPlay3(c::Ref*);
@@ -43,22 +44,18 @@ struct CC_DLL UILayer : public f::XLayer {
   void onBack(c::Ref*);
   void onQuit(c::Ref*);
 
-  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
   auto tile = CC_CSV(c::Integer,"TILE");
-  //auto nil = CC_CSV(c::Integer,"CV_Z");
   auto c = XCFG()->getColor("default");
   auto wb = cx::visBox();
   auto cw = cx::center();
   auto lb = cx::reifyBmfLabel(
-      cw.x,
-      wb.top * 0.9f,
-      "font.JellyBelly",
-      XCFG()->getL10NStr("mmenu"));
+      cw.x, wb.top * 0.9f,
+      "font.JellyBelly", gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
   incIndexZ();
@@ -115,59 +112,63 @@ void UILayer::decorate() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlay3(c::Ref *r) {
-  // ye
+void UILayer::onPlay3(c::Ref*) {
+  // yes
   auto y= [=](ws::OdinIO* io, j::json obj) {
     this->onPlayXXX(f::GMode::NET, io, obj);
   };
-  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
   // no
   auto f= [=]() {
-    cx::runScene(XCFG()->prelude(), dx);
+    cx::runScene(
+        XCFG()->prelude(), this->getDelay());
   };
   auto n= [=]() {
     cx::runScene(
-        MMenu::reify(mc_new_1(MCX,f)), dx);
+        MMenu::reify(
+          mc_new_1(MCX,f)), this->getDelay());
   };
 
   cx::runScene(
-      NetPlay::reify( mc_new_2(NPCX, y,n)), dx);
+      NetPlay::reify(
+        mc_new_2(NPCX, y,n)), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay2(c::Ref *) {
-  auto m= f::GMode::TWO;
-  onPlayXXX(m, nullptr, fmtGameData(m));
+  onPlayXXX(
+      f::GMode::TWO,
+      nullptr, fmtGameData(m));
 }
+
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay1(c::Ref *) {
-  auto m= f::GMode::ONE;
-  onPlayXXX(m, nullptr, fmtGameData(m));
+  onPlayXXX(
+      f::GMode::ONE,
+      nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
   cx::runScene(
-      Game::reify(mc_new_3(GCXX, mode, io, obj)),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+      Game::reify(
+        mc_new_3(GCXX, mode, io, obj)), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onBack(c::Ref*) {
-  auto ctx = (MCX*) getSceneX()->getCtx();
-  ctx->back();
+  auto ctx = getSceneX()->getCtx();
+  SCAST(MCX*,ctx)->back();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
   cx::runScene(
-      XCFG()->prelude(),
-      CC_CSV(c::Float,"SCENE_DELAY"));
+      XCFG()->prelude(), getDelay());
 }
 
 END_NS_UNAMED()

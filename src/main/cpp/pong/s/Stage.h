@@ -30,8 +30,8 @@ struct CC_DLL Stage : public a::System {
   virtual ~Stage() {}
   Stage() {}
   NOCPYASS(Stage)
-    DECL_PTR(a::NodeList, paddleNode)
 
+  DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, arenaNode)
   DECL_BF(inited)
 

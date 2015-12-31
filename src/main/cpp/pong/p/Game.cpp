@@ -30,13 +30,12 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  virtual void onTouchMoved(c::Touch*, c::Event*);
-  virtual void onMouseMove(c::Event*);
-  void onGUI(const c::Vec2&, const c::Vec2&);
+  void onMotion(f::ComObj*, const c::Vec2&, const c::Vec2&);
 
-  virtual void onTouchMotion(ComObj*,
+  virtual void onTouchMotion(f::ComObj*,
       const c::Vec2&, const c::Vec2&);
-  virtual void onMouseMotion(ComObj*,
+
+  virtual void onMouseMotion(f::ComObj*,
       const c::Vec2&, const c::Vec2&);
 
   virtual int getIID() { return 2; }
@@ -50,8 +49,6 @@ struct CC_DLL GLayer : public f::GameLayer {
   void deco();
   void doDone(int);
 
-  void processP(Paddle*, const c::Vec2 &loc, const c::Vec2 &delta );
-  void processL(Paddle*, const c::Vec2 &loc, const c::Vec2 &delta );
   void onWinner(const sstr&, int, int );
   void updatePoints(j::json);
 
@@ -80,104 +77,46 @@ struct CC_DLL GLayer : public f::GameLayer {
     }
   }
 */
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseMove(c::Event *event) {
-  auto e= (c::EventMouse*)event;
-  if (MOUSE_BUTTON_LEFT == e->getMouseButton()) {
-    onGUI(e->getLocationInView(), e->getDelta());
-  }
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMoved(c::Touch *t, c::Event *evt) {
-  onGUI(t->getLocationInView(), t->getDelta());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onGUI(const c::Vec2 &loc, const c::Vec2 &dt) {
-  for (auto node=paddleNode->head; node; node=node->next) {
-    auto p= CC_GNF(Paddle,node, "paddle");
-    auto box= p->sprite->getBoundingBox();
-    if (box.containsPoint(loc)) {
-      if (cx::isPortrait()) {
-        processP(p,loc,dt);
-      } else {
-        processL(p,loc,dt);
-      }
-    }
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchMotion(ComObj* c,
+void GLayer::onTouchMotion(f::ComObj *c,
     const c::Vec2 &loc, const c::Vec2 &dt) {
-  if (cx::isPortrait()) {
-    processP(c,loc,dt);
-  } else {
-    processL(c,loc,dt);
-  }
+  onMotion(c,loc,dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(ComObj* c,
+void GLayer::onMouseMotion(f::ComObj *c,
       const c::Vec2 &loc, const c::Vec2 &dt) {
-  if (cx::isPortrait()) {
-    processP(c,loc,dt);
-  } else {
-    processL(c,loc,dt);
-  }
+  onMotion(c,loc,dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::processP(Paddle *p,
+void GLayer::onMotion(f::ComObj *co,
     const c::Vec2 &loc, const c::Vec2 &delta) {
 
   auto box= MGMS()->getEnclosureBox();
+  auto p= SCAST(Paddle*,co);
   auto pos = p->pos();
   auto pnum=p->pnum;
-  float x,y;
+  auto x= pos.x;
+  auto y= pos.y;
 
   if (cx::isPortrait()) {
-    if ((pnum == 2 && loc.x > pos.x) ||
-        (pnum == 1 && loc.x < pos.x)) {
-        x=pos.x;
-        y = pos.y + delta.y;
-    }
-  } else {
     if ((pnum == 2 && loc.y > pos.y) ||
         (pnum == 1 && loc.y < pos.y)) {
-      x= pos.x + delta.x;
-      y= pos.y;
+      x = pos.x + delta.x;
+    }
+  } else {
+    if ((pnum == 2 && loc.x > pos.x) ||
+        (pnum == 1 && loc.x < pos.x)) {
+      y = pos.y + delta.y;
     }
   }
 
-    auto cur= cx::clamp(c::ccp(x,y), box);
-    p->setPos(cur.x, cur.y);
-      auto cur= cx::clamp(c::ccp(x,y), box);
-      p->setPos(cur.x, cur.y);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::processL(Paddle *p, const c::Vec2 &loc, const c::Vec2 &delta) {
-  auto box= MGMS()->getEnclosureBox();
-  auto pnum= p->pnum;
-  auto pos = p->pos();
-  float x,y;
-
-  if ((pnum == 2 && loc.x > pos.x) ||
-      (pnum == 1 && loc.x < pos.x)) {
-      y = pos.y + delta.y;
-      x=pos.x;
-      auto cur= cx::clamp(c::ccp(x,y), box);
-      p->setPos(cur.x, cur.y);
-  }
+  auto cur= cx::clamp(c::ccp(x,y), box);
+  p->setPos(cur.x, cur.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -204,20 +143,29 @@ void GLayer::deco() {
 
   auto ctx = (GCXX*) MGMS()->getCtx();
   auto ppids = ctx->data["ppids"];
-  auto pnum= ctx->data["pnum"];
+  auto pnum= JS_INT(ctx->data["pnum"]);
   sstr p2k;
   sstr p1k;
   sstr p2n;
   sstr p1n;
 
   J__LOOP(it, ppids) {
-    auto &arr=  it.value() ;
-    if (JS_INT(arr[0]) == 1) {
-      p1n= JS_STR(arr[1]);
-      p1k= it.key();
-    } else {
-      p2n= JS_STR(arr[1]);
+    auto &arr=  it.value();
+    auto n= JS_INT(arr[0]);
+    auto s= JS_STR(arr[1]);
+    switch (n) {
+      case 2:
       p2k= it.key();
+      p2n= s;
+      break;
+
+      case 1:
+      p1k= it.key();
+      p1n= s;
+      break;
+
+      default:
+      throw "bad pnum " + s::to_string(n);
     }
   }
 
@@ -254,10 +202,10 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
   Player p2(p2cat, CC_CSV(c::Integer, "CV_O"), 2, CC_CSS("P2_COLOR"));
   auto ps= (Players*) a->get("n/Players");
 
-  p1.setName(p1k,p1n);
   p2.setName(p2k,p2n);
-  ps->parr[1]=p1;
+  p1.setName(p1k,p1n);
   ps->parr[2]=p2;
+  ps->parr[1]=p1;
 
   e->mkOnePaddle(cur, p2, 0, 0);
   e->mkBall(0,0);
@@ -285,8 +233,8 @@ void GLayer::updatePoints(j::json scores) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onWinner(const sstr &p, int score) {
-  getHUD()->updateScore(p,score);
+void GLayer::onWinner(const sstr &color, int pnum, int score) {
+  getHUD()->updateScore(color,pnum,score);
   int win= getHUD()->isDone();
   if (win > 0) {
     doDone( win);
@@ -302,12 +250,18 @@ void GLayer::doDone(int p) {
   cx::sfxPlay("game_end");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::showMenu() {
+
+}
+
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
-  auto y = (GLayer*) getLayer(3);
+  auto y = SCAST(GLayer*, getLayer(3));
   auto msg= (j::json*) m;
 
   if (topic == "/hud/showmenu") {

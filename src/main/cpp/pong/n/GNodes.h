@@ -52,6 +52,7 @@ struct CC_DLL PaddleNode : public a::NodeFactory {
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
       {"lastpos" , "n/Position" },
+      {"motion" , "n/Motion" },
       {"paddle" , "n/Paddle" }
     });
   }

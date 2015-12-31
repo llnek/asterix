@@ -43,15 +43,15 @@ void Motions::doit(a::Node *node, float dt) {
 //
 void Motions::onkey(a::Node *node, float dt) {
   auto p= CC_GNF(Paddle,node,"paddle");
-  auto m= CC_GNF(Motion,node,"motion");
+  //auto m= CC_GNF(Motion,node,"motion");
   auto &cs = p->kcodes;
 
   if (MGML()->keyPoll(cs[0])) {
-    m->left=true;
+    //m->left=true;
   }
 
   if (MGML()->keyPoll(cs[1])) {
-    m->right=true;
+    //m->right=true;
   }
 
 }

@@ -28,8 +28,8 @@ struct CC_DLL NPCX : public f::SCTX {
     this->yes=yes;
     this->no=no;
   }
-  NPCX_Yes yes;
-  VOIDFN no;
+  DECL_TD(NPCX_Yes, yes)
+  DECL_TD(VOIDFN, no)
 };
 
 //////////////////////////////////////////////////////////////////////////////

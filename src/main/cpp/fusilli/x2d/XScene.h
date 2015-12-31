@@ -35,6 +35,7 @@ public:
 
   void setCtx(SCTX*, bool clean=true);
   SCTX* emitCtx();
+  float getDelay();
 
   virtual void decorate() = 0;
   virtual bool init();

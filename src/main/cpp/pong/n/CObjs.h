@@ -36,7 +36,7 @@ struct CC_DLL Paddle : public f::ComObj {
   virtual const a::COMType typeId() { return "n/Paddle"; }
 
   Paddle(c::Sprite *s, int pnum, float v) : ComObj(s) {
-    this->kcodes = pnum == 1 ? p1keys() : p2keys();
+    this->kcodes = pnum == 1 ? p1Keys() : p2Keys();
     this->snd = pnum == 1 ? "x_hit" : "o_hit";
     this->pnum= pnum;
     speed.x=v;
@@ -58,6 +58,14 @@ private:
       ? s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D }
       : s_arr<KEYCODE,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
   }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Motion : public a::Component {
+  virtual const a::COMType typeId() { return "n/Motion"; }
+  DECL_BF(right)
+  DECL_BF(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -119,13 +127,13 @@ struct CC_DLL Position : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Slots : public a::Component {
-  DECL_BF(poked)
-  DECL_IZ(pnum )
   DECL_TD(c::Vec2, p2p)
   DECL_TD(c::Vec2, p1p)
   DECL_TD(c::Size, pz)
   DECL_TD(c::Size, bz)
   DECL_TD(c::Vec2, bp)
+  DECL_BF(poked)
+  DECL_IZ(pnum )
   virtual const a::COMType typeId() { return "n/Slots"; }
 };
 

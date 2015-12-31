@@ -113,7 +113,7 @@ a::Entity* GEngine::mkOnePaddle(int cur, const Player &p, float x, float y) {
   if (p.category == CC_CSV(c::Integer, "BOT")) {
     ent->checkin(mc_new(Faux));
   } else {
-    ent->checkin(mc_new(Motion));
+    //ent->checkin(mc_new(Motion));
   }
 
   return ent;

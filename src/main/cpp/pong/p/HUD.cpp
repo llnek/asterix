@@ -25,7 +25,7 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
   auto cw= cx::center();
   auto wb= cx::visBox();
 
-  score1->setPosition( cw.x - cx::getScaledWidth(title)/2 -
+  score1->setPosition(cw.x - cx::getScaledWidth(title)/2 -
                            cx::getScaledWidth(score1)/2 - 10,
                            wb.top - tile * 6 /2 - 2);
   score2->setPosition( cw.x + cx::getScaledWidth(title)/2 +
@@ -101,22 +101,17 @@ int HUDLayer::isDone() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScores(j::json scs) {
-  scores[2] = JS_INT(scs["p2"]);
-  scores[1] = JS_INT(scs["p1"]);
+  auto &p2=parr[2];
+  auto &p1=parr[1];
+  scores[2] = JS_INT(scs[p2.color]);
+  scores[1] = JS_INT(scs[p1.color]);
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::updateScore(const sstr &color, int value) {
-  int pnum=0;
-  if (color == CC_CSS("P2_COLOR")) {
-    pnum=2;
-  }
-  else
-  if (color == CC_CSS("P1_COLOR")) {
-    pnum=1;
-  }
+void HUDLayer::updateScore(const sstr &color, int pnum, int value) {
+  assert(pnum > 0 && pnum < scores.size());
   scores[pnum] += value;
   drawScores();
 }
@@ -133,16 +128,14 @@ void HUDLayer::drawScores() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawResult(int winner) {
+  auto &p2=parr[2];
+  auto &p1=parr[1];
   sstr msg;
   sstr pn;
-  if (winner == 2) {
-    pn= parr[2].pname;
-    msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { pn });
-  }
-  else
-  if (winner == 1) {
-    pn= parr[2].pname;
-    msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { pn });
+  if (winner == 2) { pn= p2.pname; }
+  if (winner == 1) { pn= p1.pname; }
+  if (pn.length() > 0) {
+    msg= gets("whowin", s_vec<sstr> { pn });
   }
   resultMsg->setString(msg);
 }

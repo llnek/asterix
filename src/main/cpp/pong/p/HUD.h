@@ -29,7 +29,7 @@ struct CC_DLL HUDLayer : public f::XLayer {
   virtual void decorate();
 
   void regoPlayers(const Player&, const Player&);
-  void updateScore(const sstr&, int score);
+  void updateScore(const sstr&, int,  int score);
   void updateScores(j::json);
   void resetAsNew();
   void reset();

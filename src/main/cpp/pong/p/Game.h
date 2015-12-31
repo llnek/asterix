@@ -35,6 +35,9 @@ struct CC_DLL GCXX : public f::GCX {
 struct CC_DLL Game : f::GameScene {
 
   virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual f::GameLayer* getGLayer() {
+    return SCAST(f::GameLayer*, getLayer(2));
+  }
   virtual void decorate();
   virtual bool isLive();
   virtual void play();
@@ -43,6 +46,7 @@ struct CC_DLL Game : f::GameScene {
   virtual ~Game() {}
   Game() {}
   NOCPYASS(Game);
+
 
   STATIC_REIFY_SCENE_CTX(Game)
 };

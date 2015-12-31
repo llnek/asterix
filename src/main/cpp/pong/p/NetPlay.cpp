@@ -25,6 +25,8 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
+const int USERTAG= (int) 'u';
+const int PASSTAG= (int) 'p';
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL UILayer : public f::XLayer {
@@ -40,10 +42,8 @@ struct CC_DLL UILayer : public f::XLayer {
   void onCancel(c::Ref* );
   void onLogin(c::Ref*);
 
-  ws::OdinIO* odin=nullptr;
-  int player=0;
-
-  STATIC_REIFY_LAYER(UILayer)
+  DECL_PTR(ws::OdinIO, odin)
+  DECL_IZ(player)
 
   virtual void decorate();
   virtual ~UILayer() {
@@ -52,13 +52,14 @@ struct CC_DLL UILayer : public f::XLayer {
   UILayer() {}
 
   NOCPYASS(UILayer)
+  STATIC_REIFY_LAYER(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::showWaitOthers() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("waitother"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb = cx::visBox();
@@ -81,35 +82,34 @@ void UILayer::showWaitOthers() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onStart(ws::OdinEvent *evt) {
-  auto m= f::GMode::NET;
-  auto obj= fmtGameData(m);
+
+  auto obj= fmtGameData(f::GMode::NET);
+  auto ctx = getSceneX()->getCtx();
 
   obj["ppids"] = evt->doco["source"]["ppids"];
-  obj["pnum"]= j::json(player);
+  obj["pnum"]= player;
 
-  auto ctx = (NPCX*) getSceneX()->getCtx();
-  ctx->yes(odin,obj);
+  SCAST(NPCX*,ctx)->yes(odin,obj);
   SNPTR(odin)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref*) {
-  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
   auto f= [=]() {
-      cx::runScene(XCFG()->prelude(), dx); };
-  auto m = MMenu::reify(mc_new_1(MCX, f));
-
+      cx::runScene(
+          XCFG()->prelude(), getDelay()); };
   ws::disconnect(odin);
   SNPTR(odin)
-
-  cx::runScene( m, dx);
+  cx::runScene(
+      MMenu::reify(mc_new_1(MCX, f)), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayReply(ws::OdinEvent *evt) {
-  player= JS_INT(  evt->doco["pnum"]);
+  player= JS_INT( evt->doco["pnum"]);
+  assert(player > 0);
   CCLOG("player %d: ok", player);
   showWaitOthers();
 }
@@ -143,7 +143,7 @@ void UILayer::sessionEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::odinEvent(ws::OdinEvent *evt) {
-  //CCLOG("odin event = %p", evt);
+  CCLOG("odin event = %s", evt->doco.dump(0).c_str());
   switch (evt->type) {
     case ws::MType::NETWORK:
       networkEvent(evt);
@@ -157,18 +157,17 @@ void UILayer::odinEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onLogin(c::Ref* ) {
-  auto u= (c::ui::TextField*) getChildByTag( (int) 'u');
-  auto p= (c::ui::TextField*) getChildByTag( (int) 'p');
-  auto uid = u->getString();
-  auto pwd= p->getString();
+  auto u= getChildByTag( USERTAG);
+  auto p= getChildByTag( PASSTAG);
+  auto uid= SCAST(c::ui::TextField*,u)->getString();
+  auto pwd= SCAST(c::ui::TextField*,p)->getString();
 
-  //TODO: fix url
   auto wsurl = XCFG()->getWSUrl();
   auto game = XCFG()->getGameId();
 
   if (uid.length() > 0 && pwd.length() > 0) {
-    odin= ws::reifyPlayRequest(game, uid, pwd);
-    odin->listen([=](ws::OdinEvent *e) {
+    this->odin= ws::reifyPlayRequest(game, uid, pwd);
+    this->odin->listen([=](ws::OdinEvent *e) {
         this->odinEvent(e);
         });
     ws::connect(odin, wsurl);
@@ -178,14 +177,13 @@ void UILayer::onLogin(c::Ref* ) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
-
-  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("signinplay"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
   int tag;
 
-  centerImage("game.bg");
+  centerImage("gui.mmenu.menu.bg");
   incIndexZ();
 
   // text msg
@@ -202,9 +200,9 @@ void UILayer::decorate() {
   uid->setTouchEnabled(true);
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
-  uid->setPlaceHolder(XCFG()->getL10NStr("userid"));
+  uid->setPlaceHolder(gets("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  tag= (int)'u';
+  tag= USERTAG;
   addItem(uid, f::MaybeInt(), f::MaybeInt(tag));
 
   // editbox for password
@@ -215,9 +213,9 @@ void UILayer::decorate() {
   pwd->setMaxLength(16);
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
-  pwd->setPlaceHolder( XCFG()->getL10NStr("passwd"));
+  pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  tag= (int) 'p';
+  tag= PASSTAG;
   addItem(pwd, f::MaybeInt(), f::MaybeInt(tag));
 
   // btns

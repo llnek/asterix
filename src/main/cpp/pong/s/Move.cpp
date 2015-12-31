@@ -166,7 +166,6 @@ void Move::processBall(a::Node *node, float dt) {
 void Move::doit(a::Node *node, float dt) {
   auto last= CC_GNF(Position, node, "lastpos");
   auto p= CC_GNF(Paddle, node, "paddle");
-  auto m= CC_GNF(Motion, node, "motion");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto s= JS_FLOAT(cfg["PADDLE+SPEED"]) * dt;
   auto ld = last->lastDir;
@@ -174,7 +173,7 @@ void Move::doit(a::Node *node, float dt) {
   auto pos= p->pos();
   float nv, x,y;
 
-  if (m->right) {
+    if (1){//m->right) {
     if (cx::isPortrait()) {
       x = pos.x + s;
       y = pos.y;
@@ -185,7 +184,7 @@ void Move::doit(a::Node *node, float dt) {
     p->setPos(x,y);
   }
 
-  if (m->left) {
+    if (1){//m->left) {
     if (cx::isPortrait()) {
       x = pos.x - s;
       y = pos.y;
@@ -196,8 +195,8 @@ void Move::doit(a::Node *node, float dt) {
     p->setPos(x,y);
   }
 
-  m->right = false;
-  m->left= false;
+  //m->right = false;
+  //m->left= false;
 
   clamp(p->sprite);
 

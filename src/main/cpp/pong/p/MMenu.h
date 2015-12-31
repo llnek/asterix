@@ -20,7 +20,7 @@ NS_BEGIN(pong)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN b) { back=b; }
-  VOIDFN back;
+  DECL_TD(VOIDFN,back)
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -61,6 +61,9 @@ public:
   XScene* getSceneX();
   int incIndexZ();
 
+  const sstr gets(const sstr&, const s_vec<sstr>&);
+  const sstr gets(const sstr&);
+
   // tag value
   virtual int getIID() { return 1; }
 

@@ -70,6 +70,8 @@ public:
   static GameLayer* get();
 
   virtual void sendMsgEx(const MsgTopic &topic, void *msg) = 0;
+  virtual GameLayer* getGLayer() = 0;
+
   void sendMsg(const MsgTopic &topic) {
     sendMsgEx(topic, nullptr);
   }

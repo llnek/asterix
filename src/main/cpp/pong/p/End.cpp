@@ -24,7 +24,7 @@ void ELayer::onReplay(c::Ref*) {
   auto m= MGMS()->getMode();
   cx::runScene(
       Game::reify(x),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+      getSceneX()->getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,16 +32,14 @@ void ELayer::onReplay(c::Ref*) {
 void ELayer::onQuit(c::Ref*) {
   cx::runScene(
       XCFG()->prelude(),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+      getSceneX()->getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel(
-      "font.OCR",
-      XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();

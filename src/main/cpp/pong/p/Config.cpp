@@ -41,8 +41,8 @@ void Config::initCsts() {
   addColor("hud", CC_STR("#ffffff"));
 
   addCst("showFPS", CC_BOOL(false));
-  addCst("GRID_W", CC_INT(40));
-  addCst("GRID_H", CC_INT(60));
+  //addCst("GRID_W", CC_INT(40));
+  //addCst("GRID_H", CC_INT(60));
 
   addCst("syncMillis", CC_INT(3000));
 }
@@ -91,8 +91,9 @@ void Config::initAssets() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
+  auto z= gameSize();
   //for default font, we use 48pt
-  scale = 52.0f / 256 * rs.width /320.0f;
+  scale = (52.0f / 256) * (rs.width / z.width);
 }
 
 //////////////////////////////////////////////////////////////////////////////
