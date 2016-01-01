@@ -39,7 +39,7 @@ bool Stage::update(float dt) {
       onceOnly();
     }
   }
-  return true;
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,14 +71,21 @@ void Stage::onceOnly() {
     slots->p2p= c::Vec2(p2x, cw.y);
   }
 
-  for (auto node=paddleNode->head;node;node=node->next) {
+  CC_GNF(Ball,ballNode->head, "ball")->inflate(slots->bp.x, slots->bp.y);
+  initPaddles(paddleNode, slots);
+  initPaddles(fauxNode, slots);
+
+  inited=true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Stage::initPaddles(a::NodeList *nl, Slots *slots) {
+   for (auto node=nl->head;node;node=node->next) {
     auto p= CC_GNF(Paddle,node,"paddle");
     if (p->pnum == 2) { p->inflate(slots->p2p.x, slots->p2p.y); }
     if (p->pnum == 1) { p->inflate(slots->p1p.x, slots->p1p.y); }
   }
-
-  CC_GNF(Ball,ballNode->head, "ball")->inflate(slots->bp.x, slots->bp.y);
-  inited=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////

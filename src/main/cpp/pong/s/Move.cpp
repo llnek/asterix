@@ -201,6 +201,8 @@ void Move::doit(a::Node *node, float dt) {
 
   clamp(p->sprite);
 
+  if (! MGMS()->isOnline()) {return;}
+
   // below is really for wsock stuff
   if (cx::isPortrait()) {
     nv = p->pos().x;
@@ -257,7 +259,6 @@ void Move::notifyServer(a::Node *node, int direction) {
 //
 void Move::clamp(c::Sprite *sprite) {
   auto world = MGMS()->getEnclosureBox();
-  auto pos= sprite->getPosition();
   auto hw2= cx::halfHW(sprite);
   auto bb4= cx::bbox4(sprite);
   f::MaybeFloat x;
@@ -280,10 +281,12 @@ void Move::clamp(c::Sprite *sprite) {
   }
 
   if (!x.isNone()) {
+    auto pos= sprite->getPosition();
     sprite->setPosition(x.get(), pos.y);
   }
 
   if (!y.isNone()) {
+    auto pos= sprite->getPosition();
     sprite->setPosition(pos.x, y.get());
   }
 }

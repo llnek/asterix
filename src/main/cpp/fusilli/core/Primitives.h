@@ -81,7 +81,7 @@ public:
   ~Maybe() {}
   Maybe() {}
   T get() const { return value; }
-  bool isNone() const { return isset; }
+  bool isNone() const { return !isset; }
 };
 
 typedef Maybe<float> MaybeFloat;

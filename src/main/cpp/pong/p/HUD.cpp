@@ -24,17 +24,18 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
   auto tile= CC_CSV(c::Integer, "TILE");
   auto cw= cx::center();
   auto wb= cx::visBox();
-
-  score1->setPosition(cw.x - cx::getScaledWidth(title)/2 -
-                           cx::getScaledWidth(score1)/2 - 10,
-                           wb.top - tile * 6 /2 - 2);
-  score2->setPosition( cw.x + cx::getScaledWidth(title)/2 +
-                           cx::getScaledWidth(score2)/2 + 6,
-                           wb.top - tile * 6 /2 - 2);
+  float tw2;
 
   title->setString(p1.pid + " / " + p2.pid);
+  tw2= cx::getScaledWidth(title) * 0.5f;
   parr[2]= p2;
   parr[1]= p1;
+
+  score1->setPosition(cw.x - tw2 - cx::getScaledWidth(score1) * 0.5f - 10,
+      wb.top - tile * 6 /2 - 2);
+  score2->setPosition(cw.x + tw2 + cx::getScaledWidth(score2) * 0.5f + 6,
+      wb.top - tile * 6 /2 - 2);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

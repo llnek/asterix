@@ -40,6 +40,7 @@ struct CC_DLL Stage : public a::System {
 
 protected:
 
+  void initPaddles(a::NodeList*,Slots*);
   const c::Size initPaddleSize();
   const c::Size initBallSize();
   void onceOnly();

@@ -30,7 +30,7 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  void onMotion(f::ComObj*, const c::Vec2&, const c::Vec2&);
+  void onMotion(f::ComObj*, const c::Vec2&, const c::Vec2&, bool isTouch);
 
   virtual void onTouchMotion(f::ComObj*,
       const c::Vec2&, const c::Vec2&);
@@ -80,20 +80,20 @@ struct CC_DLL GLayer : public f::GameLayer {
 //
 void GLayer::onTouchMotion(f::ComObj *c,
     const c::Vec2 &loc, const c::Vec2 &dt) {
-  onMotion(c,loc,dt);
+  onMotion(c,loc,dt,true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(f::ComObj *c,
       const c::Vec2 &loc, const c::Vec2 &dt) {
-  onMotion(c,loc,dt);
+  onMotion(c,loc,dt,false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMotion(f::ComObj *co,
-    const c::Vec2 &loc, const c::Vec2 &delta) {
+    const c::Vec2 &loc, const c::Vec2 &delta, bool isTouch) {
 
   auto box= MGMS()->getEnclosureBox();
   auto p= SCAST(Paddle*,co);
@@ -103,15 +103,19 @@ void GLayer::onMotion(f::ComObj *co,
   auto y= pos.y;
 
   if (cx::isPortrait()) {
+    if (isTouch) { x = pos.x + delta.x; }
+    else { x=loc.x; }
+    /*
     if ((pnum == 2 && loc.y > pos.y) ||
         (pnum == 1 && loc.y < pos.y)) {
-      x = pos.x + delta.x;
-    }
+    }*/
   } else {
+    if (isTouch) { y = pos.y + delta.y; }
+    else { y=loc.y; }
+    /*
     if ((pnum == 2 && loc.x > pos.x) ||
         (pnum == 1 && loc.x < pos.x)) {
-      y = pos.y + delta.y;
-    }
+    }*/
   }
 
   auto cur= cx::clamp(c::ccp(x,y), box);
@@ -252,7 +256,7 @@ END_NS_UNAMED()
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
-  auto y = SCAST(GLayer*, getLayer(3));
+  auto y = SCAST(GLayer*, getLayer(2));
   auto msg= (j::json*) m;
 
   if (topic == "/hud/showmenu") {

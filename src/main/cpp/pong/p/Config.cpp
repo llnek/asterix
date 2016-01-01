@@ -54,7 +54,7 @@ void Config::initLevels() {
   auto j= j::json({
         {"PADDLE+SPEED",  200.0f},
         {"BALL+SPEED",  150.0f},
-        {"NUM+POINTS",  999994}
+        {"NUM+POINTS",  3}
       });
   d->setObject(f::JsonObj::create(j), CFG);
 }
