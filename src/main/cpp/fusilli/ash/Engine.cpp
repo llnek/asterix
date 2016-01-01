@@ -89,11 +89,12 @@ Entity* Engine::reifyEntity(const sstr &g) {
 void Engine::notifyModify(not_null<Entity*> e) {
   bool fnd=false;
   F__LOOP(it, modList) {
-    if (e == *it) { fnd=true; break; }
+    if (e == *it)
+    { fnd=true; break; }
   }
   if (!fnd) {
-    dirty=true;
     modList.push_back(e);
+    dirty=true;
   }
 }
 
@@ -109,10 +110,10 @@ void Engine::purgeEntity(not_null<Entity*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeEntity(EList* el, Entity* e) {
+  freeList.push_back(e);
   e->markDelete();
   el->release(e);
   dirty=true;
-  freeList.push_back(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,37 +196,34 @@ void Engine::onPurgeEntity(Entity *e) {
 //////////////////////////////////////////////////////////////////////////////
 // sync existing nodes, add if necessary
 void Engine::onAddEntity(Entity *e) {
-  auto rego = NodeRegistry::self();
   F__LOOP(it, nodeLists) {
-    auto nl= *it;
-    auto n= rego->reifyNode(nl->getType());
-    if (n->bindEntity(e)) {
-      nl->add(n);
-    } else {
-      delete n;
-    }
+    maybeBind(*it, e);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Engine::maybeBind(NodeList* nl, Entity *e) {
+  auto rego = NodeRegistry::self();
+  auto n= rego->reifyNode(nl->getType());
+  if (n->bindEntity(e)) {
+    nl->add(n);
+  } else {
+    delete n;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // sync changes
 void Engine::onModifyEntity(Entity *e) {
-  auto rego = NodeRegistry::self();
   F__LOOP(it, nodeLists) {
     auto nl = *it;
-    auto t = nl->getType();
-    Node *n;
     if (nl->containsWithin(e)) {
       if (!nl->isCompatible(e)) {
         nl->removeEntity(e);
       }
     } else {
-      n= rego->reifyNode(t);
-      if (n->bindEntity(e)) {
-        nl->add(n);
-      } else {
-        delete n;
-      }
+      maybeBind(nl,e);
     }
   }
 }

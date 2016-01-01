@@ -21,16 +21,18 @@ const int PINF = 1000000;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<int Z> struct FS_DLL FFrame {
+template<int Z>
+struct FS_DLL FFrame {
   s_arr<int, Z*Z> state;
-  DECL_IZ( lastBestMove)
-  DECL_IZ( other)
-  DECL_IZ( cur)
+  DECL_IZ(lastBestMove)
+  DECL_IZ(other)
+  DECL_IZ(cur)
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template<int Z> class FS_DLL GameBoard {
-public:
+// generic game-board interface
+template<int Z>
+struct FS_DLL GameBoard {
 
   virtual const s_vec<int> getNextMoves(not_null<FFrame<Z>*>) = 0;
   virtual int evalScore(not_null<FFrame<Z>*>) = 0;
@@ -49,10 +51,12 @@ public:
 
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
-//
-template <int Z> int negaMax(not_null<GameBoard<Z>*> board,
+// nega Min-Max algo function
+template <int Z>
+int negaMax(not_null<GameBoard<Z>*> board,
     not_null<FFrame<Z>*> game,
-    int maxDepth, int depth, int alpha, int beta) {
+    int maxDepth,
+    int depth, int alpha, int beta) {
 
   if (depth == 0 || board->isOver(game)) {
     return board->evalScore(game);
@@ -69,7 +73,7 @@ template <int Z> int negaMax(not_null<GameBoard<Z>*> board,
   F__LOOP(it, openMoves) {
     int move = *it;
     int rc;
-    //try  a move
+    //try a move
     board->makeMove(game, move);
     board->switchPlayer(game);
     rc = - negaMax(board, game, maxDepth, depth-1, -beta, -alpha);
@@ -94,9 +98,10 @@ template <int Z> int negaMax(not_null<GameBoard<Z>*> board,
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
-template <int Z> int evalNegaMax(not_null<GameBoard<Z>*> board) {
+template <int Z>
+int evalNegaMax(not_null<GameBoard<Z>*> board) {
   auto ptr= board->takeFFrame();
-  SMPtr<FFrame<Z>> f( ptr);
+  SMPtr<FFrame<Z>> f(ptr);
   negaMax<Z>(board, ptr, 10, 10, -PINF, PINF);
   return f->lastBestMove;
 }

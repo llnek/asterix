@@ -5,7 +5,7 @@
 #include "fusilli.h"
 NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
-//
+// Simple smart pointer.
 template<typename _Tp1> struct FS_DLL SMPtr_ref {
   _Tp1 *_M_ptr;
   explicit

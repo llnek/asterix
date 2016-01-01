@@ -19,8 +19,9 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 // owns all items in this list
-template <typename T> class FS_DLL ObjList {
-public:
+template <typename T>
+struct FS_DLL ObjList {
+
   void release(not_null<T*>);
   void add(not_null<T*> );
   const s_vec<T*> list();
@@ -120,6 +121,7 @@ public:
 private:
 
   void purgeEntity(EList*, Entity*);
+  void maybeBind(NodeList*,Entity*);
   void onModifyEntity(Entity*);
   void onPurgeEntity(Entity*);
   void onAddEntity(Entity*);
@@ -131,7 +133,7 @@ private:
   s_vec<Entity*> modList;
   s_vec<Entity*> addList;
 
-  SystemList systemList;
+  DECL_TD(SystemList, systemList)
   DECL_BF(updating)
   DECL_BF(dirty)
 

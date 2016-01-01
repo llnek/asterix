@@ -16,8 +16,10 @@
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-template<typename T> class FS_DLL FArray {
+// Dynamic array of primitive types and
+// objects.
+template<typename T>
+class FS_DLL FArray {
 private:
   DECL_PTR(T,data)
   DECL_IZ(sz)

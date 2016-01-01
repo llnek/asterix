@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef std::string stdstr;
+//typedef std::string stdstr;
 typedef std::string sstr;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,26 +61,26 @@ typedef std::string sstr;
 
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// namespace stuff
 #ifdef __cplusplus
-  #define NS_USING(nsp)  using namespace nsp;
-  #define NS_BEGIN(nsp)  namespace nsp {
-  #define NS_END(nsp)    };
-  #define NS_ALIAS(x,y)  namespace x = y;
-  #define BEGIN_NS_UNAMED() namespace {
-  #define END_NS_UNAMED() };
+#define NS_USING(nsp)  using namespace nsp;
+#define NS_BEGIN(nsp)  namespace nsp {
+#define NS_END(nsp)    };
+#define NS_ALIAS(x,y)  namespace x = y;
+#define BEGIN_NS_UNAMED() namespace {
+#define END_NS_UNAMED() };
 #else
-  #define NS_USING(nsp)
-  #define NS_BEGIN(nsp)
-  #define NS_END(nsp)
-  #define NS_ALIAS(x,y)
-  #define BEGIN_NS_UNAMED()
-  #define END_NS_UNAMED()
+#define NS_USING(nsp)
+#define NS_BEGIN(nsp)
+#define NS_END(nsp)
+#define NS_ALIAS(x,y)
+#define BEGIN_NS_UNAMED()
+#define END_NS_UNAMED()
 #endif
 
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// memory lifecycle stuff
 #define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
 #define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
 #define mc_new_3(T, p1, p2, p3) new(std::nothrow) T(p1, p2, p3)
@@ -96,39 +96,40 @@ typedef std::string sstr;
 #define mc_bool_str_u(b)  ((b) ? "TRUE" : "FALSE")
 
 //////////////////////////////////////////////////////////////////////////////
-//
-
+// c++ std collection iteration
 #define F__LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
 #define S__PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
 
+//////////////////////////////////////////////////////////////////////////////
+// c++ casting
 #define DCAST(type,expr) dynamic_cast<type>(expr)
 #define SCAST(type,expr) static_cast<type>(expr)
 
+//////////////////////////////////////////////////////////////////////////////
+// pointer macros
 #define SNPTR(x) x = nullptr;
 #define NNP(p) p != nullptr
 #define ENP(p) p == nullptr
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// std collection aliases
 #define s_vec std::vector
 #define s_que std::queue
 #define s_arr std::array
 #define s_map std::map
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// c++ constructor stuff
 #define NOCPYASS(T) \
   T&operator =(const T&) = delete;  \
   T(const T&) = delete; \
   T(T&&) = delete;  \
   T&operator =(T&&) = delete;
 
-//////////////////////////////////////////////////////////////////////////
-//
 #define NODFT(T) T()=delete;
 
 //////////////////////////////////////////////////////////////////////////
-//
+// member decl stuff
 #define DECL_PTR(T,p) T *p=nullptr;
 #define DECL_DZ(d) double d=0;
 #define DECL_FZ(f) float f=0;
@@ -137,13 +138,6 @@ typedef std::string sstr;
 #define DECL_BT(b) bool b=true;
 #define DECL_TD(T,m) T m;
 #define DECL_TV(T,m,v) T m=v;
-
-//////////////////////////////////////////////////////////////////////////
-//
-//#define CZDTOR_X(T) virtual ~T() {}
-//#define CZCTOR_X(T) T() {}
-//#define CZDTOR(T) virtual ~T();
-//#define CZCTOR(T) T();
 
 //////////////////////////////////////////////////////////////////////////////
 //

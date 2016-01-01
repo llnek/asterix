@@ -23,8 +23,7 @@ typedef s::string NodeType;
 
 //////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Component {
-public:
+struct FS_DLL Component {
   virtual const COMType typeId() = 0;
   virtual void dispose() {}
   virtual ~Component() {}

@@ -21,9 +21,10 @@ class Engine;
 class FS_DLL Entity {
 private:
 
+  //owns all the parts
   s_map<sstr, Component*> parts;
   DECL_PTR(Engine,engine)
-  sstr group;
+  DECL_TD(sstr, group)
   DECL_BF(dead)
 
 public:
@@ -36,6 +37,7 @@ public:
   NOCPYASS(Entity)
   NODFT(Entity)
 
+  // owns the component
   void checkin(not_null<Component*>);
   void purge(const COMType&);
 
@@ -49,7 +51,6 @@ public:
   void markDelete();
 
   const s_vec<Component*> getAll();
-
 };
 
 
