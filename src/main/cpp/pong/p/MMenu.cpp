@@ -62,7 +62,7 @@ void UILayer::decorate() {
 
   lb->setScale(XCFG()->getScale());
   lb->setColor(c);
-  addItem(lb);
+  addItem(lb,lastZ,++lastTag);
 
   auto b1 = cx::reifyMenuBtn("online.png");
   b1->setTarget(this,
@@ -79,7 +79,7 @@ void UILayer::decorate() {
   auto menu= cx::mkVMenu(
       s_vec<c::MenuItem*> {b1,b2,b3});
   menu->setPosition(cw);
-  addItem(menu);
+  addItem(menu,lastZ,++lastTag);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
@@ -98,7 +98,7 @@ void UILayer::decorate() {
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
                   wb.bottom+tile+sz.height*0.45f);
-  addItem(m2);
+  addItem(m2,lastZ,++lastTag);
 
   // audio
   auto audios= cx::reifyAudioIcons();

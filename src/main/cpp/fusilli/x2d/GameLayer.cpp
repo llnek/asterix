@@ -107,6 +107,7 @@ bool GameLayer::onTouchBegan(c::Touch *t, c::Event *e) {
       ok=true;
     }
   }
+  // returns true if finger is on a movable object
   return ok;
 }
 
@@ -118,6 +119,7 @@ void GameLayer::onTouchMoved(c::Touch *t, c::Event *e) {
   F__LOOP(it,motionees) {
     auto c = *it;
     auto x= c->bbox();
+    // move the object when finger is on the object
     if (x.containsPoint(loc)) {
       onTouchMotion(c,loc,t->getDelta());
     }
@@ -186,6 +188,7 @@ void GameLayer::onMouseMove(c::Event* event) {
     auto x= c->bbox();
     if (b == MOUSE_BUTTON_LEFT &&
         x.containsPoint(loc)) {
+      // mouse is on the object so move it
       onMouseMotion(c,loc,e->getDelta());
     }
   }

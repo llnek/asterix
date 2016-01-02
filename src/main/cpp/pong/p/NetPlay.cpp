@@ -69,14 +69,14 @@ void UILayer::showWaitOthers() {
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f * 255);
-  addItem(qn);
+  addItem(qn,lastZ,++lastTag);
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onCancel));
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu);
+  addItem(menu,lastZ,++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ void UILayer::decorate() {
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f*255);
-  addItem(qn);
+  addItem(qn,lastZ,++lastTag);
 
   // editbox for user
   auto uid = c::ui::TextField::create();
@@ -203,7 +203,7 @@ void UILayer::decorate() {
   uid->setPlaceHolder(gets("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
   tag= USERTAG;
-  addItem(uid, f::MaybeInt(), f::MaybeInt(tag));
+  addItem(uid, lastZ, tag);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -216,7 +216,7 @@ void UILayer::decorate() {
   pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
   tag= PASSTAG;
-  addItem(pwd, f::MaybeInt(), f::MaybeInt(tag));
+  addItem(pwd, lastZ, tag);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
@@ -230,7 +230,7 @@ void UILayer::decorate() {
       CC_MENU_SELECTOR(UILayer::onCancel));
 
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu);
+  addItem(menu,lastZ,++lastTag);
 }
 
 END_NS_UNAMED()

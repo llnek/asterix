@@ -40,14 +40,14 @@ void UILayer::decorate() {
   centerImage("game.bg");
 
   addFrame("title.png",
-      c::ccp(cw.x, wb.top * 0.9f));
+      c::ccp(cw.x, wb.top * 0.9f), lastZ, ++lastTag);
 
   auto b = cx::reifyMenuBtn("play.png");
   auto menu = cx::mkMenu(b);
   b->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onPlay));
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu);
+  addItem(menu,lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////

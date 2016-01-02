@@ -21,10 +21,11 @@ NS_BEGIN(fusii)
 class CC_DLL XLives : public c::Node {
 protected:
 
-  s_vec<c::Node*> icons;
   DECL_TD(c::Size, lifeSize)
   DECL_TD(c::Vec2, refPt)
   DECL_TD(sstr, frameId)
+
+  s_vec<c::Node*> icons;
 
   DECL_IZ(totalLives)
   DECL_IZ(curLives)

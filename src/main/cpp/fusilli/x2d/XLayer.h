@@ -39,18 +39,17 @@ public:
   virtual bool initEx(XScene*, int zx = 0);
   virtual void decorate() = 0;
 
-  virtual void addAtlasItem(const sstr &atlas,
-      not_null<c::Node*> n,
-      const MaybeInt& = MaybeInt(),
-      const MaybeInt& = MaybeInt() );
+  void addAtlasItem( const sstr &atlas, not_null<c::Node*> n, int z, int tag);
+  void addAtlasItem( const sstr &atlas, not_null<c::Node*> n);
 
-  virtual void addItem(not_null<c::Node*> n,
-      const MaybeInt& = MaybeInt() ,
-      const MaybeInt& = MaybeInt() );
+  void addItem(not_null<c::Node*> n, int z, int tag);
+  void addItem(not_null<c::Node*> n);
 
-  void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos);
-
+  void addFrame(const sstr &n, const c::Vec2 &pos, int z, int tag);
   void addFrame(const sstr &n, const c::Vec2 &pos);
+
+  void addAtlasFrame( const sstr &atlas, const sstr &n, const c::Vec2 &pos, int z, int tag);
+  void addAtlasFrame( const sstr &atlas, const sstr &n, const c::Vec2 &pos);
 
   void centerImage(const sstr &n, int z= -1);
 

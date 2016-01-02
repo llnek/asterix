@@ -77,7 +77,7 @@ c::Menu* addAudioIcons(not_null<XLayer*> layer,
   // need null to end var-args
   auto menu= c::Menu::create(audio, nullptr);
   menu->setPosition(pos);
-  layer->addItem(menu);
+  layer->addChild(menu);
   return menu;
 }
 

@@ -87,49 +87,64 @@ c::SpriteBatchNode* XLayer::getAtlas(const sstr &name) {
 //
 void XLayer::addAtlasFrame(const sstr &atlas,
                            const sstr &frame,
-                           const c::Vec2 &pos) {
+                           const c::Vec2 &pos, int z, int tag) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  addAtlasItem(atlas, tt);
+  addAtlasItem(atlas, tt, z, tag);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLayer::addAtlasFrame(const sstr &atlas,
+                           const sstr &frame,
+                           const c::Vec2 &pos) {
+  addAtlasFrame(atlas, frame,pos,lastZ,++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add an image
-//
-void XLayer::addFrame(const sstr &frame, const c::Vec2 &pos) {
+void XLayer::addFrame(const sstr &frame, const c::Vec2 &pos, int z, int tag) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  addItem(tt);
+  addItem(tt, z, tag);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLayer::addFrame(const sstr &frame, const c::Vec2 &pos) {
+  addFrame(frame, pos, lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child to this atlas
-//
-void XLayer::addAtlasItem(const sstr &atlas,
-    not_null<c::Node*> n,
-    const MaybeInt &zx, const MaybeInt &tag) {
+void XLayer::addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag) {
 
-  auto ptag = tag.isNone() ? ++lastTag : tag.get();
-  auto pzx = zx.isNone() ? lastZ : zx.get();
-  auto p= getAtlas(atlas);
   auto ss = DCAST(c::Sprite*, n.get());
+  auto p= getAtlas(atlas);
 
   //CCASSERT(ss != nullptr, "sprite cannot be null");
   CCASSERT(p != nullptr, "atlas cannot be null");
 
   if (NNP(ss)) { ss->setBatchNode(p); }
-  p->addChild(n.get(), pzx, ptag);
+  p->addChild(n.get(), z, tag);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void XLayer::addAtlasItem(const sstr &atlas, not_null<c::Node*> n) {
+  addAtlasItem(atlas, n, lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
-//
-void XLayer::addItem(not_null<c::Node*> n,
-    const MaybeInt &zx, const MaybeInt &tag) {
+void XLayer::addItem(not_null<c::Node*> n, int z, int tag) {
+  this->addChild(n.get(), z, tag);
+}
 
-  auto ptag = tag.isNone() ?  ++lastTag : tag.get();
-  auto pzx = zx.isNone() ? lastZ : zx.get();
-  this->addChild(n.get(), pzx, ptag);
+//////////////////////////////////////////////////////////////////////////////
+// Add a child
+void XLayer::addItem(not_null<c::Node*> n) {
+  addItem(n, lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
