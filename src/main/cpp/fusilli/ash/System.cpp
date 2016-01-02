@@ -50,12 +50,12 @@ bool System::isa(const SystemType &type) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void SystemList::add(not_null<System*> sys) {
-    auto s = sys.get();
+  auto s = sys.get();
   if (ENP(head)) {
     head = tail = s;
     s->next = s->previous = nullptr;
   } else {
-    System* node=nullptr;
+    System *node=nullptr;
     for(node = tail; NNP(node); node = node->previous) {
       if (node->priority() <= s->priority() ) {
         break;
@@ -66,12 +66,15 @@ void SystemList::add(not_null<System*> sys) {
       s->previous = tail;
       s->next = nullptr;
       tail = s;
-    } else if ( ENP(node )) {
-        s->previous = nullptr;
-        s->next = head;
-        head->previous = s;
-        head = s;
-    } else {
+    }
+    else
+    if ( ENP(node )) {
+      s->previous = nullptr;
+      s->next = head;
+      head->previous = s;
+      head = s;
+    }
+    else {
       s->next = node->next;
       s->previous = node;
       node->next->previous = s;
@@ -83,7 +86,7 @@ void SystemList::add(not_null<System*> sys) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void SystemList::remove(not_null<System*> sys) {
-    auto s = sys.get();
+  auto s = sys.get();
   if (head == s) {
     head = head->next;
   }

@@ -36,37 +36,32 @@ public:
   void restart();
   void suspend();
 
-  virtual ~System() {}
-  System() {}
-
   DECL_PTR(System ,previous)
   DECL_PTR(System ,next)
 
+  virtual ~System() {}
+  System() {}
   NOCPYASS(System)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL SystemList {
-protected:
-
-  void clear();
-
-public:
+struct FS_DLL SystemList {
 
   System* get(const SystemType&);
   void remove(not_null<System*>);
   void add(not_null<System*>);
   void removeAll();
+  void clear();
+
+  //owns the systems
+  DECL_PTR(System ,head)
+  DECL_PTR(System ,tail)
 
   virtual ~SystemList() {
     clear();
   }
   SystemList() {}
-
-  DECL_PTR(System ,head)
-  DECL_PTR(System ,tail)
-
   NOCPYASS(SystemList)
 };
 

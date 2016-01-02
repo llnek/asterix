@@ -24,13 +24,12 @@ protected:
 
   void init(c::Sprite*, int health, int score);
 
-  NOCPYASS(ComObj)
-
 public:
 
   virtual const a::COMType typeId() { return "fusii::ComObj"; }
 
   virtual void inflate(not_null<c::Dictionary*> options);
+  virtual void updatePosition(float x, float y);
   virtual void inflate(float x, float y);
   virtual void inflate();
   virtual void deflate();
@@ -45,13 +44,13 @@ public:
   int pid();
   float width();
 
-  virtual void updatePosition(float x, float y);
-
   ComObj(not_null<c::Sprite*>, int health, int score);
   ComObj(not_null<c::Sprite*>);
   virtual ~ComObj() {}
   ComObj();
+  NOCPYASS(ComObj)
 
+  //not owner
   DECL_PTR(c::Sprite ,sprite)
   DECL_IZ(origHealth)
   DECL_BF(status)

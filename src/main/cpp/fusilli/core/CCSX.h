@@ -25,10 +25,12 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
+  void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
+
+  const c::Size scaleSize(const c::Size &z, float scale);
+
   c::Dictionary* readXmlAsDict(const sstr &fpath);
   c::Array* readXmlAsList(const sstr &fpath);
-
-  void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
 
   const c::Color3B colorRGB(const sstr &hexcolor);
   const s_arr<c::MenuItem*,2> reifyAudioIcons();
@@ -88,8 +90,6 @@ namespace ccsx {
 
   void runScene(not_null<c::Scene*>, float delay);
   void runScene(not_null<c::Scene*>);
-
-  const c::Size scaleSize(const c::Size &z, float scale);
 
   bool isTransitioning();
 

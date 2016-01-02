@@ -31,7 +31,6 @@ public:
 
   virtual ~NodeFactory() {}
   NodeFactory() {}
-
   NOCPYASS(NodeFactory)
 };
 
@@ -40,6 +39,7 @@ public:
 class FS_DLL NodeRegistry {
 private:
 
+  // owns the factories
   s_map<NodeType,NodeFactory*> regos;
 
 public:
@@ -52,7 +52,6 @@ public:
 
   virtual ~NodeRegistry();
   NodeRegistry();
-
   NOCPYASS(NodeRegistry)
 };
 

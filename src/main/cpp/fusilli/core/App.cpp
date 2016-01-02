@@ -79,7 +79,7 @@ void App::preLaunch(const c::Size &dz) {
 
   s_vec<sstr> searchPaths;
   c::Size largeSize;
-  c::Size mediumSize;
+  c::Size medSize;
   c::Size smallSize;
   auto spath="rd";
 
@@ -91,17 +91,17 @@ void App::preLaunch(const c::Size &dz) {
 
   if (portrait) {
     largeSize = c::Size(1536, 2048);
-    mediumSize = c::Size(768, 1024);
+    medSize = c::Size(768, 1024);
     smallSize = c::Size(320, 480);
   } else {
     largeSize = c::Size(2048, 1536);
-    mediumSize = c::Size(1024, 768);
+    medSize = c::Size(1024, 768);
     smallSize = c::Size(480, 320);
   }
 
   // if the frame's height is larger than
   // the height of medium size
-  if (fz.height > mediumSize.height) {
+  if (fz.height > medSize.height) {
     CC_DTOR()->setContentScaleFactor(
         MIN(largeSize.height/dz.height, largeSize.width/dz.width));
     spath= "rd";
@@ -110,7 +110,7 @@ void App::preLaunch(const c::Size &dz) {
   // the height of small size.
   else if (fz.height > smallSize.height) {
     CC_DTOR()->setContentScaleFactor(
-        MIN(mediumSize.height/dz.height, mediumSize.width/dz.width));
+        MIN(medSize.height/dz.height, medSize.width/dz.width));
     spath= "hd";
   }
   // if the frame's height is smaller than the height of medium size.
@@ -144,13 +144,13 @@ void App::preLaunch(const c::Size &dz) {
 void App::initAudio() {
   auto a = XCFG()->getEffectFiles();
   F__LOOP(it, a) {
-    auto fp = *it;
+    auto &fp = *it;
     CCLOG("preloading sound effect: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadEffect(fp.c_str());
   }
   a= XCFG()->getMusicFiles();
   F__LOOP(it, a) {
-    auto fp = *it;
+    auto &fp = *it;
     CCLOG("preloading music: %s", fp.c_str());
     den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());
   }

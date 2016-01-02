@@ -21,6 +21,7 @@ class Entity;
 class FS_DLL Node {
 private:
 
+  //NOT owner
   s_map<sstr, Component*> values;
   s_map<COMType, sstr> types;
   DECL_PTR(Entity ,entity)
@@ -44,7 +45,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* nodeFld(not_null<ash::Node*> n, const sstr &fld) {
+template<typename T>
+T* nodeFld(not_null<ash::Node*> n, const sstr &fld) {
   auto v= n->get(fld);
   if (NNP(v)) {
     return (T*) v;

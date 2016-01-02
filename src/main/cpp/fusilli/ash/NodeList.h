@@ -27,9 +27,6 @@ public:
 
   const NodeType getType() { return nType; }
 
-  NodeList(const NodeType&);
-  virtual ~NodeList();
-
   bool containsWithin(not_null<Entity*>);
   bool isCompatible(not_null<Entity*>);
   void removeEntity(not_null<Entity*> );
@@ -40,12 +37,14 @@ public:
   void clear();
   int size();
 
-  NOCPYASS(NodeList)
-  NODFT(NodeList)
-
+  //owns the nodes
   DECL_PTR(Node ,head)
   DECL_PTR(Node ,tail)
 
+  NodeList(const NodeType&);
+  virtual ~NodeList();
+  NOCPYASS(NodeList)
+  NODFT(NodeList)
 };
 
 
