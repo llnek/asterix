@@ -49,9 +49,9 @@ void GameLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::surcease() {
-  unscheduleUpdate();
   disableListeners();
   cx::pauseAudio();
+  unscheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,9 +65,9 @@ bool GameLayer::keyPoll(KEYCODE key) {
 //
 void GameLayer::disableListeners() {
   //CCLOG("disabling event handlers");
-  try { if (cx::isDesktop()) setKeyboardEnabled(false); } catch (...) { }
-  try { if (cx::isDesktop()) setMouseEnabled(false); } catch (...) { }
-  try { if (!cx::isDesktop()) setTouchEnabled(false); } catch (...) { }
+  try { setKeyboardEnabled(false); } catch (...) { }
+  try { setMouseEnabled(false); } catch (...) { }
+  try { setTouchEnabled(false); } catch (...) { }
   keys.fill(false);
 }
 
@@ -102,7 +102,7 @@ bool GameLayer::onTouchBegan(c::Touch *t, c::Event *e) {
   auto loc= t->getLocationInView();
   auto ok=false;
   F__LOOP(it,motionees) {
-    auto &c = *it;
+    auto c = *it;
     if (c->bbox().containsPoint(loc)) {
       ok=true;
     }
@@ -116,7 +116,7 @@ void GameLayer::onTouchMoved(c::Touch *t, c::Event *e) {
   auto bx= MGMS()->getEnclosureBox();
   auto loc= t->getLocationInView();
   F__LOOP(it,motionees) {
-    auto &c = *it;
+    auto c = *it;
     auto x= c->bbox();
     if (x.containsPoint(loc)) {
       onTouchMotion(c,loc,t->getDelta());
@@ -136,7 +136,7 @@ void GameLayer::onMouseMotion(ComObj *c,
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::onTouchMotion(ComObj *c,
-    const c::Vec2 &loc, const c::Vec2 &delta) {
+  const c::Vec2 &loc, const c::Vec2 &delta) {
   auto bx= MGMS()->getEnclosureBox();
   auto pos= c->pos();
   auto y = pos.y;
@@ -182,7 +182,7 @@ void GameLayer::onMouseMove(c::Event* event) {
   auto b= e->getMouseButton();
 
   F__LOOP(it,motionees) {
-    auto &c = *it;
+    auto c = *it;
     auto x= c->bbox();
     if (b == MOUSE_BUTTON_LEFT &&
         x.containsPoint(loc)) {

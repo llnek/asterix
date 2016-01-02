@@ -16,7 +16,7 @@ NS_BEGIN(odin)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(MType t, EType c, j::json &body) : OdinEvent() {
+OdinEvent::OdinEvent(MType t, EType c, j::json body) : OdinEvent() {
   this->doco = j::json( {
     { "type", (int)t },
     { "code", (int)c }
@@ -37,18 +37,18 @@ OdinEvent::OdinEvent(MType t, EType c) : OdinEvent() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(j::json &msg) : OdinEvent() {
-  if (msg.is_object()) {
-    auto v= msg["type"];
+OdinEvent::OdinEvent(j::json full_msg) : OdinEvent() {
+  if (full_msg.is_object()) {
+    auto v= full_msg["type"];
     if (v.is_number()) {
-      type = SCAST(MType, v.get< j::json::number_integer_t >());
+      type = SCAST(MType, JS_INT(v));
     }
-    v= msg["code"];
+    v= full_msg["code"];
     if (v.is_number()) {
-      code = SCAST(EType, v.get<j::json::number_integer_t >());
+      code = SCAST(EType, JS_INT(v));
     }
-    v= msg["source"];
-    if (!v.is_null()) {
+    v= full_msg["source"];
+    if (v.is_object()) {
       doco =v;
     }
   }

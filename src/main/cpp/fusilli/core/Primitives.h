@@ -90,7 +90,8 @@ typedef Maybe<int> MaybeInt;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* dictVal(not_null<c::Dictionary*> d, const sstr &key) {
+template<typename T>
+T* dictVal(not_null<c::Dictionary*> d, const sstr &key) {
   auto v= d->objectForKey(key);
   if (NNP(v)) {
     return static_cast<T*>(v);
@@ -101,7 +102,8 @@ template<typename T> T* dictVal(not_null<c::Dictionary*> d, const sstr &key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> T* reifyRefType() {
+template<typename T>
+T* reifyRefType() {
   T *p = mc_new(T) ;
   if (NNP(p) && p->init()) {
     p->autorelease();
@@ -113,7 +115,8 @@ template<typename T> T* reifyRefType() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-template<typename T> void emptyQueue(s_que<T> &q) {
+template<typename T>
+void emptyQueue(s_que<T> &q) {
   while (! q.empty()) {
     q.pop();
   }

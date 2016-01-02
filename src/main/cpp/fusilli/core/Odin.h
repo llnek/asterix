@@ -77,7 +77,6 @@ void disconnect(OdinIO*);
 
 void close(OdinIO*);
 
-
 owner<OdinIO*> reifyPlayRequest(const sstr &game,
     const sstr &user, const sstr &pwd);
 

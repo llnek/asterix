@@ -15,7 +15,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 // Pre-populate a bunch of objects in the pool
 void XPool::preset(s::function<ComObj* ()> f, int count) {
-  for (int n=0; n < count; ++n) {
+  for (auto n=0; n < count; ++n) {
     auto rc= f();
     if (NNP(rc)) {
       objs.push_back(rc);

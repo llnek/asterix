@@ -39,7 +39,6 @@ const sstr getXXX(not_null<c::Dictionary*> d, const sstr &key ) {
   return NNP(r) ? r->getCString() : "";
 }
 
-
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
