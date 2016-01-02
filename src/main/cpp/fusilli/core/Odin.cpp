@@ -41,9 +41,12 @@ owner<OdinEvent*> mkPlayRequest(const sstr &game,
     const sstr &user,
     const sstr &pwd) {
 
-  auto a=  j::json::array_t { game, user, pwd };
-  auto p= j::json(a);
-  return new OdinEvent(MType::SESSION, EType::PLAYGAME_REQ, p);
+  return new OdinEvent(MType::SESSION, EType::PLAYGAME_REQ, j::json({
+        {"game", game },
+        {"user", user },
+        {"pswd", pwd}
+
+        }));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -52,9 +55,11 @@ owner<OdinEvent*> mkJoinRequest(const sstr &room,
     const sstr &user,
     const sstr &pwd) {
 
-  auto a=  j::json::array_t { room, user, pwd };
-  auto p= j::json(a);
-  return new OdinEvent(MType::SESSION, EType::JOINGAME_REQ,p);
+  return new OdinEvent(MType::SESSION, EType::JOINGAME_REQ,j::json({
+        {"room", room },
+        {"user", user },
+        {"pswd", pwd}
+        }));
 }
 
 //////////////////////////////////////////////////////////////////////////////
