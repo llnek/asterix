@@ -20,16 +20,10 @@ NS_BEGIN(tttoe)
 struct CC_DLL ELayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(ELayer)
-
-  virtual void decorate();
+  MDECL_DECORATE()
 
   void onReplay(c::Ref*);
   void onQuit(c::Ref*);
-
-  virtual ~ELayer() {}
-  ELayer() {}
-
-  NOCPYASS(ELayer)
 };
 
 NS_END(tttoe)

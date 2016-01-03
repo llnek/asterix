@@ -13,40 +13,28 @@
 #define __LOGIC_H__
 
 #include "2d/CCActionInterval.h"
-#include "core/XSystem.h"
+#include "x2d/GSystem.h"
 #include "EFactory.h"
-#include "n/CObjs.h"
 
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Logic : public f::XSystem<EFactory> {
-protected:
+struct CC_DLL Logic : public f::GSystem<GEngine> {
 
   void onEnqueue(a::Node*, int pnum, int cell, Grid*);
   void enqueue(a::Node*, int pos, int value, Grid*);
   void doIt(a::Node*, float);
 
-public:
-
-  virtual const a::SystemType typeId() { return "n/Logic"; }
-
-  Logic(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Logic; }
+  MDECL_SYS_PRIORITY( a::Logic)
+  MDECL_SYS_TPID("n/Logic")
 
   virtual bool update(float);
+  virtual void onAdd();
 
-  virtual ~Logic() {}
+  DECL_PTR(c::DelayTime, botTimer)
+  DECL_PTR(a::NodeList, board)
 
-  NOCPYASS(Logic)
-  NODFT(Logic)
-
-  c::DelayTime *botTimer=nullptr;
-  a::NodeList *board=nullptr;
 };
 
 

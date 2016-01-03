@@ -22,27 +22,23 @@ struct CC_DLL GCXX : public f::GCX {
     data=msg;
     odin=io;
   }
-  j::json data;
+  DECL_TD(j::json, data)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
-public:
 
   virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer();
 
-  virtual void decorate();
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
+  MDECL_GLAYER(2)
 
   virtual bool isLive();
   virtual void stop();
   virtual void play();
 
-  STATIC_REIFY_SCENE_CTX(Game)
-  virtual ~Game() {}
-  Game() {}
-  NOCPYASS(Game)
 };
 
 

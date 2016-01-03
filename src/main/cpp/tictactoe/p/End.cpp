@@ -21,27 +21,22 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onReplay(c::Ref*) {
-  auto x= (GCXX*)getSceneX()->getCtx();
-  auto m= MGMS()->getMode();
-  getSceneX()->setCtx(nullptr,false);
-  cx::runScene(
-      Game::reify(mc_new_3(GCXX, m, x->odin, x->data)),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+  auto x= (GCXX*)getSceneX()->emitCtx();
+  cx::runScene( Game::reify(x), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
   cx::runScene(
-      XCFG()->prelude(),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+      XCFG()->prelude(), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR",XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();

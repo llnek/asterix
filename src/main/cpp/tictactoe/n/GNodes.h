@@ -19,10 +19,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BoardNode : public a::NodeFactory {
-public:
-
-  virtual const a::NodeType typeId() { return "n/BoardNode"; }
+struct CC_DLL BoardNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
@@ -34,18 +31,12 @@ public:
     });
   }
 
-  virtual ~BoardNode() {}
-  BoardNode() {}
-
-  NOCPYASS(BoardNode)
+  MDECL_NFAC_TPID( "n/BoardNode")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GUINode : public a::NodeFactory {
-public:
-
-  virtual const a::NodeType typeId() { return "n/GUINode"; }
+struct CC_DLL GUINode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
@@ -54,10 +45,20 @@ public:
     });
   }
 
-  virtual ~GUINode() {}
-  GUINode() {}
+  MDECL_NFAC_TPID( "n/GUINode")
+};
 
-  NOCPYASS(GUINode)
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ArenaNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        { "slots", "n/Slots" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/ArenaNode")
 };
 
 

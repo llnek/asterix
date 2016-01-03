@@ -20,20 +20,16 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN b) { back=b; }
-  VOIDFN back;
+  DECL_TD(VOIDFN, back)
 };
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MMenu : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(MMenu)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
-  virtual ~MMenu() {}
-  MMenu() {}
-
-  NOCPYASS(MMenu)
 };
 
 

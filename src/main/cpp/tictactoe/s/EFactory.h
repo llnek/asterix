@@ -13,24 +13,21 @@
 #define __EFACTORY_H__
 
 #include "x2d/GameScene.h"
-#include "core/Factory.h"
+#include "ash/Engine.h"
 #include "n/GNodes.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EFactory  : public f::Factory {
-protected:
+struct CC_DLL GEngine  : public a::Engine {
+
   void initPlayers(Players*);
-public:
 
-  EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
+  virtual void ignite();
 
+  a::Entity* reifyArena();
   a::Entity* reifyBoard();
 
-  virtual ~EFactory() {}
-  NOCPYASS(EFactory)
-  NODFT(EFactory)
 };
 
 

@@ -29,13 +29,6 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL UILayer : public f::XLayer {
 
-  STATIC_REIFY_LAYER(UILayer)
-
-  virtual void decorate();
-
-  virtual ~UILayer() {}
-  UILayer() {}
-
   void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
   void onPlay3(c::Ref*);
   void onPlay2(c::Ref*);
@@ -43,7 +36,8 @@ struct CC_DLL UILayer : public f::XLayer {
   void onBack(c::Ref*);
   void onQuit(c::Ref*);
 
-  NOCPYASS(UILayer)
+  STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +52,7 @@ void UILayer::decorate() {
       cw.x,
       wb.top * 0.9f,
       "font.JellyBelly",
-      XCFG()->getL10NStr("mmenu"));
+      gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
   incIndexZ();
@@ -120,18 +114,17 @@ void UILayer::onPlay3(c::Ref *r) {
   auto y= [=](ws::OdinIO* io, j::json obj) {
     this->onPlayXXX(f::GMode::NET, io, obj);
   };
-  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
   // no
   auto f= [=]() {
-    cx::runScene(XCFG()->prelude(), dx);
+    cx::runScene(XCFG()->prelude(), getDelay());
   };
   auto n= [=]() {
     cx::runScene(
-        MMenu::reify(mc_new_1(MCX,f)), dx);
+        MMenu::reify(mc_new_1(MCX,f)), getDelay());
   };
 
   cx::runScene(
-      NetPlay::reify( mc_new_2(NPCX, y,n)), dx);
+      NetPlay::reify( mc_new_2(NPCX, y,n)), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,8 +144,7 @@ void UILayer::onPlay1(c::Ref *) {
 //
 void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
   cx::runScene(
-      Game::reify(mc_new_3(GCXX, mode, io, obj)),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+      Game::reify(mc_new_3(GCXX, mode, io, obj)), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -167,7 +159,7 @@ void UILayer::onBack(c::Ref*) {
 void UILayer::onQuit(c::Ref*) {
   cx::runScene(
       XCFG()->prelude(),
-      CC_CSV(c::Float,"SCENE_DELAY"));
+      getDelay());
 }
 
 END_NS_UNAMED()

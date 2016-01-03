@@ -200,14 +200,14 @@ void HUDLayer::drawScores() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawResult(int pnum) {
-  auto msg = XCFG()->getL10NStr("whodraw");
+  auto msg = gets("whodraw");
 
   switch (pnum) {
     case 2:
-      msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { this->p2Long});
+      msg= gets("whowin", s_vec<sstr> { this->p2Long});
       break;
     case 1:
-      msg= XCFG()->getL10NStr("whowin", s_vec<sstr> { this->p1Long});
+      msg= gets("whowin", s_vec<sstr> { this->p1Long});
       break;
   }
 
@@ -220,7 +220,7 @@ void HUDLayer::drawStatus(int pnum) {
   if (pnum > 0) {
     auto pfx = pnum == 1 ? p1Long : p2Long;
     drawXXXText(status,
-      XCFG()->getL10NStr("whosturn", s_vec<sstr> { pfx }));
+      gets("whosturn", s_vec<sstr> { pfx }));
   }
 }
 

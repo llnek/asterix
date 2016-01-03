@@ -17,44 +17,31 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Config : public f::XConfig {
-protected:
+struct CC_DLL Config : public f::XConfig {
 
-  void initAssets();
-  void initCsts();
-
-public:
+  virtual const sstr appKey() { return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c"; }
 
   virtual const sstr appId() { return "tictactoe"; }
-  virtual const sstr themeColor() { return ""; }
+  virtual const sstr themeColor() { return "blue"; }
 
-  virtual const sstr appKey() {
-    return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
-  }
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
 
-  virtual ResolutionPolicy policy() {
-    return ResolutionPolicy::FIXED_HEIGHT;
-  }
-
-  virtual const c::Size gameSize() {
-    return c::Size(320,480);
-  }
+  virtual const c::Size gameSize() { return c::Size(320,480); }
 
   virtual void handleResolution(const c::Size &rs);
   virtual const sstr getWSUrl();
   virtual c::Scene* prelude();
 
-  virtual void setGameId(const sstr& );
-  virtual void setRoomId(const sstr& );
-
   virtual const sstr getGameId() { return ""; }
   virtual const sstr getRoomId() { return ""; }
 
+  virtual void setGameId(const sstr& );
+  virtual void setRoomId(const sstr& );
+
   virtual void runOnce();
 
-  virtual ~Config() {}
-  Config() {}
-  NOCPYASS(Config)
+  void initAssets();
+  void initCsts();
 
   static owner<Config*> reify();
 };

@@ -25,52 +25,35 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SmartAlgo : public a::Component {
-public:
+struct CC_DLL SmartAlgo : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/SmartAlgo"; }
+  MDECL_COMP_TPID( "n/SmartAlgo" )
+  DECL_PTR(Board,board)
 
   SmartAlgo(not_null<Board*> b) {
     this->board= b;
   }
 
-  virtual ~SmartAlgo() {}
-
-  NOCPYASS(SmartAlgo)
-  NODFT(SmartAlgo)
-
-  Board *board;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Grid : public a::Component {
-public:
-
-  virtual const a::COMType typeId() { return "n/Grid"; }
+struct CC_DLL Grid : public a::Component {
 
   Grid(const ArrCells &seed) {
     s::copy(s::begin(seed),
         s::end(seed), s::begin(values));
-    this->GOALS= mapGoalSpace();
+    GOALS= mapGoalSpace();
   }
 
-  virtual ~Grid() {}
-
-  NOCPYASS(Grid);
-  NODFT(Grid)
-
+  MDECL_COMP_TPID("n/Grid")
+  DECL_TD(ArrCells, values)
   s_vec<ArrDim> GOALS;
-  ArrCells values;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL PlayView : public a::Component {
-public:
-
-  virtual const a::COMType typeId() { return "n/PlayView"; }
+struct CC_DLL PlayView : public a::Component {
 
   PlayView(not_null<f::XLayer*> layer) {
     this->size = cx::calcSize("z.png");
@@ -79,23 +62,20 @@ public:
     this->layer= layer;
   }
 
-  virtual ~PlayView() {}
-
-  NOCPYASS(PlayView)
-  NODFT(PlayView)
+  MDECL_COMP_TPID( "n/PlayView")
 
   s_arr<c::Sprite*, GD_SZ> cells;
   s_arr<f::Box4, GD_SZ> boxes;
-  f::XLayer *layer;
-  c::Size size;
+
+  DECL_PTR(f::XLayer, layer)
+  DECL_TD(c::Size, size)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Player : public a::Component {
-public:
+struct CC_DLL Player : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Player"; }
+  MDECL_COMP_TPID( "n/Player")
 
   Player(int category,
       int value,
@@ -107,9 +87,6 @@ public:
     this->pnum=id;
     this->value= value;
   }
-
-  virtual ~Player() {}
-  Player() {}
 
   Player& operator=(const Player &other) {
     category = other.category;
@@ -132,47 +109,43 @@ public:
     offset= other.offset;
   }
 
-  int category= (int) f::GMode::NICHTS;
-  int pnum= -1;
-  int offset=0;
-  int value=0;
-  sstr pidlong;
-  sstr pid;
-  sstr color;
+  DECL_TV(int, category, f::GMode::NICHTS)
+  DECL_TV(int, pnum,  -1)
+  DECL_IZ(offset)
+  DECL_IZ(value)
+  DECL_TD(sstr, pidlong)
+  DECL_TD(sstr, pid)
+  DECL_TD(sstr, color)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Players : public a::Component {
-public:
+struct CC_DLL Players : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Players"; }
-
-  virtual ~Players() {}
-  Players() {}
-
-  NOCPYASS(Players)
-
+  MDECL_COMP_TPID("n/Players")
   s_arr<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UISelection : public a::Component {
-public:
+struct CC_DLL UISelection : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/UISelection"; }
+  MDECL_COMP_TPID( "n/UISelection" )
 
-  virtual ~UISelection() {}
-  UISelection() {}
+  DECL_TV(int, cell,  -1)
+  DECL_TV(int, px, -1)
+  DECL_TV(int, py, -1)
 
-  NOCPYASS(UISelection)
-
-  int cell = -1;
-  int px = -1;
-  int py = -1;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Slots : public a::Component {
+
+};
+
+
 
 
 NS_END(tttoe)

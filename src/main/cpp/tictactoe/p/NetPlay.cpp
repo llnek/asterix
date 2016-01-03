@@ -18,6 +18,7 @@
 #include "Game.h"
 #include "Menu.h"
 #include "s/utils.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
@@ -25,6 +26,10 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 BEGIN_NS_UNAMED()
+
+const int USER_TAG = (int) 'u';
+const int PSWD_TAG = (int) 'p';
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL UILayer : public f::XLayer {
@@ -40,25 +45,22 @@ struct CC_DLL UILayer : public f::XLayer {
   void onCancel(c::Ref* );
   void onLogin(c::Ref*);
 
-  ws::OdinIO* odin=nullptr;
-  int player=0;
+  DECL_PTR(ws::OdinIO, odin)
+  DECL_IZ(player)
 
   STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 
-  virtual void decorate();
   virtual ~UILayer() {
     ws::disconnect(odin);
   }
-  UILayer() {}
-
-  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::showWaitOthers() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("waitother"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb = cx::visBox();
@@ -95,15 +97,14 @@ void UILayer::onStart(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref*) {
-  auto dx = CC_CSV(c::Float, "SCENE_DELAY");
   auto f= [=]() {
-      cx::runScene(XCFG()->prelude(), dx); };
+      cx::runScene(XCFG()->prelude(), getDelay()); };
   auto m = MMenu::reify(mc_new_1(MCX, f));
 
   ws::disconnect(odin);
   SNPTR(odin)
 
-  cx::runScene( m, dx);
+  cx::runScene( m, getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,10 +158,10 @@ void UILayer::odinEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onLogin(c::Ref* ) {
-  auto u= (c::ui::TextField*) getChildByTag( (int) 'u');
-  auto p= (c::ui::TextField*) getChildByTag( (int) 'p');
-  auto uid = u->getString();
-  auto pwd= p->getString();
+  auto u= getChildByTag( USER_TAG);
+  auto p= getChildByTag( PSWD_TAG);
+  auto uid = SCAST(c::ui::TextField, u)->getString();
+  auto pwd = SCAST(c::ui::TextField, p)->getString();
 
   //TODO: fix url
   auto wsurl = XCFG()->getWSUrl();
@@ -179,7 +180,7 @@ void UILayer::onLogin(c::Ref* ) {
 //
 void UILayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", XCFG()->getL10NStr("signinplay"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
@@ -202,10 +203,9 @@ void UILayer::decorate() {
   uid->setTouchEnabled(true);
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
-  uid->setPlaceHolder(XCFG()->getL10NStr("userid"));
+  uid->setPlaceHolder(gets("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  tag= (int)'u';
-  addItem(uid, f::MaybeInt(), f::MaybeInt(tag));
+  addItem(uid, lastZ, USER_TAG);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -215,10 +215,9 @@ void UILayer::decorate() {
   pwd->setMaxLength(16);
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
-  pwd->setPlaceHolder( XCFG()->getL10NStr("passwd"));
+  pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  tag= (int) 'p';
-  addItem(pwd, f::MaybeInt(), f::MaybeInt(tag));
+  addItem(pwd, lastZ, PSWD_TAG);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");

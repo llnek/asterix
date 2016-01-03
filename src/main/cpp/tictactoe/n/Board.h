@@ -20,20 +20,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-class CC_DLL Board : public ag::GameBoard<BD_SZ> {
-protected:
-
-  bool testWin(const ArrCells& , int actor, const ArrDim&);
-
-  s_vec<ArrDim> GOALS;
-  s_arr<int,3> actors;
-  ArrCells grid;
-  int CV_Z;
-
-  NOCPYASS(Board)
-  NODFT(Board)
-
-public:
+struct CC_DLL Board : public ag::GameBoard<BD_SZ> {
 
   virtual const s_vec<int> getNextMoves(not_null<ag::FFrame<BD_SZ>*>);
   virtual int evalScore(not_null<ag::FFrame<BD_SZ>*>);
@@ -57,8 +44,16 @@ public:
   bool isNil(int cellv);
   int getFirstMove();
 
-};
+private:
 
+  bool testWin(const ArrCells& , int actor, const ArrDim&);
+
+  DECL_TD(ArrCells, grid)
+  DECL_IZ(CV_Z)
+
+  s_vec<ArrDim> GOALS;
+  s_arr<int,3> actors;
+};
 
 NS_END(tttoe)
 #endif

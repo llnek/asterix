@@ -26,6 +26,7 @@ AppDelegate::AppDelegate() {
 
   r->rego( mc_new( BoardNode));
   r->rego( mc_new( GUINode));
+  r->rego( mc_new( ArenaNode));
 
   // step.2: set up app-config
   Config::reify();

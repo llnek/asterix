@@ -18,30 +18,29 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL HUDLayer : public f::XLayer {
-public:
 
   STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
   bool countDownState=false;
   int countDownValue=0;
 
-  c::Label *countDown= nullptr;
-  c::Label *result=nullptr;
-  c::Label *status=nullptr;
-  c::Label *title=nullptr;
-  c::Label *score1=nullptr;
-  c::Label *score2=nullptr;
+  DECL_PTR(c::Label, countDown)
+  DECL_PTR(c::Label, result)
+  DECL_PTR(c::Label, status)
+  DECL_PTR(c::Label, title)
+  DECL_PTR(c::Label, score1)
+  DECL_PTR(c::Label, score2)
 
   s_arr<int, 3> scores;
-  sstr play2;
-  sstr play1;
-  sstr p2Long;
-  sstr p1Long;
-  sstr p2ID;
-  sstr p1ID;
 
-  virtual int getIID() { return 3; }
-  virtual void decorate();
+  DECL_TD(sstr, p2Long)
+  DECL_TD(sstr, p1Long)
+  DECL_TD(sstr, play2)
+  DECL_TD(sstr, play1)
+  DECL_TD(sstr, p2ID)
+  DECL_TD(sstr, p1ID)
 
   void regoPlayers(const sstr &color1,
                    const sstr &p1k, const sstr &p1n,
@@ -64,10 +63,6 @@ public:
   void showTimer();
   void killTimer();
 
-  virtual ~HUDLayer() {}
-  HUDLayer() {}
-
-  NOCPYASS(HUDLayer)
 };
 
 

@@ -25,16 +25,10 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
-
-  virtual void decorate();
-
-  virtual ~UILayer() {}
-  UILayer() {}
+  MDECL_DECORATE()
 
   void onPlay(c::Ref*);
   void demo();
-
-  NOCPYASS(UILayer)
 
 };
 
@@ -62,9 +56,11 @@ void UILayer::demo() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay(c::Ref*) {
-  auto f= [=]() { cx::runScene(XCFG()->prelude()); };
-  auto m = MMenu::reify(mc_new_1(MCX, f));
-  cx::runScene( m, CC_CSV(c::Float, "SCENE_DELAY"));
+  auto f= [=]() {
+    cx::runScene(XCFG()->prelude(), getDelay());
+  };
+  cx::runScene(
+      MMenu::reify(mc_new_1(MCX, f)), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////

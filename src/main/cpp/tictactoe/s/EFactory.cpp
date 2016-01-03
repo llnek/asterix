@@ -12,20 +12,29 @@
 #include "core/XConfig.h"
 #include "EFactory.h"
 #include "n/Board.h"
-#include "n/CObjs.h"
 NS_BEGIN(tttoe)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-EFactory::EFactory(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
-
-  : Factory(e, options) {
+void GEngine::ignite() {
+  regoSystem(mc_new(Resolve));
+  regoSystem(mc_new(Logic));
+  regoSystem(mc_new(Stage));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::reifyBoard() {
+a::Entity* GEngine::reifyArena(int pnum) {
+  auto ent= this->reifyEntity("*");
+  auto ss= mc_new(Slots);
+  ss->pnum=pnum;
+  ent->checkin(ss);
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+a::Entity* GEngine::reifyBoard() {
 
   auto nil= CC_CSV(c::Integer, "CV_Z");
   auto xv= CC_CSV(c::Integer, "CV_X");
@@ -50,7 +59,7 @@ a::Entity* EFactory::reifyBoard() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::initPlayers(Players *ps) {
+void GEngine::initPlayers(Players *ps) {
 
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot = CC_CSV(c::Integer, "BOT");

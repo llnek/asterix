@@ -28,8 +28,8 @@ struct CC_DLL NPCX : public f::SCTX {
     this->yes=yes;
     this->no=no;
   }
-  NPCX_Yes yes;
-  VOIDFN no;
+  DECL_TD(NPCX_Yes, yes)
+  DECL_TD(VOIDFN, no)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,13 +37,8 @@ struct CC_DLL NPCX : public f::SCTX {
 struct CC_DLL NetPlay : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(NetPlay)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
-  virtual ~NetPlay() {}
-  NetPlay() {}
-
-  NOCPYASS(NetPlay)
 };
 
 
