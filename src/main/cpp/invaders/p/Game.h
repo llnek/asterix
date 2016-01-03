@@ -22,6 +22,7 @@ struct CC_DLL Game : public f::GameScene {
   virtual void sendMsgEx(const MsgTopic &topic, void*);
 
   STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
   MDECL_GLAYER(2)
 
   virtual bool isLive();

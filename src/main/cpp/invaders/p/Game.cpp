@@ -27,6 +27,7 @@ BEGIN_NS_UNAMED()
 struct CC_DLL GLayer : public f::GameLayer {
 
   MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  MDECL_DECORATE()
   MDECL_GET_IID(2)
   STATIC_REIFY_LAYER(GLayer)
 
@@ -61,7 +62,6 @@ void GLayer::decorate() {
   e->reifyShip();
   this->engine=e;
 
-  MGMS()->resetPools();
   getHUD()->reset();
 }
 

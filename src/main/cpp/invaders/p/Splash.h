@@ -19,6 +19,7 @@ NS_BEGIN(invaders)
 //
 struct CC_DLL Splash : public f::XScene {
   STATIC_REIFY_SCENE(Splash)
+  MDECL_DECORATE()
 };
 
 NS_END(invaders)

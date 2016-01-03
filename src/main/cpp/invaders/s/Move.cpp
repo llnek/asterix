@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "EFactory.h"
 #include "Move.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -20,9 +19,9 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::addToEngine(not_null<a::Engine*> e) {
+void Move::onAdd() {
   ShipMotionNode s;
-  ships = e->getNodeList(s.typeId());
+  ships = engine->getNodeList(s.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////

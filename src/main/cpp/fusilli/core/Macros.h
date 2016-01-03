@@ -53,8 +53,7 @@ static __TYPE__* reify(fusii::SCTX* x) {  \
           return nullptr; \
       } \
   } \
-} \
-virtual void decorate();
+}
 
 
 #define STATIC_REIFY_SCENE(__TYPE__) \
@@ -67,8 +66,7 @@ static __TYPE__* reify() {  \
         delete p; \
         return nullptr; \
     } \
-} \
-virtual void decorate();
+}
 
 
 #define STATIC_REIFY_LAYER(__TYPE__) \
@@ -81,8 +79,7 @@ static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
         delete p; \
         return nullptr; \
     } \
-} \
-virtual void decorate();
+}
 
 
 

@@ -19,13 +19,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::addToEngine(not_null<a::Engine*> e) {
+void Stage::onAdd() {
   CannonCtrlNode c;
   ShipMotionNode s;
 
-  cannonNode = e->getNodeList(c.typeId());
-  shipNode = e->getNodeList(s.typeId());
-    this->engine = (GEngine*) e.get();
+  cannonNode = engine->getNodeList(c.typeId());
+  shipNode = engine->getNodeList(s.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,9 +43,9 @@ bool Stage::update(float dt) {
 //
 void Stage::onceOnly() {
 
-  auto ship= CC_GNF(Ship, shipNode->head, "ship");
   auto gun = CC_GNF(Cannon, cannonNode->head, "cannon");
   auto lpr= CC_GNF(Looper, cannonNode->head, "looper");
+  auto ship= CC_GNF(Ship, shipNode->head, "ship");
   auto cfg= MGMS()->getLCfg()->getValue();
 
   // pre-population objects in pools

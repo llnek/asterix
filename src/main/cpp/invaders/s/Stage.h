@@ -12,27 +12,25 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "ash/System.h"
+#include "x2d/GSystem.h"
+#include "n/GNodes.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stage : public a::System {
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
+struct CC_DLL Stage : public f::GSystem<GEngine> {
 
   MDECL_SYS_PRIORITY( a::PreUpdate)
   MDECL_SYS_TPID( "s/Stage")
 
+  DECL_BF(inited)
+
   DECL_PTR(a::NodeList, cannonNode)
   DECL_PTR(a::NodeList, shipNode)
 
-  GEngine *engine;
-  private:
-
-  DECL_BF(inited)
+  virtual bool update(float);
+  virtual void onAdd();
   void onceOnly();
 
 };

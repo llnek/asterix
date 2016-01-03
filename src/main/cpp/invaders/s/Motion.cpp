@@ -13,7 +13,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "EFactory.h"
 #include "Motion.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -21,16 +20,14 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::addToEngine(not_null<a::Engine*> e) {
+void Motions::onAdd() {
   AlienMotionNode a;
   ShipMotionNode s;
   CannonCtrlNode c;
 
-  aliens = e->getNodeList(a.typeId());
-  ships = e->getNodeList(s.typeId());
-  cannons = e->getNodeList(c.typeId());
-
-  this->engine= (GEngine*)e.get();
+  aliens = engine->getNodeList(a.typeId());
+  ships = engine->getNodeList(s.typeId());
+  cannons = engine->getNodeList(c.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////

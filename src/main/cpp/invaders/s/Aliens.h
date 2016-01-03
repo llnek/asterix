@@ -12,17 +12,18 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "ash/System.h"
+#include "x2d/GSystem.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
+
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Aliens : public a::System {
+struct CC_DLL Aliens : public f::GSystem<GEngine> {
 
-  virtual void addToEngine(not_null<a::Engine*>);
   virtual bool update(float);
+  virtual void onAdd();
 
   MDECL_SYS_TPID( "n/Aliens")
   MDECL_SYS_PRIORITY(a::AI)
@@ -46,7 +47,7 @@ struct CC_DLL Aliens : public a::System {
   f::ComObj* findMaxX(AlienSquad* );
 
   DECL_PTR(a::NodeList, baddies)
-  GEngine *engine;
+
 };
 
 

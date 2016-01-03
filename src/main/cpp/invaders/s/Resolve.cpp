@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "EFactory.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -20,12 +19,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::addToEngine(not_null<a::Engine*> e) {
+void Resolve::onAdd() {
   AlienMotionNode a;
   ShipMotionNode s;
 
-  aliens= e->getNodeList(a.typeId());
-  ships= e->getNodeList(s.typeId());
+  aliens= engine->getNodeList(a.typeId());
+  ships= engine->getNodeList(s.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////

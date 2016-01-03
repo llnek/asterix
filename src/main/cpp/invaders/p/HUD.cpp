@@ -44,7 +44,7 @@ void HUDLayer::decorate() {
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto menu = cx::mkMenu(b);
-  auto z2= cx::halfHW(menu);
+  auto z2= cx::halfHW(b);
 
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);

@@ -12,15 +12,18 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-#include "ash/System.h"
+#include "x2d/GSystem.h"
+#include "n/GNodes.h"
+#include "EFactory.h"
+
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public a::System {
+struct CC_DLL Collide : public f::GSystem<GEngine> {
 
-  virtual void addToEngine(not_null<a::Engine*> );
   virtual bool update(float);
+  virtual void onAdd();
 
   MDECL_SYS_PRIORITY( a::Collide)
   MDECL_SYS_TPID( "n/Collide")

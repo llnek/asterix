@@ -26,6 +26,7 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_IZ(score)
 
   STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
   MDECL_GET_IID(3)
 
   bool reduceLives(int = 1);

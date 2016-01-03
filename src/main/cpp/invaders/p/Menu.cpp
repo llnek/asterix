@@ -27,6 +27,7 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 
   private:
 

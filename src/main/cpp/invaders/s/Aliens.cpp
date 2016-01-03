@@ -14,7 +14,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/ComObj.h"
-#include "EFactory.h"
 #include "Aliens.h"
 #include <math.h>
 NS_ALIAS(cx, fusii::ccsx)
@@ -22,10 +21,9 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::addToEngine(not_null<a::Engine*> e) {
+void Aliens::onAdd() {
   AlienMotionNode a;
-  baddies = e->getNodeList(a.typeId());
-  this->engine= (GEngine*) e.get();
+  baddies = engine->getNodeList(a.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////

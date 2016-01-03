@@ -33,7 +33,7 @@ void GEngine::ignite() {
   regoSystem(mc_new( Stage));
   regoSystem(mc_new( Motions));
   regoSystem(mc_new( Move));
-  regoSystem(mc_new( Aliens));
+  regoSystem(mc_new(Aliens));
   regoSystem(mc_new( Collide));
   regoSystem(mc_new( Resolve));
 }

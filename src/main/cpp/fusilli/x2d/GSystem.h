@@ -9,36 +9,37 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#if !defined(__GSYSTEM_H__)
+#define __GSYSTEM_H__
 
-#include "x2d/GSystem.h"
-#include "n/GNodes.h"
-#include "EFactory.h"
+#include "ash/System.h"
+NS_BEGIN(fusii)
 
-NS_BEGIN(invaders)
-
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public f::GSystem<GEngine> {
+template <typename T>
+class CC_DLL GSystem : public a::System {
 
-  virtual bool update(float dt);
-  virtual void onAdd();
+  public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID( "s/Resolve")
+  virtual void addToEngine(not_null<a::Engine*> e) {
+    this->engine = (T*) e.get();
+    onAdd();
+  }
 
-  void checkAliens(a::Node* );
-  void checkShip(a::Node* );
-  void checkMissiles();
-  void checkBombs();
+  protected:
 
-  DECL_PTR(a::NodeList, aliens)
-  DECL_PTR(a::NodeList, ships)
+  virtual void onAdd() = 0;
+  virtual ~GSystem() {}
+
+  GSystem() {}
+  NOCPYASS(GSystem)
+
+  DECL_PTR(T, engine)
 };
 
 
-NS_END(invaders)
+NS_END(fusii)
 #endif
 
 

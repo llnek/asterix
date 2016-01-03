@@ -18,9 +18,10 @@
 #include "core/Primitives.h"
 NS_BEGIN(fusii)
 
+#define MDECL_DECORATE() virtual void decorate();
+
 #define MDECL_GET_IID(x) \
   virtual int getIID() { return x; }
-
 
 class SpriteBatchNode;
 class XScene;

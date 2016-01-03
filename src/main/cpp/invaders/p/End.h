@@ -20,6 +20,7 @@ NS_BEGIN(invaders)
 struct CC_DLL ELayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(ELayer)
+  MDECL_DECORATE()
 
   private:
 

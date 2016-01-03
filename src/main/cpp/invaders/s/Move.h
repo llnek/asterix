@@ -12,16 +12,18 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "ash/System.h"
+#include "x2d/GSystem.h"
 #include "n/GNodes.h"
+#include "EFactory.h"
+
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
+struct CC_DLL Move : public f::GSystem<GEngine> {
 
-  virtual void addToEngine(not_null<a::Engine*>);
   virtual bool update(float dt);
+  virtual void onAdd();
 
   MDECL_SYS_PRIORITY( a::Move)
   MDECL_SYS_TPID("s/Move")
