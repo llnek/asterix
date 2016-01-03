@@ -12,18 +12,11 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "EFactory.h"
 #include "Move.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
-//////////////////////////////////////////////////////////////////////////
-//
-Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f,d) {
-
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -49,7 +42,6 @@ bool Move::update(float dt) {
 void Move::processShipMotions(a::Node *node, float dt) {
 
   auto motion = CC_GNF(Motion, node,"motion");
-  auto sv = CC_GNF(Velocity, node,"vel");
   auto ship= CC_GNF(Ship, node,"ship");
 
   auto pos = ship->pos();
@@ -60,11 +52,11 @@ void Move::processShipMotions(a::Node *node, float dt) {
 //  CCLOG("motion left = %s", motion->left ? "true" : "false");
 
   if (motion->right) {
-    x = pos.x + dt * sv->x;
+    x = pos.x + dt * ship->vel.x;
   }
 
   if (motion->left) {
-    x = pos.x - dt * sv->x;
+    x = pos.x - dt * ship->vel.x;
   }
 
   ship->setPos(x,y);

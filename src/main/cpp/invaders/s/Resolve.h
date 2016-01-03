@@ -12,36 +12,26 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public f::XSystem<EFactory> {
-public:
-
-  virtual const a::SystemType typeId() { return "s/Resolve"; }
-
-  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
+struct CC_DLL Resolve : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*> );
-
-  virtual int priority() { return a::Resolve; }
-
   virtual bool update(float dt);
+
+  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_TPID( "s/Resolve")
 
   void checkAliens(a::Node* );
   void checkShip(a::Node* );
   void checkMissiles();
   void checkBombs();
 
-  virtual ~Resolve() {}
-  NOCPYASS(Resolve)
-  NODFT(Resolve)
-
-  a::NodeList *aliens=nullptr;
-  a::NodeList *ships=nullptr;
+  DECL_PTR(a::NodeList, aliens)
+  DECL_PTR(a::NodeList, ships)
 };
 
 

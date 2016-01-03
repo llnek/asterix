@@ -14,6 +14,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/ComObj.h"
+#include "EFactory.h"
 #include "Aliens.h"
 #include <math.h>
 NS_ALIAS(cx, fusii::ccsx)
@@ -21,15 +22,10 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Aliens::Aliens(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : XSystem<EFactory>(f, d) {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 void Aliens::addToEngine(not_null<a::Engine*> e) {
   AlienMotionNode a;
   baddies = e->getNodeList(a.typeId());
+  this->engine= (GEngine*) e.get();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,7 +100,7 @@ void Aliens::dropBomb(float x, float y) {
   auto ent = bbs->get();
 
   if (NNP(ent)) {
-    factory->reifyBombs(25);
+    engine->reifyBombs(25);
     ent = bbs->get();
   }
 

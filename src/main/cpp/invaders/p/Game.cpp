@@ -12,12 +12,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/EFactory.h"
-#include "s/Stage.h"
-#include "s/Motion.h"
-#include "s/Move.h"
-#include "s/Collide.h"
-#include "s/Resolve.h"
-#include "s/Aliens.h"
 #include "Menu.h"
 #include "Game.h"
 #include "HUD.h"
@@ -32,124 +26,43 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
-
-  virtual void onTouchMoved(c::Touch*, c::Event*);
-  virtual void onMouseMove(c::Event*);
-
-  virtual int getIID() { return 2; }
-  virtual void decorate();
-
-  void deco();
-
-  void onPlayerKilled();
-  void onEarnScore(int);
-  void onStop();
-  void spawnPlayer();
-
+  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  MDECL_GET_IID(2)
   STATIC_REIFY_LAYER(GLayer)
 
-  virtual ~GLayer() {
-    mc_del_ptr(fac)
-  }
-  GLayer() {}
-  NOCPYASS(GLayer)
+  void onPlayerKilled();
+  void showMenu();
+  void onEarnScore(int);
 
-  EFactory *fac=nullptr;
-  Ship *player=nullptr;
+  DECL_PTR(Ship,player)
 };
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseMove(c::Event *event) {
-  auto box= this->player->sprite->getBoundingBox();
-  auto e= (c::EventMouse*)event;
-  auto loc= e->getLocationInView();
-  auto b= e->getMouseButton();
-  if (b == MOUSE_BUTTON_LEFT &&
-      box.containsPoint(loc)) {
-    auto pos= this->player->sprite->getPosition();
-    auto bx= MGMS()->getEnclosureBox();
-    this->player->sprite->setPosition(cx::clamp(loc, bx).x, pos.y);
-  }
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMoved(c::Touch *t, c::Event *evt) {
-  auto box= this->player->sprite->getBoundingBox();
-  auto loc= t->getLocationInView();
-  auto bx= MGMS()->getEnclosureBox();
-  if (box.containsPoint(loc)) {
-    auto pos= this->player->sprite->getPosition();
-    auto y = pos.y;
-    pos= c::ccpAdd(pos,  t->getDelta());
-    pos= cx::clamp(pos, bx);
-    this->player->sprite->setPosition(pos.x, y);
-  }
+void GLayer::showMenu() {
+  auto f= [=]() { CC_DTOR()->popScene(); };
+  CC_DTOR()->pushScene(MMenu::reify(mc_new_1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
+
   centerImage("game.bg");
-  enableListeners();
-  cx::resumeAudio();
-  deco();
-  scheduleUpdate();
-}
 
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::deco() {
+  regoAtlas("game-pics");
+  regoAtlas("lang-pics");
 
-  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+  incIndexZ();
 
-  if (atlases.empty()) {
-    regoAtlas("game-pics");
-    regoAtlas("lang-pics");
-    incIndexZ();
-  }
-
-  MGMS()->resetPools();
-
-  //pick purple since it is the largest
-  auto z0= cx::calcSize("purple_bug_0.png");
-  auto s0= cx::calcSize("ship_0.png");
-  auto e= mc_new(a::Engine);
-  auto d= CC_DICT();
-  auto f= mc_new_2(EFactory, e, d);
-
-  d->setObject(f::Size2::create(z0.width,z0.height), "alienSize");
-  d->setObject(f::Size2::create(s0.width, s0.height), "shipSize");
-
-  f->reifyAliens();
-  f->reifyShip();
-
-  e->regoSystem(mc_new_2( Stage, f, d));
-  e->regoSystem(mc_new_2( Motions, f, d));
-  e->regoSystem(mc_new_2( Move, f, d));
-  e->regoSystem(mc_new_2( Aliens, f, d));
-  e->regoSystem(mc_new_2( Collide, f, d));
-  e->regoSystem(mc_new_2( Resolve, f, d));
-  e->forceSync();
-
-  this->options= d;
-  CC_KEEP(d)
-  this->fac= f;
+  auto e= mc_new(GEngine);
+  e->reifyArena();
+  e->reifyAliens();
+  e->reifyShip();
   this->engine=e;
 
-  ShipMotionNode n;
-  auto nl= e->getNodeList(n.typeId());
-  this->player= CC_GNF(Ship, nl->head, "ship");
-
+  MGMS()->resetPools();
   getHUD()->reset();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::spawnPlayer() {
-  fac->bornShip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,20 +70,11 @@ void GLayer::spawnPlayer() {
 void GLayer::onPlayerKilled() {
   cx::sfxPlay("xxx-explode");
   if (getHUD()->reduceLives(1)) {
-    onStop();
+    MGMS()->stop();
+    ELayer::reify(getSceneX(),999);
   } else {
-    spawnPlayer();
+    this->player->inflate();
   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onStop() {
-  disableListeners();
-  cx::pauseAudio();
-  MGMS()->stop();
-  unscheduleUpdate();
-  ELayer::reify(getSceneX(),999);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -182,19 +86,22 @@ void GLayer::onEarnScore(int score) {
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
+void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
   auto y = SCAST(GLayer*, getLayer(2));
 
   if (topic == "/game/player/earnscore") {
-    j::json* js = (j::json*) msg;
-    auto n= JS_INT(js->operator[]("score"));
+    auto msg = (j::json*) m;
+    auto n= JS_INT(msg->operator[]("score"));
     y->onEarnScore(n);
   }
   else
+  if (topic == "/game/player/set!") {
+    y->player= (Ship*) m;
+  }
+  else
   if (topic == "/hud/showmenu") {
-    auto f= [=]() { CC_DTOR()->popScene(); };
-    CC_DTOR()->pushScene(MMenu::reify(mc_new_1(MCX, f)));
+    y->showMenu();
   }
   else
   if (topic == "/hud/replay") {
@@ -203,7 +110,6 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   if (topic == "/game/player/killed") {
     y->onPlayerKilled();
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -222,12 +128,6 @@ void Game::play() {
 //
 bool Game::isLive() {
   return this->state > 0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-f::GameLayer* Game::getGLayer() {
-  return (f::GameLayer*) getLayer(2);
 }
 
 //////////////////////////////////////////////////////////////////////////

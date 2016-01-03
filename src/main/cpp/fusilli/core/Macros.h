@@ -53,7 +53,9 @@ static __TYPE__* reify(fusii::SCTX* x) {  \
           return nullptr; \
       } \
   } \
-}
+} \
+virtual void decorate();
+
 
 #define STATIC_REIFY_SCENE(__TYPE__) \
 static __TYPE__* reify() {  \
@@ -65,10 +67,12 @@ static __TYPE__* reify() {  \
         delete p; \
         return nullptr; \
     } \
-}
+} \
+virtual void decorate();
+
 
 #define STATIC_REIFY_LAYER(__TYPE__) \
-  static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
+static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
     if (NNP(p) && p->initEx(xs, zx)) { \
         p->autorelease(); \
@@ -77,7 +81,8 @@ static __TYPE__* reify() {  \
         delete p; \
         return nullptr; \
     } \
-}
+} \
+virtual void decorate();
 
 
 

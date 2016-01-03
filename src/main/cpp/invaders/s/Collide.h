@@ -12,22 +12,18 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public f::XSystem<EFactory> {
-public:
-
-  virtual const a::SystemType typeId() { return "n/Collide"; }
-  Collide(not_null<EFactory*>, not_null<c::Dictionary*>);
+struct CC_DLL Collide : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*> );
-  virtual int priority() { return a::Collide; }
-
   virtual bool update(float);
+
+  MDECL_SYS_PRIORITY( a::Collide)
+  MDECL_SYS_TPID( "n/Collide")
 
   bool maybeCollide(f::ComObj*, f::ComObj*);
   void checkMissilesBombs();
@@ -35,12 +31,8 @@ public:
   void checkShipBombs(a::Node*);
   void checkShipAliens(a::Node*, a::Node*);
 
-  virtual ~Collide() {}
-  NODFT(Collide)
-  NOCPYASS(Collide)
-
-  a::NodeList *aliens=nullptr;
-  a::NodeList *ships=nullptr;
+  DECL_PTR(a::NodeList, aliens)
+  DECL_PTR(a::NodeList, ships)
 
 };
 

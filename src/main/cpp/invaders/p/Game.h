@@ -21,21 +21,14 @@ struct CC_DLL Game : public f::GameScene {
 
   virtual void sendMsgEx(const MsgTopic &topic, void*);
 
-  virtual f::GameLayer* getGLayer();
-  virtual void decorate();
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_GLAYER(2)
 
   virtual bool isLive();
   virtual void play();
   virtual void stop();
 
-  STATIC_REIFY_SCENE_CTX(Game)
-
-  virtual ~Game() {}
-  Game() {}
-  NOCPYASS(Game)
-
 };
-
 
 NS_END(invaders)
 #endif

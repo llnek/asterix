@@ -12,24 +12,20 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
+#include "EFactory.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Aliens : public f::XSystem<EFactory> {
-public:
-
-  virtual const a::SystemType typeId() { return "n/Aliens"; }
-  Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
+struct CC_DLL Aliens : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::AI; }
-
   virtual bool update(float);
+
+  MDECL_SYS_TPID( "n/Aliens")
+  MDECL_SYS_PRIORITY(a::AI)
 
   void forwardOneAlien(f::ComObj*, float delta);
   void shuffleOneAlien(f::ComObj*, int stepx);
@@ -49,11 +45,8 @@ public:
   f::ComObj* findMinX(AlienSquad* );
   f::ComObj* findMaxX(AlienSquad* );
 
-  virtual ~Aliens() {}
-  NODFT(Aliens)
-  NOCPYASS(Aliens)
-
-  a::NodeList *baddies=nullptr;
+  DECL_PTR(a::NodeList, baddies)
+  GEngine *engine;
 };
 
 

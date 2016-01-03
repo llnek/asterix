@@ -21,25 +21,23 @@ NS_BEGIN(invaders)
 //
 struct CC_DLL AlienMotionNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/AlienMotionNode"; }
+  MDECL_NFAC_TPID("n/AlienMotionNode")
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "aliens", "n/AlienSquad" },
-        {"looper",  "n/Looper" }
+        {"aliens", "n/AlienSquad" },
+        {"looper", "n/Looper" }
     });
   }
 
-  virtual ~AlienMotionNode() {}
-  AlienMotionNode() {}
-  NOCPYASS(AlienMotionNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CannonCtrlNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/CannonCtrlNode"; }
+  MDECL_NFAC_TPID( "n/CannonCtrlNode")
+
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         { "looper", "n/Looper" },
@@ -48,29 +46,36 @@ struct CC_DLL CannonCtrlNode : public a::NodeFactory {
     });
   }
 
-  virtual ~CannonCtrlNode() {}
-  CannonCtrlNode() {}
-  NOCPYASS(CannonCtrlNode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ShipMotionNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/ShipMotionNode"; }
+  MDECL_NFAC_TPID( "n/ShipMotionNode")
+
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "vel", "n/Velocity" },
         { "motion", "n/Motion"},
         { "ship", "n/Ship" }
     });
   }
 
-  virtual ~ShipMotionNode() {}
-  ShipMotionNode() {}
-  NOCPYASS(ShipMotionNode)
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ArenaNode : public a::NodeFactory {
+
+  MDECL_NFAC_TPID( "n/ArenaNode")
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        { "slots", "n/Slots" }
+    });
+  }
+
+};
 
 NS_END(invaders)
 #endif

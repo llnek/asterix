@@ -45,10 +45,13 @@ void XLayer::onQuit(c::Ref* ) {
 bool XLayer::initEx(XScene *par, int zx) {
   if (c::Layer::init()) {
     par->addLayer(this, zx);
+    preDeco();
     decorate();
+    postDeco();
     return true;
+  } else {
+    return false;
   }
-  return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

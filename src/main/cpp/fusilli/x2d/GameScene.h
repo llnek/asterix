@@ -43,6 +43,12 @@ struct CC_DLL GCX : public SCTX {
   DECL_TV(GMode,mode,GMode::ONE)
 };
 
+#define MDECL_GLAYER(x) \
+  virtual fusii::GameLayer* getGLayer() {  \
+    return (fusii::GameLayer*) getLayer(x); \
+  }
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GameScene : public XScene {

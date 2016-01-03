@@ -21,100 +21,87 @@ NS_BEGIN(invaders)
 //
 struct CC_DLL Alien : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Alien"; }
-  Alien(not_null<c::Sprite*>, int value, int rank);
+  Alien(not_null<c::Sprite*> s, int value, int rank)
+    : ComObj(s,1,value) {
+    this->rank=rank;
+  }
 
-  virtual ~Alien() {}
-  NODFT(Alien)
-  NOCPYASS(Alien)
-
-  int rank;
+  MDECL_COMP_TPID("n/Alien")
+  DECL_IZ(rank)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL AlienSquad : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/AlienSquad"; }
   const s_vec<f::ComObj*>& list() { return aliens->list(); }
+  AlienSquad(not_null<f::XPool*> aliens, int step) {
+     this->aliens=aliens;
+     this->stepx=step;
+  }
 
-  AlienSquad(not_null<f::XPool*> aliens, int step);
   int size() { return aliens->size(); }
 
-  virtual ~AlienSquad() {}
-  NODFT(AlienSquad)
-  NOCPYASS(AlienSquad)
+  MDECL_COMP_TPID("n/AlienSquad")
 
-  f::XPool *aliens;
-  int stepx;
+  //not owner of pool
+  DECL_PTR(f::XPool, aliens)
+  DECL_IZ(stepx)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Bomb : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Bomb"; }
   Bomb(not_null<c::Sprite*>);
 
-  virtual ~Bomb() {}
-  NODFT(Bomb)
-  NOCPYASS(Bomb)
+  MDECL_COMP_TPID("n/Bomb")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL Cannon : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Cannon"; }
+  MDECL_COMP_TPID( "n/Cannon")
 
-  virtual ~Cannon() {}
-  Cannon() {}
-  NOCPYASS(Cannon)
-
-  bool hasAmmo=true;
+  DECL_BT(hasAmmo)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Explosion : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Explosion"; }
   virtual void inflate(float x, float y);
 
-  Explosion(not_null<c::Sprite*> );
+  Explosion(not_null<c::Sprite*> s)
+    : ComObj(s) {
+    frameTime=0.1f ;
+  }
 
-  virtual ~Explosion() {}
+  MDECL_COMP_TPID("n/Explosion")
 
-  NOCPYASS(Explosion)
-  NODFT(Explosion)
-
-  float frameTime;
+  DECL_FZ(frameTime)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Looper : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Looper"; }
+  MDECL_COMP_TPID("n/Looper")
 
   virtual ~Looper();
-  Looper();
-  NOCPYASS(Looper)
 
-  c::DelayTime *timer7=nullptr;
-  c::DelayTime *timer0=nullptr;
-  c::DelayTime *timer1=nullptr;
+  DECL_PTR(c::DelayTime,timer7)
+  DECL_PTR(c::DelayTime,timer0)
+  DECL_PTR(c::DelayTime,timer1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Missile : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Missile"; }
   Missile(not_null<c::Sprite*>);
 
-  virtual ~Missile() {}
-  NOCPYASS(Missile)
-  NODFT(Missile)
+  MDECL_COMP_TPID( "n/Missile")
 
 };
 
@@ -122,46 +109,37 @@ struct CC_DLL Missile : public f::ComObj {
 //
 struct CC_DLL Motion : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Motion"; }
+  MDECL_COMP_TPID("n/Motion")
 
-  virtual ~Motion() {}
-  Motion() {}
-  NOCPYASS(Motion)
-
-  bool right=false;
-  bool left=false;
+  DECL_BF(right)
+  DECL_BF(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ship : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Ship"; }
-  Ship(not_null<c::Sprite*>, const sstr&, const sstr&);
+  Ship(not_null<c::Sprite*> s,
+      const sstr& s0, const sstr& s1)
+    : ComObj(s) {
+    frame0=s0;
+    frame1=s1;
+  }
 
-  virtual ~Ship() {}
-  NODFT(Ship)
-  NOCPYASS(Ship)
+  MDECL_COMP_TPID("n/Ship")
 
-  sstr frame0;
-  sstr frame1;
+  DECL_TD(sstr, frame0)
+  DECL_TD(sstr, frame1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Velocity : public a::Component {
+struct CC_DLL Slots  : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Velocity"; }
-  Velocity(float vx, float vy) {
-    x=vx; y=vy;
-  }
+    MDECL_COMP_TPID("n/Slots")
+  DECL_TD(c::Size, alienSize)
+  DECL_TD(c::Size, shipSize)
 
-  virtual ~Velocity() {}
-  NODFT(Velocity)
-  NOCPYASS(Velocity)
-
-  float x=0;
-  float y=0;
 };
 
 NS_END(invaders)

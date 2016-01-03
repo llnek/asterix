@@ -21,15 +21,11 @@ struct CC_DLL ELayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(ELayer)
 
-  virtual void decorate();
+  private:
 
   void onReplay(c::Ref*);
   void onQuit(c::Ref*);
 
-  virtual ~ELayer() {}
-  ELayer() {}
-
-  NOCPYASS(ELayer)
 };
 
 NS_END(invaders)

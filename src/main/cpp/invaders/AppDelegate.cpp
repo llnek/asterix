@@ -26,6 +26,7 @@ AppDelegate::AppDelegate() {
 
   r->rego( mc_new(AlienMotionNode));
   r->rego( mc_new(ShipMotionNode));
+  r->rego( mc_new(ArenaNode));
   r->rego( mc_new(CannonCtrlNode));
 
   // step.2: set up app-config

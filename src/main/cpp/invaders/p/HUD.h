@@ -20,27 +20,19 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL HUDLayer : public f::XLayer {
-public:
 
-  virtual int getIID() { return 3; }
-  virtual void decorate();
+  DECL_PTR(c::Label,scoreLabel)
+  DECL_PTR(f::XLives,lives)
+  DECL_IZ(score)
 
-  c::Label *scoreLabel=nullptr;
-  f::XLives *lives=nullptr;
-  int score=0;
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_GET_IID(3)
 
   bool reduceLives(int = 1);
   void updateScore(int);
   void reset();
 
-  STATIC_REIFY_LAYER(HUDLayer)
-
-  virtual ~HUDLayer() {}
-  HUDLayer() {}
-  NOCPYASS(HUDLayer)
-
 };
-
 
 
 NS_END(invaders)

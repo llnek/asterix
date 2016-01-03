@@ -28,13 +28,9 @@ struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
 
-  virtual void decorate();
+  private:
 
   void onQuit(c::Ref*);
-
-  virtual ~UILayer() {}
-  UILayer() {}
-  NOCPYASS(UILayer)
 
 };
 
@@ -42,8 +38,7 @@ struct CC_DLL UILayer : public f::XLayer {
 //
 void UILayer::onQuit(c::Ref*) {
   cx::runScene(
-      XCFG()->prelude(),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+      XCFG()->prelude(), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,9 +55,7 @@ void UILayer::decorate() {
   centerImage("mmenus.bg");
 
   // title
-  auto lb= cx::reifyBmfLabel(cw.x, wb.top * 0.9f,
-                          "font.JellyBelly",
-                          XCFG()->getL10NStr("mmenu"));
+  auto lb= cx::reifyBmfLabel(cw.x, wb.top * 0.9f, "font.JellyBelly", gets("mmenu"));
   lb->setScale(XCFG()->getScale());
   lb->setColor(XCFG()->getColor("text"));
   addItem(lb);

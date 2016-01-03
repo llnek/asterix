@@ -13,18 +13,11 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
 #include "Motion.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
-//////////////////////////////////////////////////////////////////////////
-//
-Motions::Motions(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -36,6 +29,8 @@ void Motions::addToEngine(not_null<a::Engine*> e) {
   aliens = e->getNodeList(a.typeId());
   ships = e->getNodeList(s.typeId());
   cannons = e->getNodeList(c.typeId());
+
+  this->engine= (GEngine*)e.get();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,7 +90,7 @@ void Motions::fireMissile(a::Node *node, float dt) {
   auto ent= p->get();
 
   if (ENP(ent)) {
-    factory->reifyMissiles(36);
+    this->engine->reifyMissiles(36);
     ent= p->get();
   }
 

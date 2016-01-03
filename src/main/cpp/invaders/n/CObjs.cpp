@@ -9,41 +9,20 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "CObjs.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
-
-//////////////////////////////////////////////////////////////////////////////
-//
-AlienSquad::AlienSquad(not_null<f::XPool*> aliens, int stepx) {
-  this->aliens=aliens;
-  this->stepx=stepx;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Alien::Alien(not_null<c::Sprite*> s, int value, int rank)
-  : ComObj(s, 1, value) {
-  this->rank=rank;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 Bomb::Bomb(not_null<c::Sprite*> s)
   : ComObj(s) {
+  auto gz= XCFG()->gameSize();
   auto wz= cx::visRect();
   vel.x=0;
-  vel.y= -50.0f * wz.size.height / 480.0f;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Explosion::Explosion(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  frameTime= 0.1f;
+  vel.y= -50.0f * wz.size.height / gz.height;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -64,16 +43,11 @@ void Explosion::inflate(float x, float y) {
     anim= cache->getAnimation("boom!");
   }
 
-  sprite->setPosition(x,y);
-  status=true;
+  ComObj::inflate(x,y);
 
   sprite->runAction(
     c::Sequence::createWithTwoActions(c::Animate::create(anim),
     c::CallFunc::create([=]() { this->deflate(); })));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-Looper::Looper() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,19 +61,10 @@ Looper::~Looper() {
 //
 Missile::Missile(not_null<c::Sprite*> s)
   : ComObj(s) {
+  auto gz= XCFG()->gameSize();
   auto wz= cx::visRect();
   vel.x= 0;
-  vel.y= 150.0f * wz.size.height / 480.0f;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Ship::Ship(not_null<c::Sprite*> s, const sstr& f1, const sstr& f2)
-
-  : ComObj(s) {
-
-  this->frame0 = f1;
-  this->frame1= f2;
+  vel.y= 150.0f * wz.size.height / gz.height;
 }
 
 

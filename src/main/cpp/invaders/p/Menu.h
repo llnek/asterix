@@ -20,20 +20,13 @@ NS_BEGIN(invaders)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN f) { back=f;  }
-  VOIDFN back;
+  DECL_TD(VOIDFN, back)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MMenu : public f::XScene {
-
   STATIC_REIFY_SCENE_CTX(MMenu)
-
-  virtual void decorate();
-  virtual ~MMenu() {}
-  MMenu() {}
-  NOCPYASS(MMenu)
-
 };
 
 NS_END(invaders)

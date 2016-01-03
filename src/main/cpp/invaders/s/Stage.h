@@ -12,34 +12,29 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stage : public f::XSystem<EFactory> {
-public:
-
-  virtual const a::SystemType typeId() { return "s/Stage"; }
-
-  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
+struct CC_DLL Stage : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::PreUpdate; }
-
-  void onceOnly(a::Node*);
-  void initAlienSize();
-  void initShipSize();
-
   virtual bool update(float);
 
-  virtual ~Stage() {}
-  NOCPYASS(Stage)
-  NODFT(Stage)
+  MDECL_SYS_PRIORITY( a::PreUpdate)
+  MDECL_SYS_TPID( "s/Stage")
 
-  a::NodeList *cannons=nullptr;
+  DECL_PTR(a::NodeList, cannonNode)
+  DECL_PTR(a::NodeList, shipNode)
+
+  GEngine *engine;
+  private:
+
+  DECL_BF(inited)
+  void onceOnly();
+
 };
 
 

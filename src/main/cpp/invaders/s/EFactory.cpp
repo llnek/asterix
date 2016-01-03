@@ -16,24 +16,47 @@
 #include "core/XPool.h"
 #include "ash/Engine.h"
 #include "n/GNodes.h"
+#include "Stage.h"
+#include "Motion.h"
+#include "Move.h"
+#include "Collide.h"
+#include "Resolve.h"
+#include "Aliens.h"
 #include "EFactory.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
-
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-EFactory::EFactory(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
+void GEngine::ignite() {
+  regoSystem(mc_new( Stage));
+  regoSystem(mc_new( Motions));
+  regoSystem(mc_new( Move));
+  regoSystem(mc_new( Aliens));
+  regoSystem(mc_new( Collide));
+  regoSystem(mc_new( Resolve));
+}
 
-  : Factory(e,options) {
+//////////////////////////////////////////////////////////////////////////////
+//
+a::Entity* GEngine::reifyArena() {
+  //pick purple since it is the largest
+  auto z0= cx::calcSize("purple_bug_0.png");
+  auto s0= cx::calcSize("ship_0.png");
+  auto ent= reifyEntity("*");
+  auto slots = mc_new(Slots);
 
+  slots->alienSize = z0;
+  slots->shipSize = s0;
+  ent->checkin(slots);
+
+  return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::reifyMissiles(int count) {
+void GEngine::reifyMissiles(int count) {
   auto p= MGMS()->getPool("missiles");
   p->preset([=]() -> f::ComObj* {
     auto sp = cx::reifySprite("missile.png");
@@ -45,7 +68,7 @@ void EFactory::reifyMissiles(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::reifyExplosions(int count) {
+void GEngine::reifyExplosions(int count) {
   auto p= MGMS()->getPool("explosions");
   p->preset([=]() -> f::ComObj* {
     auto sp = cx::reifySprite("boom_0.png");
@@ -57,7 +80,7 @@ void EFactory::reifyExplosions(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::reifyBombs(int count) {
+void GEngine::reifyBombs(int count) {
   auto p= MGMS()->getPool("bombs");
   p->preset([=]() -> f::ComObj* {
     auto sp = cx::reifySprite("bomb.png");
@@ -69,13 +92,7 @@ void EFactory::reifyBombs(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size EFactory::calcImgSize(const sstr &img) {
-  return cx::calcSize(img);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-const c::Size EFactory::getRankInfo(int r, c::Dictionary *out) {
+const c::Size GEngine::getRankInfo(int r, c::Dictionary *out) {
   c::Size z= cx::calcSize("purple_bug_0.png");
   sstr s0 = "purple_bug_0.png";
   sstr s1= "purple_bug_1.png";
@@ -85,32 +102,32 @@ const c::Size EFactory::getRankInfo(int r, c::Dictionary *out) {
     v= 100;
     s0 = "blue_bug_0.png";
     s1 = "blue_bug_1.png";
-    z= calcImgSize("blue_bug_0.png");
+    z= cx::calcSize("blue_bug_0.png");
   }
   else
   if (r < 5) {
     v= 50;
     s0 = "green_bug_0.png";
     s1= "green_bug_1.png";
-    z = calcImgSize("green_bug_0.png");
+    z = cx::calcSize("green_bug_0.png");
   }
 
-  out->removeAllObjects();
-  out->setObject(f::Size2::create(z.width, z.height), "size");
+  out->setObject(f::Size2::create(z), "size");
   out->setObject(CC_INT(v), "value");
   out->setObject(CC_STR(s0), "img0");
   out->setObject(CC_STR(s1), "img1");
 
-  return CC_GDV(f::Size2, out, "size");
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::fillSquad(f::XPool *pool) {
+void GEngine::fillSquad(f::XPool *pool) {
 
   auto cache= c::AnimationCache::getInstance();
   auto rows = CC_CSV(c::Integer, "ROWS");
   auto cols = CC_CSV(c::Integer, "COLS");
+  auto gz= XCFG()->gameSize();
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   auto info= CC_DICT();
@@ -120,8 +137,8 @@ void EFactory::fillSquad(f::XPool *pool) {
   for (int r=0; r < rows; ++r) {
     auto az = getRankInfo(r, info);
     y = (r == 0) ? wb.top * 0.9f
-                   : y - az.height - wz.size.height * 4/480.0f;
-    x = wb.left + (8/320.0f * wz.size.width) + HWZ(az);
+         : y - az.height - wz.size.height * 4/gz.height;
+    x = wb.left + (8/gz.width * wz.size.width) + HWZ(az);
     for (int c=0; c < cols; ++c) {
       auto s = CC_GDS(info, "img0");
       auto aa = cx::reifySprite(s);
@@ -139,7 +156,7 @@ void EFactory::fillSquad(f::XPool *pool) {
           c::Animation::createWithSpriteFrames( animFrames, 1))));
 
       MGML()->addAtlasItem("game-pics", aa);
-      x += az.width + (8/320.0f * wz.size.width);
+      x += az.width + (8/gz.width * wz.size.width);
       auto v = CC_GDV(c::Integer, info, "value");
       auto co= mc_new_3(Alien, aa, v, r);
       co->status=true;
@@ -150,35 +167,30 @@ void EFactory::fillSquad(f::XPool *pool) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::reifyAliens() {
-  auto stepx= CC_GDV(f::Size2, state, "alienSize").width / 3.0f;
-  auto ent= engine->reifyEntity("baddies");
+a::Entity* GEngine::reifyAliens() {
+  // use the largest one to calc size
+  auto z0= cx::calcSize("purple_bug_0.png");
+  auto stepx= z0.width / 3.0f;
+  auto ent= this->reifyEntity("baddies");
   auto p = MGMS()->getPool("aliens");
 
   fillSquad(p);
 
   ent->checkin(mc_new_2(AlienSquad, p, stepx));
   ent->checkin(mc_new(Looper));
-
   return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void EFactory::bornShip() {
-  CCASSERT(player != nullptr, "player cannot be null");
-  player->inflate();
-}
+a::Entity* GEngine::reifyShip() {
 
-//////////////////////////////////////////////////////////////////////////
-//
-a::Entity* EFactory::reifyShip() {
-
-  auto sz = CC_GDV(f::Size2, state, "shipSize");
-  auto ent= engine->reifyEntity("goodies");
+  auto ent= this->reifyEntity("goodies");
+  auto sz= cx::calcSize("ship_0.png");
   auto s= cx::reifySprite("ship_1.png");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
+  //TODO: why 60
   auto y = sz.height + wb.bottom + (5/60.0f * wz.size.height);
   auto x = wb.left + wz.size.width * 0.5f;
   auto ship = mc_new_3(Ship, s, "ship_1.png", "ship_0.png");
@@ -187,9 +199,10 @@ a::Entity* EFactory::reifyShip() {
 
   MGML()->addAtlasItem("game-pics", s);
   ship->inflate(x,y);
-  player= ship;
+  ship->vel.x= 150;
+  ship->vel.y= 150;
+  //player= ship;
 
-  ent->checkin(mc_new_2(Velocity, 150,0));
   ent->checkin(mc_new(Looper));
   ent->checkin(mc_new(Cannon));
   ent->checkin(mc_new(Motion));

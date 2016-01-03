@@ -43,15 +43,11 @@ void HUDLayer::decorate() {
   addItem(lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = cx::getHeight(b) * 0.5f;
-  auto hw = cx::getWidth(b) * 0.5f;
   auto menu = cx::mkMenu(b);
+  auto z2= cx::halfHW(menu);
 
-  menu->setPosition(wb.right-tile-hw, wb.bottom + tile + hh);
-  b->setCallback([=](c::Ref*) {
-        SENDMSG("/hud/showmenu");
-      });
-
+  b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
+  menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
   addItem(menu);
 }
 

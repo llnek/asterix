@@ -192,6 +192,10 @@ public:
     return pRet;
   }
 
+  static Size2* create(const c::Size z) {
+    return create(z.width, z.height);
+  }
+
   Size2(float w, float h)
   : _w(w), _h(h)
   {}

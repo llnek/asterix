@@ -15,6 +15,12 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
+#define MDECL_SYS_PRIORITY(x) \
+    virtual int priority() { return x; }
+
+#define MDECL_SYS_TPID(x) \
+    virtual const ash::SystemType typeId() { return x; }
+
 class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //

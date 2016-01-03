@@ -12,15 +12,14 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
-#include "core/Factory.h"
+#include "core/XPool.h"
+#include "ash/Engine.h"
+#include "n/GNodes.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL EFactory : public f::Factory {
-public:
-
-  EFactory(not_null<a::Engine*>, not_null<c::Dictionary*> options);
+struct CC_DLL GEngine : public a::Engine {
 
   void reifyExplosions(int count = 24);
   void reifyMissiles(int count= 36);
@@ -28,18 +27,13 @@ public:
 
   a::Entity* reifyAliens();
   a::Entity* reifyShip();
+  a::Entity* reifyArena();
 
+  virtual void ignite();
+
+private:
   const c::Size getRankInfo(int r, c::Dictionary*);
-  const c::Size calcImgSize(const sstr &img);
-
   void fillSquad(f::XPool* );
-  void bornShip();
-
-  virtual ~EFactory() {}
-  NODFT(EFactory)
-  NOCPYASS(EFactory)
-
-  f::ComObj* player=nullptr;
 };
 
 

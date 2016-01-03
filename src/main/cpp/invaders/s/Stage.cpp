@@ -17,44 +17,24 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
-
-//////////////////////////////////////////////////////////////////////////
-//
-Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
 void Stage::addToEngine(not_null<a::Engine*> e) {
   CannonCtrlNode c;
-  cannons = e->getNodeList(c.typeId());
-}
+  ShipMotionNode s;
 
-//////////////////////////////////////////////////////////////////////////
-//
-void Stage::initAlienSize() {
-  auto z= cx::calcSize("purple_bug_0.png");
-  //pick purple since it is the largest
-  state->setObject(f::Size2::create(z.width,z.height), "alienSize");
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Stage::initShipSize() {
-  auto z= cx::calcSize("ship_0.png");
-  state->setObject(f::Size2::create(z.width, z.height), "shipSize");
+  cannonNode = e->getNodeList(c.typeId());
+  shipNode = e->getNodeList(s.typeId());
+    this->engine = (GEngine*) e.get();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
-  auto n= cannons->head;
+
   if (MGMS()->isLive()) {
     if (!inited) {
-      onceOnly(n);
+      onceOnly();
     }
   }
   return true;
@@ -62,21 +42,26 @@ bool Stage::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly(a::Node *node) {
+void Stage::onceOnly() {
 
-  factory->reifyExplosions();
-  factory->reifyMissiles();
-  factory->reifyBombs();
-
-  auto gun = CC_GNF(Cannon, node, "cannon");
-  auto lpr= CC_GNF(Looper, node, "looper");
-  //auto ship= CC_GNF(Ship, node, "ship");
+  auto ship= CC_GNF(Ship, shipNode->head, "ship");
+  auto gun = CC_GNF(Cannon, cannonNode->head, "cannon");
+  auto lpr= CC_GNF(Looper, cannonNode->head, "looper");
   auto cfg= MGMS()->getLCfg()->getValue();
 
-  lpr->timer7 = cx::reifyTimer( MGML(), JS_FLOAT(cfg["coolDownWindow"]));
+  // pre-population objects in pools
+  engine->reifyExplosions();
+  engine->reifyMissiles();
+  engine->reifyBombs();
+
+  lpr->timer7 = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   gun->hasAmmo=false;
+
+  SENDMSGEX("/game/player/set!", ship);
+
   inited=true;
 }
+
 
 NS_END(invaders)
 

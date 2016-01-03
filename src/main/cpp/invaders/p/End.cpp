@@ -20,27 +20,21 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onReplay(c::Ref*) {
-  auto x= (f::GCX*)getSceneX()->getCtx();
-  auto m= MGMS()->getMode();
-  getSceneX()->setCtx(nullptr,false);
-  cx::runScene(
-      Game::reify(mc_new(f::GCX)),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+  auto x= (f::GCX*)getSceneX()->emitCtx();
+  cx::runScene(Game::reify(x), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+  cx::runScene( XCFG()->prelude(), getDelay());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR",XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();

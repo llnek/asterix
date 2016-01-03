@@ -12,37 +12,26 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "core/XSystem.h"
-#include "EFactory.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
 NS_BEGIN(invaders)
 
-
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public f::XSystem<EFactory> {
-public:
-
-  virtual const a::SystemType typeId() { return "s/Move"; }
-
-  Move(not_null<EFactory*>, not_null<c::Dictionary*> );
+struct CC_DLL Move : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*>);
+  virtual bool update(float dt);
 
-  virtual int priority() { return a::Move; }
+  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_TPID("s/Move")
 
   void processShipMotions(a::Node*, float dt);
   void clamp(Ship* );
   void moveBombs(float dt);
   void moveMissiles(float dt);
 
-  virtual bool update(float dt);
-
-  virtual ~Move() {}
-  NODFT(Move)
-  NOCPYASS(Move)
-
-  a::NodeList *ships=nullptr;
+  DECL_PTR(a::NodeList, ships)
 };
 
 

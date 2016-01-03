@@ -18,6 +18,10 @@
 #include "core/Primitives.h"
 NS_BEGIN(fusii)
 
+#define MDECL_GET_IID(x) \
+  virtual int getIID() { return x; }
+
+
 class SpriteBatchNode;
 class XScene;
 //////////////////////////////////////////////////////////////////////////////
@@ -27,6 +31,9 @@ protected:
 
   c::SpriteBatchNode* regoAtlas(const sstr &name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
+
+  virtual void postDeco() {}
+  virtual void preDeco() {}
 
   DECL_TV(int, lastTag, 1)
   DECL_TV(int, lastZ, 0)

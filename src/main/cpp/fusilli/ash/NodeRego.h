@@ -15,6 +15,10 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
+#define MDECL_NFAC_TPID(x) \
+    virtual const ash::NodeType typeId() { return x; }
+
+
 class Node;
 //////////////////////////////////////////////////////////////////////////////
 //

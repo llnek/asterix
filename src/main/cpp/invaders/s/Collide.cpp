@@ -12,18 +12,11 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
 #include "Collide.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
-//////////////////////////////////////////////////////////////////////////
-//
-Collide::Collide(not_null<EFactory*> f,
-    not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f,d) {
-}
 
 //////////////////////////////////////////////////////////////////////////
 //

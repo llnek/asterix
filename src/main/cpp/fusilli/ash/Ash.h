@@ -15,6 +15,9 @@
 #include "aeon/fusilli.h"
 NS_BEGIN(ash)
 
+#define MDECL_COMP_TPID(x) \
+    virtual const ash::COMType typeId() { return x; }
+
 //////////////////////////////////////////////////////////////////////////
 //
 typedef s::string SystemType;

@@ -12,19 +12,11 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -100,10 +92,10 @@ void Resolve::checkAliens(a::Node *node) {
     auto &en= *it;
     if (en->status) {
       if (en->health <= 0) {
-        sendEx("/game/player/earnscore",
-            j::json({
+        auto msg= j::json({
               {"score", en->score }
-            }));
+            });
+        SENDMSGEX("/game/player/earnscore", &msg);
         en->deflate();
       }
     }
@@ -118,7 +110,7 @@ void Resolve::checkShip(a::Node *node) {
   if (ship->status &&
       ship->health <= 0) {
     ship->deflate();
-    send("/game/player/killed");
+    SENDMSG("/game/player/killed");
   }
 }
 

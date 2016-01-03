@@ -23,7 +23,7 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Config*> Config::reify() {
-  auto c =  mc_new(Config);
+  auto c = mc_new(Config);
   c->initAssets();
   c->initCsts();
   c->initLevels();
@@ -33,8 +33,9 @@ owner<Config*> Config::reify() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size& rs) {
+  auto z= this->gameSize();
   //for default font, we use 48pt
-  scale = 52/256.0f * rs.width / 320.0f;
+  scale = 52/256.0f * rs.width / z.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////

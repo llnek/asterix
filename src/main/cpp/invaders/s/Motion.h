@@ -9,43 +9,36 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MOTIONS_H__)
-#define __MOTIONS_H__
+#if !defined(__MOTION_H__)
+#define __MOTION_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 NS_BEGIN(invaders)
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motions : public f::XSystem<EFactory> {
-public:
-
-  virtual const a::SystemType typeId() { return "n/Motions"; }
-
-  Motions(not_null<EFactory*>, not_null<c::Dictionary*>);
+struct CC_DLL Motions : public a::System {
 
   virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Motion; }
-
   virtual bool update(float);
+
+  MDECL_SYS_PRIORITY( a::Motion)
+  MDECL_SYS_TPID( "n/Motions")
 
   void processAlienMotions(a::Node*,float dt);
   void controlCannon(a::Node*, float dt);
   void fireMissile(a::Node*, float dt);
   void scanInput(a::Node*, float dt);
 
-  virtual ~Motions() {}
-  NODFT(Motions)
-  NOCPYASS(Motions)
+  DECL_PTR(a::NodeList, cannons)
+  DECL_PTR(a::NodeList, ships)
+  DECL_PTR(a::NodeList, aliens)
+  DECL_BF(right)
+  DECL_BF(left)
 
-  a::NodeList *cannons=nullptr;
-  a::NodeList *ships=nullptr;
-  a::NodeList *aliens=nullptr;
-  bool right=false;
-  bool left=false;
+  GEngine *engine;
 };
 
 
