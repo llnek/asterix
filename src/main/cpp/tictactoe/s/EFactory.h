@@ -23,7 +23,8 @@ struct CC_DLL GEngine  : public a::Engine {
 
   void initPlayers(Players*);
 
-  virtual void ignite();
+  virtual void initEntities();
+  virtual void initSystems();
 
   a::Entity* reifyArena();
   a::Entity* reifyBoard();

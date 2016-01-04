@@ -16,7 +16,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::ignite() {
+void GEngine::initSystems() {
   regoSystem(mc_new(Resolve));
   regoSystem(mc_new(Logic));
   regoSystem(mc_new(Stage));
