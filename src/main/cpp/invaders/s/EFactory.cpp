@@ -27,15 +27,24 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::ignite() {
-  regoSystem(mc_new( Stage));
-  regoSystem(mc_new( Motions));
-  regoSystem(mc_new( Move));
-  regoSystem(mc_new(Aliens));
-  regoSystem(mc_new( Collide));
-  regoSystem(mc_new( Resolve));
+void GEngine::initEntities() {
+  reifyArena();
+  reifyAliens();
+  reifyShip();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initSystems() {
+  regoSystem(mc_new_1(Stage,this));
+  regoSystem(mc_new_1(Motions,this));
+  regoSystem(mc_new_1(Move,this));
+  regoSystem(mc_new_1(Aliens,this));
+  regoSystem(mc_new_1(Collide,this));
+  regoSystem(mc_new_1(Resolve,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////

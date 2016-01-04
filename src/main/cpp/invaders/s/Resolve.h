@@ -12,7 +12,7 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "x2d/GSystem.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 
@@ -20,13 +20,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public f::GSystem<GEngine> {
-
-  virtual bool update(float dt);
-  virtual void onAdd();
+struct CC_DLL Resolve : public a::System {
 
   MDECL_SYS_PRIORITY( a::Resolve)
   MDECL_SYS_TPID( "s/Resolve")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
   void checkAliens(a::Node* );
   void checkShip(a::Node* );
@@ -35,6 +34,10 @@ struct CC_DLL Resolve : public f::GSystem<GEngine> {
 
   DECL_PTR(a::NodeList, aliens)
   DECL_PTR(a::NodeList, ships)
+
+  Resolve(a::Engine *e)
+  : System(e) {}
+
 };
 
 

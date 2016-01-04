@@ -25,11 +25,12 @@ struct CC_DLL GEngine : public a::Engine {
   void reifyMissiles(int count= 36);
   void reifyBombs(int count = 24);
 
+  virtual void initEntities();
+  virtual void initSystems();
+
   a::Entity* reifyAliens();
   a::Entity* reifyShip();
   a::Entity* reifyArena();
-
-  virtual void ignite();
 
 private:
   const c::Size getRankInfo(int r, c::Dictionary*);

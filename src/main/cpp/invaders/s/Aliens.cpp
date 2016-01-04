@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::onAdd() {
+void Aliens::preamble() {
   AlienMotionNode a;
   baddies = engine->getNodeList(a.typeId());
 }
@@ -98,7 +98,7 @@ void Aliens::dropBomb(float x, float y) {
   auto ent = bbs->get();
 
   if (NNP(ent)) {
-    engine->reifyBombs(25);
+    SCAST(GEngine*,engine)->reifyBombs(25);
     ent = bbs->get();
   }
 

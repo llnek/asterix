@@ -19,23 +19,19 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::onAdd() {
+  void Stage::preamble() {
   CannonCtrlNode c;
   ShipMotionNode s;
 
   cannonNode = engine->getNodeList(c.typeId());
   shipNode = engine->getNodeList(s.typeId());
+
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
-
-  if (MGMS()->isLive()) {
-    if (!inited) {
-      onceOnly();
-    }
-  }
   return true;
 }
 
@@ -49,16 +45,15 @@ void Stage::onceOnly() {
   auto cfg= MGMS()->getLCfg()->getValue();
 
   // pre-population objects in pools
-  engine->reifyExplosions();
-  engine->reifyMissiles();
-  engine->reifyBombs();
+  SCAST(GEngine*,engine)->reifyExplosions();
+  SCAST(GEngine*,engine)->reifyMissiles();
+  SCAST(GEngine*,engine)->reifyBombs();
 
   lpr->timer7 = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   gun->hasAmmo=false;
 
   SENDMSGEX("/game/player/set!", ship);
 
-  inited=true;
 }
 
 

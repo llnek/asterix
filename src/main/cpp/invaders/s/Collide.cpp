@@ -19,7 +19,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::onAdd() {
+void Collide::preamble() {
   AlienMotionNode a;
   ShipMotionNode s;
 

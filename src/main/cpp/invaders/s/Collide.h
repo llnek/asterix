@@ -12,7 +12,7 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
-#include "x2d/GSystem.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 
@@ -20,13 +20,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public f::GSystem<GEngine> {
-
-  virtual bool update(float);
-  virtual void onAdd();
+struct CC_DLL Collide : public a::System {
 
   MDECL_SYS_PRIORITY( a::Collide)
   MDECL_SYS_TPID( "n/Collide")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
   bool maybeCollide(f::ComObj*, f::ComObj*);
   void checkMissilesBombs();
@@ -37,6 +36,8 @@ struct CC_DLL Collide : public f::GSystem<GEngine> {
   DECL_PTR(a::NodeList, aliens)
   DECL_PTR(a::NodeList, ships)
 
+  Collide(a::Engine* e)
+  : System(e) {}
 };
 
 

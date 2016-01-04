@@ -19,7 +19,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::onAdd() {
+void Move::preamble() {
   ShipMotionNode s;
   ships = engine->getNodeList(s.typeId());
 }

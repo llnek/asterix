@@ -12,7 +12,7 @@
 #if !defined(__MOTION_H__)
 #define __MOTION_H__
 
-#include "x2d/GSystem.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 
@@ -20,13 +20,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motions : public f::GSystem<GEngine> {
-
-  virtual bool update(float);
-  virtual void onAdd();
+struct CC_DLL Motions : public a::System {
 
   MDECL_SYS_PRIORITY( a::Motion)
   MDECL_SYS_TPID( "n/Motions")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
   void processAlienMotions(a::Node*,float dt);
   void controlCannon(a::Node*, float dt);
@@ -38,6 +37,9 @@ struct CC_DLL Motions : public f::GSystem<GEngine> {
   DECL_PTR(a::NodeList, aliens)
   DECL_BF(right)
   DECL_BF(left)
+
+  Motions(a::Engine *e)
+  : System(e) {}
 
 };
 

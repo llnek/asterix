@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Motions::onAdd() {
+void Motions::preamble() {
   AlienMotionNode a;
   ShipMotionNode s;
   CannonCtrlNode c;
@@ -87,7 +87,7 @@ void Motions::fireMissile(a::Node *node, float dt) {
   auto ent= p->get();
 
   if (ENP(ent)) {
-    this->engine->reifyMissiles(36);
+    SCAST(GEngine*,engine)->reifyMissiles(36);
     ent= p->get();
   }
 

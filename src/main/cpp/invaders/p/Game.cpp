@@ -31,6 +31,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_GET_IID(2)
   STATIC_REIFY_LAYER(GLayer)
 
+  void onSetPlayer(Ship*);
   void onPlayerKilled();
   void showMenu();
   void onEarnScore(int);
@@ -45,6 +46,13 @@ void GLayer::showMenu() {
   CC_DTOR()->pushScene(MMenu::reify(mc_new_1(MCX, f)));
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onSetPlayer(Ship *s) {
+  this->player=s;
+  this->motionees.push_back(s);
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
@@ -56,12 +64,7 @@ void GLayer::decorate() {
 
   incIndexZ();
 
-  auto e= mc_new(GEngine);
-  e->reifyArena();
-  e->reifyAliens();
-  e->reifyShip();
-  this->engine=e;
-
+  this->engine= mc_new(GEngine);
   getHUD()->reset();
 }
 
@@ -97,7 +100,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
   else
   if (topic == "/game/player/set!") {
-    y->player= (Ship*) m;
+    y->onSetPlayer( (Ship*) m);
   }
   else
   if (topic == "/hud/showmenu") {

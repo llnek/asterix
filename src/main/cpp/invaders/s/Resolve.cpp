@@ -19,7 +19,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onAdd() {
+void Resolve::preamble() {
   AlienMotionNode a;
   ShipMotionNode s;
 

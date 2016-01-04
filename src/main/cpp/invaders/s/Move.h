@@ -12,7 +12,7 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "x2d/GSystem.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 
@@ -20,13 +20,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public f::GSystem<GEngine> {
-
-  virtual bool update(float dt);
-  virtual void onAdd();
+struct CC_DLL Move : public a::System {
 
   MDECL_SYS_PRIORITY( a::Move)
   MDECL_SYS_TPID("s/Move")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
   void processShipMotions(a::Node*, float dt);
   void clamp(Ship* );
@@ -34,6 +33,10 @@ struct CC_DLL Move : public f::GSystem<GEngine> {
   void moveMissiles(float dt);
 
   DECL_PTR(a::NodeList, ships)
+
+  Move(a::Engine *e)
+  : System(e) {}
+
 };
 
 

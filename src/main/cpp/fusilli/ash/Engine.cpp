@@ -153,14 +153,14 @@ NodeList* Engine::getNodeList( const NodeType& nodeType) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::regoSystem(not_null<System*> s) {
-  s->addToEngine( this );
+  //s->addToEngine( this );
   systemList.add(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystem(not_null<System*> s ) {
-  s->removeFromEngine(this);
+  //s->removeFromEngine(this);
   systemList.remove(s);
 }
 
@@ -232,6 +232,16 @@ void Engine::onModifyEntity(Entity *e) {
 //
 void Engine::forceSync() {
   houseKeeping();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Engine::ignite() {
+  initEntities();
+  initSystems();
+  for (auto s= systemList.head; NNP(s); s=s->next) {
+    s->preamble();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

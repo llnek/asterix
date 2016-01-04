@@ -16,37 +16,46 @@
 NS_BEGIN(ash)
 
 #define MDECL_SYS_PRIORITY(x) \
-    virtual int priority() { return x; }
+virtual int priority() { return x; }
 
 #define MDECL_SYS_TPID(x) \
-    virtual const ash::SystemType typeId() { return x; }
+virtual const ash::SystemType typeId() { return x; }
+
+#define MDECL_SYS_PREAMBLE() \
+virtual void preamble();
+
+#define MDECL_SYS_UPDATE() \
+virtual bool update(float);
+
 
 class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL System {
 protected:
+  DECL_PTR(Engine ,engine)
   DECL_BT(active)
 public:
 
-  virtual void removeFromEngine(not_null<Engine*>);
-  virtual void addToEngine(not_null<Engine*>);
-  virtual bool update(float time) = 0;
-
   virtual const SystemType typeId() = 0;
-  bool isa(const SystemType& );
-
-  bool isActive() { return active; }
+  virtual bool update(float time) = 0;
+  virtual void preamble()= 0;
   virtual int priority() = 0;
 
-  void restart();
-  void suspend();
+  bool isActive() { return active; }
+  bool isa(const SystemType&  t) {
+    return typeId() == t;
+  }
+
+  void restart() { active=true; }
+  void suspend() { active=false; }
 
   DECL_PTR(System ,previous)
   DECL_PTR(System ,next)
 
+  System(Engine *e) { engine= e; }
   virtual ~System() {}
-  System() {}
+  NODFT(System)
   NOCPYASS(System)
 };
 
@@ -57,7 +66,7 @@ struct FS_DLL SystemList {
   System* get(const SystemType&);
   void remove(not_null<System*>);
   void add(not_null<System*>);
-  void removeAll();
+  void removeAll() { clear(); }
   void clear();
 
   //owns the systems
@@ -70,6 +79,7 @@ struct FS_DLL SystemList {
   SystemList() {}
   NOCPYASS(SystemList)
 };
+
 
 NS_END(ash)
 #endif

@@ -12,7 +12,7 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "x2d/GSystem.h"
+#include "ash/System.h"
 #include "n/GNodes.h"
 #include "EFactory.h"
 
@@ -20,13 +20,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Aliens : public f::GSystem<GEngine> {
-
-  virtual bool update(float);
-  virtual void onAdd();
+struct CC_DLL Aliens : public a::System {
 
   MDECL_SYS_TPID( "n/Aliens")
   MDECL_SYS_PRIORITY(a::AI)
+  MDECL_SYS_UPDATE()
+  MDECL_SYS_PREAMBLE()
 
   void forwardOneAlien(f::ComObj*, float delta);
   void shuffleOneAlien(f::ComObj*, int stepx);
@@ -48,6 +47,9 @@ struct CC_DLL Aliens : public f::GSystem<GEngine> {
 
   DECL_PTR(a::NodeList, baddies)
 
+  Aliens(a::Engine *e)
+  : System(e)
+  {}
 };
 
 
