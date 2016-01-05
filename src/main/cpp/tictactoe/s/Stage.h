@@ -12,42 +12,36 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stage : public f::XSystem<EFactory> {
+struct CC_DLL Stage : public a::System {
+
+  MDECL_SYS_PRIORITY(a::PreUpdate)
+  MDECL_SYS_TPID( "n/Stage")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  DECL_PTR(a::NodeList, boardNode)
+  DECL_PTR(a::NodeList, arenaNode)
+
+  Stage(a::Engine *e)
+  : System(e)
+  {}
+
 protected:
 
   void onSocket(ws::OdinEvent*);
   void onSess(ws::OdinEvent*);
   void onNet(ws::OdinEvent*);
 
-  void onceOnly(a::Node*);
   void showGrid(a::Node*);
   void initOnline();
-  void doIt(a::Node*);
-
-  a::NodeList *board;
-
-public:
-
-  virtual const a::SystemType typeId() { return "n/Stage"; }
-
-  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::PreUpdate; }
-
-  virtual bool update(float);
-
-  virtual ~Stage() {}
-  NODFT(Stage)
-
-  NOCPYASS(Stage)
+  void onceOnly();
+  void doIt();
 };
 
 

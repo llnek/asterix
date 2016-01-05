@@ -18,16 +18,29 @@ NS_BEGIN(tttoe)
 owner<Config*> Config::reify() {
   auto c =  mc_new(Config);
   c->initAssets();
+  c->initLevels();
   c->initCsts();
   return c;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void Config::initLevels() {
+  auto d= getLevel("1");
+  auto j= j::json({
+        {"HUMAN+THINK+SECS",  7},
+        {"ROBOT+DELAY", 600.0f}
+      });
+  d->setObject(f::JsonObj::create(j), CFG);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Config::initCsts() {
-  addCst("PLAYER_THINK_TIME", CC_INT(7));
-  addCst("CV_Z", CC_INT(0));
+
   addCst("showFPS", CC_BOOL(false));
+  addCst("CV_Z", CC_INT(0));
 
   addColor("default", CC_STR("#5e3178"));
   addColor("text", CC_STR("#ffffff"));

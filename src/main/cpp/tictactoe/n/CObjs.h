@@ -25,12 +25,12 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SmartAlgo : public a::Component {
+struct CC_DLL Robot : public a::Component {
 
-  MDECL_COMP_TPID( "n/SmartAlgo" )
+  MDECL_COMP_TPID( "n/Robot" )
   DECL_PTR(Board,board)
 
-  SmartAlgo(not_null<Board*> b) {
+  Robot(not_null<Board*> b) {
     this->board= b;
   }
 
@@ -109,7 +109,9 @@ struct CC_DLL Player : public a::Component {
     offset= other.offset;
   }
 
-  DECL_TV(int, category, f::GMode::NICHTS)
+    Player() {}
+    
+  DECL_TV(int, category, (int)f::GMode::NICHTS)
   DECL_TV(int, pnum,  -1)
   DECL_IZ(offset)
   DECL_IZ(value)
@@ -129,9 +131,9 @@ struct CC_DLL Players : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL UISelection : public a::Component {
+struct CC_DLL CellPos  : public a::Component {
 
-  MDECL_COMP_TPID( "n/UISelection" )
+  MDECL_COMP_TPID( "n/CellPos" )
 
   DECL_TV(int, cell,  -1)
   DECL_TV(int, px, -1)
@@ -141,8 +143,10 @@ struct CC_DLL UISelection : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Slots : public a::Component {
-
+struct CC_DLL GVars : public a::Component {
+  MDECL_COMP_TPID( "n/GVars" )
+  DECL_IZ(pnum)
+  DECL_IZ(lastWinner)
 };
 
 

@@ -13,7 +13,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
-#include "ash/Node.h"
 #include "n/CObjs.h"
 #include "utils.h"
 #include "Stage.h"
@@ -22,34 +21,23 @@ NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
-
-//////////////////////////////////////////////////////////////////////////////
-Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : XSystem<EFactory>(f, d) {
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stage::addToEngine(not_null<a::Engine*> e) {
+void Stage::preamble() {
+  BoardNode b;
+  ArenaNode a;
 
-  CCLOG("adding system: Stage");
-
-  BoardNode n;
-  board = e->getNodeList(n.typeId());
+  boardNode = engine->getNodeList(b.typeId());
+  arenaNode = engine->getNodeList(a.typeId());
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
 
-  CCLOG("Stage::update()");
-  auto n = board->head;
-
   if (MGMS()->isLive()) {
-    if (! inited) {
-      onceOnly(n);
-    }
-    doIt(n);
+    doIt();
   }
 
   return true;
@@ -57,13 +45,15 @@ bool Stage::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly(a::Node *node) {
-  auto ps = CC_GNF(Players, node, "players");
+void Stage::onceOnly() {
+
+  auto ps=CC_GNLF(Players, boardNode, "players");
+  auto ss=CC_GNLF(GVars,arenaNode,"slots");
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot= CC_CSV(c::Integer,"BOT");
   auto pnum = 0;
 
-  showGrid(node);
+  showGrid(boardNode->head);
 
   if (MGMS()->isOnline()) {
     initOnline();
@@ -71,7 +61,7 @@ void Stage::onceOnly(a::Node *node) {
     pnum= c::rand_0_1() > 0.5f ? 1 : 2;
     // randomly choose
     if (ps->parr[pnum].category == human) {
-      MGMS()->sendMsg("/hud/timer/show");
+      SENDMSG("/hud/timer/show");
     }
     else
     if (ps->parr[pnum].category == bot) {
@@ -79,9 +69,8 @@ void Stage::onceOnly(a::Node *node) {
     }
   }
 
-  state->setObject(CC_INT(pnum), "pnum");
   ps->parr[0].pnum = pnum;
-  inited=true;
+  ss->pnum= pnum;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,7 +94,7 @@ void Stage::showGrid(a::Node *node) {
 //
 void Stage::initOnline() {
 
-  MGMS()->wsock()->listen( [=](ws::OdinEvent *evt) {
+  MGMS()->wsock()->listen([=](ws::OdinEvent *evt) {
     this->onSocket(evt);
   });
 
@@ -121,21 +110,23 @@ void Stage::initOnline() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::doIt(a::Node *node ) {
+void Stage::doIt() {
+
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto active = MGMS()->isLive();
   int pnum;
 
   if (! active) {
-    pnum= CC_GDV(c::Integer, state, "lastWinner");
+    pnum= ss->lastWinner;
   } else {
-    pnum = CC_GDV(c::Integer, state, "pnum");
+    pnum = ss->pnum;
   }
 
-  sendEx("/hud/update", j::json({
+  auto msg= j::json({
     { "running", active },
     { "pnum", pnum }
-  }));
-
+      });
+  SENDMSGEX("/hud/update", &msg);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -145,14 +136,14 @@ void Stage::onNet(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
-      send("/net/restart");
+      SENDMSG("/net/restart");
     break;
     case ws::EType::STOP:
       if (MGMS()->isLive() ) {
         CCLOG("game will stop");
-        send("/hud/timer/hide");
+        SENDMSG("/hud/timer/hide");
         onSess( evt);
-        send("/net/stop");
+        SENDMSG("/net/stop");
       }
     break;
   }
@@ -161,16 +152,17 @@ void Stage::onNet(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Stage::onSess(ws::OdinEvent *evt) {
-  auto ps= CC_GNF(Players, board->head, "players");
-  auto grid= CC_GNF(Grid, board->head, "grid");
+  auto ps= CC_GNLF(Players, boardNode, "players");
+  auto grid= CC_GNLF(Grid, boardNode, "grid");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto src= evt->doco["source"];
-  auto pnum= src["pnum"].get<j::json::number_integer_t>();
+  auto pnum= JS_INT(src["pnum"]);
   auto cmd= src["cmd"];
   auto snd="";
 
   if (cmd.is_object()) {
-    auto cell= cmd["cell"].get<j::json::number_integer_t>();
-    auto cv= cmd["value"].get<j::json::number_integer_t>();
+    auto cell= JS_INT(cmd["cell"]);
+    auto cv= JS_INT(cmd["value"]);
     if (cell >= 0 &&
         cell < grid->values.size()) {
       if (ps->parr[1].value == cv) {
@@ -188,15 +180,14 @@ void Stage::onSess(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
-      send("/hud/timer/show");
-      state->setObject(CC_INT(pnum), "pnum");
+      SENDMSG("/hud/timer/show");
+      ss->pnum= pnum;
     break;
     case ws::EType::POKE_WAIT:
       CCLOG("player %d: my turn to wait", pnum);
-      send("/hud/timer/hide");
+      SENDMSG("/hud/timer/hide");
       // toggle color
-      auto p2= pnum == 1 ? 2 : 1;
-      state->setObject(CC_INT(p2), "pnum");
+      ss->pnum = pnum == 1 ? 2 : 1;
     break;
   }
 }

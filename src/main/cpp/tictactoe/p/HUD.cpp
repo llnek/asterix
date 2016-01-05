@@ -91,7 +91,8 @@ void HUDLayer::showMenu(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::showTimer() {
-  auto ptt= CC_CSV(c::Integer, "PLAYER_THINK_TIME");
+    auto cfg= MGMS()->getLCfg()->getValue();
+  auto ptt= JS_INT(cfg["HUMAN+THINK+SECS"]);
   auto tile= CC_CSV(c::Integer,"TILE");
   auto scale= XCFG()->getScale();
   auto cw= cx::center();

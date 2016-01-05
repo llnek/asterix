@@ -139,7 +139,7 @@ void netSend(not_null<OdinIO*> wss, MType m, EType e, j::json body) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Send this msg through the socket
-void netSend(not_null<OdinIO*> wss, j::json msg) {
+void netSendMsg(not_null<OdinIO*> wss, j::json msg) {
   if (wss->state == CType::S_CONNECTED) {
     wss->socket->send(msg.dump());
   }

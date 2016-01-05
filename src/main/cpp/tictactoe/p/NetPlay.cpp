@@ -160,8 +160,8 @@ void UILayer::odinEvent(ws::OdinEvent *evt) {
 void UILayer::onLogin(c::Ref* ) {
   auto u= getChildByTag( USER_TAG);
   auto p= getChildByTag( PSWD_TAG);
-  auto uid = SCAST(c::ui::TextField, u)->getString();
-  auto pwd = SCAST(c::ui::TextField, p)->getString();
+  auto uid = ((c::ui::TextField*) u)->getString();
+  auto pwd = ((c::ui::TextField*) p)->getString();
 
   //TODO: fix url
   auto wsurl = XCFG()->getWSUrl();

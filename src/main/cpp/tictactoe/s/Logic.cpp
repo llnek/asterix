@@ -14,7 +14,6 @@
 #include "core/XConfig.h"
 #include "core/Odin.h"
 #include "core/JSON.h"
-#include "n/GNodes.h"
 #include "Logic.h"
 
 NS_ALIAS(ag, fusii::algos)
@@ -23,53 +22,50 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Logic::Logic(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  : XSystem<EFactory>(f,d) {
-}
+void Logic::preamble() {
+  BoardNode b;
+  ArenaNode a;
 
-//////////////////////////////////////////////////////////////////////////
-//
-void Logic::addToEngine(not_null<a::Engine*> e) {
-  BoardNode n;
-  board = e->getNodeList(n.typeId());
+  arenaNode = engine->getNodeList(a.typeId());
+  boardNode = engine->getNodeList(b.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Logic::update(float dt) {
-  //CCLOG("Logic::update()");
-  auto n= board->head;
   if (MGMS()->isLive() ) {
-    doIt(n, dt);
+    doIt(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Logic::doIt(a::Node *node, float dt) {
+void Logic::doIt(float dt) {
 
-  auto sel= CC_GNF(UISelection, node, "selection");
-  auto robot= CC_GNF(SmartAlgo, node, "robot");
-  auto grid= CC_GNF(Grid, node, "grid");
-
-  auto pnum= CC_GDV(c::Integer, state, "pnum");
-  auto ps = CC_GNF(Players, node, "players");
+  auto sel= CC_GNLF(CellPos, boardNode, "cellpos");
+  auto robot= CC_GNLF(Robot, boardNode, "robot");
+  auto grid= CC_GNLF(Grid, boardNode, "grid");
+  auto ps = CC_GNLF(Players, boardNode, "players");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto bot= CC_CSV(c::Integer, "BOT");
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto pnum= ss->pnum;
   auto &cp= ps->parr[pnum];
 
-  //handle online play
   if (MGMS()->isOnline()) {
     //if the mouse click is from the valid user, handle it
     if (pnum == cp.pnum) {
-      enqueue(node, sel->cell, cp.value, grid);
+      enqueue(sel->cell, cp.value, grid);
     }
   }
   else
   if (cp.category == bot) {
     if (ENP(botTimer)) {
-      // for the bot, create some small delay...
-      botTimer = cx::reifyTimer(MGML(), 600.0f);
+      // create some small delay...
+      botTimer = cx::reifyTimer(
+          MGML(),
+          JS_FLOAT(cfg["ROBOT+DELAY"]));
     }
     else
     if (cx::timerDone(botTimer)) {
@@ -80,7 +76,7 @@ void Logic::doIt(a::Node *node, float dt) {
       if (rc < 0) {
         rc = ag::evalNegaMax<BD_SZ>(bd);
       }
-      enqueue(node, rc, cp.value, grid);
+      enqueue( rc, cp.value, grid);
       cx::undoTimer(botTimer);
       SNPTR(botTimer)
     }
@@ -88,7 +84,7 @@ void Logic::doIt(a::Node *node, float dt) {
   else
   if (sel->cell >= 0) {
     //possibly a valid click ? handle it
-    enqueue(node, sel->cell, cp.value, grid);
+    enqueue( sel->cell, cp.value, grid);
   }
 
   sel->cell= -1;
@@ -96,22 +92,23 @@ void Logic::doIt(a::Node *node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Logic::enqueue(a::Node *node, int pos, int value, Grid *grid) {
+void Logic::enqueue( int pos, int value, Grid *grid) {
 
-  auto cur = CC_GDV(c::Integer, state, "pnum");
+  auto ps= CC_GNLF(Players, boardNode, "players");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto nil = CC_CSV(c::Integer, "CV_Z");
-  auto ps= CC_GNF(Players, node, "players");
   auto human= CC_CSV(c::Integer,"HUMAN");
+  auto cur = ss->pnum;
   auto other=0;
   auto snd="";
 
   if ((pos >= 0 && pos < grid->values.size()) &&
       nil == grid->values[pos]) {
 
-    send("/hud/timer/hide");
+    SENDMSG("/hud/timer/hide");
 
     if (MGMS()->isOnline()) {
-      onEnqueue(node, cur, pos, grid);
+      onEnqueue( cur, pos, grid);
     } else {
 
       if (cur == 1) {
@@ -123,21 +120,23 @@ void Logic::enqueue(a::Node *node, int pos, int value, Grid *grid) {
       }
 
       // switch player
-      state->setObject(CC_INT(other), "pnum");
       grid->values[pos] = value;
-      cx::sfxPlay(snd);
+      ss->pnum= other;
 
       if (ps->parr[other].category == human) {
-        send("/hud/timer/show");
+        SENDMSG("/hud/timer/show");
       }
+
+      cx::sfxPlay(snd);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Logic::onEnqueue(a::Node *node, int pnum, int cell, Grid *grid) {
-  auto ps = CC_GNF(Players, node, "players");
+void Logic::onEnqueue(int pnum, int cell, Grid *grid) {
+  auto ps = CC_GNLF(Players, boardNode, "players");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto body = j::json({
     { "color", ps->parr[pnum].color },
     { "value", ps->parr[pnum].value },
@@ -152,10 +151,9 @@ void Logic::onEnqueue(a::Node *node, int pnum, int cell, Grid *grid) {
   c::RefPtr<ws::OdinEvent>
   rp(evt);
 
-  state->setObject(CC_INT(0), "pnum");
+  ss->pnum=0;
   cx::sfxPlay(snd);
-
-  ws::netSend(MGMS()->wsock(), evt);
+    ws::netSend(MGMS()->wsock(), (ws::OdinEvent*)evt);
 }
 
 

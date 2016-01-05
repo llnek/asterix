@@ -40,6 +40,7 @@ struct CC_DLL Config : public f::XConfig {
 
   virtual void runOnce();
 
+  void initLevels();
   void initAssets();
   void initCsts();
 

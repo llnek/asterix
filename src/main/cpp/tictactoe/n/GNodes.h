@@ -23,9 +23,9 @@ struct CC_DLL BoardNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-          {"selection", "n/UISelection"},
+          {"cellpos", "n/CellPos"},
           {"players", "n/Players" },
-          {"robot", "n/SmartAlgo"},
+          {"robot", "n/Robot"},
           {"grid", "n/Grid"},
           {"view", "n/PlayView" }
     });
@@ -40,7 +40,7 @@ struct CC_DLL GUINode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "selection", "n/UISelection"},
+        { "cellpos", "n/CellPos"},
         { "view", "n/PlayView" }
     });
   }
@@ -54,7 +54,7 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "slots", "n/Slots" }
+        { "slots", "n/GVars" }
     });
   }
 

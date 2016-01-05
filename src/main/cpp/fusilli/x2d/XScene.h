@@ -39,6 +39,7 @@ public:
 
   virtual void decorate() = 0;
   virtual bool init();
+  virtual void postReify() {}
 
   virtual ~XScene();
   XScene();

@@ -34,6 +34,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onTouchEnded(c::Touch*, c::Event*);
   virtual void onMouseUp(c::Event*);
+  virtual void postReify();
 
   void onGUIXXX(const c::Vec2& );
   void playTimeExpired();
@@ -45,6 +46,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   void deco();
 
   MDECL_GET_LAYER(HUDLayer, getHUD, 3)
+  
   DECL_PTR(a::NodeList, boardNode)
   DECL_PTR(a::NodeList, arenaNode)
 
@@ -63,7 +65,7 @@ void GLayer::showMenu() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::deco() {
+void GLayer::decorate() {
 
   f::emptyQueue<sstr>( MGMS()->msgQueue() );
 
@@ -75,7 +77,7 @@ void GLayer::deco() {
 
   auto ctx = (GCXX*) getSceneX()->getCtx();
   auto ppids = ctx->data["ppids"];
-  auto pnum= ctx->data["pnum"];
+  auto pnum= JS_INT(ctx->data["pnum"]);
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
@@ -95,16 +97,7 @@ void GLayer::deco() {
 
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 
-  auto e = mc_new(GEngine);
-  e->reifyArena(pnum);
-  e->reifyBoard();
-  e->forceSync();
-  this->engine = e;
-
-  ArenaNode a;
-  BoardNode n;
-  arenaNode = e->getNodeList(a.typeId());
-  boardNode = e->getNodeList(n.typeId());
+  this->engine = mc_new_1(GEngine,pnum);
 
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   getHUD()->reset();
@@ -112,6 +105,15 @@ void GLayer::deco() {
   //this->options->setObject(CC_INT(0), "lastWinner");
   //this->options->setObject(CC_INT(pnum), "pnum");
   CCLOG("init-game - ok");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::postReify() {
+  ArenaNode a;
+  BoardNode n;
+  arenaNode = this->engine->getNodeList(a.typeId());
+  boardNode = this->engine->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -142,7 +144,7 @@ static void replay() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::updateHUD() {
-  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
+  auto ss= CC_GNF(GVars,arenaNode->head,"slots");
   if (! MGMS()->isLive()) {
     getHUD()->drawResult(ss->lastWinner);
   } else {
@@ -181,9 +183,9 @@ void GLayer::onMouseUp(c::Event *e) {
 //
 void GLayer::onGUIXXX(const c::Vec2 &pos) {
 
-  auto sel= CC_GNF(UISelection, boardNode->head, "selection");
-  auto view = CC_GNF(PlayView, boardNode->head, "view");
-  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
+  auto sel= CC_GNLF(CellPos, boardNode, "cellpos");
+  auto view = CC_GNLF(PlayView, boardNode, "view");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto cur = ss->pnum;
   int n=0;
 

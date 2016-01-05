@@ -12,49 +12,42 @@
 #if  !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
-#include "n/CObjs.h"
-
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public  f::XSystem<EFactory> {
-protected:
+struct CC_DLL Resolve : public  a::System {
 
+  MDECL_SYS_TPID( "n/Resolve")
+  MDECL_SYS_PREAMBLE()
+    MDECL_SYS_PRIORITY(a::Resolve)
+  MDECL_SYS_UPDATE()
+
+  DECL_PTR(a::NodeList, boardNode)
+  DECL_PTR(a::NodeList, arenaNode)
+
+  Resolve(a::Engine *e)
+  : System(e)
+  {}
+
+protected:
   bool xrefCell(int pos, PlayView*, c::Vec2 &cell);
 
-  bool checkWin(a::Node*, Player&, Grid*, ArrDim& );
-  void showWinningIcons(a::Node*, const ArrDim& );
-  void doWin(a::Node*, Player&, const ArrDim& );
+  bool checkWin(Player&, Grid*, ArrDim& );
+  void showWinningIcons(const ArrDim& );
+  void doWin(Player&, const ArrDim& );
 
-  void syncUp(a::Node*);
+  void syncUp();
 
-  void doIt(a::Node*, float);
-  void doForfeit(a::Node*);
-  void doDraw(a::Node*);
+  void doIt( float);
+  void doForfeit();
+  void doDraw();
 
-  bool checkDraw(a::Node*, Grid*);
-  void doDone(a::Node*, Player&);
+  bool checkDraw( Grid*);
+  void doDone( Player&);
 
-public:
-
-  virtual const a::SystemType typeId() { return "n/Resolve"; }
-
-  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*> );
-
-  virtual int priority() { return a::Resolve; }
-
-  virtual bool update(float);
-
-  virtual ~Resolve() {}
-  NOCPYASS(Resolve)
-  NODFT(Resolve)
-
-  a::NodeList *board;
 };
 
 

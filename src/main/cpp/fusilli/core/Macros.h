@@ -29,6 +29,7 @@
 #define CC_STR(x) cocos2d::String::create(x)
 #define CC_INT(x) cocos2d::Integer::create(x)
 
+#define CC_GNLF(t,n,f) ash::nodeFld<t>(n->head,f)
 #define CC_GNF(t,n,f) ash::nodeFld<t>(n,f)
 
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
@@ -47,6 +48,7 @@ static __TYPE__* reify(fusii::SCTX* x) {  \
       p->setCtx(x); \
       if (p->init()) { \
           p->autorelease(); \
+          p->postReify(); \
           return p; \
       } else { \
           delete p; \
@@ -61,6 +63,7 @@ static __TYPE__* reify() {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
     if (NNP(p) && p->init()) { \
         p->autorelease(); \
+        p->postReify(); \
         return p; \
     } else { \
         delete p; \
@@ -74,6 +77,7 @@ static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
     if (NNP(p) && p->initEx(xs, zx)) { \
         p->autorelease(); \
+        p->postReify(); \
         return p; \
     } else { \
         delete p; \

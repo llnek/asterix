@@ -46,6 +46,7 @@ public:
 
   virtual bool initEx(XScene*, int zx = 0);
   virtual void decorate() = 0;
+  virtual void postReify() {}
 
   void addAtlasItem( const sstr &atlas, not_null<c::Node*> n, int z, int tag);
   void addAtlasItem( const sstr &atlas, not_null<c::Node*> n);

@@ -12,7 +12,8 @@
 #if !defined(__SYSTEM_H__)
 #define __SYSTEM_H__
 
-#include "Ash.h"
+#include "NodeRego.h"
+#include "Node.h"
 NS_BEGIN(ash)
 
 #define MDECL_SYS_PRIORITY(x) \

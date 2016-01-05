@@ -13,27 +13,32 @@
 #define __LOGIC_H__
 
 #include "2d/CCActionInterval.h"
-#include "x2d/GSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Logic : public f::GSystem<GEngine> {
-
-  void onEnqueue(a::Node*, int pnum, int cell, Grid*);
-  void enqueue(a::Node*, int pos, int value, Grid*);
-  void doIt(a::Node*, float);
+struct CC_DLL Logic : public a::System {
 
   MDECL_SYS_PRIORITY( a::Logic)
   MDECL_SYS_TPID("n/Logic")
-
-  virtual bool update(float);
-  virtual void onAdd();
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
   DECL_PTR(c::DelayTime, botTimer)
-  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, boardNode)
+  DECL_PTR(a::NodeList, arenaNode)
+
+  Logic(a::Engine *e)
+  : System(e)
+  {}
+
+private:
+  void onEnqueue(int pnum, int cell, Grid*);
+  void enqueue(int pos, int value, Grid*);
+  void doIt( float);
 
 };
 

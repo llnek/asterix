@@ -10,69 +10,56 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
+#include "s/Resolve.h"
+#include "s/Stage.h"
+#include "s/Logic.h"
 #include "EFactory.h"
-#include "n/Board.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new(Resolve));
-  regoSystem(mc_new(Logic));
-  regoSystem(mc_new(Stage));
+  regoSystem(mc_new_1(Resolve,this));
+  regoSystem(mc_new_1(Logic,this));
+  regoSystem(mc_new_1(Stage,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* GEngine::reifyArena(int pnum) {
+void GEngine::initEntities() {
+  reifyArena();
+  reifyBoard();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::reifyArena() {
   auto ent= this->reifyEntity("*");
-  auto ss= mc_new(Slots);
-  ss->pnum=pnum;
-  ent->checkin(ss);
-  return ent;
+  auto gvs= mc_new(GVars);
+  gvs->pnum=this->pnum;
+  ent->checkin(gvs);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* GEngine::reifyBoard() {
-
-  auto nil= CC_CSV(c::Integer, "CV_Z");
-  auto xv= CC_CSV(c::Integer, "CV_X");
-  auto ov= CC_CSV(c::Integer, "CV_O");
-
-  auto bd= mc_new_3( Board, nil, xv, ov);
-  auto ent= engine->reifyEntity("*");
-  auto ps= mc_new( Players);
-  ArrCells seed;
-
-  initPlayers(ps);
-  seed.fill(nil);
-
-  ent->checkin(mc_new_1( PlayView , MGML()));
-  ent->checkin(mc_new( UISelection));
-  ent->checkin(mc_new_1( SmartAlgo, bd));
-  ent->checkin(ps);
-  ent->checkin(mc_new_1( Grid, seed));
-
-  return ent;
-};
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initPlayers(Players *ps) {
+void GEngine::reifyBoard() {
 
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot = CC_CSV(c::Integer, "BOT");
   auto netp = CC_CSV(c::Integer, "NETP");
-
-  auto vx= CC_CSV(c::Integer, "CV_X");
-  auto vo= CC_CSV(c::Integer, "CV_O");
+  auto nil= CC_CSV(c::Integer, "CV_Z");
+  auto xv= CC_CSV(c::Integer, "CV_X");
+  auto ov= CC_CSV(c::Integer, "CV_O");
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
 
+  auto bd= mc_new_3(Board, nil, xv, ov);
+  auto ent= this->reifyEntity("*");
   auto mode = MGMS()->getMode();
+  auto ps= mc_new( Players);
   auto p1cat= human;
   auto p2cat= bot;
+  ArrCells seed;
 
   if (mode == f::GMode::NET) {
     p2cat = netp;
@@ -86,12 +73,19 @@ void GEngine::initPlayers(Players *ps) {
     p2cat= human;
     p1cat= human;
   }
-
-  ps->parr[1] = Player(p1cat, vx, 1, p1c);
-  ps->parr[2] = Player(p2cat, vo, 2, p2c);
+  ps->parr[1] = Player(p1cat, xv, 1, p1c);
+  ps->parr[2] = Player(p2cat, ov, 2, p2c);
   ps->parr[0] = Player();
-}
 
+  seed.fill(nil);
+
+  ent->checkin(mc_new_1( PlayView , MGML()));
+  ent->checkin(mc_new( CellPos));
+  ent->checkin(mc_new_1( Robot, bd));
+  ent->checkin(ps);
+  ent->checkin(mc_new_1( Grid, seed));
+
+};
 
 NS_END(tttoe)
 

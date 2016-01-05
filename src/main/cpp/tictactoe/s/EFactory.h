@@ -12,7 +12,6 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
-#include "x2d/GameScene.h"
 #include "ash/Engine.h"
 #include "n/GNodes.h"
 NS_BEGIN(tttoe)
@@ -21,14 +20,20 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL GEngine  : public a::Engine {
 
-  void initPlayers(Players*);
 
   virtual void initEntities();
   virtual void initSystems();
 
-  a::Entity* reifyArena();
-  a::Entity* reifyBoard();
+  GEngine(int pnum) {
+    this->pnum=pnum;
+  }
 
+private:
+
+  void reifyArena();
+  void reifyBoard();
+
+  DECL_IZ(pnum)
 };
 
 
