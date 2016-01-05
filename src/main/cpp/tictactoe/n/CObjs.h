@@ -28,12 +28,16 @@ NS_BEGIN(tttoe)
 struct CC_DLL Robot : public a::Component {
 
   MDECL_COMP_TPID( "n/Robot" )
+  //owns ths board
   DECL_PTR(Board,board)
 
   Robot(not_null<Board*> b) {
     this->board= b;
   }
 
+  virtual ~Robot() {
+    mc_del_ptr(board)
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,7 +61,7 @@ struct CC_DLL PlayView : public a::Component {
 
   PlayView(not_null<f::XLayer*> layer) {
     this->size = cx::calcSize("z.png");
-    this->boxes= mapGridPos(1.0f);
+    this->boxes= mapGridPos(1);
     this->cells.fill(nullptr);
     this->layer= layer;
   }
@@ -109,8 +113,8 @@ struct CC_DLL Player : public a::Component {
     offset= other.offset;
   }
 
-    Player() {}
-    
+  Player() {}
+
   DECL_TV(int, category, (int)f::GMode::NICHTS)
   DECL_TV(int, pnum,  -1)
   DECL_IZ(offset)
@@ -124,7 +128,6 @@ struct CC_DLL Player : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public a::Component {
-
   MDECL_COMP_TPID("n/Players")
   s_arr<Player,3> parr;
 };
@@ -132,13 +135,11 @@ struct CC_DLL Players : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CellPos  : public a::Component {
-
   MDECL_COMP_TPID( "n/CellPos" )
 
   DECL_TV(int, cell,  -1)
   DECL_TV(int, px, -1)
   DECL_TV(int, py, -1)
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -148,8 +149,6 @@ struct CC_DLL GVars : public a::Component {
   DECL_IZ(pnum)
   DECL_IZ(lastWinner)
 };
-
-
 
 
 NS_END(tttoe)

@@ -14,7 +14,7 @@
 
 #include "algos/NegaMax.h"
 #include "s/utils.h"
-#include <tuple>
+
 NS_ALIAS(ag, fusii::algos)
 NS_BEGIN(tttoe)
 

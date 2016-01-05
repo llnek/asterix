@@ -56,16 +56,7 @@ bool Board::isNil(int cellv) {
 // if brand new game, just make a random move
 int Board::getFirstMove() {
   auto sz= grid.size();
-  bool virgo=true;
-
-  for (int i=0; i < sz; ++i) {
-    if (grid[i] != CV_Z) {
-      virgo=false;
-      break;
-    }
-  }
-
-  return virgo ? cx::randInt(sz) : -1;
+  return sz > 0 && every(grid, CV_Z) ? cx::randInt(sz) : -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -106,7 +97,7 @@ void Board::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   if (isNil(snap->state[move])) {
     snap->state[move] = snap->cur;
   } else {
-    throw "Fatal Error: cell [" + s::to_string(move) + "] is not free";
+    throw "cell [" + s::to_string(move) + "] is not free";
   }
 }
 
@@ -205,8 +196,7 @@ bool Board::testWin(const ArrCells &vs, int actor, const ArrDim &g) {
 
   int cnt=g.size();
   for (int n= 0; n < g.size(); ++n) {
-    auto pos= g[n];
-    if (actor == vs[pos]) {
+    if (actor == vs[g[n]]) {
       --cnt;
     }
   }
