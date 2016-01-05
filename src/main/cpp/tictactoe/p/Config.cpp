@@ -16,7 +16,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Config*> Config::reify() {
-  auto c =  mc_new(Config);
+  auto c = mc_new(Config);
   c->initAssets();
   c->initLevels();
   c->initCsts();
@@ -28,16 +28,20 @@ owner<Config*> Config::reify() {
 void Config::initLevels() {
   auto d= getLevel("1");
   auto j= j::json({
-        {"HUMAN+THINK+SECS",  7},
+        {"HUMAN+THINK", 7},
         {"ROBOT+DELAY", 600.0f}
       });
   d->setObject(f::JsonObj::create(j), CFG);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
+  addCst("engine", CC_STR("czlab.frigga.tttoe.core/TicTacToe"));
+  addCst("pubdate", CC_STR("2014-06-03"));
+  addCst("author", CC_STR("llnek"));
+  addCst("minp", CC_INT(2));
+  addCst("maxp", CC_INT(2));
 
   addCst("showFPS", CC_BOOL(false));
   addCst("CV_Z", CC_INT(0));
@@ -45,6 +49,9 @@ void Config::initCsts() {
   addColor("default", CC_STR("#5e3178"));
   addColor("text", CC_STR("#ffffff"));
   addColor("x", CC_STR("#f6b17f"));
+
+  game_id= "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
+  app_id = "tictactoe";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -102,30 +109,6 @@ void Config::runOnce() {
 //
 const sstr Config::getWSUrl() {
   return "";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const sstr getGameId() {
-  return "";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const sstr getRoomId() {
-  return "";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Config::setGameId(const sstr &s) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Config::setRoomId(const sstr &s) {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

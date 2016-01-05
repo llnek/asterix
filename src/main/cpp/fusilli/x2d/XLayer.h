@@ -68,7 +68,6 @@ public:
 
   XScene* getSceneX();
   int incIndexZ();
-  float getDelay();
 
   const sstr gets(const sstr&, const s_vec<sstr>&);
   const sstr gets(const sstr&);

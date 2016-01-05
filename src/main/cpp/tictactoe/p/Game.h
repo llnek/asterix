@@ -23,6 +23,7 @@ struct CC_DLL GCXX : public f::GCX {
     odin=io;
   }
   DECL_TD(j::json, data)
+  DECL_TV(int, count, 1)
 };
 
 //////////////////////////////////////////////////////////////////////////////

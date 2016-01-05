@@ -29,15 +29,17 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL UILayer : public f::XLayer {
 
-  void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
+  STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
+
+protected:
+  void onPlayXXX(
+      f::GMode, ws::OdinIO*, j::json);
   void onPlay3(c::Ref*);
   void onPlay2(c::Ref*);
   void onPlay1(c::Ref*);
   void onBack(c::Ref*);
   void onQuit(c::Ref*);
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,21 +112,21 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay3(c::Ref *r) {
-  // ye
+  // yes
   auto y= [=](ws::OdinIO* io, j::json obj) {
     this->onPlayXXX(f::GMode::NET, io, obj);
   };
   // no
   auto f= [=]() {
-    cx::runScene(XCFG()->prelude(), getDelay());
+    cx::runSceneEx(XCFG()->prelude());
   };
   auto n= [=]() {
-    cx::runScene(
-        MMenu::reify(mc_new_1(MCX,f)), getDelay());
+    cx::runSceneEx(
+        MMenu::reify(mc_new_1(MCX,f)));
   };
 
-  cx::runScene(
-      NetPlay::reify( mc_new_2(NPCX, y,n)), getDelay());
+  cx::runSceneEx(
+      NetPlay::reify( mc_new_2(NPCX, y,n)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,8 +145,8 @@ void UILayer::onPlay1(c::Ref *) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
-  cx::runScene(
-      Game::reify(mc_new_3(GCXX, mode, io, obj)), getDelay());
+  cx::runSceneEx(
+      Game::reify(mc_new_3(GCXX, mode, io, obj)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,9 +159,7 @@ void UILayer::onBack(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(),
-      getDelay());
+  cx::runSceneEx( XCFG()->prelude());
 }
 
 END_NS_UNAMED()

@@ -9,13 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
+//#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "n/CObjs.h"
 #include "utils.h"
 #include "Stage.h"
+#include "p/Game.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -53,7 +54,7 @@ void Stage::onceOnly() {
   auto bot= CC_CSV(c::Integer,"BOT");
   auto pnum = 0;
 
-  showGrid(boardNode->head);
+  showGrid();
 
   if (MGMS()->isOnline()) {
     initOnline();
@@ -75,10 +76,10 @@ void Stage::onceOnly() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stage::showGrid(a::Node *node) {
-  auto view= CC_GNF(PlayView, node, "view");
+void Stage::showGrid() {
+  auto view= CC_GNLF(PlayView, boardNode, "view");
   auto nil = CC_CSV(c::Integer, "CV_Z");
-  auto arr = mapGridPos(1.0f);
+  auto arr = mapGridPos(1);
   auto pos=0;
 
   F__LOOP(it, arr) {
@@ -98,14 +99,28 @@ void Stage::initOnline() {
     this->onSocket(evt);
   });
 
-  auto evt = new ws::OdinEvent(
-      ws::MType::SESSION ,
-      ws::EType::STARTED);
-  c::RefPtr<ws::OdinEvent>
-  rp(evt);
+  auto ctx= (GCXX*) MGMS()->getCtx();
+  if (ctx->count > 1) {
 
-  ws::netSend(MGMS()->wsock(), evt);
-  CCLOG("reply to server: session started ok");
+    auto evt = new ws::OdinEvent(
+        ws::MType::SESSION ,
+        ws::EType::REPLAY);
+    c::RefPtr<ws::OdinEvent>
+    rp(evt);
+    ws::netSend(MGMS()->wsock(), evt);
+    CCLOG("acknowledge to server: replay please");
+
+  } else {
+
+    auto evt = new ws::OdinEvent(
+        ws::MType::SESSION ,
+        ws::EType::STARTED);
+    c::RefPtr<ws::OdinEvent>
+    rp(evt);
+    ws::netSend(MGMS()->wsock(), evt);
+    CCLOG("reply to server: session started ok");
+
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////

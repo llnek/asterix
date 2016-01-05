@@ -90,6 +90,7 @@ namespace ccsx {
 
   void runScene(not_null<c::Scene*>, float delay);
   void runScene(not_null<c::Scene*>);
+  void runSceneEx(not_null<c::Scene*>);
 
   bool isTransitioning();
 

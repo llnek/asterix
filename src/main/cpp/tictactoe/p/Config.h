@@ -19,36 +19,26 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL Config : public f::XConfig {
 
-  virtual const sstr appKey() { return  "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c"; }
-
-  virtual const sstr appId() { return "tictactoe"; }
-  virtual const sstr themeColor() { return "blue"; }
-
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
 
   virtual const c::Size gameSize() { return c::Size(320,480); }
+
+  virtual const sstr themeColor() { return "blue"; }
 
   virtual void handleResolution(const c::Size &rs);
   virtual const sstr getWSUrl();
   virtual c::Scene* prelude();
 
-  virtual const sstr getGameId() { return ""; }
-  virtual const sstr getRoomId() { return ""; }
-
-  virtual void setGameId(const sstr& );
-  virtual void setRoomId(const sstr& );
-
   virtual void runOnce();
+  static owner<Config*> reify();
 
+protected:
   void initLevels();
   void initAssets();
   void initCsts();
-
-  static owner<Config*> reify();
 };
-
-
 
 NS_END(tttoe)
 #endif
+
 

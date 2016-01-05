@@ -12,7 +12,6 @@
 #if !defined(__MENU_H__)
 #define __MENU_H__
 
-#include "2d/CCActionInstant.h"
 #include "x2d/XScene.h"
 NS_BEGIN(tttoe)
 
@@ -26,12 +25,9 @@ struct CC_DLL MCX : public f::SCTX {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MMenu : public f::XScene {
-
   STATIC_REIFY_SCENE_CTX(MMenu)
   MDECL_DECORATE()
-
 };
-
 
 
 NS_END(tttoe)

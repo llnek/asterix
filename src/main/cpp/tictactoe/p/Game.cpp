@@ -11,9 +11,6 @@
 
 #include "core/XConfig.h"
 #include "s/EFactory.h"
-#include "s/Resolve.h"
-#include "s/Logic.h"
-#include "s/Stage.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "HUD.h"
@@ -46,7 +43,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   void deco();
 
   MDECL_GET_LAYER(HUDLayer, getHUD, 3)
-  
+
   DECL_PTR(a::NodeList, boardNode)
   DECL_PTR(a::NodeList, arenaNode)
 
@@ -76,8 +73,8 @@ void GLayer::decorate() {
   regoAtlas("lang-pics");
 
   auto ctx = (GCXX*) getSceneX()->getCtx();
-  auto ppids = ctx->data["ppids"];
   auto pnum= JS_INT(ctx->data["pnum"]);
+  auto ppids = ctx->data["ppids"];
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
@@ -85,7 +82,7 @@ void GLayer::decorate() {
   sstr p1n;
   sstr p2n;
   J__LOOP(it, ppids) {
-    auto &arr=  it.value() ;
+    auto &arr= it.value() ;
     if (JS_INT(arr[0]) == 1) {
       p1n= JS_STR(arr[1]);
       p1k= it.key();
@@ -102,8 +99,6 @@ void GLayer::decorate() {
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   getHUD()->reset();
 
-  //this->options->setObject(CC_INT(0), "lastWinner");
-  //this->options->setObject(CC_INT(pnum), "pnum");
   CCLOG("init-game - ok");
 }
 
@@ -124,27 +119,8 @@ void GLayer::reset() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static void replay() {
-  /*
-  if (MGMS()->isLive()) {
-    // request server to restart a new game
-    ws::netSend(MGMS()->wsock(), new ws::OdinEvent(
-      ws::MType::SESSION,
-      ws::EType::REPLAY
-    ));
-  } else {
-    inizGame();
-    reset();
-    mkAsh();
-    getSceneX()->resume();
-  }
-  */
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::updateHUD() {
-  auto ss= CC_GNF(GVars,arenaNode->head,"slots");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   if (! MGMS()->isLive()) {
     getHUD()->drawResult(ss->lastWinner);
   } else {
@@ -227,12 +203,12 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/net/restart" == topic) {
     y->getHUD()->killTimer();
-    //y->play();
   }
   else
   if ("/net/stop" == topic) {
     auto msg= (j::json*) m;
-    y->overAndDone( JS_BOOL(msg->operator[]("status")));
+    y->overAndDone(
+        JS_BOOL(msg->operator[]("status")));
   }
   else
   if ("/hud/timer/hide" == topic) {
@@ -248,7 +224,8 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/hud/end" == topic) {
     auto msg = (j::json*) m;
-    y->overAndDone( JS_INT(msg->operator[]("winner")));
+    y->overAndDone(
+        JS_INT(msg->operator[]("winner")));
   }
   else
   if ("/hud/update" == topic) {

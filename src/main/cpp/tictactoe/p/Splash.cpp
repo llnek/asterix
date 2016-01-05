@@ -23,28 +23,30 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL UILayer : public f::XLayer {
-
   STATIC_REIFY_LAYER(UILayer)
   MDECL_DECORATE()
-
+protected:
   void onPlay(c::Ref*);
   void demo();
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::demo() {
-  auto scale= 0.75;
+  auto scale= 0.75f;
   auto fm= "";
   auto ps= mapGridPos(scale);
 
   // we scale down the icons to make it look nicer
   for (int i = 0; i < ps.size(); ++i) {
     // set up the grid icons
-    if (i == 1 || i == 5 || i == 6 || i == 7) { fm= "x.png"; }
-    else if (i == 0 || i == 4) { fm= "z.png"; }
-    else { fm= "o.png"; }
+    if (i == 1 || i == 5 || i == 6 || i == 7)
+    { fm= "x.png"; }
+    else
+    if (i == 0 || i == 4)
+    { fm= "z.png"; }
+    else
+    { fm= "o.png"; }
     auto sp= cx::reifySprite(fm);
     auto bx= cx::vboxMID( ps[i]);
     sp->setScale(scale);
@@ -56,11 +58,8 @@ void UILayer::demo() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay(c::Ref*) {
-  auto f= [=]() {
-    cx::runScene(XCFG()->prelude(), getDelay());
-  };
-  cx::runScene(
-      MMenu::reify(mc_new_1(MCX, f)), getDelay());
+  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
+  cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,7 +85,6 @@ void UILayer::decorate() {
       CC_MENU_SELECTOR(UILayer::onPlay));
   menu->setPosition( cw.x, wb.top * 0.1f);
   addItem(menu);
-
 }
 
 END_NS_UNAMED()

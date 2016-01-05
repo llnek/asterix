@@ -20,9 +20,9 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL Resolve : public  a::System {
 
+  MDECL_SYS_PRIORITY(a::Resolve)
   MDECL_SYS_TPID( "n/Resolve")
   MDECL_SYS_PREAMBLE()
-    MDECL_SYS_PRIORITY(a::Resolve)
   MDECL_SYS_UPDATE()
 
   DECL_PTR(a::NodeList, boardNode)

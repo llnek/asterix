@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "x2d/XLib.h"
 #include "HUD.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
@@ -91,8 +92,8 @@ void HUDLayer::showMenu(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::showTimer() {
-    auto cfg= MGMS()->getLCfg()->getValue();
-  auto ptt= JS_INT(cfg["HUMAN+THINK+SECS"]);
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto ptt= JS_INT(cfg["HUMAN+THINK"]);
   auto tile= CC_CSV(c::Integer,"TILE");
   auto scale= XCFG()->getScale();
   auto cw= cx::center();

@@ -12,7 +12,6 @@
 #if !defined(__LOGIC_H__)
 #define __LOGIC_H__
 
-#include "2d/CCActionInterval.h"
 #include "ash/System.h"
 #include "EFactory.h"
 

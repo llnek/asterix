@@ -20,7 +20,6 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL GEngine  : public a::Engine {
 
-
   virtual void initEntities();
   virtual void initSystems();
 

@@ -23,15 +23,14 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  bool countDownState=false;
-  int countDownValue=0;
-
   DECL_PTR(c::Label, countDown)
   DECL_PTR(c::Label, result)
   DECL_PTR(c::Label, status)
   DECL_PTR(c::Label, title)
   DECL_PTR(c::Label, score1)
   DECL_PTR(c::Label, score2)
+  DECL_BF(countDownState)
+  DECL_IZ(countDownValue)
 
   s_arr<int, 3> scores;
 

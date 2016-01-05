@@ -12,7 +12,6 @@
 #if !defined(__NETPLAY_H__)
 #define __NETPLAY_H__
 
-//#include "x2d/GameScene.h"
 #include "x2d/XScene.h"
 #include "core/Odin.h"
 
@@ -35,12 +34,9 @@ struct CC_DLL NPCX : public f::SCTX {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL NetPlay : public f::XScene {
-
   STATIC_REIFY_SCENE_CTX(NetPlay)
   MDECL_DECORATE()
-
 };
-
 
 NS_END(tttoe)
 #endif

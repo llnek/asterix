@@ -38,8 +38,8 @@ protected:
   void onSess(ws::OdinEvent*);
   void onNet(ws::OdinEvent*);
 
-  void showGrid(a::Node*);
   void initOnline();
+  void showGrid();
   void onceOnly();
   void doIt();
 };

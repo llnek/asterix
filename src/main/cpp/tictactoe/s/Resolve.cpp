@@ -38,7 +38,6 @@ bool Resolve::update(float dt) {
 void Resolve::syncUp() {
   auto view= CC_GNLF(PlayView, boardNode, "view");
   auto grid= CC_GNLF(Grid, boardNode, "grid");
-
   auto nil= CC_CSV(c::Integer, "CV_Z");
 
   for (int i=0; i < grid->values.size(); ++i) {

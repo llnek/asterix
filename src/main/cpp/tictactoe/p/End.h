@@ -18,10 +18,9 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ELayer : public f::XLayer {
-
   STATIC_REIFY_LAYER(ELayer)
   MDECL_DECORATE()
-
+protected:
   void onReplay(c::Ref*);
   void onQuit(c::Ref*);
 };

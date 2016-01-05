@@ -98,13 +98,13 @@ void UILayer::onStart(ws::OdinEvent *evt) {
 //
 void UILayer::onCancel(c::Ref*) {
   auto f= [=]() {
-      cx::runScene(XCFG()->prelude(), getDelay()); };
+      cx::runSceneEx(XCFG()->prelude()); };
   auto m = MMenu::reify(mc_new_1(MCX, f));
 
   ws::disconnect(odin);
   SNPTR(odin)
 
-  cx::runScene( m, getDelay());
+  cx::runSceneEx(m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -163,16 +163,14 @@ void UILayer::onLogin(c::Ref* ) {
   auto uid = ((c::ui::TextField*) u)->getString();
   auto pwd = ((c::ui::TextField*) p)->getString();
 
-  //TODO: fix url
-  auto wsurl = XCFG()->getWSUrl();
-  auto game = XCFG()->getGameId();
-
   if (uid.length() > 0 && pwd.length() > 0) {
-    odin= ws::reifyPlayRequest(game, uid, pwd);
+    odin= ws::reifyPlayRequest(
+        XCFG()->getGameId(),
+        uid, pwd);
     odin->listen([=](ws::OdinEvent *e) {
         this->odinEvent(e);
         });
-    ws::connect(odin, wsurl);
+    ws::connect(odin, XCFG()->getWSUrl());
   }
 }
 

@@ -15,6 +15,7 @@
 #include "s/utils.h"
 #include "Game.h"
 #include "End.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
@@ -22,14 +23,14 @@ NS_BEGIN(tttoe)
 //
 void ELayer::onReplay(c::Ref*) {
   auto x= (GCXX*)getSceneX()->emitCtx();
-  cx::runScene( Game::reify(x), getDelay());
+  x->count++;
+  cx::runSceneEx(Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(), getDelay());
+  cx::runSceneEx(XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////

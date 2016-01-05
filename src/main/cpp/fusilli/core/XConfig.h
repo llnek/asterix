@@ -66,8 +66,6 @@ public:
 
   virtual ResolutionPolicy policy() = 0;
   virtual const sstr themeColor() = 0;
-  virtual const sstr appKey() = 0;
-  virtual const sstr appId() = 0;
   virtual const c::Size gameSize() = 0;
 
   virtual const sstr getWSUrl() = 0;
@@ -75,10 +73,12 @@ public:
 
   virtual bool isPortrait() { return true; }
 
-  virtual void setGameId(const sstr& ) = 0;
-  virtual void setRoomId(const sstr& ) = 0;
-  virtual const sstr getGameId() = 0;
-  virtual const sstr getRoomId() = 0;
+  void setRoomId(const sstr &s) {
+    room_id=s;
+  }
+
+  const sstr getGameId() { return game_id; }
+  const sstr getRoomId() { return room_id; }
 
   const filepath getAtlas(const sstr& );
   const filepath getFont(const sstr& );
@@ -117,8 +117,11 @@ public:
 
   virtual ~XConfig();
   XConfig();
-
   NOCPYASS(XConfig)
+
+  DECL_TD(sstr, room_id)
+  DECL_TD(sstr, game_id)
+  DECL_TD(sstr, app_id)
 
   static XConfig* self();
   static void bind(not_null<XConfig*>);
