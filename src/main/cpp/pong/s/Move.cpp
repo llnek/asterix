@@ -157,10 +157,10 @@ void Move::processBall(float dt) {
       b->vel, outPos, outVel);
 
   if (rc) {
-    b->vel.x = outVel.x;
-    b->vel.y = outVel.y;
   }
 
+  b->vel.x = outVel.x;
+  b->vel.y = outVel.y;
   b->setPos(outPos.x,outPos.y);
 }
 

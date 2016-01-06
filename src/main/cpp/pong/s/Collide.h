@@ -38,7 +38,7 @@ struct CC_DLL Collide : public a::System {
 private:
 
   void checkNodes(a::NodeList*);
-  void check(a::Node*, Ball*);
+  void check(Paddle*, Ball*);
 
 };
 

@@ -34,6 +34,7 @@ void Collide::preamble() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Collide::update(float dt) {
+
   if (MGMS()->isLive()) {
     checkNodes(paddleNode);
     checkNodes(fauxNode);
@@ -46,21 +47,21 @@ bool Collide::update(float dt) {
 void Collide::checkNodes(a::NodeList *nl) {
   auto ball = CC_GNLF(Ball, ballNode,"ball");
   for (auto node=nl->head; node; node=node->next) {
-    if (cx::collide(CC_GNF(Paddle,node, "paddle"), ball)) {
-      check(node, ball);
+    auto p= CC_GNF(Paddle,node, "paddle");
+    if (cx::collide(p, ball)) {
+      check(p, ball);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::check(a::Node *node, Ball *ball) {
-  auto pad = CC_GNF(Paddle,node,"paddle");
-  auto pos = ball->pos();
+void Collide::check(Paddle *pad, Ball *ball) {
+  auto hw2= cx::halfHW(ball->sprite);
   auto bb4 = cx::bbox4(pad->sprite);
+  auto pos = ball->pos();
   auto x= pos.x;
   auto y= pos.y;
-  auto hw2= cx::halfHW(ball->sprite);
 
   if (cx::isPortrait()) {
     ball->vel.y = - ball->vel.y;
@@ -70,17 +71,17 @@ void Collide::check(a::Node *node, Ball *ball) {
 
   if (pad->pnum == 1) {
     if (cx::isPortrait()) {
-      y=bb4.top + hw2.height;
+      y=bb4.top + hw2.height + 1;
     } else {
-      x=bb4.right + hw2.width;
+      x=bb4.right + hw2.width + 1;
     }
   }
 
   if (pad->pnum == 2) {
     if (cx::isPortrait()) {
-      y = bb4.bottom - hw2.height;
+      y = bb4.bottom - hw2.height - 1;
     } else {
-      x = bb4.left - hw2.width;
+      x = bb4.left - hw2.width -1;
     }
   }
 

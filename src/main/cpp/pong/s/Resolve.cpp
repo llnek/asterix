@@ -41,8 +41,12 @@ bool Resolve::update(float dt) {
     int win= checkNodes(paddleNode);
     if (win > 0) {
       onWin(win);
-    } else {
-      checkNodes(fauxNode);
+    }
+    else {
+      win= checkNodes(fauxNode);
+      if (win > 0) {
+        onWin(win);
+      }
     }
   }
 

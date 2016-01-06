@@ -43,8 +43,6 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto cur= parr[0].pnum;
-
   mkOnePaddle(parr[2]);
   mkArena();
   mkBall();
