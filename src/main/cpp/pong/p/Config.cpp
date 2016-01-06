@@ -36,15 +36,16 @@ c::Scene* Config::prelude() {
 //
 void Config::initCsts() {
 
+  game_id = "fa0860f9-76dc-4135-8bc7-bd5af3147d55";
+  app_id = "pong";
+
   addColor("default", CC_STR("#edff90"));
   addColor("text", CC_STR("#32baf4"));
   addColor("hud", CC_STR("#ffffff"));
 
+  addCst("syncMillis", CC_FLOAT(3000.0f));
   addCst("showFPS", CC_BOOL(false));
-  //addCst("GRID_W", CC_INT(40));
-  //addCst("GRID_H", CC_INT(60));
 
-  addCst("syncMillis", CC_INT(3000));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -21,32 +21,26 @@ NS_BEGIN(pong)
 //
 struct CC_DLL HUDLayer : public f::XLayer {
 
-  STATIC_REIFY_LAYER(HUDLayer)
-  virtual ~HUDLayer() {}
-  HUDLayer() {}
-  NOCPYASS(HUDLayer)
-
-  virtual int getIID() { return 3; }
-  virtual void decorate();
-
   void regoPlayers(const Player&, const Player&);
   void updateScore(const sstr&, int,  int score);
+  void drawResult(int winner);
+  void drawScores();
   void updateScores(j::json);
   void resetAsNew();
   void reset();
   void endGame();
   int isDone();
-  void drawScores();
 
-  //void drawResult(const sstr &winner);
-  void drawResult(int winner);
-
-  s_arr<Player,3> parr;
-  s_arr<int,3> scores;
+  DECL_PTR(c::Label, resultMsg)
   DECL_PTR(c::Label, score2)
   DECL_PTR(c::Label, score1)
   DECL_PTR(c::Label, title)
-  DECL_PTR(c::Label, resultMsg)
+  s_arr<Player,3> parr;
+  s_arr<int,3> scores;
+
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
 };
 

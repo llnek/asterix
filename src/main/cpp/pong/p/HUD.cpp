@@ -68,21 +68,21 @@ void HUDLayer::decorate() {
   title= cx::reifyBmfLabel("font.TinyBoxBB");
   title->setScale(XCFG()->getScale() * 0.3f);
   title->setPosition(cw.x, wb.top - tile * 6 /2 );
-  addItem(title,lastZ,++lastTag);
+  addItem(title);
 
   score1= cx::reifyBmfLabel("font.OCR", "8");
   score1->setScale(XCFG()->getScale() * 0.25f);
-  addItem(score1,lastZ,++lastTag);
+  addItem(score1);
 
   score2= cx::reifyBmfLabel("font.OCR", "8");
   score2->setScale(XCFG()->getScale() * 0.25f);
-  addItem(score2,lastZ,++lastTag);
+  addItem(score2);
 
   resultMsg = cx::reifyBmfLabel("font.CoffeeBuzzed");
   resultMsg->setVisible(false);
   resultMsg->setPosition(cw.x, 100);
   resultMsg->setScale(XCFG()->getScale() * 0.15f);
-  addItem(resultMsg,lastZ,++lastTag);
+  addItem(resultMsg);
 }
 
 //////////////////////////////////////////////////////////////////////////////

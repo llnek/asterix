@@ -26,8 +26,8 @@ struct CC_DLL GCXX : public f::GCX {
     : f::GCX(m,io) {
     data=pms;
   }
-  virtual ~GCXX() {}
   DECL_TD(j::json, data)
+  DECL_TV(int,count,1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,20 +35,15 @@ struct CC_DLL GCXX : public f::GCX {
 struct CC_DLL Game : f::GameScene {
 
   virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer() {
-    return SCAST(f::GameLayer*, getLayer(2));
-  }
-  virtual void decorate();
+
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
+  MDECL_GLAYER(2)
+
   virtual bool isLive();
   virtual void play();
   virtual void stop();
 
-  virtual ~Game() {}
-  Game() {}
-  NOCPYASS(Game);
-
-
-  STATIC_REIFY_SCENE_CTX(Game)
 };
 
 NS_END(pong)

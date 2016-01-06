@@ -18,6 +18,7 @@
 #include "Game.h"
 #include "n/GNodes.h"
 #include "s/utils.h"
+
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pong)
@@ -30,20 +31,15 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
-  virtual ~UILayer() {}
-  UILayer() {}
-  NOCPYASS(UILayer)
-
+protected:
   void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
   void onPlay3(c::Ref*);
   void onPlay2(c::Ref*);
   void onPlay1(c::Ref*);
   void onBack(c::Ref*);
   void onQuit(c::Ref*);
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,7 +58,7 @@ void UILayer::decorate() {
 
   lb->setScale(XCFG()->getScale());
   lb->setColor(c);
-  addItem(lb,lastZ,++lastTag);
+  addItem(lb);
 
   auto b1 = cx::reifyMenuBtn("online.png");
   b1->setTarget(this,
@@ -79,7 +75,7 @@ void UILayer::decorate() {
   auto menu= cx::mkVMenu(
       s_vec<c::MenuItem*> {b1,b2,b3});
   menu->setPosition(cw);
-  addItem(menu,lastZ,++lastTag);
+  addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
@@ -98,7 +94,7 @@ void UILayer::decorate() {
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
                   wb.bottom+tile+sz.height*0.45f);
-  addItem(m2,lastZ,++lastTag);
+  addItem(m2);
 
   // audio
   auto audios= cx::reifyAudioIcons();
@@ -113,36 +109,27 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay3(c::Ref*) {
+  // no
+  auto f= [=]() { cx::runSceneEx( XCFG()->prelude()); };
+  auto n= [=]() { cx::runSceneEx( MMenu::reify( mc_new_1(MCX,f))); };
   // yes
   auto y= [=](ws::OdinIO* io, j::json obj) {
     this->onPlayXXX(f::GMode::NET, io, obj);
   };
-  // no
-  auto f= [=]() {
-    cx::runScene(
-        XCFG()->prelude(), this->getDelay());
-  };
-  auto n= [=]() {
-    cx::runScene(
-        MMenu::reify(
-          mc_new_1(MCX,f)), this->getDelay());
-  };
 
-  cx::runScene(
-      NetPlay::reify(
-        mc_new_2(NPCX, y,n)), getDelay());
+  cx::runSceneEx( NetPlay::reify( mc_new_2(NPCX, y,n)));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlay2(c::Ref *) {
+void UILayer::onPlay2(c::Ref*) {
   auto m=f::GMode::TWO;
   onPlayXXX(m, nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlay1(c::Ref *) {
+void UILayer::onPlay1(c::Ref*) {
   auto m= f::GMode::ONE;
   onPlayXXX(m, nullptr, fmtGameData(m));
 }
@@ -150,9 +137,9 @@ void UILayer::onPlay1(c::Ref *) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
-  cx::runScene(
+  cx::runSceneEx(
       Game::reify(
-        mc_new_3(GCXX, mode, io, obj)), getDelay());
+        mc_new_3(GCXX, mode, io, obj)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,8 +152,7 @@ void UILayer::onBack(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(), getDelay());
+  cx::runSceneEx( XCFG()->prelude());
 }
 
 END_NS_UNAMED()

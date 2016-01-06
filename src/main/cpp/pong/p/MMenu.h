@@ -12,7 +12,6 @@
 #if !defined(__MMENU_H__)
 #define __MMENU_H__
 
-#include "2d/CCActionInstant.h"
 #include "x2d/XScene.h"
 NS_BEGIN(pong)
 
@@ -28,15 +27,9 @@ struct CC_DLL MCX : public f::SCTX {
 struct CC_DLL MMenu : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(MMenu)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
-  virtual ~MMenu() {}
-  MMenu() {}
-
-  NOCPYASS(MMenu)
 };
-
 
 
 NS_END(pong)

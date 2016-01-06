@@ -20,16 +20,11 @@ NS_BEGIN(pong)
 struct CC_DLL ELayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(ELayer)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
+protected:
   void onReplay(c::Ref*);
   void onQuit(c::Ref*);
-
-  virtual ~ELayer() {}
-  ELayer() {}
-
-  NOCPYASS(ELayer)
 };
 
 NS_END(pong)

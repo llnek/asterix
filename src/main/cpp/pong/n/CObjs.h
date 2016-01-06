@@ -21,21 +21,20 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ball : public f::ComObj {
-  virtual const a::COMType typeId() { return "n/Ball"; }
   Ball(c::Sprite *s, float v)
     : ComObj(s) {
     speed.x=v;
     speed.y=v;
   }
+  MDECL_COMP_TPID( "n/Ball")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Paddle : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Paddle"; }
-
-  Paddle(c::Sprite *s, int pnum, float v) : ComObj(s) {
+  Paddle(c::Sprite *s, int pnum, float v)
+    : ComObj(s) {
     this->kcodes = pnum == 1 ? p1Keys() : p2Keys();
     this->snd = pnum == 1 ? "x_hit" : "o_hit";
     this->pnum= pnum;
@@ -43,6 +42,7 @@ struct CC_DLL Paddle : public f::ComObj {
     speed.y=v;
   }
 
+  MDECL_COMP_TPID( "n/Paddle")
   s_arr<KEYCODE,2> kcodes;
   DECL_IZ(pnum)
   DECL_TD(sstr, snd)
@@ -63,7 +63,7 @@ private:
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Motion : public a::Component {
-  virtual const a::COMType typeId() { return "n/Motion"; }
+  MDECL_COMP_TPID( "n/Motion")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -77,15 +77,14 @@ struct CC_DLL Player : public a::Component {
     this->value= value;
   }
 
-  Player() {}
-
-  virtual const a::COMType typeId() { return "n/Player"; }
-
   void setName(const sstr &id, const sstr &name) {
     this->pname=name;
     this->pid=id;
   }
 
+  Player() {}
+
+  MDECL_COMP_TPID( "n/Player")
   DECL_IZ(category)
   DECL_IZ(pnum)
   DECL_IZ(value)
@@ -97,21 +96,21 @@ struct CC_DLL Player : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public a::Component {
-  virtual const a::COMType typeId() { return "n/Players"; }
+  MDECL_COMP_TPID( "n/Players")
   s_arr<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Faux : public a::Component {
-  virtual const a::COMType typeId() { return "n/Faux"; }
+  MDECL_COMP_TPID("n/Faux")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Position : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Position"; }
+  MDECL_COMP_TPID( "n/Position")
 
   Position(float lp) {
     lastP= lp;
@@ -124,7 +123,7 @@ struct CC_DLL Position : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Slots : public a::Component {
+struct CC_DLL GVars : public a::Component {
   DECL_TD(c::Vec2, p2p)
   DECL_TD(c::Vec2, p1p)
   DECL_TD(c::Size, pz)
@@ -132,9 +131,8 @@ struct CC_DLL Slots : public a::Component {
   DECL_TD(c::Vec2, bp)
   DECL_BF(poked)
   DECL_IZ(pnum )
-  virtual const a::COMType typeId() { return "n/Slots"; }
+  MDECL_COMP_TPID( "n/GVars")
 };
-
 
 
 NS_END(pong)

@@ -19,44 +19,43 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::addToEngine(not_null<a::Engine*> e) {
+void Collide::preamble() {
   FauxPaddleNode f;
   PaddleNode p;
   BallNode b;
   ArenaNode a;
 
-  arenaNode = e->getNodeList(a.typeId());
-  fauxNode = e->getNodeList(f.typeId());
-  paddleNode = e->getNodeList(p.typeId());
-  ballNode = e->getNodeList(b.typeId());
+  arenaNode = engine->getNodeList(a.typeId());
+  fauxNode = engine->getNodeList(f.typeId());
+  paddleNode = engine->getNodeList(p.typeId());
+  ballNode = engine->getNodeList(b.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
-    checkNodes(paddleNode, ballNode->head);
-    checkNodes(fauxNode, ballNode->head);
+    checkNodes(paddleNode);
+    checkNodes(fauxNode);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkNodes(a::NodeList *nl, a::Node *bnode) {
-  auto ball = CC_GNF(Ball,bnode,"ball");
+void Collide::checkNodes(a::NodeList *nl) {
+  auto ball = CC_GNLF(Ball, ballNode,"ball");
   for (auto node=nl->head; node; node=node->next) {
     if (cx::collide(CC_GNF(Paddle,node, "paddle"), ball)) {
-      check(node, bnode);
+      check(node, ball);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::check(a::Node *node, a::Node *bnode) {
+void Collide::check(a::Node *node, Ball *ball) {
   auto pad = CC_GNF(Paddle,node,"paddle");
-  auto ball = CC_GNF(Ball,bnode,"ball");
   auto pos = ball->pos();
   auto bb4 = cx::bbox4(pad->sprite);
   auto x= pos.x;

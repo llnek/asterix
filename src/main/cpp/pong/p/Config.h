@@ -29,32 +29,17 @@ protected:
 
 public:
 
-  virtual const sstr appKey() { return "fa0860f9-76dc-4135-8bc7-bd5af3147d55"; }
-
-  virtual const sstr appId() { return "pong"; }
-
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
+  virtual const c::Size gameSize() { return c::Size(320,480); }
   virtual const sstr themeColor() { return "green"; }
 
-  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
-
   virtual void handleResolution(const c::Size&);
-
   virtual void runOnce();
-
-  virtual const c::Size gameSize() { return c::Size(320,480); }
 
   virtual const sstr getWSUrl() { return ""; }
   virtual c::Scene* prelude();
 
-  virtual void setGameId(const sstr& ) {}
-  virtual void setRoomId(const sstr& ) {}
-  virtual const sstr getGameId() {}
-  virtual const sstr getRoomId() {}
-
   static owner<Config*> reify();
-
-  virtual ~Config() {}
-  NOCPYASS(Config);
 };
 
 

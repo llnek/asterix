@@ -14,7 +14,7 @@
 
 #include "ash/System.h"
 #include "core/Odin.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
@@ -23,23 +23,19 @@ NS_BEGIN(pong)
 //
 struct CC_DLL Net : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Net"; }
+  MDECL_SYS_PRIORITY( a::NetPlay)
+  MDECL_SYS_TPID( "s/Net")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::NetPlay; }
-
-  virtual bool update(float);
-
-  virtual ~Net() {}
-  Net() {}
-  NOCPYASS(Net)
+  Net(a::Engine *e)
+  : System(e)
+  {}
 
   DECL_PTR(a::NodeList,paddleNode)
   DECL_PTR(a::NodeList,fauxNode)
   DECL_PTR(a::NodeList,ballNode)
   DECL_PTR(a::NodeList,arenaNode)
-  DECL_BF(inited)
 
 private:
 
@@ -55,7 +51,6 @@ private:
   void reposEntities();
 
 };
-
 
 
 NS_END(pong)

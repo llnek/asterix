@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/GNodes.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -20,16 +19,16 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::addToEngine(not_null<a::Engine*> e) {
+void Resolve::preamble() {
   FauxPaddleNode f;
   PaddleNode p;
   BallNode b;
   ArenaNode a;
 
-  arenaNode = e->getNodeList(a.typeId());
-  fauxNode= e->getNodeList(f.typeId());
-  paddleNode = e->getNodeList(p.typeId());
-  ballNode = e->getNodeList(b.typeId());
+  arenaNode = engine->getNodeList(a.typeId());
+  fauxNode= engine->getNodeList(f.typeId());
+  paddleNode = engine->getNodeList(p.typeId());
+  ballNode = engine->getNodeList(b.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,11 +38,11 @@ bool Resolve::update(float dt) {
   if (!MGMS()->isOnline() &&
       MGMS()->isLive()) {
 
-    int win= checkNodes(paddleNode, ballNode->head);
+    int win= checkNodes(paddleNode);
     if (win > 0) {
       onWin(win);
     } else {
-      checkNodes(fauxNode, ballNode->head);
+      checkNodes(fauxNode);
     }
   }
 
@@ -52,9 +51,9 @@ bool Resolve::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
+int Resolve::checkNodes(a::NodeList *nl) {
   for (auto node=nl->head; node; node=node->next) {
-    auto winner = check(node,bnode);
+    auto winner = check(node);
     if (winner > 0) {
       return winner;
     }
@@ -65,9 +64,9 @@ int Resolve::checkNodes(a::NodeList *nl, a::Node *bnode) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::onWin(int winner) {
-  auto ps= CC_GNF(Players,arenaNode->head, "players");
-  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
-  auto ball= CC_GNF(Ball, ballNode->head, "ball");
+  auto ps= CC_GNLF(Players,arenaNode, "players");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ball= CC_GNLF(Ball, ballNode, "ball");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["BALL+SPEED"]);
 
@@ -89,9 +88,9 @@ void Resolve::onWin(int winner) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Resolve::check(a::Node *node, a::Node *bnode) {
+int Resolve::check(a::Node *node) {
   auto pd= CC_GNF(Paddle, node, "paddle");
-  auto b= CC_GNF(Ball, bnode, "ball");
+  auto b= CC_GNLF(Ball, ballNode, "ball");
   auto pc= pd->pnum;
   auto bp= b->pos();
 

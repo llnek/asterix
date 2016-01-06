@@ -13,34 +13,32 @@
 #define __COLLIDE_H__
 
 #include "ash/System.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
+
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Collide : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Collide"; }
+  MDECL_SYS_PRIORITY(a::Collide)
+  MDECL_SYS_TPID( "s/Collide")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Collide; }
-
-  virtual bool update(float);
-
-  virtual ~Collide() {}
-  Collide() {}
-  NOCPYASS(Collide)
-
-private:
-
-  void checkNodes(a::NodeList*, a::Node*);
-  void check(a::Node*, a::Node*);
+  Collide(a::Engine *e)
+  : System(e)
+  {}
 
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, fauxNode)
   DECL_PTR(a::NodeList, ballNode)
   DECL_PTR(a::NodeList, arenaNode)
+
+private:
+
+  void checkNodes(a::NodeList*);
+  void check(a::Node*, Ball*);
 
 };
 

@@ -13,7 +13,6 @@
 #define __GNODES_H__
 
 #include "ash/NodeRego.h"
-#include "ash/Node.h"
 #include "CObjs.h"
 
 NS_BEGIN(pong)
@@ -22,19 +21,19 @@ NS_BEGIN(pong)
 //
 struct CC_DLL BallNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/BallNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         {"ball", "n/Ball" }
     });
   }
+
+  MDECL_NFAC_TPID( "n/BallNode")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL FauxPaddleNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/FauxPaddleNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         {"lastpos", "n/Position" },
@@ -42,13 +41,14 @@ struct CC_DLL FauxPaddleNode : public a::NodeFactory {
         {"faux", "n/Faux" }
     });
   }
+
+  MDECL_NFAC_TPID( "n/FauxPaddleNode")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL PaddleNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/PaddleNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
       {"lastpos" , "n/Position" },
@@ -56,19 +56,22 @@ struct CC_DLL PaddleNode : public a::NodeFactory {
       {"paddle" , "n/Paddle" }
     });
   }
+
+  MDECL_NFAC_TPID( "n/PaddleNode")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ArenaNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/ArenaNode"; }
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
       {"players" , "n/Players" },
-      {"slots", "n/Slots"}
+      {"slots", "n/GVars"}
     });
   }
+
+  MDECL_NFAC_TPID( "n/ArenaNode")
 };
 
 

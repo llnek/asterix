@@ -13,7 +13,7 @@
 #define __EFACTORY_H__
 
 #include "ash/Engine.h"
-#include "n/CObjs.h"
+#include "n/GNodes.h"
 
 NS_BEGIN(pong)
 
@@ -21,14 +21,15 @@ NS_BEGIN(pong)
 //
 struct CC_DLL GEngine : public a::Engine {
 
-  a::Entity* mkOnePaddle(int cur, const Player&, float x, float y);
-  a::Entity* mkBall(float x, float y);
-  a::Entity* mkArena(int cur);
+  GEngine(int pnum, const Player&, const Player&);
+  virtual void initEntities();
+  virtual void initSystems();
 
-  virtual void ignite();
-  virtual ~GEngine() {}
-  GEngine() {}
-  NOCPYASS(GEngine)
+protected:
+  void mkOnePaddle(const Player&);
+  void mkBall();
+  void mkArena();
+  s_arr<Player,3> parr;
 };
 
 NS_END(pong)

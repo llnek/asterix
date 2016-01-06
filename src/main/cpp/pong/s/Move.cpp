@@ -13,30 +13,30 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
-#include "n/GNodes.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::addToEngine(not_null<a::Engine*> e) {
+void Move::preamble() {
   FauxPaddleNode f;
   PaddleNode p;
   BallNode b;
   ArenaNode a;
 
-  fauxNode= e->getNodeList(f.typeId());
-  paddleNode= e->getNodeList(p.typeId());
-  ballNode= e->getNodeList(b.typeId());
-  arenaNode= e->getNodeList(a.typeId());
+  fauxNode= engine->getNodeList(f.typeId());
+  paddleNode= engine->getNodeList(p.typeId());
+  ballNode= engine->getNodeList(b.typeId());
+  arenaNode= engine->getNodeList(a.typeId());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-    auto ps = CC_GNF(Players,arenaNode->head,"players");
+    auto ps = CC_GNLF(Players,arenaNode,"players");
 
     for (auto node= paddleNode->head; node; node=node->next) {
       doit(node, dt);
@@ -46,15 +46,15 @@ bool Move::update(float dt) {
       auto p = CC_GNF(Paddle,node,"paddle");
       auto &y= ps->parr[p->pnum];
       if (y.category == CC_CSV(c::Integer, "BOT")) {
-        moveRobot(node, ballNode->head, dt);
+        moveRobot(node, dt);
       }
       else
       if (y.category == CC_CSV(c::Integer, "NET")) {
-        simuMove(node, ballNode->head, dt);
+        simuMove(node, dt);
       }
     }
 
-    processBall(ballNode->head, dt);
+    processBall(dt);
   }
 
   return true;
@@ -62,14 +62,14 @@ bool Move::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
+void Move::simuMove(a::Node *node, float dt) {
   auto lastpos= CC_GNF(Position, node, "lastpos");
   auto paddle = CC_GNF(Paddle,node,"paddle");
   auto cfg = MGMS()->getLCfg()->getValue();
+  auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto world= MGMS()->getEnclosureBox();
   auto hw2 = cx::halfHW(paddle->sprite);
   auto pos = paddle->pos();
-  auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   f::MaybeFloat x;
   f::MaybeFloat y;
 
@@ -102,9 +102,9 @@ void Move::simuMove(a::Node *node, a::Node *bnode, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 //TODO: better AI please
-void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
+void Move::moveRobot(a::Node *node, float dt) {
+  auto ball = CC_GNLF(Ball,ballNode,"ball");
   auto pad= CC_GNF(Paddle,node, "paddle");
-  auto ball = CC_GNF(Ball,bnode,"ball");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto bp= ball->pos();
@@ -147,9 +147,9 @@ void Move::moveRobot(a::Node *node, a::Node *bnode, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::processBall(a::Node *node, float dt) {
+void Move::processBall(float dt) {
+  auto b= CC_GNLF(Ball, ballNode, "ball");
   auto world= MGMS()->getEnclosureBox();
-  auto b= CC_GNF(Ball, node, "ball");
   c::Vec2 outVel;
   c::Vec2 outPos;
   auto rc= cx::traceEnclosure(
@@ -222,7 +222,7 @@ void Move::doit(a::Node *node, float dt) {
   }
   last->lastP=nv;
   if (ld != dir) {
-    if (MGMS()->isOnline()) { notifyServer(node,dir); }
+    notifyServer(node,dir);
     last->lastDir=dir;
   }
 }
@@ -230,11 +230,11 @@ void Move::doit(a::Node *node, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::notifyServer(a::Node *node, int direction) {
-  auto ps= CC_GNF(Players,arenaNode->head,"players");
+  auto ps= CC_GNLF(Players,arenaNode,"players");
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto pad = CC_GNF(Paddle, node, "paddle");
   auto p2= ps->parr[2].color;
   auto p1= ps->parr[1].color;
-  auto ss= CC_GNF(Slots,arenaNode->head,"slots");
-  auto pad = CC_GNF(Paddle, node, "paddle");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto pnum= ss->pnum;
   auto vv = direction * JS_FLOAT(cfg["PADDLE+SPEED"]);
@@ -249,7 +249,8 @@ void Move::notifyServer(a::Node *node, int direction) {
           {"pv", vv } }) }
   });
 
-  ws::netSend(MGMS()->wsock(),
+  ws::netSend(
+      MGMS()->wsock(),
       ws::MType::SESSION,
       ws::EType::PLAY_MOVE,
       body);

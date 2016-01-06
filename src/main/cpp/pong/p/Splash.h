@@ -21,12 +21,8 @@ NS_BEGIN(pong)
 struct CC_DLL Splash : public f::XScene {
 
   STATIC_REIFY_SCENE(Splash)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
-  virtual ~Splash() {}
-  Splash() {}
-  NOCPYASS(Splash)
 };
 
 

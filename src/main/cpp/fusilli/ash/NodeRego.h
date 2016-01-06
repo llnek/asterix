@@ -12,7 +12,7 @@
 #if !defined(__NODEREGO_H__)
 #define __NODEREGO_H__
 
-#include "Ash.h"
+#include "Node.h"
 NS_BEGIN(ash)
 
 #define MDECL_NFAC_TPID(x) \

@@ -14,6 +14,7 @@
 #include "x2d/XLayer.h"
 #include "Splash.h"
 #include "MMenu.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pong)
 
@@ -24,11 +25,9 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL UILayer : public f::XLayer {
   STATIC_REIFY_LAYER(UILayer)
-  virtual ~UILayer() {}
-  UILayer() {}
+  MDECL_DECORATE()
+protected:
   void onPlay(c::Ref*);
-  NOCPYASS(UILayer)
-  virtual void decorate();
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,9 +37,9 @@ void UILayer::decorate() {
   auto wb = cx::visBox();
 
   centerImage("game.bg");
+  incIndexZ();
 
-  addFrame("title.png",
-      c::ccp(cw.x, wb.top * 0.9f), lastZ, ++lastTag);
+  addFrame("title.png", c::ccp(cw.x, wb.top * 0.9f));
 
   auto b = cx::reifyMenuBtn("play.png");
   auto menu = cx::mkMenu(b);
@@ -53,13 +52,8 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay(c::Ref*) {
-  auto f = [=]() {
-    cx::runScene(
-        XCFG()->prelude(), getDelay());
-  };
-
-  cx::runScene(
-      MMenu::reify(mc_new_1(MCX,f)), getDelay());
+  auto f = [=]() { cx::runSceneEx( XCFG()->prelude()); };
+  cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
 }
 
 END_NS_UNAMED()

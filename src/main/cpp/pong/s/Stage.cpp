@@ -19,36 +19,33 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stage::addToEngine(not_null<a::Engine*> e) {
+void Stage::preamble() {
   FauxPaddleNode f;
   PaddleNode p;
   BallNode b;
   ArenaNode a;
 
-  fauxNode = e->getNodeList(f.typeId());
-  ballNode=e->getNodeList(b.typeId());
-  arenaNode = e->getNodeList(a.typeId());
-  paddleNode=e->getNodeList(p.typeId());
+  fauxNode = engine->getNodeList(f.typeId());
+  ballNode=engine->getNodeList(b.typeId());
+  arenaNode = engine->getNodeList(a.typeId());
+  paddleNode=engine->getNodeList(p.typeId());
+
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
-  if (MGMS()->isLive()) {
-    if (! inited) {
-      onceOnly();
-    }
-  }
-    return true;
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stage::onceOnly() {
-  auto slots= CC_GNF(Slots, arenaNode->head, "slots");
+  auto ss= CC_GNLF(GVars, arenaNode, "slots");
   auto world = MGMS()->getEnclosureBox();
-  auto ps = initPaddleSize();
-  auto bs = initBallSize();
+  auto ps= cx::calcSize("red_paddle.png");
+  auto bs= cx::calcSize("pongball.png");
   auto cw= cx::center();
 
   // position of paddles
@@ -59,45 +56,34 @@ void Stage::onceOnly() {
   auto p2x = world.right - bs.width - HWZ(ps);
   auto p1x = world.left + bs.width + HWZ(ps);
 
-  slots->pz= c::Size( ps.width, ps.height);
-  slots->bz= c::Size( bs.width, bs.height);
-  slots->bp= c::Vec2( cw.x, cw.y);
+  ss->pz= c::Size( ps.width, ps.height);
+  ss->bz= c::Size( bs.width, bs.height);
+  ss->bp= c::Vec2( cw.x, cw.y);
 
   if (cx::isPortrait()) {
-    slots->p1p= c::Vec2(cw.x, p1y);
-    slots->p2p= c::Vec2(cw.x, p2y);
+    ss->p1p= c::Vec2(cw.x, p1y);
+    ss->p2p= c::Vec2(cw.x, p2y);
   } else {
-    slots->p1p= c::Vec2(p1x, cw.y);
-    slots->p2p= c::Vec2(p2x, cw.y);
+    ss->p1p= c::Vec2(p1x, cw.y);
+    ss->p2p= c::Vec2(p2x, cw.y);
   }
 
-  CC_GNF(Ball,ballNode->head, "ball")->inflate(slots->bp.x, slots->bp.y);
-  initPaddles(paddleNode, slots);
-  initPaddles(fauxNode, slots);
+  auto ball=CC_GNLF(Ball,ballNode, "ball");
+  ball->inflate(ss->bp.x, ss->bp.y);
 
-  inited=true;
+  initPaddles(paddleNode);
+  initPaddles(fauxNode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Stage::initPaddles(a::NodeList *nl, Slots *slots) {
+void Stage::initPaddles(a::NodeList *nl) {
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
    for (auto node=nl->head;node;node=node->next) {
     auto p= CC_GNF(Paddle,node,"paddle");
-    if (p->pnum == 2) { p->inflate(slots->p2p.x, slots->p2p.y); }
-    if (p->pnum == 1) { p->inflate(slots->p1p.x, slots->p1p.y); }
+    if (p->pnum == 2) { p->inflate(ss->p2p.x, ss->p2p.y); }
+    if (p->pnum == 1) { p->inflate(ss->p1p.x, ss->p1p.y); }
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const c::Size Stage::initPaddleSize() {
-  return cx::calcSize("red_paddle.png");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const c::Size Stage::initBallSize() {
-  return cx::calcSize("pongball.png");
 }
 
 

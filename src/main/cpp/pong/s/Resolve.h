@@ -13,35 +13,33 @@
 #define __RESOLVE_H__
 
 #include "ash/System.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Resolve : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Resolve"; }
+  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_TPID( "s/Resolve")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Resolve; }
-
-  virtual bool update(float);
-
-  virtual ~Resolve() {}
-  Resolve() {}
-  NOCPYASS(Resolve)
-
-private:
-
-  int checkNodes(a::NodeList*, a::Node*);
-  void onWin(int);
-  int check(a::Node* , a::Node* );
+  Resolve(a::Engine *e)
+  : System(e)
+  {}
 
   DECL_PTR(a::NodeList, paddleNode);
   DECL_PTR(a::NodeList, ballNode);
   DECL_PTR(a::NodeList, fauxNode);
   DECL_PTR(a::NodeList, arenaNode);
+
+private:
+
+  int checkNodes(a::NodeList*);
+  void onWin(int);
+  int check(a::Node*);
+
 };
 
 

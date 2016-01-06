@@ -18,6 +18,7 @@
 #include "Game.h"
 #include "MMenu.h"
 #include "s/utils.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
@@ -31,28 +32,25 @@ const int PASSTAG= (int) 'p';
 //
 struct CC_DLL UILayer : public f::XLayer {
 
-  void networkEvent(ws::OdinEvent*);
-  void sessionEvent(ws::OdinEvent*);
-  void odinEvent(ws::OdinEvent*);
-
-  void onPlayReply(ws::OdinEvent*);
-  void showWaitOthers();
-  void onStart(ws::OdinEvent*);
-
-  void onCancel(c::Ref* );
-  void onLogin(c::Ref*);
+  STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 
   DECL_PTR(ws::OdinIO, odin)
   DECL_IZ(player)
 
-  virtual void decorate();
   virtual ~UILayer() {
     ws::disconnect(odin);
   }
-  UILayer() {}
 
-  NOCPYASS(UILayer)
-  STATIC_REIFY_LAYER(UILayer)
+protected:
+  void networkEvent(ws::OdinEvent*);
+  void sessionEvent(ws::OdinEvent*);
+  void odinEvent(ws::OdinEvent*);
+  void onPlayReply(ws::OdinEvent*);
+  void showWaitOthers();
+  void onStart(ws::OdinEvent*);
+  void onCancel(c::Ref* );
+  void onLogin(c::Ref*);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,14 +67,14 @@ void UILayer::showWaitOthers() {
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f * 255);
-  addItem(qn,lastZ,++lastTag);
+  addItem(qn);
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onCancel));
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu,lastZ,++lastTag);
+  addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,13 +94,10 @@ void UILayer::onStart(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref*) {
-  auto f= [=]() {
-      cx::runScene(
-          XCFG()->prelude(), getDelay()); };
+  auto f= [=]() { cx::runSceneEx( XCFG()->prelude()); };
   ws::disconnect(odin);
   SNPTR(odin)
-  cx::runScene(
-      MMenu::reify(mc_new_1(MCX, f)), getDelay());
+  cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,20 +152,19 @@ void UILayer::odinEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onLogin(c::Ref* ) {
-  auto u= getChildByTag( USERTAG);
-  auto p= getChildByTag( PASSTAG);
-  auto uid= SCAST(c::ui::TextField*,u)->getString();
-  auto pwd= SCAST(c::ui::TextField*,p)->getString();
-
-  auto wsurl = XCFG()->getWSUrl();
-  auto game = XCFG()->getGameId();
+  auto u= (c::ui::TextField*) getChildByTag( USERTAG);
+  auto p= (c::ui::TextField*) getChildByTag( PASSTAG);
+  auto uid= u->getString();
+  auto pwd= p->getString();
 
   if (uid.length() > 0 && pwd.length() > 0) {
-    this->odin= ws::reifyPlayRequest(game, uid, pwd);
+    this->odin= ws::reifyPlayRequest(
+        XCFG()->getGameId(),
+        uid, pwd);
     this->odin->listen([=](ws::OdinEvent *e) {
         this->odinEvent(e);
         });
-    ws::connect(odin, wsurl);
+    ws::connect(odin, XCFG()->getWSUrl());
   }
 }
 
@@ -190,7 +184,7 @@ void UILayer::decorate() {
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f*255);
-  addItem(qn,lastZ,++lastTag);
+  addItem(qn);
 
   // editbox for user
   auto uid = c::ui::TextField::create();
@@ -202,8 +196,7 @@ void UILayer::decorate() {
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  tag= USERTAG;
-  addItem(uid, lastZ, tag);
+  addItem(uid, lastZ, USERTAG);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -215,8 +208,7 @@ void UILayer::decorate() {
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  tag= PASSTAG;
-  addItem(pwd, lastZ, tag);
+  addItem(pwd, lastZ, PASSTAG);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
@@ -230,7 +222,7 @@ void UILayer::decorate() {
       CC_MENU_SELECTOR(UILayer::onCancel));
 
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu,lastZ,++lastTag);
+  addItem(menu);
 }
 
 END_NS_UNAMED()

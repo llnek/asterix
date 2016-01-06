@@ -13,6 +13,7 @@
 #define __MOVE_H__
 
 #include "ash/System.h"
+#include "EFactory.h"
 
 NS_BEGIN(pong)
 
@@ -20,33 +21,31 @@ NS_BEGIN(pong)
 //
 struct CC_DLL Move : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Move"; }
+  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_TPID( "s/Move")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Move; }
-
-  virtual bool update(float dt);
-
-  virtual ~Move() {}
-  Move() {}
-  NOCPYASS(Move)
-
-private:
-
-  void simuMove(a::Node*, a::Node*, float);
-  void moveRobot(a::Node*, a::Node*, float);
-  void processBall(a::Node*, float);
-  void doit(a::Node*, float);
-  void notifyServer(a::Node*, int);
-  void clamp(c::Sprite*);
+  Move(a::Engine *e)
+  : System(e)
+  {}
 
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, fauxNode)
   DECL_PTR(a::NodeList, ballNode)
   DECL_PTR(a::NodeList, arenaNode)
 
+private:
+
+  void simuMove(a::Node*, float);
+  void moveRobot(a::Node*,  float);
+  void processBall( float);
+  void doit(a::Node*, float);
+  void notifyServer(a::Node*, int);
+  void clamp(c::Sprite*);
+
 };
+
 
 NS_END(pong)
 #endif

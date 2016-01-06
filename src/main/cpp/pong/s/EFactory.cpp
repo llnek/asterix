@@ -24,32 +24,54 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::ignite() {
-  this->regoSystem(mc_new(Resolve));
-  this->regoSystem(mc_new(Collide));
-  this->regoSystem(mc_new(Move));
-  this->regoSystem(mc_new(Net));
-  this->regoSystem(mc_new(Stage));
+GEngine::GEngine(int cur, const Player &p1, const Player &p2)  {
+  parr[2]= p2;
+  parr[1]= p1;
+  parr[0].pnum=cur;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* GEngine::mkArena(int cur) {
+void GEngine::initSystems() {
+  regoSystem(mc_new_1(Resolve, this));
+  regoSystem(mc_new_1(Collide, this));
+  regoSystem(mc_new_1(Move, this));
+  regoSystem(mc_new_1(Net, this));
+  regoSystem(mc_new_1(Stage, this));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initEntities() {
+  auto cur= parr[0].pnum;
+
+  mkOnePaddle(parr[2]);
+  mkArena();
+  mkBall();
+  mkOnePaddle(parr[1]);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::mkArena() {
   auto ent= this->reifyEntity("*");
-  auto ss= mc_new(Slots);
+  auto ps= mc_new(Players);
+  auto ss= mc_new(GVars);
 
-  ent->checkin(mc_new(Players));
-  ent->checkin(ss);
-
+  ss->pnum= parr[0].pnum;
   ss->poked=false;
-  ss->pnum=cur;
 
-  return ent;
+  ps->parr[2]= parr[2];
+  ps->parr[1]= parr[1];
+  ps->parr[0]= parr[0];
+
+  ent->checkin(ps);
+  ent->checkin(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* GEngine::mkBall(float x, float y) {
+void GEngine::mkBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["BALL+SPEED"]);
   auto ent = this->reifyEntity("*");
@@ -65,22 +87,19 @@ a::Entity* GEngine::mkBall(float x, float y) {
   auto b= mc_new_2(Ball, sp, sd);
 
   MGML()->addAtlasItem("game-pics", sp);
-  sp->setPosition(x,y);
   b->vel.x=vx;
   b->vel.y=vy;
   ent->checkin(b);
-
-  return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* GEngine::mkOnePaddle(
-    int cur, const Player &p, float x, float y) {
+void GEngine::mkOnePaddle( const Player &p) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto ent = this->reifyEntity("*");
+  auto cur= parr[0].pnum;
   float lp;
   sstr res;
 
@@ -91,13 +110,11 @@ a::Entity* GEngine::mkOnePaddle(
   }
 
   auto sp = cx::reifySprite(res);
-  sp->setPosition(x, y);
 
   ent->checkin(mc_new_3(Paddle, sp, p.pnum, sd));
   ent->checkin(mc_new_1(Player, p));
   MGML()->addAtlasItem("game-pics", sp);
 
-  if (cx::isPortrait()) { lp = x; } else { lp= y; }
   ent->checkin(mc_new_1(Position, lp));
 
   if (MGMS()->isOnline() && cur != p.pnum) {
@@ -112,7 +129,6 @@ a::Entity* GEngine::mkOnePaddle(
     ent->checkin(mc_new(Motion));
   }
 
-  return ent;
 }
 
 

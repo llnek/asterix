@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "Game.h"
 #include "End.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pong)
 
@@ -21,18 +22,14 @@ NS_BEGIN(pong)
 //
 void ELayer::onReplay(c::Ref*) {
   auto x= (GCXX*) getSceneX()->emitCtx();
-  auto m= MGMS()->getMode();
-  cx::runScene(
-      Game::reify(x),
-      getSceneX()->getDelay());
+  x->count++;
+  cx::runSceneEx( Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(),
-      getSceneX()->getDelay());
+  cx::runSceneEx( XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////

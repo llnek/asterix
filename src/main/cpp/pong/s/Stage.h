@@ -13,7 +13,7 @@
 #define __STAGE_H__
 
 #include "ash/System.h"
-#include "n/GNodes.h"
+#include "EFactory.h"
 
 NS_BEGIN(pong)
 
@@ -21,28 +21,22 @@ NS_BEGIN(pong)
 //
 struct CC_DLL Stage : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Stage"; }
-  virtual int priority() { return a::PreUpdate; }
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float dt);
-
-  virtual ~Stage() {}
-  Stage() {}
-  NOCPYASS(Stage)
-
+  MDECL_SYS_PRIORITY( a::PreUpdate)
+  MDECL_SYS_TPID( "s/Stage")
+  MDECL_SYS_UPDATE()
+  MDECL_SYS_PREAMBLE()
 
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, arenaNode)
   DECL_PTR(a::NodeList, ballNode)
   DECL_PTR(a::NodeList, fauxNode)
-  DECL_BF(inited)
+
+  Stage(a::Engine *e)
+  : System(e)
+  {}
 
 protected:
-
-  void initPaddles(a::NodeList*,Slots*);
-  const c::Size initPaddleSize();
-  const c::Size initBallSize();
+  void initPaddles(a::NodeList*);
   void onceOnly();
 };
 

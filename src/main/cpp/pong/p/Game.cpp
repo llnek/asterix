@@ -13,7 +13,6 @@
 #include "s/EFactory.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
-#include "n/GNodes.h"
 #include "HUD.h"
 #include "Game.h"
 #include "MMenu.h"
@@ -32,34 +31,28 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   void onMotion(f::ComObj*, const c::Vec2&, const c::Vec2&, bool isTouch);
 
-  virtual void onTouchMotion(f::ComObj*,
-      const c::Vec2&, const c::Vec2&);
-
-  virtual void onMouseMotion(f::ComObj*,
-      const c::Vec2&, const c::Vec2&);
-
-  virtual int getIID() { return 2; }
-  virtual void decoUI();
-
+  virtual void onTouchMotion(f::ComObj*, const c::Vec2&, const c::Vec2&);
+  virtual void onMouseMotion(f::ComObj*, const c::Vec2&, const c::Vec2&);
+    virtual void postReify();
   void deco(int pnum,
       const sstr &p1k, const sstr &p1n,
       const sstr &p2k, const sstr &p2n);
 
-  void showMenu();
-  void doDone(int);
-
   void onWinner(const sstr&, int, int );
   void updatePoints(j::json);
+
+  void showMenu();
+  void doDone(int);
 
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, arenaNode)
 
-  virtual ~GLayer() {}
-  GLayer() {}
-  NOCPYASS(GLayer)
-
-  DECL_GETLAYER(HUDLayer,getHUD,3)
+  MDECL_GET_LAYER(HUDLayer,getHUD,3)
   STATIC_REIFY_LAYER(GLayer)
+
+  MDECL_DECORATE()
+  MDECL_GET_IID(2)
+
 };
 /*
   replay() {
@@ -98,24 +91,21 @@ void GLayer::onMotion(f::ComObj *co,
   auto box= MGMS()->getEnclosureBox();
   auto p= SCAST(Paddle*,co);
   auto pos = p->pos();
-  auto pnum=p->pnum;
   auto x= pos.x;
   auto y= pos.y;
 
   if (cx::isPortrait()) {
-    if (isTouch) { x = pos.x + delta.x; }
-    else { x=loc.x; }
-    /*
-    if ((pnum == 2 && loc.y > pos.y) ||
-        (pnum == 1 && loc.y < pos.y)) {
-    }*/
+    if (isTouch) {
+      x = pos.x + delta.x;
+    } else {
+      x=loc.x;
+    }
   } else {
-    if (isTouch) { y = pos.y + delta.y; }
-    else { y=loc.y; }
-    /*
-    if ((pnum == 2 && loc.x > pos.x) ||
-        (pnum == 1 && loc.x < pos.x)) {
-    }*/
+    if (isTouch) {
+      y = pos.y + delta.y;
+    } else {
+      y=loc.y;
+    }
   }
 
   auto cur= cx::clamp(c::ccp(x,y), box);
@@ -124,21 +114,17 @@ void GLayer::onMotion(f::ComObj *co,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decoUI() {
-
-  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+void GLayer::decorate() {
 
   centerImage("game.bg");
+  incIndexZ();
 
-  if (atlases.empty()) {
-    regoAtlas("game-pics");
-    regoAtlas("lang-pics");
-    incIndexZ();
-  }
+  regoAtlas("game-pics");
+  regoAtlas("lang-pics");
 
   auto ctx = (GCXX*) MGMS()->getCtx();
-  auto ppids = ctx->data["ppids"];
   auto pnum= JS_INT(ctx->data["pnum"]);
+  auto ppids = ctx->data["ppids"];
   sstr p2k;
   sstr p1k;
   sstr p2n;
@@ -172,11 +158,16 @@ void GLayer::decoUI() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
+void GLayer::deco(int cur,
+    const sstr &p1k, const sstr &p1n,
     const sstr &p2k, const sstr &p2n) {
-  auto e= mc_new(GEngine);
-  auto a= e->mkArena(cur);
-  int p1cat,p2cat;
+
+  auto p1cat= CC_CSV(c::Integer, "HUMAN");
+  auto p2cat= CC_CSV(c::Integer, "BOT");
+  auto vx=CC_CSV(c::Integer, "CV_X");
+  auto vo=CC_CSV(c::Integer, "CV_O");
+  auto p1c= CC_CSS("P1_COLOR");
+  auto p2c= CC_CSS("P2_COLOR");
 
   switch (MGMS()->getMode()) {
     case f::GMode::NET:
@@ -184,8 +175,6 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
       p1cat = CC_CSV(c::Integer, "NETP");
     break;
     case f::GMode::ONE:
-      p1cat= CC_CSV(c::Integer, "HUMAN");
-      p2cat= CC_CSV(c::Integer, "BOT");
     break;
     case f::GMode::TWO:
       p2cat= CC_CSV(c::Integer, "HUMAN");
@@ -193,31 +182,27 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
     break;
   }
 
-  Player p1(p1cat, CC_CSV(c::Integer, "CV_X"), 1, CC_CSS("P1_COLOR"));
-  Player p2(p2cat, CC_CSV(c::Integer, "CV_O"), 2, CC_CSS("P2_COLOR"));
-  auto ps= (Players*) a->get("n/Players");
+  Player p1(p1cat, vx, 1, p1c);
+  Player p2(p2cat, vo, 2, p2c);
 
   p2.setName(p2k,p2n);
   p1.setName(p1k,p1n);
-  ps->parr[2]=p2;
-  ps->parr[1]=p1;
 
-  e->mkOnePaddle(cur, p2, 0, 0);
-  e->mkBall(0,0);
-  e->mkOnePaddle(cur, p1, 0, 0);
-  e->forceSync();
+  this->engine= mc_new_3(GEngine, cur, p1, p2);
+  getHUD()->regoPlayers(p1,p2);
+}
 
-  this->paddleNode= e->getNodeList(PaddleNode().typeId());
-  this->arenaNode= e->getNodeList(ArenaNode().typeId());
-  this->engine=e;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::postReify() {
+  this->paddleNode= engine->getNodeList(PaddleNode().typeId());
+  this->arenaNode= engine->getNodeList(ArenaNode().typeId());
 
   //add the motionables
   for (auto n=paddleNode->head;n;n=n->next) {
     auto p= CC_GNF(Paddle,n,"paddle");
     this->motionees.push_back(p);
   }
-
-  getHUD()->regoPlayers(p1,p2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -257,7 +242,6 @@ END_NS_UNAMED()
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
   auto y = SCAST(GLayer*, getLayer(2));
-  auto msg= (j::json*) m;
 
   if (topic == "/hud/showmenu") {
     y->showMenu();
@@ -275,6 +259,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
   else
   if (topic == "/hud/score/update") {
+    auto msg= (j::json*) m;
     y->onWinner(
         JS_STR(msg->operator[]("color")),
         JS_INT(msg->operator[]("pnum")),
@@ -282,10 +267,12 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
   else
   if (topic == "/hud/score/sync") {
+    auto msg= (j::json*) m;
     y->updatePoints(msg->operator[]("points"));
   }
   else
   if (topic == "/hud/end") {
+    auto msg= (j::json*) m;
     y->doDone(
         //JS_STR(msg->operator[]("winner")),
         JS_INT(msg->operator[]("winner")));
