@@ -19,26 +19,21 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL HUDLayer : public f::XLayer {
-public:
 
   STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
-  c::Label *scoreLabel= nullptr;
-  f::XLives *lives=nullptr;
-  int score=0;
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(f::XLives, lives)
+  DECL_IZ(score)
 
-  virtual ~HUDLayer() {}
-  HUDLayer() {}
-  NOCPYASS(HUDLayer)
-
-  virtual int getIID() { return 3; }
   void resetAsNew();
   void reset();
 
   bool reduceLives(int =1);
   void updateScore(int);
 
-  virtual void decorate();
 };
 
 

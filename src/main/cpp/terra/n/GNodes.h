@@ -13,7 +13,6 @@
 #define __GNODES_H__
 
 #include "ash/NodeRego.h"
-#include "ash/Node.h"
 #include "CObjs.h"
 NS_BEGIN(terra)
 
@@ -21,7 +20,7 @@ NS_BEGIN(terra)
 //
 struct CC_DLL ShipNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/ShipNode"; }
+  MDECL_NFAC_TPID( "n/ShipNode")
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
@@ -30,9 +29,19 @@ struct CC_DLL ShipNode : public a::NodeFactory {
     });
   }
 
-  virtual ~ShipNode() {}
-  ShipNode() {}
-  NOCPYASS(ShipNode)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ArenaNode : public a::NodeFactory {
+
+  MDECL_NFAC_TPID( "n/ArenaNode")
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {  "slots",  "n/GVars" }
+    });
+  }
 
 };
 

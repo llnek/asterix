@@ -16,39 +16,34 @@
 #include "Game.h"
 #include "x2d/XLib.h"
 #include "s/utils.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
-
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL UILayer : public f::XLayer {
-public:
 
   STATIC_REIFY_LAYER(UILayer)
-
-  virtual void decorate();
-  virtual ~UILayer() {}
-  UILayer() {}
-  NOCPYASS(UILayer)
+  MDECL_DECORATE()
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
-  auto tt= cx::reifyBmfLabel( "font.JellyBelly",
-      XCFG()->getL10NStr("mmenu"));
+  auto tt= cx::reifyBmfLabel( "font.JellyBelly", gets("mmenu"));
   auto tile = CC_CSV(c::Integer, "TILE");
+  auto c= XCFG()->getColor("text");
   auto wb= cx::visBox();
   auto cw= cx::center();
-  auto c= XCFG()->getColor("text");
 
   centerImage("gui.mmenus.menu.bg");
+  incIndexZ();
 
   tt->setPosition( cw.x, wb.top * 0.9f);
-  tt->setColor(c);
   tt->setScale(XCFG()->getScale());
+  tt->setColor(c);
   addItem(tt);
 
   auto ctx = (MCX*) getSceneX()->getCtx();
@@ -56,9 +51,8 @@ void UILayer::decorate() {
   auto menu= cx::mkMenu(b);
 
   b->setCallback([=](c::Ref*) {
-      cx::runScene(Game::reify(mc_new(f::GCX)),
-          CC_CSV(c::Float,"SCENE_DELAY"));
-      });
+      cx::runSceneEx(Game::reify(mc_new(f::GCX)));
+  });
   menu->setPosition(cw);
   addItem(menu);
 

@@ -20,26 +20,21 @@ NS_BEGIN(terra)
 struct CC_DLL Game : public f::GameScene {
 
   virtual void sendMsgEx(const MsgTopic &topic, void *msg);
-  virtual f::GameLayer* getGLayer();
-
   virtual const f::Box4 getEnclosureBox();
-  virtual void decorate();
+
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
+  MDECL_GLAYER(2)
+
+  DECL_PTR(f::ComObj, backSkyRe)
+  DECL_PTR(f::ComObj, backSky)
+  DECL_TD(c::Size, backSkyDim)
 
   virtual bool isLive();
   virtual void stop();
   virtual void play();
 
-  STATIC_REIFY_SCENE_CTX(Game)
-
-  virtual ~Game() {}
-  Game() {}
-  NOCPYASS(Game)
-
-  f::ComObj* backSkyRe=nullptr;
-  f::ComObj* backSky=nullptr;
-  c::Size backSkyDim;
 };
-
 
 NS_END(terra)
 #endif

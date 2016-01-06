@@ -16,6 +16,7 @@
 #include "core/ComObj.h"
 #include "core/CCSX.h"
 #include "s/utils.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
@@ -23,66 +24,67 @@ NS_BEGIN(terra)
 //
 struct CC_DLL Missile : public f::ComObj {
 
-  Missile(not_null<c::Sprite*> s, Attacks m = Attacks::NORMAL)
+  DECL_TV(Attacks, attackMode, Attacks::NORMAL)
+  MDECL_COMP_TPID( "n/Missile")
+
+  Missile(
+      not_null<c::Sprite*> s,
+      Attacks m = Attacks::NORMAL)
     : ComObj(s,1,0) {
     attackMode = m;
-    vel.x= 0;
+    speed.y= CC_CSV(c::Float, "MISSILE_SPEED");
+    speed.x= 0;
     vel.y= CC_CSV(c::Float, "MISSILE_SPEED");
+    vel.x= 0;
   }
 
-  virtual const a::COMType typeId() { return "n/Missile"; }
-  virtual ~Missile() {}
-  NODFT(Missile)
-  NOCPYASS(Missile)
-
-  Attacks attackMode=Attacks::NORMAL;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Bomb : public f::ComObj {
 
-  Bomb(not_null<c::Sprite*> s, Attacks m = Attacks::NORMAL)
+  DECL_TV(Attacks, attackMode, Attacks::NORMAL)
+  MDECL_COMP_TPID( "n/Bomb")
+
+  Bomb(
+      not_null<c::Sprite*> s,
+      Attacks m = Attacks::NORMAL)
     : ComObj(s,1,0) {
     attackMode = m;
+    speed.y= - CC_CSV(c::Float, "BOMB_SPEED");
+    speed.x= 0;
     vel.x= 0;
     vel.y= - CC_CSV(c::Float, "BOMB_SPEED");
   }
 
-  virtual const a::COMType typeId() { return "n/Bomb"; }
-  virtual ~Bomb() {}
-  NODFT(Bomb)
-  NOCPYASS(Bomb)
-
-  Attacks attackMode=Attacks::NORMAL;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Enemy : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Enemy"; }
+  DECL_TD(EnemyType, enemyType)
+  DECL_FZ(delayTime)
+  MDECL_COMP_TPID( "n/Enemy")
 
-  Enemy(not_null<c::Sprite*> s, const EnemyType &et)
+  Enemy(
+      not_null<c::Sprite*> s,
+      const EnemyType &et)
     : ComObj(s, et.HP, et.scoreValue) {
     delayTime= 1.2f * c::rand_0_1() + 1.0f;
     enemyType= et;
   }
 
-  EnemyType enemyType;
-  float delayTime= 0;
-  float speed=0;
-
-  virtual ~Enemy() {}
-  NODFT(Enemy)
-  NOCPYASS(Enemy)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ship : public f::ComObj {
 
-  virtual const a::COMType typeId() { return "n/Ship"; }
+  DECL_PTR(c::Sprite, bornSprite)
+  DECL_BF(canBeAttack)
+  MDECL_COMP_TPID( "n/Ship")
 
   Ship(not_null<c::Sprite*> s,
        not_null<c::Sprite*> x, int health=5)
@@ -90,51 +92,39 @@ struct CC_DLL Ship : public f::ComObj {
     bornSprite = x;
   }
 
-  c::Sprite *bornSprite=nullptr;
-  bool canBeAttack=false;
-
-  virtual ~Ship() {}
-  NODFT(Ship)
-  NOCPYASS(Ship)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Motion : public a::Component {
 
-  virtual const a::COMType typeId() { return "n/Motion"; }
+  MDECL_COMP_TPID( "n/Motion")
 
-  virtual ~Motion() {}
-  Motion() {}
-  NOCPYASS(Motion)
-
-  bool right=false;
-  bool left=false;
-  bool down=false;
-  bool up=false;
+  DECL_BF(right)
+  DECL_BF(left)
+  DECL_BF(down)
+  DECL_BF(up)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Spark : public f::ComObj {
 
-  Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
+  DECL_TV(float, duration, 0.7f)
+  DECL_TV(float, scale, 1.2f)
+  DECL_PTR(c::Sprite, sprite2)
+  MDECL_COMP_TPID( "n/Spark")
+
+  Spark(
+      not_null<c::Sprite*> sp1,
+      not_null<c::Sprite*> sp2)
     : ComObj(sp1,1,0) {
     sprite2= sp2;
   }
 
-  virtual const a::COMType typeId() { return "n/Spark"; }
-  virtual ~Spark() {}
-  NODFT(Spark)
-  NOCPYASS(Spark)
-
-  c::Sprite *sprite2=nullptr;
-  float duration=0.7f;
-  float scale=1.2f;
-
   virtual void inflate(float x, float y) {
 
-    auto scaleBy = c::ScaleBy::create(duration,3.0f,3.0f);
+    auto scaleBy = c::ScaleBy::create(duration, 3.0f, 3.0f);
     auto right = c::RotateBy::create(duration, 45.0f);
     auto seq = c::Sequence::createWithTwoActions(
         c::FadeOut::create(duration),
@@ -162,17 +152,12 @@ struct CC_DLL Spark : public f::ComObj {
     sprite2->stopAllActions();
     ComObj::deflate();
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Explosion : public f::ComObj {
-
-  virtual const a::COMType typeId() { return "n/Explosion"; }
-
-  Explosion(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
 
   virtual void inflate(float x, float y) {
     auto ac = c::AnimationCache::getInstance();
@@ -185,20 +170,17 @@ struct CC_DLL Explosion : public f::ComObj {
     ComObj::inflate(x, y);
   }
 
-  virtual ~Explosion() {}
-  NODFT(Explosion)
-  NOCPYASS(Explosion)
+  Explosion(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
+
+  MDECL_COMP_TPID( "n/Explosion")
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL HitEffect : public f::ComObj {
-
-  virtual const a::COMType typeId() { return "n/HitEffect"; }
-
-  HitEffect(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
 
   virtual void inflate(float x, float y) {
     sprite->runAction(c::ScaleBy::create(0.3f, 2.0f, 2.0f));
@@ -210,12 +192,21 @@ struct CC_DLL HitEffect : public f::ComObj {
     ComObj::inflate(x,y);
   }
 
-  float scale=0.75f;
+  HitEffect(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
 
-  virtual ~HitEffect() {}
-  NODFT(HitEffect)
-  NOCPYASS(HitEffect)
+  MDECL_COMP_TPID("n/HitEffect")
+  DECL_TV(float, scale, 0.75f)
+
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GVars : public a::Component {
+  MDECL_COMP_TPID("n/GVars")
+
+}
 
 NS_END(terra)
 #endif

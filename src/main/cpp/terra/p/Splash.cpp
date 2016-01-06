@@ -14,6 +14,7 @@
 #include "Splash.h"
 #include "Menu.h"
 #include "s/utils.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
@@ -23,17 +24,12 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
-
-  c::Sprite *flare = nullptr;
-  c::Sprite *ship = nullptr;
+  MDECL_DECORATE()
 
   virtual void update(float);
-  virtual void decorate();
 
-  virtual ~UILayer() {}
-  UILayer() {}
-  NOCPYASS(UILayer)
-
+  DECL_PTR(c::Sprite, flare)
+  DECL_PTR(c::Sprite, ship)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,19 +45,19 @@ void UILayer::decorate() {
   flare = c::Sprite::create("pics/flare.jpg");
   flare->setVisible(false);
   ship = cx::reifySprite("ship03.png");
-  ship->setPosition( cx::randFloat(wz.size.width), 0);
+  ship->setPosition(
+      cx::randFloat(wz.size.width), 0);
   addChild(flare, 15, 10);
   addChild(ship, 0, 4);
 
-  auto f= [=]() { cx::runScene(XCFG()->prelude()); };
+  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
   auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
   b->setCallback([=](c::Ref*) {
     btnEffect();
     flareEffect(flare, [=]() {
-      cx::runScene(
-          MMenu::reify(mc_new_1(MCX, f)),
-          CC_CSV(c::Float,"SCENE_DELAY"));
+      cx::runSceneEx(
+          MMenu::reify(mc_new_1(MCX, f)));
     });
   });
 
@@ -80,7 +76,8 @@ void UILayer::update(float dt) {
     this->ship->setPosition( cx::randFloat(wz.size.width), 10);
     this->update(0);
   };
-  this->ship->runAction(c::Sequence::create(
+  this->ship->runAction(
+      c::Sequence::create(
         c::MoveBy::create(2, c::ccp(cx::randFloat(wz.size.width),
             wz.size.height + 100)),
         c::CallFunc::create(g), nullptr));
@@ -92,6 +89,7 @@ END_NS_UNAMED()
 void Splash::decorate() {
   UILayer::reify(this);
 }
+
 
 NS_END(terra)
 

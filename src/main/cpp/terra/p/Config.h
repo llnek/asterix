@@ -17,57 +17,33 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Config : public f::XConfig {
-protected:
+struct CC_DLL Config : public f::XConfig {
 
-  void initLevels();
-  void initCsts();
-  void initAssets();
+  virtual const c::Size gameSize() { return c::Size(320,480); }
 
-public:
+  virtual const sstr themeColor() { return "yellow"; }
+
+  virtual void handleResolution(const c::Size& );
 
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_HEIGHT;
   }
 
-  virtual c::Scene* prelude();
-
   virtual const sstr getWSUrl() {
     return "";
   }
 
-  virtual void setGameId(const sstr& ) {
-  }
-
-  virtual void setRoomId(const sstr& ) {
-  }
-
-  virtual const sstr getGameId() {
-    return "";
-  }
-
-  virtual const sstr getRoomId() {
-    return "";
-  }
-
-  virtual void handleResolution(const c::Size& );
+  virtual c::Scene* prelude();
 
   virtual void runOnce();
 
-  virtual ~Config() {}
-  Config() {}
-  NOCPYASS(Config)
-
-  virtual const sstr appKey() { return "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a"; }
-
-  virtual const sstr themeColor() { return "yellow"; }
-
-  virtual const sstr appId() { return "terra"; }
-
-  virtual const c::Size gameSize() { return c::Size(320,480); }
-
   static owner<Config*> reify();
 
+protected:
+  void initLevels();
+  void initCsts();
+  void initAssets();
+  Config() {}
 };
 
 

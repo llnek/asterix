@@ -9,11 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Menu.h"
 #include "HUD.h"
-#include "x2d/GameScene.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
@@ -30,7 +31,7 @@ void HUDLayer::decorate() {
 
   scoreLabel= cx::reifyBmfLabel("font.TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
-  scoreLabel->setScale(12.0f/72.0f);// * XCFG()->getScale());
+  scoreLabel->setScale(12.0f/72.0f);
   scoreLabel->setPosition( wz.size.width - tile - soff,
       wz.size.height - tile - soff - cx::getHeight(scoreLabel));
   addItem(scoreLabel);
@@ -50,7 +51,9 @@ void HUDLayer::decorate() {
       SENDMSG("/hud/showmenu");
       });
   //b->setColor(this->color);
-  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  menu->setPosition(
+      wb.right - tile - hw,
+      wb.bottom + tile  + hh);
   addItem(menu);
 }
 
@@ -80,6 +83,7 @@ void HUDLayer::updateScore(int n) {
   score += n;
   scoreLabel->setString(s::to_string(score));
 }
+
 
 NS_END(terra)
 

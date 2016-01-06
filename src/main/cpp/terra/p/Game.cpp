@@ -32,34 +32,25 @@ BEGIN_NS_UNAMED()
 struct CC_DLL BLayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(BLayer)
+  MDECL_DECORATE()
+};
 
-  virtual ~BLayer() {}
-  BLayer() {}
-  NOCPYASS(BLayer)
-
-  virtual void decorate() {
-    regoAtlas("back-tiles", 1);
-    regoAtlas("game-pics", 0);
-  }
+void BLayer::decorate() {
+  regoAtlas("back-tiles", 1);
+  regoAtlas("game-pics", 0);
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) MGMS()->getLayer(3); }
-
-  virtual void onTouchMoved(c::Touch*, c::Event*);
-  virtual void onMouseMove(c::Event*);
-
-  virtual int getIID() { return 2; }
-  virtual void decorate();
-
+  MDECL_GET_LAYER(HUDLayer,getHUD,3)
   STATIC_REIFY_LAYER(GLayer)
+  MDECL_GET_IID(2)
+  MDECL_DECORATE()
 
-  virtual ~GLayer() {}
-  GLayer() {}
-  NOCPYASS(GLayer)
+  DECL_PTR(f::ComObj, ship)
+  DECL_PTR(EFactory, fac)
 
   void onEarnScore(j::json* );
   void incSecCount(float);
@@ -70,43 +61,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onDone();
   void deco();
 
-  f::ComObj *ship=nullptr;
-  EFactory *fac=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMoved(c::Touch *touch, c::Event*) {
-  auto box= ship->sprite->getBoundingBox();
-  auto pos= touch->getLocationInView();
-  auto bx= MGMS()->getEnclosureBox();
-  auto loc= ship->pos();
-  if (box.containsPoint(pos)) {
-    auto cur= ccpAdd(loc, touch->getDelta());
-    cur= cx::clamp(cur, bx);
-    ship->setPos(cur.x, cur.y);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseMove(c::Event *e) {
-  auto box= ship->sprite->getBoundingBox();
-  auto evt= (c::EventMouse*) e;
-  auto pos= evt->getLocationInView();
-  auto b= evt->getMouseButton();
-  auto bx= MGMS()->getEnclosureBox();
-  if (b == MOUSE_BUTTON_LEFT &&
-      box.containsPoint(pos)) {
-    pos= cx::clamp(pos, bx);
-    ship->setPos(pos.x, pos.y);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 void GLayer::showMenu() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -141,18 +100,17 @@ void GLayer::moveBackTiles(float) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
-  enableListeners();
-  cx::resumeAudio();
-  deco();
-  scheduleUpdate();
+void GLayer::postReify() {
+  MGMS()->reifyPools(s_vec<sstr> {
+      "BackTiles", "BackSkies", "Missiles", "Baddies",
+      "Bombs", "Explosions", "Sparks", "HitEffects"
+  });
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::deco() {
-
-  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+void GLayer::decorate() {
 
   auto a= regoAtlas("explosions");
   a->setBlendFunc(BDFUNC::ADDITIVE);
@@ -161,14 +119,7 @@ void GLayer::deco() {
   a->setBlendFunc(BDFUNC::ADDITIVE);
   incIndexZ();
 
-  MGMS()->reifyPools(s_vec<sstr> {
-      "BackTiles", "BackSkies", "Missiles", "Baddies",
-      "Bombs", "Explosions", "Sparks", "HitEffects"
-  });
-
-  auto e= mc_new(a::Engine);
-  auto d= CC_DICT();
-  auto f= mc_new_2(EFactory, e, d);
+  this->engine= mc_new(GEngine);
 
   d->setObject(CC_INT(0), "secCount");
   f->createShip();

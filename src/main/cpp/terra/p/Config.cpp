@@ -11,10 +11,9 @@
 
 #include "Config.h"
 #include "Splash.h"
+
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////
-//
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Config*> Config::reify() {
@@ -34,6 +33,9 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
+
+  game_id=  "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a";
+  app_id= "terra";
 
   addCst("MISSILE_SPEED", CC_FLOAT(900.f));
   addCst("BOMB_SPEED", CC_FLOAT(200.f));
@@ -121,8 +123,9 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size& rs) {
+  auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 52.0f/256.0f * rs.width /320.0f;
+  scale = 52.0f/256.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////

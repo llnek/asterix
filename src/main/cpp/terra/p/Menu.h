@@ -18,21 +18,16 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MCX : public f::SCTX {
+  DECL_TV(VOIDFN, back, nullptr)
   MCX(VOIDFN cb) { back=cb; }
-  VOIDFN back=nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MMenu : public f::XScene {
-public:
 
   STATIC_REIFY_SCENE_CTX(MMenu)
-
-  virtual void decorate();
-  virtual ~MMenu() {}
-  MMenu() {}
-  NOCPYASS(MMenu)
+  MDECL_DECORATE()
 
 };
 
