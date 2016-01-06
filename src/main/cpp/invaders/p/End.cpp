@@ -21,13 +21,13 @@ NS_BEGIN(invaders)
 //
 void ELayer::onReplay(c::Ref*) {
   auto x= (f::GCX*)getSceneX()->emitCtx();
-  cx::runScene(Game::reify(x), getDelay());
+  cx::runSceneEx(Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runScene( XCFG()->prelude(), getDelay());
+  cx::runSceneEx( XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////
