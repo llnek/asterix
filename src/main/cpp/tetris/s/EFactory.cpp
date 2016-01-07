@@ -10,36 +10,42 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
+#include "Stage.h"
+#include "Generate.h"
+#include "Clear.h"
+#include "Move.h"
+#include "Resolve.h"
 #include "EFactory.h"
-#include "n/CObjs.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-EFactory::EFactory(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
+void GEngine::initEntities() {
+  reifyArena();
+}
 
-  : Factory(e,options) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initSystems() {
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::reifyArena() {
-  auto ent= engine->reifyEntity("*");
-  ent->checkin(mc_new (FilledLines));
-  ent->checkin(mc_new(ShapeShell));
-  ent->checkin(mc_new(BlockGrid));
-  ent->checkin(mc_new(TileGrid));
-  ent->checkin(mc_new(Motion));
-  ent->checkin(mc_new(Dropper));
-  ent->checkin(mc_new(Pauser));
-  ent->checkin(mc_new(GridBox));
-  ent->checkin(mc_new(CtrlPad));
-  return ent;
+void GEngine::reifyArena() {
+  auto ent= this->reifyEntity("*");
+  ent->checkin(mc_new_1(FilledLines,this));
+  ent->checkin(mc_new_1(ShapeShell,this));
+  ent->checkin(mc_new_1(BlockGrid,this));
+  ent->checkin(mc_new_1(TileGrid,this));
+  ent->checkin(mc_new_1(GVars,this));
+  ent->checkin(mc_new_1(Dropper,this));
+  ent->checkin(mc_new_1(Pauser,this));
+  ent->checkin(mc_new_1(GridBox,this));
+  ent->checkin(mc_new_1(CtrlPad,this));
 }
-
 
 NS_END(tetris)
 

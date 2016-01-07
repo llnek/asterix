@@ -18,21 +18,16 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tetris)
 
-//typedef int DIM4x4[4][4];
-//typedef int DIM3x3[3][3];
-//typedef int DIM2x2[2][2];
-
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BModel {
-protected:
-  int dim=0;
-public:
+struct CC_DLL BModel {
   virtual bool test(int rID, int row, int col) = 0;
-  virtual int size() = 0;
-  virtual ~BModel() {}
   int square() { return dim * dim; }
   int getDim() { return dim; }
+  virtual int size() = 0;
+  virtual ~BModel() {}
+protected:
+  DECL_IZ(dim)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,12 +63,9 @@ struct CC_DLL Brick : public c::Sprite {
     removeFromParent();
   }
 
-  virtual ~Brick() {}
-  Brick() {}
-
-  sstr frame1= "0.png";
-  sstr frame0;
-  c::Vec2 startPos;
+  DECL_TV(sstr, frame1, "0.png")
+  DECL_TD(c::Vec2, startPos)
+  DECL_TD(sstr, frame0)
 };
 
 typedef fusii::FArrayPtr<Brick> FArrBrick;
@@ -86,10 +78,10 @@ struct CC_DLL ShapeInfo {
     model=m;
     png=p;
   }
+  DECL_PTR(BModel, model)
+  DECL_TD(sstr, png)
+  DECL_IZ(rot)
   ShapeInfo() {}
-  BModel *model = nullptr;
-  int rot= 0;
-  sstr png;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -98,43 +90,50 @@ struct CC_DLL Shape {
   Shape(const ShapeInfo& si) {
     info=si;
   }
+  DECL_TD(ShapeInfo , info)
   s_vec<Brick*> bricks;
-  float x= 0.0f;
-  float y=0.0f;
-  ShapeInfo info;
+  DECL_FZ(x)
+  DECL_FZ(y)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ShapeShell : public a::Component {
-  virtual const a::COMType typeId() { return "n/ShapeShell"; }
-  Shape *shape;
+  MDECL_COMP_TPID( "n/ShapeShell")
+  DECL_PTR(Shape, shape)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CtrlPad : public a::Component {
-  virtual const a::COMType typeId() { return "n/CtrlPad"; }
+  MDECL_COMP_TPID( "n/CtrlPad")
   s::map<sstr,f::Box4> hotspots;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GridBox : public a::Component {
-  virtual const a::COMType typeId() { return "n/GridBox"; }
-  f::Box4 box;
+  MDECL_COMP_TPID( "n/GridBox")
+  DECL_TD(f::Box4, box)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BlockGrid  : public a::Component {
-  virtual const a::COMType typeId() { return "n/BlockGrid"; }
+  MDECL_COMP_TPID( "n/BlockGrid")
   s_vec<FArrBrick> grid;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BoxModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+    return layout[rID * square() + row * dim + col] == 1;
+  }
+  virtual int size() { return 4; }
+  BoxModel() { dim=2; }
+
 private:
   s_arr<int, 2*2*4> layout {
      1,1,
@@ -149,24 +148,18 @@ private:
      1,1,
      1,1
   };
-
-public:
-
-  virtual int size() { return 4; }
-
-  virtual ~BoxModel() {}
-
-  BoxModel() { dim=2; }
-
-  virtual bool test(int rID, int row, int col) {
-    return layout[rID * square() + row * dim + col] == 1;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ElModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+     return layout[rID * square() + row * dim + col] == 1;
+  }
+  virtual int size() { return 4; }
+  ElModel() { dim=3; }
+
 private:
   s_arr<int, 4 * 3 * 3> layout {
       0,1,0,
@@ -185,24 +178,18 @@ private:
       1,1,1,
       0,0,0
   };
-
-public:
-
-  virtual int size() { return 4; }
-
-  virtual ~ElModel() {}
-
-  ElModel() { dim=3; }
-
-  virtual bool test(int rID, int row, int col) {
-     return layout[rID * square() + row * dim + col] == 1;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ElxModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+    return layout[rID * square() + row * dim + col] == 1;
+  }
+  virtual int size() { return 4; }
+  ElxModel() { dim=3; }
+
 private:
   s_arr<int, 4*3*3> layout {
       0,1,0,
@@ -221,21 +208,18 @@ private:
       1,1,1,
       0,0,1
   };
-public:
-  virtual int size() { return 4; }
-
-  virtual ~ElxModel() {}
-
-  ElxModel() { dim=3; }
-
-  virtual bool test(int rID, int row, int col) {
-    return layout[rID * square() + row * dim + col] == 1;
-  }
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL LineModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+    return layout[rID*square() + row * dim + col] == 1;
+  }
+  virtual int size() { return 4; }
+  LineModel() { dim=4; }
+
 private:
   s_arr<int, 4*4*4> layout {
       0,0,0,0,
@@ -258,22 +242,18 @@ private:
       0,1,0,0,
       0,1,0,0
   };
-
-public:
-
-  virtual int size() { return 4; }
-  virtual ~LineModel() {}
-  LineModel() { dim=4; }
-
-  virtual bool test(int rID, int row, int col) {
-    return layout[rID*square() + row * dim + col] == 1;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL NubModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+     return layout[rID * square() + dim * row + col] == 1 ;
+  }
+  virtual int size() { return 4; }
+  NubModel() { dim=3; }
+
 private:
   s_arr<int, 4 * 3 * 3> layout {
       0,0,0,
@@ -292,23 +272,18 @@ private:
       0,1,1,
       0,0,1
   };
-
-public:
-
-  virtual int size() { return 4; }
-
-  virtual ~NubModel() {}
-  NubModel() { dim=3; }
-
-  virtual bool test(int rID, int row, int col) {
-     return layout[rID * square() + dim * row + col] == 1 ;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL StModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+    return layout[rID * square() + row * dim + col] == 1;
+  }
+  virtual int size() { return 4; }
+  StModel() { dim=3; }
+
 private:
   s_arr<int,4*3*3> layout {
       0,1,0,
@@ -327,23 +302,18 @@ private:
       1,1,0,
       0,0,0
   };
-
-public:
-
-  virtual int size() { return 4; }
-
-  virtual ~StModel() {}
-  StModel() { dim=3; }
-
-  virtual bool test(int rID, int row, int col) {
-    return layout[rID * square() + row * dim + col] == 1;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL StxModel : public BModel {
+
+  virtual bool test(int rID, int row, int col) {
+    return layout[rID * square() + dim * row + col] == 1;
+  }
+  virtual int size() { return 4; }
+  StxModel() { dim=3; }
+
 private:
   s_arr<int,4*3*3> layout {
       0,1,0,
@@ -362,62 +332,58 @@ private:
       1,1,0,
       0,1,1
   };
-
-public:
-
-  virtual int size() { return 4; }
-
-  virtual ~StxModel() {}
-  StxModel() { dim=3; }
-
-  virtual bool test(int rID, int row, int col) {
-    return layout[rID * square() + dim * row + col] == 1;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Dropper : public a::Component {
-  virtual const a::COMType typeId() { return "n/Dropper"; }
-  float dropSpeed = 0;
-  float dropRate= 0;
-  c::DelayTime *timer=nullptr;
+  MDECL_COMP_TPID( "n/Dropper")
+  DECL_FZ(dropSpeed)
+  DECL_FZ(dropRate)
+  DECL_PTR(c::DelayTime, timer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL FilledLines : public a::Component {
-  virtual const a::COMType typeId() { return "n/FilledLines"; }
+  MDECL_COMP_TPID( "n/FilledLines")
   s_vec<int> lines;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Motion : public a::Component {
-  virtual const a::COMType typeId() { return "n/Motion"; }
+  MDECL_COMP_TPID( "n/Motion")
+    /*
   bool right=false;
   bool left=false;
   bool rotr= false;
   bool rotl= false;
   bool down=false;
+  */
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Pauser  : public a::Component {
-  virtual const a::COMType typeId() { return "n/Pauser"; }
-  c::DelayTime *timer=nullptr;
-  bool pauseToClear=false;
+  DECL_PTR(c::DelayTime, timer)
+  MDECL_COMP_TPID("n/Pauser")
+  DECL_BF(pauseToClear)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL TileGrid  : public a::Component {
-  virtual const a::COMType typeId() { return "n/TileGrid"; }
+  MDECL_COMP_TPID("n/TileGrid")
   s_vec<f::FArrInt> tiles;
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GVars  : public a::Component {
+  MDECL_COMP_TPID("n/GVars")
+
+};
 
 NS_END(tetris)
 #endif

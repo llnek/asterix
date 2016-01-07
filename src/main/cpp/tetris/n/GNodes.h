@@ -13,7 +13,6 @@
 #define __GNODES_H__
 
 #include "ash/NodeRego.h"
-#include "ash/Node.h"
 #include "CObjs.h"
 
 NS_BEGIN(tetris)
@@ -22,14 +21,12 @@ NS_BEGIN(tetris)
 //
 struct CC_DLL ArenaNode : public a::NodeFactory {
 
-  virtual const a::NodeType typeId() { return "n/ArenaNode"; }
-
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         { "collision", "n/TileGrid"},
         { "gbox", "n/GridBox" },
         { "blocks", "n/BlockGrid" },
-        { "motion", "n/Motion" },
+        { "slots", "n/GVars" },
         { "pauser", "n/Pauser" },
         { "dropper", "n/Dropper" },
         { "shell" , "n/ShapeShell" },
@@ -38,9 +35,7 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
     });
   }
 
-  virtual ~ArenaNode() {}
-  ArenaNode() {}
-  NOCPYASS(ArenaNode)
+  MDECL_NFAC_TPID("n/ArenaNode")
 };
 
 NS_END(tetris)

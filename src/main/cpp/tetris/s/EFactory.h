@@ -12,24 +12,21 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
-#include "core/Factory.h"
-
+#include "ash/Engine.h"
+#include "n/GNodes.h"
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL EFactory : public f::Factory {
+struct CC_DLL GEngine : public a::Engine {
 
-  EFactory(not_null<a::Engine*>,
-      not_null<c::Dictionary*> options);
+  virtual void initEntities();
+  virtual void initSystems();
 
-  a::Entity* reifyArena();
-
-  virtual ~EFactory() {}
-  NODFT(EFactory)
-  NOCPYASS(EFactory)
-
+protected:
+  void reifyArena();
 };
+
 
 NS_END(tetris)
 #endif

@@ -9,40 +9,27 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "n/GNodes.h"
 #include "Stage.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////
 //
-Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Stage::addToEngine(not_null<a::Engine*> e) {
+void Stage::preamble() {
   ArenaNode n;
-  arena= e->getNodeList(n.typeId());
+  arenaNode= engine->getNodeList(n.typeId());
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
-  auto n = arena->head;
-  if (MGMS()->isLive()) {
-    if (! inited) {
-      onceOnly(n);
-    }
-  }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly(a::Node *node) {
+void Stage::onceOnly() {
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
   auto fz= cx::calcSize("gray.png");
   auto bz= cx::calcSize("0.png");
@@ -60,21 +47,20 @@ void Stage::onceOnly(a::Node *node) {
   this->xv(fz, cw.x);
   //this.xh(fz, cw.x + fz.width, wb.right + fz.width, cw.y);
 
-  onceOnly_2(node, fz, bz, f::Box4(
+  onceOnly_2(fz, bz, f::Box4(
     wb.top,
     cw.x - hfzw,
     wb.bottom + fz.height,
     lf_boundary + hfzw
   ));
 
-  doCtrl(node);
-  inited=true;
+  doCtrl();
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::doCtrl(a::Node *node) {
-  auto cpad= CC_GNF(CtrlPad, node, "cpad");
+void Stage::doCtrl() {
+  auto cpad= CC_GNLF(CtrlPad, arenaNode, "cpad");
   auto& hsps= cpad->hotspots;
   auto cw = cx::center();
   auto wb= cx::visBox();
@@ -82,8 +68,8 @@ void Stage::doCtrl(a::Node *node) {
   //sp= ccsx.createSprite('shadedLight09.png'),
   auto sp= cx::reifySprite("shadedDark09.png");
   auto cz= sp->getContentSize();
-  auto ch3= cz.height / 3;
-  auto cw3= cz.width / 3;
+  auto ch3= cz.height / 3.0f;
+  auto cw3= cz.width / 3.0f;
   //x= cw.x + (wb.right - cw.x) * 0.5,
   auto x= wb.right * 0.75f;
   auto y= wb.top * 0.25f;
@@ -164,13 +150,13 @@ void Stage::xv(const c::Size &fz, float x) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Stage::onceOnly_2(a::Node *node, const c::Size &fz,
+void Stage::onceOnly_2(const c::Size &fz,
     const c::Size &bz,
     const f::Box4 &box) {
 
-  auto blocks= CC_GNF(BlockGrid, node, "blocks");
-  auto cs= CC_GNF(TileGrid, node, "collision");
-  auto gbox= CC_GNF(GridBox, node, "gbox");
+  auto blocks= CC_GNLF(BlockGrid, arenaNode, "blocks");
+  auto cs= CC_GNLF(TileGrid, arenaNode, "collision");
+  auto gbox= CC_GNLF(GridBox, arenaNode, "gbox");
   auto tiles= fakeTileMap(bz, box);
   auto grids = initBlockMap(tiles);
 

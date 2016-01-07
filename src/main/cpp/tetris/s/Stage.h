@@ -12,21 +12,33 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/XSystem.h"
-#include "n/GNodes.h"
+#include "ash/System.h"
 #include "EFactory.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stage : public f::XSystem<EFactory> {
+struct CC_DLL Stage : public a::System {
+
+  MDECL_SYS_PRIORITY( a::PreUpdate)
+  MDECL_SYS_TPID("s/Stage")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Stage(a::Engine *e)
+  : System(e)
+  {}
+
+  DECL_PTR(a::NodeList, arenaNode)
+
+protected:
 
   void xh(const c::Size& , float, float, float);
-  void onceOnly(a::Node*);
-  void doCtrl(a::Node*);
+  void onceOnly();
+  void doCtrl();
   void xv(const c::Size& , float);
-  void onceOnly_2(a::Node*, const c::Size&,
+  void onceOnly_2(const c::Size&,
       const c::Size& , const f::Box4&);
 
   const s_vec<FArrBrick>
@@ -35,21 +47,6 @@ struct CC_DLL Stage : public f::XSystem<EFactory> {
   const s_vec<f::FArrInt>
     fakeTileMap(const c::Size&, const f::Box4&);
 
-  virtual const a::SystemType typeId() { return "s/Stage"; }
-
-  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual bool update(float);
-
-  virtual int priority() { return a::PreUpdate; }
-
-  virtual ~Stage() {}
-  NODFT(Stage)
-  NOCPYASS(Stage)
-
-  a::NodeList *arena;
 };
 
 
