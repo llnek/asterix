@@ -10,74 +10,56 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "ash/Node.h"
 #include "core/JSON.h"
 #include "core/CCSX.h"
 #include "Aliens.h"
-#include "n/GNodes.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Aliens::Aliens(not_null<EFactory*> e, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(e, d) {
-
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::addToEngine(not_null<a::Engine*> e) {
+void Aliens::preamble() {
+  ArenaNode a;
   ShipNode n;
-  ships = e->getNodeList(n.typeId());
+
+  arenaNode = engine->getNodeList(a.typeId());
+  shipNode = engine->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::update(float dt) {
-  auto node = ships->head;
-  if (NNP(node)) {
-    doIt(node);
+  if (MGMS()->isLive()) {
+    doIt(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::addEnemy(a::Node* node, j::json& obj) {
-  J__LOOP(t, obj) {
-    auto& v = *t;
-    addEnemyToGame(node, v.get<j::json::number_integer_t>());
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Aliens::doIt(a::Node* node) {
-  auto dt= CC_GDV(c::Integer, state, "secCount");
+void Aliens::doIt(float) {
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto enemies= MGMS()->getPool("Baddies");
-  auto js= MGMS()->getLCfg();
-  auto cfg= js->getValue();
+  auto cfg= MGMS()->getLCfg()->getValue();
+  auto dt= ss->secCount;
 
-  if (enemies->countActives() <
-      cfg["enemyMax"].get<j::json::number_integer_t>()) {
-
-    j::json arr= cfg["enemies"].get<j::json::array_t>();
+  if (enemies->countActives() < JS_INT(cfg["enemyMax"])) {
+    j::json arr= JS_ARR(cfg["enemies"]);
     J__LOOP(it, arr) {
       auto& a = *it;
-      auto time = a["time"].get<j::json::number_integer_t>();
-      auto style = a["style"].get<j::json::string_t>();
-      j::json types =  a["types"].get<j::json::array_t>();
+        j::json types =  JS_ARR(a["types"]);
+      auto style = JS_STR(a["style"]);
+      auto time = JS_INT(a["time"]);
       if (style == "*" &&
-          dt % time == 0) {
-        addEnemy(node, types);
+          f::modulo(dt, time) == 0) {
+        addEnemy(types);
       }
       else
       if (style == "1" &&
           time >= dt) {
         a["style"] = "0";
-        addEnemy(node, types);
+        addEnemy(types);
       }
     }
   }
@@ -85,25 +67,34 @@ void Aliens::doIt(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::dropBombs(Enemy* enemy) {
-  auto bombs= MGMS()->getPool("Bombs");
-  auto sp= enemy->sprite;
-  auto sz= sp->getContentSize();
-  auto pos= sp->getPosition();
-  Bomb* b = (Bomb*)bombs->get();
-
-  if (ENP(b)) {
-    factory->createBombs();
-    b= (Bomb*)bombs->get();
+void Aliens::addEnemy(j::json &obj) {
+  J__LOOP(t, obj) {
+    auto &v = *t;
+    addEnemyToGame(JS_INT(v));
   }
-
-  b->inflate(pos.x, pos.y - sz.height * 0.2f);
-  b->attackMode= enemy->enemyType.attackMode;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-Enemy* Aliens::getB(const EnemyType& arg) {
+void Aliens::dropBombs(Enemy *enemy) {
+  auto bombs= MGMS()->getPool("Bombs");
+  auto sp= enemy->sprite;
+  auto sz= sp->getContentSize();
+  auto pos= sp->getPosition();
+  auto b = bombs->get();
+
+  if (ENP(b)) {
+    SCAST(GEngine*,engine)->createBombs();
+    b= bombs->get();
+  }
+
+  ((Bomb*)b)->attackMode= enemy->enemyType.attackMode;
+  b->inflate(pos.x, pos.y - sz.height * 0.2f);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+Enemy* Aliens::getB(const EnemyType &arg) {
   auto enemies = MGMS()->getPool("Baddies");
   auto pred= [=](f::ComObj* c) -> bool {
     auto e = (Enemy*)c;
@@ -112,10 +103,10 @@ Enemy* Aliens::getB(const EnemyType& arg) {
   };
 
   auto en= enemies->select(pred);
-  Enemy* y= nullptr;
+  Enemy *y= nullptr;
 
   if (ENP(en)) {
-    factory->createEnemies(1);
+    SCAST(GEngine*,engine)->createEnemies(1);
     en= enemies->select(pred);
   }
 
@@ -132,19 +123,19 @@ Enemy* Aliens::getB(const EnemyType& arg) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::addEnemyToGame(a::Node* node, int enemyType) {
-  auto& arg = EnemyTypes[enemyType];
+void Aliens::addEnemyToGame(int enemyType) {
+  auto &arg = EnemyTypes[enemyType];
   auto wz = cx::visRect();
   auto en = getB(arg);
 
   if (ENP(en)) { return; }
 
-  auto ship= CC_GNF(Ship, node, "ship");
+  auto ship= CC_GNLF(Ship, shipNode, "ship");
   auto sprite= en->sprite;
   auto pos= ship->pos();
   auto sz= en->csize();
   auto epos= en->pos();
-  c::Action* act;
+  c::Action *act;
 
   en->setPos(cx::randFloat(wz.size.width *0.5f + 80.0f), wz.size.height);
   switch (en->enemyType.moveType) {

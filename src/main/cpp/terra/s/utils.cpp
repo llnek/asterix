@@ -10,11 +10,9 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "n/CObjs.h"
 #include "EFactory.h"
 #include "utils.h"
 NS_BEGIN(terra)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -39,9 +37,9 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
   auto bigger = c::ScaleTo::create(0.5f, 1);
   auto kf= [=]() { flare->removeFromParent(); };
 
-  flare->runAction(c::Sequence::create(opacityAnim,
-      biggerEase, opacDim,
-      c::CallFunc::create(kf), c::CallFunc::create(cb), nullptr));
+  flare->runAction(
+      c::Sequence::create(opacityAnim, biggerEase, opacDim,
+        c::CallFunc::create(kf), c::CallFunc::create(cb), nullptr));
 
   flare->runAction(easeMove);
   flare->runAction(rotateEase);

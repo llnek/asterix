@@ -9,34 +9,25 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Render : public f::XSystem<EFactory> {
+struct CC_DLL Render : public a::System {
+
+  MDECL_SYS_PRIORITY( a::Render)
+  MDECL_SYS_TPID( "n/Render")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Render(a::Engine *e)
+  : System(e)
+  {}
+
 protected:
-
   void processMovement(float);
-
-public:
-
-  virtual const a::SystemType typeId() { return "n/Render"; }
-
-  Render(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*> );
-
-  virtual int priority() { return a::Render; }
-
-  virtual bool update(float);
-
-  virtual ~Render() {}
-
-  NOCPYASS(Render)
-  NODFT(Render)
-
 };
 
 

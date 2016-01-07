@@ -9,38 +9,23 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__MOVE_H__)
-#define __MOVE_H__
-
-#include "ash/System.h"
-#include "EFactory.h"
-NS_BEGIN(terra)
+#include "fusilli.h"
+NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
-
-  MDECL_SYS_PRIORITY( a::Move)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-  MDECL_SYS_TPID( "n/Move")
-
-  Move(a::Engine *e)
-  : System(e)
-  {}
-
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
-
-protected:
-  void moveOneMissile(f::ComObj*, float);
-  void onKeys(float);
-  void moveOneBomb(f::ComObj*, float);
-  void move(float);
-  void moveMissiles(float);
-};
+int modulo(int x, int m) {
+  int r = x%m;
+  return r<0 ? r+m : r;
+}
+/*
+int mod(int x, int m) {
+    return (x%m + m)%m;
+}
+*/
 
 
-NS_END(terra)
-#endif
+NS_END(fusii)
+
+
 

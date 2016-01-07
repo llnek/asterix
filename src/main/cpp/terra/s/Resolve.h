@@ -12,40 +12,35 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public f::XSystem<EFactory> {
-protected:
+struct CC_DLL Resolve : public a::System {
 
+  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_TPID( "n/Resolve")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Resolve(a::Engine *e)
+  : System(e)
+  {}
+
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
+
+protected:
   void onBulletDeath(f::ComObj*);
   void checkMissiles();
   void checkBombs();
   void onEnemyDeath(f::ComObj*);
   void onShipDeath(f::ComObj*);
   void checkAliens();
-  void checkShip(a::Node*);
+  void checkShip();
 
-public:
-
-  virtual const a::SystemType typeId() { return "n/Resolve"; }
-
-  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Resolve; }
-
-  virtual bool update(float);
-
-  virtual ~Resolve() {}
-  NOCPYASS(Resolve)
-  NODFT(Resolve)
-
-  a::NodeList* ships=nullptr;
 };
 
 

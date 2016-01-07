@@ -20,10 +20,11 @@ NS_USING(ash)
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() {
-    
+
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
+  r->rego( mc_new(ArenaNode));
   r->rego( mc_new(ShipNode));
 
   // step.2: set up app-config

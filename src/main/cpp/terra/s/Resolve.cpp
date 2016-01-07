@@ -11,8 +11,6 @@
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
-#include "ash/Node.h"
-#include "n/GNodes.h"
 #include "Resolve.h"
 #include "Game.h"
 
@@ -21,44 +19,36 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Resolve::Resolve(not_null<EFactory*> e, not_null<c::Dictionary*> d)
-
-: XSystem<EFactory>(e, d) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::addToEngine(not_null<a::Engine*> e) {
+void Resolve::preamble() {
+  ArenaNode a;
   ShipNode n;
-  ships = e->getNodeList(n.typeId());
+
+  arenaNode = engine->getNodeList(a.typeId());
+  shipNode = engine->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
-  auto node = ships->head;
 
-  if (MGMS()->isLive() &&
-      NNP(node)) {
-
+  if (MGMS()->isLive()) {
     checkMissiles();
     checkBombs();
     checkAliens();
-    checkShip(node);
+    checkShip();
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onBulletDeath(f::ComObj* b) {
+void Resolve::onBulletDeath(f::ComObj *b) {
   auto pe= MGMS()->getPool("HitEffects");
   auto pos= b->pos();
   auto e= pe->get();
 
   if (ENP(e)) {
-    factory->createHitEffects();
+    SCAST(GEngine*,engine)->createHitEffects();
     e= pe->get();
   }
 
@@ -71,9 +61,9 @@ void Resolve::checkMissiles() {
   auto box= MGMS()->getEnclosureBox();
   auto p = MGMS()->getPool("Missiles");
 
-  p->foreach([=](f::ComObj* m) {
+  p->foreach([=](f::ComObj *m) {
     if (m->status) {
-      auto pos= m->sprite->getPosition();
+      auto pos= m->pos();
       if (m->health <= 0 ||
           !cx::pointInBox(box, pos.x, pos.y)) {
         this->onBulletDeath(m);
@@ -89,9 +79,9 @@ void Resolve::checkBombs() {
   auto box= MGMS()->getEnclosureBox();
   auto p = MGMS()->getPool("Bombs");
 
-  p->foreach([=](f::ComObj* b) {
+  p->foreach([=](f::ComObj *b) {
     if (b->status) {
-      auto pos= b->sprite->getPosition();
+      auto pos= b->pos();
       if (b->health <= 0 ||
           !cx::pointInBox(box, pos)) {
         this->onBulletDeath(b);
@@ -103,19 +93,19 @@ void Resolve::checkBombs() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onEnemyDeath(f::ComObj* alien) {
+void Resolve::onEnemyDeath(f::ComObj *alien) {
   auto pe= MGMS()->getPool("Explosions");
   auto ps= MGMS()->getPool("Sparks");
   auto pos= alien->pos();
   auto e= pe->get();
   auto s= ps->get();
   if (ENP(e)) {
-    factory->createExplosions();
+    SCAST(GEngine*,engine)->createExplosions();
     e= pe->get();
   }
   e->inflate(pos.x, pos.y);
   if (ENP(s)) {
-    factory->createSparks();
+    SCAST(GEngine*,engine)->createSparks();
     s=ps->get();
   }
   s->inflate( pos.x, pos.y);
@@ -124,13 +114,13 @@ void Resolve::onEnemyDeath(f::ComObj* alien) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onShipDeath(f::ComObj* ship) {
+void Resolve::onShipDeath(f::ComObj *ship) {
   auto pe= MGMS()->getPool("Explosions");
   auto pos= ship->pos();
   auto e= pe->get();
 
   if (ENP(e)) {
-    factory->createExplosions();
+    SCAST(GEngine*,engine)->createExplosions();
     e= pe->get();
   }
 
@@ -144,15 +134,15 @@ void Resolve::checkAliens() {
   auto box= MGMS()->getEnclosureBox();
   auto p= MGMS()->getPool("Baddies");
 
-  p->foreach([=](f::ComObj* a) {
+  p->foreach([=](f::ComObj *a) {
     if (a->status) {
-      auto pos= a->sprite->getPosition();
+      auto pos= a->pos();
       if (a->health <= 0 ||
           !cx::pointInBox(box, pos)) {
         this->onEnemyDeath(a);
         a->deflate();
         auto msg = j::json({ {"score", a->score} });
-        MGMS()->sendMsgEx("/game/players/earnscore", &msg);
+        SENDMSGEX("/game/players/earnscore", &msg);
       }
     }
   });
@@ -160,13 +150,13 @@ void Resolve::checkAliens() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkShip(a::Node* node) {
-  auto ship = CC_GNF(Ship, node, "ship");
+void Resolve::checkShip() {
+  auto ship = CC_GNLF(Ship, shipNode, "ship");
   if (ship->status) {
     if (ship->health <= 0) {
       this->onShipDeath(ship);
       ship->deflate();
-      MGMS()->sendMsg("/game/players/killed");
+      SENDMSG("/game/players/killed");
     }
   }
 }

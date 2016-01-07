@@ -71,8 +71,6 @@ namespace ccsx {
   bool outOfBound(not_null<ComObj*>, const Box4 &B);
   bool outOfBound(const Box4 &src, const Box4 &B);
 
-  int modulo(int x, int m);
-
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
   void undoTimer(c::DelayTime*);
   bool timerDone(c::DelayTime*);

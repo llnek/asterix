@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
-#include "n/GNodes.h"
 #include "Game.h"
 #include "Stage.h"
 
@@ -19,54 +18,26 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Stage::Stage(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-  :
-  XSystem<EFactory>(f, d) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Stage::addToEngine(not_null<a::Engine*> e) {
+void Stage::preamble() {
   ShipNode n;
-  ships = e->getNodeList(n.typeId());
+  shipNode = engine->getNodeList(n.typeId());
+  assert(shipNode->head != nullptr);
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Stage::update(float dt) {
-  if (! inited) {
-    onceOnly();
-  }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Stage::onceOnly() {
-
-  MGMS()->reifyPools(s_vec<sstr> {
-      "BackTiles", "BackSkies", "Missiles", "Baddies",
-      "Bombs", "Explosions", "Sparks", "HitEffects"
-  });
-
-  assert(ships->head != nullptr);
-
-  factory->createBackSkies();
-  factory->createBackTiles();
-  factory->createMissiles();
-  factory->createBombs();
-  factory->createEnemies();
-  factory->createExplosions();
-  factory->createSparks();
-  factory->createHitEffects();
-
+  bornShip(CC_GNLF(Ship,shipNode,"ship"));
   sharedExplosion();
   initBackSkies();
-
-  bornShip( CC_GNF(Ship, ships->head, "ship"));
-  inited=true;
-  MGMS()->sendMsg("/game/backtiles");
+  SENDMSG("/game/backtiles");
 }
 
 //////////////////////////////////////////////////////////////////////////

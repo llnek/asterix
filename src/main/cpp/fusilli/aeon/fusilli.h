@@ -165,6 +165,17 @@ enum class Locale {
   BULGARIAN
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+int modulo(int, int);
+
+
+
+
+
+
+
+
 NS_END(fusii)
 #include "FArrayObj.h"
 #include "FArrayPtr.h"

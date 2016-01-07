@@ -12,8 +12,13 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "Stage.h"
+#include "Resolve.h"
+#include "Collide.h"
+#include "Move.h"
+#include "Aliens.h"
+#include "Render.h"
 #include "EFactory.h"
-#include "n/GNodes.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
@@ -26,31 +31,58 @@ static const s::array<sstr,4> BackTileMap= {
 
 //////////////////////////////////////////////////////////////////////////
 //
-EFactory::EFactory(not_null<a::Engine*> e,
-    not_null<c::Dictionary*> options)
+void GEngine::initEntities() {
+  MGMS()->reifyPools(s_vec<sstr> {
+      "BackTiles", "BackSkies", "Missiles", "Baddies",
+      "Bombs", "Explosions", "Sparks", "HitEffects"
+  });
+  createBackSkies();
+  createBackTiles();
+  createMissiles();
+  createBombs();
+  createEnemies();
+  createExplosions();
+  createSparks();
+  createHitEffects();
+  createArena();
+  createShip();
+}
 
-  : Factory(e, options) {
-
+//////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initSystems() {
+  regoSystem(mc_new_1(Stage, this));
+  regoSystem(mc_new_1(Move, this));
+  regoSystem(mc_new_1(Aliens, this));
+  regoSystem(mc_new_1(Collide, this));
+  regoSystem(mc_new_1(Resolve, this));
+  regoSystem(mc_new_1(Render, this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-a::Entity* EFactory::createShip() {
+void GEngine::createArena() {
+  auto ent= this->reifyEntity("+");
+  ent->checkin(mc_new(GVars));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::createShip() {
   auto zx= CC_CSV(c::Integer, "SHIP_ZX");
   auto sp= cx::reifySprite("ship01.png");
-  auto ent= engine->reifyEntity("+");
+  auto ent= this->reifyEntity("+");
   auto sz= sp->getContentSize();
   auto wz= cx::visRect();
   auto cw= cx::center();
 
-  MGML()->addAtlasItem("game-pics", sp, f::MaybeInt(zx));
+  MGML()->addAtlasItem("game-pics", sp, zx, 911);
   auto cac= c::AnimationCache::getInstance();
   auto ani= cac->getAnimation("ShipAni");
   if (ENP(ani)) {
-      c::Vector<c::SpriteFrame*> fs;
-          fs.pushBack(cx::getSpriteFrame("ship01.png"));
-          fs.pushBack(cx::getSpriteFrame("ship02.png"));
-    
+    c::Vector<c::SpriteFrame*> fs;
+    fs.pushBack(cx::getSpriteFrame("ship01.png"));
+    fs.pushBack(cx::getSpriteFrame("ship02.png"));
     cac->addAnimation(
         c::Animation::createWithSpriteFrames(fs,01.f), "ShipAni");
     ani= cac->getAnimation("ShipAni");
@@ -62,17 +94,15 @@ a::Entity* EFactory::createShip() {
   bs->setBlendFunc(BDFUNC::ADDITIVE);
   bs->setPosition(sz.width * 0.5f, 12);
   bs->setVisible(false);
-  sp->addChild(bs, zx, 99999);
+  sp->addChild(bs, zx, 911);//99999);
 
   ent->checkin( mc_new_2(Ship, sp, bs));
   ent->checkin( mc_new(Motion));
-
-  return ent;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createMissiles(int count) {
+void GEngine::createMissiles(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Missiles");
 
@@ -80,14 +110,14 @@ void EFactory::createMissiles(int count) {
     auto sp= cx::reifySprite("W1.png");
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
-    MGML()->addAtlasItem("op-pics", sp, f::MaybeInt(zx));
+    MGML()->addAtlasItem("op-pics", sp, zx, 911);
     return mc_new_1(Missile, sp);
   }, count);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createBombs(int count) {
+void GEngine::createBombs(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Bombs");
 
@@ -95,14 +125,14 @@ void EFactory::createBombs(int count) {
     auto sp= cx::reifySprite("W2.png");
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
-    MGML()->addAtlasItem("op-pics", sp, f::MaybeInt(zx));
+    MGML()->addAtlasItem("op-pics", sp, zx, 911);
     return mc_new_1(Bomb, sp);
   }, count);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createExplosions(int count) {
+void GEngine::createExplosions(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Explosions");
 
@@ -117,7 +147,7 @@ void EFactory::createExplosions(int count) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createHitEffects(int count) {
+void GEngine::createHitEffects(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("HitEffects");
 
@@ -132,7 +162,7 @@ void EFactory::createHitEffects(int count) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createSparks(int count) {
+void GEngine::createSparks(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("Sparks");
 
@@ -153,16 +183,14 @@ void EFactory::createSparks(int count) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createEnemies(int count) {
+void GEngine::createEnemies(int count) {
 
   auto zx = CC_CSV(c::Integer, "SHIP_ZX") - 1;
   auto p = MGMS()->getPool("Baddies");
   auto cr= [=](const EnemyType& arg) -> f::ComObj* {
     auto sp= cx::reifySprite(arg.textureName);
     sp->setVisible(false);
-    MGML()->addAtlasItem("game-pics",
-                         sp,
-                         f::MaybeInt(zx));
+    MGML()->addAtlasItem("game-pics", sp,zx,911);
     return mc_new_2(Enemy, sp, arg);
   };
 
@@ -176,7 +204,7 @@ void EFactory::createEnemies(int count) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createBackSkies() {
+void GEngine::createBackSkies() {
   auto zx = CC_CSV(c::Integer, "SHIP_ZX");
   auto p = MGMS()->getPool("BackSkies");
   auto layer= MGMS()->getLayer(1);
@@ -185,21 +213,21 @@ void EFactory::createBackSkies() {
     auto bg = cx::reifySprite("bg01.png");
     bg->setAnchorPoint(cx::anchorBL());
     bg->setVisible(false);
-    layer->addAtlasItem("game-pics", bg, f::MaybeInt(-10));
+    layer->addAtlasItem("game-pics", bg, -10,911);
     return mc_new_1(f::ComObj, bg);
   }, 2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EFactory::createBackTiles(int count) {
+void GEngine::createBackTiles(int count) {
   auto p = MGMS()->getPool("BackTiles");
   auto layer= MGMS()->getLayer(1);
   auto cr= [=](const sstr& name) -> f::ComObj* {
     auto sp = cx::reifySprite(name);
     sp->setAnchorPoint(cx::anchorL());
     sp->setVisible(false);
-    layer->addAtlasItem("back-tiles", sp, f::MaybeInt(-9));
+    layer->addAtlasItem("back-tiles", sp, -9,911);
     return mc_new_1(f::ComObj, sp);
   };
 

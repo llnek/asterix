@@ -11,48 +11,35 @@
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
-#include "ash/Node.h"
-#include "n/GNodes.h"
 #include "Move.h"
 #include "Game.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Move::Move(not_null<EFactory*> e, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(e, d) {
-
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::addToEngine(not_null<a::Engine*> e) {
+void Move::preamble() {
   ShipNode n;
-  ships = e->getNodeList(n.typeId());
+  shipNode = engine->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  auto node= ships->head;
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  if (MGMS()->isLive()) {
     moveMissiles(dt);
     move(dt);
-    onKeys(node,dt);
+    onKeys(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::onKeys(a::Node* node, float dt) {
-  auto mot = CC_GNF(Motion, node, "motion");
+void Move::onKeys(float dt) {
+  auto ship = CC_GNLF(Ship, shipNode, "ship");
   auto ssp = CC_CSV(c::Float, "SHIP_SPEED");
-  auto ship = CC_GNF(Ship, node, "ship");
   auto sp = ship->sprite;
   auto pos = ship->pos();
   auto wz= cx::visRect();
@@ -60,37 +47,36 @@ void Move::onKeys(a::Node* node, float dt) {
   auto y = pos.y;
   auto ok = false;
 
-  if (mot->up && pos.y <= wz.size.height) {
-    y = pos.y + dt * ssp;
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW) &&
+      pos.x <= wz.size.width) {
+    x = pos.x + dt * ssp;
     ok= true;
   }
-  if (mot->down && pos.y >= 0) {
-    y = pos.y - dt * ssp;
-    ok= true;
-  }
-  if (mot->left && pos.x >= 0) {
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW) &&
+      pos.x >= 0) {
     x = pos.x - dt * ssp;
     ok= true;
   }
-  if (mot->right && pos.x <= wz.size.width) {
-    x = pos.x + dt * ssp;
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW) &&
+      pos.y >= 0) {
+    y = pos.y - dt * ssp;
+    ok= true;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW) &&
+      pos.y <= wz.size.height) {
+    y = pos.y + dt * ssp;
     ok= true;
   }
 
   if (ok) { ship->setPos(x,y); }
-
-  mot->right= false;
-  mot->left=false;
-  mot->down=false;
-  mot->up=false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::moveOneBomb(f::ComObj* m, float dt) {
-  auto pos = m->sprite->getPosition();
-  m->sprite->setPosition(pos.x + m->vel.x * dt,
-                       pos.y + m->vel.y * dt);
+void Move::moveOneBomb(f::ComObj *bomb, float dt) {
+  auto pos = bomb->pos();
+  bomb->setPos(pos.x + bomb->vel.x * dt,
+               pos.y + bomb->vel.y * dt);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,10 +92,10 @@ void Move::move(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::moveOneMissile(f::ComObj* m, float dt) {
-  auto pos = m->sprite->getPosition();
-  m->sprite->setPosition(pos.x + m->vel.x * dt,
-                       pos.y + m->vel.y * dt);
+void Move::moveOneMissile(f::ComObj *m, float dt) {
+  auto pos = m->pos();
+  m->setPos(pos.x + m->vel.x * dt,
+            pos.y + m->vel.y * dt);
 }
 
 //////////////////////////////////////////////////////////////////////////

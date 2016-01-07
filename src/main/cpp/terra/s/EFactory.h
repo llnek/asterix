@@ -12,19 +12,17 @@
 #if !defined(__EFACTORY_H__)
 #define __EFACTORY_H__
 
-#include "core/Factory.h"
+#include "ash/Engine.h"
+#include "n/GNodes.h"
+
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EFactory : public fusii::Factory {
-public:
+struct CC_DLL GEngine : public a::Engine {
 
-  EFactory(not_null<a::Engine*>, not_null<c::Dictionary*>);
-  virtual ~EFactory() {}
-
-  NOCPYASS(EFactory)
-  NODFT(EFactory)
+  virtual void initEntities();
+  virtual void initSystems();
 
   void createMissiles(int count = 36);
   void createBombs(int count = 36);
@@ -35,8 +33,9 @@ public:
   void createBackSkies();
   void createBackTiles(int count= 1);
 
-  a::Entity* createShip();
-
+protected:
+  void createArena();
+  void createShip();
 };
 
 

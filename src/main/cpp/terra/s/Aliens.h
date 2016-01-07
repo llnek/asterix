@@ -12,43 +12,34 @@
 #if !defined(__ALIENS_H__)
 #define __ALIENS_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 #include "utils.h"
-#include "n/GNodes.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 
-class CC_DLL Aliens : public f::XSystem<EFactory> {
+struct CC_DLL Aliens : public a::System {
+
+  MDECL_SYS_PRIORITY( a::Motion)
+  MDECL_SYS_TPID( "n/Aliens")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Aliens(a::Engine *e)
+  : System(e)
+  {}
+
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
+
 protected:
-
-  void addEnemyToGame(a::Node*, int );
   Enemy* getB(const EnemyType&);
-
-  void addEnemy(a::Node*, j::json& );
-  void doIt(a::Node*);
+  void addEnemyToGame( int );
+  void addEnemy( j::json& );
   void dropBombs(Enemy*);
-
-public:
-
-  virtual const a::SystemType typeId() { return "n/Aliens"; }
-
-  Aliens(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-
-  virtual int priority() { return a::Motion; }
-
-  virtual bool update(float);
-
-  virtual ~Aliens() {}
-  NOCPYASS(Aliens)
-  NODFT(Aliens)
-
-  a::NodeList* ships= nullptr;
-
+  void doIt(float);
 };
 
 

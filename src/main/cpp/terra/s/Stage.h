@@ -12,36 +12,30 @@
 #if !defined(__STAGE_H__)
 #define __STAGE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Stage : public f::XSystem<EFactory> {
-protected:
+struct CC_DLL Stage : public a::System {
 
+  MDECL_SYS_PRIORITY(a::PreUpdate)
+  MDECL_SYS_TPID( "n/Stage")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Stage(a::Engine *e)
+  : System(e)
+  {}
+
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
+
+protected:
   void sharedExplosion();
   void initBackSkies();
   void onceOnly();
-
-public:
-
-  virtual const a::SystemType typeId() { return "n/Stage"; }
-
-  virtual int priority() { return a::PreUpdate; }
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
-
-  Stage(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual ~Stage() {}
-
-  NOCPYASS(Stage)
-  NODFT(Stage)
-
-  a::NodeList* ships=nullptr;
 };
 
 

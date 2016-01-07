@@ -37,19 +37,15 @@ struct EnemyType {
     this->scoreValue = scoreValue;
   }
 
-  virtual ~EnemyType() {}
   EnemyType() {}
 
-  //NOCPYASS(EnemyType)
-  //NODFT(EnemyType)
-
-  Attacks attackMode= Attacks::NORMAL;
-  Moves moveType= Moves::RUSH;
-  int type=0;
-  sstr textureName;
-  sstr bulletType;
-  int HP=0;
-  int scoreValue=0;
+  DECL_TV(Attacks, attackMode, Attacks::NORMAL)
+  DECL_TV(Moves, moveType,Moves::RUSH)
+  DECL_IZ(type)
+  DECL_TD(sstr, textureName)
+  DECL_TD(sstr, bulletType)
+  DECL_IZ(HP)
+  DECL_IZ(scoreValue)
 
 };
 

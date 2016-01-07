@@ -205,8 +205,8 @@ struct CC_DLL HitEffect : public f::ComObj {
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID("n/GVars")
-
-}
+  DECL_IZ(secCount)
+};
 
 NS_END(terra)
 #endif

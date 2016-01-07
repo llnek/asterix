@@ -11,44 +11,29 @@
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
-#include "n/GNodes.h"
-#include "ash/Node.h"
 #include "Collide.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Collide::Collide(not_null<EFactory*> e, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(e, d) {
-
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::addToEngine(not_null<a::Engine*> e) {
+void Collide::preamble() {
+  ArenaNode a;
   ShipNode n;
-  ships = e->getNodeList(n.typeId());
-}
 
-//////////////////////////////////////////////////////////////////////////
-//
-bool Collide::collide(f::ComObj* a, f::ComObj* b) {
-  return cx::collideN(a->sprite, b->sprite);
+  arenaNode = engine->getNodeList(a.typeId());
+  shipNode = engine->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Collide::update(float dt) {
-  auto node = ships->head;
 
-  if (MGMS()->isLive() &&
-      NNP(node)) {
+  if (MGMS()->isLive()) {
     checkMissilesAliens();
-    checkShipAliens(node);
-    checkShipBombs(node);
-    //this.checkMissilesBombs();
+    checkShipAliens();
+    checkShipBombs();
   }
 
   return true;
@@ -63,7 +48,7 @@ void Collide::checkMissilesBombs() {
     mss->foreach([=](f::ComObj* m) {
       if (b->status &&
           m->status &&
-          this->collide(b, m)) {
+          cx::collide(b, m)) {
         m->hurt();
         b->hurt();
       }
@@ -80,7 +65,7 @@ void Collide::checkMissilesAliens() {
     mss->foreach([=](f::ComObj* b) {
       if (en->status &&
           b->status &&
-          this->collide(en, b)) {
+          cx::collide(en, b)) {
         en->hurt();
         b->hurt();
       }
@@ -90,14 +75,14 @@ void Collide::checkMissilesAliens() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkShipBombs(a::Node* node) {
+void Collide::checkShipBombs() {
+  auto ship= CC_GNLF(Ship, shipNode, "ship");
   auto bombs = MGMS()->getPool("Bombs");
-  auto ship= CC_GNF(Ship, node, "ship");
 
   if (!ship->status) { return; }
   bombs->foreach([=](f::ComObj* b) {
     if (b->status &&
-        this->collide(b, ship)) {
+        cx::collide(b, ship)) {
       ship->hurt();
       b->hurt();
     }
@@ -106,14 +91,14 @@ void Collide::checkShipBombs(a::Node* node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkShipAliens(a::Node* node) {
+void Collide::checkShipAliens() {
+  auto ship= CC_GNLF(Ship, shipNode, "ship");
   auto enemies= MGMS()->getPool("Baddies");
-  auto ship= CC_GNF(Ship, node, "ship");
 
   if (! ship->status) { return; }
   enemies->foreach([=](f::ComObj* en) {
     if (en->status &&
-        this->collide(en, ship)) {
+        cx::collide(en, ship)) {
       ship->hurt();
       en->hurt();
     }

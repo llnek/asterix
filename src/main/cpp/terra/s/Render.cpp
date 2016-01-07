@@ -13,23 +13,13 @@
 #include "core/CCSX.h"
 #include "Render.h"
 #include "Game.h"
-#include "ash/Node.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Render::Render(not_null<EFactory*> e, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(e, d) {
-
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
-void Render::addToEngine(not_null<a::Engine*> e) {
-
+void Render::preamble() {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,8 +71,6 @@ void Render::processMovement(float dt) {
     }
   }
 }
-
-
 
 
 NS_END(terra)
