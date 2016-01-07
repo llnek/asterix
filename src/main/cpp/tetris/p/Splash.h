@@ -18,14 +18,8 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Splash : public f::XScene {
-
   STATIC_REIFY_SCENE(Splash)
-
-  virtual void decorate();
-
-  virtual ~Splash() {}
-  Splash() {}
-  NOCPYASS(Splash)
+  MDECL_DECORATE()
 };
 
 

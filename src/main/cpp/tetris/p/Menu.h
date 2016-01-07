@@ -28,13 +28,8 @@ struct CC_DLL MCX : public f::SCTX {
 struct CC_DLL MMenu : public f::XScene {
 
   STATIC_REIFY_SCENE_CTX(MMenu)
+  MDECL_DECORATE()
 
-  virtual void decorate();
-
-  virtual ~MMenu() {}
-  MMenu() {}
-
-  NOCPYASS(MMenu)
 };
 
 

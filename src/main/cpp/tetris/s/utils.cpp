@@ -36,7 +36,7 @@ void reifyBricks(not_null<f::XLayer*> layer,
 //
 owner<Shape*> mkShape(not_null<f::XLayer*> layer,
     float x, float y,
-    const ShapeInfo &info, const s_vec<c::Vec2>& bbox) {
+    const ShapeInfo &info, const s_vec<c::Vec2> &bbox) {
 
   Shape *rc=nullptr;
 
@@ -107,7 +107,7 @@ owner<Shape*> reifyShape(not_null<f::XLayer*> layer,
 //
 owner<Shape*> previewShape(not_null<f::XLayer*> layer,
     float x, float y,
-    const ShapeInfo& info) {
+    const ShapeInfo &info) {
 
   s_vec<f::FArrInt> dummy;
   return mkShape(layer, x, y, info,
@@ -350,7 +350,7 @@ bool shiftLeft(not_null<f::XLayer*> layer,
 bool rotateRight(not_null<f::XLayer*> layer,
     s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-  auto nF = cx::modulo( (shape->info.rot+1),
+  auto nF = f::modulo( (shape->info.rot+1),
       shape->info.model->size());
 
   auto bs= findBBox(cmap, shape->info.model,
@@ -375,7 +375,7 @@ bool rotateRight(not_null<f::XLayer*> layer,
 bool rotateLeft(not_null<f::XLayer*> layer,
     s_vec<f::FArrInt> &cmap, Shape *shape) {
 
-  auto nF = cx::modulo( (shape->info.rot-1) ,
+  auto nF = f::modulo( (shape->info.rot-1) ,
       shape->info.model->size());
 
   auto bs= findBBox(cmap, shape->info.model, shape->x, shape->y, nF);

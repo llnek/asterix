@@ -12,33 +12,29 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
-#include "n/GNodes.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public f::XSystem<EFactory> {
+struct CC_DLL Resolve : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Resolve"; }
+  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_TPID( "s/Resolve")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  Resolve(not_null<EFactory*>, not_null<c::Dictionary*>);
+  Resolve(a::Engine *e)
+  : System(e)
+  {}
 
-  virtual int priority() { return a::Resolve; }
+  DECL_PTR(a::NodeList, arenaNode)
 
-  virtual void addToEngine(not_null<a::Engine*> );
-  virtual bool update(float);
-
-  void fastDrop(a::Node*);
-  void doIt(a::Node*);
-
-  virtual ~Resolve() {}
-  NODFT(Resolve)
-  NOCPYASS(Resolve)
-
-  a::NodeList *arena;
+protected:
+  void fastDrop();
+  void doIt();
 };
 
 

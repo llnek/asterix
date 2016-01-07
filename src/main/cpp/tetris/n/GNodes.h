@@ -26,6 +26,7 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
         { "collision", "n/TileGrid"},
         { "gbox", "n/GridBox" },
         { "blocks", "n/BlockGrid" },
+        { "motion", "n/Motion" },
         { "slots", "n/GVars" },
         { "pauser", "n/Pauser" },
         { "dropper", "n/Dropper" },

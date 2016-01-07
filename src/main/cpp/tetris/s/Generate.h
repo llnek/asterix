@@ -12,34 +12,34 @@
 #if !defined(__GENERATE_H__)
 #define __GENERATE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
-#include "n/GNodes.h"
+
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Generate : public f::XSystem<EFactory> {
+struct CC_DLL Generate : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Generate"; }
-
-  Generate(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
   virtual int priority() { return a::AI + 60; }
+  MDECL_SYS_TPID( "s/Generate")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  Shape * reifyNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
-  void previewNextShape(not_null<a::Node*>, not_null<f::XLayer*>);
+  Generate(a::Engine *e)
+  : System(e)
+  {}
+
+  DECL_TD(ShapeInfo, nextShapeInfo)
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(Shape, nextShape)
+
+protected:
+
   const ShapeInfo randNextInfo();
+  Shape* reifyNextShape();
+  void previewNextShape();
 
-  a::NodeList *arena = nullptr;
-  ShapeInfo nextShapeInfo;
-  Shape *nextShape=nullptr;
-
-  virtual ~Generate() {}
-  NODFT(Generate)
-  NOCPYASS(Generate)
 };
 
 

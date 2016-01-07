@@ -12,38 +12,38 @@
 #if !defined(__CLEAR_H__)
 #define __CLEAR_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
-#include "n/GNodes.h"
+
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Clear : public f::XSystem<EFactory> {
+struct CC_DLL Clear : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Clear"; }
-
-  Clear(not_null<EFactory*>, not_null<c::Dictionary*>);
-
-  virtual void addToEngine(not_null<a::Engine*>);
-  virtual bool update(float);
   virtual int priority() { return a::AI + 50; }
+  MDECL_SYS_TPID("s/Clear")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  void clearFilled(a::Node*);
-  void clearOneRow(a::Node*, int);
-  void resetOneRow(a::Node*, int);
-  void shiftDownLines(a::Node*);
-  int findFirstDirty(a::Node*);
-  int findFirstEmpty(a::Node*, int);
-  int findLastEmpty(a::Node*, int);
-  bool isEmptyRow(a::Node*, int);
-  void copyLine(a::Node*, int, int);
+  Clear(a::Engine *e)
+  : System(e)
+  {}
 
-  virtual ~Clear() {}
-  NODFT(Clear)
-  NOCPYASS(Clear)
+  DECL_PTR(a::NodeList, arenaNode)
 
-  a::NodeList *arena;
+protected:
+
+  void clearFilled();
+  void clearOneRow( int);
+  void resetOneRow( int);
+  void shiftDownLines();
+  int findFirstDirty();
+  int findFirstEmpty( int);
+  int findLastEmpty( int);
+  bool isEmptyRow( int);
+  void copyLine( int, int);
+
 };
 
 

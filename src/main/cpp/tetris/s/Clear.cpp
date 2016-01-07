@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/CCSX.h"
 #include "Clear.h"
 #include "s/utils.h"
@@ -16,37 +17,26 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Clear::Clear(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Clear::addToEngine(not_null<a::Engine*> e) {
-  ArenaNode n;
-  arena= e->getNodeList(n.typeId());
+void Clear::preamble() {
+  arenaNode = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Clear::update(float dt) {
-  auto n= arena->head;
 
   if (MGMS()->isLive()) {
-
-    auto ps= CC_GNF(Pauser, n, "pauser");
+    auto ps= CC_GNLF(Pauser, arenaNode, "pauser");
     if (ps->pauseToClear) {
       if (cx::timerDone(ps->timer)) {
-        clearFilled(n);
         cx::undoTimer(ps->timer);
         ps->timer=nullptr;
+        clearFilled();
         ps->pauseToClear=false;
       }
-      //stop downstream processing
       return false;
     }
   }
@@ -56,26 +46,28 @@ bool Clear::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Clear::clearFilled(a::Node *node) {
-  auto flines = CC_GNF(FilledLines, node, "flines");
+void Clear::clearFilled() {
+  auto flines = CC_GNLF(FilledLines, arenaNode, "flines");
   auto score= flines->lines.size();
 
   F__LOOP(it, flines->lines) {
-    clearOneRow(node, *it);
-    resetOneRow(node, *it);
+    auto z = *it;
+    clearOneRow( z);
+    resetOneRow( z);
   }
 
-  shiftDownLines(node);
-  sendEx("/hud/score/update", j::json({
+  auto msg= j::json({
       { "score", score * 50 }
-      }));
+      });
+  shiftDownLines();
+  SENDMSGEX("/hud/score/update", &msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Clear::clearOneRow(a::Node *node, int r) {
-  auto bks= CC_GNF(BlockGrid, node, "blocks");
-  auto& row= bks->grid[r];
+void Clear::clearOneRow( int r) {
+  auto bks= CC_GNLF(BlockGrid, arenaNode, "blocks");
+  auto &row= bks->grid[r];
 
   for (auto c=0; c < row.size(); ++c) {
     auto z= row.get(c);
@@ -88,8 +80,8 @@ void Clear::clearOneRow(a::Node *node, int r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Clear::resetOneRow(a::Node *node, int r) {
-  auto co= CC_GNF(TileGrid, node, "collision");
+void Clear::resetOneRow( int r) {
+  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
   auto &row= co->tiles[r];
 
   for (auto c=0; c < row.size(); ++c) {
@@ -101,15 +93,16 @@ void Clear::resetOneRow(a::Node *node, int r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Clear::shiftDownLines(a::Node *node) {
+void Clear::shiftDownLines() {
+  auto node= arenaNode->head;
   auto top= topLine(node);
   // top down search
-  auto f0= findFirstDirty(node);
+  auto f0= findFirstDirty();
   // no lines are touched
   if (f0==0) { return; }
-  auto e0= findFirstEmpty(node,f0);
+  auto e0= findFirstEmpty(f0);
   if (e0==0) { return; }
-  auto e= findLastEmpty(node, e0);
+  auto e= findLastEmpty(e0);
   auto f = e0 + 1; // last dirty
   if (f > f0) {
     throw "error while shifting lines down";
@@ -118,7 +111,7 @@ void Clear::shiftDownLines(a::Node *node) {
   auto s=f;  // last dirty
   auto t=e;
   while (s <= f0) {
-    copyLine(node, s, t);
+    copyLine(s, t);
     ++t;
     ++s;
   }
@@ -126,11 +119,11 @@ void Clear::shiftDownLines(a::Node *node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Clear::findFirstDirty(a::Node *node) {
-  auto t = topLine(node);// - 1,
+int Clear::findFirstDirty() {
+  auto t = topLine(arenaNode->head);// - 1,
 
   for (auto r = t; r > 0; --r) {
-    if (!isEmptyRow(node,r)) { return r; }
+    if (!isEmptyRow(r)) { return r; }
   }
 
   return 0;
@@ -138,18 +131,18 @@ int Clear::findFirstDirty(a::Node *node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Clear::findFirstEmpty(a::Node *node, int t) {
+int Clear::findFirstEmpty( int t) {
   for (auto r=t; r > 0; --r) {
-    if (isEmptyRow(node,r)) { return r; }
+    if (isEmptyRow(r)) { return r; }
   }
   return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Clear::findLastEmpty(a::Node *node, int t) {
+int Clear::findLastEmpty( int t) {
   for (auto r=t; r >= 0; --r) {
-    if (!isEmptyRow(node,r)) { return r+1; }
+    if (!isEmptyRow(r)) { return r+1; }
   }
   //should never get here
   throw "findLastEmpty has error";
@@ -158,8 +151,8 @@ int Clear::findLastEmpty(a::Node *node, int t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Clear::isEmptyRow(a::Node *node, int r) {
-  auto co= CC_GNF(TileGrid, node, "collision");
+bool Clear::isEmptyRow( int r) {
+  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
   auto &row= co->tiles[r];
   auto len= row.size() - 1;
 
@@ -173,9 +166,9 @@ bool Clear::isEmptyRow(a::Node *node, int r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Clear::copyLine(a::Node *node, int from, int to) {
-  auto co = CC_GNF(TileGrid, node, "collision");
-  auto bs = CC_GNF(BlockGrid, node, "blocks");
+void Clear::copyLine( int from, int to) {
+  auto co = CC_GNLF(TileGrid, arenaNode, "collision");
+  auto bs = CC_GNLF(BlockGrid, arenaNode, "blocks");
   auto tile = CC_CSV(c::Integer, "TILE");
   auto &line_f = co->tiles[from];
   auto &line_t = co->tiles[to];

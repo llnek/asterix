@@ -25,13 +25,10 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 
-  virtual void decorate();
+protected:
   void onPlay(c::Ref*);
-
-  virtual ~UILayer() {}
-  UILayer() {}
-  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,6 +41,7 @@ void UILayer::decorate() {
   auto cw = cx::center();
 
   centerImage("game.bg");
+  incIndexZ();
 
   menu->setPosition(cw.x, wb.top * 0.1f);
   b->setTarget(this,
@@ -56,13 +54,11 @@ void UILayer::decorate() {
 //
 void UILayer::onPlay(c::Ref*) {
   auto f= [=]() {
-    cx::runScene(
-        XCFG()->prelude(),
-        CC_CSV(c::Float,"SCENE_DELAY"));
+    cx::runSceneEx(
+        XCFG()->prelude());
   };
   auto m= MMenu::reify(mc_new_1(MCX, f));
-  cx::runScene(m,
-      CC_CSV(c::Float, "SCENE_DELAY"));
+  cx::runSceneEx(m);
 }
 
 END_NS_UNAMED()

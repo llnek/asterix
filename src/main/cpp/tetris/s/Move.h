@@ -12,33 +12,28 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
-#include "core/XSystem.h"
+#include "ash/System.h"
 #include "EFactory.h"
-#include "n/GNodes.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public f::XSystem<EFactory> {
+struct CC_DLL Move : public a::System {
 
-  virtual const a::SystemType typeId() { return "s/Move"; }
+  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_TPID( "s/Move")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  Move(not_null<EFactory*>, not_null<c::Dictionary*>);
+  Move(a::Engine *e)
+  : System(e)
+  {}
 
-  virtual void addToEngine(not_null<a::Engine*>);
+  DECL_PTR(a::NodeList, arenaNode)
 
-  virtual int priority() { return a::Move; }
-
-  virtual bool update(float);
-
-  void doFall(a::Node*);
-
-  virtual ~Move() {}
-  NODFT(Move)
-  NOCPYASS(Move)
-
-  a::NodeList *arena;
+protected:
+  void doFall();
 };
 
 

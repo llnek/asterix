@@ -21,7 +21,7 @@ NS_BEGIN(tetris)
 //
 void HUDLayer::decorate() {
 
-    auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Integer, "TILE");
   auto wz = cx::visRect();
   auto cw = cx::center();
   auto wb = cx::visBox();
@@ -62,7 +62,7 @@ void HUDLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::endGame() {
-  drawStatusText(XCFG()->getL10NStr("gameover"));
+  drawStatusText(gets("gameover"));
   status->setVisible(true);
 }
 

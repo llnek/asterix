@@ -33,6 +33,10 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
+
+  game_id = "fb0fdd0b-1821-42d9-b6f7-26b11218b40d";
+  app_id = "tetris";
+
   addCst("THROTTLEWAIT", CC_FLOAT(80.0f));
   addCst("BLOCK_COLORS", CC_INT(8));
   addCst("FIELD_W", CC_INT(12));
@@ -97,8 +101,9 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
+  auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 12.0f/72.0f * rs.width /480.0f;
+  scale = 12.0f/72.0f * rs.width /gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////

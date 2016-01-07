@@ -29,22 +29,26 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-
+  regoSystem(mc_new_1(Resolve,this));
+  regoSystem(mc_new_1(Move,this));
+  regoSystem(mc_new_1(Generate,this));
+  regoSystem(mc_new_1(Clear,this));
+  regoSystem(mc_new_1(Stage,this));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GEngine::reifyArena() {
   auto ent= this->reifyEntity("*");
-  ent->checkin(mc_new_1(FilledLines,this));
-  ent->checkin(mc_new_1(ShapeShell,this));
-  ent->checkin(mc_new_1(BlockGrid,this));
-  ent->checkin(mc_new_1(TileGrid,this));
-  ent->checkin(mc_new_1(GVars,this));
-  ent->checkin(mc_new_1(Dropper,this));
-  ent->checkin(mc_new_1(Pauser,this));
-  ent->checkin(mc_new_1(GridBox,this));
-  ent->checkin(mc_new_1(CtrlPad,this));
+  ent->checkin(mc_new(FilledLines));
+  ent->checkin(mc_new(ShapeShell));
+  ent->checkin(mc_new(BlockGrid));
+  ent->checkin(mc_new(TileGrid));
+  ent->checkin(mc_new(GVars));
+  ent->checkin(mc_new(Dropper));
+  ent->checkin(mc_new(Pauser));
+  ent->checkin(mc_new(GridBox));
+  ent->checkin(mc_new(CtrlPad));
 }
 
 NS_END(tetris)

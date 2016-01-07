@@ -17,45 +17,18 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Config : public f::XConfig {
-protected:
+struct CC_DLL Config : public f::XConfig {
 
-  void initAssets();
-  void initCsts();
-  void initLevels();
-
-public:
-
-  virtual const sstr appKey() { return  "fb0fdd0b-1821-42d9-b6f7-26b11218b40d"; }
-
-  virtual const sstr appId() { return "tetris"; }
-
+  virtual const c::Size gameSize() { return c::Size(480, 320); }
   virtual const sstr themeColor() { return "silver"; }
 
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_WIDTH;
   }
 
-  virtual const c::Size gameSize() { return c::Size(480, 320); }
-
   virtual void handleResolution(const c::Size&);
 
-  virtual void setGameId(const sstr& ) {
-  }
-
-  virtual void setRoomId(const sstr& ) {
-  }
-
-  virtual const sstr getGameId() {
-    return "";
-  }
-
-  virtual const sstr getRoomId() {
-    return "";
-  }
-
   virtual bool isPortrait() { return false; }
-
   virtual c::Scene* prelude();
 
   virtual const sstr getWSUrl() {
@@ -64,12 +37,13 @@ public:
 
   virtual void runOnce();
 
-  virtual ~Config() {}
-  Config() {}
-  NOCPYASS(Config)
-
   static owner<Config*> reify();
 
+protected:
+  void initAssets();
+  void initCsts();
+  void initLevels();
+  Config() {}
 };
 
 

@@ -9,38 +9,31 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "s/utils.h"
 #include "Move.h"
 
 NS_BEGIN(tetris)
 
-//////////////////////////////////////////////////////////////////////////
-//
-Move::Move(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::addToEngine(not_null<a::Engine*> e) {
-  ArenaNode n;
-  arena = e->getNodeList(n.typeId());
+void Move::preamble() {
+  arenaNode = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  auto node= arena->head;
+
   if (MGMS()->isLive()) {
-    auto sh= CC_GNF(ShapeShell,node, "shell");
-    auto dp= CC_GNF(Dropper,node, "dropper");
+    auto sh= CC_GNLF(ShapeShell, arenaNode, "shell");
+    auto dp= CC_GNLF(Dropper, arenaNode, "dropper");
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
       cx::undoTimer(dp->timer);
       dp->timer=nullptr;
-      doFall(node);
+      doFall();
     }
   }
   return true;
@@ -48,21 +41,21 @@ bool Move::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::doFall(a::Node *node) {
-  auto co= CC_GNF(TileGrid, node, "collision");
-  auto sh= CC_GNF(ShapeShell, node, "shell");
-  auto bs= CC_GNF(BlockGrid, node, "blocks");
+void Move::doFall() {
+  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
+  auto sh= CC_GNLF(ShapeShell, arenaNode, "shell");
+  auto bs= CC_GNLF(BlockGrid, arenaNode, "blocks");
+  auto dp= CC_GNLF(Dropper, arenaNode, "dropper");
+  auto pu= CC_GNLF(Pauser, arenaNode, "pauser");
   auto shape= sh->shape;
   auto &cmap= co->tiles;
   auto &emap= bs->grid;
-  auto dp= CC_GNF(Dropper, node, "dropper");
-  auto pu= CC_GNF(Pauser, node, "pauser");
 
   if (NNP(shape)) {
     if (! moveDown(MGML(), cmap, shape)) {
 
       // lock shape in place
-      lock(node, shape);
+      lock(arenaNode->head,shape);
 
       /*
       //TODO: what is this???

@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Generate.h"
@@ -43,36 +44,25 @@ END_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////
 //
-Generate::Generate(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-  : XSystem<EFactory>(f, d) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Generate::addToEngine(not_null<a::Engine*> e) {
-  ArenaNode n;
-  arena= e->getNodeList(n.typeId());
-  nextShape=nullptr;
+void Generate::preamble() {
+  arenaNode= engine->getNodeList(ArenaNode().typeId());
   nextShapeInfo= randNextInfo();
+  nextShape=nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Generate::update(float dt) {
-  auto n = arena->head;
 
   if (MGMS()->isLive()) {
-
-    auto sl = CC_GNF(ShapeShell, n, "shell");
-    auto dp = CC_GNF(Dropper, n, "dropper");
+    auto sl = CC_GNLF(ShapeShell, arenaNode, "shell");
+    auto dp = CC_GNLF(Dropper, arenaNode, "dropper");
     auto cfg= MGMS()->getLCfg()->getValue();
     if (ENP(sl->shape)) {
-      sl->shape = reifyNextShape(n, MGML());
+      sl->shape = reifyNextShape();
       if (NNP(sl->shape)) {
         //show new next shape in preview window
-        previewNextShape(n, MGML());
+        previewNextShape();
         //activate drop timer
         dp->dropSpeed= JS_FLOAT(cfg["speed"]);
         dp->dropRate= JS_FLOAT(cfg["nrate"]);
@@ -88,16 +78,16 @@ bool Generate::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
-  auto co= CC_GNF(TileGrid, node, "collision");
-  auto bks= CC_GNF(BlockGrid, node, "blocks");
-  auto gbox= CC_GNF(GridBox, node, "gbox");
+Shape* Generate::reifyNextShape() {
+  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
+  auto bks= CC_GNLF(BlockGrid, arenaNode, "blocks");
+  auto gbox= CC_GNLF(GridBox, arenaNode, "gbox");
   auto tile= CC_CSV(c::Integer, "TILE");
   auto &tiles = co->tiles;
   auto wz= cx::visRect();
   auto x = gbox->box.left + 5 * tile;
     auto y = gbox->box.top - tile;
-  auto shape= reifyShape(layer, tiles,
+  auto shape= reifyShape(MGML(), tiles,
       x,y,
       nextShapeInfo);
   if (ENP(shape)) {
@@ -111,8 +101,8 @@ Shape * Generate::reifyNextShape(not_null<a::Node*> node, not_null<f::XLayer*> l
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> layer) {
-  auto gbox= CC_GNF(GridBox, node, "gbox");
+void Generate::previewNextShape() {
+  auto gbox= CC_GNLF(GridBox, arenaNode, "gbox");
   auto tile = CC_CSV(c::Integer, "TILE");
   auto info = randNextInfo();
   auto cw = cx::center();
@@ -128,7 +118,7 @@ void Generate::previewNextShape(not_null<a::Node*> node, not_null<f::XLayer*> la
   disposeShape(nextShape);
   SNPTR(nextShape)
 
-  nextShape= previewShape(layer, x, y, info);
+  nextShape= previewShape(MGML(), x, y, info);
   nextShapeInfo= info;
 }
 

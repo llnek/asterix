@@ -25,28 +25,24 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 
-  virtual void decorate();
+protected:
   void onQuit(c::Ref*);
-
-  virtual ~UILayer() {}
-  UILayer() {}
-
-  NOCPYASS(UILayer)
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
 
-  auto tt= cx::reifyBmfLabel("font.JellyBelly",
-      XCFG()->getL10NStr("mmenu"));
+  auto tt= cx::reifyBmfLabel("font.JellyBelly", gets("mmenu"));
+  auto tile = CC_CSV(c::Integer, "TILE");
   auto c= XCFG()->getColor("default");
-    auto tile = CC_CSV(c::Integer, "TILE");
   auto cw= cx::center();
   auto wb= cx::visBox();
 
   centerImage("gui.mmenu.menu.bg");
+  incIndexZ();
 
   tt->setPosition(cw.x, wb.top * 0.9f);
   tt->setColor(c);
@@ -56,9 +52,8 @@ void UILayer::decorate() {
   auto b= cx::reifyMenuBtn("player1.png");
   auto menu= cx::mkMenu(b);
     b->setCallback([=](c::Ref*) {
-        cx::runScene(
-            Game::reify(mc_new(f::GCX)),
-            CC_CSV(c::Float,"SCENE_DELAY"));
+        cx::runSceneEx(
+            Game::reify(mc_new(f::GCX)));
       });
   menu->setPosition(cw);
   addItem(menu);
@@ -93,9 +88,8 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(),
-      CC_CSV(c::Float,"SCENE_DELAY"));
+  cx::runSceneEx(
+      XCFG()->prelude());
 }
 
 END_NS_UNAMED()

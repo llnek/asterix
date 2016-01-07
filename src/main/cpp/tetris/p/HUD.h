@@ -21,25 +21,18 @@ NS_BEGIN(tetris)
 struct CC_DLL HUDLayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_GET_IID(3)
+  MDECL_DECORATE()
 
-  c::Label *scoreLabel=nullptr;
-  c::Label *status=nullptr;
-  int score=0;
-
-  virtual int getIID() { return 3; }
-  virtual void decorate();
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(c::Label, status)
+  DECL_IZ(score)
 
   void drawStatusText(const sstr&);
   void endGame();
   void resetAsNew();
   void reset();
   void updateScore(int );
-
-  virtual ~HUDLayer() {}
-  HUDLayer() {}
-
-  NOCPYASS(HUDLayer)
-
 };
 
 

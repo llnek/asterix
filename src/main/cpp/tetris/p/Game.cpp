@@ -12,16 +12,11 @@
 #include "x2d/GameLayer.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/Stage.h"
-#include "s/Generate.h"
-#include "s/Clear.h"
-#include "s/Motion.h"
-#include "s/Move.h"
-#include "s/Resolve.h"
 #include "s/utils.h"
 #include "Game.h"
 #include "Menu.h"
 #include "HUD.h"
+#include "s/EFactory.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -31,14 +26,17 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() {
-    return (HUDLayer*) getSceneX()->getLayer(3); }
-
+  virtual bool onTouchBegan(c::Touch*, c::Event*) {
+    return true;
+  }
   virtual void onTouchEnded(c::Touch*, c::Event*);
   virtual void onMouseUp(c::Event*);
+  virtual void postReify();
 
-  virtual int getIID() { return 2; }
-  virtual void decorate();
+  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  STATIC_REIFY_LAYER(GLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(2)
 
   void onGUI(const c::Vec2&);
   void showMenu();
@@ -46,28 +44,20 @@ struct CC_DLL GLayer : public f::GameLayer {
   void deco();
   void reset();
 
-  STATIC_REIFY_LAYER(GLayer)
-
-  virtual ~GLayer() {}
-  GLayer() {}
-  NOCPYASS(GLayer)
-
-
-  EFactory *factory = nullptr;
-  CtrlPad *cpad = nullptr;
-  Motion *motion = nullptr;
+  DECL_PTR(a::NodeList,arenaNode)
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnded(c::Touch* t, c::Event*) {
+void GLayer::onTouchEnded(c::Touch *t, c::Event*) {
   auto pos= t->getLocationInView();
   onGUI(pos);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseUp(c::Event* e) {
+void GLayer::onMouseUp(c::Event *e) {
   auto evt= (c::EventMouse*)e;
   auto pos= evt->getLocationInView();
   auto b= evt->getMouseButton();
@@ -78,8 +68,10 @@ void GLayer::onMouseUp(c::Event* e) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onGUI(const c::Vec2& pos) {
-  auto hsps= cpad->hotspots;
+void GLayer::onGUI(const c::Vec2 &pos) {
+  auto motion= CC_GNLF(Motion, arenaNode, "motion");
+  auto cpad= CC_GNLF(CtrlPad, arenaNode, "cpad");
+  auto &hsps= cpad->hotspots;
 
   if (cx::pointInBox(hsps["rr"], pos)) {
     motion->rotr=true;
@@ -105,60 +97,34 @@ void GLayer::onGUI(const c::Vec2& pos) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
-  enableListeners();
-  cx::resumeAudio();
-  deco();
-  scheduleUpdate();
+void GLayer::postReify() {
+  arenaNode= engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::deco() {
-
-  F__LOOP(it, atlases) { it->second->removeAllChildren(); }
+void GLayer::decorate() {
 
   centerImage("game.bg");
+  incIndexZ();
 
-  if (atlases.empty()) {
-    regoAtlas("game-pics");
-    regoAtlas("lang-pics");
-    incIndexZ();
-  }
+  regoAtlas("game-pics");
+  regoAtlas("lang-pics");
 
-  auto e= mc_new(a::Engine);
-  auto d= CC_DICT();
-  CC_KEEP(d)
-  auto f= mc_new_2(EFactory, e, d);
-
-  f->reifyArena();
-
-  e->regoSystem(mc_new_2(Stage, f, d));
-  e->regoSystem(mc_new_2(Generate, f, d));
-  e->regoSystem(mc_new_2(Clear, f, d));
-  e->regoSystem(mc_new_2(Motions, f, d));
-  e->regoSystem(mc_new_2(Move, f, d));
-  e->regoSystem(mc_new_2(Resolve, f, d));
-  e->forceSync();
-
-  ArenaNode a;
-  auto nl= e->getNodeList(a.typeId());
-  motion= CC_GNF(Motion, nl->head, "motion");
-  cpad= CC_GNF(CtrlPad, nl->head, "cpad");
-
-  this->options= d;
-  this->factory= f;
-  this->engine=e;
-
+  this->engine = mc_new(GEngine);
   getHUD()->reset();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::showMenu() {
 
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::endGame() {
+  surcease();
   getHUD()->endGame();
 }
 
@@ -166,14 +132,14 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
-  GLayer *y = (GLayer*) getLayer(2);
-  j::json *json= (j::json*) msg;
+  auto y = (GLayer*) getLayer(2);
 
   if ("/hud/end" == topic) {
     y->endGame();
   }
 
   if ("/hud/score/update" == topic) {
+    auto json= (j::json*) msg;
     auto v= JS_INT(json->operator[]("score"));
     y->getHUD()->updateScore(v);
   }
@@ -187,12 +153,6 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
 //
 const f::Box4 Game::getEnclosureBox() {
   return  cx::visBox();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-f::GameLayer* Game::getGLayer() {
-  return (f::GameLayer*) getLayer(2);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/utils.h"
@@ -17,69 +18,66 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
-//////////////////////////////////////////////////////////////////////////
-//
-Resolve::Resolve(not_null<EFactory*> f, not_null<c::Dictionary*> d)
-
-: XSystem<EFactory>(f, d) {
-
-}
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::addToEngine(not_null<a::Engine*> e) {
-  ArenaNode n;
-  arena = e->getNodeList(n.typeId());
+void Resolve::preamble() {
+  arenaNode = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
-  auto n= arena->head;
 
   if (MGMS()->isLive()) {
-    doIt(n);
+    doIt();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doIt(a::Node *node) {
+void Resolve::doIt() {
 
-  auto motion = CC_GNF(Motion, node, "motion");
-  auto sh = CC_GNF(ShapeShell, node, "shell");
-  auto co= CC_GNF(TileGrid, node, "collision");
+  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
+  auto sh = CC_GNLF(ShapeShell, arenaNode, "shell");
+  auto mo = CC_GNLF(Motion, arenaNode, "motion");
   auto &cmap= co->tiles;
   auto shape= sh->shape;
 
-  if (NNP(shape)) {
-    if (motion->right) {
-      shiftRight( MGML(), cmap, shape);
-    }
-    if (motion->left) {
-      shiftLeft( MGML(), cmap, shape);
-    }
-    if (motion->rotr) {
-      rotateRight( MGML(), cmap, shape);
-    }
-    if (motion->rotl) {
-      rotateLeft( MGML(), cmap, shape);
-    }
-    if (motion->down) {
-      fastDrop( node);
-    }
+  if (ENP(shape)) {
+    return;
   }
-  motion->right = false;
-  motion->left = false;
-  motion->rotr = false;
-  motion->rotl = false;
-  motion->down = false;
+
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW) ||
+      mo->right) {
+    shiftRight( MGML(), cmap, shape);
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW) ||
+      mo->left) {
+    shiftLeft( MGML(), cmap, shape);
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW) ||
+      mo->rotr) {
+    rotateRight( MGML(), cmap, shape);
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW) ||
+      mo->rotl) {
+    rotateLeft( MGML(), cmap, shape);
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_SPACE) ||
+      mo->down) {
+    fastDrop();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::fastDrop(a::Node *node) {
-  auto dp = CC_GNF(Dropper, node, "dropper");
+void Resolve::fastDrop() {
+  auto dp = CC_GNLF(Dropper, arenaNode, "dropper");
   auto cfg = MGMS()->getLCfg()->getValue();
   cx::undoTimer(dp->timer);
   // drop at fast-drop rate

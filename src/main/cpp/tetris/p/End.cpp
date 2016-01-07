@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "Game.h"
 #include "End.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
@@ -23,29 +24,24 @@ void ELayer::onReplay(c::Ref*) {
   //auto x= (f::GCX*)getSceneX()->getCtx();
   //auto m= MGMS()->getMode();
   getSceneX()->setCtx(nullptr);
-  cx::runScene(
-      Game::reify(mc_new(f::GCX)),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+  cx::runSceneEx(
+      Game::reify(mc_new(f::GCX)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runScene(
-      XCFG()->prelude(),
-      CC_CSV(c::Float, "SCENE_DELAY"));
+  cx::runSceneEx( XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR",
-      XCFG()->getL10NStr("gameover"));
+  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
-  int tag;
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
