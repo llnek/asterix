@@ -44,6 +44,7 @@ void GEngine::reifyArena() {
   ent->checkin(mc_new(ShapeShell));
   ent->checkin(mc_new(BlockGrid));
   ent->checkin(mc_new(TileGrid));
+  ent->checkin(mc_new(Motion));
   ent->checkin(mc_new(GVars));
   ent->checkin(mc_new(Dropper));
   ent->checkin(mc_new(Pauser));

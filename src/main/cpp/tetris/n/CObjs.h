@@ -354,6 +354,13 @@ struct CC_DLL FilledLines : public a::Component {
 //
 struct CC_DLL Motion : public a::Component {
   MDECL_COMP_TPID( "n/Motion")
+  void reset() {
+    right=false;
+    left=false;
+    rotr=false;
+    rotl=false;
+    down=false;
+  }
   DECL_BF(right)
   DECL_BF(left)
   DECL_BF(rotr)

@@ -105,13 +105,14 @@ void GLayer::postReify() {
 //
 void GLayer::decorate() {
 
+  this->engine = mc_new(GEngine);
+
   centerImage("game.bg");
   incIndexZ();
 
   regoAtlas("game-pics");
   regoAtlas("lang-pics");
 
-  this->engine = mc_new(GEngine);
   getHUD()->reset();
 }
 
