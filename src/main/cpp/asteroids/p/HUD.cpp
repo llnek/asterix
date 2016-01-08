@@ -9,151 +9,73 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/scenes
- * @module p/hud
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "HUD.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_ALIAS(cx,fusii::ccsx)
+ND_BEGIN(asteroids)
 
-
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class HUDLayer */
-HUDLayer = scenes.XGameHUDLayer.extend({
-  /**
-   * @method updateScore
-   */
-  updateScore(n) {
-    this.score += n;
-    this.drawScore();
-  },
-  /**
-   * @method resetAsNew
-   */
-  resetAsNew() {
-    this.score = 0;
-    this.reset();
-  },
-  /**
-   * @method reset
-   */
-  reset() {
-    this.replayBtn.setVisible(false);
-    this.lives.resurrect();
-  },
-  /**
-   * @method initAtlases
-   * @protected
-   */
-  initAtlases() {
-    this.regoAtlas( this.hudAtlas());
-  },
-  /**
-   * @method hudAtlas
-   * @private
-   */
-  hudAtlas() {
-    return 'game-pics';
-  },
-  /**
-   * @method drawScore
-   * @private
-   */
-  drawScore() {
-    this.scoreLabel.setString(Number(this.score).toString());
-  },
-  /**
-   * @method initLabels
-   * @private
-   */
-  initLabels() {
-    const wz = ccsx.vrect();
-
-    this.scoreLabel = ccsx.bmfLabel({
-      fontPath: sh.getFont('font.TinyBoxBB'),
-      text: '0',
-      anchor: ccsx.acs.BottomRight,
-      scale: 12/72
-    });
-    this.scoreLabel.setPosition( wz.width - csts.TILE - csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF - ccsx.getScaledHeight(this.scoreLabel));
-
-    this.addChild(this.scoreLabel, this.lastZix, ++this.lastTag);
-  },
-  /**
-   * @method initIcons
-   * @protected
-   */
-  initIcons() {
-    const wz = ccsx.vrect();
-
-    this.lives = new scenes.XHUDLives( this, csts.TILE + csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF, {
-      frames: ['rship_1.png'],
-      scale: 0.5,
-      totalLives: 3
-    });
-
-    this.lives.create();
-  },
-  /**
-   * @method ctor
-   * @constructs
-   */
-  ctor(options) {
-    const color= ccsx.white,
-    scale=1;
-
-    this._super(options);
-
-    this.options.i_replay= {
-      nnn: '#icon_replay.png',
-      where: ccsx.acs.Bottom,
-      color: color,
-      scale : scale,
-      visible: false,
-      cb() {
-        sh.fire('/hud/replay');
-      }
-    };
-
-    this.options.i_menu= {
-      nnn: '#icon_menu.png',
-      where: ccsx.acs.Bottom,
-      color: color,
-      scale: scale,
-      cb() {
-        sh.fire('/hud/showmenu');
-      }
-    };
-
-  }
-
-
-});
-
-/** @alias module:p/hud */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {HUDLayer} HUDLayer
-   */
-  HUDLayer: HUDLayer
-};
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void HUDLayer::updateScore(int n) {
+  score += n;
+  drawScore();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::resetAsNew() {
+  score = 0;
+  reset();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::reset() {
+  replayBtn->setVisible(false);
+  lives->resurrect();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::drawScore() {
+  scoreLabel->setString(s::to_string(score));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::decorate() {
+  auto soff = CC_CSV(c::Integer, "S_OFF");
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto wz= cx::visRect();
+  auto wb = cx::visBox();
+
+  regoAtlas( "game-pics");
+
+  scoreLabel = cx::reifyBmfLabel("font.TinyBoxBB", "0");
+  scoreLabel->setAnchorPoint(cx::anchorBR());
+  scoreLabel->setScale( 12/72.0f);
+  scoreLabel->setPosition( wz.size.width - tile - soff,
+    wz.size.height - tile - soff - cx::getScaledHeight(scoreLabel));
+  addItem(scoreLabel);
+
+  this->lives= f::reifyRefType<f::XLives>();
+  this->lives->decorate("rship_1.png", 3,
+      tile + soff,
+      wb.top - tile - soff, 0.5f);
+  addItem(lives);
+
+  auto b = cx::reifyMenuBtn("icon_menu.png");
+  auto menu = cx::mkMenu(b);
+  auto z2= cx::halfHW(b);
+
+  b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
+  menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
+  addItem(menu);
+}
+
+
+NS_END(asteroids)
+
 

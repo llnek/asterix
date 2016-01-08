@@ -27,22 +27,20 @@ struct CC_DLL UILayer : public f::XLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
-  centerImage("game.bg");
+  auto b= cx::reifyMenuBtn("play.png");
   auto cw = cx::center();
   auto wb= cx::visBox();
-  auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
-  b->setTarget(this,
-      CC_MENU_CALLBACK(UILayer::onPlay));
+
+  centerImage("game.bg");
+
+  b->setCallback([=]() {
+    auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); }
+    cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
+  });
+
   menu->setPosition(cw.x, wb.top * 0.1f);
   addItem(menu);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref*) {
-  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); }
-  cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
 }
 
 END_NS_UNAMED()

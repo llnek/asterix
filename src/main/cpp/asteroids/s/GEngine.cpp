@@ -9,172 +9,151 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires n/gnodes
- * @module s/factory
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "GEngine.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import gnodes from 'n/gnodes';
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(asteroids)
 
-
-let xcfg = sh.xcfg,
-sjs=sh.skarojs,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class EntityFactory */
-EntityFactory = sh.Ashley.casDef({
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(engine, options) {
-    this.state = options;
-    this.engine=engine;
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createMissiles
-   * @param {Number} count
-   */
-  createMissiles(count) {
-    sh.pools.Missiles.preSet(() => {
-      const sp = ccsx.createSprite('laserGreen.png');
-      sp.setVisible(false);
-      sh.main.addAtlasItem('game-pics', sp);
-      return new cobjs.Missile(sp);
-    }, count || 36);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createLasers
-   * @param {Number} count
-   */
-  createLasers(count) {
-    sh.pools.Lasers.preSet(() => {
-      const sp = ccsx.createSprite('laserRed.png');
-      sp.setVisible(false);
-      sh.main.addAtlasItem('game-pics', sp);
-      return new cobjs.Laser(sp);
-    }, count || 36);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createShip
-   */
-  createShip() {
-    let ent= sh.Ashley.newEntity(),
-    deg = 90,//sjs.randPercent() * 360;
-    sp= ccsx.createSprite('rship_0.png');
+//
+void GEngine::initEntities() {
 
-    sp.setRotation(deg);
-    sh.main.addAtlasItem('game-pics', sp);
+}
 
-    sp= new cobjs.Ship(sp,['rship_0.png','rship_1.png']);
-    this.state.ship= sp;
-    this.bornShip();
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initSystems() {
 
-    ent.add(sp);
+}
 
-    ent.add(new cobjs.Velocity(0,0,150,150));
-    ent.add(new cobjs.Motion());
-    ent.add(new cobjs.Looper(1));
-    ent.add(new cobjs.Cannon());
-    ent.add(new cobjs.Thrust(25));
-    ent.add(new cobjs.Rotation(deg));
-    this.engine.addEntity(ent);
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method bornShip
-   */
-  bornShip() {
-    let h = this.state.playerSize.height,
-    w = this.state.playerSize.width,
-    B= this.state.world,
-    wz = ccsx.vrect(),
-    cw = ccsx.center(),
-    test=true,
-    sp,aa,x,y,r;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::createMissiles(int count) {
+  auto p= MGMS()->getPool("Missiles");
+  p->preset([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("laserGreen.png");
+    sp->setVisible(false);
+    MGML()->addAtlasItem("game-pics", sp);
+    return mc_new_1(Missile, sp);
+  }, count);
+}
 
-    while (test) {
-      r= { left: sjs.rand(wz.width),
-           top: sjs.rand(wz.height) };
-      r.bottom = r.top - h;
-      r.right = r.left + w;
-      if (!this.maybeOverlap(r) &&
-          !sh.outOfBound(r,B)) {
-        x = r.left + w * 0.5;
-        y = r.top - h * 0.5;
-        test=false;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::createLasers(int count) {
+  auto p= MGMS()->getPool("Lasers");
+  p->preset([=]() -> f::ComObj* {
+    auto sp = cx::reifySprite("laserRed.png");
+    sp->setVisible(false);
+    MGML()->addAtlasItem("game-pics", sp);
+    return mc_new_1(Laser, sp);
+  }, count);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::createShip() {
+  auto sp= cx::reifySprite("rship_0.png");
+  auto ent= this->reifyEntity("*");
+  auto s= mc_new_1(Ship, sp)
+  MGML()->addAtlasItem("game-pics", sp);
+  sp->setRotation(90);
+  s->maxVel.x=150;
+  s->maxVel.y=150;
+  s->power=25;
+  s->degree=90;
+  ent->checkin(s);
+  bornShip();
+  ent->checkin(mc_new(Motion));
+  ent->checkin(mc_new(Cannon));
+  ent->checkin(mc_new_1(Looper,1));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::bornShip(Ship *ship) {
+  auto sz = ship->sprite->getContentSize();
+  auto B= MGMS()->getEnclosureBox();
+  auto h= sz.height;
+  auto w = sz.width;
+  auto wz = cx::visRect();
+  auto cw = cx::center();
+  auto test=true;
+  f::Box4 r(0,0,0,0);
+
+  while (test) {
+
+    r.right= cx::randFloat(wz.size.width);
+    r.top= cx::randFloat(wz.size.height);
+    r.bottom = r.top - h ;
+    r.left= r.right - w ;
+
+    if (!maybeOverlap(r) &&
+        !cx::outOfBound(r,B)) {
+      x = r.left + w * 0.5f;
+      y = r.top - h * 0.5f;
+      test=false;
+    }
+  }
+
+  ship->inflate(x, y);
+}
+
+void GEngine::createAsteroids(int rank) {
+  CCLOG("about to create more asteroids - %d", rank);
+  auto B= MGMS()->getEnclosureBox();
+  auto sz= cx::calcSize("astro1");
+  auto cfg = MGMS()->getLCfg();
+  auto ht = sz.height;
+  auto wd = sz.width;
+  auto pn="";
+
+  switch (rank) {
+    case 1: pn = "Astros1"; break;
+    case 2: pn = "Astros2"; break;
+    case 3: pn = "Astros3"; break;
+    default: return;
+  }
+
+  auto pool= MGMS()->getPool(pn);
+  auto wz = cx::visRect();
+  auto cw= cx::center();
+  pool->preset([=]() -> f::ComObj* {
+    auto obj= JS_OBJ(cfg[pn]);
+    int cnt= JS_INT(obj["num"]);
+    int n=0;
+    float x,y,deg;
+    f::Box4 r(0,0,0,0);
+    while (n < cnt) {
+      r.right= cx.randFloat(wz.size.width);
+      r.top= cx::randFloat(wz.size.height);
+      r.bottom = r.top - ht;
+      r.left = r.right - wd;
+      if ( !cx::outOfBound(r,B)) {
+        deg = cx::randFloat(360.0f);
+        x = r.left + wd * 0.5f;
+        y = r.top - ht * 0.5f;
+        auto sp= cx::reifySprite(JS_STR(obj["img"]));
+        auto v= JS_INT(obj["speed"]);
+        sp->setRotation(deg);
+        MGML()->addAtlasItem("game-pics", sp);
+        auto astro= new Asteroid(sp, JS_INT(obj["value"]), rank, deg,
+                               v * cx::randSign(),
+                               v * cx::randSign());
+        astro->inflate(x, y);
+        pl.push(astro);
+        ++n;
       }
     }
+  }, 1);
 
-    this.state.ship.inflate({ x: x, y: y });
-  },
-  /**
-   * @memberof module:s/factory~EntityFactory
-   * @method createAsteroids
-   * @param {Number} rank
-   */
-  createAsteroids(rank) {
-    let cfg = sh.main.getLCfg(),
-    B= this.state.world,
-    pool,
-    ht = this.state.astro1.height,
-    wd = this.state.astro1.width;
+  CCLOG("CREATED more asteroids - %d", rank);
+}
 
-    switch (rank) {
-      case csts.P_AS1: pool = sh.pools.Astros1; break;
-      case csts.P_AS2: pool = sh.pools.Astros2; break;
-      case csts.P_AS3: pool = sh.pools.Astros3; break;
-
-      default: return;
-    }
-
-    sjs.loggr.debug('about to create more asteroids - ' + rank);
-
-    pool.preSet( pl => {
-      let wz = ccsx.vrect(),
-      cw = ccsx.center(),
-      sp, x, y,
-      deg, r, n=0;
-      while (n < cfg[rank][0]) {
-        r= { left: sjs.rand(wz.width),
-             top: sjs.rand(wz.height) };
-        r.bottom = r.top - ht;
-        r.right = r.left + wd;
-        if ( !sh.outOfBound(r,B)) {
-          deg = sjs.rand(360);
-          x = r.left + wd/2;
-          y = r.top - ht/2;
-          sp= ccsx.createSprite(cfg[rank][1]);
-          sp.setRotation(deg);
-          sh.main.addAtlasItem('game-pics', sp);
-
-          sp= new cobjs.Asteroid(sp, cfg[rank][2], rank,
-                                 deg,
-                                 20 * sjs.randSign(),
-                                 20 * sjs.randSign());
-          sp.inflate({x :x, y: y});
-          pl.push(sp);
-          ++n;
-        }
-      }
-    },1);
-
-    sjs.loggr.debug('CREATED more asteroids - ' + rank);
-  },
-  /**
-   * @private
+/**
+ * @private
    */
   maybeOverlap(ship) {
     let rc= R.any( z => {
@@ -208,10 +187,7 @@ const xbox = /** @lends xbox# */{
 };
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(asteroids)
+
+
 

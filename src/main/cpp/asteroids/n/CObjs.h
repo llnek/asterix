@@ -89,12 +89,15 @@ struct CC_DLL Motion : public a::Component {
 //
 struct CC_DLL Ship : public f::DynaObj {
 
-  Ship(not_null<c::Sprite*> s, const s_vec<sstr> &frames)
+  DECL_TV(sstr,frame0,"rship_0.png")
+  DECL_TV(sstr,frame1,"rship_1.png")
+
+  Ship(not_null<c::Sprite*> s)
     : DynaObj(s) {
-    //this.frames=frames;
   }
 
   MDECL_COMP_TPID("s/Ship")
+  DECL_TD(c::Vec2, maxVel)
 };
 
 NS_END(asteroids)

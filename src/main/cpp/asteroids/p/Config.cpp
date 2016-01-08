@@ -33,19 +33,16 @@ void Config::initCsts() {
   game_id= "339a5c13-24b3-4069-9a0a-661820573fb3";
   app_id= "asteroids";
 
-  addCst("P_LMS", CC_STR("live-missiles"));
-  addCst("P_LLS",  CC_STR("live-lasers"));
-  addCst("P_MS", CC_STR("missiles"));
-  addCst("P_LS", CC_STR("lasers"));
-  addCst("P_LAS", CC_STR("live-asteroids"));
-
-  addCst("P_AS3", CC_INT(3));
-  addCst("P_AS2", CC_INT(2));
-  addCst("P_AS1", CC_INT(1));
+  addCst("P_LMS", CC_STR("Live-Missiles"));
+  addCst("P_LLS",  CC_STR("Live-Lasers"));
+  addCst("P_MS", CC_STR("Missiles"));
+  addCst("P_LS", CC_STR("Lasers"));
+  addCst("P_LAS", CC_STR("Live-Asteroids"));
 
   addCst("GRID_W", CC_INT(60));
   addCst("GRID_H", CC_INT(40));
 
+  addColor("default", CC_STR("#f6b17f"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
