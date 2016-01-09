@@ -705,6 +705,12 @@ float degToRad(float deg) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+long long currentTimeInMillis() {
+  return c::utils::getTimeInMilliseconds();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const c::Vec2 calcXY(float angle, float hypot) {
   // quadrants =  4 | 1
   //             --------
@@ -741,6 +747,21 @@ const c::Vec2 calcXY(float angle, float hypot) {
   }
 
   return c::Vec2( x * hypot, y * hypot);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+VOIDFN throttle(VOIDFN func, long long wait) {
+  long long previous = 0;
+  return [=]() {
+    auto now = cx::now();
+    if (previous==0) { previous = now; }
+    auto remaining = wait - (now - previous);
+    if (remaining <= 0 || remaining > wait) {
+      previous = now;
+      func();
+    }
+  };
 }
 
 

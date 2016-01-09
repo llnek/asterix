@@ -96,6 +96,8 @@ namespace ccsx {
   const c::Vec2 calcXY(float angle, float hypot);
   float degToRad(float);
 
+  VOIDFN throttle(VOIDFN func, long long wait);
+  long long currentTimeInMillis();
   bool isTransitioning();
 
   const c::Size calcSize(const sstr &frame);
