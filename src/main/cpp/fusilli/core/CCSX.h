@@ -65,7 +65,7 @@ namespace ccsx {
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
   bool pointInBox(const Box4 &box, const c::Vec2 &pos);
-
+  bool isIntersect(const Box4&, const Box4&);
   bool isPortrait();
 
   bool outOfBound(not_null<ComObj*>, const Box4 &B);
@@ -85,10 +85,16 @@ namespace ccsx {
 
   const Box4 bbox4B4(not_null<ComObj*>);
   const Box4 bbox4(not_null<c::Node*>);
+  const Box4 bbox4(not_null<ComObj*> c) {
+    return bbox4(c->sprite);
+  }
 
   void runScene(not_null<c::Scene*>, float delay);
   void runScene(not_null<c::Scene*>);
   void runSceneEx(not_null<c::Scene*>);
+
+  const c::Vec2 calcXY(float angle, float hypot);
+  float degToRad(float);
 
   bool isTransitioning();
 

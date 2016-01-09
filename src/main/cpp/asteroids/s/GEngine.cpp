@@ -101,6 +101,8 @@ void GEngine::bornShip(Ship *ship) {
   ship->inflate(x, y);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void GEngine::createAsteroids(int rank) {
   CCLOG("about to create more asteroids - %d", rank);
   auto B= MGMS()->getEnclosureBox();
@@ -120,18 +122,20 @@ void GEngine::createAsteroids(int rank) {
   auto pool= MGMS()->getPool(pn);
   auto wz = cx::visRect();
   auto cw= cx::center();
-  pool->preset([=]() -> f::ComObj* {
-    auto obj= JS_OBJ(cfg[pn]);
-    int cnt= JS_INT(obj["num"]);
-    int n=0;
-    float x,y,deg;
-    f::Box4 r(0,0,0,0);
-    while (n < cnt) {
-      r.right= cx.randFloat(wz.size.width);
-      r.top= cx::randFloat(wz.size.height);
-      r.bottom = r.top - ht;
-      r.left = r.right - wd;
-      if ( !cx::outOfBound(r,B)) {
+
+  auto obj= JS_OBJ(cfg[pn]);
+  int cnt= JS_INT(obj["num"]);
+  int n=0;
+  float x,y,deg;
+  f::Box4 r(0,0,0,0);
+
+  while (n < cnt) {
+    r.right= cx.randFloat(wz.size.width);
+    r.top= cx::randFloat(wz.size.height);
+    r.bottom = r.top - ht;
+    r.left = r.right - wd;
+    if ( !cx::outOfBound(r,B)) {
+      pool->preset([=]() -> f::ComObj* {
         deg = cx::randFloat(360.0f);
         x = r.left + wd * 0.5f;
         y = r.top - ht * 0.5f;
@@ -143,49 +147,41 @@ void GEngine::createAsteroids(int rank) {
                                v * cx::randSign(),
                                v * cx::randSign());
         astro->inflate(x, y);
-        pl.push(astro);
-        ++n;
-      }
+        return astro;
+      },1);
+      ++n;
     }
-  }, 1);
+  }
 
   CCLOG("CREATED more asteroids - %d", rank);
 }
 
-/**
- * @private
-   */
-  maybeOverlap(ship) {
-    let rc= R.any( z => {
-      return z.status ? sh.isIntersect(ship, ccsx.bbox4(z.sprite)) : false;
-    }, sh.pools.Astros1.pool);
-    if (rc) { return true; }
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GEngine::maybeOverlap(Ship *ship) {
+  auto p= MGMS()->getPool("Astros1");
+  auto bx= cx::bbox4(ship);
+  auto rc=false;
 
-    rc= R.any( z => {
-      return z.status ? sh.isIntersect(ship, ccsx.bbox4(z.sprite)) : false;
-    }, sh.pools.Astros2.pool);
-    if (rc) { return true; }
+  rc= p->some([=](f::ComObj* z) -> bool {
+      return z->status ? cx::isIntersect(bx, cx::bbox4(z)) : false;
+  });
+  if (rc) { return true; }
 
-    rc= R.any( z => {
-      return z.status ? sh.isIntersect(ship, ccsx.bbox4(z.sprite)) : false;
-    }, sh.pools.Astros3.pool);
-    if (rc) { return true; }
+  p= MGMS()->getPool("Astros2");
+  rc= p->some([=](f::ComObj* z) -> bool {
+      return z->status ? cx::isIntersect(bx, cx::bbox4(z)) : false;
+  });
+  if (rc) { return true; }
 
-    return false;
-  }
+  p= MGMS()->getPool("Astros3");
+  rc= p->some([=](f::ComObj* z) -> bool {
+      return z->status ? cx::isIntersect(bx, cx::bbox4(z)) : false;
+  });
+  if (rc) { return true; }
 
-});
-
-
-/** @alias module:s/factory */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {EntityFactory} EntityFactory
-   */
-  EntityFactory : EntityFactory
-};
-
+  return false;
+}
 
 NS_END(asteroids)
 

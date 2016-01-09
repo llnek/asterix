@@ -69,7 +69,8 @@ protected:
   DECL_TD(c::Vec2, acc)
   DECL_TD(c::Vec2, vel)
   DECL_FZ(power)
-  DECL_FZ(degree)
+  //degrees
+  DECL_FZ(angle)
 
 public:
   DynaObj(not_null<c::Sprite*> s, int health, int score)

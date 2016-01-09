@@ -9,322 +9,221 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/move
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Move.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(asteroids)
 
-let xcfg = sh.xcfg,
-sjs=sh.skarojs,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class Move */
-Move = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/move~Move
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
+//
+void Move::preamble() {
+  shipMotions = engine->getNodeList(ShipMotionNode().typeId());
+  arenaNode = engine->getNodeList(ArenaNode().typeId());
+}
 
-  /**
-   * @memberof module:s/move~Move
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.shipMotions= null;
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::update(float dt) {
+  if (MGMS()->isLive()) {
 
-  },
+    MGMS()->getPool("Astros3")->foreach([=](f::ComObj *a) {
+      if (a->status) { this->moveAstros(a, dt); }
+    });
+    MGMS()->getPool("Astros2")->foreach([=](f::ComObj *a) {
+      if (a->status) { this->moveAstros(a, dt); }
+    });
+    MGMS()->getPool("Astros1")->foreach([=](f::ComObj *a) {
+      if (a->status) { this->moveAstros(a, dt); }
+    });
 
-  /**
-   * @memberof module:s/move~Move
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.shipMotions = engine.getNodeList(gnodes.ShipMotionNode)
-  },
+    processShipMotions(dt);
 
-
-  /**
-   * @memberof module:s/move~Move
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    let ships=this.shipMotions.head,
-    pos, x,y;
-
-    if (this.state.running) {
-
-      sh.pools.Astros3.iter( a => {
-        if (a.status) { this.moveAstros(a, dt); }
-      });
-      sh.pools.Astros2.iter( a => {
-        if (a.status) { this.moveAstros(a, dt); }
-      });
-      sh.pools.Astros1.iter( a => {
-        if (a.status) { this.moveAstros(a, dt); }
-      });
-
-      if (!!ships) {
-        this.processShipMotions(ships,dt);
+    MGMS()->getPool("Missiles")->foreach([=](f::ComObj *m) {
+      if (m->status) {
+        auto pos= m->pos();
+        y = pos.y + dt * m->vel.y * m->speed.y;
+        x = pos.x + dt * m->vel.x * m->speed.x;
+        m->setPos(x, y);
       }
+    });
 
-      sh.pools.Missiles.iter( m => {
-        if (m.status) {
-          pos= m.pos();
-          y = pos.y + dt * m.vel.y * m.speed;
-          x = pos.x + dt * m.vel.x * m.speed;
-          m.setPos(x, y);
-        }
-      });
-
-      sh.pools.Lasers.iter( b => {
-        if (b.status) {
-          pos= b.pos();
-          y = pos.y + dt * b.vel.y * b.speed;
-          x = pos.x + dt * b.vel.x * b.speed;
-          b.setPos(x, y);
-        }
-      });
-
-    }
-
-  },
-  /**
-   * @method rotateShip
-   * @private
-   */
-  rotateShip(cur,deg) {
-    cur += deg;
-    if (cur >= 360) {
-      cur = cur - 360;
-    }
-    if (cur < 0) {
-      cur = 360 + cur;
-    }
-    return cur;
-  },
-
-  /**
-   * @method thrust
-   * @private
-   */
-  thrust(ship, angle,power) {
-    const rc= sh.calcXY(angle, power),
-    accel = {
-      x: rc[0],
-      y: rc[1]
-    };
-    return accel;
-  },
-
-  /**
-   * @method processShipMotions
-   * @private
-   */
-  processShipMotions(node,dt) {
-    let motion = node.motion,
-    velo = node.velocity,
-    tu = node.thrust,
-    rot = node.rotation,
-    ship= node.ship,
-    sp = ship.sprite,
-    pos = sp.getPosition(),
-    deg,
-    x= pos.x,
-    y= pos.y;
-
-    if (motion.right) {
-      rot.angle= this.rotateShip(rot.angle, 3);
-      ship.sprite.setRotation(rot.angle);
-    }
-
-    if (motion.left) {
-      rot.angle= this.rotateShip(rot.angle, -3);
-      ship.sprite.setRotation(rot.angle);
-    }
-
-    if (motion.up) {
-      const acc= this.thrust(ship, rot.angle, tu.power);
-      sp.setSpriteFrame(ship.frames[1]);
-      velo.acc.x= acc.x;
-      velo.acc.y= acc.y;
-    } else {
-      sp.setSpriteFrame(ship.frames[0]);
-    }
-    this.moveShip(node,dt);
-
-    motion.right=false;
-    motion.left=false;
-    motion.up=false;
-    motion.down=false;
-  },
-
-  /**
-   * @method clampVelocity
-   * @private
-   */
-  clampVelocity() {
-  },
-
-  /**
-   * @method moveShip
-   * @private
-   */
-  moveShip(snode, dt) {
-    let velo = snode.velocity,
-    B = this.state.world,
-    ship = snode.ship,
-    sp= ship.sprite,
-    r,x,y,
-    sz = sp.getContentSize(),
-    pos= sp.getPosition();
-
-    velo.vel.y = velo.vel.y + dt * velo.acc.y;
-    velo.vel.x = velo.vel.x + dt * velo.acc.x;
-
-    if (velo.vel.y > velo.max.y) {
-      velo.vel.y = velo.max.y;
-    } else if (velo.vel.y < - velo.max.y) {
-      velo.vel.y = - velo.max.y;
-    }
-    if (velo.vel.x > velo.max.x) {
-      velo.vel.x = velo.max.x;
-    } else if (velo.vel.x < -velo.max.x) {
-      velo.vel.x = -velo.max.x;
-    }
-
-    y = pos.y + dt * velo.vel.y;
-    x = pos.x + dt * velo.vel.x;
-
-    sp.setPosition(x,y);
-
-    //wrap?
-    r= ccsx.bbox4(sp);
-
-    if (r.bottom > B.top) {
-      if (velo.vel.y > 0) {
-        y = B.bottom - sz.height;
+    MGMS()->getPool("Lasers")->foreach([=](f::ComObj *b) {
+      if (b->status) {
+        auto pos= b->pos();
+        y = pos.y + dt * b->vel.y * b->speed.y;
+        x = pos.x + dt * b->vel.x * b->speed.x;
+        b->setPos(x, y);
       }
-    }
+    });
 
-    if (r.top < B.bottom) {
-      if (velo.vel.y < 0) {
-        y = B.top + sz.height;
-      }
-    }
-
-    if (r.left > B.right) {
-      if (velo.vel.x > 0) {
-        x = B.left - sz.width;
-      }
-    }
-
-    if (r.right < B.left) {
-      if (velo.vel.x < 0) {
-        x = B.right + sz.width;
-      }
-    }
-
-    sp.setPosition(x,y);
-    sp.setRotation(snode.rotation.angle);
-
-  },
-
-  /**
-   * @method moveAstros
-   * @private
-   */
-  moveAstros(astro, dt) {
-    let rot= astro.rotation,
-    B = this.state.world,
-    velo= astro.vel,
-    sp= astro.sprite,
-    sz= sp.getContentSize(),
-    pos= sp.getPosition(),
-    r,x,y;
-
-    x = pos.x + dt * velo.x;
-    y = pos.y + dt * velo.y;
-
-    rot += 0.1;
-    if (rot > 360) { rot -= 360; }
-
-    astro.rotation= rot;
-    sp.setRotation(rot);
-    sp.setPosition(x,y);
-
-    //wrap?
-    r= ccsx.bbox4(sp);
-
-    if (r.bottom > B.top) {
-      if (velo.y > 0) {
-        y = B.bottom - sz.height;
-      }
-    }
-
-    if (r.top < B.bottom) {
-      if (velo.y < 0) {
-        y = B.top + sz.height;
-      }
-    }
-
-    if (r.left > B.right) {
-      if (velo.x > 0) {
-        x = B.left - sz.width;
-      }
-    }
-
-    if (r.right < B.left) {
-      if (velo.x < 0) {
-        x = B.right + sz.width;
-      }
-    }
-
-    sp.setPosition(x,y);
   }
 
-}, {
+  return true;
+}
 
-/**
- * @memberof module:s/move~Move
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Move
-});
+float Move::rotateShip(float cur, float deg) {
+  cur += deg;
+  if (cur >= 360) {
+    cur = cur - 360;
+  }
+  if (cur < 0) {
+    cur = 360 + cur;
+  }
+  return cur;
+}
 
-
-/** @alias module:s/move */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {Move} Move
-   */
-  Move : Move
-};
-
-
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+const c::Vec2 Move::thrust(float angle, float power) {
+  return cx::calcXY(angle, power);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::processShipMotions(float dt) {
+  auto ship= CC_GNLF(Ship,shipMotions, "ship");
+  auto sp = ship->sprite;
+  auto pos = sp->getPosition();
+  auto x= pos.x;
+  auto y= pos.y;
+
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+    ship->angle= rotateShip(ship->angle, 3);
+    sp->setRotation(ship->angle);
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+    ship->angle= rotateShip(ship->angle, -3);
+    sp->setRotation(ship->angle);
+  }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
+    auto acc= thrust(ship->angle, ship->power);
+    sp->setSpriteFrame(ship->frame1);
+    ship->acc.x= acc.x;
+    ship->acc.y= acc.y;
+  } else {
+    sp->setSpriteFrame(ship->frame0);
+  }
+  moveShip(dt);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::moveShip(float dt) {
+  auto ship = CC_GNLF(Ship,shipMotions,"ship");
+  auto B = MGMS()->getEnclosureBox();
+  auto sp= ship->sprite;
+  auto sz = sp.getContentSize();
+  auto pos= sp->getPosition();
+
+  ship->vel.y = ship->vel.y + dt * ship->acc.y;
+  ship->vel.x = ship->vel.x + dt * ship->acc.x;
+
+  if (ship->vel.y > ship->maxVel.y) {
+    ship->vel.y = ship->maxVel.y;
+  }
+  else
+  if (ship->vel.y < - ship->maxVel.y) {
+    ship->vel.y = - ship->maxVel.y;
+  }
+
+  if (ship->vel.x > ship->maxVel.x) {
+    ship->vel.x = ship->maxVel.x;
+  }
+  else
+  if (ship->vel.x < -ship->maxVel.x) {
+    ship->vel.x = -ship->maxVel.x;
+  }
+
+  y = pos.y + dt * ship->vel.y;
+  x = pos.x + dt * ship->vel.x;
+
+  sp->setPosition(x,y);
+
+  //wrap?
+  auto r= cx::bbox4(sp);
+
+  if (r.bottom > B.top) {
+    if (ship->vel.y > 0) {
+      y = B.bottom - sz.height;
+    }
+  }
+
+  if (r.top < B.bottom) {
+    if (ship->vel.y < 0) {
+      y = B.top + sz.height;
+    }
+  }
+
+  if (r.left > B.right) {
+    if (ship->vel.x > 0) {
+      x = B.left - sz.width;
+    }
+  }
+
+  if (r.right < B.left) {
+    if (ship->vel.x < 0) {
+      x = B.right + sz.width;
+    }
+  }
+
+  sp->setRotation(ship->angle);
+  sp->setPosition(x,y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::moveAstros(f::ComObj *co, dt) {
+  auto B = MGMS()->getEnclosureBox();
+  auto astro = (f::DynaObj*) co;
+  auto rot= astro->angle;
+  auto sp= astro->sprite;
+  auto sz= sp->getContentSize();
+  auto pos= sp->getPosition();
+  auto x = pos.x + dt * astro->vel.x;
+  auto y = pos.y + dt * astro->vel.y;
+
+  rot += 0.1f;
+  if (rot > 360) { rot -= 360; }
+
+  sp->setRotation(rot);
+  astro->angle = rot;
+  sp->setPosition(x,y);
+
+  //wrap?
+  auto r= cx::bbox4(sp);
+
+  if (r.bottom > B.top) {
+    if (astro->vel.y > 0) {
+      y = B.bottom - sz.height;
+    }
+  }
+
+  if (r.top < B.bottom) {
+    if (astro->vel.y < 0) {
+      y = B.top + sz.height;
+    }
+  }
+
+  if (r.left > B.right) {
+    if (astro->vel.x > 0) {
+        x = B.left - sz.width;
+      }
+    }
+
+  if (r.right < B.left) {
+    if (astro->vel.x < 0) {
+      x = B.right + sz.width;
+    }
+  }
+
+  sp->setPosition(x,y);
+}
+
+NS_END(asteroids)
+
 
 

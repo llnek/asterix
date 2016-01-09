@@ -9,173 +9,100 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/cobjs
- * @requires n/gnodes
- * @requires ash-js
- * @module s/Resolve
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Resolve.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import gnodes from 'n/gnodes';
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(asteroids)
 
-let xcfg = sh.xcfg,
-sjs=sh.skarojs,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class Resolve */
-Resolve = sh.Ashley.sysDef({
+//
+void Resolve::preamble() {
+  shipNode = engine->getNodeList(ShipMotionNode().typeId());
+  arenaNode = engine->getNodeList(ArenaNode().typeId());
+}
 
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::update(float dt) {
 
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.ships= undef;
-    this.engine=undef;
-  },
-
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ships= engine.getNodeList(gnodes.ShipMotionNode);
-    this.engine=engine;
-  },
-
-  /**
-   * @memberof module:s/resolve~Resolve
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const ship = this.ships.head;
-
-    if (this.state.running) {
-      this.checkMissiles();
-      this.checkLasers();
-      this.checkAstros();
-      this.checkShip(ship);
-    }
-  },
-
-  /**
-   * @method checkMissiles
-   * @private
-   */
-  checkMissiles() {
-    const world = this.state.world;
-    sh.pools.Missiles.iter( m => {
-      if (m.status) {
-        if (m.HP <= 0 ||
-            sh.outOfBound(ccsx.bbox4(m.sprite), world)) {
-        m.deflate();
-      }}
-    });
-  },
-
-  /**
-   * @method checkLasers
-   * @private
-   */
-  checkLasers() {
-    const world = this.state.world;
-    sh.pools.Lasers.iter( b => {
-      if (b.status) {
-        if (b.HP <= 0 ||
-            sh.outOfBound(ccsx.bbox4(b.sprite), world)) {
-        b.deflate();
-      }}
-    });
-  },
-
-  /**
-   * @method checkAstros
-   * @private
-   */
-  checkAstros() {
-    sh.pools.Astros1.iter( a => {
-      if (a.status &&
-          a.HP <= 0) {
-          sh.fire('/game/players/earnscore', {score: a.value});
-          sh.factory.createAsteroids(a.rank +1);
-          a.deflate();
-        }
-    });
-    sh.pools.Astros2.iter( a => {
-      if (a.status &&
-          a.HP <= 0) {
-          sh.fire('/game/players/earnscore', {score: a.value});
-          sh.factory.createAsteroids(a.rank +1);
-          a.deflate();
-        }
-    });
-    sh.pools.Astros3.iter( a => {
-      if (a.status &&
-          a.HP <= 0) {
-          sh.fire('/game/players/earnscore', {score: a.value});
-          a.deflate();
-        }
-    });
-  },
-
-  /**
-   * @method checkShip
-   * @private
-   */
-  checkShip(node) {
-    const ship=node.ship;
-
-    if (ship.status && ship.HP <= 0) {
-      ship.deflate();
-      sh.fire('/game/players/killed');
-    }
+  if (MGMS()->isLive()) {
+    checkMissiles();
+    checkLasers();
+    checkAstros();
+    checkShip();
   }
 
-}, {
+  return true;
+}
 
-/**
- * @memberof module:s/resolve~Resolve
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Resolve
-});
-
-
-/** @alias module:s/resolve */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {Resolve} Resolve
-   */
-  Resolve : Resolve
-};
-
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void Resolve::checkMissiles() {
+  auto B = MGMS()->getEnclosureBox();
+  MGMS()->getPool("Missiles")->foreach([=](f::ComObj *m) {
+    if (m->status) {
+      if (m->health <= 0 ||
+          cx::outOfBound(cx::bbox4(m), B)) {
+      m->deflate();
+    }}
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::checkLasers() {
+  auto B= MGMS()->getEnclosureBox();
+  MGMS()->getPool("Lasers")->foreach([=](f::ComObj *b) {
+    if (b->status) {
+      if (b->health <= 0 ||
+          cx::outOfBound(cx::bbox4(b), B)) {
+      b->deflate();
+    }}
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::checkAstros() {
+  MGMS()->getPool("Astros1")->foreach([=](f::ComObj *a) {
+    if (a->status && a->health <= 0) {
+      auto msg= j::json({ {"score", a->score} });
+      SENDMSGEX("/game/players/earnscore", &msg);
+      engine->createAsteroids(a->rank +1);
+      a->deflate();
+    }
+  });
+  MGMS()->getPool("Astros2")->foreach([=](f::ComObj *a) {
+    if (a->status && a->health <= 0) {
+      auto msg= j::json({ {"score", a->score} });
+      SENDMSGEX("/game/players/earnscore", &msg);
+      engine->createAsteroids(a->rank +1);
+      a->deflate();
+    }
+  });
+  MGMS()->getPool("Astros3")->foreach([=](f::ComObj *a) {
+    if (a->status && a->health <= 0) {
+      auto msg= j::json({ {"score", a->score} });
+      SENDMSGEX("/game/players/earnscore", &msg);
+      a->deflate();
+    }
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::checkShip() {
+  auto ship = CC_GNLF(Ship,shipNode,"ship");
+  if (ship->status && ship->health <= 0) {
+    ship->deflate();
+    SENDMSG("/game/players/killed");
+  }
+}
+
+
+
+NS_END(asteroids)
+
 

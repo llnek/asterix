@@ -38,6 +38,7 @@ public:
   int countActives();
 
   void foreach(s::function<void (ComObj*)>);
+  bool some(s::function<bool (ComObj*)>);
   void clearAll(bool del=true);
 
   void checkin(not_null<ComObj*>);

@@ -573,6 +573,15 @@ bool traceEnclosure(float dt, const Box4 &bbox,
   return hit;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool isIntersect(const Box4 &a1, const Box4 &a2) {
+  return ! (a1.left > a2.right ||
+            a2.left > a1.right ||
+            a1.top < a2.bottom ||
+            a2.top < a1.bottom);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
@@ -688,6 +697,51 @@ int randSign() {
   return cocos2d::rand_0_1() > 0.5 ? 1 : -1;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+float degToRad(float deg) {
+  return deg * PI / 180;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const c::Vec2 calcXY(float angle, float hypot) {
+  // quadrants =  4 | 1
+  //             --------
+  //              3 | 2
+  float theta, q, x, y;
+  if (angle >= 0 && angle <= 90) {
+    theta = degToRad(90 - angle);
+    x = cos(theta);
+    y = sin(theta);
+    q=1;
+  }
+  else
+  if (angle >= 90 && angle <= 180 ) {
+    theta = degToRad(angle - 90);
+    x = cos(theta);
+    y =  - sin(theta);
+    q=2;
+  }
+  else
+  if (angle >= 180 && angle <= 270) {
+    theta = degToRad(270 - angle);
+    x = - cos(theta);
+    y = - sin(theta);
+    q=3;
+  }
+  else
+  if (angle >= 270 && angle <= 360) {
+    theta= degToRad(angle - 270);
+    x = - cos(theta);
+    y = sin(theta);
+    q=4;
+  }
+  else {
+  }
+
+  return c::Vec2( x * hypot, y * hypot);
+}
 
 
 NS_END(ccsx)

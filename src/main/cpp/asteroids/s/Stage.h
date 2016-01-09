@@ -9,135 +9,30 @@
 // this software.
 // Copyright (c) 2013-2014, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/pool
- * @requires n/cobjs
- * @module s/stager
- */
+#if !defined(__STAGE_H__)
+#define __STAGE_H__
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import xpool from 'zotohlab/asx/pool';
+#include "ash/System.h"
+#include "GEngine.h"
+NS_BEGIN(asteroids)
 
-let xcfg = sh.xcfg,
-sjs=sh.skarojs,
-csts= xcfg.csts,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class Stager */
-Stager = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/stager~Stager
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
+//
+struct CC_DLL Stager : public a::System {
 
-  /**
-   * @memberof module:s/stager~Stager
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-  },
+  MDECL_SYS_PRIORITY(a::PreUpdate)
+  MDECL_SYS_TPID("s/Stage")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UDPATE()
 
-  /**
-   * @memberof module:s/stager~Stager
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-  },
+  Stage(a::Engine *e)
+  : System(e)
+  {}
 
-  /**
-   * @memberof module:s/stager~Stager
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    if (ccsx.isTransitioning()) { return false; }
-    if (! this.inited) {
-      this.onceOnly();
-      this.inited=true;
-    }
-  },
-  /**
-   * @method onceOnly
-   * @private
-   */
-  onceOnly() {
-
-    sh.pools.Missiles = xpool.reify();
-    sh.pools.Lasers = xpool.reify();
-
-    sh.pools.Astros3 = xpool.reify();
-    sh.pools.Astros2 = xpool.reify();
-    sh.pools.Astros1 = xpool.reify();
-
-    this.initAsteroidSizes();
-    this.initPlayerSize();
-    this.initUfoSize();
-
-    sh.factory.createAsteroids(csts.P_AS1);
-    sh.factory.createShip();
-
-    //ccsx.onTouchOne(this.ebus);
-    //ccsx.onMouse(this.ebus);
-    sh.main.pkInput();
-  },
-  /**
-   * @method initAsteroidSizes
-   * @private
-   */
-  initAsteroidSizes() {
-    this.state.astro3 = ccsx.csize('rock_small.png');
-    this.state.astro2 = ccsx.csize('rock_med.png');
-    this.state.astro1 = ccsx.csize('rock_large.png');
-  },
-  /**
-   * @method initPlayerSize
-   * @private
-   */
-  initPlayerSize() {
-    this.state.playerSize = ccsx.csize('rship_0.png');
-  },
-  /**
-   * @method initUfoSize
-   * @private
-   */
-  initUfoSize() {
-    this.state.ufoSize = ccsx.csize('ufo.png');
-  }
-
-}, {
-
-/**
- * @memberof module:s/stager~Stager
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.PreUpdate
-});
-
-
-/** @alias module:s/stager */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {Stager} Stager
-   */
-  Stager : Stager
 };
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+NS_END(asteroids)
+#endif
+
 

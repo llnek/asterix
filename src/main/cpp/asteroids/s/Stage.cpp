@@ -9,135 +9,41 @@
 // this software.
 // Copyright (c) 2013-2014, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/pool
- * @requires n/cobjs
- * @module s/stager
- */
+#include "core/CCSX.h"
+#include "Stage.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import cobjs from 'n/cobjs';
-import xpool from 'zotohlab/asx/pool';
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(asteroids)
 
-let xcfg = sh.xcfg,
-sjs=sh.skarojs,
-csts= xcfg.csts,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class Stager */
-Stager = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/stager~Stager
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
+//
+void Stage::preamble() {
+  /*
+  sh.pools.Missiles = xpool.reify();
+  sh.pools.Lasers = xpool.reify();
+  sh.pools.Astros3 = xpool.reify();
+  sh.pools.Astros2 = xpool.reify();
+  sh.pools.Astros1 = xpool.reify();
+  this.initAsteroidSizes();
+  this.initPlayerSize();
+  this.initUfoSize();
+  sh.factory.createAsteroids(csts.P_AS1);
+  sh.factory.createShip();
+  */
+  auto nl= engine->getNodeList(ArenaNode().typeId());
+  auto ss= CC_GNLF(GVars,nl,"slots");
+  ss->playerSize = cx::calcSize("rship_0.png");
+  ss->ufoSize = cx::calcSize("ufo.png");
+  ss->astro3 = cx::calcSize("rock_small.png");
+  ss->astro2 = cx::calcSize("rock_med.png");
+  ss->astro1 = cx::calcSize("rock_large.png");
+}
 
-  /**
-   * @memberof module:s/stager~Stager
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-  },
-
-  /**
-   * @memberof module:s/stager~Stager
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-  },
-
-  /**
-   * @memberof module:s/stager~Stager
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    if (ccsx.isTransitioning()) { return false; }
-    if (! this.inited) {
-      this.onceOnly();
-      this.inited=true;
-    }
-  },
-  /**
-   * @method onceOnly
-   * @private
-   */
-  onceOnly() {
-
-    sh.pools.Missiles = xpool.reify();
-    sh.pools.Lasers = xpool.reify();
-
-    sh.pools.Astros3 = xpool.reify();
-    sh.pools.Astros2 = xpool.reify();
-    sh.pools.Astros1 = xpool.reify();
-
-    this.initAsteroidSizes();
-    this.initPlayerSize();
-    this.initUfoSize();
-
-    sh.factory.createAsteroids(csts.P_AS1);
-    sh.factory.createShip();
-
-    //ccsx.onTouchOne(this.ebus);
-    //ccsx.onMouse(this.ebus);
-    sh.main.pkInput();
-  },
-  /**
-   * @method initAsteroidSizes
-   * @private
-   */
-  initAsteroidSizes() {
-    this.state.astro3 = ccsx.csize('rock_small.png');
-    this.state.astro2 = ccsx.csize('rock_med.png');
-    this.state.astro1 = ccsx.csize('rock_large.png');
-  },
-  /**
-   * @method initPlayerSize
-   * @private
-   */
-  initPlayerSize() {
-    this.state.playerSize = ccsx.csize('rship_0.png');
-  },
-  /**
-   * @method initUfoSize
-   * @private
-   */
-  initUfoSize() {
-    this.state.ufoSize = ccsx.csize('ufo.png');
-  }
-
-}, {
-
-/**
- * @memberof module:s/stager~Stager
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.PreUpdate
-});
-
-
-/** @alias module:s/stager */
-const xbox = /** @lends xbox# */{
-
-  /**
-   * @property {Stager} Stager
-   */
-  Stager : Stager
-};
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+bool Stage::update(float dt) {
+  return true;
+}
+
+NS_END(asteroids)
 
