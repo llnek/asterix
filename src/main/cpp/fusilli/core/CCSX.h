@@ -96,7 +96,7 @@ namespace ccsx {
   const c::Vec2 calcXY(float angle, float hypot);
   float degToRad(float);
 
-  VOIDFN throttle(VOIDFN func, long long wait);
+  VOIDFN throttle(VOIDFN func, int waitMillis);
   long long currentTimeInMillis();
   bool isTransitioning();
 

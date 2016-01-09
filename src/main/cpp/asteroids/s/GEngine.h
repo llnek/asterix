@@ -30,6 +30,8 @@ struct CC_DLL GEngine : public a::Engine {
   void createAsteroids(int rank);
 
 protected:
+  s_arr<c::Size, 4> astroSizes;
+  s_arr<sstr, 4> astroPools;
   bool maybeOverlap(Ship*);
 };
 

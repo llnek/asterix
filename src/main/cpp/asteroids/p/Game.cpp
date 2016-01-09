@@ -9,189 +9,145 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/scenes
- * @requires s/sysobjs
- * @requires p/hud
- * @module p/game
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "s/GEngine.h"
+#include "HUD.h"
+#include "Game.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import sobjs from 's/sysobjs';
-import huds from 'p/hud';
-
-
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-R = sjs.ramda,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class BackLayer */
-BackLayer = scenes.XLayer.extend({
-  rtti() { return 'BackLayer'; },
-  setup() {
-  }
-}),
-//////////////////////////////////////////////////////////////////////////
-/** * @class GameLayer */
-GameLayer = scenes.XGameLayer.extend({
-  /**
-   * @method pkInput
-   * @protected
-   */
-  pkInput() {
-    ccsx.onKeyPolls(this.keyboard);
-  },
-  /**
-   * @method replay
-   */
-  replay() {
-    this.play(false);
-  },
-  /**
-   * @method play
-   */
-  play(newFlag) {
-
-    this.initEngine(sobjs.systems, sobjs.entityFactory);
-    this.reset(newFlag);
-
-    this.options.world= this.getEnclosureBox();
-    this.options.level=1;
-    this.options.running=true;
-  },
-  /**
-   * @method reset
-   */
-  reset(newFlag) {
-    if (!sjs.isempty(this.atlases)) {
-      sjs.eachObj( v => { v.removeAllChildren(); }, this.atlases);
-    } else {
-      this.regoAtlas('game-pics');
-    }
-    if (newFlag) {
-      this.getHUD().resetAsNew();
-    } else {
-      this.getHUD().reset();
-    }
-  },
-  /**
-   * @method operational
-   * @protected
-   */
-  operational() {
-    return this.options.running;
-  },
-  /**
-   * @method spawnPlayer
-   * @private
-   */
-  spawnPlayer() {
-    sh.factory.bornShip();
-  },
-  /**
-   * @method onPlayerKilled
-   * @private
-   */
-  onPlayerKilled(msg) {
-    if ( this.getHUD().reduceLives(1)) {
-      this.onDone();
-    } else {
-      this.spawnPlayer();
-    }
-  },
-  /**
-   * @method onDone
-   * @private
-   */
-  onDone() {
-    this.reset();
-    this.options.running =false;
-    this.getHUD().enableReplay();
-  },
-  /**
-   * @method onEarnScore
-   * @private
-   */
-  onEarnScore(msg) {
-    this.getHUD().updateScore(msg.score);
-  },
-  /**
-   * @method onNewGame
-   * @private
-   */
-  onNewGame(mode) {
-    //sh.xcfg.sfxPlay('start_game');
-    this.setGameMode(mode);
-    this.play(true);
-  }
-
-});
-
-/** @alias module:p/game */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.game,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    const scene = new scenes.XSceneFactory([
-      BackLayer,
-      GameLayer,
-      huds.HUDLayer
-    ]).reify(options);
-
-    scene.onmsg('/game/missiles/killed', msg => {
-      sh.main.onMissileKilled(msg);
-    }).
-    onmsg('/game/ufos/killed', msg => {
-      sh.main.onUfoKilled(msg);
-    }).
-    onmsg('/game/players/shoot', msg => {
-      sh.main.onFireMissile(msg);
-    }).
-    onmsg('/game/players/killed', msg => {
-      sh.main.onPlayerKilled(msg);
-    }).
-    onmsg('/game/ufos/shoot', msg => {
-      sh.main.onFireLaser(msg);
-    }).
-    onmsg('/game/stones/create', msg => {
-      sh.main.onCreateStones(msg);
-    }).
-    onmsg('/game/rocks/create', msg => {
-      sh.main.onCreateRocks(msg);
-    }).
-    onmsg('/game/players/earnscore', msg => {
-      sh.main.onEarnScore(msg);
-    }).
-    onmsg('/hud/showmenu', msg => {
-      scenes.showMenu();
-    }).
-    onmsg('/hud/replay', msg => {
-      sh.main.replay();
-    });
-
-    return scene;
-  }
-};
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(asteroids)
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+struct CC_DLL GLayer : public f::GameLayer {
+
+  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  STATIC_REIFY_LAYER(GLayer)
+  MDECL_GET_IID(2)
+  MDECL_DECORATE()
+
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
+
+  virtual void postReify();
+  void spawnPlayer();
+  void showMenu();
+  void onDone();
+  void onPlayerKilled();
+  void onEarnScore(j::json*);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::decorate() {
+  centerImage("game.bg");
+  incIndexZ();
+  regoAtlas("game-pics");
+
+  this->engine = mc_new(GEngine);
+  getHUD()->reset();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::postReify() {
+
+  shipNode= engine->getNodeList(ShipMotionNode().typeId());
+  arenaNode= engine->getNodeList(ArenaNode().typeId());
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::showMenu() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::spawnPlayer() {
+  engine->bornShip();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onPlayerKilled() {
+  if ( getHUD()->reduceLives(1)) {
+    onDone();
+  } else {
+    spawnPlayer();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onDone() {
+  getHUD()->reset();
+  MGMS()->stop();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onEarnScore(j::json *msg) {
+  getHUD()->updateScore(JS_INT(msg->operator[]("score")));
+}
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::sendMsgEx(const MsgTopic &t, void *m) {
+  auto y = (GLayer*) getLayer(2);
+
+  if (t== "/game/missiles/killed") {
+    //y->onMissileKilled(msg);
+  }
+
+  if (t == "/game/ufos/killed") {
+    //y->onUfoKilled(msg);
+  }
+
+  if (t == "/game/players/shoot") {
+    //y->onFireMissile(msg);
+  }
+
+  if (t == "/game/players/killed") {
+    y->onPlayerKilled(msg);
+  }
+
+  if (t == "/game/ufos/shoot") {
+    //y->onFireLaser(msg);
+  }
+
+  if (t == "/game/stones/create") {
+    //y->onCreateStones(msg);
+  }
+
+  if (t == "/game/rocks/create") {
+    //y->onCreateRocks(msg);
+  }
+
+  if (t == "/game/players/earnscore") {
+    auto msg = (j::json*) m;
+    y->onEarnScore(msg);
+  }
+
+  if (t == "/hud/showmenu") {
+    y->showMenu();
+  }
+
+  if (t == "/hud/replay") {
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::decorate() {
+  HUDLayer::reify(this, 3);
+  GLayer::reify(this,2);
+}
+
+NS_END(asteroids)
+
 

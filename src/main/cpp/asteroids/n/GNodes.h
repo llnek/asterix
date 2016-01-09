@@ -45,6 +45,21 @@ struct CC_DLL ShipMotionNode : public a::NodeFactory {
 
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ArenaNode : public a::NodeFactory {
+
+  MDECL_NFAC_TPID( "n/ArenaNode")
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        { "slots", "n/GVars" }
+    });
+  }
+
+};
+
+
 
 NS_END(asteroids)
 #endif

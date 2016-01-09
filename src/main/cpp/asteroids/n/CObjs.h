@@ -20,13 +20,14 @@ NS_BEGIN(asteroids)
 //
 struct CC_DLL Asteroid : public f::DynaObj {
 
-  Asteroids(not_null<c::Sprite*> s, int value, int rank,
-      float deg, float vx, float vy)
+  Asteroids(not_null<c::Sprite*> s,
+      int value, int rank,
+      float deg, const c::Vec2 &v)
     : ComObj(s, 1, value) {
     this->rank=rank;
     this->deg= deg;
-    this->vel.y= vy;
-    this->vel.x= vx;
+    this->speed= v;
+    this->vel=v;
   }
 
   DECL_IZ(rank)
@@ -38,25 +39,18 @@ struct CC_DLL Asteroid : public f::DynaObj {
 //
 struct CC_DLL Cannon : public a::Component {
 
-  DECL_TV(float, coolDownWindow, 800.0f)
+  MDECL_COMP_TPID("s/Cannon")
   DECL_BT(hasAmmo)
 
-  Cannon(float w) {
-    coolDownWindow= w;
-  }
-
-  MDECL_COMP_TPID("s/Cannon")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Looper : public a::Component {
 
+  DECL_PTR(c::DelayTime, timer1)
+  DECL_PTR(c::DelayTime, timer0)
   MDECL_COMP_TPID("n/Looper")
-
-  Looper(int count) {
-    //this.timers=sjs.makeArray(count,null);
-  }
 
 };
 
@@ -99,6 +93,19 @@ struct CC_DLL Ship : public f::DynaObj {
   MDECL_COMP_TPID("s/Ship")
   DECL_TD(c::Vec2, maxVel)
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GVars : public a::Component {
+  MDECL_COMP_TPID("n/GVars")
+  c::Size playerSize;
+  c::Size ufoSize;
+  c::Size astro3;
+  c::Size astro2;
+  c::Size astro1;
+
+};
+
 
 NS_END(asteroids)
 #endif

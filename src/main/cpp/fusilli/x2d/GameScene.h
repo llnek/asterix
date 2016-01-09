@@ -67,9 +67,9 @@ public:
   virtual const c::Rect getEnclosureRect();
   virtual const Box4 getEnclosureBox();
 
-  virtual bool isLive() = 0;
-  virtual void stop() = 0;
-  virtual void play() = 0;
+  virtual bool isLive() { return state > 0; }
+  virtual void stop() { state=0; }
+  virtual void play() { state=911; }
 
   static GameScene* self();
   static GameLayer* get();

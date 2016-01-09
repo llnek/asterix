@@ -751,13 +751,15 @@ const c::Vec2 calcXY(float angle, float hypot) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-VOIDFN throttle(VOIDFN func, long long wait) {
+VOIDFN throttle(VOIDFN func, int wait) {
+  long long ww= (long long)wait;
   long long previous = 0;
   return [=]() {
-    auto now = cx::now();
-    if (previous==0) { previous = now; }
-    auto remaining = wait - (now - previous);
-    if (remaining <= 0 || remaining > wait) {
+    auto now = currentTimeInMillis();
+    if (previous==0)
+    { previous = now; }
+    auto remaining = ww - (now - previous);
+    if (remaining <= 0 || remaining > ww) {
       previous = now;
       func();
     }

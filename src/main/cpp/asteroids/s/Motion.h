@@ -9,22 +9,32 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-#if !defined(__GAME_H__)
-#define __GAME_H__
+#if !defined(__MOTION_H__)
+#define __MOTION_H__
 
-#include "x2d/GameScene.h"
+#include "ash/System.h"
+#include "GEngine.h"
 
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
+struct CC_DLL Motions : public a::System {
 
-  virtual void sendMsgEx(const MsgTopic&, void*);
-  STATIC_REIFY_SCENE_CTX(Game)
-  MDECL_DECORATE()
-  MDECL_GLAYER(2)
+  MDECL_SYS_PRIORITY(a::Motion)
+  MDECL_SYS_TPID("s/Motions")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
+  Motions(a::Engine *e)
+  : System(e)
+  {}
+
+protected:
+  void initKeyOps(Motion*, int);
+  void controlCannon(float);
+  void fireMissile(float);
+  void scanInput(float);
 };
 
 

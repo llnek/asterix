@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "GEngine.h"
@@ -20,12 +21,32 @@ NS_BEGIN(asteroids)
 //
 void GEngine::initEntities() {
 
+  astroSizes[3]= cx::calcSize("rock_small.png");
+  astroSizes[2]= cx::calcSize("rock_med.png");
+  astroSizes[1]= cx::calcSize("rock_large.png");
+
+  astroPools[3]= "Astros3";
+  astroPools[2]= "Astros2";
+  astroPools[1]= "Astros1";
+
+  createAsteroids(1);
+  createShip();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-
+  MGMS()->reifyPools(s::vec<sstr>{
+        "Missiles",
+        "Lasers",
+        "Astros3",
+        "Astros2",
+        "Astros1"
+      });
+  regoSystem(mc_new_1(Resolve,this));
+  regoSystem(mc_new_1(Move,this));
+  regoSystem(mc_new_1(Motions,this));
+  regoSystem(mc_new_1(Collide,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +89,7 @@ void GEngine::createShip() {
   bornShip();
   ent->checkin(mc_new(Motion));
   ent->checkin(mc_new(Cannon));
-  ent->checkin(mc_new_1(Looper,1));
+  ent->checkin(mc_new_1(Looper));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -106,60 +127,53 @@ void GEngine::bornShip(Ship *ship) {
 void GEngine::createAsteroids(int rank) {
   CCLOG("about to create more asteroids - %d", rank);
   auto B= MGMS()->getEnclosureBox();
-  auto sz= cx::calcSize("astro1");
+  assert(rank > 0 && rank < 4);
   auto cfg = MGMS()->getLCfg();
-  auto ht = sz.height;
-  auto wd = sz.width;
-  auto pn="";
-
-  switch (rank) {
-    case 1: pn = "Astros1"; break;
-    case 2: pn = "Astros2"; break;
-    case 3: pn = "Astros3"; break;
-    default: return;
-  }
-
-  auto pool= MGMS()->getPool(pn);
+  auto sz= astroSizes[rank];
+  auto pn= astroPools[rank];
   auto wz = cx::visRect();
   auto cw= cx::center();
 
+  auto pool= MGMS()->getPool(pn);
   auto obj= JS_OBJ(cfg[pn]);
-  int cnt= JS_INT(obj["num"]);
+  auto value= JS_INT(obj["value"]);
+  auto speed= JS_INT(obj["speed"]);
+  auto cnt= JS_INT(obj["num"]);
+  auto img= JS_STR(obj["img"]);
   int n=0;
   float x,y,deg;
   f::Box4 r(0,0,0,0);
 
   while (n < cnt) {
-    r.right= cx.randFloat(wz.size.width);
+    r.right= cx::randFloat(wz.size.width);
     r.top= cx::randFloat(wz.size.height);
-    r.bottom = r.top - ht;
-    r.left = r.right - wd;
+    r.bottom = r.top - sz.height;
+    r.left = r.right - sz.width;
     if ( !cx::outOfBound(r,B)) {
       pool->preset([=]() -> f::ComObj* {
         deg = cx::randFloat(360.0f);
-        x = r.left + wd * 0.5f;
-        y = r.top - ht * 0.5f;
-        auto sp= cx::reifySprite(JS_STR(obj["img"]));
-        auto v= JS_INT(obj["speed"]);
+        x = r.left + sz.width * 0.5f;
+        y = r.top - sz.height * 0.5f;
+        auto sp= cx::reifySprite(img);
         sp->setRotation(deg);
         MGML()->addAtlasItem("game-pics", sp);
-        auto astro= new Asteroid(sp, JS_INT(obj["value"]), rank, deg,
-                               v * cx::randSign(),
-                               v * cx::randSign());
-        astro->inflate(x, y);
-        return astro;
-      },1);
+        auto a= new Asteroid(sp, value, rank, deg,
+                               speed * cx::randSign(),
+                               speed * cx::randSign());
+        a->inflate(x, y);
+        return a;
+      }, 1);
       ++n;
     }
   }
 
-  CCLOG("CREATED more asteroids - %d", rank);
+  CCLOG("CREATED %d more asteroids{%d}", cnt, rank);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GEngine::maybeOverlap(Ship *ship) {
-  auto p= MGMS()->getPool("Astros1");
+  auto p= MGMS()->getPool(astroPools[1]);
   auto bx= cx::bbox4(ship);
   auto rc=false;
 
@@ -168,13 +182,13 @@ bool GEngine::maybeOverlap(Ship *ship) {
   });
   if (rc) { return true; }
 
-  p= MGMS()->getPool("Astros2");
+  p= MGMS()->getPool(astroPools[2]);
   rc= p->some([=](f::ComObj* z) -> bool {
       return z->status ? cx::isIntersect(bx, cx::bbox4(z)) : false;
   });
   if (rc) { return true; }
 
-  p= MGMS()->getPool("Astros3");
+  p= MGMS()->getPool(astroPools[3]);
   rc= p->some([=](f::ComObj* z) -> bool {
       return z->status ? cx::isIntersect(bx, cx::bbox4(z)) : false;
   });
