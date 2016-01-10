@@ -41,8 +41,8 @@ bool Motions::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::controlCannon(float dt) {
-  auto gun = CC_GNLF(Cannon,shipNode,"cannon");
-  auto lpr= CC_GNLF(Looper,shipNode, "looper");
+  auto gun = CC_GNLF(Cannon,cannonNode,"cannon");
+  auto lpr= CC_GNLF(Looper,cannonNode, "looper");
   auto ship= CC_GNLF(Ship,shipNode, "ship");
 
   if (! gun->hasAmmo) {
@@ -60,19 +60,19 @@ void Motions::controlCannon(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::fireMissile(float dt) {
-  auto lpr= CC_GNLF(Looper,shipNode,"looper");
-  auto gun= CC_GNLF(Cannon,shipNode,"cannon");
+  auto lpr= CC_GNLF(Looper,cannonNode,"looper");
+  auto gun= CC_GNLF(Cannon,cannonNode,"cannon");
   auto ship= CC_GNLF(Ship,shipNode, "ship");
   auto sz= ship->sprite->getContentSize();
   auto deg= ship->sprite->getRotation();
   auto p= MGMS()->getPool("Missiles");
   auto top= cx::getTop(ship->sprite);
   auto pos= ship->pos();
-  auto ent= (f::DynaObj*)p->get();
+  auto ent= p->get();
 
   if (ENP(ent)) {
     SCAST(GEngine*,engine)->createMissiles(30);
-    ent= (f::DynaObj*)p->get();
+    ent= p->get();
   }
 
   auto rc= cx::calcXY(deg, sz.height * 0.5f);

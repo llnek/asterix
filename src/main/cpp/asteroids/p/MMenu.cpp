@@ -13,6 +13,8 @@
 #include "core/CCSX.h"
 #include "x2d/XLib.h"
 #include "MMenu.h"
+#include "Game.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
 BEGIN_NS_UNAMED()
@@ -43,8 +45,7 @@ void UILayer::decorate() {
   auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
   b->setCallback([=](c::Ref*){
-    //ccsx.runScene( sh.protos[sh.ptypes.game].reify(msg));
-      //this.onplay( { mode: sh.gtypes.P1_GAME});
+      cx::runSceneEx(Game::reify(mc_new(f::GCX)));
   });
   menu->setPosition(cw);
   addItem(menu);

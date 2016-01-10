@@ -97,16 +97,19 @@ void Config::initLevels() {
       {"Astros1", j::json({
           {"img", "rock_large.png"},
           {"num", 5},
+          {"speed", 10},
           {"value", 25}
           }) },
       {"Astros2", j::json({
           {"img", "rock_med.png"},
           {"num", 5},
+          {"speed", 20},
           {"value", 50}
           }) },
       {"Astros3", j::json({
           {"img", "rock_small.png"},
           {"num", 10},
+          {"speed", 30},
           {"value", 100}
           }) }
 

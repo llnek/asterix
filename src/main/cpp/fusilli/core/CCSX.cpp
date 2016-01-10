@@ -426,29 +426,25 @@ float getTop(not_null<c::Node*> s) {
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastLeft(not_null<ComObj*> ent) {
-    auto d = (DynaObj*)ent.get();
-  return get_XXX(ent->sprite, d->lastPos.x, anchorL().x);
+  return get_XXX(ent->sprite, ent->lastPos.x, anchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastRight(not_null<ComObj*> ent) {
-    auto d= (DynaObj*)ent.get();
-  return get_XXX(ent->sprite, d->lastPos.x, anchorR().x);
+  return get_XXX(ent->sprite, ent->lastPos.x, anchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastTop(not_null<ComObj*> ent) {
-    auto d= (DynaObj*) ent.get();
-  return get_YYY(ent->sprite, d->lastPos.y, anchorT().y);
+  return get_YYY(ent->sprite, ent->lastPos.y, anchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastBottom(not_null<ComObj*> ent) {
-    auto d = (DynaObj*) ent.get();
-  return get_YYY(ent->sprite, d->lastPos.y, anchorB().y);
+  return get_YYY(ent->sprite, ent->lastPos.y, anchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////

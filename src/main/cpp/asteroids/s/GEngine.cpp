@@ -24,6 +24,13 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
+    MGMS()->reifyPools(s_vec<sstr> {
+        "Missiles",
+        "Lasers",
+        "Astros3",
+        "Astros2",
+        "Astros1"
+    });
 
   astroSizes[3]= cx::calcSize("rock_small.png");
   astroSizes[2]= cx::calcSize("rock_med.png");
@@ -40,13 +47,6 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  MGMS()->reifyPools(s_vec<sstr> {
-        "Missiles",
-        "Lasers",
-        "Astros3",
-        "Astros2",
-        "Astros1"
-      });
   regoSystem(mc_new_1(Resolve,this));
   regoSystem(mc_new_1(Move,this));
   regoSystem(mc_new_1(Motions,this));

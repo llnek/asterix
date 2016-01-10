@@ -147,6 +147,7 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 void Game::decorate() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this,2);
+  play();
 }
 
 NS_END(asteroids)

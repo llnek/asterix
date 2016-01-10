@@ -175,9 +175,8 @@ void Move::moveShip(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::moveAstros(f::ComObj *co, float dt) {
+void Move::moveAstros(f::ComObj *astro, float dt) {
   auto B = MGMS()->getEnclosureBox();
-  auto astro = (f::DynaObj*) co;
   auto rot= astro->angle;
   auto sp= astro->sprite;
   auto sz= sp->getContentSize();

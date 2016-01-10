@@ -18,12 +18,12 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Asteroid : public f::DynaObj {
+struct CC_DLL Asteroid : public f::ComObj {
 
   Asteroid(not_null<c::Sprite*> s,
       int value, int rank,
       float deg, const c::Vec2 &v)
-    : DynaObj(s, 1, value) {
+    : ComObj(s, 1, value) {
     this->angle= deg;
     this->rank=rank;
     this->speed= v;
@@ -39,7 +39,7 @@ struct CC_DLL Asteroid : public f::DynaObj {
 //
 struct CC_DLL Cannon : public a::Component {
 
-  MDECL_COMP_TPID("s/Cannon")
+  MDECL_COMP_TPID("n/Cannon")
   DECL_BT(hasAmmo)
 
 };
@@ -56,22 +56,22 @@ struct CC_DLL Looper : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Missile : public f::DynaObj {
+struct CC_DLL Missile : public f::ComObj {
 
   Missile(not_null<c::Sprite*> s, float d=20)
-    : DynaObj(s) {
+    : ComObj(s) {
     speed.x= d;
     speed.y= d ;
   }
 
-  MDECL_COMP_TPID("s/Missile")
+  MDECL_COMP_TPID("n/Missile")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Motion : public a::Component {
 
-  MDECL_COMP_TPID("s/Motion")
+  MDECL_COMP_TPID("n/Motion")
   DECL_BF(right)
   DECL_BF(left)
   DECL_BF(up)
@@ -81,14 +81,14 @@ struct CC_DLL Motion : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ship : public f::DynaObj {
+struct CC_DLL Ship : public f::ComObj {
 
   DECL_TV(sstr,frame0,"rship_0.png")
   DECL_TV(sstr,frame1,"rship_1.png")
-  MDECL_COMP_TPID("s/Ship")
+  MDECL_COMP_TPID("n/Ship")
 
   Ship(not_null<c::Sprite*> s)
-    : DynaObj(s) {
+    : ComObj(s) {
   }
 };
 

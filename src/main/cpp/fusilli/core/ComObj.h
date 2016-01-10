@@ -57,28 +57,17 @@ public:
   DECL_IZ(HP)
   DECL_IZ(score)
 
+  DECL_TD(c::Vec2, lastPos)
   DECL_TD(c::Vec2, speed)
   DECL_TD(c::Vec2, acc)
   DECL_TD(c::Vec2, vel)
   DECL_TD(c::Vec2, maxVel)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL DynaObj : public ComObj {
-public:
-
-  DECL_TD(c::Vec2, lastPos)
   DECL_FZ(power)
   //degrees
   DECL_FZ(angle)
 
-  DynaObj(not_null<c::Sprite*> s, int health, int score)
-    : ComObj(s,health,score) {}
-  DynaObj(not_null<c::Sprite*> s) : ComObj(s) {}
-  DynaObj();
-  NOCPYASS(DynaObj)
 };
+
 
 NS_END(fusii)
 #endif
