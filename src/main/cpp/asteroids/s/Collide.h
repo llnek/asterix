@@ -12,6 +12,7 @@
 #if !defined(__COLLIDE_H__)
 #define __COLLIDE_H__
 
+#include "core/XPool.h"
 #include "ash/System.h"
 #include "GEngine.h"
 
@@ -26,16 +27,19 @@ struct CC_DLL Collide : public a::System {
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
+
   Collide(a::Engine *e)
   : System(e)
   {}
 
 protected:
 
+    void checkXXX(f::XPool*,f::ComObj*);
   void checkMissilesRocks();
   void checkShipBombs();
   void checkShipRocks();
-
 };
 
 

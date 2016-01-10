@@ -9,12 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-ND_BEGIN(asteroids)
+NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -25,6 +26,12 @@ void HUDLayer::updateScore(int n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+bool HUDLayer::reduceLives(int n) {
+  lives->reduce(n);
+  return lives->isDead();
+}
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::resetAsNew() {
   score = 0;
   reset();
@@ -33,7 +40,7 @@ void HUDLayer::resetAsNew() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::reset() {
-  replayBtn->setVisible(false);
+  //replayBtn->setVisible(false);
   lives->resurrect();
 }
 

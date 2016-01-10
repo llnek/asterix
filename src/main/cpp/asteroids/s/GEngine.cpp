@@ -12,6 +12,10 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "Resolve.h"
+#include "Motion.h"
+#include "Move.h"
+#include "Collide.h"
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -36,7 +40,7 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  MGMS()->reifyPools(s::vec<sstr>{
+  MGMS()->reifyPools(s_vec<sstr> {
         "Missiles",
         "Lasers",
         "Astros3",
@@ -69,7 +73,7 @@ void GEngine::createLasers(int count) {
     auto sp = cx::reifySprite("laserRed.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new_1(Laser, sp);
+    return mc_new_1(Missile, sp);
   }, count);
 }
 
@@ -78,18 +82,18 @@ void GEngine::createLasers(int count) {
 void GEngine::createShip() {
   auto sp= cx::reifySprite("rship_0.png");
   auto ent= this->reifyEntity("*");
-  auto s= mc_new_1(Ship, sp)
+    auto s= mc_new_1(Ship, sp);
   MGML()->addAtlasItem("game-pics", sp);
   sp->setRotation(90);
   s->maxVel.x=150;
   s->maxVel.y=150;
   s->power=25;
-  s->degree=90;
+  s->angle=90;
   ent->checkin(s);
-  bornShip();
+  bornShip(s);
   ent->checkin(mc_new(Motion));
   ent->checkin(mc_new(Cannon));
-  ent->checkin(mc_new_1(Looper));
+  ent->checkin(mc_new(Looper));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -102,6 +106,9 @@ void GEngine::bornShip(Ship *ship) {
   auto wz = cx::visRect();
   auto cw = cx::center();
   auto test=true;
+    auto pos= ship->pos();
+    auto x= pos.x;
+    auto y= pos.y;
   f::Box4 r(0,0,0,0);
 
   while (test) {
@@ -128,7 +135,7 @@ void GEngine::createAsteroids(int rank) {
   CCLOG("about to create more asteroids - %d", rank);
   auto B= MGMS()->getEnclosureBox();
   assert(rank > 0 && rank < 4);
-  auto cfg = MGMS()->getLCfg();
+  auto cfg = MGMS()->getLCfg()->getValue();
   auto sz= astroSizes[rank];
   auto pn= astroPools[rank];
   auto wz = cx::visRect();
@@ -141,7 +148,7 @@ void GEngine::createAsteroids(int rank) {
   auto cnt= JS_INT(obj["num"]);
   auto img= JS_STR(obj["img"]);
   int n=0;
-  float x,y,deg;
+  //float x,y;
   f::Box4 r(0,0,0,0);
 
   while (n < cnt) {
@@ -151,15 +158,16 @@ void GEngine::createAsteroids(int rank) {
     r.left = r.right - sz.width;
     if ( !cx::outOfBound(r,B)) {
       pool->preset([=]() -> f::ComObj* {
-        deg = cx::randFloat(360.0f);
-        x = r.left + sz.width * 0.5f;
-        y = r.top - sz.height * 0.5f;
+        auto deg = cx::randFloat(360.0f);
+        auto x = r.left + sz.width * 0.5f;
+        auto y = r.top - sz.height * 0.5f;
         auto sp= cx::reifySprite(img);
         sp->setRotation(deg);
         MGML()->addAtlasItem("game-pics", sp);
         auto a= new Asteroid(sp, value, rank, deg,
-                               speed * cx::randSign(),
-                               speed * cx::randSign());
+                             c::Vec2(
+                             speed * cx::randSign(),
+                               speed * cx::randSign()));
         a->inflate(x, y);
         return a;
       }, 1);
@@ -172,9 +180,8 @@ void GEngine::createAsteroids(int rank) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GEngine::maybeOverlap(Ship *ship) {
+bool GEngine::maybeOverlap(const f::Box4 &bx) {
   auto p= MGMS()->getPool(astroPools[1]);
-  auto bx= cx::bbox4(ship);
   auto rc=false;
 
   rc= p->some([=](f::ComObj* z) -> bool {

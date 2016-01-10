@@ -22,14 +22,14 @@ void ComObj::updatePosition(float x, float y) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::hurt(int damage) {
-  health -= damage;
+  HP -= damage;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::inflate(not_null<c::Dictionary*> dict) {
 
-  health = origHealth;
+  HP = origHP;
   status=true;
 
   if (ENP(sprite)) {
@@ -58,7 +58,7 @@ void ComObj::inflate(not_null<c::Dictionary*> dict) {
 //
 void ComObj::inflate(float x, float y) {
 
-  health = origHealth;
+  HP = origHP;
   status=true;
 
   if (NNP(sprite)) {
@@ -71,7 +71,7 @@ void ComObj::inflate(float x, float y) {
 //
 void ComObj::inflate() {
 
-  health = origHealth;
+  HP = origHP;
   status=true;
 
   if (NNP(sprite)) {
@@ -137,9 +137,9 @@ int ComObj::pid() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::init(c::Sprite *sprite, int health, int score) {
-  this->origHealth = health;
+  this->origHP = health;
   this->sprite = sprite;
-  this->health = health;
+  this->HP = health;
   this->score = score;
   status=false;
 }

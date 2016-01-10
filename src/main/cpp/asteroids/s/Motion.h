@@ -30,6 +30,14 @@ struct CC_DLL Motions : public a::System {
   : System(e)
   {}
 
+  DECL_PTR(a::NodeList, cannonNode)
+  DECL_PTR(a::NodeList, shipNode)
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_TD(VOIDFN, rotRight)
+  DECL_TD(VOIDFN, rotLeft)
+  DECL_TD(VOIDFN, sftUp)
+  DECL_TD(VOIDFN, sftDown)
+
 protected:
   void initKeyOps(Motion*, int);
   void controlCannon(float);

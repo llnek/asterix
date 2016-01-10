@@ -9,8 +9,10 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "Motion.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(asteroids)
@@ -20,9 +22,10 @@ NS_BEGIN(asteroids)
 void Motions::preamble() {
   cannonNode = engine->getNodeList(CannonCtrlNode().typeId());
   shipNode= engine->getNodeList(ShipMotionNode().typeId());
-  auto mo= CC_GNLF(Motion,shipNode,"motion");
-  auto w= CC_CSV(c::Integer, "THROTTLE+WAIT");
-  initKeyOps(mo, w);
+  arenaNode= engine->getNodeList(ArenaNode().typeId());
+  initKeyOps(
+    CC_GNLF(Motion,shipNode,"motion"),
+    CC_CSV(c::Integer, "THROTTLE+WAIT"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,7 +52,7 @@ void Motions::controlCannon(float dt) {
     }
   }
   else
-  if (MGMS()->keyPoll(KEYCODE::KEY_SPACE)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
     fireMissile(dt);
   }
 }
@@ -60,16 +63,16 @@ void Motions::fireMissile(float dt) {
   auto lpr= CC_GNLF(Looper,shipNode,"looper");
   auto gun= CC_GNLF(Cannon,shipNode,"cannon");
   auto ship= CC_GNLF(Ship,shipNode, "ship");
-  auto p= MGMS()->getPool("Missiles");
   auto sz= ship->sprite->getContentSize();
   auto deg= ship->sprite->getRotation();
+  auto p= MGMS()->getPool("Missiles");
   auto top= cx::getTop(ship->sprite);
   auto pos= ship->pos();
-  auto ent= p->get();
+  auto ent= (f::DynaObj*)p->get();
 
   if (ENP(ent)) {
-    engine->createMissiles(30);
-    ent= p->get();
+    SCAST(GEngine*,engine)->createMissiles(30);
+    ent= (f::DynaObj*)p->get();
   }
 
   auto rc= cx::calcXY(deg, sz.height * 0.5f);
@@ -86,16 +89,16 @@ void Motions::fireMissile(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::scanInput(float dt) {
-  if (MGMS()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     rotRight();
   }
-  if (MGMS()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
     rotLeft();
   }
-  if (MGMS()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
     sftDown();
   }
-  if (MGMS()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
     sftUp();
   }
 }
@@ -104,21 +107,10 @@ void Motions::scanInput(float dt) {
 //
 void Motions::initKeyOps(Motion *mo, int w) {
 
-  rotRight = cx::throttle([=]() {
-      mo->right=true;
-      }, w);
-
-  rotLeft = cx::throttle([=]() {
-      mo->left=true;
-      }, w);
-
-  sftDown= cx::throttle([=]() {
-      mo->down=true;
-      }, w);
-
-  sftUp= cx::throttle([=]() {
-      mo->up=true;
-      }, w);
+  rotRight = cx::throttle([=]() { mo->right=true; }, w);
+  rotLeft = cx::throttle([=]() { mo->left=true; }, w);
+  sftDown= cx::throttle([=]() { mo->down=true; }, w);
+  sftUp= cx::throttle([=]() { mo->up=true; }, w);
 }
 
 

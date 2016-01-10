@@ -12,6 +12,7 @@
 #if !defined(__RESOLVE_H__)
 #define __RESOLVE_H__
 
+#include "core/XPool.h"
 #include "ash/System.h"
 #include "GEngine.h"
 
@@ -30,11 +31,13 @@ struct CC_DLL Resolve : public a::System {
   : System(e)
   {}
 
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
+
 protected:
 
-  void checkMissiles();
-  void checkLasers();
-  void checkAstros();
+    void checkAstrosXXX(f::XPool*,bool);
+    void checkXXX(f::XPool*);
   void checkShip();
 
 };

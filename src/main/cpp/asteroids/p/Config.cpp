@@ -18,6 +18,9 @@ NS_BEGIN(asteroids)
 //
 owner<Config*> Config::reify() {
   auto c= mc_new(Config);
+  c->initAssets();
+  c->initCsts();
+  c->initLevels();
   return c;
 }
 
@@ -39,10 +42,14 @@ void Config::initCsts() {
   addCst("P_LS", CC_STR("Lasers"));
   addCst("P_LAS", CC_STR("Live-Asteroids"));
 
+  addCst("THROTTLE+WAIT", CC_INT(300));
+  addCst("showFPS", CC_BOOL(false));
+
   addCst("GRID_W", CC_INT(60));
   addCst("GRID_H", CC_INT(40));
 
   addColor("default", CC_STR("#f6b17f"));
+  addColor("text", CC_STR("#ffffff"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,38 +58,58 @@ void Config::initAssets() {
 
   addAtlas("lang-pics",  CC_STR("l10n/en/images.plist"));
   addAtlas("game-pics", CC_STR("pics/sprites.plist"));
+  addAtlas("img-pics", CC_STR("pics/images.plist"));
 
   addImage("lang-pics",  CC_STR("l10n/en/images.png"));
   addImage("game-pics", CC_STR("pics/sprites.png"));
+  addImage("img-pics", CC_STR("pics/images.png"));
+
   addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
   addImage("game.bg", CC_STR("pics/bg.png"));
 
   addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
   addEffect("game_quit", CC_STR("sfx/Death.mp3"));
 
+  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+
+  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::addLevels() {
+void Config::initLevels() {
   auto d= getLevel("1");
   auto j= j::json({
 
-      {"large", j::json({
+      {"MISSILE+SPEED", 100},
+      {"LASER+SPEED", 100},
+      {"coolDownWnd", 800.0f},
+
+      {"Astros1", j::json({
           {"img", "rock_large.png"},
           {"num", 5},
           {"value", 25}
           }) },
-      {"med", j::json({
+      {"Astros2", j::json({
           {"img", "rock_med.png"},
           {"num", 5},
           {"value", 50}
           }) },
-      {"small", j::json({
+      {"Astros3", j::json({
           {"img", "rock_small.png"},
           {"num", 10},
           {"value", 100}
           }) }
+
   });
   d->setObject(f::JsonObj::create(j), CFG);
 }
@@ -102,6 +129,11 @@ void Config::runOnce() {
   auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("img-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
   fp= getAtlas("lang-pics");
   c->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());

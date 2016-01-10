@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
@@ -38,33 +39,24 @@ bool Collide::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void Collide::checkXXX(f::XPool *p, f::ComObj *z) {
+  p->foreach([=](f::ComObj *c) {
+    if (z->status && c->status &&
+        z->HP > 0 && c->HP > 0 &&
+        cx::collide(z,c)) {
+      z->hurt();
+      c->hurt();
+    }
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Collide::checkMissilesRocks() {
-  auto p= MGMS()->getPool("Missiles");
-  p->foreach([=](f::ComObj *m) {
-    if (m->status && m->health > 0) {
-      MGMS()->getPool("Astros3")->foreach([=](f::ComObj *a) {
-        if (a->status && cx::collide(m,a)) {
-          m->hurt();
-          a->hurt();
-        }
-      });
-    }
-    if (m->status && m->health > 0) {
-      MGMS()->getPool("Astros2")->foreach([=](f::ComObj *a) {
-        if (a->status && cx::collide(m,a)) {
-          m->hurt();
-          a->hurt();
-        }
-      });
-    }
-    if (m->status && m->health > 0) {
-      MGMS()->getPool("Astros1")->foreach([=](f::ComObj *a) {
-        if (a->status && cx::collide(m,a)) {
-          m->hurt();
-          a->hurt();
-        }
-      });
-    }
+  MGMS()->getPool("Missiles")->foreach([=](f::ComObj *m) {
+    this->checkXXX(MGMS()->getPool("Astros3"), m);
+    this->checkXXX(MGMS()->getPool("Astros2"), m);
+    this->checkXXX(MGMS()->getPool("Astros1"), m);
   });
 }
 
@@ -72,49 +64,17 @@ void Collide::checkMissilesRocks() {
 //
 void Collide::checkShipBombs() {
   auto ship = CC_GNLF(Ship,shipNode,"ship");
-  MGMS()->getPool("Lasers")->foreach([=](f::ComObj *b) {
-    if (b->status && ship->status &&
-        cx::collide(b,ship)) {
-      ship->hurt();
-      b->hurt();
-    }
-  });
+  checkXXX(MGMS()->getPool("Lasers"), ship);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipRocks() {
   auto ship = CC_GNLF(Ship,shipNode,"ship");
-
-  if (ship->status && ship->health > 0) {
-    MGMS()->getPool("Astros3")->foreach([=](f::ComObj *a) {
-      if (a->status && cx::collide(ship,a)) {
-        ship->hurt();
-        a->hurt();
-      }
-    });
-  }
-
-  if (ship->status && ship->health > 0) {
-    MGMS()->getPool("Astros2")->foreach([=](f::ComObj *a) {
-      if (a->status && cx::collide(ship,a)) {
-        ship->hurt();
-        a->hurt();
-      }
-    });
-  }
-
-  if (ship->status && ship->health > 0) {
-    MGMS()->getPool("Astros1")->foreach([=](f::ComObj *a) {
-      if (a->status && cx::collide(ship,a)) {
-          ship->hurt();
-          a->hurt();
-      }
-    });
-  }
-
+  checkXXX(MGMS()->getPool("Astros3"), ship);
+  checkXXX(MGMS()->getPool("Astros2"), ship);
+  checkXXX(MGMS()->getPool("Astros1"), ship);
 }
-
 
 NS_END(asteroids)
 

@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Resolve.h"
@@ -28,9 +29,11 @@ void Resolve::preamble() {
 bool Resolve::update(float dt) {
 
   if (MGMS()->isLive()) {
-    checkMissiles();
-    checkLasers();
-    checkAstros();
+    checkXXX(MGMS()->getPool("Missiles"));
+    checkXXX(MGMS()->getPool("Lasers"));
+    checkAstrosXXX(MGMS()->getPool("Astros1"),true);
+    checkAstrosXXX(MGMS()->getPool("Astros2"),true);
+    checkAstrosXXX(MGMS()->getPool("Astros3"),false);
     checkShip();
   }
 
@@ -39,24 +42,11 @@ bool Resolve::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkMissiles() {
-  auto B = MGMS()->getEnclosureBox();
-  MGMS()->getPool("Missiles")->foreach([=](f::ComObj *m) {
-    if (m->status) {
-      if (m->health <= 0 ||
-          cx::outOfBound(cx::bbox4(m), B)) {
-      m->deflate();
-    }}
-  });
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::checkLasers() {
+void Resolve::checkXXX(f::XPool *p) {
   auto B= MGMS()->getEnclosureBox();
-  MGMS()->getPool("Lasers")->foreach([=](f::ComObj *b) {
+  p->foreach([=](f::ComObj *b) {
     if (b->status) {
-      if (b->health <= 0 ||
+      if (b->HP <= 0 ||
           cx::outOfBound(cx::bbox4(b), B)) {
       b->deflate();
     }}
@@ -65,27 +55,15 @@ void Resolve::checkLasers() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkAstros() {
-  MGMS()->getPool("Astros1")->foreach([=](f::ComObj *a) {
-    if (a->status && a->health <= 0) {
+void Resolve::checkAstrosXXX(f::XPool *p, bool cr) {
+  p->foreach([=](f::ComObj *a) {
+    if (a->status && a->HP <= 0) {
       auto msg= j::json({ {"score", a->score} });
       SENDMSGEX("/game/players/earnscore", &msg);
-      engine->createAsteroids(a->rank +1);
-      a->deflate();
-    }
-  });
-  MGMS()->getPool("Astros2")->foreach([=](f::ComObj *a) {
-    if (a->status && a->health <= 0) {
-      auto msg= j::json({ {"score", a->score} });
-      SENDMSGEX("/game/players/earnscore", &msg);
-      engine->createAsteroids(a->rank +1);
-      a->deflate();
-    }
-  });
-  MGMS()->getPool("Astros3")->foreach([=](f::ComObj *a) {
-    if (a->status && a->health <= 0) {
-      auto msg= j::json({ {"score", a->score} });
-      SENDMSGEX("/game/players/earnscore", &msg);
+      if (cr) {
+        SCAST(GEngine*,engine)->createAsteroids(
+                                                SCAST(Asteroid*,a)->rank +1);
+      }
       a->deflate();
     }
   });
@@ -95,7 +73,7 @@ void Resolve::checkAstros() {
 //
 void Resolve::checkShip() {
   auto ship = CC_GNLF(Ship,shipNode,"ship");
-  if (ship->status && ship->health <= 0) {
+  if (ship->status && ship->HP <= 0) {
     ship->deflate();
     SENDMSG("/game/players/killed");
   }

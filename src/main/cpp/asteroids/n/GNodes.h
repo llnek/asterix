@@ -12,6 +12,8 @@
 #if !defined(__GNODES_H__)
 #define __GNODES_H__
 
+#include "ash/NodeRego.h"
+#include "CObjs.h"
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////

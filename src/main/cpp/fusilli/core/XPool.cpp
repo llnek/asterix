@@ -99,7 +99,7 @@ void XPool::foreach(s::function<void (ComObj*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::some(s::function<bool (ComObj*)> f) {
+bool XPool::some(s::function<bool (ComObj*)> f) {
   F__LOOP(it, objs) { if (f(*it)) { return true;} }
   return false;
 }

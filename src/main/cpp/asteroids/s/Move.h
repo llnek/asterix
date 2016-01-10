@@ -12,6 +12,7 @@
 #if !defined(__MOVE_H__)
 #define __MOVE_H__
 
+#include "core/XPool.h"
 #include "ash/System.h"
 #include "GEngine.h"
 NS_BEGIN(asteroids)
@@ -23,11 +24,14 @@ struct CC_DLL Move : public a::System {
   MDECL_SYS_PRIORITY(a::Move)
   MDECL_SYS_TPID("s/Move")
   MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UDPATE()
+  MDECL_SYS_UPDATE()
 
   Move(a::Engine *e)
   : System(e)
   {}
+
+  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, shipNode)
 
 protected:
 
@@ -36,7 +40,8 @@ protected:
   void processShipMotions(float dt);
   void moveShip(float);
   void moveAstros(f::ComObj*, float);
-
+    void moveXXX(f::XPool*, float);
+    void moveBBB(f::XPool*, float);
 };
 
 

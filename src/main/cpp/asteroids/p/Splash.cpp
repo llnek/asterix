@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
+#include "MMenu.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
@@ -22,7 +23,7 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
   STATIC_REIFY_LAYER(UILayer)
   MDECL_DECORATE()
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -34,8 +35,8 @@ void UILayer::decorate() {
 
   centerImage("game.bg");
 
-  b->setCallback([=]() {
-    auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); }
+    b->setCallback([=](c::Ref*) {
+      auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
     cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
   });
 

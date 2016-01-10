@@ -26,13 +26,13 @@ struct CC_DLL GEngine : public a::Engine {
   void createMissiles(int count=36);
   void createLasers(int count=36);
   void createShip();
-  void bornShip();
+  void bornShip(Ship*);
   void createAsteroids(int rank);
 
 protected:
   s_arr<c::Size, 4> astroSizes;
   s_arr<sstr, 4> astroPools;
-  bool maybeOverlap(Ship*);
+    bool maybeOverlap(const f::Box4&);
 };
 
 

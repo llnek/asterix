@@ -12,7 +12,9 @@
 #if !defined(__HUD_H__)
 #define __HUD_H__
 
+#include "x2d/XLives.h"
 #include "x2d/XLayer.h"
+
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -22,10 +24,15 @@ struct CC_DLL HUDLayer : public f::XLayer {
   STATIC_REIFY_LAYER(HUDLayer)
   MDECL_DECORATE()
 
+  bool reduceLives(int =1);
   void updateScore(int n);
   void resetAsNew();
   void reset();
   void drawScore();
+
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(f::XLives, lives)
+  DECL_IZ(score)
 
 };
 

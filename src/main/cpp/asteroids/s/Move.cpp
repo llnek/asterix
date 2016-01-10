@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
@@ -19,50 +20,47 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  shipMotions = engine->getNodeList(ShipMotionNode().typeId());
+  shipNode = engine->getNodeList(ShipMotionNode().typeId());
   arenaNode = engine->getNodeList(ArenaNode().typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::moveXXX(f::XPool *p, float dt) {
+  p->foreach([=](f::ComObj *a) {
+    if (a->status) { this->moveAstros(a, dt); }
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::moveBBB(f::XPool *p, float dt) {
+  p->foreach([=](f::ComObj *m) {
+    if (m->status) {
+        auto pos= m->pos();
+        auto y = pos.y + dt * m->vel.y * m->speed.y;
+        auto x = pos.x + dt * m->vel.x * m->speed.x;
+        m->setPos(x, y);
+      }
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-
-    MGMS()->getPool("Astros3")->foreach([=](f::ComObj *a) {
-      if (a->status) { this->moveAstros(a, dt); }
-    });
-    MGMS()->getPool("Astros2")->foreach([=](f::ComObj *a) {
-      if (a->status) { this->moveAstros(a, dt); }
-    });
-    MGMS()->getPool("Astros1")->foreach([=](f::ComObj *a) {
-      if (a->status) { this->moveAstros(a, dt); }
-    });
-
+    moveXXX(MGMS()->getPool("Astros3"), dt);
+    moveXXX(MGMS()->getPool("Astros2"), dt);
+    moveXXX(MGMS()->getPool("Astros1"), dt);
     processShipMotions(dt);
-
-    MGMS()->getPool("Missiles")->foreach([=](f::ComObj *m) {
-      if (m->status) {
-        auto pos= m->pos();
-        y = pos.y + dt * m->vel.y * m->speed.y;
-        x = pos.x + dt * m->vel.x * m->speed.x;
-        m->setPos(x, y);
-      }
-    });
-
-    MGMS()->getPool("Lasers")->foreach([=](f::ComObj *b) {
-      if (b->status) {
-        auto pos= b->pos();
-        y = pos.y + dt * b->vel.y * b->speed.y;
-        x = pos.x + dt * b->vel.x * b->speed.x;
-        b->setPos(x, y);
-      }
-    });
-
+    moveBBB(MGMS()->getPool("Missiles"), dt);
+    moveBBB(MGMS()->getPool("Lasers"), dt);
   }
-
   return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 float Move::rotateShip(float cur, float deg) {
   cur += deg;
   if (cur >= 360) {
@@ -83,7 +81,7 @@ const c::Vec2 Move::thrust(float angle, float power) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processShipMotions(float dt) {
-  auto ship= CC_GNLF(Ship,shipMotions, "ship");
+  auto ship= CC_GNLF(Ship,shipNode, "ship");
   auto sp = ship->sprite;
   auto pos = sp->getPosition();
   auto x= pos.x;
@@ -113,12 +111,13 @@ void Move::processShipMotions(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::moveShip(float dt) {
-  auto ship = CC_GNLF(Ship,shipMotions,"ship");
+  auto ship = CC_GNLF(Ship,shipNode,"ship");
   auto B = MGMS()->getEnclosureBox();
   auto sp= ship->sprite;
-  auto sz = sp.getContentSize();
+  auto sz = sp->getContentSize();
   auto pos= sp->getPosition();
-
+    float x,y;
+    
   ship->vel.y = ship->vel.y + dt * ship->acc.y;
   ship->vel.x = ship->vel.x + dt * ship->acc.x;
 
@@ -176,7 +175,7 @@ void Move::moveShip(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::moveAstros(f::ComObj *co, dt) {
+void Move::moveAstros(f::ComObj *co, float dt) {
   auto B = MGMS()->getEnclosureBox();
   auto astro = (f::DynaObj*) co;
   auto rot= astro->angle;
@@ -222,6 +221,7 @@ void Move::moveAstros(f::ComObj *co, dt) {
 
   sp->setPosition(x,y);
 }
+
 
 NS_END(asteroids)
 

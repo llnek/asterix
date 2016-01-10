@@ -11,8 +11,9 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "x2d/XLib.h"
 #include "MMenu.h"
-
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
 BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////

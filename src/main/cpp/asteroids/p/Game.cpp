@@ -37,7 +37,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onPlayerKilled();
   void onEarnScore(j::json*);
 
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -68,7 +68,8 @@ void GLayer::showMenu() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
-  engine->bornShip();
+    auto ship = CC_GNLF(Ship, shipNode, "ship");
+  SCAST(GEngine*,engine)->bornShip(ship);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -113,7 +114,7 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
   }
 
   if (t == "/game/players/killed") {
-    y->onPlayerKilled(msg);
+    y->onPlayerKilled();
   }
 
   if (t == "/game/ufos/shoot") {

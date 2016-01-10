@@ -13,7 +13,7 @@
 #include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-NS_USING(invaders)
+NS_USING(asteroids)
 NS_USING(fusii)
 NS_USING(ash)
 
@@ -24,7 +24,6 @@ AppDelegate::AppDelegate() {
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
-  r->rego( mc_new(AlienMotionNode));
   r->rego( mc_new(ShipMotionNode));
   r->rego( mc_new(ArenaNode));
   r->rego( mc_new(CannonCtrlNode));

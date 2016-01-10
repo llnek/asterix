@@ -426,25 +426,29 @@ float getTop(not_null<c::Node*> s) {
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastLeft(not_null<ComObj*> ent) {
-  return get_XXX(ent->sprite, ent->lastPos.x, anchorL().x);
+    auto d = (DynaObj*)ent.get();
+  return get_XXX(ent->sprite, d->lastPos.x, anchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastRight(not_null<ComObj*> ent) {
-  return get_XXX(ent->sprite, ent->lastPos.x, anchorR().x);
+    auto d= (DynaObj*)ent.get();
+  return get_XXX(ent->sprite, d->lastPos.x, anchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastTop(not_null<ComObj*> ent) {
-  return get_YYY(ent->sprite, ent->lastPos.y, anchorT().y);
+    auto d= (DynaObj*) ent.get();
+  return get_YYY(ent->sprite, d->lastPos.y, anchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastBottom(not_null<ComObj*> ent) {
-  return get_YYY(ent->sprite, ent->lastPos.y, anchorB().y);
+    auto d = (DynaObj*) ent.get();
+  return get_YYY(ent->sprite, d->lastPos.y, anchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -700,7 +704,7 @@ int randSign() {
 //////////////////////////////////////////////////////////////////////////////
 //
 float degToRad(float deg) {
-  return deg * PI / 180;
+  return deg * M_PI / 180;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -754,7 +758,7 @@ const c::Vec2 calcXY(float angle, float hypot) {
 VOIDFN throttle(VOIDFN func, int wait) {
   long long ww= (long long)wait;
   long long previous = 0;
-  return [=]() {
+  return [=]() mutable {
     auto now = currentTimeInMillis();
     if (previous==0)
     { previous = now; }

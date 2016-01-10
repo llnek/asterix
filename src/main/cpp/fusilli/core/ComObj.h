@@ -52,33 +52,33 @@ public:
 
   //not owner
   DECL_PTR(c::Sprite ,sprite)
-  DECL_IZ(origHealth)
+  DECL_IZ(origHP)
   DECL_BF(status)
-  DECL_IZ(health)
+  DECL_IZ(HP)
   DECL_IZ(score)
 
+  DECL_TD(c::Vec2, speed)
+  DECL_TD(c::Vec2, acc)
+  DECL_TD(c::Vec2, vel)
+  DECL_TD(c::Vec2, maxVel)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL DynaObj : public ComObj {
-protected:
+public:
 
   DECL_TD(c::Vec2, lastPos)
-  DECL_TD(c::Vec2, speed)
-  DECL_TD(c::Vec2, acc)
-  DECL_TD(c::Vec2, vel)
   DECL_FZ(power)
   //degrees
   DECL_FZ(angle)
 
-public:
   DynaObj(not_null<c::Sprite*> s, int health, int score)
     : ComObj(s,health,score) {}
-  DynaObj(not_null<c::Sprite*>) : ComObj(s) {}
+  DynaObj(not_null<c::Sprite*> s) : ComObj(s) {}
   DynaObj();
   NOCPYASS(DynaObj)
-}
+};
 
 NS_END(fusii)
 #endif
