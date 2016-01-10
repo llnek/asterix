@@ -9,94 +9,54 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict"/**
- * @requires zotohlab/asx/asterix
- * @requires n/cobjs
- * @module n/gnodes
- */
+#if !defined(__GNODES_H__)
+#define __GNODES_H__
 
-import sh from 'zotohlab/asx/asterix';
-import cobjs from 'n/cobjs';
+#include "ash/NodeRego.h"
+#include "CObjs.h"
 
-
-/** @alias module:n/gnodes */
-let xbox = {},
-sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef;
+NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class BricksNode
- */
-const BricksNode = sh.Ashley.nodeDef({
-  /**
-   * @memberof module:n/gnodes~BricksNode
-   * @property {BrickFence} fence
-   */
-  fence   : cobjs.BrickFence
-});
-/**
- * @property {BricksNode} BricksNode
- */
-xbox.BricksNode = BricksNode;
+//
+struct CC_DLL BricksNode : public a::NodeFactory {
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"fence", "n/BrickFence" }
+    });
+  }
+  MDECL_NFAC_TPID("n/BricksNode")
+};
 
 //////////////////////////////////////////////////////////////////////////////
-/**
- * @class PaddleMotionNode
- */
-const PaddleMotionNode = sh.Ashley.nodeDef({
-  /**
-   * @memberof module:n/gnodes~PaddleMotionNode
-   * @property {Velocity} velocity
-   * @static
-   */
-  velocity    : cobjs.Velocity,
-  /**
-   * @memberof module:n/gnodes~PaddleMotionNode
-   * @property {Motion} motion
-   * @static
-   */
-  motion      : cobjs.Motion,
-  /**
-   * @memberof module:n/gnodes~PaddleMotionNode
-   * @property {Paddle} paddle
-   * @static
-   */
-  paddle      : cobjs.Paddle
-});
-/**
- * @property {PaddleMotionNode} PaddleMotionNode
- */
-xbox.PaddleMotionNode = PaddleMotionNode;
+//
+struct CC_DLL PaddleMotionNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"motion", "n/Motion" },
+        {"paddle", "n/Paddle"}
+    });
+  }
+
+  MDECL_NFAC_TPID("n/PaddleMotionNode")
+};
 
 //////////////////////////////////////////////////////////////////////////////
-const BallMotionNode = sh.Ashley.nodeDef({
-  /**
-   * @memberof module:n/gnodes~BallMotionNode
-   * @property {Velocity} velocity
-   * @static
-   */
-  velocity    : cobjs.Velocity,
-  /**
-   * @memberof module:n/gnodes~BallMotionNode
-   * @property {Ball} ball
-   * @static
-   */
-  ball        : cobjs.Ball
-});
-/**
- * @property {BallMotionNode} BallMotionNode
- */
-xbox.BallMotionNode = BallMotionNode;
+//
+struct CC_DLL BallMotionNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"ball", "n/Ball"}
+    });
+  }
+
+  MDECL_NFAC_TPID("n/BallMotionNode")
+};
 
 
+NS_END(breakout)
+#endif
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
 

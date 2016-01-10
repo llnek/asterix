@@ -9,159 +9,109 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/move
- */
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Move.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(breakout)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class Move */
-Move = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/move~Move
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state= options;
-  },
-  /**
-   * @memberof module:s/move~Move
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.paddleMotions = null;
-    this.ballMotions = null;
-  },
-  /**
-   * @memberof module:s/move~Move
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.ballMotions = engine.getNodeList( gnodes.BallMotionNode);
-    this.paddleMotions = engine.getNodeList(gnodes.PaddleMotionNode);
-  },
-  /**
-   * @memberof module:s/move~Move
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const balls=this.ballMotions.head,
-    pds = this.paddleMotions.head;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::initEntities() {
 
-    if (this.state.running) {
+}
 
-      if (!!balls) {
-        this.processBallMotions(balls, dt);
-      }
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::initSystems() {
 
-      if (!!pds) {
-        this.processPaddleMotions(pds,dt);
-      }
-    }
-  },
-  /**
-   * @method processBallMotions
-   * @private
-   */
-  processBallMotions(node, dt) {
-    let v = node.velocity,
-    b= node.ball,
-    rc,
-    pos= b.sprite.getPosition(),
-    rect= ccsx.bbox(b.sprite);
 
-    rect.x = pos.x;
-    rect.y = pos.y;
+}
 
-    rc=ccsx.traceEnclosure(dt,this.state.world,
-                           rect,
-                           v.vel);
-    if (rc.hit) {
-      v.vel.x = rc.vx;
-      v.vel.y = rc.vy;
-    }
-    b.sprite.setPosition(rc.x,rc.y);
-  },
-  /**
-   * @method processPaddleMotions
-   * @private
-   */
-  processPaddleMotions(node,dt) {
-    let motion = node.motion,
-    sv = node.velocity,
-    pad= node.paddle,
-    pos = pad.sprite.getPosition(),
-    x= pos.x,
-    y= pos.y;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::preamble() {
+  paddleNode = engine->getNodeList(PaddleMotionNode().typeId());
+  ballNode = engine->getNodeList( BallMotionNode().typeId());
+}
 
-    if (motion.right) {
-      x = pos.x + dt * sv.vel.x;
-    }
-
-    if (motion.left) {
-      x = pos.x - dt * sv.vel.x;
-    }
-
-    pad.sprite.setPosition(x,y);
-    this.clamp(pad);
-
-    motion.right=false;
-    motion.left=false;
-  },
-  /**
-   * @method clamp
-   * @private
-   */
-  clamp(pad) {
-    const sz= pad.sprite.getContentSize(),
-    pos= pad.sprite.getPosition(),
-    wz = ccsx.vrect();
-
-    if (ccsx.getRight(pad.sprite) > wz.width - csts.TILE) {
-      pad.sprite.setPosition(wz.width - csts.TILE - sh.hw(sz), pos.y);
-    }
-    if (ccsx.getLeft(pad.sprite) < csts.TILE) {
-      pad.sprite.setPosition( csts.TILE + sh.hw(sz), pos.y);
-    }
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::update(float dt) {
+  if (MGMS()->isLive()) {
+    processBallMotions( dt);
+    processPaddleMotions(dt);
   }
 
-}, {
+  return true;
+}
 
-/**
- * @memberof module:s/move~Move
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Move
-});
-
-
-/** @alias module:s/move */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Move} Move
-   */
-  Move : Move
-};
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void Move::processBallMotions(float dt) {
+  auto ball = CC_GNLF(Ball, ballNode, "ball");
+  auto B = MGMS()->getEnclosureBox();
+  auto pos= ball->pos();
+  auto rect= cx::bbox(ball->sprite);
+
+  rect.x = pos.x;
+  rect.y = pos.y;
+
+  c::Vec2 outPos;
+  c::Vec2 outVel;
+  bool rc=cx::traceEnclosure(dt, B,
+                         rect,
+                         ball->vel,
+                         outPos, outVel);
+
+  ball->vel.x = outVel.x;
+  ball->vel.y = outVel.y;
+  ball->setPos(outPos.x, outPos.y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::processPaddleMotions(float dt) {
+  auto motion = CC_GNLF(Motion,paddleNode,"motion");
+  auto pad = CC_GNLF(Paddle,paddleNode,"paddle");
+  auto pos = pad->pos();
+  auto x= pos.x;
+  auto y= pos.y;
+
+  if (motion->right) {
+    x = pos.x + dt * pad->vel.x;
+  }
+
+  if (motion->left) {
+    x = pos.x - dt * pad->vel.x;
+  }
+
+  pad->setPos(x,y);
+  clamp(pad);
+
+  motion->right=false;
+  motion->left=false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::clamp(Paddle *pad) {
+  auto sz= pad->sprite->getContentSize();
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto pos= pad->sprite->getPosition();
+  auto wz = cx::visRect();
+
+  if (cx::getRight(pad->sprite) > wz.size.width - tile) {
+    pad->setPos(wz.size.width - tile - sz.width * 0.5f, pos.y);
+  }
+
+  if (cx::getLeft(pad->sprite) < tile) {
+    pad->setPos( tile + sz.height * 0.5f, pos.y);
+  }
+}
+
+NS_END(breakout)
+
 

@@ -9,115 +9,69 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/scenes
- * @requires zotohlab/asx/ccsx
- * @module p/mmenu
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Game.h"
+#include "MMenu.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_BEGIN(cx,fusii::ccsx)
+NS_BEGIN(breakout)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
 //////////////////////////////////////////////////////////////////////////////
-/** * @class MainMenuLayer */
-MainMenuLayer = scenes.XMenuLayer.extend({
-  /**
-   * @method title
-   * @private
-   */
-  title() {
-    const wb=ccsx.vbox(),
-    cw= ccsx.center(),
-    tt=ccsx.bmfLabel({
-      fontPath: sh.getFont('font.JellyBelly'),
-      text: sh.l10n('%mmenu'),
-      pos: cc.p(cw.x, wb.top * 0.9),
-      color: cc.color(246,177,127),
-      scale: xcfg.game.scale
-    });
-    this.addItem(tt);
-  },
-  /**
-   * @method onplay
-   * @private
-   */
-  onplay(msg) {
-    ccsx.runScene( sh.protos[sh.ptypes.game].reify(msg));
-  },
-  /**
-   * @method setup
-   * @protected
-   */
-  setup() {
-    this.centerImage(sh.getImage('gui.mmenus.menu.bg'));
-    const cw = ccsx.center(),
-    wb = ccsx.vbox(),
-    menu= ccsx.vmenu([{
-      nnn: '#play.png',
-      target: this,
-      cb() {
-        this.onplay({ mode: sh.gtypes.P1_GAME });
-      }
-    }],
-    {pos: cw});
-    this.addItem(menu);
-
-    this.mkBackQuit(false, [
-        { nnn: '#icon_back.png',
-          cb() {
-            this.options.onback();
-          },
-          target: this },
-
-        { nnn: '#icon_quit.png',
-          cb() { this.onQuit(); },
-          target: this }
-      ],
-      (m,z) => {
-        m.setPosition(wb.left + csts.TILE + z.width * 1.1,
-                      wb.bottom + csts.TILE + z.height * 0.45);
-      });
-
-    this.mkAudio({
-      pos: cc.p(wb.right - csts.TILE,
-                wb.bottom + csts.TILE),
-      anchor: ccsx.acs.BottomRight
-    });
-
-  }
-
-});
-
-/** @alias module:p/mmenu */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.mmenu,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    return new scenes.XSceneFactory([
-      MainMenuLayer
-    ]).reify(options);
-  }
+//
+struct CC_DLL UILayer : public f::XLayer {
+  STATIC_REIFY_LAYER(UILayer)
+  MDECL_DECORATE()
 };
 
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void UILayer::decorate() {
+
+  auto wb=cx::visBox();
+  auto cw= cx::center();
+
+  centerImage("gui.mmenus.menu.bg");
+  incIndexZ();
+
+  auto tt= cx::reifyBmfLabel("font.JellyBelly", gets("mmenu"));
+  tt->setPosition(cw.x, wb.top * 0.9f);
+  tt->setColor(XCFG()->getColor("default"));
+  tt->setScale(XCFG()->getScale());
+  addItem(tt);
+
+  auto b= cx::reifyMenuBtn("play.png");
+  auto menu= cx::mkMenu(b);
+  b->setCallback([=](c::Ref*){
+    cx::runSceneEx(Game::reify(mc_new(f::GCX)));
+  });
+  menu->setPosition(cw);
+  addItem(menu);
+
+  // back-quit buttons
+  auto b= cx::reifyMenuBtn("icon_back.png");
+  auto q= cx::reifyMenuBtn("icon_quit.png");
+  auto sz= b->getContentSize();
+
+  q->setTarget(this, CC_MENU_SELECTOR(UILayer::onQuit));
+  b->setCallback([=](c::Ref*) { ctx->back(); });
+
+  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {b, q} );
+  m2->setPosition(wb.left + tile + sz.width * 1.1f,
+                  wb.bottom + tile + sz.height * 0.45f);
+  addItem(m2);
+
+  auto audios = cx::reifyAudioIcons();
+  audios[0]->setColor(dfc);
+  audios[1]->setColor(dfc);
+
+  addAudioIcons(this, audios,
+      cx::anchorBR(),
+      c::Vec2(wb.right - tile, wb.bottom + tile));
+
+}
+
+NS_END(breakout)
+
+
 

@@ -9,142 +9,80 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/scenes
- * @module p/hud
- */
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "HUD.h"
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+NS_BEGIN(breakout)
 
-
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class HUDLayer */
-HUDLayer = scenes.XGameHUDLayer.extend({
-  /**
-   * @method initAtlases
-   * @protected
-   */
-  initAtlases() {
-    this.regoAtlas('game-pics');
-  },
-  /**
-   * @method hudAtlas
-   * @private
-   */
-  hudAtlas() { return 'game-pics'; },
-  /**
-   * @method updateScore
-   */
-  updateScore(n) {
-    this.score += n;
-    this.drawScore();
-  },
-  /**
-   * @method resetAsNew
-   * @private
-   */
-  resetAsNew() {
-    this.reset();
-  },
-  /**
-   * @method reset
-   * @private
-   */
-  reset() {
-    this.replayBtn.setVisible(false);
-    this.lives.resurrect();
-    this.score=0;
-  },
-  /**
-   * @method initLabels
-   * @protected
-   */
-  initLabels() {
-    const wz = ccsx.vrect();
-
-    this.scoreLabel = ccsx.bmfLabel({
-      fontPath: sh.getFont('font.TinyBoxBB'),
-      text: '0',
-      anchor: ccsx.acs.BottomRight,
-      scale: 12/72
-    });
-    this.scoreLabel.setPosition( wz.width - csts.TILE - csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF - ccsx.getScaledHeight(this.scoreLabel));
-
-    this.addChild(this.scoreLabel, this.lastZix, ++this.lastTag);
-  },
-  /**
-   * @method initIcons
-   * @protected
-   */
-  initIcons() {
-    const wz = ccsx.vrect();
-
-    this.lives = new scenes.XHUDLives( this, csts.TILE + csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF, {
-      frames: ['paddle.png'],
-      scale: 0.5,
-      totalLives: 3
-    });
-
-    this.lives.create();
-  },
-  /**
-   * @method drawScore
-   * @private
-   */
-  drawScore() {
-    this.scoreLabel.setString(Number(this.score).toString());
-  },
-  /**
-   * @method ctor
-   * @private
-   */
-  ctor(options) {
-    this._super(options);
-    this.options.i_replay= {
-      nnn: '#icon_replay.png',
-      where: ccsx.acs.Bottom,
-      visible: false,
-      cb() {
-        sh.fire('/hud/replay');
-      }
-    };
-
-    this.options.i_menu= {
-      nnn: '#icon_menu.png',
-      where: ccsx.acs.Bottom,
-      cb() {
-        sh.fire('/hud/showmenu');
-      }
-    };
-
-  }
-
-});
-
-/** @alias module:p/hud */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {HUDLayer} HUDLayer
-   */
-  HUDLayer: HUDLayer
-};
-
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+void HUDLayer::updateScore(int n) {
+  score += n;
+  drawScore();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::resetAsNew() {
+  reset();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::reset() {
+  lives->resurrect();
+  score=0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::decorate() {
+  auto soff = CC_CSV(c::Integer, "S_OFF");
+  auto tile = CC_CSV(c::Integer, "TILE");
+  auto wz = cx::visRect();
+  auto wb = cx::visBox();
+
+  regoAtlas("game-pics");
+
+  scoreLabel = cx::reifyBmfLabel("font.TinyBoxBB", "0");
+  scoreLabel->setAnchorPoint(cx::anchorBR());
+  scoreLabel->setScale(12/72.0f);
+  scoreLabel->setPosition( wz.size.width - tile - soff,
+    wz.size.height - tile - soff - cx::getScaledHeight(scoreLabel));
+  addItem(scoreLabel);
+
+  this->lives= f::reifyRefType<f::XLives>();
+  this->lives->decorate("paddle.png", 3,
+      tile + soff,
+      wb.top - tile - soff, 0.5f);
+  addItem(lives);
+
+  auto b = cx::reifyMenuBtn("icon_menu.png");
+  auto menu = cx::mkMenu(b);
+  auto z2= cx::halfHW(b);
+
+  b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
+  menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
+  addItem(menu);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::drawScore() {
+  scoreLabel->setString(s::to_string(score));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool HUDLayer::reduceLives(int n) {
+  lives->reduce(n);
+  return lives->isDead();
+}
+
+
+
+
+NS_END(breakout)
+
 

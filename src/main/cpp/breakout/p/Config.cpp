@@ -9,99 +9,125 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/cfg
- * @module p/config
- */
+#include "Config.h"
+#include "Splash.h"
 
-import sh from 'zotohlab/asx/asterix';
-import xcfg from 'zotohlab/asx/cfg';
+NS_BEGIN(breakout)
 
-const sjs= sh.skarojs,
-/** @alias module:p/config */
-xbox = sjs.merge( xcfg, {
+BEGIN_NS_UNAMED()
+const s_arr<sstr,8> CANDIES {
+  "red_candy", "amber_candy","white_candy","green_candy",
+  "yellow_candy","blue_candy", "purple_plus_candy", "purple_minus_candy"
+};
 
-  appKey :  "7d943e06-0849-4bf4-a16d-64a401f72a3e",
-
-  appid: 'breakout',
-  color: 'yellow',
-
-  resolution: {
-    policy: cc.ResolutionPolicy.FIXED_HEIGHT,
-    resSize: [0,0]
-  },
-
-  csts: {
-    GRID_W: 40,
-    GRID_H: 60,
-
-    CANDIES: ['red_candy','amber_candy','white_candy','green_candy','yellow_candy','blue_candy',
-              'purple_plus_candy', 'purple_minus_candy'],
-
-    ROWS: 5,
-    COLS: 9,
-    TOP: 6,
-
-    TOP_ROW: 10,
-
-    PADDLE_OFF: 4,
-    LEFT_OFF: 4
-  },
-
-  assets: {
-    atlases: {
-      'game-pics' : 'res/{{appid}}/pics/sprites',
-      'lang-pics' : 'res/{{appid}}/l10n/{{lang}}/images'
-    },
-    tiles: {
-    },
-    images: {
-      'gui.mmenus.menu.bg' : 'res/{{appid}}/pics/bg.png',
-      'game.bg' : 'res/{{appid}}/pics/bg.png',
-    },
-    sounds: {
-      'game_end' : 'res/cocos2d/sfx/MineExplosion',
-      'game_quit' : 'res/cocos2d/sfx/Death',
-      'ball-paddle' : 'res/cocos2d/sfx/ElevatorBeep',
-      'ball-brick' : 'res/cocos2d/sfx/MineBeep'
-    },
-    fonts: {
-    }
-  },
-
-  game: {
-    sd: {width:320, height:480}
-  },
-
-  levels: {
-    "1" : {
-      'tiles' : {
-      },
-      'images' : {
-      },
-      'sprites' : {
-      },
-      'cfg' : [ 0, 1, 5, 3, 4]
-    }
-  },
-
-  handleResolution(rs) {
-    //for default font, we use 48pt
-    this.game.scale = 52/256 * rs.width /320;
-  },
-
-  runOnce() {
-    cc.spriteFrameCache.addSpriteFrames( sh.getPList('game-pics'));
-cc.spriteFrameCache.addSpriteFrames( sh.getPList('lang-pics'));
-  }
-
-});
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
-//EOF
+//
+owner<Config*> Config::reify() {
+  auto c= mc_new(Config);
+  c->initAssets();
+  c->initCsts();
+  c->initLevels();
+  return c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Scene* Config::prelude() {
+  return Splash::reify();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initCsts() {
+  game_id = "7d943e06-0849-4bf4-a16d-64a401f72a3e";
+  app_id= "breakout";
+
+  addCst("GRID_W", CC_INT(40));
+  addCst("GRID_H", CC_INT(60));
+
+  addCst("PADDLE+OFF", CC_INT(4));
+  addCst("LEFT+OFF", CC_INT(4));
+
+  addColor("default", CC_STR("#f6b17f"));
+  addColor("text", CC_STR("#ffffff"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initAssets() {
+  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  addAtlas("game-pics", CC_STR("pics/sprites.plist"));
+  addAtlas("img-pics", CC_STR("pics/images.plist"));
+
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("game-pics", CC_STR("pics/sprites.png"));
+  addImage("img-pics", CC_STR("pics/images.png"));
+
+  addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
+  addImage("game.bg", CC_STR("pics/bg.png"));
+
+  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
+  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("ball-paddle", CC_STR("sfx/ElevatorBeep.mp3"));
+  addEffect("ball-brick", CC_STR("sfx/MineBeep.mp3"));
+
+  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+
+  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initLevels() {
+  auto d= getLevel("1");
+  auto j= j::json({
+      {"PADDLE+SPEED", 150},
+      {"BALL+SPEED", 200},
+        {"ROWS", 5},
+        {"COLS", 9},
+        {"TOP", 6},
+        {"TOP_ROW", 10},
+        {"combo",  j::json::array_t {0,1,5,3,4} }
+      });
+  d->setObject(f::JsonObj::create(j), CFG);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::handleResolution(const c::Size &rs) {
+  auto gz= gameSize();
+  //for default font, we use 48pt
+  scale = 52/256 * rs.width / gz.width;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::runOnce() {
+  auto c= c::SpriteFrameCache::getInstance();
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("img-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("lang-pics");
+  c->addSpriteFramesWithFile(fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+}
+
+
+NS_END(breakout)
+
 

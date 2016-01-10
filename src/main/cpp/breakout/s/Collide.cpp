@@ -9,199 +9,124 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires n/gnodes
- * @module s/collide
- */
+#include "Collide.h"
 
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
-import gnodes from 'n/gnodes';
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::preamble() {
+  paddleNode = engine->getNodeList(PaddleMotionNode().typeId());
+  ballNode = engine->getNodeList(BallMotionNode().typeId());
+  fenceNode= engine->getNodeList(BricksNode().typeId());
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Collide::update(float dt) {
+  if (MGMS()->isLive()) {
+    if (! onPlayerKilled()) {
+      checkNodes();
+      checkBricks();
+    }
+  }
+}
 
-let sjs = sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.xcsts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class Collide */
-Collide = sh.Ashley.sysDef({
-  /**
-   * @memberof module:s/collide~Collide
-   * @method constructor
-   * @param {Object} options
-   */
-  constructor(options) {
-    this.state = options;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method removeFromEngine
-   * @param {Ash.Engine} engine
-   */
-  removeFromEngine(engine) {
-    this.paddles=null;
-    this.balls=null;
-    this.fences= undef;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method addToEngine
-   * @param {Ash.Engine} engine
-   */
-  addToEngine(engine) {
-    this.paddles= engine.getNodeList(gnodes.PaddleMotionNode);
-    this.balls= engine.getNodeList(gnodes.BallMotionNode);
-    this.fences= engine.getNodeList(gnodes.BricksNode);
-    this.engine=engine;
-  },
-  /**
-   * @memberof module:s/collide~Collide
-   * @method update
-   * @param {Number} dt
-   */
-  update(dt) {
-    const bnode = this.balls.head,
-    pnode= this.paddles.head,
-    fnode= this.fences.head;
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Collide::onPlayerKilled() {
+  auto pad= CC_GNLF(Paddle,paddleNode,"paddle");
+  auto ball = CC_GNLF(Ball,ballNode,"ball");
+  auto pos= ball->pos();
 
-    if (this.state.running &&
-        !!bnode &&
-        !!pnode &&
-        !!fnode) {
+  if (pos.y < cx::getBottom(pad->sprite)) {
+    SENDMSG("/game/players/killed");
+    return true;
+  } else {
+    return false;
+  }
+}
 
-      if (! this.onPlayerKilled(pnode, bnode)) {
-        this.checkNodes(pnode, bnode);
-        this.checkBricks(fnode, bnode,dt);
-      }
-    }
-  },
-  /**
-   * @method onPlayerKilled
-   * @private
-   */
-  onPlayerKilled(pnode, bnode) {
-    const pos= bnode.ball.sprite.getPosition();
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::checkNodes() {
+  auto pad= CC_GNLF(Paddle,paddleNode,"paddle");
+  auto ball = CC_GNLF(Ball,ballNode,"ball");
 
-    if (pos.y < ccsx.getBottom(pnode.paddle.sprite)) {
-      sh.fire('/game/players/killed');
-      return true;
-    } else {
-      return false;
-    }
-  },
-  /**
-   * @method checkNodes
-   * @private
-   */
-  checkNodes(pnode,bnode) {
-    if (ccsx.collide0(pnode.paddle.sprite,
-                      bnode.ball.sprite)) {
-      this.check(pnode,bnode);
-    }
-  },
-  //ball hits paddle
-  /**
-   * @method check
-   * @private
-   */
-  check(pnode,bnode) {
-    const ball= bnode.ball,
-    pad= pnode.paddle,
-    hh= ball.sprite.getContentSize().height * 0.5,
-    pos= ball.sprite.getPosition(),
-    bv= bnode.velocity,
-    top= ccsx.getTop(pad.sprite);
+  if (cx::collide(pad,ball)) {
+    check();
+  }
+}
 
-    ball.sprite.setPosition(pos.x, top+hh);
-    bv.vel.y = - bv.vel.y;
-  },
-  /**
-   * @method checkBricks
-   * @private
-   */
-  checkBricks(fence,bnode,dt) {
-    const bss = fence.fence.bricks,
-    m= bnode.ball;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::check() {
+  auto pad= CC_GNLF(Paddle,paddleNode,"paddle");
+  auto ball = CC_GNLF(Ball,ballNode,"ball");
+  auto sz= ball->sprite->getContentSize();
+  auto hh= sz.height * 0.5f;
+  auto pos= ball->pos();
+  auto top= cx::getTop(pad->sprite);
 
-    for (let n=0; n < bss.length; ++n) {
-      if (bss[n].status !== true) { continue; }
-      if (ccsx.collide0(m.sprite, bss[n].sprite)) {
-        this.onBrick(bnode, bss[n]);
-        break;
-      }
-    }
-  },
-  /**
-   * @method onBrick
-   * @private
-   */
-  onBrick(bnode, brick) {
-    const bz = bnode.ball.sprite.getContentSize(),
-    kz= brick.sprite.getContentSize(),
-    velo= bnode.velocity,
-    ks= brick.sprite,
-    bs= bnode.ball.sprite,
-    ka = { L: ccsx.getLeft(ks), T: ccsx.getTop(ks),
-           R: ccsx.getRight(ks), B: ccsx.getBottom(ks) },
-    ba = { L : ccsx.getLeft(bs), T: ccsx.getTop(bs),
-           R: ccsx.getRight(bs), B: ccsx.getBottom(bs) };
+  ball->setPos(pos.x, top+hh);
+  ball->vel.y = - ball->vel.y;
+}
 
-    // ball coming down from top?
-    if (ba.T > ka.T &&  ka.T > ba.B) {
-      velo.vel.y = - velo.vel.y;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::checkBricks() {
+  auto fence= CC_GNLF(BrickFence,fenceNode,"fence");
+  auto ball = CC_GNLF(Ball,ballNode,"ball");
+  auto &bss= fence->bricks;
+
+  for (auto n=0; n < bss.size(); ++n) {
+    if (! bss[n]->status) { continue; }
+    if (cx::collide(ball->sprite, bss[n]->sprite)) {
+      onBrick(bss[n]);
+      break;
     }
-    else
-    // ball coming from bottom?
-    if (ba.T > ka.B &&  ka.B > ba.B) {
-      velo.vel.y = - velo.vel.y;
-    }
-    else
-    // ball coming from left?
-    if (ka.L > ba.L && ba.R > ka.L) {
-      velo.vel.x = - velo.vel.x;
-    }
-    else
-    // ball coming from right?
-    if (ka.R > ba.L && ba.R > ka.R) {
-      velo.vel.x = - velo.vel.x;
-    }
-    else {
-      sjs.loggr.error("Failed to determine the collide of ball and brick.");
-      return;
-    }
-    sh.fire('/game/players/earnscore', {
-      value: brick.value
-    });
-    brick.sprite.setVisible(false);
-    brick.status=false;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::onBrick(Brick *brick) {
+  auto ball = CC_GNLF(Ball,ballNode,"ball");
+  auto bz = ball->sprite->getContentSize();
+  auto kz= brick->sprite->getContentSize();
+  auto ks= brick->sprite;
+  auto bs= ball->sprite;
+  auto ka= cx::bbox4(ks);
+  auto ba = cx::bbox4(bs);
+
+  // ball coming down from top?
+  if (ba.top > ka.top &&  ka.top > ba.bottom) {
+    ball->vel.y = - ball->vel.y;
+  }
+  else
+  // ball coming from bottom?
+  if (ba.top > ka.bottom &&  ka.bottom > ba.bottom) {
+    ball->vel.y = - ball->vel.y;
+  }
+  else
+  // ball coming from left?
+  if (ka.left > ba.left && ba.right > ka.left) {
+    ball->vel.x = - ball->vel.x;
+  }
+  else
+  // ball coming from right?
+  if (ka.R > ba.L && ba.R > ka.R) {
+    ball->vel.x = - ball->vel.x;
+  }
+  else {
+    throw "Failed to determine the collide of ball and brick.";
   }
 
-}, {
+  auto msg= j::json({
+      {"value", brick->score }
+      });
+  SENDMSGEX("/game/players/earnscore", &msg);
+  brick->deflate();
+}
 
-/**
- * @memberof module:s/collide~Collide
- * @property {Number} Priority
- */
-Priority : xcfg.ftypes.Collide
-});
+NS_END(breakout)
 
-
-/** @alias module:s/collide */
-const xbox = /** @lends xbox# */{
-  /**
-   * @property {Collide} Collide
-   */
-  Collide : Collide
-};
-
-
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-///////////////////////////////////////////////////////////////////////////////
-//EOF
 

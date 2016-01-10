@@ -9,142 +9,33 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/ccsx
- * @requires zotohlab/asx/scenes
- * @module p/hud
- */
+#if !defined(__HUD_H__)
+#define __HUD_H__
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+#include "x2d/XLives.h"
+#include "x2d/XLayer.h"
+NS_BEGIN(breakout)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL HUDLayer : public f::XLayer {
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
-let sjs= sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class HUDLayer */
-HUDLayer = scenes.XGameHUDLayer.extend({
-  /**
-   * @method initAtlases
-   * @protected
-   */
-  initAtlases() {
-    this.regoAtlas('game-pics');
-  },
-  /**
-   * @method hudAtlas
-   * @private
-   */
-  hudAtlas() { return 'game-pics'; },
-  /**
-   * @method updateScore
-   */
-  updateScore(n) {
-    this.score += n;
-    this.drawScore();
-  },
-  /**
-   * @method resetAsNew
-   * @private
-   */
-  resetAsNew() {
-    this.reset();
-  },
-  /**
-   * @method reset
-   * @private
-   */
-  reset() {
-    this.replayBtn.setVisible(false);
-    this.lives.resurrect();
-    this.score=0;
-  },
-  /**
-   * @method initLabels
-   * @protected
-   */
-  initLabels() {
-    const wz = ccsx.vrect();
+  void updateScore(int n);
+  void resetAsNew();
+  void reset();
+  void drawScore();
 
-    this.scoreLabel = ccsx.bmfLabel({
-      fontPath: sh.getFont('font.TinyBoxBB'),
-      text: '0',
-      anchor: ccsx.acs.BottomRight,
-      scale: 12/72
-    });
-    this.scoreLabel.setPosition( wz.width - csts.TILE - csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF - ccsx.getScaledHeight(this.scoreLabel));
+  DECL_PTR(c::Label,scoreLabel)
+  DECL_PTR(f::XLives, lives)
+  DECL_IZ(score)
 
-    this.addChild(this.scoreLabel, this.lastZix, ++this.lastTag);
-  },
-  /**
-   * @method initIcons
-   * @protected
-   */
-  initIcons() {
-    const wz = ccsx.vrect();
-
-    this.lives = new scenes.XHUDLives( this, csts.TILE + csts.S_OFF,
-      wz.height - csts.TILE - csts.S_OFF, {
-      frames: ['paddle.png'],
-      scale: 0.5,
-      totalLives: 3
-    });
-
-    this.lives.create();
-  },
-  /**
-   * @method drawScore
-   * @private
-   */
-  drawScore() {
-    this.scoreLabel.setString(Number(this.score).toString());
-  },
-  /**
-   * @method ctor
-   * @private
-   */
-  ctor(options) {
-    this._super(options);
-    this.options.i_replay= {
-      nnn: '#icon_replay.png',
-      where: ccsx.acs.Bottom,
-      visible: false,
-      cb() {
-        sh.fire('/hud/replay');
-      }
-    };
-
-    this.options.i_menu= {
-      nnn: '#icon_menu.png',
-      where: ccsx.acs.Bottom,
-      cb() {
-        sh.fire('/hud/showmenu');
-      }
-    };
-
-  }
-
-});
-
-/** @alias module:p/hud */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {HUDLayer} HUDLayer
-   */
-  HUDLayer: HUDLayer
 };
 
+NS_END(breakout)
+#endif
 
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
 

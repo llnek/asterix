@@ -9,87 +9,22 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
-"use strict";/**
- * @requires zotohlab/asx/asterix
- * @requires zotohlab/asx/scenes
- * @requires zotohlab/asx/ccsx
- * @module p/splash
- */
+#if !defined(__SPLASH_H__)
+#define __SPLASH_H__
 
-import scenes from 'zotohlab/asx/scenes';
-import sh from 'zotohlab/asx/asterix';
-import ccsx from 'zotohlab/asx/ccsx';
+#include "x2d/XScene.h"
+NS_BEGIN(breakout)
 
-let sjs = sh.skarojs,
-xcfg = sh.xcfg,
-csts= xcfg.csts,
-undef,
-//////////////////////////////////////////////////////////////////////////
-/** * @class SplashLayer */
-SplashLayer = scenes.XLayer.extend({
-  /**
-   * @method setup
-   * @protected
-   */
-  setup() {
-    this.centerImage(sh.getImage('game.bg'));
-    this.btns();
-  },
-  /**
-   * @method btns
-   * @private
-   */
-  btns() {
-    const cw = ccsx.center(),
-    wz = ccsx.vrect(),
-    menu= ccsx.vmenu([{
-      nnn: '#play.png',
-      cb() {
-        this.onplay();
-      },
-      target: this
-    }],
-    {pos: cc.p(cw.x, wz.height * 0.1) });
-    this.addItem(menu);
-  },
-  /**
-   * @method onplay
-   * @private
-   */
-  onplay() {
-    const ss= sh.protos[sh.ptypes.start],
-    mm= sh.protos[sh.ptypes.mmenu];
-
-    ccsx.runScene( mm.reify({
-      onback() { ccsx.runScene( ss.reify() ); }
-    }));
-  }
-
-});
-
-/** @alias module:p/splash */
-const xbox= /** @lends xbox# */{
-  /**
-   * @property {String} rtti
-   */
-  rtti : sh.ptypes.start,
-  /**
-   * @method reify
-   * @param {Object} options
-   * @return {cc.Scene}
-   */
-  reify(options) {
-    return new scenes.XSceneFactory([
-      SplashLayer
-    ]).reify(options);
-  }
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Splash : public f::XScene {
+  STATIC_REIFY_SCENE(Splash)
+  MDECL_DECORATE()
 };
 
+NS_END(breakout)
+#endif
 
-sjs.merge(exports, xbox);
-/*@@
-return xbox;
-@@*/
-//////////////////////////////////////////////////////////////////////////////
-//EOF
+
+
 
