@@ -9,8 +9,15 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Collide.h"
+#include "Move.h"
+#include "p/Config.h"
 #include "GEngine.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -24,9 +31,8 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new(Resolve,this));
-  regoSystem(mc_new(Collide,this));
-  regoSystem(mc_new(Move,this));
+  regoSystem(mc_new_1(Collide,this));
+  regoSystem(mc_new_1(Move,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,31 +45,33 @@ void GEngine::createBricks() {
   auto cw= cx::center();
 
   auto loff= CC_CSV(c::Integer,"LEFT+OFF");
-  auto csz= cx::calcCize("");
-  auto rows= JS_INT(cfg["ROWS"]);
-  auto cols= JS_INT(cfg["COLS"])
+  auto csz= cx::calcSize("red_candy.png");
+    j::json rows= JS_ARR(cfg["ROWS"]);
+  auto cols= JS_INT(cfg["COLS"]);
   auto tr= JS_INT(cfg["TOP+ROW"]);
   auto y= wz.size.height - tr*tile;
   auto x=0.0f;
   auto bf= mc_new(BrickFence);
 
-  for (int r=0; r < rows; ++r) {
+  J__LOOP(it, rows) {
+    auto &rr = *it;
+    auto r= JS_INT(rr);
+    auto cn= cg->getCandy(r);
     x= csz.width * 0.5f + tile + loff;
     for (int c=0; c < cols; ++c) {
-      auto cn= cg->getCandy(r);
       auto sp= cx::reifySprite(cn);
       auto v= JS_INT(cfg["CDS"][cn]);
 
       MGML()->addAtlasItem("game-pics", sp);
-      auto b = mc_new_2(Brick,sp,v);
+      auto b = mc_new_3(Brick,sp,v,r);
       bf->bricks.push_back(b);
-      sp->inflate(x, y);
+      b->inflate(x, y);
       x += csz.width + 1;
     }
     y -= csz.height - 2;
   }
 
-  ent= this->reifyEntity("*");
+  auto ent= this->reifyEntity("*");
   ent->checkin(bf);
 }
 
@@ -92,7 +100,7 @@ void GEngine::createPaddle() {
   p->inflate( cw.x, 56);
   auto ent= this->reifyEntity("*");
   ent->checkin(p);
-  ent->checkin(mc_new(Motion));
+  ent->checkin(mc_new(Gesture));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,6 +125,6 @@ void GEngine::createBall() {
 
 
 NS_END(breakout)
-#endif
+
 
 

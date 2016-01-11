@@ -23,6 +23,8 @@ struct CC_DLL Game : public f::GameScene {
   STATIC_REIFY_SCENE_CTX(Game)
   MDECL_DECORATE()
   MDECL_GLAYER(2)
+  virtual const f::Box4 getEnclosureBox();
+
 };
 
 

@@ -9,10 +9,12 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
 
+  NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////

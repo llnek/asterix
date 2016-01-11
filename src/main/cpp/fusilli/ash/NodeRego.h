@@ -12,6 +12,7 @@
 #if !defined(__NODEREGO_H__)
 #define __NODEREGO_H__
 
+#include "NodeList.h"
 #include "Node.h"
 NS_BEGIN(ash)
 

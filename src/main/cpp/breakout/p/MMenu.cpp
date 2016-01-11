@@ -11,12 +11,14 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "x2d/XLib.h"
 #include "Game.h"
 #include "MMenu.h"
 
-NS_BEGIN(cx,fusii::ccsx)
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL UILayer : public f::XLayer {
@@ -27,7 +29,7 @@ struct CC_DLL UILayer : public f::XLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
-
+    auto tile = CC_CSV(c::Integer,"TILE");
   auto wb=cx::visBox();
   auto cw= cx::center();
 
@@ -40,9 +42,9 @@ void UILayer::decorate() {
   tt->setScale(XCFG()->getScale());
   addItem(tt);
 
-  auto b= cx::reifyMenuBtn("play.png");
-  auto menu= cx::mkMenu(b);
-  b->setCallback([=](c::Ref*){
+  auto btn= cx::reifyMenuBtn("play.png");
+  auto menu= cx::mkMenu(btn);
+  btn->setCallback([=](c::Ref*){
     cx::runSceneEx(Game::reify(mc_new(f::GCX)));
   });
   menu->setPosition(cw);
@@ -52,7 +54,7 @@ void UILayer::decorate() {
   auto b= cx::reifyMenuBtn("icon_back.png");
   auto q= cx::reifyMenuBtn("icon_quit.png");
   auto sz= b->getContentSize();
-
+    auto ctx = (MCX*) getSceneX()->getCtx();
   q->setTarget(this, CC_MENU_SELECTOR(UILayer::onQuit));
   b->setCallback([=](c::Ref*) { ctx->back(); });
 
@@ -62,6 +64,7 @@ void UILayer::decorate() {
   addItem(m2);
 
   auto audios = cx::reifyAudioIcons();
+    auto dfc = XCFG()->getColor("default");
   audios[0]->setColor(dfc);
   audios[1]->setColor(dfc);
 
@@ -70,6 +73,18 @@ void UILayer::decorate() {
       c::Vec2(wb.right - tile, wb.bottom + tile));
 
 }
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+void MMenu::decorate() {
+  UILayer::reify(this);
+}
+
+
+
+
+
 
 NS_END(breakout)
 

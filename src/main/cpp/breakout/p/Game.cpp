@@ -32,15 +32,29 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onPlayerKilled();
   void spawnPlayer();
   void onDone();
+  void showMenu();
+
+  DECL_PTR(a::NodeList, paddleNode)
+  DECL_PTR(a::NodeList, ballNode)
+  DECL_PTR(a::NodeList, arenaNode)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
+  paddleNode=engine->getNodeList(PaddleMotionNode().typeId());
+  ballNode=engine->getNodeList(BallMotionNode().typeId());
+  arenaNode=engine->getNodeList(ArenaNode().typeId());
+
+  motionees.push_back(CC_GNLF(Paddle,paddleNode,"paddle"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::showMenu() {
 
 }
-    //this.state.candySize= ccsx.csize('red_candy.png');
-    //this.state.ballSize= ccsx.csize('ball.png');
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -53,7 +67,10 @@ void GLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
-  engine->bornPaddle();
+
+  SCAST(GEngine*,engine)->bornPaddle(
+      CC_GNLF(Paddle,paddleNode,"paddle"),
+      CC_GNLF(Ball,ballNode,"ball"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,7 +86,7 @@ void GLayer::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
-  reset();
+    getHUD()->reset();
   surcease();
 }
 
@@ -77,7 +94,7 @@ void GLayer::onDone() {
 //
 void GLayer::onEarnScore(j::json *msg) {
   getHUD()->updateScore(
-      JS_INT(msg->operation[]("value")));
+      JS_INT(msg->operator[]("value")));
 }
 
 END_NS_UNAMED()
@@ -88,7 +105,7 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 
   if (t == "/game/bricks/killed") {
     auto msg = (j::json*)m;
-    y->onBrickKilled(msg);
+    //y->onBrickKilled(msg);
   }
 
   if (t == "/game/players/killed") {
@@ -120,6 +137,13 @@ const f::Box4 Game::getEnclosureBox() {
       tile);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::decorate() {
+  HUDLayer::reify(this,3);
+  GLayer::reify(this,2);
+  play();
+}
 
 NS_END(breakout)
 

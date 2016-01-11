@@ -20,6 +20,7 @@ NS_BEGIN(breakout)
 //
 struct CC_DLL Ball : public f::ComObj {
   MDECL_COMP_TPID("n/Ball")
+    Ball(not_null<c::Sprite*> s) : ComObj(s) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,13 +38,16 @@ struct CC_DLL Brick : public f::ComObj {
 //
 struct CC_DLL BrickFence : public a::Component {
   MDECL_COMP_TPID("n/BrickFence")
-  s_vec<Brick> bricks;
+  s_vec<Brick*> bricks;
+  virtual ~BrickFence() {
+      F__LOOP(it,bricks) { delete *it; };
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motion : public a::Component {
-  MDECL_COMP_TPID("n/Motion")
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID("n/Gesture")
   DECL_BF(right)
   DECL_BF(left)
 };

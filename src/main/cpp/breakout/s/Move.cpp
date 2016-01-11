@@ -19,19 +19,6 @@ NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::initEntities() {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Move::initSystems() {
-
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Move::preamble() {
   paddleNode = engine->getNodeList(PaddleMotionNode().typeId());
   ballNode = engine->getNodeList( BallMotionNode().typeId());
@@ -44,7 +31,6 @@ bool Move::update(float dt) {
     processBallMotions( dt);
     processPaddleMotions(dt);
   }
-
   return true;
 }
 
@@ -54,10 +40,7 @@ void Move::processBallMotions(float dt) {
   auto ball = CC_GNLF(Ball, ballNode, "ball");
   auto B = MGMS()->getEnclosureBox();
   auto pos= ball->pos();
-  auto rect= cx::bbox(ball->sprite);
-
-  rect.x = pos.x;
-  rect.y = pos.y;
+  auto rect= cx::bbox4(ball);
 
   c::Vec2 outPos;
   c::Vec2 outVel;
@@ -74,25 +57,23 @@ void Move::processBallMotions(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processPaddleMotions(float dt) {
-  auto motion = CC_GNLF(Motion,paddleNode,"motion");
+  auto motion = CC_GNLF(Gesture,paddleNode,"motion");
   auto pad = CC_GNLF(Paddle,paddleNode,"paddle");
   auto pos = pad->pos();
   auto x= pos.x;
   auto y= pos.y;
 
-  if (motion->right) {
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     x = pos.x + dt * pad->vel.x;
   }
 
-  if (motion->left) {
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
     x = pos.x - dt * pad->vel.x;
   }
 
   pad->setPos(x,y);
   clamp(pad);
 
-  motion->right=false;
-  motion->left=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -108,7 +89,7 @@ void Move::clamp(Paddle *pad) {
   }
 
   if (cx::getLeft(pad->sprite) < tile) {
-    pad->setPos( tile + sz.height * 0.5f, pos.y);
+    pad->setPos( tile + sz.width * 0.5f, pos.y);
   }
 }
 

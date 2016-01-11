@@ -16,8 +16,8 @@ NS_BEGIN(breakout)
 
 BEGIN_NS_UNAMED()
 const s_arr<sstr,8> CANDIES {
-  "red_candy", "amber_candy","white_candy","green_candy",
-  "yellow_candy","blue_candy", "purple_plus_candy", "purple_minus_candy"
+  "red_candy.png", "amber_candy.png","white_candy.png","green_candy.png",
+  "yellow_candy.png","blue_candy.png", "purple_plus_candy.png", "purple_minus_candy.png"
 };
 
 END_NS_UNAMED()
@@ -33,6 +33,13 @@ owner<Config*> Config::reify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const sstr Config::getCandy(int pos) {
+  assert(pos >=0 && pos < CANDIES.size());
+  return CANDIES[pos];
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 c::Scene* Config::prelude() {
   return Splash::reify();
 }
@@ -43,6 +50,7 @@ void Config::initCsts() {
   game_id = "7d943e06-0849-4bf4-a16d-64a401f72a3e";
   app_id= "breakout";
 
+  addCst("showFPS", CC_BOOL(false));
   addCst("GRID_W", CC_INT(40));
   addCst("GRID_H", CC_INT(60));
 
@@ -91,13 +99,22 @@ void Config::initAssets() {
 void Config::initLevels() {
   auto d= getLevel("1");
   auto j= j::json({
-      {"PADDLE+SPEED", 150},
-      {"BALL+SPEED", 200},
-        {"ROWS", 5},
+        {"PADDLE+SPEED", 150},
+        {"BALL+SPEED", 200},
         {"COLS", 9},
         {"TOP", 6},
-        {"TOP_ROW", 10},
-        {"combo",  j::json::array_t {0,1,5,3,4} }
+        {"TOP+ROW", 10},
+        {"ROWS",  j::json::array_t {0,1,5,3,4} },
+        {"CDS", j::json::object_t {
+          {"red_candy.png", 10 },
+          {"amber_candy.png", 15},
+          {"white_candy.png", 8},
+          {"green_candy.png", 20},
+          {"yellow_candy.png", 15},
+          {"blue_candy.png",  10},
+          {"purple_plus_candy.png", 5},
+          {"purple_minus_candy.png", 15 }
+        }}
       });
   d->setObject(f::JsonObj::create(j), CFG);
 }

@@ -22,8 +22,8 @@ NS_BEGIN(breakout)
 struct CC_DLL Move : public a::System {
   MDECL_SYS_PRIORITY(a::Move)
   MDECL_SYS_TPID("s/Move")
-  MDECL_PREAMBLE()
-  MDECL_UDPATE()
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
   Move(a::Engine *e)
   : System(e)

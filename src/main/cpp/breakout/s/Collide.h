@@ -21,10 +21,10 @@ NS_BEGIN(breakout)
 //
 struct CC_DLL Collide : public a::System {
   MDECL_SYS_TPID("s/Collide")
-  MDECL_DECORATE()
-  MDECL_PREAMBLE()
+  MDECL_SYS_UPDATE()
+  MDECL_SYS_PREAMBLE()
   MDECL_SYS_PRIORITY(a::Collide)
-
+    
   Collide(a::Engine *e)
   : System(e)
   {}
@@ -35,7 +35,7 @@ struct CC_DLL Collide : public a::System {
 
 protected:
 
-  void onPlayerKilled();
+  bool onPlayerKilled();
   void check();
   void checkNodes();
   void checkBricks();

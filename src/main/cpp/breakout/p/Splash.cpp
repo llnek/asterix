@@ -17,6 +17,7 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
 
+BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL UILayer : public f::XLayer {
@@ -41,6 +42,15 @@ void UILayer::decorate() {
   });
   addItem(menu);
 }
+
+END_NS_UNAMED()
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::decorate() {
+  UILayer::reify(this);
+}
+
+
 
 
 NS_END(breakout)

@@ -34,7 +34,7 @@ struct CC_DLL PaddleMotionNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        {"motion", "n/Motion" },
+        {"motion", "n/Gesture" },
         {"paddle", "n/Paddle"}
     });
   }
@@ -55,6 +55,18 @@ struct CC_DLL BallMotionNode : public a::NodeFactory {
   MDECL_NFAC_TPID("n/BallMotionNode")
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ArenaNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"slots", "n/GVars"}
+    });
+  }
+
+  MDECL_NFAC_TPID("n/ArenaNode")
+};
 
 NS_END(breakout)
 #endif

@@ -13,7 +13,7 @@
 #include "n/GNodes.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
-NS_USING(terra)
+NS_USING(breakout)
 NS_USING(fusii)
 NS_USING(ash)
 
@@ -24,8 +24,10 @@ AppDelegate::AppDelegate() {
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
+  r->rego( mc_new(PaddleMotionNode));
   r->rego( mc_new(ArenaNode));
-  r->rego( mc_new(ShipNode));
+  r->rego( mc_new(BricksNode));
+  r->rego( mc_new(BallMotionNode));
 
   // step.2: set up app-config
   Config::reify();

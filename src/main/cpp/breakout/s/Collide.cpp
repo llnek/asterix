@@ -9,7 +9,13 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Collide.h"
+
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -79,7 +85,7 @@ void Collide::checkBricks() {
 
   for (auto n=0; n < bss.size(); ++n) {
     if (! bss[n]->status) { continue; }
-    if (cx::collide(ball->sprite, bss[n]->sprite)) {
+    if (cx::collide(ball, bss[n])) {
       onBrick(bss[n]);
       break;
     }
@@ -113,7 +119,7 @@ void Collide::onBrick(Brick *brick) {
   }
   else
   // ball coming from right?
-  if (ka.R > ba.L && ba.R > ka.R) {
+  if (ka.right > ba.left && ba.right > ka.right) {
     ball->vel.x = - ball->vel.x;
   }
   else {

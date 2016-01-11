@@ -23,6 +23,7 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
+  bool reduceLives(int n= 1);
   void updateScore(int n);
   void resetAsNew();
   void reset();

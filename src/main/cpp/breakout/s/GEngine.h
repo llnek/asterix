@@ -13,7 +13,7 @@
 #define __GENGINE_H__
 
 #include "ash/Engine.h"
-
+#include "n/GNodes.h"
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
