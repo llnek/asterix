@@ -15,24 +15,13 @@
 #include "s/utils.h"
 #include "Menu.h"
 #include "Splash.h"
+
 NS_BEGIN(tttoe)
-
-//////////////////////////////////////////////////////////////////////////////
-//
 BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-protected:
-  void onPlay(c::Ref*);
-  void demo();
-};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::demo() {
+void demo(f::XLayer *layer) {
   auto scale= 0.75f;
   auto fm= "";
   auto ps= mapGridPos(scale);
@@ -51,48 +40,39 @@ void UILayer::demo() {
     auto bx= cx::vboxMID( ps[i]);
     sp->setScale(scale);
     sp->setPosition(bx);
-    addAtlasItem("game-pics", sp);
+    layer->addAtlasItem("game-pics", sp);
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref*) {
-  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
-  cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::decorate() {
-
-  centerImage("game.bg");
-  incIndexZ();
-  regoAtlas("game-pics");
-
-  // title
-  auto cw = cx::center();
-  auto wb = cx::visBox();
-  addAtlasFrame("game-pics", "title.png",
-                     c::Vec2(cw.x, wb.top * 0.9f));
-
-  demo();
-
-  // play button
-  auto b1= cx::reifyMenuBtn("play.png");
-  auto menu= cx::mkMenu(b1);
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay));
-  menu->setPosition( cw.x, wb.top * 0.1f);
-  addItem(menu);
 }
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decorate() {
-  UILayer::reify(this);
+
+  layer->centerImage("game.bg");
+  layer->incIndexZ();
+  layer->regoAtlas("game-pics");
+
+  // title
+  auto cw = cx::center();
+  auto wb = cx::visBox();
+  layer->addAtlasFrame("game-pics", "title.png",
+                     c::Vec2(cw.x, wb.top * 0.9f));
+
+  demo(layer);
+
+  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
+  // play button
+  auto b1= cx::reifyMenuBtn("play.png");
+  auto menu= cx::mkMenu(b1);
+  b1->setCallback([=](c::Ref*) {
+    cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
+      });
+
+  menu->setPosition( cw.x, wb.top * 0.1f);
+  layer->addItem(menu);
 }
+
 
 
 NS_END(tttoe)

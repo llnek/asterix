@@ -42,10 +42,24 @@ public:
 
   virtual ~XScene();
   XScene();
-
   NOCPYASS(XScene)
 };
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL SceneWithOne : public XScene {
+protected:
+
+  DECL_PTR(SingleLayer, layer)
+
+public:
+
+  virtual ~SceneWithOne() {}
+  SceneWithOne();
+  NOCPYASS(SceneWithOne)
+
+};
 
 
 NS_END(fusii)

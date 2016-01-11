@@ -64,6 +64,16 @@ XScene::~XScene() {
 XScene::XScene() {
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+SceneWithOne::SceneWithOne() {
+  layer=reifyRefType<SingleLayer>();
+  addChild(layer);
+}
+
+
+
 NS_END(fusii)
 
 

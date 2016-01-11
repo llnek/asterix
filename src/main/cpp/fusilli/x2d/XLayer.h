@@ -30,22 +30,22 @@ class XScene;
 class CC_DLL XLayer : public c::Layer {
 protected:
 
-  c::SpriteBatchNode* regoAtlas(const sstr &name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
 
   virtual void postDeco() {}
   virtual void preDeco() {}
 
+public:
+
   DECL_TV(int, lastTag, 1)
   DECL_TV(int, lastZ, 0)
 
-public:
-
+  c::SpriteBatchNode* regoAtlas(const sstr &name, int zx = 0);
   virtual c::SpriteBatchNode* getAtlas(const sstr &name);
   virtual void onQuit(c::Ref*);
 
   virtual bool initEx(XScene*, int zx = 0);
-  virtual void decorate() = 0;
+  virtual void decorate() =0;
   virtual void postReify() {}
 
   void addAtlasItem( const sstr &atlas, not_null<c::Node*> n, int z, int tag);
@@ -80,6 +80,17 @@ public:
 
   NOCPYASS(XLayer)
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL SingleLayer : public XLayer {
+public:
+  virtual void decorate() {}
+  virtual ~SingleLayer() {}
+  SingleLayer() {}
+  NOCPYASS(SingleLayer)
+};
+
 
 
 

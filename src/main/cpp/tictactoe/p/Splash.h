@@ -17,7 +17,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Splash : public f::XScene {
+struct CC_DLL Splash : public f::SceneWithOne {
 
   STATIC_REIFY_SCENE(Splash)
   MDECL_DECORATE()
