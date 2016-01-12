@@ -52,7 +52,7 @@ public:
   void restart() { active=true; }
   void suspend() { active=false; }
 
-  System(Engine *e) { engine= e; }
+  System(not_null<Engine*> e) { engine= e; }
   virtual ~System() {}
   NODFT(System)
   NOCPYASS(System)
@@ -60,19 +60,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct FS_DLL SystemList  : public f::FDListAnchor<System> {
+struct FS_DLL SystemList  : public f::FDList<System> {
 
+  virtual void add(not_null<System*> );
   System* get(const SystemType&);
-  void remove(not_null<System*>);
-  void add(not_null<System*>);
-  void removeAll() { clear(); }
-  void clear();
 
-  //owns the systems
-
-  virtual ~SystemList() {
-    clear();
-  }
+  virtual ~SystemList() {}
   SystemList() {}
   NOCPYASS(SystemList)
 };

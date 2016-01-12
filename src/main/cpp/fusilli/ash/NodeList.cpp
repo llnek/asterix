@@ -17,78 +17,8 @@ NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList::~NodeList() {
-//  printf("NodeList dtor\n");
-  clear();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 NodeList::NodeList(const NodeType &t) {
   this->nType = t;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void NodeList::add(not_null<Node*> n) {
-  if (ENP(head)) {
-    head = tail = n;
-    SNPTR(n->previous)
-    SNPTR(n->next)
-  } else {
-    n->previous = tail;
-    tail->next = n;
-    SNPTR(n->next)
-    tail = n;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-int NodeList::size() {
-  auto n= head;
-  int c=0;
-  while (NNP(n)) {
-    n = n->next;
-    ++c;
-  }
-  return c;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void NodeList::purge(not_null<Node*> node) {
-  if (head == node ) {
-    head = head->next;
-  }
-  if (tail == node ) {
-    tail = tail->previous;
-  }
-  if (NNP(node->previous)) {
-    node->previous->next = node->next;
-  }
-  if ( NNP(node->next)) {
-    node->next->previous = node->previous;
-  }
-  delete node.get();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void NodeList::clear() {
-  while (NNP(head)) {
-    auto n = head;
-    head = head->next;
-    delete n;
-  }
-  SNPTR(head)
-  SNPTR(tail)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool NodeList::isEmpty() {
-  return ENP(head);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -167,13 +167,13 @@ void Engine::regoSystem(not_null<System*> s) {
 //
 void Engine::purgeSystem(not_null<System*> s ) {
   //s->removeFromEngine(this);
-  systemList.remove(s);
+  systemList.purge(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystems() {
-  systemList.removeAll();
+  systemList.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////

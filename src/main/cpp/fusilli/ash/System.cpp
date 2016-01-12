@@ -50,43 +50,11 @@ void SystemList::add(not_null<System*> sys) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void SystemList::remove(not_null<System*> sys) {
-
-  auto s = sys.get();
-  if (head == s) {
-    head = head->next;
-  }
-  if (tail == s) {
-    tail = tail->previous;
-  }
-  if (NNP(s->previous )) {
-    s->previous->next = s->next;
-  }
-  if (NNP(s->next )) {
-    s->next->previous = s->previous;
-  }
-  delete s;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 System* SystemList::get(const SystemType &type) {
   for (auto s = head; NNP(s); s = s->next) {
     if (s->isa(type) ) { return s; }
   }
   return nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void SystemList::clear() {
-  while (NNP(head)) {
-    auto e= head;
-    head = head->next;
-    delete e;
-  }
-  SNPTR(head)
-  SNPTR(tail)
 }
 
 

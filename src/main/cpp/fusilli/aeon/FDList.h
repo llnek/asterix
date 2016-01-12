@@ -37,16 +37,20 @@ struct FS_DLL FDListAnchor {
 template <typename T>
 struct FS_DLL FDList {
 
-  void release(not_null<T*>);
-  void add(not_null<T*> );
+  virtual bool isEmpty() { return head==nullptr; }
+  virtual void release(not_null<T*>);
+  virtual void purge(not_null<T*>);
+  virtual void add(not_null<T*> );
+
   const s_vec<T*> list();
   void clear() ;
+  int size();
 
   DECL_PTR(T , head)
   DECL_PTR(T , tail)
 
   virtual ~FDList();
-  FDList();
+  FDList() {}
   NOCPYASS(FDList)
 };
 
@@ -66,6 +70,18 @@ void FDList<T>::add(not_null<T*> e) {
     tail = e;
   }
 }
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+int FDList<T>::size() {
+  auto n= head;
+  int c=0;
+  while (NNP(n)) {
+    n = n->next;
+    ++c;
+  }
+  return c;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -81,6 +97,14 @@ void FDList<T>::release(not_null<T*> e) {
   }
   SNPTR(e->previous)
   SNPTR(e->next)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template <typename T>
+void FDList<T>::purge(not_null<T*> e) {
+  release(e);
+  delete e.get();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -113,14 +137,6 @@ template <typename T>
 FDList<T>::~FDList() {
   //printf("FDList dtor\n");
   clear();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template <typename T>
-FDList<T>::FDList() {
-  SNPTR(head)
-  SNPTR(tail)
 }
 
 

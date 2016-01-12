@@ -20,7 +20,7 @@ NS_BEGIN(ash)
 //
 class Entity;
 class Node;
-class FS_DLL NodeList : public f::FDListAnchor<Node> {
+class FS_DLL NodeList : public f::FDList<Node> {
 
   //owns the nodes
   DECL_TD(NodeType, nType)
@@ -33,14 +33,8 @@ public:
   bool isCompatible(not_null<Entity*>);
   void removeEntity(not_null<Entity*> );
 
-  void purge(not_null<Node*> );
-  void add(not_null<Node*> );
-  bool isEmpty();
-  void clear();
-  int size();
-
   NodeList(const NodeType&);
-  virtual ~NodeList();
+  virtual ~NodeList() {}
   NODFT(NodeList)
   NOCPYASS(NodeList)
 
