@@ -13,7 +13,6 @@
 #define __XCONFIG_H__
 
 #define XCFG() fusii::XConfig::self()
-
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 #include "Primitives.h"
@@ -120,8 +119,8 @@ public:
   NOCPYASS(XConfig)
 
   DECL_TD(sstr, room_id)
-  DECL_TD(sstr, game_id)
   DECL_TD(sstr, app_id)
+  DECL_TD(sstr, game_id)
 
   static XConfig* self();
   static void bind(not_null<XConfig*>);

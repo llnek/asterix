@@ -12,21 +12,18 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
+#define MDECL_GET_IID(x) virtual int getIID() { return x; }
+#define MDECL_DECORATE() virtual void decorate();
 #include "2d/CCSpriteBatchNode.h"
 #include "platform/CCCommon.h"
 #include "2d/CCLayer.h"
 #include "core/Primitives.h"
 NS_BEGIN(fusii)
 
-#define MDECL_DECORATE() virtual void decorate();
-
-#define MDECL_GET_IID(x) \
-  virtual int getIID() { return x; }
-
-class SpriteBatchNode;
-class XScene;
 //////////////////////////////////////////////////////////////////////////////
 //
+class SpriteBatchNode;
+class XScene;
 class CC_DLL XLayer : public c::Layer {
 protected:
 
@@ -77,14 +74,12 @@ public:
 
   virtual ~XLayer() {}
   XLayer() {}
-
   NOCPYASS(XLayer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SingleLayer : public XLayer {
-public:
+struct CC_DLL SingleLayer : public XLayer {
   virtual void decorate() {}
   virtual ~SingleLayer() {}
   SingleLayer() {}

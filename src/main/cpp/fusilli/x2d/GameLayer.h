@@ -21,8 +21,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GameLayer : public XLayer {
-
-  protected:
+protected:
 
   virtual void onTouchMotion( ComObj*, const c::Vec2&, const c::Vec2&);
   virtual void onMouseMotion( ComObj*, const c::Vec2&, const c::Vec2&);
@@ -54,7 +53,7 @@ class CC_DLL GameLayer : public XLayer {
   virtual void onMouseUp(c::Event*);
   virtual void onMouseMove(c::Event*);
 
-  public:
+public:
 
   bool isMouseEnabled() { return _mouseEnabled; }
   void setMouseEnabled(bool);
@@ -62,14 +61,13 @@ class CC_DLL GameLayer : public XLayer {
 
   virtual ~GameLayer();
   GameLayer();
-
   NOCPYASS(GameLayer)
 };
+
 
 #define MDECL_GET_LAYER(T,n,x) \
   T* n() \
     { return (T*) getSceneX()->getLayer(x); }
-
 
 
 NS_END(fusii)

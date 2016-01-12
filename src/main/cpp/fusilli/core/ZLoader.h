@@ -20,7 +20,6 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL ZLoader : public c::Scene {
-private:
 
   void startLoad(float delay);
 
@@ -31,7 +30,6 @@ public:
 
   virtual ~ZLoader() {}
   ZLoader() {}
-
   NOCPYASS(ZLoader)
 };
 

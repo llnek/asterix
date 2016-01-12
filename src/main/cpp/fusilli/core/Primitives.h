@@ -12,37 +12,6 @@
 #if !defined(__PRIMITIVES_H__)
 #define __PRIMITIVES_H__
 
-/*
-#include "platform/CCCommon.h"
-
-#include "math/CCAffineTransform.h"
-#include "math/CCGeometry.h"
-#include "math/CCVertex.h"
-#include "math/Mat4.h"
-#include "math/MathUtil.h"
-#include "math/Quaternion.h"
-#include "math/Vec2.h"
-#include "math/Vec3.h"
-#include "math/Vec4.h"
-
-// Deprecated include
-#include "deprecated/CCArray.h"
-#include "deprecated/CCBool.h"
-#include "deprecated/CCDictionary.h"
-#include "deprecated/CCDouble.h"
-#include "deprecated/CCFloat.h"
-#include "deprecated/CCInteger.h"
-#include "deprecated/CCNotificationCenter.h"
-#include "deprecated/CCSet.h"
-#include "deprecated/CCString.h"
-// CCDeprecated.h must be included at the end
-#include "deprecated/CCDeprecated.h"
-
-#include "base/CCDataVisitor.h"
-#include "base/CCConsole.h"
-#include "base/CCRef.h"
-*/
-
 #include "aeon/fusilli.h"
 #include "JSON.h"
 #include "cocos2d.h"
@@ -55,9 +24,10 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T> class CC_DLL Maybe {
-private:
+
   DECL_TD(T, value)
   DECL_BF(isset)
+
 public:
   explicit Maybe(T t) { value=t; isset=true; }
   Maybe<T>& operator=(const Maybe<T> &arg) {
@@ -86,7 +56,6 @@ public:
 
 typedef Maybe<float> MaybeFloat;
 typedef Maybe<int> MaybeInt;
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -152,6 +121,10 @@ struct CC_DLL Box4 {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Val2 : public c::Ref, public c::Clonable {
+
+  DECL_FZ(_x)
+  DECL_FZ(_y)
+
 public:
 
   static Val2* create(float x, float y) {
@@ -176,14 +149,15 @@ public:
     return Val2::create(_x,_y);
   }
 
-private:
-  DECL_FZ(_x)
-  DECL_FZ(_y)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Size2 : public c::Ref, public c::Clonable {
+
+  DECL_FZ(_w)
+  DECL_FZ(_h)
+
 public:
 
   static Size2* create(float w, float h) {
@@ -212,14 +186,17 @@ public:
     return Size2::create(_w,_h);
   }
 
-private:
-  DECL_FZ(_w)
-  DECL_FZ(_h)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Box4R : public c::Ref, public c::Clonable {
+
+  DECL_FZ(_lf)
+  DECL_FZ(_t)
+  DECL_FZ(_r)
+  DECL_FZ(_b)
+
 public:
 
   static Box4R* create(float t, float r, float b, float lf) {
@@ -257,16 +234,14 @@ public:
     return Box4R::create(_t,_r,_b,_lf);
   }
 
-private:
-  DECL_FZ(_t)
-  DECL_FZ(_r)
-  DECL_FZ(_b)
-  DECL_FZ(_lf)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL JsonObj : public c::Ref, public c::Clonable {
+
+  DECL_TD(j::json, _obj)
+
 public:
 
   static JsonObj* create(const j::json& c) {
@@ -302,13 +277,14 @@ public:
     return JsonObj::create(_obj);
   }
 
-private:
-  DECL_TD(j::json, _obj)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL C3B : public c::Ref, public c::Clonable {
+
+  DECL_TD(c::Color3B, _c)
+
 public:
 
   static C3B* create(const c::Color3B& c) {
@@ -333,13 +309,14 @@ public:
     return C3B::create(_c);
   }
 
-private:
-  DECL_TD(c::Color3B, _c)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL C4B : public c::Ref, public c::Clonable {
+
+  DECL_TD(c::Color4B, _c)
+
 public:
 
   static C4B* create(const c::Color4B &c) {
@@ -364,8 +341,6 @@ public:
     return C4B::create(_c);
   }
 
-private:
-  DECL_TD(c::Color4B, _c)
 };
 
 //////////////////////////////////////////////////////////////////////////

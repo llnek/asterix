@@ -17,7 +17,7 @@ NS_BEGIN(fusii)
 //
 void ZLoader::onEnter() {
   c::Scene::onEnter();
-  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::startLoad), 0.3);
+  this->schedule(CC_SCHEDULE_SELECTOR(ZLoader::startLoad), 0.3f);
 }
 
 //////////////////////////////////////////////////////////////////////////////

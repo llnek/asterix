@@ -20,7 +20,6 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XPool {
-private:
 
   s_vec<ComObj*> objs;
 
@@ -46,7 +45,6 @@ public:
 
   virtual ~XPool();
   XPool();
-
   NOCPYASS(XPool)
 };
 

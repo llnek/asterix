@@ -80,7 +80,7 @@ struct CC_DLL OdinEvent : public c::EventCustom {
   DECL_TV(MType, type, MType::NICHTS)
   DECL_TV(EType, code, EType::NICHTS)
   DECL_TD(j::json, doco)
-  DECL_DZ(tstamp)
+  long long tstamp=0;
 
   virtual ~OdinEvent();
   OdinEvent();

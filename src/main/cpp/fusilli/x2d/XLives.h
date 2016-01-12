@@ -48,7 +48,6 @@ public:
 
   virtual ~XLives() {}
   XLives() {}
-
   NOCPYASS(XLives)
 };
 

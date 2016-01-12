@@ -15,15 +15,14 @@
 #define MGMSLIVE() fusii::GameScene::self()->isLive()
 #define MGMS() fusii::GameScene::self()
 #define MGML() fusii::GameScene::get()
-
 #define SENDMSGEX(t,m) MGMS()->sendMsgEx(t,m)
 #define SENDMSG(t) MGMS()->sendMsg(t)
-
 #include "platform/CCCommon.h"
 #include "core/XPool.h"
 #include "core/Odin.h"
 #include "core/JSON.h"
 #include "XScene.h"
+#include "XLib.h"
 #include "GameLayer.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)
@@ -97,7 +96,6 @@ public:
 
   virtual ~GameScene();
   GameScene();
-
   NOCPYASS(GameScene)
 };
 

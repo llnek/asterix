@@ -57,7 +57,7 @@ OdinEvent::OdinEvent(j::json full_msg) : OdinEvent() {
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::OdinEvent() : c::EventCustom("odin") {
-  tstamp = (double) c::utils::getTimeInMilliseconds();
+  tstamp = c::utils::getTimeInMilliseconds();
   doco= j::json::object_t();
 }
 

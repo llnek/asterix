@@ -22,8 +22,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const sstr XLayer::gets(const sstr &key,
-    const s_vec<sstr> &pms) {
+const sstr XLayer::gets(const sstr &key, const s_vec<sstr> &pms) {
   return XCFG()->getL10NStr(key, pms);
 }
 
@@ -32,7 +31,6 @@ const sstr XLayer::gets(const sstr &key,
 const sstr XLayer::gets(const sstr &key) {
   return XCFG()->getL10NStr(key);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
