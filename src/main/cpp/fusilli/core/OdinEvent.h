@@ -71,16 +71,14 @@ enum class CC_DLL EType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL OdinEvent : public c::EventCustom {
-public:
+struct CC_DLL OdinEvent : public c::EventCustom {
 
   OdinEvent(MType, EType, j::json body);
   OdinEvent(MType t, EType c);
   OdinEvent(j::json msg);
 
-  MType type=MType::NICHTS;
-  EType code=EType::NICHTS;
-
+  DECL_TV(MType, type, MType::NICHTS)
+  DECL_TV(EType, code, EType::NICHTS)
   DECL_TD(j::json, doco)
   DECL_DZ(tstamp)
 

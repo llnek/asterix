@@ -37,11 +37,15 @@ j::json evtToDoc(not_null<OdinEvent*> evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> mkPlayRequest(const sstr &game,
+owner<OdinEvent*> mkPlayRequest(
+    const sstr &game,
     const sstr &user,
     const sstr &pwd) {
 
-  return new OdinEvent(MType::SESSION, EType::PLAYGAME_REQ, j::json({
+  return new OdinEvent(
+      MType::SESSION,
+      EType::PLAYGAME_REQ,
+      j::json({
         {"game", game },
         {"user", user },
         {"pswd", pwd}
@@ -50,11 +54,15 @@ owner<OdinEvent*> mkPlayRequest(const sstr &game,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<OdinEvent*> mkJoinRequest(const sstr &room,
+owner<OdinEvent*> mkJoinRequest(
+    const sstr &room,
     const sstr &user,
     const sstr &pwd) {
 
-  return new OdinEvent(MType::SESSION, EType::JOINGAME_REQ,j::json({
+  return new OdinEvent(
+      MType::SESSION,
+      EType::JOINGAME_REQ,
+      j::json({
         {"room", room },
         {"user", user },
         {"pswd", pwd}
@@ -76,10 +84,8 @@ owner<OdinEvent*> json_decode(const n::WebSocket::Data &e) {
 
   try {
     j::json msg;
-
     msg.parse(e.bytes);
     evt= mc_new_1( OdinEvent,msg);
-
   } catch (...) {
     CCLOGERROR("failed to parse json: %s", "");
   }

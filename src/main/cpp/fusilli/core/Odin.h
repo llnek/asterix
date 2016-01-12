@@ -27,10 +27,11 @@ enum class CC_DLL CType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL OdinIO : public n::WebSocket::Delegate {
-public:
+typedef s::function<void (OdinEvent*)> OEventFN;
 
-  typedef s::function<void (OdinEvent*)> OEventFN;
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL OdinIO : public n::WebSocket::Delegate {
 
 protected:
 
@@ -53,7 +54,7 @@ public:
   virtual void onClose(n::WebSocket* ) ;
   virtual void onOpen(n::WebSocket*) ;
 
-  CType state= CType::S_NOT_CONNECTED;
+  DECL_TV(CType, state, CType::S_NOT_CONNECTED)
   DECL_PTR(n::WebSocket, socket)
   DECL_TD(sstr, room)
   DECL_TD(sstr, game)
@@ -67,14 +68,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-n::WebSocket* connect(not_null<OdinIO*>, const sstr &url);
-
 void netSend(not_null<OdinIO*>, const MType, const EType, j::json body);
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
-    void netSendMsg(not_null<OdinIO*>, j::json fullmsg);
+void netSendMsg(not_null<OdinIO*>, j::json fullmsg);
 
+n::WebSocket* connect(not_null<OdinIO*>, const sstr &url);
 void disconnect(OdinIO*);
-
 void close(OdinIO*);
 
 owner<OdinIO*> reifyPlayRequest(const sstr &game,

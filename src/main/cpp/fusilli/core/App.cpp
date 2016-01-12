@@ -84,7 +84,7 @@ void App::preLaunch(const c::Size &dz) {
   auto spath="rd";
 
   // set FPS. default is 1.0/60 if you don't call this
-  CC_DTOR()->setAnimationInterval(1.0 / fps);
+  CC_DTOR()->setAnimationInterval(1.0f / fps);
 
   // turn on display FPS?
   CC_DTOR()->setDisplayStats( dispFPS);

@@ -50,7 +50,6 @@ public:
 
   virtual ~App() {}
   App() {}
-
   NOCPYASS(App)
 };
 
