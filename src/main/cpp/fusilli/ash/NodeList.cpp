@@ -33,9 +33,11 @@ NodeList::NodeList(const NodeType &t) {
 void NodeList::add(not_null<Node*> n) {
   if (ENP(head)) {
     head = tail = n;
+    SNPTR(n->previous)
+    SNPTR(n->next)
   } else {
-    tail->next = n;
     n->previous = tail;
+    tail->next = n;
     SNPTR(n->next)
     tail = n;
   }
@@ -62,10 +64,10 @@ void NodeList::purge(not_null<Node*> node) {
   if (tail == node ) {
     tail = tail->previous;
   }
-  if (node->previous ) {
+  if (NNP(node->previous)) {
     node->previous->next = node->next;
   }
-  if ( node->next ) {
+  if ( NNP(node->next)) {
     node->next->previous = node->previous;
   }
   delete node.get();

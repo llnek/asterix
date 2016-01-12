@@ -30,8 +30,8 @@ bool Node::bindEntity(not_null<Entity*> e) {
   }
   values.clear();
   F__LOOP(it, types) {
-    auto f= it->second;
-    auto t= it->first;
+    auto &f= it->second;
+    auto &t= it->first;
     auto c= e->get(t);
     if (NNP(c)) {
       values.insert(S__PAIR(sstr, Component*, f, c));

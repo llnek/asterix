@@ -55,8 +55,7 @@ void NodeRegistry::derego(const NodeType &t) {
 //
 owner<Node*> NodeRegistry::reifyNode(const NodeType &t) {
   auto it=regos.find(t);
-  return (it != regos.end())
-    ? it->second->reifyNode() : nullptr;
+  return (it != regos.end()) ? it->second->reifyNode() : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////

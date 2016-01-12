@@ -17,8 +17,8 @@ NS_BEGIN(ash)
 void SystemList::add(not_null<System*> sys) {
   auto s = sys.get();
   if (ENP(head)) {
-    head = tail = s;
     s->next = s->previous = nullptr;
+    head = tail = s;
   } else {
     System *node=nullptr;
     for(node = tail; NNP(node); node = node->previous) {
@@ -65,16 +65,14 @@ void SystemList::remove(not_null<System*> sys) {
   if (NNP(s->next )) {
     s->next->previous = s->previous;
   }
-  mc_del_ptr(s);
+  delete s;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 System* SystemList::get(const SystemType &type) {
   for (auto s = head; NNP(s); s = s->next) {
-    if (s->isa(type) ) {
-      return s;
-    }
+    if (s->isa(type) ) { return s; }
   }
   return nullptr;
 }

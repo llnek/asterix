@@ -19,9 +19,10 @@ NS_BEGIN(fusii)
 // Dynamic array of pointers to a type.
 template<typename T>
 class FS_DLL FArrayPtr {
-private:
+
   DECL_PTR(T*,data)
   DECL_IZ(sz)
+
 public:
 
   FArrayPtr<T>& operator=(const FArrayPtr<T>&);

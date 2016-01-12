@@ -42,7 +42,6 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL NodeRegistry {
-private:
 
   // owns the factories
   s_map<NodeType,NodeFactory*> regos;

@@ -42,11 +42,10 @@ Engine::~Engine() {
 //
 const s_vec<Entity*> Engine::getEntities(const sstr &g) {
   auto it=groups.find(g);
-  s_vec<Entity*> v;
   if (it != groups.end()) {
     return it->second->list();
   } else {
-    return v;
+    return s_vec<Entity*> {};
   }
 }
 
@@ -141,7 +140,7 @@ NodeList* Engine::getNodeList( const NodeType& nodeType) {
   auto nl = mc_new_1(NodeList, nodeType);
   auto rego = NodeRegistry::self();
   F__LOOP(it, groups) {
-    auto el= it->second;
+    auto &el= it->second;
     Node *n= nullptr;
     for (auto e= el->head; NNP(e); e=e->next) {
       if (ENP(n)) {
@@ -195,7 +194,7 @@ void Engine::update(float time) {
 // get rid of nodes bound to this entity
 void Engine::onPurgeEntity(Entity *e) {
   F__LOOP(it, nodeLists) {
-    auto nl= *it;
+    auto &nl= *it;
     nl->removeEntity(e);
   }
 }
@@ -224,7 +223,7 @@ void Engine::maybeBind(NodeList* nl, Entity *e) {
 // sync changes
 void Engine::onModifyEntity(Entity *e) {
   F__LOOP(it, nodeLists) {
-    auto nl = *it;
+    auto &nl = *it;
     if (nl->containsWithin(e)) {
       if (!nl->isCompatible(e)) {
         nl->removeEntity(e);

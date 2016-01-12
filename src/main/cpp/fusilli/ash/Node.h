@@ -19,7 +19,6 @@ class Entity;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Node : public f::FDListItem<Node> {
-private:
 
   //NOT owner
   s_map<sstr, Component*> values;
@@ -28,13 +27,13 @@ private:
 
 public:
 
-  Node(const s_map<sstr, COMType>& );
-
   Entity* getEntity() { return entity; }
+
   bool bindEntity(not_null<Entity*> );
   bool belongsTo(not_null<Entity*>);
   Component* get(const sstr &field);
 
+  Node(const s_map<sstr, COMType>& );
   virtual ~Node() {}
   NODFT(Node)
   NOCPYASS(Node)

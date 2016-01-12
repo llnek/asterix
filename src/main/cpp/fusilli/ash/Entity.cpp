@@ -31,9 +31,7 @@ Entity::~Entity() {
 //
 void Entity::checkin(not_null<Component*> c) {
   auto z = c->typeId();
-  if (has(z)) {
-    throw "cannot reassign component";
-  }
+  assert(! has(z));
   parts.insert(S__PAIR(COMType, Component*, z, c));
   engine->notifyModify(this);
 }
@@ -48,7 +46,6 @@ void Entity::markDelete() {
 //
 void Entity::purge(const COMType &z) {
   auto it = parts.find(z);
-
   if (it != parts.end()) {
     auto rc= it->second;
     parts.erase(it);

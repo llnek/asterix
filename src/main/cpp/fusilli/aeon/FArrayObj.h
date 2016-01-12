@@ -20,9 +20,10 @@ NS_BEGIN(fusii)
 // objects.
 template<typename T>
 class FS_DLL FArray {
-private:
+
   DECL_PTR(T,data)
   DECL_IZ(sz)
+
 public:
 
   FArray<T>& operator=(const FArray<T>&);

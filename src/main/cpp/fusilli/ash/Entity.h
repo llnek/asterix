@@ -19,7 +19,6 @@ NS_BEGIN(ash)
 //
 class Engine;
 class FS_DLL Entity : public f::FDListItem<Entity> {
-private:
 
   //owns all the parts
   s_map<COMType, Component*> parts;
@@ -33,7 +32,7 @@ public:
   NODFT(Entity)
   NOCPYASS(Entity)
 
-  // owns the component
+  // takeover the component
   void checkin(not_null<Component*>);
   void purge(const COMType&);
 

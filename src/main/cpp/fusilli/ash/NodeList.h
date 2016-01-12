@@ -21,8 +21,10 @@ NS_BEGIN(ash)
 class Entity;
 class Node;
 class FS_DLL NodeList : public f::FDListAnchor<Node> {
-private:
+
+  //owns the nodes
   DECL_TD(NodeType, nType)
+
 public:
 
   const NodeType getType() { return nType; }
@@ -42,7 +44,6 @@ public:
   NODFT(NodeList)
   NOCPYASS(NodeList)
 
-  //owns the nodes
 };
 
 

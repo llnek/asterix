@@ -24,38 +24,7 @@ typedef f::FDList<Entity> EList;
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Engine {
-public:
 
-  const s_vec<Entity*> getEntities(const sstr &grp);
-  const s_vec<Entity*> getEntities();
-
-  NodeList* getNodeList(const NodeType& );
-
-  Entity* reifyEntity(const sstr &grp);
-  Entity* reifyEntity();
-
-  void purgeEntities(const sstr &grp);
-  void purgeEntities();
-  void purgeEntity(not_null<Entity*>);
-
-  void notifyModify(not_null<Entity*>);
-  void purgeSystem (not_null<System*> );
-  void purgeSystems();
-
-  void regoSystem(not_null<System*> );
-  void forceSync();
-  void update(float time);
-
-  void ignite();
-
-  virtual ~Engine();
-  Engine() {}
-  NOCPYASS(Engine)
-
-protected:
-  virtual void initEntities() = 0;
-  virtual void initSystems() = 0;
-private:
   void purgeEntity(EList*, Entity*);
   void maybeBind(NodeList*,Entity*);
   void onModifyEntity(Entity*);
@@ -70,6 +39,37 @@ private:
   DECL_TD(SystemList, systemList)
   DECL_BF(updating)
   DECL_BF(dirty)
+
+public:
+
+  const s_vec<Entity*> getEntities(const sstr &grp);
+  const s_vec<Entity*> getEntities();
+
+  Entity* reifyEntity(const sstr &grp);
+  Entity* reifyEntity();
+
+  void purgeEntities(const sstr &grp);
+  void purgeEntities();
+  void purgeEntity(not_null<Entity*>);
+
+  void purgeSystem (not_null<System*> );
+  void purgeSystems();
+
+  NodeList* getNodeList(const NodeType& );
+  void notifyModify(not_null<Entity*>);
+  void regoSystem(not_null<System*> );
+  void forceSync();
+  void ignite();
+  void update(float time);
+
+  virtual ~Engine();
+  Engine() {}
+  NOCPYASS(Engine)
+
+protected:
+
+  virtual void initEntities() = 0;
+  virtual void initSystems() = 0;
 };
 
 

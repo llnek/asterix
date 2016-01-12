@@ -15,7 +15,7 @@ template<typename _Tp1> struct FS_DLL SMPtr_ref {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename _Tp> class FS_DLL SMPtr {
-private:
+
   _Tp *_M_ptr;
 
 public:

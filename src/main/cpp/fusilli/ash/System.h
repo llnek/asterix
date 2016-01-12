@@ -13,7 +13,7 @@
 #define __SYSTEM_H__
 
 #include "NodeRego.h"
-#include "Node.h"
+
 NS_BEGIN(ash)
 
 #define MDECL_SYS_TPID(x) \
@@ -33,8 +33,10 @@ NS_BEGIN(ash)
 class Engine;
 class FS_DLL System : public f::FDListItem<System> {
 protected:
+
   DECL_PTR(Engine ,engine)
   DECL_BT(active)
+
 public:
 
   virtual const SystemType typeId() = 0;
