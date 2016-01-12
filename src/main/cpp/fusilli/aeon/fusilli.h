@@ -180,6 +180,7 @@ NS_END(fusii)
 #include "FArrayObj.h"
 #include "FArrayPtr.h"
 #include "SMPtr.h"
+#include "FDList.h"
 NS_ALIAS(f,fusii)
 NS_ALIAS(s,std)
 NS_USING(gsl)

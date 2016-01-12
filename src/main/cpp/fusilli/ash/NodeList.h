@@ -12,15 +12,15 @@
 #if !defined(__NODELIST_H__)
 #define __NODELIST_H__
 
-#include "Ash.h"
+#include "Node.h"
 NS_BEGIN(ash)
 
-class Entity;
-class Node;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL NodeList {
+class Entity;
+class Node;
+class FS_DLL NodeList : public f::FDListAnchor<Node> {
 private:
   DECL_TD(NodeType, nType)
 public:
@@ -37,14 +37,12 @@ public:
   void clear();
   int size();
 
-  //owns the nodes
-  DECL_PTR(Node ,head)
-  DECL_PTR(Node ,tail)
-
   NodeList(const NodeType&);
   virtual ~NodeList();
-  NOCPYASS(NodeList)
   NODFT(NodeList)
+  NOCPYASS(NodeList)
+
+  //owns the nodes
 };
 
 

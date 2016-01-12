@@ -15,14 +15,14 @@
 #include "Ash.h"
 NS_BEGIN(ash)
 
-class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Entity {
+class Engine;
+class FS_DLL Entity : public f::FDListItem<Entity> {
 private:
 
   //owns all the parts
-  s_map<sstr, Component*> parts;
+  s_map<COMType, Component*> parts;
   DECL_PTR(Engine,engine)
   DECL_TD(sstr, group)
   DECL_BF(dead)
@@ -30,12 +30,8 @@ private:
 public:
 
   Entity(const sstr &group, not_null<Engine*>);
-
-  DECL_PTR(Entity ,previous)
-  DECL_PTR(Entity ,next)
-
-  NOCPYASS(Entity)
   NODFT(Entity)
+  NOCPYASS(Entity)
 
   // owns the component
   void checkin(not_null<Component*>);

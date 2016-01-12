@@ -16,23 +16,22 @@
 #include "Node.h"
 NS_BEGIN(ash)
 
-#define MDECL_SYS_PRIORITY(x) \
-virtual int priority() { return x; }
-
 #define MDECL_SYS_TPID(x) \
-virtual const ash::SystemType typeId() { return x; }
+  virtual const ash::SystemType typeId() { return x; }
+
+#define MDECL_SYS_PRIORITY(x) \
+  virtual int priority() { return x; }
 
 #define MDECL_SYS_PREAMBLE() \
-virtual void preamble();
+  virtual void preamble();
 
 #define MDECL_SYS_UPDATE() \
-virtual bool update(float);
+  virtual bool update(float);
 
-
-class Engine;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL System {
+class Engine;
+class FS_DLL System : public f::FDListItem<System> {
 protected:
   DECL_PTR(Engine ,engine)
   DECL_BT(active)
@@ -51,9 +50,6 @@ public:
   void restart() { active=true; }
   void suspend() { active=false; }
 
-  DECL_PTR(System ,previous)
-  DECL_PTR(System ,next)
-
   System(Engine *e) { engine= e; }
   virtual ~System() {}
   NODFT(System)
@@ -62,7 +58,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct FS_DLL SystemList {
+struct FS_DLL SystemList  : public f::FDListAnchor<System> {
 
   System* get(const SystemType&);
   void remove(not_null<System*>);
@@ -71,8 +67,6 @@ struct FS_DLL SystemList {
   void clear();
 
   //owns the systems
-  DECL_PTR(System ,head)
-  DECL_PTR(System ,tail)
 
   virtual ~SystemList() {
     clear();

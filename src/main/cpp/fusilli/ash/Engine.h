@@ -18,100 +18,8 @@
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
-// owns all items in this list
-template <typename T>
-struct FS_DLL ObjList {
-
-  void release(not_null<T*>);
-  void add(not_null<T*> );
-  const s_vec<T*> list();
-  void clear() ;
-
-  DECL_PTR(T,head)
-  DECL_PTR(T,tail)
-
-  virtual ~ObjList();
-  ObjList();
-  NOCPYASS(ObjList)
-};
-
-//////////////////////////////////////////////////////////////////////////////
 //
-template <typename T>
-void ObjList<T>::add(not_null<T*> e) {
-  if (ENP(head)) {
-    head = tail = e;
-    SNPTR(head->previous)
-    SNPTR(head->next)
-  } else {
-    tail->next = e;
-    e->previous = tail;
-    SNPTR(e->next)
-    tail = e;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template <typename T>
-void ObjList<T>::release(not_null<T*> e) {
-  if (head == e) {
-    head = head->next;
-  }
-  if (tail == e) {
-    tail = tail->previous;
-  }
-  if (e->previous ) {
-    e->previous->next = e->next;
-  }
-  if (e->next) {
-    e->next->previous = e->previous;
-  }
-  SNPTR(e->previous)
-  SNPTR(e->next)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template <typename T>
-void ObjList<T>::clear() {
-  while (NNP(head)) {
-    auto e= head;
-    head = head->next;
-    delete e;
-  }
-  SNPTR(head)
-  SNPTR(tail)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template <typename T>
-const s_vec<T*> ObjList<T>::list() {
-  s_vec<T*> v;
-  for (auto p= head; NNP(p); p=p->next) {
-    v.push_back(p);
-  }
-  return v;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template <typename T>
-ObjList<T>::~ObjList() {
-  //printf("ObjList dtor\n");
-  clear();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template <typename T>
-ObjList<T>::ObjList() {
-  SNPTR(head)
-  SNPTR(tail)
-}
-
-typedef ObjList<Entity> EList;
+typedef f::FDList<Entity> EList;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -122,21 +30,26 @@ public:
   const s_vec<Entity*> getEntities();
 
   NodeList* getNodeList(const NodeType& );
-  Entity* reifyEntity(const sstr &grp);
 
-  void purgeEntity(not_null<Entity*> );
+  Entity* reifyEntity(const sstr &grp);
+  Entity* reifyEntity();
+
   void purgeEntities(const sstr &grp);
+  void purgeEntities();
+  void purgeEntity(not_null<Entity*>);
+
   void notifyModify(not_null<Entity*>);
   void purgeSystem (not_null<System*> );
   void purgeSystems();
-  void forceSync();
 
   void regoSystem(not_null<System*> );
+  void forceSync();
   void update(float time);
+
   void ignite();
 
   virtual ~Engine();
-  Engine();
+  Engine() {}
   NOCPYASS(Engine)
 
 protected:

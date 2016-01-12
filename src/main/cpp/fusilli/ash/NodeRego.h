@@ -20,9 +20,9 @@ NS_BEGIN(ash)
     virtual const ash::NodeType typeId() { return x; }
 
 
-class Node;
 //////////////////////////////////////////////////////////////////////////////
 //
+class Node;
 class FS_DLL NodeFactory {
 protected:
 
@@ -56,7 +56,7 @@ public:
   void derego(const NodeType&);
 
   virtual ~NodeRegistry();
-  NodeRegistry();
+  NodeRegistry() {}
   NOCPYASS(NodeRegistry)
 };
 

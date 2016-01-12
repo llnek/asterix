@@ -18,7 +18,7 @@ NS_BEGIN(ash)
 class Entity;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Node {
+class FS_DLL Node : public f::FDListItem<Node> {
 private:
 
   //NOT owner
@@ -36,11 +36,9 @@ public:
   Component* get(const sstr &field);
 
   virtual ~Node() {}
-  NOCPYASS(Node)
   NODFT(Node)
+  NOCPYASS(Node)
 
-  DECL_PTR(Node ,previous)
-  DECL_PTR(Node ,next)
 };
 
 //////////////////////////////////////////////////////////////////////////////
