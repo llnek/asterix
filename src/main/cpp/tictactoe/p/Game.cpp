@@ -66,11 +66,11 @@ void GLayer::decorate() {
 
   f::emptyQueue<sstr>( MGMS()->msgQueue() );
 
-  centerImage("game.bg");
+  centerImage(this,"game.bg");
   incIndexZ();
 
-  regoAtlas("game-pics");
-  regoAtlas("lang-pics");
+  regoAtlas(this,"game-pics");
+  regoAtlas(this,"lang-pics");
 
   auto ctx = (GCXX*) getSceneX()->getCtx();
   auto pnum= JS_INT(ctx->data["pnum"]);

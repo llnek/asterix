@@ -125,7 +125,7 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
   s1->setAnchorPoint(cx::anchorC());
   s1->setPosition(pos.x, pos.y);
 
-  view->layer->addAtlasItem("game-pics", s1);
+  view->layer->addAtlasItem(view->layer,"game-pics", s1);
   return s1;
 }
 

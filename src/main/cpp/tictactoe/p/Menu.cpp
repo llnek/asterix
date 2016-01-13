@@ -56,12 +56,12 @@ void UILayer::decorate() {
       "font.JellyBelly",
       gets("mmenu"));
 
-  centerImage("gui.mmenu.menu.bg");
+  centerImage(this,"gui.mmenu.menu.bg");
   incIndexZ();
 
   lb->setScale(XCFG()->getScale());
   lb->setColor(c);
-  addItem(lb);
+  addItem(this,lb);
 
   auto b1 = cx::reifyMenuBtn("online.png");
   b1->setTarget(this,
@@ -78,7 +78,7 @@ void UILayer::decorate() {
   auto menu= cx::mkVMenu(
       s_vec<c::MenuItem*> {b1,b2,b3});
   menu->setPosition(cw);
-  addItem(menu);
+  addItem(this,menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
@@ -97,7 +97,7 @@ void UILayer::decorate() {
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
                   wb.bottom+tile+sz.height*0.45f);
-  addItem(m2);
+  addItem(this,m2);
 
   // audio
   auto audios= cx::reifyAudioIcons();

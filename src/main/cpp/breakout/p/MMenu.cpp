@@ -24,6 +24,7 @@ BEGIN_NS_UNAMED()
 struct CC_DLL UILayer : public f::XLayer {
   STATIC_REIFY_LAYER(UILayer)
   MDECL_DECORATE()
+    void onQuit(c::Ref*) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,14 +34,14 @@ void UILayer::decorate() {
   auto wb=cx::visBox();
   auto cw= cx::center();
 
-  centerImage("gui.mmenus.menu.bg");
+  centerImage(this,"gui.mmenus.menu.bg");
   incIndexZ();
 
   auto tt= cx::reifyBmfLabel("font.JellyBelly", gets("mmenu"));
   tt->setPosition(cw.x, wb.top * 0.9f);
   tt->setColor(XCFG()->getColor("default"));
   tt->setScale(XCFG()->getScale());
-  addItem(tt);
+  addItem(this,tt);
 
   auto btn= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(btn);
@@ -48,7 +49,7 @@ void UILayer::decorate() {
     cx::runSceneEx(Game::reify(mc_new(f::GCX)));
   });
   menu->setPosition(cw);
-  addItem(menu);
+  addItem(this,menu);
 
   // back-quit buttons
   auto b= cx::reifyMenuBtn("icon_back.png");
@@ -61,7 +62,7 @@ void UILayer::decorate() {
   auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {b, q} );
   m2->setPosition(wb.left + tile + sz.width * 1.1f,
                   wb.bottom + tile + sz.height * 0.45f);
-  addItem(m2);
+  addItem(this,m2);
 
   auto audios = cx::reifyAudioIcons();
     auto dfc = XCFG()->getColor("default");

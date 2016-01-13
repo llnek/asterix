@@ -60,7 +60,7 @@ void GLayer::showMenu() {
 //
 void GLayer::decorate() {
   this->engine = mc_new(GEngine);
-  regoAtlas("game-pics");
+  regoAtlas(this, "game-pics");
   getHUD()->reset();
 }
 

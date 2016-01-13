@@ -29,7 +29,7 @@ void HUDLayer::decorate() {
   auto cw= cx::center();
   auto wb= cx::visBox();
 
-  regoAtlas("game-pics");
+  regoAtlas(this,"game-pics");
   incIndexZ();
 
   //score1
@@ -38,7 +38,7 @@ void HUDLayer::decorate() {
   score1->setAnchorPoint(cx::anchorTL());
   score1->setScale(scale);
   score1->setPosition(tile+soff+2, wb.top-tile-soff);
-  addItem(score1);
+  addItem(this,score1);
 
   //score2
   score2= cx::reifyBmfLabel( "font.SmallTypeWriting", "0");
@@ -46,14 +46,14 @@ void HUDLayer::decorate() {
   score2->setAnchorPoint(cx::anchorTR());
   score2->setScale(scale);
   score2->setPosition(wb.right-tile-soff, wb.top-tile-soff);
-  addItem(score2);
+  addItem(this,score2);
 
   // status
   status= cx::reifyBmfLabel( "font.CoffeeBuzzed");
   status->setColor(XCFG()->getColor("text"));
   status->setScale(scale * 0.3f);
   status->setPosition(cw.x, wb.bottom + tile * 10);
-  addItem(status);
+  addItem(this,status);
 
   // result
   result= cx::reifyBmfLabel( "font.CoffeeBuzzed");
@@ -61,7 +61,7 @@ void HUDLayer::decorate() {
   result->setScale(scale * 0.3f);
   result->setPosition(cw.x, wb.bottom + tile * 10);
   result->setVisible(false);
-  addItem(result);
+  addItem(this,result);
 
   //title
   title = cx::reifyBmfLabel( "font.JellyBelly");
@@ -69,7 +69,7 @@ void HUDLayer::decorate() {
   title->setAnchorPoint(cx::anchorT());
   title->setColor(color);
   title->setPosition(cw.x, wb.top - 2*tile);
-  addItem(title);
+  addItem(this,title);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto hh = cx::getHeight(b) * 0.5f;
@@ -80,7 +80,7 @@ void HUDLayer::decorate() {
   auto menu = cx::mkMenu(b);
 
   menu->setPosition(wb.right-tile-hw, wb.bottom+tile+hh);
-  addItem(menu);
+  addItem(this,menu);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ void HUDLayer::showTimer() {
     countDown->setAnchorPoint(cx::anchorC());
     countDown->setScale(scale * 0.5f);
     countDown->setColor(XCFG()->getColor("text"));
-    addItem(countDown);
+    addItem(this,countDown);
   }
 
   countDownState= true;

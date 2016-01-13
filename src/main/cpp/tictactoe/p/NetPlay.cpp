@@ -65,19 +65,19 @@ void UILayer::showWaitOthers() {
   auto cw= cx::center();
   auto wb = cx::visBox();
 
-  removeAll();
+  removeAll(this);
 
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f * 255);
-  addItem(qn);
+  addItem(this,qn);
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
   b1->setTarget(this,
       CC_MENU_SELECTOR(UILayer::onCancel));
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu);
+  addItem(this,menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -184,14 +184,14 @@ void UILayer::decorate() {
   auto wb= cx::visBox();
   int tag;
 
-  centerImage("game.bg");
+  centerImage(this,"game.bg");
   incIndexZ();
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setOpacity(0.9f*255);
-  addItem(qn);
+  addItem(this,qn);
 
   // editbox for user
   auto uid = c::ui::TextField::create();
@@ -203,7 +203,7 @@ void UILayer::decorate() {
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  addItem(uid, lastZ, USER_TAG);
+  addItem(this,uid, lastZ, USER_TAG);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -215,7 +215,7 @@ void UILayer::decorate() {
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  addItem(pwd, lastZ, PSWD_TAG);
+  addItem(this,pwd, lastZ, PSWD_TAG);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
@@ -229,7 +229,7 @@ void UILayer::decorate() {
       CC_MENU_SELECTOR(UILayer::onCancel));
 
   menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu);
+  addItem(this,menu);
 }
 
 END_NS_UNAMED()

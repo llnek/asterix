@@ -34,13 +34,13 @@ void UILayer::decorate() {
   auto wb = cx::visBox();
   auto menu= cx::mkMenu(b);
 
-  centerImage("game.bg");
+  centerImage(this,"game.bg");
 
   menu->setPosition(cw.x, wb.top * 0.1f);
   b->setCallback([=](c::Ref*) {
     cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
   });
-  addItem(menu);
+  addItem(this,menu);
 }
 
 END_NS_UNAMED()

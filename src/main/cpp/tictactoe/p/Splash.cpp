@@ -17,11 +17,10 @@
 #include "Splash.h"
 
 NS_BEGIN(tttoe)
-BEGIN_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void demo(f::XLayer *layer) {
+void Splash::demo() {
   auto scale= 0.75f;
   auto fm= "";
   auto ps= mapGridPos(scale);
@@ -40,26 +39,26 @@ void demo(f::XLayer *layer) {
     auto bx= cx::vboxMID( ps[i]);
     sp->setScale(scale);
     sp->setPosition(bx);
-    layer->addAtlasItem("game-pics", sp);
+    addAtlasItem(this, "game-pics", sp);
   }
 }
 
-END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decorate() {
 
-  layer->centerImage("game.bg");
-  layer->incIndexZ();
-  layer->regoAtlas("game-pics");
+  centerImage(this, "game.bg");
+  incIndexZ();
+  regoAtlas(this, "game-pics");
 
   // title
   auto cw = cx::center();
   auto wb = cx::visBox();
-  layer->addAtlasFrame("game-pics", "title.png",
-                     c::Vec2(cw.x, wb.top * 0.9f));
+  addAtlasFrame(
+      this, "game-pics", "title.png",
+      c::Vec2(cw.x, wb.top * 0.9f));
 
-  demo(layer);
+  demo();
 
   auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
   // play button
@@ -70,7 +69,7 @@ void Splash::decorate() {
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);
-  layer->addItem(menu);
+  addItem(this,menu);
 }
 
 

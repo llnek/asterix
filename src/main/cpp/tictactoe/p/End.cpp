@@ -48,7 +48,7 @@ void ELayer::decorate() {
   qn->setPosition(cw.x, wb.top * 0.75f);
   qn->setColor(XCFG()->getColor("text"));
   qn->setOpacity(0.9f*255);
-  addItem(qn);
+  addItem(this,qn);
 
   // btns
   auto b1= cx::reifyMenuBtn("play.png");
@@ -62,7 +62,7 @@ void ELayer::decorate() {
       CC_MENU_SELECTOR(ELayer::onQuit));
 
   menu->setPosition(cw.x, wb.top * 0.5f);
-  addItem(menu);
+  addItem(this,menu);
 }
 
 

@@ -45,20 +45,20 @@ void HUDLayer::decorate() {
   auto wz = cx::visRect();
   auto wb = cx::visBox();
 
-  regoAtlas("game-pics");
+  regoAtlas(this,"game-pics");
 
   scoreLabel = cx::reifyBmfLabel("font.TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
   scoreLabel->setScale(12/72.0f);
   scoreLabel->setPosition( wz.size.width - tile - soff,
     wz.size.height - tile - soff - cx::getScaledHeight(scoreLabel));
-  addItem(scoreLabel);
+  addItem(this,scoreLabel);
 
   this->lives= f::reifyRefType<f::XLives>();
   this->lives->decorate("paddle.png", 3,
       tile + soff,
       wb.top - tile - soff, 0.5f);
-  addItem(lives);
+  addItem(this,lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto menu = cx::mkMenu(b);
@@ -66,7 +66,7 @@ void HUDLayer::decorate() {
 
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
-  addItem(menu);
+  addItem(this,menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////

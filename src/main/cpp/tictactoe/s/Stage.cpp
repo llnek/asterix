@@ -87,7 +87,7 @@ void Stage::showGrid() {
     view->cells[pos++]=sp;
     sp->setPosition(cx::vboxMID(*it));
     sp->setUserObject(CC_INT(nil));
-    view->layer->addAtlasItem("game-pics", sp);
+    view->layer->addAtlasItem(view->layer,"game-pics", sp);
   }
 }
 
