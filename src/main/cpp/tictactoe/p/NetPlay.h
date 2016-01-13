@@ -34,9 +34,29 @@ struct CC_DLL NPCX : public f::SCTX {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL NetPlay : public f::XScene {
+
   STATIC_REIFY_SCENE_CTX(NetPlay)
   MDECL_DECORATE()
+
+protected:
+
+  void networkEvent(ws::OdinEvent*);
+  void sessionEvent(ws::OdinEvent*);
+  void odinEvent(ws::OdinEvent*);
+
+  void onPlayReply(ws::OdinEvent*);
+  void showWaitOthers();
+  void onStart(ws::OdinEvent*);
+
+  void onCancel();
+  void onLogin();
+
+  DECL_PTR(ws::OdinIO, odin)
+  DECL_IZ(player)
+
+  virtual ~NetPlay();
 };
+
 
 NS_END(tttoe)
 #endif

@@ -12,6 +12,7 @@
 #if !defined(__MENU_H__)
 #define __MENU_H__
 
+#include "x2d/GameScene.h"
 #include "x2d/XScene.h"
 NS_BEGIN(tttoe)
 
@@ -27,6 +28,15 @@ struct CC_DLL MCX : public f::SCTX {
 struct CC_DLL MMenu : public f::XScene {
   STATIC_REIFY_SCENE_CTX(MMenu)
   MDECL_DECORATE()
+
+protected:
+
+  void onPlayXXX( f::GMode, ws::OdinIO*, j::json);
+  void onPlay3();
+  void onPlay2();
+  void onPlay1();
+  void onBack();
+  void onQuit();
 };
 
 

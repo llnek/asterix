@@ -30,35 +30,10 @@ BEGIN_NS_UNAMED()
 const int USER_TAG = (int) 'u';
 const int PSWD_TAG = (int) 'p';
 
+END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL UILayer : public f::XLayer {
-
-  void networkEvent(ws::OdinEvent*);
-  void sessionEvent(ws::OdinEvent*);
-  void odinEvent(ws::OdinEvent*);
-
-  void onPlayReply(ws::OdinEvent*);
-  void showWaitOthers();
-  void onStart(ws::OdinEvent*);
-
-  void onCancel(c::Ref* );
-  void onLogin(c::Ref*);
-
-  DECL_PTR(ws::OdinIO, odin)
-  DECL_IZ(player)
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-  virtual ~UILayer() {
-    ws::disconnect(odin);
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::showWaitOthers() {
+void NetPlay::showWaitOthers() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
   auto wz= cx::visRect();
@@ -72,44 +47,46 @@ void UILayer::showWaitOthers() {
   qn->setOpacity(0.9f * 255);
   addItem(this,qn);
 
+  auto f= []() { cx::runSceneEx(XCFG()->prelude()); };
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onCancel));
+
   menu->setPosition(cw.x, wb.top * 0.1f);
+  b1->setCallback([=](c::Ref*) {
+      this->onCancel();
+      });
+
   addItem(this,menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onStart(ws::OdinEvent *evt) {
+void NetPlay::onStart(ws::OdinEvent *evt) {
   auto m= f::GMode::NET;
   auto obj= fmtGameData(m);
 
   obj["ppids"] = evt->doco["source"]["ppids"];
   obj["pnum"]= j::json(player);
 
-  auto ctx = (NPCX*) getSceneX()->getCtx();
-  ctx->yes(odin,obj);
+  auto ctx = (NPCX*) getCtx();
+  auto io=odin;
   SNPTR(odin)
+  ctx->yes(io,obj);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onCancel(c::Ref*) {
-  auto f= [=]() {
-      cx::runSceneEx(XCFG()->prelude()); };
+void NetPlay::onCancel() {
+  auto f= []() { cx::runSceneEx(XCFG()->prelude()); };
   auto m = MMenu::reify(mc_new_1(MCX, f));
-
   ws::disconnect(odin);
-  SNPTR(odin)
-
+  mc_del_ptr(odin)
   cx::runSceneEx(m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlayReply(ws::OdinEvent *evt) {
+void NetPlay::onPlayReply(ws::OdinEvent *evt) {
   player= JS_INT(  evt->doco["pnum"]);
   CCLOG("player %d: ok", player);
   showWaitOthers();
@@ -117,7 +94,7 @@ void UILayer::onPlayReply(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::networkEvent(ws::OdinEvent *evt) {
+void NetPlay::networkEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYER_JOINED:
       //TODO
@@ -133,7 +110,7 @@ void UILayer::networkEvent(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::sessionEvent(ws::OdinEvent *evt) {
+void NetPlay::sessionEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
@@ -143,7 +120,7 @@ void UILayer::sessionEvent(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::odinEvent(ws::OdinEvent *evt) {
+void NetPlay::odinEvent(ws::OdinEvent *evt) {
   //CCLOG("odin event = %p", evt);
   switch (evt->type) {
     case ws::MType::NETWORK:
@@ -157,11 +134,11 @@ void UILayer::odinEvent(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onLogin(c::Ref* ) {
-  auto u= getChildByTag( USER_TAG);
-  auto p= getChildByTag( PSWD_TAG);
-  auto uid = ((c::ui::TextField*) u)->getString();
-  auto pwd = ((c::ui::TextField*) p)->getString();
+void NetPlay::onLogin() {
+  auto u= (c::ui::TextField*) getChildByTag( USER_TAG);
+  auto p= (c::ui::TextField*) getChildByTag( PSWD_TAG);
+  auto uid = u->getString();
+  auto pwd = p->getString();
 
   if (uid.length() > 0 && pwd.length() > 0) {
     odin= ws::reifyPlayRequest(
@@ -176,13 +153,12 @@ void UILayer::onLogin(c::Ref* ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::decorate() {
+void NetPlay::decorate() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
   auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
-  int tag;
 
   centerImage(this,"game.bg");
   incIndexZ();
@@ -220,23 +196,25 @@ void UILayer::decorate() {
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
   auto b2= cx::reifyMenuBtn("cancel.png");
-  auto menu= cx::mkVMenu(s::vector<c::MenuItem*> {b1, b2});
-
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onLogin));
-
-  b2->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onCancel));
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1, b2});
 
   menu->setPosition(cw.x, wb.top * 0.1f);
+  b1->setCallback([=](c::Ref*) {
+      this->onLogin();
+      });
+
+  b2->setCallback([=](c::Ref*) {
+      this->onCancel();
+      });
+
   addItem(this,menu);
 }
 
-END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::decorate() {
-  UILayer::reify(this);
+NetPlay::~NetPlay() {
+  ws::disconnect(odin);
+  mc_del_ptr(odin)
 }
 
 

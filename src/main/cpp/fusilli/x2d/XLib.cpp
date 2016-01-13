@@ -56,7 +56,7 @@ c::Menu* addReplayIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> c,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* addAudioIcons(not_null<XLayer*> layer,
+c::Menu* addAudioIcons(not_null<c::Node*> layer,
     const s_arr<c::MenuItem*,2> &audios,
     const c::Vec2 &anchor, const c::Vec2 &pos) {
 
