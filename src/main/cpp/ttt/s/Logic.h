@@ -10,18 +10,38 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
+
+#include "ash/System.h"
+#include "GEngine.h"
+
 NS_BEGIN(tttoe)
+
 //////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Game : public f::GameScene {
+class CC_DLL Logic : public a::System {
+
+  void sync(int pos, int value, Grid*);
+  void doIt( float);
+
+public:
+
+  MDECL_SYS_PRIORITY( a::Logic)
+  MDECL_SYS_TPID("n/Logic")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  DECL_PTR(c::DelayTime, botTimer)
+  DECL_PTR(a::NodeList, humanNode)
+  DECL_PTR(a::NodeList, robotNode)
+  DECL_PTR(a::NodeList, boardNode)
+  DECL_PTR(a::NodeList, arenaNode)
+
+  Logic(a::Engine *e)
+  : System(e)
+  {}
 
 };
 
 
-
-
-
 NS_END(tttoe)
-
 
 

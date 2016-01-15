@@ -8,44 +8,40 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#include "renderer/CCTextureCache.h"
-#include "2d/CCMenuItem.h"
-#include "2d/CCSprite.h"
-#include "2d/CCMenu.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "XScene.h"
-#include "XLayer.h"
-NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(fusii)
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+#include "ash/System.h"
+#include "GEngine.h"
+NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XLayer::initEx(XScene *par, int zx) {
-  if (c::Layer::init()) {
-    par->addLayer(this, zx);
-    preDeco();
-    decorate();
-    postDeco();
-    return true;
-  } else {
-    return false;
-  }
-}
+struct CC_DLL Net : public a::System {
 
-//////////////////////////////////////////////////////////////////////////////
-// Remember the parent scene object
-//
-XScene* XLayer::getSceneX() {
-  return (XScene*) getParent();
-}
+  MDECL_SYS_PRIORITY(a::Net)
+  MDECL_SYS_TPID( "n/Net")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer::XLayer() {
-   bind(this);
-}
+  DECL_PTR(a::NodeList, boardNode)
+  DECL_PTR(a::NodeList, arenaNode)
 
-NS_END(fusii)
+  Net(a::Engine *e)
+  : System(e)
+  {}
+
+protected:
+
+  void onSocket(ws::OdinEvent*);
+  void onSess(ws::OdinEvent*);
+  void onNet(ws::OdinEvent*);
+
+  void initOnline();
+  void process();
+  void sync();
+};
+
+
+NS_END(tttoe)
+
 

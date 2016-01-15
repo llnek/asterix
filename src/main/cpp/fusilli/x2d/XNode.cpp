@@ -35,13 +35,13 @@ const sstr XNode::gets(const sstr &key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::SpriteBatchNode*
-XNode::regoAtlas(not_null<c::Node*> par, const sstr &name, int zx) {
+XNode::regoAtlas( const sstr &name, int zx) {
 
   auto i= c::TextureCache::getInstance()->addImage( XCFG()->getImage(name));
   auto a= c::SpriteBatchNode::createWithTexture(i);
 
   atlases.insert(S__PAIR(sstr, c::SpriteBatchNode*, name, a));
-  par->addChild(a, zx, ++lastTag);
+  self->addChild(a, zx, ++lastTag);
   return a;
 }
 
@@ -60,40 +60,39 @@ c::SpriteBatchNode* XNode::getAtlas(const sstr &name) {
 //////////////////////////////////////////////////////////////////////////////
 // Add an image chosen from this atlas
 //
-void XNode::addAtlasFrame(not_null<c::Node*> par, const sstr &atlas,
+void XNode::addAtlasFrame( const sstr &atlas,
                            const sstr &frame,
                            const c::Vec2 &pos, int z, int tag) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  addAtlasItem(par, atlas, tt, z, tag);
+  addAtlasItem( atlas, tt, z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::addAtlasFrame(not_null<c::Node*> par,
-    const sstr &atlas,
+void XNode::addAtlasFrame( const sstr &atlas,
                            const sstr &frame,
                            const c::Vec2 &pos) {
-  addAtlasFrame(par, atlas, frame,pos,lastZ,++lastTag);
+  addAtlasFrame( atlas, frame,pos,lastZ,++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add an image
-void XNode::addFrame(not_null<c::Node*> par, const sstr &frame, const c::Vec2 &pos, int z, int tag) {
+void XNode::addFrame( const sstr &frame, const c::Vec2 &pos, int z, int tag) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  addItem(par, tt, z, tag);
+  addItem( tt, z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::addFrame(not_null<c::Node*> par, const sstr &frame, const c::Vec2 &pos) {
-  addFrame(par, frame, pos, lastZ, ++lastTag);
+void XNode::addFrame( const sstr &frame, const c::Vec2 &pos) {
+  addFrame( frame, pos, lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child to this atlas
-void XNode::addAtlasItem(not_null<c::Node*> par, const sstr &atlas, not_null<c::Node*> n, int z, int tag) {
+void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n, int z, int tag) {
 
   auto ss = DCAST(c::Sprite*, n.get());
   auto p= getAtlas(atlas);
@@ -107,29 +106,29 @@ void XNode::addAtlasItem(not_null<c::Node*> par, const sstr &atlas, not_null<c::
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::addAtlasItem(not_null<c::Node*> par, const sstr &atlas, not_null<c::Node*> n) {
-  addAtlasItem(par, atlas, n, lastZ, ++lastTag);
+void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n) {
+  addAtlasItem( atlas, n, lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
-void XNode::addItem(not_null<c::Node*> par, not_null<c::Node*> n, int z, int tag) {
-  par->addChild(n.get(), z, tag);
+void XNode::addItem( not_null<c::Node*> n, int z, int tag) {
+  self->addChild(n.get(), z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
-void XNode::addItem(not_null<c::Node*> par, not_null<c::Node*> n) {
-  addItem(par, n, lastZ, ++lastTag);
+void XNode::addItem( not_null<c::Node*> n) {
+  addItem( n, lastZ, ++lastTag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::centerImage(not_null<c::Node*> par, const sstr &name, int z) {
+void XNode::centerImage(const sstr &name, int z) {
   auto t= c::TextureCache::getInstance()->addImage(XCFG()->getImage(name));
   auto s= c::Sprite::createWithTexture(t);
   s->setPosition(cx::center());
-  par->addChild(s,z);
+  self->addChild(s,z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -143,8 +142,8 @@ void XNode::removeAtlasAll(const sstr &atlas) {
 //////////////////////////////////////////////////////////////////////////////
 // Remove all children
 //
-void XNode::removeAll(not_null<c::Node*> par) {
-  par->removeAllChildren();
+void XNode::removeAll() {
+  self->removeAllChildren();
 }
 
 //////////////////////////////////////////////////////////////////////////////

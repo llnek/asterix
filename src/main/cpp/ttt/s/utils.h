@@ -8,44 +8,32 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+#define GD_SZ BD_SZ * BD_SZ
+#define BD_SZ 3
 
-#include "renderer/CCTextureCache.h"
-#include "2d/CCMenuItem.h"
-#include "2d/CCSprite.h"
-#include "2d/CCMenu.h"
-#include "core/XConfig.h"
+typedef s_arr<int, GD_SZ> ArrCells;
+typedef s_arr<int, BD_SZ> ArrDim;
+
+#include "x2d/GameScene.h"
 #include "core/CCSX.h"
-#include "XScene.h"
-#include "XLayer.h"
-NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-bool XLayer::initEx(XScene *par, int zx) {
-  if (c::Layer::init()) {
-    par->addLayer(this, zx);
-    preDeco();
-    decorate();
-    postDeco();
-    return true;
-  } else {
-    return false;
-  }
-}
+NS_BEGIN(tttoe)
 
-//////////////////////////////////////////////////////////////////////////////
-// Remember the parent scene object
-//
-XScene* XLayer::getSceneX() {
-  return (XScene*) getParent();
-}
+  const s_arr<fusii::Box4, GD_SZ> mapGridPos(float scale = 1.0f);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer::XLayer() {
-   bind(this);
-}
+  const s_vec<ArrDim> mapGoalSpace();
 
-NS_END(fusii)
+  const sstr pkFlip(const sstr &img, bool flip);
+
+  const sstr xrefImg(int value);
+
+  c::Sprite* drawSymbol(not_null<a::Component*>, const c::Vec2&, int value, bool flip = false);
+
+  j::json fmtGameData(fusii::GMode );
+
+
+NS_END(tttoe)
 

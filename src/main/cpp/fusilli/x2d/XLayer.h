@@ -39,7 +39,7 @@ public:
   virtual int getIID() { return 1; }
 
   virtual ~XLayer() {}
-  XLayer() {}
+  XLayer();
   NOCPYASS(XLayer)
 };
 
