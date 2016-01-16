@@ -99,7 +99,7 @@ typedef std::string sstr;
 // c++ std collection iteration
 #define F__LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
 #define S__PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
-#define ARR__COPY(f,t) s::copy(s::begin(f), s::end(f), s::begin(t));
+#define S__COPY(f,t) s::copy(s::begin(f), s::end(f), s::begin(t))
 
 
 //////////////////////////////////////////////////////////////////////////////
