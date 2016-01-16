@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 
+#include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
@@ -23,17 +24,17 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Robot : public a::Component {
+struct CC_DLL SmartAI : public a::Component {
 
-  MDECL_COMP_TPID( "n/Robot" )
-  DECL_PTR(TTToe,board)
+  MDECL_COMP_TPID( "n/SmartAI" )
+  DECL_PTR(TTToe,ai)
 
-  Robot(not_null<TTToe*> b) {
-    this->board= b;
+  SmartAI(not_null<TTToe*> b) {
+    this->ai= b;
   }
 
-  virtual ~Robot() {
-    mc_del_ptr(board)
+  virtual ~SmartAI() {
+    mc_del_ptr(ai)
   }
 };
 
@@ -42,27 +43,24 @@ struct CC_DLL Robot : public a::Component {
 struct CC_DLL Grid : public a::Component {
 
   Grid(const ArrCells &seed) {
-    s::copy(s::begin(seed),
-        s::end(seed), s::begin(values));
     GOALS= mapGoalSpace();
+    ARR__COPY(seed,vals);
   }
 
   MDECL_COMP_TPID("n/Grid")
-  DECL_TD(ArrCells, values)
-  // winning combo(s)
+  DECL_TD(ArrCells, vals)
   s_vec<ArrDim> GOALS;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL PlayView : public a::Component {
+struct CC_DLL GridView : public a::Component {
 
-  PlayView(not_null<f::XNode*> node) {
+  GridView(not_null<f::XNode*> node) {
     this->layer= node;
   }
-
+  MDECL_COMP_TPID( "n/GridView")
   DECL_PTR(f::XNode, layer)
-  MDECL_COMP_TPID( "n/PlayView")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -108,20 +106,37 @@ struct CC_DLL Player : public a::Component {
 //
 struct CC_DLL Players : public a::Component {
   MDECL_COMP_TPID("n/Players")
-  s_arr<Player,3> parr;
+  s_arr<Player*,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CellSquare  : public f::ComObj {
-  CellSquare(not_null<c::Sprite*> s, int cell, int value)
+struct CC_DLL CSquare  : public f::ComObj {
+  CSquare(not_null<c::Sprite*> s, int cell, int value)
   : ComObj(s) {
     this->value=value;
     this->cell=cell;
   }
+  void toggle(bool flip= false) {
+    auto x= CC_CSV(c::Integer,"CV_X");
+    auto o= CC_CSV(c::Integer,"CV_O");
+    auto z= CC_CSV(c::Integer,"CV_Z");
+    sstr s= "";
+    if (value == x) {
+      s= flip ? "x_i.png" : "x.png";
+    }
+    else
+    if (value == o) {
+      s= flip ? "o_i.png" : "o.png";
+    }
+    else {
+      s= flip ? "z_i.png" : "z.png";
+    }
+    sprite->setSpriteFrame(s);
+  }
   DECL_IZ(value)
   DECL_IZ(cell)
-  MDECL_COMP_TPID( "n/CellSquare" )
+  MDECL_COMP_TPID( "n/CSquare" )
 };
 
 //////////////////////////////////////////////////////////////////////////////

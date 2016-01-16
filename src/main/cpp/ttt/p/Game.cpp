@@ -18,24 +18,34 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 BEGIN_NS_UNAMED()
+struct CC_DLL GLayer : public f::GameLayer {
+  virtual void postReify();
+  void showGrid();
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, cells)
+  DECL_PTR(a::NodeList, arena)
+};
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::postReify() {
-  cellPicNode = engine->getNodeList(CellPicNode().typeId());
-  boardNode = engine->getNodeList(BoardNode().typeId());
+void GLayer::postReify() {
+  cells = engine->getNodeList(SquareNode().typeId());
+  board = engine->getNodeList(BoardNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
   showGrid();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::showGrid() {
-  auto view= CC_GNLF(PlayView, boardNode, "view");
+void GLayer::showGrid() {
+  auto view= CC_GNLF(GridView, arena, "view");
   auto gps= mapGridPos(1);
-
-  for (auto node= cellPicNode->head; NNP(node); node=node->next) {
-    auto cp= CC_GNF(CellPic,node,"cell");
+  for (auto n= cells->head; NNP(n); n=n->next) {
+    auto cp= CC_GNF(CSquare,n,"square");
     auto pos= cp->cell;
     cp->setPos(cx::vboxMID( gps[pos] ));
-    view->layer->addAtlasItem("game-pics", sp);
+    cp->toggle(false);
+    view->layer->
+      addAtlasItem(
+          "game-pics", cp->sprite);
   }
 }
 

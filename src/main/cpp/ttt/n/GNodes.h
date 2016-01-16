@@ -21,11 +21,9 @@ struct CC_DLL BoardNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-          //{"cellpos", "n/CellPos"},
           {"players", "n/Players" },
-          //{"robot", "n/Robot"},
-          {"grid", "n/Grid"},
-          {"view", "n/PlayView" }
+          {"cellpos", "n/CellPos"},
+          {"grid", "n/Grid"}
     });
   }
 
@@ -38,9 +36,8 @@ struct CC_DLL RobotNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "cellpos", "n/CellPos"},
         { "player", "n/Player"},
-        { "robot", "n/Robot"}
+        { "robot", "n/SmartAI"}
     });
   }
 
@@ -53,9 +50,7 @@ struct CC_DLL HumanNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "cellpos", "n/CellPos"},
-        { "player", "n/Player"},
-        { "human", "n/Human"}
+        { "player", "n/Player"}
     });
   }
 
@@ -64,30 +59,15 @@ struct CC_DLL HumanNode : public a::NodeFactory {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL NetPlayNode : public a::NodeFactory {
+struct CC_DLL SquaresNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "cellpos", "n/CellPos"},
-        { "player", "n/Player"},
-        { "netplay", "n/NetPlay"}
+        { "squares", "n/CSquares" }
     });
   }
 
-  MDECL_NFAC_TPID( "n/NetPlayNode")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL CellPicNode : public a::NodeFactory {
-
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode({
-        { "cell", "n/CellPic" }
-    });
-  }
-
-  MDECL_NFAC_TPID( "n/CellPicNode")
+  MDECL_NFAC_TPID( "n/SquaresNode")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,7 +76,9 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "slots", "n/GVars" }
+        {"view", "n/GridView" },
+        {"player", "n/Player"},
+        {"slots", "n/GVars" }
     });
   }
 
