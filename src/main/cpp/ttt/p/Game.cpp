@@ -21,14 +21,13 @@ BEGIN_NS_UNAMED()
 struct CC_DLL GLayer : public f::GameLayer {
   virtual void postReify();
   void showGrid();
+  DECL_PTR(a::NodeList, squares)
   DECL_PTR(a::NodeList, board)
-  DECL_PTR(a::NodeList, cells)
   DECL_PTR(a::NodeList, arena)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
-  cells = engine->getNodeList(SquareNode().typeId());
   board = engine->getNodeList(BoardNode().typeId());
   arena = engine->getNodeList(ArenaNode().typeId());
   showGrid();
@@ -36,12 +35,12 @@ void GLayer::postReify() {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::showGrid() {
-  auto view= CC_GNLF(GridView, arena, "view");
+  auto css= CC_GNLF(CSquares,arena, "squares");
   auto gps= mapGridPos(1);
-  for (auto n= cells->head; NNP(n); n=n->next) {
-    auto cp= CC_GNF(CSquare,n,"square");
+  F__LOOP(it,css->sqs) {
+    auto cp= *it;
     auto pos= cp->cell;
-    cp->setPos(cx::vboxMID( gps[pos] ));
+    cp->sprite->setPosition(cx::vboxMID( gps[pos] ));
     cp->toggle(false);
     view->layer->
       addAtlasItem(

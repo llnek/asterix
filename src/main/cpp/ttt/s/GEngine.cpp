@@ -35,63 +35,63 @@ void GEngine::initEntities() {
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
   auto mode = MGMS()->getMode();
+  auto css= mc_new(CSquares);
   auto ps= mc_new(Players);
   auto gvs= mc_new(GVars);
   a::Entity *arena;
   a::Entity *board;
   a::Entity *p2;
   a::Entity *p1;
+  int cat2, cat1;
   ArrCells seed;
   seed.fill(nil);
+
+  // config global vars
+  gvs->pnum=this->pnum;
 
   arena= this->reifyEntity();
   board= this->reifyEntity();
   p2 = this->reifyEntity();
   p1 = this->reifyEntity();
 
-  // the cells
-  for (auto i=0; i < GD_SZ; ++i) {
+  // the squares
+  for (auto i=0; i < css->sqs.size(); ++i) {
     auto sp= cx::reifySprite("z.png");
-    auto pic= this->reifyEntity();
-    pic->checkin( mc_new_3(CellPic, sp, i, nil));
+    css->sqs[i] = mc_new_3(CSquare, sp, i, nil);
   }
 
-  // config global vars
-  gvs->pnum=this->pnum;
   arena->checkin(gvs);
+  arena->checkin(css);
 
   // config p2 and p1
   if (mode == f::GMode::NET) {
-    p2->checkin(mc_new(NetPlay));
-    p1->checkin(mc_new(NetPlay));
-    p2->checkin(mc_new(Human));
-    p1->checkin(mc_new(Human));
+    cat2= netp;
+    cat1= netp;
   }
   else
   if (mode == f::GMode::ONE) {
     auto bd= mc_new_3(TTToe, nil, xv, ov);
     p2->checkin(mc_new(Robot, bd));
-    p1->checkin(mc_new(Human));
+    cat2=bot;
+    cat1=human;
   }
   else
   if (mode == f::GMode::TWO) {
-    p2->checkin(mc_new(Human));
-    p1->checkin(mc_new(Human));
+    cat2= human;
+    cat1= human;
   }
-  p2->checkin(mc_new(CellPos));
-  p1->checkin(mc_new(CellPos));
 
-  ps->parr[2]= mc_new_2(Player, ov, 2);
-  ps->parr[1]= mc_new_2(Player,xv, 1);
-  ps->parr[0]= nullptr;
+  ps->parr[2]= mc_new_2(Player, cat2, ov, 2);
+  ps->parr[1]= mc_new_2(Player, cat1, xv, 1);
+  ps->parr[0]= nullptr; // dummy
+
   p2->checkin(ps->parr[2]);
   p1->checkin(ps->parr[1]);
 
   // the board
-  board->checkin(mc_new_1(PlayView , MGML()));
   board->checkin(mc_new_1( Grid, seed));
   board->checkin(ps);
-
+  board->checkin(mc_new(CellPos));
 };
 
 NS_END(tttoe)

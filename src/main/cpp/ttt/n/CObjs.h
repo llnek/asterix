@@ -111,10 +111,10 @@ struct CC_DLL Players : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CSquare  : public f::ComObj {
-  CSquare(not_null<c::Sprite*> s, int cell, int value)
-  : ComObj(s) {
+struct CC_DLL CSquare  {
+  CSquare(not_null<c::Sprite*> s, int cell, int value) {
     this->value=value;
+    this->sprite=s;
     this->cell=cell;
   }
   void toggle(bool flip= false) {
@@ -134,9 +134,16 @@ struct CC_DLL CSquare  : public f::ComObj {
     }
     sprite->setSpriteFrame(s);
   }
+  DECL_PTR(c::Sprite,sprite)
   DECL_IZ(value)
   DECL_IZ(cell)
-  MDECL_COMP_TPID( "n/CSquare" )
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL CSquares  : public a::Component {
+  MDECL_COMP_TPID( "n/CSquares" )
+  s_arr<CSquare*,GD_SZ> sqs;
 };
 
 //////////////////////////////////////////////////////////////////////////////

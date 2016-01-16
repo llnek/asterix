@@ -59,25 +59,11 @@ struct CC_DLL HumanNode : public a::NodeFactory {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SquaresNode : public a::NodeFactory {
-
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode({
-        { "squares", "n/CSquares" }
-    });
-  }
-
-  MDECL_NFAC_TPID( "n/SquaresNode")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        {"view", "n/GridView" },
-        {"player", "n/Player"},
+        {"squares", "n/CSquares"},
         {"slots", "n/GVars" }
     });
   }
