@@ -118,15 +118,7 @@ c::Sprite* drawSymbol(not_null<a::Component*> c,
     const c::Vec2 &pos,
     int value, bool flip) {
 
-  auto frame = pkFlip(xrefImg(value), flip);
-  auto view= (PlayView*) c.get();
-  auto s1= cx::reifySprite(frame);
-
-  s1->setAnchorPoint(cx::anchorC());
-  s1->setPosition(pos.x, pos.y);
-
-  view->layer->addAtlasItem(view->layer,"game-pics", s1);
-  return s1;
+  return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////

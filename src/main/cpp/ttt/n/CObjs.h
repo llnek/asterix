@@ -25,14 +25,11 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SmartAI : public a::Component {
-
   MDECL_COMP_TPID( "n/SmartAI" )
   DECL_PTR(TTToe,ai)
-
   SmartAI(not_null<TTToe*> b) {
     this->ai= b;
   }
-
   virtual ~SmartAI() {
     mc_del_ptr(ai)
   }
@@ -41,12 +38,10 @@ struct CC_DLL SmartAI : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Grid : public a::Component {
-
   Grid(const ArrCells &seed) {
     GOALS= mapGoalSpace();
-    ARR__COPY(seed,vals);
+    S__COPY(seed,vals);
   }
-
   MDECL_COMP_TPID("n/Grid")
   DECL_TD(ArrCells, vals)
   s_vec<ArrDim> GOALS;
@@ -54,27 +49,12 @@ struct CC_DLL Grid : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GridView : public a::Component {
-
-  GridView(not_null<f::XNode*> node) {
-    this->layer= node;
-  }
-  MDECL_COMP_TPID( "n/GridView")
-  DECL_PTR(f::XNode, layer)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Player : public a::Component {
-
-  MDECL_COMP_TPID( "n/Player")
-
   Player(int category, int value, int id) {
     this->category= category;
     this->pnum=id;
     this->value= value;
   }
-
   Player& operator=(const Player &other) {
     category= other.category;
     pidlong= other.pidlong;
@@ -83,7 +63,6 @@ struct CC_DLL Player : public a::Component {
     pid = other.pid;
     return *this;
   }
-
   Player(const Player &other) {
     category= other.category;
     pidlong= other.pidlong;
@@ -91,52 +70,58 @@ struct CC_DLL Player : public a::Component {
     pnum= other.pnum;
     value= other.value;
   }
-
+  Player(int pnum) { this->pnum= pnum; }
   Player() {}
-
   DECL_TV(int, category, f::GMode::NICHTS)
   DECL_TV(int, pnum,  -1)
   DECL_IZ(value)
   DECL_TD(sstr, pidlong)
   DECL_TD(sstr, pid)
   DECL_TD(sstr, color)
+  MDECL_COMP_TPID( "n/Player")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public a::Component {
   MDECL_COMP_TPID("n/Players")
+  //~owner
   s_arr<Player*,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID("n/Gesture")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL CSquare  {
-  CSquare(not_null<c::Sprite*> s, int cell, int value) {
-    this->value=value;
-    this->sprite=s;
+  CSquare(int cell) {
+    this->value = CC_CSV(c::Integer,"CV_Z");
     this->cell=cell;
+    this->png= "z";
+    sprite= cx::reifySprite(png+ ".png");
   }
-  void toggle(bool flip= false) {
+  void toggle(int nv) {
     auto x= CC_CSV(c::Integer,"CV_X");
     auto o= CC_CSV(c::Integer,"CV_O");
     auto z= CC_CSV(c::Integer,"CV_Z");
-    sstr s= "";
-    if (value == x) {
-      s= flip ? "x_i.png" : "x.png";
+    if (value == z) {
+      if (nv == x) { png= "x"; }
+      if (nv == o) { png= "o"; }
+      value=nv;
+      sprite->setSpriteFrame(png + ".png");
     }
-    else
-    if (value == o) {
-      s= flip ? "o_i.png" : "o.png";
-    }
-    else {
-      s= flip ? "z_i.png" : "z.png";
-    }
-    sprite->setSpriteFrame(s);
+  }
+  void flip() {
+    sprite->setSpriteFrame(png + "_i.png");
   }
   DECL_PTR(c::Sprite,sprite)
   DECL_IZ(value)
   DECL_IZ(cell)
+  DECL_TD(sstr,png)
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -10,35 +10,38 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
+#include "core/OdinEvent.h"
 #include "ash/System.h"
 #include "GEngine.h"
+
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Net : public a::System {
+class CC_DLL Net : public a::System {
 
-  MDECL_SYS_PRIORITY(a::Net)
+  void onSocket(ws::OdinEvent*);
+  void onSess(ws::OdinEvent*);
+  void onNet(ws::OdinEvent*);
+  void initOnline();
+  void process();
+  void sync();
+
+public:
+
+  MDECL_SYS_PRIORITY(a::NetPlay)
   MDECL_SYS_TPID( "n/Net")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(a::NodeList, boardNode)
-  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, arena)
 
   Net(a::Engine *e)
   : System(e)
   {}
 
-protected:
-
-  void onSocket(ws::OdinEvent*);
-  void onSess(ws::OdinEvent*);
-  void onNet(ws::OdinEvent*);
-
-  void initOnline();
-  void process();
-  void sync();
 };
 
 

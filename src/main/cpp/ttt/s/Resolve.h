@@ -18,9 +18,9 @@ NS_BEGIN(tttoe)
 //
 class CC_DLL Resolve : public  a::System {
 
-  bool checkWin(Player&, Grid*, ArrDim& );
+  bool checkWin(Player*, Grid*, ArrDim& );
   void showWinningIcons(const ArrDim& );
-  void doWin(Player&, const ArrDim& );
+  void doWin(Player*, const ArrDim& );
   void sync();
   void doIt( float);
   void doForfeit();
@@ -47,5 +47,5 @@ public:
 
 
 NS_END(tttoe)
-#endif
+
 

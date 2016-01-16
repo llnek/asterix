@@ -23,24 +23,21 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Net::update(float dt) {
-
   if (MGMS()->isLive()) {
     process();
     sync();
   }
-
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::preamble() {
-  netplayNode = engine->getNodeList(NetPlayNode().typeId());
-  boardNode = engine->getNodeList(BoardNode().typeId());
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
-  auto ps= CC_GNLF(Players,boardNode->head,"players");
-  auto ss= CC_GNLF(GVars, arenaNode->head, "slots");
-  ss->pnum= 0;
+  board = engine->getNodeList(BoardNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
+  auto ps= CC_GNLF(Players,board,"players");
+  auto ss= CC_GNLF(GVars, arena, "slots");
+  ss->pnum= 0; // no one is current yet
   initOnline();
 }
 
@@ -62,7 +59,6 @@ void Net::initOnline() {
     rp(evt);
     ws::netSend(MGMS()->wsock(), evt);
     CCLOG("acknowledge to server: replay please");
-
   } else {
     // new game
     auto evt = new ws::OdinEvent(
@@ -72,7 +68,6 @@ void Net::initOnline() {
     rp(evt);
     ws::netSend(MGMS()->wsock(), evt);
     CCLOG("reply to server: session started ok");
-
   }
 }
 
@@ -80,7 +75,7 @@ void Net::initOnline() {
 //
 void Net::sync() {
 
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto active = MGMS()->isLive();
   int pnum;
 
@@ -101,10 +96,10 @@ void Net::sync() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::process() {
-  auto ps = CC_GNLF(Players, boardNode, "players");
-  auto sel = CC_GNLF(Select, boardNode, "click");
-  auto grid= CC_GNLF(Grid, boardNode, "grid");
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ps = CC_GNLF(Players, board, "players");
+  auto sel = CC_GNLF(CellPos, board, "select");
+  auto grid= CC_GNLF(Grid, board, "grid");
+  auto ss= CC_GNLF(GVars,arena, "slots");
   auto nil = CC_CSV(c::Integer, "CV_Z");
   auto pos = sel->cell;
   auto cur = ss->pnum;
@@ -112,8 +107,8 @@ void Net::process() {
   // is it really your turn?
   if (cur > 0 && cur == ps->parr[0]->pnum) {} else { return;}
 
-  if ((pos >= 0 && pos < grid->values.size()) &&
-      nil == grid->values[pos])
+  if ((pos >= 0 && pos < grid->vals.size()) &&
+      nil == grid->vals[pos])
   {}
   else
   { return; }
@@ -127,7 +122,7 @@ void Net::process() {
     j::json({
       { "color", ps->parr[cur]->color },
       { "value", ps->parr[cur]->value },
-      { "grid", grid->values },
+      { "grid", grid->vals },
       { "cell", pos }
     }));
   c::RefPtr<ws::OdinEvent>
@@ -163,9 +158,9 @@ void Net::onNet(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::onSess(ws::OdinEvent *evt) {
-  auto ps= CC_GNLF(Players, boardNode, "players");
-  auto grid= CC_GNLF(Grid, boardNode, "grid");
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ps= CC_GNLF(Players, board, "players");
+  auto grid= CC_GNLF(Grid, board, "grid");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto src= evt->doco["source"];
   auto pnum= JS_INT(src["pnum"]);
   auto cmd= src["cmd"];
@@ -175,13 +170,13 @@ void Net::onSess(ws::OdinEvent *evt) {
     auto cell= JS_INT(cmd["cell"]);
     auto cv= JS_INT(cmd["value"]);
     if (cell >= 0 &&
-        cell < grid->values.size()) {
+        cell < grid->vals.size()) {
       if (ps->parr[1]->value == cv) {
         snd= "x_pick";
       } else {
         snd= "o_pick";
       }
-      grid->values[cell] = cv;
+      grid->vals[cell] = cv;
       cx::sfxPlay(snd);
     }
   }

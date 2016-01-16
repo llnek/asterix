@@ -10,14 +10,32 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
+#include "x2d/GameScene.h"
+#include "core/Odin.h"
+#include "core/JSON.h"
+
+NS_ALIAS(ws,fusii::odin)
 NS_BEGIN(tttoe)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GCXX : public f::GCX {
+  GCXX(f::GMode m, ws::OdinIO *io, j::json msg)
+    : GCX(m,io) {
+    data=msg;
+  }
+  DECL_TD(j::json, data)
+  DECL_TV(int, count, 1)
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
-
+  virtual void sendMsgEx(const MsgTopic&, void*);
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
+  MDECL_GLAYER(2)
 };
-
-
 
 
 

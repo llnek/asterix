@@ -16,20 +16,12 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GEngine  : public a::Engine {
-
-  DECL_IZ(pnum)
-
+  DECL_IZ(mynum)
 public:
-
+  GEngine(int pnum) { mynum=pnum; }
   virtual void initEntities();
   virtual void initSystems();
-
-  GEngine(int pnum) {
-    this->pnum=pnum;
-  }
-
 };
-
 
 NS_END(tttoe)
 

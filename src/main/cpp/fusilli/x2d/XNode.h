@@ -20,9 +20,9 @@ NS_BEGIN(fusii)
 class CC_DLL XNode {
 protected:
 
-  c::SpriteBatchNode* regoAtlas( const sstr &name, int zx = 0);
+  virtual c::SpriteBatchNode* regoAtlas( const sstr &name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
-  void bind(c::Node* p) { self = p; }
+  virtual void bind(c::Node* p) { self = p; }
   DECL_TV(int, lastTag, 0)
   DECL_TV(int, lastZ, 0)
   DECL_PTR(c::Node, self)
@@ -30,30 +30,30 @@ protected:
 
 public:
 
-  void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos, int z, int tag);
-  void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos);
+  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos, int z, int tag);
+  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos);
 
-  void addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag);
-  void addAtlasItem(const sstr &atlas, not_null<c::Node*> n);
+  virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag);
+  virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n);
 
-  void addFrame(const sstr &n, const c::Vec2 &pos, int z, int tag);
-  void addFrame(const sstr &n, const c::Vec2 &pos);
+  virtual void addFrame(const sstr &n, const c::Vec2 &pos, int z, int tag);
+  virtual void addFrame(const sstr &n, const c::Vec2 &pos);
 
   virtual c::SpriteBatchNode* getAtlas(const sstr &name);
 
-  void addItem(not_null<c::Node*> n, int z, int tag);
-  void addItem(not_null<c::Node*> n);
+  virtual void addItem(not_null<c::Node*> n, int z, int tag);
+  virtual void addItem(not_null<c::Node*> n);
 
-  const sstr gets(const sstr&, const s_vec<sstr>&);
-  const sstr gets(const sstr&);
+  virtual const sstr gets(const sstr&, const s_vec<sstr>&);
+  virtual const sstr gets(const sstr&);
 
-  void centerImage(const sstr &n, int z= -1);
-  void removeAtlasAll(const sstr &atlas) ;
-  void removeItem(not_null<c::Node*> n);
-  void removeAll();
+  virtual void centerImage(const sstr &n, int z= -1);
+  virtual void removeAtlasAll(const sstr &atlas) ;
+  virtual void removeItem(not_null<c::Node*> n);
+  virtual void removeAll();
 
-  int zIndex() { return lastZ; }
-  int incIndexZ();
+  virtual int zIndex() { return lastZ; }
+  virtual int incIndexZ();
 
   virtual ~XNode() {}
 };

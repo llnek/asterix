@@ -33,7 +33,6 @@ GameScene* GameScene::self() {
 //
 GameScene::~GameScene() {
   F__LOOP(it, pools) { delete it->second; }
-  mc_del_ptr(context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +116,6 @@ const c::Rect GameScene::getEnclosureRect() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
 const Box4 GameScene::getEnclosureBox() {
   return cx::visBox();
 }

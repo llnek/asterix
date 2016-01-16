@@ -11,7 +11,10 @@
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Resolve.h"
+
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,10 +44,9 @@ void Resolve::sync() {
   for (int i=0; i < grid->vals.size(); ++i) {
     auto v= grid->vals[i];
     if (v != nil) {
-      auto sq= css[i];
+      auto sq= css->sqs[i];
       if (sq->value == nil) {
-        sq->value=v;
-        sq->toggle();
+        sq->toggle(v);
       }
     }
   }
@@ -130,7 +132,7 @@ void Resolve::doForfeit() {
   F__LOOP(it, css->sqs) {
     auto z = *it;
     if (z->value == loser->value) {
-      z->toggle(true);
+      z->flip();
     }
   }
 
@@ -149,7 +151,7 @@ void Resolve::showWinningIcons(const ArrDim &combo) {
           != combo.end())) {
       auto z= css->sqs[i];
       if (z->value != nil) {
-        z->toggle(true);
+        z->flip();
       }
     }
   }
@@ -195,7 +197,7 @@ bool Resolve::checkWin(Player *p, Grid *game, ArrDim &combo) {
 
     for (int i=0; i < g.size(); ++i) {
       auto pos = g[i];
-      if (game->values[pos] == p->value) {
+      if (game->vals[pos] == p->value) {
         ++cnt;
       }
     }

@@ -23,10 +23,10 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 void Logic::preamble() {
-  humanNode = engine->getNodeList(HumanNode().typeId());
-  robotNode = engine->getNodeList(RobotNode().typeId());
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
-  boardNode = engine->getNodeList(BoardNode().typeId());
+  human= engine->getNodeList(HumanNode().typeId());
+  robot= engine->getNodeList(RobotNode().typeId());
+  arena= engine->getNodeList(ArenaNode().typeId());
+  board= engine->getNodeList(BoardNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,10 +43,10 @@ bool Logic::update(float dt) {
 //
 void Logic::doIt(float dt) {
 
-  auto ps = CC_GNLF(Players, boardNode, "players");
-  auto sel = CC_GNLF(Select, boardNode, "click");
-  auto grid= CC_GNLF(Grid, boardNode, "grid");
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ps = CC_GNLF(Players, board, "players");
+  auto sel = CC_GNLF(CellPos, board, "select");
+  auto grid= CC_GNLF(Grid, board, "grid");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto bot= CC_CSV(c::Integer, "BOT");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto pnum= ss->pnum;
@@ -61,11 +61,13 @@ void Logic::doIt(float dt) {
     }
     else
     if (cx::timerDone(botTimer)) {
-      auto robot= CC_GNLF(Robot,robotNode,"robot");
-      robot->board->syncState(grid->values, cp->value);
-      int rc= robot->board->getFirstMove();
+      auto rb= CC_GNLF(SmartAI,robot,"robot");
+      auto bd= rb->ai;
+      int rc;
+      bd->syncState(grid->vals, cp->value);
+      rc= bd->getFirstMove();
       if (rc < 0) {
-        rc = ag::evalNegaMax<BD_SZ>(robot->board);
+        rc = ag::evalNegaMax<BD_SZ>(bd);
       }
       sync(rc, cp->value, grid);
       cx::undoTimer(botTimer);
@@ -85,16 +87,16 @@ void Logic::doIt(float dt) {
 //
 void Logic::sync(int pos, int value, Grid *grid) {
 
-  auto ps= CC_GNLF(Players, boardNode, "players");
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ps= CC_GNLF(Players, board, "players");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto nil = CC_CSV(c::Integer, "CV_Z");
   auto human= CC_CSV(c::Integer,"HUMAN");
   auto cur = ss->pnum;
   auto other=0;
   auto snd="";
 
-  if ((pos >= 0 && pos < grid->values.size()) &&
-      nil == grid->values[pos]) {
+  if ((pos >= 0 && pos < grid->vals.size()) &&
+      nil == grid->vals[pos]) {
 
     SENDMSG("/hud/timer/hide");
 
@@ -107,7 +109,7 @@ void Logic::sync(int pos, int value, Grid *grid) {
     }
 
     // switch player
-    grid->values[pos] = value;
+    grid->vals[pos] = value;
     ss->pnum= other;
 
     if (ps->parr[other]->category == human) {

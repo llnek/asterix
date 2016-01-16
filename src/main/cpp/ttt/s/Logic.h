@@ -30,10 +30,10 @@ public:
   MDECL_SYS_UPDATE()
 
   DECL_PTR(c::DelayTime, botTimer)
-  DECL_PTR(a::NodeList, humanNode)
-  DECL_PTR(a::NodeList, robotNode)
-  DECL_PTR(a::NodeList, boardNode)
-  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, human)
+  DECL_PTR(a::NodeList, robot)
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, arena)
 
   Logic(a::Engine *e)
   : System(e)

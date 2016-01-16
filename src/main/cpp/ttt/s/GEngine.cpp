@@ -22,7 +22,7 @@ NS_BEGIN(tttoe)
 void GEngine::initSystems() {
   regoSystem(mc_new_1(Resolve,this));
   regoSystem(mc_new_1(Logic,this));
-  regoSystem(mc_new_1(Net,this));
+ // regoSystem(mc_new_1(Net,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,22 +42,22 @@ void GEngine::initEntities() {
   a::Entity *board;
   a::Entity *p2;
   a::Entity *p1;
-  int cat2, cat1;
+  auto cat1= human;
+  auto cat2= bot;
   ArrCells seed;
   seed.fill(nil);
-
-  // config global vars
-  gvs->pnum=this->pnum;
 
   arena= this->reifyEntity();
   board= this->reifyEntity();
   p2 = this->reifyEntity();
   p1 = this->reifyEntity();
 
+  // config global vars
+  gvs->pnum= mynum;
+
   // the squares
   for (auto i=0; i < css->sqs.size(); ++i) {
-    auto sp= cx::reifySprite("z.png");
-    css->sqs[i] = mc_new_3(CSquare, sp, i, nil);
+    css->sqs[i] = mc_new_1(CSquare, i);
   }
 
   arena->checkin(gvs);
@@ -67,23 +67,28 @@ void GEngine::initEntities() {
   if (mode == f::GMode::NET) {
     cat2= netp;
     cat1= netp;
+    p2->checkin(mc_new(Gesture));
+    p1->checkin(mc_new(Gesture));
   }
   else
   if (mode == f::GMode::ONE) {
     auto bd= mc_new_3(TTToe, nil, xv, ov);
-    p2->checkin(mc_new(Robot, bd));
-    cat2=bot;
-    cat1=human;
+    p2->checkin(mc_new_1(SmartAI, bd));
+    p1->checkin(mc_new(Gesture));
   }
   else
   if (mode == f::GMode::TWO) {
     cat2= human;
     cat1= human;
+    p2->checkin(mc_new(Gesture));
+    p1->checkin(mc_new(Gesture));
   }
 
-  ps->parr[2]= mc_new_2(Player, cat2, ov, 2);
-  ps->parr[1]= mc_new_2(Player, cat1, xv, 1);
-  ps->parr[0]= nullptr; // dummy
+  ps->parr[2]= mc_new_3(Player, cat2, ov, 2);
+  ps->parr[2]->color= CC_CSS("P2_COLOR");
+  ps->parr[1]= mc_new_3(Player, cat1, xv, 1);
+  ps->parr[1]->color= CC_CSS("P1_COLOR");
+  ps->parr[0]= mc_new_1(Player,mynum);
 
   p2->checkin(ps->parr[2]);
   p1->checkin(ps->parr[1]);
