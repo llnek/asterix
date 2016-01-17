@@ -15,7 +15,7 @@
 #include "NetPlay.h"
 #include "MMenu.h"
 #include "Game.h"
-#include "n/GNodes.h"
+#include "s/utils.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -72,10 +72,10 @@ void MMenu::decorate() {
   back->setCallback(
       [=](c::Ref*){ SCAST(MCX*, getCtx())->back(); });
 
-  // audio btns
-  s_vec<c::MenuItem*> audios {back, quit};
+  // ctrl btns
+  s_vec<c::MenuItem*> ctrl {back, quit};
   auto sz= back->getContentSize();
-  auto m2= cx::mkHMenu(audios);
+  auto m2= cx::mkHMenu(ctrl);
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
                   wb.bottom+tile+sz.height*0.45f);

@@ -43,7 +43,7 @@ c::Menu* XNode::addAudioIcons( const s_arr<c::MenuItem*,2> &audios,
   // need null to end var-args
   auto menu= c::Menu::create(audio, nullptr);
   menu->setPosition(pos);
-  addChild(menu);
+  self->addChild(menu);
   return menu;
 }
 

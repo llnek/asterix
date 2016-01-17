@@ -22,7 +22,6 @@
 #include "core/Odin.h"
 #include "core/JSON.h"
 #include "XScene.h"
-#include "XLib.h"
 #include "GameLayer.h"
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(fusii)

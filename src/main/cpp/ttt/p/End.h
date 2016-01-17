@@ -9,40 +9,24 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
-//////////////////////////////////////////////////////////////////////////////
-#include "x2d/GameScene.h"
-#include "core/Odin.h"
-#include "core/JSON.h"
 
-NS_ALIAS(ws,fusii::odin)
+#include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GCXX : public f::GCX {
-  GCXX(f::GMode m, ws::OdinIO *io, j::json msg)
-    : GCX(m,io) {
-    data=msg;
-  }
-  DECL_TD(j::json, data)
-};
+class CC_DLL ELayer : public f::XLayer {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Game : public f::GameScene {
-  virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer() {
-     return
-       (f::GameLayer*) getLayer(2);
-  }
+  void onReplay();
+  void onQuit();
 
-  STATIC_REIFY_SCENE_CTX(Game)
+public:
+
+  STATIC_REIFY_LAYER(ELayer)
   MDECL_DECORATE()
+  MDECL_GET_IID(4)
+
 };
-
-
 
 NS_END(tttoe)
-
-
 

@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "Resolve.h"
 #include "Net.h"
@@ -22,7 +23,9 @@ NS_BEGIN(tttoe)
 void GEngine::initSystems() {
   regoSystem(mc_new_1(Resolve,this));
   regoSystem(mc_new_1(Logic,this));
- // regoSystem(mc_new_1(Net,this));
+  if (MGMS()->isOnline()) {
+    regoSystem(mc_new_1(Net,this));
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,10 +58,12 @@ void GEngine::initEntities() {
   // config global vars
   gvs->pnum= mynum;
 
+  auto gps= mapGridPos(1);
   // the squares
   for (auto i=0; i < css->sqs.size(); ++i) {
     css->sqs[i] = mc_new_1(CSquare, i);
   }
+  S__COPY(gps, css->boxes);
 
   arena->checkin(gvs);
   arena->checkin(css);

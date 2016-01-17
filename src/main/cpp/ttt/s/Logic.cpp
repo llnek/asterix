@@ -23,7 +23,6 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 void Logic::preamble() {
-  human= engine->getNodeList(HumanNode().typeId());
   robot= engine->getNodeList(RobotNode().typeId());
   arena= engine->getNodeList(ArenaNode().typeId());
   board= engine->getNodeList(BoardNode().typeId());
@@ -111,6 +110,11 @@ void Logic::sync(int pos, int value, Grid *grid) {
     // switch player
     grid->vals[pos] = value;
     ss->pnum= other;
+    auto msg= j::json({
+        {"running", MGMS()->isLive() },
+        {"pnum", other}
+        });
+    SENDMSGEX("/hud/update",&msg);
 
     if (ps->parr[other]->category == human) {
       SENDMSG("/hud/timer/show");

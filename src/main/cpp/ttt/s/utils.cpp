@@ -88,39 +88,6 @@ const s_vec<ArrDim> mapGoalSpace() {
   return goals;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr pkFlip(const sstr &img, bool flip) {
-  if (flip) {
-    return img + ".i.png";
-  } else {
-    return img + ".png";
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr xrefImg(int value) {
-  auto x= CC_CSV(c::Integer,"CV_X");
-  auto o= CC_CSV(c::Integer,"CV_O");
-  auto z= CC_CSV(c::Integer,"CV_Z");
-
-  if (x==value) { return "x"; }
-  if (o==value) { return "o"; }
-  if (z==value) { return "z"; }
-
-  throw "bad xrefImg() value!";
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-c::Sprite* drawSymbol(not_null<a::Component*> c,
-    const c::Vec2 &pos,
-    int value, bool flip) {
-
-  return nullptr;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 j::json fmtGameData(f::GMode m) {

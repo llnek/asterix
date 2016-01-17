@@ -60,7 +60,10 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
 
   obj["ppids"] = evt->doco["source"]["ppids"];
   obj["pnum"]= j::json(player);
+
+  io->cancelAll();
   SNPTR(odin)
+
   ctx->yes(io,obj);
 }
 
@@ -69,8 +72,6 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
 void NetPlay::onCancel() {
   auto f= []() { cx::runEx(XCFG()->prelude()); };
   auto m = MMenu::reify(mc_new_1(MCX, f));
-  ws::disconnect(odin);
-  mc_del_ptr(odin)
   cx::runEx(m);
 }
 
@@ -92,7 +93,6 @@ void NetPlay::networkEvent(ws::OdinEvent *evt) {
     break;
     case ws::EType::START:
       CCLOG("play room is ready, game can start");
-      odin->cancelAll();
       onStart(evt);
     break;
   }
@@ -150,14 +150,12 @@ void NetPlay::decorate() {
   auto cw= cx::center();
   auto wb= cx::visBox();
 
-  centerImage(this,"game.bg");
-  incIndexZ();
+  centerImage("game.bg");
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
-  qn->setOpacity(0.9f*255);
-  addItem(this,qn);
+  addItem(qn);
 
   // editbox for user
   auto uid = c::ui::TextField::create();
@@ -169,7 +167,7 @@ void NetPlay::decorate() {
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
   uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  addItem(this,uid, lastZ, USER_TAG);
+  addItem(uid, lastZ, USER_TAG);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -181,30 +179,29 @@ void NetPlay::decorate() {
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  addItem(this,pwd, lastZ, PSWD_TAG);
+  addItem(pwd, lastZ, PSWD_TAG);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
   auto b2= cx::reifyMenuBtn("cancel.png");
-  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1, b2});
+  s_vec<c::MenuItem*> btns {b1, b2};
+  auto menu= cx::mkVMenu(btns);
 
   menu->setPosition(cw.x, wb.top * 0.1f);
-  b1->setCallback([=](c::Ref*) {
-      this->onLogin();
-      });
+  b1->setCallback(
+      [=](c::Ref*) { this->onLogin(); });
 
-  b2->setCallback([=](c::Ref*) {
-      this->onCancel();
-      });
+  b2->setCallback(
+      [=](c::Ref*) { this->onCancel(); });
 
-  addItem(this,menu);
+  addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 NetPlay::~NetPlay() {
   ws::disconnect(odin);
-  mc_del_ptr(odin)
+  delete odin;
 }
 
 

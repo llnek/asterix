@@ -116,7 +116,7 @@ struct CC_DLL CSquare  {
     }
   }
   void flip() {
-    sprite->setSpriteFrame(png + "_i.png");
+    sprite->setSpriteFrame(png + ".i.png");
   }
   DECL_PTR(c::Sprite,sprite)
   DECL_IZ(value)
@@ -128,6 +128,7 @@ struct CC_DLL CSquare  {
 //
 struct CC_DLL CSquares  : public a::Component {
   MDECL_COMP_TPID( "n/CSquares" )
+  s_arr<f::Box4,GD_SZ> boxes;
   s_arr<CSquare*,GD_SZ> sqs;
 };
 

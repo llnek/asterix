@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "n/GNodes.h"
 #include "s/utils.h"
-#include "Game.h"
+#include "MMenu.h"
 #include "Splash.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -62,14 +62,12 @@ void Splash::decorate() {
 
   demo();
 
-  auto x= new GCXX(f::GMode::ONE, nullptr, fmtGameData(f::GMode::ONE));
   auto f= []() { cx::runEx(XCFG()->prelude()); };
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify(x));
-    //cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
+      cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);

@@ -47,13 +47,11 @@ class CC_DLL NetPlay : public f::XScene {
   DECL_PTR(ws::OdinIO, odin)
   DECL_IZ(player)
 
-  virtual ~NetPlay();
-
 public:
 
   STATIC_REIFY_SCENE_CTX(NetPlay)
   MDECL_DECORATE()
-
+  virtual ~NetPlay();
 };
 
 

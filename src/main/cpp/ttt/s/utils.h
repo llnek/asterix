@@ -26,12 +26,6 @@ NS_BEGIN(tttoe)
 
   const s_vec<ArrDim> mapGoalSpace();
 
-  const sstr pkFlip(const sstr &img, bool flip);
-
-  const sstr xrefImg(int value);
-
-  c::Sprite* drawSymbol(not_null<a::Component*>, const c::Vec2&, int value, bool flip = false);
-
   j::json fmtGameData(fusii::GMode );
 
 
