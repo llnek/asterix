@@ -20,6 +20,9 @@ NS_BEGIN(fusii)
 class CC_DLL XNode {
 protected:
 
+  virtual c::Menu* addAudioIcons(const s_arr<c::MenuItem*,2>&,
+    const c::Vec2 &anchor, const c::Vec2 &pos);
+
   virtual c::SpriteBatchNode* regoAtlas( const sstr &name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
   virtual void bind(c::Node* p) { self = p; }

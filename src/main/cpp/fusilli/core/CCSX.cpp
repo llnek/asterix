@@ -290,20 +290,20 @@ const Box4 bbox4(not_null<c::Node*> s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void runSceneEx(not_null<c::Scene*> ns) {
-  runScene(ns, CC_CSV(c::Float, "SCENE_DELAY"));
+void runEx(not_null<c::Scene*> ns) {
+  run(ns, CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void runScene(not_null<c::Scene*> ns, float delay) {
+void run(not_null<c::Scene*> ns, float delay) {
   CC_DTOR()->replaceScene(
       c::TransitionCrossFade::create(delay, ns));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void runScene(not_null<c::Scene*> ns) {
+void run(not_null<c::Scene*> ns) {
   CC_DTOR()->replaceScene(ns);
 }
 

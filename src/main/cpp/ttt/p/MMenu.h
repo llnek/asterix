@@ -8,23 +8,34 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
 
-#if !defined(__XLIB_H__)
-#define __XLIB_H__
+#include "x2d/GameScene.h"
+NS_BEGIN(tttoe)
 
-#include "base/ccTypes.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL MCX : public f::SCTX {
+  MCX(VOIDFN b) { back=b; }
+  DECL_TD(VOIDFN, back)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MMenu : public f::XScene {
+
+  void onPlayXXX( ws::OdinIO*, j::json);
+  void onPlayXXX( f::GMode);
+  void onPlay3();
+
+public:
+
+  STATIC_REIFY_SCENE_CTX(MMenu)
+  MDECL_DECORATE()
+
+};
 
 
-//c::Menu* addMenuIcon(not_null<XLayer*> layer, not_null<c::MenuItem*> b);
+NS_END(tttoe)
 
-c::Menu* addAudioIcons(not_null<c::Node*> layer,
-    const s_arr<c::MenuItem*,2>&,
-    const c::Vec2 &anchor, const c::Vec2 &pos);
-
-
-
-NS_END(fusii)
-#endif
 

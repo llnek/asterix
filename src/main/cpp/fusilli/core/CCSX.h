@@ -89,9 +89,9 @@ namespace ccsx {
     return bbox4(c->sprite);
   }
 
-  void runScene(not_null<c::Scene*>, float delay);
-  void runScene(not_null<c::Scene*>);
-  void runSceneEx(not_null<c::Scene*>);
+  void run(not_null<c::Scene*>, float delay);
+  void run(not_null<c::Scene*>);
+  void runEx(not_null<c::Scene*>);
 
   const c::Vec2 calcXY(float angle, float hypot);
   float degToRad(float);

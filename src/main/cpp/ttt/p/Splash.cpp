@@ -62,14 +62,14 @@ void Splash::decorate() {
 
   demo();
 
-  auto f= []() { cx::runSceneEx(XCFG()->prelude()); };
+  auto x= new GCXX(f::GMode::ONE, nullptr, fmtGameData(f::GMode::ONE));
+  auto f= []() { cx::runEx(XCFG()->prelude()); };
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
-    auto x= new GCXX(f::GMode::ONE, nullptr, fmtGameData(f::GMode::ONE));
   b1->setCallback([=](c::Ref*) {
-      cx::runSceneEx(Game::reify(x));
-    //cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
+      cx::runEx(Game::reify(x));
+    //cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);

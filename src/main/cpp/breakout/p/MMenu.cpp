@@ -46,7 +46,7 @@ void UILayer::decorate() {
   auto btn= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(btn);
   btn->setCallback([=](c::Ref*){
-    cx::runSceneEx(Game::reify(mc_new(f::GCX)));
+    cx::runEx(Game::reify(mc_new(f::GCX)));
   });
   menu->setPosition(cw);
   addItem(this,menu);

@@ -8,63 +8,54 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
 
-#if !defined(__XSCENE_H__)
-#define __XSCENE_H__
+#include "x2d/XScene.h"
+#include "core/Odin.h"
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
+NS_ALIAS(ws, fusii::odin)
+NS_BEGIN(tttoe)
+
+typedef std::function<void (ws::OdinIO*, j::json)> NPCX_Yes;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SCTX {
-  DECL_TV(int, count,1)
-  virtual ~SCTX() {}
+struct CC_DLL NPCX : public f::SCTX {
+  NPCX(NPCX_Yes yes, VOIDFN no) {
+    this->yes=yes;
+    this->no=no;
+  }
+  DECL_TD(NPCX_Yes, yes)
+  DECL_TD(VOIDFN, no)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XScene : public XNode, public c::Scene {
-protected:
+class CC_DLL NetPlay : public f::XScene {
 
-  DECL_PTR(SCTX, context)
+  void networkEvent(ws::OdinEvent*);
+  void sessionEvent(ws::OdinEvent*);
+  void odinEvent(ws::OdinEvent*);
+
+  void onPlayReply(ws::OdinEvent*);
+  void showWaitOthers();
+  void onStart(ws::OdinEvent*);
+
+  void onCancel();
+  void onLogin();
+
+  DECL_PTR(ws::OdinIO, odin)
+  DECL_IZ(player)
+
+  virtual ~NetPlay();
 
 public:
 
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  SCTX* getCtx() { return context; }
-  XLayer* getLayer(int tag);
-
-  void setCtx(SCTX*, bool clean=true);
-  SCTX* emitCtx();
-
-  virtual void decorate() = 0;
-  virtual bool init();
-  virtual void postReify() {}
-
-  virtual ~XScene();
-  XScene();
-  NOCPYASS(XScene)
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
+  STATIC_REIFY_SCENE_CTX(NetPlay)
+  MDECL_DECORATE()
 
 };
 
 
-NS_END(fusii)
-#endif
+NS_END(tttoe)
 

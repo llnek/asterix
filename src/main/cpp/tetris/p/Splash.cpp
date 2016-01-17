@@ -54,11 +54,11 @@ void UILayer::decorate() {
 //
 void UILayer::onPlay(c::Ref*) {
   auto f= [=]() {
-    cx::runSceneEx(
+    cx::runEx(
         XCFG()->prelude());
   };
   auto m= MMenu::reify(mc_new_1(MCX, f));
-  cx::runSceneEx(m);
+  cx::runEx(m);
 }
 
 END_NS_UNAMED()

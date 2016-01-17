@@ -53,7 +53,7 @@ struct CC_DLL GCX : public SCTX {
 class CC_DLL GameScene : public XScene {
 protected:
 
-  static void bind(not_null<GameScene*>);
+  static void binds(not_null<GameScene*>);
 
   s_map<sstr, XPool*> pools;
   s_que<sstr> msgQ;

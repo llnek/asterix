@@ -45,7 +45,7 @@ void UILayer::decorate() {
   auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
   b->setCallback([=](c::Ref*){
-      cx::runSceneEx(Game::reify(mc_new(f::GCX)));
+      cx::runEx(Game::reify(mc_new(f::GCX)));
   });
   menu->setPosition(cw);
   addItem(menu);
@@ -58,7 +58,7 @@ void UILayer::decorate() {
   back->setColor(c);
   quit->setColor(c);
   quit->setCallback([=](c::Ref*) {
-    cx::runSceneEx(XCFG()->prelude());
+    cx::runEx(XCFG()->prelude());
   });
   auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit});
   m2->setPosition(wb.left + tile + sz.width * 1.1,

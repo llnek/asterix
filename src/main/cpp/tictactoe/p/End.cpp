@@ -24,13 +24,13 @@ NS_BEGIN(tttoe)
 void ELayer::onReplay(c::Ref*) {
   auto x= (GCXX*)getSceneX()->emitCtx();
   x->count++;
-  cx::runSceneEx(Game::reify(x));
+  cx::runEx(Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runSceneEx(XCFG()->prelude());
+  cx::runEx(XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////

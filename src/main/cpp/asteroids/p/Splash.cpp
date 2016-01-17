@@ -36,8 +36,8 @@ void UILayer::decorate() {
   centerImage("game.bg");
 
     b->setCallback([=](c::Ref*) {
-      auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
-    cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
+      auto f= [=]() { cx::runEx(XCFG()->prelude()); };
+    cx::runEx( MMenu::reify(mc_new_1(MCX,f)));
   });
 
   menu->setPosition(cw.x, wb.top * 0.1f);

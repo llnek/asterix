@@ -52,7 +52,7 @@ void UILayer::decorate() {
   auto b= cx::reifyMenuBtn("player1.png");
   auto menu= cx::mkMenu(b);
     b->setCallback([=](c::Ref*) {
-        cx::runSceneEx(
+        cx::runEx(
             Game::reify(mc_new(f::GCX)));
       });
   menu->setPosition(cw);
@@ -88,7 +88,7 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runSceneEx(
+  cx::runEx(
       XCFG()->prelude());
 }
 

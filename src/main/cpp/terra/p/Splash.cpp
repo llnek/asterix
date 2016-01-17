@@ -50,13 +50,13 @@ void UILayer::decorate() {
   addChild(flare, 15, 10);
   addChild(ship, 0, 4);
 
-  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
+  auto f= [=]() { cx::runEx(XCFG()->prelude()); };
   auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
   b->setCallback([=](c::Ref*) {
     btnEffect();
     flareEffect(flare, [=]() {
-      cx::runSceneEx(
+      cx::runEx(
           MMenu::reify(mc_new_1(MCX, f)));
     });
   });

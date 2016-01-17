@@ -110,14 +110,14 @@ void UILayer::decorate() {
 //
 void UILayer::onPlay3(c::Ref*) {
   // no
-  auto f= [=]() { cx::runSceneEx( XCFG()->prelude()); };
-  auto n= [=]() { cx::runSceneEx( MMenu::reify( mc_new_1(MCX,f))); };
+  auto f= [=]() { cx::runEx( XCFG()->prelude()); };
+  auto n= [=]() { cx::runEx( MMenu::reify( mc_new_1(MCX,f))); };
   // yes
   auto y= [=](ws::OdinIO* io, j::json obj) {
     this->onPlayXXX(f::GMode::NET, io, obj);
   };
 
-  cx::runSceneEx( NetPlay::reify( mc_new_2(NPCX, y,n)));
+  cx::runEx( NetPlay::reify( mc_new_2(NPCX, y,n)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ void UILayer::onPlay1(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
-  cx::runSceneEx(
+  cx::runEx(
       Game::reify(
         mc_new_3(GCXX, mode, io, obj)));
 }
@@ -152,7 +152,7 @@ void UILayer::onBack(c::Ref*) {
 //////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runSceneEx( XCFG()->prelude());
+  cx::runEx( XCFG()->prelude());
 }
 
 END_NS_UNAMED()

@@ -21,6 +21,33 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
+// add a toggle for sound on & off
+c::Menu* XNode::addAudioIcons( const s_arr<c::MenuItem*,2> &audios,
+    const c::Vec2 &anchor, const c::Vec2 &pos) {
+
+  c::Vector<c::MenuItem*> items;
+  items.pushBack( audios[1]);
+  items.pushBack( audios[0]);
+
+  auto cb = [](c::Ref *r) {
+    auto t= SCAST(c::MenuItemToggle*, r);
+    auto b= t->getSelectedIndex() == 0;
+    XCFG()->toggleAudio( b);
+  };
+
+  // the toggle
+  auto audio = c::MenuItemToggle::createWithCallback(cb, items);
+  audio->setSelectedIndex( XCFG()->hasAudio() ? 0 : 1);
+  audio->setAnchorPoint(anchor);
+
+  // need null to end var-args
+  auto menu= c::Menu::create(audio, nullptr);
+  menu->setPosition(pos);
+  addChild(menu);
+  return menu;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 //
 const sstr XNode::gets(const sstr &key, const s_vec<sstr> &pms) {
   return XCFG()->getL10NStr(key, pms);

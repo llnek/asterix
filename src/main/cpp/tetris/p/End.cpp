@@ -24,14 +24,14 @@ void ELayer::onReplay(c::Ref*) {
   //auto x= (f::GCX*)getSceneX()->getCtx();
   //auto m= MGMS()->getMode();
   getSceneX()->setCtx(nullptr);
-  cx::runSceneEx(
+  cx::runEx(
       Game::reify(mc_new(f::GCX)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ELayer::onQuit(c::Ref*) {
-  cx::runSceneEx( XCFG()->prelude());
+  cx::runEx( XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////

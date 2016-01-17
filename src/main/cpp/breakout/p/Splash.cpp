@@ -28,7 +28,7 @@ struct CC_DLL UILayer : public f::XLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::decorate() {
-  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
+  auto f= [=]() { cx::runEx(XCFG()->prelude()); };
   auto b= cx::reifyMenuBtn("play.png");
   auto cw = cx::center();
   auto wb = cx::visBox();
@@ -38,7 +38,7 @@ void UILayer::decorate() {
 
   menu->setPosition(cw.x, wb.top * 0.1f);
   b->setCallback([=](c::Ref*) {
-    cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
+    cx::runEx( MMenu::reify(mc_new_1(MCX,f)));
   });
   addItem(this,menu);
 }

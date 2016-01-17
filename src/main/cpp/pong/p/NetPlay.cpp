@@ -94,10 +94,10 @@ void UILayer::onStart(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onCancel(c::Ref*) {
-  auto f= [=]() { cx::runSceneEx( XCFG()->prelude()); };
+  auto f= [=]() { cx::runEx( XCFG()->prelude()); };
   ws::disconnect(odin);
   SNPTR(odin)
-  cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
+  cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

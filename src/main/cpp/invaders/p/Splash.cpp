@@ -38,11 +38,11 @@ void UILayer::decorate() {
 
   addFrame("title.png", c::Vec2(cw.x, wb.top * 0.9f));
 
-  auto cb= [=]() { cx::runScene(XCFG()->prelude()); };
+  auto cb= [=]() { cx::run(XCFG()->prelude()); };
   auto b1 = cx::reifyMenuBtn("play.png");
   auto menu = cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-        cx::runScene( MMenu::reify(mc_new_1(MCX, cb)));
+        cx::run( MMenu::reify(mc_new_1(MCX, cb)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);

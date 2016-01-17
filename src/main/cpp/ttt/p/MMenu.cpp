@@ -11,10 +11,9 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "core/odin.h"
-#include "x2d/XLib.h"
+#include "core/Odin.h"
 #include "NetPlay.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "Game.h"
 #include "n/GNodes.h"
 
@@ -27,67 +26,67 @@ NS_BEGIN(tttoe)
 void MMenu::decorate() {
   auto tile = CC_CSV(c::Integer,"TILE");
   auto nil = CC_CSV(c::Integer,"CV_Z");
-  auto c = XCFG()->getColor("default");
+  auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
   auto cw = cx::center();
   auto lb = cx::reifyBmfLabel(
-      cw.x,
-      wb.top * 0.9f,
-      "font.JellyBelly",
-      gets("mmenu"));
+      cw.x, wb.top * 0.9f,
+      "font.JellyBelly", gets("mmenu"));
 
-  centerImage(this,"gui.mmenu.menu.bg");
-  incIndexZ();
+  centerImage("gui.mmenu.menu.bg");
 
   lb->setScale(XCFG()->getScale());
   lb->setColor(c);
-  addItem(this,lb);
+  addItem(lb);
 
+  //menu buttons
   auto b1 = cx::reifyMenuBtn("online.png");
-  b1->setCallback([=](c::Ref*){
-      this->onPlay3();
-      });
-
   auto b2 = cx::reifyMenuBtn("player2.png");
-  b2->setCallback([=](c::Ref*){
-      this->onPlay2();
-      });
-
   auto b3 = cx::reifyMenuBtn("player1.png");
-  b3->setCallback([=](c::Ref*){
-      this->onPlay1();
-      });
 
-  auto menu= cx::mkVMenu( s_vec<c::MenuItem*> {b1,b2,b3});
+  b1->setCallback(
+      [=](c::Ref*){ this->onPlay3(); });
+
+  b2->setCallback(
+      [=](c::Ref*){ this->onPlayXXX(f::GMode::TWO ); } );
+
+  b3->setCallback(
+      [=](c::Ref*){ this->onPlayXXX(f::GMode::ONE ); } );
+
+  //add btns to menu
+  s_vec<c::MenuItem*> btns {b1,b2,b3};
+  auto menu= cx::mkVMenu(btns);
   menu->setPosition(cw);
-  addItem(this,menu);
+  addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  back->setCallback([=](c::Ref*){
-      this->onBack();
-      });
-  back->setColor(c);
-
   auto quit= cx::reifyMenuBtn("icon_quit.png");
-  quit->setCallback([=](c::Ref*){
-      this->onQuit();
-      });
+
+  back->setColor(c);
   quit->setColor(c);
 
-  auto m2= cx::mkHMenu( s_vec<c::MenuItem*> {back, quit} );
+  quit->setCallback(
+      [=](c::Ref*){ cx::runEx( XCFG()->prelude()); });
+
+  back->setCallback(
+      [=](c::Ref*){ SCAST(MCX*, getCtx())->back(); });
+
+  // audio btns
+  s_vec<c::MenuItem*> audios {back, quit};
   auto sz= back->getContentSize();
+  auto m2= cx::mkHMenu(audios);
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
                   wb.bottom+tile+sz.height*0.45f);
-  addItem(this,m2);
+  addItem(m2);
 
   // audio
   auto audios= cx::reifyAudioIcons();
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons(this, audios,
+  addAudioIcons(audios,
       cx::anchorBR(),
       c::Vec2(wb.right-tile, wb.bottom+tile));
 }
@@ -95,56 +94,31 @@ void MMenu::decorate() {
 //////////////////////////////////////////////////////////////////////////
 //
 void MMenu::onPlay3() {
-  // yes
-  auto y= [=](ws::OdinIO* io, j::json obj) {
-    this->onPlayXXX(f::GMode::NET, io, obj);
+  auto f = []() { cx::runEx(XCFG()->prelude()); };
+  auto n = [=]() {
+    cx::runEx( MMenu::reify( mc_new_1(MCX,f)));
   };
-  // no
-  auto f= []() {
-    cx::runEx(XCFG()->prelude());
+  auto y= [=](ws::OdinIO *io, j::json obj) {
+    this->onPlayXXX(io, obj);
   };
-  auto n= [=]() {
-    cx::runEx(
-        MMenu::reify(mc_new_1(MCX,f)));
-  };
-
-  cx::runEx(
-      NetPlay::reify( mc_new_2(NPCX, y,n)));
+  cx::runEx( NetPlay::reify( mc_new_2(NPCX, y,n)));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MMenu::onPlay2() {
-  auto m= f::GMode::TWO;
-  onPlayXXX(m, nullptr, fmtGameData(m));
-}
-//////////////////////////////////////////////////////////////////////////
-//
-void MMenu::onPlay1() {
-  auto m= f::GMode::ONE;
-  onPlayXXX(m, nullptr, fmtGameData(m));
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void MMenu::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
+void MMenu::onPlayXXX(ws::OdinIO *io, j::json obj) {
+  auto mode= f::GMode::NET;
   cx::runEx(
       Game::reify(mc_new_3(GCXX, mode, io, obj)));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MMenu::onBack() {
-  auto ctx = (MCX*) getCtx();
-  ctx->back();
+void MMenu::onPlayXXX(f::GMode mode) {
+  auto obj = fmtGameData(mode);
+  cx::runEx(
+      Game::reify(mc_new_3(GCXX, mode, nullptr, obj)));
 }
-
-//////////////////////////////////////////////////////////////////////////
-//
-void MMenu::onQuit() {
-  cx::runEx( XCFG()->prelude());
-}
-
 
 NS_END(tttoe)
 

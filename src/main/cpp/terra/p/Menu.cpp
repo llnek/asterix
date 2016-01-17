@@ -51,7 +51,7 @@ void UILayer::decorate() {
   auto menu= cx::mkMenu(b);
 
   b->setCallback([=](c::Ref*) {
-      cx::runSceneEx(Game::reify(mc_new(f::GCX)));
+      cx::runEx(Game::reify(mc_new(f::GCX)));
   });
   menu->setPosition(cw);
   addItem(menu);

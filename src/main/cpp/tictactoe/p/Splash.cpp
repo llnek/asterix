@@ -60,12 +60,12 @@ void Splash::decorate() {
 
   demo();
 
-  auto f= [=]() { cx::runSceneEx(XCFG()->prelude()); };
+  auto f= [=]() { cx::runEx(XCFG()->prelude()); };
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-    cx::runSceneEx( MMenu::reify(mc_new_1(MCX, f)));
+    cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);

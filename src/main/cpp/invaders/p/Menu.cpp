@@ -38,7 +38,7 @@ struct CC_DLL UILayer : public f::XLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onQuit(c::Ref*) {
-  cx::runSceneEx(
+  cx::runEx(
       XCFG()->prelude());
 }
 
@@ -65,7 +65,7 @@ void UILayer::decorate() {
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-      cx::runScene(Game::reify(mc_new(f::GCX)));
+      cx::run(Game::reify(mc_new(f::GCX)));
       });
 
   menu->setPosition(cw);

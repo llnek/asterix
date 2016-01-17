@@ -16,21 +16,16 @@
 #include "core/JSON.h"
 #include "NetPlay.h"
 #include "Game.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-BEGIN_NS_UNAMED()
+static int USER_TAG = (int) 'u';
+static int PSWD_TAG = (int) 'p';
 
-const int USER_TAG = (int) 'u';
-const int PSWD_TAG = (int) 'p';
-
-END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::showWaitOthers() {
@@ -40,36 +35,31 @@ void NetPlay::showWaitOthers() {
   auto cw= cx::center();
   auto wb = cx::visBox();
 
-  removeAll(this);
+  removeAll();
 
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
-  qn->setOpacity(0.9f * 255);
-  addItem(this,qn);
+  addItem(qn);
 
   auto f= []() { cx::runEx(XCFG()->prelude()); };
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
 
   menu->setPosition(cw.x, wb.top * 0.1f);
-  b1->setCallback([=](c::Ref*) {
-      this->onCancel();
-      });
-
-  addItem(this,menu);
+  b1->setCallback(
+      [=](c::Ref*) { this->onCancel(); });
+  addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onStart(ws::OdinEvent *evt) {
-  auto m= f::GMode::NET;
-  auto obj= fmtGameData(m);
+  auto obj= fmtGameData( f::GMode::NET);
+  auto ctx = SCAST(NPCX*, getCtx());
+  auto io=odin;
 
   obj["ppids"] = evt->doco["source"]["ppids"];
   obj["pnum"]= j::json(player);
-
-  auto ctx = (NPCX*) getCtx();
-  auto io=odin;
   SNPTR(odin)
   ctx->yes(io,obj);
 }

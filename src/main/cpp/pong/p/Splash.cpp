@@ -52,8 +52,8 @@ void UILayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void UILayer::onPlay(c::Ref*) {
-  auto f = [=]() { cx::runSceneEx( XCFG()->prelude()); };
-  cx::runSceneEx( MMenu::reify(mc_new_1(MCX,f)));
+  auto f = [=]() { cx::runEx( XCFG()->prelude()); };
+  cx::runEx( MMenu::reify(mc_new_1(MCX,f)));
 }
 
 END_NS_UNAMED()
