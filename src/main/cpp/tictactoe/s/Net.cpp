@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
-#include "n/CObjs.h"
+#include "n/C.h"
 #include "n/lib.h"
 #include "Net.h"
 
