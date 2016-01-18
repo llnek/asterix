@@ -8,9 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__BOARD_H__)
-#define __BOARD_H__
+#pragma once
 
 #include "algos/NegaMax.h"
 #include "s/utils.h"
@@ -20,7 +18,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-struct CC_DLL Board : public ag::GameBoard<BD_SZ> {
+struct CC_DLL TTToe : public ag::GameBoard<BD_SZ> {
 
   virtual const s_vec<int> getNextMoves(not_null<ag::FFrame<BD_SZ>*>);
   virtual int evalScore(not_null<ag::FFrame<BD_SZ>*>);
@@ -37,8 +35,8 @@ struct CC_DLL Board : public ag::GameBoard<BD_SZ> {
   int getWinner(not_null<ag::FFrame<BD_SZ>*>, ArrDim &combo);
   void syncState(const ArrCells &seed, int actor);
 
-  Board(int nil,  int p1v,  int p2v);
-  virtual ~Board() {}
+  TTToe(int nil,  int p1v,  int p2v);
+  virtual ~TTToe() {}
 
   int getOtherPlayer(int pv);
   bool isNil(int cellv);
@@ -56,6 +54,5 @@ private:
 };
 
 NS_END(tttoe)
-#endif
 
 

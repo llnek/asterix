@@ -8,9 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__HUD_H__)
-#define __HUD_H__
+#pragma once
 
 #include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
@@ -46,16 +44,15 @@ struct CC_DLL HUDLayer : public f::XLayer {
                    const sstr &color2,
                    const sstr &p2k, const sstr &p2n);
 
-  void showMenu(c::Ref*);
   void resetAsNew();
   void reset();
 
+  void draw(bool running,  int category, int pnum);
   void drawXXXText(c::Label*, const sstr&);
+  void drawStatus(int category, int pnum);
   void updateScore(int pnum, int value);
-  void draw(bool running,  int pnum);
   void showCountDown(const sstr&);
   void drawResult(int pnum);
-  void drawStatus(int pnum);
   void endGame(int winner);
   void updateTimer(float);
   void drawScores();
@@ -66,6 +63,5 @@ struct CC_DLL HUDLayer : public f::XLayer {
 
 
 NS_END(tttoe)
-#endif
 
 

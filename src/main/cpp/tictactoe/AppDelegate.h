@@ -8,21 +8,16 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__APP_DELEGATE_H__)
-#define __APP_DELEGATE_H__
+#pragma once
 
 #include "aeon/fusilli.h"
 #include "core/App.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AppDelegate : public fusii::App {
-public:
+struct CC_DLL AppDelegate : public fusii::App {
   virtual ~AppDelegate();
   AppDelegate();
-  NOCPYASS(AppDelegate)
 };
 
-#endif
 

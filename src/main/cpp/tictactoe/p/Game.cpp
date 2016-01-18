@@ -10,47 +10,91 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "s/EFactory.h"
 #include "core/CCSX.h"
-#include "core/Odin.h"
-#include "HUD.h"
-#include "END.h"
-#include "Game.h"
-#include "Menu.h"
+#include "s/GEngine.h"
+#include "s/utils.h"
+#include "MMenu.h"
 #include "End.h"
+#include "HUD.h"
+#include "Game.h"
 
-NS_ALIAS(ws, fusii::odin)
-NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
-
+//////////////////////////////////////////////////////////////////////////////
 BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GLayer : public f::GameLayer {
+class CC_DLL GLayer : public f::GameLayer {
 
-  virtual void onTouchEnded(c::Touch*, c::Event*);
-  virtual void onMouseUp(c::Event*);
-  virtual void postReify();
+  virtual void onTouchEnded(c::Touch *t, c::Event*);
+  virtual void onMouseUp(c::Event *e);
 
-  void onGUIXXX(const c::Vec2& );
+  void onGUIXXX(const c::Vec2 &pos);
+  void showGrid();
+
+public:
+
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+
+  void overAndDone(int winner);
   void playTimeExpired();
-  void overAndDone(int);
-  void updateHUD();
-
   void showMenu();
-  void reset();
-  void deco();
-
-  MDECL_GET_LAYER(HUDLayer, getHUD, 3)
-
-  DECL_PTR(a::NodeList, boardNode)
-  DECL_PTR(a::NodeList, arenaNode)
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_GET_IID(2)
   MDECL_DECORATE()
+  MDECL_GET_IID(2)
+
+  virtual void postReify();
+
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, arena)
 };
+
+//////////////////////////////////////////////////////////////////////////////
+void GLayer::postReify() {
+  board = engine->getNodeList(BoardNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
+
+  showGrid();
+
+  auto ps = CC_GNLF(Players,board,"players");
+  auto ss = CC_GNLF(GVars,arena,"slots");
+  auto human= CC_CSV(c::Integer,"HUMAN");
+  auto pnum= c::rand_0_1() > 0.5f ? 1 : 2;
+
+  if (MGMS()->isOnline()) {
+    return;
+  } else {
+    // randomly choose who starts
+    ss->pnum= pnum;
+  }
+
+  if (ps->parr[pnum]->category == human) {
+    SENDMSG("/hud/timer/show");
+  }
+
+  auto msg= j::json({
+      {"category", ps->parr[pnum]->category},
+      {"running", true },
+      {"pnum", pnum}
+      });
+  SENDMSGEX("/hud/update",&msg);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::playTimeExpired() {
+  MGMS()->msgQueue().push("forfeit");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::overAndDone(int winner) {
+  getHUD()->endGame(winner);
+  surcease();
+  ELayer::reify(getSceneX(),999);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -60,17 +104,61 @@ void GLayer::showMenu() {
   CC_DTOR()->pushScene(m);
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onTouchEnded(c::Touch *t, c::Event*) {
+  onGUIXXX(t->getLocationInView());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseUp(c::Event *e) {
+  auto evt = (c::EventMouse*) e;
+  onGUIXXX(evt->getLocationInView());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onGUIXXX(const c::Vec2 &pos) {
+
+  auto sel= CC_GNLF(CellPos, board, "select");
+  auto css= CC_GNLF(CSquares,arena,"squares");
+  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto cur = ss->pnum;
+  int n=0;
+
+  sel->cell =  -1;
+  sel->px= pos.x;
+  sel->py= pos.y;
+
+  if (cur <=  0) {
+    CCLOG("onGUIXXX:  OOOPS, cur ============== %d", cur);
+    return;
+  }
+
+  //which cell did he click on?
+  F__LOOP(it, css->boxes) {
+    auto &bx = *it;
+    if (sel->px >= bx.left && sel->px <= bx.right &&
+        sel->py >= bx.bottom && sel->py <= bx.top) {
+      sel->cell= n;
+      break;
+    }
+    ++n;
+  }
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void GLayer::decorate() {
 
   f::emptyQueue<sstr>( MGMS()->msgQueue() );
 
-  centerImage(this,"game.bg");
+  centerImage("game.bg");
   incIndexZ();
 
-  regoAtlas(this,"game-pics");
-  regoAtlas(this,"lang-pics");
+  regoAtlas("game-pics");
+  regoAtlas("lang-pics");
 
   auto ctx = (GCXX*) getSceneX()->getCtx();
   auto pnum= JS_INT(ctx->data["pnum"]);
@@ -94,7 +182,7 @@ void GLayer::decorate() {
 
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 
-  this->engine = mc_new_1(GEngine,pnum);
+  engine = mc_new_1(GEngine,pnum);
 
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   getHUD()->reset();
@@ -103,89 +191,19 @@ void GLayer::decorate() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::postReify() {
-  ArenaNode a;
-  BoardNode n;
-  arenaNode = this->engine->getNodeList(a.typeId());
-  boardNode = this->engine->getNodeList(n.typeId());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::reset() {
-  getHUD()->reset();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::updateHUD() {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
-  if (! MGMS()->isLive()) {
-    getHUD()->drawResult(ss->lastWinner);
-  } else {
-    getHUD()->drawStatus(ss->pnum);
+void GLayer::showGrid() {
+  auto css= CC_GNLF(CSquares,arena, "squares");
+  auto gps= mapGridPos(1);
+  for (int i=0; i < gps.size(); ++i) {
+    auto s= css->sqs[i];
+    auto &bx= gps[i];
+    assert(s->cell == i);
+    s->sprite->setPosition(cx::vboxMID(bx));
+    addAtlasItem( "game-pics", s->sprite);
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::playTimeExpired() {
-  MGMS()->msgQueue().push("forfeit");
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::overAndDone(int winner) {
-  getHUD()->endGame(winner);
-  surcease();
-  ELayer::reify(getSceneX(),999);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchEnded(c::Touch *t, c::Event*) {
-  onGUIXXX(t->getLocationInView());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseUp(c::Event *e) {
-  auto evt = (c::EventMouse*) e;
-  onGUIXXX(evt->getLocationInView());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onGUIXXX(const c::Vec2 &pos) {
-
-  auto sel= CC_GNLF(CellPos, boardNode, "cellpos");
-  auto view = CC_GNLF(PlayView, boardNode, "view");
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
-  auto cur = ss->pnum;
-  int n=0;
-
-  sel->cell =  -1;
-  sel->px= pos.x;
-  sel->py= pos.y;
-
-  if (cur <=  0) {
-    CCLOG("onGUIXXX:  OOOPS, cur ============== %d", cur);
-    return;
-  }
-
-  //which cell did he click on?
-  F__LOOP(it, view->boxes) {
-    auto &bx = *it;
-    if (sel->px >= bx.left && sel->px <= bx.right &&
-        sel->py >= bx.bottom && sel->py <= bx.top) {
-      sel->cell= n;
-      break;
-    }
-    ++n;
-  }
-
-}
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
@@ -230,8 +248,9 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/hud/update" == topic) {
     auto msg= (j::json*) m;
-    y->getHUD()->draw(
+      y->getHUD()->draw(
         JS_BOOL(msg->operator[]("running")),
+                        JS_INT(msg->operator[]("category")),
         JS_INT(msg->operator[]("pnum")));
   }
   else
@@ -246,28 +265,10 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   if ("/game/play" == topic) {
     MGMS()->play();
   }
+
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-bool Game::isLive() {
-  return state > 0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Game::stop() {
-  state=0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void Game::play() {
-  state=911;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
+//////////////////////////////////////////////////////////////////////////////
 void Game::decorate() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this,2);
@@ -275,6 +276,9 @@ void Game::decorate() {
 }
 
 
+
+
 NS_END(tttoe)
+
 
 

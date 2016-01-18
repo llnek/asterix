@@ -8,23 +8,25 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__END_H__)
-#define __END_H__
+#pragma once
 
 #include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL ELayer : public f::XLayer {
+class CC_DLL ELayer : public f::XLayer {
+
+  void onReplay();
+  void onQuit();
+
+public:
+
   STATIC_REIFY_LAYER(ELayer)
   MDECL_DECORATE()
-protected:
-  void onReplay(c::Ref*);
-  void onQuit(c::Ref*);
+  MDECL_GET_IID(4)
+
 };
 
 NS_END(tttoe)
-#endif
 

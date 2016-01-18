@@ -11,7 +11,7 @@
 
 #include "base/ccRandom.h"
 #include "core/CCSX.h"
-#include "Board.h"
+#include "TTToe.h"
 #include "s/utils.h"
 #include <math.h>
 
@@ -40,7 +40,7 @@ bool every(const ArrCells &arr, int v) {
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-Board::Board(int nil, int p1v, int p2v) {
+TTToe::TTToe(int nil, int p1v, int p2v) {
   this->actors = {nil, p1v, p2v};
   this->GOALS= mapGoalSpace();
   this->CV_Z= nil;
@@ -48,20 +48,20 @@ Board::Board(int nil, int p1v, int p2v) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Board::isNil(int cellv) {
+bool TTToe::isNil(int cellv) {
   return cellv == this->CV_Z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // if brand new game, just make a random move
-int Board::getFirstMove() {
+int TTToe::getFirstMove() {
   auto sz= grid.size();
   return sz > 0 && every(grid, CV_Z) ? cx::randInt(sz) : -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Board::syncState(const ArrCells &seed, int actor) {
+void TTToe::syncState(const ArrCells &seed, int actor) {
   s::copy(s::begin(seed), s::end(seed), s::begin(grid));
   actors[0] = actor;
 }
@@ -69,7 +69,7 @@ void Board::syncState(const ArrCells &seed, int actor) {
 //////////////////////////////////////////////////////////////////////////////
 // find set of empty slots
 const s_vec<int>
-Board::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
+TTToe::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 
   auto sz= snap->state.size();
   s_vec<int> rc;
@@ -85,14 +85,14 @@ Board::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Board::undoMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
+void TTToe::undoMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   assert(move >= 0 && move < snap->state.size());
   snap->state[move] = CV_Z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Board::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
+void TTToe::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   assert(move >= 0 && move < snap->state.size());
   if (isNil(snap->state[move])) {
     snap->state[move] = snap->cur;
@@ -103,7 +103,7 @@ void Board::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Board::switchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
+void TTToe::switchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
   auto t = snap->cur;
   snap->cur= snap->other;
   snap->other=t;
@@ -111,7 +111,7 @@ void Board::switchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Board::getOtherPlayer(int pv) {
+int TTToe::getOtherPlayer(int pv) {
   if (pv == actors[1]) {
     return actors[2];
   }
@@ -125,7 +125,7 @@ int Board::getOtherPlayer(int pv) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
+owner<ag::FFrame<BD_SZ>*>  TTToe::takeFFrame() {
   auto ff = mc_new( ag::FFrame<BD_SZ> );
 
   s::copy(s::begin(grid), s::end(grid), s::begin(ff->state));
@@ -138,7 +138,7 @@ owner<ag::FFrame<BD_SZ>*>  Board::takeFFrame() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Board::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
+int TTToe::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
   F__LOOP(it, GOALS) {
     if (testWin(snap->state, snap->other, *it)) {
@@ -150,7 +150,7 @@ int Board::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Board::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
+bool TTToe::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
 
   F__LOOP(it, GOALS) {
     auto &t = *it;
@@ -164,13 +164,13 @@ bool Board::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Board::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
+bool TTToe::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
   return not_any(snap->state, CV_Z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
+int TTToe::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 
   int win= -1;
   F__LOOP(it, GOALS) {
@@ -192,7 +192,7 @@ int Board::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Board::testWin(const ArrCells &vs, int actor, const ArrDim &g) {
+bool TTToe::testWin(const ArrCells &vs, int actor, const ArrDim &g) {
 
   int cnt=g.size();
   for (int n= 0; n < g.size(); ++n) {

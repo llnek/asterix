@@ -8,39 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MENU_H__)
-#define __MENU_H__
-
-#include "x2d/GameScene.h"
-#include "x2d/XScene.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+#include "ash/Engine.h"
+#include "n/GNodes.h"
 NS_BEGIN(tttoe)
-
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MCX : public f::SCTX {
-  MCX(VOIDFN b) { back=b; }
-  DECL_TD(VOIDFN, back)
+class CC_DLL GEngine  : public a::Engine {
+  DECL_IZ(mynum)
+public:
+  GEngine(int pnum) { mynum=pnum; }
+  virtual void initEntities();
+  virtual void initSystems();
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL MMenu : public f::XScene {
-  STATIC_REIFY_SCENE_CTX(MMenu)
-  MDECL_DECORATE()
-
-protected:
-
-  void onPlayXXX( f::GMode, ws::OdinIO*, j::json);
-  void onPlay3();
-  void onPlay2();
-  void onPlay1();
-  void onBack();
-  void onQuit();
-};
-
 
 NS_END(tttoe)
-#endif
 
 

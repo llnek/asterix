@@ -8,35 +8,43 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+#include "core/OdinEvent.h"
+#include "ash/System.h"
+#include "GEngine.h"
 
-#if !defined(__EFACTORY_H__)
-#define __EFACTORY_H__
-
-#include "ash/Engine.h"
-#include "n/GNodes.h"
+NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GEngine  : public a::Engine {
+class CC_DLL Net : public a::System {
 
-  virtual void initEntities();
-  virtual void initSystems();
+  void onSocket(ws::OdinEvent*);
+  void onSess(ws::OdinEvent*);
+  void onNet(ws::OdinEvent*);
+  void initOnline();
+  void process();
+  void sync();
 
-  GEngine(int pnum) {
-    this->pnum=pnum;
-  }
+public:
 
-private:
+  MDECL_SYS_PRIORITY(a::NetPlay)
+  MDECL_SYS_TPID( "n/Net")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  void reifyArena();
-  void reifyBoard();
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, arena)
 
-  DECL_IZ(pnum)
+  Net(a::Engine *e)
+  : System(e)
+  {}
+
 };
 
 
 NS_END(tttoe)
-#endif
 
 

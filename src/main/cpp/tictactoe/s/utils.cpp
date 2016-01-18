@@ -88,47 +88,6 @@ const s_vec<ArrDim> mapGoalSpace() {
   return goals;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr pkFlip(const sstr &img, bool flip) {
-  if (flip) {
-    return img + ".i.png";
-  } else {
-    return img + ".png";
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr xrefImg(int value) {
-  auto x= CC_CSV(c::Integer,"CV_X");
-  auto o= CC_CSV(c::Integer,"CV_O");
-  auto z= CC_CSV(c::Integer,"CV_Z");
-
-  if (x==value) { return "x"; }
-  if (o==value) { return "o"; }
-  if (z==value) { return "z"; }
-
-  throw "bad xrefImg() value!";
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-c::Sprite* drawSymbol(not_null<a::Component*> c,
-    const c::Vec2 &pos,
-    int value, bool flip) {
-
-  auto frame = pkFlip(xrefImg(value), flip);
-  auto view= (PlayView*) c.get();
-  auto s1= cx::reifySprite(frame);
-
-  s1->setAnchorPoint(cx::anchorC());
-  s1->setPosition(pos.x, pos.y);
-
-  view->layer->addAtlasItem(view->layer,"game-pics", s1);
-  return s1;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 j::json fmtGameData(f::GMode m) {
@@ -151,7 +110,7 @@ j::json fmtGameData(f::GMode m) {
     return j::json({
         {"ppids", j::json:: object_t {
           { XCFG()->getL10NStr("cpu"), j::json::array_t {
-            2, XCFG()->getL10NStr("player2") }
+            2, XCFG()->getL10NStr("computer") }
           },
           { XCFG()->getL10NStr("p1"), j::json::array_t {
             1, XCFG()->getL10NStr("player1") }

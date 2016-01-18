@@ -8,25 +8,20 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__SPLASH_H__)
-#define __SPLASH_H__
-
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 #include "x2d/XScene.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Splash : public f::XScene {
-
+class CC_DLL Splash : public f::XScene {
+  void demo();
+public:
   STATIC_REIFY_SCENE(Splash)
   MDECL_DECORATE()
-
-protected:
-  void demo();
 };
 
-
 NS_END(tttoe)
-#endif
+
 

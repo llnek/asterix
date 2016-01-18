@@ -8,9 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__CONFIG_H__)
-#define __CONFIG_H__
+#pragma once
 
 #include "core/XConfig.h"
 NS_BEGIN(tttoe)
@@ -39,6 +37,5 @@ protected:
 };
 
 NS_END(tttoe)
-#endif
 
 

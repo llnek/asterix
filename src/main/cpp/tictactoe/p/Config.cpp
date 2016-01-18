@@ -46,8 +46,8 @@ void Config::initCsts() {
   addCst("showFPS", CC_BOOL(false));
   addCst("CV_Z", CC_INT(0));
 
-  addColor("default", CC_STR("#5e3178"));
   addColor("text", CC_STR("#ffffff"));
+  addColor("dft", CC_STR("#5e3178"));
   addColor("x", CC_STR("#f6b17f"));
 
   game_id= "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";

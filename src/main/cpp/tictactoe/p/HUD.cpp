@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "x2d/XLib.h"
 #include "HUD.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -22,15 +21,14 @@ NS_BEGIN(tttoe)
 //
 void HUDLayer::decorate() {
 
-  auto color = XCFG()->getColor("default");
   auto soff= CC_CSV(c::Integer, "S_OFF");
   auto tile= CC_CSV(c::Integer, "TILE");
+  auto color = XCFG()->getColor("dft");
   auto scale= XCFG()->getScale();
   auto cw= cx::center();
   auto wb= cx::visBox();
 
-  regoAtlas(this,"game-pics");
-  incIndexZ();
+  regoAtlas("game-pics");
 
   //score1
   score1= cx::reifyBmfLabel("font.SmallTypeWriting", "0");
@@ -38,7 +36,7 @@ void HUDLayer::decorate() {
   score1->setAnchorPoint(cx::anchorTL());
   score1->setScale(scale);
   score1->setPosition(tile+soff+2, wb.top-tile-soff);
-  addItem(this,score1);
+  addItem(score1);
 
   //score2
   score2= cx::reifyBmfLabel( "font.SmallTypeWriting", "0");
@@ -46,14 +44,14 @@ void HUDLayer::decorate() {
   score2->setAnchorPoint(cx::anchorTR());
   score2->setScale(scale);
   score2->setPosition(wb.right-tile-soff, wb.top-tile-soff);
-  addItem(this,score2);
+  addItem(score2);
 
   // status
   status= cx::reifyBmfLabel( "font.CoffeeBuzzed");
   status->setColor(XCFG()->getColor("text"));
   status->setScale(scale * 0.3f);
   status->setPosition(cw.x, wb.bottom + tile * 10);
-  addItem(this,status);
+  addItem(status);
 
   // result
   result= cx::reifyBmfLabel( "font.CoffeeBuzzed");
@@ -61,32 +59,27 @@ void HUDLayer::decorate() {
   result->setScale(scale * 0.3f);
   result->setPosition(cw.x, wb.bottom + tile * 10);
   result->setVisible(false);
-  addItem(this,result);
+  addItem(result);
 
   //title
-  title = cx::reifyBmfLabel( "font.JellyBelly");
+  title = cx::reifyBmfLabel("font.JellyBelly");
   title->setScale(scale * 0.6f);
   title->setAnchorPoint(cx::anchorT());
   title->setColor(color);
   title->setPosition(cw.x, wb.top - 2*tile);
-  addItem(this,title);
+  addItem(title);
 
+  //menu icon
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto hh = cx::getHeight(b) * 0.5f;
   auto hw = cx::getWidth(b) * 0.5f;
-  b->setTarget(this,
-      CC_MENU_SELECTOR(HUDLayer::showMenu));
   b->setColor(color);
+  b->setCallback(
+      [=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   auto menu = cx::mkMenu(b);
 
   menu->setPosition(wb.right-tile-hw, wb.bottom+tile+hh);
-  addItem(this,menu);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::showMenu(c::Ref*) {
-  SENDMSG("/hud/showmenu");
+  addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,15 +103,15 @@ void HUDLayer::showTimer() {
     countDown->setAnchorPoint(cx::anchorC());
     countDown->setScale(scale * 0.5f);
     countDown->setColor(XCFG()->getColor("text"));
-    addItem(this,countDown);
+    addItem(countDown);
   }
 
   countDownState= true;
   countDownValue= ptt;
 
   showCountDown(s::to_string(ptt));
-
-  schedule(CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1.0f);
+  schedule(
+      CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,16 +150,16 @@ void HUDLayer::killTimer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int pnum, int value) {
-  assert(pnum >=0 && pnum < scores.size());
+  assert(pnum > 0 && pnum < scores.size());
   scores[pnum] += value;
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::draw(bool running, int pnum) {
+void HUDLayer::draw(bool running, int category, int pnum) {
   if (running) {
-    drawStatus(pnum);
+    drawStatus(category, pnum);
   } else {
     drawResult(pnum);
   }
@@ -218,11 +211,17 @@ void HUDLayer::drawResult(int pnum) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::drawStatus(int pnum) {
+void HUDLayer::drawStatus(int category, int pnum) {
   if (pnum > 0) {
     auto pfx = pnum == 1 ? p1Long : p2Long;
-    drawXXXText(status,
-      gets("whosturn", s_vec<sstr> { pfx }));
+    auto bot = CC_CSV(c::Integer, "BOT");
+    sstr msg;
+    if (category == bot) {
+      msg= gets("whosthink", s_vec<sstr> { pfx });
+    } else {
+      msg= gets("whosturn", s_vec<sstr> { pfx });
+    }
+    drawXXXText(status, msg);
   }
 }
 

@@ -9,13 +9,15 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "n/GNodes.h"
 #include "s/utils.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "Splash.h"
 
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +41,7 @@ void Splash::demo() {
     auto bx= cx::vboxMID( ps[i]);
     sp->setScale(scale);
     sp->setPosition(bx);
-    addAtlasItem(this, "game-pics", sp);
+    addAtlasItem("game-pics", sp);
   }
 }
 
@@ -47,29 +49,29 @@ void Splash::demo() {
 //
 void Splash::decorate() {
 
-  centerImage(this, "game.bg");
+  centerImage( "game.bg");
   incIndexZ();
-  regoAtlas(this, "game-pics");
+  regoAtlas( "game-pics");
 
   // title
   auto cw = cx::center();
   auto wb = cx::visBox();
   addAtlasFrame(
-      this, "game-pics", "title.png",
+      "game-pics", "title.png",
       c::Vec2(cw.x, wb.top * 0.9f));
 
   demo();
 
-  auto f= [=]() { cx::runEx(XCFG()->prelude()); };
+  auto f= []() { cx::runEx(XCFG()->prelude()); };
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-    cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
+      cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);
-  addItem(this,menu);
+  addItem(menu);
 }
 
 

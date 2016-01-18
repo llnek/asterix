@@ -8,50 +8,44 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if  !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#pragma once
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public  a::System {
+class CC_DLL Resolve : public  a::System {
+
+  bool checkWin(Player*, Grid*, ArrDim& );
+  void showWinningIcons(const ArrDim& );
+  void doWin(Player*, const ArrDim& );
+  void sync();
+  void doIt( float);
+  void doForfeit();
+  void doDraw();
+  bool checkDraw( Grid*);
+  void doDone( Player*);
+
+public:
 
   MDECL_SYS_PRIORITY(a::Resolve)
   MDECL_SYS_TPID( "n/Resolve")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(a::NodeList, boardNode)
-  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, arena)
 
   Resolve(a::Engine *e)
   : System(e)
   {}
-
-protected:
-  bool xrefCell(int pos, PlayView*, c::Vec2 &cell);
-
-  bool checkWin(Player&, Grid*, ArrDim& );
-  void showWinningIcons(const ArrDim& );
-  void doWin(Player&, const ArrDim& );
-
-  void syncUp();
-
-  void doIt( float);
-  void doForfeit();
-  void doDraw();
-
-  bool checkDraw( Grid*);
-  void doDone( Player&);
 
 };
 
 
 
 NS_END(tttoe)
-#endif
+
 

@@ -8,16 +8,15 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
 
-#if !defined(__COBJS_H__)
-#define __COBJS_H__
-
+#include "core/XConfig.h"
+#include "core/ComObj.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "core/JSON.h"
-#include "ash/Ash.h"
 #include "s/utils.h"
-#include "Board.h"
+#include "TTToe.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
@@ -25,118 +24,118 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Robot : public a::Component {
-
-  MDECL_COMP_TPID( "n/Robot" )
-  //owns ths board
-  DECL_PTR(Board,board)
-
-  Robot(not_null<Board*> b) {
-    this->board= b;
+struct CC_DLL SmartAI : public a::Component {
+  MDECL_COMP_TPID( "n/SmartAI" )
+  DECL_PTR(TTToe,ai)
+  SmartAI(not_null<TTToe*> b) {
+    this->ai= b;
   }
-
-  virtual ~Robot() {
-    mc_del_ptr(board)
+  virtual ~SmartAI() {
+    mc_del_ptr(ai)
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Grid : public a::Component {
-
   Grid(const ArrCells &seed) {
-    s::copy(s::begin(seed),
-        s::end(seed), s::begin(values));
     GOALS= mapGoalSpace();
+    S__COPY(seed,vals);
   }
-
   MDECL_COMP_TPID("n/Grid")
-  DECL_TD(ArrCells, values)
+  DECL_TD(ArrCells, vals)
   s_vec<ArrDim> GOALS;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL PlayView : public a::Component {
-
-  PlayView(not_null<f::XLayer*> layer) {
-    this->size = cx::calcSize("z.png");
-    this->boxes= mapGridPos(1);
-    this->cells.fill(nullptr);
-    this->layer= layer;
-  }
-
-  MDECL_COMP_TPID( "n/PlayView")
-
-  s_arr<c::Sprite*, GD_SZ> cells;
-  s_arr<f::Box4, GD_SZ> boxes;
-
-  DECL_PTR(f::XLayer, layer)
-  DECL_TD(c::Size, size)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Player : public a::Component {
-
-  MDECL_COMP_TPID( "n/Player")
-
-  Player(int category,
-      int value,
-      int id, const sstr &color) {
-
-    this->offset = id == 1 ? 0 : 1;
+  Player(int category, int value, int id) {
     this->category= category;
-    this->color= color;
     this->pnum=id;
     this->value= value;
   }
-
   Player& operator=(const Player &other) {
-    category = other.category;
+    category= other.category;
     pidlong= other.pidlong;
-    pid = other.pid;
-    color = other.color;
     pnum= other.pnum;
     value= other.value;
-    offset= other.offset;
+    pid = other.pid;
     return *this;
   }
-
   Player(const Player &other) {
-    category = other.category;
+    category= other.category;
     pidlong= other.pidlong;
     pid = other.pid;
-    color = other.color;
     pnum= other.pnum;
     value= other.value;
-    offset= other.offset;
   }
-
+  Player(int pnum) { this->pnum= pnum; }
   Player() {}
-
-  DECL_TV(int, category, (int)f::GMode::NICHTS)
+  DECL_TV(int, category, f::GMode::NICHTS)
   DECL_TV(int, pnum,  -1)
-  DECL_IZ(offset)
   DECL_IZ(value)
   DECL_TD(sstr, pidlong)
   DECL_TD(sstr, pid)
   DECL_TD(sstr, color)
-
+  MDECL_COMP_TPID( "n/Player")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public a::Component {
   MDECL_COMP_TPID("n/Players")
-  s_arr<Player,3> parr;
+  //~owner
+  s_arr<Player*,3> parr;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID("n/Gesture")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL CSquare  {
+  CSquare(int cell) {
+    this->value = CC_CSV(c::Integer,"CV_Z");
+    this->cell=cell;
+    this->png= "z";
+    sprite= cx::reifySprite(png+ ".png");
+  }
+  void toggle(int nv) {
+    auto x= CC_CSV(c::Integer,"CV_X");
+    auto o= CC_CSV(c::Integer,"CV_O");
+    auto z= CC_CSV(c::Integer,"CV_Z");
+    if (value == z) {
+      if (nv == x) { png= "x"; }
+      if (nv == o) { png= "o"; }
+      value=nv;
+      sprite->setSpriteFrame(png + ".png");
+    }
+  }
+  void flip() {
+    sprite->setSpriteFrame(png + ".i.png");
+  }
+  DECL_PTR(c::Sprite,sprite)
+  DECL_IZ(value)
+  DECL_IZ(cell)
+  DECL_TD(sstr,png)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL CSquares  : public a::Component {
+  MDECL_COMP_TPID( "n/CSquares" )
+  s_arr<f::Box4,GD_SZ> boxes;
+  s_arr<CSquare*,GD_SZ> sqs;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CellPos  : public a::Component {
   MDECL_COMP_TPID( "n/CellPos" )
-
   DECL_TV(int, cell,  -1)
   DECL_TV(int, px, -1)
   DECL_TV(int, py, -1)
@@ -152,7 +151,6 @@ struct CC_DLL GVars : public a::Component {
 
 
 NS_END(tttoe)
-#endif
 
 
 

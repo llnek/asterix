@@ -8,18 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__LOGIC_H__)
-#define __LOGIC_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Logic : public a::System {
+class CC_DLL Logic : public a::System {
+
+  void sync(int pos, int value, Grid*);
+  void doIt( float);
+
+public:
 
   MDECL_SYS_PRIORITY( a::Logic)
   MDECL_SYS_TPID("n/Logic")
@@ -27,22 +30,17 @@ struct CC_DLL Logic : public a::System {
   MDECL_SYS_UPDATE()
 
   DECL_PTR(c::DelayTime, botTimer)
-  DECL_PTR(a::NodeList, boardNode)
-  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, robot)
+  DECL_PTR(a::NodeList, board)
+  DECL_PTR(a::NodeList, arena)
 
   Logic(a::Engine *e)
   : System(e)
   {}
 
-private:
-  void onEnqueue(int pnum, int cell, Grid*);
-  void enqueue(int pos, int value, Grid*);
-  void doIt( float);
-
 };
 
 
 NS_END(tttoe)
-#endif
 
 

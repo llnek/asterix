@@ -8,10 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__GNODES_H__)
-#define __GNODES_H__
-
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 #include "ash/NodeRego.h"
 #include "ash/Node.h"
 #include "CObjs.h"
@@ -23,11 +21,9 @@ struct CC_DLL BoardNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-          {"cellpos", "n/CellPos"},
           {"players", "n/Players" },
-          {"robot", "n/Robot"},
-          {"grid", "n/Grid"},
-          {"view", "n/PlayView" }
+          {"select", "n/CellPos"},
+          {"grid", "n/Grid"}
     });
   }
 
@@ -36,16 +32,30 @@ struct CC_DLL BoardNode : public a::NodeFactory {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GUINode : public a::NodeFactory {
+struct CC_DLL RobotNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "cellpos", "n/CellPos"},
-        { "view", "n/PlayView" }
+        { "player", "n/Player"},
+        { "robot", "n/SmartAI"}
     });
   }
 
-  MDECL_NFAC_TPID( "n/GUINode")
+  MDECL_NFAC_TPID( "n/RobotNode")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL HumanNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        { "motion", "n/Gesture"},
+        { "player", "n/Player"}
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/HumanNode")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +64,8 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "slots", "n/GVars" }
+        {"squares", "n/CSquares"},
+        {"slots", "n/GVars" }
     });
   }
 
@@ -64,6 +75,5 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
 
 NS_END(tttoe)
-#endif
 
 

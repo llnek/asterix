@@ -8,44 +8,34 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
 
-#if !defined(__STAGE_H__)
-#define __STAGE_H__
-
-#include "ash/System.h"
-#include "EFactory.h"
+#include "x2d/GameScene.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stage : public a::System {
+struct CC_DLL MCX : public f::SCTX {
+  MCX(VOIDFN b) { back=b; }
+  DECL_TD(VOIDFN, back)
+};
 
-  MDECL_SYS_PRIORITY(a::PreUpdate)
-  MDECL_SYS_TPID( "n/Stage")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL MMenu : public f::XScene {
 
-  DECL_PTR(a::NodeList, boardNode)
-  DECL_PTR(a::NodeList, arenaNode)
+  void onPlayXXX( ws::OdinIO*, j::json);
+  void onPlayXXX( f::GMode);
+  void onPlay3();
 
-  Stage(a::Engine *e)
-  : System(e)
-  {}
+public:
 
-protected:
+  STATIC_REIFY_SCENE_CTX(MMenu)
+  MDECL_DECORATE()
 
-  void onSocket(ws::OdinEvent*);
-  void onSess(ws::OdinEvent*);
-  void onNet(ws::OdinEvent*);
-
-  void initOnline();
-  void showGrid();
-  void onceOnly();
-  void doIt();
 };
 
 
 NS_END(tttoe)
-#endif
 
 
