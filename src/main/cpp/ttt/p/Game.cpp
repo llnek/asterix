@@ -74,6 +74,7 @@ void GLayer::postReify() {
   }
 
   auto msg= j::json({
+      {"category", ps->parr[pnum]->category},
       {"running", true },
       {"pnum", pnum}
       });
@@ -247,8 +248,9 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/hud/update" == topic) {
     auto msg= (j::json*) m;
-    y->getHUD()->draw(
+      y->getHUD()->draw(
         JS_BOOL(msg->operator[]("running")),
+                        JS_INT(msg->operator[]("category")),
         JS_INT(msg->operator[]("pnum")));
   }
   else

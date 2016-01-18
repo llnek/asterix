@@ -157,9 +157,9 @@ void HUDLayer::updateScore(int pnum, int value) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::draw(bool running, int pnum) {
+void HUDLayer::draw(bool running, int category, int pnum) {
   if (running) {
-    drawStatus(pnum);
+    drawStatus(category, pnum);
   } else {
     drawResult(pnum);
   }
@@ -211,11 +211,17 @@ void HUDLayer::drawResult(int pnum) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::drawStatus(int pnum) {
+void HUDLayer::drawStatus(int category, int pnum) {
   if (pnum > 0) {
     auto pfx = pnum == 1 ? p1Long : p2Long;
-    drawXXXText(status,
-      gets("whosturn", s_vec<sstr> { pfx }));
+    auto bot = CC_CSV(c::Integer, "BOT");
+    sstr msg;
+    if (category == bot) {
+      msg= gets("whosthink", s_vec<sstr> { pfx });
+    } else {
+      msg= gets("whosturn", s_vec<sstr> { pfx });
+    }
+    drawXXXText(status, msg);
   }
 }
 

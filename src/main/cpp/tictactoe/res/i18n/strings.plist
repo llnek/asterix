@@ -5,8 +5,11 @@
     <key>en</key>
     <dict>
 
+      <key>whosthink</key>
+      <string>{}'s thinking...</string>
+
       <key>whosturn</key>
-      <string>{}'s TURN...</string>
+      <string>{}'s turn...</string>
 
       <key>whodraw</key>
       <string>It's a draw!</string>

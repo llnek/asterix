@@ -111,6 +111,7 @@ void Logic::sync(int pos, int value, Grid *grid) {
     grid->vals[pos] = value;
     ss->pnum= other;
     auto msg= j::json({
+        {"category", ps->parr[other]->category},
         {"running", MGMS()->isLive() },
         {"pnum", other}
         });

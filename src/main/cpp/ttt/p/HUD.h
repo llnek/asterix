@@ -47,12 +47,12 @@ struct CC_DLL HUDLayer : public f::XLayer {
   void resetAsNew();
   void reset();
 
+  void draw(bool running,  int category, int pnum);
   void drawXXXText(c::Label*, const sstr&);
+  void drawStatus(int category, int pnum);
   void updateScore(int pnum, int value);
-  void draw(bool running,  int pnum);
   void showCountDown(const sstr&);
   void drawResult(int pnum);
-  void drawStatus(int pnum);
   void endGame(int winner);
   void updateTimer(float);
   void drawScores();

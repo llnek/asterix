@@ -110,7 +110,7 @@ j::json fmtGameData(f::GMode m) {
     return j::json({
         {"ppids", j::json:: object_t {
           { XCFG()->getL10NStr("cpu"), j::json::array_t {
-            2, XCFG()->getL10NStr("player2") }
+            2, XCFG()->getL10NStr("computer") }
           },
           { XCFG()->getL10NStr("p1"), j::json::array_t {
             1, XCFG()->getL10NStr("player1") }
