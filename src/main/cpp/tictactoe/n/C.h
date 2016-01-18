@@ -24,19 +24,6 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SmartAI : public a::Component {
-  MDECL_COMP_TPID( "n/SmartAI" )
-  DECL_PTR(TTToe,ai)
-  SmartAI(not_null<TTToe*> b) {
-    this->ai= b;
-  }
-  virtual ~SmartAI() {
-    mc_del_ptr(ai)
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Grid : public a::Component {
   Grid(const ArrCells &seed) {
     GOALS= mapGoalSpace();
@@ -99,7 +86,6 @@ struct CC_DLL Gesture : public a::Component {
 //
 struct CC_DLL CSquare  {
   CSquare(int cell) {
-    this->value = CC_CSV(c::Integer,"CV_Z");
     this->cell=cell;
     this->png= "z";
     sprite= cx::reifySprite(png+ ".png");
@@ -107,8 +93,7 @@ struct CC_DLL CSquare  {
   void toggle(int nv) {
     auto x= CC_CSV(c::Integer,"CV_X");
     auto o= CC_CSV(c::Integer,"CV_O");
-    auto z= CC_CSV(c::Integer,"CV_Z");
-    if (value == z) {
+    if (value == 0) {
       if (nv == x) { png= "x"; }
       if (nv == o) { png= "o"; }
       value=nv;

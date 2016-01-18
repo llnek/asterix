@@ -100,7 +100,7 @@ void Net::process() {
   auto sel = CC_GNLF(CellPos, board, "select");
   auto grid= CC_GNLF(Grid, board, "grid");
   auto ss= CC_GNLF(GVars,arena, "slots");
-  auto nil = CC_CSV(c::Integer, "CV_Z");
+  auto nil = 0;
   auto pos = sel->cell;
   auto cur = ss->pnum;
 

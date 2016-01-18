@@ -39,23 +39,22 @@ bool every(const ArrCells &arr, int v) {
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
-TTToe::TTToe(int nil, int p1v, int p2v) {
+TTToe::TTToe(int p1v, int p2v) {
   this->actors = {nil, p1v, p2v};
   this->GOALS= mapGoalSpace();
-  this->CV_Z= nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool TTToe::isNil(int cellv) {
-  return cellv == this->CV_Z;
+  return cellv == this->nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // if brand new game, just make a random move
 int TTToe::getFirstMove() {
   auto sz= grid.size();
-  return sz > 0 && every(grid, CV_Z) ? cx::randInt(sz) : -1;
+  return sz > 0 && every(grid, nil) ? cx::randInt(sz) : -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,7 +85,7 @@ TTToe::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 //
 void TTToe::undoMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   assert(move >= 0 && move < snap->state.size());
-  snap->state[move] = CV_Z;
+  snap->state[move] = nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -119,7 +118,7 @@ int TTToe::getOtherPlayer(int pv) {
     return actors[1];
   }
 
-  return CV_Z;
+  return nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -164,7 +163,7 @@ bool TTToe::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool TTToe::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
-  return not_any(snap->state, CV_Z);
+  return not_any(snap->state, nil);
 }
 
 //////////////////////////////////////////////////////////////////////////////

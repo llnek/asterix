@@ -60,8 +60,7 @@ void Logic::doIt(float dt) {
     }
     else
     if (cx::timerDone(botTimer)) {
-      auto rb= CC_GNLF(SmartAI,robot,"robot");
-      auto bd= rb->ai;
+      auto bd= CC_GNLF(TTToe,robot,"robot");
       int rc;
       bd->syncState(grid->vals, cp->value);
       rc= bd->getFirstMove();
@@ -88,7 +87,7 @@ void Logic::sync(int pos, int value, Grid *grid) {
 
   auto ps= CC_GNLF(Players, board, "players");
   auto ss= CC_GNLF(GVars,arena,"slots");
-  auto nil = CC_CSV(c::Integer, "CV_Z");
+  auto nil = 0;
   auto human= CC_CSV(c::Integer,"HUMAN");
   auto cur = ss->pnum;
   auto other=0;

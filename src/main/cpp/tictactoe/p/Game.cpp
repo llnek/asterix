@@ -60,7 +60,7 @@ void GLayer::postReify() {
   auto ps = CC_GNLF(Players,board,"players");
   auto ss = CC_GNLF(GVars,arena,"slots");
   auto human= CC_CSV(c::Integer,"HUMAN");
-  auto pnum= c::rand_0_1() > 0.5f ? 1 : 2;
+  auto pnum= cx::randSign() > 0 ? 2 : 1;
 
   if (MGMS()->isOnline()) {
     return;

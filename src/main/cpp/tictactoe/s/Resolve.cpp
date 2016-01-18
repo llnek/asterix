@@ -39,7 +39,7 @@ bool Resolve::update(float dt) {
 void Resolve::sync() {
   auto css= CC_GNLF(CSquares, arena, "squares");
   auto grid= CC_GNLF(Grid, board, "grid");
-  auto nil= CC_CSV(c::Integer, "CV_Z");
+  auto nil= 0;
 
   for (int i=0; i < grid->vals.size(); ++i) {
     auto v= grid->vals[i];
@@ -143,7 +143,7 @@ void Resolve::doForfeit() {
 //
 void Resolve::showWinningIcons(const ArrDim &combo) {
   auto css= CC_GNLF(CSquares, arena, "squares");
-  auto nil = CC_CSV(c::Integer, "CV_Z");
+  auto nil = 0;
 
   //flip the losing cells to gray
   for (int i=0; i < css->sqs.size(); ++i) {
@@ -178,7 +178,7 @@ void Resolve::doDone(Player *pobj) {
 //
 bool Resolve::checkDraw(Grid *gd) {
 
-  auto nil= CC_CSV(c::Integer, "CV_Z");
+  auto nil= 0;
 
   return ! (s::find(s::begin(gd->vals), s::end(gd->vals), nil)
     != gd->vals.end());

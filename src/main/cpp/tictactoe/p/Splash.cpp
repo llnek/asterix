@@ -49,7 +49,6 @@ void Splash::demo() {
 void Splash::decorate() {
 
   centerImage( "game.bg");
-  incIndexZ();
   regoAtlas( "game-pics");
 
   // title

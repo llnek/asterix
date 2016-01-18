@@ -11,6 +11,7 @@
 #pragma once
 
 #include "algos/NegaMax.h"
+#include "ash/Ash.h"
 #include "lib.h"
 
 NS_ALIAS(ag, fusii::algos)
@@ -18,7 +19,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-struct CC_DLL TTToe : public ag::GameBoard<BD_SZ> {
+struct CC_DLL TTToe : public ag::GameBoard<BD_SZ>, public a::Component {
 
   virtual const s_vec<int> getNextMoves(not_null<ag::FFrame<BD_SZ>*>);
   virtual int evalScore(not_null<ag::FFrame<BD_SZ>*>);
@@ -32,22 +33,24 @@ struct CC_DLL TTToe : public ag::GameBoard<BD_SZ> {
   virtual void switchPlayer(not_null<ag::FFrame<BD_SZ>*>);
   virtual owner<ag::FFrame<BD_SZ>*> takeFFrame();
 
-  int getWinner(not_null<ag::FFrame<BD_SZ>*>, ArrDim &combo);
-  void syncState(const ArrCells &seed, int actor);
+  virtual int getWinner(not_null<ag::FFrame<BD_SZ>*>, ArrDim &combo);
+  virtual void syncState(const ArrCells &seed, int actor);
 
-  TTToe(int nil,  int p1v,  int p2v);
+  TTToe(int p1v,  int p2v);
   virtual ~TTToe() {}
 
-  int getOtherPlayer(int pv);
-  bool isNil(int cellv);
-  int getFirstMove();
+  virtual int getOtherPlayer(int pv);
+  virtual bool isNil(int cellv);
+  virtual int getFirstMove();
+
+  MDECL_COMP_TPID( "n/SmartAI" )
 
 private:
 
   bool testWin(const ArrCells& , int actor, const ArrDim&);
 
   DECL_TD(ArrCells, grid)
-  DECL_IZ(CV_Z)
+  DECL_IZ(nil)
 
   s_vec<ArrDim> GOALS;
   s_arr<int,3> actors;

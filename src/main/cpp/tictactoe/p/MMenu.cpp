@@ -25,7 +25,7 @@ NS_BEGIN(tttoe)
 //
 void MMenu::decorate() {
   auto tile = CC_CSV(c::Integer,"TILE");
-  auto nil = CC_CSV(c::Integer,"CV_Z");
+  auto nil = 0;
   auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
   auto cw = cx::center();

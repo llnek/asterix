@@ -42,9 +42,7 @@ void Config::initCsts() {
   addCst("author", CC_STR("llnek"));
   addCst("minp", CC_INT(2));
   addCst("maxp", CC_INT(2));
-
   addCst("showFPS", CC_BOOL(false));
-  addCst("CV_Z", CC_INT(0));
 
   addColor("text", CC_STR("#ffffff"));
   addColor("dft", CC_STR("#5e3178"));

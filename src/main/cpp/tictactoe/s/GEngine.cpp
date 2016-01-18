@@ -37,7 +37,7 @@ void GEngine::initEntities() {
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot = CC_CSV(c::Integer, "BOT");
   auto netp = CC_CSV(c::Integer, "NETP");
-  auto nil= CC_CSV(c::Integer, "CV_Z");
+  auto nil= 0;
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
   auto mode = MGMS()->getMode();
@@ -80,8 +80,7 @@ void GEngine::initEntities() {
   }
   else
   if (mode == f::GMode::ONE) {
-    auto bd= mc_new_3(TTToe, nil, xv, ov);
-    p2->checkin(mc_new_1(SmartAI, bd));
+    p2->checkin( mc_new_2(TTToe, xv, ov));
     p1->checkin(mc_new(Gesture));
   }
   else
