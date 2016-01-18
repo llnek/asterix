@@ -11,17 +11,15 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "utils.h"
-#include "CObjs.h"
+#include "lib.h"
 
-NS_ALIAS(cx, fusii::ccsx)
-NS_USING(fusii)
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // Calculate position of each individual cells in the grid,
 // so that we can detect when a user clicks on the cell
-const s_arr<Box4,GD_SZ> mapGridPos(float scale) {
+const s_arr<f::Box4,GD_SZ> mapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
   auto csz = cx::scaleSize(cx::calcSize("z.png"), scale);
@@ -31,7 +29,7 @@ const s_arr<Box4,GD_SZ> mapGridPos(float scale) {
   auto zh= csz.height * BD_SZ + gh * (BD_SZ-1);
   auto zw= csz.width * BD_SZ + gw * (BD_SZ-1);
 
-  s_arr<Box4, GD_SZ> boxes;
+  s_arr<f::Box4, GD_SZ> boxes;
   auto cw = cx::center();
   auto x0 = cw.x - zw * 0.5f;
   auto y0 = cw.y + zh * 0.5f;
@@ -130,16 +128,6 @@ j::json fmtGameData(f::GMode m) {
   throw "bad game mode!";
 }
 
-
-
 NS_END(tttoe)
-
-
-
-
-
-
-
-
 
 

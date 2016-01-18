@@ -15,7 +15,7 @@
 #include "NetPlay.h"
 #include "MMenu.h"
 #include "Game.h"
-#include "s/utils.h"
+#include "n/lib.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)

@@ -13,7 +13,7 @@
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "n/CObjs.h"
-#include "utils.h"
+#include "n/lib.h"
 #include "Net.h"
 
 NS_ALIAS(ws, fusii::odin)

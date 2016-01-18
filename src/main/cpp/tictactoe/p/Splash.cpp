@@ -13,7 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "n/GNodes.h"
-#include "s/utils.h"
+#include "n/lib.h"
 #include "MMenu.h"
 #include "Splash.h"
 

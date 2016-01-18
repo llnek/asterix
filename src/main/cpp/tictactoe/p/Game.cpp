@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
-#include "s/utils.h"
+#include "n/lib.h"
 #include "MMenu.h"
 #include "End.h"
 #include "HUD.h"

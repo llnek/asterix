@@ -12,7 +12,6 @@
 #include "base/ccRandom.h"
 #include "core/CCSX.h"
 #include "TTToe.h"
-#include "s/utils.h"
 #include <math.h>
 
 NS_ALIAS(cx, fusii::ccsx)

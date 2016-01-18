@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/utils.h"
 #include "Game.h"
 #include "End.h"
 

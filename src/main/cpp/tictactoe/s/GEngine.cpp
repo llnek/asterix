@@ -11,11 +11,14 @@
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Resolve.h"
 #include "Net.h"
 #include "Logic.h"
-#include "utils.h"
+#include "n/lib.h"
 #include "GEngine.h"
+
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
