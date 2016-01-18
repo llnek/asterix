@@ -184,7 +184,7 @@ bool Resolve::checkDraw(Grid *gd) {
 //
 bool Resolve::checkWin(Player *p, Grid *game, ArrDim &combo) {
 
-  CCLOG("checking win for %s", p->color.c_str());
+  //CCLOG("checking win for %s", p->color.c_str());
 
   F__LOOP(it, game->GOALS) {
 
