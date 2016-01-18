@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COBJS_H__)
-#define __COBJS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -34,8 +33,7 @@ protected:
 //
 struct CC_DLL Brick : public c::Sprite {
 
-  static Brick* reify(const c::Vec2 &pos,
-      const sstr &f0) {
+  static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
     Brick *b = mc_new(Brick);
     if (NNP(b) &&
         b->init()) {
@@ -90,7 +88,7 @@ struct CC_DLL Shape {
   Shape(const ShapeInfo& si) {
     info=si;
   }
-  DECL_TD(ShapeInfo , info)
+  DECL_TD(ShapeInfo, info)
   s_vec<Brick*> bricks;
   DECL_FZ(x)
   DECL_FZ(y)
@@ -118,7 +116,7 @@ struct CC_DLL GridBox : public a::Component {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// the game area as a grid
 struct CC_DLL BlockGrid  : public a::Component {
   MDECL_COMP_TPID( "n/BlockGrid")
   s_vec<FArrBrick> grid;
@@ -352,8 +350,8 @@ struct CC_DLL FilledLines : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motion : public a::Component {
-  MDECL_COMP_TPID( "n/Motion")
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID( "n/Gesture")
   void reset() {
     right=false;
     left=false;
@@ -377,7 +375,7 @@ struct CC_DLL Pauser  : public a::Component {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-//
+// for collision detection, game area as a grid
 struct CC_DLL TileGrid  : public a::Component {
   MDECL_COMP_TPID("n/TileGrid")
   s_vec<f::FArrInt> tiles;
@@ -391,5 +389,4 @@ struct CC_DLL GVars  : public a::Component {
 };
 
 NS_END(tetris)
-#endif
 

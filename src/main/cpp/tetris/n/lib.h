@@ -8,12 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__UTILS_H__)
-#define __UTILS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XLayer.h"
-#include "n/GNodes.h"
+#include "n/N.h"
 
 NS_BEGIN(tetris)
 
@@ -40,6 +39,7 @@ bool maybeCollide(s_vec<f::FArrInt>&,
     float tl_x, float tl_y, float br_x, float br_y);
 
 const f::Cell2D xrefTile(float x, float y);
+const f::Cell2D xrefTile(const c::Vec2&);
 
 void initDropper(Dropper*);
 
@@ -72,7 +72,6 @@ bool rotateRight(not_null<f::XLayer*>, s_vec<f::FArrInt>&, Shape*);
 bool rotateLeft(not_null<f::XLayer*>, s_vec<f::FArrInt>&, Shape*);
 
 NS_END(tetris)
-#endif
 
 
 
