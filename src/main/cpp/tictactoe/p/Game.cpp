@@ -93,7 +93,8 @@ void GLayer::playTimeExpired() {
 void GLayer::overAndDone(int winner) {
   getHUD()->endGame(winner);
   surcease();
-  ELayer::reify(getSceneX(),999);
+  auto x= mc_new1(ECX, arena);
+  ELayer::reify(getSceneX(), x, 999);
 }
 
 //////////////////////////////////////////////////////////////////////////////

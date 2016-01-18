@@ -18,26 +18,10 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SCTX {
-  DECL_TV(int, count,1)
-  virtual ~SCTX() {}
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-protected:
-
-  DECL_PTR(SCTX, context)
-
-public:
+struct CC_DLL XScene : public XNode, public c::Scene {
 
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  SCTX* getCtx() { return context; }
   XLayer* getLayer(int tag);
-
-  void setCtx(SCTX*, bool clean=true);
-  SCTX* emitCtx();
 
   virtual void decorate() = 0;
   virtual bool init();

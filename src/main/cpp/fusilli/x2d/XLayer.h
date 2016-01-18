@@ -37,8 +37,8 @@ public:
 
   // tag value
   virtual int getIID() { return 1; }
-
   virtual ~XLayer() {}
+
   XLayer();
   NOCPYASS(XLayer)
 };

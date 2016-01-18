@@ -97,6 +97,10 @@ struct CC_DLL CSquare  {
       sprite->setSpriteFrame(png + ".png");
     }
   }
+  void dispose() {
+    if (NNP(sprite)) { sprite->removeFromParent(); }
+    SNPTR(sprite)
+  }
   void flip() {
     sprite->setSpriteFrame(png + ".i.png");
   }

@@ -17,6 +17,13 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL SCTX {
+  DECL_TV(int, count,1)
+  virtual ~SCTX() {}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL XNode {
 protected:
 
@@ -28,7 +35,10 @@ protected:
   virtual void bind(c::Node* p) { self = p; }
   DECL_TV(int, lastTag, 0)
   DECL_TV(int, lastZ, 0)
+
   DECL_PTR(c::Node, self)
+  DECL_PTR(SCTX, context)
+
   XNode() {}
 
 public:
@@ -58,7 +68,11 @@ public:
   virtual int zIndex() { return lastZ; }
   virtual int incIndexZ();
 
-  virtual ~XNode() {}
+  virtual void setCtx(SCTX*, bool clean=true);
+  virtual SCTX* getCtx() { return context; }
+  virtual SCTX* emitCtx();
+
+  virtual ~XNode();
 };
 
 NS_END(fusii)

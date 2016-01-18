@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "Game.h"
 #include "End.h"
+#include "n/N.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
@@ -37,8 +38,16 @@ void ELayer::onQuit() {
 void ELayer::decorate() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
+  auto ctx= (ECX*) getCtx();
   auto cw= cx::center();
   auto wb= cx::visBox();
+
+  // clear out the grid
+  auto css= CC_GNLF(CSquares,ctx->arena,"squares");
+  F__LOOP(it,css->sqs) {
+    auto q= *it;
+    q->dispose();
+  }
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);

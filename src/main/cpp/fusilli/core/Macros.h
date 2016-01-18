@@ -71,6 +71,21 @@ static __TYPE__* reify() {  \
     } \
 }
 
+#define STATIC_REIFY_LAYER_CTX(__TYPE__) \
+  static __TYPE__* reify(fusii::XScene* xs, fusii::SCTX* x, int zx = 0) {  \
+    __TYPE__ *p = mc_new( __TYPE__ ); \
+    if (NNP(p)) { \
+      p->setCtx(x); \
+      if (p->initEx(xs, zx)) { \
+          p->autorelease(); \
+          p->postReify(); \
+          return p; \
+      } else { \
+          delete p; \
+          return nullptr; \
+      } \
+  } \
+}
 
 #define STATIC_REIFY_LAYER(__TYPE__) \
 static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \

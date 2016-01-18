@@ -11,8 +11,18 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ash/NodeRego.h"
 #include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ECX : public f::SCTX {
+  ECX(a::NodeList* n) {
+    arena=n;
+  }
+  DECL_PTR(a::NodeList, arena)
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -23,7 +33,7 @@ class CC_DLL ELayer : public f::XLayer {
 
 public:
 
-  STATIC_REIFY_LAYER(ELayer)
+  STATIC_REIFY_LAYER_CTX(ELayer)
   MDECL_DECORATE()
   MDECL_GET_IID(4)
 
