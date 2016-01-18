@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
 #include "GEngine.h"

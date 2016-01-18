@@ -39,12 +39,12 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Stage,this));
-  regoSystem(mc_new_1(Motions,this));
-  regoSystem(mc_new_1(Move,this));
-  regoSystem(mc_new_1(Aliens,this));
-  regoSystem(mc_new_1(Collide,this));
-  regoSystem(mc_new_1(Resolve,this));
+  regoSystem(mc_new1(Stage,this));
+  regoSystem(mc_new1(Motions,this));
+  regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(Aliens,this));
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(Resolve,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ void GEngine::reifyMissiles(int count) {
     auto sp = cx::reifySprite("missile.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new_1(Missile, sp);
+    return mc_new1(Missile, sp);
   }, count);
 }
 
@@ -83,7 +83,7 @@ void GEngine::reifyExplosions(int count) {
     auto sp = cx::reifySprite("boom_0.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new_1(Explosion, sp);
+    return mc_new1(Explosion, sp);
   }, count);
 }
 
@@ -95,7 +95,7 @@ void GEngine::reifyBombs(int count) {
     auto sp = cx::reifySprite("bomb.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new_1(Bomb, sp);
+    return mc_new1(Bomb, sp);
   }, count);
 }
 
@@ -167,7 +167,7 @@ void GEngine::fillSquad(f::XPool *pool) {
       MGML()->addAtlasItem("game-pics", aa);
       x += az.width + (8/gz.width * wz.size.width);
       auto v = CC_GDV(c::Integer, info, "value");
-      auto co= mc_new_3(Alien, aa, v, r);
+      auto co= mc_new3(Alien, aa, v, r);
       co->status=true;
       pool->checkin(co);
     }
@@ -185,7 +185,7 @@ a::Entity* GEngine::reifyAliens() {
 
   fillSquad(p);
 
-  ent->checkin(mc_new_2(AlienSquad, p, stepx));
+  ent->checkin(mc_new2(AlienSquad, p, stepx));
   ent->checkin(mc_new(Looper));
   return ent;
 }
@@ -202,7 +202,7 @@ a::Entity* GEngine::reifyShip() {
   //TODO: why 60
   auto y = sz.height + wb.bottom + (5/60.0f * wz.size.height);
   auto x = wb.left + wz.size.width * 0.5f;
-  auto ship = mc_new_3(Ship, s, "ship_1.png", "ship_0.png");
+  auto ship = mc_new3(Ship, s, "ship_1.png", "ship_0.png");
 
   CCASSERT(s != nullptr, "ship sprite cannot be null");
 

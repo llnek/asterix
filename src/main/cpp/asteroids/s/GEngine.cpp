@@ -47,10 +47,10 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Resolve,this));
-  regoSystem(mc_new_1(Move,this));
-  regoSystem(mc_new_1(Motions,this));
-  regoSystem(mc_new_1(Collide,this));
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(Motions,this));
+  regoSystem(mc_new1(Collide,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ void GEngine::createMissiles(int count) {
     auto sp = cx::reifySprite("laserGreen.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new_1(Missile, sp);
+    return mc_new1(Missile, sp);
   }, count);
 }
 
@@ -73,7 +73,7 @@ void GEngine::createLasers(int count) {
     auto sp = cx::reifySprite("laserRed.png");
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new_1(Missile, sp);
+    return mc_new1(Missile, sp);
   }, count);
 }
 
@@ -82,7 +82,7 @@ void GEngine::createLasers(int count) {
 void GEngine::createShip() {
   auto sp= cx::reifySprite("rship_0.png");
   auto ent= this->reifyEntity("*");
-    auto s= mc_new_1(Ship, sp);
+    auto s= mc_new1(Ship, sp);
   MGML()->addAtlasItem("game-pics", sp);
   sp->setRotation(90);
   s->maxVel.x=150;

@@ -48,12 +48,11 @@ void Logic::doIt(float dt) {
   auto ss= CC_GNLF(GVars,arena,"slots");
   auto bot= CC_CSV(c::Integer, "BOT");
   auto cfg= MGMS()->getLCfg()->getValue();
-  auto pnum= ss->pnum;
-  auto cp= ps->parr[pnum];
+  // current player
+  auto cp= ps->parr[ss->pnum];
 
   if (cp->category == bot) {
     if (ENP(botTimer)) {
-      // create some small delay...
       botTimer = cx::reifyTimer(
           MGML(),
           JS_FLOAT(cfg["ROBOT+DELAY"]));
@@ -61,9 +60,8 @@ void Logic::doIt(float dt) {
     else
     if (cx::timerDone(botTimer)) {
       auto bd= CC_GNLF(TTToe,robot,"robot");
-      int rc;
       bd->syncState(grid->vals, cp->value);
-      rc= bd->getFirstMove();
+      int rc= bd->getFirstMove();
       if (rc < 0) {
         rc = ag::evalNegaMax<BD_SZ>(bd);
       }
@@ -87,18 +85,16 @@ void Logic::sync(int pos, int value, Grid *grid) {
 
   auto ps= CC_GNLF(Players, board, "players");
   auto ss= CC_GNLF(GVars,arena,"slots");
-  auto nil = 0;
   auto human= CC_CSV(c::Integer,"HUMAN");
-  auto cur = ss->pnum;
   auto other=0;
   auto snd="";
 
   if ((pos >= 0 && pos < grid->vals.size()) &&
-      nil == grid->vals[pos]) {
+      0 == grid->vals[pos]) {
 
     SENDMSG("/hud/timer/hide");
 
-    if (cur == 1) {
+    if (ss->pnum == 1) {
       snd= "x_pick";
       other = 2;
     } else {

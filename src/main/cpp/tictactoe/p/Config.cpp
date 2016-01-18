@@ -29,7 +29,7 @@ void Config::initLevels() {
   auto d= getLevel("1");
   auto j= j::json({
         {"HUMAN+THINK", 7},
-        {"ROBOT+DELAY", 600.0f}
+        {"ROBOT+DELAY", 1000.0f}
       });
   d->setObject(f::JsonObj::create(j), CFG);
 }
@@ -97,16 +97,10 @@ void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  CCLOG("cached sprite-sheet: %s", fp.c_str());
   fp= getAtlas("lang-pics");
   c->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const sstr Config::getWSUrl() {
-  return "";
+  CCLOG("cached sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

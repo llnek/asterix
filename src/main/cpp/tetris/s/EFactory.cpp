@@ -29,11 +29,11 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Resolve,this));
-  regoSystem(mc_new_1(Move,this));
-  regoSystem(mc_new_1(Generate,this));
-  regoSystem(mc_new_1(Clear,this));
-  regoSystem(mc_new_1(Stage,this));
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(Generate,this));
+  regoSystem(mc_new1(Clear,this));
+  regoSystem(mc_new1(Stage,this));
 }
 
 //////////////////////////////////////////////////////////////////////////

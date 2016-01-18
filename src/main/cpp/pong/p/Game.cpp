@@ -188,7 +188,7 @@ void GLayer::deco(int cur,
   p2.setName(p2k,p2n);
   p1.setName(p1k,p1n);
 
-  this->engine= mc_new_3(GEngine, cur, p1, p2);
+  this->engine= mc_new3(GEngine, cur, p1, p2);
   getHUD()->regoPlayers(p1,p2);
 }
 

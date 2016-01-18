@@ -85,7 +85,7 @@ owner<OdinEvent*> json_decode(const n::WebSocket::Data &e) {
   try {
     j::json msg;
     msg.parse(e.bytes);
-    evt= mc_new_1( OdinEvent,msg);
+    evt= mc_new1( OdinEvent,msg);
   } catch (...) {
     CCLOGERROR("failed to parse json: %s", "");
   }

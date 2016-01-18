@@ -24,6 +24,10 @@ struct CC_DLL GCXX : public f::GCX {
     : GCX(m,io) {
     data=msg;
   }
+  GCXX(f::GMode m, j::json msg)
+    : GCX(m) {
+    data=msg;
+  }
   DECL_TD(j::json, data)
 };
 

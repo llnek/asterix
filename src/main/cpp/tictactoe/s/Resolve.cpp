@@ -39,13 +39,12 @@ bool Resolve::update(float dt) {
 void Resolve::sync() {
   auto css= CC_GNLF(CSquares, arena, "squares");
   auto grid= CC_GNLF(Grid, board, "grid");
-  auto nil= 0;
 
   for (int i=0; i < grid->vals.size(); ++i) {
     auto v= grid->vals[i];
-    if (v != nil) {
+    if (v != 0) {
       auto sq= css->sqs[i];
-      if (sq->value == nil) {
+      if (sq->value == 0) {
         sq->toggle(v);
       }
     }
@@ -143,14 +142,13 @@ void Resolve::doForfeit() {
 //
 void Resolve::showWinningIcons(const ArrDim &combo) {
   auto css= CC_GNLF(CSquares, arena, "squares");
-  auto nil = 0;
 
   //flip the losing cells to gray
   for (int i=0; i < css->sqs.size(); ++i) {
     if (! (s::find(s::begin(combo), s::end(combo), i)
           != combo.end())) {
       auto z= css->sqs[i];
-      if (z->value != nil) {
+      if (z->value != 0) {
         z->flip();
       }
     }
@@ -178,9 +176,7 @@ void Resolve::doDone(Player *pobj) {
 //
 bool Resolve::checkDraw(Grid *gd) {
 
-  auto nil= 0;
-
-  return ! (s::find(s::begin(gd->vals), s::end(gd->vals), nil)
+  return ! (s::find(s::begin(gd->vals), s::end(gd->vals), 0)
     != gd->vals.end());
 }
 

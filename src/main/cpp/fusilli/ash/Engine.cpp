@@ -63,7 +63,7 @@ const s_vec<Entity*> Engine::getEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity* Engine::reifyEntity(const sstr &g) {
-  auto e= mc_new_2(Entity,g, this);
+  auto e= mc_new2(Entity,g, this);
   auto it= groups.find(g);
   EList *el;
   if (it != groups.end()) {
@@ -137,7 +137,7 @@ void Engine::purgeEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 NodeList* Engine::getNodeList( const NodeType& nodeType) {
-  auto nl = mc_new_1(NodeList, nodeType);
+  auto nl = mc_new1(NodeList, nodeType);
   auto rego = NodeRegistry::self();
   F__LOOP(it, groups) {
     auto &el= it->second;

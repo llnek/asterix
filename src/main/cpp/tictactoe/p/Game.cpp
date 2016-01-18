@@ -100,7 +100,7 @@ void GLayer::overAndDone(int winner) {
 //
 void GLayer::showMenu() {
   auto f= [=]() { CC_DTOR()->popScene(); };
-  auto m= MMenu::reify(mc_new_1(MCX,f));
+  auto m= MMenu::reify(mc_new1(MCX,f));
   CC_DTOR()->pushScene(m);
 }
 
@@ -155,7 +155,6 @@ void GLayer::decorate() {
   f::emptyQueue<sstr>( MGMS()->msgQueue() );
 
   centerImage("game.bg");
-  incIndexZ();
 
   regoAtlas("game-pics");
   regoAtlas("lang-pics");
@@ -182,11 +181,9 @@ void GLayer::decorate() {
 
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 
-  engine = mc_new_1(GEngine,pnum);
+  engine = mc_new1(GEngine,pnum);
 
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
-  getHUD()->reset();
-
   CCLOG("init-game - ok");
 }
 
@@ -199,11 +196,9 @@ void GLayer::showGrid() {
     auto &bx= gps[i];
     assert(s->cell == i);
     s->sprite->setPosition(cx::vboxMID(bx));
-    addAtlasItem( "game-pics", s->sprite);
+    addAtlasItem("game-pics", s->sprite);
   }
 }
-
-
 
 END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
@@ -257,24 +252,15 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   if ("/player/timer/expired" == topic) {
     y->playTimeExpired();
   }
-  else
-  if ("/game/stop" == topic) {
-    MGMS()->stop();
-  }
-  else
-  if ("/game/play" == topic) {
-    MGMS()->play();
-  }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void Game::decorate() {
   HUDLayer::reify(this, 3);
-  GLayer::reify(this,2);
+  GLayer::reify(this, 2);
   play();
 }
-
 
 
 

@@ -38,7 +38,7 @@ void UILayer::decorate() {
 
   menu->setPosition(cw.x, wb.top * 0.1f);
   b->setCallback([=](c::Ref*) {
-    cx::runEx( MMenu::reify(mc_new_1(MCX,f)));
+    cx::runEx( MMenu::reify(mc_new1(MCX,f)));
   });
   addItem(this,menu);
 }

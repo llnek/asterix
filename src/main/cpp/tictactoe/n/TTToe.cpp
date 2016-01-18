@@ -40,7 +40,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 TTToe::TTToe(int p1v, int p2v) {
-  this->actors = {nil, p1v, p2v};
+  this->actors = {this->nil, p1v, p2v};
   this->GOALS= mapGoalSpace();
 }
 
@@ -60,7 +60,7 @@ int TTToe::getFirstMove() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void TTToe::syncState(const ArrCells &seed, int actor) {
-  s::copy(s::begin(seed), s::end(seed), s::begin(grid));
+  S__COPY(seed, grid);
   actors[0] = actor;
 }
 
@@ -126,10 +126,10 @@ int TTToe::getOtherPlayer(int pv) {
 owner<ag::FFrame<BD_SZ>*>  TTToe::takeFFrame() {
   auto ff = mc_new( ag::FFrame<BD_SZ> );
 
-  s::copy(s::begin(grid), s::end(grid), s::begin(ff->state));
   ff->other= getOtherPlayer(actors[0]);
   ff->cur= actors[0];
   ff->lastBestMove= -1;
+  S__COPY(grid, ff->state);
 
   return ff;
 }
@@ -181,7 +181,7 @@ int TTToe::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
       win=snap->cur;
     }
     if (win > 0) {
-      s::copy(s::begin(t),s::end(t),s::begin(combo));
+      S__COPY(t,combo);
       break;
     }
   }

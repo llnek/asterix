@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XScene.h"
 #include "core/Odin.h"
@@ -56,4 +57,5 @@ public:
 
 
 NS_END(tttoe)
+
 

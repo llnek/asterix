@@ -97,7 +97,7 @@ void UILayer::onCancel(c::Ref*) {
   auto f= [=]() { cx::runEx( XCFG()->prelude()); };
   ws::disconnect(odin);
   SNPTR(odin)
-  cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
+  cx::runEx( MMenu::reify(mc_new1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

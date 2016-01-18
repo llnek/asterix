@@ -25,7 +25,6 @@ NS_BEGIN(tttoe)
 //
 void MMenu::decorate() {
   auto tile = CC_CSV(c::Integer,"TILE");
-  auto nil = 0;
   auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
   auto cw = cx::center();
@@ -66,11 +65,12 @@ void MMenu::decorate() {
   back->setColor(c);
   quit->setColor(c);
 
-  quit->setCallback(
-      [=](c::Ref*){ cx::runEx( XCFG()->prelude()); });
-
   back->setCallback(
-      [=](c::Ref*){ SCAST(MCX*, getCtx())->back(); });
+      [=](c::Ref*){
+      SCAST(MCX*, getCtx())->back(); });
+
+  quit->setCallback(
+      [=](c::Ref*){ cx::rxfs(); });
 
   // ctrl btns
   s_vec<c::MenuItem*> ctrl {back, quit};
@@ -94,14 +94,20 @@ void MMenu::decorate() {
 //////////////////////////////////////////////////////////////////////////
 //
 void MMenu::onPlay3() {
-  auto f = []() { cx::runEx(XCFG()->prelude()); };
-  auto n = [=]() {
-    cx::runEx( MMenu::reify( mc_new_1(MCX,f)));
-  };
-  auto y= [=](ws::OdinIO *io, j::json obj) {
-    this->onPlayXXX(io, obj);
-  };
-  cx::runEx( NetPlay::reify( mc_new_2(NPCX, y,n)));
+  auto f = []() { cx::rxfs(); };
+  auto x= new NPCX(
+
+    [=](ws::OdinIO *io, j::json obj) {
+      this->onPlayXXX(io, obj);
+    },
+
+    [=]() {
+      cx::runEx(
+          MMenu::reify(mc_new1(MCX,f))); }
+
+  );
+
+  cx::runEx(NetPlay::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,7 +115,8 @@ void MMenu::onPlay3() {
 void MMenu::onPlayXXX(ws::OdinIO *io, j::json obj) {
   auto mode= f::GMode::NET;
   cx::runEx(
-      Game::reify(mc_new_3(GCXX, mode, io, obj)));
+      Game::reify(
+        mc_new3(GCXX, mode, io, obj)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -117,8 +124,10 @@ void MMenu::onPlayXXX(ws::OdinIO *io, j::json obj) {
 void MMenu::onPlayXXX(f::GMode mode) {
   auto obj = fmtGameData(mode);
   cx::runEx(
-      Game::reify(mc_new_3(GCXX, mode, nullptr, obj)));
+      Game::reify(
+        mc_new2(GCXX, mode, obj)));
 }
+
 
 NS_END(tttoe)
 

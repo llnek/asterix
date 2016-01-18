@@ -86,6 +86,7 @@ void Net::sync() {
   }
 
   auto msg= j::json({
+    {"category", CC_CSV(c::Integer, "NETP")},
     { "running", active },
     { "pnum", pnum }
   });
@@ -100,19 +101,21 @@ void Net::process() {
   auto sel = CC_GNLF(CellPos, board, "select");
   auto grid= CC_GNLF(Grid, board, "grid");
   auto ss= CC_GNLF(GVars,arena, "slots");
-  auto nil = 0;
   auto pos = sel->cell;
   auto cur = ss->pnum;
 
   // is it really your turn?
-  if (cur > 0 && cur == ps->parr[0]->pnum) {} else { return;}
+  if (cur < 1 ||
+      cur != ps->parr[0]->pnum)
+  { return;}
 
   if ((pos >= 0 && pos < grid->vals.size()) &&
-      nil == grid->vals[pos])
+      0 == grid->vals[pos])
   {}
   else
   { return; }
 
+  //ok, you clicked a square
   SENDMSG("/hud/timer/hide");
 
   auto snd = cur == 1 ? "x_pick" : "o_pick";
@@ -148,7 +151,7 @@ void Net::onNet(ws::OdinEvent *evt) {
       if (MGMS()->isLive() ) {
         CCLOG("game will stop");
         SENDMSG("/hud/timer/hide");
-        onSess( evt);
+        onSess(evt);
         SENDMSG("/net/stop");
       }
     break;
@@ -181,7 +184,7 @@ void Net::onSess(ws::OdinEvent *evt) {
     }
   }
 
-  if (pnum == 1 || pnum == 2) {} else { return; }
+  if (pnum < 1) { return; }
 
   switch (evt->code) {
     case ws::EType::POKE_MOVE:

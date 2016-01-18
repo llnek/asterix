@@ -31,17 +31,16 @@ static int PSWD_TAG = (int) 'p';
 void NetPlay::showWaitOthers() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
-  auto wz= cx::visRect();
-  auto cw= cx::center();
   auto wb = cx::visBox();
+  auto cw= cx::center();
 
+  //clear layer
   removeAll();
 
   qn->setScale(XCFG()->getScale() * 0.3f);
   qn->setPosition(cw.x, wb.top * 0.75f);
   addItem(qn);
 
-  auto f= []() { cx::runEx(XCFG()->prelude()); };
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
 
@@ -55,30 +54,29 @@ void NetPlay::showWaitOthers() {
 //
 void NetPlay::onStart(ws::OdinEvent *evt) {
   auto obj= fmtGameData( f::GMode::NET);
-  auto ctx = SCAST(NPCX*, getCtx());
   auto io=odin;
 
   obj["ppids"] = evt->doco["source"]["ppids"];
-  obj["pnum"]= j::json(player);
+  obj["pnum"]= player; //j::json(player);
 
   io->cancelAll();
   SNPTR(odin)
-
-  ctx->yes(io,obj);
+  SCAST(NPCX*, getCtx())->yes(io,obj);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onCancel() {
-  auto f= []() { cx::runEx(XCFG()->prelude()); };
-  auto m = MMenu::reify(mc_new_1(MCX, f));
-  cx::runEx(m);
+  auto f= []() { cx::rxfs(); };
+  cx::runEx(
+      MMenu::reify(
+        mc_new1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onPlayReply(ws::OdinEvent *evt) {
-  player= JS_INT(  evt->doco["pnum"]);
+  player= JS_INT( evt->doco["pnum"]);
   CCLOG("player %d: ok", player);
   showWaitOthers();
 }
@@ -88,7 +86,6 @@ void NetPlay::onPlayReply(ws::OdinEvent *evt) {
 void NetPlay::networkEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYER_JOINED:
-      //TODO
       //CCLOG("another player joined room: ", evt.source.puid);
     break;
     case ws::EType::START:
@@ -146,7 +143,6 @@ void NetPlay::onLogin() {
 void NetPlay::decorate() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
-  auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
 

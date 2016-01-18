@@ -9,31 +9,31 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Config : public f::XConfig {
+class CC_DLL Config : public f::XConfig {
+
+  void initLevels();
+  void initAssets();
+  void initCsts();
+
+public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
 
   virtual const c::Size gameSize() { return c::Size(320,480); }
 
-  virtual const sstr themeColor() { return "blue"; }
-
   virtual void handleResolution(const c::Size &rs);
-  virtual const sstr getWSUrl();
   virtual c::Scene* prelude();
 
   virtual void runOnce();
   static owner<Config*> reify();
 
-protected:
-  void initLevels();
-  void initAssets();
-  void initCsts();
 };
 
 NS_END(tttoe)

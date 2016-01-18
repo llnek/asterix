@@ -24,10 +24,10 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Resolve,this));
-  regoSystem(mc_new_1(Logic,this));
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Logic,this));
   if (MGMS()->isOnline()) {
-    regoSystem(mc_new_1(Net,this));
+    regoSystem(mc_new1(Net,this));
   }
 }
 
@@ -37,13 +37,13 @@ void GEngine::initEntities() {
   auto human = CC_CSV(c::Integer, "HUMAN");
   auto bot = CC_CSV(c::Integer, "BOT");
   auto netp = CC_CSV(c::Integer, "NETP");
-  auto nil= 0;
   auto xv= CC_CSV(c::Integer, "CV_X");
   auto ov= CC_CSV(c::Integer, "CV_O");
   auto mode = MGMS()->getMode();
   auto css= mc_new(CSquares);
   auto ps= mc_new(Players);
   auto gvs= mc_new(GVars);
+  auto gps= mapGridPos(1);
   a::Entity *arena;
   a::Entity *board;
   a::Entity *p2;
@@ -51,7 +51,7 @@ void GEngine::initEntities() {
   auto cat1= human;
   auto cat2= bot;
   ArrCells seed;
-  seed.fill(nil);
+  seed.fill(0);
 
   arena= this->reifyEntity();
   board= this->reifyEntity();
@@ -61,10 +61,9 @@ void GEngine::initEntities() {
   // config global vars
   gvs->pnum= mynum;
 
-  auto gps= mapGridPos(1);
   // the squares
   for (auto i=0; i < css->sqs.size(); ++i) {
-    css->sqs[i] = mc_new_1(CSquare, i);
+    css->sqs[i] = mc_new1(CSquare, i);
   }
   S__COPY(gps, css->boxes);
 
@@ -80,7 +79,7 @@ void GEngine::initEntities() {
   }
   else
   if (mode == f::GMode::ONE) {
-    p2->checkin( mc_new_2(TTToe, xv, ov));
+    p2->checkin( mc_new2(TTToe, xv, ov));
     p1->checkin(mc_new(Gesture));
   }
   else
@@ -91,17 +90,17 @@ void GEngine::initEntities() {
     p1->checkin(mc_new(Gesture));
   }
 
-  ps->parr[2]= mc_new_3(Player, cat2, ov, 2);
+  ps->parr[2]= mc_new3(Player, cat2, ov, 2);
   ps->parr[2]->color= CC_CSS("P2_COLOR");
-  ps->parr[1]= mc_new_3(Player, cat1, xv, 1);
+  ps->parr[1]= mc_new3(Player, cat1, xv, 1);
   ps->parr[1]->color= CC_CSS("P1_COLOR");
-  ps->parr[0]= mc_new_1(Player,mynum);
+  ps->parr[0]= mc_new1(Player,mynum);
 
   p2->checkin(ps->parr[2]);
   p1->checkin(ps->parr[1]);
 
   // the board
-  board->checkin(mc_new_1( Grid, seed));
+  board->checkin(mc_new1( Grid, seed));
   board->checkin(ps);
   board->checkin(mc_new(CellPos));
 };

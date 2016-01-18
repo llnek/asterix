@@ -83,9 +83,9 @@ typedef std::string sstr;
 // memory lifecycle stuff
 #define mc_free_mem(mem)  { if (mem) ::free(mem); mem = nullptr; }
 #define mc_free_fp(fp)    { if (fp) ::fclose(fp); fp = nullptr; }
-#define mc_new_3(T, p1, p2, p3) new(std::nothrow) T(p1, p2, p3)
-#define mc_new_2(T, p1, p2) new(std::nothrow) T(p1, p2)
-#define mc_new_1(T, p1) new(std::nothrow) T(p1)
+#define mc_new3(T, p1, p2, p3) new(std::nothrow) T(p1, p2, p3)
+#define mc_new2(T, p1, p2) new(std::nothrow) T(p1, p2)
+#define mc_new1(T, p1) new(std::nothrow) T(p1)
 #define mc_new(T) new(std::nothrow) T()
 #define mc_free_ptr(ptr)  mc_free_mem(ptr)
 #define mc_free_str(pc)   mc_free_mem(pc)

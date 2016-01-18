@@ -31,8 +31,8 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Collide,this));
-  regoSystem(mc_new_1(Move,this));
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(Move,this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ void GEngine::createBricks() {
       auto v= JS_INT(cfg["CDS"][cn]);
 
       MGML()->addAtlasItem("game-pics", sp);
-      auto b = mc_new_3(Brick,sp,v,r);
+      auto b = mc_new3(Brick,sp,v,r);
       bf->bricks.push_back(b);
       b->inflate(x, y);
       x += csz.width + 1;
@@ -94,7 +94,7 @@ void GEngine::createPaddle() {
   auto vx= JS_INT(cfg["PADDLE+SPEED"]);
   auto cw= cx::center();
   MGML()->addAtlasItem("game-pics",sp);
-  auto p= mc_new_1(Paddle, sp);
+  auto p= mc_new1(Paddle, sp);
   p->speed.x= vx;
   p->vel.x= vx;
   p->inflate( cw.x, 56);
@@ -110,7 +110,7 @@ void GEngine::createBall() {
   auto bsp= JS_INT(cfg["BALL+SPEED"]);
   auto sp = cx::reifySprite("ball.png");
   auto cw= cx::center();
-  auto b= mc_new_1(Ball, sp);
+  auto b= mc_new1(Ball, sp);
 
   MGML()->addAtlasItem("game-pics", sp);
   b->speed.x= bsp;

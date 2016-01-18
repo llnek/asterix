@@ -92,6 +92,7 @@ namespace ccsx {
   void run(not_null<c::Scene*>, float delay);
   void run(not_null<c::Scene*>);
   void runEx(not_null<c::Scene*>);
+  void rxfs();
 
   const c::Vec2 calcXY(float angle, float hypot);
   float degToRad(float);

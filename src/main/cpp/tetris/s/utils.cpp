@@ -41,7 +41,7 @@ owner<Shape*> mkShape(not_null<f::XLayer*> layer,
   Shape *rc=nullptr;
 
   if (bbox.size() > 0) {
-    rc= mc_new_1(Shape, info);
+    rc= mc_new1(Shape, info);
     rc->x=x;
     rc->y=y;
     reifyBricks(layer, bbox, info.png, rc->bricks);

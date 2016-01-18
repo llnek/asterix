@@ -37,7 +37,6 @@ void ELayer::onQuit() {
 void ELayer::decorate() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
-  auto wz= cx::visRect();
   auto cw= cx::center();
   auto wb= cx::visBox();
 

@@ -51,12 +51,12 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Stage, this));
-  regoSystem(mc_new_1(Move, this));
-  regoSystem(mc_new_1(Aliens, this));
-  regoSystem(mc_new_1(Collide, this));
-  regoSystem(mc_new_1(Resolve, this));
-  regoSystem(mc_new_1(Render, this));
+  regoSystem(mc_new1(Stage, this));
+  regoSystem(mc_new1(Move, this));
+  regoSystem(mc_new1(Aliens, this));
+  regoSystem(mc_new1(Collide, this));
+  regoSystem(mc_new1(Resolve, this));
+  regoSystem(mc_new1(Render, this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void GEngine::createShip() {
   bs->setVisible(false);
   sp->addChild(bs, zx, 911);//99999);
 
-  ent->checkin( mc_new_2(Ship, sp, bs));
+  ent->checkin( mc_new2(Ship, sp, bs));
   ent->checkin( mc_new(Motion));
 }
 
@@ -111,7 +111,7 @@ void GEngine::createMissiles(int count) {
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp, zx, 911);
-    return mc_new_1(Missile, sp);
+    return mc_new1(Missile, sp);
   }, count);
 }
 
@@ -126,7 +126,7 @@ void GEngine::createBombs(int count) {
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp, zx, 911);
-    return mc_new_1(Bomb, sp);
+    return mc_new1(Bomb, sp);
   }, count);
 }
 
@@ -141,7 +141,7 @@ void GEngine::createExplosions(int count) {
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("explosions", sp);
-    return mc_new_1(Explosion, sp);
+    return mc_new1(Explosion, sp);
   }, count);
 }
 
@@ -156,7 +156,7 @@ void GEngine::createHitEffects(int count) {
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     sp->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp);
-    return mc_new_1(HitEffect, sp);
+    return mc_new1(HitEffect, sp);
   }, count);
 }
 
@@ -177,7 +177,7 @@ void GEngine::createSparks(int count) {
     sp3->setVisible(false);
     MGML()->addAtlasItem("op-pics", sp3);
 
-    return mc_new_2(Spark, sp2, sp3);
+    return mc_new2(Spark, sp2, sp3);
   }, count);
 }
 
@@ -191,7 +191,7 @@ void GEngine::createEnemies(int count) {
     auto sp= cx::reifySprite(arg.textureName);
     sp->setVisible(false);
     MGML()->addAtlasItem("game-pics", sp,zx,911);
-    return mc_new_2(Enemy, sp, arg);
+    return mc_new2(Enemy, sp, arg);
   };
 
   F__LOOP(it, EnemyTypes) {
@@ -214,7 +214,7 @@ void GEngine::createBackSkies() {
     bg->setAnchorPoint(cx::anchorBL());
     bg->setVisible(false);
     layer->addAtlasItem("game-pics", bg, -10,911);
-    return mc_new_1(f::ComObj, bg);
+    return mc_new1(f::ComObj, bg);
   }, 2);
 }
 
@@ -228,7 +228,7 @@ void GEngine::createBackTiles(int count) {
     sp->setAnchorPoint(cx::anchorL());
     sp->setVisible(false);
     layer->addAtlasItem("back-tiles", sp, -9,911);
-    return mc_new_1(f::ComObj, sp);
+    return mc_new1(f::ComObj, sp);
   };
 
   F__LOOP(it, BackTileMap) {

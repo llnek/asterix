@@ -22,9 +22,8 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::demo() {
-  auto scale= 0.75f;
+  auto ps= mapGridPos(0.75f);
   auto fm= "";
-  auto ps= mapGridPos(scale);
 
   // we scale down the icons to make it look nicer
   for (int i = 0; i < ps.size(); ++i) {
@@ -38,7 +37,7 @@ void Splash::demo() {
     { fm= "o.png"; }
     auto sp= cx::reifySprite(fm);
     auto bx= cx::vboxMID( ps[i]);
-    sp->setScale(scale);
+    sp->setScale(0.75f);
     sp->setPosition(bx);
     addAtlasItem("game-pics", sp);
   }
@@ -49,7 +48,7 @@ void Splash::demo() {
 void Splash::decorate() {
 
   centerImage( "game.bg");
-  regoAtlas( "game-pics");
+  regoAtlas("game-pics");
 
   // title
   auto cw = cx::center();
@@ -60,12 +59,12 @@ void Splash::decorate() {
 
   demo();
 
-  auto f= []() { cx::runEx(XCFG()->prelude()); };
-  // play button
   auto b1= cx::reifyMenuBtn("play.png");
+  auto f= []() { cx::rxfs(); };
   auto menu= cx::mkMenu(b1);
-  b1->setCallback([=](c::Ref*) {
-      cx::runEx( MMenu::reify(mc_new_1(MCX, f)));
+  b1->setCallback(
+      [=](c::Ref*) {
+        cx::runEx(MMenu::reify(mc_new1(MCX, f)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);

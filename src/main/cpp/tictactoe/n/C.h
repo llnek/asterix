@@ -9,17 +9,14 @@
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
-
+//////////////////////////////////////////////////////////////////////////////
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
-#include "core/Odin.h"
-#include "core/JSON.h"
 #include "lib.h"
 #include "TTToe.h"
 
 NS_ALIAS(cx, fusii::ccsx)
-NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,7 +56,7 @@ struct CC_DLL Player : public a::Component {
   }
   Player(int pnum) { this->pnum= pnum; }
   Player() {}
-  DECL_TV(int, category, f::GMode::NICHTS)
+  DECL_TV(int, category, 0)
   DECL_TV(int, pnum,  -1)
   DECL_IZ(value)
   DECL_TD(sstr, pidlong)

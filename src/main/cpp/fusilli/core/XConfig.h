@@ -64,10 +64,12 @@ public:
   virtual void runOnce() {}
 
   virtual ResolutionPolicy policy() = 0;
-  virtual const sstr themeColor() = 0;
   virtual const c::Size gameSize() = 0;
 
-  virtual const sstr getWSUrl() = 0;
+  virtual const sstr getWSUrl() {
+    return "";
+  }
+
   virtual c::Scene* prelude() = 0;
 
   virtual bool isPortrait() { return true; }

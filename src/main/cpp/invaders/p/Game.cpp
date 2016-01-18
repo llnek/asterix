@@ -43,7 +43,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 //
 void GLayer::showMenu() {
   auto f= [=]() { CC_DTOR()->popScene(); };
-  CC_DTOR()->pushScene(MMenu::reify(mc_new_1(MCX, f)));
+  CC_DTOR()->pushScene(MMenu::reify(mc_new1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -42,7 +42,7 @@ void UILayer::decorate() {
   auto b1 = cx::reifyMenuBtn("play.png");
   auto menu = cx::mkMenu(b1);
   b1->setCallback([=](c::Ref*) {
-        cx::run( MMenu::reify(mc_new_1(MCX, cb)));
+        cx::run( MMenu::reify(mc_new1(MCX, cb)));
       });
 
   menu->setPosition( cw.x, wb.top * 0.1f);

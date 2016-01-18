@@ -33,11 +33,11 @@ GEngine::GEngine(int cur, const Player &p1, const Player &p2)  {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new_1(Resolve, this));
-  regoSystem(mc_new_1(Collide, this));
-  regoSystem(mc_new_1(Move, this));
-  regoSystem(mc_new_1(Net, this));
-  regoSystem(mc_new_1(Stage, this));
+  regoSystem(mc_new1(Resolve, this));
+  regoSystem(mc_new1(Collide, this));
+  regoSystem(mc_new1(Move, this));
+  regoSystem(mc_new1(Net, this));
+  regoSystem(mc_new1(Stage, this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ void GEngine::mkBall() {
   }
 
   auto sp= cx::reifySprite("pongball.png");
-  auto b= mc_new_2(Ball, sp, sd);
+  auto b= mc_new2(Ball, sp, sd);
 
   MGML()->addAtlasItem("game-pics", sp);
   b->vel.x=vx;
@@ -109,11 +109,11 @@ void GEngine::mkOnePaddle( const Player &p) {
 
   auto sp = cx::reifySprite(res);
 
-  ent->checkin(mc_new_3(Paddle, sp, p.pnum, sd));
-  ent->checkin(mc_new_1(Player, p));
+  ent->checkin(mc_new3(Paddle, sp, p.pnum, sd));
+  ent->checkin(mc_new1(Player, p));
   MGML()->addAtlasItem("game-pics", sp);
 
-  ent->checkin(mc_new_1(Position, lp));
+  ent->checkin(mc_new1(Position, lp));
 
   if (MGMS()->isOnline() && cur != p.pnum) {
     ent->checkin(mc_new(Faux));

@@ -57,7 +57,7 @@ void UILayer::decorate() {
     btnEffect();
     flareEffect(flare, [=]() {
       cx::runEx(
-          MMenu::reify(mc_new_1(MCX, f)));
+          MMenu::reify(mc_new1(MCX, f)));
     });
   });
 
