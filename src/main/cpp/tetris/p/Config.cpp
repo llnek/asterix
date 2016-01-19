@@ -46,8 +46,8 @@ void Config::initCsts() {
   addCst("FENCE", CC_INT(0));
   addCst("TILE", CC_INT(16));
 
-  addColor("default", CC_STR("#f6b17f"));
   addColor("text", CC_STR("#ffffff"));
+  addColor("dft", CC_STR("#f6b17f"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -8,9 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MENU_H__)
-#define __MENU_H__
+#pragma once
 
 #include "x2d/XScene.h"
 
@@ -34,6 +32,5 @@ struct CC_DLL MMenu : public f::XScene {
 
 
 NS_END(tetris)
-#endif
 
 

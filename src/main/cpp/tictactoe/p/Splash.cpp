@@ -60,7 +60,7 @@ void Splash::decorate() {
   demo();
 
   auto b1= cx::reifyMenuBtn("play.png");
-  auto f= []() { cx::rxfs(); };
+  auto f= []() { cx::prelude(); };
   auto menu= cx::mkMenu(b1);
   b1->setCallback(
       [=](c::Ref*) {

@@ -70,7 +70,7 @@ void MMenu::decorate() {
       SCAST(MCX*, getCtx())->back(); });
 
   quit->setCallback(
-      [=](c::Ref*){ cx::rxfs(); });
+      [=](c::Ref*){ cx::prelude(); });
 
   // ctrl btns
   s_vec<c::MenuItem*> ctrl {back, quit};
@@ -94,7 +94,7 @@ void MMenu::decorate() {
 //////////////////////////////////////////////////////////////////////////
 //
 void MMenu::onPlay3() {
-  auto f = []() { cx::rxfs(); };
+  auto f = []() { cx::prelude(); };
   auto x= new NPCX(
 
     [=](ws::OdinIO *io, j::json obj) {

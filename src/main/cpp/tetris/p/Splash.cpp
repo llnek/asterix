@@ -12,60 +12,30 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
-#include "Menu.h"
+#include "MMenu.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-protected:
-  void onPlay(c::Ref*);
-};
-
-//////////////////////////////////////////////////////////////////////////
-//
-void UILayer::decorate() {
+void Splash::decorate() {
 
   auto b= cx::reifyMenuBtn("play.png");
+  auto f= []() { cx::prelude(); }
   auto menu= cx::mkMenu(b);
   auto wb = cx::visBox();
   auto cw = cx::center();
+  auto ctx= mc_new1(MCX,f);
 
   centerImage("game.bg");
-  incIndexZ();
+
+  b->setCallback(
+      [=](c::Ref*)
+      { cx::runEx( MMenu::reify(ctx)); });
 
   menu->setPosition(cw.x, wb.top * 0.1f);
-  b->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay));
-
   addItem(menu);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref*) {
-  auto f= [=]() {
-    cx::runEx(
-        XCFG()->prelude());
-  };
-  auto m= MMenu::reify(mc_new1(MCX, f));
-  cx::runEx(m);
-}
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////
-//
-void Splash::decorate() {
-  UILayer::reify(this);
 }
 
 

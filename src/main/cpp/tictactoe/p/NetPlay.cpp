@@ -67,7 +67,7 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onCancel() {
-  auto f= []() { cx::rxfs(); };
+  auto f= []() { cx::prelude(); };
   cx::runEx(
       MMenu::reify(
         mc_new1(MCX, f)));
