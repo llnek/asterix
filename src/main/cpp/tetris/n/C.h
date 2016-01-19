@@ -378,13 +378,6 @@ struct CC_DLL Pauser  : public a::Component {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-// for collision detection, game area as a grid
-struct CC_DLL TileGrid  : public a::Component {
-  MDECL_COMP_TPID("n/TileGrid")
-  s_vec<f::FArrInt> tiles;
-};
-
-//////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars  : public a::Component {
   MDECL_COMP_TPID("n/GVars")

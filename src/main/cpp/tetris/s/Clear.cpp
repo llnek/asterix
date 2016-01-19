@@ -11,17 +11,16 @@
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
+#include "n/lib.h"
 #include "Clear.h"
-#include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::preamble() {
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +28,7 @@ void Clear::preamble() {
 bool Clear::update(float dt) {
 
   if (MGMS()->isLive()) {
-    auto ps= CC_GNLF(Pauser, arenaNode, "pauser");
+    auto ps= CC_GNLF(Pauser, arena, "pauser");
     if (ps->pauseToClear) {
       if (cx::timerDone(ps->timer)) {
         cx::undoTimer(ps->timer);
@@ -47,7 +46,7 @@ bool Clear::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::clearFilled() {
-  auto flines = CC_GNLF(FilledLines, arenaNode, "flines");
+  auto flines = CC_GNLF(FilledLines, arena, "flines");
   auto score= flines->lines.size();
 
   F__LOOP(it, flines->lines) {
@@ -66,7 +65,7 @@ void Clear::clearFilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::clearOneRow( int r) {
-  auto bks= CC_GNLF(BlockGrid, arenaNode, "blocks");
+  auto bks= CC_GNLF(BlockGrid, arena, "blocks");
   auto &row= bks->grid[r];
 
   for (auto c=0; c < row.size(); ++c) {
@@ -81,8 +80,8 @@ void Clear::clearOneRow( int r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::resetOneRow( int r) {
-  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
-  auto &row= co->tiles[r];
+  auto bks= CC_GNLF(BlockGrid, arena, "blocks");
+  auto &row= bks->grid[r];
 
   for (auto c=0; c < row.size(); ++c) {
     row.set(c, r==0 ? 1 : 0);

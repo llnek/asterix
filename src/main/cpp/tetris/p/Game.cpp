@@ -98,7 +98,7 @@ void GLayer::onceOnly() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::doCtrl() {
-  auto cpad= CC_GNLF(CtrlPad, arenaNode, "cpad");
+  auto cpad= CC_GNLF(CtrlPad, arena, "cpad");
   auto& hsps= cpad->hotspots;
   auto cw = cx::center();
   auto wb= cx::visBox();
@@ -113,7 +113,7 @@ void GLayer::doCtrl() {
   auto y= wb.top * 0.25f;
 
   sp->setPosition(x,y);
-  MGML()->addAtlasItem("game-pics", sp);
+  addAtlasItem("game-pics", sp);
 
   auto cbx= cx::bbox4(sp);
   //calc hotspots for touch & mouse
@@ -164,7 +164,7 @@ void GLayer::xh(const c::Size &fz, float lf_bdy, float rt_bdy, float ypos) {
   while (x < rt_bdy) { //}cw.x) {
     auto f= cx::reifySprite("gray.png");
     f->setPosition(x, y);
-    MGML()->addAtlasItem("game-pics",f);
+    addAtlasItem("game-pics",f);
     x += fz.width;
   }
 }
@@ -181,7 +181,7 @@ void GLayer::xv(const c::Size &fz, float x) {
   while (y < wb.top) {
     auto f= cx::reifySprite("gray.png");
     f->setPosition(x, y);
-    MGML()->addAtlasItem("game-pics",f);
+    addAtlasItem("game-pics",f);
     y += fz.height;
   }
 }
@@ -192,16 +192,13 @@ void GLayer::onceOnly_2(const c::Size &fz,
     const c::Size &bz,
     const f::Box4 &box) {
 
-  auto blocks= CC_GNLF(BlockGrid, arenaNode, "blocks");
-  auto cs= CC_GNLF(TileGrid, arenaNode, "collision");
-  auto gbox= CC_GNLF(GridBox, arenaNode, "gbox");
+  auto blocks= CC_GNLF(BlockGrid, arena, "blocks");
+  auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto tiles= fakeTileMap(bz, box);
   auto grids = initBlockMap(tiles);
 
   blocks->grid.resize(grids.size(), FArrBrick());
-  cs->tiles.resize(tiles.size(), f::FArrInt());
-  s::copy(grids.begin(), grids.end(), blocks->grid.begin());
-  s::copy(tiles.begin(), tiles.end(), cs->tiles.begin());
+  S__COPY(grids, blocks->grid);
   gbox->box= box;
 
   XCFG()->resetCst("FENCE", CC_INT( (int) floor(fz.width)));
@@ -255,8 +252,6 @@ GLayer::fakeTileMap(const c::Size &bz, const f::Box4 &box) {
   return map;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnded(c::Touch *t, c::Event*) {
@@ -279,8 +274,8 @@ void GLayer::onMouseUp(c::Event *e) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onGUI(const c::Vec2 &pos) {
-  auto motion= CC_GNLF(Gesture, arenaNode, "motion");
-  auto cpad= CC_GNLF(CtrlPad, arenaNode, "cpad");
+  auto motion= CC_GNLF(Gesture, arena, "motion");
+  auto cpad= CC_GNLF(CtrlPad, arena, "cpad");
   auto &hsps= cpad->hotspots;
 
   if (cx::pointInBox(hsps["rr"], pos)) {
@@ -309,6 +304,7 @@ void GLayer::onGUI(const c::Vec2 &pos) {
 //
 void GLayer::postReify() {
   arena= engine->getNodeList(ArenaNode().typeId());
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////////

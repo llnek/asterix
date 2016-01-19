@@ -12,8 +12,8 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "n/lib.h"
 #include "Generate.h"
-#include "s/utils.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -45,7 +45,7 @@ END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::preamble() {
-  arenaNode= engine->getNodeList(ArenaNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
   nextShapeInfo= randNextInfo();
   nextShape=nullptr;
 }
@@ -55,8 +55,8 @@ void Generate::preamble() {
 bool Generate::update(float dt) {
 
   if (MGMS()->isLive()) {
-    auto sl = CC_GNLF(ShapeShell, arenaNode, "shell");
-    auto dp = CC_GNLF(Dropper, arenaNode, "dropper");
+    auto sl = CC_GNLF(ShapeShell, arena, "shell");
+    auto dp = CC_GNLF(Dropper, arena, "dropper");
     auto cfg= MGMS()->getLCfg()->getValue();
     if (ENP(sl->shape)) {
       sl->shape = reifyNextShape();
@@ -79,15 +79,13 @@ bool Generate::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 Shape* Generate::reifyNextShape() {
-  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
-  auto bks= CC_GNLF(BlockGrid, arenaNode, "blocks");
-  auto gbox= CC_GNLF(GridBox, arenaNode, "gbox");
+  auto bks= CC_GNLF(BlockGrid, arena, "blocks");
+  auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto tile= CC_CSV(c::Integer, "TILE");
-  auto &tiles = co->tiles;
   auto wz= cx::visRect();
   auto x = gbox->box.left + 5 * tile;
     auto y = gbox->box.top - tile;
-  auto shape= reifyShape(MGML(), tiles,
+  auto shape= reifyShape(MGML(), bks,
       x,y,
       nextShapeInfo);
   if (ENP(shape)) {
@@ -102,7 +100,7 @@ Shape* Generate::reifyNextShape() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::previewNextShape() {
-  auto gbox= CC_GNLF(GridBox, arenaNode, "gbox");
+  auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto tile = CC_CSV(c::Integer, "TILE");
   auto info = randNextInfo();
   auto cw = cx::center();

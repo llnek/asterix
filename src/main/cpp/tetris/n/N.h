@@ -22,14 +22,13 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "collision", "n/TileGrid"},
         { "gbox", "n/GridBox" },
         { "blocks", "n/BlockGrid" },
         { "motion", "n/Gesture" },
         { "slots", "n/GVars" },
         { "pauser", "n/Pauser" },
         { "dropper", "n/Dropper" },
-        { "shell" , "n/ShapeShell" },
+        { "shell" , "n/Shape" },
         { "flines", "n/FilledLines" },
         { "cpad" , "n/CtrlPad" }
     });

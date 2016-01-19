@@ -19,7 +19,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> reifyShape(not_null<f::XLayer*>,
-    s_vec<f::FArrInt>& ,
+    s_vec<f::FArrBrick>& ,
     float x, float y, const ShapeInfo&);
 
 owner<Shape*> previewShape(not_null<f::XLayer*>,
@@ -32,10 +32,10 @@ void clearOldBricks(s_vec<Brick*>&);
 void disposeShape(Shape*);
 
 const s_vec<c::Vec2>
-findBBox(s_vec<f::FArrInt>&, BModel*,
+findBBox(s_vec<f::FArrBrick>&, BModel*,
     float px, float py, int rID, bool skipCollide = false);
 
-bool maybeCollide(s_vec<f::FArrInt>&,
+bool maybeCollide(s_vec<f::FArrBrick>&,
     float tl_x, float tl_y, float br_x, float br_y);
 
 const f::Cell2D xrefTile(float x, float y);
@@ -45,17 +45,9 @@ void initDropper(Dropper*);
 
 void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
 
-//void lockBricks(s_vec<f::FArrInt>&, s_vec<FArrBrick>&, Brick*);
-
 void lock(not_null<a::Node*>, Shape*);
 
-/*
-void postLock(not_null<a::Node*>,
-    s_vec<f::FArrInt>&,
-    s_vec<FArrBrick>&);
-*/
-
-bool testFilledRow(s_vec<f::FArrInt>&, int r);
+bool testFilledRow(s_vec<f::FArrBrick>&, int r);
 
 void flashFilled(s_vec<FArrBrick>&,
     FilledLines*,
@@ -63,13 +55,14 @@ void flashFilled(s_vec<FArrBrick>&,
 
 void pauseForClearance(not_null<a::Node*>, bool b, float delay);
 
-bool moveDown(not_null<f::XLayer*> , s_vec<f::FArrInt>&, Shape*);
+bool moveDown(not_null<f::XLayer*> , s_vec<f::FArrBrick>&, Shape*);
 
-bool shiftRight(not_null<f::XLayer*>, s_vec<f::FArrInt>&, Shape*);
-bool shiftLeft(not_null<f::XLayer*>, s_vec<f::FArrInt>&, Shape*);
+bool shiftRight(not_null<f::XLayer*>, s_vec<f::FArrBrick>&, Shape*);
+bool shiftLeft(not_null<f::XLayer*>, s_vec<f::FArrBrick>&, Shape*);
 
-bool rotateRight(not_null<f::XLayer*>, s_vec<f::FArrInt>&, Shape*);
-bool rotateLeft(not_null<f::XLayer*>, s_vec<f::FArrInt>&, Shape*);
+bool rotateRight(not_null<f::XLayer*>, s_vec<f::FArrBrick>&, Shape*);
+bool rotateLeft(not_null<f::XLayer*>, s_vec<f::FArrBrick>&, Shape*);
+
 
 NS_END(tetris)
 

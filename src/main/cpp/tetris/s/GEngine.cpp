@@ -10,21 +10,14 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
-#include "Stage.h"
 #include "Generate.h"
 #include "Clear.h"
 #include "Move.h"
 #include "Resolve.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initEntities() {
-  reifyArena();
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -33,18 +26,16 @@ void GEngine::initSystems() {
   regoSystem(mc_new1(Move,this));
   regoSystem(mc_new1(Generate,this));
   regoSystem(mc_new1(Clear,this));
-  regoSystem(mc_new1(Stage,this));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GEngine::reifyArena() {
-  auto ent= this->reifyEntity("*");
+void GEngine::initEntities() {
+  auto ent= this->reifyEntity();
   ent->checkin(mc_new(FilledLines));
   ent->checkin(mc_new(ShapeShell));
   ent->checkin(mc_new(BlockGrid));
-  ent->checkin(mc_new(TileGrid));
-  ent->checkin(mc_new(Motion));
+  ent->checkin(mc_new(Gesture));
   ent->checkin(mc_new(GVars));
   ent->checkin(mc_new(Dropper));
   ent->checkin(mc_new(Pauser));
@@ -53,4 +44,5 @@ void GEngine::reifyArena() {
 }
 
 NS_END(tetris)
+
 

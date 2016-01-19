@@ -8,12 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__EFACTORY_H__)
-#define __EFACTORY_H__
+#pragma once
 
 #include "ash/Engine.h"
-#include "n/GNodes.h"
+#include "n/N.h"
+
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -23,11 +22,11 @@ struct CC_DLL GEngine : public a::Engine {
   virtual void initEntities();
   virtual void initSystems();
 
-protected:
-  void reifyArena();
+  virtual ~GEngine() {}
+  GEngine() {}
 };
 
 
 NS_END(tetris)
-#endif
+
 
