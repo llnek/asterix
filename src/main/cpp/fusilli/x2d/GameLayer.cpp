@@ -92,8 +92,10 @@ void GameLayer::enableListeners() {
     CCLOG("failed to init-keys");
   }
   try {
-    if (!cx::isDesktop())
-    setTouchEnabled(true);
+    if (!cx::isDesktop()) {
+      setTouchMode(this->tmode);
+      setTouchEnabled(true);
+    }
   } catch (...) {
     CCLOG("failed to init-touch");
   }

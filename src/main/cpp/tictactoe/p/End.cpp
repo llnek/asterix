@@ -46,7 +46,7 @@ void ELayer::decorate() {
   auto css= CC_GNLF(CSquares,ctx->arena,"squares");
   F__LOOP(it,css->sqs) {
     auto q= *it;
-    q->dispose();
+    q->sprite->setOpacity(0.1f * 255);
   }
 
   // text msg

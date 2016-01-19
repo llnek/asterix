@@ -25,6 +25,7 @@ NS_BEGIN(tttoe)
 BEGIN_NS_UNAMED()
 class CC_DLL GLayer : public f::GameLayer {
 
+  virtual bool onTouchBegan(c::Touch *t, c::Event*);
   virtual void onTouchEnded(c::Touch *t, c::Event*);
   virtual void onMouseUp(c::Event *e);
 
@@ -107,8 +108,15 @@ void GLayer::showMenu() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+bool GLayer::onTouchBegan(c::Touch *t, c::Event *e) {
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onTouchEnded(c::Touch *t, c::Event*) {
-  onGUIXXX(t->getLocationInView());
+  auto p= CC_DTOR()->convertToGL(t->getLocationInView());
+  onGUIXXX(p);
 }
 
 //////////////////////////////////////////////////////////////////////////////
