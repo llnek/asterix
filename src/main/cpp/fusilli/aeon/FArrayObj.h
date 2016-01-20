@@ -37,6 +37,9 @@ public:
   void setFirst(T value);
   void setLast(T value);
 
+  T getFirst();
+  T getLast();
+
   void set(int pos, T value);
   int size() { return sz; }
 
@@ -193,6 +196,22 @@ template<typename T>
 void FArray<T>::set(int pos, T v) {
   assert(pos >= 0 && pos < sz);
   data[pos] = v;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T FArray<T>::getFirst() {
+  assert(sz > 0);
+  return data[0];
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T FArray<T>::getLast() {
+  assert(sz > 0);
+  return data[sz-1];
 }
 
 //////////////////////////////////////////////////////////////////////////

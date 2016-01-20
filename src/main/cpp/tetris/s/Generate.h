@@ -20,7 +20,7 @@ NS_BEGIN(tetris)
 class CC_DLL Generate : public a::System {
 
   const ShapeInfo randNextInfo();
-  Shape* reifyNextShape();
+  owner<Shape*> reifyNextShape();
   void previewNextShape();
 
 public:

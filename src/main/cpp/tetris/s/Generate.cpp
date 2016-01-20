@@ -78,7 +78,7 @@ bool Generate::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Shape* Generate::reifyNextShape() {
+owner<Shape*> Generate::reifyNextShape() {
   auto bks= CC_GNLF(BlockGrid, arena, "blocks");
   auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto tile= CC_CSV(c::Integer, "TILE");
@@ -123,7 +123,7 @@ void Generate::previewNextShape() {
 //////////////////////////////////////////////////////////////////////////////
 //
 const ShapeInfo Generate::randNextInfo() {
-  auto bc= CC_CSV(c::Integer, "BLOCK_COLORS");
+  auto bc= CC_CSV(c::Integer, "BLOCK+COLORS");
   auto n= cx::randInt(ListOfModels.size());
   auto proto= ListOfModels[n];
   return ShapeInfo(proto,

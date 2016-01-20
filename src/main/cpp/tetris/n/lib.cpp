@@ -14,12 +14,9 @@
 
 NS_BEGIN(tetris)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////
 //
-void reifyBricks(not_null<f::XLayer*> layer,
+static void reifyBricks(not_null<f::XLayer*> layer,
     const s_vec<c::Vec2> &bs,
     const sstr &png,
     s_vec<Brick*> &bricks) {
@@ -27,13 +24,13 @@ void reifyBricks(not_null<f::XLayer*> layer,
   F__LOOP(it, bs) {
     auto obj= Brick::reify( *it, png );
     bricks.push_back(obj);
-    layer->addAtlasItem("game-pics", obj);
+    layer->addAtlasItem("game-pics", obj->sprite);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Shape*> mkShape(not_null<f::XLayer*> layer,
+static owner<Shape*> mkShape(not_null<f::XLayer*> layer,
     float x, float y,
     const ShapeInfo &info,
     const s_vec<c::Vec2> &bbox) {
@@ -52,22 +49,23 @@ owner<Shape*> mkShape(not_null<f::XLayer*> layer,
 
 //////////////////////////////////////////////////////////////////////////
 //
-void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
+static void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
 
-  auto zs = z->getPosition();
+  auto zs = z->sprite->getPosition();
   auto t= xrefTile(zs);
 
   assert(t.row >= 0);
   assert(t.col >= 0);
 
   auto &em= emap[t.row];
-  assert(ENP(em.get(t.col)));
+  auto c= em.get(t.col);
+  assert(ENP(c));
   em.set(t.col, z);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void postLock(not_null<a::Node*> node,
+static void postLock(not_null<a::Node*> node,
     s_vec<FArrBrick> &emap) {
 
   auto flines = CC_GNF(FilledLines, node, "flines");
@@ -88,7 +86,6 @@ void postLock(not_null<a::Node*> node,
   }
 }
 
-END_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> reifyShape(not_null<f::XLayer*> layer,
@@ -122,9 +119,8 @@ int topLine(not_null<a::Node*> node) {
 //////////////////////////////////////////////////////////////////////////
 //
 void disposeShape(Shape *shape) {
-  if (NNP(shape)) {
+  if (NNP(shape))
     clearOldBricks(shape->bricks);
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -139,8 +135,7 @@ void clearOldBricks(s_vec<Brick*> &bs) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s_vec<c::Vec2>
-findBBox(s_vec<f::FArrBrick> &emap,
+const s_vec<c::Vec2> findBBox(s_vec<f::FArrBrick> &emap,
     BModel *model,
     float px, float py,
     int rID, bool skipCollide) {
@@ -172,7 +167,7 @@ findBBox(s_vec<f::FArrBrick> &emap,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool maybeCollide(s_vec<f::FArrBrick> &cmap,
+bool maybeCollide(s_vec<f::FArrBrick> &emap,
     float tl_x, float tl_y,
     float br_x, float br_y) {
 
@@ -182,9 +177,10 @@ bool maybeCollide(s_vec<f::FArrBrick> &cmap,
       tile.col < 0 ) { return true; }
 
   auto &em= emap[tile.row];
+  auto c= em.get(tile.col);
   auto rc=false;
 
-  if (em.get(tile.col) != nullptr)  {
+  if (NNP(c) )  {
     CCLOG("collide! tile = %d, %d", tile.row , tile.col);
     rc= true;
   }
@@ -269,9 +265,8 @@ void flashFilled(s_vec<FArrBrick> &emap,
   F__LOOP(it, lines) {
     auto &row= emap[*it];
     for (auto c=0; c < row.size(); ++c) {
-      if (row.get(c) != nullptr) {
-        row.get(c)->blink();
-      }
+      auto b= row.get(c);
+      if (NNP(b)) { b->blink(); }
     }
   }
 

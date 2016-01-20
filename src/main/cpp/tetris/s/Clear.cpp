@@ -67,34 +67,28 @@ void Clear::clearFilled() {
 void Clear::clearOneRow( int r) {
   auto bks= CC_GNLF(BlockGrid, arena, "blocks");
   auto &row= bks->grid[r];
+  auto end = row.size() -1;
 
-  for (auto c=0; c < row.size(); ++c) {
+  // skip the 2 side walls
+  for (auto c=1; c < end; ++c) {
     auto z= row.get(c);
     if (NNP(z)) {
-      row.set(c, nullptr);
       z->dispose();
     }
+    delete z;
+    row.set(c, nullptr);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::resetOneRow( int r) {
-  auto bks= CC_GNLF(BlockGrid, arena, "blocks");
-  auto &row= bks->grid[r];
-
-  for (auto c=0; c < row.size(); ++c) {
-    row.set(c, r==0 ? 1 : 0);
-  }
-  row.setFirst(1);
-  row.setLast(1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::shiftDownLines() {
-  auto node= arenaNode->head;
-  auto top= topLine(node);
+  auto top= topLine(arena->head);
   // top down search
   auto f0= findFirstDirty();
   // no lines are touched
@@ -119,7 +113,7 @@ void Clear::shiftDownLines() {
 //////////////////////////////////////////////////////////////////////////////
 //
 int Clear::findFirstDirty() {
-  auto t = topLine(arenaNode->head);// - 1,
+  auto t = topLine(arena->head);// - 1,
 
   for (auto r = t; r > 0; --r) {
     if (!isEmptyRow(r)) { return r; }
@@ -151,46 +145,43 @@ int Clear::findLastEmpty( int t) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Clear::isEmptyRow( int r) {
-  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
-  auto &row= co->tiles[r];
+  auto co= CC_GNLF(BlockGrid, arena, "blocks");
+  auto &row= co->grid[r];
   auto len= row.size() - 1;
 
   if (r==0) { return false; }
 
   for (auto c=1; c < len; ++c) {
-    if (row.get(c) != 0) { return false; }
+    if (row.get(c) != nullptr) { return false; }
   }
+
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::copyLine( int from, int to) {
-  auto co = CC_GNLF(TileGrid, arenaNode, "collision");
-  auto bs = CC_GNLF(BlockGrid, arenaNode, "blocks");
+  auto bs = CC_GNLF(BlockGrid, arena, "blocks");
   auto tile = CC_CSV(c::Integer, "TILE");
-  auto &line_f = co->tiles[from];
-  auto &line_t = co->tiles[to];
   auto dlen= tile * (from - to);
-  int c;
+  //TODO : fix dlen
 
-  for (c=0; c < line_f.size(); ++c) {
-    line_t.set(c, line_f.get(c));
-    line_f.set(c, 0);
-  }
-  line_f.setFirst(1);
-  line_f.setLast(1);
-
-  // deal with actual shape
   auto &g_f = bs->grid[from];
   auto &g_t = bs->grid[to];
+  auto end= g_f.size() -1;
 
-  for (c=0; c < g_f.size(); ++c) {
-    if (g_f.get(c)) {
-      auto pos = g_f.get(c)->getPosition();
-      g_f.get(c)->setPosition(pos.x, pos.y - dlen);
+  // skip the 2 side walls
+  for (auto c=1; c < end; ++c) {
+    auto b= g_f.get(c);
+    if (b) {
+      auto pos = b->getPosition();
+      b->setPosition(pos.x, pos.y - dlen);
     }
-    g_t.set(c, g_f.get(c));
+    auto old= g_t.swap(c, b);
+    if (old) {
+      old->dispose();
+      delete old;
+    }
     g_f.set(c, nullptr);
   }
 }

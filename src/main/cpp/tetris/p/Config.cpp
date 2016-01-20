@@ -38,9 +38,9 @@ void Config::initCsts() {
   app_id = "tetris";
 
   addCst("THROTTLEWAIT", CC_FLOAT(80.0f));
-  addCst("BLOCK_COLORS", CC_INT(8));
+  addCst("BLOCK+COLORS", CC_INT(8));
   addCst("FIELD_W", CC_INT(12));
-  addCst("BTN_SIZE", CC_INT(32));
+  addCst("BTN+SIZE", CC_INT(32));
 
   addCst("showFPS", CC_BOOL(false));
   addCst("FENCE", CC_INT(0));

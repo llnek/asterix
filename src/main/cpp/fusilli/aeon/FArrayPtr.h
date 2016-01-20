@@ -21,6 +21,7 @@ template<typename T>
 class FS_DLL FArrayPtr {
 
   DECL_PTR(T*,data)
+  DECL_BF(purge)
   DECL_IZ(sz)
 
 public:
@@ -33,12 +34,17 @@ public:
 
   FArrayPtr<T>* clone();
 
+  T* getFirst();
+  T* getLast();
+
   void setFirst(T *value);
   void setLast(T *value);
 
   void set(int pos, T *value);
   int size() { return sz; }
+  T* swap(int, T*);
 
+  void map(s::function<T* (T*)>);
   bool notAny(T *v);
   bool some(T *v);
   bool all(T *v);
@@ -48,6 +54,7 @@ public:
   T* operator[](int pos);
   T* get(int pos);
 
+  explicit FArrayPtr(int z, bool purge);
   explicit FArrayPtr(int z);
   FArrayPtr();
 
@@ -108,6 +115,15 @@ FArrayPtr<T>::FArrayPtr(const FArrayPtr<T> &src) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
+FArrayPtr<T>::FArrayPtr(int z, bool purge) {
+  data = z > 0 ? new T* [z] : nullptr;
+  sz=z;
+  this->purge=purge;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
 FArrayPtr<T>::FArrayPtr(int z) {
   data = z > 0 ? new T* [z] : nullptr;
   sz=z;
@@ -123,7 +139,32 @@ FArrayPtr<T>::FArrayPtr() {
 //
 template<typename T>
 FArrayPtr<T>::~FArrayPtr() {
+  if (purge && sz > 0) {
+    for (int i=0; i < sz; ++i) {
+      delete data[i];
+    }
+  }
   mc_del_arr(data)
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T* FArrayPtr<T>::swap(int pos, T* np) {
+  assert(sz > 0);
+  assert(pos >=0 && pos < sz);
+  auto rc= data[pos];
+  data[pos]= np;
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+void FArrayPtr<T>::map(s::function<T* (T*)> m) {
+  for (int i = 0; i < sz; ++i) {
+    data[i] = m(data[i]);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -192,6 +233,22 @@ template<typename T>
 void FArrayPtr<T>::set(int pos, T *v) {
   assert(pos >= 0 && pos < sz);
   data[pos] = v;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T* FArray<T>::getFirst() {
+  assert(sz > 0);
+  return data[0];
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T* FArray<T>::getLast() {
+  assert(sz > 0);
+  return data[sz-1];
 }
 
 //////////////////////////////////////////////////////////////////////////

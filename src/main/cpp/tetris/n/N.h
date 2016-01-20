@@ -28,7 +28,7 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
         { "slots", "n/GVars" },
         { "pauser", "n/Pauser" },
         { "dropper", "n/Dropper" },
-        { "shell" , "n/Shape" },
+        { "shell" , "n/ShapeShell" },
         { "flines", "n/FilledLines" },
         { "cpad" , "n/CtrlPad" }
     });

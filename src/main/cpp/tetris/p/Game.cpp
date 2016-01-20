@@ -48,19 +48,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   void reset();
 
   // ----
+
+  void initBlockMap(BlockGrid*, const c::Size&, const f::Box4&);
   void xh(const c::Size& , float, float, float);
   void onceOnly();
   void doCtrl();
   void xv(const c::Size& , float);
   void onceOnly_2(const c::Size&,
       const c::Size& , const f::Box4&);
-
-  const s_vec<FArrBrick>
-    initBlockMap(s_vec<f::FArrInt> &tiles);
-
-  const s_vec<f::FArrInt>
-    fakeTileMap(const c::Size&, const f::Box4&);
-
 
   DECL_PTR(a::NodeList, arena)
 };
@@ -194,11 +189,8 @@ void GLayer::onceOnly_2(const c::Size &fz,
 
   auto blocks= CC_GNLF(BlockGrid, arena, "blocks");
   auto gbox= CC_GNLF(GridBox, arena, "gbox");
-  auto tiles= fakeTileMap(bz, box);
-  auto grids = initBlockMap(tiles);
 
-  blocks->grid.resize(grids.size(), FArrBrick());
-  S__COPY(grids, blocks->grid);
+  initBlockMap(blocks, bz, box);
   gbox->box= box;
 
   XCFG()->resetCst("FENCE", CC_INT( (int) floor(fz.width)));
@@ -211,45 +203,30 @@ void GLayer::onceOnly_2(const c::Size &fz,
 }
 
 //////////////////////////////////////////////////////////////////////////
-//
-const s_vec<FArrBrick>
-GLayer::initBlockMap(s_vec<f::FArrInt> &tiles) {
-  s_vec<FArrBrick> grid;
-
-  F__LOOP(it, tiles) {
-    auto &e = *it;
-    FArrBrick rc(e.size());
-    rc.fill(nullptr);
-    grid.push_back(rc);
-  }
-
-  return grid;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Create our own collision map using cells.
-const s_vec<f::FArrInt>
-GLayer::fakeTileMap(const c::Size &bz, const f::Box4 &box) {
+void GLayer::initBlockMap(BlockGrid *bks,
+    const c::Size &bz, const f::Box4 &box) {
 
   auto hlen = (int) floor((box.top - box.bottom) / bz.height);
   auto wlen = (int) floor((box.right - box.left) / bz.width);
-  s_vec<f::FArrInt> map;
 
+  // use true to indicate wall tiles
   wlen += 2; // 2 side walls
-  // use 1 to indicate wall
   for (auto r = 0; r <= hlen; ++r) {
-    f::FArrInt rc(wlen);
+    f::FArrBrick rc(wlen,true);
     if (r == 0) {
-      rc.fill(1);
+      rc.map([](Brick* cur) -> Brick* {
+            return mc_new1(Brick,true);
+          });
     } else {
-      rc.fill(0);
-      rc.setFirst(1);
-      rc.setLast(1);
+       rc.fill(nullptr);
     }
-    map.push_back(rc);
+    if (r > 0) {
+      rc.setFirst(mc_new1(Brick,true));
+      rc.setLast(mc_new1(Brick,true));
+    }
+    bks->grid.push_back(rc);
   }
-
-  return map;
 }
 
 //////////////////////////////////////////////////////////////////////////////

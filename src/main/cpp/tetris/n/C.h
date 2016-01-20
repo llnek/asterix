@@ -31,38 +31,43 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Brick : public c::Sprite {
+struct CC_DLL Brick {
 
   static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
-    Brick *b = mc_new(Brick);
-    if (NNP(b) &&
-        b->init()) {
-      b->setAnchorPoint(cx::anchorTL());
-      b->setPosition(pos);
-      b->startPos = pos;
-      b->frame0=f0;
-      b->show();
-      b->autorelease();
-      return b;
-    }
-    CC_SAFE_DELETE(b);
-    return nullptr;
+    auto b = mc_new1(Brick, f0);
+    b->sprite->setAnchorPoint(cx::anchorTL());
+    b->sprite->setPosition(pos);
+    b->startPos=pos;
+    return b;
   }
 
+  Brick(bool used) { this->colliable=used; }
+
+  Brick(const sstr& f0) {
+    sprite= c::Sprite::create(f0);
+    frame0=f0;
+    colliable=true;
+  }
+
+  Brick() {}
+
   void blink() {
-    setSpriteFrame( frame1);
+    if (NNP(sprite)) sprite->setSpriteFrame( frame1);
   }
 
   void show() {
-    setSpriteFrame( frame0);
+    if (NNP(sprite)) sprite->setSpriteFrame( frame0);
   }
 
   void dispose() {
-    removeFromParent();
+    if (NNP(sprite)) sprite->removeFromParent();
+    colliable=false;
   }
 
   DECL_TV(sstr, frame1, "0.png")
+  DECL_PTR(c::Sprite,sprite)
   DECL_TD(c::Vec2, startPos)
+  DECL_BF(colliable)
   DECL_TD(sstr, frame0)
 };
 
@@ -91,6 +96,13 @@ struct CC_DLL Shape : public a::Component {
   DECL_FZ(x)
   DECL_FZ(y)
   MDECL_COMP_TPID( "n/Shape")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ShapeShell : public a::Component {
+  MDECL_COMP_TPID( "n/ShapeShell")
+  DECL_PTR(Shape, shape)
 };
 
 //////////////////////////////////////////////////////////////////////////////
