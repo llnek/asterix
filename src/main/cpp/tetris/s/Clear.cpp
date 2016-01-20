@@ -89,12 +89,17 @@ void Clear::resetOneRow( int r) {
 //
 void Clear::shiftDownLines() {
   auto top= topLine(arena->head);
+  int f0,e0;
   // top down search
-  auto f0= findFirstDirty();
+  f0= findFirstDirty();
   // no lines are touched
-  if (f0==0) { return; }
-  auto e0= findFirstEmpty(f0);
-  if (e0==0) { return; }
+  if (f0==0){
+    return;
+  }
+  e0= findFirstEmpty(f0);
+  if (e0==0) {
+    return;
+  }
   auto e= findLastEmpty(e0);
   auto f = e0 + 1; // last dirty
   if (f > f0) {
@@ -145,8 +150,8 @@ int Clear::findLastEmpty( int t) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Clear::isEmptyRow( int r) {
-  auto co= CC_GNLF(BlockGrid, arena, "blocks");
-  auto &row= co->grid[r];
+  auto bs= CC_GNLF(BlockGrid, arena, "blocks");
+  auto &row= bs->grid[r];
   auto len= row.size() - 1;
 
   if (r==0) { return false; }
@@ -163,22 +168,20 @@ bool Clear::isEmptyRow( int r) {
 void Clear::copyLine( int from, int to) {
   auto bs = CC_GNLF(BlockGrid, arena, "blocks");
   auto tile = CC_CSV(c::Integer, "TILE");
-  auto dlen= tile * (from - to);
-  //TODO : fix dlen
-
   auto &g_f = bs->grid[from];
   auto &g_t = bs->grid[to];
   auto end= g_f.size() -1;
+  auto dlen= tile * (from - to);
 
   // skip the 2 side walls
   for (auto c=1; c < end; ++c) {
     auto b= g_f.get(c);
     if (b) {
-      auto pos = b->getPosition();
-      b->setPosition(pos.x, pos.y - dlen);
+      auto pos = b->sprite->getPosition();
+      b->sprite->setPosition(pos.x, pos.y - dlen);
     }
     auto old= g_t.swap(c, b);
-    if (old) {
+    if (NNP(old)) {
       old->dispose();
       delete old;
     }

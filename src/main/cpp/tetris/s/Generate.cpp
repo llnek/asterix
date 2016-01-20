@@ -58,11 +58,13 @@ bool Generate::update(float dt) {
     auto sl = CC_GNLF(ShapeShell, arena, "shell");
     auto dp = CC_GNLF(Dropper, arena, "dropper");
     auto cfg= MGMS()->getLCfg()->getValue();
-    if (ENP(sl->shape)) {
-      sl->shape = reifyNextShape();
-      if (NNP(sl->shape)) {
-        //show new next shape in preview window
+    Shape *sp = sl->shape;
+
+    if (ENP(sp)) {
+      sp = reifyNextShape();
+      if (NNP(sp)) {
         previewNextShape();
+        sl->shape= sp;
         //activate drop timer
         dp->dropSpeed= JS_FLOAT(cfg["speed"]);
         dp->dropRate= JS_FLOAT(cfg["nrate"]);
@@ -84,8 +86,8 @@ owner<Shape*> Generate::reifyNextShape() {
   auto tile= CC_CSV(c::Integer, "TILE");
   auto wz= cx::visRect();
   auto x = gbox->box.left + 5 * tile;
-    auto y = gbox->box.top - tile;
-  auto shape= reifyShape(MGML(), bks,
+  auto y = gbox->box.top - tile;
+  auto shape= reifyShape(MGML(), bks->grid,
       x,y,
       nextShapeInfo);
   if (ENP(shape)) {
@@ -103,11 +105,10 @@ void Generate::previewNextShape() {
   auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto tile = CC_CSV(c::Integer, "TILE");
   auto info = randNextInfo();
-  auto cw = cx::center();
   auto wb = cx::visBox();
 
   auto sz = (1 + info.model->getDim()) * tile;
-  auto x = cw.x + (wb.right - cw.x) * 0.5f;
+  auto x = wb.cx + (wb.right - wb.cx) * 0.5f;
   auto y = wb.top * 0.7f;
 
   x -= sz * 0.5f;

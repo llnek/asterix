@@ -21,7 +21,8 @@ struct CC_DLL Game : public f::GameScene {
   virtual void sendMsgEx(const MsgTopic&, void*);
 
   virtual f::GameLayer* getGLayer() {
-    return (f::GameLayer*) getLayer(2);
+    return
+      (f::GameLayer*) getLayer(2);
   }
 
   STATIC_REIFY_SCENE_CTX(Game)

@@ -38,13 +38,14 @@ struct CC_DLL Brick {
     b->sprite->setAnchorPoint(cx::anchorTL());
     b->sprite->setPosition(pos);
     b->startPos=pos;
+    b->show();
     return b;
   }
 
   Brick(bool used) { this->colliable=used; }
 
   Brick(const sstr& f0) {
-    sprite= c::Sprite::create(f0);
+    sprite= c::Sprite::create();
     frame0=f0;
     colliable=true;
   }

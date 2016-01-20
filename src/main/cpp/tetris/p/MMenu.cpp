@@ -22,15 +22,14 @@ NS_BEGIN(tetris)
 //
 void MMenu::decorate() {
 
-  auto tt= cx::reifyBmfLabel("font.JellyBelly", gets("mmenu"));
+  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
   auto tile = CC_CSV(c::Integer, "TILE");
   auto c= XCFG()->getColor("dft");
-  auto cw= cx::center();
   auto wb= cx::visBox();
 
   centerImage("gui.mmenu.menu.bg");
 
-  tt->setPosition(cw.x, wb.top * 0.9f);
+  tt->setPosition(wb.cx, wb.top * 0.9f);
   tt->setScale(XCFG()->getScale());
   tt->setColor(c);
   addItem(tt);
@@ -40,13 +39,13 @@ void MMenu::decorate() {
   b->setCallback(
       [=](c::Ref*) {
         cx::runEx( Game::reify(mc_new(f::GCX))); });
-  menu->setPosition(cw);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
   auto quit= cx::reifyMenuBtn("icon_quit.png");
-  auto ctx= (MCX*) getSceneX()->getCtx();
+  auto ctx= (MCX*) getCtx();
   auto sz= back->getContentSize();
 
   quit->setColor(c);
@@ -71,4 +70,5 @@ void MMenu::decorate() {
 }
 
 NS_END(tetris)
+
 

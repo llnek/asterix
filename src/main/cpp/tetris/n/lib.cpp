@@ -89,7 +89,7 @@ static void postLock(not_null<a::Node*> node,
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> reifyShape(not_null<f::XLayer*> layer,
-    s_vec<f::FArrBrick> &emap,
+    s_vec<FArrBrick> &emap,
     float x, float y, const ShapeInfo &info) {
 
   return mkShape(layer, x, y, info,
@@ -102,7 +102,7 @@ owner<Shape*> previewShape(not_null<f::XLayer*> layer,
     float x, float y,
     const ShapeInfo &info) {
 
-  s_vec<f::FArrBrick> dummy;
+  s_vec<FArrBrick> dummy;
   return mkShape(layer, x, y, info,
       findBBox(dummy, info.model, x, y, info.rot, true));
 }
@@ -135,7 +135,7 @@ void clearOldBricks(s_vec<Brick*> &bs) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s_vec<c::Vec2> findBBox(s_vec<f::FArrBrick> &emap,
+const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
     BModel *model,
     float px, float py,
     int rID, bool skipCollide) {
@@ -167,7 +167,7 @@ const s_vec<c::Vec2> findBBox(s_vec<f::FArrBrick> &emap,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool maybeCollide(s_vec<f::FArrBrick> &emap,
+bool maybeCollide(s_vec<FArrBrick> &emap,
     float tl_x, float tl_y,
     float br_x, float br_y) {
 
@@ -244,7 +244,7 @@ void lock(not_null<a::Node*> node, Shape *shape) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool testFilledRow(s_vec<f::FArrBrick> &emap, int r) {
+bool testFilledRow(s_vec<FArrBrick> &emap, int r) {
   auto &row= emap[r];
 
   // negative if any holes in the row
@@ -291,7 +291,7 @@ void pauseForClearance(not_null<a::Node*> node, bool b, float delay) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool moveDown(not_null<f::XLayer*> layer,
-    s_vec<f::FArrBrick> &emap,
+    s_vec<FArrBrick> &emap,
     Shape *shape) {
 
   auto tile= CC_CSV(c::Integer, "TILE");
@@ -313,7 +313,7 @@ bool moveDown(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool shiftRight(not_null<f::XLayer*> layer,
-    s_vec<f::FArrBrick> &emap,
+    s_vec<FArrBrick> &emap,
     Shape *shape) {
 
   auto tile = CC_CSV(c::Integer, "TILE");
@@ -335,7 +335,7 @@ bool shiftRight(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool shiftLeft(not_null<f::XLayer*> layer,
-    s_vec<f::FArrBrick> &emap, Shape *shape) {
+    s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto tile= CC_CSV(c::Integer, "TILE");
   auto new_x= shape->x - tile;
@@ -356,7 +356,7 @@ bool shiftLeft(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool rotateRight(not_null<f::XLayer*> layer,
-    s_vec<f::FArrBrick> &emap, Shape *shape) {
+    s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto nF = f::modulo( (shape->info.rot+1),
       shape->info.model->size());
@@ -381,7 +381,7 @@ bool rotateRight(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 bool rotateLeft(not_null<f::XLayer*> layer,
-    s_vec<f::FArrBrick> &emap, Shape *shape) {
+    s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto nF = f::modulo( (shape->info.rot-1) ,
       shape->info.model->size());

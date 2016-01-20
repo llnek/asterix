@@ -17,8 +17,7 @@ NS_BEGIN(tetris)
 //
 class CC_DLL ELayer : public f::XLayer {
 
-  void onReplay(c::Ref*);
-  void onQuit(c::Ref*);
+  void onReplay();
 
 public:
 

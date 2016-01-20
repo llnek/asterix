@@ -24,12 +24,12 @@ void HUDLayer::decorate() {
   auto tile = CC_CSV(c::Integer, "TILE");
   auto gz= XCFG()->gameSize();
   auto wz = cx::visRect();
-  auto cw = cx::center();
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
+  score=0;
 
-  scoreLabel = cx::reifyBmfLabel( "font.SmallTypeWriting", "0");
+  scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
   scoreLabel->setAnchorPoint(cx::anchorTR());
   scoreLabel->setScale(XCFG()->getScale());
   scoreLabel->setPosition(
@@ -37,9 +37,10 @@ void HUDLayer::decorate() {
       wb.top - (wz.size.height/gz.height * tile));
   addItem(scoreLabel);
 
-  status= cx::reifyBmfLabel("font.CoffeeBuzzed");
+  status= cx::reifyBmfLabel("CoffeeBuzzed");
   status->setScale( XCFG()->getScale() * 0.5f );
-  status->setPosition(cw.x * 1.5f, cw.y);
+  status->setPosition(wb.cx * 1.5f, wb.cy);
+  status->setVisible(false);
   addItem(status);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
@@ -47,7 +48,7 @@ void HUDLayer::decorate() {
   auto hw = cx::getWidth(b) * 0.5f;
   auto menu = cx::mkMenu(b);
 
-  b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
+  b->setCallback([](c::Ref*) { SENDMSG("/hud/showmenu"); });
   menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
 }
@@ -65,18 +66,6 @@ void HUDLayer::drawStatusText(const sstr &msg) {
   status->setString( msg);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::resetAsNew() {
-  reset();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::reset() {
-  status->setVisible(false);
-  score=0;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //

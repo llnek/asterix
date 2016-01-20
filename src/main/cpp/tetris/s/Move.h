@@ -19,7 +19,15 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Move : public a::System {
 
+  void initKeyOps(a::Node*, int);
+  void scanInput();
   void doFall();
+
+  VOIDFN sftRight;
+  VOIDFN sftLeft;
+  VOIDFN sftDown;
+  VOIDFN rotr;
+  VOIDFN rotl;
 
 public:
 

@@ -12,10 +12,11 @@
 #include "x2d/GameLayer.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/lib.h"
-#include "Game.h"
 #include "MMenu.h"
 #include "HUD.h"
+#include "End.h"
+#include "Game.h"
+#include "n/lib.h"
 #include "s/GEngine.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -34,7 +35,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void postReify();
 
   virtual HUDLayer* getHUD() {
-    return (HUDLayer*) getLayer(3);
+    return
+      (HUDLayer*) getSceneX()->getLayer(3);
   }
 
   STATIC_REIFY_LAYER(GLayer)
@@ -45,15 +47,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   void showMenu();
   void endGame();
   void deco();
-  void reset();
 
   // ----
 
   void initBlockMap(BlockGrid*, const c::Size&, const f::Box4&);
   void xh(const c::Size& , float, float, float);
+  void xv(const c::Size& , float);
   void onceOnly();
   void doCtrl();
-  void xv(const c::Size& , float);
   void onceOnly_2(const c::Size&,
       const c::Size& , const f::Box4&);
 
@@ -66,23 +67,22 @@ void GLayer::onceOnly() {
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
   auto fz= cx::calcSize("gray.png");
   auto bz= cx::calcSize("0.png");
-  auto cw = cx::center();
-  auto wb= cx::visBox();
   auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
-  auto lf_boundary= cw.x - fld_w * bz.width - fz.width;
+  auto lf_boundary= wb.cx - fld_w * bz.width - fz.width;
   auto hfzh= HHZ(fz);
   auto hfzw= HWZ(fz);
 
   // attempt to draw the walls
-  this->xh(fz, lf_boundary, cw.x, wb.bottom + hfzh);
+  this->xh(fz, lf_boundary, wb.cx, wb.bottom + hfzh);
   this->xv(fz, lf_boundary);
-  this->xv(fz, cw.x);
+  this->xv(fz, wb.cx);
   //this.xh(fz, cw.x + fz.width, wb.right + fz.width, cw.y);
 
   onceOnly_2(fz, bz, f::Box4(
     wb.top,
-    cw.x - hfzw,
+    wb.cx - hfzw,
     wb.bottom + fz.height,
     lf_boundary + hfzw
   ));
@@ -95,9 +95,8 @@ void GLayer::onceOnly() {
 void GLayer::doCtrl() {
   auto cpad= CC_GNLF(CtrlPad, arena, "cpad");
   auto& hsps= cpad->hotspots;
-  auto cw = cx::center();
-  auto wb= cx::visBox();
   auto wz= cx::visRect();
+  auto wb= cx::visBox();
   //sp= ccsx.createSprite('shadedLight09.png'),
   auto sp= cx::reifySprite("shadedDark09.png");
   auto cz= sp->getContentSize();
@@ -149,14 +148,11 @@ void GLayer::doCtrl() {
 //////////////////////////////////////////////////////////////////////////
 // draw horizontal
 void GLayer::xh(const c::Size &fz, float lf_bdy, float rt_bdy, float ypos) {
-  auto cw = cx::center();
-  auto wb= cx::visBox();
-  auto wz= cx::visRect();
   auto hfzw = HWZ(fz);
   auto y = ypos;//wb.bottom + fz.height * 0.5;
   auto x = lf_bdy;
 
-  while (x < rt_bdy) { //}cw.x) {
+  while (x < rt_bdy) {
     auto f= cx::reifySprite("gray.png");
     f->setPosition(x, y);
     addAtlasItem("game-pics",f);
@@ -168,7 +164,6 @@ void GLayer::xh(const c::Size &fz, float lf_bdy, float rt_bdy, float ypos) {
 // Draw vertical wall
 void GLayer::xv(const c::Size &fz, float x) {
   auto wz= cx::visRect();
-  auto cw = cx::center();
   auto wb= cx::visBox();
   auto y= wb.bottom;
   y += HHZ(fz);
@@ -197,7 +192,7 @@ void GLayer::onceOnly_2(const c::Size &fz,
   XCFG()->resetCst("TILE", CC_INT( (int) floor(bz.width)));
   XCFG()->resetCst("CBOX", f::Box4R::create(box));
 
-  CCLOG("collision tiles and blocks init'ed.");
+  CCLOG("collision tiles and blocks init'ed");
   CCLOG("fence size = %d", CC_CSV(c::Integer,"FENCE"));
   CCLOG("tile size = %d", CC_CSV(c::Integer,"TILE"));
 }
@@ -213,13 +208,13 @@ void GLayer::initBlockMap(BlockGrid *bks,
   // use true to indicate wall tiles
   wlen += 2; // 2 side walls
   for (auto r = 0; r <= hlen; ++r) {
-    f::FArrBrick rc(wlen,true);
+    FArrBrick rc(wlen,true);
     if (r == 0) {
       rc.map([](Brick* cur) -> Brick* {
             return mc_new1(Brick,true);
           });
     } else {
-       rc.fill(nullptr);
+      rc.fill(nullptr);
     }
     if (r > 0) {
       rc.setFirst(mc_new1(Brick,true));
@@ -294,14 +289,12 @@ void GLayer::decorate() {
 
   regoAtlas("game-pics");
   regoAtlas("lang-pics");
-
-  getHUD()->reset();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::showMenu() {
-  auto f= [=]() { CC_DTOR()->popScene(); };
+  auto f= []() { CC_DTOR()->popScene(); };
   auto m= MMenu::reify(mc_new1(MCX,f));
   CC_DTOR()->pushScene(m);
 }
@@ -311,6 +304,7 @@ void GLayer::showMenu() {
 void GLayer::endGame() {
   surcease();
   getHUD()->endGame();
+  ELayer::reify(getSceneX(), 99999);
 }
 
 END_NS_UNAMED()
@@ -319,14 +313,14 @@ END_NS_UNAMED()
 void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   auto y = (GLayer*) getLayer(2);
 
-  if ("/hud/end" == topic) {
-    y->endGame();
-  }
-
   if ("/hud/score/update" == topic) {
     auto json= (j::json*) msg;
     auto v= JS_INT(json->operator[]("score"));
     y->getHUD()->updateScore(v);
+  }
+
+  if ("/hud/end" == topic) {
+    y->endGame();
   }
 
   if ("/hud/showmenu" == topic) {
@@ -341,6 +335,7 @@ void Game::decorate() {
   GLayer::reify(this, 2);
   play();
 }
+
 
 NS_END(tetris)
 

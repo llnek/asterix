@@ -20,6 +20,8 @@ NS_BEGIN(tetris)
 //
 void Move::preamble() {
   arena = engine->getNodeList(ArenaNode().typeId());
+  initKeyOps(
+    arena->head, CC_CSV(c::Integer, "THROTTLE+WAIT"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,6 +31,9 @@ bool Move::update(float dt) {
   if (MGMS()->isLive()) {
     auto sh= CC_GNLF(ShapeShell, arena, "shell");
     auto dp= CC_GNLF(Dropper, arena, "dropper");
+
+    scanInput();
+
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
       cx::undoTimer(dp->timer);
@@ -50,30 +55,63 @@ void Move::doFall() {
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
-  if (NNP(shape)) {
-    if (! moveDown(MGML(), emap, shape)) {
+  if (NNP(shape) &&
+      ! moveDown(MGML(), emap, shape)) {
 
-      // lock shape in place
-      lock(arena->head,shape);
+    // lock shape in place
+    lock(arena->head,shape);
 
-      /*
-      //TODO: what is this???
-      if (ENP(pu->timer)) {
-        sh->shape=nullptr;
-        shape->bricks.clear();
-        delete shape;
-      }
-      */
-
-      shape->bricks.clear();
+    /*
+    //TODO: what is this???
+    if (ENP(pu->timer)) {
       sh->shape=nullptr;
-      mc_del_ptr(shape);
-
-    } else {
-      // drop at fast-drop rate
-      setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
+      shape->bricks.clear();
+      delete shape;
     }
+    */
+
+    shape->bricks.clear();
+    sh->shape=nullptr;
+    mc_del_ptr(shape);
+
+  } else {
+    // drop at fast-drop rate
+    setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
   }
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::scanInput() {
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+    sftRight();
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+    sftLeft();
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
+    rotr();
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
+    rotl();
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
+    sftDown();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::initKeyOps(a::Node *node, int w) {
+
+  auto mo = CC_GNF(Gesture,node,"motion");
+
+  sftRight = cx::throttle([=]() { mo->right=true; }, w);
+  sftLeft = cx::throttle([=]() { mo->left=true; }, w);
+  sftDown= cx::throttle([=]() { mo->down=true; }, w);
+  rotr = cx::throttle([=]() { mo->rotr=true; }, w);
+  rotl = cx::throttle([=]() { mo->rotl=true; }, w);
 }
 
 

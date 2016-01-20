@@ -22,10 +22,10 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Move,this));
   regoSystem(mc_new1(Generate,this));
+  regoSystem(mc_new1(Resolve,this));
   regoSystem(mc_new1(Clear,this));
+  regoSystem(mc_new1(Move,this));
 }
 
 //////////////////////////////////////////////////////////////////////////

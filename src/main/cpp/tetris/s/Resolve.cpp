@@ -32,6 +32,8 @@ bool Resolve::update(float dt) {
   if (MGMS()->isLive()) {
     doIt();
   }
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,28 +50,23 @@ void Resolve::doIt() {
     return;
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW) ||
-      mo->right) {
+  if ( mo->right) {
     shiftRight( MGML(), emap, shape);
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW) ||
-      mo->left) {
+  if ( mo->left) {
     shiftLeft( MGML(), emap, shape);
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW) ||
-      mo->rotr) {
+  if ( mo->rotr) {
     rotateRight( MGML(), emap, shape);
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW) ||
-      mo->rotl) {
+  if ( mo->rotl) {
     rotateLeft( MGML(), emap, shape);
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_SPACE) ||
-      mo->down) {
+  if ( mo->down) {
     fastDrop();
   }
 

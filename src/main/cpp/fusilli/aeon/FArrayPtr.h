@@ -44,7 +44,7 @@ public:
   int size() { return sz; }
   T* swap(int, T*);
 
-  void map(s::function<T* (T*)>);
+  void map(std::function<T* (T*)>);
   bool notAny(T *v);
   bool some(T *v);
   bool all(T *v);
@@ -161,7 +161,7 @@ T* FArrayPtr<T>::swap(int pos, T* np) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArrayPtr<T>::map(s::function<T* (T*)> m) {
+void FArrayPtr<T>::map(std::function<T* (T*)> m) {
   for (int i = 0; i < sz; ++i) {
     data[i] = m(data[i]);
   }
@@ -238,7 +238,7 @@ void FArrayPtr<T>::set(int pos, T *v) {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* FArray<T>::getFirst() {
+T* FArrayPtr<T>::getFirst() {
   assert(sz > 0);
   return data[0];
 }
@@ -246,7 +246,7 @@ T* FArray<T>::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* FArray<T>::getLast() {
+T* FArrayPtr<T>::getLast() {
   assert(sz > 0);
   return data[sz-1];
 }

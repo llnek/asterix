@@ -22,11 +22,10 @@ NS_BEGIN(tetris)
 void Splash::decorate() {
 
   auto b= cx::reifyMenuBtn("play.png");
-  auto f= []() { cx::prelude(); }
+  auto f= []() { cx::prelude(); };
   auto menu= cx::mkMenu(b);
-  auto wb = cx::visBox();
-  auto cw = cx::center();
   auto ctx= mc_new1(MCX,f);
+  auto wb = cx::visBox();
 
   centerImage("game.bg");
 
@@ -34,7 +33,7 @@ void Splash::decorate() {
       [=](c::Ref*)
       { cx::runEx( MMenu::reify(ctx)); });
 
-  menu->setPosition(cw.x, wb.top * 0.1f);
+  menu->setPosition(wb.cx, wb.top * 0.1f);
   addItem(menu);
 }
 

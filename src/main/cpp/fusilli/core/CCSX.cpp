@@ -296,6 +296,12 @@ void runEx(not_null<c::Scene*> ns) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+void prelude() {
+  runEx(XCFG()->prelude());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 void run(not_null<c::Scene*> ns, float delay) {
   CC_DTOR()->replaceScene(
       c::TransitionCrossFade::create(delay, ns));

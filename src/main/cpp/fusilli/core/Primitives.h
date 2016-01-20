@@ -96,7 +96,10 @@ void emptyQueue(s_que<T> &q) {
 struct CC_DLL Box4 {
   Box4(float t, float r, float b, float l)
     : top(t), right(r), bottom(b), left(l)
-  {}
+  {
+    cy= (top-bottom) * 0.5f + bottom;
+    cx= (right-left) * 0.5f + left;
+  }
   ~Box4() {}
   Box4() {}
   Box4(const Box4 &b) {
@@ -104,17 +107,23 @@ struct CC_DLL Box4 {
     right=b.right;
     bottom=b.bottom;
     left=b.left;
+    cy= (top-bottom) * 0.5f + bottom;
+    cx= (right-left) * 0.5f + left;
   }
   Box4& operator=(const Box4 &b) {
     top=b.top;
     right=b.right;
     bottom=b.bottom;
     left=b.left;
+    cy= (top-bottom) * 0.5f + bottom;
+    cx= (right-left) * 0.5f + left;
     return *this;
   }
-  DECL_FZ(top)
-  DECL_FZ(right)
   DECL_FZ(bottom)
+  DECL_FZ(top)
+  DECL_FZ(cx)
+  DECL_FZ(cy)
+  DECL_FZ(right)
   DECL_FZ(left)
 };
 

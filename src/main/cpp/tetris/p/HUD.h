@@ -26,10 +26,8 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_IZ(score)
 
   void drawStatusText(const sstr&);
-  void endGame();
-  void resetAsNew();
-  void reset();
   void updateScore(int );
+  void endGame();
 };
 
 

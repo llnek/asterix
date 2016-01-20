@@ -20,9 +20,7 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onReplay(c::Ref*) {
-  //auto x= (f::GCX*)getSceneX()->getCtx();
-  //auto m= MGMS()->getMode();
+void ELayer::onReplay() {
   getSceneX()->setCtx(nullptr);
   cx::runEx(
       Game::reify(mc_new(f::GCX)));
@@ -32,14 +30,13 @@ void ELayer::onReplay(c::Ref*) {
 //
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
+  auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
   auto wz= cx::visRect();
-  auto cw= cx::center();
   auto wb= cx::visBox();
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setPosition(wb.cx, wb.top * 0.75f);
   qn->setColor(XCFG()->getColor("text"));
   addItem(qn);
 
@@ -53,9 +50,9 @@ void ELayer::decorate() {
       [=](c::Ref*) { this->onReplay();  });
 
   b2->setCallback(
-      [=](c::Ref*) { cx::prelude(); });
+      [](c::Ref*) { cx::prelude(); });
 
-  menu->setPosition(cw.x, wb.top * 0.5f);
+  menu->setPosition(wb.cx, wb.top * 0.5f);
   addItem(menu);
 }
 
