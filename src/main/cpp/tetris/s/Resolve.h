@@ -8,18 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#pragma once
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public a::System {
+
+  void fastDrop();
+  void doIt();
+
+public:
 
   MDECL_SYS_PRIORITY( a::Resolve)
   MDECL_SYS_TPID( "s/Resolve")
@@ -30,17 +33,13 @@ struct CC_DLL Resolve : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, arena)
 
-protected:
-  void fastDrop();
-  void doIt();
 };
 
 
 
 NS_END(tetris)
-#endif
 
 
 

@@ -12,7 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/utils.h"
+#include "n/lib.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -22,7 +22,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -38,11 +38,11 @@ bool Resolve::update(float dt) {
 //
 void Resolve::doIt() {
 
-  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
-  auto sh = CC_GNLF(ShapeShell, arenaNode, "shell");
-  auto mo = CC_GNLF(Motion, arenaNode, "motion");
-  auto &cmap= co->tiles;
+  auto sh = CC_GNLF(ShapeShell, arena, "shell");
+  auto bs= CC_GNLF(BlockGrid, arena, "blocks");
+  auto mo = CC_GNLF(Gesture, arena, "motion");
   auto shape= sh->shape;
+  auto &emap= bs->grid;
 
   if (ENP(shape)) {
     return;
@@ -50,22 +50,22 @@ void Resolve::doIt() {
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW) ||
       mo->right) {
-    shiftRight( MGML(), cmap, shape);
+    shiftRight( MGML(), emap, shape);
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW) ||
       mo->left) {
-    shiftLeft( MGML(), cmap, shape);
+    shiftLeft( MGML(), emap, shape);
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW) ||
       mo->rotr) {
-    rotateRight( MGML(), cmap, shape);
+    rotateRight( MGML(), emap, shape);
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW) ||
       mo->rotl) {
-    rotateLeft( MGML(), cmap, shape);
+    rotateLeft( MGML(), emap, shape);
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_SPACE) ||
@@ -79,7 +79,7 @@ void Resolve::doIt() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::fastDrop() {
-  auto dp = CC_GNLF(Dropper, arenaNode, "dropper");
+  auto dp = CC_GNLF(Dropper, arena, "dropper");
   auto cfg = MGMS()->getLCfg()->getValue();
   cx::undoTimer(dp->timer);
   // drop at fast-drop rate

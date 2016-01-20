@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "s/utils.h"
+#include "n/lib.h"
 #include "Move.h"
 
 NS_BEGIN(tetris)
@@ -19,7 +19,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,8 +27,8 @@ void Move::preamble() {
 bool Move::update(float dt) {
 
   if (MGMS()->isLive()) {
-    auto sh= CC_GNLF(ShapeShell, arenaNode, "shell");
-    auto dp= CC_GNLF(Dropper, arenaNode, "dropper");
+    auto sh= CC_GNLF(ShapeShell, arena, "shell");
+    auto dp= CC_GNLF(Dropper, arena, "dropper");
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
       cx::undoTimer(dp->timer);
@@ -36,26 +36,25 @@ bool Move::update(float dt) {
       doFall();
     }
   }
+
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::doFall() {
-  auto co= CC_GNLF(TileGrid, arenaNode, "collision");
-  auto sh= CC_GNLF(ShapeShell, arenaNode, "shell");
-  auto bs= CC_GNLF(BlockGrid, arenaNode, "blocks");
-  auto dp= CC_GNLF(Dropper, arenaNode, "dropper");
-  auto pu= CC_GNLF(Pauser, arenaNode, "pauser");
+  auto sh= CC_GNLF(ShapeShell, arena, "shell");
+  auto bs= CC_GNLF(BlockGrid, arena, "blocks");
+  auto dp= CC_GNLF(Dropper, arena, "dropper");
+  auto pu= CC_GNLF(Pauser, arena, "pauser");
   auto shape= sh->shape;
-  auto &cmap= co->tiles;
   auto &emap= bs->grid;
 
   if (NNP(shape)) {
-    if (! moveDown(MGML(), cmap, shape)) {
+    if (! moveDown(MGML(), emap, shape)) {
 
       // lock shape in place
-      lock(arenaNode->head,shape);
+      lock(arena->head,shape);
 
       /*
       //TODO: what is this???
