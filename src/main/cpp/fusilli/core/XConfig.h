@@ -48,16 +48,16 @@ protected:
   void loadL10NStrings();
   void setCsts();
 
-  static const sstr ATLASES;
-  static const sstr LEVELS;
-  static const sstr FONTS;
-  static const sstr TILES;
-  static const sstr IMAGES;
-  static const sstr COLORS;
-  static const sstr MUSIC;
-  static const sstr CSTS;
-  static const sstr EFX;
-  static const sstr CFG;
+  sstr ATLASES;
+  sstr LEVELS;
+  sstr FONTS;
+  sstr TILES;
+  sstr IMAGES;
+  sstr COLORS;
+  sstr MUSIC;
+  sstr CSTS;
+  sstr EFX;
+  sstr CFG;
 
 public:
 

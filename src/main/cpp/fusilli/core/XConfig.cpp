@@ -16,16 +16,18 @@ NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
-const sstr XConfig::ATLASES= "atlases";
-const sstr XConfig::LEVELS= "levels";
-const sstr XConfig::FONTS= "fonts";
-const sstr XConfig::TILES= "tiles";
-const sstr XConfig::IMAGES= "images";
-const sstr XConfig::COLORS= "colors";
-const sstr XConfig::MUSIC= "music";
-const sstr XConfig::EFX= "effects";
-const sstr XConfig::CSTS= "csts";
-const sstr XConfig::CFG= "cfg";
+  /*
+sstr XConfig::ATLASES= "atlases";
+sstr XConfig::LEVELS= "levels";
+sstr XConfig::FONTS= "fonts";
+sstr XConfig::TILES= "tiles";
+sstr XConfig::IMAGES= "images";
+sstr XConfig::COLORS= "colors";
+sstr XConfig::MUSIC= "music";
+sstr XConfig::EFX= "effects";
+sstr XConfig::CSTS= "csts";
+sstr XConfig::CFG= "cfg";
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -65,6 +67,17 @@ XConfig::~XConfig() {
 XConfig::XConfig() {
   frags = CC_DICT();
   CC_KEEP(frags)
+
+  ATLASES= "atlases";
+  LEVELS= "levels";
+  FONTS= "fonts";
+  TILES= "tiles";
+  IMAGES= "images";
+  COLORS= "colors";
+  MUSIC= "music";
+  EFX= "effects";
+  CSTS= "csts";
+  CFG= "cfg";
 
   frags->setObject(CC_DICT(), ATLASES);
   frags->setObject(CC_DICT(), TILES);

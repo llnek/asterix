@@ -205,6 +205,7 @@ const f::Cell2D xrefTile(float x, float y) {
   y -= co;
   x += co;
   // realign actual x,y
+  // realign to screen 0,0
   x -= bx.left - fn;
 
   auto rc= f::Cell2D(

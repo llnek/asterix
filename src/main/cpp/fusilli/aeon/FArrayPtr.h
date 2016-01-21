@@ -21,7 +21,6 @@ template<typename T>
 class FS_DLL FArrayPtr {
 
   DECL_PTR(T*,data)
-  DECL_BF(purge)
   DECL_IZ(sz)
 
 public:
@@ -54,7 +53,6 @@ public:
   T* operator[](int pos);
   T* get(int pos);
 
-  explicit FArrayPtr(int z, bool purge);
   explicit FArrayPtr(int z);
   FArrayPtr();
 
@@ -102,23 +100,14 @@ FArrayPtr<T>& FArrayPtr<T>::operator=(const FArrayPtr<T> &src) {
 //
 template<typename T>
 FArrayPtr<T>::FArrayPtr(const FArrayPtr<T> &src) {
-  SNPTR(data)
   sz=src.sz;
+  SNPTR(data)
   if (sz > 0) {
     data= new T* [sz];
     for (int i=0; i < sz; ++i) {
       data[i] = src.data[i];
     }
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template<typename T>
-FArrayPtr<T>::FArrayPtr(int z, bool purge) {
-  data = z > 0 ? new T* [z] : nullptr;
-  sz=z;
-  this->purge=purge;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -139,11 +128,6 @@ FArrayPtr<T>::FArrayPtr() {
 //
 template<typename T>
 FArrayPtr<T>::~FArrayPtr() {
-  if (purge && sz > 0) {
-    for (int i=0; i < sz; ++i) {
-      delete data[i];
-    }
-  }
   mc_del_arr(data)
 }
 

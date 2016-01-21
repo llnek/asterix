@@ -15,6 +15,25 @@
 
 NS_BEGIN(tetris)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+static void scanInput(Gesture *mo) {
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+    mo->right=true;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+    mo->left=true;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
+    mo->rotr = true;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
+    mo->rotl = true;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
+    mo->down = true;
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -32,7 +51,7 @@ bool Move::update(float dt) {
     auto sh= CC_GNLF(ShapeShell, arena, "shell");
     auto dp= CC_GNLF(Dropper, arena, "dropper");
 
-    scanInput();
+    scanner();
 
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
@@ -80,38 +99,16 @@ void Move::doFall() {
   }
 
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Move::scanInput() {
-  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    sftRight();
-  }
-  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    sftLeft();
-  }
-  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
-    rotr();
-  }
-  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
-    rotl();
-  }
-  if (MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
-    sftDown();
-  }
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::initKeyOps(a::Node *node, int w) {
 
   auto mo = CC_GNF(Gesture,node,"motion");
 
-  sftRight = cx::throttle([=]() { mo->right=true; }, w);
-  sftLeft = cx::throttle([=]() { mo->left=true; }, w);
-  sftDown= cx::throttle([=]() { mo->down=true; }, w);
-  rotr = cx::throttle([=]() { mo->rotr=true; }, w);
-  rotl = cx::throttle([=]() { mo->rotl=true; }, w);
+  scanner = cx::throttle([=]() {
+      scanInput(mo);
+      }, w);
+
 }
 
 

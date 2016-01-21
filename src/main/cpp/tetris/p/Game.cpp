@@ -70,6 +70,11 @@ void GLayer::onceOnly() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
+  CCLOG("gray.png, width= %d, height = %d",
+      (int)fz.width, (int)fz.height);
+  CCLOG("0.png, width= %d, height = %d",
+      (int)bz.width, (int)bz.height);
+
   auto lf_boundary= wb.cx - fld_w * bz.width - fz.width;
   auto hfzh= HHZ(fz);
   auto hfzw= HWZ(fz);
@@ -149,12 +154,11 @@ void GLayer::doCtrl() {
 // draw horizontal
 void GLayer::xh(const c::Size &fz, float lf_bdy, float rt_bdy, float ypos) {
   auto hfzw = HWZ(fz);
-  auto y = ypos;//wb.bottom + fz.height * 0.5;
   auto x = lf_bdy;
 
   while (x < rt_bdy) {
     auto f= cx::reifySprite("gray.png");
-    f->setPosition(x, y);
+    f->setPosition(x, ypos);
     addAtlasItem("game-pics",f);
     x += fz.width;
   }
@@ -205,10 +209,12 @@ void GLayer::initBlockMap(BlockGrid *bks,
   auto hlen = (int) floor((box.top - box.bottom) / bz.height);
   auto wlen = (int) floor((box.right - box.left) / bz.width);
 
+  assert(wlen == CC_CSV(c::Integer, "FIELD_W"));
+
   // use true to indicate wall tiles
   wlen += 2; // 2 side walls
   for (auto r = 0; r <= hlen; ++r) {
-    FArrBrick rc(wlen,true);
+    FArrBrick rc(wlen);
     if (r == 0) {
       rc.map([](Brick* cur) -> Brick* {
             return mc_new1(Brick,true);
