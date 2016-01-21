@@ -52,10 +52,14 @@ static owner<Shape*> mkShape(not_null<f::XLayer*> layer,
 static void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
 
   auto zs = z->sprite->getPosition();
+  auto &e= emap[0];
+  auto hlen= emap.size();
+  auto last= e.size() - 1;
   auto t= xrefTile(zs);
 
-  assert(t.row >= 0);
-  assert(t.col >= 0);
+  // must be inside the 2 walls
+  assert(t.col > 0 && t.col < last);
+  assert(t.row > 0);
 
   auto &em= emap[t.row];
   auto c= em.get(t.col);
@@ -110,10 +114,8 @@ owner<Shape*> previewShape(not_null<f::XLayer*> layer,
 //////////////////////////////////////////////////////////////////////////
 //
 int topLine(not_null<a::Node*> node) {
-  auto gx= CC_GNF(GridBox, node, "gbox");
-  auto tile= CC_CSV(c::Integer, "TILE");
-  return (int)
-    floor((gx->box.top - gx->box.bottom) / tile);
+  auto bks= CC_GNF(BlockGrid, node, "blocks");
+  return (int) bks->grid.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,14 +148,12 @@ const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
   float x,y;
 
   for (auto r=0; r < dim; ++r) {
-    y = py - tile * r;
+    y = py - r * tile;
     for (auto c=0; c < dim; ++c) {
-      x = px + tile * c;
+      x = px + c * tile;
       if (model->test(rID,r,c)) {
         if (!skipCollide &&
-            maybeCollide(emap, x, y,
-                              x + tile,
-                              y - tile)) {
+            maybeCollide(emap, x, y)) {
           return s_vec<c::Vec2> {};
         }
         bs.push_back(c::ccp(x,y));
@@ -168,13 +168,18 @@ const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
 //////////////////////////////////////////////////////////////////////////
 //
 bool maybeCollide(s_vec<FArrBrick> &emap,
-    float tl_x, float tl_y,
-    float br_x, float br_y) {
+    float tl_x, float tl_y) {
 
   auto tile= xrefTile(tl_x , tl_y);
+  auto &e= emap[0];
+  auto hlen= emap.size();
+  auto last= e.size() -1;
 
-  if (tile.row < 0 ||
-      tile.col < 0 ) { return true; }
+  if (tile.row >= 0 && tile.row < hlen &&
+      tile.col >= 0 && tile.col < last)
+  {}
+  else
+  { return true;  } // bad index
 
   auto &em= emap[tile.row];
   auto c= em.get(tile.col);
@@ -199,17 +204,14 @@ const f::Cell2D xrefTile(const c::Vec2 &pos) {
 const f::Cell2D xrefTile(float x, float y) {
   // find center, instead of top left
   auto tile = CC_CSV(c::Integer, "TILE") ;
-  auto fn= CC_CSV(c::Integer, "FENCE");
   auto co = tile * 0.5f;
   auto bx= CC_CSV(f::Box4R, "CBOX");
   y -= co;
   x += co;
-  // realign actual x,y
-  // realign to screen 0,0
-  x -= bx.left - fn;
 
   auto rc= f::Cell2D(
-      floor(y / tile), floor(x / tile));
+    (int) floor((y - bx.bottom) / tile),
+    (int) floor((x - bx.left) / tile));
 
   CCLOG("tile = %d, %d", rc.row , rc.col);
   return rc;
@@ -247,9 +249,10 @@ void lock(not_null<a::Node*> node, Shape *shape) {
 //
 bool testFilledRow(s_vec<FArrBrick> &emap, int r) {
   auto &row= emap[r];
+  auto last= row.size() -1;
 
   // negative if any holes in the row
-  for (auto c=0; c < row.size(); ++c) {
+  for (auto c=1; c < last; ++c) {
     if (row.get(c) == nullptr) { return false; }
   }
 
@@ -265,7 +268,8 @@ void flashFilled(s_vec<FArrBrick> &emap,
 
   F__LOOP(it, lines) {
     auto &row= emap[*it];
-    for (auto c=0; c < row.size(); ++c) {
+    auto last= row.size()-1;
+    for (auto c=1; c < last; ++c) {
       auto b= row.get(c);
       if (NNP(b)) { b->blink(); }
     }

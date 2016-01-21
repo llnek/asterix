@@ -84,7 +84,6 @@ owner<Shape*> Generate::reifyNextShape() {
   auto bks= CC_GNLF(BlockGrid, arena, "blocks");
   auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto tile= CC_CSV(c::Integer, "TILE");
-  auto wz= cx::visRect();
   auto x = gbox->box.left + 5 * tile;
   auto y = gbox->box.top - tile;
   auto shape= reifyShape(MGML(), bks->grid,

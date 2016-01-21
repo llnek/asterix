@@ -35,8 +35,7 @@ const s_vec<c::Vec2>
 findBBox(s_vec<FArrBrick>&, BModel*,
     float px, float py, int rID, bool skipCollide = false);
 
-bool maybeCollide(s_vec<FArrBrick>&,
-    float tl_x, float tl_y, float br_x, float br_y);
+bool maybeCollide(s_vec<FArrBrick>&, float tl_x, float tl_y );
 
 const f::Cell2D xrefTile(float x, float y);
 const f::Cell2D xrefTile(const c::Vec2&);

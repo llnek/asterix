@@ -50,13 +50,9 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   // ----
 
-  void initBlockMap(BlockGrid*, const c::Size&, const f::Box4&);
-  void xh(const c::Size& , float, float, float);
-  void xv(const c::Size& , float);
+  const f::Box4 initBlockMap(BlockGrid*, const c::Size&);
   void onceOnly();
   void doCtrl();
-  void onceOnly_2(const c::Size&,
-      const c::Size& , const f::Box4&);
 
   DECL_PTR(a::NodeList, arena)
 };
@@ -64,32 +60,24 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onceOnly() {
+  auto blocks= CC_GNLF(BlockGrid, arena, "blocks");
+  auto gbox= CC_GNLF(GridBox, arena, "gbox");
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
-  auto fz= cx::calcSize("gray.png");
-  auto bz= cx::calcSize("0.png");
-  auto wb= cx::visBox();
+  auto bz= cx::calcSize("gray.png");
+  auto box= initBlockMap(blocks, bz);
 
-  CCLOG("gray.png, width= %d, height = %d",
-      (int)fz.width, (int)fz.height);
-  CCLOG("0.png, width= %d, height = %d",
-      (int)bz.width, (int)bz.height);
+  XCFG()->resetCst("FENCE", CC_INT( (int) floor(bz.width)));
+  XCFG()->resetCst("TILE", CC_INT( (int) floor(bz.width)));
+  XCFG()->resetCst("CBOX", f::Box4R::create(box));
+  gbox->box= box;
 
-  auto lf_boundary= wb.cx - fld_w * bz.width - fz.width;
-  auto hfzh= HHZ(fz);
-  auto hfzw= HWZ(fz);
-
-  // attempt to draw the walls
-  this->xh(fz, lf_boundary, wb.cx, wb.bottom + hfzh);
-  this->xv(fz, lf_boundary);
-  this->xv(fz, wb.cx);
-  //this.xh(fz, cw.x + fz.width, wb.right + fz.width, cw.y);
-
-  onceOnly_2(fz, bz, f::Box4(
-    wb.top,
-    wb.cx - hfzw,
-    wb.bottom + fz.height,
-    lf_boundary + hfzw
-  ));
+  CCLOG("brick: w= %d, h= %d", (int)bz.width, (int)bz.height);
+  CCLOG("fence size = %d", CC_CSV(c::Integer,"FENCE"));
+  CCLOG("tile size = %d", CC_CSV(c::Integer,"TILE"));
+  CCLOG("gridbox: t=%d, r=%d, b=%d, l=%d",
+      (int)box.top,(int)box.right,
+      (int)box.bottom,(int)box.left);
+  CCLOG("collision tiles and blocks init'ed");
 
   doCtrl();
 }
@@ -99,7 +87,6 @@ void GLayer::onceOnly() {
 void GLayer::doCtrl() {
   auto cpad= CC_GNLF(CtrlPad, arena, "cpad");
   auto& hsps= cpad->hotspots;
-  auto wz= cx::visRect();
   auto wb= cx::visBox();
   //sp= ccsx.createSprite('shadedLight09.png'),
   auto sp= cx::reifySprite("shadedDark09.png");
@@ -150,83 +137,52 @@ void GLayer::doCtrl() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// draw horizontal
-void GLayer::xh(const c::Size &fz, float lf_bdy, float rt_bdy, float ypos) {
-  auto hfzw = HWZ(fz);
-  auto x = lf_bdy;
-
-  while (x < rt_bdy) {
-    auto f= cx::reifySprite("gray.png");
-    f->setPosition(x, ypos);
-    addAtlasItem("game-pics",f);
-    x += fz.width;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Draw vertical wall
-void GLayer::xv(const c::Size &fz, float x) {
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-  auto y= wb.bottom;
-  y += HHZ(fz);
-
-  while (y < wb.top) {
-    auto f= cx::reifySprite("gray.png");
-    f->setPosition(x, y);
-    addAtlasItem("game-pics",f);
-    y += fz.height;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onceOnly_2(const c::Size &fz,
-    const c::Size &bz,
-    const f::Box4 &box) {
-
-  auto blocks= CC_GNLF(BlockGrid, arena, "blocks");
-  auto gbox= CC_GNLF(GridBox, arena, "gbox");
-
-  initBlockMap(blocks, bz, box);
-  gbox->box= box;
-
-  XCFG()->resetCst("FENCE", CC_INT( (int) floor(fz.width)));
-  XCFG()->resetCst("TILE", CC_INT( (int) floor(bz.width)));
-  XCFG()->resetCst("CBOX", f::Box4R::create(box));
-
-  CCLOG("collision tiles and blocks init'ed");
-  CCLOG("fence size = %d", CC_CSV(c::Integer,"FENCE"));
-  CCLOG("tile size = %d", CC_CSV(c::Integer,"TILE"));
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Create our own collision map using cells.
-void GLayer::initBlockMap(BlockGrid *bks,
-    const c::Size &bz, const f::Box4 &box) {
+const f::Box4
+GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
 
-  auto hlen = (int) floor((box.top - box.bottom) / bz.height);
-  auto wlen = (int) floor((box.right - box.left) / bz.width);
+  auto wlen= CC_CSV(c::Integer, "FIELD_W") + 2; // 2 side walls
+  auto wz= MGMS()->getEnclosureRect();
+  auto wb= MGMS()->getEnclosureBox();
+  auto hlen = (int) floor(wz.size.height / bz.height);
+  auto png= "gray.png";
+  auto last= wlen-1;
+  float x,y;
 
-  assert(wlen == CC_CSV(c::Integer, "FIELD_W"));
-
-  // use true to indicate wall tiles
-  wlen += 2; // 2 side walls
-  for (auto r = 0; r <= hlen; ++r) {
+  ++hlen; // add one more to the top
+  for (auto r = 1; r <= hlen; ++r) {
     FArrBrick rc(wlen);
-    if (r == 0) {
-      rc.map([](Brick* cur) -> Brick* {
-            return mc_new1(Brick,true);
-          });
-    } else {
-      rc.fill(nullptr);
-    }
-    if (r > 0) {
-      rc.setFirst(mc_new1(Brick,true));
-      rc.setLast(mc_new1(Brick,true));
-    }
+    rc.fill(nullptr);
+    auto y= wb.bottom + r * bz.height;
+    auto x= wb.left;
+    auto b= Brick::reify(c::Vec2(x,y), png);
+    MGML()->addAtlasItem("game-pics", b->sprite);
+    rc.setFirst(b);
+    x += bz.width * (wlen-1);
+    b= Brick::reify( c::Vec2(x,y), png);
+    MGML()->addAtlasItem("game-pics", b->sprite);
+    rc.setLast(b);
     bks->grid.push_back(rc);
   }
+  //pop off the extra row
+  --hlen;
+
+  // fill in first row == row[0]
+  y = wb.bottom + bz.height;
+  auto &rc=bks->grid[0];
+  for (auto c = 1; c < last; ++c) {
+    auto b= Brick::reify(
+        c::Vec2(wb.left + c * bz.width, y), png);
+    MGML()->addAtlasItem("game-pics", b->sprite);
+    rc.set(c, b);
+  }
+
+  return f::Box4(
+wb.bottom + hlen * bz.height,
+wb.left + wlen * bz.width,
+wb.bottom,
+wb.left
+      );
 }
 
 //////////////////////////////////////////////////////////////////////////////

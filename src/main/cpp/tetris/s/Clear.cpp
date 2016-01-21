@@ -67,10 +67,10 @@ void Clear::clearFilled() {
 void Clear::clearOneRow( int r) {
   auto bks= CC_GNLF(BlockGrid, arena, "blocks");
   auto &row= bks->grid[r];
-  auto end = row.size() -1;
+  auto last = row.size() -1;
 
   // skip the 2 side walls
-  for (auto c=1; c < end; ++c) {
+  for (auto c=1; c < last; ++c) {
     auto z= row.get(c);
     if (NNP(z)) {
       z->dispose();
