@@ -67,7 +67,6 @@ void GLayer::onceOnly() {
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
   auto fz= cx::calcSize("gray.png");
   auto bz= cx::calcSize("0.png");
-  auto wz= cx::visRect();
   auto wb= cx::visBox();
 
   CCLOG("gray.png, width= %d, height = %d",
