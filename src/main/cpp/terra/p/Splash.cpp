@@ -12,35 +12,19 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
-#include "Menu.h"
-#include "s/utils.h"
+#include "MMenu.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
-struct CC_DLL UILayer : public f::XLayer {
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-  virtual void update(float);
-
-  DECL_PTR(c::Sprite, flare)
-  DECL_PTR(c::Sprite, ship)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::decorate() {
+void Splash::decorate() {
   auto wz = cx::visRect();
   auto wb = cx::visBox();
-  auto cw = cx::center();
 
   centerImage("game.bg");
-  incIndexZ();
 
   flare = c::Sprite::create("pics/flare.jpg");
   flare->setVisible(false);
@@ -50,27 +34,27 @@ void UILayer::decorate() {
   addChild(flare, 15, 10);
   addChild(ship, 0, 4);
 
-  auto f= [=]() { cx::runEx(XCFG()->prelude()); };
   auto b= cx::reifyMenuBtn("play.png");
+  auto f= []() { cx::prelude(); };
   auto menu= cx::mkMenu(b);
+  auto x= mc_new1(MCX,f);
   b->setCallback([=](c::Ref*) {
     btnEffect();
     flareEffect(flare, [=]() {
-      cx::runEx(
-          MMenu::reify(mc_new1(MCX, f)));
+      cx::runEx(MMenu::reify(x));
     });
   });
 
-  menu->setPosition( cw.x, wb.top * 0.1f);
+  menu->setPosition( wb.cx, wb.top * 0.1f);
   addItem(menu);
 
-  scheduleOnce(CC_SCHEDULE_SELECTOR(UILayer::update),0);
+  scheduleOnce(CC_SCHEDULE_SELECTOR(Splash::update),0);
   cx::sfxMusic("mainMusic", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::update(float dt) {
+void Splash::update(float dt) {
   auto wz = cx::visRect();
   auto g= [=]() {
     this->ship->setPosition( cx::randFloat(wz.size.width), 10);
@@ -81,13 +65,6 @@ void UILayer::update(float dt) {
         c::MoveBy::create(2, c::ccp(cx::randFloat(wz.size.width),
             wz.size.height + 100)),
         c::CallFunc::create(g), nullptr));
-}
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void Splash::decorate() {
-  UILayer::reify(this);
 }
 
 

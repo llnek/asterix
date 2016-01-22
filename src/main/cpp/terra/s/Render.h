@@ -8,14 +8,20 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Render : public a::System {
+class CC_DLL Render : public a::System {
+
+  void processMovement(float);
+
+public:
 
   MDECL_SYS_PRIORITY( a::Render)
   MDECL_SYS_TPID( "n/Render")
@@ -26,8 +32,6 @@ struct CC_DLL Render : public a::System {
   : System(e)
   {}
 
-protected:
-  void processMovement(float);
 };
 
 

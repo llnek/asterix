@@ -23,8 +23,8 @@ void Resolve::preamble() {
   ArenaNode a;
   ShipNode n;
 
-  arenaNode = engine->getNodeList(a.typeId());
-  shipNode = engine->getNodeList(n.typeId());
+  arena = engine->getNodeList(a.typeId());
+  ship = engine->getNodeList(n.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ void Resolve::checkMissiles() {
   p->foreach([=](f::ComObj *m) {
     if (m->status) {
       auto pos= m->pos();
-      if (m->health <= 0 ||
+      if (m->HP <= 0 ||
           !cx::pointInBox(box, pos.x, pos.y)) {
         this->onBulletDeath(m);
         m->deflate();
@@ -82,7 +82,7 @@ void Resolve::checkBombs() {
   p->foreach([=](f::ComObj *b) {
     if (b->status) {
       auto pos= b->pos();
-      if (b->health <= 0 ||
+      if (b->HP <= 0 ||
           !cx::pointInBox(box, pos)) {
         this->onBulletDeath(b);
         b->deflate();
@@ -137,7 +137,7 @@ void Resolve::checkAliens() {
   p->foreach([=](f::ComObj *a) {
     if (a->status) {
       auto pos= a->pos();
-      if (a->health <= 0 ||
+      if (a->HP <= 0 ||
           !cx::pointInBox(box, pos)) {
         this->onEnemyDeath(a);
         a->deflate();
@@ -151,11 +151,11 @@ void Resolve::checkAliens() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip() {
-  auto ship = CC_GNLF(Ship, shipNode, "ship");
-  if (ship->status) {
-    if (ship->health <= 0) {
-      this->onShipDeath(ship);
-      ship->deflate();
+  auto sp = CC_GNLF(Ship, ship, "ship");
+  if (sp->status) {
+    if (sp->HP <= 0) {
+      this->onShipDeath(sp);
+      sp->deflate();
       SENDMSG("/game/players/killed");
     }
   }

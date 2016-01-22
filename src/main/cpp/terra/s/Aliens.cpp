@@ -20,11 +20,8 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::preamble() {
-  ArenaNode a;
-  ShipNode n;
-
-  arenaNode = engine->getNodeList(a.typeId());
-  shipNode = engine->getNodeList(n.typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
+  ship = engine->getNodeList(ShipNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -39,16 +36,18 @@ bool Aliens::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::doIt(float) {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto enemies= MGMS()->getPool("Baddies");
-  auto cfg= MGMS()->getLCfg()->getValue();
+  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto json= MGMS()->getLCfg();
+  auto cfg= json->getValue();
+  auto dirty=false;
   auto dt= ss->secCount;
 
   if (enemies->countActives() < JS_INT(cfg["enemyMax"])) {
     j::json arr= JS_ARR(cfg["enemies"]);
     J__LOOP(it, arr) {
-      auto& a = *it;
-        j::json types =  JS_ARR(a["types"]);
+      auto &a = *it;
+      j::json types =  JS_ARR(a["types"]);
       auto style = JS_STR(a["style"]);
       auto time = JS_INT(a["time"]);
       if (style == "*" &&
@@ -59,8 +58,13 @@ void Aliens::doIt(float) {
       if (style == "1" &&
           time >= dt) {
         a["style"] = "0";
+        dirty=true;
         addEnemy(types);
       }
+    }
+    if (dirty) {
+      cfg["enemies"] = arr;
+      json->setValue(cfg);
     }
   }
 }
@@ -78,9 +82,8 @@ void Aliens::addEnemy(j::json &obj) {
 //
 void Aliens::dropBombs(Enemy *enemy) {
   auto bombs= MGMS()->getPool("Bombs");
-  auto sp= enemy->sprite;
-  auto sz= sp->getContentSize();
-  auto pos= sp->getPosition();
+  auto sz= enemy->csize();
+  auto pos= enemy->pos();
   auto b = bombs->get();
 
   if (ENP(b)) {
@@ -88,7 +91,7 @@ void Aliens::dropBombs(Enemy *enemy) {
     b= bombs->get();
   }
 
-  ((Bomb*)b)->attackMode= enemy->enemyType.attackMode;
+  SCAST(Bomb*,b)->attackMode= enemy->enemyType.attackMode;
   b->inflate(pos.x, pos.y - sz.height * 0.2f);
 }
 
@@ -124,15 +127,15 @@ Enemy* Aliens::getB(const EnemyType &arg) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::addEnemyToGame(int enemyType) {
+  auto sp= CC_GNLF(Ship, ship, "ship");
   auto &arg = EnemyTypes[enemyType];
   auto wz = cx::visRect();
   auto en = getB(arg);
 
   if (ENP(en)) { return; }
 
-  auto ship= CC_GNLF(Ship, shipNode, "ship");
   auto sprite= en->sprite;
-  auto pos= ship->pos();
+  auto pos= sp->pos();
   auto sz= en->csize();
   auto epos= en->pos();
   c::Action *act;

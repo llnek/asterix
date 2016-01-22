@@ -20,8 +20,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  ShipNode n;
-  shipNode = engine->getNodeList(n.typeId());
+  ship = engine->getNodeList(ShipNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -38,10 +37,9 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::onKeys(float dt) {
-  auto ship = CC_GNLF(Ship, shipNode, "ship");
-  auto ssp = CC_CSV(c::Float, "SHIP_SPEED");
-  auto sp = ship->sprite;
-  auto pos = ship->pos();
+  auto ssp = CC_CSV(c::Float, "SHIP+SPEED");
+  auto sp = CC_GNLF(Ship, ship, "ship");
+  auto pos = sp->pos();
   auto wz= cx::visRect();
   auto x = pos.x;
   auto y = pos.y;
@@ -68,7 +66,7 @@ void Move::onKeys(float dt) {
     ok= true;
   }
 
-  if (ok) { ship->setPos(x,y); }
+  if (ok) { sp->setPos(x,y); }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -108,6 +106,7 @@ void Move::moveMissiles(float dt) {
     }
   });
 }
+
 
 NS_END(terra)
 

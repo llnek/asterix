@@ -8,9 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__GAME_H__)
-#define __GAME_H__
+#pragma once
 
 #include "x2d/GameScene.h"
 NS_BEGIN(terra)
@@ -22,20 +20,20 @@ struct CC_DLL Game : public f::GameScene {
   virtual void sendMsgEx(const MsgTopic &topic, void *msg);
   virtual const f::Box4 getEnclosureBox();
 
+  virtual f::GameLayer* getGLayer() {
+    return (f::GameLayer*) getLayer(2);
+  }
+
   STATIC_REIFY_SCENE_CTX(Game)
   MDECL_DECORATE()
-  MDECL_GLAYER(2)
 
   DECL_PTR(f::ComObj, backSkyRe)
   DECL_PTR(f::ComObj, backSky)
   DECL_TD(c::Size, backSkyDim)
 
-  virtual bool isLive();
-  virtual void stop();
-  virtual void play();
-
 };
 
+
 NS_END(terra)
-#endif
+
 

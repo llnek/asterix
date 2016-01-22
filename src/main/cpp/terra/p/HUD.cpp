@@ -12,7 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "HUD.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -21,15 +21,15 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
-  auto soff = CC_CSV(c::Integer, "S_OFF");
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto soff = CC_CSV(c::Float, "S_OFF");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto wz = cx::visRect();
   auto wb= cx::visBox();
 
   regoAtlas("game-pics");
   incIndexZ();
 
-  scoreLabel= cx::reifyBmfLabel("font.TinyBoxBB", "0");
+  scoreLabel= cx::reifyBmfLabel("TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
   scoreLabel->setScale(12.0f/72.0f);
   scoreLabel->setPosition( wz.size.width - tile - soff,
@@ -47,25 +47,13 @@ void HUDLayer::decorate() {
   auto hw = cx::getWidth(b) * 0.5f;
   auto menu = cx::mkMenu(b);
 
-  b->setCallback([=](c::Ref*) {
-      SENDMSG("/hud/showmenu");
-      });
   //b->setColor(this->color);
-  menu->setPosition(
-      wb.right - tile - hw,
-      wb.bottom + tile  + hh);
+  b->setCallback(
+      [=](c::Ref*) { SENDMSG("/hud/showmenu"); });
+
+  menu->setPosition( wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
-}
 
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::resetAsNew() {
-  reset();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::reset() {
   lives->resurrect();
   score=0;
 }

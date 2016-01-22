@@ -8,17 +8,25 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#pragma once
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public a::System {
+
+  void onBulletDeath(f::ComObj*);
+  void checkMissiles();
+  void checkBombs();
+  void onEnemyDeath(f::ComObj*);
+  void onShipDeath(f::ComObj*);
+  void checkAliens();
+  void checkShip();
+
+public:
 
   MDECL_SYS_PRIORITY( a::Resolve)
   MDECL_SYS_TPID( "n/Resolve")
@@ -29,23 +37,13 @@ struct CC_DLL Resolve : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
-
-protected:
-  void onBulletDeath(f::ComObj*);
-  void checkMissiles();
-  void checkBombs();
-  void onEnemyDeath(f::ComObj*);
-  void onShipDeath(f::ComObj*);
-  void checkAliens();
-  void checkShip();
+  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(a::NodeList, ship)
 
 };
 
 
 NS_END(terra)
-#endif
 
 
 

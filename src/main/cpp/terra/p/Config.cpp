@@ -37,10 +37,11 @@ void Config::initCsts() {
   game_id=  "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a";
   app_id= "terra";
 
-  addCst("MISSILE_SPEED", CC_FLOAT(900.f));
-  addCst("BOMB_SPEED", CC_FLOAT(200.f));
-  addCst("SHIP_SPEED", CC_FLOAT(200.f));
-  addCst("SHIP_ZX", CC_INT(3000));
+  addCst("MISSILE+SPEED", CC_FLOAT(900.f));
+  addCst("BOMB+SPEED", CC_FLOAT(200.f));
+  addCst("SHIP+SPEED", CC_FLOAT(200.f));
+  addCst("SHIP+ZX", CC_INT(3000));
+  addCst("showFPS", CC_BOOL(false));
 
   addCst("menuHeight", CC_INT(36));
   addCst("menuWidth", CC_INT(123));
@@ -55,18 +56,17 @@ void Config::initAssets() {
 
   addAtlas("game-pics", CC_STR("pics/textureTransparentPack.plist"));
   addAtlas("images-pics", CC_STR("pics/images.plist"));
-  addAtlas("lang-pics", CC_STR("fon/en/images.plist"));
+  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
   addAtlas("op-pics", CC_STR("pics/textureOpaquePack.plist"));
   addAtlas("explosions", CC_STR("pics/explosion.plist"));
   addAtlas("back-tiles", CC_STR("pics/b01.plist"));
 
   addImage("game-pics", CC_STR("pics/textureTransparentPack.png"));
   addImage("images-pics", CC_STR("pics/images.png"));
-  addImage("lang-pics", CC_STR("fon/en/images.png"));
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
   addImage("op-pics", CC_STR("pics/textureOpaquePack.png"));
   addImage("explosions", CC_STR("pics/explosion.png"));
   addImage("back-tiles", CC_STR("pics/b01.png"));
-
 
   addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
   addImage("flare", CC_STR("pics/flare.jpg"));
@@ -80,19 +80,19 @@ void Config::initAssets() {
   addEffect("fireEffect", CC_STR("sfx/fireEffect.mp3"));
   addMusic("mainMusic", CC_STR("sfx/mainMainMusic.mp3"));
 
-  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 
-  addFont("font.arial", CC_STR("fon/en/arial-14.fnt"));
+  addFont("arial", CC_STR("fon/en/arial-14.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////

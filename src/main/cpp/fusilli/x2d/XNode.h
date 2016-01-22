@@ -10,6 +10,10 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 
+#define MDECL_GET_IID(x) virtual int getIID() { return x; }
+#define MDECL_UPDATE() virtual void update(float);
+#define MDECL_DECORATE() virtual void decorate();
+
 #include "2d/CCSpriteBatchNode.h"
 #include "platform/CCCommon.h"
 #include "core/Primitives.h"

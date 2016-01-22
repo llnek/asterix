@@ -12,8 +12,6 @@
 #if !defined(__XLAYER_H__)
 #define __XLAYER_H__
 
-#define MDECL_GET_IID(x) virtual int getIID() { return x; }
-#define MDECL_DECORATE() virtual void decorate();
 #include "2d/CCLayer.h"
 #include "XNode.h"
 NS_BEGIN(fusii)

@@ -11,17 +11,17 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/EFactory.h"
+#include "s/GEngine.h"
 #include "HUD.h"
 #include "Game.h"
-#include "s/utils.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
+BEGIN_NS_UNAMED()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
 struct CC_DLL BLayer : public f::XLayer {
   STATIC_REIFY_LAYER(BLayer)
   MDECL_DECORATE()
@@ -36,20 +36,25 @@ void BLayer::decorate() {
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+
   STATIC_REIFY_LAYER(GLayer)
+
+  virtual void postReify();
+
   MDECL_GET_IID(2)
   MDECL_DECORATE()
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
+  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(a::NodeList, ship)
 
-  virtual void postReify();
   void onEarnScore(j::json* );
   void incSecCount(float);
   void onPlayerKilled();
   void moveBackTiles(float);
+  void sharedExplosion();
   void initBackTiles();
+  void initBackSkies();
   void showMenu();
   void onDone();
   void deco();
@@ -90,16 +95,47 @@ void GLayer::moveBackTiles(float) {
   tm->sprite->runAction(c::Sequence::create(move,fun,nullptr));
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::initBackSkies() {
+  auto p = MGMS()->getPool("BackSkies");
+  auto g = (Game*) getSceneX();
+  auto bs = p->get();
+
+  assert(bs != nullptr);
+  bs->inflate(0, 0);
+
+  g->backSkyDim = bs->csize();
+  g->backSkyRe = nullptr;
+  g->backSky = bs;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void GLayer::sharedExplosion() {
+  c::Vector<c::SpriteFrame*> fs;
+  sstr str;
+  for (auto n = 1; n < 35; ++n) {
+    auto ns= s::to_string(n);
+    if (n < 10 ) { str= "0" + ns; } else { str= ns; }
+    fs.pushBack( cx::getSpriteFrame( "explosion_" + str + ".png"));
+  }
+  auto a = c::Animation::createWithSpriteFrames(fs, 0.04f);
+  c::AnimationCache::getInstance()->addAnimation(a, "Explosion");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
-  ArenaNode a;
-  ShipNode s;
+  arena = engine->getNodeList(ArenaNode().typeId());
+  ship = engine->getNodeList(ShipNode().typeId());
 
-  arenaNode = engine->getNodeList(a.typeId());
-  shipNode = engine->getNodeList(s.typeId());
+  this->motionees.push_back(CC_GNLF(Ship,ship,"ship"));
 
-  this->motionees.push_back(CC_GNLF(Ship,shipNode,"ship"));
+  bornShip(SCAST(GEngine*,engine), CC_GNLF(Ship,ship,"ship"));
+  sharedExplosion();
+  initBackSkies();
+  initBackTiles();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,7 +150,6 @@ void GLayer::decorate() {
   incIndexZ();
 
   this->engine= mc_new(GEngine);
-  getHUD()->reset();
   cx::sfxMusic("bgMusic", true);
   schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0f);
 }
@@ -123,7 +158,7 @@ void GLayer::decorate() {
 //
 void GLayer::incSecCount(float) {
   // counter used to spawn enemies
-  auto ss= CC_GNLF(GVars, arenaNode, "slots");
+  auto ss= CC_GNLF(GVars, arena, "slots");
   ss->secCount += 1;
 }
 
@@ -134,7 +169,7 @@ void GLayer::onPlayerKilled() {
   if ( getHUD()->reduceLives(1)) {
     onDone();
   } else {
-    bornShip(CC_GNLF(Ship,shipNode,"ship"));
+    bornShip(SCAST(GEngine*,engine), CC_GNLF(Ship,ship,"ship"));
   }
 }
 
@@ -172,7 +207,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
   else
   if ("/game/backtiles" == topic) {
-    y->initBackTiles();
+    //y->initBackTiles();
   }
   else
   if ("/hud/showmenu" == topic) {
@@ -196,25 +231,6 @@ void Game::decorate() {
   GLayer::reify(this, 2);
   play();
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Game::isLive() {
-   return state > 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::play() {
-  state= 911;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::stop() {
-  state= -1;
-}
-
 
 
 NS_END(terra)

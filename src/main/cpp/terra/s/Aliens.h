@@ -8,19 +8,24 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__ALIENS_H__)
-#define __ALIENS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "EFactory.h"
-#include "utils.h"
+#include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class CC_DLL Aliens : public a::System {
 
-struct CC_DLL Aliens : public a::System {
+  Enemy* getB(const EnemyType&);
+  void addEnemyToGame( int );
+  void addEnemy( j::json& );
+  void dropBombs(Enemy*);
+  void doIt(float);
+
+public:
 
   MDECL_SYS_PRIORITY( a::Motion)
   MDECL_SYS_TPID( "n/Aliens")
@@ -31,19 +36,11 @@ struct CC_DLL Aliens : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
-
-protected:
-  Enemy* getB(const EnemyType&);
-  void addEnemyToGame( int );
-  void addEnemy( j::json& );
-  void dropBombs(Enemy*);
-  void doIt(float);
+  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(a::NodeList, ship)
 };
 
 
 NS_END(terra)
-#endif
 
 

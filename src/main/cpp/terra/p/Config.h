@@ -8,20 +8,23 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__CONFIG_H__)
-#define __CONFIG_H__
+#pragma once
 
 #include "core/XConfig.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Config : public f::XConfig {
+class CC_DLL Config : public f::XConfig {
+
+  void initLevels();
+  void initCsts();
+  void initAssets();
+  Config() {}
+
+public:
 
   virtual const c::Size gameSize() { return c::Size(320,480); }
-
-  virtual const sstr themeColor() { return "yellow"; }
 
   virtual void handleResolution(const c::Size& );
 
@@ -29,26 +32,13 @@ struct CC_DLL Config : public f::XConfig {
     return ResolutionPolicy::FIXED_HEIGHT;
   }
 
-  virtual const sstr getWSUrl() {
-    return "";
-  }
-
   virtual c::Scene* prelude();
-
   virtual void runOnce();
 
   static owner<Config*> reify();
-
-protected:
-  void initLevels();
-  void initCsts();
-  void initAssets();
-  Config() {}
 };
 
-
 NS_END(terra)
-#endif
 
 
 

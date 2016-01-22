@@ -47,7 +47,7 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void fireMissiles(not_null<f::ComObj*> obj, float dt) {
+void fireMissiles(GEngine *eg, not_null<f::ComObj*> obj, float dt) {
   auto po1= MGMS()->getPool("Missiles");
   auto ship = SCAST(Ship*, obj.get());
   auto sz = ship->csize();
@@ -57,7 +57,7 @@ void fireMissiles(not_null<f::ComObj*> obj, float dt) {
   auto m2= po1->getAndSet();
   auto m1= po1->getAndSet();
 
-  if (!m1 || !m2) { GEngine::createMissiles(); }
+  if (!m1 || !m2) { eg->createMissiles(); }
 
   if (!m1) { m1= po1->getAndSet(); }
   if (!m2) { m2= po1->getAndSet(); }
@@ -68,7 +68,7 @@ void fireMissiles(not_null<f::ComObj*> obj, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void bornShip(not_null<f::ComObj*> ccc) {
+void bornShip(GEngine *eg, not_null<f::ComObj*> ccc) {
   auto ship = SCAST(Ship*,ccc.get());
   auto bsp= ship->bornSprite;
   auto ssp= ship->sprite;
@@ -76,7 +76,7 @@ void bornShip(not_null<f::ComObj*> ccc) {
     ship->canBeAttack = true;
     bsp->setVisible(false);
     ssp->schedule([=](float dt) {
-      fireMissiles(ship, dt);
+      fireMissiles(eg, ship, dt);
     }, 1.0f/6, "fm");
     ship->inflate();
   };

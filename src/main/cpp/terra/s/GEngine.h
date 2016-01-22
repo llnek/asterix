@@ -8,18 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__EFACTORY_H__)
-#define __EFACTORY_H__
+#pragma once
 
 #include "ash/Engine.h"
-#include "n/GNodes.h"
+#include "n/N.h"
 
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public a::Engine {
+
+  void createArena();
+  void createShip();
+
+public:
 
   virtual void initEntities();
   virtual void initSystems();
@@ -33,13 +36,9 @@ struct CC_DLL GEngine : public a::Engine {
   void createBackSkies();
   void createBackTiles(int count= 1);
 
-protected:
-  void createArena();
-  void createShip();
 };
 
 
 NS_END(terra)
-#endif
 
 

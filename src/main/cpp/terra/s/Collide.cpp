@@ -19,11 +19,8 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  ArenaNode a;
-  ShipNode n;
-
-  arenaNode = engine->getNodeList(a.typeId());
-  shipNode = engine->getNodeList(n.typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
+  ship = engine->getNodeList(ShipNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,14 +73,14 @@ void Collide::checkMissilesAliens() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipBombs() {
-  auto ship= CC_GNLF(Ship, shipNode, "ship");
+  auto sp = CC_GNLF(Ship, ship, "ship");
   auto bombs = MGMS()->getPool("Bombs");
 
-  if (!ship->status) { return; }
+  if (!sp->status) { return; }
   bombs->foreach([=](f::ComObj* b) {
     if (b->status &&
-        cx::collide(b, ship)) {
-      ship->hurt();
+        cx::collide(b, sp)) {
+      sp->hurt();
       b->hurt();
     }
   });
@@ -92,14 +89,14 @@ void Collide::checkShipBombs() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipAliens() {
-  auto ship= CC_GNLF(Ship, shipNode, "ship");
   auto enemies= MGMS()->getPool("Baddies");
+  auto sp= CC_GNLF(Ship, ship, "ship");
 
-  if (! ship->status) { return; }
+  if (! sp->status) { return; }
   enemies->foreach([=](f::ComObj* en) {
     if (en->status &&
-        cx::collide(en, ship)) {
-      ship->hurt();
+        cx::collide(en, sp)) {
+      sp->hurt();
       en->hurt();
     }
   });

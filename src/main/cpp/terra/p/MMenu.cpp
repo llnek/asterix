@@ -12,48 +12,37 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "Game.h"
-#include "x2d/XLib.h"
-#include "s/utils.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::decorate() {
-  auto tt= cx::reifyBmfLabel( "font.JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Integer, "TILE");
+void MMenu::decorate() {
+  auto tt= cx::reifyBmfLabel( "JellyBelly", gets("mmenu"));
+  auto tile = CC_CSV(c::Float, "TILE");
   auto c= XCFG()->getColor("text");
   auto wb= cx::visBox();
-  auto cw= cx::center();
 
   centerImage("gui.mmenus.menu.bg");
-  incIndexZ();
 
-  tt->setPosition( cw.x, wb.top * 0.9f);
+  tt->setPosition( wb.cx, wb.top * 0.9f);
   tt->setScale(XCFG()->getScale());
   tt->setColor(c);
   addItem(tt);
 
-  auto ctx = (MCX*) getSceneX()->getCtx();
+  auto ctx = (MCX*) getCtx();
   auto b= cx::reifyMenuBtn("player1.png");
   auto menu= cx::mkMenu(b);
 
-  b->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify(mc_new(f::GCX)));
-  });
-  menu->setPosition(cw);
+  b->setCallback(
+      [=](c::Ref*)
+      { cx::runEx( Game::reify(mc_new(f::GCX))); });
+
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
@@ -63,11 +52,12 @@ void UILayer::decorate() {
   back->setColor(c);
 
   auto quit= cx::reifyMenuBtn("icon_quit.png");
-  quit->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onQuit));
   quit->setColor(c);
+  quit->setCallback(
+      [=](c::Ref*) { cx::prelude(); });
 
-  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit});
+  s_vec<c::MenuItem*> btns {back, quit};
+  auto m2= cx::mkHMenu(btns);
   m2->setPosition(wb.left + tile + sz.width * 1.1,
                   wb.bottom + tile + sz.height * 0.45);
   addItem(m2);
@@ -76,18 +66,10 @@ void UILayer::decorate() {
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons(this, audios,
+  addAudioIcons( audios,
     cx::anchorBR(),
     c::Vec2(wb.right - tile, wb.bottom + tile));
 }
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void MMenu::decorate() {
-  UILayer::reify(this);
-}
-
 
 NS_END(terra)
 

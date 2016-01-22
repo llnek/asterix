@@ -8,9 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__SPLASH_H__)
-#define __SPLASH_H__
+#pragma once
 
 #include "x2d/XScene.h"
 NS_BEGIN(terra)
@@ -20,12 +18,15 @@ NS_BEGIN(terra)
 struct CC_DLL Splash : public f::XScene {
 
   STATIC_REIFY_SCENE(Splash)
+  MDECL_UPDATE()
   MDECL_DECORATE()
+
+  DECL_PTR(c::Sprite, flare)
+  DECL_PTR(c::Sprite, ship)
 
 };
 
 
 NS_END(terra)
-#endif
 
 

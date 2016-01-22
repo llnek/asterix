@@ -10,16 +10,18 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-
 #include "core/ComObj.h"
+#include "core/CCSX.h"
 #include "cocos2d.h"
+
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 enum class Moves { RUSH, VERT, HORZ, OLAP };
 enum class Attacks { TSUIHIKIDAN, NORMAL };
-
+class GEngine;
 struct EnemyType {
 
   EnemyType(Attacks attackMode, Moves moveType,
@@ -63,9 +65,9 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb);
 
 inline void btnEffect() {  cx::sfxPlay("btnEffect"); }
 
-void fireMissiles(not_null<f::ComObj*> ship, float dt);
+void fireMissiles(GEngine*, not_null<f::ComObj*> ship, float dt);
 
-void bornShip(not_null<f::ComObj*> ship);
+void bornShip(GEngine*, not_null<f::ComObj*> ship);
 
 void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta);
 

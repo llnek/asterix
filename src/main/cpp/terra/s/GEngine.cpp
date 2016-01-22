@@ -12,19 +12,19 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Stage.h"
 #include "Resolve.h"
 #include "Collide.h"
 #include "Move.h"
 #include "Aliens.h"
 #include "Render.h"
-#include "EFactory.h"
+#include "GEngine.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static const s::array<sstr,4> BackTileMap= {
+static const s_arr<sstr,4> BackTileMap= {
   "lvl1_map1.png", "lvl1_map2.png",
   "lvl1_map3.png", "lvl1_map4.png"
 };
@@ -51,7 +51,6 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new1(Stage, this));
   regoSystem(mc_new1(Move, this));
   regoSystem(mc_new1(Aliens, this));
   regoSystem(mc_new1(Collide, this));
@@ -69,12 +68,11 @@ void GEngine::createArena() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createShip() {
-  auto zx= CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx= CC_CSV(c::Integer, "SHIP+ZX");
   auto sp= cx::reifySprite("ship01.png");
   auto ent= this->reifyEntity("+");
   auto sz= sp->getContentSize();
-  auto wz= cx::visRect();
-  auto cw= cx::center();
+  auto wb= cx::visBox();
 
   MGML()->addAtlasItem("game-pics", sp, zx, 911);
   auto cac= c::AnimationCache::getInstance();
@@ -87,7 +85,7 @@ void GEngine::createShip() {
         c::Animation::createWithSpriteFrames(fs,01.f), "ShipAni");
     ani= cac->getAnimation("ShipAni");
   }
-  sp->setPosition(cw.x, sz.height);
+  sp->setPosition(wb.cx, sz.height);
   sp->runAction(c::RepeatForever::create( c::Animate::create(ani)));
 
   auto bs = cx::reifySprite("ship03.png");
@@ -97,13 +95,13 @@ void GEngine::createShip() {
   sp->addChild(bs, zx, 911);//99999);
 
   ent->checkin( mc_new2(Ship, sp, bs));
-  ent->checkin( mc_new(Motion));
+  ent->checkin( mc_new(Gesture));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createMissiles(int count) {
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto p = MGMS()->getPool("Missiles");
 
   p->preset([=]() -> f::ComObj* {
@@ -118,7 +116,7 @@ void GEngine::createMissiles(int count) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createBombs(int count) {
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto p = MGMS()->getPool("Bombs");
 
   p->preset([=]() -> f::ComObj* {
@@ -133,7 +131,7 @@ void GEngine::createBombs(int count) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createExplosions(int count) {
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto p = MGMS()->getPool("Explosions");
 
   p->preset([=]() -> f::ComObj* {
@@ -148,7 +146,7 @@ void GEngine::createExplosions(int count) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createHitEffects(int count) {
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto p = MGMS()->getPool("HitEffects");
 
   p->preset([=]() -> f::ComObj* {
@@ -163,7 +161,7 @@ void GEngine::createHitEffects(int count) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createSparks(int count) {
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto p = MGMS()->getPool("Sparks");
 
   p->preset([=]() -> f::ComObj* {
@@ -185,7 +183,7 @@ void GEngine::createSparks(int count) {
 //
 void GEngine::createEnemies(int count) {
 
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX") - 1;
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX") - 1;
   auto p = MGMS()->getPool("Baddies");
   auto cr= [=](const EnemyType& arg) -> f::ComObj* {
     auto sp= cx::reifySprite(arg.textureName);
@@ -195,17 +193,17 @@ void GEngine::createEnemies(int count) {
   };
 
   F__LOOP(it, EnemyTypes) {
-     auto& arg = *it;
-     p->preset([=]() ->  f::ComObj* {
-         return cr(arg);
-     }, count);
+    auto &arg = *it;
+    p->preset([=]() ->  f::ComObj* {
+      return cr(arg);
+    }, count);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createBackSkies() {
-  auto zx = CC_CSV(c::Integer, "SHIP_ZX");
+  auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto p = MGMS()->getPool("BackSkies");
   auto layer= MGMS()->getLayer(1);
 
@@ -223,7 +221,7 @@ void GEngine::createBackSkies() {
 void GEngine::createBackTiles(int count) {
   auto p = MGMS()->getPool("BackTiles");
   auto layer= MGMS()->getLayer(1);
-  auto cr= [=](const sstr& name) -> f::ComObj* {
+  auto cr= [=](const sstr &name) -> f::ComObj* {
     auto sp = cx::reifySprite(name);
     sp->setAnchorPoint(cx::anchorL());
     sp->setVisible(false);
@@ -232,7 +230,7 @@ void GEngine::createBackTiles(int count) {
   };
 
   F__LOOP(it, BackTileMap) {
-    auto& n = *it;
+    auto &n = *it;
     p->preset([=]() -> f::ComObj* {
       return cr(n);
     }, count);

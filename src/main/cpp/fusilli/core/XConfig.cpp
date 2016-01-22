@@ -165,8 +165,8 @@ void XConfig::setCsts() {
   f->setObject(CC_BOOL(true), "showFPS");
   f->setObject(CC_INT(60), "FPS");
 
-  f->setObject(CC_INT(4), "S_OFF");
-  f->setObject(CC_INT(8), "TILE");
+  f->setObject(CC_FLOAT(4.0f), "S_OFF");
+  f->setObject(CC_FLOAT(8.0f), "TILE");
 
   f->setObject(CC_STR("O"), "P2_COLOR");
   f->setObject(CC_STR("X"), "P1_COLOR");

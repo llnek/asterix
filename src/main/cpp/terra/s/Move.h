@@ -8,17 +8,23 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MOVE_H__)
-#define __MOVE_H__
+#pragma once
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
+class CC_DLL Move : public a::System {
+
+  void moveOneMissile(f::ComObj*, float);
+  void onKeys(float);
+  void moveOneBomb(f::ComObj*, float);
+  void move(float);
+  void moveMissiles(float);
+
+public:
 
   MDECL_SYS_PRIORITY( a::Move)
   MDECL_SYS_PREAMBLE()
@@ -29,18 +35,11 @@ struct CC_DLL Move : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
+  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(a::NodeList, ship)
 
-protected:
-  void moveOneMissile(f::ComObj*, float);
-  void onKeys(float);
-  void moveOneBomb(f::ComObj*, float);
-  void move(float);
-  void moveMissiles(float);
 };
 
 
 NS_END(terra)
-#endif
 
