@@ -23,7 +23,7 @@ NS_BEGIN(tetris)
 void MMenu::decorate() {
 
   auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto c= XCFG()->getColor("dft");
   auto wb= cx::visBox();
 

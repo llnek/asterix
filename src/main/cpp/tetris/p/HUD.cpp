@@ -21,7 +21,7 @@ NS_BEGIN(tetris)
 //
 void HUDLayer::decorate() {
 
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto gz= XCFG()->gameSize();
   auto wz = cx::visRect();
   auto wb = cx::visBox();

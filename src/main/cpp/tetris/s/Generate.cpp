@@ -83,7 +83,7 @@ bool Generate::update(float dt) {
 owner<Shape*> Generate::reifyNextShape() {
   auto bks= CC_GNLF(BlockGrid, arena, "blocks");
   auto gbox= CC_GNLF(GridBox, arena, "gbox");
-  auto tile= CC_CSV(c::Integer, "TILE");
+  auto tile= CC_CSV(c::Float, "TILE");
   auto x = gbox->box.left + 5 * tile;
   auto y = gbox->box.top - tile;
   auto shape= reifyShape(MGML(), bks->grid,
@@ -102,7 +102,7 @@ owner<Shape*> Generate::reifyNextShape() {
 //
 void Generate::previewNextShape() {
   auto gbox= CC_GNLF(GridBox, arena, "gbox");
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto info = randNextInfo();
   auto wb = cx::visBox();
 

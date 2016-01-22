@@ -142,7 +142,7 @@ const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
     float px, float py,
     int rID, bool skipCollide) {
 
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto dim= model->getDim();
   s_vec<c::Vec2> bs;
   float x,y;
@@ -203,7 +203,7 @@ const f::Cell2D xrefTile(const c::Vec2 &pos) {
 //
 const f::Cell2D xrefTile(float x, float y) {
   // find center, instead of top left
-  auto tile = CC_CSV(c::Integer, "TILE") ;
+  auto tile = CC_CSV(c::Float, "TILE") ;
   auto co = tile * 0.5f;
   auto bx= CC_CSV(f::Box4R, "CBOX");
   y -= co;
@@ -299,7 +299,7 @@ bool moveDown(not_null<f::XLayer*> layer,
     s_vec<FArrBrick> &emap,
     Shape *shape) {
 
-  auto tile= CC_CSV(c::Integer, "TILE");
+  auto tile= CC_CSV(c::Float, "TILE");
   auto new_y = shape->y - tile;
   auto x = shape->x;
   auto rc=false;
@@ -321,7 +321,7 @@ bool shiftRight(not_null<f::XLayer*> layer,
     s_vec<FArrBrick> &emap,
     Shape *shape) {
 
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto new_x= shape->x + tile;
   auto y= shape->y;
   auto rc=false;
@@ -342,7 +342,7 @@ bool shiftRight(not_null<f::XLayer*> layer,
 bool shiftLeft(not_null<f::XLayer*> layer,
     s_vec<FArrBrick> &emap, Shape *shape) {
 
-  auto tile= CC_CSV(c::Integer, "TILE");
+  auto tile= CC_CSV(c::Float, "TILE");
   auto new_x= shape->x - tile;
   auto y= shape->y;
   auto rc=false;

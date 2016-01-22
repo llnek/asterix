@@ -66,14 +66,12 @@ void GLayer::onceOnly() {
   auto bz= cx::calcSize("gray.png");
   auto box= initBlockMap(blocks, bz);
 
-  XCFG()->resetCst("FENCE", CC_INT( (int) floor(bz.width)));
-  XCFG()->resetCst("TILE", CC_INT( (int) floor(bz.width)));
   XCFG()->resetCst("CBOX", f::Box4R::create(box));
+  XCFG()->resetCst("TILE", CC_FLOAT( bz.width));
   gbox->box= box;
 
   CCLOG("brick: w= %d, h= %d", (int)bz.width, (int)bz.height);
-  CCLOG("fence size = %d", CC_CSV(c::Integer,"FENCE"));
-  CCLOG("tile size = %d", CC_CSV(c::Integer,"TILE"));
+  CCLOG("tile size = %f", CC_CSV(c::Float,"TILE"));
   CCLOG("gridbox: t=%d, r=%d, b=%d, l=%d",
       (int)box.top,(int)box.right,
       (int)box.bottom,(int)box.left);
@@ -162,6 +160,16 @@ GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
     b= Brick::reify( c::Vec2(x,y), png);
     MGML()->addAtlasItem("game-pics", b->sprite);
     rc.setLast(b);
+/* test to fill up entire box
+    y= wb.bottom + r * bz.height;
+    x= wb.left;
+    for (int i=1; i < (wlen-1); ++i) {
+      x += bz.width;
+      b= Brick::reify( c::Vec2(x,y), "0.png");
+      MGML()->addAtlasItem("game-pics", b->sprite);
+      rc.set(i,b);
+    }
+*/
     bks->grid.push_back(rc);
   }
   //pop off the extra row

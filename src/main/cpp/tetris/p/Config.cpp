@@ -44,7 +44,7 @@ void Config::initCsts() {
 
   addCst("showFPS", CC_BOOL(false));
   addCst("FENCE", CC_INT(0));
-  addCst("TILE", CC_INT(16));
+  addCst("TILE", CC_FLOAT(16.0f));
 
   addColor("text", CC_STR("#ffffff"));
   addColor("dft", CC_STR("#f6b17f"));

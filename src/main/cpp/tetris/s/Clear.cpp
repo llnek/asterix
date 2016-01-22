@@ -167,7 +167,7 @@ bool Clear::isEmptyRow( int r) {
 //
 void Clear::copyLine( int from, int to) {
   auto bs = CC_GNLF(BlockGrid, arena, "blocks");
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto &g_f = bs->grid[from];
   auto &g_t = bs->grid[to];
   auto end= g_f.size() -1;
