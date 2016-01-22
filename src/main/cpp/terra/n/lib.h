@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__UTILS_H__)
-#define __UTILS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/ComObj.h"
 #include "cocos2d.h"
@@ -62,7 +61,7 @@ const s::array<EnemyType, 6> EnemyTypes = {
 
 void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb);
 
-void btnEffect();
+inline void btnEffect() {  cx::sfxPlay("btnEffect"); }
 
 void fireMissiles(not_null<f::ComObj*> ship, float dt);
 
@@ -71,5 +70,4 @@ void bornShip(not_null<f::ComObj*> ship);
 void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta);
 
 NS_END(terra)
-#endif
 

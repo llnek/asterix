@@ -10,8 +10,8 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "EFactory.h"
-#include "utils.h"
+#include "GEngine.h"
+#include "lib.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,8 +31,7 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
   flare->setScale(0.3f);
 
   auto rotateEase = c::EaseExponentialOut::create( c::RotateBy::create(2.5f, 90));
-  auto easeMove = c::EaseSineOut::create(
-                                         c::MoveBy::create(0.5f, c::ccp(490, 0)));
+  auto easeMove = c::EaseSineOut::create( c::MoveBy::create(0.5f, c::ccp(490, 0)));
   auto biggerEase = c::EaseSineOut::create(c::ScaleBy::create(0.7f, 1.2f, 1.2f));
   auto bigger = c::ScaleTo::create(0.5f, 1);
   auto kf= [=]() { flare->removeFromParent(); };
@@ -48,23 +47,17 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void btnEffect() {
-  cx::sfxPlay("btnEffect");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void fireMissiles(not_null<f::ComObj*> obj, float dt) {
   auto po1= MGMS()->getPool("Missiles");
-  auto ship = (Ship*) obj.get();
-  auto pos = ship->pos();
+  auto ship = SCAST(Ship*, obj.get());
   auto sz = ship->csize();
+  auto pos = ship->pos();
   auto offy= 3.0f + sz.height * 0.3f;
   auto offx= 13.0f;
   auto m2= po1->getAndSet();
   auto m1= po1->getAndSet();
 
- // if (!m1 || !m2) { EFactory::createMissiles(); }
+  if (!m1 || !m2) { GEngine::createMissiles(); }
 
   if (!m1) { m1= po1->getAndSet(); }
   if (!m2) { m2= po1->getAndSet(); }
@@ -76,7 +69,7 @@ void fireMissiles(not_null<f::ComObj*> obj, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void bornShip(not_null<f::ComObj*> ccc) {
-  auto ship = static_cast<Ship*>(ccc.get());
+  auto ship = SCAST(Ship*,ccc.get());
   auto bsp= ship->bornSprite;
   auto ssp= ship->sprite;
   auto normal = [=]() {
@@ -102,7 +95,6 @@ void bornShip(not_null<f::ComObj*> ccc) {
 //
 void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta) {
   auto bx= MGMS()->getEnclosureBox();
-  auto wz= cx::visRect();
   auto pos= ship->pos();
   auto cur= ccpAdd(pos, delta);
   cur= cx::clamp(cur, bx);
