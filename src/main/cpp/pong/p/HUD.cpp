@@ -21,8 +21,7 @@ NS_BEGIN(pong)
 //
 void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
 
-  auto tile= CC_CSV(c::Integer, "TILE");
-  auto cw= cx::center();
+  auto tile= CC_CSV(c::Float, "TILE");
   auto wb= cx::visBox();
   float tw2;
 
@@ -31,25 +30,11 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
   parr[2]= p2;
   parr[1]= p1;
 
-  score1->setPosition(cw.x - tw2 - cx::getScaledWidth(score1) * 0.5f - 10,
+  score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(score1) * 0.5f - 10,
       wb.top - tile * 6 /2 - 2);
-  score2->setPosition(cw.x + tw2 + cx::getScaledWidth(score2) * 0.5f + 6,
+  score2->setPosition(wb.cx + tw2 + cx::getScaledWidth(score2) * 0.5f + 6,
       wb.top - tile * 6 /2 - 2);
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::resetAsNew() {
-  reset();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::reset() {
-  resultMsg->setVisible(false);
-  scores.fill(0);
-  drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,28 +46,31 @@ void HUDLayer::endGame() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
-  auto tile = CC_CSV(c::Integer, "TILE");
-  auto cw= cx::center();
+  auto tile = CC_CSV(c::Float, "TILE");
   auto wb= cx::visBox();
 
-  title= cx::reifyBmfLabel("font.TinyBoxBB");
+  title= cx::reifyBmfLabel("TinyBoxBB");
   title->setScale(XCFG()->getScale() * 0.3f);
-  title->setPosition(cw.x, wb.top - tile * 6 /2 );
+  title->setPosition(wb.cx, wb.top - tile * 6 /2 );
   addItem(title);
 
-  score1= cx::reifyBmfLabel("font.OCR", "8");
+  score1= cx::reifyBmfLabel("OCR", "8");
   score1->setScale(XCFG()->getScale() * 0.25f);
   addItem(score1);
 
-  score2= cx::reifyBmfLabel("font.OCR", "8");
+  score2= cx::reifyBmfLabel("OCR", "8");
   score2->setScale(XCFG()->getScale() * 0.25f);
   addItem(score2);
 
-  resultMsg = cx::reifyBmfLabel("font.CoffeeBuzzed");
+  resultMsg = cx::reifyBmfLabel("CoffeeBuzzed");
   resultMsg->setVisible(false);
-  resultMsg->setPosition(cw.x, 100);
+  resultMsg->setPosition(wb.cx, 100);
   resultMsg->setScale(XCFG()->getScale() * 0.15f);
   addItem(resultMsg);
+
+  resultMsg->setVisible(false);
+  scores.fill(0);
+  drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -8,12 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__GNODES_H__)
-#define __GNODES_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/NodeRego.h"
-#include "CObjs.h"
+#include "C.h"
 
 NS_BEGIN(pong)
 
@@ -52,7 +51,7 @@ struct CC_DLL PaddleNode : public a::NodeFactory {
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
       {"lastpos" , "n/Position" },
-      {"motion" , "n/Motion" },
+      {"motion" , "n/Gesture" },
       {"paddle" , "n/Paddle" }
     });
   }
@@ -76,6 +75,5 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
 
 NS_END(pong)
-#endif
 
 

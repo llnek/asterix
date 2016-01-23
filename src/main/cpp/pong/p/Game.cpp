@@ -33,7 +33,16 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onTouchMotion(f::ComObj*, const c::Vec2&, const c::Vec2&);
   virtual void onMouseMotion(f::ComObj*, const c::Vec2&, const c::Vec2&);
-    virtual void postReify();
+  virtual void postReify();
+
+  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  STATIC_REIFY_LAYER(GLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(2)
+
+  void initPaddles(a::NodeList*);
+  void onceOnly();
+
   void deco(int pnum,
       const sstr &p1k, const sstr &p1n,
       const sstr &p2k, const sstr &p2n);
@@ -46,12 +55,6 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   DECL_PTR(a::NodeList, paddleNode)
   DECL_PTR(a::NodeList, arenaNode)
-
-  MDECL_GET_LAYER(HUDLayer,getHUD,3)
-  STATIC_REIFY_LAYER(GLayer)
-
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
 
 };
 /*
@@ -71,22 +74,19 @@ struct CC_DLL GLayer : public f::GameLayer {
 */
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(f::ComObj *c,
-    const c::Vec2 &loc, const c::Vec2 &dt) {
+void GLayer::onTouchMotion(f::ComObj *c, const c::Vec2 &loc, const c::Vec2 &dt) {
   onMotion(c,loc,dt,true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(f::ComObj *c,
-      const c::Vec2 &loc, const c::Vec2 &dt) {
+void GLayer::onMouseMotion(f::ComObj *c, const c::Vec2 &loc, const c::Vec2 &dt) {
   onMotion(c,loc,dt,false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMotion(f::ComObj *co,
-    const c::Vec2 &loc, const c::Vec2 &delta, bool isTouch) {
+void GLayer::onMotion(f::ComObj *co, const c::Vec2 &loc, const c::Vec2 &delta, bool isTouch) {
 
   auto box= MGMS()->getEnclosureBox();
   auto p= SCAST(Paddle*,co);
@@ -94,18 +94,10 @@ void GLayer::onMotion(f::ComObj *co,
   auto x= pos.x;
   auto y= pos.y;
 
-  if (cx::isPortrait()) {
-    if (isTouch) {
-      x = pos.x + delta.x;
-    } else {
-      x=loc.x;
-    }
+  if (isTouch) {
+    x = pos.x + delta.x;
   } else {
-    if (isTouch) {
-      y = pos.y + delta.y;
-    } else {
-      y=loc.y;
-    }
+    x=loc.x;
   }
 
   auto cur= cx::clamp(c::ccp(x,y), box);
@@ -117,7 +109,6 @@ void GLayer::onMotion(f::ComObj *co,
 void GLayer::decorate() {
 
   centerImage("game.bg");
-  incIndexZ();
 
   regoAtlas("game-pics");
   regoAtlas("lang-pics");
@@ -151,15 +142,14 @@ void GLayer::decorate() {
   }
 
   deco(pnum, p1k, p1n, p2k, p2n);
-  getHUD()->reset();
+
 
   CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::deco(int cur,
-    const sstr &p1k, const sstr &p1n,
+void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
     const sstr &p2k, const sstr &p2n) {
 
   auto p1cat= CC_CSV(c::Integer, "HUMAN");
@@ -194,6 +184,49 @@ void GLayer::deco(int cur,
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onceOnly() {
+  auto fauxNode = engine->getNodeList(FauxPaddleNode().typeId());
+  auto arenaNode = engine->getNodeList(ArenaNode().typeId());
+  auto ballNode=engine->getNodeList(BallNode().typeId());
+  auto paddleNode=engine->getNodeList(PaddlNode().typeId());
+  auto ss= CC_GNLF(GVars, arenaNode, "slots");
+  auto world = MGMS()->getEnclosureBox();
+  auto ps= cx::calcSize("red_paddle.png");
+  auto bs= cx::calcSize("pongball.png");
+  auto wb= cx::visBox();
+
+  // position of paddles
+  // portrait
+  auto p1y = world.top * 0.1f + bs.height + HHZ(ps);
+  auto p2y = world.top * 0.9f - bs.height - HHZ(ps);
+
+  ss->pz= c::Size( ps.width, ps.height);
+  ss->bz= c::Size( bs.width, bs.height);
+  ss->bp= c::Vec2( wb.cx, wb.cy);
+
+  ss->p1p= c::Vec2(wb.cx, p1y);
+  ss->p2p= c::Vec2(wb.cx, p2y);
+
+  auto ball=CC_GNLF(Ball,ballNode, "ball");
+  ball->inflate(ss->bp.x, ss->bp.y);
+
+  initPaddles(paddleNode);
+  initPaddles(fauxNode);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::initPaddles(a::NodeList *nl) {
+  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+   for (auto node=nl->head;node;node=node->next) {
+    auto p= CC_GNF(Paddle,node,"paddle");
+    if (p->pnum == 2) { p->inflate(ss->p2p.x, ss->p2p.y); }
+    if (p->pnum == 1) { p->inflate(ss->p1p.x, ss->p1p.y); }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::postReify() {
   this->paddleNode= engine->getNodeList(PaddleNode().typeId());
   this->arenaNode= engine->getNodeList(ArenaNode().typeId());
@@ -203,6 +236,8 @@ void GLayer::postReify() {
     auto p= CC_GNF(Paddle,n,"paddle");
     this->motionees.push_back(p);
   }
+
+  onceOnly();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -286,24 +321,6 @@ void Game::decorate() {
   HUDLayer::reify(this,3);
   GLayer::reify(this,2);
   play();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Game::isLive() {
-  return state > 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::stop() {
-  state= 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::play() {
-  state = 911;
 }
 
 

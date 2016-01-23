@@ -28,40 +28,31 @@ void ELayer::onReplay(c::Ref*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onQuit(c::Ref*) {
-  cx::runEx( XCFG()->prelude());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void ELayer::decorate() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
+  auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
   auto wz= cx::visRect();
-  auto cw= cx::center();
   auto wb= cx::visBox();
-  int tag;
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setPosition(wb.cx, wb.top * 0.75f);
   qn->setColor(XCFG()->getColor("text"));
-  qn->setOpacity(0.9f*255);
   addItem(qn);
 
   // btns
   auto b1= cx::reifyMenuBtn("play.png");
   auto b2= cx::reifyMenuBtn("quit.png");
-  auto menu= cx::mkVMenu(
-      s_vec<c::MenuItem*> {b1, b2} );
+  s_vec<c::MenuItem*> btns {b1, b2} ;
+  auto menu= cx::mkVMenu( btns);
 
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(ELayer::onReplay));
+  b1->setCallback(
+      [=](c::Ref*) { this->onReplay();  });
 
-  b2->setTarget(this,
-      CC_MENU_SELECTOR(ELayer::onQuit));
+  b2->setCallback(
+      [=](c::Ref*) { cx::prelude();  });
 
-  menu->setPosition(cw.x, wb.top * 0.5f);
+  menu->setPosition(wb.cx, wb.top * 0.5f);
   addItem(menu);
 }
 

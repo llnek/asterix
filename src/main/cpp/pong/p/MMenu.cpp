@@ -12,12 +12,11 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
-#include "x2d/XLib.h"
 #include "NetPlay.h"
 #include "MMenu.h"
 #include "Game.h"
-#include "n/GNodes.h"
-#include "s/utils.h"
+#include "n/N.h"
+#include "n/lib.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -25,72 +24,53 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-protected:
-  void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
-  void onPlay3(c::Ref*);
-  void onPlay2(c::Ref*);
-  void onPlay1(c::Ref*);
-  void onBack(c::Ref*);
-  void onQuit(c::Ref*);
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::decorate() {
-  auto tile = CC_CSV(c::Integer,"TILE");
-  auto c = XCFG()->getColor("default");
+void MMenu::decorate() {
+  auto tile = CC_CSV(c::Float,"TILE");
+  auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
-  auto cw = cx::center();
   auto lb = cx::reifyBmfLabel(
-      cw.x, wb.top * 0.9f,
-      "font.JellyBelly", gets("mmenu"));
+      wb.cx, wb.top * 0.9f,
+      "JellyBelly", gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
-  incIndexZ();
 
   lb->setScale(XCFG()->getScale());
   lb->setColor(c);
   addItem(lb);
 
   auto b1 = cx::reifyMenuBtn("online.png");
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay3));
+  b1->setCallback(
+      [=](c::Ref*) { this->onPlay3();  });
 
   auto b2 = cx::reifyMenuBtn("player2.png");
-  b2->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay2));
+  b2->setCallback(
+      [=](c::Ref*) { this->onPlay2();  });
 
   auto b3 = cx::reifyMenuBtn("player1.png");
-  b3->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay1));
+  b3->setCallback(
+      [=](c::Ref*) { this->onPlay1();  } );
 
-  auto menu= cx::mkVMenu(
-      s_vec<c::MenuItem*> {b1,b2,b3});
-  menu->setPosition(cw);
+  s_vec<c::MenuItem*> btns {b1,b2,b3};
+  auto menu= cx::mkVMenu( btns);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  back->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onBack));
+  auto quit= cx::reifyMenuBtn("icon_quit.png");
+  s_vec<c::MenuItem*> bns {back, quit} ;
+  auto ctx = getSceneX()->getCtx();
+  auto sz= back->getContentSize();
+  auto m2= cx::mkHMenu(bns);
+
+  quit->setColor(c);
   back->setColor(c);
 
-  auto quit= cx::reifyMenuBtn("icon_quit.png");
-  quit->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onQuit));
-  quit->setColor(c);
+  back->setCallback(
+      [=](c::Ref*) { SCAST(MCX*,ctx)->back(); });
 
-  auto m2= cx::mkHMenu(
-      s_vec<c::MenuItem*> {back, quit} );
-  auto sz= back->getContentSize();
+  quit->setCallback(
+      [=](c::Ref*) { cx::prelude();  });
 
   m2->setPosition(wb.left+tile+sz.width*1.1f,
                   wb.bottom+tile+sz.height*0.45f);
@@ -101,16 +81,16 @@ void UILayer::decorate() {
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons(this, audios,
+  addAudioIcons( audios,
       cx::anchorBR(),
       c::Vec2(wb.right-tile, wb.bottom+tile));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlay3(c::Ref*) {
+void MMenu::onPlay3() {
   // no
-  auto f= [=]() { cx::runEx( XCFG()->prelude()); };
+  auto f= []() { cx::prelude(); };
   auto n= [=]() { cx::runEx( MMenu::reify( mc_new1(MCX,f))); };
   // yes
   auto y= [=](ws::OdinIO* io, j::json obj) {
@@ -122,44 +102,24 @@ void UILayer::onPlay3(c::Ref*) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlay2(c::Ref*) {
+void MMenu::onPlay2() {
   auto m=f::GMode::TWO;
   onPlayXXX(m, nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlay1(c::Ref*) {
+void MMenu::onPlay1() {
   auto m= f::GMode::ONE;
   onPlayXXX(m, nullptr, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
+void MMenu::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
   cx::runEx(
       Game::reify(
         mc_new3(GCXX, mode, io, obj)));
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onBack(c::Ref*) {
-  auto ctx = getSceneX()->getCtx();
-  SCAST(MCX*,ctx)->back();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onQuit(c::Ref*) {
-  cx::runEx( XCFG()->prelude());
-}
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void MMenu::decorate() {
-  UILayer::reify(this);
 }
 
 

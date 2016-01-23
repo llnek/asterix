@@ -20,49 +20,25 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-protected:
-  void onPlay(c::Ref*);
-};
+void Splash::decorate() {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::decorate() {
-  auto cw = cx::center();
   auto wb = cx::visBox();
 
   centerImage("game.bg");
-  incIndexZ();
-
-  addFrame("title.png", c::ccp(cw.x, wb.top * 0.9f));
+  addFrame("title.png", c::ccp(wb.cx, wb.top * 0.9f));
 
   auto b = cx::reifyMenuBtn("play.png");
+  auto f = []() { cx::prelude(); };
   auto menu = cx::mkMenu(b);
-  b->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onPlay));
-  menu->setPosition(cw.x, wb.top * 0.1f);
-  addItem(menu,lastZ, ++lastTag);
-}
+  auto x= mc_new1(MCX, f);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onPlay(c::Ref*) {
-  auto f = [=]() { cx::runEx( XCFG()->prelude()); };
-  cx::runEx( MMenu::reify(mc_new1(MCX,f)));
-}
+  b->setCallback(
+      [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
 
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void Splash::decorate() {
-  UILayer::reify(this);
-}
+  menu->setPosition(wb.cx, wb.top * 0.1f);
+  addItem(menu);
 
+}
 
 
 

@@ -39,8 +39,8 @@ void Config::initCsts() {
   game_id = "fa0860f9-76dc-4135-8bc7-bd5af3147d55";
   app_id = "pong";
 
-  addColor("default", CC_STR("#edff90"));
   addColor("text", CC_STR("#32baf4"));
+  addColor("dft", CC_STR("#edff90"));
   addColor("hud", CC_STR("#ffffff"));
 
   addCst("syncMillis", CC_FLOAT(3000.0f));
@@ -77,17 +77,17 @@ void Config::initAssets() {
   addEffect("o_hit", CC_STR("sfx/MineBeep.mp3"));
   addEffect("game_quit", CC_STR("sfx/Death.mp3"));
 
-  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
 

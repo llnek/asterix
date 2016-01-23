@@ -17,92 +17,63 @@
 #include "NetPlay.h"
 #include "Game.h"
 #include "MMenu.h"
-#include "s/utils.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-BEGIN_NS_UNAMED()
-const int USERTAG= (int) 'u';
-const int PASSTAG= (int) 'p';
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-  DECL_PTR(ws::OdinIO, odin)
-  DECL_IZ(player)
-
-  virtual ~UILayer() {
-    ws::disconnect(odin);
-  }
-
-protected:
-  void networkEvent(ws::OdinEvent*);
-  void sessionEvent(ws::OdinEvent*);
-  void odinEvent(ws::OdinEvent*);
-  void onPlayReply(ws::OdinEvent*);
-  void showWaitOthers();
-  void onStart(ws::OdinEvent*);
-  void onCancel(c::Ref* );
-  void onLogin(c::Ref*);
-};
+static int USERTAG= (int) 'u';
+static int PASSTAG= (int) 'p';
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::showWaitOthers() {
+void NetPlay::showWaitOthers() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
-  auto wz= cx::visRect();
-  auto cw= cx::center();
+  auto qn= cx::reifyBmfLabel("OCR", gets("waitother"));
+  auto b1= cx::reifyMenuBtn("cancel.png");
+  auto menu = cx::mkMenu(b1);
   auto wb = cx::visBox();
 
   removeAll();
 
   qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
-  qn->setOpacity(0.9f * 255);
+  qn->setPosition(wb.cx, wb.top * 0.75f);
   addItem(qn);
 
-  auto b1= cx::reifyMenuBtn("cancel.png");
-  auto menu = cx::mkMenu(b1);
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onCancel));
-  menu->setPosition(cw.x, wb.top * 0.1f);
+  b1->setCallback(
+      [=](c::Ref*) { this->onCancel(); });
+
+  menu->setPosition(wb.cx, wb.top * 0.1f);
   addItem(menu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onStart(ws::OdinEvent *evt) {
+void NetPlay::onStart(ws::OdinEvent *evt) {
 
   auto obj= fmtGameData(f::GMode::NET);
-  auto ctx = getSceneX()->getCtx();
+  auto ctx = getCtx();
 
   obj["ppids"] = evt->doco["source"]["ppids"];
   obj["pnum"]= player;
 
-  SCAST(NPCX*,ctx)->yes(odin,obj);
+  SCAST(NPCX*, ctx)->yes(odin,obj);
   SNPTR(odin)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onCancel(c::Ref*) {
-  auto f= [=]() { cx::runEx( XCFG()->prelude()); };
+void NetPlay::onCancel() {
+  auto f= []() { cx::prelude(); };
   ws::disconnect(odin);
-  SNPTR(odin)
+  mc_del_ptr(odin);
   cx::runEx( MMenu::reify(mc_new1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onPlayReply(ws::OdinEvent *evt) {
+void NetPlay::onPlayReply(ws::OdinEvent *evt) {
   player= JS_INT( evt->doco["pnum"]);
   assert(player > 0);
   CCLOG("player %d: ok", player);
@@ -111,7 +82,7 @@ void UILayer::onPlayReply(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::networkEvent(ws::OdinEvent *evt) {
+void NetPlay::networkEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYER_JOINED:
       //TODO
@@ -127,7 +98,7 @@ void UILayer::networkEvent(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::sessionEvent(ws::OdinEvent *evt) {
+void NetPlay::sessionEvent(ws::OdinEvent *evt) {
   switch (evt->code) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
@@ -137,7 +108,7 @@ void UILayer::sessionEvent(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::odinEvent(ws::OdinEvent *evt) {
+void NetPlay::odinEvent(ws::OdinEvent *evt) {
   CCLOG("odin event = %s", evt->doco.dump(0).c_str());
   switch (evt->type) {
     case ws::MType::NETWORK:
@@ -151,7 +122,7 @@ void UILayer::odinEvent(ws::OdinEvent *evt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::onLogin(c::Ref* ) {
+void NetPlay::onLogin() {
   auto u= (c::ui::TextField*) getChildByTag( USERTAG);
   auto p= (c::ui::TextField*) getChildByTag( PASSTAG);
   auto uid= u->getString();
@@ -170,20 +141,15 @@ void UILayer::onLogin(c::Ref* ) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::decorate() {
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
-  auto wz= cx::visRect();
-  auto cw= cx::center();
+void NetPlay::decorate() {
+  auto qn= cx::reifyBmfLabel("OCR", gets("signinplay"));
   auto wb= cx::visBox();
-  int tag;
 
   centerImage("gui.mmenu.menu.bg");
-  incIndexZ();
 
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
-  qn->setOpacity(0.9f*255);
+  qn->setPosition(wb.cx, wb.top * 0.75f);
   addItem(qn);
 
   // editbox for user
@@ -195,8 +161,8 @@ void UILayer::decorate() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
-  uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  addItem(uid, lastZ, USERTAG);
+  uid->setPosition(c::Vec2(wb.cx, wb.cy+bxz.height*0.5f+2));
+  addItem(uid, 0, USERTAG);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -207,30 +173,25 @@ void UILayer::decorate() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
-  pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  addItem(pwd, lastZ, PASSTAG);
+  pwd->setPosition(c::Vec2(wb.cx, wb.cy-bxz.height*0.5f-2));
+  addItem(pwd, 0, PASSTAG);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
   auto b2= cx::reifyMenuBtn("cancel.png");
-  auto menu= cx::mkVMenu(s::vector<c::MenuItem*> {b1, b2});
+  s::vector<c::MenuItem*> btns {b1, b2};
+  auto menu= cx::mkVMenu(btns);
 
-  b1->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onLogin));
+  b1->setCallback(
+      [=](c::Ref*) { this->onLogin(); });
 
-  b2->setTarget(this,
-      CC_MENU_SELECTOR(UILayer::onCancel));
+  b2->setCallback(
+      [=](c::Ref*) { this->onCancel(); });
 
-  menu->setPosition(cw.x, wb.top * 0.1f);
+  menu->setPosition(wb.cx, wb.top * 0.1f);
   addItem(menu);
 }
 
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void NetPlay::decorate() {
-  UILayer::reify(this);
-}
 
 
 NS_END(pong)

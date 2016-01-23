@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MMENU_H__)
-#define __MMENU_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XScene.h"
 NS_BEGIN(pong)
@@ -29,11 +28,15 @@ struct CC_DLL MMenu : public f::XScene {
   STATIC_REIFY_SCENE_CTX(MMenu)
   MDECL_DECORATE()
 
+  void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
+  void onPlay3(c::Ref*);
+  void onPlay2(c::Ref*);
+  void onPlay1(c::Ref*);
+
 };
 
 
 NS_END(pong)
-#endif
 
 
 

@@ -8,40 +8,33 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#if !defined(__STAGE_H__)
-#define __STAGE_H__
-
-#include "ash/System.h"
-#include "EFactory.h"
+#include "ash/Engine.h"
+#include "n/N.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stage : public a::System {
+class CC_DLL GEngine : public a::Engine {
 
-  MDECL_SYS_PRIORITY( a::PreUpdate)
-  MDECL_SYS_TPID( "s/Stage")
-  MDECL_SYS_UPDATE()
-  MDECL_SYS_PREAMBLE()
+  void mkOnePaddle(const Player&);
+  void mkBall();
+  void mkArena();
+  s_arr<Player,3> parr;
 
-  DECL_PTR(a::NodeList, paddleNode)
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, ballNode)
-  DECL_PTR(a::NodeList, fauxNode)
+public:
 
-  Stage(a::Engine *e)
-  : System(e)
-  {}
+  GEngine(int pnum, const Player&, const Player&);
+  virtual void initEntities();
+  virtual void initSystems();
 
-protected:
-  void initPaddles(a::NodeList*);
-  void onceOnly();
 };
 
 
 NS_END(pong)
-#endif
+
 
 

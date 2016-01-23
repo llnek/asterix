@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__CONFIG_H__)
-#define __CONFIG_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
 
@@ -19,25 +18,21 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
-protected:
 
   void initAssets();
   void initCsts();
   void initLevels();
 
-  Config() {}
+  Config() {};
 
 public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
   virtual const c::Size gameSize() { return c::Size(320,480); }
-  virtual const sstr themeColor() { return "green"; }
 
   virtual void handleResolution(const c::Size&);
-  virtual void runOnce();
-
-  virtual const sstr getWSUrl() { return ""; }
   virtual c::Scene* prelude();
+  virtual void runOnce();
 
   static owner<Config*> reify();
 };
@@ -45,6 +40,5 @@ public:
 
 
 NS_END(pong)
-#endif
 
 

@@ -16,8 +16,7 @@
 #include "s/Collide.h"
 #include "s/Move.h"
 #include "s/Net.h"
-#include "s/Stage.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pong)
@@ -37,7 +36,6 @@ void GEngine::initSystems() {
   regoSystem(mc_new1(Collide, this));
   regoSystem(mc_new1(Move, this));
   regoSystem(mc_new1(Net, this));
-  regoSystem(mc_new1(Stage, this));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -52,7 +50,7 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::mkArena() {
-  auto ent= this->reifyEntity("*");
+  auto ent= this->reifyEntity();
   auto ps= mc_new(Players);
   auto ss= mc_new(GVars);
 
@@ -72,7 +70,7 @@ void GEngine::mkArena() {
 void GEngine::mkBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["BALL+SPEED"]);
-  auto ent = this->reifyEntity("*");
+  auto ent = this->reifyEntity();
   auto vy = sd * cx::randSign();
   auto vx = sd * cx::randSign();
 
@@ -96,7 +94,7 @@ void GEngine::mkOnePaddle( const Player &p) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto ent = this->reifyEntity("*");
+  auto ent = this->reifyEntity();
   auto cur= parr[0].pnum;
   float lp;
   sstr res;
@@ -124,7 +122,7 @@ void GEngine::mkOnePaddle( const Player &p) {
     ent->checkin(mc_new(Faux));
   }
   else {
-    ent->checkin(mc_new(Motion));
+    ent->checkin(mc_new(Gesture));
   }
 
 }

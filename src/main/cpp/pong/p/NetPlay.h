@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__NETPLAY_H__)
-#define __NETPLAY_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XScene.h"
 #include "core/Odin.h"
@@ -33,12 +32,33 @@ struct CC_DLL NPCX : public f::SCTX {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL NetPlay : public f::XScene {
+class CC_DLL NetPlay : public f::XScene {
+
+  void networkEvent(ws::OdinEvent*);
+  void sessionEvent(ws::OdinEvent*);
+  void odinEvent(ws::OdinEvent*);
+  void onPlayReply(ws::OdinEvent*);
+  void showWaitOthers();
+  void onStart(ws::OdinEvent*);
+  void onCancel(c::Ref* );
+  void onLogin(c::Ref*);
+
+  DECL_PTR(ws::OdinIO, odin)
+  DECL_IZ(player)
+
+public:
+
   STATIC_REIFY_SCENE_CTX(NetPlay)
   MDECL_DECORATE()
+
+  virtual ~NetPlay() {
+    ws::disconnect(odin);
+    delete odin;
+  }
+
 };
 
 
 NS_END(pong)
-#endif
+
 

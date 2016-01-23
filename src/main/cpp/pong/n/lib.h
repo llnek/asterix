@@ -8,31 +8,15 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#if !defined(__EFACTORY_H__)
-#define __EFACTORY_H__
-
-#include "ash/Engine.h"
-#include "n/GNodes.h"
-
+#include "x2d/GameScene.h"
+#include "core/CCSX.h"
 NS_BEGIN(pong)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GEngine : public a::Engine {
-
-  GEngine(int pnum, const Player&, const Player&);
-  virtual void initEntities();
-  virtual void initSystems();
-
-protected:
-  void mkOnePaddle(const Player&);
-  void mkBall();
-  void mkArena();
-  s_arr<Player,3> parr;
-};
+  j::json fmtGameData(fusii::GMode );
 
 NS_END(pong)
-#endif
 
 

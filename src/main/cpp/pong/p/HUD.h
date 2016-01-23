@@ -8,12 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__HUD_H_)
-#define __HUD_H_
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XLayer.h"
-#include "n/CObjs.h"
+#include "n/C.h"
 
 NS_BEGIN(pong)
 
@@ -26,8 +25,6 @@ struct CC_DLL HUDLayer : public f::XLayer {
   void drawResult(int winner);
   void drawScores();
   void updateScores(j::json);
-  void resetAsNew();
-  void reset();
   void endGame();
   int isDone();
 
@@ -46,6 +43,5 @@ struct CC_DLL HUDLayer : public f::XLayer {
 
 
 NS_END(pong)
-#endif
 
 

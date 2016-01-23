@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COBJS_H__)
-#define __COBJS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/ComObj.h"
 #include "core/CCSX.h"
@@ -21,7 +20,7 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ball : public f::ComObj {
-  Ball(c::Sprite *s, float v)
+  Ball(not_null<c::Sprite*> s, float v)
     : ComObj(s) {
     speed.x=v;
     speed.y=v;
@@ -31,9 +30,19 @@ struct CC_DLL Ball : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Paddle : public f::ComObj {
+class CC_DLL Paddle : public f::ComObj {
 
-  Paddle(c::Sprite *s, int pnum, float v)
+  const s_arr<KEYCODE,2> p1Keys() {
+    return s_arr<KEYCODE,2> {KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ARROW};
+  }
+
+  const s_arr<KEYCODE,2> p2Keys() {
+    return s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D };
+  }
+
+public:
+
+  Paddle(not_null<c::Sprite*> s, int pnum, float v)
     : ComObj(s) {
     this->kcodes = pnum == 1 ? p1Keys() : p2Keys();
     this->snd = pnum == 1 ? "x_hit" : "o_hit";
@@ -46,24 +55,12 @@ struct CC_DLL Paddle : public f::ComObj {
   s_arr<KEYCODE,2> kcodes;
   DECL_IZ(pnum)
   DECL_TD(sstr, snd)
-
-private:
-  const s_arr<KEYCODE,2> p1Keys() {
-    return cx::isPortrait()
-      ? s_arr<KEYCODE,2> { KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ARROW}
-      : s_arr<KEYCODE,2> {KEYCODE::KEY_DOWN_ARROW,KEYCODE::KEY_UP_ARROW };
-  }
-  const s_arr<KEYCODE,2> p2Keys() {
-    return cx::isPortrait()
-      ? s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D }
-      : s_arr<KEYCODE,2> {KEYCODE::KEY_S, KEYCODE::KEY_W  };
-  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motion : public a::Component {
-  MDECL_COMP_TPID( "n/Motion")
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID( "n/Gesture")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,6 +133,5 @@ struct CC_DLL GVars : public a::Component {
 
 
 NS_END(pong)
-#endif
 
 

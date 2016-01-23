@@ -8,20 +8,32 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__NET_H__)
-#define __NET_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
 #include "core/Odin.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Net : public a::System {
+class CC_DLL Net : public a::System {
+
+  void syncPaddles(a::NodeList*, ws::OdinEvent*);
+  void syncOnePaddle(a::Node*, j::json);
+  void onceOnly();
+  void onEvent(ws::OdinEvent*);
+  void onnetw(ws::OdinEvent*);
+  void onsess(ws::OdinEvent*);
+  void syncScores(j::json);
+  void process(ws::OdinEvent*);
+  void reposPaddles(a::NodeList*);
+  void reposEntities();
+
+public:
 
   MDECL_SYS_PRIORITY( a::NetPlay)
   MDECL_SYS_TPID( "s/Net")
@@ -37,23 +49,9 @@ struct CC_DLL Net : public a::System {
   DECL_PTR(a::NodeList,ballNode)
   DECL_PTR(a::NodeList,arenaNode)
 
-private:
-
-  void syncPaddles(a::NodeList*, ws::OdinEvent*);
-  void syncOnePaddle(a::Node*, j::json);
-  void onceOnly();
-  void onEvent(ws::OdinEvent*);
-  void onnetw(ws::OdinEvent*);
-  void onsess(ws::OdinEvent*);
-  void syncScores(j::json);
-  void process(ws::OdinEvent*);
-  void reposPaddles(a::NodeList*);
-  void reposEntities();
-
 };
 
 
 NS_END(pong)
-#endif
 
 
