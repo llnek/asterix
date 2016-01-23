@@ -15,14 +15,13 @@
 #include "core/CCSX.h"
 #include "core/XPool.h"
 #include "ash/Engine.h"
-#include "n/GNodes.h"
-#include "Stage.h"
+#include "n/N.h"
 #include "Motion.h"
 #include "Move.h"
 #include "Collide.h"
 #include "Resolve.h"
 #include "Aliens.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
@@ -39,7 +38,6 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new1(Stage,this));
   regoSystem(mc_new1(Motions,this));
   regoSystem(mc_new1(Move,this));
   regoSystem(mc_new1(Aliens,this));
@@ -53,8 +51,8 @@ a::Entity* GEngine::reifyArena() {
   //pick purple since it is the largest
   auto z0= cx::calcSize("purple_bug_0.png");
   auto s0= cx::calcSize("ship_0.png");
-  auto ent= reifyEntity("*");
-  auto slots = mc_new(Slots);
+  auto ent= reifyEntity();
+  auto slots = mc_new(GVars);
 
   slots->alienSize = z0;
   slots->shipSize = s0;
@@ -153,9 +151,9 @@ void GEngine::fillSquad(f::XPool *pool) {
       auto aa = cx::reifySprite(s);
       aa->setPosition(x + HWZ(az), y - HHZ(az));
 
+      c::Vector<c::SpriteFrame*> animFrames(2);
       auto f1= CC_GDS(info, "img0");
       auto f2= CC_GDS(info, "img1");
-      c::Vector<c::SpriteFrame*> animFrames(2);
 
       animFrames.pushBack( cx::getSpriteFrame(f1));
       animFrames.pushBack( cx::getSpriteFrame(f2));
@@ -180,7 +178,7 @@ a::Entity* GEngine::reifyAliens() {
   // use the largest one to calc size
   auto z0= cx::calcSize("purple_bug_0.png");
   auto stepx= z0.width / 3.0f;
-  auto ent= this->reifyEntity("baddies");
+  auto ent= this->reifyEntity();
   auto p = MGMS()->getPool("aliens");
 
   fillSquad(p);
@@ -194,9 +192,9 @@ a::Entity* GEngine::reifyAliens() {
 //
 a::Entity* GEngine::reifyShip() {
 
-  auto ent= this->reifyEntity("goodies");
-  auto sz= cx::calcSize("ship_0.png");
   auto s= cx::reifySprite("ship_1.png");
+  auto sz= cx::calcSize("ship_0.png");
+  auto ent= this->reifyEntity();
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   //TODO: why 60
@@ -214,7 +212,6 @@ a::Entity* GEngine::reifyShip() {
 
   ent->checkin(mc_new(Looper));
   ent->checkin(mc_new(Cannon));
-  ent->checkin(mc_new(Motion));
 
   ent->checkin(ship);
   return ent;

@@ -22,27 +22,25 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::preamble() {
-  AlienMotionNode a;
-  baddies = engine->getNodeList(a.typeId());
+  baddies = engine->getNodeList(AlienMotionNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::update(float dt) {
-  auto node=baddies->head;
   if (MGMS()->isLive()) {
-    processMovement(node, dt);
-    processBombs(node, dt);
+    processMovement( dt);
+    processBombs( dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::processMovement(a::Node *node, float dt) {
+void Aliens::processMovement(float dt) {
 
-  auto sqad= CC_GNF(AlienSquad, node, "aliens");
-  auto lpr = CC_GNF(Looper, node, "looper");
+  auto sqad= CC_GNLF(AlienSquad, baddies, "aliens");
+  auto lpr = CC_GNLF(Looper, baddies, "looper");
   auto tm= lpr->timer0;
 
   if (cx::timerDone(tm)) {
@@ -54,10 +52,10 @@ void Aliens::processMovement(a::Node *node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Aliens::processBombs(a::Node *node, float dt) {
+void Aliens::processBombs(float dt) {
 
-  auto sqad= CC_GNF(AlienSquad, node, "aliens");
-  auto lpr = CC_GNF(Looper, node, "looper");
+  auto sqad= CC_GNLF(AlienSquad, baddies, "aliens");
+  auto lpr = CC_GNLF(Looper, baddies, "looper");
   auto tm= lpr->timer1;
 
   if (cx::timerDone(tm)) {
@@ -144,8 +142,6 @@ void Aliens::shuffleOneAlien(f::ComObj *a, int stepx) {
 //
 void Aliens::forwardOneAlien(f::ComObj *a, float delta) {
   auto pos= a->sprite->getPosition();
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
   a->sprite->setPosition(pos.x, pos.y - delta);
 }
 

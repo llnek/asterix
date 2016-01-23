@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__CONFIG_H__)
-#define __CONFIG_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
 #include "x2d/XScene.h"
@@ -19,36 +18,24 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
-protected:
 
   void initLevels();
   void initAssets();
   void initCsts();
   void initPools();
 
+  Config() {}
+
 public:
 
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
   virtual const c::Size gameSize() { return c::Size(320,480); }
   virtual void handleResolution(const c::Size& );
 
-  virtual const sstr appKey() { return "d39bf198-518a-4de7-88a0-5e28c88571b0"; }
-  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
-  virtual const sstr appId() { return "invaders"; }
-  virtual const sstr themeColor() { return "red"; }
-
-  virtual const sstr getWSUrl();
   virtual c::Scene* prelude();
-
-  virtual void setGameId(const sstr& s) {}
-  virtual void setRoomId(const sstr& s) {}
-
-  virtual const sstr getGameId();
-  virtual const sstr getRoomId();
-
   virtual void runOnce() ;
 
   virtual ~Config() {}
-  Config() {}
   NOCPYASS(Config)
 
   static owner<Config*> reify();
@@ -56,6 +43,6 @@ public:
 
 
 NS_END(invaders)
-#endif
+
 
 

@@ -13,49 +13,33 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "x2d/XLayer.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "Splash.h"
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-//////////////////////////////////////////////////////////////////////////////
-//
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-};
 
 //////////////////////////////////////////////////////////////////////////
 //
-void UILayer::decorate() {
+void Splash::decorate() {
 
+  auto b1 = cx::reifyMenuBtn("play.png");
+  auto f= []() { cx::prelude(); };
+  auto menu = cx::mkMenu(b1);
   auto wb = cx::visBox();
-  auto cw = cx::center();
+  auto x = mc_new1(MCX, f);
 
   centerImage("game.bg");
 
-  addFrame("title.png", c::Vec2(cw.x, wb.top * 0.9f));
+  addFrame( "title.png", c::Vec2(wb.cx, wb.top * 0.9f));
 
-  auto cb= [=]() { cx::run(XCFG()->prelude()); };
-  auto b1 = cx::reifyMenuBtn("play.png");
-  auto menu = cx::mkMenu(b1);
-  b1->setCallback([=](c::Ref*) {
-        cx::run( MMenu::reify(mc_new1(MCX, cb)));
-      });
+  b1->setCallback(
+      [=](c::Ref*) { cx::runEx(MMenu::reify(x)); });
 
-  menu->setPosition( cw.x, wb.top * 0.1f);
+  menu->setPosition( wb.cx, wb.top * 0.1f);
+
   addItem(menu);
 }
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void Splash::decorate() {
-  UILayer::reify(this);
-}
-
 
 NS_END(invaders)
 

@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MOTION_H__)
-#define __MOTION_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(invaders)
 
@@ -27,16 +25,11 @@ struct CC_DLL Motions : public a::System {
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  void processAlienMotions(a::Node*,float dt);
-  void controlCannon(a::Node*, float dt);
-  void fireMissile(a::Node*, float dt);
-  void scanInput(a::Node*, float dt);
+  void processAlienMotions(float dt);
+  void processCannon( float dt);
 
-  DECL_PTR(a::NodeList, cannons)
-  DECL_PTR(a::NodeList, ships)
+  DECL_PTR(a::NodeList, cannon)
   DECL_PTR(a::NodeList, aliens)
-  DECL_BF(right)
-  DECL_BF(left)
 
   Motions(a::Engine *e)
   : System(e) {}
@@ -45,6 +38,5 @@ struct CC_DLL Motions : public a::System {
 
 
 NS_END(invaders)
-#endif
 
 

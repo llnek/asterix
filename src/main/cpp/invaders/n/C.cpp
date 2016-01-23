@@ -11,7 +11,7 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "CObjs.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)

@@ -107,6 +107,7 @@ void GameLayer::enableListeners() {
 bool GameLayer::onTouchBegan(c::Touch *t, c::Event *e) {
   auto loc= t->getLocationInView();
   auto ok=false;
+  loc = CC_DTOR()->convertToGL(loc);
   F__LOOP(it,motionees) {
     auto c = *it;
     if (c->bbox().containsPoint(loc)) {
@@ -122,6 +123,7 @@ bool GameLayer::onTouchBegan(c::Touch *t, c::Event *e) {
 void GameLayer::onTouchMoved(c::Touch *t, c::Event *e) {
   auto bx= MGMS()->getEnclosureBox();
   auto loc= t->getLocationInView();
+  loc = CC_DTOR()->convertToGL(loc);
   F__LOOP(it,motionees) {
     auto c = *it;
     auto x= c->bbox();

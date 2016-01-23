@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COLLIDE_H__)
-#define __COLLIDE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(invaders)
 
@@ -27,14 +25,13 @@ struct CC_DLL Collide : public a::System {
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  bool maybeCollide(f::ComObj*, f::ComObj*);
   void checkMissilesBombs();
-  void checkMissilesAliens(a::Node*);
-  void checkShipBombs(a::Node*);
-  void checkShipAliens(a::Node*, a::Node*);
+  void checkMissilesAliens();
+  void checkShipBombs();
+  void checkShipAliens();
 
   DECL_PTR(a::NodeList, aliens)
-  DECL_PTR(a::NodeList, ships)
+  DECL_PTR(a::NodeList, ship)
 
   Collide(a::Engine* e)
   : System(e) {}
@@ -43,5 +40,4 @@ struct CC_DLL Collide : public a::System {
 
 
 NS_END(invaders)
-#endif
 

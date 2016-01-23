@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(invaders)
 
@@ -27,13 +25,13 @@ struct CC_DLL Resolve : public a::System {
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  void checkAliens(a::Node* );
-  void checkShip(a::Node* );
+  void checkAliens();
+  void checkShip();
   void checkMissiles();
   void checkBombs();
 
   DECL_PTR(a::NodeList, aliens)
-  DECL_PTR(a::NodeList, ships)
+  DECL_PTR(a::NodeList, ship)
 
   Resolve(a::Engine *e)
   : System(e) {}
@@ -42,6 +40,5 @@ struct CC_DLL Resolve : public a::System {
 
 
 NS_END(invaders)
-#endif
 
 

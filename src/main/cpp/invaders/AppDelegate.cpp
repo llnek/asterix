@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "ash/NodeRego.h"
-#include "n/GNodes.h"
+#include "n/N.h"
 #include "p/Config.h"
 #include "AppDelegate.h"
 NS_USING(invaders)
@@ -19,7 +19,7 @@ NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate() : App("invaders") {
 
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
@@ -37,8 +37,8 @@ AppDelegate::AppDelegate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
-  //delete NodeRegistry::Self();
-  //delete XConfig::Self();
+  delete NodeRegistry::self();
+  delete XConfig::self();
 }
 
 

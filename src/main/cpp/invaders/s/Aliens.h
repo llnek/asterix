@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__ALIENS_H__)
-#define __ALIENS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(invaders)
 
@@ -30,8 +28,8 @@ struct CC_DLL Aliens : public a::System {
   void forwardOneAlien(f::ComObj*, float delta);
   void shuffleOneAlien(f::ComObj*, int stepx);
 
-  void processMovement(a::Node*, float dt);
-  void processBombs(a::Node*, float dt);
+  void processMovement(float dt);
+  void processBombs( float dt);
 
   void dropBomb(float x, float y);
   void checkBomb(AlienSquad* );
@@ -54,5 +52,4 @@ struct CC_DLL Aliens : public a::System {
 
 
 NS_END(invaders)
-#endif
 

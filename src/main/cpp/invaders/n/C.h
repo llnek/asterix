@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COBJS_H__)
-#define __COBJS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "2d/CCActionInterval.h"
 #include "core/ComObj.h"
@@ -35,9 +34,10 @@ struct CC_DLL Alien : public f::ComObj {
 struct CC_DLL AlienSquad : public a::Component {
 
   const s_vec<f::ComObj*>& list() { return aliens->list(); }
+
   AlienSquad(not_null<f::XPool*> aliens, int step) {
-     this->aliens=aliens;
-     this->stepx=step;
+    this->aliens=aliens;
+    this->stepx=step;
   }
 
   int size() { return aliens->size(); }
@@ -107,9 +107,9 @@ struct CC_DLL Missile : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motion : public a::Component {
+struct CC_DLL Gesture : public a::Component {
 
-  MDECL_COMP_TPID("n/Motion")
+  MDECL_COMP_TPID("n/Gesture")
 
   DECL_BF(right)
   DECL_BF(left)
@@ -134,14 +134,16 @@ struct CC_DLL Ship : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Slots  : public a::Component {
+struct CC_DLL GVars  : public a::Component {
 
-    MDECL_COMP_TPID("n/Slots")
   DECL_TD(c::Size, alienSize)
   DECL_TD(c::Size, shipSize)
+  MDECL_COMP_TPID("n/GVars")
 
 };
 
+
+
 NS_END(invaders)
-#endif
+
 

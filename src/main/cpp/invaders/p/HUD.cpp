@@ -23,14 +23,13 @@ NS_BEGIN(invaders)
 //
 void HUDLayer::decorate() {
 
-  auto soff = CC_CSV(c::Integer, "S_OFF");
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto soff = CC_CSV(c::Float, "S_OFF");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
-  incIndexZ();
 
-  scoreLabel = cx::reifyBmfLabel("font.SmallTypeWriting", "0");
+  scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
   scoreLabel->setAnchorPoint(cx::anchorTR());
   scoreLabel->setScale(XCFG()->getScale());
   scoreLabel->setPosition(wb.right-tile-soff, wb.top-tile);
@@ -49,6 +48,9 @@ void HUDLayer::decorate() {
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
   addItem(menu);
+
+  lives->resurrect();
+  score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,12 +67,6 @@ void HUDLayer::updateScore(int n) {
   scoreLabel->setString(s::to_string(score));
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::reset() {
-  lives->resurrect();
-  score=0;
-}
 
 
 NS_END(invaders)

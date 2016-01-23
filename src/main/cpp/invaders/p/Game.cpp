@@ -11,27 +11,27 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "s/EFactory.h"
-#include "Menu.h"
+#include "s/GEngine.h"
+#include "MMenu.h"
 #include "Game.h"
 #include "HUD.h"
 #include "END.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
-//////////////////////////////////////////////////////////////////////////////
-//
 BEGIN_NS_UNAMED()
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
-  STATIC_REIFY_LAYER(GLayer)
 
-  void onSetPlayer(Ship*);
+  virtual void postReify();
+
   void onPlayerKilled();
   void showMenu();
   void onEarnScore(int);
@@ -41,16 +41,31 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::showMenu() {
-  auto f= [=]() { CC_DTOR()->popScene(); };
-  CC_DTOR()->pushScene(MMenu::reify(mc_new1(MCX, f)));
+void GLayer::postReify() {
+  auto cannon = engine->getNodeList(CannonCtrlNode().typeId());
+  auto ship = engine->getNodeList(ShipMotionNode().typeId());
+  auto gun = CC_GNLF(Cannon, cannon, "cannon");
+  auto lpr= CC_GNLF(Looper, cannon, "looper");
+  auto sp= CC_GNLF(Ship, ship, "ship");
+  auto cfg= MGMS()->getLCfg()->getValue();
+
+  // pre-population objects in pools
+  SCAST(GEngine*,engine)->reifyExplosions();
+  SCAST(GEngine*,engine)->reifyMissiles();
+  SCAST(GEngine*,engine)->reifyBombs();
+
+  lpr->timer7 = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
+  gun->hasAmmo=false;
+
+  this->motionees.push_back(sp);
+  this->player=sp;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onSetPlayer(Ship *s) {
-  this->player=s;
-  this->motionees.push_back(s);
+void GLayer::showMenu() {
+  auto f= []() { CC_DTOR()->popScene(); };
+  CC_DTOR()->pushScene(MMenu::reify(mc_new1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,10 +77,7 @@ void GLayer::decorate() {
   regoAtlas("game-pics");
   regoAtlas("lang-pics");
 
-  incIndexZ();
-
   this->engine= mc_new(GEngine);
-  getHUD()->reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -99,10 +111,6 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
     y->onEarnScore(n);
   }
   else
-  if (topic == "/game/player/set!") {
-    y->onSetPlayer( (Ship*) m);
-  }
-  else
   if (topic == "/hud/showmenu") {
     y->showMenu();
   }
@@ -115,35 +123,16 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::stop() {
-  this->state = -1;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Game::play() {
-  this->state= 911;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Game::isLive() {
-  return this->state > 0;
-}
-
 //////////////////////////////////////////////////////////////////////////
 //
 void Game::decorate() {
 
+  MGMS()->reifyPool("explosions");
+  MGMS()->reifyPool("aliens");
+  MGMS()->reifyPool("missiles");
+  MGMS()->reifyPool("bombs");
+
   HUDLayer::reify(this, 3);
-
-  reifyPool("explosions");
-  reifyPool("aliens");
-  reifyPool("missiles");
-  reifyPool("bombs");
-
   GLayer::reify(this, 2);
 
   play();

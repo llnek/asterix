@@ -80,24 +80,28 @@ void Config::initAssets() {
   addEffect("bugs-march", CC_STR("sfx/march.mp3"));
   addEffect("xxx-explode", CC_STR("sfx/explode.mp3"));
 
-  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  addColor("default", CC_STR("#5e3178"));
+
+  game_id = "d39bf198-518a-4de7-88a0-5e28c88571b0";
+  app_id = "invaders";
+
   addColor("text", CC_STR("#ffffff"));
+  addColor("dft", CC_STR("#5e3178"));
 
   addCst("showFPS", CC_BOOL(false));
   addCst("CELLS",  CC_INT(42));
@@ -107,24 +111,7 @@ void Config::initCsts() {
   addCst("TOP", CC_INT(6));
   addCst("OFF_X", CC_INT(4));
   addCst("OFF_Y", CC_INT(2));
-}
 
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr Config::getWSUrl() {
-  return "";
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr Config::getGameId() {
-  return "";
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-const sstr Config::getRoomId() {
-  return "";
 }
 
 NS_END(invaders)

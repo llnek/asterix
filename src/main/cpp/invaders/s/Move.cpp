@@ -20,16 +20,14 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  ShipMotionNode s;
-  ships = engine->getNodeList(s.typeId());
+  ship = engine->getNodeList(ShipMotionNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  auto node = ships->head;
   if (MGMS()->isLive()) {
-    processShipMotions(node, dt);
+    processShipMotions( dt);
     moveMissiles(dt);
     moveBombs(dt);
   }
@@ -38,31 +36,23 @@ bool Move::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::processShipMotions(a::Node *node, float dt) {
+void Move::processShipMotions( float dt) {
 
-  auto motion = CC_GNF(Motion, node,"motion");
-  auto ship= CC_GNF(Ship, node,"ship");
-
-  auto pos = ship->pos();
+  auto sp= CC_GNLF(Ship, ship,"ship");
+  auto pos = sp->pos();
   auto x= pos.x;
   auto y= pos.y;
 
-//  CCLOG("motion right = %s", motion->right ? "true" : "false");
-//  CCLOG("motion left = %s", motion->left ? "true" : "false");
-
-  if (motion->right) {
-    x = pos.x + dt * ship->vel.x;
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+    x = pos.x + dt * sp->vel.x;
   }
 
-  if (motion->left) {
-    x = pos.x - dt * ship->vel.x;
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+    x = pos.x - dt * sp->vel.x;
   }
 
-  ship->setPos(x,y);
-  clamp(ship);
-
-  motion->right=false;
-  motion->left=false;
+  sp->setPos(x,y);
+  clamp(sp);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +60,7 @@ void Move::processShipMotions(a::Node *node, float dt) {
 void Move::clamp(Ship *ship) {
 
   auto sz= ship->sprite->getContentSize();
-  auto tile= CC_CSV(c::Integer,"TILE");
+  auto tile= CC_CSV(c::Float,"TILE");
   auto wz = cx::visRect();
   auto pos= ship->pos();
 

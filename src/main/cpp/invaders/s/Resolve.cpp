@@ -20,24 +20,19 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  AlienMotionNode a;
-  ShipMotionNode s;
-
-  aliens= engine->getNodeList(a.typeId());
-  ships= engine->getNodeList(s.typeId());
+  aliens= engine->getNodeList(AlienMotionNode().typeId());
+  ship= engine->getNodeList(ShipMotionNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
-  auto enemies = aliens->head;
-  auto ship = ships->head;
-
-  checkMissiles();
-  checkBombs();
-  checkAliens(enemies);
-  checkShip(ship);
-
+  if (MGMS()->isLive() ) {
+    checkMissiles();
+    checkBombs();
+    checkAliens();
+    checkShip();
+  }
   return true;
 }
 
@@ -53,7 +48,7 @@ void Resolve::checkMissiles() {
     auto &m = *it;
     if (m->status) {
       if (m->pos().y >= ht ||
-          m->health <= 0) {
+          m->HP <= 0) {
         m->deflate();
       }
     }
@@ -72,7 +67,7 @@ void Resolve::checkBombs() {
 
     auto &b = *it;
     if (b->status) {
-      if (b->health <= 0 ||
+      if (b->HP <= 0 ||
           b->pos().y <= bt) {
         b->deflate();
       }
@@ -82,15 +77,15 @@ void Resolve::checkBombs() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkAliens(a::Node *node) {
-  auto sqad= CC_GNF(AlienSquad, node, "aliens");
+void Resolve::checkAliens() {
+  auto sqad= CC_GNLF(AlienSquad, aliens, "aliens");
   auto c= sqad->list();
 
   F__LOOP(it, c) {
 
     auto &en= *it;
     if (en->status) {
-      if (en->health <= 0) {
+      if (en->HP <= 0) {
         auto msg= j::json({
               {"score", en->score }
             });
@@ -103,15 +98,16 @@ void Resolve::checkAliens(a::Node *node) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkShip(a::Node *node) {
-  auto ship = CC_GNF(Ship, node, "ship");
+void Resolve::checkShip() {
+  auto sp = CC_GNLF(Ship, ship, "ship");
 
-  if (ship->status &&
-      ship->health <= 0) {
-    ship->deflate();
+  if (sp->status &&
+      sp->HP <= 0) {
+    sp->deflate();
     SENDMSG("/game/player/killed");
   }
 }
+
 
 NS_END(invaders)
 

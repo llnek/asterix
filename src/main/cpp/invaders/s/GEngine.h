@@ -8,29 +8,37 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#if !defined(__MENU_H__)
-#define __MENU_H__
-
-#include "2d/CCActionInstant.h"
-#include "x2d/XScene.h"
+#include "core/XPool.h"
+#include "ash/Engine.h"
+#include "n/N.h"
 NS_BEGIN(invaders)
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MCX : public f::SCTX {
-  MCX(VOIDFN f) { back=f;  }
-  DECL_TD(VOIDFN, back)
+class CC_DLL GEngine : public a::Engine {
+
+  const c::Size getRankInfo(int r, c::Dictionary*);
+  void fillSquad(f::XPool* );
+
+public:
+
+  void reifyExplosions(int count = 24);
+  void reifyMissiles(int count= 36);
+  void reifyBombs(int count = 24);
+
+  virtual void initEntities();
+  virtual void initSystems();
+
+  a::Entity* reifyAliens();
+  a::Entity* reifyShip();
+  a::Entity* reifyArena();
+
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL MMenu : public f::XScene {
-  STATIC_REIFY_SCENE_CTX(MMenu)
-  MDECL_DECORATE()
-};
 
 NS_END(invaders)
-#endif
 
 

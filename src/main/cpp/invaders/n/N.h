@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__GNODES_H__)
-#define __GNODES_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/NodeRego.h"
-#include "ash/Node.h"
-#include "CObjs.h"
+#include "C.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +54,6 @@ struct CC_DLL ShipMotionNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "motion", "n/Motion"},
         { "ship", "n/Ship" }
     });
   }
@@ -71,13 +68,14 @@ struct CC_DLL ArenaNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        { "slots", "n/Slots" }
+        { "slots", "n/GVars" }
     });
   }
 
 };
 
+
+
 NS_END(invaders)
-#endif
 
 

@@ -48,9 +48,9 @@ bool App::applicationDidFinishLaunching() {
 
   if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-    glview = c::GLViewImpl::createWithRect("z", c::Rect(0, 0, sz.width, sz.height));
+    glview = c::GLViewImpl::createWithRect(appName, c::Rect(0, 0, sz.width, sz.height));
 #else
-    glview = c::GLViewImpl::create("z");
+    glview = c::GLViewImpl::create(appName);
 #endif
     CC_DTOR()->setOpenGLView(glview);
   }
@@ -83,7 +83,10 @@ void App::preLaunch(const c::Size &dz) {
   c::Size smallSize;
   auto spath="rd";
 
-  // set FPS. default is 1.0/60 if you don't call this
+  // Set the design resolution
+  cx::setDevRes(dz.width, dz.height, XCFG()->policy());
+
+  // FPS. dft is 1.0/60 if you don't call this
   CC_DTOR()->setAnimationInterval(1.0f / fps);
 
   // turn on display FPS?
@@ -120,18 +123,14 @@ void App::preLaunch(const c::Size &dz) {
     spath="sd";
   }
 
-  searchPaths.push_back(spath);
-
   CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
   CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
   CCLOG("image search path=%s", spath);
   CCLOG("sound search path=%s", "sfx");
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
 
+  searchPaths.push_back(spath);
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
-
-  // Set the design resolution
-  cx::setDevRes(dz.width, dz.height, XCFG()->policy());
 
   XCFG()->handleResolution(fz);
   XCFG()->runOnce();

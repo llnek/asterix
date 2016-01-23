@@ -13,62 +13,38 @@
 #include "2d/CCMenu.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Menu.h"
+#include "MMenu.h"
 #include "Game.h"
-#include "x2d/XLib.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
+void MMenu::decorate() {
 
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-
-  private:
-
-  void onQuit(c::Ref*);
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::onQuit(c::Ref*) {
-  cx::runEx(
-      XCFG()->prelude());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void UILayer::decorate() {
-
-  auto ctx = (MCX*) getSceneX()->getCtx();
-  auto tile = CC_CSV(c::Integer, "TILE");
-  auto dfc= XCFG()->getColor("default");
+  auto tile = CC_CSV(c::Float, "TILE");
+  auto dfc= XCFG()->getColor("dft");
+  auto ctx = (MCX*) getCtx();
   auto wb = cx::visBox();
-  auto cw = cx::center();
 
-  // background
   centerImage("mmenus.bg");
 
   // title
-  auto lb= cx::reifyBmfLabel(cw.x, wb.top * 0.9f, "font.JellyBelly", gets("mmenu"));
-  lb->setScale(XCFG()->getScale());
+  auto lb= cx::reifyBmfLabel(wb.cx, wb.top * 0.9f, "JellyBelly", gets("mmenu"));
   lb->setColor(XCFG()->getColor("text"));
+  lb->setScale(XCFG()->getScale());
   addItem(lb);
 
   // play button
   auto b1= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b1);
-  b1->setCallback([=](c::Ref*) {
-      cx::run(Game::reify(mc_new(f::GCX)));
-      });
+  auto x= mc_new(f::GCX);
 
-  menu->setPosition(cw);
+  b1->setCallback(
+      [=](c::Ref*) { cx::runEx(Game::reify(x)); });
+
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit buttons
@@ -76,10 +52,11 @@ void UILayer::decorate() {
   auto q= cx::reifyMenuBtn("icon_quit.png");
   auto sz= b->getContentSize();
 
-  q->setTarget(this, CC_MENU_SELECTOR(UILayer::onQuit));
+  q->setCallback([](c::Ref*) { cx::prelude();  });
   b->setCallback([=](c::Ref*) { ctx->back(); });
 
-  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {b, q} );
+  s_vec<c::MenuItem*> btns {b, q};
+  auto m2= cx::mkHMenu(btns);
   m2->setPosition(wb.left + tile + sz.width * 1.1f,
                   wb.bottom + tile + sz.height * 0.45f);
   addItem(m2);
@@ -88,16 +65,9 @@ void UILayer::decorate() {
   audios[0]->setColor(dfc);
   audios[1]->setColor(dfc);
 
-  addAudioIcons(this, audios,
+  addAudioIcons(audios,
       cx::anchorBR(),
       c::Vec2(wb.right - tile, wb.bottom + tile));
-}
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void MMenu::decorate() {
-  UILayer::reify(this);
 }
 
 

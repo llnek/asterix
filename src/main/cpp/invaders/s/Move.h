@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MOVE_H__)
-#define __MOVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(invaders)
 
@@ -27,12 +25,12 @@ struct CC_DLL Move : public a::System {
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  void processShipMotions(a::Node*, float dt);
+  void processShipMotions(float dt);
   void clamp(Ship* );
   void moveBombs(float dt);
   void moveMissiles(float dt);
 
-  DECL_PTR(a::NodeList, ships)
+  DECL_PTR(a::NodeList, ship)
 
   Move(a::Engine *e)
   : System(e) {}
@@ -41,7 +39,6 @@ struct CC_DLL Move : public a::System {
 
 
 NS_END(invaders)
-#endif
 
 
 
