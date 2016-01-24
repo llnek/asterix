@@ -20,8 +20,8 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  shipNode = engine->getNodeList(ShipMotionNode().typeId());
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
+  ships = engine->getNodeList(ShipMotionNode().typeId());
+  arenas = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ void Resolve::checkAstrosXXX(f::XPool *p, bool cr) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip() {
-  auto ship = CC_GNLF(Ship,shipNode,"ship");
+  auto ship = CC_GNLF(Ship,ships,"ship");
   if (ship->status && ship->HP <= 0) {
     ship->deflate();
     SENDMSG("/game/players/killed");

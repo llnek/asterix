@@ -20,19 +20,21 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::preamble() {
-  cannonNode = engine->getNodeList(CannonCtrlNode().typeId());
-  shipNode= engine->getNodeList(ShipMotionNode().typeId());
-  arenaNode= engine->getNodeList(ArenaNode().typeId());
-  initKeyOps(
-    CC_GNLF(Motion,shipNode,"motion"),
-    CC_CSV(c::Integer, "THROTTLE+WAIT"));
+  cannon = engine->getNodeList(CannonCtrlNode().typeId());
+  ship= engine->getNodeList(ShipMotionNode().typeId());
+  arena= engine->getNodeList(ArenaNode().typeId());
+
+  auto mo= CC_GNLF(Gesture,ship,"motion");
+  scanner= cx::throttle(
+      [=]() { scanInput(mo); },
+      CC_CSV(c::Integer, "THROTTLE+WAIT"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Motions::update(float dt) {
   if (MGMS()->isLive()) {
-    scanInput(dt);
+    scanner();
     controlCannon(dt);
   }
   return true;
@@ -41,9 +43,8 @@ bool Motions::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::controlCannon(float dt) {
-  auto gun = CC_GNLF(Cannon,cannonNode,"cannon");
-  auto lpr= CC_GNLF(Looper,cannonNode, "looper");
-  auto ship= CC_GNLF(Ship,shipNode, "ship");
+  auto gun = CC_GNLF(Cannon,cannon,"cannon");
+  auto lpr= CC_GNLF(Looper,cannon, "looper");
 
   if (! gun->hasAmmo) {
     if (cx::timerDone(lpr->timer0)) {
@@ -60,14 +61,14 @@ void Motions::controlCannon(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::fireMissile(float dt) {
-  auto lpr= CC_GNLF(Looper,cannonNode,"looper");
-  auto gun= CC_GNLF(Cannon,cannonNode,"cannon");
-  auto ship= CC_GNLF(Ship,shipNode, "ship");
-  auto sz= ship->sprite->getContentSize();
-  auto deg= ship->sprite->getRotation();
+  auto lpr= CC_GNLF(Looper,cannon,"looper");
+  auto gun= CC_GNLF(Cannon,cannon,"cannon");
+  auto sp= CC_GNLF(Ship,ship, "ship");
+  auto sz= sp->sprite->getContentSize();
+  auto deg= sp->sprite->getRotation();
   auto p= MGMS()->getPool("Missiles");
-  auto top= cx::getTop(ship->sprite);
-  auto pos= ship->pos();
+  auto top= cx::getTop(sp->sprite);
+  auto pos= sp->pos();
   auto ent= p->get();
 
   if (ENP(ent)) {
@@ -88,29 +89,19 @@ void Motions::fireMissile(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Motions::scanInput(float dt) {
+void Motions::scanInput(Gesture *mo) {
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    rotRight();
+    mo->right=true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    rotLeft();
+    mo->left=true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
-    sftDown();
+    mo->down=true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
-    sftUp();
+    mo->up=true;
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Motions::initKeyOps(Motion *mo, int w) {
-
-  rotRight = cx::throttle([=]() { mo->right=true; }, w);
-  rotLeft = cx::throttle([=]() { mo->left=true; }, w);
-  sftDown= cx::throttle([=]() { mo->down=true; }, w);
-  sftUp= cx::throttle([=]() { mo->up=true; }, w);
 }
 
 

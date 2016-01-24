@@ -20,8 +20,8 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  shipNode = engine->getNodeList(ShipMotionNode().typeId());
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
+  ships = engine->getNodeList(ShipMotionNode().typeId());
+  arenas = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,23 +81,24 @@ const c::Vec2 Move::thrust(float angle, float power) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processShipMotions(float dt) {
-  auto ship= CC_GNLF(Ship,shipNode, "ship");
+  auto mo= CC_GNLF(Gesture,ships, "motion");
+  auto ship= CC_GNLF(Ship,ships, "ship");
   auto sp = ship->sprite;
   auto pos = sp->getPosition();
   auto x= pos.x;
   auto y= pos.y;
 
-  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+  if (mo->right) {
     ship->angle= rotateShip(ship->angle, 3);
     sp->setRotation(ship->angle);
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+  if (mo->left) {
     ship->angle= rotateShip(ship->angle, -3);
     sp->setRotation(ship->angle);
   }
 
-  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
+  if (mo->up) {
     auto acc= thrust(ship->angle, ship->power);
     sp->setSpriteFrame(ship->frame1);
     ship->acc.x= acc.x;
@@ -111,13 +112,13 @@ void Move::processShipMotions(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::moveShip(float dt) {
-  auto ship = CC_GNLF(Ship,shipNode,"ship");
+  auto ship = CC_GNLF(Ship,ships,"ship");
   auto B = MGMS()->getEnclosureBox();
   auto sp= ship->sprite;
   auto sz = sp->getContentSize();
   auto pos= sp->getPosition();
-    float x,y;
-    
+  float x,y;
+
   ship->vel.y = ship->vel.y + dt * ship->acc.y;
   ship->vel.x = ship->vel.x + dt * ship->acc.x;
 

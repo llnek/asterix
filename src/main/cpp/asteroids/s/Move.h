@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MOVE_H__)
-#define __MOVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XPool.h"
 #include "ash/System.h"
@@ -19,7 +18,17 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
+class CC_DLL Move : public a::System {
+
+  const c::Vec2 thrust(float angle, float power);
+  float rotateShip(float cur, float deg);
+  void processShipMotions(float dt);
+  void moveShip(float);
+  void moveAstros(f::ComObj*, float);
+  void moveXXX(f::XPool*, float);
+  void moveBBB(f::XPool*, float);
+
+public:
 
   MDECL_SYS_PRIORITY(a::Move)
   MDECL_SYS_TPID("s/Move")
@@ -30,22 +39,12 @@ struct CC_DLL Move : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
+  DECL_PTR(a::NodeList, arenas)
+  DECL_PTR(a::NodeList, ships)
 
-protected:
-
-  const c::Vec2 thrust(float angle, float power);
-  float rotateShip(float cur, float deg);
-  void processShipMotions(float dt);
-  void moveShip(float);
-  void moveAstros(f::ComObj*, float);
-    void moveXXX(f::XPool*, float);
-    void moveBBB(f::XPool*, float);
 };
 
 
 NS_END(asteroids)
-#endif
 
 

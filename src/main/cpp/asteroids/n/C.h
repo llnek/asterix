@@ -8,12 +8,10 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COBJS_H__)
-#define __COBJS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/ComObj.h"
-
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +30,6 @@ struct CC_DLL Asteroid : public f::ComObj {
 
   MDECL_COMP_TPID("n/Asteroid")
   DECL_IZ(rank)
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,9 +66,9 @@ struct CC_DLL Missile : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motion : public a::Component {
+struct CC_DLL Gesture : public a::Component {
 
-  MDECL_COMP_TPID("n/Motion")
+  MDECL_COMP_TPID("n/Gesture")
   DECL_BF(right)
   DECL_BF(left)
   DECL_BF(up)
@@ -106,6 +103,5 @@ struct CC_DLL GVars : public a::Component {
 
 
 NS_END(asteroids)
-#endif
 
 

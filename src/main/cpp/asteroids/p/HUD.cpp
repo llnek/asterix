@@ -30,19 +30,6 @@ bool HUDLayer::reduceLives(int n) {
   lives->reduce(n);
   return lives->isDead();
 }
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::resetAsNew() {
-  score = 0;
-  reset();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::reset() {
-  //replayBtn->setVisible(false);
-  lives->resurrect();
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -53,14 +40,14 @@ void HUDLayer::drawScore() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
-  auto soff = CC_CSV(c::Integer, "S_OFF");
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto soff = CC_CSV(c::Float, "S_OFF");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto wz= cx::visRect();
   auto wb = cx::visBox();
 
   regoAtlas( "game-pics");
 
-  scoreLabel = cx::reifyBmfLabel("font.TinyBoxBB", "0");
+  scoreLabel = cx::reifyBmfLabel("TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
   scoreLabel->setScale( 12/72.0f);
   scoreLabel->setPosition( wz.size.width - tile - soff,
@@ -80,6 +67,9 @@ void HUDLayer::decorate() {
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
   addItem(menu);
+
+  lives->resurrect();
+  score = 0;
 }
 
 

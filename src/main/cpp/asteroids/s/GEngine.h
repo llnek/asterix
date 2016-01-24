@@ -8,18 +8,23 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__GENGINE_H__)
-#define __GENGINE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/Engine.h"
-#include "n/GNodes.h"
+#include "n/N.h"
 
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public a::Engine {
+
+  bool maybeOverlap(const f::Box4&);
+  s_arr<c::Size, 4> astroSizes;
+  s_arr<sstr, 4> astroPools;
+
+public:
 
   virtual void initEntities();
   virtual void initSystems();
@@ -29,14 +34,9 @@ struct CC_DLL GEngine : public a::Engine {
   void bornShip(Ship*);
   void createAsteroids(int rank);
 
-protected:
-  s_arr<c::Size, 4> astroSizes;
-  s_arr<sstr, 4> astroPools;
-    bool maybeOverlap(const f::Box4&);
 };
 
 
 NS_END(asteroids)
-#endif
 
 

@@ -20,8 +20,8 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  shipNode = engine->getNodeList(ShipMotionNode().typeId());
-  arenaNode = engine->getNodeList(ArenaNode().typeId());
+  ships = engine->getNodeList(ShipMotionNode().typeId());
+  arenas = engine->getNodeList(ArenaNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,8 @@ void Collide::checkXXX(f::XPool *p, f::ComObj *z) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissilesRocks() {
-  MGMS()->getPool("Missiles")->foreach([=](f::ComObj *m) {
+  auto p= MGMS()->getPool("Missiles");
+  p->foreach([=](f::ComObj *m) {
     this->checkXXX(MGMS()->getPool("Astros3"), m);
     this->checkXXX(MGMS()->getPool("Astros2"), m);
     this->checkXXX(MGMS()->getPool("Astros1"), m);
@@ -63,14 +64,14 @@ void Collide::checkMissilesRocks() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipBombs() {
-  auto ship = CC_GNLF(Ship,shipNode,"ship");
+  auto ship = CC_GNLF(Ship,ships,"ship");
   checkXXX(MGMS()->getPool("Lasers"), ship);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipRocks() {
-  auto ship = CC_GNLF(Ship,shipNode,"ship");
+  auto ship = CC_GNLF(Ship,ships,"ship");
   checkXXX(MGMS()->getPool("Astros3"), ship);
   checkXXX(MGMS()->getPool("Astros2"), ship);
   checkXXX(MGMS()->getPool("Astros1"), ship);

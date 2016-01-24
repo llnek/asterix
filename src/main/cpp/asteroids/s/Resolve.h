@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XPool.h"
 #include "ash/System.h"
@@ -20,7 +19,13 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public a::System {
+
+  void checkAstrosXXX(f::XPool*,bool);
+  void checkXXX(f::XPool*);
+  void checkShip();
+
+public:
 
   MDECL_SYS_PRIORITY(a::Resolve)
   MDECL_SYS_TPID("s/Resolve")
@@ -31,19 +36,12 @@ struct CC_DLL Resolve : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
-
-protected:
-
-    void checkAstrosXXX(f::XPool*,bool);
-    void checkXXX(f::XPool*);
-  void checkShip();
+  DECL_PTR(a::NodeList, arenas)
+  DECL_PTR(a::NodeList, ships)
 
 };
 
 
 NS_END(asteroids)
-#endif
 
 

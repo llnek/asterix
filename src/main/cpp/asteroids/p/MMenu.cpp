@@ -11,75 +11,64 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "x2d/XLib.h"
 #include "MMenu.h"
 #include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
-BEGIN_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL UILayer : public f::XLayer {
-  STATIC_REIFY_LAYER(UILayer)
-  MDECL_DECORATE()
-};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void UILayer::decorate() {
+void MMenu::decorate() {
 
-  auto tt= cx::reifyBmfLabel("font.JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Integer, "TILE");
-  auto c= XCFG()->getColor("default");
-  auto cw= cx::center();
+  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
+  auto tile = CC_CSV(c::Float, "TILE");
+  auto c= XCFG()->getColor("dft");
   auto wb=cx::visBox();
 
   centerImage("gui.mmenus.menu.bg");
 
-  tt->setPosition(cw.x, wb.top * 0.9f);
+  tt->setPosition(wb.cx, wb.top * 0.9f);
   tt->setScale(XCFG()->getScale());
   tt->setColor(c);
   addItem(tt);
 
   auto b= cx::reifyMenuBtn("play.png");
   auto menu= cx::mkMenu(b);
-  b->setCallback([=](c::Ref*){
-      cx::runEx(Game::reify(mc_new(f::GCX)));
-  });
-  menu->setPosition(cw);
+  auto x= mc_new(f::GCX);
+
+  b->setCallback(
+      [=](c::Ref*){ cx::runEx(Game::reify(x)); });
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
+
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
   auto quit= cx::reifyMenuBtn("icon_quit.png");
-  auto ctx= (MCX*) getSceneX()->getCtx();
+  auto ctx= (MCX*) getCtx();
   auto sz= back->getContentSize();
-  back->setCallback([=](c::Ref*) { ctx->back(); });
+
   back->setColor(c);
   quit->setColor(c);
-  quit->setCallback([=](c::Ref*) {
-    cx::runEx(XCFG()->prelude());
-  });
-  auto m2= cx::mkHMenu(s_vec<c::MenuItem*> {back, quit});
+
+  quit->setCallback([=](c::Ref*) { cx::prelude(); });
+  back->setCallback([=](c::Ref*) { ctx->back(); });
+
+  s_vec<c::MenuItem*> btns {back, quit};
+  auto m2= cx::mkHMenu(btns);
+
   m2->setPosition(wb.left + tile + sz.width * 1.1,
                   wb.bottom + tile + sz.height * 0.45);
   addItem(m2);
+
   // audio btns
   auto audios= cx::reifyAudioIcons();
   audios[0]->setColor(c);
   audios[1]->setColor(c);
-  addAudioIcons(this, audios,
+  addAudioIcons( audios,
     cx::anchorBR(),
     c::Vec2(wb.right - tile, wb.bottom + tile));
 }
-
-END_NS_UNAMED()
-//////////////////////////////////////////////////////////////////////////////
-//
-void MMenu::decorate() {
-  UILayer::reify(this);
-}
-
 
 
 NS_END(asteroids)

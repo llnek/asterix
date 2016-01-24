@@ -22,13 +22,13 @@ BEGIN_NS_UNAMED()
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
   STATIC_REIFY_LAYER(GLayer)
   MDECL_GET_IID(2)
   MDECL_DECORATE()
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
+  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(a::NodeList, ship)
 
   virtual void postReify();
   void spawnPlayer();
@@ -42,20 +42,19 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
+
   centerImage("game.bg");
-  incIndexZ();
   regoAtlas("game-pics");
 
-  this->engine = mc_new(GEngine);
-  getHUD()->reset();
+  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
 
-  shipNode= engine->getNodeList(ShipMotionNode().typeId());
-  arenaNode= engine->getNodeList(ArenaNode().typeId());
+  ship= engine->getNodeList(ShipMotionNode().typeId());
+  arena= engine->getNodeList(ArenaNode().typeId());
 
 }
 
@@ -68,8 +67,8 @@ void GLayer::showMenu() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
-    auto ship = CC_GNLF(Ship, shipNode, "ship");
-  SCAST(GEngine*,engine)->bornShip(ship);
+  auto sp = CC_GNLF(Ship, ship, "ship");
+  SCAST(GEngine*,engine)->bornShip(sp);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,7 +84,7 @@ void GLayer::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
-  getHUD()->reset();
+  surcease();
   MGMS()->stop();
 }
 

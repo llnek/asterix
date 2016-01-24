@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COLLIDE_H__)
-#define __COLLIDE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XPool.h"
 #include "ash/System.h"
@@ -20,30 +19,30 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public a::System {
+class CC_DLL Collide : public a::System {
+
+  void checkXXX(f::XPool*,f::ComObj*);
+  void checkMissilesRocks();
+  void checkShipBombs();
+  void checkShipRocks();
+
+public:
 
   MDECL_SYS_PRIORITY(a::Collide)
   MDECL_SYS_TPID("s/Collide")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(a::NodeList, arenaNode)
-  DECL_PTR(a::NodeList, shipNode)
+  DECL_PTR(a::NodeList, arenas)
+  DECL_PTR(a::NodeList, ships)
 
   Collide(a::Engine *e)
   : System(e)
   {}
 
-protected:
-
-    void checkXXX(f::XPool*,f::ComObj*);
-  void checkMissilesRocks();
-  void checkShipBombs();
-  void checkShipRocks();
 };
 
 
 NS_END(asteroids)
-#endif
 
 

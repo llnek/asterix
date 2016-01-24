@@ -48,8 +48,8 @@ void Config::initCsts() {
   addCst("GRID_W", CC_INT(60));
   addCst("GRID_H", CC_INT(40));
 
-  addColor("default", CC_STR("#f6b17f"));
   addColor("text", CC_STR("#ffffff"));
+  addColor("dft", CC_STR("#f6b17f"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,17 +70,17 @@ void Config::initAssets() {
   addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
   addEffect("game_quit", CC_STR("sfx/Death.mp3"));
 
-  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
 

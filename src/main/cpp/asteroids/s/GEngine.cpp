@@ -24,13 +24,13 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-    MGMS()->reifyPools(s_vec<sstr> {
-        "Missiles",
-        "Lasers",
-        "Astros3",
-        "Astros2",
-        "Astros1"
-    });
+  MGMS()->reifyPools(s_vec<sstr> {
+    "Missiles",
+    "Lasers",
+    "Astros3",
+    "Astros2",
+    "Astros1"
+  });
 
   astroSizes[3]= cx::calcSize("rock_small.png");
   astroSizes[2]= cx::calcSize("rock_med.png");
@@ -81,8 +81,8 @@ void GEngine::createLasers(int count) {
 //
 void GEngine::createShip() {
   auto sp= cx::reifySprite("rship_0.png");
-  auto ent= this->reifyEntity("*");
-    auto s= mc_new1(Ship, sp);
+  auto ent= this->reifyEntity();
+  auto s= mc_new1(Ship, sp);
   MGML()->addAtlasItem("game-pics", sp);
   sp->setRotation(90);
   s->maxVel.x=150;
@@ -91,7 +91,7 @@ void GEngine::createShip() {
   s->angle=90;
   ent->checkin(s);
   bornShip(s);
-  ent->checkin(mc_new(Motion));
+  ent->checkin(mc_new(Gesture));
   ent->checkin(mc_new(Cannon));
   ent->checkin(mc_new(Looper));
 }
@@ -104,11 +104,10 @@ void GEngine::bornShip(Ship *ship) {
   auto h= sz.height;
   auto w = sz.width;
   auto wz = cx::visRect();
-  auto cw = cx::center();
   auto test=true;
-    auto pos= ship->pos();
-    auto x= pos.x;
-    auto y= pos.y;
+  auto pos= ship->pos();
+  auto x= pos.x;
+  auto y= pos.y;
   f::Box4 r(0,0,0,0);
 
   while (test) {
@@ -139,7 +138,6 @@ void GEngine::createAsteroids(int rank) {
   auto sz= astroSizes[rank];
   auto pn= astroPools[rank];
   auto wz = cx::visRect();
-  auto cw= cx::center();
 
   auto pool= MGMS()->getPool(pn);
   auto obj= JS_OBJ(cfg[pn]);
@@ -167,7 +165,7 @@ void GEngine::createAsteroids(int rank) {
         auto a= new Asteroid(sp, value, rank, deg,
                              c::Vec2(
                              speed * cx::randSign(),
-                               speed * cx::randSign()));
+                             speed * cx::randSign()));
         a->inflate(x, y);
         return a;
       }, 1);
