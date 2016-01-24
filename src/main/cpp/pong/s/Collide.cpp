@@ -20,15 +20,10 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  FauxPaddleNode f;
-  PaddleNode p;
-  BallNode b;
-  ArenaNode a;
-
-  arenaNode = engine->getNodeList(a.typeId());
-  fauxNode = engine->getNodeList(f.typeId());
-  paddleNode = engine->getNodeList(p.typeId());
-  ballNode = engine->getNodeList(b.typeId());
+  faux = engine->getNodeList(FauxPaddleNode().typeId());
+  arena = engine->getNodeList(ArenaNode().typeId());
+  paddle = engine->getNodeList(PaddleNode().typeId());
+  ball = engine->getNodeList(BallNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -36,8 +31,8 @@ void Collide::preamble() {
 bool Collide::update(float dt) {
 
   if (MGMS()->isLive()) {
-    checkNodes(paddleNode);
-    checkNodes(fauxNode);
+    checkNodes(paddle);
+    checkNodes(faux);
   }
   return true;
 }
@@ -45,11 +40,11 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkNodes(a::NodeList *nl) {
-  auto ball = CC_GNLF(Ball, ballNode,"ball");
+  auto ba = CC_GNLF(Ball, ball,"ball");
   for (auto node=nl->head; node; node=node->next) {
     auto p= CC_GNF(Paddle,node, "paddle");
-    if (cx::collide(p, ball)) {
-      check(p, ball);
+    if (cx::collide(p, ba)) {
+      check(p, ba);
     }
   }
 }
@@ -63,26 +58,14 @@ void Collide::check(Paddle *pad, Ball *ball) {
   auto x= pos.x;
   auto y= pos.y;
 
-  if (cx::isPortrait()) {
-    ball->vel.y = - ball->vel.y;
-  } else {
-    ball->vel.x = - ball->vel.x;
-  }
+  ball->vel.y = - ball->vel.y;
 
   if (pad->pnum == 1) {
-    if (cx::isPortrait()) {
-      y=bb4.top + hw2.height + 1;
-    } else {
-      x=bb4.right + hw2.width + 1;
-    }
+    y=bb4.top + hw2.height + 1;
   }
 
   if (pad->pnum == 2) {
-    if (cx::isPortrait()) {
-      y = bb4.bottom - hw2.height - 1;
-    } else {
-      x = bb4.left - hw2.width -1;
-    }
+    y = bb4.bottom - hw2.height - 1;
   }
 
   ball->setPos(x,y);

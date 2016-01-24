@@ -40,8 +40,8 @@ class CC_DLL NetPlay : public f::XScene {
   void onPlayReply(ws::OdinEvent*);
   void showWaitOthers();
   void onStart(ws::OdinEvent*);
-  void onCancel(c::Ref* );
-  void onLogin(c::Ref*);
+  void onCancel();
+  void onLogin();
 
   DECL_PTR(ws::OdinIO, odin)
   DECL_IZ(player)

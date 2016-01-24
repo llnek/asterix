@@ -8,17 +8,22 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__RESOLVE_H__)
-#define __RESOLVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public a::System {
+
+  int checkNodes(a::NodeList*);
+  void onWin(int);
+  int check(a::Node*);
+
+public:
 
   MDECL_SYS_PRIORITY( a::Resolve)
   MDECL_SYS_TPID( "s/Resolve")
@@ -29,21 +34,14 @@ struct CC_DLL Resolve : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddleNode);
-  DECL_PTR(a::NodeList, ballNode);
-  DECL_PTR(a::NodeList, fauxNode);
-  DECL_PTR(a::NodeList, arenaNode);
-
-private:
-
-  int checkNodes(a::NodeList*);
-  void onWin(int);
-  int check(a::Node*);
+  DECL_PTR(a::NodeList, paddle);
+  DECL_PTR(a::NodeList, ball);
+  DECL_PTR(a::NodeList, faux);
+  DECL_PTR(a::NodeList, arena);
 
 };
 
 
 NS_END(pong)
-#endif
 
 

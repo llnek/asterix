@@ -44,10 +44,10 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList,paddleNode)
-  DECL_PTR(a::NodeList,fauxNode)
-  DECL_PTR(a::NodeList,ballNode)
-  DECL_PTR(a::NodeList,arenaNode)
+  DECL_PTR(a::NodeList,paddle)
+  DECL_PTR(a::NodeList,faux)
+  DECL_PTR(a::NodeList,ball)
+  DECL_PTR(a::NodeList,arena)
 
 };
 

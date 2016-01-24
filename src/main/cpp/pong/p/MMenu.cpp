@@ -59,7 +59,7 @@ void MMenu::decorate() {
   auto back= cx::reifyMenuBtn("icon_back.png");
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   s_vec<c::MenuItem*> bns {back, quit} ;
-  auto ctx = getSceneX()->getCtx();
+  auto ctx = getCtx();
   auto sz= back->getContentSize();
   auto m2= cx::mkHMenu(bns);
 

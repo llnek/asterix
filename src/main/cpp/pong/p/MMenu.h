@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-
+#include "x2d/GameScene.h"
 #include "x2d/XScene.h"
 NS_BEGIN(pong)
 
@@ -29,9 +29,9 @@ struct CC_DLL MMenu : public f::XScene {
   MDECL_DECORATE()
 
   void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
-  void onPlay3(c::Ref*);
-  void onPlay2(c::Ref*);
-  void onPlay1(c::Ref*);
+  void onPlay3();
+  void onPlay2();
+  void onPlay1();
 
 };
 

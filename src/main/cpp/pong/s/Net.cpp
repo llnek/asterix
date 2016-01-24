@@ -21,15 +21,10 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::preamble() {
-  FauxPaddleNode f;
-  PaddleNode p;
-  BallNode b;
-  ArenaNode a;
-  paddleNode= engine->getNodeList(p.typeId());
-  ballNode= engine->getNodeList(b.typeId());
-  fauxNode= engine->getNodeList(f.typeId());
-  arenaNode= engine->getNodeList(a.typeId());
-
+  paddle= engine->getNodeList(PaddleNode().typeId());
+  ball= engine->getNodeList(BallNode().typeId());
+  faux= engine->getNodeList(FauxPaddleNode().typeId());
+  arena= engine->getNodeList(ArenaNode().typeId());
   if (MGMS()->isLive() &&
       MGMS()->isOnline()) {
     onceOnly();
@@ -45,8 +40,8 @@ bool Net::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onceOnly() {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
   auto cfg= MGMS()->getLCfg()->getValue();
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto w= MGMS()->getEnclosureBox();
   auto p2= CC_CSS("P2_COLOR");
   auto p1= CC_CSS("P1_COLOR");
@@ -110,7 +105,7 @@ void Net::onEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onnetw(ws::OdinEvent *evt) {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   j::json msg;
   switch (evt->code) {
     case ws::EType::RESTART:
@@ -133,7 +128,7 @@ void Net::onnetw(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onsess(ws::OdinEvent *evt) {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto msg= evt->doco;
   if (!msg.is_object()) { return; }
   auto pnum= JS_INT(msg["pnum"]);
@@ -157,7 +152,7 @@ void Net::onsess(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::syncScores(j::json scores) {
-  auto ps= CC_GNLF(Players,arenaNode,"players");
+  auto ps= CC_GNLF(Players,arena,"players");
   auto p2=ps->parr[2].color;
   auto p1=ps->parr[1].color;
   auto rc = j::json({
@@ -170,7 +165,7 @@ void Net::syncScores(j::json scores) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::process(ws::OdinEvent *evt) {
-  auto ps= CC_GNLF(Players,arenaNode,"players");
+  auto ps= CC_GNLF(Players,arena,"players");
   auto source = evt->doco["source"];
   auto ok= true;
 
@@ -199,22 +194,22 @@ void Net::process(ws::OdinEvent *evt) {
   }
 
   if (source["ball"].is_object()) {
-    auto ball= CC_GNLF(Ball,ballNode,"ball");
+    auto ba= CC_GNLF(Ball,ball,"ball");
     auto c = source["ball"];
     CCLOG("server says: Ball got SYNC'ED !!!");
-    ball->setPos(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
-    ball->vel.y= JS_FLOAT(c["vy"]);
-    ball->vel.x= JS_FLOAT(c["vx"]);
+    ba->setPos(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
+    ba->vel.y= JS_FLOAT(c["vy"]);
+    ba->vel.x= JS_FLOAT(c["vx"]);
   }
 
-  syncPaddles(paddleNode, evt);
-  syncPaddles(fauxNode, evt);
+  syncPaddles(paddle, evt);
+  syncPaddles(faux, evt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::reposPaddles(a::NodeList *nl) {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   for (auto node=nl->head; node; node=node->next) {
     auto last= CC_GNF(Position,node,"lastpos");
     auto p= CC_GNF(Paddle,node,"paddle");
@@ -233,21 +228,21 @@ void Net::reposPaddles(a::NodeList *nl) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::reposEntities() {
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
-  auto ball= CC_GNLF(Ball,ballNode,"ball");
+  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto b= CC_GNLF(Ball,ball,"ball");
 
-  reposPaddles(paddleNode);
-  reposPaddles(fauxNode);
+  reposPaddles(paddle);
+  reposPaddles(faux);
 
-  ball->setPos(ss->bp.x, ss->bp.y);
-  ball->vel.y=0;
-  ball->vel.x=0;
+  b->setPos(ss->bp.x, ss->bp.y);
+  b->vel.y=0;
+  b->vel.x=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::syncPaddles(a::NodeList *nl, ws::OdinEvent *evt) {
-  auto ps= CC_GNLF(Players,arenaNode,"players");
+  auto ps= CC_GNLF(Players,arena,"players");
   auto source = evt->doco["source"];
   auto p2= ps->parr[2].color;
   auto p1= ps->parr[1].color;

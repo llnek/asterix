@@ -8,18 +8,22 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COLLIDE_H__)
-#define __COLLIDE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public a::System {
+class CC_DLL Collide : public a::System {
+
+  void checkNodes(a::NodeList*);
+  void check(Paddle*, Ball*);
+
+public:
 
   MDECL_SYS_PRIORITY(a::Collide)
   MDECL_SYS_TPID( "s/Collide")
@@ -30,19 +34,13 @@ struct CC_DLL Collide : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddleNode)
-  DECL_PTR(a::NodeList, fauxNode)
-  DECL_PTR(a::NodeList, ballNode)
-  DECL_PTR(a::NodeList, arenaNode)
-
-private:
-
-  void checkNodes(a::NodeList*);
-  void check(Paddle*, Ball*);
+  DECL_PTR(a::NodeList, paddle)
+  DECL_PTR(a::NodeList, faux)
+  DECL_PTR(a::NodeList, ball)
+  DECL_PTR(a::NodeList, arena)
 
 };
 
 NS_END(pong)
-#endif
 
 

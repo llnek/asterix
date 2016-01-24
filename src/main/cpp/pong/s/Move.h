@@ -8,18 +8,26 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MOVE_H__)
-#define __MOVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "EFactory.h"
+#include "GEngine.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
+class CC_DLL Move : public a::System {
+
+  void simuMove(a::Node*, float);
+  void moveRobot(a::Node*,  float);
+  void processBall( float);
+  void doit(a::Node*, float);
+  void notifyServer(a::Node*, int);
+  void clamp(c::Sprite*);
+
+public:
 
   MDECL_SYS_PRIORITY( a::Move)
   MDECL_SYS_TPID( "s/Move")
@@ -30,25 +38,15 @@ struct CC_DLL Move : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddleNode)
-  DECL_PTR(a::NodeList, fauxNode)
-  DECL_PTR(a::NodeList, ballNode)
-  DECL_PTR(a::NodeList, arenaNode)
-
-private:
-
-  void simuMove(a::Node*, float);
-  void moveRobot(a::Node*,  float);
-  void processBall( float);
-  void doit(a::Node*, float);
-  void notifyServer(a::Node*, int);
-  void clamp(c::Sprite*);
+  DECL_PTR(a::NodeList, paddle)
+  DECL_PTR(a::NodeList, faux)
+  DECL_PTR(a::NodeList, ball)
+  DECL_PTR(a::NodeList, arena)
 
 };
 
 
 NS_END(pong)
-#endif
 
 
 

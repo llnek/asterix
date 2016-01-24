@@ -19,7 +19,7 @@ NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate() : App("pong") {
 
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();

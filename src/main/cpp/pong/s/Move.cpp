@@ -20,15 +20,10 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  FauxPaddleNode f;
-  PaddleNode p;
-  BallNode b;
-  ArenaNode a;
-
-  fauxNode= engine->getNodeList(f.typeId());
-  paddleNode= engine->getNodeList(p.typeId());
-  ballNode= engine->getNodeList(b.typeId());
-  arenaNode= engine->getNodeList(a.typeId());
+  faux= engine->getNodeList(FauxPaddleNode().typeId());
+  paddle= engine->getNodeList(PaddleNode().typeId());
+  ball= engine->getNodeList(BallNode().typeId());
+  arena= engine->getNodeList(ArenaNode().typeId());
 
 }
 
@@ -36,13 +31,13 @@ void Move::preamble() {
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-    auto ps = CC_GNLF(Players,arenaNode,"players");
+    auto ps = CC_GNLF(Players,arena,"players");
 
-    for (auto node= paddleNode->head; node; node=node->next) {
+    for (auto node= paddle->head; node; node=node->next) {
       doit(node, dt);
     }
 
-    for (auto node= fauxNode->head; node; node=node->next) {
+    for (auto node= faux->head; node; node=node->next) {
       auto p = CC_GNF(Paddle,node,"paddle");
       auto &y= ps->parr[p->pnum];
       if (y.category == CC_CSV(c::Integer, "BOT")) {
@@ -64,38 +59,30 @@ bool Move::update(float dt) {
 //
 void Move::simuMove(a::Node *node, float dt) {
   auto lastpos= CC_GNF(Position, node, "lastpos");
-  auto paddle = CC_GNF(Paddle,node,"paddle");
+  auto pad = CC_GNF(Paddle,node,"paddle");
   auto cfg = MGMS()->getLCfg()->getValue();
   auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto world= MGMS()->getEnclosureBox();
-  auto hw2 = cx::halfHW(paddle->sprite);
-  auto pos = paddle->pos();
+  auto hw2 = cx::halfHW(pad->sprite);
+  auto pos = pad->pos();
   f::MaybeFloat x;
   f::MaybeFloat y;
 
   if (lastpos->lastDir > 0) {
-    if (cx::isPortrait()) {
-      x = f::MaybeFloat(pos.x + delta);
-    } else {
-      y = f::MaybeFloat(pos.y + delta);
-    }
+    x = f::MaybeFloat(pos.x + delta);
   }
   else
   if (lastpos->lastDir < 0) {
-    if (cx::isPortrait()) {
-      x = f::MaybeFloat(pos.x - delta);
-    } else {
-      y = f::MaybeFloat(pos.y - delta);
-    }
+    x = f::MaybeFloat(pos.x - delta);
   }
 
   if (! x.isNone()) {
-    paddle->setPos(x.get(), pos.y);
-    clamp(paddle->sprite);
+    pad->setPos(x.get(), pos.y);
+    clamp(pad->sprite);
   }
   if (! y.isNone()) {
-    paddle->setPos(pos.x, y.get());
-    clamp(paddle->sprite);
+    pad->setPos(pos.x, y.get());
+    clamp(pad->sprite);
   }
 }
 
@@ -103,34 +90,22 @@ void Move::simuMove(a::Node *node, float dt) {
 //
 //TODO: better AI please
 void Move::moveRobot(a::Node *node, float dt) {
-  auto ball = CC_GNLF(Ball,ballNode,"ball");
   auto pad= CC_GNF(Paddle,node, "paddle");
+  auto ba= CC_GNLF(Ball,ball,"ball");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto bp= ball->pos();
   auto pos = pad->pos();
+  auto bp= ba->pos();
   f::MaybeFloat y;
   f::MaybeFloat x;
 
-  if (cx::isPortrait()) {
-    if (bp.x > pos.x) {
-      if (ball->vel.x > 0) {
-        x = f::MaybeFloat(pos.x + dt * speed);
-      }
-    } else {
-      if (ball->vel.x < 0) {
-        x = f::MaybeFloat(pos.x - dt * speed);
-      }
+  if (bp.x > pos.x) {
+    if (ba->vel.x > 0) {
+      x = f::MaybeFloat(pos.x + dt * speed);
     }
   } else {
-    if (bp.y > pos.y) {
-      if (ball->vel.y > 0) {
-        y = f::MaybeFloat(pos.y + dt * speed);
-      }
-    } else {
-      if (ball->vel.y < 0) {
-        y = f::MaybeFloat(pos.y - dt * speed);
-      }
+    if (ba->vel.x < 0) {
+      x = f::MaybeFloat(pos.x - dt * speed);
     }
   }
 
@@ -148,16 +123,13 @@ void Move::moveRobot(a::Node *node, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processBall(float dt) {
-  auto b= CC_GNLF(Ball, ballNode, "ball");
   auto world= MGMS()->getEnclosureBox();
+  auto b= CC_GNLF(Ball, ball, "ball");
   c::Vec2 outVel;
   c::Vec2 outPos;
   auto rc= cx::traceEnclosure(
       dt,world, cx::bbox4(b->sprite),
       b->vel, outPos, outVel);
-
-  if (rc) {
-  }
 
   b->vel.x = outVel.x;
   b->vel.y = outVel.y;
@@ -178,37 +150,25 @@ void Move::doit(a::Node *node, float dt) {
   float nv, x,y;
 
   if (MGML()->keyPoll(cs[1])) {
-    if (cx::isPortrait()) {
-      x = pos.x + s;
-      y = pos.y;
-    } else {
-      y = pos.y + s;
-      x= pos.x;
-    }
+    x = pos.x + s;
+    y = pos.y;
     p->setPos(x,y);
   }
 
   if (MGML()->keyPoll(cs[0])) {
-    if (cx::isPortrait()) {
-      x = pos.x - s;
-      y = pos.y;
-    } else {
-      y = pos.y - s;
-      x= pos.x;
-    }
+    x = pos.x - s;
+    y = pos.y;
     p->setPos(x,y);
   }
 
   clamp(p->sprite);
 
-  if (! MGMS()->isOnline()) {return;}
-
   // below is really for wsock stuff
-  if (cx::isPortrait()) {
-    nv = p->pos().x;
-  } else {
-    nv = p->pos().y;
+  if (! MGMS()->isOnline()) {
+    return;
   }
+
+  nv = p->pos().x;
 
   auto delta= abs(nv - lp);
   auto dir=0;
@@ -229,15 +189,15 @@ void Move::doit(a::Node *node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::notifyServer(a::Node *node, int direction) {
-  auto ps= CC_GNLF(Players,arenaNode,"players");
-  auto ss= CC_GNLF(GVars,arenaNode,"slots");
+void Move::notifyServer(a::Node *node, int dir) {
+  auto ps= CC_GNLF(Players,arena,"players");
+  auto ss= CC_GNLF(GVars,arena,"slots");
   auto pad = CC_GNF(Paddle, node, "paddle");
   auto p2= ps->parr[2].color;
   auto p1= ps->parr[1].color;
   auto cfg= MGMS()->getLCfg()->getValue();
   auto pnum= ss->pnum;
-  auto vv = direction * JS_FLOAT(cfg["PADDLE+SPEED"]);
+  auto vv = dir * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto pos = pad->pos();
   auto key= pnum==2 ? p2 : p1;
   auto body= j::json({
@@ -245,7 +205,7 @@ void Move::notifyServer(a::Node *node, int direction) {
       {key, j::json({
           {"x", pos.x },
           {"y", pos.y },
-          {"dir", direction },
+          {"dir", dir},
           {"pv", vv } }) }
   });
 
@@ -265,20 +225,11 @@ void Move::clamp(c::Sprite *sprite) {
   f::MaybeFloat x;
   f::MaybeFloat y;
 
-  if (cx::isPortrait()) {
-    if (bb4.right > world.right) {
-        x = f::MaybeFloat(world.right - hw2.width);
-    }
-    if (bb4.left < world.left) {
-        x = f::MaybeFloat(world.left + hw2.width);
-    }
-  } else {
-    if (bb4.top > world.top) {
-        y = f::MaybeFloat(world.top - hw2.height);
-    }
-    if (bb4.bottom < world.bottom) {
-        y = f::MaybeFloat(world.bottom + hw2.height);
-    }
+  if (bb4.right > world.right) {
+    x = f::MaybeFloat(world.right - hw2.width);
+  }
+  if (bb4.left < world.left) {
+    x = f::MaybeFloat(world.left + hw2.width);
   }
 
   if (!x.isNone()) {

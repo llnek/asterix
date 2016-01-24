@@ -20,7 +20,7 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onReplay(c::Ref*) {
+void ELayer::onReplay() {
   auto x= (GCXX*) getSceneX()->emitCtx();
   x->count++;
   cx::runEx( Game::reify(x));

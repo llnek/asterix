@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "s/EFactory.h"
+#include "s/GEngine.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
 #include "HUD.h"
@@ -188,7 +188,7 @@ void GLayer::onceOnly() {
   auto fauxNode = engine->getNodeList(FauxPaddleNode().typeId());
   auto arenaNode = engine->getNodeList(ArenaNode().typeId());
   auto ballNode=engine->getNodeList(BallNode().typeId());
-  auto paddleNode=engine->getNodeList(PaddlNode().typeId());
+  auto paddleNode=engine->getNodeList(PaddleNode().typeId());
   auto ss= CC_GNLF(GVars, arenaNode, "slots");
   auto world = MGMS()->getEnclosureBox();
   auto ps= cx::calcSize("red_paddle.png");
