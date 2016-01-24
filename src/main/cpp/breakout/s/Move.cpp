@@ -20,8 +20,8 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  paddleNode = engine->getNodeList(PaddleMotionNode().typeId());
-  ballNode = engine->getNodeList( BallMotionNode().typeId());
+  paddle = engine->getNodeList(PaddleMotionNode().typeId());
+  ball = engine->getNodeList( BallMotionNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,28 +37,28 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processBallMotions(float dt) {
-  auto ball = CC_GNLF(Ball, ballNode, "ball");
+  auto ba= CC_GNLF(Ball, ball, "ball");
   auto B = MGMS()->getEnclosureBox();
-  auto pos= ball->pos();
-  auto rect= cx::bbox4(ball);
+  auto pos= ba->pos();
+  auto rect= cx::bbox4(ba);
 
   c::Vec2 outPos;
   c::Vec2 outVel;
   bool rc=cx::traceEnclosure(dt, B,
                          rect,
-                         ball->vel,
+                         ba->vel,
                          outPos, outVel);
 
-  ball->vel.x = outVel.x;
-  ball->vel.y = outVel.y;
-  ball->setPos(outPos.x, outPos.y);
+  ba->vel.x = outVel.x;
+  ba->vel.y = outVel.y;
+  ba->setPos(outPos.x, outPos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processPaddleMotions(float dt) {
-  auto motion = CC_GNLF(Gesture,paddleNode,"motion");
-  auto pad = CC_GNLF(Paddle,paddleNode,"paddle");
+  auto motion = CC_GNLF(Gesture,paddle,"motion");
+  auto pad = CC_GNLF(Paddle,paddle,"paddle");
   auto pos = pad->pos();
   auto x= pos.x;
   auto y= pos.y;
@@ -80,7 +80,7 @@ void Move::processPaddleMotions(float dt) {
 //
 void Move::clamp(Paddle *pad) {
   auto sz= pad->sprite->getContentSize();
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto pos= pad->sprite->getPosition();
   auto wz = cx::visRect();
 

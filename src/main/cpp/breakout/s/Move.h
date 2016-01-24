@@ -8,18 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MOVE_H__)
-#define __MOVE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
+#include "n/N.h"
 
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Move : public a::System {
+
   MDECL_SYS_PRIORITY(a::Move)
   MDECL_SYS_TPID("s/Move")
   MDECL_SYS_PREAMBLE()
@@ -29,8 +29,8 @@ struct CC_DLL Move : public a::System {
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddleNode)
-  DECL_PTR(a::NodeList, ballNode)
+  DECL_PTR(a::NodeList, paddle)
+  DECL_PTR(a::NodeList, ball)
 
   void processPaddleMotions(float);
   void processBallMotions(float);
@@ -40,6 +40,5 @@ struct CC_DLL Move : public a::System {
 
 
 NS_END(breakout)
-#endif
 
 

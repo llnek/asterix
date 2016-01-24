@@ -8,49 +8,41 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__CONFIG_H__)
-#define __CONFIG_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Config : public f::XConfig {
-
-  virtual const sstr themeColor() { return  "yellow"; }
-
-  virtual ResolutionPolicy policy() {
-    return
-    ResolutionPolicy::FIXED_HEIGHT;
-  }
-  virtual const c::Size gameSize() { return c::Size(320,480); }
-
-  virtual const sstr getWSUrl() { return ""; }
-
-  const sstr getCandy(int pos);
-  virtual c::Scene* prelude();
-
-  virtual void handleResolution(const c::Size&);
-  virtual void runOnce();
-
-  virtual ~Config() {}
-  NOCPYASS(Config)
-
-  static owner<Config*> reify();
-
-protected:
+class CC_DLL Config : public f::XConfig {
 
   void initAssets();
   void initCsts();
   void initLevels();
   Config() {}
+
+public:
+
+  virtual const c::Size gameSize() { return c::Size(320,480); }
+  virtual ResolutionPolicy policy() {
+    return
+    ResolutionPolicy::FIXED_HEIGHT;
+  }
+
+  virtual void handleResolution(const c::Size&);
+  virtual void runOnce();
+
+  const sstr getCandy(int pos);
+  virtual c::Scene* prelude();
+
+  virtual ~Config() {}
+  NOCPYASS(Config)
+  static owner<Config*> reify();
 };
 
 
 NS_END(breakout)
-#endif
 
 

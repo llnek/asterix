@@ -39,10 +39,9 @@ void GEngine::initSystems() {
 //
 void GEngine::createBricks() {
   auto cfg= MGMS()->getLCfg()->getValue();
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto cg= (Config*) XCFG();
   auto wz = cx::visRect();
-  auto cw= cx::center();
 
   auto loff= CC_CSV(c::Integer,"LEFT+OFF");
   auto csz= cx::calcSize("red_candy.png");
@@ -71,16 +70,16 @@ void GEngine::createBricks() {
     y -= csz.height - 2;
   }
 
-  auto ent= this->reifyEntity("*");
+  auto ent= this->reifyEntity();
   ent->checkin(bf);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::bornPaddle(Paddle *p, Ball *ball) {
-  auto cw= cx::center();
+  auto wb= cx::visBox();
 
-  ball->inflate(cw.x, 250);
+  ball->inflate(wb.cx, 250);
   p->inflate();
   ball->vel.y = ball->speed.y * cx::randSign();
   ball->vel.x = ball->speed.x * cx::randSign();
@@ -92,13 +91,13 @@ void GEngine::createPaddle() {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto sp = cx::reifySprite("paddle.png");
   auto vx= JS_INT(cfg["PADDLE+SPEED"]);
-  auto cw= cx::center();
+  auto wb= cx::visBox();
   MGML()->addAtlasItem("game-pics",sp);
   auto p= mc_new1(Paddle, sp);
   p->speed.x= vx;
   p->vel.x= vx;
-  p->inflate( cw.x, 56);
-  auto ent= this->reifyEntity("*");
+  p->inflate( wb.cx, 56);
+  auto ent= this->reifyEntity();
   ent->checkin(p);
   ent->checkin(mc_new(Gesture));
 }
@@ -109,7 +108,7 @@ void GEngine::createBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto bsp= JS_INT(cfg["BALL+SPEED"]);
   auto sp = cx::reifySprite("ball.png");
-  auto cw= cx::center();
+  auto wb= cx::visBox();
   auto b= mc_new1(Ball, sp);
 
   MGML()->addAtlasItem("game-pics", sp);
@@ -117,9 +116,9 @@ void GEngine::createBall() {
   b->speed.y= bsp;
   b->vel.x= bsp * cx::randSign();
   b->vel.y= bsp * cx::randSign();
-  b->inflate( cw.x, 250);
+  b->inflate( wb.cx, 250);
 
-  auto ent= this->reifyEntity("*");
+  auto ent= this->reifyEntity();
   ent->checkin(b);
 }
 

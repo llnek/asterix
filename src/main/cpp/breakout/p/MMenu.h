@@ -8,19 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__MMENU_H__)
-#define __MMENU_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XScene.h"
-
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN b) { back=b;}
-  VOIDFN back;
+  DECL_TD(VOIDFN, back)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +30,6 @@ struct CC_DLL MMenu : public f::XScene {
 
 
 NS_END(breakout)
-#endif
 
 
 

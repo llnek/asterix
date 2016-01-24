@@ -57,8 +57,8 @@ void Config::initCsts() {
   addCst("PADDLE+OFF", CC_INT(4));
   addCst("LEFT+OFF", CC_INT(4));
 
-  addColor("default", CC_STR("#f6b17f"));
   addColor("text", CC_STR("#ffffff"));
+  addColor("dft", CC_STR("#f6b17f"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -80,17 +80,17 @@ void Config::initAssets() {
   addEffect("ball-paddle", CC_STR("sfx/ElevatorBeep.mp3"));
   addEffect("ball-brick", CC_STR("sfx/MineBeep.mp3"));
 
-  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
+  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
+  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
+  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
+  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
+  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
+  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 
 }
 
@@ -124,7 +124,7 @@ void Config::initLevels() {
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 52/256 * rs.width / gz.width;
+  scale = 52.0f/256 * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////

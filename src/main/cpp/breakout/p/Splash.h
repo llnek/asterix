@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__SPLASH_H__)
-#define __SPLASH_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XScene.h"
 NS_BEGIN(breakout)
@@ -23,7 +22,6 @@ struct CC_DLL Splash : public f::XScene {
 };
 
 NS_END(breakout)
-#endif
 
 
 

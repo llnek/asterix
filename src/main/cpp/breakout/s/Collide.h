@@ -8,32 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COLLIDE_H__)
-#define __COLLIDE_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
-#include "n/GNodes.h"
+#include "n/N.h"
 
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public a::System {
-  MDECL_SYS_TPID("s/Collide")
-  MDECL_SYS_UPDATE()
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_PRIORITY(a::Collide)
-    
-  Collide(a::Engine *e)
-  : System(e)
-  {}
-
-  DECL_PTR(a::NodeList, paddleNode)
-  DECL_PTR(a::NodeList, ballNode)
-  DECL_PTR(a::NodeList, fenceNode)
-
-protected:
+class CC_DLL Collide : public a::System {
 
   bool onPlayerKilled();
   void check();
@@ -41,10 +26,24 @@ protected:
   void checkBricks();
   void onBrick(Brick*);
 
+public:
+
+  MDECL_SYS_PRIORITY(a::Collide)
+  MDECL_SYS_TPID("s/Collide")
+  MDECL_SYS_UPDATE()
+  MDECL_SYS_PREAMBLE()
+
+  Collide(a::Engine *e)
+  : System(e)
+  {}
+
+  DECL_PTR(a::NodeList, paddle)
+  DECL_PTR(a::NodeList, ball)
+  DECL_PTR(a::NodeList, fence)
+
 };
 
 
 NS_END(breakout)
-#endif
 
 

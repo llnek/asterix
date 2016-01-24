@@ -21,7 +21,8 @@ BEGIN_NS_UNAMED()
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GLayer : public f::GameLayer {
-  MDECL_GET_LAYER(HUDLayer,getHUD,3)
+
+  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
@@ -34,20 +35,20 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onDone();
   void showMenu();
 
-  DECL_PTR(a::NodeList, paddleNode)
-  DECL_PTR(a::NodeList, ballNode)
-  DECL_PTR(a::NodeList, arenaNode)
+  DECL_PTR(a::NodeList, paddle)
+  DECL_PTR(a::NodeList, ball)
+  DECL_PTR(a::NodeList, arena)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
-  paddleNode=engine->getNodeList(PaddleMotionNode().typeId());
-  ballNode=engine->getNodeList(BallMotionNode().typeId());
-  arenaNode=engine->getNodeList(ArenaNode().typeId());
+  paddle=engine->getNodeList(PaddleMotionNode().typeId());
+  ball=engine->getNodeList(BallMotionNode().typeId());
+  arena=engine->getNodeList(ArenaNode().typeId());
 
-  motionees.push_back(CC_GNLF(Paddle,paddleNode,"paddle"));
+  motionees.push_back(CC_GNLF(Paddle,paddle,"paddle"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,9 +60,8 @@ void GLayer::showMenu() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
-  this->engine = mc_new(GEngine);
-  regoAtlas(this, "game-pics");
-  getHUD()->reset();
+  regoAtlas("game-pics");
+  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,8 @@ void GLayer::decorate() {
 void GLayer::spawnPlayer() {
 
   SCAST(GEngine*,engine)->bornPaddle(
-      CC_GNLF(Paddle,paddleNode,"paddle"),
-      CC_GNLF(Ball,ballNode,"ball"));
+      CC_GNLF(Paddle,paddle,"paddle"),
+      CC_GNLF(Ball,ball,"ball"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,8 +86,8 @@ void GLayer::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
-    getHUD()->reset();
   surcease();
+  //ELayer::reify(this, 9999);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 //
 const f::Box4 Game::getEnclosureBox() {
   auto cfg= MGMS()->getLCfg()->getValue();
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto wb= cx::visBox();
 
   return f::Box4(
@@ -144,6 +144,7 @@ void Game::decorate() {
   GLayer::reify(this,2);
   play();
 }
+
 
 NS_END(breakout)
 

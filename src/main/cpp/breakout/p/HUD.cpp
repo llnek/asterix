@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "HUD.h"
 
-  NS_ALIAS(cx,fusii::ccsx)
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,39 +26,26 @@ void HUDLayer::updateScore(int n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::resetAsNew() {
-  reset();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::reset() {
-  lives->resurrect();
-  score=0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void HUDLayer::decorate() {
-  auto soff = CC_CSV(c::Integer, "S_OFF");
-  auto tile = CC_CSV(c::Integer, "TILE");
+  auto soff = CC_CSV(c::Float, "S_OFF");
+  auto tile = CC_CSV(c::Float, "TILE");
   auto wz = cx::visRect();
   auto wb = cx::visBox();
 
-  regoAtlas(this,"game-pics");
+  regoAtlas("game-pics");
 
-  scoreLabel = cx::reifyBmfLabel("font.TinyBoxBB", "0");
+  scoreLabel = cx::reifyBmfLabel("TinyBoxBB", "0");
   scoreLabel->setAnchorPoint(cx::anchorBR());
   scoreLabel->setScale(12/72.0f);
   scoreLabel->setPosition( wz.size.width - tile - soff,
     wz.size.height - tile - soff - cx::getScaledHeight(scoreLabel));
-  addItem(this,scoreLabel);
+  addItem(scoreLabel);
 
   this->lives= f::reifyRefType<f::XLives>();
   this->lives->decorate("paddle.png", 3,
       tile + soff,
       wb.top - tile - soff, 0.5f);
-  addItem(this,lives);
+  addItem(lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto menu = cx::mkMenu(b);
@@ -66,7 +53,10 @@ void HUDLayer::decorate() {
 
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
-  addItem(this,menu);
+  addItem(menu);
+
+  lives->resurrect();
+  score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

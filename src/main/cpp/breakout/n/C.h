@@ -8,9 +8,8 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
-#if !defined(__COBJS_H__)
-#define __COBJS_H__
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "core/ComObj.h"
 
@@ -19,19 +18,19 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ball : public f::ComObj {
+  Ball(not_null<c::Sprite*> s) : ComObj(s) {}
   MDECL_COMP_TPID("n/Ball")
-    Ball(not_null<c::Sprite*> s) : ComObj(s) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Brick : public f::ComObj {
-  MDECL_COMP_TPID("n/Brick")
   Brick(not_null<c::Sprite*> s, int value, int color)
   : ComObj(s,1,value) {
     this->color=color;
   }
   DECL_IZ(color);
+  MDECL_COMP_TPID("n/Brick")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,10 +54,10 @@ struct CC_DLL Gesture : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Paddle : public f::ComObj {
-  MDECL_COMP_TPID("n/Paddle")
   Paddle(not_null<c::Sprite*> s)
   : ComObj(s) {
   }
+  MDECL_COMP_TPID("n/Paddle")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,6 +68,5 @@ struct CC_DLL GVars : public a::Component {
 };
 
 NS_END(breakout)
-#endif
 
 
