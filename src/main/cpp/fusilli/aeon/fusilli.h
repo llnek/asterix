@@ -65,17 +65,17 @@ typedef std::string sstr;
 #ifdef __cplusplus
 #define NS_USING(nsp)  using namespace nsp;
 #define NS_BEGIN(nsp)  namespace nsp {
-#define NS_END(nsp)    };
+#define NS_END         };
 #define NS_ALIAS(x,y)  namespace x = y;
-#define BEGIN_NS_UNAMED() namespace {
-#define END_NS_UNAMED() };
+#define BEGIN_NS_UNAMED   namespace {
+#define END_NS_UNAMED   };
 #else
 #define NS_USING(nsp)
 #define NS_BEGIN(nsp)
-#define NS_END(nsp)
+#define NS_END
 #define NS_ALIAS(x,y)
-#define BEGIN_NS_UNAMED()
-#define END_NS_UNAMED()
+#define BEGIN_NS_UNAMED
+#define END_NS_UNAMED
 #endif
 
 
