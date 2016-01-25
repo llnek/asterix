@@ -46,6 +46,8 @@ c::Menu* mkMenu(const s_vec<c::MenuItem*> &items, bool vert, float pad) {
     menu->alignItemsVerticallyWithPadding(pad);
   }
 
+  menu->setAnchorPoint(anchorBL());
+  menu->setPosition(0,0);
   return menu;
 }
 
@@ -54,6 +56,8 @@ c::Menu* mkMenu(const s_vec<c::MenuItem*> &items, bool vert, float pad) {
 c::Menu* mkMenu(c::MenuItem *item) {
   auto menu= c::Menu::create();
   menu->addChild( item);
+  menu->setAnchorPoint(anchorBL());
+  menu->setPosition(0,0);
   return menu;
 }
 
@@ -705,6 +709,12 @@ int randSign() {
     case 0: case 2: case 4: case 6: case 8: return 1;
     default: return -1;
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float rand() {
+  return cocos2d::rand_0_1();
 }
 
 //////////////////////////////////////////////////////////////////////////////

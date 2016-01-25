@@ -8,23 +8,31 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
 
-#include "x2d/GameScene.h"
-
+#include "x2d/XNode.h"
 NS_BEGIN(spacecraze)
+
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
+class CC_DLL BackDrop : public f::XNode, public c::Node {
 
-  STATIC_REIFY_SCENE_CTX(Game)
-  MDECL_DECORATE()
+  s_vec<c::Sprite*> stars;
+  c::Size sz;
 
+  void decorate();
+  BackDrop() {}
+
+public:
+
+  virtual void update(float);
+  virtual ~BackDrop() {}
+
+  static owner<BackDrop*> reify();
 };
 
 
-NS_END
 
+NS_END
 
 

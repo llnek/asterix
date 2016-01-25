@@ -7,17 +7,36 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
-
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 #pragma once
 
 #include "core/XConfig.h"
-
 NS_BEGIN(spacecraze)
-
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Config : public f::XConfig {
 
+  void initLevels();
+  void initCsts();
+  void initAssets();
+
+  Config() {}
+
 public:
+
+  virtual const c::Size gameSize() { return c::Size(1280,800);  }
+
+  virtual void handleResolution(const c::Size&);
+  virtual void runOnce();
+
+  virtual ResolutionPolicy policy() {
+    return ResolutionPolicy::SHOW_ALL;
+  }
+
+  virtual bool isPortrait() { return false; }
+  virtual c::Scene* prelude();
+
+  static owner<Config*> reify();
 
 
 };

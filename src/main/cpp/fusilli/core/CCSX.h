@@ -163,6 +163,7 @@ namespace ccsx {
   const c::Vec2 clamp(const c::Vec2 &cur, const Box4&);
 
   float randFloat(float upper);
+  float rand();
   int randInt(int upper);
   int randSign();
 
