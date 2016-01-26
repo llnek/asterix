@@ -8,6 +8,44 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+
+//////////////////////////////////////////////////////////////////////////////
+
+#include "core/ComObj.h"
+NS_BEGIN(spacecraze)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Alien : public f::ComObj {
+  MDECL_COMP_TPID("n/Alien")
+  Alien(not_null<c::Sprite*> s)
+  : ComObj(s) {
+
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL AlienSquad : public a::Component {
+
+  const s_vec<f::ComObj*>& list() { return aliens->list(); }
+
+  AlienSquad(not_null<f::XPool*> aliens) {
+    this->aliens=aliens;
+  }
+
+  int size() { return aliens->size(); }
+
+  MDECL_COMP_TPID("n/AlienSquad")
+
+  //not owner of pool
+  DECL_PTR(f::XPool, aliens)
+};
+
+
+
+NS_END
 
 

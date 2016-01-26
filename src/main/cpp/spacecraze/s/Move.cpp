@@ -11,27 +11,29 @@
 
 #pragma once
 
-//////////////////////////////////////////////////////////////////////////////
-
-#include "ash/NodeRego.h"
+#include "Move.h"
 NS_BEGIN(spacecraze)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL AlienNode : public a::NodeFactory {
+void Move::preamble() {
 
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode({
-        {"aliens", "n/AlienSquad" }
-    });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::update(float dt) {
+  if (MGMS()->isLive()) {
+    processAliens(dt);
   }
-
-  MDECL_NFAC_TPID("n/AlienNode")
-};
-
+  return true;
+}
 
 
 NS_END
+
+
 
 
 

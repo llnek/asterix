@@ -13,25 +13,25 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/NodeRego.h"
+#include "ash/System.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL AlienNode : public a::NodeFactory {
+struct CC_DLL Move : public a::System {
 
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode({
-        {"aliens", "n/AlienSquad" }
-    });
-  }
+  MDECL_SYS_PRIORITY(a::Move)
+  MDECL_SYS_TPID("s/Move")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  MDECL_NFAC_TPID("n/AlienNode")
 };
 
 
 
 NS_END
+
+
 
 
 

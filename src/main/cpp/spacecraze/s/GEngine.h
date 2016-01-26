@@ -19,7 +19,11 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public a::Engine {
+
+  void reifyAliens();
+
+public:
 
   virtual void initEntities();
   virtual void initSystems();
