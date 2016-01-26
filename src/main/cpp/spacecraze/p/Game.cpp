@@ -11,7 +11,9 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "MMenu.h"
+#include "s/GEngine.h"
+#include "BackDrop.h"
+//#include "MMenu.h"
 #include "HUD.h"
 #include "Game.h"
 
@@ -37,9 +39,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
-  auto b= BackDrop::reify();
-  addChild(b,-1);
-
+  
   regoAtlas("game-pics");
   engine= mc_new(GEngine);
 }

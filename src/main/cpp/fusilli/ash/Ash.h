@@ -7,10 +7,9 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#if !defined(__ASH_H__)
-#define __ASH_H__
+#pragma once
 
 #include "aeon/fusilli.h"
 NS_BEGIN(ash)
@@ -49,8 +48,8 @@ enum SPV {
   Error = -1
 };
 
-NS_END(ash)
+NS_END
 NS_ALIAS(a, ash)
-#endif
+
 
 

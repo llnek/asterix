@@ -36,6 +36,8 @@ void Config::initCsts() {
   game_id= "f86694e1-5604-4d53-b684-eae696894546";
   app_id= "space craze";
 
+  addCst("star+speed+inc", CC_FLOAT(0.5f));
+  addCst("star+speed", CC_FLOAT(10.0f));
   addCst("showFPS", CC_BOOL(false));
   addCst("MAX+STARS", CC_INT(15));
 
@@ -47,14 +49,14 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("lang-pics",  CC_STR("l10n/en/images.plist"));
+  //addAtlas("lang-pics",  CC_STR("l10n/en/images.plist"));
   //addAtlas("game-pics", CC_STR("pics/sprites.plist"));
   addAtlas("game-pics", CC_STR("pics/spacetex.plist"));
 
-  addImage("lang-pics",  CC_STR("l10n/en/images.png"));
+  //addImage("lang-pics",  CC_STR("l10n/en/images.png"));
   //addImage("game-pics", CC_STR("pics/sprites.png"));
   addImage("game-pics", CC_STR("pics/spacetex.png"));
-  addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("game.bg", CC_STR("pics/sfbg.png"));
 
   addEffect("level_complete", CC_STR("level_complete.wav"));
   addEffect("blast_brick", CC_STR("blast_brick.wav"));
@@ -64,7 +66,7 @@ void Config::initAssets() {
   addEffect("shoot_enemy", CC_STR("shoot_enemy.wav"));
   addEffect("shoot_player", CC_STR("shoot_player.wav"));
 
-  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
+  //addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
 
 }
 
@@ -96,11 +98,14 @@ void Config::runOnce() {
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
-  fp= getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  //fp= getAtlas("lang-pics");
+  //c->addSpriteFramesWithFile(fp);
+  //CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
 }
+
+
+
 
 NS_END
 

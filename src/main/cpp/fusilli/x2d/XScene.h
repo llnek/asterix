@@ -7,10 +7,12 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#if !defined(__XSCENE_H__)
-#define __XSCENE_H__
+#pragma once
+
+//////////////////////////////////////////////////////////////////////////////
+//
 
 #include "2d/CCScene.h"
 #include "XLayer.h"
@@ -49,6 +51,8 @@ public:
 };
 
 
-NS_END(fusii)
-#endif
+
+NS_END
+
+
 

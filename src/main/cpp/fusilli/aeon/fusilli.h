@@ -7,13 +7,11 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#if !defined(__FUSILLI_H__)
-#define __FUSILLI_H__
+#pragma once
 
 #include "GSL/gsl.h"
-
 #include <functional>
 #include <queue>
 #include <vector>
@@ -178,7 +176,8 @@ int modulo(int, int);
 
 
 
-NS_END(fusii)
+NS_END
+
 #include "FArrayObj.h"
 #include "FArrayPtr.h"
 #include "SMPtr.h"
@@ -186,6 +185,5 @@ NS_END(fusii)
 NS_ALIAS(f,fusii)
 NS_ALIAS(s,std)
 NS_USING(gsl)
-#endif
 
 

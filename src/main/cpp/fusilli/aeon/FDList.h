@@ -7,10 +7,9 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#if !defined(__FDLIST_H__)
-#define __FDLIST_H__
+#pragma once
 
 #include "GSL/gsl.h"
 NS_USING(gsl)
@@ -140,7 +139,6 @@ FDList<T>::~FDList() {
 }
 
 
-NS_END(fusii)
-#endif
+NS_END
 
 

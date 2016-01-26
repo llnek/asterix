@@ -11,8 +11,9 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "BackDrop.h"
 #include "Splash.h"
-#include "Game.h"
+//#include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
@@ -25,20 +26,22 @@ void Splash::decorate() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
+  BackDrop::reify(this, -1);
+
   regoAtlas("game-pics");
 
-  title->setPosition(wb.cx, wz.height * 1.2);
+  title->setPosition(wb.cx, wb.top * 1.2f);
   title->runAction(
       c::Sequence::createWithTwoActions(
         c::DelayTime::create(0.5f),
         c::EaseBackOut::create(
           c::MoveBy::create(0.5f,
-            c::ccp(0, wz.height * -0.5f)))));
+            c::ccp(wb.left, wb.top * -0.5f)))));
   addAtlasItem("game-pics", title);
 
   auto b= cx::reifyMenuBtn("play");
   auto menu= cx::mkMenu(b);
-  auto ctx= mc_new(f::GCX);
+  //auto ctx= mc_new(f::GCX);
 
   b->setPosition(wb.cx, wb.top * -0.15);
   b->runAction(
@@ -46,10 +49,10 @@ void Splash::decorate() {
         c::DelayTime::create(1.0f),
         c::EaseBackOut::create(
           c::MoveBy::create(0.5f,
-            c::ccp(0, wz.top * 0.5f)))));
+            c::ccp(wb.left, wb.top * 0.5f)))));
 
   b->setCallback(
-      [=](c::Ref*) { cx::runEx(Game::reify(ctx)); });
+      [=](c::Ref*) { }); //cx::runEx(Game::reify(ctx)); });
   addItem(menu);
 
   demo(0);
@@ -61,22 +64,22 @@ void Splash::decorate() {
 void Splash::demo(float dt) {
 
   auto duration = cx::randInt(4);
-  auto wz = cx::visRect();
+  auto wb = cx::visBox();
   c::Vec2 dist;
   c::Vec2 src;
 
   if(cx::randSign() > 0) {
     // left-to-right
-    src.x = cx::randSign() * wz.width * 0.25f;
-    src.y = wz.height * 0.25f + cx::rand() * wz.height * 0.5f;
-    dist.x = src.x < 0 ? wz.width*1.5f : wz.width*-1.5f;
-    dist.y = cx::rand() * wz.height;
+    src.x = cx::randSign() * wb.right * 0.25f;
+    src.y = wb.top * 0.25f + cx::rand() * wb.top * 0.5f;
+    dist.x = src.x < 0 ? wb.right*1.5f : wb.right*-1.5f;
+    dist.y = cx::rand() * wb.top;
   } else {
     // top-to-bottom
-    src.x = wz.width * 0.25f + cx::rand() * wz.width * 0.5f;
-    src.y = cx::randSign() * wz.height * 0.25f;
-    dist.x = cx::rand() * wz.width;
-    dist.y = src.y < 0 ? wz.height*1.5f : wz.height*-1.5f;
+    src.x = wb.right * 0.25f + cx::rand() * wb.right * 0.5f;
+    src.y = cx::randSign() * wb.top * 0.25f;
+    dist.x = cx::rand() * wb.right;
+    dist.y = src.y < 0 ? wb.top*1.5f : wb.top*-1.5f;
   }
 
   // choose an enemy ship 1 <= x <= 3

@@ -7,14 +7,14 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "base/ccUtils.h"
 #include "Odin.h"
 NS_BEGIN(fusii)
 NS_BEGIN(odin)
 
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 j::json evtToDoc(MType type, EType code, j::json body) {
@@ -93,7 +93,7 @@ owner<OdinEvent*> json_decode(const n::WebSocket::Data &e) {
   return evt;
 }
 
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinIO::~OdinIO() {
@@ -297,7 +297,7 @@ n::WebSocket* connect(not_null<OdinIO*> wss, const sstr &url) {
 }
 
 
-NS_END(odin)
-NS_END(fusii)
+NS_END
+NS_END
 
 

@@ -11,16 +11,25 @@
 
 #pragma once
 
-#include "x2d/GameScene.h"
+//////////////////////////////////////////////////////////////////////////////
 
+#include "x2d/GameScene.h"
 NS_BEGIN(spacecraze)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
 
+  virtual void sendMsgEx(const MsgTopic&, void*);
+
+  virtual f::GameLayer* getGLayer() {
+    return (f::GameLayer*) getLayer(2);
+  }
+
   STATIC_REIFY_SCENE_CTX(Game)
   MDECL_DECORATE()
 
+  Game() {}
 };
 
 

@@ -10,25 +10,24 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 #pragma once
 
-#include "x2d/XNode.h"
+//////////////////////////////////////////////////////////////////////////////
+
+#include "x2d/XLayer.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL BackDrop : public f::XNode, public c::Node {
+class CC_DLL BackDrop : public f::XLayer {
 
   s_vec<c::Sprite*> stars;
   c::Size sz;
 
-  void decorate();
-  BackDrop() {}
-
 public:
 
+  STATIC_REIFY_LAYER(BackDrop)
   virtual void update(float);
-  virtual ~BackDrop() {}
+  MDECL_DECORATE()
 
-  static owner<BackDrop*> reify();
 };
 
 

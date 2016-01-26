@@ -10,8 +10,11 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
 NS_BEGIN(spacecraze)
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Config : public f::XConfig {
@@ -30,7 +33,7 @@ public:
   virtual void runOnce();
 
   virtual ResolutionPolicy policy() {
-    return ResolutionPolicy::SHOW_ALL;
+    return ResolutionPolicy::FIXED_WIDTH;
   }
 
   virtual bool isPortrait() { return false; }
@@ -40,6 +43,7 @@ public:
 
 
 };
+
 
 NS_END
 

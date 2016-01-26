@@ -1,7 +1,7 @@
-#if !defined(__SMPTR_H__)
-#define __SMPTR_H__
+#pragma once
 
 // from stdc++
+
 #include "fusilli.h"
 NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
@@ -96,6 +96,6 @@ public:
 };
 
 
-NS_END(fusii)
-#endif
+NS_END
+
 

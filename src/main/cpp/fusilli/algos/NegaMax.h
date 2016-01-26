@@ -7,10 +7,9 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#if !defined(__NEGAMAX_H__)
-#define __NEGAMAX_H__
+#pragma once
 
 #include "aeon/fusilli.h"
 #include <algorithm>
@@ -49,7 +48,7 @@ struct FS_DLL GameBoard {
   virtual ~GameBoard() {}
 };
 
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 // nega Min-Max algo function
 template <int Z>
@@ -95,7 +94,7 @@ int negaMax(not_null<GameBoard<Z>*> board,
   return bestValue;
 }
 
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////
 // Main method for nega-max algo
 template <int Z>
@@ -107,7 +106,6 @@ int evalNegaMax(not_null<GameBoard<Z>*> board) {
 }
 
 
-NS_END(algos)
-NS_END(fusii)
-#endif
+NS_END
+NS_END
 

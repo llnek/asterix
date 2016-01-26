@@ -7,9 +7,12 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////////
+//
 #define MDECL_GET_IID(x) virtual int getIID() { return x; }
 #define MDECL_UPDATE() virtual void update(float);
 #define MDECL_DECORATE() virtual void decorate();
@@ -79,5 +82,7 @@ public:
   virtual ~XNode();
 };
 
-NS_END(fusii)
+
+NS_END
+
 

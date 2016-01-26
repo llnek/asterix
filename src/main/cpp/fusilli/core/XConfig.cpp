@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "audio/include/SimpleAudioEngine.h"
 #include "CCSX.h"
@@ -31,7 +31,7 @@ sstr XConfig::CFG= "cfg";
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 
 XConfig *SGT;
 
@@ -42,7 +42,7 @@ const sstr getXXX(not_null<c::Dictionary*> d, const sstr &key ) {
   return NNP(r) ? r->getCString() : "";
 }
 
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::bind(not_null<XConfig*> c) {
@@ -411,5 +411,7 @@ const s_vec<filepath> XConfig::getMusicFiles() {
 
 
 
-NS_END(fusii)
+NS_END
+
+
 

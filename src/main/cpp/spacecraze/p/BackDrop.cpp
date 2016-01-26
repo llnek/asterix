@@ -9,22 +9,18 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "BackDrop.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(spacecraze)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-owner<BackDrop*> BackDrop::reify() {
-  auto s= f::reifyRefType<BackDrop>();
-  s->decorate();
-  return s;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void BackDrop::decorate() {
 
+    auto num= CC_CSV(c::Integer, "MAX+STARS");
   auto wb= cx::visBox();
   c::Size sz;
 
@@ -32,12 +28,12 @@ void BackDrop::decorate() {
   regoAtlas("game-pics");
 
   //sprinkle stars
-  for (auto i = 0; i < 15; ++i) {
+  for (auto i = 0; i < num; ++i) {
     auto s = cx::reifySprite("star");
     if (i==0) {
       sz= s->getContentSize();
     }
-    s->setPosition(cx::rand() * wb.right, cx.rand() * wb.top);
+      s->setPosition(cx::rand() * wb.right, cx::rand() * wb.top);
     stars.push_back(s);
     addAtlasItem("game-pics", s);
   }
@@ -48,18 +44,19 @@ void BackDrop::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void BackDrop::update(float dt) {
-  auto speed = 10.0f;
-
+    auto di= CC_CSV(c::Float, "star+speed+inc");
+    auto d= CC_CSV(c::Float, "star+speed");
+    auto wb = cx::visBox();
   F__LOOP(it, stars) {
     auto s= *it;
-    auto y= s->getPositionY() - speed;
+    auto y= s->getPositionY() - d;
 
     if(y < sz.height * -0.5) {
       y = wb.top + sz.height * 0.5;
     }
 
     s->setPositionY(y);
-    speed += 0.5f;
+    d += di;
   }
 }
 

@@ -7,10 +7,12 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2015, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#if !defined(__XCONFIG_H__)
-#define __XCONFIG_H__
+#pragma once
+
+//////////////////////////////////////////////////////////////////////////////
+//
 
 #define XCFG() fusii::XConfig::self()
 #include "platform/CCCommon.h"
@@ -141,6 +143,9 @@ template<typename T> T* cstVal(const sstr &key) {
   }
 }
 
-NS_END(fusii)
-#endif
+
+NS_END
+
+
+
 
