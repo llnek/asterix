@@ -33,15 +33,70 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  void createLevel();
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
-  
-  regoAtlas("game-pics");
+
   engine= mc_new(GEngine);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::createLevel() {
+
+  auto ctx = (GCXX*) MGMS()->getCtx();
+  auto wb = cx::visBox();
+
+  //score_ = score_to_carry_;
+
+  regoAtlas("game-pics");
+
+  right_side_enemy_position_ = wb.cx;
+  left_side_enemy_position_ = wb.cx;
+
+  // generate level filename
+  char level_file[16] = {0};
+  sprintf(level_file, "Level%02d.xml", current_level_);
+
+  // fetch level file data
+  unsigned long size;
+  char* data = (char*)CCFileUtils::sharedFileUtils()->getFileData(level_file, "rb", &size);
+
+  // parse the level file
+  tinyxml2::XMLDocument xml_document;
+  tinyxml2::XMLError xml_result = xml_document.Parse(data, size);
+
+  CC_SAFE_DELETE(data);
+
+  // print the error if parsing was unsuccessful
+  if(xml_result != tinyxml2::XML_SUCCESS)
+  {
+    CCLOGERROR("Error:%d while reading %s", xml_result, level_file);
+    return;
+  }
+
+  // save player data
+  tinyxml2::XMLNode* level_node = xml_document.FirstChild();
+  player_fire_rate_ = level_node->ToElement()->FloatAttribute("player_fire_rate");
+
+  // create set of enemies
+  tinyxml2::XMLNode* enemy_set_node = level_node->FirstChild();
+  CreateEnemies(enemy_set_node);
+
+  // create set of bricks
+  tinyxml2::XMLNode* brick_set_node = enemy_set_node->NextSibling();
+  CreateBricks(brick_set_node);
+
+  CreatePlayer();
+
+  CreateHUD();
+
+  // everything created, start updating
+  scheduleUpdate();
 }
 
 
@@ -56,6 +111,7 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::decorate() {
+  BackDrop::reify(this, 1);
   HUDLayer::reify(this, 3);
   GLayer::reify(this,2);
   play();

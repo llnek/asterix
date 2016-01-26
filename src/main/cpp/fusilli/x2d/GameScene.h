@@ -79,6 +79,7 @@ public:
   XPool* reifyPool(const sstr &n);
   XPool* getPool(const sstr &n);
 
+  int getLevel() { return level; }
   ws::OdinIO* wsock();
   GMode getMode();
   bool isOnline();
