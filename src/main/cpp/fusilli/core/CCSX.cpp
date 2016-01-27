@@ -46,8 +46,8 @@ c::Menu* mkMenu(const s_vec<c::MenuItem*> &items, bool vert, float pad) {
     menu->alignItemsVerticallyWithPadding(pad);
   }
 
-  menu->setAnchorPoint(anchorBL());
-  menu->setPosition(0,0);
+  //menu->setAnchorPoint(anchorBL());
+  //menu->setPosition(0,0);
   return menu;
 }
 

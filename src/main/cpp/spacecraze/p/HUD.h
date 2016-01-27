@@ -13,6 +13,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
+#include "x2d/XLives.h"
 #include "x2d/XLayer.h"
 NS_BEGIN(spacecraze)
 
@@ -24,6 +25,8 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(f::XLives, lives)
 };
 
 

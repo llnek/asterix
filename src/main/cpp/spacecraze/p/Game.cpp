@@ -46,57 +46,34 @@ void GLayer::decorate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::postReify() {
+  //char level_file[64] = {0};
+  //::sprintf(level_file, "Level%02d.xml", MGMS()->getLevel());
+  auto cl= MGMS()->getLevel();
+  auto fp = cl < 10 ? "0" : "";
+  auto map= cx::readXmlAsDict("pics/Level" + fp + s::to_string(cl) + ".xml");
+  auto d= CC_GDV(c::Dictionary, map, "player");
+  auto r1= CC_GDV(c::Double, d, "fireRate");
+
+  d= CC_GDV(c::Dictionary, map, "enemy");
+  auto dur= CC_GDV(c::Double, d, "moveDuration");
+  auto r2= CC_GDV(c::Double, d, "fireRate");
+  auto scores= CC_GDV(c::Dictionary, d, "scores");
+  auto layout= CC_GDV(c::Dictionary, d, "layout");
+
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::createLevel() {
 
-  auto ctx = (GCXX*) MGMS()->getCtx();
   auto wb = cx::visBox();
 
   //score_ = score_to_carry_;
 
   regoAtlas("game-pics");
 
-  right_side_enemy_position_ = wb.cx;
-  left_side_enemy_position_ = wb.cx;
-
-  // generate level filename
-  char level_file[16] = {0};
-  sprintf(level_file, "Level%02d.xml", current_level_);
-
-  // fetch level file data
-  unsigned long size;
-  char* data = (char*)CCFileUtils::sharedFileUtils()->getFileData(level_file, "rb", &size);
-
-  // parse the level file
-  tinyxml2::XMLDocument xml_document;
-  tinyxml2::XMLError xml_result = xml_document.Parse(data, size);
-
-  CC_SAFE_DELETE(data);
-
-  // print the error if parsing was unsuccessful
-  if(xml_result != tinyxml2::XML_SUCCESS)
-  {
-    CCLOGERROR("Error:%d while reading %s", xml_result, level_file);
-    return;
-  }
-
-  // save player data
-  tinyxml2::XMLNode* level_node = xml_document.FirstChild();
-  player_fire_rate_ = level_node->ToElement()->FloatAttribute("player_fire_rate");
-
-  // create set of enemies
-  tinyxml2::XMLNode* enemy_set_node = level_node->FirstChild();
-  CreateEnemies(enemy_set_node);
-
-  // create set of bricks
-  tinyxml2::XMLNode* brick_set_node = enemy_set_node->NextSibling();
-  CreateBricks(brick_set_node);
-
-  CreatePlayer();
-
-  CreateHUD();
-
-  // everything created, start updating
-  scheduleUpdate();
 }
 
 
@@ -114,7 +91,7 @@ void Game::decorate() {
   BackDrop::reify(this, 1);
   HUDLayer::reify(this, 3);
   GLayer::reify(this,2);
-  play();
+  //play();
 }
 
 

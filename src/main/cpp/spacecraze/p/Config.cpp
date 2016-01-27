@@ -43,6 +43,7 @@ void Config::initCsts() {
 
   addColor("text", CC_STR("#ffffff"));
   addColor("dft", CC_STR("#f6b17f"));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,8 +67,7 @@ void Config::initAssets() {
   addEffect("shoot_enemy", CC_STR("shoot_enemy.wav"));
   addEffect("shoot_player", CC_STR("shoot_player.wav"));
 
-  //addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-
+  addFont("sftext", CC_STR("fon/en/sftext.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

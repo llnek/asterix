@@ -13,7 +13,7 @@
 #include "core/CCSX.h"
 #include "BackDrop.h"
 #include "Splash.h"
-//#include "Game.h"
+#include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
@@ -41,7 +41,7 @@ void Splash::decorate() {
 
   auto b= cx::reifyMenuBtn("play");
   auto menu= cx::mkMenu(b);
-  //auto ctx= mc_new(f::GCX);
+  auto ctx= mc_new(f::GCX);
 
   b->setPosition(wb.cx, wb.top * -0.15);
   b->runAction(
@@ -52,7 +52,7 @@ void Splash::decorate() {
             c::ccp(wb.left, wb.top * 0.5f)))));
 
   b->setCallback(
-      [=](c::Ref*) { }); //cx::runEx(Game::reify(ctx)); });
+      [=](c::Ref*) { cx::runEx(Game::reify(ctx)); });
   addItem(menu);
 
   demo(0);

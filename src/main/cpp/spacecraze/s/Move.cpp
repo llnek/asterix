@@ -25,7 +25,6 @@ void Move::preamble() {
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-    processAliens(dt);
   }
   return true;
 }

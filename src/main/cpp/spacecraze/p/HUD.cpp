@@ -9,14 +9,50 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "HUD.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
 
+  auto s= cx::reifySprite("sfscore");
+  auto wb= cx::visBox();
+  float y= wb.top*0.925f;
+  float x;
+
+  regoAtlas("game-pics");
+
+  s->setPosition(wb.right *0.15f, y);
+  addAtlasItem("game-pics", s);
+
+  s= cx::reifySprite("sflives");
+  s->setPosition(wb.right*0.7f, y);
+  addAtlasItem("game-pics", s);
+
+  x += s->getPositionX() + s->getContentSize().width;
+  y += cx::calcSize("sflifei").height * 0.5;
+  this->lives= f::reifyRefType<f::XLives>();
+  this->lives->decorate("sflifei", 3, x, y);
+  addItem(lives);
+
+  y= wb.top*0.925f;
+
+  scoreLabel = cx::reifyBmfLabel("sftext", "0");
+  scoreLabel->setPosition(wb.right * 0.3f, y);
+  addItem(scoreLabel);
+
+
+  auto b= cx::reifyMenuBtn("sfpause");
+  auto menu = cx::mkMenu(b);
+
+  b->setPosition(wb.right*0.95f, y);
+  b->setCallback([=](c::Ref*) {
+      });
+  addItem(menu);
 }
 
 
