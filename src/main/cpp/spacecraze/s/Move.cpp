@@ -24,8 +24,6 @@ void Move::preamble() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
-  if (MGMS()->isLive()) {
-  }
   return true;
 }
 

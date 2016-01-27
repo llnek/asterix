@@ -29,6 +29,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*) getSceneX()->getLayer(3); }
 
+    virtual void postReify();
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
@@ -40,7 +41,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
-
+  regoAtlas("game-pics");
   engine= mc_new(GEngine);
 }
 
@@ -50,19 +51,53 @@ void GLayer::postReify() {
   //char level_file[64] = {0};
   //::sprintf(level_file, "Level%02d.xml", MGMS()->getLevel());
   auto cl= MGMS()->getLevel();
-  auto fp = cl < 10 ? "0" : "";
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
+  auto mez = cx::calcSize("sfenmy3");
+  auto top = wb.top * 0.8f;
+  sstr fp = cl < 10 ? "0" : "";
   auto map= cx::readXmlAsDict("pics/Level" + fp + s::to_string(cl) + ".xml");
-  auto d= CC_GDV(c::Dictionary, map, "player");
+  auto d= f::dictVal<c::Dictionary>(map, "player");
   auto r1= CC_GDV(c::Double, d, "fireRate");
 
-  d= CC_GDV(c::Dictionary, map, "enemy");
+  d= f::dictVal<c::Dictionary>(map, "enemy");
   auto dur= CC_GDV(c::Double, d, "moveDuration");
   auto r2= CC_GDV(c::Double, d, "fireRate");
-  auto scores= CC_GDV(c::Dictionary, d, "scores");
-  auto layout= CC_GDV(c::Dictionary, d, "layout");
-
+  auto scores= f::dictVal<c::Dictionary>(d, "scores");
+  auto layout= f::dictVal<c::Array>(d, "layout");
+  Ref *ref= nullptr;
+  CCARRAY_FOREACH(layout, ref) {
+    auto s = (c::String*) ref;
+    auto v= f::tokenize(s->getCString(), ',');
+    float height_t=0;
+    float width_t=0;
+    float gap=0;
+    gap= s::stof(v[0]);
+    v.erase(v.begin());
+    s_vec<c::Sprite*> aliens;
+    auto z= v.size();
+    for (auto j=0; j < z; ++j) {
+      auto png="sfenmy" + v[j];
+      auto sp= cx::reifySprite(png);
+      auto sz= sp->getContentSize();
+      width_t += sz.width;
+      height_t= MAX(sz.height, height_t);
+      aliens.push_back(sp);
+    }
+    width_t += gap * (z-1);
+    auto lf= wb.left + 0.5f * (wb.right - wb.left - width_t);
+    F__LOOP(it,aliens) {
+      auto sp= *it;
+      auto sw= sp->getContentSize().width;
+      sp->setPosition(lf + sw * 0.5f, top);
+      MGML()->addAtlasItem("game-pics",sp);
+      lf += sw + gap;
+    }
+    top -= height_t * 1.5f;
+  }
 
 }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

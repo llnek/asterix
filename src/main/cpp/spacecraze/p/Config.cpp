@@ -59,13 +59,13 @@ void Config::initAssets() {
   addImage("game-pics", CC_STR("pics/spacetex.png"));
   addImage("game.bg", CC_STR("pics/sfbg.png"));
 
-  addEffect("level_complete", CC_STR("level_complete.wav"));
-  addEffect("blast_brick", CC_STR("blast_brick.wav"));
-  addEffect("blast_enemy", CC_STR("blast_enemy.wav"));
-  addEffect("blast_player", CC_STR("blast_player.wav"));
-  addEffect("game_over", CC_STR("game_over.wav"));
-  addEffect("shoot_enemy", CC_STR("shoot_enemy.wav"));
-  addEffect("shoot_player", CC_STR("shoot_player.wav"));
+  addEffect("level_complete", CC_STR("sfx/level_complete.wav"));
+  addEffect("blast_brick", CC_STR("sfx/blast_brick.wav"));
+  addEffect("blast_enemy", CC_STR("sfx/blast_enemy.wav"));
+  addEffect("blast_player", CC_STR("sfx/blast_player.wav"));
+  addEffect("game_over", CC_STR("sfx/game_over.wav"));
+  addEffect("shoot_enemy", CC_STR("sfx/shoot_enemy.wav"));
+  addEffect("shoot_player", CC_STR("sfx/shoot_player.wav"));
 
   addFont("sftext", CC_STR("fon/en/sftext.fnt"));
 }

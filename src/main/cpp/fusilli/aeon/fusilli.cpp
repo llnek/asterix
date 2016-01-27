@@ -10,7 +10,22 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "fusilli.h"
+#include <sstream>
 NS_BEGIN(fusii)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+s_vec<sstr> tokenize(const sstr &src, char delim) {
+  s::stringstream ss(src);
+  s_vec<sstr> out;
+  sstr tkn;
+  while (s::getline(ss, tkn, delim)) {
+    if (tkn.length() > 0) {
+      out.push_back(tkn);
+    }
+  }
+  return out;
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
