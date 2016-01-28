@@ -14,6 +14,7 @@
 #include "s/GEngine.h"
 #include "BackDrop.h"
 //#include "MMenu.h"
+#include "n/lib.h"
 #include "HUD.h"
 #include "Game.h"
 
@@ -26,14 +27,16 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
+  virtual void onMouseMotion(f::ComObj*, const c::Vec2&);
+  virtual void postReify();
+
   HUDLayer* getHUD() {
     return (HUDLayer*) getSceneX()->getLayer(3); }
 
-    virtual void postReify();
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
-    virtual void onMouseMotion(f::ComObj*, const c::Vec2&);
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,17 +53,26 @@ void GLayer::onMouseMotion(f::ComObj *c, const c::Vec2 &loc) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
+  auto c= loadLevel(MGMS()->getLevel());
   regoAtlas("game-pics");
-  engine= mc_new(GEngine);
+  engine= mc_new1(GEngine,c);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
+  auto aliens = engine->getNodeList(AlienNode().typeId());
   auto ships = engine->getNodeList(ShipNode().typeId());
+  auto lpr2= CC_GNLF(Looper,aliens,"looper");
+  auto lpr1= CC_GNLF(Looper,ships,"looper");
   auto s= CC_GNLF(Ship,ships,"ship");
+
   this->motionees.push_back(s);
-  SCAST(GEngine*,engine)->spawnPlayer(s);
+  spawnPlayer(s);
+
+  // timers for bullets
+  lpr2->timer = cx::reifyTimer(MGML(), 1.0f);
+  lpr1->timer = cx::reifyTimer(MGML(), 1.0f);
 }
 
 

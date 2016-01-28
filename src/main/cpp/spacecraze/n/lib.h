@@ -12,35 +12,17 @@
 #pragma once
 
 //////////////////////////////////////////////////////////////////////////////
+#include "core/JSON.h"
+#include "N.h"
 
-#include "ash/Engine.h"
-#include "n/N.h"
 NS_BEGIN(spacecraze)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL GEngine : public a::Engine {
+j::json loadLevel(int n);
+void spawnPlayer(Ship*);
 
-  void createAliens();
-  void createShip();
 
-public:
-
-  void createMissiles(int = 24);
-  void createBombs(int = 24);
-
-  virtual void initEntities();
-  virtual void initSystems();
-  virtual ~GEngine() {}
-  GEngine(j::json c)
-    : Engine(c) {
-  }
-};
 
 
 NS_END
-
-
-
 
 

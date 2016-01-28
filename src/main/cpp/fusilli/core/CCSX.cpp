@@ -12,6 +12,7 @@
 #include "audio/include/SimpleAudioEngine.h"
 #include "cocos2d.h"
 #include "XConfig.h"
+#include "JSON.h"
 #include "CCSX.h"
 
 NS_ALIAS(den, CocosDenshion)
@@ -213,6 +214,13 @@ c::Array* readXmlAsList(const sstr &fpath) {
 //
 c::Dictionary* readXmlAsDict(const sstr &fpath) {
   return c::Dictionary::createWithContentsOfFile(fpath.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+j::json readJson(const sstr &fpath) {
+    auto s= c::FileUtils::getInstance()->getStringFromFile(fpath);
+  return j::json::parse(s);
 }
 
 //////////////////////////////////////////////////////////////////////////

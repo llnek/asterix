@@ -11,9 +11,12 @@
 
 #pragma once
 
+#include "nlohmann/json.hpp"
 #include "NodeList.h"
 #include "System.h"
 #include "Entity.h"
+
+NS_ALIAS(j, nlohmann)
 NS_BEGIN(ash)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,7 +63,9 @@ public:
   void forceSync();
   void ignite();
   void update(float time);
+  j::json getCfg() { return config; }
 
+  Engine(j::json c) { config=c; }
   virtual ~Engine();
   Engine() {}
   NOCPYASS(Engine)
@@ -69,6 +74,7 @@ protected:
 
   virtual void initEntities() = 0;
   virtual void initSystems() = 0;
+  DECL_TD(j::json, config)
 };
 
 

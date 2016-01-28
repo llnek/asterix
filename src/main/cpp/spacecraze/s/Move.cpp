@@ -20,7 +20,6 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(spacecraze)
 
-static int POO = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -34,31 +33,36 @@ void Move::preamble() {
 void Move::processAliens(float dt) {
 
   auto squad = CC_GNLF(AlienSquad,aliens,"squad");
-  auto enemy = squad->aliens->randGet();
-    auto wb = cx::visBox();
-  auto pos = c::ccpSub(enemy->pos(),
-      c::ccp(0, enemy->csize().height * 0.3f));
+  auto lpr = CC_GNLF(Looper,aliens,"looper");
+  auto a = squad->aliens->randGet();
 
-  auto bullet = cx::reifySprite("sfbullet2");
-  MGML()->addAtlasItem("game-pics",bullet);
-  //enemy_bullets_->addObject(bullet);
+  if (cx::timerDone(lpr->timer)) {
+    cx::undoTimer(lpr->timer);
+    fireBombs((Alien*) a);
+    lpr->timer=cx::reifyTimer(MGML(), lpr->duration);
+  }
 
-  bullet->setPosition(pos);
-  bullet->setScale(0.5f);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::fireBombs(Alien* enemy) {
 
   auto scale_up = c::ScaleTo::create(0.25f, 1.0f);
-  bullet->runAction(scale_up);
+  auto pos = c::ccpSub(enemy->pos(),
+      c::ccp(0, enemy->csize().height * 0.3f));
+  auto p= MGMS()->getPool("Bombs");
+  auto b= p->get();
 
-  auto move_down = c::MoveTo::create(
-      //enemy->getBulletDuration()
-                          1.5f * 0.8f           * (pos.y / wb.top),
-      c::ccp(pos.x, 0));
+  if (ENP(b)) {
+    SCAST(GEngine*,engine)->createBombs();
+    b= p->get();
+  }
 
-  auto remove = c::CallFunc::create([=]() {
-
-      });
-
-  bullet->runAction(c::Sequence::createWithTwoActions(move_down, remove));
+  SCAST(Bomb*,b)->morph(enemy->type);
+  b->inflate(pos.x, pos.y);
+  b->sprite->setScale(0.5f);
+  b->sprite->runAction(scale_up);
 
   cx::sfxPlay("shoot_enemy");
 }
@@ -66,6 +70,7 @@ void Move::processAliens(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processShip(float dt) {
+  auto lpr = CC_GNLF(Looper,ships,"looper");
   auto ship = CC_GNLF(Ship,ships,"ship");
   auto bx= MGMS()->getEnclosureBox();
   auto pos = ship->pos();
@@ -88,9 +93,10 @@ void Move::processShip(float dt) {
           c::Vec2(x,y), ship->csize(), bx).x, pos.y);
   }
 
-  if (POO == 0) {
-     firePlayerBullet(dt);
-     ++POO;
+  if (cx::timerDone(lpr->timer)) {
+    cx::undoTimer(lpr->timer);
+    firePlayerBullet(dt);
+    lpr->timer= cx::reifyTimer(MGML(), lpr->duration);
   }
 }
 
@@ -103,32 +109,69 @@ void Move::firePlayerBullet(float dt) {
   auto pos = c::ccpAdd(ship->pos(),
       c::ccp(0, ship->csize().height * 0.3f));
 
-  auto bullet = cx::reifySprite("sfbullet");
-  MGML()->addAtlasItem("game-pics", bullet);
-
-  bullet->setPosition(pos);
-  bullet->setScale(0.5f);
-
   auto scale_up = c::CCScaleTo::create(0.25f, 1.0f);
-  bullet->runAction(scale_up);
+  auto p= MGMS()->getPool("Missiles");
+  auto m = p->get();
+  if (ENP(m)) {
+    SCAST(GEngine*,engine)->createMissiles();
+    m=p->get();
+  }
 
-  // move the bullet up
-  auto move_up = c::MoveTo::create(1.5f, c::ccp(pos.x, wb.top));
-  auto remove = c::CallFunc::create([=]() {
-
-  });
-
-  bullet->runAction(c::Sequence::createWithTwoActions(move_up, remove));
+  m->inflate(pos.x,pos.y);
+  m->sprite->setScale(0.5f);
+  m->sprite->runAction(scale_up);
 
   cx::sfxPlay("shoot_player");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void Move::processMissiles(float dt) {
+  auto world = MGMS()->getEnclosureBox();
+  auto p= MGMS()->getPool("Missiles");
+  auto ms= p->list();
+  F__LOOP(it,ms) {
+    auto m = (Missile*) *it;
+    if (m->status) {
+      auto pos= m->pos();
+      pos.y += m->vel.y * dt;
+      if (pos.y > world.top) {
+        m->deflate();
+      } else {
+        m->setPos(pos.x,pos.y);
+      }
+    }
+  };
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::processBombs(float dt) {
+  auto world = MGMS()->getEnclosureBox();
+  auto p= MGMS()->getPool("Bombs");
+  auto bs= p->list();
+  F__LOOP(it,bs) {
+    auto b = (Bomb*) *it;
+    if (b->status) {
+      auto pos= b->pos();
+      pos.y -= b->vel.y * dt;
+      if (pos.y < world.bottom) {
+        b->deflate();
+      } else {
+        b->setPos(pos.x,pos.y);
+      }
+    }
+  };
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-    //processAliens(dt);
+    processAliens(dt);
+    processBombs(dt);
     processShip(dt);
+    processMissiles(dt);
   }
   return true;
 }

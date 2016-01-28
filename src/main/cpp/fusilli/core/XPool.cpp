@@ -81,8 +81,8 @@ ComObj* XPool::randGet() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::checkin(not_null<ComObj*> c, bool on) {
-  if (on) { c->status=true; }
+void XPool::checkin(not_null<ComObj*> c) {
+  //if (on) { c->status=true; }
   objs.push_back(c);
 }
 

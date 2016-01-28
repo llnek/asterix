@@ -44,7 +44,7 @@ public:
   bool some(s::function<bool (ComObj*)>);
   void clearAll(bool del=true);
 
-  void checkin(not_null<ComObj*>, bool on);
+  void checkin(not_null<ComObj*>);
   void reset();
 
   virtual ~XPool();

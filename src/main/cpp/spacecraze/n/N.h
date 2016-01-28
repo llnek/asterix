@@ -23,7 +23,8 @@ struct CC_DLL AlienNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        {"squad", "n/AlienSquad" }
+        {"squad", "n/AlienSquad" },
+        {"looper", "n/Looper" }
     });
   }
 
@@ -36,6 +37,7 @@ struct CC_DLL ShipNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
+        {"looper", "n/Looper" },
         {"ship", "n/Ship" },
         {"motion", "n/Gesture" }
     });

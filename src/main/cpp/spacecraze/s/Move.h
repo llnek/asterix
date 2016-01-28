@@ -22,6 +22,9 @@ NS_BEGIN(spacecraze)
 class CC_DLL Move : public a::System {
 
   void firePlayerBullet(float);
+  void fireBombs(Alien*);
+  void processMissiles(float);
+  void processBombs(float);
   void processAliens(float);
   void processShip(float);
 

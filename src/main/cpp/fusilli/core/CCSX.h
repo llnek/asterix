@@ -30,6 +30,7 @@ namespace ccsx {
 
   c::Dictionary* readXmlAsDict(const sstr &fpath);
   c::Array* readXmlAsList(const sstr &fpath);
+  j::json readJson(const sstr &fpath);
 
   const c::Color3B colorRGB(const sstr &hexcolor);
   const s_arr<c::MenuItem*,2> reifyAudioIcons();

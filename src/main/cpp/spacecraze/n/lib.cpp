@@ -9,38 +9,40 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
+#include "core/CCSX.h"
+#include "lib.h"
 
-//////////////////////////////////////////////////////////////////////////////
-
-#include "ash/Engine.h"
-#include "n/N.h"
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine : public a::Engine {
+void spawnPlayer(Ship* ship) {
 
-  void createAliens();
-  void createShip();
+  auto wb = cx::visBox();
 
-public:
+  ship->inflate(wb.cx, wb.top * -0.1f);
 
-  void createMissiles(int = 24);
-  void createBombs(int = 24);
+  auto movement = c::EaseBackOut::create(
+      c::MoveTo::create(1.0f,
+        c::ccp(wb.cx, wb.top * 0.1f)));
+  auto movement_over = c::CallFunc::create([=]() {
 
-  virtual void initEntities();
-  virtual void initSystems();
-  virtual ~GEngine() {}
-  GEngine(j::json c)
-    : Engine(c) {
-  }
-};
+  });
+
+  ship->sprite->runAction(c::Sequence::createWithTwoActions(
+        movement, movement_over));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+j::json loadLevel(int n) {
+  //char level_file[64] = {0}; //::sprintf(level_file, "Level%02d.xml", MGMS()->getLevel());
+  sstr fp = n < 10 ? "0" : "";
+  return cx::readJson("pics/Level" + fp + s::to_string(n) + ".json");
+}
 
 
 NS_END
-
-
-
 
 
