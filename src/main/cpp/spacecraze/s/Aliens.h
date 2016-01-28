@@ -13,24 +13,30 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
+#include "ash/System.h"
 #include "n/N.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine : public a::Engine {
+class CC_DLL Aliens : public a::System {
 
-  void reifyAliens();
-  void reifyShip();
+  void startEnemies();
 
 public:
 
-  virtual void initEntities();
-  virtual void initSystems();
+  MDECL_SYS_TPID("s/Aliens")
+  MDECL_SYS_PRIORITY(a::AI)
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  void spawnPlayer(Ship*);
+  Aliens(a::Engine *e)
+    : System(e) {
+  }
+
+  DECL_PTR(a::NodeList,aliens)
 };
+
 
 
 NS_END

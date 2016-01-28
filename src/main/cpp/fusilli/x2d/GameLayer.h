@@ -26,7 +26,7 @@ class CC_DLL GameLayer : public XLayer {
 protected:
 
   virtual void onTouchMotion( ComObj*, const c::Vec2&, const c::Vec2&);
-  virtual void onMouseMotion( ComObj*, const c::Vec2&, const c::Vec2&);
+  virtual void onMouseMotion( ComObj*, const c::Vec2&);
 
   virtual bool onTouchBegan(c::Touch *t, c::Event *e);
   virtual void onTouchMoved(c::Touch *t, c::Event *e);

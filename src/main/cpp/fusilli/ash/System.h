@@ -68,9 +68,9 @@ struct FS_DLL SystemList  : public f::FDList<System> {
   NOCPYASS(SystemList)
 };
 
-
 NS_END
 
+#include "Engine.h"
 
 
 

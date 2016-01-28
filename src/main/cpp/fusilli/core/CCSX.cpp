@@ -685,6 +685,31 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const c::Vec2 clamp(const c::Vec2& loc, const c::Size &sz, const Box4 &world) {
+  auto hh = HHZ(sz);
+  auto hw = HWZ(sz);
+  auto x= loc.x;
+  auto y= loc.y;
+
+  if ((loc.x + hw) > world.right) {
+    x = world.right - hw;
+  }
+  if ((loc.x - hw) < world.left) {
+    x = world.left + hw;
+  }
+  if ((loc.y - hh) < world.bottom) {
+    y = world.bottom + hh;
+  }
+  if ((loc.y + hh) > world.top) {
+    y = world.top - hh;
+  }
+
+  return c::Vec2(x,y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
 const c::Vec2 clamp(const c::Vec2 &cur, const Box4 &bx) {
   return ccpClamp(cur, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
 }

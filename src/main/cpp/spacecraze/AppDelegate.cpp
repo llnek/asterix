@@ -25,8 +25,8 @@ AppDelegate::AppDelegate() : App("space craze") {
   // step.1: register all ash::node factories here
   auto r= NodeRegistry::self();
 
-  //r->rego( mc_new( BoardNode));
-  //r->rego( mc_new( HumanNode));
+  r->rego( mc_new( AlienNode));
+  r->rego( mc_new( ShipNode));
   //r->rego( mc_new( RobotNode));
   //r->rego( mc_new( ArenaNode));
 

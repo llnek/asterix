@@ -159,6 +159,7 @@ namespace ccsx {
   const c::Vec2 anchorB();
   const c::Vec2 anchorBL();
 
+    const c::Vec2 clamp(const c::Vec2 &loc, const c::Size &sz, const Box4 &world);
   const c::Vec2 clamp(const c::Vec2 &cur, const Box4&);
 
   float randFloat(float upper);

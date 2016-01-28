@@ -35,6 +35,7 @@ public:
   ComObj* getAndSet();
   ComObj* get();
   ComObj* getAt(int n);
+  ComObj* randGet();
 
   int size() { return (int)objs.size(); }
   int countActives();
@@ -43,7 +44,7 @@ public:
   bool some(s::function<bool (ComObj*)>);
   void clearAll(bool del=true);
 
-  void checkin(not_null<ComObj*>);
+  void checkin(not_null<ComObj*>, bool on);
   void reset();
 
   virtual ~XPool();

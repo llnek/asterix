@@ -14,6 +14,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ash/NodeRego.h"
+#include "C.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -22,11 +23,25 @@ struct CC_DLL AlienNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        {"aliens", "n/AlienSquad" }
+        {"squad", "n/AlienSquad" }
     });
   }
 
   MDECL_NFAC_TPID("n/AlienNode")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL ShipNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"ship", "n/Ship" },
+        {"motion", "n/Gesture" }
+    });
+  }
+
+  MDECL_NFAC_TPID("n/ShipNode")
 };
 
 

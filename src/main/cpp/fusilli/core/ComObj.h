@@ -35,7 +35,7 @@ public:
   virtual void hurt(int damage=1);
 
   void setPos(float x, float y);
-  const c::Size csize();
+  virtual const c::Size csize();
   const c::Vec2 pos();
   const c::Rect bbox();
 

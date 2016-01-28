@@ -14,6 +14,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/ComObj.h"
+#include "core/XPool.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -24,6 +25,26 @@ struct CC_DLL Alien : public f::ComObj {
   : ComObj(s) {
 
   }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Ship : public f::ComObj {
+  MDECL_COMP_TPID("n/Ship")
+  Ship(not_null<c::Sprite*> s)
+  : ComObj(s) {
+    speed.x= 150;
+    vel.x=150;
+  }
+  //virtual const c::Size csize() { return c::Size(64,64);//84,96); }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID("n/Gesture")
+  DECL_BF(right)
+  DECL_BF(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,6 +63,10 @@ struct CC_DLL AlienSquad : public a::Component {
 
   //not owner of pool
   DECL_PTR(f::XPool, aliens)
+  DECL_FZ(rightEdge)
+  DECL_FZ(leftEdge)
+  DECL_FZ(duration)
+  DECL_FZ(fireRate)
 };
 
 

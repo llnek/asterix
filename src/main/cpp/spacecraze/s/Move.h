@@ -14,17 +14,30 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
+#include "n/N.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
+class CC_DLL Move : public a::System {
+
+  void firePlayerBullet(float);
+  void processAliens(float);
+  void processShip(float);
+
+public:
 
   MDECL_SYS_PRIORITY(a::Move)
   MDECL_SYS_TPID("s/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
+  Move(a::Engine *e)
+    : System(e) {
+  }
+
+  DECL_PTR(a::NodeList,aliens)
+  DECL_PTR(a::NodeList,ships)
 };
 
 

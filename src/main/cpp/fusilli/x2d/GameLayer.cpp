@@ -136,11 +136,8 @@ void GameLayer::onTouchMoved(c::Touch *t, c::Event *e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::onMouseMotion(ComObj *c,
-    const c::Vec2 &loc, const c::Vec2 &delta) {
-  auto bx= MGMS()->getEnclosureBox();
-  auto pos= c->pos();
-  c->setPos(cx::clamp(loc, bx).x, pos.y);
+void GameLayer::onMouseMotion(ComObj *c, const c::Vec2 &loc) {
+  c->setPos(loc.x, loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -186,18 +183,17 @@ void GameLayer::onMouseUp(c::Event* ) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::onMouseMove(c::Event* event) {
-  auto bx= MGMS()->getEnclosureBox();
   auto e= (c::EventMouse*)event;
   auto loc= e->getLocationInView();
   auto b= e->getMouseButton();
 
   F__LOOP(it,motionees) {
     auto c = *it;
-    auto x= c->bbox();
-    if (b == MOUSE_BUTTON_LEFT &&
-        x.containsPoint(loc)) {
+    //auto x= c->bbox();
+    if (b == MOUSE_BUTTON_LEFT) {
+        //x.containsPoint(loc)) {
       // mouse is on the object so move it
-      onMouseMotion(c,loc,e->getDelta());
+      onMouseMotion(c,loc);
     }
   }
 }

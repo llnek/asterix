@@ -70,6 +70,9 @@ bool App::applicationDidFinishLaunching() {
 //
 void App::preLaunch(const c::Size &dz) {
 
+  // device sizes 2733x1536
+  // 1495x840
+  // 854x480
   auto glview = CC_DTOR()->getOpenGLView();
   auto dispFPS= CC_CSV(c::Bool,"showFPS");
   auto fps = CC_CSV(c::Integer,"FPS");

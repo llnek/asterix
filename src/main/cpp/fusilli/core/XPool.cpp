@@ -9,7 +9,10 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "CCSX.h"
 #include "XPool.h"
+
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,8 +65,24 @@ ComObj* XPool::get() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Get a free object from the pool.  More like a peek
+ComObj* XPool::randGet() {
+  auto sz= objs.size();
+  ComObj *rc=nullptr;
+  if (sz == 1) {
+    rc=objs.at(0);
+  }
+  else
+  if (sz > 0) {
+    rc=objs.at(cx::randInt(sz));
+  }
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////
 //
-void XPool::checkin(not_null<ComObj*> c) {
+void XPool::checkin(not_null<ComObj*> c, bool on) {
+  if (on) { c->status=true; }
   objs.push_back(c);
 }
 
