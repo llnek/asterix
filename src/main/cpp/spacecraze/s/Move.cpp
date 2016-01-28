@@ -67,19 +67,26 @@ void Move::processAliens(float dt) {
 //
 void Move::processShip(float dt) {
   auto ship = CC_GNLF(Ship,ships,"ship");
+  auto bx= MGMS()->getEnclosureBox();
   auto pos = ship->pos();
+  auto dirty=false;
   auto x= pos.x;
   auto y= pos.y;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     x += ship->vel.x * dt;
+    dirty=true;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
     x -= ship->vel.x * dt;
+    dirty=true;
   }
 
-  ship->setPos(x,y);
+  if (dirty) {
+    ship->setPos(cx::clamp(
+          c::Vec2(x,y), ship->csize(), bx).x, pos.y);
+  }
 
   if (POO == 0) {
      firePlayerBullet(dt);

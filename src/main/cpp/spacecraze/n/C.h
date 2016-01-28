@@ -33,8 +33,8 @@ struct CC_DLL Ship : public f::ComObj {
   MDECL_COMP_TPID("n/Ship")
   Ship(not_null<c::Sprite*> s)
   : ComObj(s) {
-    speed.x= 150;
-    vel.x=150;
+    speed.x= 250;
+    vel.x=250;
   }
   //virtual const c::Size csize() { return c::Size(64,64);//84,96); }
 };
