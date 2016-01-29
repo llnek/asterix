@@ -33,7 +33,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*) getSceneX()->getLayer(3); }
 
+  void onAlienKilled(Alien*);
   void onPlayerKilled();
+  void onEnd();
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -55,34 +57,69 @@ void GLayer::onMouseMotion(f::ComObj *c, const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onEnd() {
+  MGMS()->stop();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onPlayerKilled() {
 
   auto death = c::Spawn::createWithTwoActions(
       c::FadeOut::create(0.5f),
       c::ScaleTo::create(0.5f, 1.5f));
   auto ship= CC_GNLF(Ship,ships,"ship");
+  auto d1=c::CallFunc::create([=]() {
+        //ship->deflate();
+    });
   auto pos= ship->pos();
   c::CallFunc *d2;
 
   if (getHUD()->reduceLives(1)) {
     d2=c::CallFunc::create([=]() {
-        //end game
-        });
+        this->onEnd();
+    });
   } else  {
     d2= c::CallFunc::create([=]() {
         spawnPlayer(ship);
-        });
+    });
   }
 
   ship->sprite->runAction(
-      c::Sequence::createWithTwoActions(death, d2));
+      c::Sequence::create(death, d1,d2,nullptr));
 
+  /*
   auto explosion = c::ParticleSystemQuad::create("pics/explosion.plist");
   explosion->setAutoRemoveOnFinish(true);
   explosion->setPosition(pos);
   MGML()->addItem(explosion);
-
+*/
   cx::sfxPlay("blast_player");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onAlienKilled(Alien *obj) {
+
+  obj->sprite->stopAllActions();
+
+  auto blast = c::ScaleTo::create(0.25f, 0.0f);
+  auto remove =c::CallFunc::create([=]() {
+      obj->deflate();
+  });
+  obj->sprite->runAction(
+      c::Sequence::createWithTwoActions(blast, remove));
+
+  auto exp = c::ParticleSystemQuad::create("pics/explosion.plist");
+  auto pc= c::ccc4f(0.9569, 0.2471, 0.3373, 1);
+  exp->setStartColor(pc);
+  exp->setEndColor(pc);
+  exp->setAutoRemoveOnFinish(true);
+  exp->setPosition(obj->pos());
+  MGML()->addItem(exp);
+
+  getHUD()->updateScore(obj->score);
+  cx::sfxPlay("blast_enemy");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -123,6 +160,11 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   if ("/game/player/killed" == topic) {
     y->onPlayerKilled();
   }
+  else
+  if ("/game/alien/killed" == topic) {
+    y->onAlienKilled((Alien*) m);
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

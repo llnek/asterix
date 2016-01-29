@@ -43,11 +43,11 @@ void Move::processAliens(float dt) {
   }
 
 }
-
+static int POO=0;
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::fireBombs(Alien* enemy) {
-
+if (POO > 0) {return;}
   auto scale_up = c::ScaleTo::create(0.25f, 1.0f);
   auto pos = c::ccpSub(enemy->pos(),
       c::ccp(0, enemy->csize().height * 0.3f));
@@ -63,7 +63,7 @@ void Move::fireBombs(Alien* enemy) {
   b->inflate(pos.x, pos.y);
   b->sprite->setScale(0.5f);
   b->sprite->runAction(scale_up);
-
+POO++;
   cx::sfxPlay("shoot_enemy");
 }
 
@@ -77,6 +77,8 @@ void Move::processShip(float dt) {
   auto dirty=false;
   auto x= pos.x;
   auto y= pos.y;
+
+  if (ship->godMode) { return; }
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     x += ship->vel.x * dt;

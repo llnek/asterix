@@ -32,13 +32,17 @@ public:
   virtual void inflate(float x, float y);
   virtual void inflate();
   virtual void deflate();
+
   virtual void hurt(int damage=1);
+  virtual const c::Size csize();
+
+  void mortal() { godMode=false; }
+  void god() { godMode=true; }
+  void freeze() { status=false; }
 
   void setPos(float x, float y);
-  virtual const c::Size csize();
   const c::Vec2 pos();
   const c::Rect bbox();
-
   float height();
   int pid();
   float width();
@@ -53,6 +57,7 @@ public:
   DECL_PTR(c::Sprite ,sprite)
   DECL_IZ(origHP)
   DECL_BF(status)
+  DECL_BF(godMode)
   DECL_IZ(HP)
   DECL_IZ(score)
 

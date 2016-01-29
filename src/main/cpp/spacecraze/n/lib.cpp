@@ -21,15 +21,16 @@ void spawnPlayer(Ship* ship) {
 
   auto wb = cx::visBox();
 
-  ship->inflate(wb.cx, wb.top * -0.1f);
-
   auto movement = c::EaseBackOut::create(
       c::MoveTo::create(1.0f,
         c::ccp(wb.cx, wb.top * 0.1f)));
   auto movement_over = c::CallFunc::create([=]() {
-
+      ship->mortal();
   });
 
+  ship->inflate(wb.cx, wb.top * -0.1f);
+  ship->sprite->setScale(1.0f);
+  ship->god();
   ship->sprite->runAction(c::Sequence::createWithTwoActions(
         movement, movement_over));
 }

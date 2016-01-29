@@ -67,12 +67,9 @@ void Resolve::checkBombs() {
 void Resolve::checkAliens() {
   auto sq = CC_GNLF(AlienSquad,aliens,"squad");
   sq->aliens->foreach([=](f::ComObj *c) {
-    if (!c->status || c->HP <=0) {
-      c->deflate();
-      auto msg= j::json({
-          {"score", 1}
-          });
-      SENDMSGEX("/game/player/earnscore", &msg);
+    if (c->status && c->HP <=0) {
+      c->freeze();
+      SENDMSGEX("/game/alien/killed", c);
     }
   });
 }
@@ -82,7 +79,10 @@ void Resolve::checkAliens() {
 void Resolve::checkShip() {
   auto ship = CC_GNLF(Ship,ships,"ship");
 
-  if (!ship->status || ship->HP <= 0) {
+  if (ship->godMode) { return; }
+
+  if (ship->status && ship->HP <= 0) {
+    ship->freeze();
     SENDMSG("/game/player/killed");
   }
 }

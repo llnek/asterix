@@ -98,7 +98,7 @@ void GEngine::createShip() {
   ent->checkin(t);
   ent->checkin(c);
 
-  MGML()->addAtlasItem("game-pics", p);
+  MGML()->addAtlasItem("game-pics", p, 999,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

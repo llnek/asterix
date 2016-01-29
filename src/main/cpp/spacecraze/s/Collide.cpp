@@ -64,6 +64,9 @@ void Collide::checkMissiles() {
 void Collide::checkBombs() {
   auto bs = MGMS()->getPool("Bombs")->list();
   auto ship = CC_GNLF(Ship,ships,"ship");
+
+  if (ship->godMode) { return;}
+
   F__LOOP(it,bs) {
     auto b= *it;
     if (b->status && ship->status ) {
