@@ -12,6 +12,8 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "Collide.h"
+#include "Resolve.h"
 #include "Aliens.h"
 #include "Move.h"
 #include "GEngine.h"
@@ -72,6 +74,9 @@ void GEngine::createBombs(int cnt) {
 void GEngine::initSystems() {
   regoSystem(mc_new1(Aliens,this));
   regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(Resolve,this));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,7 +126,7 @@ void GEngine::createAliens() {
     s_vec<Alien*> aliens;
     J__LOOP(it2, fmt) {
       auto n = *it2;
-      auto a = new Alien(JS_INT(n));
+      auto a = new Alien(JS_INT(n),1,10);
       auto sz= a->csize();
       width_t += sz.width;
       height_t= MAX(sz.height, height_t);

@@ -55,6 +55,20 @@ void HUDLayer::decorate() {
   addItem(menu);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool HUDLayer::reduceLives(int n) {
+  lives->reduce(n);
+  return lives->isDead();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateScore(int n) {
+  score += n;
+  scoreLabel->setString(s::to_string(score));
+}
+
 
 NS_END
 

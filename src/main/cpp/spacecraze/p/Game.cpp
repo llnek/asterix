@@ -33,10 +33,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*) getSceneX()->getLayer(3); }
 
+  void onPlayerKilled();
+
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  DECL_PTR(a::NodeList,aliens)
+  DECL_PTR(a::NodeList,ships)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,6 +53,37 @@ void GLayer::onMouseMotion(f::ComObj *c, const c::Vec2 &loc) {
   c->setPos(cx::clamp(loc, c->csize(), bx).x, pos.y);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onPlayerKilled() {
+
+  auto death = c::Spawn::createWithTwoActions(
+      c::FadeOut::create(0.5f),
+      c::ScaleTo::create(0.5f, 1.5f));
+  auto ship= CC_GNLF(Ship,ships,"ship");
+  auto pos= ship->pos();
+  c::CallFunc *d2;
+
+  if (getHUD()->reduceLives(1)) {
+    d2=c::CallFunc::create([=]() {
+        //end game
+        });
+  } else  {
+    d2= c::CallFunc::create([=]() {
+        spawnPlayer(ship);
+        });
+  }
+
+  ship->sprite->runAction(
+      c::Sequence::createWithTwoActions(death, d2));
+
+  auto explosion = c::ParticleSystemQuad::create("pics/explosion.plist");
+  explosion->setAutoRemoveOnFinish(true);
+  explosion->setPosition(pos);
+  MGML()->addItem(explosion);
+
+  cx::sfxPlay("blast_player");
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -61,8 +96,8 @@ void GLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
-  auto aliens = engine->getNodeList(AlienNode().typeId());
-  auto ships = engine->getNodeList(ShipNode().typeId());
+  aliens = engine->getNodeList(AlienNode().typeId());
+  ships = engine->getNodeList(ShipNode().typeId());
   auto lpr2= CC_GNLF(Looper,aliens,"looper");
   auto lpr1= CC_GNLF(Looper,ships,"looper");
   auto s= CC_GNLF(Ship,ships,"ship");
@@ -81,8 +116,13 @@ void GLayer::postReify() {
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::sendMsgEx(const MsgTopic &t, void *m) {
+void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
+  auto y = (GLayer*) getLayer(2);
+
+  if ("/game/player/killed" == topic) {
+    y->onPlayerKilled();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -14,16 +14,28 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ash/System.h"
+#include "GEngine.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Collide : public a::System {
+class CC_DLL Collide : public a::System {
+  void checkMissiles();
+  void checkBombs();
+
+public:
 
   MDECL_SYS_PRIORITY(a::Collide)
   MDECL_SYS_TPID("s/Collide")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
+
+  Collide(a::Engine *e)
+  : System(e) {
+  }
+
+  DECL_PTR(a::NodeList, aliens)
+  DECL_PTR(a::NodeList, ships)
 
 };
 

@@ -15,7 +15,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Collide.h"
+#include "Resolve.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
@@ -23,58 +23,69 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::preamble() {
+void Resolve::preamble() {
   aliens = engine->getNodeList(AlienNode().typeId());
   ships = engine->getNodeList(ShipNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Collide::update(float dt) {
+bool Resolve::update(float dt) {
   if (MGMS()->isLive()) {
     checkMissiles();
     checkBombs();
+    checkAliens();
+    checkShip();
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkMissiles() {
-  auto ms = MGMS()->getPool("Missiles")->list();
-  auto sq = CC_GNLF(AlienSquad,aliens,"squad");
-  auto ss= sq->aliens->list();
-
-  F__LOOP(it,ss) {
-    auto a= *it;
-    F__LOOP(it2,ms) {
-      auto m= *it2;
-      if (a->status && m->status) {
-        if (cx::collide(a,m)) {
-          a->hurt();
-          m->hurt();
-        }
-      }
+void Resolve::checkMissiles() {
+  auto ms = MGMS()->getPool("Missiles");
+  ms->foreach([=](f::ComObj *c) {
+    if (!c->status || c->HP <=0) {
+      c->deflate();
     }
-  }
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkBombs() {
-  auto bs = MGMS()->getPool("Bombs")->list();
-  auto ship = CC_GNLF(Ship,ships,"ship");
-  F__LOOP(it,bs) {
-    auto b= *it;
-    if (b->status && ship->status ) {
-      if (cx::collide(b,ship)) {
-        ship->hurt();
-        b->hurt();
-      }
+void Resolve::checkBombs() {
+  auto ms = MGMS()->getPool("Bombs");
+  ms->foreach([=](f::ComObj *c) {
+    if (!c->status || c->HP <=0) {
+      c->deflate();
     }
-  }
+  });
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::checkAliens() {
+  auto sq = CC_GNLF(AlienSquad,aliens,"squad");
+  sq->aliens->foreach([=](f::ComObj *c) {
+    if (!c->status || c->HP <=0) {
+      c->deflate();
+      auto msg= j::json({
+          {"score", 1}
+          });
+      SENDMSGEX("/game/player/earnscore", &msg);
+    }
+  });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::checkShip() {
+  auto ship = CC_GNLF(Ship,ships,"ship");
+
+  if (!ship->status || ship->HP <= 0) {
+    SENDMSG("/game/player/killed");
+  }
+}
 
 
 NS_END

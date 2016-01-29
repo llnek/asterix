@@ -13,29 +13,40 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/XLives.h"
-#include "x2d/XLayer.h"
+#include "ash/System.h"
+#include "GEngine.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
+class CC_DLL Resolve : public a::System {
 
-  STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+  void checkMissiles();
+  void checkBombs();
+  void checkAliens();
+  void checkShip();
 
-  bool reduceLives(int n);
-  void updateScore(int n);
+public:
 
-  DECL_PTR(c::Label, scoreLabel)
-  DECL_PTR(f::XLives, lives)
-  DECL_IZ(score)
+  MDECL_SYS_PRIORITY(a::Resolve)
+  MDECL_SYS_TPID("s/Resolve")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Resolve(a::Engine *e)
+  : System(e) {
+  }
+
+  DECL_PTR(a::NodeList, aliens)
+  DECL_PTR(a::NodeList, ships)
+
 };
 
 
 
 NS_END
+
+
 
 
 

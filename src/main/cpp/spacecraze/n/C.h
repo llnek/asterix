@@ -24,10 +24,11 @@ NS_BEGIN(spacecraze)
 //
 struct CC_DLL Alien : public f::ComObj {
   MDECL_COMP_TPID("n/Alien")
-  Alien(int n) {
+  Alien(int n, int health, int value) {
     assert(n > 0 && n < 4);
     sprite = cx::reifySprite("sfenmy" + s::to_string(n));
     MGML()->addAtlasItem("game-pics",sprite);
+    init(sprite,health,value);
     type=n;
   }
   DECL_IZ(type)
@@ -60,7 +61,7 @@ struct CC_DLL Bomb : public f::ComObj {
 struct CC_DLL Ship : public f::ComObj {
   MDECL_COMP_TPID("n/Ship")
   Ship(not_null<c::Sprite*> s)
-  : ComObj(s) {
+  : ComObj(s,1,0) {
     speed.x= 250;
     vel.x=250;
   }
