@@ -29,7 +29,8 @@ void spawnPlayer(Ship* ship) {
   });
 
   ship->inflate(wb.cx, wb.top * -0.1f);
-  ship->sprite->setScale(1.0f);
+  ship->sprite->setOpacity(255);
+  ship->sprite->setScale(1);
   ship->god();
   ship->sprite->runAction(c::Sequence::createWithTwoActions(
         movement, movement_over));

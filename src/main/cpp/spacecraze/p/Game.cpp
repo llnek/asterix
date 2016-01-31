@@ -70,7 +70,7 @@ void GLayer::onPlayerKilled() {
       c::ScaleTo::create(0.5f, 1.5f));
   auto ship= CC_GNLF(Ship,ships,"ship");
   auto d1=c::CallFunc::create([=]() {
-        //ship->deflate();
+        ship->deflate();
     });
   auto pos= ship->pos();
   c::CallFunc *d2;
@@ -86,14 +86,13 @@ void GLayer::onPlayerKilled() {
   }
 
   ship->sprite->runAction(
-      c::Sequence::create(death, d1,d2,nullptr));
+      c::Sequence::create( death, d1,d2,nullptr));
 
-  /*
   auto explosion = c::ParticleSystemQuad::create("pics/explosion.plist");
   explosion->setAutoRemoveOnFinish(true);
   explosion->setPosition(pos);
   MGML()->addItem(explosion);
-*/
+
   cx::sfxPlay("blast_player");
 }
 
