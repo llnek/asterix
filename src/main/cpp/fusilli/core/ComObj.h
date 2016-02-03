@@ -43,6 +43,7 @@ public:
   void setPos(float x, float y);
   const c::Vec2 pos();
   const c::Rect bbox();
+  float radius();
   float height();
   int pid();
   float width();

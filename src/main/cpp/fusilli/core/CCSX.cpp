@@ -179,6 +179,23 @@ c::Label* reifyBmfLabel(float x, float y, const sstr &font, const sstr &text) {
   return f;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Label* reifyLabel(const sstr &font, float sz, const sstr &text) {
+  return c::Label::createWithTTF(text, XCFG()->getFont(font), sz);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Label* reifyLabel(float x, float y,
+  const sstr &font,
+  float sz,
+  const sstr &text) {
+  auto t = reifyLabel(font, sz, text);
+  t->setPosition(x,y);
+  return t;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
 bool collide(not_null<ComObj*> a, not_null<ComObj*> b) {
@@ -283,6 +300,14 @@ bool timerDone(c::DelayTime* t) {
 //
 c::Sprite* reifySprite(const sstr &name) {
   return c::Sprite::createWithSpriteFrameName(name);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Sprite* loadSprite(const sstr &fname, const sstr &path) {
+  auto sp= c::Sprite::create();
+  sp->initWithFile(path + "/" + fname);
+  return sp;
 }
 
 //////////////////////////////////////////////////////////////////////////

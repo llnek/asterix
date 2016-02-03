@@ -75,12 +75,18 @@ namespace ccsx {
   void undoTimer(c::DelayTime*);
   bool timerDone(c::DelayTime*);
 
-  c::Label* reifyBmfLabel(const sstr &font, const sstr &text="");
+  c::Label* reifyLabel(const sstr &font, float sz, const sstr &text="");
+  c::Label* reifyLabel(float x, float y,
+    const sstr &font,
+    float sz,
+    const sstr &text="");
 
+  c::Label* reifyBmfLabel(const sstr &font, const sstr &text="");
   c::Label* reifyBmfLabel(float x, float y,
     const sstr &font,
     const sstr &text="");
 
+  c::Sprite* loadSprite(const sstr &fname, const sstr &path="pics");
   c::Sprite* reifySprite(const sstr &frameName);
 
   const Box4 bbox4B4(not_null<ComObj*>);
@@ -160,7 +166,7 @@ namespace ccsx {
   const c::Vec2 anchorB();
   const c::Vec2 anchorBL();
 
-    const c::Vec2 clamp(const c::Vec2 &loc, const c::Size &sz, const Box4 &world);
+  const c::Vec2 clamp(const c::Vec2 &loc, const c::Size &sz, const Box4 &world);
   const c::Vec2 clamp(const c::Vec2 &cur, const Box4&);
 
   float randFloat(float upper);
