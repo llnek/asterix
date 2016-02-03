@@ -110,6 +110,14 @@ const c::Rect ComObj::bbox() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void ComObj::setPos(const c::Vec2 &pos) {
+  if (NNP(sprite)) {
+    sprite->setPosition(pos.x,pos.y);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void ComObj::setPos(float x, float y) {
   if (NNP(sprite)) {
     sprite->setPosition(x,y);
@@ -126,6 +134,12 @@ const c::Vec2 ComObj::pos() {
 //
 const c::Size ComObj::csize() {
   return NNP(sprite) ? sprite->getContentSize() : c::Size(0,0);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float ComObj::circum() {
+  return NNP(sprite) ? sprite->getContentSize().width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

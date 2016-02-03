@@ -19,6 +19,57 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(hockey)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::preamble() {
+  shared= engine->getNodeList(SharedNode().typeId());
+  pucks= engine->getNodeList(PuckNode().typeId());
+  mallets= engine->getNodeList(MalletNode().typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::update(float dt) {
+  if (MGMS()->isLive()) {
+    process();
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::process() {
+  auto ss = CC_GNLF(GVars,shared,"slots");
+  auto puck = CC_GNLF(Puck,pucks,"puck");
+  auto bc= puck->circum();
+
+  //check for goals!
+
+  if (puck->nextPos.y > wb.top + bc) {
+    auto msg=j::json({
+        {"pnum", 1},
+        {"score",1}
+        });
+    SENDMSGEX("/game/player/earnscore",&msg);
+  }
+
+  if (puck->nextPos.y  < -bc) {
+    auto msg=j::json({
+        {"pnum", 2},
+        {"score",1}
+        });
+    SENDMSGEX("/game/player/earnscore",&msg);
+  }
+
+  //move pieces to next position
+  for(auto node=mallets->head;node;node=node->next) {
+    auto m=CC_GNF(Mallet,node,"mallet");
+    m->setPos(m->nextPos);
+  }
+
+  puck->setPos(puck->nextPos);
+}
+
 
 
 NS_END

@@ -19,6 +19,10 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public a::System {
 
+  DECL_PTR(a::NodeList, mallets)
+  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(a::NodeList, pucks)
+
 public:
 
   MDECL_SYS_PRIORITY( a::Move)

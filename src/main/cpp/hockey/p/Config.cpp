@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "Splash.h"
 #include "Config.h"
+#include "Game.h"
 NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ void Config::runOnce() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Splash::reify();
+  return Game::reify(mc_new(f::GCX));
 }
 
 

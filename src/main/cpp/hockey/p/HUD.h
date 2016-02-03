@@ -22,10 +22,10 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, score2Label)
-  DECL_PTR(c::Label, score1Label)
+  s_arr<c::Label*,3> slabels;
   s_arr<int,3> scores;
 
+  void updateScore(int pnum, int v);
 };
 
 

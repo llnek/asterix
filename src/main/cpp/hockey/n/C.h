@@ -20,16 +20,31 @@ NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Mallet : public f::ComObj {
-  Mallet(not_null<c::Sprite*> s)
-    : ComObj(s) {
+struct CC_DLL Widget : public f::ComObj {
+  void setPos(const c::Vec2 &pos) {
+    f::ComObj::setPos(pos);
+    if (!nextPos.equals(pos)) {
+      nextPos = pos;
+    }
   }
+  DECL_TD(c::Vec2,nextPos)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Mallet : public Widget {
+  Mallet(not_null<c::Sprite*> s, int pnum)
+    : ComObj(s) {
+    this->pnum=pnum;
+  }
+  DECL_PTR(c::Touch, tap)
+  DECL_IZ(pnum)
   MDECL_COMP_TPID("n/Mallet")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Puck : public f::ComObj {
+struct CC_DLL Puck : public Widget {
   Mallet(not_null<c::Sprite*> s)
     : ComObj(s) {
   }
@@ -40,7 +55,6 @@ struct CC_DLL Puck : public f::ComObj {
 //
 struct CC_DLL Player : public a::Component {
   MDECL_COMP_TPID("n/Player")
-  DECL_PTR(c::Touch, tap)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,6 +74,8 @@ struct CC_DLL Gesture : public a::Component {
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
+  DECL_FZ(goalWidth)
+  DECL_FZ(sq_radii)
 };
 
 

@@ -40,9 +40,11 @@ public:
   void god() { godMode=true; }
   void freeze() { status=false; }
 
-  void setPos(float x, float y);
+  virtual void setPos(float x, float y);
+  virtual void setPos(const c::Vec2&);
   const c::Vec2 pos();
   const c::Rect bbox();
+  float circum();
   float radius();
   float height();
   int pid();

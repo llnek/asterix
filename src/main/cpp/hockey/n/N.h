@@ -17,6 +17,33 @@ NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL MalletNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"motion", "n/Gesture" },
+        {"mallet", "n/Mallet" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/MalletNode")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL PuckNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"puck", "n/Puck" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/PuckNode")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL SharedNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
@@ -26,7 +53,6 @@ struct CC_DLL SharedNode : public a::NodeFactory {
   }
 
   MDECL_NFAC_TPID( "n/SharedNode")
-
 };
 
 

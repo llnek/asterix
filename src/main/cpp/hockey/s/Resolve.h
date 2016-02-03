@@ -19,6 +19,12 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Resolve : public a::System {
 
+  DECL_PTR(a::NodeList, mallets)
+  DECL_PTR(a::NodeList, puck)
+  DECL_PTR(a::NodeList, shared)
+
+  void process();
+
 public:
 
   MDECL_SYS_PRIORITY( a::Resolve)

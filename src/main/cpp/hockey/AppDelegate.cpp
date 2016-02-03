@@ -26,6 +26,8 @@ AppDelegate::AppDelegate() {
   auto r= NodeRegistry::self();
 
   r->rego( mc_new(SharedNode));
+  r->rego( mc_new(PuckNode));
+  r->rego( mc_new(MalletNode));
 
   // set up app-config
   Config::reify();

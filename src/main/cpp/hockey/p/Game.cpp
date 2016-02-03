@@ -68,12 +68,11 @@ void GLayer::onTouchesMoved(const s_vec<c::Touch*> &touches, c::Event* event) {
         auto r= m->radius();
         auto cp= m->pos();
         auto npos= tap;
-        //keep player inside screen
+        //clamp
+        if (npos.y < r) npos.y  = r;
         if (npos.x < r) npos.x = r;
         if (npos.x > wb.right - r) npos.x = wb.right - r;
-        if (npos.y < r) npos.y  = r;
         if (npos.y > wb.top - r) npos.y = wb.top - r;
-
         //keep player inside its court
         if (cp.y < wb.top* 0.5f) {
           if (npos.y > wb.top* 0.5f - r) {
@@ -92,11 +91,64 @@ void GLayer::onTouchesMoved(const s_vec<c::Touch*> &touches, c::Event* event) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchesEnded(const s_vec<c::Touch*> &touches, c::Event* ) {
+  F__LOOP(it,touches) {
+    auto t= *it;
+    for (auto node=mallets->head;node;node=node->next) {
+      auto m=CC_GNF(Mallet,node,"mallet");
+      if (m->tap == t) {
+        m->vec=c::Vec2(0,0);
+        SNPTR(m->tap)
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::updateScore(int player, int score) {
+  auto ball= CC_GNLF(Puck,pucks,"puck");
+  auto bc= ball->circum();
+  auto wb= cx::visBox();
+
+  getHUD()->updateScore(player, score)
+  ball->vec= CC_ZPT;
+
+  if (player == 1) {
+        //move ball to player 2 court
+    ball->nextPos = c::Vec2(wb.cx, wb.cy + bc);
+  } else {
+      //move ball to player 1 court
+    ball->nextPos = c::Vec2(wb.cx, wb.cy - bc);
+  }
+
+  for (auto node=mallets->head;node;node=node->next) {
+    auto m= CC_GNF(Mallet,mode,"mallet");
+    auto mc= m->circum();
+    if (m->pnum == 1) {
+      m->setPos(c::Vec2(wb.cx, mc));
+    } else {
+      m->setPos(c::Vec2(wb.cx, wb.top - mc));
+    }
+    m->tap=nullptr;
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
   mallets = engine->getNodeList(MalletNode().typeId());
+  pucks = engine->getNodeList(PuckNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
+
+  auto mr=CC_GNLF(Mallet,mallets,"mallet")->radius();
+  auto br=CC_GNLF(Puck,pucks,"puck")->radius();
+  auto ss=CC_GNLF(GVars,shared,"slots");
+
+  ss->sq_radii = pow(mr+br, 2);
+  ss->goalWidth= 400;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -109,6 +161,14 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer(2);
+
+  if (topic == "/game/player/earnscore") {
+    auto msg= (j::json*) m;
+    y->updateScore(
+        JS_INT(msg->operator[]("pnum")),
+        JS_INT(msg->operator[]("score")));
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
