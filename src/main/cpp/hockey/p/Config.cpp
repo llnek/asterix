@@ -41,7 +41,11 @@ void Config::initCsts() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addImage("game.bg", CC_STR("pics/court.png"));
+  addImage("mallet", CC_STR("pics/mallet.png"));
+  addImage("puck", CC_STR("pics/puck.png"));
+  addImage("logo", CC_STR("pics/logo.png"));
+  addFont("dft", CC_STR("fon/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

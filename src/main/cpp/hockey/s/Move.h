@@ -23,6 +23,8 @@ class CC_DLL Move : public a::System {
   DECL_PTR(a::NodeList, shared)
   DECL_PTR(a::NodeList, pucks)
 
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::Move)

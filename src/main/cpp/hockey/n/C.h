@@ -21,11 +21,15 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Widget : public f::ComObj {
-  void setPos(const c::Vec2 &pos) {
-    f::ComObj::setPos(pos);
+  virtual void setPos(float x, float y) {
+    auto pos= c::Vec2(x,y);
     if (!nextPos.equals(pos)) {
       nextPos = pos;
     }
+    f::ComObj::setPos(x,y);
+  }
+  void syncPos() {
+    f::ComObj::setPos(nextPos.x,nextPos.y);
   }
   DECL_TD(c::Vec2,nextPos)
 };
@@ -76,6 +80,8 @@ struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
   DECL_FZ(goalWidth)
   DECL_FZ(sq_radii)
+  DECL_TD(c::Vec2,ballNextPos)
+  DECL_TD(c::Vec2,ballVec)
 };
 
 

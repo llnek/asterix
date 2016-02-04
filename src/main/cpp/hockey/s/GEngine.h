@@ -21,6 +21,7 @@ class CC_DLL GEngine  : public a::Engine {
 
 public:
 
+  void readyPoint(a::NodeList *mallets, a::Node *ball);
   virtual void initEntities();
   virtual void initSystems();
 

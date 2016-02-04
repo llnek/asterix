@@ -41,7 +41,6 @@ public:
   void freeze() { status=false; }
 
   virtual void setPos(float x, float y);
-  virtual void setPos(const c::Vec2&);
   const c::Vec2 pos();
   const c::Rect bbox();
   float circum();

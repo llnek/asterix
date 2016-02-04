@@ -35,6 +35,7 @@
 
 #define CC_SIZE  cocos2d::Size(0,0)
 #define CC_ZPT   cocos2d::Vec2(0,0)
+#define CC_NIL nullptr
 
 
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;

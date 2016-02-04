@@ -104,32 +104,41 @@ void GameLayer::enableListeners() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GameLayer::onTouchBegan(c::Touch *t, c::Event *e) {
-  auto loc= t->getLocationInView();
-  auto ok=false;
-  loc = CC_DTOR()->convertToGL(loc);
+bool GameLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
+  auto ok=true;
   F__LOOP(it,motionees) {
     auto c = *it;
-    if (c->bbox().containsPoint(loc)) {
-      ok=true;
+    if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
+      ok = ok && onTouchStart(c, ts);
+    } else {
+      ok = ok && onTouchStart(c, ts[0]);
     }
   }
-  // returns true if finger is on a movable object
-  return ok;
+  return motionees.size() > 0 ? ok : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::onTouchMoved(c::Touch *t, c::Event *e) {
-  auto bx= MGMS()->getEnclosureBox();
-  auto loc= t->getLocationInView();
-  loc = CC_DTOR()->convertToGL(loc);
+void GameLayer::onTouchesMoved(const s_vec<c::Touch*> &ts, c::Event*) {
   F__LOOP(it,motionees) {
     auto c = *it;
-    auto x= c->bbox();
-    // move the object when finger is on the object
-    if (x.containsPoint(loc)) {
-      onTouchMotion(c,loc,t->getDelta());
+    if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
+      onTouchMotion(c, ts);
+    } else {
+      onTouchMotion(c, ts[0]);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchesEnded(const s_vec<c::Touch*> &ts, c::Event*) {
+  F__LOOP(it,motionees) {
+    auto c = *it;
+    if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
+      onTouchEnd(c, ts);
+    } else {
+      onTouchEnd(c, ts[0]);
     }
   }
 }
@@ -142,14 +151,41 @@ void GameLayer::onMouseMotion(ComObj *c, const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::onTouchMotion(ComObj *c,
-  const c::Vec2 &loc, const c::Vec2 &delta) {
+bool GameLayer::onTouchStart(ComObj *c, const s_vec<c::Touch*> &ts) {
+  throw "you need to implement this!";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GameLayer::onTouchStart(ComObj *c, c::Touch *tap) {
+  return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchEnd(ComObj *c, const s_vec<c::Touch*> &ts) {
+  throw "you need to implement this!";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchEnd(ComObj *c, c::Touch *tap) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchMotion(ComObj *c, const s_vec<c::Touch*> &ts) {
+  throw "you need to implement this!";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onTouchMotion(ComObj *c, c::Touch *tap) {
   auto bx= MGMS()->getEnclosureBox();
-  auto pos= c->pos();
-  auto y = pos.y;
-  pos= c::ccpAdd(pos, delta);
-  pos= cx::clamp(pos, bx);
-  c->setPos(pos.x, y);
+  auto loc= tap->getLocation();
+  auto pos= cx::clamp(tap, bx);
+  c->setPos(pos.x, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -184,16 +220,13 @@ void GameLayer::onMouseUp(c::Event* ) {
 //
 void GameLayer::onMouseMove(c::Event* event) {
   auto e= (c::EventMouse*)event;
-  auto loc= e->getLocationInView();
+  //auto loc= e->getLocationInView();
   auto b= e->getMouseButton();
+  auto loc= e->getLocation();
 
   F__LOOP(it,motionees) {
-    auto c = *it;
-    //auto x= c->bbox();
     if (b == MOUSE_BUTTON_LEFT) {
-        //x.containsPoint(loc)) {
-      // mouse is on the object so move it
-      onMouseMotion(c,loc);
+      onMouseMotion(*it, loc);
     }
   }
 }

@@ -25,11 +25,21 @@ NS_BEGIN(fusii)
 class CC_DLL GameLayer : public XLayer {
 protected:
 
-  virtual void onTouchMotion( ComObj*, const c::Vec2&, const c::Vec2&);
-  virtual void onMouseMotion( ComObj*, const c::Vec2&);
+  virtual bool onTouchStart(ComObj*, const s_vec<c::Touch*>& );
+  virtual bool onTouchStart(ComObj*, c::Touch*);
 
-  virtual bool onTouchBegan(c::Touch *t, c::Event *e);
-  virtual void onTouchMoved(c::Touch *t, c::Event *e);
+  virtual void onTouchMotion(ComObj*, const s_vec<c::Touch*>& );
+  virtual void onTouchMotion(ComObj*, c::Touch*);
+
+  virtual void onTouchEnd(ComObj*, const s_vec<c::Touch*>& );
+  virtual void onTouchEnd(ComObj*, c::Touch*);
+
+
+  virtual void onMouseMotion(ComObj*, const c::Vec2&);
+
+  virtual bool onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onTouchesEnded(const s_vec<c::Touch*>&, c::Event*);
 
   virtual void onKeyReleased(KEYCODE k, c::Event*);
   virtual void onKeyPressed(KEYCODE k, c::Event*);
@@ -43,7 +53,8 @@ protected:
   virtual void postDeco();
   virtual void preDeco();
 
-    c::Touch::DispatchMode tmode= c::Touch::DispatchMode::ONE_BY_ONE;
+  //c::Touch::DispatchMode tmode= c::Touch::DispatchMode::ALL_AT_ONCE;
+  //c::Touch::DispatchMode tmode= c::Touch::DispatchMode::ONE_BY_ONE;
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
   DECL_PTR(a::Engine ,engine)
   DECL_BF(_mouseEnabled)

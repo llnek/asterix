@@ -26,7 +26,12 @@ NS_BEGIN(hockey)
 void GEngine::initEntities() {
   auto sp= cx::loadSprite("mallet.png");
   auto ent= this->reifyEntity();
-  ent->checkin( mc_new1(Mallet,sp));
+  ent->checkin( mc_new1(Mallet,sp,1));
+  ent->checkin(mc_new(Gesture));
+
+  sp= cx::loadSprite("mallet.png");
+  ent= this->reifyEntity();
+  ent->checkin( mc_new1(Mallet,sp,2));
   ent->checkin(mc_new(Gesture));
 
   sp= cx::loadSprite("puck.png");
@@ -38,8 +43,28 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(Resolve,this));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::readyPoint(a::NodeList *mallets, a::Node *ball) {
+  auto puck= CC_GNF(Puck,ball,"puck");
+  auto wb=cx::visbox();
+  for (auto node=mallets->head;node;node=node->next) {
+    auto m=CC_GNF(Mallet,node,"mallet");
+    if (m->pnum == 2) {
+      m->setPos(wb.cx, wb.top - m->circum());
+    } else {
+      m->setPos(wb.cx, m->circum());
+    }
+  }
+  puck->setPos(wb.cx, wb.cy - puck->circum());
+}
+
+
 
 
 NS_END

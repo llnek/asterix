@@ -52,8 +52,8 @@ void Resolve::process() {
         });
     SENDMSGEX("/game/player/earnscore",&msg);
   }
-
-  if (puck->nextPos.y  < -bc) {
+  else
+  if (puck->nextPos.y < -bc) {
     auto msg=j::json({
         {"pnum", 2},
         {"score",1}
@@ -64,10 +64,10 @@ void Resolve::process() {
   //move pieces to next position
   for(auto node=mallets->head;node;node=node->next) {
     auto m=CC_GNF(Mallet,node,"mallet");
-    m->setPos(m->nextPos);
+    m->sync();
   }
 
-  puck->setPos(puck->nextPos);
+  puck->sync();
 }
 
 

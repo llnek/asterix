@@ -29,79 +29,74 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_GET_IID(2)
   MDECL_UPDATE()
 
-  virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
-  virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
-  virtual void onTouchesEnded(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onTouchStart(ComObj*, const s_vec<c::Touch*>& );
+  virtual void onTouchMotion(ComObj*, const s_vec<c::Touch*>& );
+  virtual void onTouchEnd(ComObj*, const s_vec<c::Touch*>& );
 
   virtual void postReify();
 
+  DECL_PTR(a::NodeList, mallets)
+  DECL_PTR(a::NodeList, pucks)
   DECL_PTR(a::NodeList, shared)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchesBegan(const s_vec<c::Touch*> &touches, c::Event*) {
-  auto ps= CC_GNLF(Players,shared,"players");
+bool GLayer::onTouchStart(ComObj *cobj, const s_vec<c::Touch*> &touches) {
+  auto m = (Mallet*) cobj;
   F__LOOP(it,touches) {
     auto t = *it;
     auto tap = t->getLocation();
-    for (auto n=1; n < 3; ++n) {
-      if (ps->parr[n]->getBoundingBox().containsPoint(tap)) {
-        ps->parr[n].tap= touch;
-      }
+    if (m->bbox().containsPoint(tap)) {
+      m->tap= t;
     }
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchesMoved(const s_vec<c::Touch*> &touches, c::Event* event) {
-  auto ps= CC_GNLF(Players,shared,"players");
+void GLayer::onTouchMotion(ComObj *cobj, const s_vec<c::Touch*> &touches) {
   auto wb= cx::visBox();
+  auto m= (Mallet*)cobj;
   F__LOOP(it,touches) {
     auto t = *it;
     auto tap = t->getLocation();
-    for (auto node=mallets->head; node; node=node->next) {
-      auto m= CC_GNF(Mallet,node,"mallet");
-      auto &py= ps->parr[m->pnum];
-      if (py->tap == t) {
-        auto r= m->radius();
-        auto cp= m->pos();
-        auto npos= tap;
-        //clamp
-        if (npos.y < r) npos.y  = r;
-        if (npos.x < r) npos.x = r;
-        if (npos.x > wb.right - r) npos.x = wb.right - r;
-        if (npos.y > wb.top - r) npos.y = wb.top - r;
-        //keep player inside its court
-        if (cp.y < wb.top* 0.5f) {
-          if (npos.y > wb.top* 0.5f - r) {
-            npos.y = wb.top* 0.5f - r;
-          }
-        } else {
-          if (npos.y < wb.top* 0.5f + r) {
-            npos.y = wb.top* 0.5f + r;
-          }
+    if (m->tap == t) {
+      auto r= m->radius();
+      auto cp= m->pos();
+      auto npos= tap;
+      //clamp
+      if (npos.y < r) { npos.y  = r; }
+      if (npos.x < r) { npos.x = r; }
+      if (npos.x > wb.right - r) { npos.x = wb.right - r; }
+      if (npos.y > wb.top - r) { npos.y = wb.top - r; }
+      //keep player inside its court
+      if (cp.y < wb.cy) {
+        if (npos.y > wb.cy - r) {
+          npos.y = wb.cy - r;
         }
-
-        m->nextPos= npos;
-        m->vec= c::Vec2(tap.x - cp.x, tap.y - cp.y);
+      } else {
+        if (npos.y < wb.cy + r) {
+          npos.y = wb.cy + r;
+        }
       }
+
+      m->nextPos= npos;
+      m->vec= c::Vec2(tap.x - cp.x, tap.y - cp.y);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchesEnded(const s_vec<c::Touch*> &touches, c::Event* ) {
+void GLayer::onTouchEnd(ComObj *cobj, const s_vec<c::Touch*> &touches) {
+  auto m = (Mallet*) cobj;
   F__LOOP(it,touches) {
     auto t= *it;
-    for (auto node=mallets->head;node;node=node->next) {
-      auto m=CC_GNF(Mallet,node,"mallet");
-      if (m->tap == t) {
-        m->vec=c::Vec2(0,0);
-        SNPTR(m->tap)
-      }
+    if (m->tap == t) {
+      m->vec= CC_ZPT;
+      m->tap= CC_NIL;
     }
   }
 }
@@ -128,12 +123,14 @@ void GLayer::updateScore(int player, int score) {
     auto m= CC_GNF(Mallet,mode,"mallet");
     auto mc= m->circum();
     if (m->pnum == 1) {
-      m->setPos(c::Vec2(wb.cx, mc));
+      m->setPos(wb.cx, mc);
     } else {
-      m->setPos(c::Vec2(wb.cx, wb.top - mc));
+      m->setPos(wb.cx, wb.top - mc);
     }
-    m->tap=nullptr;
+    m->tap=CC_NIL;
   }
+
+  SCAST(GEngine*,engine)->readyPoint(mallets,pucks->head);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -149,11 +146,13 @@ void GLayer::postReify() {
   ss->sq_radii = pow(mr+br, 2);
   ss->goalWidth= 400;
 
+  SCAST(GEngine*,engine)->readyPoint(mallets,pucks->head);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decorate() {
   engine = mc_new(GEngine);
+  centerImage("game.bg");
 }
 
 END_NS_UNAMED

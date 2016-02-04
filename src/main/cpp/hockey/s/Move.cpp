@@ -22,18 +22,66 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-
+  mallets = engine->getNodeList(MalletNode().typeId());
+  pucks = engine->getNodeList(PuckNode().typeId());
+  shared = engine->getNodeList(SharedNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
+    process(dt);
   }
   return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::process(float dt) {
+  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto puck= CC_GNLF(Puck,pucks,"puck");
+  auto bnpos = puck->nextPos;
+  auto br= puck->radius();
+  auto bv = puck->vec;
+  bv *=  0.98f;
 
+  bnpos.x += bv.x;
+  bnpos.y += bv.y;
+
+  for (auto node=mallets->head;node;node=node->next) {
+    auto m=CC_GNF(Mallet,node,"mallet");
+    auto pnpos = m->nextPos;
+    auto bpos= puck->pos();
+    auto mpos= m->pos();
+    auto mr= m->radius();
+    auto pv = m->vec;
+    auto dx = bnpos.x - mpos.x;
+    auto dy = bnpos.y - mpos.y;
+    auto dist1 = pow(dx, 2) + pow(dy, 2);
+    auto dist2 = pow(bpos.x - pnpos.x, 2) + pow(bpos.y - pnpos.y, 2);
+
+    if (dist1 <= ss->sq_radii || dist2 <= ss->sq_radii) {
+
+      auto mag_player = pow(pv.x, 2) + pow(pv.y, 2);
+      auto mag_ball = pow(bv.x, 2) + pow(bv.y, 2);
+      auto force = sqrt(mag_ball + mag_player);
+      auto angle = atan2(dy, dx);
+
+      bv.x = force* cos(angle);
+      bv.y = force* sin(angle);
+
+      bnpos.x = pnpos.x + (mr + br + force) * cos(angle);
+      bnpos.y = pnpos.y + (mr + br + force) * sin(angle);
+
+      cx::sfxPlay("hit");
+    }
+  }
+
+  ss->ballNextPos= bnpos;
+  ss->ballVec= bv;
+
+}
 
 
 
