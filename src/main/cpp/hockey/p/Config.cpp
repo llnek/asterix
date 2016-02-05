@@ -50,7 +50,19 @@ void Config::initAssets() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const c::Size &fz) {
+  auto gz= gameSize();
+  sstr p;
+
+  if (fz.width > gz.width) {
+    CC_DTOR()->setContentScaleFactor(1);
+    p="sd";
+  } else {
+    CC_DTOR()->setContentScaleFactor(2);
+    p="hd";
+  }
+
+  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////

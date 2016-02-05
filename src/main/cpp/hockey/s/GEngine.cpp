@@ -26,15 +26,18 @@ NS_BEGIN(hockey)
 void GEngine::initEntities() {
   auto sp= cx::loadSprite("mallet.png");
   auto ent= this->reifyEntity();
+  MGML()->addItem(sp);
   ent->checkin( mc_new2(Mallet,sp,1));
   ent->checkin(mc_new(Gesture));
 
   sp= cx::loadSprite("mallet.png");
   ent= this->reifyEntity();
+  MGML()->addItem(sp);
   ent->checkin( mc_new2(Mallet,sp,2));
   ent->checkin(mc_new(Gesture));
 
   sp= cx::loadSprite("puck.png");
+  MGML()->addItem(sp);
   ent= this->reifyEntity();
   ent->checkin(mc_new1(Puck,sp));
 
