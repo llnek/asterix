@@ -37,7 +37,7 @@ protected:
 
   virtual void onMouseMotion(ComObj*, const c::Vec2&);
 
-  virtual bool onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
   virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
   virtual void onTouchesEnded(const s_vec<c::Touch*>&, c::Event*);
 

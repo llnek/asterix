@@ -43,7 +43,7 @@ void Move::process(float dt) {
   auto puck= CC_GNLF(Puck,pucks,"puck");
   auto bnpos = puck->nextPos;
   auto br= puck->radius();
-  auto bv = puck->vec;
+  auto bv = puck->vel;
   bv *=  0.98f;
 
   bnpos.x += bv.x;
@@ -55,7 +55,7 @@ void Move::process(float dt) {
     auto bpos= puck->pos();
     auto mpos= m->pos();
     auto mr= m->radius();
-    auto pv = m->vec;
+    auto pv = m->vel;
     auto dx = bnpos.x - mpos.x;
     auto dy = bnpos.y - mpos.y;
     auto dist1 = pow(dx, 2) + pow(dy, 2);

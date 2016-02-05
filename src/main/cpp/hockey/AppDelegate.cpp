@@ -20,7 +20,7 @@ NS_USING(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate() : App("hockey") {
 
   // register all ash::node factories here
   auto r= NodeRegistry::self();

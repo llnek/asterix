@@ -42,7 +42,7 @@ void Resolve::process() {
   auto ss = CC_GNLF(GVars,shared,"slots");
   auto puck = CC_GNLF(Puck,pucks,"puck");
   auto bc= puck->circum();
-
+    auto wb= cx::visBox();
   //check for goals!
 
   if (puck->nextPos.y > wb.top + bc) {
@@ -64,10 +64,10 @@ void Resolve::process() {
   //move pieces to next position
   for(auto node=mallets->head;node;node=node->next) {
     auto m=CC_GNF(Mallet,node,"mallet");
-    m->sync();
+    m->syncPos();
   }
 
-  puck->sync();
+  puck->syncPos();
 }
 
 

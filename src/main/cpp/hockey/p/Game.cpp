@@ -27,12 +27,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
-  MDECL_UPDATE()
 
-  virtual void onTouchStart(ComObj*, const s_vec<c::Touch*>& );
-  virtual void onTouchMotion(ComObj*, const s_vec<c::Touch*>& );
-  virtual void onTouchEnd(ComObj*, const s_vec<c::Touch*>& );
-
+  virtual bool onTouchStart(f::ComObj*, const s_vec<c::Touch*>& );
+  virtual void onTouchMotion(f::ComObj*, const s_vec<c::Touch*>& );
+  virtual void onTouchEnd(f::ComObj*, const s_vec<c::Touch*>& );
+  void updateScore(int,int);
   virtual void postReify();
 
   DECL_PTR(a::NodeList, mallets)
@@ -42,7 +41,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(ComObj *cobj, const s_vec<c::Touch*> &touches) {
+bool GLayer::onTouchStart(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
   auto m = (Mallet*) cobj;
   F__LOOP(it,touches) {
     auto t = *it;
@@ -56,7 +55,7 @@ bool GLayer::onTouchStart(ComObj *cobj, const s_vec<c::Touch*> &touches) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(ComObj *cobj, const s_vec<c::Touch*> &touches) {
+void GLayer::onTouchMotion(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
   auto wb= cx::visBox();
   auto m= (Mallet*)cobj;
   F__LOOP(it,touches) {
@@ -83,19 +82,19 @@ void GLayer::onTouchMotion(ComObj *cobj, const s_vec<c::Touch*> &touches) {
       }
 
       m->nextPos= npos;
-      m->vec= c::Vec2(tap.x - cp.x, tap.y - cp.y);
+      m->vel= c::Vec2(tap.x - cp.x, tap.y - cp.y);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnd(ComObj *cobj, const s_vec<c::Touch*> &touches) {
+void GLayer::onTouchEnd(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
   auto m = (Mallet*) cobj;
   F__LOOP(it,touches) {
     auto t= *it;
     if (m->tap == t) {
-      m->vec= CC_ZPT;
+      m->vel= CC_ZPT;
       m->tap= CC_NIL;
     }
   }
@@ -108,8 +107,8 @@ void GLayer::updateScore(int player, int score) {
   auto bc= ball->circum();
   auto wb= cx::visBox();
 
-  getHUD()->updateScore(player, score)
-  ball->vec= CC_ZPT;
+    getHUD()->updateScore(player, score);
+  ball->vel= CC_ZPT;
 
   if (player == 1) {
         //move ball to player 2 court
@@ -120,7 +119,7 @@ void GLayer::updateScore(int player, int score) {
   }
 
   for (auto node=mallets->head;node;node=node->next) {
-    auto m= CC_GNF(Mallet,mode,"mallet");
+    auto m= CC_GNF(Mallet,node,"mallet");
     auto mc= m->circum();
     if (m->pnum == 1) {
       m->setPos(wb.cx, mc);
@@ -159,7 +158,7 @@ END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
-  auto y= (GLayer*) getGLayer(2);
+  auto y= (GLayer*) getGLayer();
 
   if (topic == "/game/player/earnscore") {
     auto msg= (j::json*) m;

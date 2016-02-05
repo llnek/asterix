@@ -22,13 +22,13 @@ NS_BEGIN(hockey)
 void HUDLayer::decorate() {
 
   auto wb= cx::visBox();
-  auto b= cx::reifyBmfLabel(wb.right-60, wb.top * 0.5f + 80, "OCR", 60, "888");
+  auto b= cx::reifyLabel(wb.right-60, wb.top * 0.5f + 80, "arial", 60, "888");
   b->setRotation(90);
   addItem(b);
   slabels[2]=b;
   scores[2]=0;
 
-  b= cx::reifyBmfLabel(wb.right-60, wb.top * 0.5f - 80, "OCR", 60, "888");
+  b= cx::reifyLabel(wb.right-60, wb.top * 0.5f - 80, "arial", 60, "888");
   b->setRotation(90);
   addItem(b);
   slabels[1]=b;

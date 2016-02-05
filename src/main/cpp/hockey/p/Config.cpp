@@ -45,7 +45,7 @@ void Config::initAssets() {
   addImage("mallet", CC_STR("pics/mallet.png"));
   addImage("puck", CC_STR("pics/puck.png"));
   addImage("logo", CC_STR("pics/logo.png"));
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("arial", CC_STR("fon/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

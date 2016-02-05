@@ -23,7 +23,7 @@ class CC_DLL Collide : public a::System {
   DECL_PTR(a::NodeList, pucks)
   DECL_PTR(a::NodeList, shared)
 
-  void process(float)
+    void process(float);
 
 public:
 

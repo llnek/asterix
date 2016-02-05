@@ -44,7 +44,7 @@ void Collide::process(float dt) {
   auto gw2= ss->goalWidth * 0.5f;
   auto br= puck->radius();
   auto bps= puck->pos();
-
+    auto wb= cx::visBox();
   auto bnps = ss->ballNextPos;
   auto bvec = ss->ballVec;
 
@@ -80,7 +80,7 @@ void Collide::process(float dt) {
 
   //finally, update ball's vector and next position
   puck->nextPos = bnps;
-  puck->vec = bvec;
+  puck->vel = bvec;
 
 }
 

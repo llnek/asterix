@@ -31,6 +31,10 @@ struct CC_DLL Widget : public f::ComObj {
   void syncPos() {
     f::ComObj::setPos(nextPos.x,nextPos.y);
   }
+
+  Widget(not_null<c::Sprite*> s)
+  : ComObj(s) {}
+
   DECL_TD(c::Vec2,nextPos)
 };
 
@@ -38,7 +42,7 @@ struct CC_DLL Widget : public f::ComObj {
 //
 struct CC_DLL Mallet : public Widget {
   Mallet(not_null<c::Sprite*> s, int pnum)
-    : ComObj(s) {
+    : Widget(s) {
     this->pnum=pnum;
   }
   DECL_PTR(c::Touch, tap)
@@ -49,8 +53,8 @@ struct CC_DLL Mallet : public Widget {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Puck : public Widget {
-  Mallet(not_null<c::Sprite*> s)
-    : ComObj(s) {
+  Puck(not_null<c::Sprite*> s)
+    : Widget(s) {
   }
   MDECL_COMP_TPID("n/Puck")
 };

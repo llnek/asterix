@@ -110,14 +110,6 @@ const c::Rect ComObj::bbox() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::setPos(const c::Vec2 &pos) {
-  if (NNP(sprite)) {
-    sprite->setPosition(pos.x,pos.y);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void ComObj::setPos(float x, float y) {
   if (NNP(sprite)) {
     sprite->setPosition(x,y);

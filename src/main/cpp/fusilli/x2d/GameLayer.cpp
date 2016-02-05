@@ -93,7 +93,7 @@ void GameLayer::enableListeners() {
   }
   try {
     if (!cx::isDesktop()) {
-      setTouchMode(this->tmode);
+      //setTouchMode(this->tmode);
       setTouchEnabled(true);
     }
   } catch (...) {
@@ -104,17 +104,15 @@ void GameLayer::enableListeners() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GameLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
-  auto ok=true;
+void GameLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
   F__LOOP(it,motionees) {
     auto c = *it;
     if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
-      ok = ok && onTouchStart(c, ts);
+      onTouchStart(c, ts);
     } else {
-      ok = ok && onTouchStart(c, ts[0]);
+      onTouchStart(c, ts[0]);
     }
   }
-  return motionees.size() > 0 ? ok : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -184,7 +182,7 @@ void GameLayer::onTouchMotion(ComObj *c, const s_vec<c::Touch*> &ts) {
 void GameLayer::onTouchMotion(ComObj *c, c::Touch *tap) {
   auto bx= MGMS()->getEnclosureBox();
   auto loc= tap->getLocation();
-  auto pos= cx::clamp(tap, bx);
+  auto pos= cx::clamp(loc, bx);
   c->setPos(pos.x, pos.y);
 }
 
