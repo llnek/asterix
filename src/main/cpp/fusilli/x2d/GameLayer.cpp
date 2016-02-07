@@ -107,7 +107,7 @@ void GameLayer::enableListeners() {
 void GameLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
   F__LOOP(it,motionees) {
     auto c = *it;
-    if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
+    if (tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
       onTouchStart(c, ts);
     } else {
       onTouchStart(c, ts[0]);
@@ -120,7 +120,7 @@ void GameLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
 void GameLayer::onTouchesMoved(const s_vec<c::Touch*> &ts, c::Event*) {
   F__LOOP(it,motionees) {
     auto c = *it;
-    if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
+    if (tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
       onTouchMotion(c, ts);
     } else {
       onTouchMotion(c, ts[0]);
@@ -133,7 +133,7 @@ void GameLayer::onTouchesMoved(const s_vec<c::Touch*> &ts, c::Event*) {
 void GameLayer::onTouchesEnded(const s_vec<c::Touch*> &ts, c::Event*) {
   F__LOOP(it,motionees) {
     auto c = *it;
-    if (getTouchMode() == c::Touch::DispatchMode::ALL_AT_ONCE) {
+    if (tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
       onTouchEnd(c, ts);
     } else {
       onTouchEnd(c, ts[0]);
@@ -220,7 +220,7 @@ void GameLayer::onMouseMove(c::Event* event) {
   auto e= (c::EventMouse*)event;
   auto loc= e->getLocationInView();
   auto b= e->getMouseButton();
-  
+
   F__LOOP(it,motionees) {
     if (b == MOUSE_BUTTON_LEFT) {
       onMouseMotion(*it, loc);

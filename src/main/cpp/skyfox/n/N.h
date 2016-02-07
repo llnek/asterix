@@ -29,6 +29,39 @@ struct CC_DLL SharedNode : public a::NodeFactory {
 
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL BombNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"bomb", "n/Bomb" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/BombNode")
+
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL UfoNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"ufo", "n/Ufo" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/UfoNode")
+
+};
+
+
+
+
+
 
 NS_END
 

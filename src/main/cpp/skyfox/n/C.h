@@ -57,6 +57,25 @@ struct CC_DLL Health : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL Bomb : public f::ComObj {
+  Bomb(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
+  MDECL_COMP_TPID("n/Bomb")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Ufo : public f::ComObj {
+  Ufo(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
+  MDECL_COMP_TPID("n/Ufo")
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Gesture : public a::Component {
   MDECL_COMP_TPID("n/Gesture")
 };
@@ -65,6 +84,12 @@ struct CC_DLL Gesture : public a::Component {
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
+  DECL_FZ(meteorInterval)
+  DECL_FZ(meteorSpeed)
+  DECL_FZ(ufoInterval)
+  DECL_FZ(healthSpeed)
+  DECL_FZ(energy)
+
 };
 
 

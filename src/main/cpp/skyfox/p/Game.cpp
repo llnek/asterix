@@ -28,16 +28,48 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  void updateEnergy();
+  void createActions();
+  void onDone();
   virtual void postReify();
 
+  DECL_PTR(c::RepeatForever,rotateSprite)
+  DECL_PTR(c::RepeatForever,swingHealth)
+  DECL_PTR(c::RepeatForever,blinkRay)
+  DECL_PTR(c::Sequence,shockwaveSequence)
+  DECL_PTR(c::Sequence,groundHit)
+  DECL_PTR(c::Sequence,explosion)
+  DECL_PTR(c::Node,shockWave)
+  DECL_PTR(c::ScaleTo,growBomb)
+  DECL_PTR(c::Animate,ufoAnimation)
+  DECL_PTR(c::Sprite,ufo)
   DECL_PTR(a::NodeList, shared)
   s_vec<c::Sprite*> clouds;
 
+  GLayer() {
+    tmode= c::Touch::DispatchMode::ONE_BY_ONE;
+  }
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::updateEnergy() {
+  auto ss= CC_GNLF(GVars,shared,"slots");
+  getHUD()->updateEnergy(ss->energy);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onDone() {
+  cx::sfxEffect("fire_truck");
+  //_gameOverMessage->setVisible(true);
+  MGMS()->stop();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
   shared = engine->getNodeList(SharedNode().typeId());
+  cx::sfxMusic("bg", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -79,6 +111,7 @@ void GLayer::decorate() {
     clouds.push_back(cloud);
   }
 
+  createActions();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -89,87 +122,83 @@ void GLayer::createActions() {
       c::EaseInOut::create(
         c::RotateTo::create(1.2f, -10), 2),
         c::EaseInOut::create(c::RotateTo::create(1.2f, 10), 2), CC_NIL);
+  auto wb= cx::visBox();
 
-  _swingHealth = c::RepeatForever::create( (c::ActionInterval *) easeSwing );
-  _swingHealth->retain();
+  this->swingHealth = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
+  CC_KEEP(this->swingHealth)
 
-  _shockwaveSequence = c::Sequence::create(
+  this->shockwaveSequence = c::Sequence::create(
       c::FadeOut::create(1.0f),
-      c::CallFunc::create(s::bind(&GameLayer::shockwaveDone, this)),
-                    nullptr);
-    _shockwaveSequence->retain();
+      c::CallFunc::create([=]() {
+        this->shockWave->setVisible(false);
+        }),
+      CC_NIL);
+  CC_KEEP(this->shockwaveSequence)
 
+  this->growBomb = c::ScaleTo::create(4.0f, 1);
+  CC_KEEP(this->growBomb)
 
-    _growBomb = ScaleTo::create(4.0f, 1);
-    _growBomb->retain();
+  this->rotateSprite = c::RepeatForever::create(
+      c::RotateBy::create(0.5f ,  -90));
+  CC_KEEP(this->rotateSprite)
 
+  //animations
+  auto animation = c::Animation::create();
+  for (auto i = 1; i <= 10; ++i) {
+    animation->addSpriteFrame(
+        cx::getSpriteFrame( "boom"+s::to_string(i)+".png"));
+  }
+  animation->setRestoreOriginalFrame(true);
+  animation->setDelayPerUnit(1 / 10.0f);
+  this->groundHit = c::Sequence::create(
+              c::MoveBy::create(0, c::Vec2(0,wb.top * 0.12f)),
+              c::Animate::create(animation),
+              c::CallFuncN::create([](c::Node *p) {
+                p->setVisible(false);
+                }),
+              CC_NIL);
+  CC_KEEP(this->groundHit)
 
-    auto  rotate = RotateBy::create(0.5f ,  -90);
-    _rotateSprite = RepeatForever::create( rotate );
-    _rotateSprite->retain();
+  animation = c::Animation::create();
+  for (auto i = 1; i <= 7; ++i) {
+    animation->addSpriteFrame(
+        cx::getSpriteFrame(
+          "explosion_small"+s::to_string(i)+".png"));
+  }
+  animation->setRestoreOriginalFrame(true);
+  animation->setDelayPerUnit(0.5 / 7.0f);
+  this->explosion = c::Sequence::create(
+          c::Animate::create(animation),
+          c::CallFuncN::create([](c::Node *p) {
+            p->setVisible(false);
+            }),
+          CC_NIL);
+  CC_KEEP(this->explosion)
 
+  //add ufo
+  this->ufo = cx::reifySprite("ufo_1.png");
+  animation = c::Animation::create();
+  for (auto i = 1; i <= 4; ++i) {
+    animation->addSpriteFrame(
+        cx::getSpriteFrame(
+          "ufo_" + s::to_string(i) +".png"));
+  }
+  animation->setDelayPerUnit(1.0 / 4.0f);
+  animation->setLoops(-1);
+  this->ufoAnimation = c::Animate::create(animation);
+  CC_KEEP(this->ufoAnimation)
 
-    //animations
-    auto animation = Animation::create();
-    int i;
-    for(i = 1; i <= 10; i++) {
-        auto name = String::createWithFormat("boom%i.png", i);
-        auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(name->getCString());
-        animation->addSpriteFrame(frame);
-    }
+  auto uz= this->ufo->getBoundingBox().size;
+  auto ray = cx::reifySprite("ray.png");
+  ray->setAnchorPoint(c::Vec2(0.5, 1.0));
+  ray->setPosition(uz.width  * 0.52f, uz.height * 0.5f);
 
-    animation->setDelayPerUnit(1 / 10.0f);
-    animation->setRestoreOriginalFrame(true);
-    _groundHit = Sequence::create(
-                MoveBy::create(0, Vec2(0,_screenSize.height * 0.12f)),
-                Animate::create(animation),
-                CallFuncN::create(CC_CALLBACK_1(GameLayer::animationDone, this)),
-                nullptr
-                );
-   _groundHit->retain();
+  this->blinkRay = c::RepeatForever::create(c::Blink::create(4, 6));
+  CC_KEEP(this->blinkRay)
+  this->ufo->addChild(ray, -1, kSpriteRay);
 
-    animation = Animation::create();
-    for(i = 1; i <= 7; i++) {
-        auto name = String::createWithFormat("explosion_small%i.png", i);
-        auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(name->getCString());
-        animation->addSpriteFrame(frame);
-    }
-
-    animation->setDelayPerUnit(0.5 / 7.0f);
-    animation->setRestoreOriginalFrame(true);
-    _explosion = Sequence::create(
-            Animate::create(animation),
-            CallFuncN::create(CC_CALLBACK_1(GameLayer::animationDone, this)),
-            nullptr
-            );
-
-    _explosion->retain();
-
-    //add ufo
-    _ufo = Sprite::createWithSpriteFrameName("ufo_1.png");
-    animation = Animation::create();
-    for(i = 1; i <= 4; i++) {
-        auto name = String::createWithFormat("ufo_%i.png", i);
-        auto frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(name->getCString());
-        animation->addSpriteFrame(frame);
-    }
-
-    animation->setDelayPerUnit(1.0 / 4.0f);
-    animation->setLoops(-1);
-    _ufoAnimation = Animate::create(animation);
-    _ufoAnimation->retain();
-
-    auto ray = Sprite::createWithSpriteFrameName("ray.png");
-    ray->setAnchorPoint(Vec2(0.5, 1.0));
-    ray->setPosition(Vec2(_ufo->getBoundingBox().size.width  * 0.52f, _ufo->getBoundingBox().size.height * 0.5f));
-
-    _blinkRay = RepeatForever::create(Blink::create(4, 6));
-    _blinkRay->retain();
-    _ufo->addChild(ray, -1, kSpriteRay);
-
-    _ufo->setVisible(false);
-    _gameBatchNode->addChild(_ufo, 0, kSpriteUfo);
-
+  this->ufo->setVisible(false);
+  addAtlasItem("game-pics", this->ufo, 0, kSpriteUfo);
 }
 
 END_NS_UNAMED
@@ -177,6 +206,14 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic=="/game/hud/updateEnergy") {
+    y->updateEnergy();
+  }
+  else
+  if (topic=="/game/end") {
+    y->onDone();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

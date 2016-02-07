@@ -19,6 +19,11 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public a::System {
 
+  void increaseDifficulty();
+  void resetHealth();
+  void process(float);
+  void changeEnergy(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::AI)
@@ -26,9 +31,18 @@ public:
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
+  DECL_FZ(difficultyTimer)
+  DECL_FZ(meteorTimer)
+  DECL_FZ(ufoTimer)
+  DECL_FZ(healthTimer)
+
+  DECL_PTR(a::NodeList, bombs)
+  DECL_PTR(a::NodeList, ufos)
+
   AI(a::Engine *e)
   : System(e)
   {}
+
 
 };
 
