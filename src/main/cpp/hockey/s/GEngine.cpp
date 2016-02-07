@@ -67,6 +67,8 @@ void GEngine::readyPoint(a::NodeList *mallets, a::Node *ball) {
     }
   }
   puck->setPos(wb.cx, wb.cy - puck->circum());
+    puck->vel.x= -10;
+    puck->vel.y=10;
 }
 
 

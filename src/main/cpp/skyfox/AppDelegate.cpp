@@ -16,11 +16,11 @@
 
 NS_USING(fusii)
 NS_USING(ash)
-NS_USING(@@APPID@@)
+NS_USING(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+AppDelegate::AppDelegate() : App("skyfox") {
 
   // register all ash::node factories here
   auto r= NodeRegistry::self();

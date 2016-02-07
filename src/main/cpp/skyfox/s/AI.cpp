@@ -9,34 +9,19 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
-
-NS_USING(fusii)
-NS_USING(ash)
-NS_USING(@@APPID@@)
-
 //////////////////////////////////////////////////////////////////////////////
-//
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
 
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "AI.h"
 
-  r->rego( mc_new(SharedNode));
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(skyfox)
 
-  // set up app-config
-  Config::reify();
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
-  delete XConfig::self();
-}
+
+NS_END
 
 
 

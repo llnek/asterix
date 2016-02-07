@@ -8,35 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
-
-NS_USING(fusii)
-NS_USING(ash)
-NS_USING(@@APPID@@)
+#include "core/XConfig.h"
+NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+class CC_DLL Config : public f::XConfig {
 
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
+  void initAssets();
+  void initLevels();
+  void initCsts();
 
-  r->rego( mc_new(SharedNode));
+public:
 
-  // set up app-config
-  Config::reify();
-}
+  virtual const c::Size gameSize() { return c::Size(2048,1536); }
+  virtual bool isPortrait() { return false; }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
-  delete XConfig::self();
-}
+  virtual ResolutionPolicy policy() {
+    return ResolutionPolicy::EXACT_FIT; }
+
+  virtual void handleResolution(const c::Size &rs);
+  virtual c::Scene* prelude();
+
+  virtual void runOnce();
+  static owner<Config*> reify();
+
+};
+
+
+NS_END
 
 
 

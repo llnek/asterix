@@ -145,6 +145,11 @@ void GLayer::postReify() {
   ss->sq_radii = pow(mr+br, 2);
   ss->goalWidth= 400;
 
+  for (auto node=mallets->head;node;node=node->next) {
+    auto m=CC_GNF(Mallet,node,"mallet");
+    this->motionees.push_back(m);
+  }
+
   SCAST(GEngine*,engine)->readyPoint(mallets,pucks->head);
 }
 

@@ -8,35 +8,27 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "ash/NodeRego.h"
+#include "ash/Engine.h"
 #include "n/N.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
 
-NS_USING(fusii)
-NS_USING(ash)
-NS_USING(@@APPID@@)
-
+NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+class CC_DLL GEngine  : public a::Engine {
 
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
+public:
 
-  r->rego( mc_new(SharedNode));
+  virtual void initEntities();
+  virtual void initSystems();
 
-  // set up app-config
-  Config::reify();
-}
+};
 
-//////////////////////////////////////////////////////////////////////////////
-//
-AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
-  delete XConfig::self();
-}
+
+
+NS_END
 
 
 

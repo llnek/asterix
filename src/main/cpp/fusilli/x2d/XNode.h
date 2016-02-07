@@ -50,18 +50,18 @@ protected:
 
 public:
 
-  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos, int z, int tag);
+  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos, int z, int tag=0);
   virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos);
 
-  virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag);
+  virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag=0);
   virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n);
 
-  virtual void addFrame(const sstr &n, const c::Vec2 &pos, int z, int tag);
+  virtual void addFrame(const sstr &n, const c::Vec2 &pos, int z, int tag=0);
   virtual void addFrame(const sstr &n, const c::Vec2 &pos);
 
   virtual c::SpriteBatchNode* getAtlas(const sstr &name);
 
-  virtual void addItem(not_null<c::Node*> n, int z, int tag);
+  virtual void addItem(not_null<c::Node*> n, int z, int tag=0);
   virtual void addItem(not_null<c::Node*> n);
 
   virtual const sstr gets(const sstr&, const s_vec<sstr>&);

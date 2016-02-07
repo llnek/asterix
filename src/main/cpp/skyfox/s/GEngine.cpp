@@ -9,34 +9,45 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Resolve.h"
+#include "Collide.h"
+#include "Move.h"
+#include "AI.h"
+#include "GEngine.h"
 
-NS_USING(fusii)
-NS_USING(ash)
-NS_USING(@@APPID@@)
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+void GEngine::initEntities() {
+  auto p= MGMS()->reifyPool("Meteors");
 
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
+  p->preset([=]() {
+    auto s= cx::reifySprite("meteor.png");
+    MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteMeteor);
+    return mc_new1(Meteor,s);
+  }, 50);
 
-  r->rego( mc_new(SharedNode));
+  p= MGMS()->reifyPool("Healths");
+  p->preset([=]() {
+    auto s= cx::reifySprite("health.png");
+    s->setAnchorPoint(c::Vec2(0.5f, 0.8f));
+    MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteHealth);
+    return mc_new1(Health,s);
+  }, 20);
 
-  // set up app-config
-  Config::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
-  delete XConfig::self();
+void GEngine::initSystems() {
+
 }
 
 
+NS_END
 

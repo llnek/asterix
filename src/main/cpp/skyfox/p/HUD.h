@@ -8,35 +8,28 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
-
-NS_USING(fusii)
-NS_USING(ash)
-NS_USING(@@APPID@@)
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
+
+#include "x2d/XLayer.h"
+NS_BEGIN(skyfox)
+
+//////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+struct CC_DLL HUDLayer : public f::XLayer {
 
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
-  r->rego( mc_new(SharedNode));
+  DECL_PTR(c::Label, energyLabel)
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_IZ(score)
 
-  // set up app-config
-  Config::reify();
-}
+};
 
-//////////////////////////////////////////////////////////////////////////////
-//
-AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
-  delete XConfig::self();
-}
+
+NS_END
 
 
 

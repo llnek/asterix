@@ -8,35 +8,30 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
-#include "AppDelegate.h"
+#include "x2d/GameScene.h"
 
-NS_USING(fusii)
-NS_USING(ash)
-NS_USING(@@APPID@@)
+NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+struct CC_DLL Game : public f::GameScene {
+  virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual f::GameLayer* getGLayer() {
+     return
+       (f::GameLayer*) getLayer(2);
+  }
 
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
+};
 
-  r->rego( mc_new(SharedNode));
 
-  // set up app-config
-  Config::reify();
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
-  delete XConfig::self();
-}
+NS_END
+
 
 
 

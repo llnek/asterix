@@ -218,10 +218,9 @@ void GameLayer::onMouseUp(c::Event* ) {
 //
 void GameLayer::onMouseMove(c::Event* event) {
   auto e= (c::EventMouse*)event;
-  //auto loc= e->getLocationInView();
+  auto loc= e->getLocationInView();
   auto b= e->getMouseButton();
-  auto loc= e->getLocation();
-
+  
   F__LOOP(it,motionees) {
     if (b == MOUSE_BUTTON_LEFT) {
       onMouseMotion(*it, loc);
