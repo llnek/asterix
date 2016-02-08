@@ -84,12 +84,35 @@ struct CC_DLL Gesture : public a::Component {
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_FZ(meteorInterval)
-  DECL_FZ(meteorSpeed)
-  DECL_FZ(ufoInterval)
-  DECL_FZ(healthSpeed)
-  DECL_FZ(energy)
 
+  DECL_FZ(meteorInterval)
+  DECL_FZ(meteorTimer)
+  DECL_FZ(meteorSpeed)
+
+  DECL_FZ(healthInterval)
+  DECL_FZ(healthTimer)
+  DECL_FZ(healthSpeed)
+
+  DECL_FZ(ufoInterval)
+  DECL_FZ(ufoTimer)
+  DECL_BF(ufoKilled)
+
+  DECL_FZ(difficultyInterval)
+  DECL_FZ(difficultyTimer)
+
+  DECL_IZ(energy)
+
+  DECL_PTR(c::RepeatForever,rotateSprite)
+  DECL_PTR(c::RepeatForever,swingHealth)
+  DECL_PTR(c::RepeatForever,blinkRay)
+  DECL_PTR(c::Sequence,shockwaveSequence)
+  DECL_PTR(c::Sequence,groundHit)
+  DECL_PTR(c::Sequence,explosion)
+  DECL_PTR(c::Sprite,shockWave)
+  DECL_PTR(c::ScaleTo,growBomb)
+  DECL_PTR(c::Animate,ufoAnimation)
+
+  s_vec<f::ComObj*> fallingObjects;
 };
 
 

@@ -19,6 +19,8 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public a::System {
 
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::Collide)

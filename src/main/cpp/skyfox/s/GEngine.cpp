@@ -24,6 +24,7 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
+
   auto p= MGMS()->reifyPool("Meteors");
 
   p->preset([=]() {
@@ -39,6 +40,31 @@ void GEngine::initEntities() {
     MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteHealth);
     return mc_new1(Health,s);
   }, 20);
+
+
+  //CREATE BOMB SPRITE
+  auto sp = cx::reifySprite("bomb.png");
+  sp->getTexture()->generateMipmap();
+  sp->setVisible(false);
+  auto size = sp->getContentSize();
+  //add sparkle
+  auto sparkle = cx::reifySprite("sparkle.png");
+  sparkle->setPosition(size.width * 0.72f, size.height * 0.72f);
+  sp->addChild(sparkle, kMiddleground, kSpriteSparkle);
+  //add halo
+  auto halo = cx::reifySprite("halo.png");
+  halo->setPosition(size.width * 0.4f, size.height * 0.4f);
+  sp->addChild(halo, 1, kSpriteHalo);
+
+  MGML()->addAtlasItem("game-pics",sp);
+  auto ent= this->reifyEntity();
+  ent->checkin(mc_new1(Bomb,sp));
+
+  //add shockwave
+  ss->shockWave = cx::reifySprite("shockwave.png");
+  ss->shockWave->getTexture()->generateMipmap();
+  ss->shockWave->setVisible(false);
+  MGML()->addAtlasItem("game-pics", ss->shockWave);
 
 }
 

@@ -88,79 +88,90 @@ void AI::process(float dt) {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::resetMeteor() {
 
-void GameLayer::resetMeteor(void) {
+  auto ss = CC_GNLF(GVars,shared,"slots");
+  auto p= MGMS()->getPool("Meteors");
+  auto wb = cx::visBox();
 
-    if (_fallingObjects.size() > 30) return;
+  if (ss->fallingObjects.size() > 30) { return; }
 
-    auto meteor = _meteorPool.at(_meteorPoolIndex);
-	_meteorPoolIndex++;
-	if (_meteorPoolIndex == _meteorPool.size()) _meteorPoolIndex = 0;
+  auto meteor = p->get();
+  auto meteor_x = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto meteor_target_x = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto mz= meteor->csize();
 
+  meteor->stopAllActions();
+  meteor->setPosition(meteor_x, wb.top + HHZ(mz));
 
-	int meteor_x = rand() % (int) (_screenSize.width * 0.8f) + _screenSize.width * 0.1f;
-    int meteor_target_x = rand() % (int) (_screenSize.width * 0.8f) + _screenSize.width * 0.1f;
+  auto rotate = c::RotateBy::create(0.5f ,  -90);
+  auto repeatRotate = c::RepeatForever::create(rotate);
+  auto seq= c::Sequence::create (
+      c::MoveTo::create(ss->meteorSpeed,
+        c::Vec2(meteor_target_x, wb.top * 0.15f)),
+      c::CallFunc::create([=]() {
+        this->fallingObjectDone(meteor);
+        }),
+      CC_NIL);
 
-    meteor->stopAllActions();
-    meteor->setPosition(Vec2(meteor_x, _screenSize.height + meteor->getBoundingBox().size.height * 0.5));
-
-    //create action
-    auto  rotate = RotateBy::create(0.5f ,  -90);
-    auto  repeatRotate = RepeatForever::create( rotate );
-    auto  sequence = Sequence::create (
-               MoveTo::create(_meteorSpeed, Vec2(meteor_target_x, _screenSize.height * 0.15f)),
-               CallFunc::create(std::bind(&GameLayer::fallingObjectDone, this, meteor) ),
-               nullptr);
-
-    meteor->setVisible ( true );
-    meteor->runAction(repeatRotate);
-    meteor->runAction(sequence);
-    _fallingObjects.pushBack(meteor);
+  meteor->setVisible (true);
+  meteor->runAction(repeatRotate);
+  meteor->runAction(sequence);
+  ss->fallingObjects.push_back(meteor);
 }
 
-void GameLayer::resetUfo(void) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::resetUfo(Ufo *ufo) {
 
-    if (_ufo->isVisible()) return;
+  if (ufo->sprite->isVisible()) { return; }
 
-    float newX;
-    float newY;
+  auto UFO_SPEED = CC_CSV(c::Integer,"UFO+SPEED");
+  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto wb= cx::visBox();
+  auto newY = cx::randFloat(wb.top * 0.3f) + wb.top * 0.3f;
+  auto newX= cx::randSign() > 0 ? 0 : wb.right;
 
-    //pick side
-    if (rand() % 100 < 50) {
-        newX = 0.0;
-    } else {
-        newX = _screenSize.width;
-    }
+  if (newY > wb.top * 0.7f) {
+    newY = wb.top * 0.7f;
+  }
 
-    //pick height
-    newY = rand() % (int) (_screenSize.height * 0.3f) + _screenSize.height * 0.3f;
-    if (newY > _screenSize.height * 0.7f) newY = _screenSize.height * 0.7f;
+  ufo->sprite->stopAllActions();
+  ufo->setPos(newX, newY);
+  ufo->sprite->runAction(ss->ufoAnimation->clone());
 
-    _ufo->stopAllActions();
-    _ufo->setPosition(Vec2(newX, newY));
-    _ufo->runAction( _ufoAnimation->clone());
+  auto ray = ufo->sprite->getChildByTag(kSpriteRay);
+  ray->sprite->setVisible(false);
+  ray->sprite->stopAllActions();
+  ray->sprite->runAction(ss->blinkRay->clone());
 
-    //set ray
-    auto ray = _ufo->getChildByTag(kSpriteRay);
-    ray->setVisible(false);
-    ray->stopAllActions();
-    ray->runAction( _blinkRay->clone());
+  FiniteTimeAction *  sequence;
+  if ((int)newX == 0) {
+    seq= c::Sequence::create(
+        c::MoveTo::create(
+          UFO_SPEED,
+          c::Vec2(wb.right * 1.1, newY)),
+        c::CallFunc::create([](c::Node *p) {
+          p->setVisible(false);
+          }),
+        CC_NIL);
+  } else {
+    seq= c::Sequence::create(
+        c::MoveTo::create(
+          UFO_SPEED,
+          c::Vec2(-wb.right * 0.1, newY)),
+        c::CallFunc::create([](c::Node *p) {
+          p->setVisible(false);
+          }),
+        CC_NIL);
+  }
 
-    FiniteTimeAction *  sequence;
-    if (newX == 0.0) {
-        sequence = Sequence::create ( MoveTo::create(UFO_SPEED, Vec2(_screenSize.width * 1.1, newY)),
-                                       CallFunc::create(std::bind(&GameLayer::animationDone, this, _ufo) ),
-                                       nullptr);
-    } else {
-        sequence = Sequence::create ( MoveTo::create(UFO_SPEED, Vec2(-_screenSize.width * 0.1, newY)),
-                                     CallFunc::create(std::bind(&GameLayer::animationDone, this, _ufo) ),
-                                    nullptr);
-    }
-
-    _ufo->setVisible(true);
-    _ufo->runAction(sequence);
-    _ufoKilled = false;
-    SimpleAudioEngine::getInstance()->playEffect("pew.wav", true);
+  ufo->sprite->setVisible(true);
+  ufo->sprite->runAction(sequence);
+  ss->ufoKilled = false;
+  cx::sfxPlay("pew");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -169,6 +180,7 @@ void AI::resetHealth() {
 
   if (ss->fallingObjects.size() > 30) { return; }
 
+  auto ss= CC_GNLF(GVars,shared,"slots");
   auto hp= MGMS()->getPool("Healths");
   auto health = hp->get();
   if (ENP(health)) {
@@ -241,6 +253,33 @@ void AI::increaseDifficulty () {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::fallingObjectDone(c::Node *pSender) {
+
+  //_fallingObjects.erase(_fallingObjects.find( (Sprite *)pSender));
+  pSender->stopAllActions();
+  pSender->setRotation(0);
+
+  if (pSender->getTag() == kSpriteMeteor) {
+    changeEnergy(-15);
+    pSender->runAction(ss->groundHit->clone() );
+    //play explosion sound
+    cx::sfxPlay("boom");
+  } else {
+    pSender->setVisible(false);
+    if (ss->energy == 100) {
+      auto msg= j::json({
+          {"score", 25}
+          });
+      SENDMSGEX("/game/player/earnscore", &msg);
+    } else {
+      changeEnergy(10);
+    }
+    //play health bonus sound
+    cx::sfxPlay("health");
+  }
+}
 
 
 

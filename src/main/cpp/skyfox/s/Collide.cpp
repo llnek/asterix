@@ -19,6 +19,72 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(skyfox)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::preamble() {
+  shared=engine->getNodeList(SharedNode().typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Collide::update(float dt) {
+  if (MGMS()->isLive()) {
+    process(dt);
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::process(float dt) {
+
+  auto p= MGMS()->getPool("FallingObjects");
+  auto &pl = p->list();
+  auto ss= CC_GNLF(GVars,shared,"slots");
+
+  if (!ss->shockWave->isVisible()) {
+    return;
+  }
+
+
+        for (i = count-1; i >= 0; i--) {
+            auto sprite =  _fallingObjects.at(i);
+            diffx = _shockWave->getPositionX() - sprite->getPositionX();
+            diffy = _shockWave->getPositionY() - sprite->getPositionY();
+            if (pow(diffx, 2) + pow(diffy, 2) <= pow(_shockWave->getBoundingBox().size.width * 0.5f, 2)) {
+                sprite->stopAllActions();
+                sprite->runAction( _explosion->clone());
+                SimpleAudioEngine::getInstance()->playEffect("boom.wav");
+                if (sprite->getTag() == kSpriteMeteor) {
+                    _shockwaveHits++;
+                    _score += _shockwaveHits * 13 + _shockwaveHits * 2;
+                }
+                //play sound
+                _fallingObjects.erase(i);
+            }
+        }
+        if (_ufo->isVisible() && !_ufoKilled) {
+
+            diffx = _shockWave->getPositionX() - _ufo->getPositionX();
+            diffy = _shockWave->getPositionY() - _ufo->getPositionY();
+            if (pow(diffx, 2) + pow(diffy, 2) <= pow(_shockWave->getBoundingBox().size.width * 0.6f, 2)) {
+                _ufoKilled = true;
+                SimpleAudioEngine::getInstance()->stopAllEffects();
+                _ufo->stopAllActions();
+                ray->stopAllActions();
+                ray->setVisible(false);
+                _ufo->runAction( _explosion->clone());
+                SimpleAudioEngine::getInstance()->playEffect("boom.wav");
+
+                 _shockwaveHits++;
+                 _score += _shockwaveHits * 13 + _shockwaveHits * 4;
+            }
+        }
+
+        _scoreDisplay->setString(String::createWithFormat("%i", _score)->getCString());
+
+
+}
 
 
 NS_END

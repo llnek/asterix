@@ -33,17 +33,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onDone();
   virtual void postReify();
 
-  DECL_PTR(c::RepeatForever,rotateSprite)
-  DECL_PTR(c::RepeatForever,swingHealth)
-  DECL_PTR(c::RepeatForever,blinkRay)
-  DECL_PTR(c::Sequence,shockwaveSequence)
-  DECL_PTR(c::Sequence,groundHit)
-  DECL_PTR(c::Sequence,explosion)
-  DECL_PTR(c::Node,shockWave)
-  DECL_PTR(c::ScaleTo,growBomb)
-  DECL_PTR(c::Animate,ufoAnimation)
-  DECL_PTR(c::Sprite,ufo)
   DECL_PTR(a::NodeList, shared)
+
   s_vec<c::Sprite*> clouds;
 
   GLayer() {
@@ -61,15 +52,69 @@ void GLayer::updateEnergy() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
-  cx::sfxEffect("fire_truck");
+
   //_gameOverMessage->setVisible(true);
+  cx::sfxEffect("fire_truck");
   MGMS()->stop();
+
+  //stop all actions currently running (meteors, health drops, animations,
+  int i;
+  int count = (int) _fallingObjects.size();
+
+  for (i = count-1; i >= 0; i--) {
+      auto sprite = _fallingObjects.at(i);
+      sprite->stopAllActions();
+      sprite->setVisible(false);
+      _fallingObjects.erase(i);
+  }
+  if (_bomb->isVisible()) {
+      _bomb->stopAllActions();
+      _bomb->setVisible(false);
+      auto child = _bomb->getChildByTag(kSpriteHalo);
+      child->stopAllActions();
+      child = _bomb->getChildByTag(kSpriteSparkle);
+      child->stopAllActions();
+  }
+  if (_shockWave->isVisible()) {
+      _shockWave->stopAllActions();
+      _shockWave->setVisible(false);
+  }
+  if (_ufo->isVisible()) {
+      _ufo->stopAllActions();
+      _ufo->setVisible(false);
+      auto ray = _ufo->getChildByTag(kSpriteRay);
+      ray->stopAllActions();
+      ray->setVisible(false);
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
   shared = engine->getNodeList(SharedNode().typeId());
   cx::sfxMusic("bg", true);
+
+  auto ss=CC_GNLF(GVars,shared,"slots");
+
+  ss->energy = 100;
+  ss->meteorInterval = 3.5;
+  ss->meteorTimer = ss->meteorInterval * 0.99f;
+  ss->meteorSpeed = 10;//in seconds to reach ground
+
+  ss->ufoInterval = 20;
+  ss->ufoTimer = - ss->ufoInterval;
+  ss->ufoKilled = false;
+
+  ss->healthInterval = 25;
+  ss->healthTimer = - ss->healthInterval;
+  ss->healthSpeed = 15;//in seconds to reach ground
+
+  ss->difficultyInterval = 60;
+  ss->difficultyTimer = 0;
+
+  getHUD()->updateEnergy();
+  getHUD()->updateScore(0);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -112,6 +157,7 @@ void GLayer::decorate() {
   }
 
   createActions();
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

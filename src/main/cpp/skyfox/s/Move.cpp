@@ -19,6 +19,36 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(skyfox)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::preamble() {
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::update(float dt) {
+  if (MGMS()->isLive()) {
+    process(dt);
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::process(float dt) {
+  auto p= MGMS()->getPool("Clouds");
+  auto &c= p->list();
+  F__LOOP(it,c) {
+    auto co= *it;
+    auto z= co->csize();
+    co->sprite->setPositionX(co->sprite->getPositionX() + dt * 20);
+    if (co->sprite->getPositionX() > wb.right + HWZ(z)) {
+      co->sprite->setPositionX(- HWZ(z));
+    }
+  }
+}
+
 
 
 NS_END
