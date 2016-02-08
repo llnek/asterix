@@ -22,6 +22,7 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
+  shared = engine->getNodeList(SharedNode().typeId());
   bombs = engine->getNodeList(BombNode().typeId());
   ufos = engine->getNodeList(UfoNode().typeId());
 }
@@ -39,31 +40,32 @@ bool AI::update(float dt) {
 //
 void AI::process(float dt) {
 
+  auto ss=CC_GNLF(GVars,shared,"slots");
   auto bomb=CC_GNLF(Bomb,bombs,"bomb");
   auto ufo=CC_GNLF(Ufo,ufos,"ufo");
   auto wb=cx::visBox();
 
-  meteorTimer += dt;
-  if (meteorTimer > _meteorInterval) {
-    meteorTimer = 0;
+  ss->meteorTimer += dt;
+  if (ss->meteorTimer > ss->meteorInterval) {
+    ss->meteorTimer = 0;
     resetMeteor();
   }
 
-  ufoTimer += dt;
-  if (ufoTimer > _ufoInterval) {
-    ufoTimer = 0;
+  ss->ufoTimer += dt;
+  if (ss->ufoTimer > ss->ufoInterval) {
+    ss->ufoTimer = 0;
     resetUfo();
   }
 
-  healthTimer += dt;
-  if (healthTimer > _healthInterval) {
-    healthTimer = 0;
+  ss->healthTimer += dt;
+  if (ss->healthTimer > ss->healthInterval) {
+    ss->healthTimer = 0;
     resetHealth();
   }
 
-  difficultyTimer += dt;
-  if (difficultyTimer > _difficultyInterval) {
-    difficultyTimer = 0;
+  ss->difficultyTimer += dt;
+  if (ss->difficultyTimer > ss->difficultyInterval) {
+    ss->difficultyTimer = 0;
     increaseDifficulty();
   }
 
@@ -85,7 +87,6 @@ void AI::process(float dt) {
     }
   }
 
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,29 +97,34 @@ void AI::resetMeteor() {
   auto p= MGMS()->getPool("Meteors");
   auto wb = cx::visBox();
 
-  if (ss->fallingObjects.size() > 30) { return; }
+  if (ss->fallingObjects.size() > 30) {
+    return;
+  }
 
+  auto mx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto mtx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
   auto meteor = p->get();
-  auto meteor_x = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto meteor_target_x = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  if (ENP(meteor)) {
+    SCAST(GEngine*,engine)->createMeteors();
+    meteor=p->get();
+  }
   auto mz= meteor->csize();
 
   meteor->stopAllActions();
-  meteor->setPosition(meteor_x, wb.top + HHZ(mz));
+  meteor->setPosition(mx, wb.top + HHZ(mz));
 
-  auto rotate = c::RotateBy::create(0.5f ,  -90);
-  auto repeatRotate = c::RepeatForever::create(rotate);
-  auto seq= c::Sequence::create (
+  auto rr = c::RepeatForever::create(
+      c::RotateBy::create(0.5f , -90));
+  auto seq= c::Sequence::create(
       c::MoveTo::create(ss->meteorSpeed,
-        c::Vec2(meteor_target_x, wb.top * 0.15f)),
-      c::CallFunc::create([=]() {
-        this->fallingObjectDone(meteor);
-        }),
+        c::Vec2(mtx, wb.top * 0.15f)),
+      c::CallFunc::create(
+        [=]() { this->fallingObjectDone(meteor); }),
       CC_NIL);
 
-  meteor->setVisible (true);
-  meteor->runAction(repeatRotate);
-  meteor->runAction(sequence);
+  CC_SHOW(meteor);
+  meteor->runAction(rr);
+  meteor->runAction(seq);
   ss->fallingObjects.push_back(meteor);
 }
 
@@ -126,13 +132,13 @@ void AI::resetMeteor() {
 //
 void AI::resetUfo(Ufo *ufo) {
 
-  if (ufo->sprite->isVisible()) { return; }
-
   auto UFO_SPEED = CC_CSV(c::Integer,"UFO+SPEED");
   auto ss= CC_GNLF(GVars,shared,"slots");
   auto wb= cx::visBox();
   auto newY = cx::randFloat(wb.top * 0.3f) + wb.top * 0.3f;
   auto newX= cx::randSign() > 0 ? 0 : wb.right;
+
+  if (ufo->sprite->isVisible()) { return; }
 
   if (newY > wb.top * 0.7f) {
     newY = wb.top * 0.7f;
@@ -143,33 +149,31 @@ void AI::resetUfo(Ufo *ufo) {
   ufo->sprite->runAction(ss->ufoAnimation->clone());
 
   auto ray = ufo->sprite->getChildByTag(kSpriteRay);
-  ray->sprite->setVisible(false);
+  CC_HIDE(ray->sprite);
   ray->sprite->stopAllActions();
   ray->sprite->runAction(ss->blinkRay->clone());
 
-  FiniteTimeAction *  sequence;
+  FiniteTimeAction *seq;
   if ((int)newX == 0) {
     seq= c::Sequence::create(
         c::MoveTo::create(
           UFO_SPEED,
           c::Vec2(wb.right * 1.1, newY)),
-        c::CallFunc::create([](c::Node *p) {
-          p->setVisible(false);
-          }),
+        c::CallFunc::create(
+          [](c::Node *p) { CC_HIDE(p); }),
         CC_NIL);
   } else {
     seq= c::Sequence::create(
         c::MoveTo::create(
           UFO_SPEED,
           c::Vec2(-wb.right * 0.1, newY)),
-        c::CallFunc::create([](c::Node *p) {
-          p->setVisible(false);
-          }),
+        c::CallFunc::create(
+          [](c::Node *p) { CC_HIDE(p); }),
         CC_NIL);
   }
 
-  ufo->sprite->setVisible(true);
-  ufo->sprite->runAction(sequence);
+  CC_SHOW(ufo->sprite);
+  ufo->sprite->runAction(seq);
   ss->ufoKilled = false;
   cx::sfxPlay("pew");
 }
@@ -184,22 +188,22 @@ void AI::resetHealth() {
   auto hp= MGMS()->getPool("Healths");
   auto health = hp->get();
   if (ENP(health)) {
-    //?
+    SCAST(GEngine*,engine)->createHealths();
+    health=hp->get();
   }
 
-	int health_x = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  int health_target_x = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  int htx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  int hx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto hz= health->csize();
 
   health->stopAllActions();
-  health->setPosition(health_x,
-      wb.top + health->getBoundingBox().size.height * 0.5);
+  health->setPosition(hx, wb.top + HHZ(hz));
 
   auto seq = c::Sequence::create(
          c::MoveTo::create(ss->healthSpeed,
-           c::Vec2(health_target_x, wb.top * 0.15f)),
-         c::CallFunc::create([=]() {
-           this->fallingObjectDone(health);
-           }),
+           c::Vec2(htx, wb.top * 0.15f)),
+         c::CallFunc::create(
+           [=]() { this->fallingObjectDone(health); }),
          CC_NIL);
 
   health->inflate();
@@ -267,7 +271,7 @@ void AI::fallingObjectDone(c::Node *pSender) {
     //play explosion sound
     cx::sfxPlay("boom");
   } else {
-    pSender->setVisible(false);
+    CC_HIDE(pSender);
     if (ss->energy == 100) {
       auto msg= j::json({
           {"score", 25}

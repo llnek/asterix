@@ -18,23 +18,30 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(skyfox)
 
-
 enum {
-    kSpriteBomb,
-    kSpriteShockwave,
-    kSpriteMeteor,
-    kSpriteHealth,
-    kSpriteHalo,
-    kSpriteSparkle,
-    kSpriteUfo,
-    kSpriteRay
+  kSpriteBomb,
+  kSpriteShockwave,
+  kSpriteMeteor,
+  kSpriteHealth,
+  kSpriteHalo,
+  kSpriteSparkle,
+  kSpriteUfo,
+  kSpriteRay
 };
 
 enum {
+  kBackground,
+  kMiddleground,
+  kForeground
+};
 
-    kBackground,
-    kMiddleground,
-    kForeground
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Cloud : public f::ComObj {
+  Cloud(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
+  MDECL_COMP_TPID("n/Cloud")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,6 +92,9 @@ struct CC_DLL Gesture : public a::Component {
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
+  DECL_FZ(difficultyInterval)
+  DECL_FZ(difficultyTimer)
+
   DECL_FZ(meteorInterval)
   DECL_FZ(meteorTimer)
   DECL_FZ(meteorSpeed)
@@ -97,9 +107,7 @@ struct CC_DLL GVars : public a::Component {
   DECL_FZ(ufoTimer)
   DECL_BF(ufoKilled)
 
-  DECL_FZ(difficultyInterval)
-  DECL_FZ(difficultyTimer)
-
+  DECL_IZ(shockwaveHits)
   DECL_IZ(energy)
 
   DECL_PTR(c::RepeatForever,rotateSprite)

@@ -26,7 +26,8 @@ AppDelegate::AppDelegate() : App("skyfox") {
   auto r= NodeRegistry::self();
 
   r->rego( mc_new(SharedNode));
-
+  r->rego( mc_new(UfoNode));
+  r->rego( mc_new(BombNode));
   // set up app-config
   Config::reify();
 }

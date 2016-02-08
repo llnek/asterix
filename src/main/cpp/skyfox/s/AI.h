@@ -34,11 +34,7 @@ public:
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_FZ(difficultyTimer)
-  DECL_FZ(meteorTimer)
-  DECL_FZ(ufoTimer)
-  DECL_FZ(healthTimer)
-
+  DECL_PTR(a::NodeList, shared)
   DECL_PTR(a::NodeList, bombs)
   DECL_PTR(a::NodeList, ufos)
 

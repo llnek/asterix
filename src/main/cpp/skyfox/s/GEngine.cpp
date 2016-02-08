@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Resolve.h"
 #include "Collide.h"
 #include "Move.h"
 #include "AI.h"
@@ -25,39 +24,43 @@ NS_BEGIN(skyfox)
 //
 void GEngine::initEntities() {
 
-  auto p= MGMS()->reifyPool("Meteors");
+  MGMS()->reifyPools(s_vec<sstr> {"Meteors", "Healths", "Clouds" });
+  auto ent= this->reifyEntity();
+  auto ss= mc_new1(GVars);
+  auto wb= cx::visBox();
+  ent->checkin(ss);
 
-  p->preset([=]() {
+  MGMS()->getPool("Meteors")
+  ->preset([=]() {
     auto s= cx::reifySprite("meteor.png");
     MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteMeteor);
     return mc_new1(Meteor,s);
   }, 50);
 
-  p= MGMS()->reifyPool("Healths");
-  p->preset([=]() {
+  MGMS()->getPool("Healths")
+  ->preset([=]() {
     auto s= cx::reifySprite("health.png");
     s->setAnchorPoint(c::Vec2(0.5f, 0.8f));
     MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteHealth);
     return mc_new1(Health,s);
   }, 20);
 
-
-  //CREATE BOMB SPRITE
+  //CREATE BOMB
   auto sp = cx::reifySprite("bomb.png");
   sp->getTexture()->generateMipmap();
   sp->setVisible(false);
-  auto size = sp->getContentSize();
+  auto sz = sp->getContentSize();
   //add sparkle
   auto sparkle = cx::reifySprite("sparkle.png");
-  sparkle->setPosition(size.width * 0.72f, size.height * 0.72f);
+  sparkle->setPosition(sz.width * 0.72f, sz.height * 0.72f);
   sp->addChild(sparkle, kMiddleground, kSpriteSparkle);
   //add halo
   auto halo = cx::reifySprite("halo.png");
-  halo->setPosition(size.width * 0.4f, size.height * 0.4f);
+  halo->setPosition(sz.width * 0.4f, sz.height * 0.4f);
   sp->addChild(halo, 1, kSpriteHalo);
 
   MGML()->addAtlasItem("game-pics",sp);
-  auto ent= this->reifyEntity();
+  ent= this->reifyEntity();
   ent->checkin(mc_new1(Bomb,sp));
 
   //add shockwave
@@ -66,12 +69,50 @@ void GEngine::initEntities() {
   ss->shockWave->setVisible(false);
   MGML()->addAtlasItem("game-pics", ss->shockWave);
 
+  auto animation = c::Animation::create();
+  //add ufo
+  sp= cx::reifySprite("ufo_1.png");
+  for (auto i = 1; i <= 4; ++i) {
+    animation->addSpriteFrame(
+        cx::getSpriteFrame(
+          "ufo_" + s::to_string(i) +".png"));
+  }
+  animation->setDelayPerUnit(1.0 / 4.0f);
+  animation->setLoops(-1);
+  ss->ufoAnimation = c::Animate::create(animation);
+  CC_KEEP(ss->ufoAnimation)
+
+  auto ray = cx::reifySprite("ray.png");
+  auto uz= sp->getBoundingBox().size;
+  ray->setAnchorPoint(c::Vec2(0.5, 1));
+  ray->setPosition(uz.width  * 0.52f, uz.height * 0.5f);
+
+  ss->blinkRay = c::RepeatForever::create(c::Blink::create(4, 6));
+  CC_KEEP(ss->blinkRay)
+  sp->addChild(ray, -1, kSpriteRay);
+  sp->setVisible(false);
+  MGML()->addAtlasItem("game-pics", sp, 0, kSpriteUfo);
+
+  ent=this->reifyEntity();
+  ent->checkin(mc_new1(Ufo,sp));
+
+  auto pool=MGMS()->reifyPool("Clouds");
+  for (auto i = 0; i < 4; ++i) {
+    auto y = wb.top * (i % 2 == 0 ? 0.4f : 0.5f);
+    auto c = cx::reifySprite("cloud.png");
+    c->setPosition(wb.right * 0.1f + i * wb.right * 0.3f, y);
+    MGML()->addAtlasItem("game-pics", c, kBackground);
+    pool->checkin(mc_new1(Cloud,c));
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(AI,this));
+  regoSystem(mc_new1(Move,this));
 }
 
 

@@ -24,6 +24,9 @@
 #define CC_KEEP(x) if (x) {x->retain();}
 #define CC_DROP(x) if (x) {x->release();}
 
+#define CC_HIDE(s) s->setVisible(false)
+#define CC_SHOW(s) s->setVisible(true)
+
 #define CC_DICT() cocos2d::Dictionary::create()
 #define CC_FLOAT(x) cocos2d::Float::create(x)
 #define CC_BOOL(x) cocos2d::Bool::create(x)

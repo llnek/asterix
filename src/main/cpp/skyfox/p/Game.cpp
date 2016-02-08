@@ -28,19 +28,82 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  virtual bool onTouchStart(f::ComObj*, c::Touch*);
+  virtual void postReify();
+  void updateScore(int);
   void updateEnergy();
   void createActions();
   void onDone();
-  virtual void postReify();
 
   DECL_PTR(a::NodeList, shared)
-
-  s_vec<c::Sprite*> clouds;
+  DECL_PTR(a::NodeList, ufos)
+  DECL_PTR(a::NodeList, bombs)
 
   GLayer() {
     tmode= c::Touch::DispatchMode::ONE_BY_ONE;
   }
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
+
+  auto ss= CC_GNLF(GVars,shared,"slots");
+
+  if (ENP(touch)) { return false; }
+
+  if (co->sprite->isVisible()) {
+
+    auto child = co->sprite->getChildByTag(kSpriteHalo);
+    auto pos= co->pos();
+
+    co->sprite->stopAllActions();
+    child->stopAllActions();
+    child = co->sprite->getChildByTag(kSpriteSparkle);
+    child->stopAllActions();
+
+    if (co->sprite->getScale() > 0.25f) {
+
+      ss->shockWave->setPosition(pos.x,pos.y);
+      CC_SHOW(ss->shockWave);
+      ss->shockWave->setOpacity(255);
+      ss->shockWave->setScale(0.1f);
+      ss->shockWave->runAction(
+          c::ScaleTo::create(0.5f,
+            co->sprite->getScale() * 2.0f));
+      ss->shockWave->runAction(
+          ss->shockwaveSequence->clone());
+      cx::sfxPlay("bombRelease");
+    } else {
+      cx::sfxPlay("bombFail");
+    }
+    ss->shockwaveHits = 0;
+    CC_HIDE(co->sprite);
+
+  } else {
+
+    auto tap = touch->getLocation();
+    co->sprite->stopAllActions();
+    co->sprite->setScale(0.1f);
+    co->setPos(tap.x,tap.y);
+    CC_SHOW(co->sprite)
+    co->sprite->setOpacity(50);
+    co->sprite->runAction(ss->growBomb->clone() );
+
+    child = co->sprite->getChildByTag(kSpriteHalo);
+    child->runAction( ss->rotateSprite->clone());
+    child = co->sprite->getChildByTag(kSpriteSparkle);
+    child->runAction( ss->rotateSprite->clone());
+  }
+
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::updateScore(int n) {
+  getHUD()->updateScore(n);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -91,12 +154,13 @@ void GLayer::onDone() {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
+
   shared = engine->getNodeList(SharedNode().typeId());
   cx::sfxMusic("bg", true);
 
   auto ss=CC_GNLF(GVars,shared,"slots");
-
   ss->energy = 100;
+
   ss->meteorInterval = 3.5;
   ss->meteorTimer = ss->meteorInterval * 0.99f;
   ss->meteorSpeed = 10;//in seconds to reach ground
@@ -112,52 +176,42 @@ void GLayer::postReify() {
   ss->difficultyInterval = 60;
   ss->difficultyTimer = 0;
 
-  getHUD()->updateEnergy();
+  getHUD()->updateEnergy(ss->energy);
   getHUD()->updateScore(0);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decorate() {
+
   auto wb= cx::visBox();
 
   centerImage("game.bg");
   regoAtlas("game-pics");
 
-  engine = mc_new(GEngine);
-
   //create cityscape
   for (auto i = 0; i < 2; ++i) {
     auto s= cx::reifySprite("city_dark.png");
-    s->setAnchorPoint(c::Vec2(0.5,0));
-    s->setPosition(wb.right * (0.25f + i * 0.5f), 0);
+    s->setAnchorPoint(cx::anchorB());
+    s->setPosition(wb.right * (0.25f+i*0.5f), 0);
     addAtlasItem("game-pics", s, kMiddleground);
 
     s= cx::reifySprite("city_light.png");
-    s->setAnchorPoint(c::Vec2(0.5,0));
-    s->setPosition(wb.right * (0.25f + i * 0.5f), wb.top * 0.1f);
+    s->setAnchorPoint(cx::anchorB());
+    s->setPosition(wb.right * (0.25f+i*0.5f), wb.top * 0.1f);
     addAtlasItem("game-pics", s, kBackground);
   }
 
   //add trees
   for (auto i = 0; i < 3; ++i) {
     auto s= cx::reifySprite("trees.png");
-    s->setAnchorPoint(c::Vec2(0.5f, 0.0f));
-    s->setPosition(wb.right * (0.2f + i * 0.3f), 0);
+    s->setAnchorPoint(cx::anchorB());
+    s->setPosition(wb.right * (0.2f+i*0.3f), 0);
     addAtlasItem("game-pics",s, kMiddleground);
-  }
-
-  //add clouds
-  for (auto i = 0; i < 4; ++i) {
-    auto cloud_y = wb.top * (i % 2 == 0 ? 0.4f : 0.5f);
-    auto cloud = cx::reifySprite("cloud.png");
-    cloud->setPosition(wb.right * 0.1f + i * wb.right * 0.3f, cloud_y);
-    addAtlasItem("game-pics", cloud, kBackground);
-    clouds.push_back(cloud);
   }
 
   createActions();
 
+  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,42 +222,40 @@ void GLayer::createActions() {
       c::EaseInOut::create(
         c::RotateTo::create(1.2f, -10), 2),
         c::EaseInOut::create(c::RotateTo::create(1.2f, 10), 2), CC_NIL);
+  auto ss= CC_GNLF(GVars,shared,"slots");
   auto wb= cx::visBox();
 
-  this->swingHealth = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
-  CC_KEEP(this->swingHealth)
+  ss->swingHealth = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
+  CC_KEEP(ss->swingHealth)
 
-  this->shockwaveSequence = c::Sequence::create(
+  ss->shockwaveSequence = c::Sequence::create(
       c::FadeOut::create(1.0f),
-      c::CallFunc::create([=]() {
-        this->shockWave->setVisible(false);
-        }),
+      c::CallFunc::create([=]() { CC_HIDE(ss->shockWave); }),
       CC_NIL);
-  CC_KEEP(this->shockwaveSequence)
+  CC_KEEP(ss->shockwaveSequence)
 
-  this->growBomb = c::ScaleTo::create(4.0f, 1);
-  CC_KEEP(this->growBomb)
+  ss->growBomb = c::ScaleTo::create(4.0f, 1);
+  CC_KEEP(ss->growBomb)
 
-  this->rotateSprite = c::RepeatForever::create(
+  ss->rotateSprite = c::RepeatForever::create(
       c::RotateBy::create(0.5f ,  -90));
-  CC_KEEP(this->rotateSprite)
+  CC_KEEP(ss->rotateSprite)
 
   //animations
   auto animation = c::Animation::create();
   for (auto i = 1; i <= 10; ++i) {
     animation->addSpriteFrame(
-        cx::getSpriteFrame( "boom"+s::to_string(i)+".png"));
+        cx::getSpriteFrame("boom"+s::to_string(i)+".png"));
   }
   animation->setRestoreOriginalFrame(true);
   animation->setDelayPerUnit(1 / 10.0f);
-  this->groundHit = c::Sequence::create(
+  ss->groundHit = c::Sequence::create(
               c::MoveBy::create(0, c::Vec2(0,wb.top * 0.12f)),
               c::Animate::create(animation),
-              c::CallFuncN::create([](c::Node *p) {
-                p->setVisible(false);
-                }),
+              c::CallFuncN::create(
+                [](c::Node *p) { CC_HIDE(p); }),
               CC_NIL);
-  CC_KEEP(this->groundHit)
+  CC_KEEP(ss->groundHit)
 
   animation = c::Animation::create();
   for (auto i = 1; i <= 7; ++i) {
@@ -213,38 +265,12 @@ void GLayer::createActions() {
   }
   animation->setRestoreOriginalFrame(true);
   animation->setDelayPerUnit(0.5 / 7.0f);
-  this->explosion = c::Sequence::create(
+  ss->explosion = c::Sequence::create(
           c::Animate::create(animation),
-          c::CallFuncN::create([](c::Node *p) {
-            p->setVisible(false);
-            }),
+          c::CallFuncN::create(
+            [](c::Node *p) { CC_HIDE(p); }),
           CC_NIL);
-  CC_KEEP(this->explosion)
-
-  //add ufo
-  this->ufo = cx::reifySprite("ufo_1.png");
-  animation = c::Animation::create();
-  for (auto i = 1; i <= 4; ++i) {
-    animation->addSpriteFrame(
-        cx::getSpriteFrame(
-          "ufo_" + s::to_string(i) +".png"));
-  }
-  animation->setDelayPerUnit(1.0 / 4.0f);
-  animation->setLoops(-1);
-  this->ufoAnimation = c::Animate::create(animation);
-  CC_KEEP(this->ufoAnimation)
-
-  auto uz= this->ufo->getBoundingBox().size;
-  auto ray = cx::reifySprite("ray.png");
-  ray->setAnchorPoint(c::Vec2(0.5, 1.0));
-  ray->setPosition(uz.width  * 0.52f, uz.height * 0.5f);
-
-  this->blinkRay = c::RepeatForever::create(c::Blink::create(4, 6));
-  CC_KEEP(this->blinkRay)
-  this->ufo->addChild(ray, -1, kSpriteRay);
-
-  this->ufo->setVisible(false);
-  addAtlasItem("game-pics", this->ufo, 0, kSpriteUfo);
+  CC_KEEP(ss->explosion)
 }
 
 END_NS_UNAMED
@@ -253,6 +279,12 @@ END_NS_UNAMED
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
 
+  if (topic=="/game/player/earnscore") {
+    auto msg=(j::json*)m;
+    y->updateScore(
+        JS_INT(msg->operator[]("score")));
+  }
+  else
   if (topic=="/game/hud/updateEnergy") {
     y->updateEnergy();
   }
