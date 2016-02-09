@@ -54,7 +54,7 @@ void AI::process(float dt) {
   ss->ufoTimer += dt;
   if (ss->ufoTimer > ss->ufoInterval) {
     ss->ufoTimer = 0;
-    resetUfo();
+    resetUfo(ufo);
   }
 
   ss->healthTimer += dt;
@@ -92,29 +92,27 @@ void AI::process(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::resetMeteor() {
-
+    auto wb=cx::visBox();
+  auto mtx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto mx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
   auto ss = CC_GNLF(GVars,shared,"slots");
   auto p= MGMS()->getPool("Meteors");
-  auto wb = cx::visBox();
-
+ 
   if (ss->fallingObjects.size() > 30) {
     return;
   }
 
-  auto mx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto mtx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
   auto meteor = p->get();
   if (ENP(meteor)) {
     SCAST(GEngine*,engine)->createMeteors();
     meteor=p->get();
   }
-  auto mz= meteor->csize();
+  auto sz= meteor->csize();
 
-  meteor->stopAllActions();
-  meteor->setPosition(mx, wb.top + HHZ(mz));
+  meteor->sprite->stopAllActions();
+  meteor->sprite->setPosition(mx, wb.top + HHZ(sz));
 
-  auto rr = c::RepeatForever::create(
-      c::RotateBy::create(0.5f , -90));
+  auto rr = c::RepeatForever::create( c::RotateBy::create(0.5f , -90));
   auto seq= c::Sequence::create(
       c::MoveTo::create(ss->meteorSpeed,
         c::Vec2(mtx, wb.top * 0.15f)),
@@ -122,10 +120,10 @@ void AI::resetMeteor() {
         [=]() { this->fallingObjectDone(meteor); }),
       CC_NIL);
 
-  CC_SHOW(meteor);
-  meteor->runAction(rr);
-  meteor->runAction(seq);
-  ss->fallingObjects.push_back(meteor);
+  CC_SHOW(meteor->sprite);
+  meteor->sprite->runAction(rr);
+  meteor->sprite->runAction(seq);
+    ss->fallingObjects.insert(S__PAIR(f::ComObj*,f::ComObj*,meteor,meteor));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,31 +133,32 @@ void AI::resetUfo(Ufo *ufo) {
   auto UFO_SPEED = CC_CSV(c::Integer,"UFO+SPEED");
   auto ss= CC_GNLF(GVars,shared,"slots");
   auto wb= cx::visBox();
+  auto sp= ufo->sprite;
   auto newY = cx::randFloat(wb.top * 0.3f) + wb.top * 0.3f;
   auto newX= cx::randSign() > 0 ? 0 : wb.right;
 
-  if (ufo->sprite->isVisible()) { return; }
+  if (sp->isVisible()) { return; }
 
   if (newY > wb.top * 0.7f) {
     newY = wb.top * 0.7f;
   }
 
-  ufo->sprite->stopAllActions();
+  sp->stopAllActions();
   ufo->setPos(newX, newY);
-  ufo->sprite->runAction(ss->ufoAnimation->clone());
+  sp->runAction(ss->ufoAnimation->clone());
 
-  auto ray = ufo->sprite->getChildByTag(kSpriteRay);
-  CC_HIDE(ray->sprite);
-  ray->sprite->stopAllActions();
-  ray->sprite->runAction(ss->blinkRay->clone());
+  auto ray = sp->getChildByTag(kSpriteRay);
+  CC_HIDE(ray);
+  ray->stopAllActions();
+  ray->runAction(ss->blinkRay->clone());
 
-  FiniteTimeAction *seq;
+    c::FiniteTimeAction *seq;
   if ((int)newX == 0) {
     seq= c::Sequence::create(
         c::MoveTo::create(
           UFO_SPEED,
           c::Vec2(wb.right * 1.1, newY)),
-        c::CallFunc::create(
+        c::CallFuncN::create(
           [](c::Node *p) { CC_HIDE(p); }),
         CC_NIL);
   } else {
@@ -167,13 +166,13 @@ void AI::resetUfo(Ufo *ufo) {
         c::MoveTo::create(
           UFO_SPEED,
           c::Vec2(-wb.right * 0.1, newY)),
-        c::CallFunc::create(
+        c::CallFuncN::create(
           [](c::Node *p) { CC_HIDE(p); }),
         CC_NIL);
   }
 
-  CC_SHOW(ufo->sprite);
-  ufo->sprite->runAction(seq);
+  CC_SHOW(sp);
+  sp->runAction(seq);
   ss->ufoKilled = false;
   cx::sfxPlay("pew");
 }
@@ -182,22 +181,24 @@ void AI::resetUfo(Ufo *ufo) {
 //
 void AI::resetHealth() {
 
-  if (ss->fallingObjects.size() > 30) { return; }
-
   auto ss= CC_GNLF(GVars,shared,"slots");
   auto hp= MGMS()->getPool("Healths");
+  auto wb= cx::visBox();
   auto health = hp->get();
+
+  if (ss->fallingObjects.size() > 30) { return; }
   if (ENP(health)) {
     SCAST(GEngine*,engine)->createHealths();
     health=hp->get();
   }
 
-  int htx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  int hx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto hz= health->csize();
+  auto htx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto hx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
+  auto sp=health->sprite;
+  auto sz= health->csize();
 
-  health->stopAllActions();
-  health->setPosition(hx, wb.top + HHZ(hz));
+  sp->stopAllActions();
+  sp->setPosition(hx, wb.top + HHZ(sz));
 
   auto seq = c::Sequence::create(
          c::MoveTo::create(ss->healthSpeed,
@@ -206,10 +207,10 @@ void AI::resetHealth() {
            [=]() { this->fallingObjectDone(health); }),
          CC_NIL);
 
-  health->inflate();
-  health->runAction( ss->swingHealth->clone());
-  health->runAction(seq);
-  ss->fallingObjects.push_back(health);
+  CC_SHOW(sp);
+  sp->runAction( ss->swingHealth->clone());
+  sp->runAction(seq);
+    ss->fallingObjects.insert(S__PAIR(f::ComObj*,f::ComObj*,health,health));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -227,7 +228,7 @@ void AI::changeEnergy(float value) {
     ss->energy = 100;
   }
 
-  SENDMSG("/game/hud/updateEnergy");
+  SENDMSG("/game/hud/updateenergy");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -259,20 +260,22 @@ void AI::increaseDifficulty () {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::fallingObjectDone(c::Node *pSender) {
+void AI::fallingObjectDone(f::ComObj *pSender) {
 
-  //_fallingObjects.erase(_fallingObjects.find( (Sprite *)pSender));
-  pSender->stopAllActions();
-  pSender->setRotation(0);
+  auto ss= CC_GNLF(GVars,shared,"slots");
 
-  if (pSender->getTag() == kSpriteMeteor) {
+  ss->fallingObjects.erase(pSender);
+  pSender->sprite->stopAllActions();
+  pSender->sprite->setRotation(0);
+
+  if (pSender->sprite->getTag() == kSpriteMeteor) {
     changeEnergy(-15);
-    pSender->runAction(ss->groundHit->clone() );
+    pSender->sprite->runAction(ss->groundHit->clone() );
     //play explosion sound
     cx::sfxPlay("boom");
   } else {
-    CC_HIDE(pSender);
-    if (ss->energy == 100) {
+    CC_HIDE(pSender->sprite);
+    if ((int)ss->energy == 100) {
       auto msg= j::json({
           {"score", 25}
           });

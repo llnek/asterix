@@ -22,40 +22,49 @@ NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-
-  MGMS()->reifyPools(s_vec<sstr> {"Meteors", "Healths", "Clouds" });
-  auto ent= this->reifyEntity();
-  auto ss= mc_new1(GVars);
-  auto wb= cx::visBox();
-  ent->checkin(ss);
-
+void GEngine::createMeteors(int cnt) {
   MGMS()->getPool("Meteors")
   ->preset([=]() {
     auto s= cx::reifySprite("meteor.png");
     MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteMeteor);
     return mc_new1(Meteor,s);
-  }, 50);
+  }, cnt);
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::createHealths(int cnt) {
   MGMS()->getPool("Healths")
   ->preset([=]() {
     auto s= cx::reifySprite("health.png");
     s->setAnchorPoint(c::Vec2(0.5f, 0.8f));
     MGML()->addAtlasItem("game-pics",s, kMiddleground, kSpriteHealth);
     return mc_new1(Health,s);
-  }, 20);
+  }, cnt);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initEntities() {
+
+  MGMS()->reifyPools(s_vec<sstr> {"Meteors", "Healths", "Clouds" });
+
+  auto ent= this->reifyEntity();
+  auto ss= mc_new(GVars);
+  auto wb= cx::visBox();
+  ent->checkin(ss);
 
   //CREATE BOMB
-  auto sp = cx::reifySprite("bomb.png");
-  sp->getTexture()->generateMipmap();
-  sp->setVisible(false);
-  auto sz = sp->getContentSize();
-  //add sparkle
   auto sparkle = cx::reifySprite("sparkle.png");
+  auto halo = cx::reifySprite("halo.png");
+  auto sp = cx::reifySprite("bomb.png");
+  auto sz = sp->getContentSize();
+  sp->getTexture()->generateMipmap();
+  CC_HIDE(sp);
+  //add sparkle
   sparkle->setPosition(sz.width * 0.72f, sz.height * 0.72f);
   sp->addChild(sparkle, kMiddleground, kSpriteSparkle);
   //add halo
-  auto halo = cx::reifySprite("halo.png");
   halo->setPosition(sz.width * 0.4f, sz.height * 0.4f);
   sp->addChild(halo, 1, kSpriteHalo);
 
@@ -66,11 +75,15 @@ void GEngine::initEntities() {
   //add shockwave
   ss->shockWave = cx::reifySprite("shockwave.png");
   ss->shockWave->getTexture()->generateMipmap();
-  ss->shockWave->setVisible(false);
+    CC_HIDE(ss->shockWave);
   MGML()->addAtlasItem("game-pics", ss->shockWave);
 
-  auto animation = c::Animation::create();
+  //blink ray
+  ss->blinkRay = c::RepeatForever::create(c::Blink::create(4, 6));
+  CC_KEEP(ss->blinkRay)
+
   //add ufo
+  auto animation = c::Animation::create();
   sp= cx::reifySprite("ufo_1.png");
   for (auto i = 1; i <= 4; ++i) {
     animation->addSpriteFrame(
@@ -83,20 +96,25 @@ void GEngine::initEntities() {
   CC_KEEP(ss->ufoAnimation)
 
   auto ray = cx::reifySprite("ray.png");
-  auto uz= sp->getBoundingBox().size;
-  ray->setAnchorPoint(c::Vec2(0.5, 1));
-  ray->setPosition(uz.width  * 0.52f, uz.height * 0.5f);
+  sz= sp->getBoundingBox().size;
+  ray->setAnchorPoint(cx::anchorT());
+  ray->setPosition(sz.width  * 0.52f, sz.height * 0.5f);
 
-  ss->blinkRay = c::RepeatForever::create(c::Blink::create(4, 6));
-  CC_KEEP(ss->blinkRay)
   sp->addChild(ray, -1, kSpriteRay);
-  sp->setVisible(false);
+  CC_HIDE(sp);
   MGML()->addAtlasItem("game-pics", sp, 0, kSpriteUfo);
 
   ent=this->reifyEntity();
   ent->checkin(mc_new1(Ufo,sp));
 
+  createClouds();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::createClouds(int cnt) {
   auto pool=MGMS()->reifyPool("Clouds");
+    auto wb=cx::visBox();
   for (auto i = 0; i < 4; ++i) {
     auto y = wb.top * (i % 2 == 0 ? 0.4f : 0.5f);
     auto c = cx::reifySprite("cloud.png");
@@ -104,7 +122,6 @@ void GEngine::initEntities() {
     MGML()->addAtlasItem("game-pics", c, kBackground);
     pool->checkin(mc_new1(Cloud,c));
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

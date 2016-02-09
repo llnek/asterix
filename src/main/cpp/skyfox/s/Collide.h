@@ -32,6 +32,8 @@ public:
   : System(e)
   {}
 
+  DECL_PTR(a::NodeList,shared)
+  DECL_PTR(a::NodeList,ufos)
 };
 
 

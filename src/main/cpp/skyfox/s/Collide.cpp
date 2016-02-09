@@ -23,6 +23,7 @@ NS_BEGIN(skyfox)
 //
 void Collide::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
+    ufos=engine->getNodeList(UfoNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,52 +39,55 @@ bool Collide::update(float dt) {
 //
 void Collide::process(float dt) {
 
-  auto p= MGMS()->getPool("FallingObjects");
-  auto &pl = p->list();
   auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ufo= CC_GNLF(Ufo,ufos,"ufo");
+  auto ray = ufo->sprite->getChildByTag(kSpriteRay);
+  auto sz= CC_CSIZE(ss->shockWave);
+  s_vec<f::ComObj*> dead;
+  float dx,dy;
 
   if (!ss->shockWave->isVisible()) {
     return;
   }
 
+  F__LOOP(it,ss->fallingObjects) {
+    auto co= it->second;
+    dx = ss->shockWave->getPositionX() - co->sprite->getPositionX();
+    dy = ss->shockWave->getPositionY() - co->sprite->getPositionY();
+    if (pow(dx, 2) + pow(dy, 2) <= pow(HWZ(sz), 2)) {
+      co->sprite->stopAllActions();
+      co->sprite->runAction( ss->explosion->clone());
+      cx::sfxPlay("boom");
+      if (co->sprite->getTag() == kSpriteMeteor) {
+          ++ss->shockwaveHits;
+          auto msg= j::json({
+              "score" , ss->shockwaveHits * 13 + ss->shockwaveHits * 2 });
+          SENDMSGEX("/game/player/earnscore", &msg);
+      }
+      dead.push_back(co);
+    }
+  }
 
-        for (i = count-1; i >= 0; i--) {
-            auto sprite =  _fallingObjects.at(i);
-            diffx = _shockWave->getPositionX() - sprite->getPositionX();
-            diffy = _shockWave->getPositionY() - sprite->getPositionY();
-            if (pow(diffx, 2) + pow(diffy, 2) <= pow(_shockWave->getBoundingBox().size.width * 0.5f, 2)) {
-                sprite->stopAllActions();
-                sprite->runAction( _explosion->clone());
-                SimpleAudioEngine::getInstance()->playEffect("boom.wav");
-                if (sprite->getTag() == kSpriteMeteor) {
-                    _shockwaveHits++;
-                    _score += _shockwaveHits * 13 + _shockwaveHits * 2;
-                }
-                //play sound
-                _fallingObjects.erase(i);
-            }
-        }
-        if (_ufo->isVisible() && !_ufoKilled) {
+  F__LOOP(it,dead) { ss->fallingObjects.erase(*it); }
 
-            diffx = _shockWave->getPositionX() - _ufo->getPositionX();
-            diffy = _shockWave->getPositionY() - _ufo->getPositionY();
-            if (pow(diffx, 2) + pow(diffy, 2) <= pow(_shockWave->getBoundingBox().size.width * 0.6f, 2)) {
-                _ufoKilled = true;
-                SimpleAudioEngine::getInstance()->stopAllEffects();
-                _ufo->stopAllActions();
-                ray->stopAllActions();
-                ray->setVisible(false);
-                _ufo->runAction( _explosion->clone());
-                SimpleAudioEngine::getInstance()->playEffect("boom.wav");
-
-                 _shockwaveHits++;
-                 _score += _shockwaveHits * 13 + _shockwaveHits * 4;
-            }
-        }
-
-        _scoreDisplay->setString(String::createWithFormat("%i", _score)->getCString());
-
-
+  if (ufo->sprite->isVisible() && ! ss->ufoKilled) {
+    dx = ss->shockWave->getPositionX() - ufo->sprite->getPositionX();
+    dy = ss->shockWave->getPositionY() - ufo->sprite->getPositionY();
+    if (pow(dx, 2) + pow(dy, 2) <= pow(CC_CSIZE(ss->shockWave).width * 0.6f, 2)) {
+      ss->ufoKilled = true;
+      cx::pauseEffects();
+      ufo->sprite->stopAllActions();
+      ray->stopAllActions();
+      CC_HIDE(ray);
+      ufo->sprite->runAction( ss->explosion->clone());
+      cx::sfxPlay("boom");
+      ++ss->shockwaveHits;
+      auto msg = j::json({
+          "score", ss->shockwaveHits * 13 + ss->shockwaveHits * 4
+          });
+      SENDMSGEX("/game/player/earnscore", &msg);
+    }
+  }
 }
 
 

@@ -21,11 +21,18 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateEnergy(float v) {
-  energyLabel->setString(
-      s::to_string((int)v) + "% ");
+  auto e=(int)v;
+  energyLabel->setString( s::to_string(e) + "% ");
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateScore(int v) {
+  score += v;
+  scoreLabel->setString( s::to_string(score) );
+}
+
+//////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
   auto wb = cx::visBox();
@@ -33,7 +40,7 @@ void HUDLayer::decorate() {
   regoAtlas("game-pics");
 
   scoreLabel= cx::reifyBmfLabel("dft", "0");
-  scoreLabel->setAnchorPoint(c::Vec2(1,0.5));
+  scoreLabel->setAnchorPoint(cx::anchorR());
   scoreLabel->setPosition(wb.right * 0.8f, wb.top * 0.94f);
   addItem(scoreLabel);
 

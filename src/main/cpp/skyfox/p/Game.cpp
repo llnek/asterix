@@ -28,6 +28,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  void onGUIXXX(f::ComObj *co, const c::Vec2 &tap);
+
+  virtual void onMouseClick(f::ComObj*,const c::Vec2&);
   virtual bool onTouchStart(f::ComObj*, c::Touch*);
   virtual void postReify();
   void updateScore(int);
@@ -40,37 +43,49 @@ struct CC_DLL GLayer : public f::GameLayer {
   DECL_PTR(a::NodeList, bombs)
 
   GLayer() {
-    tmode= c::Touch::DispatchMode::ONE_BY_ONE;
+    tMode= c::Touch::DispatchMode::ONE_BY_ONE;
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
+  if (ENP(touch)) { return false; }
+  onGUIXXX(co, touch->getLocation());
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseClick(f::ComObj *co, const c::Vec2 &loc) {
+  onGUIXXX(co,loc);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onGUIXXX(f::ComObj *co, const c::Vec2 &tap) {
 
   auto ss= CC_GNLF(GVars,shared,"slots");
+  auto sp=co->sprite;
 
-  if (ENP(touch)) { return false; }
+  if (sp->isVisible()) {
 
-  if (co->sprite->isVisible()) {
-
-    auto child = co->sprite->getChildByTag(kSpriteHalo);
+    auto child = sp->getChildByTag(kSpriteHalo);
     auto pos= co->pos();
 
-    co->sprite->stopAllActions();
     child->stopAllActions();
-    child = co->sprite->getChildByTag(kSpriteSparkle);
+    sp->stopAllActions();
+    child = sp->getChildByTag(kSpriteSparkle);
     child->stopAllActions();
 
-    if (co->sprite->getScale() > 0.25f) {
-
+    if (sp->getScale() > 0.25f) {
       ss->shockWave->setPosition(pos.x,pos.y);
       CC_SHOW(ss->shockWave);
       ss->shockWave->setOpacity(255);
       ss->shockWave->setScale(0.1f);
       ss->shockWave->runAction(
           c::ScaleTo::create(0.5f,
-            co->sprite->getScale() * 2.0f));
+            sp->getScale() * 2.0f));
       ss->shockWave->runAction(
           ss->shockwaveSequence->clone());
       cx::sfxPlay("bombRelease");
@@ -78,25 +93,20 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
       cx::sfxPlay("bombFail");
     }
     ss->shockwaveHits = 0;
-    CC_HIDE(co->sprite);
-
+    CC_HIDE(sp);
   } else {
-
-    auto tap = touch->getLocation();
-    co->sprite->stopAllActions();
-    co->sprite->setScale(0.1f);
+    sp->stopAllActions();
+    sp->setScale(0.1f);
     co->setPos(tap.x,tap.y);
-    CC_SHOW(co->sprite)
-    co->sprite->setOpacity(50);
-    co->sprite->runAction(ss->growBomb->clone() );
-
-    child = co->sprite->getChildByTag(kSpriteHalo);
+    CC_SHOW(sp);
+    sp->setOpacity(50);
+    sp->runAction(ss->growBomb->clone() );
+    auto child = sp->getChildByTag(kSpriteHalo);
     child->runAction( ss->rotateSprite->clone());
-    child = co->sprite->getChildByTag(kSpriteSparkle);
+    child = sp->getChildByTag(kSpriteSparkle);
     child->runAction( ss->rotateSprite->clone());
   }
 
-  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -116,49 +126,55 @@ void GLayer::updateEnergy() {
 //
 void GLayer::onDone() {
 
+  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto bomb=CC_GNLF(Bomb,bombs,"bomb");
+  auto ufo=CC_GNLF(Ufo,ufos,"ufo");
+
   //_gameOverMessage->setVisible(true);
-  cx::sfxEffect("fire_truck");
+  cx::sfxPlay("fire_truck");
   MGMS()->stop();
 
-  //stop all actions currently running (meteors, health drops, animations,
-  int i;
-  int count = (int) _fallingObjects.size();
+  F__LOOP(it,ss->fallingObjects) {
+    it->second->sprite->stopAllActions();
+    CC_HIDE(it->second->sprite);
+  }
 
-  for (i = count-1; i >= 0; i--) {
-      auto sprite = _fallingObjects.at(i);
-      sprite->stopAllActions();
-      sprite->setVisible(false);
-      _fallingObjects.erase(i);
-  }
-  if (_bomb->isVisible()) {
-      _bomb->stopAllActions();
-      _bomb->setVisible(false);
-      auto child = _bomb->getChildByTag(kSpriteHalo);
+  ss->fallingObjects.clear();
+
+  if (bomb->sprite->isVisible()) {
+      bomb->sprite->stopAllActions();
+      CC_HIDE(bomb->sprite);
+      auto child = bomb->sprite->getChildByTag(kSpriteHalo);
       child->stopAllActions();
-      child = _bomb->getChildByTag(kSpriteSparkle);
+      child = bomb->sprite->getChildByTag(kSpriteSparkle);
       child->stopAllActions();
   }
-  if (_shockWave->isVisible()) {
-      _shockWave->stopAllActions();
-      _shockWave->setVisible(false);
+  if (ss->shockWave->isVisible()) {
+      ss->shockWave->stopAllActions();
+      CC_HIDE(ss->shockWave);
   }
-  if (_ufo->isVisible()) {
-      _ufo->stopAllActions();
-      _ufo->setVisible(false);
-      auto ray = _ufo->getChildByTag(kSpriteRay);
+  if (ufo->sprite->isVisible()) {
+      ufo->sprite->stopAllActions();
+      CC_HIDE(ufo->sprite);
+      auto ray = ufo->sprite->getChildByTag(kSpriteRay);
       ray->stopAllActions();
-      ray->setVisible(false);
+      CC_HIDE(ray);
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::postReify() {
 
   shared = engine->getNodeList(SharedNode().typeId());
-  cx::sfxMusic("bg", true);
+  ufos = engine->getNodeList(UfoNode().typeId());
+  bombs = engine->getNodeList(BombNode().typeId());
+
+    createActions();
+
 
   auto ss=CC_GNLF(GVars,shared,"slots");
+  cx::sfxMusic("bg", true);
   ss->energy = 100;
 
   ss->meteorInterval = 3.5;
@@ -181,6 +197,7 @@ void GLayer::postReify() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::decorate() {
 
   auto wb= cx::visBox();
@@ -208,8 +225,6 @@ void GLayer::decorate() {
     s->setPosition(wb.right * (0.2f+i*0.3f), 0);
     addAtlasItem("game-pics",s, kMiddleground);
   }
-
-  createActions();
 
   engine = mc_new(GEngine);
 }
@@ -285,7 +300,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
         JS_INT(msg->operator[]("score")));
   }
   else
-  if (topic=="/game/hud/updateEnergy") {
+  if (topic=="/game/hud/updateenergy") {
     y->updateEnergy();
   }
   else

@@ -15,8 +15,8 @@
 #include "base/CCEventListenerTouch.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "XScene.h"
 #include "GameScene.h"
+#include "GameLayer.h"
 
 NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
@@ -211,7 +211,23 @@ void GameLayer::onMouseDown(c::Event*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::onMouseUp(c::Event* ) {
+void GameLayer::onMouseUp(c::Event* event) {
+
+  auto e= (c::EventMouse*)event;
+  auto loc= e->getLocationInView();
+  auto b= e->getMouseButton();
+
+  F__LOOP(it,motionees) {
+    if (b == MOUSE_BUTTON_LEFT) {
+      onMouseClick(*it, loc);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GameLayer::onMouseClick(ComObj *co, const c::Vec2 &loc) {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

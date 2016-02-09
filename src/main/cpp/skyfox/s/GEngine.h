@@ -19,11 +19,15 @@ NS_BEGIN(skyfox)
 //
 class CC_DLL GEngine  : public a::Engine {
 
+  void createClouds(int cnt=4);
+
 public:
 
   virtual void initEntities();
   virtual void initSystems();
 
+  void createMeteors(int cnt=50);
+  void createHealths(int cnt=20);
 };
 
 

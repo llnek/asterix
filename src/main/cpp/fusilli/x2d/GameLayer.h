@@ -36,6 +36,7 @@ protected:
 
 
   virtual void onMouseMotion(ComObj*, const c::Vec2&);
+  virtual void onMouseClick(ComObj*, const c::Vec2&);
 
   virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
   virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
@@ -53,7 +54,7 @@ protected:
   virtual void postDeco();
   virtual void preDeco();
 
-  c::Touch::DispatchMode tmode= c::Touch::DispatchMode::ALL_AT_ONCE;
+  c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
   //c::Touch::DispatchMode tmode= c::Touch::DispatchMode::ONE_BY_ONE;
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
   DECL_PTR(a::Engine ,engine)

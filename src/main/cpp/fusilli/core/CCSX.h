@@ -38,6 +38,11 @@ namespace ccsx {
   void sfxMusic(const sstr &music, bool repeat);
   void sfxPlay(const sstr &sound);
 
+  void resumeEffects();
+  void resumeMusic();
+  void pauseEffects();
+  void pauseMusic();
+
   void resumeAudio();
   void pauseAudio();
 

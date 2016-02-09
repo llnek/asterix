@@ -17,9 +17,10 @@
 NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL AI : public a::System {
 
-  void fallingObjectDone(c::Node*);
+  void fallingObjectDone(f::ComObj*);
   void increaseDifficulty();
   void resetMeteor();
   void resetUfo(Ufo*);

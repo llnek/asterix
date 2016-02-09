@@ -108,7 +108,7 @@ struct CC_DLL GVars : public a::Component {
   DECL_BF(ufoKilled)
 
   DECL_IZ(shockwaveHits)
-  DECL_IZ(energy)
+  DECL_FZ(energy)
 
   DECL_PTR(c::RepeatForever,rotateSprite)
   DECL_PTR(c::RepeatForever,swingHealth)
@@ -120,7 +120,7 @@ struct CC_DLL GVars : public a::Component {
   DECL_PTR(c::ScaleTo,growBomb)
   DECL_PTR(c::Animate,ufoAnimation)
 
-  s_vec<f::ComObj*> fallingObjects;
+  s_map<f::ComObj*,f::ComObj*> fallingObjects;
 };
 
 

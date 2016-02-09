@@ -38,6 +38,7 @@ bool Move::update(float dt) {
 //
 void Move::process(float dt) {
   auto p= MGMS()->getPool("Clouds");
+    auto wb= cx::visBox();
   auto &c= p->list();
   F__LOOP(it,c) {
     auto co= *it;
