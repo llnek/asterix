@@ -129,6 +129,7 @@ void GLayer::onDone() {
   auto ss= CC_GNLF(GVars,shared,"slots");
   auto bomb=CC_GNLF(Bomb,bombs,"bomb");
   auto ufo=CC_GNLF(Ufo,ufos,"ufo");
+  auto wb=cx::visBox();
 
   //_gameOverMessage->setVisible(true);
   cx::sfxPlay("fire_truck");
@@ -160,6 +161,14 @@ void GLayer::onDone() {
       ray->stopAllActions();
       CC_HIDE(ray);
   }
+
+  auto btn=cx::reifyMenuBtn("gameover.png");
+  auto mnu=cx::mkMenu(btn);
+  btn->setPosition(wb.cx,wb.top*0.65f);
+  btn->setCallback([=](c::Ref*){
+    cx::runEx(Game::reify(mc_new(f::GCX)));
+  });
+  addItem(mnu);
 }
 
 //////////////////////////////////////////////////////////////////////////////
