@@ -170,10 +170,9 @@ void GLayer::postReify() {
   ufos = engine->getNodeList(UfoNode().typeId());
   bombs = engine->getNodeList(BombNode().typeId());
 
-    createActions();
-
-
   auto ss=CC_GNLF(GVars,shared,"slots");
+  auto bb= CC_GNLF(Bomb,bombs,"bomb");
+
   cx::sfxMusic("bg", true);
   ss->energy = 100;
 
@@ -192,8 +191,12 @@ void GLayer::postReify() {
   ss->difficultyInterval = 60;
   ss->difficultyTimer = 0;
 
+  createActions();
+
   getHUD()->updateEnergy(ss->energy);
   getHUD()->updateScore(0);
+
+  this->motionees.push_back(bb);
 }
 
 //////////////////////////////////////////////////////////////////////////////

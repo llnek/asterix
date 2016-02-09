@@ -92,12 +92,12 @@ void AI::process(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::resetMeteor() {
-    auto wb=cx::visBox();
+  auto wb=cx::visBox();
   auto mtx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
   auto mx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
   auto ss = CC_GNLF(GVars,shared,"slots");
   auto p= MGMS()->getPool("Meteors");
- 
+
   if (ss->fallingObjects.size() > 30) {
     return;
   }
@@ -120,10 +120,10 @@ void AI::resetMeteor() {
         [=]() { this->fallingObjectDone(meteor); }),
       CC_NIL);
 
-  CC_SHOW(meteor->sprite);
+  meteor->show();
   meteor->sprite->runAction(rr);
   meteor->sprite->runAction(seq);
-    ss->fallingObjects.insert(S__PAIR(f::ComObj*,f::ComObj*,meteor,meteor));
+  ss->fallingObjects.insert(S__PAIR(f::ComObj*,f::ComObj*,meteor,meteor));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ void AI::resetUfo(Ufo *ufo) {
   ray->stopAllActions();
   ray->runAction(ss->blinkRay->clone());
 
-    c::FiniteTimeAction *seq;
+  c::FiniteTimeAction *seq;
   if ((int)newX == 0) {
     seq= c::Sequence::create(
         c::MoveTo::create(
@@ -286,6 +286,7 @@ void AI::fallingObjectDone(f::ComObj *pSender) {
     //play health bonus sound
     cx::sfxPlay("health");
   }
+  pSender->deflate();
 }
 
 

@@ -61,7 +61,7 @@ void Collide::process(float dt) {
       if (co->sprite->getTag() == kSpriteMeteor) {
           ++ss->shockwaveHits;
           auto msg= j::json({
-              "score" , ss->shockwaveHits * 13 + ss->shockwaveHits * 2 });
+              {"score" , (int) (ss->shockwaveHits * 13 + ss->shockwaveHits * 2 )}});
           SENDMSGEX("/game/player/earnscore", &msg);
       }
       dead.push_back(co);
@@ -83,7 +83,7 @@ void Collide::process(float dt) {
       cx::sfxPlay("boom");
       ++ss->shockwaveHits;
       auto msg = j::json({
-          "score", ss->shockwaveHits * 13 + ss->shockwaveHits * 4
+          {"score", (int)(ss->shockwaveHits * 13 + ss->shockwaveHits * 4) }
           });
       SENDMSGEX("/game/player/earnscore", &msg);
     }

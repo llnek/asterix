@@ -58,7 +58,7 @@ void GEngine::initEntities() {
   auto sparkle = cx::reifySprite("sparkle.png");
   auto halo = cx::reifySprite("halo.png");
   auto sp = cx::reifySprite("bomb.png");
-  auto sz = sp->getContentSize();
+  auto sz = CC_CSIZE(sp);
   sp->getTexture()->generateMipmap();
   CC_HIDE(sp);
   //add sparkle
@@ -75,7 +75,7 @@ void GEngine::initEntities() {
   //add shockwave
   ss->shockWave = cx::reifySprite("shockwave.png");
   ss->shockWave->getTexture()->generateMipmap();
-    CC_HIDE(ss->shockWave);
+  CC_HIDE(ss->shockWave);
   MGML()->addAtlasItem("game-pics", ss->shockWave);
 
   //blink ray
@@ -84,7 +84,7 @@ void GEngine::initEntities() {
 
   //add ufo
   auto animation = c::Animation::create();
-  sp= cx::reifySprite("ufo_1.png");
+  auto ray = cx::reifySprite("ray.png");
   for (auto i = 1; i <= 4; ++i) {
     animation->addSpriteFrame(
         cx::getSpriteFrame(
@@ -95,8 +95,8 @@ void GEngine::initEntities() {
   ss->ufoAnimation = c::Animate::create(animation);
   CC_KEEP(ss->ufoAnimation)
 
-  auto ray = cx::reifySprite("ray.png");
-  sz= sp->getBoundingBox().size;
+  sp= cx::reifySprite("ufo_1.png");
+  sz= CC_CSIZE(sp);
   ray->setAnchorPoint(cx::anchorT());
   ray->setPosition(sz.width  * 0.52f, sz.height * 0.5f);
 

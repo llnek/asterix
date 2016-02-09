@@ -33,14 +33,17 @@ public:
   virtual void inflate();
   virtual void deflate();
 
+  virtual void setPos(float x, float y);
   virtual void hurt(int damage=1);
   virtual const c::Size csize();
+
+  void show();
+  void hide();
 
   void mortal() { godMode=false; }
   void god() { godMode=true; }
   void freeze() { status=false; }
 
-  virtual void setPos(float x, float y);
   const c::Vec2 pos();
   const c::Rect bbox();
   float circum();
