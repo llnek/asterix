@@ -16,7 +16,46 @@
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
+
+enum {
+    kBackground,
+    kMiddleground,
+    kForeground
+};
+
+enum {
+    kSpriteRocket,
+    kSpritePlanet,
+    kSpriteBoost,
+    kSpriteStar
+};
+
+typedef enum gamestates {
+    kGameIntro,
+    kGamePaused,
+    kGamePlay,
+    kGameOver
+} GameState;
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Rocket : public f::ComObj {
+  Rocket(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
+  MDECL_COMP_TPID("n/Rocket")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Planet : public f::ComObj {
+  Planet(not_null<c::Sprite*> s)
+    : ComObj(s) {
+  }
+  MDECL_COMP_TPID("n/Planet")
+};
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +67,20 @@ struct CC_DLL Gesture : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public a::Component {
+
+  DECL_PTR(c::ParticleSystemQuad, pickup)
+  DECL_PTR(c::ParticleSystemQuad, jet)
+  DECL_PTR(c::ParticleSystemQuad, boom)
+  DECL_PTR(c::ParticleSystemQuad, comet)
+  DECL_PTR(c::ParticleSystemQuad, warp)
+  DECL_PTR(c::ParticleSystemQuad, star)
+
   MDECL_COMP_TPID( "n/GVars" )
+  DECL_FZ(minLineLength)
+  DECL_BF(drawing)
+  DECL_IZ(state)
+
+  s_vec<c::Vec2> grid;
 };
 
 

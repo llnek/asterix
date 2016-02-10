@@ -14,7 +14,7 @@
 #include "ash/Engine.h"
 #include "n/N.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GEngine  : public a::Engine {

@@ -13,7 +13,21 @@
 
 #include "ash/NodeRego.h"
 #include "C.h"
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL RocketNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"rocket", "n/Rocket" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/RocketNode")
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //

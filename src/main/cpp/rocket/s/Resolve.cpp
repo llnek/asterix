@@ -17,7 +17,7 @@
 #include "Resolve.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
 
 
 

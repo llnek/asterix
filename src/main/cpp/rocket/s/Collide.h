@@ -14,7 +14,7 @@
 #include "ash/System.h"
 #include "GEngine.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public a::System {

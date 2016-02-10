@@ -16,15 +16,16 @@
 
 NS_USING(fusii)
 NS_USING(ash)
-NS_USING(@@APPID@@)
+NS_USING(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-  AppDelegate::AppDelegate()  : App ("@@APPID@@") {
+  AppDelegate::AppDelegate()  : App ("rocket") {
 
   // register all ash::node factories here
   auto r= NodeRegistry::self();
 
+  r->rego( mc_new(RocketNode));
   r->rego( mc_new(SharedNode));
 
   // set up app-config

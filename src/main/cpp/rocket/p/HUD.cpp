@@ -12,17 +12,37 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "n/C.h"
 #include "HUD.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
+  auto wz=cx::visRect();
+  auto wb=cx::visBox();
 
-  scoreLabel= cx::reifyBmfLabel("OCR", "0");
-  addItem(scoreLabel);
+  regoAtlas("game-pics");
+
+  scoreLabel= cx::reifyBmfLabel("dft", "0");
+  scoreLabel->setAlignment(c::TextHAlignment::LEFT);
+  scoreLabel->setWidth(wz.size.width * 0.5f);
+  scoreLabel->setAnchorPoint(cx::anchorL());
+  scoreLabel->setPosition(wb.right * 0.48f, wb.top * 0.95f);
+  addItem(scoreLabel,kBackground);
+
+  auto btn = cx::reifyMenuBtn("btn_pause_off.png");
+  auto mnu= cx::mkMenu(btn);
+  btn->setPosition(wb.right * 0.06f, wb.top* 0.95f);
+  CC_HIDE(mnu);
+  addItem(mnu, kBackground);
+
+  paused = cx::reifySprite("label_paused.png");
+  paused->setPosition(wb.cx, wb.top * 0.55f);
+  CC_HIDE(paused);
+  addAtlasItem("game-pics",paused, kForeground);
 
   score=0;
 }

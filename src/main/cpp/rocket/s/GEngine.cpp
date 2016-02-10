@@ -19,12 +19,20 @@
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
+  auto ent= this->reifyEntity();
+  auto wb=cx::visBox();
+  ent->checkin(mc_new(GVars));
 
+  MGMS()->reifyPool("Planets");
+
+  rocket = Rocket::create();
+  rocket->setPosition(c::Vec2(wb.cx, wb.top * 0.1f));
+  MGML()->addAtlasItem("game-pics", rocket, kForeground, kSpriteRocket);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -24,10 +24,10 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(640,480); }
+  virtual const c::Size gameSize() { return c::Size(1536,2048); }
 
   virtual ResolutionPolicy policy() {
-    return ResolutionPolicy::NO_BORDER; }
+    return ResolutionPolicy::EXACT_FIT; }
 
   virtual void handleResolution(const c::Size &rs);
   virtual c::Scene* prelude();

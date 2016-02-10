@@ -9,9 +9,9 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "Splash.h"
 #include "Config.h"
-NS_BEGIN(@@APPID@@)
+#include "Game.h"
+NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -34,30 +34,57 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "@@GAME_ID@@";
-  app_id = "@@APPID@@";
+  game_id= "47641fcb-a939-4fac-87e4-91e219c44cc8";
+  app_id = "rocket";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+
+  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game.bg",  CC_STR("pics/bg.png"));
+
+  addFont("dft", CC_STR("fon/en/font.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
+  auto dz= gameSize();
+  sstr p;
+  float w;
+
+  if (rs.width > 768) {
+    p= "rd";
+    w=1536;
+  } else if (rs.width > 320) {
+    p="hd";
+    w=768;
+  } else {
+    p="sd";
+    w=380;
+  }
+
+  CC_DTOR()->setContentScaleFactor(w/dz.width);
+  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
+  auto c= c::SpriteFrameCache::getInstance();
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Splash::reify();
+    return Game::reify(mc_new(f::GCX));
 }
 
 
