@@ -25,6 +25,7 @@ NS_USING(rocket)
   // register all ash::node factories here
   auto r= NodeRegistry::self();
 
+  r->rego( mc_new(LineDrawingNode));
   r->rego( mc_new(RocketNode));
   r->rego( mc_new(SharedNode));
 

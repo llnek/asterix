@@ -14,6 +14,8 @@
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
+#include "Rocket.h"
+#include "LineContainer.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(rocket)
@@ -39,13 +41,15 @@ typedef enum gamestates {
 } GameState;
 
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Rocket : public f::ComObj {
-  Rocket(not_null<c::Sprite*> s)
-    : ComObj(s) {
+struct CC_DLL LineDrawing : public a::Component {
+  LineDrawing(not_null<LineContainer*> c) {
+    lines=c;
   }
-  MDECL_COMP_TPID("n/Rocket")
+  DECL_PTR(LineContainer,lines)
+  MDECL_COMP_TPID("n/LineDrawing")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,7 +82,11 @@ struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
   DECL_FZ(minLineLength)
   DECL_BF(drawing)
+  DECL_IZ(gridPos)
   DECL_IZ(state)
+  DECL_IZ(cometInterval)
+  DECL_IZ(cometTimer)
+  DECL_FZ(timeBetweenPickups)
 
   s_vec<c::Vec2> grid;
 };

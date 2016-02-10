@@ -24,6 +24,10 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
+  virtual void onTouchMotion(f::ComObj*, c::Touch*);
+  virtual bool onTouchStart(f::ComObj*, c::Touch*);
+  virtual void onTouchEnd(f::ComObj*, c::Touch*);
+
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
@@ -31,9 +35,17 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void postReify();
 
   void createParticles();
+  void resetStar();
   void createStarGrid();
 
+  DECL_PTR(a::NodeList, drawings)
   DECL_PTR(a::NodeList, shared)
+  DECL_PTR(a::NodeList, rockets)
+
+  GLayer() {
+    tMode= c::Touch::DispatchMode::ONE_BY_ONE;
+  }
+
 };
 
 static s_arr<c::Vec2,7> PPOS = {
@@ -48,14 +60,18 @@ static s_arr<c::Vec2,7> PPOS = {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
+  drawings=engine->getNodeList(LineDrawingNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
+  rockets=engine->getNodeList(RocketNode().typeId());
+  auto dw= CC_GNLF(LineDrawing,drawings,"drawing");
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
   auto ss=CC_GNLF(GVars,shared,"slots");
   auto pool= MGMS()->getPool("Planets");
   auto wb=cx::visBox();
+
   ss->minLineLength = wb.right * 0.07f;
   ss->drawing = false;
   ss->state = kGameIntro;
-
 
   //add planets
   for (auto i=0; i < PPOS.size(); ++i) {
@@ -68,6 +84,140 @@ void GLayer::postReify() {
 
   createParticles();
   createStarGrid();
+
+  rock->setPos(wb.cx, wb.top * 0.1f);
+  rock->sprite->setOpacity(255);
+  rock->show();
+  rock->reset();
+
+  ss->timeBetweenPickups = 0.0;
+  ss->cometInterval = 4;
+  ss->cometTimer = 0;
+
+  //getHUD()->updateScore(0);
+
+  dw->lines->reset();
+
+  //shuffle grid cells
+  s::random_shuffle(ss->grid.begin(), ss->grid.end());
+  ss->gridPos = 0;
+
+  resetStar();
+
+  ss->warp->stopSystem();
+
+  cx::sfxMusic("background.mp3", true);
+  cx::sfxPlay("rocket.wav");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::resetStar() {
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto rpos=rock->pos();
+
+  while (true) {
+    auto pos= ss->grid[ss->gridPos];
+    ++ss->gridPos;
+    if (ss->gridPos >= ss->grid.size()) { ss->gridPos=0; }
+    if (pow(pos.x - rpos.x, 2) +
+        pow(pos.y - rpos.y, 2) > rock->radius() * 6) {
+      ss->star->setPosition(pos);
+      CC_SHOW(ss->star);
+      ss->star->resetSystem();
+      return;
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
+
+  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto tap = touch->getLocation();
+  auto rpos=rock->pos();
+  auto dx = rpos.x - tap.x;
+  auto dy = rpos.y - tap.y;
+
+  if (dx * dx + dy * dy <= pow(rock->radius(), 2)) {
+    rock->rotationOrientation= ROTATE_NONE;
+    dw->lines->lineType= LINE_NONE;
+    ss->drawing = true;
+  }
+
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(f::ComObj *co, c::Touch *touch) {
+  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  if (ss->drawing) {
+    auto tap = touch->getLocation();
+    auto rpos=rock->pos();
+    auto dx = rpos.x - tap.x;
+    auto dy = rpos.y - tap.y;
+
+    if (dx * dx + dy * dy > pow(ss->minLineLength, 2)) {
+      rock->select(true);
+      dw->lines->pivot= tap;
+      dw->lines->lineType= LINE_TEMP;
+    } else {
+      rock->select(false);
+      dw->lines->lineType= LINE_NONE;
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
+  auto dw= CC_GNLF(LineDrawing,drawings,"drawing");
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto tap = touch->getLocation();
+
+  //track if tapping on ship
+  ss->drawing = false;
+  rock->select(false);
+
+  //if we are showing a temp line
+  if (dw->lines->lineType == LINE_TEMP) {
+    //set up dashed line
+    dw->lines->pivot= tap;
+    dw->lines->lineLength= rock->pos().distance(tap);
+
+    //set up rocket
+    auto circlelen = dw->lines->lineLength * 2 * M_PI;
+    auto iters = floor(circlelen / rock->speed.x);
+    rock->pivot=tap;
+    rock->angularSpeed= 2 * M_PI / iters;
+
+    auto diff = rock->pos();
+    diff.subtract(rock->pivot);
+    auto clkwise = diff.getRPerp();
+    auto dot =clkwise.dot(rock->vel);
+
+    if (dot > 0) {
+      rock->angularSpeed= rock->angularSpeed * -1;
+      rock->rotationOrientation= ROTATE_CLOCKWISE;
+      rock->targetRotation=
+        CC_RADIANS_TO_DEGREES(atan2(clkwise.y, clkwise.x));
+    } else {
+      rock->rotationOrientation= ROTATE_COUNTER;
+      rock->targetRotation=
+        CC_RADIANS_TO_DEGREES(atan2(-1 * clkwise.y,
+              -1 * clkwise.x));
+    }
+    dw->lines->lineType= LINE_DASHED;
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,7 +226,6 @@ void GLayer::decorate() {
 
   centerImage("game.bg");
   regoAtlas("game-pics");
-
 
   engine = mc_new(GEngine);
 }

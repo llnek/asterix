@@ -30,9 +30,15 @@ void GEngine::initEntities() {
 
   MGMS()->reifyPool("Planets");
 
-  rocket = Rocket::create();
-  rocket->setPosition(c::Vec2(wb.cx, wb.top * 0.1f));
-  MGML()->addAtlasItem("game-pics", rocket, kForeground, kSpriteRocket);
+  ent= this->reifyEntity();
+  auto c= LineContainer::create();
+  MGML()->addItem(c,1);
+  ent->checkin(mc_new1(LineDrawing,c));
+
+  ent= this->reifyEntity();
+  auto r= Rocket::create();
+  r->setPos(wb.cx, wb.top * 0.1f);
+  ent->checkin(r);
 }
 
 //////////////////////////////////////////////////////////////////////////////

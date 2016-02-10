@@ -17,6 +17,20 @@ NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL LineDrawingNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"drawing", "n/LineDrawing" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/LineDrawingNode")
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL RocketNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {

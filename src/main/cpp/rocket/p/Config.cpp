@@ -47,6 +47,9 @@ void Config::initAssets() {
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg",  CC_STR("pics/bg.png"));
 
+  addEffect("rocket", CC_STR("sfx/rocket.wav"));
+  addMusic("bg", CC_STR("sfx/background.mp3"));
+
   addFont("dft", CC_STR("fon/en/font.fnt"));
 }
 
