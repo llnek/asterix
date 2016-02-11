@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "Config.h"
-#include "Game.h"
+#include "Splash.h"
 NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void Config::runOnce() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-    return Game::reify(mc_new(f::GCX));
+  return Splash::reify();
 }
 
 

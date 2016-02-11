@@ -309,6 +309,7 @@ void GLayer::killPlayer() {
   auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
   auto rock=CC_GNLF(Rocket,rockets,"rocket");
   auto ss=CC_GNLF(GVars,shared,"slots");
+  auto wb=cx::visBox();
 
   cx::pauseAudio();
   cx::sfxPlay("shipBoom");
@@ -318,6 +319,10 @@ void GLayer::killPlayer() {
   rock->hide();
   ss->jet->stopSystem();
   dw->lines->lineType= LINE_NONE;
+
+  auto gameOver = cx::reifySprite("gameOver.png");
+  gameOver->setPosition(wb.cx, wb.top * 0.55f);
+  addAtlasItem("game-pics",gameOver, kForeground);
 
   ss->state = kGameOver;
   MGMS()->stop();

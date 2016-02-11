@@ -12,6 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "Game.h"
 #include "Splash.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -20,7 +21,23 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decorate() {
+  auto play = cx::reifyMenuBtn("label_play.png");
+  auto intro = cx::reifySprite("logo.png");
+  auto menu= cx::mkMenu(play);
+  auto wb=cx::visBox();
 
+  centerImage("game.bg");
+  regoAtlas("game-pics");
+
+  intro->setPosition(wb.cx, wb.top * 0.55f);
+
+  play->setPosition(wb.cx, wb.top * 0.2);
+  play->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(f::GCX)));
+  });
+
+  addAtlasItem("game-pics",intro);
+  addItem(menu);
 }
 
 

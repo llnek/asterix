@@ -25,6 +25,7 @@ class CC_DLL Config : public f::XConfig {
 public:
 
   virtual const c::Size gameSize() { return c::Size(1536,2048); }
+  //virtual const c::Size gameSize() { return c::Size(768,1024); }
 
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::EXACT_FIT; }
