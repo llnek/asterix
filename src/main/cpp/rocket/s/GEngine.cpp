@@ -24,26 +24,34 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto ent= this->reifyEntity();
+  auto c= LineContainer::create();
+  auto r= Rocket::create();
   auto wb=cx::visBox();
+
+  MGML()->addAtlasItem("game-pics", r->sprite, kForeground, kSpriteRocket);
+  MGML()->addItem(c,1);
+
+  auto ent= this->reifyEntity();
   ent->checkin(mc_new(GVars));
 
-  MGMS()->reifyPool("Planets");
-
   ent= this->reifyEntity();
-  auto c= LineContainer::create();
-  MGML()->addItem(c,1);
   ent->checkin(mc_new1(LineDrawing,c));
 
   ent= this->reifyEntity();
-  auto r= Rocket::create();
   r->setPos(wb.cx, wb.top * 0.1f);
   ent->checkin(r);
+
+  MGMS()->reifyPool("Planets");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
+
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(AI,this));
+  regoSystem(mc_new1(Move,this));
 
 }
 

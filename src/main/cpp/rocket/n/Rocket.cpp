@@ -40,7 +40,6 @@ Rocket::Rocket(not_null<c::Sprite*> s)
 Rocket* Rocket::create() {
   auto s = cx::reifySprite("rocket.png");
   auto r= mc_new1(Rocket,s);
-  MGML()->addAtlasItem("game-pics", s, kForeground, kSpriteRocket);
   r->reset();
   return r;
 }
@@ -61,65 +60,62 @@ void Rocket::reset() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Rocket::update (float dt) {
-/*
-	Point position = this->getPosition();
 
-	if (_rotationOrientation == ROTATE_NONE) {
+  auto position = sprite->getPosition();
 
-		position.x += _vector.x * dt;
-		position.y += _vector.y * dt;
+  if (rotationOrientation == ROTATE_NONE) {
+    position.x += vel.x * dt;
+    position.y += vel.y * dt;
+  } else {
+    //rotate point around a pivot by a certain amount (rotation angle)
+    auto angle = angularSpeed * dt;
+    auto rotatedPoint = position.rotateByAngle(pivot, angle);
+    position.x = rotatedPoint.x;
+    position.y = rotatedPoint.y;
 
-	} else {
+    auto diff = position;
+    float rotatedAngle;
+    diff.subtract(pivot);
+    auto clockwise = diff.getRPerp();
 
-		//rotate point around a pivot by a certain amount (rotation angle)
-        float angle = _angularSpeed * dt;
-        Point rotatedPoint = position.rotateByAngle(_pivot, angle);
-        position.x = rotatedPoint.x;
-        position.y = rotatedPoint.y;
-
-        float rotatedAngle;
-
-        Point diff = position;
-        diff.subtract(_pivot);
-        Point clockwise = diff.getRPerp();
-
-         if (_rotationOrientation == ROTATE_COUNTER) {
-             rotatedAngle = atan2 (-1 * clockwise.y, -1 * clockwise.x);
-         } else {
-             rotatedAngle = atan2 (clockwise.y, clockwise.x);
-         }
-
-         //update rocket vector
-         _vector.x = _speed * cos (rotatedAngle);
-         _vector.y = _speed * sin (rotatedAngle);
-
-         this->setRotationFromVector();
-
-         //wrap rotation values to 0-360 degrees
-         if (this->getRotation() > 0) {
-             this->setRotation( fmodf(this->getRotation(), 360.0f) );
-         } else {
-             this->setRotation( fmodf(this->getRotation(), -360.0f) );
-         }
-	}
-
-    if (_targetRotation > this->getRotation() + 180) {
-        _targetRotation -= 360;
-    }
-    if (_targetRotation < this->getRotation() - 180) {
-        _targetRotation += 360;
+    if (rotationOrientation == ROTATE_COUNTER) {
+      rotatedAngle = atan2 (-1 * clockwise.y, -1 * clockwise.x);
+    } else {
+      rotatedAngle = atan2 (clockwise.y, clockwise.x);
     }
 
-    this->setPosition(position);
+    //update rocket vector
+    vel.x = speed.x * cos (rotatedAngle);
+    vel.y = speed.y * sin (rotatedAngle);
 
-    _dr = _targetRotation - this->getRotation() ;
-    _ar = _dr * _rotationSpring;
-    _vr += _ar ;
-    _vr *= _rotationDamping;
-    float rotationNow = this->getRotation();
-    rotationNow += _vr;
-    this->setRotation(rotationNow);
-*/
+    setRotationFromVector();
+
+    //wrap rotation values to 0-360 degrees
+    if (sprite->getRotation() > 0) {
+      sprite->setRotation( fmodf(sprite->getRotation(), 360.0f) );
+    } else {
+      sprite->setRotation( fmodf(sprite->getRotation(), -360.0f) );
+    }
+  }
+
+  if (targetRotation > sprite->getRotation() + 180) {
+    targetRotation -= 360;
+  }
+  if (targetRotation < sprite->getRotation() - 180) {
+    targetRotation += 360;
+  }
+
+  sprite->setPosition(position);
+
+  dr = targetRotation - sprite->getRotation() ;
+  ar = dr * rotationSpring;
+  vr += ar ;
+  vr *= rotationDamping;
+
+  auto rotationNow = sprite->getRotation();
+  rotationNow += vr;
+
+  sprite->setRotation(rotationNow);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -132,44 +128,45 @@ void Rocket::select(bool flag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Rocket::collidedWithSides() {
-/*
-    Size screenSize = Director::getInstance()->getWinSize();
 
+  auto position= sprite->getPosition();
+  auto r= this->radius();
+  auto wz = cx::visRect();
+  auto wb=cx::visBox();
 
-    if (_position.x > screenSize.width - _radius) {
-        _position.x =  screenSize.width - _radius;
-        _rotationOrientation = ROTATE_NONE;
-        _vector = Vec2(this->getVector().x * -1, this->getVector().y);
-        this->setRotationFromVector();
-        return true;
-    }
+  if (position.x > wb.right - r) {
+    sprite->setPositionX(wb.right-r);
+    rotationOrientation = ROTATE_NONE;
+    vel = c::Vec2(vel.x * -1, vel.y);
+    this->setRotationFromVector();
+    return true;
+  }
 
-    if (_position.x < _radius) {
-        _position.x =  _radius;
-       	_rotationOrientation =  ROTATE_NONE;
-        _vector =  Vec2 (this->getVector().x * -1, this->getVector().y);
-        this->setRotationFromVector();
-        return true;
+  if (position.x < r) {
+    sprite->setPositionX(r);
+    rotationOrientation = ROTATE_NONE;
+    vel =  c::Vec2 (vel.x * -1, vel.y);
+    this->setRotationFromVector();
+    return true;
+  }
 
-    }
+  if (position.y < r) {
+    sprite->setPositionY(r);
+    rotationOrientation = ROTATE_NONE;
+    vel =  c::Vec2 (vel.x, vel.y * -1);
+    this->setRotationFromVector();
+    return true;
+  }
 
-    if (_position.y < _radius) {
-        _position.y = _radius;
-       	_rotationOrientation = ROTATE_NONE;
-        _vector =  Vec2 (this->getVector().x, this->getVector().y * -1);
-        this->setRotationFromVector();
-        return true;
-    }
+  if (position.y > wb.top - r) {
+    sprite->setPositionY(wb.top - r);
+    rotationOrientation = ROTATE_NONE;
+    vel =  c::Vec2 (vel.x, vel.y * -1);
+    this->setRotationFromVector();
+    return true;
+  }
 
-    if (_position.y > screenSize.height - _radius) {
-        _position.y =  screenSize.height - _radius;
-       	_rotationOrientation = ROTATE_NONE;
-        _vector =  Vec2 (this->getVector().x, this->getVector().y * -1);
-        this->setRotationFromVector();
-        return true;
-    }
-*/
-    return false;
+  return false;
 }
 
 

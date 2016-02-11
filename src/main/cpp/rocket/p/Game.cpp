@@ -36,6 +36,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   void createParticles();
   void resetStar();
+  void killPlayer();
   void createStarGrid();
 
   DECL_PTR(a::NodeList, drawings)
@@ -59,6 +60,7 @@ static s_arr<c::Vec2,7> PPOS = {
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::postReify() {
   drawings=engine->getNodeList(LineDrawingNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
@@ -69,9 +71,11 @@ void GLayer::postReify() {
   auto pool= MGMS()->getPool("Planets");
   auto wb=cx::visBox();
 
+  this->motionees.push_back(rock);
+
   ss->minLineLength = wb.right * 0.07f;
   ss->drawing = false;
-  ss->state = kGameIntro;
+  ss->state = kGamePlay;//kGameIntro;
 
   //add planets
   for (auto i=0; i < PPOS.size(); ++i) {
@@ -106,29 +110,8 @@ void GLayer::postReify() {
 
   ss->warp->stopSystem();
 
-  cx::sfxMusic("background.mp3", true);
   cx::sfxPlay("rocket.wav");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::resetStar() {
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto rpos=rock->pos();
-
-  while (true) {
-    auto pos= ss->grid[ss->gridPos];
-    ++ss->gridPos;
-    if (ss->gridPos >= ss->grid.size()) { ss->gridPos=0; }
-    if (pow(pos.x - rpos.x, 2) +
-        pow(pos.y - rpos.y, 2) > rock->radius() * 6) {
-      ss->star->setPosition(pos);
-      CC_SHOW(ss->star);
-      ss->star->resetSystem();
-      return;
-    }
-  }
+  cx::sfxMusic("background.mp3", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -221,6 +204,7 @@ void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::decorate() {
   auto wb=cx::visBox();
 
@@ -298,11 +282,67 @@ void GLayer::createStarGrid() {
   CCLOG("POSSIBLE STARS: %i", (int)ss->grid.size());
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::resetStar() {
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto rpos=rock->pos();
+
+  while (true) {
+    auto pos= ss->grid[ss->gridPos];
+    ++ss->gridPos;
+    if (ss->gridPos >= ss->grid.size()) { ss->gridPos=0; }
+    if (pow(pos.x - rpos.x, 2) +
+        pow(pos.y - rpos.y, 2) > rock->radius() * 6) {
+      ss->star->setPosition(pos);
+      CC_SHOW(ss->star);
+      ss->star->resetSystem();
+      return;
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::killPlayer() {
+  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+
+  cx::pauseAudio();
+  cx::sfxPlay("shipBoom");
+
+  ss->boom->setPosition(rock->pos());
+  ss->boom->resetSystem();
+  rock->hide();
+  ss->jet->stopSystem();
+  dw->lines->lineType= LINE_NONE;
+
+  ss->state = kGameOver;
+  MGMS()->stop();
+}
+
+
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic == "/game/player/killed") {
+    y->killPlayer();
+  }
+  else
+  if (topic == "/game/resetstar") {
+    y->resetStar();
+  }
+  else
+  if (topic == "/game/player/earnscore") {
+    auto msg= (j::json*) m;
+    y->getHUD()->updateScore(JS_INT(msg->operator[]("score")));
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

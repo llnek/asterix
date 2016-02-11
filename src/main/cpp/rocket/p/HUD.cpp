@@ -47,6 +47,12 @@ void HUDLayer::decorate() {
   score=0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateScore(int v) {
+  score += v;
+  scoreLabel->setString(s::to_string(score));
+}
 
 NS_END
 

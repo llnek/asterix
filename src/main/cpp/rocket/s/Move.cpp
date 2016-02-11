@@ -20,6 +20,37 @@ NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(rocket)
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::preamble() {
+  drawings=engine->getNodeList(LineDrawingNode().typeId());
+  shared=engine->getNodeList(SharedNode().typeId());
+  rockets=engine->getNodeList(RocketNode().typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::update(float dt) {
+  if (MGMS()->isLive()) {
+    process(dt);
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::process(float dt) {
+  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+
+  if (dw->lines->lineType != LINE_NONE) {
+    dw->lines->tip= rock->pos();
+  }
+
+}
+
+
 
 NS_END
 

@@ -19,6 +19,8 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public a::System {
 
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::AI)
@@ -29,6 +31,10 @@ public:
   AI(a::Engine *e)
   : System(e)
   {}
+
+  DECL_PTR(a::NodeList, rockets)
+  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(a::NodeList, drawings)
 
 };
 

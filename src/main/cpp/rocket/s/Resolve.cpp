@@ -20,6 +20,28 @@ NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(rocket)
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::preamble() {
+  drawings=engine->getNodeList(LineDrawingNode().typeId());
+  shared=engine->getNodeList(SharedNode().typeId());
+  rockets=engine->getNodeList(RocketNode().typeId());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::update(float dt) {
+  if (MGMS()->isLive()) {
+    process(dt);
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::process(float dt) {
+}
+
 
 NS_END
 
