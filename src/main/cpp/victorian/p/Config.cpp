@@ -9,9 +9,9 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "Splash.h"
+#include "Game.h"
 #include "Config.h"
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -34,34 +34,51 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "@@GAME_ID@@";
-  app_id = "@@APPID@@";
+  game_id= "cd5dfd6a-6941-4377-ae1a-9d624afd1127";
+  app_id = "victorian";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("dft", CC_STR("fon/en/font.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
+  auto dz= gameSize();
+  sstr p;
+  float h;
+
+  if (rs.height > 768) {
+    p="rd";
+    h= 1536;
+  } else if (rs.height > 320) {
+    p="hd";
+    h=768;
+  } else {
+    p="sd";
+    h=380;
+  }
+
+  CC_DTOR()->setContentScaleFactor(h/dz.height);
+  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
-  //auto fp= getAtlas("game-pics");
-  //c->addSpriteFramesWithFile( fp);
-  //CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Splash::reify();
+  return Game::reify();
 }
 
 
