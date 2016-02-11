@@ -33,12 +33,25 @@ typedef enum {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Widget : public f::ComObj {
+
   Widget(not_null<c::Sprite*> s)
     : ComObj(s) {
   }
-  MDECL_COMP_TPID("n/Widget")
-  DECL_TD(c::Vec2,nextPos)
-  void place () { sprite->setPosition(nextPos); }
+
+  virtual float radius() {
+    return _width * 0.5f;
+  }
+
+  virtual float height() { return _height; }
+  virtual float width() { return _width; }
+
+  void setSize() {
+    _height = sprite->boundingBox().size.height;
+    _width = sprite->boundingBox().size.width;
+  }
+
+  DECL_FZ(_height)
+  DECL_FZ(_width)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,6 +79,8 @@ struct CC_DLL GVars : public a::Component {
 
 NS_END
 
-
+#include "Terrain.h"
+#include "Player.h"
+#include "Block.h"
 
 

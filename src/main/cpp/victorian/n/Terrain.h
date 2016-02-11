@@ -1,74 +1,78 @@
-﻿#ifndef __TERRAIN_H__
-#define __TERRAIN_H__
+﻿// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "core/ComObj.h"
+#include "Block.h"
+#include "Player.h"
 
 #define TILE_H_SIZE 6
 #define TILE_W_SIZE 8
 
-#include "cocos2d.h"
-#include "Block.h"
-#include "Player.h"
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(victorian)
 
-USING_NS_CC;
-using namespace std;
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Terrain : public Widget {
 
+  Vector<Block*> _blockPool;
+  Vector<Block*> _blocks;
 
-class Terrain : public Sprite {
+  int _blockPoolIndex;
+  int _lastBlockHeight;
+  int _lastBlockWidth;
+  int _minTerrainWidth;
 
-    Vector<Block *> _blockPool;
-	int _blockPoolIndex;
+  bool _showGap;
 
-    Vector<Block *> _blocks;
-	int _lastBlockHeight;
-    int _lastBlockWidth;
-	int _minTerrainWidth;
+  int _currentPatternIndex;
+  int _currentPatternCnt;
+  int _currentWidthIndex;
+  int _currentHeightIndex;
+  int _currentTypeIndex;
 
-    bool _showGap;
-    Size _screenSize;
+  int _increaseGapInterval;
+  float _increaseGapTimer;
+  int _gapSize;
 
-    int _currentPatternIndex;
-    int _currentPatternCnt;
-    int _currentWidthIndex;
-    int _currentHeightIndex;
-    int _currentTypeIndex;
+  void initTerrain();
+  void addBlocks(int currentWidth);
 
-    int _increaseGapInterval;
-    float _increaseGapTimer;
-    int _gapSize;
+  void distributeBlocks();
+  void initBlock(Block *block);
 
-    void initTerrain (void);
-    void addBlocks(int currentWidth);
-
-    void distributeBlocks();
-    void initBlock(Block * block);
-
-    inline int getWidth () {
-
-        int width = 0;
-        for (auto block : _blocks) {
-            width += block->getWidth();
-        }
-        return width;
+  virtual float getWidth () {
+    int width = 0;
+    for (auto block : _blocks) {
+      width += block->getWidth();
     }
+    return width;
+  }
 
+  Terrain(not_null<c::Sprite*> s);
+  virtual ~Terrain();
+  static Terrain* create();
 
-public:
+  void activateChimneysAt(Player *player);
+  void checkCollision(Player *player);
 
-	Terrain(void);
-	virtual ~Terrain(void);
+  void move(float xMove);
+  void reset();
 
-	CC_SYNTHESIZE(bool, _startTerrain, StartTerrain);
-
-    static Terrain * create();
-
-	void activateChimneysAt (Player * player);
-    void checkCollision (Player * player);
-
-	void move (float xMove);
-    void reset (void);
-
+  CC_SYNTHESIZE(bool, _startTerrain, StartTerrain);
 };
 
 
-#endif // __TERRAIN_H__
+NS_END
 
 

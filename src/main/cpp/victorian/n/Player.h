@@ -1,5 +1,17 @@
-﻿#ifndef __PLAYER_H__
-#define __PLAYER_H__
+﻿// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "C.h"
 
 #define PLAYER_INITIAL_SPEED 8
 #define PLAYER_JUMP 42
@@ -9,98 +21,94 @@
 #define FLOATING_FRICTION 0.98f
 #define AIR_FRICTION 0.99f
 
-#include "cocos2d.h"
-#include "GameSprite.h"
+NS_BEGIN(victorian)
 
-USING_NS_CC;
-
-typedef enum
-{
+typedef enum {
     kPlayerMoving,
     kPlayerFalling,
     kPlayerDying
 
 } PlayerState;
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Player : public Widget {
 
-class Player : public GameSprite {
+  Action *_rideAnimation;
+  Action *_floatAnimation;
 
-    Action * _rideAnimation;
-    Action * _floatAnimation;
-    float _speed;
-	int _floatingTimerMax;
-	float _floatingTimer;
-	int _floatingInterval;
-    bool _hasFloated;
+  bool _hasFloated;
 
-    Size _screenSize;
+  int _floatingTimerMax;
+  float _floatingTimer;
+  int _floatingInterval;
 
-    void initPlayer (void);
+  void initPlayer();
 
-public:
+  Player(not_null<c::Sprite*>);
+  virtual ~Player();
 
-	Player(void);
-	virtual ~Player(void);
+  static Player* create();
 
-	CC_SYNTHESIZE(PlayerState, _state, State);
-	CC_SYNTHESIZE(bool, _inAir, InAir);
-	CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
-    CC_SYNTHESIZE(bool, _jumping, Jumping);
-    CC_SYNTHESIZE(float, _maxSpeed, MaxSpeed);
+  virtual void update (float dt);
+  void setFloating (bool value);
+  void reset();
 
-    static Player * create (void);
-
-	virtual void update (float dt);
-
-    void setFloating (bool value);
-
-    void reset (void);
-
-	inline virtual void place () {
-		this->setPositionY( _nextPosition.y );
-        if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
-            this->setPositionX(this->getPositionX() + _vector.x);
-            if (this->getPositionX() > _screenSize.width * 0.2f) {
-                this->setPositionX(_screenSize.width * 0.2f);
-            }
-        }
-	};
-
-    inline int left() {
-    	return this->getPositionX() - _width * 0.5f;
-	}
-
-	inline int right() {
-    	return this->getPositionX() + _width * 0.5f;
-	}
-
-    inline int top() {
-    	return this->getPositionY() ;
+  virtual void place () {
+    auto wb=cx::visBox();
+    sprite->setPositionY(nextPos.y);
+    if (vel.x > 0 && sprite->getPositionX() < wb.right * 0.2f) {
+      sprite->setPositionX(sprite->getPositionX() + vel.x);
+      if (sprite->getPositionX() > wb.right * 0.2f) {
+        sprite->setPositionX(wb.right * 0.2f);
+      }
     }
+  }
 
-    inline int bottom() {
-		return this->getPositionY() - _height  ;
-    }
+  virtual float left() {
+    return sprite->getPositionX() - _width * 0.5f;
+  }
 
-    inline int next_left() {
-    	return _nextPosition.x - _width * 0.5f;
-    }
+  virtual float right() {
+    return sprite->getPositionX() + _width * 0.5f;
+  }
 
-    inline int next_right() {
-    	return _nextPosition.x + _width * 0.5f;
-    }
+  virtual float top() {
+    return sprite->getPositionY() ;
+  }
 
-    inline int next_top() {
-    	return _nextPosition.y ;
-    }
+  virtual float bottom() {
+    return sprite->getPositionY() - _height  ;
+  }
 
-    inline int next_bottom() {
-    	return _nextPosition.y - _height;
-    }
+  virtual float next_left() {
+    return nextPos.x - _width * 0.5f;
+  }
 
+  virtual float next_right() {
+    return nextPos.x + _width * 0.5f;
+  }
+
+  virtual float next_top() {
+    return nextPos.y ;
+  }
+
+  virtual float next_bottom() {
+    return nextPos.y - _height;
+  }
+
+  CC_SYNTHESIZE(PlayerState, _state, State);
+  CC_SYNTHESIZE(bool, _inAir, InAir);
+  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
+  CC_SYNTHESIZE(bool, _jumping, Jumping);
 };
 
-#endif // __PLAYER_H__
+
+
+
+
+NS_END
+
 
 
 

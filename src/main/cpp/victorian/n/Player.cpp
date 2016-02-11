@@ -1,172 +1,210 @@
-﻿
+﻿// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
+#include "core/XConfig.h"
+#include "core/ComObj.h"
+#include "core/CCSX.h"
 #include "Player.h"
-#include "SimpleAudioEngine.h"
+
 #define P_ACCELERATION 0.05
 
-using namespace CocosDenshion;
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(victorian)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 Player::~Player(){
-
-    CC_SAFE_RELEASE(_rideAnimation);
-    CC_SAFE_RELEASE(_floatAnimation);
+  CC_SAFE_RELEASE(_floatAnimation);
+  CC_SAFE_RELEASE(_rideAnimation);
 }
 
-Player::Player() {
+//////////////////////////////////////////////////////////////////////////////
+//
+Player::Player(not_null<c::Sprite*> s)
+  : Widget(s) {
 
-    _screenSize = Director::getInstance()->getWinSize();
-	_floatingTimerMax = 2;
-	_floatingTimer = 0;
-    _speed = PLAYER_INITIAL_SPEED;
-    _maxSpeed = PLAYER_INITIAL_SPEED;
-    _floating = false;
-    _nextPosition = Vec2(0,0);
-	_nextPosition.y = _screenSize.height * 0.6f;
-	_state = kPlayerMoving;
-    _jumping = false;
-    _hasFloated = false;
+  auto wb=cx::visBox();
+
+  maxVel.x = PLAYER_INITIAL_SPEED;
+  maxVel.y=maxVel.x;
+
+  speed.x = PLAYER_INITIAL_SPEED;
+  speed.y=speed.x;
+
+  _floatingTimerMax = 2;
+  _floatingTimer = 0;
+  _floating = false;
+  nextPos= c::Vec2(0,0);
+  nextPos.y = wb.top * 0.6f;
+  _state = kPlayerMoving;
+  _jumping = false;
+  _hasFloated = false;
 }
 
-Player * Player::create () {
+//////////////////////////////////////////////////////////////////////////////
+//
+Player* Player::create () {
 
-    auto player = new Player();
+  auto s= cx::reifySprite("player_1.png");
+  auto player = mc_new1(Player,s);
 
-    if (player && player->initWithSpriteFrameName("player_1.png")) {
-		player->autorelease();
-        player->setSize();
-        player->initPlayer();
-        return player;
-	}
-
-	CC_SAFE_DELETE(player);
-	return nullptr;
+  player->setSize();
+  player->initPlayer();
+  return player;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 void Player::update (float dt) {
 
-    if (_speed + P_ACCELERATION <= _maxSpeed) {
-        _speed += P_ACCELERATION;
-    } else {
-        _speed = _maxSpeed;
+  if (speed.x + P_ACCELERATION <= maxVel.x) {
+    speed.x += P_ACCELERATION;
+    speed.y=speed.x;
+  } else {
+    speed = maxVel;
+  }
+
+  vel.x = speed.x;
+
+  switch (_state) {
+    case kPlayerMoving:
+      vel.y -= G_FORCE;
+      if (_hasFloated) _hasFloated = false;
+    break;
+
+    case kPlayerFalling:
+      if (_floating ) {
+        vel.y -= FLOATNG_GRAVITY;
+        vel.x *= FLOATING_FRICTION;
+      } else {
+        vel.y -= G_FORCE;
+        vel.x *= AIR_FRICTION;
+        _floatingTimer = 0;
+      }
+    break;
+
+    case kPlayerDying:
+      vel.y -= G_FORCE;
+      vel.x = -_speed;
+      sprite->setPositionX(sprite->getPositionX() + vel.x);
+    break;
+
+  }
+
+  if (_jumping) {
+    _state = kPlayerFalling;
+    vel.y += PLAYER_JUMP * 0.25f;
+    if (vel.y > PLAYER_JUMP ) _jumping = false;
+  }
+
+  if (vel.y < -TERMINAL_VELOCITY) vel.y = -TERMINAL_VELOCITY;
+
+  nextPos.y = sprite->getPositionY() + vel.y;
+
+  if (vel.x * vel.x < 0.01) vel.x = 0;
+  if (vel.y * vel.y < 0.01) vel.y = 0;
+
+  if (_floating) {
+    _floatingTimer += dt;
+    if (_floatingTimer > _floatingTimerMax) {
+      _floatingTimer = 0;
+      cx::sfxPlay("falling");
+      this->setFloating(false);
     }
+  }
 
-    _vector.x = _speed;
-
-	switch (_state) {
-		case kPlayerMoving:
-			_vector.y -= G_FORCE;
-            if (_hasFloated) _hasFloated = false;
-		break;
-
-        case kPlayerFalling:
-            if (_floating ) {
-				_vector.y -= FLOATNG_GRAVITY;
-				_vector.x *= FLOATING_FRICTION;
-
-            } else {
-				_vector.y -= G_FORCE;
-				_vector.x *= AIR_FRICTION;
-				_floatingTimer = 0;
-			}
-		break;
-        case kPlayerDying:
-            _vector.y -= G_FORCE;
-            _vector.x = -_speed;
-            this->setPositionX(this->getPositionX() + _vector.x);
-        break;
-
-	}
-
-    if (_jumping) {
-        _state = kPlayerFalling;
-        _vector.y += PLAYER_JUMP * 0.25f;
-        if (_vector.y > PLAYER_JUMP ) _jumping = false;
-    }
-
-    if (_vector.y < -TERMINAL_VELOCITY) _vector.y = -TERMINAL_VELOCITY;
-
-  	_nextPosition.y = this->getPositionY() + _vector.y;
-
-
-	if (_vector.x * _vector.x < 0.01) _vector.x = 0;
-	if (_vector.y * _vector.y < 0.01) _vector.y = 0;
-
-	if (_floating) {
-		_floatingTimer += dt;
-		if (_floatingTimer > _floatingTimerMax) {
-            _floatingTimer = 0;
-            SimpleAudioEngine::getInstance()->playEffect("falling.wav");
-			this->setFloating(false);
-		}
-	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Player::reset () {
 
-    _speed = PLAYER_INITIAL_SPEED;
-    _maxSpeed = PLAYER_INITIAL_SPEED;
+  auto wb=cx::visBox();
 
-    _vector = Vec2(0,0);
-    this->setFloating(false);
-    this->setRotation(0);
-    _nextPosition.y = _screenSize.height * 0.6f;
-    this->setPosition(Vec2( _screenSize.width * 0.2f, _nextPosition.y ));
-    _state = kPlayerMoving;
-    _jumping = false;
-    _hasFloated = false;
+  maxVel.x = PLAYER_INITIAL_SPEED;
+  maxVel.y=maxVel.x;
+
+  speed.x = PLAYER_INITIAL_SPEED;
+  speed.y=speed.x;
+
+  vel = c::Vec2(0,0);
+
+  this->setFloating(false);
+  this->setRotation(0);
+
+  nextPos.y = wb.top * 0.6f;
+  sprite->setPosition(wb.right * 0.2f, nextPos.y);
+  _state = kPlayerMoving;
+  _jumping = false;
+  _hasFloated = false;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void Player::setFloating (bool value) {
 
-    if (_floating == value) return;
+  if (_floating == value) return;
 
-    if (value && _hasFloated) return;
+  if (value && _hasFloated) return;
 
-    _floating = value;
+  _floating = value;
 
-    this->stopAllActions();
+  sprite->stopAllActions();
 
-    if (value) {
-        _hasFloated = true;
-        SimpleAudioEngine::getInstance()->playEffect("openUmbrella.wav");
-        this->setDisplayFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("player_float.png"));
-        this->runAction(_floatAnimation);
-        _vector.y += PLAYER_JUMP * 0.5f;
-    } else {
-
-        this->runAction(_rideAnimation);
-    }
+  if (value) {
+    _hasFloated = true;
+    cx::sfxPlay("openUmbrella");
+    sprite->setDisplayFrame(cx::getSpriteFrame("player_float.png"));
+    sprite->runAction(_floatAnimation);
+    vel.y += PLAYER_JUMP * 0.5f;
+  } else {
+    sprite->runAction(_rideAnimation);
+  }
 }
 
-void Player::initPlayer () {
+//////////////////////////////////////////////////////////////////////////////
+//
+void Player::initPlayer() {
 
-    this->setAnchorPoint(Vec2(0.5f, 1.0f));
-    this->setPosition(Vec2(_screenSize.width * 0.2f, _nextPosition.y));
-    _height = 252 * 0.95f;
-    _width = 184;
+  auto wb=cx::visBox();
 
-    Animation* animation;
-    animation = Animation::create();
-    SpriteFrame * frame;
-    int i;
-    for(i = 1; i <= 3; i++) {
-        frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(String::createWithFormat("player_%i.png", i)->getCString());
-        animation->addSpriteFrame(frame);
-    }
+  sprite->setAnchorPoint(cx::anchorT());
+  sprite->setPosition(wb.right * 0.2f, nextPos.y);
+  _height = 252 * 0.95f;
+  _width = 184;
 
-    animation->setDelayPerUnit(0.2f / 3.0f);
-    animation->setRestoreOriginalFrame(false);
-    animation->setLoops(-1);
-    _rideAnimation = Animate::create(animation);
-    _rideAnimation->retain();
+  Animation *animation = Animation::create();
+  SpriteFrame *frame;
+  for (auto i = 1; i <= 3; ++i) {
+    frame = cx::getSpriteFrame("player_"+s::to_string(i)+".png");
+    animation->addSpriteFrame(frame);
+  }
+  animation->setDelayPerUnit(0.2f / 3.0f);
+  animation->setRestoreOriginalFrame(false);
+  animation->setLoops(-1);
+  _rideAnimation = Animate::create(animation);
+  _rideAnimation->retain();
 
+  auto easeSwing = c::Sequence::create(
+         c::EaseInOut::create(c::RotateTo::create(0.8f, -10), 2),
+         c::EaseInOut::create(c::RotateTo::create(0.8f, 10), 2),
+         nullptr);
+  _floatAnimation = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
+  _floatAnimation->retain();
 
-    auto easeSwing = Sequence::create(
-           EaseInOut::create(RotateTo::create(0.8f, -10), 2),
-           EaseInOut::create(RotateTo::create(0.8f, 10), 2),
-           nullptr);
-    _floatAnimation = RepeatForever::create( (ActionInterval*) easeSwing );
-    _floatAnimation->retain();
-
-    this->runAction(_rideAnimation);
+  sprite->runAction(_rideAnimation);
 }
+
+
+
+NS_END
+
 

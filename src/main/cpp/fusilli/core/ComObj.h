@@ -44,13 +44,24 @@ public:
   void god() { godMode=true; }
   void freeze() { status=false; }
 
-  const c::Vec2 pos();
   const c::Rect bbox();
-  float circum();
-  float radius();
-  float height();
+  const c::Vec2 pos();
+
+  virtual void place() {
+    sprite->setPosition(nextPos); }
+
+
+  virtual float circum();
+  virtual float radius();
+  virtual float height();
+  virtual float width();
+
+  //virtual float bottom();
+  //virtual float top();
+  //virtual float right();
+  //virtual float left();
+
   int pid();
-  float width();
 
   ComObj(not_null<c::Sprite*>, int health, int score);
   ComObj(not_null<c::Sprite*>);
@@ -67,10 +78,17 @@ public:
   DECL_IZ(score)
 
   DECL_TD(c::Vec2, lastPos)
-  DECL_TD(c::Vec2, speed)
+  DECL_TD(c::Vec2, nextPos)
+
+  //DECL_TD(c::Vec2, maxVel)
+  //DECL_TD(c::Vec2, speed)
+
+  DECL_FZ(maxSpeed)
+  DECL_FZ(speed)
+
   DECL_TD(c::Vec2, acc)
   DECL_TD(c::Vec2, vel)
-  DECL_TD(c::Vec2, maxVel)
+
   DECL_FZ(power)
   //degrees
   DECL_FZ(angle)

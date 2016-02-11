@@ -93,19 +93,19 @@ void ComObj::deflate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::height() {
-  return NNP(sprite) ? sprite->getContentSize().height : 0;
+  return NNP(sprite) ? sprite->boundingBox().size.height : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::width() {
-  return NNP(sprite) ? sprite->getContentSize().width : 0;
+  return NNP(sprite) ? sprite->boundingBox().size.width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Rect ComObj::bbox() {
-  return NNP(sprite) ? sprite->getBoundingBox() : c::Rect(0,0,0,0);
+  return NNP(sprite) ? sprite->boundingBox() : c::Rect(0,0,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -141,19 +141,19 @@ const c::Vec2 ComObj::pos() {
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Size ComObj::csize() {
-  return NNP(sprite) ? sprite->getContentSize() : c::Size(0,0);
+  return NNP(sprite) ? sprite->boundingBox().size : c::Size(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::circum() {
-  return NNP(sprite) ? sprite->getContentSize().width : 0;
+  return NNP(sprite) ? sprite->boundingBox().size.width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::radius() {
-  return NNP(sprite) ? sprite->getContentSize().width * 0.5f : 0;
+  return NNP(sprite) ? sprite->boundingBox().size.width * 0.5f : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
