@@ -19,6 +19,22 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
 
+enum {
+
+    kBackground,
+    kMiddleground,
+    kForeground
+};
+
+enum {
+    kSpritePlayer,
+    kSpriteTerrain,
+    kSpriteBlock,
+    kSpriteChimney,
+    kSpritePuff
+};
+
+
 typedef enum {
     kGameIntro,
     kGamePlay,
@@ -72,15 +88,23 @@ struct CC_DLL Gesture : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public a::Component {
+  DECL_PTR(c::Animate,jamAnimate)
+  DECL_PTR(c::MoveTo,jamMove)
+  DECL_PTR(c::Sprite,jam)
+  DECL_PTR(c::Sprite,hat)
+
+  DECL_PTR(c::Sprite,background)
+  DECL_PTR(c::Sprite,foreground)
+  DECL_IZ(state)
+
+  DECL_IZ(speedIncreaseInterval)
+  DECL_IZ(speedIncreaseTimer)
+
   MDECL_COMP_TPID( "n/GVars" )
 };
 
 
 
 NS_END
-
-#include "Terrain.h"
-#include "Player.h"
-#include "Block.h"
 
 

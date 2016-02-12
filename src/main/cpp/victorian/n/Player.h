@@ -34,8 +34,8 @@ typedef enum {
 //
 struct CC_DLL Player : public Widget {
 
-  DECL_PTR(Action, _floatAnimation)
-  DECL_PTR(Action, _rideAnimation)
+    DECL_PTR(c::Action, _floatAnimation)
+    DECL_PTR(c::Action, _rideAnimation)
 
   DECL_BF(_hasFloated)
 
@@ -96,6 +96,8 @@ struct CC_DLL Player : public Widget {
   virtual float next_bottom() {
     return nextPos.y - _height;
   }
+
+  MDECL_COMP_TPID("n/Player")
 
   CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
   CC_SYNTHESIZE(PlayerState, _state, State);

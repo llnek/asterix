@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
-#include "Block.h"
+#include "BBlock.h"
 
 #define TOTAL_PUFFS 3
 
@@ -39,9 +39,9 @@ Block::Block (not_null<c::Sprite*> s)
 
   auto wz=cx::visRect();
 
-  _wallTiles= 20;
-  _roofTiles=5;
-  _chimneys=5;
+//  _wallTiles= 20;
+//  _roofTiles=5;
+//  _chimneys=5;
 
   _tileHeight = wz.size.height / TILE_H_SIZE;
   _tileWidth = wz.size.width / TILE_W_SIZE;
@@ -107,8 +107,8 @@ void Block::setupBlock(int width, int height, int type) {
   _height = height * _tileHeight + _tileHeight * 0.49f;
   sprite->setPositionY(_height);
 
-  SpriteFrame *wallFrame;
-  SpriteFrame *roofFrame = rand() % 10 > 6 ? _roof1 : _roof2;
+    c::SpriteFrame *wallFrame;
+    c::SpriteFrame *roofFrame = rand() % 10 > 6 ? _roof1 : _roof2;
 
   float chimneyX[] = {0,0,0,0,0};
   int num_chimneys;
@@ -197,7 +197,7 @@ void Block::initBlock() {
   //create tiles
   for (auto i = 0; i < 5; ++i) {
     auto tile = cx::reifySprite("roof_1.png");
-    tile->setAnchorPoint(cx::anchorLT());
+    tile->setAnchorPoint(cx::anchorTL());
     tile->setPosition(i*_tileWidth, 0);
     CC_HIDE(tile);
     sprite->addChild(tile, kMiddleground, kRoofTile);
@@ -205,7 +205,7 @@ void Block::initBlock() {
 
     for (auto j = 0; j < 4; ++j) {
       tile = cx::reifySprite("building_1.png");
-      tile->setAnchorPoint(cx::anchorLT());
+      tile->setAnchorPoint(cx::anchorTL());
       tile->setPosition(
           i*_tileWidth, -1 * (_tileHeight*0.47f + j*_tileHeight));
       CC_HIDE(tile);
@@ -222,14 +222,14 @@ void Block::initBlock() {
 
     for (auto j = 0; j < TOTAL_PUFFS; ++j) {
       auto puff = cx::reifySprite("puff_1.png");
-      puff->setAnchorPoint(Vec2(0,-0.5));
+        puff->setAnchorPoint(c::Vec2(0,-0.5));
       CC_HIDE(puff);
       chimney->addChild(puff, -1, j);
     }
   }
 
-  Animation *animation = Animation::create();
-  SpriteFrame *frame;
+    auto animation = c::Animation::create();
+    c::SpriteFrame *frame;
 
   for (auto i = 1; i <= 4; ++i) {
     frame = cx::getSpriteFrame("puff_"+s::to_string(i)+".png");
@@ -239,7 +239,7 @@ void Block::initBlock() {
   animation->setDelayPerUnit(0.75f / 4.0f);
   animation->setRestoreOriginalFrame(false);
   animation->setLoops(-1);
-  _puffAnimation = Animate::create(animation);
+    _puffAnimation = c::Animate::create(animation);
   _puffAnimation->retain();
 
   _puffSpawn = c::Repeat::create(

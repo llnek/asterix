@@ -16,6 +16,8 @@
 #include "Collide.h"
 #include "Move.h"
 #include "AI.h"
+#include "n/Terrain.h"
+#include "n/Player.h"
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -25,12 +27,38 @@ NS_BEGIN(victorian)
 //
 void GEngine::initEntities() {
 
+  auto pool= MGMS()->reifyPool("Clouds");
+  auto t= Terrain::create();
+  auto p= Player::create();
+  auto wb=cx::visBox();
+
+  //add clouds
+  for (auto i = 0; i < 4; ++i) {
+    auto cy = wb.top * (i % 2 == 0 ? 0.7f : 0.8f);
+    auto c = cx::reifySprite("cloud.png");
+    c->setPosition(wb.right * 0.15f + i * wb.right * 0.25f, cy);
+    MGML()->addAtlasItem("game-pics",c, kBackground);
+    pool->checkin(mc_new1(Cloud,c));
+  }
+
+  auto ent=this->reifyEntity();
+  ent->checkin(mc_new(GVars));
+
+  ent=this->reifyEntity();
+  ent->checkin(t);
+
+  ent=this->reifyEntity();
+  ent->checkin(p);
+
+  MGML()->addAtlasItem("game-pics",t->sprite, kMiddleground);
+  MGML()->addAtlasItem("game-pics",p->sprite, kBackground);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Move,this));
 }
 
 

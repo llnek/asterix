@@ -19,6 +19,8 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Resolve : public a::System {
 
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::Resolve)
@@ -29,6 +31,10 @@ public:
   Resolve(a::Engine *e)
   : System(e)
   {}
+
+  DECL_PTR(a::NodeList, terrains)
+  DECL_PTR(a::NodeList, players)
+  DECL_PTR(a::NodeList, shared)
 
 };
 

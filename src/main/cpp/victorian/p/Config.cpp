@@ -41,7 +41,22 @@ void Config::initCsts() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
+
+  addAtlas("game-pics",CC_STR("pics/sprite_sheet.plist"));
+
+  addImage("game.bg",CC_STR("pics/bg.png"));
+  addImage("game-pics",CC_STR("pics/sprite_sheet.png"));
+
   addFont("dft", CC_STR("fon/en/font.fnt"));
+
+  addMusic("background3",CC_STR("sfx/background3.mp3"));
+  addEffect("falling",CC_STR("sfx/falling.wav"));
+  addEffect("hitBuilding",CC_STR("sfx/hitBuilding.wav"));
+  addEffect("jump",CC_STR("sfx/jump.wav"));
+  addEffect("crashing",CC_STR("sfx/crashing.wav"));
+  addEffect("start",CC_STR("sfx/start.wav"));
+  addEffect("openUmbrella",CC_STR("sfx/openUmbrella.wav"));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,7 +93,7 @@ void Config::runOnce() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Game::reify();
+    return Game::reify(mc_new(f::GCX));
 }
 
 

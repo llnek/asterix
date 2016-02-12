@@ -130,7 +130,7 @@ void Player::reset () {
   vel = c::Vec2(0,0);
 
   this->setFloating(false);
-  this->setRotation(0);
+  sprite->setRotation(0);
 
   nextPos.y = wb.top * 0.6f;
   sprite->setPosition(wb.right * 0.2f, nextPos.y);
@@ -174,8 +174,8 @@ void Player::initPlayer() {
   _height = 252 * 0.95f;
   _width = 184;
 
-  Animation *animation = Animation::create();
-  SpriteFrame *frame;
+    auto animation = c::Animation::create();
+    c::SpriteFrame *frame;
   for (auto i = 1; i <= 3; ++i) {
     frame = cx::getSpriteFrame("player_"+s::to_string(i)+".png");
     animation->addSpriteFrame(frame);
@@ -183,7 +183,7 @@ void Player::initPlayer() {
   animation->setDelayPerUnit(0.2f / 3.0f);
   animation->setRestoreOriginalFrame(false);
   animation->setLoops(-1);
-  _rideAnimation = Animate::create(animation);
+    _rideAnimation = c::Animate::create(animation);
   _rideAnimation->retain();
 
   auto easeSwing = c::Sequence::create(

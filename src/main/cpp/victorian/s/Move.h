@@ -19,6 +19,8 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public a::System {
 
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::Move)
@@ -29,6 +31,10 @@ public:
   Move(a::Engine *e)
   : System(e)
   {}
+
+  DECL_PTR(a::NodeList, terrains)
+  DECL_PTR(a::NodeList, players)
+  DECL_PTR(a::NodeList, shared)
 
 };
 

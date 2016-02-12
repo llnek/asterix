@@ -17,6 +17,34 @@ NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL TerrainNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"terrain", "n/Terrain" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/TerrainNode")
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL PlayerNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"player", "n/Player" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/PlayerNode")
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL SharedNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {

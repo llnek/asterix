@@ -34,7 +34,7 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Block : public Widget {
+struct CC_DLL Block : public Widget, public c::Ref {
 
   Block(not_null<c::Sprite*> s);
   virtual ~Block();

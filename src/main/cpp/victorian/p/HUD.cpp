@@ -20,8 +20,14 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
-  scoreLabel= cx::reifyBmfLabel("OCR", "0");
+  scoreLabel= cx::reifyBmfLabel("dft", "000000");
+  scoreLabel->setAlignment(c::TextHAlignment::CENTER);
+  scoreLabel->setWidth(wz.size.width * 0.3f);
+  scoreLabel->setAnchorPoint(cx::anchorBR());
+  scoreLabel->setPosition(wb.right * 0.95f, wb.top * 0.88f);
   addItem(scoreLabel);
 
   score=0;

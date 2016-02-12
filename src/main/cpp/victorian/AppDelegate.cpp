@@ -25,6 +25,8 @@ NS_USING(victorian)
   // register all ash::node factories here
   auto r= NodeRegistry::self();
 
+  r->rego( mc_new(TerrainNode));
+  r->rego( mc_new(PlayerNode));
   r->rego( mc_new(SharedNode));
 
   // set up app-config

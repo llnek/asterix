@@ -49,8 +49,8 @@ Terrain::Terrain(not_null<c::Sprite*> s)
   _currentTypeIndex=0;
   _currentWidthIndex=0;
   _currentHeightIndex=0;
-  _blockPool=20;
-  _blocks=20;
+  //_blockPool=20;
+  //_blocks=20;
   _showGap=false;
 }
 
@@ -76,7 +76,7 @@ void Terrain::initTerrain() {
   //init object pools
   for (auto i = 0; i < 20; ++i) {
     auto block = Block::create();
-    sprite->addChild(block);
+    sprite->addChild(block->sprite);
     _blockPool.pushBack(block);
   }
 
@@ -136,7 +136,7 @@ void Terrain::checkCollision(Player *player) {
         player->nextPos=
             c::Vec2(player->nextPos.x, block->top() + player->height());
         player->vel= c::Vec2(player->vel.x, 0);
-        player->setRotation(0.0);
+        player->sprite->setRotation(0.0);
         inAir = false;
         break;
       }
@@ -155,14 +155,14 @@ void Terrain::checkCollision(Player *player) {
         (player->next_bottom() < block->top() &&
          player->next_top() > block->bottom())) {
 
-      if (player->right() >= spos.x + block->getPositionX() &&
-          player->left() < spos.x + block->getPositionX()) {
+      if (player->right() >= spos.x + block->sprite->getPositionX() &&
+          player->left() < spos.x + block->sprite->getPositionX()) {
 
         player->sprite->setPositionX(
-            spos.x + block->getPositionX() - player->getWidth() * 0.5f);
+            spos.x + block->sprite->getPositionX() - player->width() * 0.5f);
 
         player->nextPos=
-            c::Vec2(spos.x + block->getPositionX() - player->getWidth()*0.5f, player->nextPo.y);
+            c::Vec2(spos.x + block->sprite->getPositionX() - player->width()*0.5f, player->nextPos.y);
         player->vel= c::Vec2(player->vel.x * -0.5f, player->vel.y);
 
         if (player->bottom() + player->height() * 0.2f < block->top()) {
@@ -180,7 +180,7 @@ void Terrain::checkCollision(Player *player) {
   } else {
     if (player->getState() != kPlayerMoving) {
       player->setState(kPlayerMoving);
-      cx::sfxPlay->pauseEffects();
+      cx::pauseEffects();
     }
     player->setFloating (false);
   }

@@ -11,8 +11,8 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "BBlock.h"
 #include "Player.h"
-#include "Block.h"
 #include "C.h"
 
 #define TILE_H_SIZE 6
@@ -21,12 +21,13 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
+class Player;
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Terrain : public Widget {
 
-  Vector<Block*> _blockPool;
-  Vector<Block*> _blocks;
+  c::Vector<Block*> _blockPool;
+  c::Vector<Block*> _blocks;
 
   DECL_IZ(_blockPoolIndex)
   DECL_IZ(_lastBlockHeight)
@@ -68,6 +69,8 @@ struct CC_DLL Terrain : public Widget {
 
   void move(float xMove);
   void reset();
+
+  MDECL_COMP_TPID("n/Terrain")
 
   CC_SYNTHESIZE(bool, _startTerrain, StartTerrain);
 };
