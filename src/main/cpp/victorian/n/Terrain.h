@@ -11,9 +11,9 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
-#include "Block.h"
 #include "Player.h"
+#include "Block.h"
+#include "C.h"
 
 #define TILE_H_SIZE 6
 #define TILE_W_SIZE 8
@@ -28,43 +28,43 @@ struct CC_DLL Terrain : public Widget {
   Vector<Block*> _blockPool;
   Vector<Block*> _blocks;
 
-  int _blockPoolIndex;
-  int _lastBlockHeight;
-  int _lastBlockWidth;
-  int _minTerrainWidth;
+  DECL_IZ(_blockPoolIndex)
+  DECL_IZ(_lastBlockHeight)
+  DECL_IZ(_lastBlockWidth)
+  DECL_IZ(_minTerrainWidth)
 
-  bool _showGap;
+  DECL_BF(_showGap)
 
-  int _currentPatternIndex;
-  int _currentPatternCnt;
-  int _currentWidthIndex;
-  int _currentHeightIndex;
-  int _currentTypeIndex;
+  DECL_IZ(_currentPatternIndex)
+  DECL_IZ(_currentPatternCnt)
+  DECL_IZ(_currentWidthIndex)
+  DECL_IZ(_currentHeightIndex)
+  DECL_IZ(_currentTypeIndex)
 
-  int _increaseGapInterval;
-  float _increaseGapTimer;
-  int _gapSize;
+  DECL_IZ(_increaseGapInterval)
+  DECL_FZ(_increaseGapTimer)
+  DECL_IZ(_gapSize)
 
   void initTerrain();
   void addBlocks(int currentWidth);
 
   void distributeBlocks();
-  void initBlock(Block *block);
+  void initBlock(Block*);
 
-  virtual float getWidth () {
-    int width = 0;
+  virtual float width () {
+    int w = 0;
     for (auto block : _blocks) {
-      width += block->getWidth();
+      w += block->width();
     }
-    return width;
+    return w;
   }
 
   Terrain(not_null<c::Sprite*> s);
   virtual ~Terrain();
   static Terrain* create();
 
-  void activateChimneysAt(Player *player);
-  void checkCollision(Player *player);
+  void activateChimneysAt(Player*);
+  void checkCollision(Player*);
 
   void move(float xMove);
   void reset();

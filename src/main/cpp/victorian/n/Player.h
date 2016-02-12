@@ -34,14 +34,14 @@ typedef enum {
 //
 struct CC_DLL Player : public Widget {
 
-  Action *_rideAnimation;
-  Action *_floatAnimation;
+  DECL_PTR(Action, _floatAnimation)
+  DECL_PTR(Action, _rideAnimation)
 
-  bool _hasFloated;
+  DECL_BF(_hasFloated)
 
-  int _floatingTimerMax;
-  float _floatingTimer;
-  int _floatingInterval;
+  DECL_IZ(_floatingInterval)
+  DECL_IZ(_floatingTimerMax)
+  DECL_FZ(_floatingTimer)
 
   void initPlayer();
 
@@ -97,9 +97,9 @@ struct CC_DLL Player : public Widget {
     return nextPos.y - _height;
   }
 
+  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
   CC_SYNTHESIZE(PlayerState, _state, State);
   CC_SYNTHESIZE(bool, _inAir, InAir);
-  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
   CC_SYNTHESIZE(bool, _jumping, Jumping);
 };
 

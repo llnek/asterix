@@ -64,10 +64,10 @@ struct CC_DLL Block : public Widget {
   void createPuff();
   void initBlock();
 
-  static Block * create();
+  static Block* create();
 
-  void setupBlock (int width, int height, int type);
-  void setPuffing (bool value);
+  void setupBlock(int width, int height, int type);
+  void setPuffing(bool value);
   void hidePuffs();
 
   virtual float left() {

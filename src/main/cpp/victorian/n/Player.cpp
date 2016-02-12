@@ -33,11 +33,8 @@ Player::Player(not_null<c::Sprite*> s)
 
   auto wb=cx::visBox();
 
-  maxVel.x = PLAYER_INITIAL_SPEED;
-  maxVel.y=maxVel.x;
-
-  speed.x = PLAYER_INITIAL_SPEED;
-  speed.y=speed.x;
+  maxSpeed = PLAYER_INITIAL_SPEED;
+  speed = PLAYER_INITIAL_SPEED;
 
   _floatingTimerMax = 2;
   _floatingTimer = 0;
@@ -51,7 +48,7 @@ Player::Player(not_null<c::Sprite*> s)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Player* Player::create () {
+Player* Player::create() {
 
   auto s= cx::reifySprite("player_1.png");
   auto player = mc_new1(Player,s);
@@ -65,14 +62,13 @@ Player* Player::create () {
 //
 void Player::update (float dt) {
 
-  if (speed.x + P_ACCELERATION <= maxVel.x) {
-    speed.x += P_ACCELERATION;
-    speed.y=speed.x;
+  if (speed + P_ACCELERATION <= maxSpeed) {
+    speed += P_ACCELERATION;
   } else {
-    speed = maxVel;
+    speed = maxSpeed;
   }
 
-  vel.x = speed.x;
+  vel.x = speed;
 
   switch (_state) {
     case kPlayerMoving:
@@ -93,10 +89,9 @@ void Player::update (float dt) {
 
     case kPlayerDying:
       vel.y -= G_FORCE;
-      vel.x = -_speed;
+      vel.x = -speed;
       sprite->setPositionX(sprite->getPositionX() + vel.x);
     break;
-
   }
 
   if (_jumping) {
@@ -129,11 +124,8 @@ void Player::reset () {
 
   auto wb=cx::visBox();
 
-  maxVel.x = PLAYER_INITIAL_SPEED;
-  maxVel.y=maxVel.x;
-
-  speed.x = PLAYER_INITIAL_SPEED;
-  speed.y=speed.x;
+  maxSpeed = PLAYER_INITIAL_SPEED;
+  speed = PLAYER_INITIAL_SPEED;
 
   vel = c::Vec2(0,0);
 
@@ -178,6 +170,7 @@ void Player::initPlayer() {
 
   sprite->setAnchorPoint(cx::anchorT());
   sprite->setPosition(wb.right * 0.2f, nextPos.y);
+
   _height = 252 * 0.95f;
   _width = 184;
 

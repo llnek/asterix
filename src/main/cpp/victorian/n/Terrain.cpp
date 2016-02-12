@@ -133,9 +133,8 @@ void Terrain::checkCollision(Player *player) {
       if (player->bottom() >= block->top() &&
           player->next_bottom() <= block->top() &&
           player->top() > block->top()) {
-        player->setNextPosition(
-            c::Vec2(player->getNextPosition().x,
-            block->top() + player->getHeight()));
+        player->nextPos=
+            c::Vec2(player->nextPos.x, block->top() + player->height());
         player->vel= c::Vec2(player->vel.x, 0);
         player->setRotation(0.0);
         inAir = false;
@@ -162,11 +161,11 @@ void Terrain::checkCollision(Player *player) {
         player->sprite->setPositionX(
             spos.x + block->getPositionX() - player->getWidth() * 0.5f);
 
-        player->setNextPosition(
-            c::Vec2(spos.x + block->getPositionX() - player->getWidth()*0.5f,
-                    player->getNextPosition().y));
+        player->nextPos=
+            c::Vec2(spos.x + block->getPositionX() - player->getWidth()*0.5f, player->nextPo.y);
         player->vel= c::Vec2(player->vel.x * -0.5f, player->vel.y);
-        if (player->bottom() + player->getHeight() * 0.2f < block->top()) {
+
+        if (player->bottom() + player->height() * 0.2f < block->top()) {
           player->setState(kPlayerDying);
           cx::sfxPlay("hitBuilding");
           return;
@@ -203,16 +202,15 @@ void Terrain::move(float xMove) {
 
   sprite->setPositionX(sprite->getPositionX() - xMove);
 
-  auto pos= sprite->getPosition();
+  auto spos= sprite->getPosition();
   auto block = _blocks.at(0);
-  if (pos.x + block->getWidth() < 0) {
+  if (spos.x + block->width() < 0) {
     auto firstBlock = _blocks.at(0);
     _blocks.erase(0);
     _blocks.pushBack(firstBlock);
-    sprite->setPositionX(pos.x + block->getWidth());
+    sprite->setPositionX(spos.x + block->width());
 
-    auto width_cnt =
-      this->getWidth() - block->getWidth() - ( _blocks.at(0))->getWidth();
+    auto width_cnt = width() - block->width() - _blocks.at(0)->width();
     this->initBlock(block);
     this->addBlocks(width_cnt);
   }
@@ -228,7 +226,7 @@ void Terrain::reset() {
   int currentWidth = 0;
   for (auto block : _blocks) {
     this->initBlock(block);
-    currentWidth +=  block->getWidth();
+    currentWidth +=  block->width();
   }
 
   while (currentWidth < _minTerrainWidth) {
@@ -239,7 +237,7 @@ void Terrain::reset() {
     }
     _blocks.pushBack(block);
     this->initBlock(block);
-    currentWidth +=  block->getWidth();
+    currentWidth +=  block->width();
   }
 
   this->distributeBlocks();
@@ -258,7 +256,7 @@ void Terrain::addBlocks(int currentWidth) {
       _blockPoolIndex = 0;
     }
     this->initBlock(block);
-    currentWidth +=  block->getWidth();
+    currentWidth += block->width();
     _blocks.pushBack(block);
   }
   this->distributeBlocks();
@@ -277,9 +275,9 @@ void Terrain::distributeBlocks() {
     if (i != 0) {
       prev_block = _blocks.at(i - 1);
       block->sprite->setPositionX(
-          prev_block->sprite->getPositionX() + prev_block->getWidth());
+          prev_block->sprite->getPositionX() + prev_block->width());
     } else {
-      block->sprite->setPositionX ( 0 );
+      block->sprite->setPositionX(0);
     }
   }
 }

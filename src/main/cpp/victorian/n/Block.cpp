@@ -22,14 +22,14 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 //
 Block::~Block () {
-  _chimneys.clear();
-  _wallTiles.clear();
-  _roofTiles.clear();
   CC_SAFE_RELEASE(_puffAnimation);
   CC_SAFE_RELEASE(_puffSpawn);
   CC_SAFE_RELEASE(_puffMove);
   CC_SAFE_RELEASE(_puffFade);
   CC_SAFE_RELEASE(_puffScale);
+  _chimneys.clear();
+  _wallTiles.clear();
+  _roofTiles.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
