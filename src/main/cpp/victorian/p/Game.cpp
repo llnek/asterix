@@ -22,6 +22,10 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
+  GLayer() {
+    tMode= c::Touch::DispatchMode::ONE_BY_ONE;
+  }
+
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
@@ -45,6 +49,7 @@ void GLayer::postReify() {
   terrains = engine->getNodeList(TerrainNode().typeId());
   players = engine->getNodeList(PlayerNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
+  auto py=CC_GNLF(Player,players,"player");
   auto ss=CC_GNLF(GVars,shared,"slots");
   auto wb=cx::visBox();
 
@@ -116,6 +121,7 @@ void GLayer::postReify() {
   cx::pauseMusic();
   cx::sfxMusic("background3", true);
 
+  this->motionees.push_back(py);
   startGame();
 }
 

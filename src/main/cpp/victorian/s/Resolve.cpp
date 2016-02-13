@@ -45,8 +45,8 @@ void Resolve::process(float dt) {
   auto tn=CC_GNLF(Terrain,terrains,"terrain");
   auto py=CC_GNLF(Player,players,"player");
   auto ss=CC_GNLF(GVars,shared,"slots");
-    auto wb=cx::visBox();
-    
+  auto wb=cx::visBox();
+
   if (py->sprite->getPositionY() < -py->height() ||
       py->sprite->getPositionX() < -py->width() * 0.5f) {
 
