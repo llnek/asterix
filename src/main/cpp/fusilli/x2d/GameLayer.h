@@ -54,8 +54,8 @@ protected:
   virtual void postDeco();
   virtual void preDeco();
 
-  c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
-  //c::Touch::DispatchMode tmode= c::Touch::DispatchMode::ONE_BY_ONE;
+  //c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
+  c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ONE_BY_ONE;
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
   DECL_PTR(a::Engine ,engine)
   DECL_BF(_mouseEnabled)
