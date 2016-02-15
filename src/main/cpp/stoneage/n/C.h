@@ -19,14 +19,13 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
-enum GemTypes {
-  TYPE_GEM_BLUE  = 1,
-  TYPE_GEM_YELLOW ,
-  TYPE_GEM_RED ,
-  TYPE_GEM_GREEN ,
-  TYPE_GEM_PINK  ,
-  TYPE_GEM_WHITE
-};
+#define TYPE_GEM_BLUE  0
+#define TYPE_GEM_YELLOW 1
+#define TYPE_GEM_RED 2
+#define TYPE_GEM_GREEN 3
+#define TYPE_GEM_PINK  4
+#define TYPE_GEM_WHITE 5
+#define GEMSET_SIZE 6
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,6 +38,13 @@ struct CC_DLL Gesture : public a::Component {
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
+  s_arr<int,GEMSET_SIZE> TYPES {
+    TYPE_GEM_BLUE,
+    TYPE_GEM_YELLOW,
+    TYPE_GEM_RED,
+    TYPE_GEM_GREEN,
+    TYPE_GEM_PINK
+  };
 
   self.schedulerID = nil
   self.grid = {}
