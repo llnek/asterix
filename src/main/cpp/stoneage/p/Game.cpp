@@ -36,71 +36,89 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::postReify() {
   shared = engine->getNodeList(SharedNode().typeId());
+  auto ss=CC_GNLF(GVars,shared,"slots");
+
+  ss->gridController = GridController::create();
+  ss->gridAnimations = GridAnimations::create();
+  ss->schedulerID = CC_NIL;
+  ss->enabled=false;
+  ss->grid = {};
+  ss->gridGemsColumnMap = {};
+  ss->allGems = {};
+  ss->gemsContainer = c::Node::create();
+  ss->selectedGem = CC_NIL;
+  ss->targetGem = CC_NIL;
+  ss->selectedIndex = Cell2P(0, 0);
+  ss->targetIndex = Cell2P(0, 0);
+  ss->selectedGemPosition = Cell2P(0, 0);
+  ss->combos = 0;
+  ss->addingCombos = false;
+
+  ss->gemsContainer->setPosition( 25, 80);
+  addItem(ss->gemsContainer);
+
+  //build interface
+  auto frame = cx::loadSprite("frame.png");
+  frame->setPosition(wb.cx, wb.cy);
+  addItem(frame);
+
+
+  buildGrid(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::buildGrid(GVars *ss) {
+
+  auto sx=CC_CSV(c::Integer, "GRID_SIZE_X");
+  auto sy=CC_CSV(c::Integer, "GRID_SIZE_Y");
+  auto tile=CC_CSV(c::Integer, "TILE_SIZE");
+  auto grid=CC_CSV(c::Integer, "GRID_SIZE");
+
+  ss->enabled = false;
+
+  for (auto c = 0; c < sx; ++c) {
+    self.grid[c] = {}
+    self.gridGemsColumnMap[c] = {}
+    for (auto r = 0; r < sy; ++r) {
+      if (c < 2) {
+        ss->grid[c][r] = TYPES[ getVerticalUnique(c,r) ];
+      } else {
+        ss->grid[c][r] = TYPES[ getVerticalHorizontalUnique(c,r) ];
+      }
+
+      auto g = Gem::create();
+      g->setType(  ss->grid[c][r] );
+      g->setPos( c * (tile + grid), r * (tile + grid));
+
+      ss->gemsContainer->addChild(g);
+      ss->gridGemsColumnMap[c][r] = g;
+      table.insert(self.allGems, g);
+    }
+  }
+
+  ss->gridAnimations->animateIntro();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+int GLayer::getVerticalUnique(int col, int row) {
+
+  auto type = cx::randInt(GEMSET_SIZE);
+  assert(type >= 0 && type < GEMSET_SIZE);
+
+  if (ss->grid[col][row-1] == TYPES[type] &&
+      ss->grid[col][row-2] != CC_NIL &&
+      ss->grid[col][row-2] == TYPES[type]) {
+      type = type + 1;
+    if (type >= GEMSET_SIZE) type = 0;
+  }
+  return type;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 void GLayer::decorate() {
-
-  self.schedulerID = nil
-  self.grid = {}
-  self.gridController = nil
-  self.gridAnimations = nil
-  self.objectPools = nil
-  self.gridGemsColumnMap = {}
-  self.allGems = {}
-  self.gemsContainer = cc.Node:create()
-  self.selectedGem = nil
-  self.targetGem = nil
-  self.selectedIndex = {x = 0, y = 0}
-  self.targetIndex = {x = 0, y = 0}
-  self.selectedGemPosition = {x = 0, y = 0}
-  self.combos = 0
-  self.addingCombos = false
-  self.scoreLabel = nil
-  self.diamondScoreLabel = nil
-  self.diamondScore = 0
-  self.gemsScore = 0
-  self.running = true
-  self:addTouchEvents()
-  self:init()
-  self:buildGrid()
-
-    self.gridController = GridController:create()
-    self.gridAnimations = GridAnimations:create()
-    self.objectPools = ObjectPools.create()
-
-    self.gridAnimations:setGameLayer(self)
-    self.gridController:setGameLayer(self)
-    self.objectPools:createPools(self)
-
-    self:addChild( self.gemsContainer )
-    self.gemsContainer:setPosition( 25, 80)
-
-    --build interface
-    local frame = cc.Sprite:create("frame.png")
-    frame:setPosition(self.middle.x, self.middle.y)
-    self:addChild(frame)
-
-    local diamondScoreBg = cc.Sprite:create("diamondScore.png")
-    diamondScoreBg:setPosition(100, constants.SCREEN_HEIGHT - 30)
-    self:addChild(diamondScoreBg)
-
-    local scoreBg = cc.Sprite:create("gemsScore.png")
-    scoreBg:setPosition(280, constants.SCREEN_HEIGHT - 30)
-    self:addChild(scoreBg)
-
-    local ttfConfig = {}
-    ttfConfig.fontFilePath="fonts/myriad-pro.ttf"
-    ttfConfig.fontSize=20
-
-    self.diamondScoreLabel = cc.Label:createWithTTF(ttfConfig, "0", cc.TEXT_ALIGNMENT_RIGHT , 150)
-    self.diamondScoreLabel:setPosition (140, constants.SCREEN_HEIGHT - 30)
-    self:addChild(self.diamondScoreLabel)
-
-    self.scoreLabel = cc.Label:createWithTTF(ttfConfig, "0", cc.TEXT_ALIGNMENT_RIGHT , 150)
-    self.scoreLabel:setPosition (330, constants.SCREEN_HEIGHT - 30)
-    self:addChild(self.scoreLabel)
-
 
   engine = mc_new(GEngine);
 }

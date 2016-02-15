@@ -39,6 +39,28 @@ struct CC_DLL Gesture : public a::Component {
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
+
+  self.schedulerID = nil
+  self.grid = {}
+  self.gridController = nil
+  self.gridAnimations = nil
+  self.objectPools = nil
+  self.gridGemsColumnMap = {};
+  self.allGems = {};
+  self.gemsContainer = cc.Node:create();
+  self.selectedGem = nil
+  self.targetGem = nil
+  self.selectedIndex = {x = 0, y = 0}
+  self.targetIndex = {x = 0, y = 0}
+  self.selectedGemPosition = {x = 0, y = 0}
+  self.combos = 0
+  self.addingCombos = false
+  self.scoreLabel = nil
+  self.diamondScoreLabel = nil
+  self.diamondScore = 0
+  self.gemsScore = 0
+  self.running = true
+
 };
 
 

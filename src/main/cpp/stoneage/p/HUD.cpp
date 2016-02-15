@@ -21,7 +21,26 @@ NS_BEGIN(stoneage)
 //
 void HUDLayer::decorate() {
 
-  scoreLabel= cx::reifyBmfLabel("OCR", "0");
+  auto diamondScoreBg = cx::loadSprite("diamondScore.png");
+  auto scoreBg = cx::loadSprite("gemsScore.png");
+  auto wb= cx::visBox();
+
+  diamondScoreBg->setPosition(100, wb.top - 30);
+  addItem(diamondScoreBg);
+
+  scoreBg->setPosition(280, wb.top - 30);
+  addItem(scoreBg);
+
+  diamondScoreLabel = cx::reifyLabel("dft", 20, "0");
+  diamondScoreLabel->setAlignment(c::TEXT_ALIGNMENT_RIGHT);
+  diamondScoreLabel->setMaxLineWidth(150);
+  diamondScoreLabel->setPosition (140, wb.top - 30);
+  addItem(diamondScoreLabel);
+
+  scoreLabel = cx::reifyLabel("dft", 20, "0");
+  scoreLabel->setAlignment(c::TEXT_ALIGNMENT_RIGHT);
+  scoreLabel->setMaxLineWidth(150);
+  scoreLabel->setPosition (330, wb.top - 30);
   addItem(scoreLabel);
 
   score=0;

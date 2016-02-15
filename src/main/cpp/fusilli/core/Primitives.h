@@ -362,6 +362,13 @@ struct CC_DLL Cell2D {
   DECL_IZ(col)
 };
 
+//////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Cell2P {
+  Cell2P (int x, int y) { this->x=x; this->y=y; }
+  DECL_IZ(x)
+  DECL_IZ(y)
+};
 
 
 
