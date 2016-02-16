@@ -29,6 +29,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_GET_IID(2)
 
   virtual void postReify();
+  void buildGrid(GVars*);
 
   DECL_PTR(a::NodeList, shared)
 };
@@ -37,14 +38,15 @@ struct CC_DLL GLayer : public f::GameLayer {
 void GLayer::postReify() {
   shared = engine->getNodeList(SharedNode().typeId());
   auto ss=CC_GNLF(GVars,shared,"slots");
+  auto wb=cx::visBox();
 
   ss->gridController = GridController::create();
   ss->gridAnimations = GridAnimations::create();
   ss->schedulerID = CC_NIL;
   ss->enabled=false;
-  ss->grid = {};
-  ss->gridGemsColumnMap = {};
-  ss->allGems = {};
+  //ss->grid = {};
+  //ss->gridGemsColumnMap = {};
+  //ss->allGems = {};
   ss->gemsContainer = c::Node::create();
   ss->selectedGem = CC_NIL;
   ss->targetGem = CC_NIL;
@@ -78,22 +80,23 @@ void GLayer::buildGrid(GVars *ss) {
   ss->enabled = false;
 
   for (auto c = 0; c < sx; ++c) {
-    self.grid[c] = {}
-    self.gridGemsColumnMap[c] = {}
+    auto gg= = new f::FArrInt(sy);
+    ss->grid[c] =gg;
+    ss->gridGemsColumnMap[c] = new f::FArrayPtr<Gem>(sy);
     for (auto r = 0; r < sy; ++r) {
       if (c < 2) {
-        ss->grid[c][r] = TYPES[ getVerticalUnique(c,r) ];
+        gg->set(r, getGemType(getVertUnique(c,r)));
       } else {
-        ss->grid[c][r] = TYPES[ getVerticalHorizontalUnique(c,r) ];
+        gg->set(r, getGemType(getVertHorzUnique(c,r)));
       }
 
       auto g = Gem::create();
-      g->setType(  ss->grid[c][r] );
-      g->setPos( c * (tile + grid), r * (tile + grid));
+      g->setType(gg[r]);
+      g->setPosition(c * (tile + grid), r * (tile + grid));
 
       ss->gemsContainer->addChild(g);
-      ss->gridGemsColumnMap[c][r] = g;
-      table.insert(self.allGems, g);
+      ss->gridGemsColumnMap[c]->set(r,g);
+      ss->allGems.push_back(g);
     }
   }
 

@@ -23,71 +23,65 @@ NS_BEGIN(stoneage)
 struct CC_DLL Gem : public c::Sprite {
 
   static Gem* create() {
-
+    auto g= new Gem();
+    g->init();
+    g->autorelease();
+    return g;
   };
 
   Gem() {
-    self.visibleSize = cc.Director:getInstance():getVisibleSize()
-    self.origin = cc.Director:getInstance():getVisibleOrigin()
-    self.type = constants.TYPE_GEM_BLUE;
-    self.gemContainer = cc.Node:create()
-    self.skin = cc.Sprite:create("gem_blue.png")
-    self.selected = false
+    this->skin = cx::loadSprite("gem_blue.png");
+    this->gemContainer = c::Node::create();
+    this->type = TYPE_GEM_BLUE;
+    this->selected = false;
   }
 
+  DECL_BF(selected)
+
+  int getType() { return type; }
+  void deselect();
+  void select();
+  void reset();
 };
 
-function Gem:ctor()
-    self:init()
-end
+//////////////////////////////////////////////////////////////////////////////
+//
+void Gem::select() {
+  if (selected) {
+  } else {
+    selected = true;
+  }
+}
 
-function Gem:select()
-    if (self.selected == true) then return end
-    --show selected state
-    self.selected = true
-end
+//////////////////////////////////////////////////////////////////////////////
+//
+void Gem::deselect() {
+  if (!selected ) {
+  } else {
+    selected = false;
+  }
+}
 
-function Gem:deselect ()
-    if (self.selected == false) then return end
-    --clear selected state
-    self.selected = false
-end
+//////////////////////////////////////////////////////////////////////////////
+//
+void Gem:reset() {
+  gemContainer->setScale(1, 1);
+  gemContainer->setRotation(0);
+}
 
-function Gem:reset ()
-    self.gemContainer:setScale (1, 1)
-    self.gemContainer:setRotation(0)
-end
+//////////////////////////////////////////////////////////////////////////////
+//
+void Gem::setType(int value) {
+  auto tc = CC_DTOR()->getTextureCache();
+  this->type = value;
+  skin->setTexture(tc->addImage("pics/" + getGemPng(type)));
+}
 
-function Gem:getType ()
-    return self.type
-end
-
-function Gem:setType (value)
-
-    self.type = value
-
-    local textureCache = cc.Director:getInstance():getTextureCache()
-    if (self.type == constants.TYPE_GEM_BLUE) then
-        self.skin:setTexture(textureCache:addImage("gem_blue.png"))
-    elseif (self.type == constants.TYPE_GEM_GREEN) then
-        self.skin:setTexture(textureCache:addImage("gem_green.png"))
-    elseif (self.type == constants.TYPE_GEM_YELLOW) then
-        self.skin:setTexture(textureCache:addImage("gem_yellow.png"))
-    elseif (self.type == constants.TYPE_GEM_RED) then
-        self.skin:setTexture(textureCache:addImage("gem_red.png"))
-    elseif (self.type == constants.TYPE_GEM_PINK) then
-        self.skin:setTexture(textureCache:addImage("gem_pink.png"))
-    elseif (self.type == constants.TYPE_GEM_WHITE) then
-        self.skin:setTexture(textureCache:addImage("gem_white.png"))
-   end
-end
-
-function Gem:init ()
-	--self:setVisible(true)
-    self:setVisible(false)
-    self.gemContainer:addChild(self.skin)
-    self:addChild(self.gemContainer)
-end
+bool Gem:init() {
+  setVisible(false);
+  self.gemContainer:addChild(self.skin)
+  self:addChild(self.gemContainer)
+}
 
 
 
