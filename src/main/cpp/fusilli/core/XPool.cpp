@@ -24,6 +24,8 @@ void XPool::preset(s::function<ComObj* ()> f, int count) {
       objs.push_back(rc);
     }
   }
+  batch=count;
+  ctor=f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,8 +42,8 @@ ComObj* XPool::select(s::function<bool (ComObj*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool and set it's status to true
-ComObj* XPool::getAndSet() {
-  auto rc= get();
+ComObj* XPool::getAndSet(bool create) {
+  auto rc= get(create);
   if (NNP(rc)) {
     rc->status=true;
   }
@@ -56,27 +58,16 @@ ComObj* XPool::getAt(int pos) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool.  More like a peek
-ComObj* XPool::get() {
+ComObj* XPool::get(bool create) {
   F__LOOP(it, objs) {
     auto e= *it;
     if (! e->status) { return e; }
   }
+  if (create &&  ctor) {
+    preset(ctor,batch);
+    return get();
+  }
   return nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Get a free object from the pool.  More like a peek
-ComObj* XPool::randGet() {
-  auto sz= objs.size();
-  ComObj *rc=nullptr;
-  if (sz == 1) {
-    rc=objs.at(0);
-  }
-  else
-  if (sz > 0) {
-    rc=objs.at(cx::randInt(sz));
-  }
-  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////

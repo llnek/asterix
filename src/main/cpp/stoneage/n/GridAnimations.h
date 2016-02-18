@@ -13,14 +13,16 @@
 
 #include "core/ComObj.h"
 NS_BEGIN(stoneage)
-
+class GVars;
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GridAnimations : public f::Component {
+struct CC_DLL GridAnimations {
 
-  static GridAnimations* create();
+  static GridAnimations* create(GVars*);
 
-  GridAnimations();
+  GridAnimations(GVars *s) {
+    ss=s;
+  }
 
   void animateIntro();
 
@@ -30,17 +32,18 @@ struct CC_DLL GridAnimations : public f::Component {
 
   void resetSelectedGem();
 
-  void swapGems(Gem* gemOrigin, Gem* gemTarget, onComplete);
+  void swapGems(Gem* gemOrigin, Gem* gemTarget, VOIDFN );
 
+  void animateMatches(const s_vec<f::Cell2P>&, VOIDFN );
 
-  void animateMatches(matches, onComplete);
+  void animateCollapse( VOIDFN);
 
-  void animateCollapse( onComplete );
+  void dropGemTo(Gem*, float y, float delay, VOIDFN);
 
-  void dropGemTo(gem, y, delay, onComplete);
+  void collectDiamonds(const s_vec<Gem*>&);
 
-  void collectDiamonds(diamonds);
-
+  DECL_IZ(animatedGems)
+  DECL_PTR(GVars,ss)
 };
 
 

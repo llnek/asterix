@@ -32,7 +32,7 @@ void ComObj::inflate(not_null<c::Dictionary*> dict) {
   HP = origHP;
   status=true;
 
-  if (ENP(sprite)) {
+  if (ENP(node)) {
     return;
   }
 
@@ -42,16 +42,16 @@ void ComObj::inflate(not_null<c::Dictionary*> dict) {
   auto y= fusii::dictVal<c::Float>(dict, "y");
 
   if (NNP(x) && NNP(y)) {
-    sprite->setPosition(x->getValue(), y->getValue());
+    node->setPosition(x->getValue(), y->getValue());
   }
   if (NNP(deg)) {
-    sprite->setRotation(deg->getValue());
+    node->setRotation(deg->getValue());
   }
   if (NNP(scale)) {
-    sprite->setScale(scale->getValue());
+    node->setScale(scale->getValue());
   }
 
-  sprite->setVisible(true);
+  node->setVisible(true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,9 +61,9 @@ void ComObj::inflate(float x, float y) {
   HP = origHP;
   status=true;
 
-  if (NNP(sprite)) {
-    sprite->setPosition(x,y);
-    sprite->setVisible(true);
+  if (NNP(node)) {
+    node->setPosition(x,y);
+    node->setVisible(true);
   }
 }
 
@@ -74,18 +74,18 @@ void ComObj::inflate() {
   HP = origHP;
   status=true;
 
-  if (NNP(sprite)) {
-    sprite->setVisible(true);
+  if (NNP(node)) {
+    node->setVisible(true);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::deflate() {
-  if (NNP(sprite)) {
-    sprite->unscheduleAllCallbacks();
-    sprite->stopAllActions();
-    sprite->setVisible(false);
+  if (NNP(node)) {
+    node->unscheduleAllCallbacks();
+    node->stopAllActions();
+    node->setVisible(false);
   }
   status=false;
 }
@@ -93,95 +93,95 @@ void ComObj::deflate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::height() {
-  return NNP(sprite) ? sprite->boundingBox().size.height : 0;
+  return NNP(node) ? node->boundingBox().size.height : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::width() {
-  return NNP(sprite) ? sprite->boundingBox().size.width : 0;
+  return NNP(node) ? node->boundingBox().size.width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Rect ComObj::bbox() {
-  return NNP(sprite) ? sprite->boundingBox() : c::Rect(0,0,0,0);
+  return NNP(node) ? node->boundingBox() : c::Rect(0,0,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::setPos(float x, float y) {
-  if (NNP(sprite)) {
-    sprite->setPosition(x,y);
+  if (NNP(node)) {
+    node->setPosition(x,y);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::hide() {
-  if (NNP(sprite)) {
-    sprite->setVisible(false);
+  if (NNP(node)) {
+    node->setVisible(false);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::show() {
-  if (NNP(sprite)) {
-    sprite->setVisible(true);
+  if (NNP(node)) {
+    node->setVisible(true);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Vec2 ComObj::pos() {
-  return NNP(sprite) ? sprite->getPosition() : c::Vec2(0,0);
+  return NNP(node) ? node->getPosition() : c::Vec2(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Size ComObj::csize() {
-  return NNP(sprite) ? sprite->boundingBox().size : c::Size(0,0);
+  return NNP(node) ? node->boundingBox().size : c::Size(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::circum() {
-  return NNP(sprite) ? sprite->boundingBox().size.width : 0;
+  return NNP(node) ? node->boundingBox().size.width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::radius() {
-  return NNP(sprite) ? sprite->boundingBox().size.width * 0.5f : 0;
+  return NNP(node) ? node->boundingBox().size.width * 0.5f : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 int ComObj::pid() {
-  return NNP(sprite) ? sprite->getTag() : 0;
+  return NNP(node) ? node->getTag() : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::init(c::Sprite *sprite, int health, int score) {
+void ComObj::init(c::Node *node, int health, int score) {
   this->origHP = health;
-  this->sprite = sprite;
+  this->node = node;
   this->HP = health;
   this->score = score;
-  status=false;
+  deflate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(not_null<c::Sprite*> sprite, int health, int score) {
-  init(sprite, health, score);
+ComObj::ComObj(not_null<c::Node*> node, int health, int score) {
+  init(node, health, score);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ComObj::ComObj(not_null<c::Sprite*> sprite) {
-  init(sprite,1,0);
+ComObj::ComObj(not_null<c::Node*> node) {
+  init(node,1,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

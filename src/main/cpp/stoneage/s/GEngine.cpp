@@ -24,6 +24,32 @@ NS_BEGIN(stoneage)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
+  auto p= MGMS()->reifyPools( "DiamondParticles");
+  p->preset([=]() -> f::ComObj* {
+    auto p = c::ParticleSystemQuad::create("pics/diamond.plist");
+    p->stopSystem();
+    p->setVisible(false);
+    MGML()->addItem(p);
+    return mc_new1(Particle,p);
+  },50);
+
+  p= MGMS()->reifyPools( "MatchParticles");
+  p->preset([=]() -> f::ComObj* {
+    auto p = c::ParticleSystemQuad::create("pics/match.plist");
+    p->stopSystem();
+    p->setVisible(false);
+    MGML()->addItem(p);
+    return mc_new1(Particle,p);
+  },50);
+
+  p= MGMS()->reifyPools( "Diamonds");
+  p->preset([=]() -> f::ComObj* {
+    auto p = cx::loadSprite("gem_white.png");
+    p->setLocalZOrder(Z_DIAMOND);
+    p->setVisible(false);
+    MGML()->addItem(p);
+    return mc_new1(Diamond,p);
+  },50);
 
 }
 

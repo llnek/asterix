@@ -23,19 +23,18 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XPool {
-
+  s::function<ComObj* ()> ctor;
   s_vec<ComObj*> objs;
-
+  DECL_IZ(batch)
 public:
 
   const s_vec<ComObj*>& list() { return objs; }
   ComObj* select(s::function<bool (ComObj*)>);
   void preset(s::function<ComObj* ()>, int);
 
-  ComObj* getAndSet();
-  ComObj* get();
+  ComObj* getAndSet(bool create=false);
+  ComObj* get(bool create=false);
   ComObj* getAt(int n);
-  ComObj* randGet();
 
   int size() { return (int)objs.size(); }
   int countActives();

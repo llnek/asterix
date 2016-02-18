@@ -14,19 +14,30 @@
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
-
+#include "Gem.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
-#define TYPE_GEM_BLUE  0
-#define TYPE_GEM_YELLOW 1
-#define TYPE_GEM_RED 2
-#define TYPE_GEM_GREEN 3
-#define TYPE_GEM_PINK  4
-#define TYPE_GEM_WHITE 5
-#define GEMSET_SIZE 6
+class GridController;
+class GridAnimations;
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Particle : public f::ComObj {
+  MDECL_COMP_TPID("n/Particle")
+  Particle(not_null<c::Node*> n)
+  : ComObj(n) {
+  }
+};
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Diamond : public f::ComObj {
+  MDECL_COMP_TPID("n/Diamond")
+  Diamond(not_null<c::Node*> n)
+  : ComObj(n) {
+  }
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -43,30 +54,25 @@ struct CC_DLL GVars : public a::Component {
     TYPE_GEM_YELLOW,
     TYPE_GEM_RED,
     TYPE_GEM_GREEN,
-    TYPE_GEM_PINK
+    TYPE_GEM_PINK,
+    TYPE_GEM_WHITE
   };
 
-  self.schedulerID = nil
-  self.grid = {}
-  self.gridController = nil
-  self.gridAnimations = nil
-  self.objectPools = nil
-  self.gridGemsColumnMap = {};
-  self.allGems = {};
-  self.gemsContainer = cc.Node:create();
-  self.selectedGem = nil
-  self.targetGem = nil
-  self.selectedIndex = {x = 0, y = 0}
-  self.targetIndex = {x = 0, y = 0}
-  self.selectedGemPosition = {x = 0, y = 0}
-  self.combos = 0
-  self.addingCombos = false
-  self.scoreLabel = nil
-  self.diamondScoreLabel = nil
-  self.diamondScore = 0
-  self.gemsScore = 0
-  self.running = true
+  s_vec<f::FArrayPtr<Gem>*> gridGemsColumnMap;
+  s_vec<f::FArrInt*> grid;
+  s_vec<Gem*> allGems;
 
+  DECL_PTR(GridController, gridController)
+  DECL_PTR(GridAnimations, gridAnimations)
+  DECL_PTR(c::Node,gemsContainer)
+  DECL_BF(enabled)
+  DECL_PTR(Gem,selectedGem)
+  DECL_PTR(Gem,targetGem)
+  DECL_TD(f::Cell2P,selectedIndex)
+  DECL_TD(f::Cell2P,targetIndex)
+  DECL_TD(c::Vec2,selectedGemPosition)
+  DECL_IZ(combos)
+  DECL_BF(addingCombos)
 };
 
 

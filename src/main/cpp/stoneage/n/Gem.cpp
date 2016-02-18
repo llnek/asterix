@@ -11,30 +11,45 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "core/XConfig.h"
 #include "core/ComObj.h"
+#include "core/CCSX.h"
 #include "lib.h"
+
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gem : public f::ComObj {
+Gem* Gem::create() {
+  auto png= getGemPng(TYPE_GEM_BLUE);
+  auto s= cx::loadSprite(png);
+  return mc_new2(Gem,s,TYPE_GEM_BLUE);
+}
 
-  Gem(not_null<c::Node*>,int);
-  static Gem* create();
+//////////////////////////////////////////////////////////////////////////////
+//
+Gem::Gem(not_null<c::Node*> n, int t) : ComObj(n) {
+  type = t;
+}
 
-  DECL_TV(int,type,-1)
-  DECL_BF(selected)
+//////////////////////////////////////////////////////////////////////////////
+//
+void Gem::reset() {
+  node->setScale(1, 1);
+  node->setRotation(0);
+}
 
-  void deselect();
-  void select();
-  void reset();
-
-  int getType() { return type; }
-  void setType(int);
-
-};
-
+//////////////////////////////////////////////////////////////////////////////
+//
+void Gem::setType(int value) {
+  auto tc = CC_DTOR()->getTextureCache();
+  auto p=getGemPngPath(value);
+  node->setTexture(tc->addImage(p));
+  type = value;
+}
 
 NS_END
+
 
 
