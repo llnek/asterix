@@ -27,10 +27,25 @@ NS_BEGIN(stoneage)
 #define TYPE_GEM_WHITE 5
 #define GEMSET_SIZE 6
 
+#define TILE_SIZE  60
+#define GRID_SIZE_X  8
+#define GRID_SIZE_Y  11
+#define GRID_SPACE  6
+
+#define Z_GRID  1
+#define Z_SWAP_1  2
+#define Z_SWAP_2  3
+#define Z_DIAMOND  4
+
+#define POINTS  10
+#define COMBO_POINTS  50
+#define DIAMOND_POINTS  100
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 const sstr getGemPng(int type);
-
+int getGemType(int pos);
 
 NS_END
 

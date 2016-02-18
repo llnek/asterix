@@ -77,6 +77,12 @@ int getVerticalHorizontalUnique(GVars *ss, int col, int row) {
   return t;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void dropSelectedGem(GVars *ss) {
+  ss->selectedGem->node->setLocalZOrder(Z_GRID);
+  ss->gridAnimations->resetSelectedGem();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -237,33 +243,42 @@ void onGridCollapseComplete(GVars *ss) {
 //
 void collapseGrid(GVars *ss) {
 
-  for i = 1, #self.gridController.matchArray do
-      self.grid[self.gridController.matchArray[i].x][self.gridController.matchArray[i].y] = -1
-  end
+  F__LOOP(it, ss->gridController->matchArray) {
+    auto &z= *it;
+    ss->grid[z.x]->set(z.y, -1);
+  }
 
   local column = nil
   local newColumn = nil
   local i
 
-  for c = 1, constants.GRID_SIZE_X do
-      column = self.grid[c]
-      newColumn = {}
-      i = 1
-      while #newColumn < #column do
-          if (#column > i) then
-              if (column[i] ~= -1) then
-                  --move gem
-                  table.insert(newColumn, column[i])
-              end
-          else
-              --create new gem
-              table.insert(newColumn, 1, column[i])
-          end
-          i = i+1
-      end
-      self.grid[c] = newColumn
-  end
-  self.gridAnimations:animateCollapse (onGridCollapseComplete)
+  F__LOOP(it,ss->grid) {
+    s_vec<int> nc;
+    auto gc= *it;
+    int v;
+    int i=0;
+    while (nc.size() < gc->size()) {
+      if (gc->size() > i) {
+        if (gc->get(i) != -1) {
+            //move gem
+            nc.push_back(gc->get(i));
+        }
+      } else {
+        //create new gem
+        nc.insert(nc.begin(), gc->getLast());//gc->get(i));
+      }
+      i += 1;
+    }
+    assert(nc.size() == gc->size());
+    for (i=0; i < gc->size(); ++i) {
+      gc->set(i, nc[i]);
+    }
+  }
+  ss->gridAnimations->animateCollapse(
+      [=](c::Ref *r) {
+        onGridCollapseComplete(ss,r);
+      });
+
 }
 
 
