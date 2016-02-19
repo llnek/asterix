@@ -25,6 +25,7 @@ NS_USING(stoneage)
   // register all ash::node factories here
   auto r= NodeRegistry::self();
 
+  r->rego( mc_new(GridXXXNode));
   r->rego( mc_new(SharedNode));
 
   // set up app-config

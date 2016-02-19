@@ -17,13 +17,16 @@ NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gem : public f::ComObj {
+class CC_DLL Gem : public f::ComObj {
 
   Gem(not_null<c::Node*>,int);
-  static Gem* create();
 
   DECL_TV(int,type,-1)
   DECL_BF(selected)
+
+public:
+
+  static Gem* create();
 
   void deselect();
   void select();

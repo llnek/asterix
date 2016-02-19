@@ -31,18 +31,19 @@ void HUDLayer::decorate() {
   scoreBg->setPosition(280, wb.top - 30);
   addItem(scoreBg);
 
-  diamondScoreLabel = cx::reifyLabel("dft", 20, "0");
-  diamondScoreLabel->setAlignment(c::TEXT_ALIGNMENT_RIGHT);
-  diamondScoreLabel->setMaxLineWidth(150);
-  diamondScoreLabel->setPosition (140, wb.top - 30);
-  addItem(diamondScoreLabel);
+  dscoreLabel = cx::reifyLabel("dft", 20, "0");
+    dscoreLabel->setAlignment(c::TextHAlignment::RIGHT);
+  dscoreLabel->setMaxLineWidth(150);
+  dscoreLabel->setPosition (140, wb.top - 30);
+  addItem(dscoreLabel);
 
   scoreLabel = cx::reifyLabel("dft", 20, "0");
-  scoreLabel->setAlignment(c::TEXT_ALIGNMENT_RIGHT);
+    scoreLabel->setAlignment(c::TextHAlignment::RIGHT);
   scoreLabel->setMaxLineWidth(150);
   scoreLabel->setPosition (330, wb.top - 30);
   addItem(scoreLabel);
 
+  dscore=0;
   score=0;
 }
 

@@ -364,8 +364,9 @@ struct CC_DLL Cell2D {
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Cell2P {
-  Cell2P (int x, int y) { this->x=x; this->y=y; }
+struct CC_DLL Cell2I {
+  Cell2I (int x, int y) { this->x=x; this->y=y; }
+    Cell2I() {}
   DECL_IZ(x)
   DECL_IZ(y)
 };

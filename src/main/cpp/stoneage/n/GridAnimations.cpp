@@ -9,19 +9,19 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
+#include "Gem.h"
 #include "lib.h"
+#include "GridAnimations.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-GridAnimations* GridAnimations::create(GVars *ss) {
-  return mc_new1(GridAnimations,ss);
-}
+static int GEMS_TOTAL= GRID_SIZE_X * GRID_SIZE_Y;
+static int TILE_GRID= TILE_SIZE+GRID_SPACE;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -41,16 +41,16 @@ void GridAnimations::dropColumn(int col) {
     this->animatedGems += 1;
     if (this->animatedGems == GEMS_TOTAL) {
       this->ss->enabled = true;
-      startTimer(this->ss);
+        SENDMSG("/game/start/timer");
     }
   };
 
   float delay = col>0 ? cx::rand() * 1.5f : 0;
   auto m= ss->gridGemsColumnMap[col];
   Gem *gem;
-  for (auto i=0; i < gcm.size(); ++i) {
-    gem = m[i];
-    CC_SHOW(gem->node);
+  for (auto i=0; i < m->size(); ++i) {
+    gem = m->get(i);
+    gem->show();
     auto finalY = gem->node->getPositionY();
     gem->node->setPositionY(finalY + 800);
     gem->node->runAction(
@@ -71,14 +71,14 @@ void GridAnimations::animateSelected(Gem *gem) {
   gem->select();
   gem->node->stopAllActions();
   gem->node->runAction(
-    c::EaseBounceOut::create (c::RotateBy::create(0.5, 360)));
+    c::EaseBounceOut::create(c::RotateBy::create(0.5, 360)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GridAnimations::resetSelectedGem () {
-  local gemPosition = ss->selectedGemPosition;
-  local gem = ss->selectedGem;
+  auto gemPosition = ss->selectedGemPosition;
+  auto gem = ss->selectedGem;
   gem->node->runAction(
       c::EaseElasticOut::create(
         c::MoveTo::create(0.25, gemPosition)));
@@ -87,74 +87,73 @@ void GridAnimations::resetSelectedGem () {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GridAnimations::swapGems(Gem *gemOrigin, Gem *gemTarget, VOIDFN onComplete) {
-  gemOrigin->deselect();
 
   auto origin = ss->selectedGemPosition;
-  auto target = c::Vec2(
-      gemTarget->node->getPositionX(),
-      gemTarget->node->getPositionY());
+  auto target = gemTarget->pos();
 
   auto moveSelected = c::EaseBackOut::create(
       c::MoveTo::create(0.8f, target));
   auto moveTarget = c::EaseBackOut::create(
       c::MoveTo::create(0.8f, origin) );
-  auto callback = c::CallFunc::create(onComplete);
 
+  gemOrigin->deselect();
   gemOrigin->node->runAction(moveSelected);
   gemTarget->node->runAction(
-      c::Sequence::create(moveTarget, callback));
+      c::Sequence::create(
+        moveTarget,
+        c::CallFunc::create(onComplete),
+        CC_NIL));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GridAnimations::animateMatches(
-    const s_vec<f::Cell2P> &matches, onComplete) {
+    const s_vec<f::Cell2I> &matches, VOIDFN onComplete) {
+
+  this->animatedMatchedGems = matches.size();
 
   auto onCompleteMe=[=]() {
     this->animatedMatchedGems -= 1;
     if (this->animatedMatchedGems == 0) {
-      if (onComplete) onComplete();
+      onComplete();
     }
   };
-  this->animatedMatchedGems = matches.size();
 
   F__LOOP(it,matches) {
     auto &pt= *it;
-    auto gem = ss->gridGemsColumnMap[pt.x][pt.y];
+      auto gem = ss->gridGemsColumnMap[pt.x]->get(pt.y);
     gem->node->stopAllActions();
-    auto scale = c::EaseBackOut::create(c::ScaleTo::create(0.3, 0));
-    auto callback = c::CallFunc::create(onCompleteMe);
-    auto action = c::Sequence::create(scale, callback);
-    gem->node->runAction(action);
+    gem->node->runAction(
+        c::Sequence::create(
+          c::EaseBackOut::create(c::ScaleTo::create(0.3, 0)),
+          c::CallFunc::create(onCompleteMe),
+          CC_NIL));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GridAnimations::animateCollapse(onComplete) {
-  this->animatedCollapsedGems = 0;
-  local gem = nil
-  local drop  = 1
+void GridAnimations::animateCollapse(VOIDFN onComplete) {
 
+  this->animatedCollapsedGems = 0;
   for (auto c = 0; c < GRID_SIZE_X; ++c) {
     auto cm = ss->gridGemsColumnMap[c];
-    drop = 1;
+    int drop = 1;
     for (auto r = 0; r < cm->size(); ++r) {
-      auto gem = cm[r];
+        auto gem = cm->get(r);
       //if this gem has been resized, move it to the top
       if (gem->node->getScaleX() != 1) {
-        gem->node->setPositionY(
-            (GRID_SIZE_Y+drop) * (TILE_SIZE+GRID_SPACE));
+        gem->node->setPositionY( (GRID_SIZE_Y+drop) * TILE_GRID);
         this->animatedCollapsedGems += 1;
         gem->setType(getNewGem());
         CC_SHOW(gem->node);
-        auto newY = (GRID_SIZE_Y - drop - 1) * (TILE_SIZE + GRID_SPACE);
+        auto newY = (GRID_SIZE_Y - drop - 1) * TILE_GRID;
         this->dropGemTo(gem, newY,  0.2f, onComplete);
         drop += 1;
       } else {
         if (drop > 1) {
           this->animatedCollapsedGems += 1;
-          auto newY = gem->node->getPositionY() - (drop-1) * (TILE_SIZE + GRID_SPACE);
+          auto newY = gem->node->getPositionY() - (drop-1) * TILE_GRID;
           this->dropGemTo(gem, newY, 0, onComplete);
         }
       }
@@ -170,10 +169,9 @@ void GridAnimations::dropGemTo(
   gem->node->stopAllActions();
   gem->reset();
 
-  auto nCompleteMe=[=]() {
+  auto onCompleteMe=[=]() {
     this->animatedCollapsedGems -= 1;
-    if (this->animatedCollapsedGems == 0 &&
-        onComplete != CC_NIL) {
+    if (this->animatedCollapsedGems == 0) {
       onComplete();
     }
   };
@@ -207,7 +205,7 @@ void GridAnimations::collectDiamonds(const s_vec<Gem*> &diamonds) {
     auto action = c::Sequence::create(
         delay,
         moveTo,
-        cc.CallFunc:create(removeDiamond),
+        c::CallFuncN::create(removeDiamond),
         CC_NIL);
     d->node->runAction(action);
   }

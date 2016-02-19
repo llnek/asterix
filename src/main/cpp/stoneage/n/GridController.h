@@ -11,44 +11,46 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
 #include "core/ComObj.h"
-#include "core/CCSX.h"
+#include "lib.h"
 
-NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
-
+class GemInfo;
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GridController : public f::Component {
+struct CC_DLL GridController : public f::ComObj {
 
-  static GridController* create();
+  MDECL_COMP_TPID("n/GridController")
 
-  GridController() {}
+  DECL_PTR(GridAnimations,anim)
+  DECL_PTR(GVars,ss)
+  DECL_BF(enabled)
+  DECL_BF(touchDown)
 
-  bool checkGridMatches();
+  GridController(GVars *v, GridAnimations* a) {
+    ss=v;
+    anim=a;
+  }
+
+  void addMatches(const s_vec<f::Cell2I>&);
 
   void checkTypeMatch(int c, int r);
+  bool checkGridMatches();
 
-  void addMatches(matches);
+  bool find(const f::Cell2I&, const s_vec<f::Cell2I>& );
 
-  void find(np, array);
+  GemInfo findGemAtPosition(const c::Vec2&);
 
-  void findGemAtPosition(position);
+  void selectStartGem(const GemInfo& );
 
-  void selectStartGem(touchedGem);
+  void selectTargetGem(const GemInfo& );
 
-  void selectTargetGem(touchedGem);
+  void onTouchUp(const c::Vec2&);
 
-  void onTouchUp(touch);
+  void onTouchMove(const c::Vec2&);
+  void onTouchDown(const c::Vec2&);
 
-  void onTouchMove(touch);
-
-  void isValidTarget(px, py, touch);
-
-  s_vec<> matchArray;
-  this->enabled = true;
-  this->touchDown = false;
+  bool isValidTarget(int px, int py, const c::Vec2&);
 
 };
 

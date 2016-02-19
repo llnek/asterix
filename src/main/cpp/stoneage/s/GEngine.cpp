@@ -51,6 +51,16 @@ void GEngine::initEntities() {
     return mc_new1(Diamond,p);
   },50);
 
+  auto ent= this->reifyEntity();
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
+
+  auto a= mc_new1(GridAnimations,ss);
+  auto g= mc_new2(GridController,ss,a);
+  ent= this->reifyEntity();
+  ent->checkin(g);
+  ent->checkin(a);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

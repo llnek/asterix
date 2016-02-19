@@ -8,13 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
-#include "core/ComObj.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "Gem.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
@@ -24,6 +22,7 @@ NS_BEGIN(stoneage)
 Gem* Gem::create() {
   auto png= getGemPng(TYPE_GEM_BLUE);
   auto s= cx::loadSprite(png);
+  MGML()->addItem(s);
   return mc_new2(Gem,s,TYPE_GEM_BLUE);
 }
 
@@ -45,7 +44,7 @@ void Gem::reset() {
 void Gem::setType(int value) {
   auto tc = CC_DTOR()->getTextureCache();
   auto p=getGemPngPath(value);
-  node->setTexture(tc->addImage(p));
+    SCAST(c::Sprite*,node)->setTexture(tc->addImage(p));
   type = value;
 }
 

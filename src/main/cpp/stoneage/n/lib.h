@@ -12,11 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
-#include "core/CCSX.h"
 
-
-NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
 #define TYPE_GEM_BLUE  0
@@ -31,7 +27,6 @@ NS_BEGIN(stoneage)
 #define GRID_SIZE_X  8
 #define GRID_SIZE_Y  11
 #define GRID_SPACE  6
-
 #define Z_GRID  1
 #define Z_SWAP_1  2
 #define Z_SWAP_2  3
@@ -41,11 +36,52 @@ NS_BEGIN(stoneage)
 #define COMBO_POINTS  50
 #define DIAMOND_POINTS  100
 
+class GridController;
+class GridAnimations;
+class Gem;
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GVars : public a::Component {
+
+  s_vec<f::FArrayPtr<Gem>*> gridGemsColumnMap;
+  s_vec<f::FArrInt*> grid;
+  s_vec<Gem*> allGems;
+  s_vec<f::Cell2I> matchArray;
+
+  MDECL_COMP_TPID( "n/GVars" )
+
+  DECL_PTR(c::Node,gemsContainer)
+  DECL_BF(enabled)
+  DECL_PTR(Gem,selectedGem)
+  DECL_PTR(Gem,targetGem)
+  DECL_TD(f::Cell2I,selectedIndex)
+  DECL_TD(f::Cell2I,targetIndex)
+  DECL_TD(c::Vec2,selectedGemPosition)
+  DECL_IZ(combos)
+  DECL_BF(addingCombos)
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
+
+const sstr getGemPngPath(int type);
 const sstr getGemPng(int type);
+
 int getGemType(int pos);
+int getNewGem();
+
+int getVerticalHorizontalUnique(GVars*, int col, int row);
+int getVerticalUnique(GVars*, int col, int row);
+
+void dropSelectedGem(GVars*);
+void collapseGrid(GVars*);
+
+void onGridCollapseComplete(GVars*);
+void onNewSwapComplete(GVars*);
+
+void swapGemsToNewPosition(GVars*);
+void showMatchParticle(const s_vec<f::Cell2I>&) ;
+
 
 NS_END
 

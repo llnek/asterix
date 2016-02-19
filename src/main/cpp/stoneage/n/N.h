@@ -13,6 +13,8 @@
 
 #include "ash/NodeRego.h"
 #include "C.h"
+#include "GridAnimations.h"
+#include "GridController.h"
 NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,6 +28,21 @@ struct CC_DLL SharedNode : public a::NodeFactory {
   }
 
   MDECL_NFAC_TPID( "n/SharedNode")
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GridXXXNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"ctrl", "n/GridController" },
+        {"anim", "n/GridAnimations" }
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/GridXXXNode")
 
 };
 

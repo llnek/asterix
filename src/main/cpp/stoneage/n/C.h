@@ -19,8 +19,6 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
-class GridController;
-class GridAnimations;
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Particle : public f::ComObj {
@@ -41,39 +39,23 @@ struct CC_DLL Diamond : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
+struct CC_DLL GemInfo {
+  GemInfo(int x, int y, Gem *g) {
+    this->x =x;
+    this->y = y;
+    this->gem=g;
+  }
+  DECL_IZ(y)
+  DECL_IZ(x)
+  DECL_PTR(Gem,gem)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
-  MDECL_COMP_TPID( "n/GVars" )
-  s_arr<int,GEMSET_SIZE> TYPES {
-    TYPE_GEM_BLUE,
-    TYPE_GEM_YELLOW,
-    TYPE_GEM_RED,
-    TYPE_GEM_GREEN,
-    TYPE_GEM_PINK,
-    TYPE_GEM_WHITE
-  };
-
-  s_vec<f::FArrayPtr<Gem>*> gridGemsColumnMap;
-  s_vec<f::FArrInt*> grid;
-  s_vec<Gem*> allGems;
-
-  DECL_PTR(GridController, gridController)
-  DECL_PTR(GridAnimations, gridAnimations)
-  DECL_PTR(c::Node,gemsContainer)
-  DECL_BF(enabled)
-  DECL_PTR(Gem,selectedGem)
-  DECL_PTR(Gem,targetGem)
-  DECL_TD(f::Cell2P,selectedIndex)
-  DECL_TD(f::Cell2P,targetIndex)
-  DECL_TD(c::Vec2,selectedGemPosition)
-  DECL_IZ(combos)
-  DECL_BF(addingCombos)
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID("n/Gesture")
 };
+
 
 
 

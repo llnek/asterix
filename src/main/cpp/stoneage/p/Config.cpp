@@ -37,26 +37,13 @@ void Config::initCsts() {
   game_id= "6acae825-6061-48ac-92b2-cdcf055ef23b";
   app_id = "stoneage";
 
-  addCst("TILE_SIZE", CC_INT(60));
-  addCst("GRID_SIZE_X", CC_INT(8));
-  addCst("GRID_SIZE_Y", CC_INT(11));
-  addCst("GRID_SPACE", CC_INT(6));
-
-  addCst("Z_GRID", CC_INT(1));
-  addCst("Z_SWAP_1", CC_INT(2));
-  addCst("Z_SWAP_2", CC_INT(3));
-  addCst("Z_DIAMOND", CC_INT(4));
-
-  addCst("DIAMOND_POINTS", CC_INT(100));
-  addCst("POINTS", CC_INT(10));
-  addCst("COMBO_POINTS", CC_INT(50));
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
 
+  addImage("game.bg", CC_STR("pics/background.jpg"));
   addImage("intro.bg", CC_STR("pics/introbg.jpg"));
 
   addMusic("background", CC_STR("sfx/background.mp3"));
@@ -65,7 +52,7 @@ void Config::initAssets() {
   addEffect("diamond2", CC_STR("sfx/diamond2.wav"));
   addEffect("wrong", CC_STR("sfx/wrong.wav"));
 
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("dft", CC_STR("fon/en/myriad-pro.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

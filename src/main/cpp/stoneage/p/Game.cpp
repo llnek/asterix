@@ -9,6 +9,8 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "n/GridAnimations.h"
+#include "n/GridController.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
@@ -24,32 +26,39 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
+  void buildGrid(GVars*,GridAnimations*);
+  void addToScore();
+  void startTimer();
+  void tick();
+
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
   virtual void postReify();
-  void buildGrid(GVars*);
 
   DECL_PTR(a::NodeList, shared)
+  DECL_PTR(a::NodeList, gcn)
+  DECL_PTR(c::Sprite, timerBar)
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
 
   shared=engine->getNodeList(SharedNode().typeId());
+  gcn=engine->getNodeList(GridCtrlNode().typeId());
+
+  auto anim= CC_GNLF(GridAnimations,ctrl,"anim");
+  auto g= CC_GNLF(GridController,ctrl,"ctrl");
   auto ss=CC_GNLF(GVars,shared,"slots");
   auto wb= cx::vixBox();
 
-  ss->gridController = GridController:create();
-  ss->gridAnimations = GridAnimations:create();
-
-  ss->selectedGemPosition = f::Cell2P();
+  ss->selectedGemPosition = f::Cell2I();
   ss->gemsContainer = c::Node:create();
-  ss->selectedIndex = f::Cell2P();
-  ss->targetIndex = f::Cell2P();
-  ss->schedulerID = CC_NIL;
+  ss->selectedIndex = f::Cell2I();
+  ss->targetIndex = f::Cell2I();
   ss->selectedGem = CC_NIL;
   ss->targetGem = CC_NIL;
   ss->combos = 0;
@@ -62,41 +71,43 @@ void GLayer::postReify() {
   frame->setPosition(wb.cx, wb.cy);
   addItem(frame);
 
-  buildGrid();
+  buildGrid(ss,anim);
+  this->motionees.push_back(g);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decorate() {
+  engine= mc_new(GEngine);
   centerImage("game.bg");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(f::ComObj *co, c::Touch *t) {
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  ss->gridController->onTouchDown(t->getLocation());
+  auto ctrl=CC_GNLF(GridController,gcn,"ctrl");
+  ctrl->onTouchDown(t->getLocation());
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(f::ComObj *co, c::Touch *t) {
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  ss->gridController->onTouchMove(t->getLocation());
+  auto ctrl=CC_GNLF(GridController,gcn,"ctrl");
+  ctrl->onTouchMove(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(f::ComObj *co, c::Touch *t) {
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  ss->gridController->onTouchUp(t->getLocation());
+  auto ctrl=CC_GNLF(GridController,gcn,"ctrl");
+  ctrl->onTouchUp(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::buildGrid () {
-  auto ss=CC_GNLF(GVars,shared,"slots");
+void GLayer::buildGrid(GVars *ss, GridAnimations *anim) {
+  auto TILEGRID = TILE_SIZE + GRID_SPACE;
   ss->enabled = false;
   for (auto c = 0; c < GRID_SIZE_X; ++c) {
     auto m= new f::FArrayPtr<Gem>(GRID_SIZE_Y);
@@ -106,47 +117,33 @@ void GLayer::buildGrid () {
     ss->grid.push_back(g);
 
     for (auto r = 0; r < GRID_SIZE_Y; ++r) {
-      auto gem = Gem:create();
+      auto gem = Gem::create();
       auto idx= c<2
-        ? getVerticalUnique(c,r) : getVerticalHorizontalUnique(c,r);
+        ? getVerticalUnique(c,r)
+        : getVerticalHorizontalUnique(c,r);
       auto t= getGemType(idx);
 
       gem->setType(t);
       g->set(r,t);
-
-      gem->setPosition(
-          c*(TILE_SIZE + GRID_SPACE),
-          r*(TILE_SIZE + GRID_SPACE));
+      gem->inflate( c*TILEGRID, r*TILEGRID);
 
       ss->gemsContainer->addChild(gem);
       m->set(r,gem);
       ss->allGems.push_back(gem);
     }
   }
-  ss->gridAnimations->animateIntro();
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::dropSelectedGem() {
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  ss->selectedGem->node->setLocalZOrder(Z_GRID);
-  ss->gridAnimations->resetSelectedGem();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-int GLayer::getNewGem() {
-  return cx::randInt(GEMSET_SIZE);
+  anim->animateIntro();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::addToScore() {
-  F__LOOP(it, ss->gridController->matchArray) {
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  F__LOOP(it, ss->matchArray) {
     auto position = *it;
     auto gem = ss->gridGemsColumnMap[position.x][position.y];
-    if (gem->type == TYPE_GEM_WHITE) {
+    if (gem->getType() == TYPE_GEM_WHITE) {
         //got a diamond
     }
   }
@@ -154,31 +151,20 @@ void GLayer::addToScore() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::showMatchParticle(const s_vec<f::Cell2P> &matches) {
-  auto p= MGMS()->getPool("MatchParticles");
-  F__LOOP(it,matches) {
-    auto &pos= *it;
-    auto gem = ss->gridGemsColumnMap[pos.x][pos.y];
-    auto particle = p->get(true);
-    particle->node->setPosition(
-        gem->node->getPositionX() + ss->gemsContainer->getPositionX(),
-        gem->node->getPositionY() + ss->gemsContainer->getPositionY());
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::startTimer() {
 
-    local timeBarBg = cc.Sprite:create("timeBarBg.png")
-    timeBarBg:setPosition(self.middle.x, 40)
-    self:addChild(timeBarBg)
+  auto timeBarBg = c::loadSprite("timeBarBg.png");
+  auto wb = cx::visBox();
 
-    local timeBar = cc.Sprite:create("timeBar.png")
-    timeBar:setAnchorPoint(cc.p(0,0.5))
-    timeBar:setPosition(self.middle.x - 290, 40)
-    self:addChild(timeBar)
-    this->schedule(CC_SCHEDULE_SELECTOR(GLayer::tick), 1);
+  timeBarBg->setPosition(wb.cx, 40);
+  addItem(timeBarBg);
+
+  timeBar = cx::loadSprite("timeBar.png");
+  timeBar->setAnchorPoint(cx::anchorL());
+  timeBar->setPosition(wb.cx - 290, 40);
+  addItem(timeBar);
+
+  this->schedule(CC_SCHEDULE_SELECTOR(GLayer::tick), 1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -197,7 +183,7 @@ void GLayer::tick() {
     // show game over
     auto gameOver = cx::loadSprite("gameOver.png");
     gameOver->setPosition(wb.cx, wb.cy);
-    addItem(gameOve);
+    addItem(gameOver);
   }
 }
 
@@ -206,6 +192,10 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if ("/game/start/timer" == topic) {
+    y->startTimer();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

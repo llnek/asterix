@@ -97,7 +97,7 @@ namespace ccsx {
   const Box4 bbox4B4(not_null<ComObj*>);
   const Box4 bbox4(not_null<c::Node*>);
   inline const Box4 bbox4(not_null<ComObj*> c) {
-    return bbox4(c->sprite);
+    return bbox4(c->node);
   }
 
   void run(not_null<c::Scene*>, float delay);

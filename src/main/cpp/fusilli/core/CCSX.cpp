@@ -223,7 +223,7 @@ c::Label* reifyLabel(float x, float y,
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
 bool collide(not_null<ComObj*> a, not_null<ComObj*> b) {
-  return (NNP(a) && NNP(b)) ? collideN(a->sprite, b->sprite) : false;
+  return (NNP(a) && NNP(b)) ? collideN(a->node, b->node) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ j::json readJson(const sstr &fpath) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool outOfBound(not_null<ComObj*> ent, const Box4 &B) {
-  return (NNP(ent) && NNP(ent->sprite)) ? outOfBound(bbox4(ent->sprite), B) : false;
+  return (NNP(ent) && NNP(ent->node)) ? outOfBound(bbox4(ent->node), B) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -392,7 +392,7 @@ const c::Size calcSize(const sstr &frame) {
 // Calculate halves of width and height of this sprite
 //
 const c::Size halfHW(not_null<ComObj*> n) {
-  return halfHW(n->sprite);
+  return halfHW(n->node);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -493,25 +493,25 @@ float getTop(not_null<c::Node*> s) {
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastLeft(not_null<ComObj*> ent) {
-  return get_XXX(ent->sprite, ent->lastPos.x, anchorL().x);
+  return get_XXX(ent->node, ent->lastPos.x, anchorL().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastRight(not_null<ComObj*> ent) {
-  return get_XXX(ent->sprite, ent->lastPos.x, anchorR().x);
+  return get_XXX(ent->node, ent->lastPos.x, anchorR().x);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastTop(not_null<ComObj*> ent) {
-  return get_YYY(ent->sprite, ent->lastPos.y, anchorT().y);
+  return get_YYY(ent->node, ent->lastPos.y, anchorT().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getLastBottom(not_null<ComObj*> ent) {
-  return get_YYY(ent->sprite, ent->lastPos.y, anchorB().y);
+  return get_YYY(ent->node, ent->lastPos.y, anchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -696,43 +696,43 @@ const c::Vec2 anchorTL() { return c::Vec2(0, 1); }
 // not used for now.
 //
 void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
-  auto pos2 = obj2->sprite->getPosition();
-  auto pos1= obj1->sprite->getPosition();
-  auto sz2= obj2->sprite->getContentSize();
-  auto sz1= obj1->sprite->getContentSize();
+  auto pos2 = obj2->node->getPosition();
+  auto pos1= obj1->node->getPosition();
+  auto sz2= obj2->node->getContentSize();
+  auto sz1= obj1->node->getContentSize();
   auto hh1= HHZ(sz1);
   auto hw1= HWZ(sz1);
   auto x = pos1.x;
   auto y= pos1.y;
-  auto bx2 = bbox4(obj2->sprite);
-  auto bx1 = bbox4(obj1->sprite);
+  auto bx2 = bbox4(obj2->node);
+  auto bx1 = bbox4(obj1->node);
 
   // coming from right
   if (bx1.left < bx2.right && bx2.right < bx1.right) {
     obj2->vel.x = - fabs(obj2->vel.x);
     obj1->vel.x = fabs(obj1->vel.x);
-    x= getRight(obj2->sprite) + hw1;
+    x= getRight(obj2->node) + hw1;
   }
   else
   // coming from left
   if (bx1.right > bx2.left && bx1.left < bx2.left) {
     obj1->vel.x = - fabs( obj1->vel.x);
     obj2->vel.x = fabs(obj2->vel.x);
-    x= getLeft(obj2->sprite) - hw1;
+    x= getLeft(obj2->node) - hw1;
   }
   else
   // coming from top
   if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
     obj2->vel.y = - fabs(obj2->vel.y);
     obj1->vel.y = fabs(obj1->vel.y);
-    y= getTop(obj2->sprite) + hh1;
+    y= getTop(obj2->node) + hh1;
   }
   else
   // coming from bottom
   if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
     obj1->vel.y = - fabs(obj1->vel.y);
     obj2->vel.y = fabs(obj2->vel.y);
-    y= getBottom(obj2->sprite) - hh1;
+    y= getBottom(obj2->node) - hh1;
   }
   else {
     return;
