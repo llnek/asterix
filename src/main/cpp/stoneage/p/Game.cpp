@@ -9,12 +9,11 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "n/GridAnimations.h"
-#include "n/GridController.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
 #include "HUD.h"
+#include "n/lib.h"
 #include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -26,10 +25,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  void buildGrid(GVars*,GridAnimations*);
+  void onTouchMotion(f::ComObj*, c::Touch*);
+  void onTouchEnd(f::ComObj*, c::Touch*);
+  bool onTouchStart(f::ComObj*, c::Touch*);
+
+  void buildGrid(GVars*);
   void addToScore();
   void startTimer();
-  void tick();
+  void tick(float);
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -37,26 +40,89 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void postReify();
 
+  DECL_PTR(a::NodeList, player)
   DECL_PTR(a::NodeList, shared)
-  DECL_PTR(a::NodeList, gcn)
-  DECL_PTR(c::Sprite, timerBar)
+  DECL_BF(touchDown)
+  DECL_PTR(c::Sprite, timeBar)
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
+
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto loc=touch->getLocation();
+
+  this->touchDown = true;
+  if (!ss->enabled ) { return true; }
+
+  auto touchedGem = findGemAtPosition(ss, loc);
+  if (touchedGem.gem != CC_NIL ) {
+    if (ENP(ss->selectedGem)) {
+      selectStartGem(ss,touchedGem);
+    } else {
+      if (isValidTarget(ss, touchedGem.x, touchedGem.y, loc) ) {
+        selectTargetGem(ss,touchedGem);
+      }
+      else {
+        if (ss->selectedGem != CC_NIL) {
+          ss->selectedGem->deselect();
+        }
+        ss->selectedGem = CC_NIL;
+        selectStartGem (ss,touchedGem);
+      }
+    }
+  }
+    
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  if (!MGMS()->isLive()) { return; }
+  this->touchDown = false;
+  if (!ss->enabled) { return; }
+  if (ss->selectedGem != CC_NIL) { dropSelectedGem(ss); }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(f::ComObj *co, c::Touch *touch) {
+
+  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto loc=touch->getLocation();
+
+  if (!MGMS()->isLive()) { return; }
+  if (!ss->enabled ) { return; }
+
+  //track to see if we have a valid target
+  if (ss->selectedGem != CC_NIL && this->touchDown ) {
+    ss->selectedGem->setPos(
+      loc.x - ss->gemsContainer->getPositionX(),
+      loc.y - ss->gemsContainer->getPositionY());
+    auto touchedGem = findGemAtPosition(ss, loc);
+    if (touchedGem.gem != CC_NIL &&
+        isValidTarget(ss, touchedGem.x, touchedGem.y, loc)) {
+      selectTargetGem(ss,touchedGem);
+    }
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::postReify() {
 
+  player=engine->getNodeList(PlayerNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
-  gcn=engine->getNodeList(GridCtrlNode().typeId());
 
-  auto anim= CC_GNLF(GridAnimations,ctrl,"anim");
-  auto g= CC_GNLF(GridController,ctrl,"ctrl");
+  auto py=CC_GNLF(Player,player,"player");
   auto ss=CC_GNLF(GVars,shared,"slots");
-  auto wb= cx::vixBox();
+  auto wb= cx::visBox();
 
-  ss->selectedGemPosition = f::Cell2I();
-  ss->gemsContainer = c::Node:create();
+  ss->selectedGemPosition = c::Vec2(0,0);
+  ss->gemsContainer = c::Node::create();
   ss->selectedIndex = f::Cell2I();
   ss->targetIndex = f::Cell2I();
   ss->selectedGem = CC_NIL;
@@ -71,8 +137,8 @@ void GLayer::postReify() {
   frame->setPosition(wb.cx, wb.cy);
   addItem(frame);
 
-  buildGrid(ss,anim);
-  this->motionees.push_back(g);
+  buildGrid(ss);
+  this->motionees.push_back(py);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,30 +150,8 @@ void GLayer::decorate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(f::ComObj *co, c::Touch *t) {
-  auto ctrl=CC_GNLF(GridController,gcn,"ctrl");
-  ctrl->onTouchDown(t->getLocation());
-  return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchMotion(f::ComObj *co, c::Touch *t) {
-  auto ctrl=CC_GNLF(GridController,gcn,"ctrl");
-  ctrl->onTouchMove(t->getLocation());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchEnd(f::ComObj *co, c::Touch *t) {
-  auto ctrl=CC_GNLF(GridController,gcn,"ctrl");
-  ctrl->onTouchUp(t->getLocation());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::buildGrid(GVars *ss, GridAnimations *anim) {
-  auto TILEGRID = TILE_SIZE + GRID_SPACE;
+void GLayer::buildGrid(GVars *ss) {
+  auto TILE_GRID = TILE_SIZE + GRID_SPACE;
   ss->enabled = false;
   for (auto c = 0; c < GRID_SIZE_X; ++c) {
     auto m= new f::FArrayPtr<Gem>(GRID_SIZE_Y);
@@ -119,21 +163,21 @@ void GLayer::buildGrid(GVars *ss, GridAnimations *anim) {
     for (auto r = 0; r < GRID_SIZE_Y; ++r) {
       auto gem = Gem::create();
       auto idx= c<2
-        ? getVerticalUnique(c,r)
-        : getVerticalHorizontalUnique(c,r);
+        ? getVerticalUnique(ss,c,r)
+        : getVerticalHorizontalUnique(ss,c,r);
       auto t= getGemType(idx);
 
       gem->setType(t);
       g->set(r,t);
-      gem->inflate( c*TILEGRID, r*TILEGRID);
+      gem->inflate( c*TILE_GRID, r*TILE_GRID);
 
-      ss->gemsContainer->addChild(gem);
+      ss->gemsContainer->addChild(gem->node);
       m->set(r,gem);
       ss->allGems.push_back(gem);
     }
   }
 
-  anim->animateIntro();
+  animateIntro(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -142,7 +186,7 @@ void GLayer::addToScore() {
   auto ss=CC_GNLF(GVars,shared,"slots");
   F__LOOP(it, ss->matchArray) {
     auto position = *it;
-    auto gem = ss->gridGemsColumnMap[position.x][position.y];
+    auto gem = ss->gridGemsColumnMap[position.x]->get(position.y);
     if (gem->getType() == TYPE_GEM_WHITE) {
         //got a diamond
     }
@@ -153,7 +197,7 @@ void GLayer::addToScore() {
 //
 void GLayer::startTimer() {
 
-  auto timeBarBg = c::loadSprite("timeBarBg.png");
+  auto timeBarBg = cx::loadSprite("timeBarBg.png");
   auto wb = cx::visBox();
 
   timeBarBg->setPosition(wb.cx, 40);
@@ -169,9 +213,11 @@ void GLayer::startTimer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::tick() {
+void GLayer::tick(float dt) {
   auto scaleNow = timeBar->getScaleX();
   auto speed = 0.007f;
+  auto wb= cx::visBox();
+    
   if (scaleNow - speed > 0) {
     timeBar->setScaleX(scaleNow - speed);
   } else {
@@ -196,6 +242,18 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   if ("/game/start/timer" == topic) {
     y->startTimer();
   }
+  else
+  if ("/game/player/addscore" == topic) {
+    y->addToScore();
+  }
+  else
+  if ("/game/player/earnscore" == topic) {
+    auto msg= ( j::json*)m;
+    y->getHUD()->updateScore(
+        JS_STR(msg->operator[]("type")),
+        JS_INT(msg->operator[]("score")));
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

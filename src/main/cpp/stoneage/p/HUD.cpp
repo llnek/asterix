@@ -32,13 +32,13 @@ void HUDLayer::decorate() {
   addItem(scoreBg);
 
   dscoreLabel = cx::reifyLabel("dft", 20, "0");
-    dscoreLabel->setAlignment(c::TextHAlignment::RIGHT);
+  dscoreLabel->setAlignment(c::TextHAlignment::RIGHT);
   dscoreLabel->setMaxLineWidth(150);
   dscoreLabel->setPosition (140, wb.top - 30);
   addItem(dscoreLabel);
 
   scoreLabel = cx::reifyLabel("dft", 20, "0");
-    scoreLabel->setAlignment(c::TextHAlignment::RIGHT);
+  scoreLabel->setAlignment(c::TextHAlignment::RIGHT);
   scoreLabel->setMaxLineWidth(150);
   scoreLabel->setPosition (330, wb.top - 30);
   addItem(scoreLabel);
@@ -47,6 +47,11 @@ void HUDLayer::decorate() {
   score=0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateScore(const sstr &type, int value) {
+
+}
 
 NS_END
 

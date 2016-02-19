@@ -28,8 +28,8 @@ public:
 
   static Gem* create();
 
-  void deselect();
-  void select();
+  void deselect() {selected=false; }
+  void select() { selected=true; }
   void reset();
 
   int getType() { return type; }

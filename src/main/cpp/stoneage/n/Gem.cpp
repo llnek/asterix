@@ -22,7 +22,6 @@ NS_BEGIN(stoneage)
 Gem* Gem::create() {
   auto png= getGemPng(TYPE_GEM_BLUE);
   auto s= cx::loadSprite(png);
-  MGML()->addItem(s);
   return mc_new2(Gem,s,TYPE_GEM_BLUE);
 }
 

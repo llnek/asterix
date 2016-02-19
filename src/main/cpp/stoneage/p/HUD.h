@@ -27,6 +27,8 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_IZ(dscore)
   DECL_IZ(score)
 
+  void updateScore(const sstr&, int);
+
 };
 
 

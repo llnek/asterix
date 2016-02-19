@@ -24,7 +24,7 @@ NS_BEGIN(stoneage)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto p= MGMS()->reifyPools( "DiamondParticles");
+  auto p= MGMS()->reifyPool( "DiamondParticles");
   p->preset([=]() -> f::ComObj* {
     auto p = c::ParticleSystemQuad::create("pics/diamond.plist");
     p->stopSystem();
@@ -33,7 +33,7 @@ void GEngine::initEntities() {
     return mc_new1(Particle,p);
   },50);
 
-  p= MGMS()->reifyPools( "MatchParticles");
+  p= MGMS()->reifyPool( "MatchParticles");
   p->preset([=]() -> f::ComObj* {
     auto p = c::ParticleSystemQuad::create("pics/match.plist");
     p->stopSystem();
@@ -42,7 +42,7 @@ void GEngine::initEntities() {
     return mc_new1(Particle,p);
   },50);
 
-  p= MGMS()->reifyPools( "Diamonds");
+  p= MGMS()->reifyPool( "Diamonds");
   p->preset([=]() -> f::ComObj* {
     auto p = cx::loadSprite("gem_white.png");
     p->setLocalZOrder(Z_DIAMOND);
@@ -55,11 +55,8 @@ void GEngine::initEntities() {
   auto ss= mc_new(GVars);
   ent->checkin(ss);
 
-  auto a= mc_new1(GridAnimations,ss);
-  auto g= mc_new2(GridController,ss,a);
   ent= this->reifyEntity();
-  ent->checkin(g);
-  ent->checkin(a);
+  ent->checkin(mc_new(Player));
 
 }
 

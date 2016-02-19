@@ -11,7 +11,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
+#include "core/ComObj.h"
 
 NS_BEGIN(stoneage)
 
@@ -36,8 +36,7 @@ NS_BEGIN(stoneage)
 #define COMBO_POINTS  50
 #define DIAMOND_POINTS  100
 
-class GridController;
-class GridAnimations;
+class GemInfo;
 class Gem;
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -64,6 +63,13 @@ struct CC_DLL GVars : public a::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 
+bool isValidTarget(GVars*, int px, int py, const c::Vec2 &);
+GemInfo findGemAtPosition(GVars*, const c::Vec2&);
+bool checkGridMatches(GVars*);
+void selectStartGem(GVars*, const GemInfo&);
+void selectTargetGem(GVars*, const GemInfo&);
+
+
 const sstr getGemPngPath(int type);
 const sstr getGemPng(int type);
 
@@ -80,7 +86,23 @@ void onGridCollapseComplete(GVars*);
 void onNewSwapComplete(GVars*);
 
 void swapGemsToNewPosition(GVars*);
-void showMatchParticle(const s_vec<f::Cell2I>&) ;
+void showMatchParticle(GVars*, const s_vec<f::Cell2I>&) ;
+
+void animateMatches(GVars*, const s_vec<f::Cell2I>&, VOIDFN);
+void dropColumn(GVars*, int col);
+void animateIntro(GVars*);
+void animateSelected(Gem*);
+void resetSelectedGem(GVars*);
+void swapGems(GVars*, Gem*, Gem*, VOIDFN);
+
+void dropGemTo(Gem*, float y, float delay, VOIDFN );
+void animateCollapse(GVars*, VOIDFN );
+void collectDiamonds(const s_vec<f::ComObj*>&);
+
+
+
+
+
 
 
 NS_END
