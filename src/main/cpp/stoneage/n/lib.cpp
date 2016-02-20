@@ -153,11 +153,14 @@ GemInfo findGemAtPosition(GVars *ss, const c::Vec2 &position) {
   auto x = ceil((mx - TILE_SIZE * 0.5f) / TILE_GRID);
   auto y = ceil((my - TILE_SIZE * 0.5f) / TILE_GRID);
 
-  if (x < 0) x = 0;
-  if (y < 0) y = 0;
-  if (x >= GRID_SIZE_X) x = GRID_SIZE_X-1;
-  if (y >= GRID_SIZE_Y) y = GRID_SIZE_Y-1;
+  if (x < 1) x = 1;
+  if (y < 1) y = 1;
+  if (x > GRID_SIZE_X) x = GRID_SIZE_X;
+  if (y > GRID_SIZE_Y) y = GRID_SIZE_Y;
 
+  // coz arrays are zero based
+  --x;
+  --y;
   return GemInfo(x, y , ss->gridGemsColumnMap[x]->get(y));
 }
 
@@ -361,6 +364,8 @@ void onGridCollapseComplete(GVars *ss) {
     auto pos=gem->pos();
     auto yIndex = ceil((pos.y - TILE_SIZE * 0.5f)/TILE_GRID);
     auto xIndex = ceil((pos.x - TILE_SIZE * 0.5f)/TILE_GRID);
+      --yIndex;
+      --xIndex;// zero based
     ss->gridGemsColumnMap[xIndex]->set(yIndex, gem);
     ss->grid[xIndex]->set(yIndex, gem->getType());
   }
@@ -464,22 +469,18 @@ void collapseGrid(GVars *ss) {
     s_vec<int> nc;
     auto gc= *it;
     int v;
-    int i=0;
-    while (nc.size() < gc->size()) {
-      if (gc->size() > i) {
-        if (gc->get(i) != -1) {
-            //move gem
-            nc.push_back(gc->get(i));
-        }
-      } else {
-        //create new gem
-        nc.insert(nc.begin(), gc->getLast());//gc->get(i));
+    for (auto i=0; i < gc->size(); ++i) {
+      v=gc->get(i);
+      if (v != -1) {
+        nc.push_back(v);
       }
-      i += 1;
     }
-    assert(nc.size() == gc->size());
-    for (i=0; i < gc->size(); ++i) {
+
+    for (auto i=0; i < nc.size(); ++i) {
       gc->set(i, nc[i]);
+    }
+    for (auto i= nc.size();  i < gc->size(); ++i) {
+      gc->set(i,-1);
     }
   }
 

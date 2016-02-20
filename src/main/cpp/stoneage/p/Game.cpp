@@ -54,7 +54,7 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
   auto loc=touch->getLocation();
 
   this->touchDown = true;
-  if (!ss->enabled ) { return true; }
+  if (!ss->enabled ) { return false; }
 
   auto touchedGem = findGemAtPosition(ss, loc);
   if (touchedGem.gem != CC_NIL ) {
@@ -73,7 +73,7 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
       }
     }
   }
-    
+
   return true;
 }
 
@@ -153,26 +153,26 @@ void GLayer::decorate() {
 void GLayer::buildGrid(GVars *ss) {
   auto TILE_GRID = TILE_SIZE + GRID_SPACE;
   ss->enabled = false;
-  for (auto c = 0; c < GRID_SIZE_X; ++c) {
+  for (auto c = 1; c <= GRID_SIZE_X; ++c) {
     auto m= new f::FArrayPtr<Gem>(GRID_SIZE_Y);
     auto g= mc_new1(f::FArrInt,GRID_SIZE_Y);
 
     ss->gridGemsColumnMap.push_back(m);
     ss->grid.push_back(g);
 
-    for (auto r = 0; r < GRID_SIZE_Y; ++r) {
+    for (auto r = 1; r <= GRID_SIZE_Y; ++r) {
       auto gem = Gem::create();
-      auto idx= c<2
-        ? getVerticalUnique(ss,c,r)
-        : getVerticalHorizontalUnique(ss,c,r);
+      auto idx= c<3
+        ? getVerticalUnique(ss,c-1,r-1)
+        : getVerticalHorizontalUnique(ss,c-1,r-1);
       auto t= getGemType(idx);
 
       gem->setType(t);
-      g->set(r,t);
+      g->set(r-1,t); // zero based
       gem->inflate( c*TILE_GRID, r*TILE_GRID);
 
       ss->gemsContainer->addChild(gem->node);
-      m->set(r,gem);
+      m->set(r-1,gem); // zero based
       ss->allGems.push_back(gem);
     }
   }
@@ -217,7 +217,7 @@ void GLayer::tick(float dt) {
   auto scaleNow = timeBar->getScaleX();
   auto speed = 0.007f;
   auto wb= cx::visBox();
-    
+
   if (scaleNow - speed > 0) {
     timeBar->setScaleX(scaleNow - speed);
   } else {
