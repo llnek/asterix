@@ -169,6 +169,8 @@ enum class Locale {
 //
 s_vec<sstr> tokenize(const sstr &src, char delim);
 int modulo(int, int);
+void randSeed();
+
 
 
 
