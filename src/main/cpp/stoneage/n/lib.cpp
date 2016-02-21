@@ -357,6 +357,27 @@ void swapGemsToNewPosition(GVars *ss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void dbgGemTypes(GVars *ss, int col) {
+  auto g= ss->grid[col];
+  for (auto n=0; n < g->size(); ++n) {
+    CCLOG("row[%d].type = %d", n, g->get(n));
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void dbgGems(GVars *ss, int c) {
+  auto g= ss->gridGemsColumnMap[c];
+  for (auto n=0; n < g->size(); ++n) {
+    auto c= g->get(n);
+    CCLOG("gem[%d].pos= %d, %d",
+        n,
+        (int)c->node->getPositionX(), (int)c->node->getPositionY());
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void onGridCollapseComplete(GVars *ss) {
 
   F__LOOP(it,ss->allGems) {
@@ -372,27 +393,27 @@ void onGridCollapseComplete(GVars *ss) {
 
   if (checkGridMatches(ss)) {
 
-     //animate matched games
-   if (ss->addingCombos) {
-     if (ss->matchArray.size() > 3) {
-       ss->combos += (ss->matchArray.size() - 3);
+       //animate matched games
+     if (ss->addingCombos) {
+       if (ss->matchArray.size() > 3) {
+         ss->combos += (ss->matchArray.size() - 3);
+       }
      }
-   }
 
-   animateMatches(
-       ss,
-       ss->matchArray,
-       [=]() { collapseGrid(ss); });
+     animateMatches(
+         ss,
+         ss->matchArray,
+         [=]() { collapseGrid(ss); });
 
-   showMatchParticle(ss,ss->matchArray);
+     showMatchParticle(ss,ss->matchArray);
 
-   auto msg= j::json({
-       {"score", (int)ss->matchArray.size() * POINTS },
-       {"type", "match"}
-       });
-   SENDMSGEX("/game/player/earnscore",&msg);
+     auto msg= j::json({
+         {"score", (int)ss->matchArray.size() * POINTS },
+         {"type", "match"}
+         });
+     SENDMSGEX("/game/player/earnscore",&msg);
 
-   cx::sfxPlay("match");
+     cx::sfxPlay("match");
 
   } else {
 
@@ -637,8 +658,8 @@ void animateCollapse(GVars *ss, VOIDFN onComplete) {
         gem->node->setPositionY( (GRID_SIZE_Y+drop) * TILE_GRID);
         animatedCollapsedGems += 1;
         gem->setType(getNewGem());
-        CC_SHOW(gem->node);
-        auto newY = (GRID_SIZE_Y - drop - 1) * TILE_GRID;
+        gem->show();
+        auto newY = (GRID_SIZE_Y - (drop - 1)) * TILE_GRID;
         dropGemTo(gem, newY,  0.2f, onComplete);
         drop += 1;
       } else {
@@ -649,6 +670,7 @@ void animateCollapse(GVars *ss, VOIDFN onComplete) {
         }
       }
     }
+
   }
 }
 

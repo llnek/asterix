@@ -100,7 +100,8 @@ void animateCollapse(GVars*, VOIDFN );
 void collectDiamonds(const s_vec<f::ComObj*>&);
 
 
-
+void dbgGemTypes(GVars*,int);
+void dbgGems(GVars*,int);
 
 
 

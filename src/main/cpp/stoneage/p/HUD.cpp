@@ -50,7 +50,13 @@ void HUDLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(const sstr &type, int value) {
-
+  if ("diamond" == type) {
+    dscore += value;
+    dscoreLabel->setString(s::to_string(dscore));
+  } else {
+    score += value;
+    scoreLabel->setString(s::to_string(score));
+  }
 }
 
 NS_END
