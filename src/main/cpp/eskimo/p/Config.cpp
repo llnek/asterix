@@ -1,0 +1,104 @@
+// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
+#include "Splash.h"
+#include "Config.h"
+NS_BEGIN(eskimo)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Config*> Config::reify() {
+  auto c = mc_new(Config);
+  c->initAssets();
+  c->initLevels();
+  c->initCsts();
+  return c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initLevels() {
+  auto d= getLevel("1");
+  auto j= j::json({ });
+  d->setObject(f::JsonObj::create(j), CFG);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initCsts() {
+  game_id="9c1f0a53-1757-43df-bed1-50176a24eea2";
+  app_id = "eskimo";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::initAssets() {
+
+  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game.bg", CC_STR("pics/bg.jpg"));
+
+  addFont("background", CC_STR("sfx/background.mp3"));
+  addFont("button", CC_STR("sfx/button.wav"));
+  addFont("cap", CC_STR("sfx/cap.wav"));
+  addFont("igloo", CC_STR("sfx/igloo.wav"));
+  addFont("oops", CC_STR("sfx/oops.wav"));
+  addFont("shape", CC_STR("sfx/shape.wav"));
+  addFont("switch", CC_STR("sfx/switch.wav"));
+
+  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::handleResolution(const c::Size &rs) {
+  auto gz= gameSize();
+  sstr p;
+  float w;
+
+  if (rs.width > 640) {
+    p="rd";
+    w=1280;
+  }
+  else
+  if (rs.width > 320) {
+    p="hd";
+    w=640;
+  } else {
+    p="sd";
+    w=320;
+  }
+
+  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
+
+  CC_DTOR()->setContentScaleFactor(w/gz.width);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::runOnce() {
+  auto c= c::SpriteFrameCache::getInstance();
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Scene* Config::prelude() {
+  return Splash::reify();
+}
+
+
+NS_END
+
+
