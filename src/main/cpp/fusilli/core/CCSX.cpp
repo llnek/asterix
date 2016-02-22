@@ -240,6 +240,12 @@ void setDevRes(float x, float y, ResolutionPolicy pcy) {
 
 //////////////////////////////////////////////////////////////////////////
 //
+bool isClicked(not_null<c::Node*> node, const c::Vec2 &tap) {
+  return tap.distance(node->getPosition()) <= node->getBoundingBox().size.width * 0.8f;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 bool isPortrait() {
   auto s=screen();
   return s.height > s.width;

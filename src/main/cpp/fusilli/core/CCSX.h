@@ -94,6 +94,8 @@ namespace ccsx {
   c::Sprite* loadSprite(const sstr &fname, const sstr &path="pics");
   c::Sprite* reifySprite(const sstr &frameName);
 
+  bool isClicked(not_null<c::Node*>, const c::Vec2&);
+
   const Box4 bbox4B4(not_null<ComObj*>);
   const Box4 bbox4(not_null<c::Node*>);
   inline const Box4 bbox4(not_null<ComObj*> c) {

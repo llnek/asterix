@@ -12,6 +12,8 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
+#include "n/lib.h"
+#include "LevelSelector.h"
 #include "Splash.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -59,7 +61,7 @@ void Splash::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::showLevels() {
-  auto newScene = cx::TransitionMoveInR::create(0.2f, LevelSelectLayer::scene());
+  auto newScene = c::TransitionMoveInR::create(0.2f, LevelSelector::reify());
   cx::sfxPlay("button");
   CC_DTOR()->replaceScene(newScene);
 }
@@ -67,10 +69,13 @@ void Splash::showLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::showHelp() {
-  auto levelsCompleted = UserDefault::getInstance()->getIntegerForKey("levelsCompleted");
-  auto newScene = c::TransitionMoveInR::create(0.2f, GameLayer::scene(0, levelsCompleted));
+  /*
+  auto levelsCompleted = c::UserDefault::getInstance()->getIntegerForKey("levelsCompleted");
+  auto newScene = c::TransitionMoveInR::create(0.2f,
+      Game::reify(0, levelsCompleted));
   cx::sfxPlay("button");
   CC_DTOR()->replaceScene(newScene);
+  */
 }
 
 //////////////////////////////////////////////////////////////////////////////

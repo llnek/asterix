@@ -24,10 +24,42 @@ class XScene;
 class CC_DLL XLayer : public XNode, public c::Layer {
 protected:
 
+  //c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
+  c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ONE_BY_ONE;
+  DECL_PTR(c::EventListenerMouse ,_mouseListener)
+  DECL_BF(_mouseEnabled)
+  s_arr<bool, 256> keys;
+
+  virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onTouchesEnded(const s_vec<c::Touch*>&, c::Event*);
+  virtual void onKeyReleased(KEYCODE k, c::Event*);
+  virtual void onKeyPressed(KEYCODE k, c::Event*);
+  virtual void onMouseScroll(c::Event*);
+  virtual void onMouseDown(c::Event*);
+  virtual void onMouseUp(c::Event*);
+  virtual void onMouseMove(c::Event*);
+
+  virtual bool onTouchStart( const s_vec<c::Touch*>& );
+  virtual bool onTouchStart( c::Touch*);
+  virtual void onTouchMotion( const s_vec<c::Touch*>& );
+  virtual void onTouchMotion( c::Touch*);
+  virtual void onTouchEnd( const s_vec<c::Touch*>& );
+  virtual void onTouchEnd( c::Touch*);
+  virtual void onMouseMotion( const c::Vec2&);
+  virtual void onMouseClick( const c::Vec2&);
+
+  void disableListeners();
+  void enableListeners();
+
   virtual void postDeco() {}
   virtual void preDeco() {}
 
 public:
+
+  bool isMouseEnabled() { return _mouseEnabled; }
+  void setMouseEnabled(bool);
+  bool keyPoll(KEYCODE);
 
   virtual bool initEx(XScene*, int zx = 0);
   virtual void decorate() =0;

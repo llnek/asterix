@@ -55,7 +55,8 @@ void Config::initAssets() {
   addFont("shape", CC_STR("sfx/shape.wav"));
   addFont("switch", CC_STR("sfx/switch.wav"));
 
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("font_levels", CC_STR("fon/en/font_levels.fnt"));
+  addFont("dft", CC_STR("fon/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

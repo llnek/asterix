@@ -8,39 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "x2d/XScene.h"
+NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
-#include "base/CCEventKeyboard.h"
-#include "core/ComObj.h"
-#include "ash/Engine.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL GameLayer : public XLayer {
-protected:
-
-  virtual void update(float);
-  virtual void surcease();
-
-  virtual void postDeco();
-  virtual void preDeco();
-
-  DECL_PTR(a::Engine,engine)
-public:
-
-  virtual ~GameLayer();
-  GameLayer();
-  NOCPYASS(GameLayer)
+struct CC_DLL LevelSelector : public f::XScene {
+  STATIC_REIFY_SCENE(LevelSelector)
+  MDECL_DECORATE()
 };
-
-
-
 
 NS_END
 
