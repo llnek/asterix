@@ -13,6 +13,7 @@
 
 #include "ash/NodeRego.h"
 #include "C.h"
+#include "lib.h"
 
 NS_BEGIN(pong)
 

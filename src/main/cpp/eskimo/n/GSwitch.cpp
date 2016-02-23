@@ -9,26 +9,33 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "core/ComObj.h"
 #include "core/CCSX.h"
-#include "HUD.h"
+#include "GSwitch.h"
 
-NS_ALIAS(cx,fusii::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(eskimo)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+GSwitch* GSwitch::create() {
+  auto s= cx::reifySprite("blank.png");
+  return mc_new1(GSwitch,s);
+}
 
-  scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
-  addItem(scoreLabel);
-
-  score=0;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GSwitch::initGSwitch(int direction, const c::Vec2 &position) {
+  sprite->setDisplayFrame(cx::getSpriteFrame(
+        "switch_" + s::to_string(direction) + ".png"));
+  sprite->setPosition(position);
+  CC_SHOW(sprite);
+  this->direction = direction;
 }
 
 
-NS_END
+NS_EMD
 
 
 

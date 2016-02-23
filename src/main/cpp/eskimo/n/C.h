@@ -25,12 +25,6 @@ struct CC_DLL Gesture : public a::Component {
   MDECL_COMP_TPID("n/Gesture")
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GVars : public a::Component {
-  MDECL_COMP_TPID( "n/GVars" )
-};
-
 
 
 NS_END

@@ -17,6 +17,17 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL GameCtx : public f::GCX {
+  GameCtx(int v, int c) {
+    levelCompleted=c;
+    level=v;
+  }
+  DECL_IZ(levelCompleted)
+  DECL_IZ(level)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Game : public f::GameScene {
   virtual void sendMsgEx(const MsgTopic&, void*);
   virtual f::GameLayer* getGLayer() {

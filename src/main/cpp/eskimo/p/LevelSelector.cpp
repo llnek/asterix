@@ -13,6 +13,7 @@
 #include "core/ComObj.h"
 #include "core/CCSX.h"
 #include "n/lib.h"
+#include "Game.h"
 #include "Splash.h"
 #include "LevelSelector.h"
 
@@ -81,13 +82,17 @@ void LLayer::decorate() {
 //
 bool LLayer::onTouchStart(c::Touch *touch) {
   auto tap = touch->getLocation();
+  auto i=_firstIndex;
+
   F__LOOP(it,_levelLabels) {
     auto &z= *it;
-    if (cx::isClicked(z.btn,tap) &&
-        z.btn->getTag() == kTagButtonOff) {
-     z.btn->setDisplayFrame(cx::getSpriteFrame("btn_num_on.png"));
-     break;
+    if (cx::isClicked(z.btn,tap)) {
+      if (z.btn->getTag() == kTagButtonOff) {
+         z.btn->setDisplayFrame(cx::getSpriteFrame("btn_num_on.png"));
+         break;
+      }
     }
+    ++i;
   }
   return true;
 }
@@ -96,21 +101,20 @@ bool LLayer::onTouchStart(c::Touch *touch) {
 //
 void LLayer::onTouchEnd(c::Touch *touch) {
   auto tap = touch->getLocation();
+  auto i=0;
   F__LOOP(it, _levelLabels) {
     auto &z= *it;
-    if (cx::isClicked(z.btn,tap) &&
-        z.btn->getTag() == kTagButtonOff) {
-
-      cx::sfxPlay("button");
-      z.btn->setDisplayFrame(cx::getSpriteFrame("btn_num_off.png"));
-      /*
-      auto newScene = c::TransitionMoveInR::create(0.2f,
-          Game::reify(_firstIndex + i, _levelsCompleted));
-      CC_DTOR()->replaceScene(newScene);
-      */
-      return;
+    if (cx::isClicked(z.btn,tap)) {
+      if (z.btn->getTag() == kTagButtonOff) {
+        cx::sfxPlay("button");
+        z.btn->setDisplayFrame(cx::getSpriteFrame("btn_num_off.png"));
+        auto x= new GameCtx(_firstIndex + i, _levelsCompleted);
+        CC_DTOR()->replaceScene( c::TransitionMoveInR::create(0.2f,
+            Game::reify(x)));
+        return;
+      }
     }
-    //++i;
+    ++i;
   }
 }
 
@@ -141,6 +145,7 @@ void LLayer::createScreen() {
   int i = _firstIndex;
   int cols = 5;
   int rows = 5;
+  int tag;
   c::Sprite *mi;
 
   for (auto r = 0; r < rows; ++r) {
@@ -149,10 +154,10 @@ void LLayer::createScreen() {
                      wb.top * 0.65f - wb.right * 0.15f * r );
       if (i > _levelsCompleted) {
         mi = cx::reifySprite("btn_num_on.png");
-        mi->setTag(kTagButtonOn);
+        tag= kTagButtonOn;
       } else {
         mi = cx::reifySprite("btn_num_off.png");
-        mi->setTag(kTagButtonOff);
+        tag= kTagButtonOff;
       }
       mi->setPosition(position);
 
@@ -160,7 +165,7 @@ void LLayer::createScreen() {
       label->setAnchorPoint(cx::anchorC());
       label->setPosition(position);
 
-      addAtlasItem("game-pics", mi);
+      addAtlasItem("game-pics", mi, 0, tag);
       addItem(label, kForeground);
 
       _levelLabels.push_back(LabelBtn(label,mi));

@@ -25,6 +25,32 @@ NS_BEGIN(eskimo)
 //
 void GEngine::initEntities() {
 
+  auto pp= MGMS()->reifyPool("Platforms");
+  auto ps= MGMS()->reifyPool("Switches");
+  auto ent= this->reifyEntity();
+  ent->checkin(mc_new(GVars));
+
+
+    _gSwitchPool = Vector<GSwitch*>(30);
+
+  ps->preset()
+
+    for (int i = 0; i < 30; i++) {
+        auto sprite = GSwitch::create();
+        sprite->setVisible(false);
+        _gSwitchPool.pushBack(sprite);
+        _gameBatchNode->addChild(sprite);
+    }
+
+    _platformPool = Vector<Platform *>(50);
+    for (int  i = 0; i < 50; i++) {
+        auto platform = Platform::create(this);
+        platform->setVisible(false);
+        _gameBatchNode->addChild(platform);
+        _platformPool.pushBack(platform);
+    }
+    _platformPoolIndex = 0;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

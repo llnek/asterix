@@ -8,27 +8,30 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "HUD.h"
-
-NS_ALIAS(cx,fusii::ccsx)
+#include "b2Sprite.h"
 NS_BEGIN(eskimo)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+class GVars;
+class CC_DLL Platform : public b2Sprite {
 
-  scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
-  addItem(scoreLabel);
+  s_vec<c::Sprite*> _tiles;
 
-  score=0;
-}
+  void switchTexture();
+  void createTiles();
+
+public:
+
+  void initPlatform(int width, float angle, const c::Vec2&);
+  virtual ~Platform();
+  Platform(GVars*);
+  static Platform* create(GVars*);
+};
 
 
 NS_END
-
-
 

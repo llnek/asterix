@@ -36,6 +36,7 @@ void Config::initLevels() {
 void Config::initCsts() {
   game_id="9c1f0a53-1757-43df-bed1-50176a24eea2";
   app_id = "eskimo";
+  addCst("showFPS", CC_BOOL(false));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,14 +48,15 @@ void Config::initAssets() {
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg", CC_STR("pics/bg.jpg"));
 
-  addFont("background", CC_STR("sfx/background.mp3"));
-  addFont("button", CC_STR("sfx/button.wav"));
-  addFont("cap", CC_STR("sfx/cap.wav"));
-  addFont("igloo", CC_STR("sfx/igloo.wav"));
-  addFont("oops", CC_STR("sfx/oops.wav"));
-  addFont("shape", CC_STR("sfx/shape.wav"));
-  addFont("switch", CC_STR("sfx/switch.wav"));
+  addMusic("background", CC_STR("sfx/background.mp3"));
+  addEffect("button", CC_STR("sfx/button.wav"));
+  addEffect("cap", CC_STR("sfx/cap.wav"));
+  addEffect("igloo", CC_STR("sfx/igloo.wav"));
+  addEffect("oops", CC_STR("sfx/oops.wav"));
+  addEffect("shape", CC_STR("sfx/shape.wav"));
+  addEffect("switch", CC_STR("sfx/switch.wav"));
 
+  addFont("font_msgs", CC_STR("fon/en/font_messages.fnt"));
   addFont("font_levels", CC_STR("fon/en/font_levels.fnt"));
   addFont("dft", CC_STR("fon/en/Verdana.ttf"));
 }

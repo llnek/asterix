@@ -8,27 +8,29 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "HUD.h"
-
-NS_ALIAS(cx,fusii::ccsx)
+#include "core/ComObj.h"
 NS_BEGIN(eskimo)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+class CC_DLL GSwitch : public f::ComObj {
 
-  scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
-  addItem(scoreLabel);
+  GSwitch(not_null<c::Node*> n) : ComObj(n) {
+  }
 
-  score=0;
-}
+public:
+
+  void initGSwitch(int direction, const c::Vec2& );
+
+  static GSwitch* create();
+  DECL_IZ(direction)
+
+};
 
 
 NS_END
-
 
 

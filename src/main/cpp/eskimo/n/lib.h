@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
+#include "Box2D/Box2D.h"
 NS_BEGIN(eskimo)
 
 enum {
@@ -54,9 +55,11 @@ enum {
     kSpriteBtnAgain
 };
 
-#define EVENT_DISPATCHER Director::getInstance()->getEventDispatcher()
-#define ADD_NOTIFICATION( __target__, __notification__, __handler__) EVENT_DISPATCHER->addEventListenerWithSceneGraphPriority(EventListenerCustom::create (__notification__, __handler__), __target__);
+#define EVENT_DISPATCHER cocos2d::Director::getInstance()->getEventDispatcher()
+#define ADD_NOTIFICATION( __target__, __notification__, __handler__) EVENT_DISPATCHER->addEventListenerWithSceneGraphPriority(cocos2d::EventListenerCustom::create (__notification__, __handler__), __target__);
 
+#define NOTIFICATION_LEVEL_COMPLETED  "NOTIFICATION_LEVEL_COMPLETED"
+#define NOTIFICATION_GRAVITY_SWITCH  "NOTIFICATION_GRAVITY_SWITCH"
 
 #define TUTORIAL_1 "tilt the device to move the eskimo."
 #define TUTORIAL_2 "tap the screen to switch from snowball to ice cube."
@@ -75,6 +78,15 @@ enum {
 #define PLATFORM_HEIGHT 16.0
 #define PLAYER_SWITCH_RADII pow(SWITCH_RADIUS * 0.8, 2) + pow(PLAYER_RADIUS * 0.8, 2)
 #define TILES_PER_PLATFORM 15
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GVars : public a::Component {
+  MDECL_COMP_TPID( "n/GVars" )
+  DECL_TV(float, gravity, 0.98f)
+  DECL_PTR(b2World, world)
+
+};
 
 
 NS_END

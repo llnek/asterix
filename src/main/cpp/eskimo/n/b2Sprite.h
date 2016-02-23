@@ -8,27 +8,29 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "HUD.h"
-
-NS_ALIAS(cx,fusii::ccsx)
+#include "2d/CCSprite.h"
+#include "Box2D/Box2D.h"
 NS_BEGIN(eskimo)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+struct CC_DLL b2Sprite : public c::Sprite {
 
-  scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
-  addItem(scoreLabel);
+  virtual void setSpritePosition (const c::Vec2& );
+  virtual void update();
+  virtual void hide();
+  virtual void reset();
 
-  score=0;
-}
+  DECL_PTR(b2Body, _body)
+
+  b2Sprite() {}
+
+};
 
 
 NS_END
-
 
 
