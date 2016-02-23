@@ -11,26 +11,44 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "core/ComObj.h"
 #include "b2Sprite.h"
+#include "lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class GVars;
-class CC_DLL Platform : public b2Sprite {
+class CC_DLL PlatformSprite : public b2Sprite {
 
   s_vec<c::Sprite*> _tiles;
+  DECL_PTR(GVars, ss)
 
+  PlatformSprite(not_null<GVars*>);
   void switchTexture();
   void createTiles();
 
 public:
 
   void initPlatform(int width, float angle, const c::Vec2&);
-  virtual ~Platform();
-  Platform(GVars*);
-  static Platform* create(GVars*);
+
+  virtual ~PlatformSprite() {}
+
+  static PlatformSprite* create(not_null<GVars*>);
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Platform : public f::ComObj {
+  MDECL_COMP_TPID("n/Platform")
+
+  Platform(not_null<GVars*> ss) {
+    node=PlatformSprite::create(ss);
+    CC_HIDE(node);
+  }
+
+};
+
+
 
 
 NS_END

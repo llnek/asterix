@@ -19,23 +19,25 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GSwitch* GSwitch::create() {
+GSwitch* GSwitch::create(not_null<GVars*> ss) {
   auto s= cx::reifySprite("blank.png");
-  return mc_new1(GSwitch,s);
+  CC_HIDE(s);
+  return mc_new2(GSwitch,ss, s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GSwitch::initGSwitch(int direction, const c::Vec2 &position) {
-  sprite->setDisplayFrame(cx::getSpriteFrame(
-        "switch_" + s::to_string(direction) + ".png"));
-  sprite->setPosition(position);
-  CC_SHOW(sprite);
+    SCAST(c::Sprite*,node)->setDisplayFrame(
+        cx::getSpriteFrame(
+        fmtPng("switch_" ,direction)));
+  node->setPosition(position);
+  CC_SHOW(node);
   this->direction = direction;
 }
 
 
-NS_EMD
+NS_END
 
 
 

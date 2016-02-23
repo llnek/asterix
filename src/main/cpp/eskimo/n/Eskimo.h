@@ -11,26 +11,45 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "2d/CCSprite.h"
-#include "n/lib.h"
+#include "lib.h"
+#include "b2Sprite.h"
+
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class GVars;
-class CC_DLL Igloo : public c::Sprite {
+class CC_DLL EskimoSprite : public b2Sprite {
 
-  const sstr fmtGPng(int g) { return "block_large_" + s::to_string(g) + ".png"; }
-  DECL_PTR(c::Sprite, _block)
-  void addBlock();
+  void makeCircleShape();
+  void makeBoxShape();
 
 public:
 
-  void initIgloo(int gravity, const c::Vec2&);
-  static Igloo* create(GVars*);
+  static EskimoSprite* create(not_null<GVars*>);
 
-  virtual ~Igloo();
-  Igloo(GVars*);
+  DECL_BF(_switchShape)
+  DECL_IZ(_state)
+  DECL_PTR(GVars,ss)
+
+  EskimoSprite(not_null<GVars*>);
+  virtual ~EskimoSprite() {}
+
+  virtual void update();
+  virtual void reset();
+
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Eskimo : public f::ComObj {
+
+  MDECL_COMP_TPID("n/Eskimo")
+
+  Eskimo(not_null<GVars*> g) {
+    node= EskimoSprite::create(g);
+    MGML()->addAtlasItem("game-pics", node, kMiddleground);
+  }
 
 };
 
@@ -38,5 +57,6 @@ public:
 
 
 NS_END
+
 
 

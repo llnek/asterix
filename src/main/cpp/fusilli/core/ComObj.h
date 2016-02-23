@@ -18,7 +18,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ComObj : public ash::Component {
+class CC_DLL ComObj : public ash::Component, public Poolable {
 protected:
 
   void init(c::Node*, int health, int score);
@@ -72,7 +72,7 @@ public:
   //not owner
   DECL_PTR(c::Node ,node)
   DECL_IZ(origHP)
-  DECL_BF(status)
+  //DECL_BF(status)
   DECL_BF(godMode)
   DECL_IZ(HP)
   DECL_IZ(score)

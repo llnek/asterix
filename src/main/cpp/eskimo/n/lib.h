@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
+#include "ash/Ash.h"
 #include "Box2D/Box2D.h"
 NS_BEGIN(eskimo)
 
@@ -81,13 +82,14 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ash::Component {
   MDECL_COMP_TPID( "n/GVars" )
   DECL_TV(float, gravity, 0.98f)
   DECL_PTR(b2World, world)
 
 };
 
+const sstr fmtPng(const sstr& pfx, int);
 
 NS_END
 

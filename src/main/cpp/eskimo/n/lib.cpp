@@ -8,30 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "2d/CCSprite.h"
-#include "Box2D/Box2D.h"
+#include "lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL b2Sprite : public c::Sprite  {
-
-  virtual void setSpritePosition (const c::Vec2& );
-  virtual void update();
-  virtual void hide();
-  virtual void reset();
-
-  DECL_PTR(b2Body, _body)
-
-  b2Sprite() {}
-
-};
+const sstr fmtPng(const sstr& pfx, int n) {
+  return pfx + s::to_string(n) + ".png";
+}
 
 
 NS_END
+
 
 

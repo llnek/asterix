@@ -11,6 +11,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "Box2D/Box2D.h"
 #include "ash/Engine.h"
 #include "n/N.h"
 
@@ -19,11 +20,16 @@ NS_BEGIN(eskimo)
 //
 class CC_DLL GEngine  : public a::Engine {
 
+  DECL_PTR(b2World, world)
+
 public:
 
   virtual void initEntities();
   virtual void initSystems();
 
+  GEngine(not_null<b2World*> w) {
+    world=w;
+  }
 };
 
 

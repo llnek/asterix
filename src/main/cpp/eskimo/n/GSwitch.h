@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-
+#include "lib.h"
 #include "core/ComObj.h"
 NS_BEGIN(eskimo)
 
@@ -18,16 +18,17 @@ NS_BEGIN(eskimo)
 //
 class CC_DLL GSwitch : public f::ComObj {
 
-  GSwitch(not_null<c::Node*> n) : ComObj(n) {
+  GSwitch(not_null<GVars*>, not_null<c::Node*> n) : ComObj(n) {
   }
 
 public:
 
   void initGSwitch(int direction, const c::Vec2& );
 
-  static GSwitch* create();
+  static GSwitch* create(not_null<GVars*>);
   DECL_IZ(direction)
 
+  MDECL_COMP_TPID("n/GSwitch")
 };
 
 

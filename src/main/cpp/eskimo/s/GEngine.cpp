@@ -16,6 +16,8 @@
 #include "Collide.h"
 #include "Move.h"
 #include "AI.h"
+#include "n/Platform.h"
+#include "n/GSwitch.h"
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -28,28 +30,21 @@ void GEngine::initEntities() {
   auto pp= MGMS()->reifyPool("Platforms");
   auto ps= MGMS()->reifyPool("Switches");
   auto ent= this->reifyEntity();
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ss->world=this->world;
+  ent->checkin(ss);
 
+  pp->preset([=]() -> f::Poolable* {
+    auto p= mc_new1(Platform,ss);
+    MGML()->addAtlasItem("game-pics",p->node);
+    return p;
+  }, 50);
 
-    _gSwitchPool = Vector<GSwitch*>(30);
-
-  ps->preset()
-
-    for (int i = 0; i < 30; i++) {
-        auto sprite = GSwitch::create();
-        sprite->setVisible(false);
-        _gSwitchPool.pushBack(sprite);
-        _gameBatchNode->addChild(sprite);
-    }
-
-    _platformPool = Vector<Platform *>(50);
-    for (int  i = 0; i < 50; i++) {
-        auto platform = Platform::create(this);
-        platform->setVisible(false);
-        _gameBatchNode->addChild(platform);
-        _platformPool.pushBack(platform);
-    }
-    _platformPoolIndex = 0;
+  ps->preset([=]() -> f::Poolable* {
+    auto s= GSwitch::create(ss);
+    MGML()->addAtlasItem("game-pics", s->node);
+    return s;
+  }, 30);
 
 }
 

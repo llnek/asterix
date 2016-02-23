@@ -27,7 +27,8 @@ Igloo::~Igloo() {
 Igloo::Igloo(GVars *ss) {
 
   auto onGravityChanged = [=](c::EventCustom*) {
-    _block->setSpriteFrame(cx::getSpriteFrame(fmtGPng(ss->gravity)));
+    _block->setSpriteFrame(
+                           cx::getSpriteFrame(fmtPng("block_large_",ss->gravity)));
   };
 
   auto onLevelCompleted = [=](c::EventCustom*) {
@@ -57,7 +58,8 @@ Igloo* Igloo::create(GVars *ss) {
 //
 void Igloo::initIgloo(int gravity, const c::Vec2 &pos) {
 
-  _block->setDisplayFrame( cx::getSpriteFrame(fmtGPng(gravity)));
+  _block->setDisplayFrame(
+                          cx::getSpriteFrame(fmtPng("block_large_",gravity)));
   this->setPosition(pos);
   this->setDisplayFrame(cx::getSpriteFrame("igloo_off.png"));
   setVisible(true);

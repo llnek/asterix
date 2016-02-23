@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
+#include "lib.h"
 #include "b2Sprite.h"
 
 NS_ALIAS(cx, fusii::ccsx)

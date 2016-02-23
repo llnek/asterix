@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
 #include "core/CCSX.h"
 #include "lib.h"
 #include "Platform.h"
@@ -20,7 +19,9 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Platform::Platform (GVars *ss) {
+PlatformSprite::PlatformSprite(not_null<GVars*> ss) {
+
+  this->ss = ss.get();
 
   //create body
   b2BodyDef bodyDef;
@@ -31,7 +32,7 @@ Platform::Platform (GVars *ss) {
   _body->SetUserData(this);
 
   //register game notifications
-  auto onGravityChanged = [=] (EventCustom*) {
+    auto onGravityChanged = [=] (c::EventCustom*) {
     if (this->isVisible()) {
       switchTexture();
     }
@@ -42,22 +43,18 @@ Platform::Platform (GVars *ss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Platform* Platform::create(GVars *ss) {
-
-  auto sprite = mc_new1(Platform,ss);
-  if (sprite->initWithSpriteFrameName("blank.png")) {
-    sprite->autorelease();
-    sprite->createTiles();
-    return sprite;
-  } else {
-    CC_SAFE_DELETE(sprite);
-    return CC_NIL;
-  }
+PlatformSprite* PlatformSprite::create(not_null<GVars*> ss) {
+  auto sprite = new PlatformSprite(ss);
+  sprite->initWithSpriteFrameName("blank.png");
+  sprite->autorelease();
+  sprite->createTiles();
+  CC_HIDE(sprite);
+  return sprite;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Platform::initPlatform(int width, float angle, const c::Vec2 &position) {
+void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &position) {
 
   //reutilize body from the pool: so destroy any existent fixture
   if (_body->GetFixtureList()) {
@@ -81,6 +78,7 @@ void Platform::initPlatform(int width, float angle, const c::Vec2 &position) {
 
   //set unused tiles in the platform invisible
   auto startX = -width * 0.5f + TILE * 0.5f;
+    int i=0;
   F__LOOP(it,_tiles) {
     auto block = *it;
 
@@ -88,7 +86,7 @@ void Platform::initPlatform(int width, float angle, const c::Vec2 &position) {
       block->setVisible(false);
     } else {
       block->setVisible(true);
-      block->setPosition(Vec2(startX + i * TILE, 0));
+        block->setPosition(c::Vec2(startX + i * TILE, 0));
       block->setFlippedX(false);
       block->setFlippedY(false);
 
@@ -99,6 +97,7 @@ void Platform::initPlatform(int width, float angle, const c::Vec2 &position) {
         if (position.x > TILE * 5) block->setFlippedX(true);
       }
     }
+      ++i;
   }
   switchTexture();
 
@@ -110,11 +109,12 @@ void Platform::initPlatform(int width, float angle, const c::Vec2 &position) {
 //////////////////////////////////////////////////////////////////////////////
 //
 //texture platform with tiles
-void Platform::switchTexture() {
+void PlatformSprite::switchTexture() {
   F__LOOP(it, _tiles) {
     auto block= *it;
     if (block->isVisible()) {
-      block->setSpriteFrame(cx::getSpriteFrame( fmtGPng(ss->gravity)));
+      block->setSpriteFrame(
+                            cx::getSpriteFrame( fmtPng("block_",ss->gravity)));
     }
   }
 }
@@ -122,7 +122,7 @@ void Platform::switchTexture() {
 //////////////////////////////////////////////////////////////////////////////
 //
 //create platform with maximum number of tiles a platform can have (larger side / tile size).
-void Platform::createTiles() {
+void PlatformSprite::createTiles() {
   for (auto i = 0; i < TILES_PER_PLATFORM; ++i) {
     auto block = cx::reifySprite("block_1.png");
     CC_HIDE(block);

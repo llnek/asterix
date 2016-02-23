@@ -29,8 +29,8 @@ void ComObj::hurt(int damage) {
 //
 void ComObj::inflate(not_null<c::Dictionary*> dict) {
 
+  Poolable::inflate();
   HP = origHP;
-  status=true;
 
   if (ENP(node)) {
     return;
@@ -58,8 +58,8 @@ void ComObj::inflate(not_null<c::Dictionary*> dict) {
 //
 void ComObj::inflate(float x, float y) {
 
+  Poolable::inflate();
   HP = origHP;
-  status=true;
 
   if (NNP(node)) {
     node->setPosition(x,y);
@@ -71,8 +71,8 @@ void ComObj::inflate(float x, float y) {
 //
 void ComObj::inflate() {
 
+  Poolable::inflate();
   HP = origHP;
-  status=true;
 
   if (NNP(node)) {
     node->setVisible(true);
@@ -82,12 +82,12 @@ void ComObj::inflate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void ComObj::deflate() {
+  Poolable::deflate();
   if (NNP(node)) {
     node->unscheduleAllCallbacks();
     node->stopAllActions();
     node->setVisible(false);
   }
-  status=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
