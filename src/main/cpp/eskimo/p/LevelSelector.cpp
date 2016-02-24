@@ -62,7 +62,7 @@ struct CC_DLL LLayer : public f::XLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void LLayer::decorate() {
+void LLayer::decoUI() {
   auto db = c::UserDefault::getInstance();
 
   _levelsCompleted = db->getIntegerForKey("levelsCompleted");
@@ -237,7 +237,7 @@ void LLayer::createMenu() {
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
-void LevelSelector::decorate() {
+void LevelSelector::decoUI() {
   LLayer::reify(this);
 }
 

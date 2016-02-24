@@ -13,7 +13,9 @@
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "Box2D/Box2D.h"
 #include "core/CCSX.h"
+#include "n/Eskimo.h"
 #include "Move.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -38,12 +40,11 @@ static void applyLinearImpulse(b2Body *body, float acc, float mult) {
   body->ApplyLinearImpulse( b2Vec2(0, acc * mult), body->GetWorldCenter(), true);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
+  players=engine->getNodeList(EskimoNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
-  players=engine->getNodeList(EskimoNode.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////

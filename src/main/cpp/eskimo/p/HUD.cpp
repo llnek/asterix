@@ -14,9 +14,50 @@
 #include "core/CCSX.h"
 #include "HUD.h"
 #include "n/lib.h"
+#include "Splash.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(eskimo)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::toggleBtn(int tag, bool b) {
+  F__LOOP(it, _buttons) {
+    auto btn= *it;
+    if (btn->getTag() == tag) {
+       btn->setVisible(b);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::showTut(const sstr &msg) {
+  _tutorialLabel->setString(msg);
+  CC_SHOW(_tutorialLabel);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::showMsg(const sstr &msg) {
+  _messages->setString(msg);
+  CC_SHOW(_messages);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::showMenu() {
+  CC_SHOW(_messages);
+  CC_SHOW(_btnStart);
+  CC_HIDE(_btnMenu);
+  CC_HIDE(_btnAgain);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::toggleTutorial(bool b) {
+  _tutorialLabel->setVisible(b);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -58,7 +99,7 @@ void HUDLayer::touchEnd(c::Touch *touch) {
         CC_HIDE(_btnStart);
         CC_HIDE(_messages);
         MGMS()->play();
-        if (_currentLevel == 0) {
+        if (ss->currentLevel == 0) {
           CC_SHOW(_tutorialLabel);
         }
       break;
@@ -164,11 +205,6 @@ void HUDLayer::createBtns() {
   CC_HIDE(_messages);
   addItem(_messages, kForeground);
 
-  _smoke = c::ParticleSystemQuad::create("pics/smoke.plist");
-  _smoke->stopSystem();
-  CC_HIDE(_smoke);
-  addItem(_smoke, kForeground);
-
   _tutorialLabel = cx::reifyLabel("dft", 25, TUTORIAL_1);
   _tutorialLabel->setAlignment(c::TextHAlignment::CENTER);
   _tutorialLabel->setPosition(wb.cx, wb.top * 0.2f);
@@ -181,7 +217,7 @@ void HUDLayer::createBtns() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
   regoAtlas("game-pics");
 

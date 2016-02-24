@@ -13,7 +13,11 @@
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "Box2D/Box2D.h"
 #include "core/CCSX.h"
+#include "n/GSwitch.h"
+#include "n/Eskimo.h"
+#include "n/Igloo.h"
 #include "Collide.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -23,8 +27,8 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
+  players=engine->getNodeList(EskimoNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
-  players=engine->getNodeList(EskimoNode.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,17 +50,17 @@ void Collide::process(float dt) {
   float dx,dy;
   float x,y;
   F__LOOP(it, sws) {
-    auto gw= (*it)->node;
-    if (!gw->isVisible())
-    continue;
-    dx = cx::deltaX(gw,player);
-    dy = cx::deltaY(gw,player);
+    auto gw= (GSwitch*) *it;
+    if (!gw->node->isVisible()) {
+      continue; }
+    dx = cx::deltaX(gw->node,player);
+    dy = cx::deltaY(gw->node,player);
     if (pow(dx, 2) + pow (dy, 2) < PLAYER_SWITCH_RADII) {
       ss->gravity = gw->direction;
-      CC_HIDE(gw);
+      gw->hide();
       cx::sfxPlay("switch");
       //notify of collision
-      EVENT_DISPATCHER->dispatchCustomEvent(NOTIFICATION_GRAVITY_SWITCH);
+      CC_DISPEVENT1(NOTIFY_GSWITCH);
       x=0;
       y=0;
       //change world gravity
@@ -72,44 +76,28 @@ void Collide::process(float dt) {
   }
 
   //check for level complete (collision with Igloo)
-  dx = cx::deltaX(player, igloo);
-  dy = cx::deltaY(player, igloo);
+  dx = cx::deltaX(player, ss->igloo);
+  dy = cx::deltaY(player, ss->igloo);
   if (pow(dx, 2) + pow(dy, 2) < IGLOO_SQ_RADIUS) {
     cx::sfxPlay("igloo");
     CC_HIDE(player);
-    CC_HIDE(ss->btnPause);
-    CC_HIDE(ss->btnReset);
+    auto m2=j::json({ {"tag", kSpriteBtnReset } });
+    auto m1=j::json({ {"tag", kSpriteBtnPause } });
+    SENDMSGEX("/game/hud/togglebutton->off", &m2);
+    SENDMSGEX("/game/hud/togglebutton->off", &m1);
 
     //notify of Level Completed. Igloo will listen to this and change its texture.
-    EVENT_DISPATCHER->dispatchCustomEvent(NOTIFICATION_LEVEL_COMPLETED);
+    CC_DISPEVENT1(NOTIFY_LEVEL_DONE);
 
     //run smoke particle
     CC_SHOW(ss->smoke);
     ss->smoke->resetSystem();
 
-    auto msg= j::json({
-        {"msg", "well done!"}
-        });
+    auto msg= j::json({ {"msg", "well done!"} });
     SENDMSGEX("/game/hud/showmsg", &msg);
-    //_messages->setString("well done!");
-    //CC_SHOW(_messages);
 
-    SENDMSG("/game/player/newlevel");
-    //create delay until new level is loaded
-    /*
-    auto seq= c::Sequence::create(
-        c::DelayTime::create(2.5f),
-        c::CallFunc::create([=]() {
-          this->newLevel();
-          }),
-        CC_NIL);
-    this->runAction(seq);
-    CC_HIDE(_tutorialLabel);
-    MGMS()->stop();
-    */
+    SENDMSG("/game/player/goto/newlevel");
   }
-
-
 
 }
 

@@ -52,8 +52,8 @@ protected:
   void disableListeners();
   void enableListeners();
 
-  virtual void postDeco() {}
-  virtual void preDeco() {}
+  virtual void decoPost() {}
+  virtual void decoPre() {}
 
 public:
 
@@ -62,8 +62,8 @@ public:
   bool keyPoll(KEYCODE);
 
   virtual bool initEx(XScene*, int zx = 0);
-  virtual void decorate() =0;
-  virtual void postReify() {}
+  virtual void decoUI() =0;
+  virtual void onInited() {}
 
   XScene* getSceneX();
 
@@ -78,7 +78,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SingleLayer : public XLayer {
-  virtual void decorate() {}
+  virtual void decoUI() {}
   virtual ~SingleLayer() {}
   SingleLayer() {}
   NOCPYASS(SingleLayer)

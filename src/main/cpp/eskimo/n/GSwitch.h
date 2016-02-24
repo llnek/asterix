@@ -10,39 +10,29 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-
-#include "x2d/GameScene.h"
-
+#include "core/ComObj.h"
+#include "lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GameCtx : public f::GCX {
-  GameCtx(int v, int c) {
-    levelsCompleted=c;
-    level=v;
-  }
-  DECL_IZ(levelsCompleted)
-  DECL_IZ(level)
-};
+class CC_DLL GSwitch : public f::ComObj {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Game : public f::GameScene {
-  virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer() {
-     return
-       (f::GameLayer*) getLayer(2);
+  GSwitch(GVars*, c::Node *n)
+    : ComObj(n) {
   }
 
-  STATIC_REIFY_SCENE_CTX(Game)
-  MDECL_DECORATE()
-};
+public:
 
+  void initGSwitch(int direction, const c::Vec2& );
+
+  static GSwitch* create(not_null<GVars*>);
+  DECL_IZ(direction)
+
+  MDECL_COMP_TPID("n/GSwitch")
+};
 
 
 NS_END
-
-
 
 

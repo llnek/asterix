@@ -35,7 +35,7 @@ GameLayer::GameLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::postDeco() {
+void GameLayer::decoPost() {
   if (NNP(engine)) {
     engine->forceSync();
     engine->ignite();
@@ -45,7 +45,7 @@ void GameLayer::postDeco() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameLayer::preDeco() {
+void GameLayer::decoPre() {
   cx::resumeAudio();
   enableListeners();
 }

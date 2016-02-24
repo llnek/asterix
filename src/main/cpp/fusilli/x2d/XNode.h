@@ -15,7 +15,7 @@
 //
 #define MDECL_GET_IID(x) virtual int getIID() { return x; }
 #define MDECL_UPDATE() virtual void update(float);
-#define MDECL_DECORATE() virtual void decorate();
+#define MDECL_DECORATE() virtual void decoUI();
 
 #include "2d/CCSpriteBatchNode.h"
 #include "platform/CCCommon.h"

@@ -82,6 +82,7 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class Igloo;
 struct CC_DLL GVars : public ash::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
@@ -89,11 +90,15 @@ struct CC_DLL GVars : public ash::Component {
   DECL_PTR(b2World, world)
   DECL_TD(c::Vec2, acc)
 
+  DECL_FZ(tutorialCounter)
+  DECL_IZ(tutorialStep)
+
   DECL_PTR(Igloo, igloo)
   DECL_IZ(currentLevel)
   DECL_IZ(gravity)
-  DECL_IZ(gravity)
 
+  virtual ~GVars() {
+  }
 };
 
 const sstr fmtPng(const sstr& pfx, int);

@@ -28,8 +28,8 @@ protected:
   virtual void update(float);
   virtual void surcease();
 
-  virtual void postDeco();
-  virtual void preDeco();
+  virtual void decoPost();
+  virtual void decoPre();
 
   DECL_PTR(a::Engine,engine)
 public:

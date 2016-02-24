@@ -8,41 +8,36 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/ComObj.h"
+#include "core/CCSX.h"
+#include "GSwitch.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GameCtx : public f::GCX {
-  GameCtx(int v, int c) {
-    levelsCompleted=c;
-    level=v;
-  }
-  DECL_IZ(levelsCompleted)
-  DECL_IZ(level)
-};
+GSwitch* GSwitch::create(not_null<GVars*> ss) {
+  auto s= cx::reifySprite("blank.png");
+  CC_HIDE(s);
+  return mc_new2(GSwitch,ss.get(), s);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
-  virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer() {
-     return
-       (f::GameLayer*) getLayer(2);
-  }
-
-  STATIC_REIFY_SCENE_CTX(Game)
-  MDECL_DECORATE()
-};
-
+void GSwitch::initGSwitch(int direction, const c::Vec2 &position) {
+  SCAST(c::Sprite*,node)->setDisplayFrame(
+        cx::getSpriteFrame(
+        fmtPng("switch_" ,direction)));
+  node->setPosition(position);
+  CC_SHOW(node);
+  this->direction = direction;
+}
 
 
 NS_END
-
 
 
 

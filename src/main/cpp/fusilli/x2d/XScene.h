@@ -25,9 +25,9 @@ struct CC_DLL XScene : public XNode, public c::Scene {
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);
   XLayer* getLayer(int tag);
 
-  virtual void decorate() = 0;
+  virtual void decoUI() = 0;
   virtual bool init();
-  virtual void postReify() {}
+  virtual void onInited() {}
 
   virtual ~XScene();
   XScene();

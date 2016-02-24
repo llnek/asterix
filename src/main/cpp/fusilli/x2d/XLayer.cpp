@@ -28,9 +28,9 @@ NS_BEGIN(fusii)
 bool XLayer::initEx(XScene *par, int zx) {
   if (c::Layer::init()) {
     par->addLayer(this, zx);
-    preDeco();
-    decorate();
-    postDeco();
+    decoPre();
+    decoUI();
+    decoPost();
     return true;
   } else {
     return false;

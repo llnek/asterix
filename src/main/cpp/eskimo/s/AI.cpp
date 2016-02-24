@@ -13,6 +13,7 @@
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "Box2D/Box2D.h"
 #include "core/CCSX.h"
 #include "AI.h"
 

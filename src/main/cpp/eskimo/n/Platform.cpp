@@ -36,7 +36,7 @@ PlatformSprite::PlatformSprite(not_null<GVars*> ss) {
     }
   };
 
-  ADD_NOTIFICATION(this, NOTIFY_GWITCH, onGravityChanged);
+  ADD_NOTIFICATION(this, NOTIFY_GSWITCH, onGravityChanged);
 }
 
 //////////////////////////////////////////////////////////////////////////////

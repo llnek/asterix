@@ -32,7 +32,7 @@ XLayer* XScene::getLayer(int tag) {
 //
 bool XScene::init() {
   if (c::Scene::init()) {
-    decorate();
+    decoUI();
     return true;
   }
   return false;

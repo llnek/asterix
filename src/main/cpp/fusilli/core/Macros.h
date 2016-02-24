@@ -23,7 +23,8 @@
 #define CC_GDV(t,d,f) fusii::dictVal<t>(d,f)->getValue()
 #define CC_CSV(t,f) fusii::cstVal<t>(f)->getValue()
 
-#define CC_DISPEVENT(a,b) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a,b)
+#define CC_DISPEVENT2(a,b) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a,b)
+#define CC_DISPEVENT1(a) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a)
 
 #define CC_FILER() cocos2d::FileUtils::getInstance()
 #define CC_DTOR() cocos2d::Director::getInstance()
@@ -49,7 +50,8 @@
 #define CC_ZPT   cocos2d::Vec2(0,0)
 #define CC_NIL nullptr
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
 typedef cocos2d::BlendFunc BDFUNC;
 
@@ -66,7 +68,7 @@ static __TYPE__* reify(fusii::SCTX* x) {  \
       p->setCtx(x); \
       if (p->init()) { \
           p->autorelease(); \
-          p->postReify(); \
+          p->onInited(); \
           return p; \
       } else { \
           delete p; \
@@ -81,7 +83,7 @@ static __TYPE__* reify() {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
     if (NNP(p) && p->init()) { \
         p->autorelease(); \
-        p->postReify(); \
+        p->onInited(); \
         return p; \
     } else { \
         delete p; \
@@ -96,7 +98,7 @@ static __TYPE__* reify() {  \
       p->setCtx(x); \
       if (p->initEx(xs, zx)) { \
           p->autorelease(); \
-          p->postReify(); \
+          p->onInited(); \
           return p; \
       } else { \
           delete p; \
@@ -110,7 +112,7 @@ static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
     if (NNP(p) && p->initEx(xs, zx)) { \
         p->autorelease(); \
-        p->postReify(); \
+        p->onInited(); \
         return p; \
     } else { \
         delete p; \

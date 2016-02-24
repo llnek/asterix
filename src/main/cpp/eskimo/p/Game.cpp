@@ -30,6 +30,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
+  DECL_TD(c::ValueVector, _levels)
+  DECL_PTR(b2World, _world)
+
   DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
 
@@ -42,25 +45,31 @@ struct CC_DLL GLayer : public f::GameLayer {
   void resetLevel();
   void newLevel();
   void loadLevel(int);
+  void readyNewLevel();
 
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
+  virtual void onInited();
 
-  virtual void postReify();
   void createScreen(GVars*);
   void initPhysics(GVars*);
+  void switchShape(bool);
 
-  DECL_TD(c::ValueVector, _levels)
-  DECL_PTR(b2World, _world)
-  DECL_FZ(_tutorialCounter)
-  DECL_IZ(_tutorialStep)
-
+    virtual ~GLayer();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 GLayer::~GLayer() {
   mc_del_ptr(_world);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::switchShape(bool t) {
+  auto py= CC_GNLF(Eskimo,players,"player");
+  auto player= (EskimoSprite*) py->node;
+  player->_switchShape= t;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -83,13 +92,14 @@ void GLayer::initPhysics(GVars *ss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
+void GLayer::onInited() {
   _levels = CC_FILER()->getValueVectorFromFile("pics/levels.plist");
   players = engine->getNodeList(EskimoNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
   auto ss= CC_GNLF(GVars,shared,"slots");
   auto ctx= (GameCtx*) MGMS()->getCtx();
 
+  getHUD()->setG(ss);
   createScreen(ss);
   initPhysics(ss);
 
@@ -116,13 +126,13 @@ void GLayer::loadLevel(int level) {
 
   //create platforms
   auto levelData = _levels.at(level).asValueMap();
-  auto platforms = levelData.at("platforms").asValueVector();
+  auto platforms =
+    levelData.at("platforms").asValueVector();
 
-  for (auto platformData : platforms) {
+  for (auto pData : platforms) {
     auto pm = (Platform*)po->getAndSet(true);
-    auto data = platformData.asValueMap();
+    auto data = pData.asValueMap();
     auto ps= (PlatformSprite*) pm->node;
-
     ps->initPlatform (
                       data.at("width").asInt() * TILE,
                       data.at("angle").asFloat(),
@@ -141,10 +151,11 @@ void GLayer::resetLevel() {
    play again or the reset level button)
    */
 
-  auto levelData = _levels.at(_currentLevel).asValueMap();
   auto py= CC_GNLF(Eskimo,players,"player");
   auto ss= CC_GNLF(GVars,shared,"slots");
   auto player= (EskimoSprite*) py->node;
+  auto levelData =
+    _levels.at(ss->currentLevel).asValueMap();
   float x=0;
   float y=0;
 
@@ -155,7 +166,7 @@ void GLayer::resetLevel() {
   ss->gravity = levelData.at("gravity").asInt();
 
   int i = 1;
-  CC_DISPEVENT(NOTIFY_GSWITCH, &i);
+  CC_DISPEVENT2(NOTIFY_GSWITCH, &i);
 
   switch (ss->gravity) {
     case kDirectionUp: y= FORCE_GRAVITY; break;
@@ -203,20 +214,15 @@ void GLayer::resetLevel() {
 
   //if _currentLevel == 0 this is tutorial level
   if (ss->currentLevel != 0) {
-    getHUD()->showMsg("level "+ s::to_string(ss->currentLevel));
+    getHUD()->showMsg("level " + s::to_string(ss->currentLevel));
   } else {
     getHUD()->showMsg("tutorial");
     ss->tutorialStep = 0;
     ss->tutorialCounter = 0.0;
   }
-  getHUD()->hideTuturial();
-  //CC_HIDE(_tutorialLabel);
 
+  getHUD()->toggleTutorial(false);
   getHUD()->showMenu();
-  //CC_SHOW(_messages);
-  //CC_SHOW(_btnStart);
-  //CC_HIDE(_btnMenu);
-  //CC_HIDE(_btnAgain);
 
   ss->acc= c::Vec2(0,0);
 }
@@ -247,7 +253,7 @@ void GLayer::onAcceleration(c::Acceleration *acc, c::Event *event) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::decorate() {
+void GLayer::decoUI() {
 
   b2Vec2 gravity; gravity.Set(0.0f, -FORCE_GRAVITY);
 
@@ -263,6 +269,11 @@ void GLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createScreen(GVars *ss) {
+
+  ss->smoke = c::ParticleSystemQuad::create("pics/smoke.plist");
+  ss->smoke->stopSystem();
+  CC_HIDE(ss->smoke);
+  addItem(ss->smoke, kForeground);
 
   ss->igloo = Igloo::create(ss);
   CC_HIDE(ss->igloo);
@@ -288,27 +299,71 @@ void GLayer::newLevel() {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::readyNewLevel() {
+  auto seq= c::Sequence::create(
+      c::DelayTime::create(2.5f),
+      c::CallFunc::create([=]() {
+        this->newLevel();
+        }),
+      CC_NIL);
+  this->runAction(seq);
+  getHUD()->toggleTutorial(false);
+  MGMS()->stop();
+}
+
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
 
+  if (topic == "/game/player/switchshape->true") {
+    y->switchShape(true);
+  }
+  else
+  if (topic == "/game/player/resetlevel") {
+    y->resetLevel();
+  }
+  else
   if (topic == "/game/player/newlevel") {
-
+    y->newLevel();
   }
   else
   if (topic == "/game/hud/showmsg") {
-
+    auto msg = (j::json*) m;
+    y->getHUD()->showMsg(JS_STR(msg->operator[]("msg")));
   }
-  else {
-
+  else
+  if (topic == "/game/unschedule") {
+    y->unscheduleUpdate();
   }
-
+  else
+  if (topic == "/game/hud/togglebutton->off") {
+    auto msg = (j::json*) m;
+    y->getHUD()->toggleBtn(
+        JS_INT(msg->operator[]("tag")), false);
+  }
+  else
+  if (topic == "/game/hud/togglebutton->on") {
+    auto msg = (j::json*) m;
+    y->getHUD()->toggleBtn(
+        JS_INT(msg->operator[]("tag")), true);
+  }
+  else
+  if (topic == "/game/player/goto/newlevel") {
+    y->readyNewLevel();
+  }
+  else
+  if (topic == "/game/hud/showtut") {
+    auto msg = (j::json*) m;
+    y->getHUD()->showTut(JS_STR(msg->operator[]("msg")));
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();

@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XLayer.h"
+#include "n/lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////
@@ -20,15 +21,6 @@ class CC_DLL HUDLayer : public f::XLayer {
 
   s_vec<c::Sprite*> _buttons;
   void createBtns();
-
-public:
-
-  bool touchStart(c::Touch *touch);
-  void touchEnd(c::Touch *touch);
-
-  STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
 
   DECL_PTR(c::Label, _tutorialLabel)
   DECL_PTR(c::Label, scoreLabel)
@@ -40,6 +32,26 @@ public:
   DECL_PTR(c::Sprite, _btnAgain)
   DECL_PTR(c::Sprite, _btnMenu)
   DECL_IZ(score)
+  DECL_PTR(GVars,ss)
+
+public:
+
+  bool touchStart(c::Touch *touch);
+  void touchEnd(c::Touch *touch);
+
+  void toggleTutorial(bool);
+  void toggleBtn(int , bool );
+
+  void showTut(const sstr&);
+  void showMsg(const sstr&);
+  void showMenu();
+
+  void setG(not_null<GVars*> g) { ss= g.get(); }
+
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
+
 
 };
 
