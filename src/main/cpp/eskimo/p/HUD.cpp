@@ -13,17 +13,182 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(eskimo)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::touchEnd(c::Touch *touch) {
+  auto tap = touch->getLocation();
+  F__LOOP(it, _buttons) {
+    auto btn= *it;
+    if (!btn->isVisible() ||
+        !btn->boundingBox().containsPoint(tap)) {
+      continue; }
+
+    CC_HIDE(btn->getChildByTag(kSpriteBtnOn));
+    switch (btn->getTag()) {
+      case kSpriteBtnAgain:
+        cx::sfxPlay("button");
+        MGMS()->stop();
+        CC_HIDE(_btnAgain);
+        CC_HIDE(_btnMenu);
+        SENDMSG("/game/player/resetlevel");
+      break;
+      case kSpriteBtnReset:
+        MGMS()->stop();
+        SENDMSG("/game/player/resetlevel");
+      break;
+      case kSpriteBtnPause:
+        if (MGMS()->isLive()) {
+          _messages->setString("paused");
+          CC_SHOW(_messages);
+        } else {
+          CC_HIDE(_messages);
+        }
+        if (MGMS()->isLive()) { MGMS()->stop(); }
+        else { MGMS()->play(); }
+      break;
+      case kSpriteBtnStart:
+        cx::sfxPlay("button");
+        CC_SHOW(_btnPause);
+        CC_SHOW(_btnReset);
+        CC_HIDE(_btnStart);
+        CC_HIDE(_messages);
+        MGMS()->play();
+        if (_currentLevel == 0) {
+          CC_SHOW(_tutorialLabel);
+        }
+      break;
+      case kSpriteBtnMenu:
+        cx::sfxPlay("button");
+        cx::pauseMusic();
+        SENDMSG("/game/unschedule");
+        CC_DTOR()->replaceScene(
+          c::TransitionMoveInL::create(0.2f, Splash::reify()));
+      break;
+    }
+    return;
+  }
+
+  if (MGMS()->isLive()) {
+    SENDMSG("/game/player/switchshape->true"); }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool HUDLayer::touchStart(c::Touch *touch) {
+  auto tap = touch->getLocation();
+  F__LOOP(it,_buttons) {
+    auto btn = *it;
+    if (btn->isVisible()) {
+      if (btn->boundingBox().containsPoint(tap)) {
+        CC_SHOW(btn->getChildByTag(kSpriteBtnOn));
+        return true;
+      }
+    }
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::createBtns() {
+
+  auto wb= cx::visBox();
+  auto wz=cx::visRect();
+  c::Sprite *bOn;
+
+  _btnStart = cx::reifySprite("btn_start_off.png");
+  _btnStart->setPosition(wb.cx, wb.top * 0.45f);
+  CC_HIDE(_btnStart);
+  addAtlasItem("game-pics", _btnStart, kForeground, kSpriteBtnStart);
+  //+
+  bOn = cx::reifySprite("btn_start_on.png");
+  bOn->setAnchorPoint(cx::anchorBL());
+  CC_HIDE(bOn);
+  _btnStart->addChild(bOn, kForeground, kSpriteBtnOn);
+  _buttons.push_back(_btnStart);
+
+  _btnReset = cx::reifySprite("btn_reset_off.png");
+  _btnReset->setAnchorPoint(cx::anchorT());
+  _btnReset->setPosition(wb.right * 0.9f, wb.top);
+  CC_HIDE(_btnReset);
+  addAtlasItem("game-pics", _btnReset, kForeground, kSpriteBtnReset);
+  //+
+  bOn = cx::reifySprite("btn_reset_on.png");
+  bOn->setAnchorPoint(cx::anchorBL());
+  CC_HIDE(bOn);
+  _btnReset->addChild(bOn, kForeground, kSpriteBtnOn);
+  _buttons.push_back(_btnReset);
+
+  _btnPause = cx::reifySprite("btn_pause_off.png");
+  _btnPause->setAnchorPoint(cx::anchorT());
+  _btnPause->setPosition(wb.right * 0.1f, wb.top);
+  CC_HIDE(_btnPause);
+  addAtlasItem("game-pics", _btnPause, kForeground, kSpriteBtnPause);
+  //+
+  bOn = cx::reifySprite("btn_pause_on.png");
+  bOn->setAnchorPoint(cx::anchorBL());
+  CC_HIDE(bOn);
+  _btnPause->addChild(bOn, kForeground, kSpriteBtnOn);
+  _buttons.push_back(_btnPause);
+
+  _btnAgain = cx::reifySprite("btn_again_off.png");
+  _btnAgain->setPosition(wb.cx, wb.top * 0.45f);
+  CC_HIDE(_btnAgain);
+  addAtlasItem("game-pics", _btnAgain, kForeground, kSpriteBtnAgain);
+  //+
+  bOn = cx::reifySprite("btn_again_on.png");
+  bOn->setAnchorPoint(cx::anchorBL());
+  CC_HIDE(bOn);
+  _btnAgain->addChild(bOn, kForeground, kSpriteBtnOn);
+  _buttons.push_back(_btnAgain);
+
+  _btnMenu = cx::reifySprite("btn_menu_off.png");
+  _btnMenu->setPosition(wb.cx, wb.top * 0.3f);
+  CC_HIDE(_btnMenu);
+  addAtlasItem("game-pics", _btnMenu, kForeground, kSpriteBtnMenu);
+  //+
+  bOn = cx::reifySprite("btn_menu_on.png");
+  bOn->setAnchorPoint(cx::anchorBL());
+  CC_HIDE(bOn);
+  _btnMenu->addChild(bOn, kForeground, kSpriteBtnOn);
+  _buttons.push_back(_btnMenu);
+
+  _messages = cx::reifyBmfLabel("font_msgs", "level");
+  _messages->setAlignment(c::TextHAlignment::CENTER);
+  _messages->setPosition(wb.cx, wb.top * 0.6f);
+  CC_HIDE(_messages);
+  addItem(_messages, kForeground);
+
+  _smoke = c::ParticleSystemQuad::create("pics/smoke.plist");
+  _smoke->stopSystem();
+  CC_HIDE(_smoke);
+  addItem(_smoke, kForeground);
+
+  _tutorialLabel = cx::reifyLabel("dft", 25, TUTORIAL_1);
+  _tutorialLabel->setAlignment(c::TextHAlignment::CENTER);
+  _tutorialLabel->setPosition(wb.cx, wb.top * 0.2f);
+  _tutorialLabel->setHeight(wz.size.height * 0.4f);
+  _tutorialLabel->setWidth(wz.size.width * 0.7f);
+  CC_HIDE(_tutorialLabel);
+  addItem(_tutorialLabel, kForeground);
+
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decorate() {
 
-  scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
-  addItem(scoreLabel);
+  regoAtlas("game-pics");
 
+  createBtns();
+
+  //scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
+  //addItem(scoreLabel);
   score=0;
 }
 

@@ -244,6 +244,18 @@ bool isClicked(not_null<c::Node*> node, const c::Vec2 &tap) {
   return tap.distance(node->getPosition()) <= node->getBoundingBox().size.width * 0.8f;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+float deltaX(not_null<c::Node*> a, not_null<c::Node*> b) {
+  return a->getPositionX() - b->getPositionX();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float deltaY(not_null<c::Node*> a, not_null<c::Node*> b) {
+  return a->getPositionY() - b->getPositionY();
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 bool isPortrait() {

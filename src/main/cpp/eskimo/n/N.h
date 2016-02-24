@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ash/NodeRego.h"
+#include "Eskimo.h"
 #include "C.h"
 #include "lib.h"
 NS_BEGIN(eskimo)
@@ -19,15 +20,23 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SharedNode : public a::NodeFactory {
-
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         {"slots", "n/GVars" }
     });
   }
-
   MDECL_NFAC_TPID( "n/SharedNode")
+};
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL EskimoNode : public a::NodeFactory {
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"player", "n/Eskimo" }
+    });
+  }
+  MDECL_NFAC_TPID( "n/EskimoNode")
 };
 
 

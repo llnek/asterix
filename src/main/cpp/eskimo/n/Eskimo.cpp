@@ -19,15 +19,13 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EskimoSprite::EskimoSprite(not_null<GVars*> gv) {
+EskimoSprite::EskimoSprite(GVars *ss) {
 
   this->initWithSpriteFrameName("player_circle.png");
-  this->ss= gv.get();
+  this->ss= ss;
 
   //create body
-  b2BodyDef bodyDef;
-  bodyDef.type = b2_dynamicBody;
-
+  b2BodyDef bodyDef; bodyDef.type = b2_dynamicBody;
   _body = ss->world->CreateBody(&bodyDef);
   _body->SetSleepingAllowed(false);
   _body->SetUserData(this);
@@ -82,20 +80,18 @@ void EskimoSprite::update() {
 //
 void EskimoSprite::makeCircleShape() {
 
-  if (_body->GetFixtureList() ) {
-    _body->DestroyFixture(_body->GetFixtureList());
-  }
-
-  //Define shape
-  b2CircleShape  circle;
-  circle.m_radius = PLAYER_RADIUS/PTM_RATIO;
-
   //Define fixture
+  //Define shape
+  b2CircleShape  circle; circle.m_radius = PLAYER_RADIUS/PTM_RATIO;
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &circle;
   fixtureDef.density = 1;
   fixtureDef.restitution = 0.4;
   fixtureDef.friction = 10;
+
+  auto tmp= _body->GetFixtureList();
+  if (tmp) {
+    _body->DestroyFixture(tmp); }
 
   _body->CreateFixture(&fixtureDef);
   _state = kStateCircle;
@@ -107,23 +103,23 @@ void EskimoSprite::makeCircleShape() {
 //
 void EskimoSprite::makeBoxShape() {
 
-  if (_body->GetFixtureList() ) {
-    _body->DestroyFixture(_body->GetFixtureList());
-  }
-
-  //Define shape
-  b2PolygonShape box;
-  box.SetAsBox(PLAYER_RADIUS /PTM_RATIO, PLAYER_RADIUS/ PTM_RATIO);
-
   //Define fixture
+  //Define shape
+  b2PolygonShape box; box.SetAsBox(PLAYER_RADIUS /PTM_RATIO,
+      PLAYER_RADIUS/ PTM_RATIO);
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &box;
   fixtureDef.density = 10;
   fixtureDef.restitution = 0;
   fixtureDef.friction = 0;
 
+  auto tmp= _body->GetFixtureList();
+  if (tmp) {
+    _body->DestroyFixture(tmp); }
+
   _body->CreateFixture(&fixtureDef);
   _state = kStateBox;
+
   this->setDisplayFrame(cx::getSpriteFrame("player_box.png"));
 }
 

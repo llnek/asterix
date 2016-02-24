@@ -11,7 +11,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "lib.h"
+#include "core/ComObj.h"
 #include "b2Sprite.h"
 
 NS_BEGIN(eskimo)
@@ -22,6 +22,7 @@ class CC_DLL EskimoSprite : public b2Sprite {
 
   void makeCircleShape();
   void makeBoxShape();
+  EskimoSprite(GVars*);
 
 public:
 
@@ -31,7 +32,6 @@ public:
   DECL_IZ(_state)
   DECL_PTR(GVars,ss)
 
-  EskimoSprite(not_null<GVars*>);
   virtual ~EskimoSprite() {}
 
   virtual void update();

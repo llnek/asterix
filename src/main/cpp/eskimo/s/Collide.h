@@ -19,6 +19,10 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public a::System {
 
+  DECL_PTR(a::NodeList, players)
+  DECL_PTR(a::NodeList, shared)
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::Collide)

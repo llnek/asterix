@@ -22,17 +22,28 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-
+  shared=engine->getNodeList(SharedNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
-
+    process(dt);
   }
   return true;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::process(float dt) {
+  auto ss= CC_GNLF(GVars,shared,"slots");
+
+  ss->world->Step(dt, 10, 10);
+  ss->world->ClearForces();
+
+}
+
 
 NS_END
 

@@ -16,13 +16,29 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
+class CC_DLL HUDLayer : public f::XLayer {
+
+  s_vec<c::Sprite*> _buttons;
+  void createBtns();
+
+public:
+
+  bool touchStart(c::Touch *touch);
+  void touchEnd(c::Touch *touch);
 
   STATIC_REIFY_LAYER(HUDLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
+  DECL_PTR(c::Label, _tutorialLabel)
   DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(c::Label, _messages)
+
+  DECL_PTR(c::Sprite, _btnStart)
+  DECL_PTR(c::Sprite, _btnReset)
+  DECL_PTR(c::Sprite, _btnPause)
+  DECL_PTR(c::Sprite, _btnAgain)
+  DECL_PTR(c::Sprite, _btnMenu)
   DECL_IZ(score)
 
 };

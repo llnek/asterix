@@ -19,6 +19,9 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public a::System {
 
+  DECL_PTR(a::NodeList,shared)
+  void process(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::AI)

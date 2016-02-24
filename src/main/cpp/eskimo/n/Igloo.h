@@ -21,14 +21,13 @@ class CC_DLL Igloo : public c::Sprite {
 
   DECL_PTR(c::Sprite, _block)
   void addBlock();
+  Igloo(GVars*);
 
 public:
 
   void initIgloo(int gravity, const c::Vec2&);
-  static Igloo* create(GVars*);
-
+  static Igloo* create(not_null<GVars*>);
   virtual ~Igloo();
-  Igloo(GVars*);
 
 };
 

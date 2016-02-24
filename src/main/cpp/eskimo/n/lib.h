@@ -59,8 +59,8 @@ enum {
 #define EVENT_DISPATCHER cocos2d::Director::getInstance()->getEventDispatcher()
 #define ADD_NOTIFICATION( __target__, __notification__, __handler__) EVENT_DISPATCHER->addEventListenerWithSceneGraphPriority(cocos2d::EventListenerCustom::create (__notification__, __handler__), __target__);
 
-#define NOTIFICATION_LEVEL_COMPLETED  "NOTIFICATION_LEVEL_COMPLETED"
-#define NOTIFICATION_GRAVITY_SWITCH  "NOTIFICATION_GRAVITY_SWITCH"
+#define NOTIFY_LEVEL_DONE  "NOTIFICATION_LEVEL_COMPLETED"
+#define NOTIFY_GSWITCH  "NOTIFICATION_GRAVITY_SWITCH"
 
 #define TUTORIAL_1 "tilt the device to move the eskimo."
 #define TUTORIAL_2 "tap the screen to switch from snowball to ice cube."
@@ -84,8 +84,15 @@ enum {
 //
 struct CC_DLL GVars : public ash::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_TV(float, gravity, 0.98f)
+
+  DECL_PTR(c::ParticleSystem, smoke)
   DECL_PTR(b2World, world)
+  DECL_TD(c::Vec2, acc)
+
+  DECL_PTR(Igloo, igloo)
+  DECL_IZ(currentLevel)
+  DECL_IZ(gravity)
+  DECL_IZ(gravity)
 
 };
 

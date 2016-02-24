@@ -31,7 +31,8 @@ public:
   virtual void updatePosition(float x, float y);
   virtual void inflate(float x, float y);
   virtual void inflate();
-  virtual void deflate();
+  virtual void deflate(bool stop=true);
+
 
   virtual void setPos(float x, float y);
   virtual void hurt(int damage=1);

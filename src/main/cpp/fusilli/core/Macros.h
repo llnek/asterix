@@ -13,16 +13,24 @@
 
 //////////////////////////////////////////////////////////////////////////////
 //
+#define CC_APPDB() cocos2d::UserDefault::getInstance()
+
+//////////////////////////////////////////////////////////////////////////////
+//
 #define CC_GDS(d,f) fusii::dictVal<cocos2d::String>(d,f)->getCString()
 #define CC_CSS(f) fusii::cstVal<cocos2d::String>(f)->getCString()
 
 #define CC_GDV(t,d,f) fusii::dictVal<t>(d,f)->getValue()
 #define CC_CSV(t,f) fusii::cstVal<t>(f)->getValue()
 
+#define CC_DISPEVENT(a,b) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a,b)
+
+#define CC_FILER() cocos2d::FileUtils::getInstance()
 #define CC_DTOR() cocos2d::Director::getInstance()
 #define CC_PCAST(T) static_cast<T>(getParent())
 #define CC_KEEP(x) if (x) {x->retain();}
 #define CC_DROP(x) if (x) {x->release();}
+
 
 #define CC_CSIZE(s) s->getBoundingBox().size
 #define CC_HIDE(s) s->setVisible(false)

@@ -26,6 +26,7 @@ NS_USING(eskimo)
   auto r= NodeRegistry::self();
 
   r->rego( mc_new(SharedNode));
+  r->rego( mc_new(EskimoNode));
 
   // set up app-config
   Config::reify();

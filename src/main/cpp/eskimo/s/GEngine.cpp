@@ -17,6 +17,7 @@
 #include "Move.h"
 #include "AI.h"
 #include "n/Platform.h"
+#include "n/Eskimo.h"
 #include "n/GSwitch.h"
 #include "GEngine.h"
 
@@ -46,12 +47,17 @@ void GEngine::initEntities() {
     return s;
   }, 30);
 
+  ent= this->reifyEntity();
+  ent->checkin(mc_new1(Eskimo,ss));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(AI,this));
 }
 
 

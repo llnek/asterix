@@ -14,6 +14,7 @@
 #include "x2d/GameScene.h"
 #include "2d/CCSprite.h"
 #include "Box2D/Box2D.h"
+#include "lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////

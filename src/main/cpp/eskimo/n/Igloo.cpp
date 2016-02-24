@@ -18,8 +18,8 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 Igloo::~Igloo() {
-  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFICATION_LEVEL_COMPLETED);
-  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFICATION_GRAVITY_SWITCH);
+  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFY_LEVEL_DONE);
+  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFY_GSWITCH);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -36,22 +36,18 @@ Igloo::Igloo(GVars *ss) {
   };
 
     //register game notifications
-  ADD_NOTIFICATION(this, NOTIFICATION_LEVEL_COMPLETED, onLevelCompleted);
-  ADD_NOTIFICATION(this, NOTIFICATION_GRAVITY_SWITCH, onGravityChanged);
+  ADD_NOTIFICATION(this, NOTIFY_LEVEL_DONE, onLevelCompleted);
+  ADD_NOTIFICATION(this, NOTIFY_GSWITCH, onGravityChanged);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Igloo* Igloo::create(GVars *ss) {
-  auto sprite = mc_new1(Igloo, ss);
-  if (sprite->initWithSpriteFrameName("igloo_off.png")) {
-    sprite->autorelease();
-    sprite->addBlock();
-    return sprite;
-  } else {
-    CC_SAFE_DELETE(sprite);
-    return CC_NIL;
-  }
+Igloo* Igloo::create(not_null<GVars*> ss) {
+  auto sprite = mc_new1(Igloo, ss.get());
+  sprite->initWithSpriteFrameName("igloo_off.png");
+  sprite->autorelease();
+  sprite->addBlock();
+  return sprite;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -13,7 +13,6 @@
 
 #include "core/ComObj.h"
 #include "b2Sprite.h"
-#include "lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ public:
 
   void initPlatform(int width, float angle, const c::Vec2&);
 
-  virtual ~PlatformSprite() {}
+  virtual ~PlatformSprite();
 
   static PlatformSprite* create(not_null<GVars*>);
 };
@@ -43,7 +42,6 @@ struct CC_DLL Platform : public f::ComObj {
 
   Platform(not_null<GVars*> ss) {
     node=PlatformSprite::create(ss);
-    CC_HIDE(node);
   }
 
 };

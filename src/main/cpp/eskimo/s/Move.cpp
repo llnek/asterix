@@ -19,22 +19,77 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(eskimo)
 
+//////////////////////////////////////////////////////////////////////////////
+// some friction
+static void applyForce(b2Body *body, float acc, float mult, bool x) {
+  body->ApplyForce( b2Vec2(0, acc * mult), body->GetWorldCenter(), true);
+  auto vec = body->GetLinearVelocity();
+  if (x) {
+    vec.x *= BALL_FRICTION;
+  } else {
+    vec.y *= BALL_FRICTION;
+  }
+  body->SetLinearVelocity(vec);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// no friction
+static void applyLinearImpulse(b2Body *body, float acc, float mult) {
+  body->ApplyLinearImpulse( b2Vec2(0, acc * mult), body->GetWorldCenter(), true);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-
+  shared=engine->getNodeList(SharedNode().typeId());
+  players=engine->getNodeList(EskimoNode.typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-
+    process(dt);
   }
   return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::process(float dt) {
+  auto py= CC_GNLF(Eskimo,players,"player");
+  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto player= (EskimoSprite*) py->node;
+
+  player->update();
+
+  //if player is touching something,
+  //update it with accelerometer data
+
+  if (player->_body->GetContactList()) {
+    switch (ss->gravity) {
+    //update X axis
+      case kDirectionDown:
+      case kDirectionUp:
+        if (player->_state == kStateCircle) {
+          applyForce(player->_body,ss->acc.x,CIRCLE_MULTIPLIER,true);
+        } else {
+          applyLinearImpulse(player->_body,ss->acc.x,BOX_MULTIPLIER);
+        }
+      break;
+      //update Y axis
+      case kDirectionRight:
+      case kDirectionLeft:
+        if (player->_state == kStateCircle) {
+          applyForce(player->_body,ss->acc.y, CIRCLE_MULTIPLIER, false);
+        } else {
+          applyLinearImpulse(player->_body, ss->acc.y, BOX_MULTIPLIER);
+        }
+      break;
+    }
+  }
+}
 
 NS_END
 

@@ -81,11 +81,13 @@ void ComObj::inflate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ComObj::deflate() {
-  Poolable::deflate();
+void ComObj::deflate(bool stop) {
+  Poolable::deflate(stop);
   if (NNP(node)) {
-    node->unscheduleAllCallbacks();
-    node->stopAllActions();
+    if (stop) {
+      node->unscheduleAllCallbacks();
+      node->stopAllActions();
+    }
     node->setVisible(false);
   }
 }
