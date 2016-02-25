@@ -24,7 +24,13 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 // some friction
 static void applyForce(b2Body *body, float acc, float mult, bool x) {
-  body->ApplyForce( b2Vec2(0, acc * mult), body->GetWorldCenter(), true);
+  b2Vec2 bv;
+  if (x) {
+    bv= b2Vec2(acc * mult, 0);
+  } else {
+    bv= b2Vec2(0, acc * mult);
+  }
+  body->ApplyForce( bv, body->GetWorldCenter(), true);
   auto vec = body->GetLinearVelocity();
   if (x) {
     vec.x *= BALL_FRICTION;
@@ -36,8 +42,14 @@ static void applyForce(b2Body *body, float acc, float mult, bool x) {
 
 //////////////////////////////////////////////////////////////////////////////
 // no friction
-static void applyLinearImpulse(b2Body *body, float acc, float mult) {
-  body->ApplyLinearImpulse( b2Vec2(0, acc * mult), body->GetWorldCenter(), true);
+static void applyLinearImpulse(b2Body *body, float acc, float mult, bool x) {
+  b2Vec2 bv;
+  if (x) {
+    bv= b2Vec2(acc * mult, 0);
+  } else {
+    bv= b2Vec2(0, acc * mult);
+  }
+  body->ApplyLinearImpulse( bv, body->GetWorldCenter(), true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,7 +88,7 @@ void Move::process(float dt) {
         if (player->_state == kStateCircle) {
           applyForce(player->_body,ss->acc.x,CIRCLE_MULTIPLIER,true);
         } else {
-          applyLinearImpulse(player->_body,ss->acc.x,BOX_MULTIPLIER);
+          applyLinearImpulse(player->_body,ss->acc.x,BOX_MULTIPLIER, true);
         }
       break;
       //update Y axis
@@ -85,7 +97,7 @@ void Move::process(float dt) {
         if (player->_state == kStateCircle) {
           applyForce(player->_body,ss->acc.y, CIRCLE_MULTIPLIER, false);
         } else {
-          applyLinearImpulse(player->_body, ss->acc.y, BOX_MULTIPLIER);
+          applyLinearImpulse(player->_body, ss->acc.y, BOX_MULTIPLIER, false);
         }
       break;
     }

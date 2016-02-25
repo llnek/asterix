@@ -250,6 +250,7 @@ void GLayer::onAcceleration(c::Acceleration *acc, c::Event *event) {
   auto ss=CC_GNLF(GVars,shared,"slots");
   ss->acc= c::Vec2(acc->x * ACCELEROMETER_MULTIPLIER,
                    acc->y * ACCELEROMETER_MULTIPLIER);
+  //CCLOG("oh yeah! %f,%f", ss->acc.x, ss->acc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
