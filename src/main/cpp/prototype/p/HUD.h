@@ -8,50 +8,24 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
+
+#include "x2d/XLayer.h"
+NS_BEGIN(prototype)
+
+//////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL HUDLayer : public f::XLayer {
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
-
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
-
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
-
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_IZ(score)
 
 };
-
 
 
 NS_END

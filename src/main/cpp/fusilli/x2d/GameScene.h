@@ -55,6 +55,7 @@ protected:
 
   DECL_TV(int, state, 0)
   DECL_TV(int, level, 1)
+  NOCPYASS(GameScene)
 
 public:
 
@@ -90,9 +91,9 @@ public:
 
   s_que<sstr>& msgQueue() { return msgQ; }
 
-  virtual ~GameScene();
+  GameScene(bool usePhysics );
   GameScene();
-  NOCPYASS(GameScene)
+  virtual ~GameScene();
 };
 
 

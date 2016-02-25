@@ -8,53 +8,33 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "x2d/GameScene.h"
+
+NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct CC_DLL Game : public f::GameScene {
+  virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual f::GameLayer* getGLayer() {
+     return
+       (f::GameLayer*) getLayer(2);
+  }
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
-
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
-
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
-
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
+  virtual ~Game() {}
+  Game()
 };
 
 
 
 NS_END
+
 
 
 

@@ -9,52 +9,39 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Splash.h"
+#include "Game.h"
+
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void Splash::decoUI() {
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
+  auto title= cx::createSprite("title");
+  auto wb= cx::visBox();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
+  centerImage("gui.bg");
 
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
+  title->setPosition(wb.cx, wb.top * 0.8);
+  addItem(title);
 
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
+  auto play= cx::createMenuBtn("play-std.btn", "play-sel.btn");
+  auto menu= cx::mkMenu(play);
+  play->setPosition(wb.cx, wb.top * 0.2);
+  play->setCallback([=](c::Ref*){
+      cx::sfxPlay("button");
+      cx::runEx(Game::reify(new GameCtx() ));
+  });
+  addItem(menu);
 
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
-};
-
+}
 
 
 NS_END
-
 
 

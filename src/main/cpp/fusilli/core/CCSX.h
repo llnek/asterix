@@ -48,11 +48,11 @@ namespace ccsx {
 
   bool isDesktop();
 
-  c::MenuItem* reifyMenuBtn(const sstr &n);
+  c::MenuItem* createMenuBtn(const sstr &n);
+  c::MenuItem* createMenuBtn( const sstr &n, const sstr &s);
 
-  c::MenuItem* reifyMenuBtn(
-      const sstr &n,
-      const sstr &s, const sstr &d);
+  c::MenuItem* reifyMenuBtn(const sstr &n);
+  c::MenuItem* reifyMenuBtn( const sstr &n, const sstr &s);
 
   c::Menu* mkMenu(const s_vec<c::MenuItem*>&, bool vert = false, float padding= 10.0f);
   c::Menu* mkHMenu(const s_vec<c::MenuItem*>&, float padding= 10.0f);
@@ -91,8 +91,9 @@ namespace ccsx {
     const sstr &font,
     const sstr &text="");
 
-  c::Sprite* loadSprite(const sstr &fname, const sstr &path="pics");
-  c::Sprite* reifySprite(const sstr &frameName);
+  c::Sprite* loadSprite(const sstr &fname, const sstr &path= "pics");
+  c::Sprite* reifySpriteFromFile(const sstr &frameName);
+  c::Sprite* createSprite(const sstr &frameName);
 
   float deltaX(not_null<c::Node*> a, not_null<c::Node*> b);
   float deltaY(not_null<c::Node*> a, not_null<c::Node*> b);

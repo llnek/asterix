@@ -8,53 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "aeon/fusilli.h"
+#include "core/App.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
-
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
-
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
-
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
+struct CC_DLL AppDelegate : public fusii::App {
+  virtual ~AppDelegate();
+  AppDelegate();
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
-};
-
-
-
-NS_END
 
 
 

@@ -11,61 +11,60 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "XScene.h"
-NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(fusii)
+#include "s/GEngine.h"
+#include "HUD.h"
+#include "Game.h"
+
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(prototype)
+BEGIN_NS_UNAMED
+//////////////////////////////////////////////////////////////////////////////
+struct CC_DLL GLayer : public f::GameLayer {
+
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+
+  DECL_PTR(a::NodeList, shared)
+  STATIC_REIFY_LAYER(GLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(2)
+
+  virtual void onInited();
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
-//
-XLayer* XScene::addLayer(not_null<XLayer*> y, int z) {
- this->addChild(y, z, y->getIID());
- return y;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-XLayer* XScene::getLayer(int tag) {
-  return SCAST(XLayer*, getChildByTag(tag));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool XScene::init() {
-  bool ok= usePhysics ? c::Scene::initWithPhysics() : c::Scene::init();
-  if (ok) {
-    decoUI();
-    return true;
-  }
-  return false;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-XScene::~XScene() {
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-XScene::XScene() {
-  bind(this);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-XScene::XScene(bool physics) {
-  usePhysics=physics;
-  bind(this);
+void GLayer::onInited() {
+  shared = engine->getNodeList(SharedNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//
-SceneWithOne::SceneWithOne() {
-  layer=reifyRefType<SingleLayer>();
-  addChild(layer);
+void GLayer::decoUI() {
+  engine = mc_new(GEngine);
 }
 
+END_NS_UNAMED
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::sendMsgEx(const MsgTopic &topic, void *m) {
+  auto y= (GLayer*) getGLayer();
+}
 
+//////////////////////////////////////////////////////////////////////////////
+void Game::decoUI() {
+  HUDLayer::reify(this, 3);
+  GLayer::reify(this, 2);
+  play();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Game::Game()
+  : f::GameScene(true) {
+}
 
 NS_END
+
+
 
 

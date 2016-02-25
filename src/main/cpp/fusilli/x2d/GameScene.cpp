@@ -35,10 +35,16 @@ GameScene* GameScene::self() {
 GameScene::~GameScene() {
   F__LOOP(it, pools) { delete it->second; }
 }
-
 //////////////////////////////////////////////////////////////////////////////
 //
 GameScene::GameScene() {
+  binds(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+GameScene::GameScene(bool usePhysics)
+  : XScene(usePhysics) {
   binds(this);
 }
 

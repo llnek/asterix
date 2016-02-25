@@ -8,53 +8,33 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "core/XConfig.h"
+#include "core/ComObj.h"
+#include "core/CCSX.h"
+
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(prototype)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
-
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
-
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
-
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
+struct CC_DLL Gesture : public a::Component {
+  MDECL_COMP_TPID("n/Gesture")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
+struct CC_DLL GVars : public a::Component {
+  MDECL_COMP_TPID( "n/GVars" )
 };
 
 
 
 NS_END
+
 
 
 

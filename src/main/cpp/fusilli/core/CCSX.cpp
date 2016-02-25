@@ -145,25 +145,32 @@ void resumeAudio() {
 const s_arr<c::MenuItem*,2> reifyAudioIcons() {
   auto n3="sound_off.png";
   auto n2="sound_on.png";
-  return s_arr<c::MenuItem*,2> { reifyMenuBtn(n3,n3,n3),
-    reifyMenuBtn(n2,n2,n2) };
+  return s_arr<c::MenuItem*,2> { reifyMenuBtn(n3,n3),
+    reifyMenuBtn(n2,n2) };
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::MenuItem* reifyMenuBtn(const sstr &n) {
-  return reifyMenuBtn(n,n,n);
+  return reifyMenuBtn(n,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuBtn(const sstr &n,
-    const sstr &s,
-    const sstr &d) {
+c::MenuItem* reifyMenuBtn(const sstr &n, const sstr &s) {
+  return c::MenuItemSprite::create(reifySprite(n), reifySprite(s));
+}
 
-  return c::MenuItemSprite::create(reifySprite(n),
-                                reifySprite(s),
-                                reifySprite(d));
+//////////////////////////////////////////////////////////////////////////////
+//
+c::MenuItem* createMenuBtn(const sstr &n) {
+  return createMenuBtn(n,n);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+c::MenuItem* createMenuBtn(const sstr &n, const sstr &s) {
+  return c::MenuItemImage::create(createSprite(n), createSprite(s));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -339,9 +346,14 @@ bool timerDone(c::DelayTime* t) {
 
 //////////////////////////////////////////////////////////////////////////
 // Reify a sprite from its frame name
-//
 c::Sprite* reifySprite(const sstr &name) {
   return c::Sprite::createWithSpriteFrameName(name);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Reify a sprite from its frame name
+c::Sprite* createSprite(const sstr &name) {
+  return c::Sprite::create( XCFG()->getImage(name));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -9,52 +9,34 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
+#include "ash/NodeRego.h"
+#include "n/N.h"
+#include "p/Config.h"
+#include "AppDelegate.h"
+
+NS_USING(fusii)
+NS_USING(ash)
+NS_USING(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+  AppDelegate::AppDelegate()  : App ("prototype") {
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
+  // register all ash::node factories here
+  auto r= NodeRegistry::self();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
+  r->rego( mc_new(SharedNode));
 
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
-
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
-
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
-};
+  // set up app-config
+  Config::reify();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
-};
-
-
-
-NS_END
+AppDelegate::~AppDelegate() {
+  delete NodeRegistry::self();
+  delete XConfig::self();
+}
 
 
 

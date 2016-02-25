@@ -9,52 +9,30 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Resolve.h"
+#include "Collide.h"
+#include "Move.h"
+#include "AI.h"
+#include "GEngine.h"
+
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GEngine::initEntities() {
 
-#include "2d/CCScene.h"
-#include "XLayer.h"
-NS_BEGIN(fusii)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
-  NOCPYASS(XScene)
-public:
-
-  XLayer* addLayer(not_null<XLayer*>, int zx = 0);
-  XLayer* getLayer(int tag);
-
-  virtual void decoUI() = 0;
-  virtual bool init();
-  virtual void onInited() {}
-
-  XScene(bool physics);
-  XScene();
-  virtual ~XScene();
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL SceneWithOne : public XScene {
-protected:
+void GEngine::initSystems() {
 
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
-};
-
+}
 
 
 NS_END
-
-
 
