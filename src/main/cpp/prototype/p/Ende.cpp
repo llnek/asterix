@@ -34,11 +34,17 @@ void Ende::decoUI() {
 
   retry->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
-      cx::runEx(Game::reify( new GameCtx() ));
+    if (XCFG()->hasAudio()) {
+      cx::stopMusic();
+    }
+    cx::runEx(Game::reify( new GameCtx() ));
   });
 
   splash->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
+    if (XCFG()->hasAudio()) {
+      cx::stopMusic();
+    }
     cx::runEx(Splash::reify());
   });
 

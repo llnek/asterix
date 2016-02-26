@@ -41,12 +41,16 @@ namespace ccsx {
   void sfxPlay(const sstr &sound);
 
   void resumeEffects();
-  void resumeMusic();
   void pauseEffects();
+  void stopEffects();
+
+  void resumeMusic();
   void pauseMusic();
+  void stopMusic();
 
   void resumeAudio();
   void pauseAudio();
+  void stopAudio();
 
   bool isDesktop();
 

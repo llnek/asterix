@@ -34,18 +34,27 @@ void MMenu::decoUI() {
   resume->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     cx::pop();
+    if (XCFG()->hasAudio()) {
+      cx::resumeMusic();
+    }
   });
 
   retry->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     cx::pop();
-      cx::runEx(Game::reify( new GameCtx() ));
+    if (XCFG()->hasAudio()) {
+      cx::stopMusic();
+    }
+    cx::runEx(Game::reify( new GameCtx() ));
   });
 
   splash->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     cx::pop();
-      cx::runEx(Splash::reify());
+    if (XCFG()->hasAudio()) {
+      cx::stopMusic();
+    }
+    cx::runEx(Splash::reify());
   });
 
   menu->setPosition(wb.cx,wb.cy);
@@ -64,6 +73,10 @@ void MMenu::decoUI() {
   addAudioIcons(audios,
       cx::anchorBR(),
       c::Vec2(wb.right-gap, wb.bottom+gap));
+
+  if (XCFG()->hasAudio()) {
+    cx::pauseMusic();
+  }
 }
 
 

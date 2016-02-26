@@ -141,7 +141,7 @@ void GLayer::decoUI() {
   addItem(menu);
 
   engine = mc_new(GEngine);
-  //cx::sfxMusic("background", true);
+  cx::sfxMusic("background", true);
 }
 
 END_NS_UNAMED
