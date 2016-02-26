@@ -29,11 +29,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   void setPhysicsWorld(c::PhysicsWorld*);
 
   DECL_PTR(c::PhysicsWorld, pWorld);
+  DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
+
+  virtual void onMouseMotion(const c::Vec2&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -51,6 +54,7 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+  players = engine->getNodeList(PlayerNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wz= cx::visRect();
@@ -93,25 +97,30 @@ bool GLayer::onContactBegin(c::PhysicsContact&) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onMouseMotion(const c::Vec2 &loc) {
+  auto py=CC_GNLF(SpaceShip,players,"player");
+  py->setPos(loc.x,loc.y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
-  ss->isTouching = true;
-  ss->touchPt = touch->getLocation();
-  return true;
+  auto py=CC_GNLF(SpaceShip,players,"player");
+  auto loc= touch->getLocation();
+  return cx::isClicked(py->node,loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
-  ss->touchPt = touch->getLocation();
+  auto py=CC_GNLF(SpaceShip,players,"player");
+  auto loc= touch->getLocation();
+  py->setPos(loc.x, loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
-  ss->isTouching = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

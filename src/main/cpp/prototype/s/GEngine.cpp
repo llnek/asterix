@@ -41,6 +41,7 @@ void GEngine::initEntities() {
     return mc_new1(Asteroid,tmp);
   }, 32);
 
+  auto v=CC_CSV(c::Integer,"SHIP+SPEED");
   auto s = cx::createSprite("player");
   auto py= mc_new1(SpaceShip,s);
   auto sz= py->csize();
@@ -52,6 +53,8 @@ void GEngine::initEntities() {
   MGML()->addItem(s,-1);
 
   auto ent= this->reifyEntity();
+  ent->checkin(mc_new(Gesture));
+  py->speed=v;
   ent->checkin(py);
 
   ent=this->reifyEntity();

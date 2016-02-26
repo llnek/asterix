@@ -23,7 +23,7 @@ NS_BEGIN(prototype)
 //
 void AI::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
-  timer= cx::reifyTimer(MGML(), 1000);
+  timer= cx::reifyTimer(MGML(), 1500);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -67,16 +67,15 @@ void AI::process(float dt) {
     cx::undoTimer(timer);
   }
 
-  //auto ss= CC_GNLF(GVars,shared, "slots");
   auto p= MGMS()->getPool("Asteroids");
   auto tmp= (Asteroid*) p->getAndSet(true);
   auto wb= cx::visBox();
   auto sz= tmp->csize();
   auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
 
-  tmp->inflate(wb.left + rx , wb.top - sz.height);
+  tmp->inflate(wb.left + rx , wb.bottom + sz.height);
   tmp->node->getPhysicsBody()->setEnabled(true);
-  timer= cx::reifyTimer(MGML(), 1000);
+  timer= cx::reifyTimer(MGML(), 1500);
 }
 
 

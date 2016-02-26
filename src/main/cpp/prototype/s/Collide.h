@@ -18,8 +18,10 @@ NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public a::System {
+  DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
   void process(float);
+  void clamp(float);
 public:
 
   MDECL_SYS_PRIORITY( a::Collide)

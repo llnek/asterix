@@ -54,33 +54,36 @@ void Move::process(float dt) {
     }
   }
 
-  if (ss->isTouching) {
-    onTouch(dt, ss->touchPt);
-  }
-
+  onKeys(dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::onTouch(float dt, const c::Vec2 &loc) {
+void Move::onKeys(float dt) {
 
   auto py= CC_GNLF(SpaceShip, players, "player");
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-  auto sz= py->csize();
-  auto delta= HWZ(wz.size) * dt;
+  auto mo= CC_GNLF(Gesture, players, "motion");
+  auto pos= py->pos();
+  auto x=pos.x;
+  auto y=pos.y;
 
-  if  (loc.x < wb.cx) {
-    py->node->setPositionX(py->node->getPosition().x - delta);
-    if (py->node->getPosition().x <= wb.left + HWZ(sz)) {
-      py->node->setPositionX(wb.left + HWZ(sz));
-    }
-  } else {
-    py->node->setPositionX(py->node->getPosition().x + delta);
-    if (py->node->getPosition().x >= wb.right - HWZ(sz)) {
-      py->node->setPositionX(wb.right - HWZ(sz));
-    }
+  if (ENP(mo)) { return; }
+
+  if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
+    x = pos.x + dt * py->speed;
   }
+  if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
+    x = pos.x - dt * py->speed;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW)) {
+    y = pos.y + dt * py->speed;
+  }
+  if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW)) {
+    y = pos.y - dt * py->speed;
+  }
+
+  py->setPos(x,y);
+
 
 }
 

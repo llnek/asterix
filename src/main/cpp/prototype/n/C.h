@@ -40,8 +40,6 @@ struct CC_DLL Asteroid : public f::ComObj {
 //
 struct CC_DLL Gesture : public a::Component {
   MDECL_COMP_TPID("n/Gesture")
-  DECL_BF(right)
-  DECL_BF(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,10 +48,6 @@ struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
   s_arr<c::Sprite*,2> bgSprites;
-
-  DECL_TD(c::Vec2, touchPt)
-  DECL_BF(isTouching)
-
 };
 
 

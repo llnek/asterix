@@ -35,7 +35,8 @@ struct CC_DLL PlayerNode : public a::NodeFactory {
 
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
-        {"player", "n/SpaceShip" }
+        {"player", "n/SpaceShip" },
+        {"motion", "n/Gesture"}
     });
   }
 

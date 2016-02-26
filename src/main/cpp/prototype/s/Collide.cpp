@@ -23,6 +23,7 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
+  players=engine->getNodeList(PlayerNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
 }
 
@@ -30,6 +31,7 @@ void Collide::preamble() {
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
+    clamp(dt);
     process(dt);
   }
   return true;
@@ -37,9 +39,32 @@ bool Collide::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::process(float dt) {
+void Collide::clamp(float dt) {
+  auto py=CC_GNLF(SpaceShip, players, "player");
+  auto sz= py->csize();
+  auto loc= py->pos();
+  auto wb= cx::visBox();
+
+  if (loc.x <= wb.left + HWZ(sz)) {
+    py->node->setPositionX(wb.left + HWZ(sz));
+  }
+  if (loc.x >= wb.right - HWZ(sz)) {
+    py->node->setPositionX(wb.right - HWZ(sz));
+  }
+
+  if (loc.y <= wb.bottom + HHZ(sz)) {
+    py->node->setPositionY(wb.bottom + HHZ(sz));
+  }
+  if (loc.y >= wb.top - HHZ(sz)) {
+    py->node->setPositionY(wb.top - HHZ(sz));
+  }
+
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Collide::process(float dt) {
+}
 
 NS_END
 

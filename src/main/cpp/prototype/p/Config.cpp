@@ -36,6 +36,8 @@ void Config::initLevels() {
 void Config::initCsts() {
   game_id= "6b708e18-c38f-4b57-bace-dbeb7c529263";
   app_id = "prototype";
+
+  addCst("SHIP+SPEED", CC_INT(200));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,6 +65,9 @@ void Config::initAssets() {
 
   addImage("play-std", CC_STR("pics/play-std.png"));
   addImage("play-sel", CC_STR("pics/play-sel.png"));
+
+  addImage("sound_off.png", CC_STR("pics/sound_off.png"));
+  addImage("sound_on.png", CC_STR("pics/sound_on.png"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("crash", CC_STR("sfx/crash.wav"));
