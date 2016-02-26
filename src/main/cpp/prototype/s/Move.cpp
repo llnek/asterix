@@ -47,8 +47,8 @@ void Move::process(float dt) {
   F__LOOP(it,c) {
     auto a= (Asteroid*) *it;
     if (!a->status) { continue; }
-    a->setPos(a->node->getPosition().x, a->node->getPosition().y + (0.75 * wb.top * dt));
-    if (a->node->getPosition().y > wb.top * 1.2) {
+    a->setPos(a->node->getPosition().x, a->node->getPosition().y - (0.75 * wb.top * dt));
+    if (a->node->getPosition().y < wb.bottom-(wb.top * 0.2)) {
       a->node->getPhysicsBody()->setEnabled(false);
       a->deflate();
     }

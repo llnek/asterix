@@ -73,7 +73,7 @@ void AI::process(float dt) {
   auto sz= tmp->csize();
   auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
 
-  tmp->inflate(wb.left + rx , wb.bottom + sz.height);
+  tmp->inflate(wb.left + rx , wb.top + sz.height);
   tmp->node->getPhysicsBody()->setEnabled(true);
   timer= cx::reifyTimer(MGML(), 1500);
 }
