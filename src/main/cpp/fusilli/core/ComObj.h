@@ -66,7 +66,7 @@ public:
 
   ComObj(not_null<c::Node*>, int health, int score);
   ComObj(not_null<c::Node*>);
-  virtual ~ComObj() {}
+  virtual ~ComObj();
   ComObj();
   NOCPYASS(ComObj)
 

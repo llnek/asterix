@@ -19,12 +19,22 @@ NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
-  scoreLabel= cx::reifyBmfLabel("OCR", "0");
+  auto wb= cx::visBox();
+
+  scoreLabel= cx::reifyLabel("dft", 24, "0");
+  scoreLabel->setPosition(wb.cx, wb.top * 0.1);
   addItem(scoreLabel);
 
   score=0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateScore(int n) {
+  score += n;
+  scoreLabel->setString(s::to_string(score));
 }
 
 

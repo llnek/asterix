@@ -11,59 +11,44 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "MMenu.h"
 #include "Splash.h"
 #include "Game.h"
+#include "Ende.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decoUI() {
-  auto resume = cx::createMenuBtn("resume-std", "resume-sel");
-  auto retry = cx::createMenuBtn("replay-std", "replay-sel");
+void Ende::decoUI() {
   auto splash = cx::createMenuBtn("splash-std", "splash-sel");
+  auto retry = cx::createMenuBtn("replay-std", "replay-sel");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
   auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
+      retry,splash
   }, wz.size.height/4);
 
-  resume->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-  });
+  menu->setPosition(wb.cx,wb.cy);
 
   retry->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
-    cx::pop();
       cx::runEx(Game::reify( new GameCtx() ));
   });
 
   splash->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
-    cx::pop();
-      cx::runEx(Splash::reify());
+    cx::runEx(Splash::reify());
   });
 
-  menu->setPosition(wb.cx,wb.cy);
+  auto title= cx::createSprite("game-over");
+  title->setPosition(wb.cx, wb.top * 0.8);
+
   centerImage("gui.bg");
+
+  addItem(title);
   addItem(menu);
-
-  // audio
-  auto audios= cx::createAudioIcons();
-  auto sz= CC_CSIZE(audios[0]);
-  auto gap= sz.width /4;
-  auto c= cx::white();
-
-  audios[0]->setColor(c);
-  audios[1]->setColor(c);
-
-  addAudioIcons(audios,
-      cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
 }
 
 

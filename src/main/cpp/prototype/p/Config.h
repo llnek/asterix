@@ -24,10 +24,9 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(640,480); }
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual ResolutionPolicy policy() {
-    return ResolutionPolicy::NO_BORDER; }
+  virtual const c::Size gameSize() { return c::Size(320,480); }
 
   virtual void handleResolution(const c::Size &rs);
   virtual c::Scene* prelude();

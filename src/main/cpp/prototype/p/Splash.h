@@ -16,9 +16,8 @@ NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Splash : public f::XScene {
+struct CC_DLL Splash : public f::XScene {
 
-public:
   STATIC_REIFY_SCENE(Splash)
   MDECL_DECORATE()
 };

@@ -19,6 +19,11 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public a::System {
 
+  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(c::DelayTime, timer)
+  void process(float);
+  void parallex(float);
+
 public:
 
   MDECL_SYS_PRIORITY( a::AI)

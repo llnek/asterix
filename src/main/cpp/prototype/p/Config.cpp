@@ -42,10 +42,33 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addImage("gui.bg", CC_STR("pics/background.png"));
-  addImage("title", CC_STR("pics/title.png"));
+  addImage("game.bg", CC_STR("pics/background.png"));
+  addImage("player", CC_STR("pics/player.png"));
 
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addImage("game-over", CC_STR("pics/game-over.png"));
+  addImage("title", CC_STR("pics/game-title.png"));
+  addImage("gui.bg", CC_STR("pics/bg.png"));
+
+  addImage("pause-std", CC_STR("pics/pause-std.png"));
+  addImage("pause-sel", CC_STR("pics/pause-sel.png"));
+
+  addImage("resume-std", CC_STR("pics/resume-std.png"));
+  addImage("resume-sel", CC_STR("pics/resume-sel.png"));
+
+  addImage("replay-std", CC_STR("pics/replay-std.png"));
+  addImage("replay-sel", CC_STR("pics/replay-sel.png"));
+
+  addImage("splash-std", CC_STR("pics/splash-std.png"));
+  addImage("splash-sel", CC_STR("pics/splash-sel.png"));
+
+  addImage("play-std", CC_STR("pics/play-std.png"));
+  addImage("play-sel", CC_STR("pics/play-sel.png"));
+
+  addEffect("button", CC_STR("sfx/button-click.wav"));
+  addEffect("crash", CC_STR("sfx/crash.wav"));
+  addMusic("background", CC_STR("sfx/music.mp3"));
+
+  addFont("dft", CC_STR("fon/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

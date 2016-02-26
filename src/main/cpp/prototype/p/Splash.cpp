@@ -22,20 +22,21 @@ NS_BEGIN(prototype)
 //
 void Splash::decoUI() {
 
+  auto play= cx::createMenuBtn("play-std", "play-sel");
   auto title= cx::createSprite("title");
+  auto menu= cx::mkMenu(play);
   auto wb= cx::visBox();
 
-  centerImage("gui.bg");
-
+  // background, title
   title->setPosition(wb.cx, wb.top * 0.8);
+  centerImage("gui.bg");
   addItem(title);
 
-  auto play= cx::createMenuBtn("play-std.btn", "play-sel.btn");
-  auto menu= cx::mkMenu(play);
+  // one play button
   play->setPosition(wb.cx, wb.top * 0.2);
   play->setCallback([=](c::Ref*){
-      cx::sfxPlay("button");
-      cx::runEx(Game::reify(new GameCtx() ));
+    cx::sfxPlay("button");
+    cx::runEx(Game::reify(new GameCtx() ));
   });
   addItem(menu);
 

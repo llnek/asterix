@@ -142,6 +142,15 @@ void resumeAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const s_arr<c::MenuItem*,2> createAudioIcons() {
+  auto n3="sound_off.png";
+  auto n2="sound_on.png";
+  return s_arr<c::MenuItem*,2> { createMenuBtn(n3,n3),
+    createMenuBtn(n2,n2) };
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const s_arr<c::MenuItem*,2> reifyAudioIcons() {
   auto n3="sound_off.png";
   auto n2="sound_on.png";
@@ -170,7 +179,8 @@ c::MenuItem* createMenuBtn(const sstr &n) {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::MenuItem* createMenuBtn(const sstr &n, const sstr &s) {
-  return c::MenuItemImage::create(createSprite(n), createSprite(s));
+  return c::MenuItemImage::create(
+                                  XCFG()->getImage(n), XCFG()->getImage(s));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -381,14 +391,14 @@ const Box4 bbox4(not_null<c::Node*> s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void runEx(not_null<c::Scene*> ns) {
-  run(ns, CC_CSV(c::Float, "SCENE_DELAY"));
+void prelude() {
+  runEx(XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void prelude() {
-  runEx(XCFG()->prelude());
+void runEx(not_null<c::Scene*> ns) {
+  run(ns, CC_CSV(c::Float, "SCENE_DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -402,6 +412,25 @@ void run(not_null<c::Scene*> ns, float delay) {
 //
 void run(not_null<c::Scene*> ns) {
   CC_DTOR()->replaceScene(ns);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void pushEx(not_null<c::Scene*> ns) {
+  push(ns, CC_CSV(c::Float, "SCENE_DELAY"));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void push(not_null<c::Scene*> ns, float delay) {
+  CC_DTOR()->pushScene(
+      c::TransitionCrossFade::create(delay, ns));
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+void push(not_null<c::Scene*> ns) {
+  CC_DTOR()->pushScene(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////

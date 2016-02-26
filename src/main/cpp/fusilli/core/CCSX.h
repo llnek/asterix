@@ -33,6 +33,8 @@ namespace ccsx {
   j::json readJson(const sstr &fpath);
 
   const c::Color3B colorRGB(const sstr &hexcolor);
+
+  const s_arr<c::MenuItem*,2> createAudioIcons();
   const s_arr<c::MenuItem*,2> reifyAudioIcons();
 
   void sfxMusic(const sstr &music, bool repeat);
@@ -92,7 +94,7 @@ namespace ccsx {
     const sstr &text="");
 
   c::Sprite* loadSprite(const sstr &fname, const sstr &path= "pics");
-  c::Sprite* reifySpriteFromFile(const sstr &frameName);
+  c::Sprite* reifySprite(const sstr &frameName);
   c::Sprite* createSprite(const sstr &frameName);
 
   float deltaX(not_null<c::Node*> a, not_null<c::Node*> b);
@@ -104,6 +106,12 @@ namespace ccsx {
   inline const Box4 bbox4(not_null<ComObj*> c) {
     return bbox4(c->node);
   }
+
+  void push(not_null<c::Scene*>, float delay);
+  void push(not_null<c::Scene*>);
+  void pushEx(not_null<c::Scene*>);
+
+  inline void pop() { CC_DTOR()->popScene(); }
 
   void run(not_null<c::Scene*>, float delay);
   void run(not_null<c::Scene*>);

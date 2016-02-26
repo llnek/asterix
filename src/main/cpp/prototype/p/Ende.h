@@ -11,15 +11,16 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MMenu : public f::XScene {
+struct CC_DLL Ende : public f::XLayer {
 
-  STATIC_REIFY_SCENE(MMenu)
+  STATIC_REIFY_LAYER(Ende)
   MDECL_DECORATE()
+  MDECL_GET_IID(4)
 
 };
 

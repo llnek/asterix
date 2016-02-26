@@ -26,6 +26,7 @@ NS_USING(prototype)
   auto r= NodeRegistry::self();
 
   r->rego( mc_new(SharedNode));
+  r->rego( mc_new(PlayerNode));
 
   // set up app-config
   Config::reify();

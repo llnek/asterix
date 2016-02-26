@@ -18,17 +18,42 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(prototype)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL SpaceShip : public f::ComObj {
+  MDECL_COMP_TPID("n/SpaceShip")
+  SpaceShip(not_null<c::Sprite*> s)
+  : ComObj(s) {
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Asteroid : public f::ComObj {
+  MDECL_COMP_TPID("n/Asteroid")
+  Asteroid(not_null<c::Sprite*> s)
+  : ComObj(s) {
+  }
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Gesture : public a::Component {
   MDECL_COMP_TPID("n/Gesture")
+  DECL_BF(right)
+  DECL_BF(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
+
+  s_arr<c::Sprite*,2> bgSprites;
+
+  DECL_TD(c::Vec2, touchPt)
+  DECL_BF(isTouching)
+
 };
 
 

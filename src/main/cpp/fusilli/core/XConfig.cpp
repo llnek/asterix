@@ -162,7 +162,7 @@ void XConfig::setCsts() {
   f->setObject(CC_FLOAT(0.35), "SCENE_DELAY");
   f->setObject(CC_INT(10), "BTN_PADDING");
 
-  f->setObject(CC_BOOL(true), "showFPS");
+  f->setObject(CC_BOOL(false), "showFPS");
   f->setObject(CC_INT(60), "FPS");
 
   f->setObject(CC_FLOAT(4.0f), "S_OFF");

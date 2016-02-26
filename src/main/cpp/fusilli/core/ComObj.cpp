@@ -143,19 +143,19 @@ const c::Vec2 ComObj::pos() {
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Size ComObj::csize() {
-  return NNP(node) ? node->boundingBox().size : c::Size(0,0);
+  return NNP(node) ? CC_CSIZE(node) : c::Size(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::circum() {
-  return NNP(node) ? node->boundingBox().size.width : 0;
+  return NNP(node) ? CC_CSIZE(node).width : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float ComObj::radius() {
-  return NNP(node) ? node->boundingBox().size.width * 0.5f : 0;
+  return NNP(node) ? CC_CSIZE(node).width * 0.5f : 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -192,6 +192,13 @@ ComObj::ComObj() {
   init(nullptr,1,0);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+ComObj::~ComObj() {
+  if (node) {
+     node->removeFromParent();
+  }
+}
 
 
 

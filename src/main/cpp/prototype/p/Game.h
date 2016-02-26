@@ -20,7 +20,7 @@ NS_BEGIN(prototype)
 struct CC_DLL Game : public f::GameScene {
   virtual void sendMsgEx(const MsgTopic&, void*);
   virtual f::GameLayer* getGLayer() {
-     return
+    return
        (f::GameLayer*) getLayer(2);
   }
 
@@ -28,9 +28,14 @@ struct CC_DLL Game : public f::GameScene {
   MDECL_DECORATE()
 
   virtual ~Game() {}
-  Game()
+    Game();
 };
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GameCtx : public f::GCX {
+};
 
 
 NS_END

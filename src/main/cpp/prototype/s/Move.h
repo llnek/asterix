@@ -19,6 +19,11 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public a::System {
 
+  void onTouch(float,const c::Vec2&);
+  void process(float);
+
+  DECL_PTR(a::NodeList,players)
+  DECL_PTR(a::NodeList,shared)
 public:
 
   MDECL_SYS_PRIORITY( a::Move)
