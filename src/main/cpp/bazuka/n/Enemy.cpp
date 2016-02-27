@@ -36,21 +36,20 @@ void Enemy::sync() {
   node->setPosition(c::ccpAdd(node->getPosition(), c::Vec2(-3, 0)));
 }
 
-void Enemy::shoot(float dt)
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void Enemy::shoot(float dt) {
 
-  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("gunshot.wav");
+  auto p= MGMS()->getPool("Bullets");
+  auto pos = node->getPosition();
+  auto sz= CC_CSIZE(node);
+  auto b= p->getAndSet(true);
 
-  //CCLog("[Enemy] shoot");
-  CCPoint p = this->getPosition();
+  cx::sfxPlay("gunshot");
 
-  p.x = p.x - this->getContentSize().width/2;
-  p.y = p.y - this->getContentSize().height * 0.05;
-
-  Projectile* pr= Projectile::createProjectile(p,1);
-
-  projLayer->addChild(pr);
-  projLayer->enemyBullets->addObject(pr);
+  b->inflate(
+    pos.x - HWZ(sz),
+    pos.y - sz.height * 0.05f);
 }
 
 
