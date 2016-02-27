@@ -40,8 +40,6 @@ protected:
   virtual c::SpriteBatchNode* regoAtlas( const sstr &name, int zx = 0);
   s_map<sstr, c::SpriteBatchNode*> atlases;
   virtual void bind(c::Node* p) { self = p; }
-  DECL_TV(int, lastTag, 0)
-  DECL_TV(int, lastZ, 0)
 
   DECL_PTR(c::Node, self)
   DECL_PTR(SCTX, context)
@@ -71,9 +69,6 @@ public:
   virtual void removeAtlasAll(const sstr &atlas) ;
   virtual void removeItem(not_null<c::Node*> n);
   virtual void removeAll();
-
-  virtual int zIndex() { return lastZ; }
-  virtual int incIndexZ();
 
   virtual void setCtx(SCTX*, bool clean=true);
   virtual SCTX* getCtx() { return context; }

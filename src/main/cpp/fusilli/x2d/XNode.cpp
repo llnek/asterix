@@ -89,7 +89,7 @@ XNode::regoAtlas( const sstr &name, int zx) {
   auto a= c::SpriteBatchNode::createWithTexture(i);
 
   atlases.insert(S__PAIR(sstr, c::SpriteBatchNode*, name, a));
-  self->addChild(a, zx, ++lastTag);
+  self->addChild(a, zx);
   return a;
 }
 
@@ -121,7 +121,7 @@ void XNode::addAtlasFrame( const sstr &atlas,
 void XNode::addAtlasFrame( const sstr &atlas,
                            const sstr &frame,
                            const c::Vec2 &pos) {
-  addAtlasFrame( atlas, frame,pos,lastZ,++lastTag);
+  addAtlasFrame( atlas, frame,pos,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ void XNode::addFrame( const sstr &frame, const c::Vec2 &pos, int z, int tag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XNode::addFrame( const sstr &frame, const c::Vec2 &pos) {
-  addFrame( frame, pos, lastZ, ++lastTag);
+  addFrame( frame, pos,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n, int z, int ta
 //////////////////////////////////////////////////////////////////////////////
 //
 void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n) {
-  addAtlasItem( atlas, n, lastZ, ++lastTag);
+  addAtlasItem( atlas, n, 0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ void XNode::addItem( not_null<c::Node*> n, int z, int tag) {
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 void XNode::addItem( not_null<c::Node*> n) {
-  addItem( n, lastZ, ++lastTag);
+  addItem( n, 0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -203,11 +203,6 @@ void XNode::removeItem(not_null<c::Node*> n) {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-int XNode::incIndexZ() {
-  return ++lastZ;
-}
 
 
 NS_END
