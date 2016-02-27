@@ -21,8 +21,8 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto splash = cx::createMenuBtn("splash-std", "splash-sel");
-  auto retry = cx::createMenuBtn("replay-std", "replay-sel");
+  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
+  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -48,7 +48,7 @@ void Ende::decoUI() {
     cx::runEx(Splash::reify());
   });
 
-  auto title= cx::createSprite("game-over");
+  auto title= cx::reifySprite("game-over.png");
   title->setPosition(wb.cx, wb.top * 0.8);
 
   centerImage("gui.bg");

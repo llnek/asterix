@@ -29,7 +29,7 @@ void GEngine::initEntities() {
 
   p->preset([=]() -> f::Poolable* {
     auto png = "asteroid_" + s::to_string(1 + (rand() % 3)) + ".png";
-    auto tmp = cx::loadSprite(png);
+    auto tmp = cx::reifySprite(png);
     auto sz= CC_CSIZE(tmp);
     CC_HIDE(tmp);
     MGML()->addItem(tmp,-1);
@@ -42,7 +42,7 @@ void GEngine::initEntities() {
   }, 32);
 
   auto v=CC_CSV(c::Integer,"SHIP+SPEED");
-  auto s = cx::createSprite("player");
+  auto s = cx::reifySprite("player.png");
   auto py= mc_new1(SpaceShip,s);
   auto sz= py->csize();
   auto body = c::PhysicsBody::createCircle(HWZ(sz));

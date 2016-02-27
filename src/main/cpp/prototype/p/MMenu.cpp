@@ -21,9 +21,9 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::createMenuBtn("resume-std", "resume-sel");
-  auto retry = cx::createMenuBtn("replay-std", "replay-sel");
-  auto splash = cx::createMenuBtn("splash-std", "splash-sel");
+  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
+  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
+  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -62,7 +62,7 @@ void MMenu::decoUI() {
   addItem(menu);
 
   // audio
-  auto audios= cx::createAudioIcons();
+  auto audios= cx::reifyAudioIcons();
   auto sz= CC_CSIZE(audios[0]);
   auto gap= sz.width /4;
   auto c= cx::white();

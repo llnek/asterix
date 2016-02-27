@@ -22,8 +22,8 @@ NS_BEGIN(prototype)
 //
 void Splash::decoUI() {
 
-  auto play= cx::createMenuBtn("play-std", "play-sel");
-  auto title= cx::createSprite("title");
+  auto play= cx::reifyMenuBtn("play-std.png", "play-sel.png");
+  auto title= cx::reifySprite("game-title.png");
   auto menu= cx::mkMenu(play);
   auto wb= cx::visBox();
 

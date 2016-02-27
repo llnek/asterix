@@ -125,7 +125,7 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
-  auto btn= cx::createMenuBtn("pause-std","pause-sel");
+  auto btn= cx::reifyMenuBtn("pause-std.png","pause-sel.png");
   auto sz= CC_CSIZE(btn);
   auto gap= sz.width / 4;
   auto wz= cx::visRect();
