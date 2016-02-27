@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>en</key>
+    <dict>
+
+      <key>whosthink</key>
+      <string>{}'s thinking...</string>
+
+      <key>whosturn</key>
+      <string>{}'s turn...</string>
+
+      <key>whodraw</key>
+      <string>It's a draw!</string>
+
+      <key>whowin</key>
+      <string>{} Wins!</string>
+
+      <key>computer</key>
+      <string>Computer</string>
+
+      <key>player2</key>
+      <string>Player 2</string>
+
+      <key>player1</key>
+      <string>Player 1</string>
+
+      <key>quit!</key>
+      <string>Quit</string>
+
+      <key>back</key>
+      <string>Back</string>
+
+      <key>ok</key>
+      <string>OK</string>
+
+      <key>cpu</key>
+      <string>CPU</string>
+
+      <key>p2</key>
+      <string>P2</string>
+
+      <key>p1</key>
+      <string>P1</string>
+
+      <key>mmenu</key>
+      <string>Main Menu</string>
+
+      <key>replay</key>
+      <string>REPLAY</string>
+
+      <key>play</key>
+      <string>PLAY</string>
+
+      <key>quit?</key>
+      <string>Continue to quit game?</string>
+
+      <key>scores</key>
+      <string>= scores =</string>
+
+    </dict>
+  </dict>
+</plist>
