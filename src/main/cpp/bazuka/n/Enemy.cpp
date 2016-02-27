@@ -11,50 +11,49 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ScrollingBgLayer.h"
 #include "core/XConfig.h"
+#include "core/ComObj.h"
 #include "core/CCSX.h"
+#include "Enemy.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ScrollingBgLayer::ScrollingBgLayer() {
-
-  auto speed= CC_CSV(c::Float, "BG+SCROLL+SPEED");
-  auto s= cx::createSprite("game.bg");
-  auto wb= cx::visBox();
-
-  s->setPosition(wb.cx, wb.cy);
-  addChild(s,-1);
-
-  hills = ScrollingBg::create("hills.png", speed * 0.3, 142);
-  addChild(hills);
-
-  treesNbush = ScrollingBg::create("treesNbush.png", speed * 0.5, 136);
-  addChild(treesNbush);
-
-  ground = ScrollingBg::create("ground.png", speed * 0.8, 0);
-  addChild(ground);
-
-  grass = ScrollingBg::create("grass.png", speed, 0);
-  addChild(grass);
-
+Enemy* Enemy::create() {
+  auto i= CC_TCAC()->addImage( XCFG()->getImage("enemy_anim.png"));
+  auto a= c::SpriteBatchNode::createWithTexture(i);
+  auto s= cx::reifyEnemy("enemy_idle_1.png");
+  s->addChild(a);
+  //this->schedule(schedule_selector(Enemy::shoot),1.8);
+  return  mc_new1(Enemy,s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ScrollingBgLayer::sync() {
-  treesNbush->sync();
-  hills->sync();
-  ground->sync();
-  grass->sync();
+void Enemy::sync() {
+  node->setPosition(c::ccpAdd(node->getPosition(), c::Vec2(-3, 0)));
+}
+
+void Enemy::shoot(float dt)
+{
+
+  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("gunshot.wav");
+
+  //CCLog("[Enemy] shoot");
+  CCPoint p = this->getPosition();
+
+  p.x = p.x - this->getContentSize().width/2;
+  p.y = p.y - this->getContentSize().height * 0.05;
+
+  Projectile* pr= Projectile::createProjectile(p,1);
+
+  projLayer->addChild(pr);
+  projLayer->enemyBullets->addObject(pr);
 }
 
 
-
 NS_END
-
 
 

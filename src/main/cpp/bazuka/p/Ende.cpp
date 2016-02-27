@@ -21,40 +21,45 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto wz= cx::visRect();
+
+  auto btn = cx::reifyMenuBtn("mainmenu.png");
+  auto menu= cx::mkMenu(btn);
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      retry,splash
-  }, wz.size.height/4);
-
-  menu->setPosition(wb.cx,wb.cy);
-
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
-
-  splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
+  btn->setPosition(wb.cx, wb.top * 0.2);
+  btn->setCallback([=](c::Ref*){
+    cx::sfxPlay("pop");
     cx::runEx(Splash::reify());
   });
-
-  auto title= cx::reifySprite("game-over.png");
-  title->setPosition(wb.cx, wb.top * 0.8);
-
-  centerImage("gui.bg");
-
-  addItem(title);
   addItem(menu);
+
+  auto gameOverLabel = cx::reifyBmfLabel("dft", "GAMEOVER");
+  gameOverLabel->setPosition(wb.cx, wb.top * 0.6);
+  addItem(gameOverLabel, 10);
+
+  auto highScore = CC_APPDB()->getIntegerForKey("GameHighScore");
+  auto score= getHUD()->getScore();
+
+  if (score > highScore) {
+    CC_APPDB()->setIntegerForKey("GameHighScore", score);
+    CC_APPDB()->flush();
+
+    auto newHighScoreLabel = cx::reifyBmfLabel("dft", "NEW HIGH SCORE");
+    newHighScoreLabel->setPosition(wb.cx, wb.cy);
+    newHighScoreLabel->setScale(0.75);
+    addItem(newHighScoreLabel, 10);
+
+    auto GOscoreLabel = cx::reifyBmfLabel("dft", s::to_string(score));
+    GOscoreLabel->setPosition(wb.cx, wb.top * 0.4);
+    GOscoreLabel->setScale(0.75);
+    addItem(GOscoreLabel, 10);
+  } else {
+    auto newHighScoreLabel = cx::reifyBmfLabel("dft", "BETTER LUCK NEXT TIME");
+    newHighScoreLabel->setPosition(wb.cx, wb.cy);
+    newHighScoreLabel->setScale(0.75);
+    addItem(newHighScoreLabel, 10);
+  }
+
 }
 
 

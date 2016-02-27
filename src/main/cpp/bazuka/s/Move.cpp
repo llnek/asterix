@@ -40,29 +40,109 @@ bool Move::update(float dt) {
 //
 void Move::process(float dt) {
   auto ss= CC_GNLF(GVars, shared, "slots");
-  auto p= MGMS()->getPool("Asteroids");
-  auto &c=p->list();
-  auto wb= cx::visBox();
+  auto py= CC_GNLF(Hero, players, "hero");
 
-  F__LOOP(it,c) {
-    auto a= (Asteroid*) *it;
-    if (!a->status) { continue; }
-    a->setPos(a->node->getPosition().x, a->node->getPosition().y - (0.75 * wb.top * dt));
-    if (a->node->getPosition().y < wb.bottom-(wb.top * 0.2)) {
-      a->node->getPhysicsBody()->setEnabled(false);
-      a->deflate();
-    }
+  switch(py->mPlayerState) {
+    case kPlayerStateBoost: boostAnim(py); break;
+    case kPLayerStateIdle: idleAnim(py); break;
   }
 
+  if (!moveEnemies(dt)) { return;  }
+
+  moveBullets(dt);
+  moveRockets(dt);
   onKeys(dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void Move::moveBullets(float dt) {
+  auto po= MGMS()->getPool("Bullets");
+  auto wb= cx::visBox();
+  auto &cs= po->list();
+
+  F__LOOP(it,cs) {
+    auto z = (Projectile*) *it;
+    if (z->status) {
+      z->sync();
+      if (z->node->getPositionX() < wb.left) {
+        z->deflate();
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::moveRockets(float dt) {
+  auto po= MGMS()->getPool("Rockets");
+  auto wb= cx::visBox();
+  auto &cs= po->list();
+
+  F__LOOP(it,cs) {
+    auto z = (Projectile*) *it;
+    if (z->status) {
+      z->sync();
+      if (z->node->getPositionX() > wb.right) {
+        z->deflate();
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Move::moveEnemies(float dt) {
+  auto p= MGMS()->getPool("Enemies");
+  auto wb= cx::visBox();
+  auto over=false;
+  auto &cs= p->list();
+
+  F__LOOP(it, cs) {
+    auto z= (Enemy*) *it;
+    if (z->status) {
+      z->sync();
+      if (z->node->getPositionX() + HWZ(z->csize()) < wb.left) {
+        over=true;
+        break;
+      }
+    }
+  }
+
+  if (over) {
+    SENDMSG("/game/player/loser");
+  }
+
+  return !over;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::idleAnim(Hero *py) {
+  if (py->mActionState != kActionStateIdle) {
+    py->mActionState = kActionStateIdle;
+    py->node->stopAllActions();
+    py->node->runAction(mIdleAction);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::boostAnim(Hero *py) {
+  if (py->mActionState != kActionStateBoost) {
+    py->mActionState = kActionStateBoost;
+    py->node->stopAllActions();
+    py->node->runAction(mBoostAction);
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Move::onKeys(float dt) {
 
-  auto py= CC_GNLF(SpaceShip, players, "player");
   auto mo= CC_GNLF(Gesture, players, "motion");
+  auto py= CC_GNLF(Hero, players, "player");
   auto pos= py->pos();
   auto x=pos.x;
   auto y=pos.y;

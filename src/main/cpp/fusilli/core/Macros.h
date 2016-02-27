@@ -26,12 +26,12 @@
 #define CC_DISPEVENT2(a,b) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a,b)
 #define CC_DISPEVENT1(a) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a)
 
+#define CC_TCAC() cocos2d::TextureCache::getInstance()
 #define CC_FILER() cocos2d::FileUtils::getInstance()
 #define CC_DTOR() cocos2d::Director::getInstance()
 #define CC_PCAST(T) static_cast<T>(getParent())
 #define CC_KEEP(x) if (x) {x->retain();}
 #define CC_DROP(x) if (x) {x->release();}
-
 
 #define CC_CSIZE(s) s->getBoundingBox().size
 #define CC_HIDE(s) s->setVisible(false)

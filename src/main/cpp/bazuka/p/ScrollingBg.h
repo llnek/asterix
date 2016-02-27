@@ -18,7 +18,7 @@ NS_BEGIN(bazuka)
 //
 class ScrollingBg : public c::Node {
 
-  bool iniz(const sstr&, float speed, float yPos);
+  bool init(const sstr&, float speed, float yPos);
   DECL_PTR(c::Sprite,gameBg2)
   DECL_PTR(c::Sprite,gameBg1)
   DECL_FZ(speed)

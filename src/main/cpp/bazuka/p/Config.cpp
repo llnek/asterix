@@ -74,6 +74,10 @@ void Config::runOnce() {
   auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("player_anim");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

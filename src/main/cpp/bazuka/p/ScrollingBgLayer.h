@@ -12,12 +12,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ScrollingBg.h"
-#include "x2d/XLayer.h"
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ScrollingBgLayer : public f::XLayer {
+class CC_DLL ScrollingBgLayer : public c::Node {
 
   DECL_PTR(ScrollingBg, treesNbush)
   DECL_PTR(ScrollingBg, hills)
@@ -25,9 +24,6 @@ class CC_DLL ScrollingBgLayer : public f::XLayer {
   DECL_PTR(ScrollingBg, grass)
 
 public:
-
-  STATIC_REIFY_LAYER(ScrollingBgLayer)
-  MDECL_DECORATE()
 
   void sync();
 };

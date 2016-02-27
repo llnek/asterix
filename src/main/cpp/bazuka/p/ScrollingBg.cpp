@@ -22,17 +22,19 @@ NS_BEGIN(bazuka)
 //
 ScrollingBg* ScrollingBg::create(const sstr &name, float speed, float yPos) {
   auto ob = mc_new(ScrollingBg);
-  ob->iniz(name, speed, yPos);
+  ob->init(name, speed, yPos);
   ob->autorelease();
   return ob;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool ScrollingBg::iniz(const sstr &name, float speed, float yPos) {
+bool ScrollingBg::init(const sstr &name, float speed, float yPos) {
 
   auto wz= cx::visRect();
   auto wb= cx::visBox();
+
+  c::Node::init();
 
   gameBg1 = cx::createSprite(name);
   gameBg1->setPosition(wb.cx, yPos);
