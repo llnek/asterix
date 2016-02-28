@@ -16,6 +16,7 @@
 #include "MMenu.h"
 #include "Ende.h"
 #include "Game.h"
+#include "ScrollingBgLayer.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -24,11 +25,9 @@ BEGIN_NS_UNAMED
 struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  void fireRocket(Hero*);
 
-  bool onContactBegin(c::PhysicsContact&);
-  void setPhysicsWorld(c::PhysicsWorld*);
-
-  DECL_PTR(c::PhysicsWorld, pWorld);
+  DECL_PTR(ScrollingBgLayer, bgLayer)
   DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
 
@@ -37,6 +36,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_GET_IID(2)
 
   virtual void onMouseMotion(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -57,91 +57,136 @@ void GLayer::onInited() {
   players = engine->getNodeList(PlayerNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
   auto ss= CC_GNLF(GVars, shared, "slots");
+  auto hero=CC_GNLF(Hero,players,"player");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  for (auto n = 0; n < 2;  ++n) {
-    auto s = cx::createSprite("game.bg");
-    ss->bgSprites[n]=s;
-    s->setPosition(
-        wb.cx,
-        (-1 * wz.size.height * n) + wb.cy);
-    addItem(s, -2);
+  // player setup
+  hero->node->addChild( cx::reifySpriteBatch("player_anim"));
+  hero->inflate(wb.right * 0.125, wb.top * 0.5);
+  addItem(hero->node, 5);
+
+  // player idle
+  auto anim = c::Animation::create();
+  for (auto n=1; n <= 4; ++n) {
+    anim->addSpriteFrame(
+        cx::getSpriteFrame("player_idle_"+s::to_string(n)+".png"));
   }
+  anim->setDelayPerUnit(0.25);
 
-  setPhysicsWorld(MGMS()->getPhysicsWorld());
+  hero->idle= c::RepeatForever::create(c::Animate::create(anim));
+  CC_KEEP(hero->idle);
 
-  auto ln = c::EventListenerPhysicsContact::create();
-  ln->onContactBegin = CC_CALLBACK_1(GLayer::onContactBegin, this);
-  getEventDispatcher()->addEventListenerWithSceneGraphPriority(ln, this);
+  // player boost
+  anim = c::Animation::create();
+  for (auto n=1; n <= 4; ++n) {
+    anim->addSpriteFrame(
+        cx::getSpriteFrame("player_boost_"+s::to_string(n)+".png"));
+  }
+  anim->setDelayPerUnit(0.25);
 
+  hero->boost= c::RepeatForever::create(c::Animate::create(anim));
+  CC_KEEP(hero->boost);
+
+  hero->node->runAction(hero->boost->clone());
+
+
+  ss->gravity = c::Vec2(0, -5);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void GLayer::decoUI() {
+
+  auto roll= CC_CSV(c::Float, "BG+SCROLL");
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
+
+  bgLayer = f::reifyRefType<ScrollingBgLayer>();
+  bgLayer->set(roll);
+  addItem(bgLayer);
+
+  regoAtlas("game-pics");
+
+  //this->schedule(schedule_selector(HelloWorld::spawnEnemy),3.0);
+
+  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
-  pWorld = world;
-  pWorld->setGravity(c::Vec2(0, 0));
-}
+void GLayer::onMouseClick(const c::Vec2 &loc) {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onContactBegin(c::PhysicsContact&) {
-  setOpacity(255 * 0.1);
-  cx::sfxPlay("crash");
-  surcease();
-  MGMS()->stop();
-  Ende::reify(MGMS(), 4);
-  return true;
+  auto hero= CC_GNLF(Hero, players, "player");
+  auto wb= cx::visBox();
+
+  if (MGMS()->isLive()) {
+    if (loc.x < wb.cx) {
+      // treat as left button pressed
+      hero->jump=true;
+    } else {
+      fireRocket(hero);
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  py->setPos(loc.x,loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
+
+  auto hero= CC_GNLF(Hero, players, "player");
   auto loc= touch->getLocation();
-  return cx::isClicked(py->node,loc);
+  auto wb= cx::visBox();
+
+  if (MGMS()->isLive()) {
+    if (loc.x < wb.cx) {
+      // treat as left button pressed
+      hero->jump=true;
+    } else {
+      fireRocket(hero);
+    }
+  }
+
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::fireRocket(Hero *hero) {
+
+  auto po= MGMS()->getPool("Rockets");
+    auto sz= hero->csize();
+  auto pos = hero->pos();
+  auto r= (Projectile*) po->getAndSet(true);
+
+  r->inflate( pos.x + HWZ(sz), pos.y - sz.height * 0.05);
+
+  cx::sfxPlay("fireRocket");
+
+  auto emitter = c::ParticleExplosion::create();
+  emitter->setPosition(c::ccpAdd(pos, c::Vec2(HWZ(sz) ,0 )));
+  emitter->setStartColor(c::ccc4f(1.0, 1.0, 1.0, 1.0));
+  emitter->setEndColor(c::ccc4f(0.0, 0.0, 0.0, 0.0));
+  emitter->setTotalParticles(10);
+  emitter->setLife(0.25);
+  emitter->setSpeed(2.0);
+  emitter->setSpeedVar(50.0);
+  emitter->setAutoRemoveOnFinish(true);
+  addItem(emitter, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  auto loc= touch->getLocation();
-  py->setPos(loc.x, loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void GLayer::decoUI() {
-  auto btn= cx::reifyMenuBtn("pause-std.png","pause-sel.png");
-  auto sz= CC_CSIZE(btn);
-  auto gap= sz.width / 4;
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-  btn->setPosition(
-      wb.left + sz.width - gap,
-      wb.top - sz.height + gap);
-  btn->setCallback([=](c::Ref*){
-    cx::sfxPlay("button");
-    cx::pushEx(MMenu::reify());
-  });
-  auto menu = cx::mkMenu(btn);
-  addItem(menu);
-
-  engine = mc_new(GEngine);
-  cx::sfxMusic("background", true);
 }
 
 END_NS_UNAMED

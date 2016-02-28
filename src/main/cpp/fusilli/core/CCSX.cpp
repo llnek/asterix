@@ -161,6 +161,12 @@ void stopAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+c::SpriteBatchNode* reifySpriteBatch(const sstr &name) {
+  return c::SpriteBatchNode::createWithTexture( CC_TCAC()->addImage( XCFG()->getImage(name)));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const s_arr<c::MenuItem*,2> createAudioIcons() {
   auto n3="sound_off.png";
   auto n2="sound_on.png";

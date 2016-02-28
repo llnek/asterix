@@ -84,10 +84,7 @@ const sstr XNode::gets(const sstr &key) {
 //
 c::SpriteBatchNode*
 XNode::regoAtlas( const sstr &name, int zx) {
-
-  auto i= c::TextureCache::getInstance()->addImage( XCFG()->getImage(name));
-  auto a= c::SpriteBatchNode::createWithTexture(i);
-
+  auto a= cx::reifySpriteBatch(name);
   atlases.insert(S__PAIR(sstr, c::SpriteBatchNode*, name, a));
   self->addChild(a, zx);
   return a;

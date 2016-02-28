@@ -37,6 +37,9 @@ void Config::initCsts() {
   game_id= "31b3f51c-d0e8-4ec4-8a04-8896e22c070b";
   app_id = "bazuka";
 
+  addCst("ENEMY+FIRE+DELAY", CC_FLOAT(1.8f));
+  addCst("ENEMY+SPAWN+DELAY", CC_INT(3000));
+
   addCst("BG+SCROLL", CC_FLOAT(3.0));
 }
 
@@ -47,8 +50,15 @@ void Config::initAssets() {
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
 
+  addAtlas("player_anim", CC_STR("pics/player_anim.plist"));
+  addImage("player_anim", CC_STR("pics/player_anim.png"));
+
+  addAtlas("enemy_anim", CC_STR("pics/enemy_anim.plist"));
+  addImage("enemy_anim", CC_STR("pics/enemy_anim.png"));
+
   addImage("game.bg", CC_STR("pics/bg.png"));
   addImage("gui.bg", CC_STR("pics/bg.png"));
+
 
   addEffect("enemyKill", CC_STR("sfx/enemyKill.wav"));
   addEffect("fireRocket", CC_STR("sfx/fireRocket.wav"));
@@ -75,6 +85,15 @@ void Config::runOnce() {
   auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("enemy_anim");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("player_anim");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

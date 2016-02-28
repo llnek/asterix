@@ -19,10 +19,11 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public a::System {
 
+  DECL_PTR(c::DelayTime, enemyTimer)
   DECL_PTR(a::NodeList, shared)
-  DECL_PTR(c::DelayTime, timer)
-  void process(float);
+  void processEnemies(float);
   void parallex(float);
+  void spawnEnemyTimer();
 
 public:
 

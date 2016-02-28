@@ -14,7 +14,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
-//#include "Game.h"
+#include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -63,7 +63,7 @@ void Splash::decoUI() {
   play->setCallback(
     [=](c::Ref*) {
       cx::sfxPlay("pop");
-      //cx::runEx(Game::reify( new GameCtx() ));
+      cx::runEx(Game::reify( new GameCtx() ));
     });
   menu->setPosition(wb.cx, wb.cy);
   addItem(menu, 10);

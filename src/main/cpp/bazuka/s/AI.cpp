@@ -15,6 +15,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "AI.h"
+#include "n/Enemy.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -23,7 +24,12 @@ NS_BEGIN(bazuka)
 //
 void AI::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
-  timer= cx::reifyTimer(MGML(), 1500);
+  spawnEnemyTimer();
+}
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::spawnEnemyTimer() {
+  enemyTimer= cx::reifyTimer(MGML(), CC_CSV(c::Integer, "ENEMY+SPAWN+DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +37,7 @@ void AI::preamble() {
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
     parallex(dt);
-    process(dt);
+    processEnemies(dt);
   }
   return true;
 }
@@ -42,40 +48,29 @@ void AI::parallex(float dt) {
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wb= cx::visBox();
 
-  F__LOOP(it, ss->bgSprites) {
-    auto s= *it;
-    if (s->getPosition().y >= wb.top + wb.cy - 1) {
-      s->setPosition(wb.cx, (-1 * wb.top) + wb.cy);
-    }
-  }
-
-  F__LOOP(it, ss->bgSprites) {
-    auto s= *it;
-    s->setPosition(
-        s->getPosition().x,
-        s->getPosition().y + (0.75 * wb.top * dt));
-  }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::process(float dt) {
+void AI::processEnemies(float dt) {
 
-  if (!cx::timerDone(timer)) { return; }
+  if (!cx::timerDone(enemyTimer)) { return; }
   else {
-    cx::undoTimer(timer);
+    cx::undoTimer(enemyTimer);
   }
 
-  auto p= MGMS()->getPool("Asteroids");
-  auto tmp= (Asteroid*) p->getAndSet(true);
+  auto po= MGMS()->getPool("Enemies");
+  auto e= (Enemy*)po->getAndSet(true);
+  auto mrand = 1 + (rand()%3);
+  auto wz= cx::visRect();
   auto wb= cx::visBox();
-  auto sz= tmp->csize();
-  auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
+  auto sz= e->csize();
 
-  tmp->inflate(wb.left + rx , wb.top + sz.height);
-  tmp->node->getPhysicsBody()->setEnabled(true);
-  timer= cx::reifyTimer(MGML(), 1500);
+  e->inflate(wb.right + HWZ(sz), wz.size.height * mrand * 0.25);
+  e->lockAndLoad();
+
+  spawnEnemyTimer();
 }
 
 

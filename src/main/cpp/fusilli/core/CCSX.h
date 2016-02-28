@@ -54,6 +54,8 @@ namespace ccsx {
 
   bool isDesktop();
 
+  c::SpriteBatchNode* reifySpriteBatch(const sstr &name);
+
   c::MenuItem* createMenuBtn(const sstr &n);
   c::MenuItem* createMenuBtn( const sstr &n, const sstr &s);
 

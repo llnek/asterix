@@ -18,20 +18,41 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
+enum ActionState {
+  kActionStateNone = 0,
+  kActionStateIdle ,
+  kActionStateBoost
+};
+
+enum PlayerState {
+  kPlayerStateNone = 0,
+  kPLayerStateIdle,
+  kPlayerStateBoost
+};
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SpaceShip : public f::ComObj {
-  MDECL_COMP_TPID("n/SpaceShip")
-  SpaceShip(not_null<c::Sprite*> s)
+struct CC_DLL Hero : public f::ComObj {
+  MDECL_COMP_TPID("n/Hero")
+  Hero(not_null<c::Sprite*> s)
   : ComObj(s) {
   }
+  virtual ~Hero() {
+    CC_DROP(boost);
+    CC_DROP(idle);
+  }
+  DECL_PTR(c::Action,boost);
+  DECL_PTR(c::Action,idle);
+  DECL_IZ(jumpTimer)
+  DECL_BF(jump)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Asteroid : public f::ComObj {
-  MDECL_COMP_TPID("n/Asteroid")
-  Asteroid(not_null<c::Sprite*> s)
+struct CC_DLL Projectile : public f::ComObj {
+  MDECL_COMP_TPID("n/Projectile")
+  Projectile(not_null<c::Sprite*> s)
   : ComObj(s) {
   }
 };
@@ -47,7 +68,8 @@ struct CC_DLL Gesture : public a::Component {
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  s_arr<c::Sprite*,2> bgSprites;
+  DECL_TD(c::Vec2, gravity)
+
 };
 
 
