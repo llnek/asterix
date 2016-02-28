@@ -34,12 +34,10 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-
-  game_id= "8ee5d415-c51e-4c4a-b577-9cfcbd4645ed";
+  game_id= "31b3f51c-d0e8-4ec4-8a04-8896e22c070b";
   app_id = "bazuka";
 
-  addCst("BG+SCROLL+SPEED", CC_FLOAT(3.0f));
-  addCst("SHIP+SPEED", CC_INT(200));
+  addCst("BG+SCROLL", CC_FLOAT(3.0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,16 +48,19 @@ void Config::initAssets() {
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
 
   addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("gui.bg", CC_STR("pics/bg.png"));
 
-  addEffect("rocketExplode", CC_STR("sfx/rocketExplode.wav"));
   addEffect("enemyKill", CC_STR("sfx/enemyKill.wav"));
   addEffect("fireRocket", CC_STR("sfx/fireRocket.wav"));
   addEffect("gunshot", CC_STR("sfx/gunshot.wav"));
   addEffect("playerKill", CC_STR("sfx/playerKill.wav"));
   addEffect("pop", CC_STR("sfx/pop.wav"));
-  addMusic("bgMusic", CC_STR("sfx/bgMusic.wav"));
+  addEffect("rocketExplode", CC_STR("sfx/rocketExplode.wav"));
 
-  addFont("dft","fon/en/PixelFont.fnt");
+  addMusic("background", CC_STR("sfx/bgMusic.wav"));
+
+  addFont("pixel", CC_STR("fon/en/PixelFont.fnt"));
+  addFont("dft", CC_STR("fon/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,10 +73,6 @@ void Config::handleResolution(const c::Size &rs) {
 void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("player_anim");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }

@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ScrollingBg.h"
+#include "2d/CCNode.h"
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -25,9 +26,13 @@ class CC_DLL ScrollingBgLayer : public c::Node {
 
 public:
 
+  void set(float speed);
   void sync();
+
 };
 
+
 NS_END
+
 
 

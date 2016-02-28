@@ -12,22 +12,19 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ScrollingBgLayer.h"
-#include "core/XConfig.h"
 #include "core/CCSX.h"
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ScrollingBgLayer::ScrollingBgLayer() {
+void ScrollingBgLayer::set(float speed) {
 
-  auto speed= CC_CSV(c::Float, "BG+SCROLL+SPEED");
-  auto s= cx::createSprite("game.bg");
+  auto bg = cx::createSprite("game.bg");
   auto wb= cx::visBox();
 
-  s->setPosition(wb.cx, wb.cy);
-  addChild(s,-1);
+  bg->setPosition(wb.cx, wb.cy);
+  addChild(bg, -1);
 
   hills = ScrollingBg::create("hills.png", speed * 0.3, 142);
   addChild(hills);
@@ -40,17 +37,17 @@ ScrollingBgLayer::ScrollingBgLayer() {
 
   grass = ScrollingBg::create("grass.png", speed, 0);
   addChild(grass);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void ScrollingBgLayer::sync() {
-  treesNbush->sync();
   hills->sync();
+  treesNbush->sync();
   ground->sync();
   grass->sync();
 }
+
 
 
 

@@ -19,16 +19,15 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL Splash : public f::XScene {
 
-  DECL_PTR(ScrollingBgLayer, bgLayer)
-  DECL_PTR(c::Sprite,title)
+  DECL_PTR(ScrollingBgLayer, bg)
 
-  void moveXXX(float);
+  void moveXXX(c::Node*, float);
 
 public:
 
   STATIC_REIFY_SCENE(Splash)
-  MDECL_DECORATE()
   MDECL_UPDATE()
+  MDECL_DECORATE()
 
 };
 

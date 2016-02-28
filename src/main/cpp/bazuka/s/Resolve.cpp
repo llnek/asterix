@@ -23,7 +23,7 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
+  //players=engine->getNodeList(PlayerNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
 }
 

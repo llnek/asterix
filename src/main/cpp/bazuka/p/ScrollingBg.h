@@ -11,23 +11,28 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "2d/CCNode.h"
+#include "core/Primitives.h"
+#include "2d/CCSprite.h"
+
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class ScrollingBg : public c::Node {
+class ScrollingBg: public c::Node {
 
-  bool init(const sstr&, float speed, float yPos);
-  DECL_PTR(c::Sprite,gameBg2)
-  DECL_PTR(c::Sprite,gameBg1)
+  void set(const sstr&, float speed, float yPos);
+
+  DECL_PTR(c::Sprite, head);
+  DECL_PTR(c::Sprite, tail);
   DECL_FZ(speed)
 
 public:
 
   static ScrollingBg* create(const sstr&, float speed, float yPos);
   void sync();
+
 };
+
 
 NS_END
 

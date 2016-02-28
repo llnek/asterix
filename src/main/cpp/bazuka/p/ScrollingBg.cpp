@@ -12,44 +12,41 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "ScrollingBg.h"
+#include "core/ComObj.h"
 #include "core/CCSX.h"
+#include "ScrollingBg.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ScrollingBg* ScrollingBg::create(const sstr &name, float speed, float yPos) {
-  auto ob = mc_new(ScrollingBg);
-  ob->init(name, speed, yPos);
-  ob->autorelease();
+ScrollingBg* ScrollingBg::create(const sstr &png, float speed, float yPos) {
+  auto ob = f::reifyRefType<ScrollingBg>();
+  ob->set(png,speed,yPos);
   return ob;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool ScrollingBg::init(const sstr &name, float speed, float yPos) {
-
+void ScrollingBg::set(const sstr &png, float speed, float yPos) {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  c::Node::init();
+  head = cx::reifySprite(png);
+  tail = cx::reifySprite(png);
 
-  gameBg1 = cx::createSprite(name);
-  gameBg1->setPosition(wb.cx, yPos);
-  gameBg1->setAnchorPoint(cx::anchorB());
-  gameBg1->setScaleX(1.01);
-  addChild(gameBg1);
+  head->setPosition(wb.cx, yPos);
+  head->setAnchorPoint(cx::anchorB());
+  head->setScaleX(1.01);
+  addChild(head);
 
-  gameBg2 = cx::createSprite(name);
-  gameBg2->setPosition(wb.cx + wz.size.width, yPos);
-  gameBg2->setAnchorPoint(cx::anchorL());
-  gameBg2->setScaleX(1.01);
-  addChild(gameBg2);
+  tail->setPosition(wb.cx + wz.size.width,yPos);
+  tail->setAnchorPoint(cx::anchorL());
+  tail->setScaleX(1.01);
+  addChild(tail);
 
   this->speed = speed;
-  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,21 +57,22 @@ void ScrollingBg::sync() {
   auto wb= cx::visBox();
 
     // scroll bg left or right
-  if (gameBg1->getPosition().x < wb.left - HWZ(wz.size)) {
-    gameBg1->setPosition(wb.right + HWZ(wz.size), gameBg1->getPosition().y);
+
+  if (head->getPosition().x < wb.left - HWZ(wz.size)) {
+    head->setPosition(wb.right + HWZ(wz.size), head->getPosition().y);
   }
 
-  if (gameBg2->getPosition().x < wb.left - HWZ(wz.size)) {
-    gameBg2->setPosition(wb.right + HWZ(wz.size), gameBg2->getPosition().y);
+  if (tail->getPosition().x < wb.left - HWZ(wz.size)) {
+    tail->setPosition(wb.right + HWZ(wz.size), head->getPosition().y);
   }
 
-    auto bg1pos = gameBg1->getPosition();
-    gameBg1->setPosition(bg1pos.x - speed, bg1pos.y);
+  auto pos1 = head->getPosition();
+  auto pos2 = tail->getPosition();
 
-    auto bg2pos = gameBg2->getPosition();
-    gameBg2->setPosition(bg2pos.x - speed, bg2pos.y);
+  head->setPosition(pos1.x - speed, pos1.y);
+  tail->setPosition(pos2.x - speed, pos2.y);
+
 }
-
 
 NS_END
 

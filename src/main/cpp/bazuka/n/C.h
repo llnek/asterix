@@ -20,9 +20,9 @@ NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Hero : public f::ComObj {
-  MDECL_COMP_TPID("n/Hero")
-  Hero(not_null<c::Sprite*> s)
+struct CC_DLL SpaceShip : public f::ComObj {
+  MDECL_COMP_TPID("n/SpaceShip")
+  SpaceShip(not_null<c::Sprite*> s)
   : ComObj(s) {
   }
 };
@@ -47,41 +47,9 @@ struct CC_DLL Gesture : public a::Component {
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_PTR(ScrollingBgLayer, bgLayer)
-  DECL_TD(c::Vec2, gravity)
-  DECL_BF(jump)
-  DECL_IZ(jumpTimer)
-
-
+  s_arr<c::Sprite*,2> bgSprites;
 };
 
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Projectile : public a::ComObj {
-  static Projectile* create(int type) {
-    auto png= type==2 ? "rocket.png" : "bullet.png";
-    auto s = cx::reifySprite(png);
-    CC_HIDE(s);
-    MGML()->addAtlasItem("game-pics", s);
-    return mc_new1(Projectile,s,type);
-  }
-  Projectile(not_null<c::Sprite*> s, int type)
-    : ComObj(s) {
-    this->type=type;
-  }
-  void sync() {
-    switch (type) {
-    case 1:
-      node->setPosition(c::ccpAdd(node->getPosition(), c::Vec2(-7, 0)));
-    break;
-    case 2:
-      node->setPosition(c::ccpAdd(node->getPosition(), c::Vec2(7, 0)));
-    break;
-    }
-  }
-  DECL_IZ(type)
-}
 
 
 NS_END

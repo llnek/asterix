@@ -23,7 +23,7 @@ NS_BEGIN(bazuka)
 //
 void AI::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
-  createEnemyTimer();
+  timer= cx::reifyTimer(MGML(), 1500);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,20 @@ void AI::parallex(float dt) {
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wb= cx::visBox();
 
-  ss->bgLayer->sync();
+  F__LOOP(it, ss->bgSprites) {
+    auto s= *it;
+    if (s->getPosition().y >= wb.top + wb.cy - 1) {
+      s->setPosition(wb.cx, (-1 * wb.top) + wb.cy);
+    }
+  }
+
+  F__LOOP(it, ss->bgSprites) {
+    auto s= *it;
+    s->setPosition(
+        s->getPosition().x,
+        s->getPosition().y + (0.75 * wb.top * dt));
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,34 +67,17 @@ void AI::process(float dt) {
     cx::undoTimer(timer);
   }
 
-  auto p= MGMS()->getPool("Enemies");
-  auto tmp= (Enemy*) p->getAndSet(true);
+  auto p= MGMS()->getPool("Asteroids");
+  auto tmp= (Asteroid*) p->getAndSet(true);
   auto wb= cx::visBox();
   auto sz= tmp->csize();
+  auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
 
-  auto mrand = 1 + (rand() % 3);
-  float h = wb.top * mrand * 0.25f ;
-  CCPoint p = ccp(visibleSize.width + this->getContentSize().width/2 , h);
-  this->setPosition(p);
-  auto idleanimation = c::Animation::create();
-  for (auto n = 1; n <= 4;  ++n) {
-    idleanimation->addSpriteFrame(
-        cx::getSpriteFrame("enemy_idle_" + s::to_string(n) + ".png"));
-  }
-  idleanimation->setDelayPerUnit(0.25f);
-  s->runAction(c::RepeatForever::create(c::Animate::create(idleanimation))) ;
-
-
-
-  createEnemyTimer();
+  tmp->inflate(wb.left + rx , wb.top + sz.height);
+  tmp->node->getPhysicsBody()->setEnabled(true);
+  timer= cx::reifyTimer(MGML(), 1500);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void AI::createEnemyTimer() {
-  auto t1= CC_CSV(c::Integer, "ADD+ENEMY+DELAY");
-  timer= cx::reifyTimer(MGML(), t1);
-}
 
 
 NS_END

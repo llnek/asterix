@@ -16,81 +16,90 @@
 #include "Splash.h"
 //#include "Game.h"
 
-NS_ALIAS(cx, fusii::ccsx)
-NS_USING(sp, spine)
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::update(float dt) {
+  bg->sync();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
 
+  auto roll= CC_CSV(c::Float, "BG+SCROLL");
   auto wb= cx::visBox();
 
-  bgLayer = mc_new1(ScrollingBgLayer,3);
-  addItem(bgLayer);
+  bg = f::reifyRefType<ScrollingBgLayer>();
+  bg->set(roll);
+  addItem(bg);
 
-  title = cx::reifyBmfLabe("dft", "Bazuka");
-  title->setPosition(wb.cx, wb.top * 0.8f);
-  addItem(title);
+  auto nameLabel = cx::reifyBmfLabel("pixel", "Ms.tinyBazooka");
+  nameLabel->setPosition(wb.cx, wb.top * 0.8);
+  addItem(nameLabel);
 
-  // animate title a bit
-  moveXXX(20.f);
+  // jiggle the label
+  moveXXX(nameLabel,20.0);
 
-  // Uuuh????
-  auto skeleton = sp::SkeletonAnimation::createWithFile( "pics/player.json", "pics/player.atlas", 1.0f);
-  skeleton->addAnimation("runCycle",true,0,0);
-  skeleton->setPosition(wb.right * .125f , wb.top * 0.2f - HHZ(CC_CSIZE(skeleton)));
-  addItem(skeleton);
+  auto skeletonNode = spine::SkeletonAnimation::createWithFile(
+      "pics/player.json", "pics/player.atlas", 1.0f);
+  skeletonNode->addAnimation(0,"runCycle",true,0);
+  skeletonNode->setPosition(
+      wb.right * .125 ,
+      wb.top * 0.2 - HHZ(CC_CSIZE(skeletonNode)));
+  addItem(skeletonNode);
 
-  //options
-  auto p = cx::reifyMenuBtn("play.png",); //"_bookgame_UI_play.png",
-  auto pMenu = cx:mkMenu(p);
-  p->setCallback([=](c::Ref*){
+  auto options = cx::reifyMenuBtn("options.png");
+  auto play= cx::reifyMenuBtn("play.png");
+  auto sz=CC_CSIZE(play);
+  auto menu = cx::mkHMenu(s_vec<c::MenuItem*> {play,options}, sz.width/4);
+  options->setCallback(
+    [=](c::Ref*) {
       cx::sfxPlay("pop");
-      //Game::reify(new GameCtx());
-      });
+      //cx::runEx(MMenu::reify());
+    });
+  play->setCallback(
+    [=](c::Ref*) {
+      cx::sfxPlay("pop");
+      //cx::runEx(Game::reify( new GameCtx() ));
+    });
+  menu->setPosition(wb.cx, wb.cy);
+  addItem(menu, 10);
 
-  pMenu->setPosition(wb.cx, wb.cy);
-  addItem(pMenu, 10);
-
-  auto newHighScoreLabel = cx::reifyBmfLabel("dft", "CURRENT HIGH SCORE");
-  newHighScoreLabel->setPosition(wb.cx, wb.top * 0.15f);
-  newHighScoreLabel->setScale(0.5f);
+  auto newHighScoreLabel = cx::reifyBmfLabel("pixel", "CURRENT HIGH SCORE");
+  newHighScoreLabel->setPosition(wb.cx, wb.top * 0.15);
+  newHighScoreLabel->setScale(0.5);
   addItem(newHighScoreLabel, 10);
 
-  auto highScoreLabel = cx::reifyBmfLabel("dft", "0");
+  auto highScoreLabel = cx::reifyBmfLabel("pixel", "0");
   highScoreLabel->setPosition(wb.cx, wb.top * 0.1);
-  highScoreLabel->setScale(0.5f);
+  highScoreLabel->setScale(0.5);
   addItem(highScoreLabel, 10);
 
-  auto score = CC_APPDB()->getIntegerForKey("GameHighScore");
-  highScoreLabel->setString(s::to_string(score));
+  auto highScore = CC_APPDB()->getIntegerForKey("GameHighScore");
+  highScoreLabel->setString(s::to_string(highScore));
 
-  scheduleUpdate();
+  this->scheduleUpdate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::update(float dt) {
-  bgLayer->sync();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Splash::moveXXX(float yOff) {
-  auto loc= title->getPosition();
-  auto move = c::MoveTo::create(1.0f, c::Vec2(loc.x, loc.y + yOff));
-  title->runAction(
+void Splash::moveXXX(c::Node *ref, float delta) {
+  auto actionMove = c::MoveTo::create(1.0,
+      c::Vec2(ref->getPosition().x, ref->getPosition().y + delta));
+  ref->runAction(
       c::Sequence::create(
-        c::EaseSineInOut::create((c::ActionInterval*)move),
-        c::CallFunc::create([=](){
-          this->moveXXX(-1 * yOff);
+        c::EaseSineInOut::create((c::ActionInterval*)actionMove),
+        c::CallFunc::create([=]() {
+          this->moveXXX(ref, -delta);
         }),
         CC_NIL));
 }
 
 
-
 NS_END
+
 
 
