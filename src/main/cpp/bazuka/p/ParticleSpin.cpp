@@ -8,36 +8,41 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "ParticleSpin.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+ParticleSpin* ParticleSpin::create(const sstr &name, const c::Vec2 &pos) {
+  auto pc = mc_new(ParticleSpin);
+  pc->initWithSpriteFrameName(name);
+  pc->setPosition(pos);
+  pc->autorelease();
+  return pc;
+}
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+//////////////////////////////////////////////////////////////////////////////
+//
+void ParticleSpin::update(float dt) {
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  auto initpos = this->getPosition();
+  c::Vec2 finalpos;
 
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+  spinCounter += dt*4;
 
-};
+  finalpos.x = initpos.x + speed.x;
+  speed.y += gravity.y;
+  finalpos.y = initpos.y + speed.y + gravity.y;
+
+  this->setPosition(finalpos);
+  this->setRotation(CC_RADIANS_TO_DEGREES(spinCounter * speed.x));
+}
 
 
 NS_END
-
-
-
 

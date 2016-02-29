@@ -48,17 +48,22 @@ void AI::parallex(float dt) {
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wb= cx::visBox();
 
-
+  ss->bgLayer->sync();
 }
 
+static int POO=0;
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::processEnemies(float dt) {
 
-  if (!cx::timerDone(enemyTimer)) { return; }
-  else {
+  if (cx::timerDone(enemyTimer)) {
     cx::undoTimer(enemyTimer);
+  } else {
+    return;
   }
+
+  if (POO > 0) {return;}
+  POO++;
 
   auto po= MGMS()->getPool("Enemies");
   auto e= (Enemy*)po->getAndSet(true);

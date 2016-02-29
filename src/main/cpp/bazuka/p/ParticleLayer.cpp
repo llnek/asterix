@@ -8,36 +8,39 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
-
+#include "ParticleLayer.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+ParticleLayer::ParticleLayer(const c::Vec2 &p) {
+  enemyDie = ParticleSpin::create("EnemyDie.png", p);
+  addChild(enemyDie);
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+  enemyGun = ParticleSpin::create("EnemyGun.png", p);
+  addChild(enemyGun);
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  scheduleOnce( schedule_selector(ParticleLayer::removeSelf),2.0);
+  scheduleUpdate();
+}
 
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+//////////////////////////////////////////////////////////////////////////////
+//
+void ParticleLayer::update(float dt) {
+  enemyDie->update(dt);
+  enemyGun->update(dt);
+}
 
-};
-
+//////////////////////////////////////////////////////////////////////////////
+//
+void ParticleLayer::removeSelf(float dt) {
+  this->unscheduleUpdate();
+  this->removeFromParent();
+}
 
 NS_END
-
-
-
 

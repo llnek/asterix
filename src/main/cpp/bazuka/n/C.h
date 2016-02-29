@@ -11,10 +11,10 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ScrollingBgLayer.h"
 #include "core/XConfig.h"
 #include "core/ComObj.h"
 #include "core/CCSX.h"
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
@@ -30,6 +30,10 @@ enum PlayerState {
   kPlayerStateBoost
 };
 
+enum ProjectileType {
+  kTypeRocket=0,
+  kTypeBullet
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -45,15 +49,38 @@ struct CC_DLL Hero : public f::ComObj {
   DECL_PTR(c::Action,boost);
   DECL_PTR(c::Action,idle);
   DECL_IZ(jumpTimer)
+  DECL_IZ(action)
+  DECL_IZ(state)
   DECL_BF(jump)
+  void animate() {
+    if (state==kPlayerStateBoost) { animXXX(kActionStateBoost,boost);  }
+    if (state== kPLayerStateIdle) { animXXX(kActionStateIdle,idle);  }
+  }
+  void animXXX(int a, c::Action *act) {
+    if (action != a) {
+      action = a;
+      node->stopAllActions();
+      node->runAction(act->clone());
+    }
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Projectile : public f::ComObj {
   MDECL_COMP_TPID("n/Projectile")
-  Projectile(not_null<c::Sprite*> s)
+  DECL_IZ(type)
+  Projectile(not_null<c::Sprite*> s, int type)
   : ComObj(s) {
+    this->type=type;
+  }
+  void sync() {
+    if (type == kTypeBullet) {
+      node->setPositionX(node->getPositionX() - 7);
+    }
+    if (type == kTypeRocket) {
+      node->setPositionX(node->getPositionX() + 7);
+    }
   }
 };
 
@@ -68,6 +95,7 @@ struct CC_DLL Gesture : public a::Component {
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
+  DECL_PTR(ScrollingBgLayer, bgLayer)
   DECL_TD(c::Vec2, gravity)
 
 };

@@ -11,33 +11,25 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
-
+#include "ParticleSpin.h"
+#include "2d/CCNode.h"
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+class CC_DLL ParticleLayer : public c::Node {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
+  DECL_PTR(ParticleSpin, enemyDie)
+  DECL_PTR(ParticleSpin, enemyGun)
+  void removeSelf(float dt);
+
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+  ParticleLayer(const c::Vec2&);
+  virtual void update(float dt);
 
 };
 
-
 NS_END
-
-
 
 

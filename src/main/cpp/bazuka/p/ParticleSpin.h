@@ -11,33 +11,33 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
+#include "core/Primitives.h"
+#include "2d/CCSprite.h"
 
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+class CC_DLL ParticleSpin : public c::Sprite {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
+  ParticleSpin() {
+    speed.x= CCRANDOM_MINUS1_1() * 2.0f;
+    speed.y= (rand()% 3) + 1;
+  }
+
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  static ParticleSpin* create(const sstr&, const c::Vec2&);
 
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+  DECL_TV(c::Vec2, gravity, c::Vec2(0,-0.25))
+  DECL_FZ(spinCounter)
+  DECL_TD(c::Vec2,speed)
+
+  virtual void update(float dt);
 
 };
 
 
 NS_END
-
-
 
 

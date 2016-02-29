@@ -31,7 +31,7 @@ void GEngine::initEntities() {
     auto sp= cx::reifySprite("rocket.png");
     CC_HIDE(sp);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new1(Projectile,sp);
+    return mc_new2(Projectile,sp,kTypeRocket);
   }, 32);
 
   po= MGMS()->reifyPool("Bullets");
@@ -39,7 +39,7 @@ void GEngine::initEntities() {
     auto sp= cx::reifySprite("bullet.png");
     CC_HIDE(sp);
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new1(Projectile,sp);
+    return mc_new2(Projectile,sp,kTypeBullet);
   }, 32);
 
   po= MGMS()->reifyPool("Enemies");
@@ -47,7 +47,7 @@ void GEngine::initEntities() {
     return Enemy::create();
   }, 32);
 
-  auto sp = cx::reifySprite("player_idle_1.png");
+  auto sp = cx::reifySprite("player.png");
   auto ent= this->reifyEntity();
   auto py= mc_new1(Hero,sp);
   auto wb= cx::visBox();

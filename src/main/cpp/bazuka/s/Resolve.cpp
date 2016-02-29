@@ -23,7 +23,7 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  //players=engine->getNodeList(PlayerNode().typeId());
+  players=engine->getNodeList(PlayerNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
 }
 
@@ -39,7 +39,37 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
+  auto hero= CC_GNLF(Hero,players,"player");
+    auto ss=CC_GNLF(GVars,shared,"slots");
+  auto sz= hero->csize();
+  auto pos= hero->pos();
+  auto wb= cx::visBox();
+
+  float maxY = wb.top - HHZ(sz);
+  float minY = HHZ(sz);
+  float newY = MIN(MAX(pos.y, minY), maxY);
+
+  hero->setPos(pos.x, newY);
+
+  if (hero->jump) {
+    hero->jumpTimer = 10;
+    hero->jump = false;
+  }
+
+  pos=hero->pos();
+
+  if (hero->jumpTimer>0) {
+    hero->state = kPlayerStateBoost;
+    --hero->jumpTimer;
+      hero->node->setPosition( c::ccpAdd(pos, c::Vec2(0,7)));
+  } else {
+    hero->state = kPLayerStateIdle;
+    hero->jumpTimer = 0;
+    hero->node->setPosition(c::ccpAdd(pos, ss->gravity));
+  }
+
 }
+
 
 NS_END
 

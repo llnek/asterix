@@ -50,12 +50,6 @@ void Config::initAssets() {
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addAtlas("player_anim", CC_STR("pics/player_anim.plist"));
-  addImage("player_anim", CC_STR("pics/player_anim.png"));
-
-  addAtlas("enemy_anim", CC_STR("pics/enemy_anim.plist"));
-  addImage("enemy_anim", CC_STR("pics/enemy_anim.png"));
-
   addImage("game.bg", CC_STR("pics/bg.png"));
   addImage("gui.bg", CC_STR("pics/bg.png"));
 
@@ -83,14 +77,6 @@ void Config::handleResolution(const c::Size &rs) {
 void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("enemy_anim");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("player_anim");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 

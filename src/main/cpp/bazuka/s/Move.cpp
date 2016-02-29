@@ -15,6 +15,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
+#include "n/Enemy.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -39,14 +40,62 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
+  auto hero= CC_GNLF(Hero,players,"player");
+  auto sz= hero->csize();
+  auto wb= cx::visBox();
+  auto gameOver=false;
+
+  hero->animate();
+
+  //enemies
+  auto po= MGMS()->getPool("Enemies");
+  auto &cs= po->list();
+  F__LOOP(it, cs) {
+    auto e= (Enemy*) *it;
+    if (e->status) {
+      e->sync();
+      if (e->node->getPositionX() + HWZ(e->csize()) < 0) {
+        gameOver=true;
+        break;
+      }
+    }
+  }
+
+  if (gameOver) {
+    SENDMSG("/game/player/lose");
+    return;
+  }
+
+  //enemy bullets
+  po = MGMS()->getPool("Bullets"); {
+    auto &cs= po->list();
+    F__LOOP(it, cs) {
+      auto p= (Projectile*) *it;
+      p->sync();
+      if (p->node->getPositionX() <= wb.left ) {
+        p->deflate();
+      }
+    }
+  }
+
+  //player bullets
+  po = MGMS()->getPool("Rockets"); {
+    auto &cs= po->list();
+    F__LOOP(it, cs) {
+      auto p = (Projectile*) *it;
+      p->sync();
+      if (p->node->getPositionX() >= wb.right) {
+        p->deflate();
+      }
+    }
+  }
+
   onKeys(dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::onKeys(float dt) {
-
-
 }
 
 

@@ -26,6 +26,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
   void fireRocket(Hero*);
+  void onStop();
 
   DECL_PTR(ScrollingBgLayer, bgLayer)
   DECL_PTR(a::NodeList, players)
@@ -53,6 +54,12 @@ GLayer::~GLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onStop() {
+  MGMS()->stop();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onInited() {
   players = engine->getNodeList(PlayerNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
@@ -62,7 +69,6 @@ void GLayer::onInited() {
   auto wb= cx::visBox();
 
   // player setup
-  hero->node->addChild( cx::reifySpriteBatch("player_anim"));
   hero->inflate(wb.right * 0.125, wb.top * 0.5);
   addItem(hero->node, 5);
 
@@ -92,6 +98,7 @@ void GLayer::onInited() {
 
 
   ss->gravity = c::Vec2(0, -5);
+  ss->bgLayer=this->bgLayer;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -194,6 +201,10 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic == "/game/player/lose") {
+    y->onStop();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

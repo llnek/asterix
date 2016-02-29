@@ -27,9 +27,8 @@ Enemy* Enemy::create() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  sp->addChild(cx::reifySpriteBatch("enemy_anim"));
   CC_HIDE(sp);
-  MGML()->addItem(sp);
+  MGML()->addAtlasItem("game-pics", sp);
 
   auto anim = c::Animation::create();
   auto enemy= mc_new1(Enemy,sp);
@@ -60,7 +59,7 @@ void Enemy::lockAndLoad() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::sync() {
-  node->setPosition( c::ccpAdd(node->getPosition(), c::Vec2(-3, 0)));
+  node->setPositionX(node->getPositionX() - 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////

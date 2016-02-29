@@ -15,6 +15,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
+#include "n/Enemy.h"
+#include "p/ParticleLayer.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -31,7 +33,6 @@ void Collide::preamble() {
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
-    clamp(dt);
     process(dt);
   }
   return true;
@@ -39,13 +40,52 @@ bool Collide::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::clamp(float dt) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Collide::process(float dt) {
+    auto hero=CC_GNLF(Hero,players,"player");
+  auto pr= MGMS()->getPool("Rockets");
+  auto pe= MGMS()->getPool("Enemies");
+  auto pb= MGMS()->getPool("Bullets");
+  auto &rs= pr->list();
+  auto &es= pe->list();
+  auto &bs= pb->list();
+  bool gameOver=false;
+
+  F__LOOP(it, rs) {
+    auto r= (Projectile*) *it;
+    F__LOOP(it2, es) {
+      auto e = (Enemy*) *it;
+      if (cx::collide(r,e)) {
+        auto pLayer = mc_new1(ParticleLayer, e->pos());
+        MGML()->addItem(pLayer);
+        cx::sfxPlay("rocketExplode");
+        cx::sfxPlay("enemyKill");
+        r->hurt();
+        e->hurt();
+        auto msg= j::json({
+            {"score", 1}
+            });
+        SENDMSGEX("/game/player/earnscore", &msg);
+        r->deflate();
+        e->deflate();
+      }
+    }
+  }
+
+  F__LOOP(it, bs) {
+    auto b= (Projectile*) *it;
+    if (cx::collide(b, hero)) {
+      cx::sfxPlay("playerKill");
+      hero->hurt();
+      b->hurt();
+      b->deflate();
+      gameOver=true;
+      break;
+    }
+  }
+
+  if (gameOver) {
+    SENDMSG("/game/player/lose");
+  }
 }
 
 NS_END
