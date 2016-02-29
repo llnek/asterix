@@ -41,7 +41,7 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-    auto hero=CC_GNLF(Hero,players,"player");
+  auto hero=CC_GNLF(Hero,players,"player");
   auto pr= MGMS()->getPool("Rockets");
   auto pe= MGMS()->getPool("Enemies");
   auto pb= MGMS()->getPool("Bullets");
@@ -52,9 +52,10 @@ void Collide::process(float dt) {
 
   F__LOOP(it, rs) {
     auto r= (Projectile*) *it;
+    if (!r->status) { continue;  }
     F__LOOP(it2, es) {
       auto e = (Enemy*) *it;
-      if (cx::collide(r,e)) {
+      if (e->status && cx::collide(r,e)) {
         auto pLayer = mc_new1(ParticleLayer, e->pos());
         MGML()->addItem(pLayer);
         cx::sfxPlay("rocketExplode");
@@ -73,7 +74,7 @@ void Collide::process(float dt) {
 
   F__LOOP(it, bs) {
     auto b= (Projectile*) *it;
-    if (cx::collide(b, hero)) {
+    if (b->status && cx::collide(b, hero)) {
       cx::sfxPlay("playerKill");
       hero->hurt();
       b->hurt();

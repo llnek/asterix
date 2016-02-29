@@ -51,7 +51,6 @@ void AI::parallex(float dt) {
   ss->bgLayer->sync();
 }
 
-static int POO=0;
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::processEnemies(float dt) {
@@ -61,9 +60,6 @@ void AI::processEnemies(float dt) {
   } else {
     return;
   }
-
-  if (POO > 0) {return;}
-  POO++;
 
   auto po= MGMS()->getPool("Enemies");
   auto e= (Enemy*)po->getAndSet(true);

@@ -63,8 +63,8 @@ void GLayer::onStop() {
 void GLayer::onInited() {
   players = engine->getNodeList(PlayerNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
-  auto ss= CC_GNLF(GVars, shared, "slots");
   auto hero=CC_GNLF(Hero,players,"player");
+  auto ss= CC_GNLF(GVars, shared, "slots");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -114,7 +114,6 @@ void GLayer::decoUI() {
 
   regoAtlas("game-pics");
 
-  //this->schedule(schedule_selector(HelloWorld::spawnEnemy),3.0);
 
   engine = mc_new(GEngine);
 }
