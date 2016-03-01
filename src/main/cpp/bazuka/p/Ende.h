@@ -12,11 +12,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XLayer.h"
+
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class HUDLayer;
 struct CC_DLL Ende : public f::XLayer {
+
+  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
   STATIC_REIFY_LAYER(Ende)
   MDECL_DECORATE()

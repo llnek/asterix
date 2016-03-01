@@ -21,48 +21,38 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
+
+  bgLayer = f::reifyRefType<ScrollingBgLayer>();
+  bgLayer->set(3);
+  addItem(bgLayer);
+
+  auto nameLabel = cx::reifyBmfLabel("pixel", "Options Menu");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
-  }, wz.size.height/4);
+  nameLabel->setPosition(wb.cx, wb.top * 0.8);
+  addItem(nameLabel);
 
-  resume->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::resumeMusic();
-    }
-  });
-
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
-
+  auto splash = cx::reifyMenuBtn("mainmenu.png");
+  auto back = cx::reifyMenuBtn("resume.png");
+  auto menu = cx::mkHMenu(s_vec<c::MenuItem*>{splash,back}, CC_CSIZE(splash).width /4);
   splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
+    cx::sfxPlay("pop");
     cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
     cx::runEx(Splash::reify());
   });
-
-  menu->setPosition(wb.cx,wb.cy);
-  centerImage("gui.bg");
-  addItem(menu);
+  back->setCallback([=](c::Ref*) {
+      cx::sfxPlay("pop");
+      cx::pop();
+      if (XCFG()->hasAudio()) { cx::resumeMusic(); }
+  });
+  menu->setPosition(wb.cx, wb.cy);
+  addItem(menu, 10);
 
   // audio
-  auto audios= cx::reifyAudioIcons();
+  auto n3= "soundOFF.png";
+  auto n2= "soundON.png";
+  s_arr<c::MenuItem*,2> audios= { cx::reifyMenuBtn(n3,n3), cx::reifyMenuBtn(n2,n2) };
   auto sz= CC_CSIZE(audios[0]);
   auto gap= sz.width /4;
   auto c= cx::white();
@@ -77,8 +67,15 @@ void MMenu::decoUI() {
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();
   }
+
+  this->scheduleUpdate();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void MMenu::update(float ) {
+  bgLayer->sync();
+}
 
 NS_END
 

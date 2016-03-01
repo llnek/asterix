@@ -13,6 +13,7 @@
 #include "core/CCSX.h"
 #include "Splash.h"
 #include "Game.h"
+#include "HUD.h"
 #include "Ende.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -21,42 +22,45 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
+
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      retry,splash
-  }, wz.size.height/4);
+  auto btn = cx::reifyMenuBtn("mainmenu.png");
+  auto mnu= cx::mkMenu(btn);
+  btn->setCallback([=](c::Ref*) {
+      cx::sfxPlay("pop");
+      cx::runEx(Splash::reify());
+      });
+  btn->setPosition(wb.cx, wb.cy);
+  addItem(mnu);
 
-  menu->setPosition(wb.cx,wb.cy);
+  auto text = cx::reifyBmfLabel("pixel", "GAMEOVER");
+  text->setPosition(wb.cx, wb.top * 0.6);
+  addItem(text, 10);
 
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
+  auto high = CC_APPDB()->getIntegerForKey("GameHighScore");
+  auto score= getHUD()->getScore();
+  if (score > high) {
+    CC_APPDB()->setIntegerForKey("GameHighScore", score);
+    CC_APPDB()->flush();
+    text = cx::reifyBmfLabel("pixel", "NEW HIGH SCORE");
+    text->setPosition(wb.cx, wb.cy);
+    text->setScale(0.75);
+    addItem(text, 10);
 
-  splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Splash::reify());
-  });
+    text = cx::reifyBmfLabel("pixel", s::to_string(score));
+    text->setPosition(wb.cx, wb.top * 0.4);
+    text->setScale(0.75);
+    addItem(text, 10);
+  } else {
+    text = cx::reifyBmfLabel("pixel", "BETTER LUCK NEXT TIME");
+    text->setPosition(wb.cx, wb.cy);
+    text->setScale(0.75);
+    addItem(text, 10);
+  }
 
-  auto title= cx::reifySprite("game-over.png");
-  title->setPosition(wb.cx, wb.top * 0.8);
-
-  centerImage("gui.bg");
-
-  addItem(title);
-  addItem(menu);
 }
-
 
 NS_END
 

@@ -51,21 +51,15 @@ void Splash::decoUI() {
       wb.top * 0.2 - HHZ(CC_CSIZE(skeletonNode)));
   addItem(skeletonNode);
 
-  auto options = cx::reifyMenuBtn("options.png");
   auto play= cx::reifyMenuBtn("play.png");
   auto sz=CC_CSIZE(play);
-  auto menu = cx::mkHMenu(s_vec<c::MenuItem*> {play,options}, sz.width/4);
-  options->setCallback(
-    [=](c::Ref*) {
-      cx::sfxPlay("pop");
-      //cx::runEx(MMenu::reify());
-    });
+  auto menu = cx::mkMenu(play);
   play->setCallback(
     [=](c::Ref*) {
       cx::sfxPlay("pop");
       cx::runEx(Game::reify( new GameCtx() ));
     });
-  menu->setPosition(wb.cx, wb.cy);
+  play->setPosition(wb.cx, wb.cy);
   addItem(menu, 10);
 
   auto newHighScoreLabel = cx::reifyBmfLabel("pixel", "CURRENT HIGH SCORE");

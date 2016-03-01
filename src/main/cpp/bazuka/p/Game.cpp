@@ -56,6 +56,9 @@ GLayer::~GLayer() {
 //
 void GLayer::onStop() {
   MGMS()->stop();
+  surcease();
+  this->setOpacity(255 * 0.1);
+  Ende::reify(MGMS(), 4);
 }
 
 //////////////////////////////////////////////////////////////////////////////

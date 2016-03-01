@@ -16,16 +16,20 @@ NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
+class CC_DLL HUDLayer : public f::XLayer {
+
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_IZ(score)
+
+public:
 
   STATIC_REIFY_LAYER(HUDLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, scoreLabel)
-  DECL_IZ(score)
-
   void updateScore(int);
+  int getScore() { return score; }
+
 };
 
 

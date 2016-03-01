@@ -12,14 +12,20 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/GameScene.h"
+#include "ScrollingBgLayer.h"
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MMenu : public f::XScene {
+class CC_DLL MMenu : public f::XScene {
+
+  DECL_PTR(ScrollingBgLayer, bgLayer)
+
+public:
 
   STATIC_REIFY_SCENE(MMenu)
   MDECL_DECORATE()
+  MDECL_UPDATE()
 
 };
 
