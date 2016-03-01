@@ -14,7 +14,7 @@
 #include "ash/System.h"
 #include "GEngine.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Resolve : public a::System {

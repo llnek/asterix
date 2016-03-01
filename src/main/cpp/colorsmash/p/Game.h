@@ -11,28 +11,30 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
+#include "x2d/GameScene.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+struct CC_DLL Game : public f::GameScene {
+  virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual f::GameLayer* getGLayer() {
+    return
+       (f::GameLayer*) getLayer(2);
+  }
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  virtual ~Game() {}
+    Game();
+};
 
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GameCtx : public f::GCX {
 };
 
 

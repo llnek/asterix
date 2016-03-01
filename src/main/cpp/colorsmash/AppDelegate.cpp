@@ -8,36 +8,36 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
+
+#include "ash/NodeRego.h"
+#include "n/N.h"
+#include "p/Config.h"
+#include "AppDelegate.h"
+
+NS_USING(fusii)
+NS_USING(ash)
+NS_USING(colorsmash)
+
 //////////////////////////////////////////////////////////////////////////////
+//
+  AppDelegate::AppDelegate()  : App ("colorsmash") {
 
-#include "ash/System.h"
-#include "GEngine.h"
+  // register all ash::node factories here
+  auto r= NodeRegistry::self();
 
-NS_BEGIN(@@APPID@@)
+  r->rego( mc_new(SharedNode));
+  r->rego( mc_new(PlayerNode));
+
+  // set up app-config
+  Config::reify();
+}
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
-
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
-
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
-
-};
-
-
-NS_END
-
+//
+AppDelegate::~AppDelegate() {
+  delete NodeRegistry::self();
+  delete XConfig::self();
+}
 
 
 

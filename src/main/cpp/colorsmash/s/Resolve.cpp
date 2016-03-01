@@ -8,33 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
-
-#include "ash/System.h"
-#include "GEngine.h"
-
-NS_BEGIN(@@APPID@@)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Resolve.h"
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(colorsmash)
 
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
 
-};
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::preamble() {
+  players=engine->getNodeList(PlayerNode().typeId());
+  shared=engine->getNodeList(SharedNode().typeId());
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::update(float dt) {
+  if (MGMS()->isLive()) {
+    process(dt);
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::process(float dt) {
+}
 
 NS_END
 

@@ -8,36 +8,37 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Resolve.h"
+#include "Collide.h"
+#include "Move.h"
+#include "AI.h"
 #include "GEngine.h"
 
-NS_BEGIN(@@APPID@@)
+NS_ALIAS(cx,fusii::ccsx)
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+void GEngine::initEntities() {
+  auto ent=this->reifyEntity();
+  ent->checkin(mc_new(GVars));
+  auto wb= cx::visBox();
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+}
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
-
-};
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::initSystems() {
+  //regoSystem(mc_new1(Resolve,this));
+  //regoSystem(mc_new1(Collide,this));
+  //regoSystem(mc_new1(AI,this));
+  //regoSystem(mc_new1(Move,this));
+}
 
 
 NS_END
-
-
-
 

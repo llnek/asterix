@@ -11,33 +11,21 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
-
-NS_BEGIN(@@APPID@@)
+#include "x2d/XLayer.h"
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+struct CC_DLL Ende : public f::XLayer {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
-
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+  STATIC_REIFY_LAYER(Ende)
+  MDECL_DECORATE()
+  MDECL_GET_IID(4)
 
 };
 
 
 NS_END
-
 
 
 

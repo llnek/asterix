@@ -11,33 +11,15 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
-
-NS_BEGIN(@@APPID@@)
+#include "aeon/fusilli.h"
+#include "core/App.h"
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
-
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
-
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
-
+//
+struct CC_DLL AppDelegate : public fusii::App {
+  virtual ~AppDelegate();
+  AppDelegate();
 };
-
-
-NS_END
-
 
 
 

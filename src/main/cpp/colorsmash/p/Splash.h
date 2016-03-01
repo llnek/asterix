@@ -11,33 +11,26 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
-
-NS_BEGIN(@@APPID@@)
+#include "x2d/XScene.h"
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+class CC_DLL Splash : public f::XScene {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
+  c::Vec2 getRandomPositionForTile();
+  c::Color3B getColorForTile(int);
+  void doAnimation(float);
+
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+  STATIC_REIFY_SCENE(Splash)
+  MDECL_DECORATE()
 
 };
 
 
 NS_END
-
 
 
 

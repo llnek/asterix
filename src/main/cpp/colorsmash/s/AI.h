@@ -14,22 +14,24 @@
 #include "ash/System.h"
 #include "GEngine.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+class CC_DLL AI : public a::System {
 
-  DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
+  DECL_PTR(c::DelayTime, timer)
   void process(float);
+  void parallex(float);
+
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
+  MDECL_SYS_PRIORITY( a::AI)
+  MDECL_SYS_TPID("n/AI")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  AI(a::Engine *e)
   : System(e)
   {}
 
@@ -37,7 +39,6 @@ public:
 
 
 NS_END
-
 
 
 

@@ -11,33 +11,28 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
+#include "x2d/XLayer.h"
+NS_BEGIN(colorsmash)
 
-NS_BEGIN(@@APPID@@)
+//////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL HUDLayer : public f::XLayer {
 
-//////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+  DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(c::Label, timeLabel)
+  DECL_IZ(score)
+  DECL_IZ(time)
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
-
+  void updateTimer(int);
+  void updateScore(int);
 };
 
 
 NS_END
-
 
 
 

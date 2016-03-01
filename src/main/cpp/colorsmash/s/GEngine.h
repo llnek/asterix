@@ -11,33 +11,24 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
+#include "ash/Engine.h"
+#include "n/N.h"
 
-NS_BEGIN(@@APPID@@)
-
+NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+class CC_DLL GEngine  : public a::Engine {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+  virtual void initEntities();
+  virtual void initSystems();
 
 };
 
 
-NS_END
 
+NS_END
 
 
 

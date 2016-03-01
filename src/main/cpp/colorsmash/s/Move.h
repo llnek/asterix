@@ -14,22 +14,25 @@
 #include "ash/System.h"
 #include "GEngine.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+class CC_DLL Move : public a::System {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(a::NodeList,players)
+  DECL_PTR(a::NodeList,shared)
+
   void process(float);
+  void onKeys(float);
+
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
+  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_TPID("n/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  Move(a::Engine *e)
   : System(e)
   {}
 

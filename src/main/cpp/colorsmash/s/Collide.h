@@ -14,22 +14,22 @@
 #include "ash/System.h"
 #include "GEngine.h"
 
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
-
+class CC_DLL Collide : public a::System {
   DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
   void process(float);
+  void clamp(float);
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
+  MDECL_SYS_PRIORITY( a::Collide)
+  MDECL_SYS_TPID("n/Collide")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  Collide(a::Engine *e)
   : System(e)
   {}
 

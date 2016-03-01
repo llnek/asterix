@@ -11,33 +11,41 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "GEngine.h"
-
-NS_BEGIN(@@APPID@@)
+#include "ash/NodeRego.h"
+#include "C.h"
+NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
+//
+struct CC_DLL SharedNode : public a::NodeFactory {
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  void process(float);
-public:
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"slots", "n/GVars" }
+    });
+  }
 
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  MDECL_NFAC_TPID( "n/SharedNode")
 
-  Resolve(a::Engine *e)
-  : System(e)
-  {}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL PlayerNode : public a::NodeFactory {
+
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"player", "n/SpaceShip" },
+        {"motion", "n/Gesture"}
+    });
+  }
+
+  MDECL_NFAC_TPID( "n/PlayerNode")
 
 };
 
 
 NS_END
-
 
 
 
