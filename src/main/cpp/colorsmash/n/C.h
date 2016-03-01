@@ -18,41 +18,6 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(colorsmash)
 
-enum Constants {
-  MAX_COLORS = 4,            // maximum number of colours we can use
-  TILE_SIZE = 32,             // size in points of each tile (same as tile.png)
-  NUM_COLS = 14,              // maximum number of columns
-  NUM_ROWS = 20,              // maximum number of rows
-  SCORE_PER_TILE = 10         // score when a tile is cleared
-};
-
-// define an object that we can use an enumeration for our colour types
-enum E_COLOR_TYPE  {
-    E_COLOR_NONE=0,
-    E_COLOR_RED,
-    E_COLOR_GREEN,
-    E_COLOR_BLUE,
-    E_COLOR_YELLOW
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL SpaceShip : public f::ComObj {
-  MDECL_COMP_TPID("n/SpaceShip")
-  SpaceShip(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Asteroid : public f::ComObj {
-  MDECL_COMP_TPID("n/Asteroid")
-  Asteroid(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
-};
-
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Gesture : public a::Component {
@@ -64,7 +29,7 @@ struct CC_DLL Gesture : public a::Component {
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  s_arr<c::Sprite*,2> bgSprites;
+  DECL_BF(countDown)
 };
 
 

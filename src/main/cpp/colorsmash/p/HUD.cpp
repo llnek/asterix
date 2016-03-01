@@ -57,6 +57,11 @@ void HUDLayer::updateTimer(int n) {
 void HUDLayer::updateScore(int n) {
   score += n;
   scoreLabel->setString("Score: " + s::to_string(score));
+  scoreLabel->runAction(
+      c::Sequence::create(
+        c::EaseSineIn::create( c::ScaleTo::create(0.125, 1.1)),
+        c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
+        CC_NIL));
 }
 
 

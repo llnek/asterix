@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "Splash.h"
 #include "Game.h"
-#include "n/C.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(colorsmash)
@@ -25,7 +25,7 @@ void Splash::decoUI() {
 
     auto wz= cx::visRect();
     auto wb= cx::visBox();
-    
+
   // create a coloured layer as background
   auto background = c::LayerColor::create(c::Color4B(25, 0, 51, 255), wz.size.width, wz.size.height);
   addItem(background);
@@ -39,6 +39,7 @@ void Splash::decoUI() {
   auto playButton = cx::createMenuBtn("play");
   auto menu=cx::mkMenu(playButton);
   playButton->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(new f::GCX() ));
       });
   playButton->setPosition(wb.cx,wb.cy);
   addItem(menu, 1);
@@ -66,35 +67,6 @@ void Splash::doAnimation(float) {
           c::RemoveSelf::create(true), CC_NIL));
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-c::Vec2 Splash::getRandomPositionForTile() {
-  return c::Vec2(floor(1 + cx::rand() * NUM_COLS) * TILE_SIZE,
-      floor(1 + cx::rand() * (NUM_ROWS+5)) * TILE_SIZE );
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-c::Color3B Splash::getColorForTile(int colorData) {
-  switch (colorData) {
-    case E_COLOR_RED:
-      return c::Color3B(255, 128, 0);
-    break;
-    case E_COLOR_GREEN:
-      return c::Color3B(0, 204, 0);
-    break;
-    case E_COLOR_BLUE:
-      return c::Color3B(0, 76, 153);
-    break;
-    case E_COLOR_YELLOW:
-      return c::Color3B(102, 0, 102);
-    break;
-  }
-
-  throw "bad color!";
-}
-
 
 
 

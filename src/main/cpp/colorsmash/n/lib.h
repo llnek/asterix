@@ -8,38 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
 #include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Collide.h"
-
-NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(colorsmash)
 
+enum Constants {
+  MAX_COLORS = 4,            // maximum number of colours we can use
+  TILE_SIZE = 32,             // size in points of each tile (same as tile.png)
+  NUM_COLS = 14,              // maximum number of columns
+  NUM_ROWS = 20,              // maximum number of rows
+  SCORE_PER_TILE = 10         // score when a tile is cleared
+};
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Collide::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
-}
+// define an object that we can use an enumeration for our colour types
+enum E_COLOR_TYPE  {
+    E_COLOR_NONE=0,
+    E_COLOR_RED,
+    E_COLOR_GREEN,
+    E_COLOR_BLUE,
+    E_COLOR_YELLOW
+};
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Collide::update(float dt) {
-  if (MGMS()->isLive()) {
-    process(dt);
-  }
-  return true;
-}
+void findTilesToRemove(const s_vec<int> &tiles,
+    FArrInt *garbo,
+    int col, int row, int tileColor);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Collide::process(float dt) {
-}
+c::Color3B getColorForTile(int colorData);
+
+c::Vec2 getRandomPositionForTile();
+
+c::Vec2 getPositionForTile(int);
 
 NS_END
 

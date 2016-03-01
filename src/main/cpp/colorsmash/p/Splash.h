@@ -18,8 +18,6 @@ NS_BEGIN(colorsmash)
 //
 class CC_DLL Splash : public f::XScene {
 
-  c::Vec2 getRandomPositionForTile();
-  c::Color3B getColorForTile(int);
   void doAnimation(float);
 
 public:

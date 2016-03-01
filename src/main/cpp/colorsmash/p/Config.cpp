@@ -11,7 +11,7 @@
 
 #include "Splash.h"
 #include "Config.h"
-#include "n/C.h"
+#include "n/lib.h"
 
 NS_BEGIN(colorsmash)
 
