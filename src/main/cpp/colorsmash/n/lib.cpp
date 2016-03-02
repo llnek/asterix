@@ -18,7 +18,7 @@ NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
 //
 void findTilesToRemove(const s_vec<int> &tiles,
-    FArrInt *garbo,
+    s_vec<int> &garbo,
     int col, int row, int tileColor) {
 
   // first do bounds checking
@@ -34,12 +34,12 @@ void findTilesToRemove(const s_vec<int> &tiles,
   }
 
   // check if tile is already saved
-  if (garbo->get(tileId) >= 0) {
+    if (s::find(garbo.begin(),garbo.end(),tileId) != garbo.end()) {
     return;
   }
 
   // save the tile to be removed
-  garbo->set(tileId, tileId);
+  garbo.push_back(tileId);
 
   // check up
   findTilesToRemove(tiles, garbo, col, row+1, tileColor);

@@ -18,6 +18,17 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(colorsmash)
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GameTile : public f::ComObj {
+  MDECL_COMP_TPID("n/GameTile")
+  GameTile(not_null<c::Node*> n) : ComObj(n) {
+  }
+  DECL_TV(int,index,-1)
+  DECL_TV(int,type,-1)
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Gesture : public a::Component {
@@ -29,7 +40,6 @@ struct CC_DLL Gesture : public a::Component {
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_BF(countDown)
 };
 
 

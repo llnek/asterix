@@ -23,13 +23,15 @@ NS_BEGIN(colorsmash)
 //
 void AI::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
+  timer=cx::reifyTimer(MGML(), 1000);
+  time=60;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
-    parallex(dt);
+    //parallex(dt);
     process(dt);
   }
   return true;
@@ -40,15 +42,31 @@ bool AI::update(float dt) {
 void AI::parallex(float dt) {
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wb= cx::visBox();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
+  if (!cx::timerDone(timer)) { return; }  else {
+    cx::undoTimer(timer);
+  }
+  --time;
+  auto msg= j::json({
+      {"time", time}
+      });
+  SENDMSGEX("/game/hud/updatetimer", &msg);
+
+  if (time <= 0) {
+    cx::undoTimer(timer);
+    SENDMSG("/game/player/lose");
+      return;
+  }
+   if (time == 5) {
+    SENDMSG("/game/hud/redzone");
+  }
+    timer=cx::reifyTimer(MGML(), 1000);
 
 }
-
 
 
 NS_END

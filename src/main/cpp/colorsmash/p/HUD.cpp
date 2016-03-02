@@ -23,7 +23,7 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  time = 60;
+  time = 0;
   score=0;
 
   scoreLabel = cx::reifyLabel("dft", 18, "");
@@ -47,8 +47,23 @@ void HUDLayer::decoUI() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void HUDLayer::flashAlert() {
+  auto seq= c::Sequence::create(
+      c::EaseSineIn::create(c::ScaleTo::create(0.125, 1.1)),
+      c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)));
+  timeLabel->runAction(c::RepeatForever::create(seq));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::pause() {
+  timeLabel->stopAllActions();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::updateTimer(int n) {
-  time += n;
+  time = n;
   timeLabel->setString("Time: " + s::to_string(time));
 }
 

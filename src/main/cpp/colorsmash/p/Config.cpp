@@ -52,9 +52,8 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addImage("pause", CC_STR("pics/pause_button.png"));
-  addImage("play", CC_STR("pics/play_button.png"));
-  addImage("tile", CC_STR("pics/tile.png"));
+  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("crash", CC_STR("sfx/crash.wav"));
@@ -72,9 +71,9 @@ void Config::handleResolution(const c::Size &rs) {
 //
 void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
-  //auto fp= getAtlas("game-pics");
-  //c->addSpriteFramesWithFile( fp);
-  //CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,7 @@ void Splash::decoUI() {
   addItem(titleLabel, 1);
 
   // create a play button to move to the game world
-  auto playButton = cx::createMenuBtn("play");
+  auto playButton = cx::reifyMenuBtn("play_button.png");
   auto menu=cx::mkMenu(playButton);
   playButton->setCallback([=](c::Ref*) {
       cx::runEx(Game::reify(new f::GCX() ));
@@ -53,7 +53,7 @@ void Splash::decoUI() {
 void Splash::doAnimation(float) {
   auto numTiles = floor(cx::rand() * 30);
   for (auto i = 0;  i < numTiles; ++i) {
-    auto tile = cx::createSprite("tile");
+    auto tile = cx::reifySprite("tile.png");
     tile->setColor(getColorForTile(1 + floor(cx::rand() * MAX_COLORS)));
     tile->setPosition(getRandomPositionForTile());
     tile->setScale(0);

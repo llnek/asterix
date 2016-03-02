@@ -35,7 +35,7 @@ void GEngine::initEntities() {
 void GEngine::initSystems() {
   //regoSystem(mc_new1(Resolve,this));
   //regoSystem(mc_new1(Collide,this));
-  //regoSystem(mc_new1(AI,this));
+  regoSystem(mc_new1(AI,this));
   //regoSystem(mc_new1(Move,this));
 }
 

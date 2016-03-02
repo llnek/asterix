@@ -32,7 +32,7 @@ enum E_COLOR_TYPE  {
 };
 
 void findTilesToRemove(const s_vec<int> &tiles,
-    FArrInt *garbo,
+    s_vec<int>&,
     int col, int row, int tileColor);
 
 c::Color3B getColorForTile(int colorData);
