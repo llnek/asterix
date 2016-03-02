@@ -33,8 +33,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onEnd();
   void createTileSprite(int);
   bool onGUI(const c::Vec2 &);
-    void findTilesToShift();
-    
+  void findTilesToShift();
+
   DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
   DECL_BF(busySignal)
@@ -408,7 +408,7 @@ void GLayer::onEnd() {
   MGMS()->stop();
   surcease();
   getHUD()->pause();
-  //Ende::reify(MGMS(),4);
+  Ende::reify(MGMS(),4);
 }
 
 END_NS_UNAMED
@@ -422,7 +422,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
     auto v=JS_INT(msg->operator[]("time"));
     y->getHUD()->updateTimer(v);
   }
-  if ("/game/hud/redalert" == topic) {
+  if ("/game/hud/redzone" == topic) {
     y->getHUD()->flashAlert();
   }
   if ("/game/hud/earnscore" == topic) {

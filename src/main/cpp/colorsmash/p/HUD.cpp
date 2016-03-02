@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
+#include "MMenu.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(colorsmash)
@@ -34,8 +35,10 @@ void HUDLayer::decoUI() {
   timeLabel->setPosition(wb.right * 0.66, wb.top * 0.875);
   addItem(timeLabel);
 
-  auto pause= cx::createMenuBtn("pause");
+  auto pause= cx::reifyMenuBtn("pause_button.png");
   pause->setCallback([=](c::Ref*){
+      cx::sfxPlay("button");
+      cx::pushEx(MMenu::reify());
   });
   pause->setPosition(wb.right * 0.9, wb.top * 0.95);
   auto menu= cx::mkMenu(pause);
@@ -50,7 +53,8 @@ void HUDLayer::decoUI() {
 void HUDLayer::flashAlert() {
   auto seq= c::Sequence::create(
       c::EaseSineIn::create(c::ScaleTo::create(0.125, 1.1)),
-      c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)));
+      c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
+                                CC_NIL);
   timeLabel->runAction(c::RepeatForever::create(seq));
 }
 

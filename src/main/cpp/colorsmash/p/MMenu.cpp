@@ -21,44 +21,42 @@ NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
+
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
-  }, wz.size.height/4);
+  auto bg = c::LayerColor::create(
+      c::Color4B(25, 0, 51, 255), wz.size.width,wz.size.height);
+  addItem(bg);
 
-  resume->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::resumeMusic();
-    }
-  });
+  auto title = cx::reifyLabel("dft",52, "Options");
+  title->setPosition(wb.cx, wb.top * 0.75);
+  addItem(title);
 
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
-
-  splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Splash::reify());
-  });
-
-  menu->setPosition(wb.cx,wb.cy);
-  centerImage("gui.bg");
+  auto b1 = c::MenuItemLabel::create(
+      cx::reifyLabel("dft",32,"Restart"),
+      [=](c::Ref*) {
+      cx::pop();
+      cx::runEx(Game::reify( new f::GCX() ));
+      });
+  auto b2 = c::MenuItemLabel::create(
+      cx::reifyLabel("dft",32,"Back"),
+      [=](c::Ref*) {
+        if (XCFG()->hasAudio()) {
+          cx::resumeMusic();
+        }
+        cx::pop();
+      });
+  auto b3 = c::MenuItemLabel::create(
+      cx::reifyLabel("dft",32,"Quit"),
+      [=](c::Ref*) {
+        cx::pop();
+        cx::runEx(Splash::reify());
+      });
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{
+      b1,b2,b3
+      }, CC_CSIZE(b1).width/4);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // audio

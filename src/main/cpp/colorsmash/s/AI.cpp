@@ -24,7 +24,7 @@ NS_BEGIN(colorsmash)
 void AI::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
   timer=cx::reifyTimer(MGML(), 1000);
-  time=60;
+  time=10;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,9 +57,8 @@ void AI::process(float dt) {
   SENDMSGEX("/game/hud/updatetimer", &msg);
 
   if (time <= 0) {
-    cx::undoTimer(timer);
     SENDMSG("/game/player/lose");
-      return;
+    return;
   }
    if (time == 5) {
     SENDMSG("/game/hud/redzone");

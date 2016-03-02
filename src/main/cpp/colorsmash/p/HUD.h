@@ -27,6 +27,7 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_IZ(score)
   DECL_IZ(time)
 
+  int getScore() { return score; }
   void flashAlert();
   void pause();
   void updateTimer(int);
