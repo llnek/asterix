@@ -136,9 +136,10 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
     y->onEnd();
   }
 
-  if (""==topic) {
+  if ("/game/player/earnscore"==topic) {
+    auto msg= (j::json*) m;
+    y->getHUD()->updateScore(JS_INT(msg->operator[]("score")));
   }
-
 
   if (""==topic) {
   }
