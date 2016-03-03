@@ -28,6 +28,7 @@ BEGIN_NS_UNAMED
 struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  void onEnd();
 
   DECL_PTR(a::NodeList, shared)
 
@@ -105,6 +106,15 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onEnd() {
+  this->setOpacity(255 * 0.1);
+  MGMS()->stop();
+  surcease();
+  Ende::reify(MGMS(),4);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
@@ -121,6 +131,23 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if ("/game/player/lose"==topic) {
+    y->onEnd();
+  }
+
+  if (""==topic) {
+  }
+
+
+  if (""==topic) {
+  }
+
+
+  if (""==topic) {
+  }
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

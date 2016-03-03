@@ -16,16 +16,19 @@ NS_BEGIN(flappy)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
-
-  STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+class CC_DLL HUDLayer : public f::XLayer {
 
   DECL_PTR(c::Sprite, tutorialSprite)
   DECL_PTR(c::Label, scoreLabel)
   DECL_IZ(score)
 
+public:
+
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
+
+  int getScore() { return score; }
   void getReady();
   void updateScore(int);
 };
