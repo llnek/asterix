@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>en</key>
+    <dict>
+
+      <key>mobileStart</key>
+      <string>Press Anywhere To Start!</string>
+
+      <key>webStart</key>
+      <string>Press Spacebar To Start!</string>
+
+      <key>passwd</key>
+      <string>Password</string>
+
+      <key>userid</key>
+      <string>UserId</string>
+
+      <key>player2</key>
+      <string>Player 2</string>
+
+      <key>player1</key>
+      <string>Player 1</string>
+
+      <key>computer</key>
+      <string>Computer</string>
+
+      <key>cpu</key>
+      <string>CPU</string>
+
+      <key>2players</key>
+      <string>2 Players</string>
+
+      <key>1player</key>
+      <string>1 Player</string>
+
+      <key>online</key>
+      <string>Online</string>
+
+      <key>gameover</key>
+      <string>Game Over</string>
+
+      <key>quit!</key>
+      <string>Quit</string>
+
+      <key>back</key>
+      <string>Back</string>
+
+      <key>ok</key>
+      <string>OK</string>
+
+      <key>mmenu</key>
+      <string>Main Menu</string>
+
+      <key>replay</key>
+      <string>REPLAY</string>
+
+      <key>play</key>
+      <string>PLAY</string>
+
+      <key>waitothers</key>
+      <string>Waiting...\nfor other players.</string>
+
+      <key>waitother</key>
+      <string>Waiting...\nfor another player.</string>
+
+      <key>signinplay</key>
+      <string>Please sign in to play.</string>
+
+      <key>quit?</key>
+      <string>Continue and quit game?</string>
+
+    </dict>
+
+</dict>
+</plist>
+
