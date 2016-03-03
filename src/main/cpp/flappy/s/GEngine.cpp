@@ -24,40 +24,7 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto p= MGMS()->reifyPool("Asteroids");
-  auto wb= cx::visBox();
-
-  p->preset([=]() -> f::Poolable* {
-    auto png = "asteroid_" + s::to_string(1 + (rand() % 3)) + ".png";
-    auto tmp = cx::reifySprite(png);
-    auto sz= CC_CSIZE(tmp);
-    CC_HIDE(tmp);
-    MGML()->addItem(tmp,-1);
-    auto body = c::PhysicsBody::createCircle(HWZ(sz));
-    body->setContactTestBitmask(true);
-    body->setDynamic(true);
-    body->setEnabled(false);
-    tmp->setPhysicsBody(body);
-    return mc_new1(Asteroid,tmp);
-  }, 32);
-
-  auto v=CC_CSV(c::Integer,"SHIP+SPEED");
-  auto s = cx::reifySprite("player.png");
-  auto py= mc_new1(SpaceShip,s);
-  auto sz= py->csize();
-  auto body = c::PhysicsBody::createCircle(HWZ(sz));
-  body->setContactTestBitmask(true);
-  body->setDynamic(true);
-  s->setPhysicsBody(body);
-  py->inflate(wb.cx, wb.cy);
-  MGML()->addItem(s,-1);
-
-  auto ent= this->reifyEntity();
-  ent->checkin(mc_new(Gesture));
-  py->speed=v;
-  ent->checkin(py);
-
-  ent=this->reifyEntity();
+  auto ent=this->reifyEntity();
   ent->checkin(mc_new(GVars));
 }
 

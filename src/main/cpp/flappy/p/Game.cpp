@@ -17,6 +17,10 @@
 #include "Ende.h"
 #include "Game.h"
 
+#include "n/Fairytale.h"
+#include "n/Tower.h"
+#include "n/Dragon.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
 BEGIN_NS_UNAMED
@@ -25,18 +29,13 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  bool onContactBegin(c::PhysicsContact&);
-  void setPhysicsWorld(c::PhysicsWorld*);
-
-  DECL_PTR(c::PhysicsWorld, pWorld);
-  DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -54,68 +53,50 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  players = engine->getNodeList(PlayerNode().typeId());
   shared = engine->getNodeList(SharedNode().typeId());
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  for (auto n = 0; n < 2;  ++n) {
-    auto s = cx::createSprite("game.bg");
-    ss->bgSprites[n]=s;
-    s->setPosition(
-        wb.cx,
-        (-1 * wz.size.height * n) + wb.cy);
-    addItem(s, -2);
-  }
+  // set the roof of the castle
+  ss->castleRoof = 100;
 
-  setPhysicsWorld(MGMS()->getPhysicsWorld());
+  // create & init all managers
+  ss->towers= new Tower(this);
+  ss->towers->init();
 
-  auto ln = c::EventListenerPhysicsContact::create();
-  ln->onContactBegin = CC_CALLBACK_1(GLayer::onContactBegin, this);
-  getEventDispatcher()->addEventListenerWithSceneGraphPriority(ln, this);
+  ss->dragon= new Dragon(ss,this);
+  ss->dragon->init();
 
+  ss->fairytale= new Fairytale(this);
+  ss->fairytale->init();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
-  pWorld = world;
-  pWorld->setGravity(c::Vec2(0, 0));
-}
+void GLayer::onMouseClick(const c::Vec2 &loc) {
+  auto ss= CC_GNLF(GVars, shared, "slots");
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onContactBegin(c::PhysicsContact&) {
-  setOpacity(255 * 0.1);
-  cx::sfxPlay("crash");
-  surcease();
-  MGMS()->stop();
-  Ende::reify(MGMS(), 4);
-  return true;
-}
+  ss->hasGameStarted = true;
+  getHUD()->getReady();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  py->setPos(loc.x,loc.y);
+  // inform DragonManager that the game has started
+  ss->dragon->onGameStart();
+  // fly dragon...fly!!!
+  ss->dragon->dragonFlap();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  auto loc= touch->getLocation();
-  return cx::isClicked(py->node,loc);
+  onMouseClick(touch->getLocation());
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  auto loc= touch->getLocation();
-  py->setPos(loc.x, loc.y);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,23 +106,14 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
-  auto btn= cx::reifyMenuBtn("pause-std.png","pause-sel.png");
-  auto sz= CC_CSIZE(btn);
-  auto gap= sz.width / 4;
   auto wz= cx::visRect();
   auto wb= cx::visBox();
-  btn->setPosition(
-      wb.left + sz.width - gap,
-      wb.top - sz.height + gap);
-  btn->setCallback([=](c::Ref*){
-    cx::sfxPlay("button");
-    cx::pushEx(MMenu::reify());
-  });
-  auto menu = cx::mkMenu(btn);
-  addItem(menu);
+
+  regoAtlas("game-pics", E_LAYER_BG + 1);
+  regoAtlas("dhtex", E_LAYER_BG + 1);
+
 
   engine = mc_new(GEngine);
-  cx::sfxMusic("background", true);
 }
 
 END_NS_UNAMED

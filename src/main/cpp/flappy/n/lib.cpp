@@ -9,36 +9,35 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-//////////////////////////////////////////////////////////////////////////////
-
-#include "x2d/GameScene.h"
 #include "core/XConfig.h"
+#include "core/ComObj.h"
 #include "core/CCSX.h"
-#include "Resolve.h"
+#include "lib.h"
 
-NS_ALIAS(cx,fusii::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(flappy)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+void addDragon(f::XNode *node) {
+  auto dragonSprite = cx::reifySprite("dhch_1");
+  auto wb= cx::visBox();
+
+  dragonSprite->setPosition(wb.right * 0.2, wb.top * 0.5);
+  node->addAtlasItem("dhtex", dragonSprite, E_LAYER_PLAYER);
+
+  auto animation = c::AnimationCache::getInstance()->getAnimation("dragonFlying");
+  dragonSprite->runAction(c::RepeatForever::create(c::Animate::create(animation)));
+
+  auto flySequence = c::Sequence::create(
+      c::EaseSineOut::create(c::MoveBy::create(animation->getDuration()/2, c::Vec2(0, 10))),
+      c::EaseSineOut::create(c::MoveBy::create(animation->getDuration()/2, c::Vec2(0, -10))),
+      CC_NIL);
+
+  dragonSprite->runAction(c::RepeatForever::create(flySequence));
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Resolve::update(float dt) {
-  if (MGMS()->isLive()) {
-    process(dt);
-  }
-  return true;
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::process(float dt) {
-}
 
 NS_END
 

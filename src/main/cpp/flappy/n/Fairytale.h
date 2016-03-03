@@ -8,37 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
+#include "x2d/XNode.h"
+#include "lib.h"
 
-NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
-}
+class CC_DLL Fairytale {
+  DECL_TV(c::Size,silhouetteSpriteSize,c::Size(0,0))
+  DECL_TV(c::Size,castleSpriteSize,c::Size(0,0))
+  DECL_PTR(f::XNode,parentNode)
+  s_vec<c::Sprite*> silhouetteSprites;
+  s_vec<c::Sprite*> castleSprites;
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Resolve::update(float dt) {
-  if (MGMS()->isLive()) {
-    process(dt);
-  }
-  return true;
-}
+  DECL_IZ(lastCastleIndex)
+  DECL_IZ(lastSilhouetteIndex)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::process(float dt) {
-}
+  void createSilhouette();
+  void createCastle();
+  void createStars();
+  void updateCastle();
+  void updateSilhouette();
+
+public:
+
+  Fairytale(f::XNode *n) { parentNode=n; }
+  void update(float);
+    void init();
+};
 
 NS_END
 

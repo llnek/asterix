@@ -8,37 +8,43 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
+#include "x2d/XNode.h"
+#include "n/lib.h"
+#include "n/C.h"
 
-NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
-}
+class CC_DLL Dragon {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Resolve::update(float dt) {
-  if (MGMS()->isLive()) {
-    process(dt);
+  DECL_PTR(f::XNode, parentNode)
+  DECL_PTR(GVars,ss)
+
+public:
+  void dragonFlap();
+  void dragonDeath();
+
+
+  Dragon(GVars *ss, f::XNode *n) {
+    this->ss=ss;
+     parentNode=n;
   }
-  return true;
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::process(float dt) {
-}
+  void init();
+  void onGameStart();
+  void update(float);
+
+  DECL_TV(c::Vec2, dragonPosition, c::Vec2(0,0))
+  DECL_TV(c::Vec2, dragonSpeed, c::Vec2(0,0))
+  DECL_PTR(c::Sprite,dragonSprite)
+  DECL_BF(mustApplyGravity)
+
+};
+
 
 NS_END
 

@@ -22,9 +22,11 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
+  DECL_PTR(c::Sprite, tutorialSprite)
   DECL_PTR(c::Label, scoreLabel)
   DECL_IZ(score)
 
+  void getReady();
   void updateScore(int);
 };
 

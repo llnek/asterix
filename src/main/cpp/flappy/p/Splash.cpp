@@ -14,6 +14,7 @@
 #include "core/CCSX.h"
 #include "Splash.h"
 #include "Game.h"
+#include "n/Fairytale.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -22,24 +23,36 @@ NS_BEGIN(flappy)
 //
 void Splash::decoUI() {
 
-  auto play= cx::reifyMenuBtn("play-std.png", "play-sel.png");
-  auto title= cx::reifySprite("game-title.png");
-  auto menu= cx::mkMenu(play);
+  auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  // background, title
-  title->setPosition(wb.cx, wb.top * 0.8);
-  centerImage("gui.bg");
-  addItem(title);
+  regoAtlas("game-pics", 1+E_LAYER_BG);
+  regoAtlas("dhtex", 1+E_LAYER_BG);
 
-  // one play button
-  play->setPosition(wb.cx, wb.top * 0.2);
-  play->setCallback([=](c::Ref*){
-    cx::sfxPlay("button");
-    cx::runEx(Game::reify(new GameCtx() ));
+  fairytale= new Fairytale(this);
+  fairytale->init();
+
+  addDragon(this);
+
+  auto title= cx::reifySprite("dhtitle");
+  title->setPosition(wb.cx, wb.top * 0.75);
+  addAtlasItem("dhtex", title,1);
+
+  auto btn = cx::reifyMenuBtn("dhplay");
+  auto menu= cx::mkMenu(btn);
+  btn->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify( new f::GCX() ));
   });
-  addItem(menu);
+  btn->setPosition(wb.cx, wb.top * 0.25);
+  addItem(menu, 1);
 
+  scheduleUpdate();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::update(float dt) {
+  fairytale->update(dt);
 }
 
 

@@ -26,7 +26,8 @@ public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual const c::Size gameSize() { return c::Size(320,480); }
+  virtual const c::Size gameSize() { return c::Size(1280,800); }
+  virtual bool isPortrait() { return false; }
 
   virtual void handleResolution(const c::Size &rs);
   virtual c::Scene* prelude();

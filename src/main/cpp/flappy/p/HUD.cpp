@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -22,12 +23,30 @@ NS_BEGIN(flappy)
 void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
-
-  scoreLabel= cx::reifyLabel("dft", 24, "0");
-  scoreLabel->setPosition(wb.cx, wb.top * 0.1);
-  addItem(scoreLabel);
-
   score=0;
+
+  scoreLabel= cx::reifyLabel("dft", 120, "0");
+  scoreLabel->setPosition(wb.cx, wb.top * 0.875);
+  addItem(scoreLabel, E_LAYER_HUD);
+
+  // create the tutorial sprite and add it to the batch node
+  tutorialSprite = cx::reifySprite("dhtap");
+  tutorialSprite->setPosition(wb.cx, wb.cy);
+    addItem(tutorialSprite,E_LAYER_HUD);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::getReady() {
+  if (tutorialSprite) {
+            // fade it out and then remove it
+    tutorialSprite->runAction(
+        c::Sequence::create(
+          c::FadeOut::create(0.25),
+          c::RemoveSelf::create(true),
+          CC_NIL));
+    tutorialSprite = CC_NIL;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,6 +54,14 @@ void HUDLayer::decoUI() {
 void HUDLayer::updateScore(int n) {
   score += n;
   scoreLabel->setString(s::to_string(score));
+  // run a simple action so the user knows the score is being added
+        // use the ease functions to create a heart beat effect
+  scoreLabel->runAction(
+      c::Sequence::create(
+        c::EaseSineIn::create(
+          c::ScaleTo::create(0.125, 1.2)),
+        c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
+        CC_NIL));
 }
 
 

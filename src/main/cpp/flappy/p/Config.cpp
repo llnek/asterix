@@ -11,6 +11,9 @@
 
 #include "Splash.h"
 #include "Config.h"
+#include "core/CCSX.h"
+
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,11 +50,12 @@ void Config::initAssets() {
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addImage("game.bg", CC_STR("pics/background.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
+  addAtlas("dhtex", CC_STR("pics/dhtex.plist"));
+  addImage("dhtex", CC_STR("pics/dhtex.png"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
-  addEffect("crash", CC_STR("sfx/crash.wav"));
+  addEffect("crash", CC_STR("sfx/crash.mp3"));
+  addEffect("flap", CC_STR("sfx/flap.mp3"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
   addFont("dft", CC_STR("fon/en/arial.ttf"));
@@ -69,6 +73,20 @@ void Config::runOnce() {
   auto fp= getAtlas("game-pics");
   c->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("dhtex");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  auto anim = c::Animation::create();
+  anim->addSpriteFrame(cx::getSpriteFrame("dhch_1"));
+  anim->addSpriteFrame(cx::getSpriteFrame("dhch_2"));
+  anim->addSpriteFrame(cx::getSpriteFrame("dhch_3"));
+  anim->addSpriteFrame(cx::getSpriteFrame("dhch_2"));
+  anim->addSpriteFrame(cx::getSpriteFrame("dhch_1"));
+  anim->setDelayPerUnit(0.1);
+  c::AnimationCache::getInstance()->addAnimation(anim, "dragonFlying");
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

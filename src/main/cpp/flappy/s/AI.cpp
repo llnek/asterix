@@ -23,7 +23,6 @@ NS_BEGIN(flappy)
 //
 void AI::preamble() {
   shared=engine->getNodeList(SharedNode().typeId());
-  timer= cx::reifyTimer(MGML(), 1500);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,43 +38,11 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::parallex(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
-  auto wb= cx::visBox();
-
-  F__LOOP(it, ss->bgSprites) {
-    auto s= *it;
-    if (s->getPosition().y >= wb.top + wb.cy - 1) {
-      s->setPosition(wb.cx, (-1 * wb.top) + wb.cy);
-    }
-  }
-
-  F__LOOP(it, ss->bgSprites) {
-    auto s= *it;
-    s->setPosition(
-        s->getPosition().x,
-        s->getPosition().y + (0.75 * wb.top * dt));
-  }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
-
-  if (!cx::timerDone(timer)) { return; }
-  else {
-    cx::undoTimer(timer);
-  }
-
-  auto p= MGMS()->getPool("Asteroids");
-  auto tmp= (Asteroid*) p->getAndSet(true);
-  auto wb= cx::visBox();
-  auto sz= tmp->csize();
-  auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
-
-  tmp->inflate(wb.left + rx , wb.top + sz.height);
-  tmp->node->getPhysicsBody()->setEnabled(true);
-  timer= cx::reifyTimer(MGML(), 1500);
 }
 
 

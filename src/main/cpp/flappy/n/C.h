@@ -20,34 +20,25 @@ NS_BEGIN(flappy)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SpaceShip : public f::ComObj {
-  MDECL_COMP_TPID("n/SpaceShip")
-  SpaceShip(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Asteroid : public f::ComObj {
-  MDECL_COMP_TPID("n/Asteroid")
-  Asteroid(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Gesture : public a::Component {
   MDECL_COMP_TPID("n/Gesture")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class Fairytale;
+class Tower;
+class Dragon;
 struct CC_DLL GVars : public a::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  s_arr<c::Sprite*,2> bgSprites;
+  DECL_PTR(Fairytale, fairytale)
+  DECL_PTR(Tower, towers)
+  DECL_PTR(Dragon, dragon)
+  DECL_BF(hasGameStarted)
+  DECL_FZ(castleRoof)
+
+
 };
 
 

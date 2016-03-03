@@ -15,6 +15,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
+#include "n/Dragon.h"
+#include "n/Tower.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -23,7 +25,6 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
   shared=engine->getNodeList(SharedNode().typeId());
 }
 
@@ -31,7 +32,6 @@ void Collide::preamble() {
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
-    clamp(dt);
     process(dt);
   }
   return true;
@@ -39,31 +39,29 @@ bool Collide::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::clamp(float dt) {
-  auto py=CC_GNLF(SpaceShip, players, "player");
-  auto sz= py->csize();
-  auto loc= py->pos();
-  auto wb= cx::visBox();
-
-  if (loc.x <= wb.left + HWZ(sz)) {
-    py->node->setPositionX(wb.left + HWZ(sz));
-  }
-  if (loc.x >= wb.right - HWZ(sz)) {
-    py->node->setPositionX(wb.right - HWZ(sz));
-  }
-
-  if (loc.y <= wb.bottom + HHZ(sz)) {
-    py->node->setPositionY(wb.bottom + HHZ(sz));
-  }
-  if (loc.y >= wb.top - HHZ(sz)) {
-    py->node->setPositionY(wb.top - HHZ(sz));
-  }
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Collide::process(float dt) {
+  auto ss= CC_GNLF(GVars, shared, "slots");
+  // first find out which tower is right in front
+  auto frontTower = ss->towers->getFrontTower();
+  // fetch the bounding boxes of the respective sprites
+  auto dragonAABB = CC_BBOX(ss->dragon->dragonSprite);
+  auto lowerTowerAABB = CC_BBOX(frontTower.lowerSprite);
+  auto upperTowerAABB = CC_BBOX(frontTower.upperSprite);
+
+  // if the respective rects intersect, we have a collision
+  if (dragonAABB.intersectsRect( lowerTowerAABB) ||
+      dragonAABB.intersectsRect(upperTowerAABB)) {
+    // dragon must die
+    ss->dragon->dragonDeath();
+    SENDMSG("/game/player/lose");
+  }
+  else
+  if (abs(lowerTowerAABB.getMidX() - dragonAABB.getMidX()) <= MAX_SCROLLING_SPEED/2 ) {
+    auto msg= j::json({
+        {"score", 1}
+        });
+    SENDMSGEX("/game/player/earnscore", &msg);
+  }
 }
 
 NS_END

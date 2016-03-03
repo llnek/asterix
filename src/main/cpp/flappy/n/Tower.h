@@ -8,37 +8,54 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
+#include "x2d/XNode.h"
+#include "n/lib.h"
 
-NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
-}
+struct CC_DLL TowerBody {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Resolve::update(float dt) {
-  if (MGMS()->isLive()) {
-    process(dt);
+  TowerBody(const c::Vec2 &p) {
+    position=p;
   }
-  return true;
-}
+  TowerBody() {}
+
+  DECL_PTR(c::Sprite,lowerSprite)
+  DECL_PTR(c::Sprite,upperSprite)
+  DECL_TD(c::Vec2,position)
+
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::process(float dt) {
-}
+class CC_DLL Tower {
+
+  void createTower();
+
+  DECL_TV(c::Size, towerSpriteSize, c::Size(0,0))
+  DECL_PTR(f::XNode,parentNode)
+  s_vec<TowerBody> towers;
+  DECL_IZ(firstTowerIndex)
+  DECL_IZ(lastTowerIndex)
+
+public:
+
+  Tower(f::XNode *n) { parentNode=n; }
+  void init();
+
+  void createTower(const c::Vec2&);
+  c::Vec2 getNextTowerPosition();
+  void update(float);
+  void repositionTower(int);
+  TowerBody& getFrontTower();
+
+};
+
 
 NS_END
 

@@ -1,0 +1,102 @@
+{
+	frames = {
+		dhbase = {
+			frame = "{{281,512},{274,294}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{274,294}}";
+			sourceSize = "{274,294}";
+		};
+		dhbush = {
+			frame = "{{281,210},{571,186}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{571,186}}";
+			sourceSize = "{571,186}";
+		};
+		"dhch_1" = {
+			frame = "{{861,78},{101,75}}";
+			offset = "{-1,0}";
+			rotated = NO;
+			sourceColorRect = "{{3,7},{101,75}}";
+			sourceSize = "{109,89}";
+		};
+		"dhch_2" = {
+			frame = "{{861,1},{101,75}}";
+			offset = "{-1,2}";
+			rotated = NO;
+			sourceColorRect = "{{3,5},{101,75}}";
+			sourceSize = "{109,89}";
+		};
+		"dhch_3" = {
+			frame = "{{861,155},{101,75}}";
+			offset = "{-1,2}";
+			rotated = NO;
+			sourceColorRect = "{{3,5},{101,75}}";
+			sourceSize = "{109,89}";
+		};
+		dhgover = {
+			frame = "{{281,398},{517,112}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{517,112}}";
+			sourceSize = "{517,112}";
+		};
+		dhplay = {
+			frame = "{{281,808},{276,157}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{276,157}}";
+			sourceSize = "{276,157}";
+		};
+		dhstar1 = {
+			frame = "{{964,1},{16,16}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{16,16}}";
+			sourceSize = "{16,16}";
+		};
+		dhstar2 = {
+			frame = "{{982,1},{6,6}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{6,6}}";
+			sourceSize = "{6,6}";
+		};
+		dhtap = {
+			frame = "{{559,512},{294,80}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{294,80}}";
+			sourceSize = "{294,80}";
+		};
+		dhtitle = {
+			frame = "{{281,1},{578,207}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{578,207}}";
+			sourceSize = "{578,207}";
+		};
+		"opst_01" = {
+			frame = "{{141,1},{138,1020}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{138,1020}}";
+			sourceSize = "{138,1020}";
+		};
+		"opst_02" = {
+			frame = "{{1,1},{138,1020}}";
+			offset = "{0,0}";
+			rotated = NO;
+			sourceColorRect = "{{0,0},{138,1020}}";
+			sourceSize = "{138,1020}";
+		};
+	};
+	metadata = {
+		format = 2;
+		realTextureFileName = "dhtex.png";
+		size = "{1024,1024}";
+		smartupdate = "$TexturePacker:SmartUpdate:398d51cfd35d36b716131318f1cdeaba$";
+		textureFileName = "dhtex.png";
+	};
+}
