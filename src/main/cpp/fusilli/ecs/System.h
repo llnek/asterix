@@ -12,10 +12,10 @@
 #pragma once
 
 #include "NodeRego.h"
-NS_BEGIN(ash)
+NS_BEGIN(ecs)
 
 #define MDECL_SYS_TPID(x) \
-  virtual const ash::SystemType typeId() { return x; }
+  virtual const ecs::SystemType typeId() { return x; }
 
 #define MDECL_SYS_PRIORITY(x) \
   virtual int priority() { return x; }

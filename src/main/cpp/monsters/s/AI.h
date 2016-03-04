@@ -11,7 +11,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(monsters)
@@ -19,9 +19,24 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public a::System {
 
+  DECL_PTR(a::NodeList, enemies)
   DECL_PTR(a::NodeList, shared)
   void process(float);
-  void parallex(float);
+
+  DECL_FZ(humanQuirkValue)
+  DECL_FZ(humanZapValue)
+  DECL_FZ(humanMunchValue)
+  DECL_FZ(humanTotalValue)
+  DECL_FZ(aiQuirkValue)
+  DECL_FZ(aiZapValue)
+  DECL_FZ(aiMunchValue)
+  DECL_FZ(aiTotalValue)
+
+  void spawnQuirkForEntity(not_null<ecs::Node*>);
+  void spawnZapForEntity(not_null<ecs::Node*>);
+  void spawnMunchForEntity(not_null<ecs::Node*>);
+  void changeStateForEntity(
+      not_null<ecs::Node*>, not_null<AIState*>);
 
 public:
 

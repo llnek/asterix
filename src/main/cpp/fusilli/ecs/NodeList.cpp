@@ -9,63 +9,56 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "NodeRego.h"
+#include "NodeList.h"
 #include "Entity.h"
 #include "Node.h"
-NS_BEGIN(ash)
+NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node::Node(const s_map<sstr, COMType> &s) {
-  F__LOOP(it, s) {
-    this->types.insert(S__PAIR(COMType, sstr, it->second, it->first));
-  }
+NodeList::NodeList(const NodeType &t) {
+  this->nType = t;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Node::bindEntity(not_null<Entity*> e) {
-  if (NNP(entity) ||
-      !e->isOk() ) {
-    return false;
-  }
-  values.clear();
-  F__LOOP(it, types) {
-    auto &f= it->second;
-    auto &t= it->first;
-    auto c= e->get(t);
-    if (NNP(c)) {
-      values.insert(S__PAIR(sstr, Component*, f, c));
+void NodeList::removeEntity(not_null<Entity*> e) {
+  Node *n = head;
+  Node *c;
+  while (NNP(n)) {
+    if (n->belongsTo(e)) {
+      c= n->next;
+      purge(n);
+      n=c;
     } else {
-      // this entity is no good, doesn't have the right
-      // components
-      values.clear();
-      break;
+      n = n->next;
     }
   }
-  if ( values.size() > 0) {
-    entity=e.get();
-    return true;
-  } else {
-    return false;
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Node::belongsTo(not_null<Entity*> e) {
-  return entity == e.get();
+bool NodeList::containsWithin(not_null<Entity*> e) {
+  for (auto n= head; NNP(n); n = n->next) {
+    if (n->belongsTo(e)) { return true; }
+  }
+  return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Node::get(const sstr &f) {
-  auto it = values.find(f);
-  if (it != values.end()) {
-    return it->second;
-  } else {
-    return nullptr;
-  }
+bool NodeList::isCompatible(not_null<Entity*> e) {
+  auto rego = NodeRegistry::self();
+  auto n = rego->reifyNode(nType);
+  auto ok= n->bindEntity(e);
+  delete n;
+  return ok;
 }
+
+
+
+
 
 
 

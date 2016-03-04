@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "System.h"
-NS_BEGIN(ash)
+NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //

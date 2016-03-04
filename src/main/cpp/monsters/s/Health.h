@@ -8,58 +8,36 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "NodeList.h"
-#include "Node.h"
-NS_BEGIN(ash)
+#include "ecs/System.h"
+#include "GEngine.h"
 
-#define MDECL_NFAC_TPID(x) \
-    virtual const ash::NodeType typeId() { return x; }
-
+NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-class Node;
-class FS_DLL NodeFactory {
-protected:
+class CC_DLL HealthSystem : public ecs::System {
 
-  owner<Node*> reifyXXXNode(const s_vec<sstr>&, const s_vec<COMType>&);
-  owner<Node*> reifyXXXNode(const s_map<sstr,COMType>&);
+  DECL_PTR(a::NodeList, shared)
+  void process(float);
 
 public:
 
-  virtual owner<Node*> reifyNode() = 0;
-  virtual const NodeType typeId() = 0;
+  MDECL_SYS_TPID("n/HealthSystem")
+  MDECL_SYS_PRIORITY( 10)
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  virtual ~NodeFactory() {}
-  NodeFactory() {}
-  NOCPYASS(NodeFactory)
-};
+  HealthSystem(a::Engine *e)
+  : System(e)
+  {}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class FS_DLL NodeRegistry {
-
-  // owns the factories
-  s_map<NodeType,NodeFactory*> regos;
-
-public:
-
-  owner<Node*> reifyNode(const NodeType&);
-  static NodeRegistry* self();
-
-  void rego(not_null<NodeFactory*>);
-  void derego(const NodeType&);
-
-  virtual ~NodeRegistry();
-  NodeRegistry() {}
-  NOCPYASS(NodeRegistry)
 };
 
 
 NS_END
+
 
 
 

@@ -35,6 +35,16 @@ struct CC_DLL Gun : public ecs::Component {
   DECL_FZ(damageRate)
   DECL_FZ(lastDamageTime)
   DECL_TD(sstr,sound)
+
+  Gun(float range, float damage,
+      float damageRate,
+      const sstr &sound) {
+    this->damageRate = damageRate;
+    this->range = range;
+    this->damage = damage;
+    this->sound = sound;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,6 +54,13 @@ struct CC_DLL Health : public ecs::Component {
   DECL_FZ(curHp)
   DECL_FZ(maxHp)
   DECL_BF(alive)
+
+  Health(float curHp, float maxHp) {
+    this->curHp = curHp;
+    this->maxHp = maxHp;
+    this->alive = true;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,6 +73,18 @@ struct CC_DLL Melee : public ecs::Component {
   DECL_FZ(damageRate)
   DECL_BF(aoe)
   DECL_TD(sstr,sound)
+
+  Melee(float damage, bool destroySelf,
+        float damageRate, bool aoe,
+        const sstr &sound) {
+
+    this->destroySelf = destroySelf;
+    this->damage = damage;
+    this->damageRate = damageRate;
+    this->aoe = aoe;
+    this->sound = sound;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,6 +92,11 @@ struct CC_DLL Melee : public ecs::Component {
 struct CC_DLL Monster : public ecs::Component {
   MDECL_COMP_TPID("n/Monster")
   DECL_TD(MonsterType, type)
+
+  Monster(MonsterType t) {
+    this->type = t;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,6 +108,18 @@ struct CC_DLL Move : public ecs::Component {
   DECL_TD(c::Vec2, acceleration)
   DECL_FZ(maxAcceleration)
   DECL_FZ(maxVelocity)
+
+  Move(const c::Vec2 &moveTarget,
+       float maxVelocity,
+       float maxAcceleration) {
+
+    this->maxAcceleration = maxAcceleration;
+    this->acceleration = c::Vec2(0,0);
+    this->velocity = c::Vec2(0,0);
+    this->moveTarget = moveTarget;
+    this->maxVelocity = maxVelocity;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -83,6 +129,7 @@ struct CC_DLL Player : public ecs::Component {
   DECL_TV(bool, attacking,false)
   DECL_IZ(coins)
   DECL_FZ(lastCoinDrop)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,6 +144,11 @@ struct CC_DLL Render : public f::ComObj {
 struct CC_DLL Team : public ecs::Component {
   MDECL_COMP_TPID("n/Team")
   DECL_IZ(team)
+
+  Team(int team) {
+    this->team = team;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -104,9 +156,13 @@ struct CC_DLL Team : public ecs::Component {
 struct CC_DLL Automa : public ecs::Component {
   MDECL_COMP_TPID("n/Automa")
   DECL_TD(AIState, state)
-  virtual ~AI() {
-    mc_del_ptr(state);
+
+  virtual ~Automa() { mc_del_ptr(state); }
+
+  Automa(not_null<AIState*> s) {
+    state = s.get();
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////

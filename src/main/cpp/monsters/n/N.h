@@ -41,7 +41,7 @@ struct CC_DLL EnemyNode : public a::NodeFactory {
         {"team", "n/Team"},
         {"player", "n/Player"},
         {"gun", "n/Gun"},
-        {"ai", "n/Robot"}
+        {"ai", "n/Automa"}
     });
   }
   MDECL_NFAC_TPID( "n/EnemyNode")

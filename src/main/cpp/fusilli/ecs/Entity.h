@@ -11,45 +11,41 @@
 
 #pragma once
 
-#include "Ash.h"
-NS_BEGIN(ash)
+#include "Ecs.h"
+NS_BEGIN(ecs)
 
-class Entity;
 //////////////////////////////////////////////////////////////////////////////
 //
-class FS_DLL Node : public f::FDListItem<Node> {
+class Engine;
+class FS_DLL Entity : public f::FDListItem<Entity> {
 
-  //NOT owner
-  s_map<sstr, Component*> values;
-  s_map<COMType, sstr> types;
-  DECL_PTR(Entity ,entity)
+  //owns all the parts
+  s_map<COMType, Component*> parts;
+  DECL_PTR(Engine,engine)
+  DECL_TD(sstr, group)
+  DECL_BF(dead)
 
 public:
 
-  Entity* getEntity() { return entity; }
+  Entity(const sstr &group, not_null<Engine*>);
+  NODFT(Entity)
+  NOCPYASS(Entity)
 
-  bool bindEntity(not_null<Entity*> );
-  bool belongsTo(not_null<Entity*>);
-  Component* get(const sstr &field);
+  // takeover the component
+  void checkin(not_null<Component*>);
+  void purge(const COMType&);
 
-  Node(const s_map<sstr, COMType>& );
-  virtual ~Node() {}
-  NODFT(Node)
-  NOCPYASS(Node)
+  Component* get(const COMType& );
+  bool has(const COMType&);
 
+  const sstr groupId() { return group; }
+  virtual ~Entity();
+
+  bool isOk() { return !dead; };
+  void markDelete();
+
+  const s_vec<Component*> getAll();
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-template<typename T>
-T* nodeFld(not_null<ash::Node*> n, const sstr &fld) {
-  auto v= n->get(fld);
-  if (NNP(v)) {
-    return (T*) v;
-  } else {
-    return nullptr;
-  }
-}
 
 
 NS_END

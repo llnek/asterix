@@ -9,39 +9,18 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
+#include "core/CCSX.h"
+#include "lib.h"
 
-#include "Node.h"
-NS_BEGIN(ash)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(monsters)
 
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class Entity;
-class Node;
-class FS_DLL NodeList : public f::FDList<Node> {
-
-  //owns the nodes
-  DECL_TD(NodeType, nType)
-
-public:
-
-  const NodeType getType() { return nType; }
-
-  bool containsWithin(not_null<Entity*>);
-  bool isCompatible(not_null<Entity*>);
-  void removeEntity(not_null<Entity*> );
-
-  NodeList(const NodeType&);
-  virtual ~NodeList() {}
-  NODFT(NodeList)
-  NOCPYASS(NodeList)
-
-};
 
 
 
 NS_END
+
 
 
 

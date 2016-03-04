@@ -8,47 +8,37 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-#include "Ash.h"
-NS_BEGIN(ash)
+#include "ecs/System.h"
+#include "GEngine.h"
+
+NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-class Engine;
-class FS_DLL Entity : public f::FDListItem<Entity> {
+class CC_DLL GunSystem : public ecs::System {
 
-  //owns all the parts
-  s_map<COMType, Component*> parts;
-  DECL_PTR(Engine,engine)
-  DECL_TD(sstr, group)
-  DECL_BF(dead)
+  DECL_PTR(a::NodeList, shared)
+  void process(float);
 
 public:
 
-  Entity(const sstr &group, not_null<Engine*>);
-  NODFT(Entity)
-  NOCPYASS(Entity)
+  MDECL_SYS_TPID("n/GunSystem")
+  MDECL_SYS_PRIORITY( 10)
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
 
-  // takeover the component
-  void checkin(not_null<Component*>);
-  void purge(const COMType&);
+  GunSystem(ecs::Engine *e)
+  : System(e)
+  {}
 
-  Component* get(const COMType& );
-  bool has(const COMType&);
-
-  const sstr groupId() { return group; }
-  virtual ~Entity();
-
-  bool isOk() { return !dead; };
-  void markDelete();
-
-  const s_vec<Component*> getAll();
 };
 
 
 NS_END
+
+
 
 
 

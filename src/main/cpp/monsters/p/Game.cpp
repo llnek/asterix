@@ -28,15 +28,20 @@ struct CC_DLL GLayer : public f::GameLayer {
   c::MenuItem* mkBtn();
   void cfgBtn(c::MenuItem*, const sstr&);
   void lblBtn(c::MenuItem*, const sstr&);
+  void quirked();
+  void zapped();
+  void munched();
 
+  DECL_PTR(a::NodeList, players)
+  DECL_PTR(a::NodeList, enemies)
   DECL_PTR(a::NodeList, shared)
+
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-
+  virtual void onMouseClick(const c::Vec2&);
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
@@ -52,6 +57,70 @@ GLayer::~GLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::quirked() {
+  auto humanPlayer= CC_GNLF(Player,players,"player");
+  auto wb=cx::visBox();
+
+  if (humanPlayer->coins < COST_QUIRK) {
+  return; }
+
+  humanPlayer->coins -= COST_QUIRK;
+  cx::sfxPlay("spawn");
+
+  for (auto i = 0; i < 2; ++i) {
+    auto ent = engine->createQuirkMonster(1);
+    auto render = (Render*)ent->get("n/Render");
+    if (render) {
+      auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
+      render->setPos(wb.right * 0.25, wb.cy + r);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::zapped() {
+  auto humanPlayer= CC_GNLF(Player,players,"player");
+  auto wb=cx::visBox();
+
+  if (humanPlayer->coins < COST_ZAP) {
+  return; }
+
+  humanPlayer->coins -= COST_ZAP;
+
+  cx::sfxPlay("spawn");
+
+  auto ent= engine->createZapMonster(1);
+  auto render = (Render*)ent->get("n/Render");
+  if (render) {
+    auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
+    render->setPos(wb.right * 0.25, wb.cy + r);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::munched() {
+  auto humanPlayer= CC_GNLF(Player,players,"player");
+  auto wb=cx::visBox();
+
+  if (humanPlayer->coins < COST_MUNCH) {
+  return; }
+
+  humanPlayer->coins -= COST_MUNCH;
+
+  cx::sfxPlay("spawn");
+
+  auto ent= engine->createMunchMonster(1);
+  auto render = (Render*)ent->get("n/Render");
+  if (render) {
+    auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
+    render->setPos(wb.right * 0.25, wb.cy + r);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onInited() {
 
   shared = engine->getNodeList(SharedNode().typeId());
@@ -63,13 +132,20 @@ void GLayer::onInited() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const c::Vec2 &loc) {
+  auto player=CC_GNLF(Player,players,"player");
+  auto render=CC_GNLF(Render,players,"render");
+
+  if (render->bbox().containsPoint(loc)) {
+    player->attacking = !player->attacking;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-    return true;
+  onMouseClick(touch->getLocation());
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -99,7 +175,7 @@ void GLayer::cfgBtn(c::MenuItem *b, const sstr &png) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::lblBtn(c::MenuItem *b, const sstr &msg) {
-  
+
   auto txt = cx::reifyBmfLabel("dft", msg);
   txt->setPosition(CC_CSIZE(b).width * 0.75, HHZ(CC_CSIZE(b)));
    // txt->setVerticalAlignment(c::TextVAlignment::TOP);
@@ -121,9 +197,9 @@ void GLayer::decoUI() {
   auto bz= CC_CSIZE(btns[0]);
   auto menu= cx::mkHMenu(btns, bz.width/4);
   menu->setPosition(wb.cx, MARGIN + HHZ(bz));
-  btns[0]->setCallback([=](c::Ref*){});
-  btns[1]->setCallback([=](c::Ref*){});
-  btns[2]->setCallback([=](c::Ref*){});
+  btns[0]->setCallback([=](c::Ref*){ this->quirked(); });
+  btns[1]->setCallback([=](c::Ref*){ this->zapped(); });
+  btns[2]->setCallback([=](c::Ref*){ this->munched(); });
   cfgBtn(btns[0], "quirk1.png");
   cfgBtn(btns[1], "zap1.png");
   cfgBtn(btns[2], "munch1.png");

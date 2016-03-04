@@ -9,60 +9,57 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "NodeRego.h"
+#pragma once
+
 #include "NodeList.h"
-#include "Entity.h"
 #include "Node.h"
-NS_BEGIN(ash)
+NS_BEGIN(ecs)
+
+#define MDECL_NFAC_TPID(x) \
+    virtual const ecs::NodeType typeId() { return x; }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-NodeList::NodeList(const NodeType &t) {
-  this->nType = t;
-}
+class Node;
+class FS_DLL NodeFactory {
+protected:
+
+  owner<Node*> reifyXXXNode(const s_vec<sstr>&, const s_vec<COMType>&);
+  owner<Node*> reifyXXXNode(const s_map<sstr,COMType>&);
+
+public:
+
+  virtual owner<Node*> reifyNode() = 0;
+  virtual const NodeType typeId() = 0;
+
+  virtual ~NodeFactory() {}
+  NodeFactory() {}
+  NOCPYASS(NodeFactory)
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NodeList::removeEntity(not_null<Entity*> e) {
-  Node *n = head;
-  Node *c;
-  while (NNP(n)) {
-    if (n->belongsTo(e)) {
-      c= n->next;
-      purge(n);
-      n=c;
-    } else {
-      n = n->next;
-    }
-  }
-}
+class FS_DLL NodeRegistry {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool NodeList::containsWithin(not_null<Entity*> e) {
-  for (auto n= head; NNP(n); n = n->next) {
-    if (n->belongsTo(e)) { return true; }
-  }
-  return false;
-}
+  // owns the factories
+  s_map<NodeType,NodeFactory*> regos;
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool NodeList::isCompatible(not_null<Entity*> e) {
-  auto rego = NodeRegistry::self();
-  auto n = rego->reifyNode(nType);
-  auto ok= n->bindEntity(e);
-  delete n;
-  return ok;
-}
+public:
 
+  owner<Node*> reifyNode(const NodeType&);
+  static NodeRegistry* self();
 
+  void rego(not_null<NodeFactory*>);
+  void derego(const NodeType&);
 
-
-
-
+  virtual ~NodeRegistry();
+  NodeRegistry() {}
+  NOCPYASS(NodeRegistry)
+};
 
 
 NS_END
+
 
 

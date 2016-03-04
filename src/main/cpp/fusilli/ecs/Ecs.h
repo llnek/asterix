@@ -12,10 +12,10 @@
 #pragma once
 
 #include "aeon/fusilli.h"
-NS_BEGIN(ash)
+NS_BEGIN(ecs)
 
 #define MDECL_COMP_TPID(x) \
-    virtual const ash::COMType typeId() { return x; }
+    virtual const ecs::COMType typeId() { return x; }
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -49,7 +49,7 @@ enum SPV {
 };
 
 NS_END
-NS_ALIAS(a, ash)
+NS_ALIAS(a, ecs)
 
 
 

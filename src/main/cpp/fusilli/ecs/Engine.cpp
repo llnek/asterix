@@ -12,7 +12,7 @@
 #include "NodeRego.h"
 #include "Node.h"
 #include "Engine.h"
-NS_BEGIN(ash)
+NS_BEGIN(ecs)
 
   /*
 A* myA = new A;
