@@ -25,11 +25,10 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  bool onContactBegin(c::PhysicsContact&);
-  void setPhysicsWorld(c::PhysicsWorld*);
+  c::MenuItem* mkBtn();
+  void cfgBtn(c::MenuItem*, const sstr&);
+  void lblBtn(c::MenuItem*, const sstr&);
 
-  DECL_PTR(c::PhysicsWorld, pWorld);
-  DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
 
   STATIC_REIFY_LAYER(GLayer)
@@ -54,68 +53,28 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  players = engine->getNodeList(PlayerNode().typeId());
+
   shared = engine->getNodeList(SharedNode().typeId());
   auto ss= CC_GNLF(GVars, shared, "slots");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  for (auto n = 0; n < 2;  ++n) {
-    auto s = cx::createSprite("game.bg");
-    ss->bgSprites[n]=s;
-    s->setPosition(
-        wb.cx,
-        (-1 * wz.size.height * n) + wb.cy);
-    addItem(s, -2);
-  }
-
-  setPhysicsWorld(MGMS()->getPhysicsWorld());
-
-  auto ln = c::EventListenerPhysicsContact::create();
-  ln->onContactBegin = CC_CALLBACK_1(GLayer::onContactBegin, this);
-  getEventDispatcher()->addEventListenerWithSceneGraphPriority(ln, this);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
-  pWorld = world;
-  pWorld->setGravity(c::Vec2(0, 0));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onContactBegin(c::PhysicsContact&) {
-  setOpacity(255 * 0.1);
-  cx::sfxPlay("crash");
-  surcease();
-  MGMS()->stop();
-  Ende::reify(MGMS(), 4);
-  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  py->setPos(loc.x,loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  auto loc= touch->getLocation();
-  return cx::isClicked(py->node,loc);
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  auto loc= touch->getLocation();
-  py->setPos(loc.x, loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -124,24 +83,93 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+c::MenuItem* GLayer::mkBtn() {
+  return cx::reifyMenuBtn("button.png", "button_sel.png");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::cfgBtn(c::MenuItem *b, const sstr &png) {
+  auto s = cx::reifySprite(png);
+  s->setPosition(CC_CSIZE(b).width * 0.25, HHZ(CC_CSIZE(b)));
+  b->addChild(s);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::lblBtn(c::MenuItem *b, const sstr &msg) {
+  
+  auto txt = cx::reifyBmfLabel("dft", msg);
+  txt->setPosition(CC_CSIZE(b).width * 0.75, HHZ(CC_CSIZE(b)));
+   // txt->setVerticalAlignment(c::TextVAlignment::TOP);
+  b->addChild(txt);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::decoUI() {
-  auto btn= cx::reifyMenuBtn("pause-std.png","pause-sel.png");
-  auto sz= CC_CSIZE(btn);
-  auto gap= sz.width / 4;
-  auto wz= cx::visRect();
+
+  auto MARGIN = 26 / CC_CONTENT_SCALE_FACTOR();
   auto wb= cx::visBox();
-  btn->setPosition(
-      wb.left + sz.width - gap,
-      wb.top - sz.height + gap);
-  btn->setCallback([=](c::Ref*){
-    cx::sfxPlay("button");
-    cx::pushEx(MMenu::reify());
-  });
-  auto menu = cx::mkMenu(btn);
+
+  centerImage("game.bg");
+  regoAtlas("game-pics");
+
+  // quirk,zap,munch
+  s_vec<c::MenuItem*> btns {mkBtn(),mkBtn(),mkBtn()};
+  auto bz= CC_CSIZE(btns[0]);
+  auto menu= cx::mkHMenu(btns, bz.width/4);
+  menu->setPosition(wb.cx, MARGIN + HHZ(bz));
+  btns[0]->setCallback([=](c::Ref*){});
+  btns[1]->setCallback([=](c::Ref*){});
+  btns[2]->setCallback([=](c::Ref*){});
+  cfgBtn(btns[0], "quirk1.png");
+  cfgBtn(btns[1], "zap1.png");
+  cfgBtn(btns[2], "munch1.png");
+
+  ///////
+  lblBtn(btns[0], "10");
+  lblBtn(btns[1], "25");
+  lblBtn(btns[2], "50");
+
   addItem(menu);
 
+  auto _stateLabel = cx::reifyBmfLabel("dft", "Idle");
+  _stateLabel->setPosition(wb.cx, wb.top * 0.25);
+  addItem(_stateLabel);
+
+  auto coin1 = cx::reifySprite("coin.png");
+  coin1->setPosition(
+      MARGIN + HWZ(CC_CSIZE(coin1)),
+      wb.top - MARGIN - HHZ(CC_CSIZE(coin1)));
+  addItem(coin1);
+
+  auto coin2 = cx::reifySprite("coin.png");
+  coin2->setPosition(
+      wb.right - MARGIN - HWZ(CC_CSIZE(coin2)),
+      wb.top - MARGIN - HHZ(CC_CSIZE(coin2)));
+  addItem(coin2);
+
+  auto _coin1Label = cx::reifyBmfLabel("dft","10");
+//width:winSize.width * 0.25
+  _coin1Label->setAlignment(c::TextHAlignment::LEFT);
+  _coin1Label->setPosition(
+      coin1->getPositionX() + HWZ(CC_CSIZE(coin1)) + MARGIN/2 +
+      HWZ(CC_CSIZE(_coin1Label)),
+      wb.top - MARGIN*1.6);
+  addItem(_coin1Label);
+
+  auto _coin2Label = cx::reifyBmfLabel("dft", "10");
+//width:winSize.width * 0.25
+  _coin2Label->setAlignment(c::TextHAlignment::RIGHT);
+  _coin2Label->setPosition(coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
+      HWZ(CC_CSIZE(_coin2Label)),
+      wb.top - MARGIN*1.6);
+  addItem(_coin2Label);
+
   engine = mc_new(GEngine);
-  cx::sfxMusic("background", true);
+  //cx::sfxMusic("background", true);
 }
 
 END_NS_UNAMED

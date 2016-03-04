@@ -34,7 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "@@GAMEID@@";
+
+  game_id= "aff2dd9a-2fa4-487e-8eea-f2ce786a36e8";
   app_id = "monsters";
 
   addCst("SHIP+SPEED", CC_INT(200));
@@ -44,22 +45,35 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addAtlas("game-pics", CC_STR("pics/Sprites.plist"));
+  addImage("game-pics", CC_STR("pics/Sprites.png"));
 
   addImage("game.bg", CC_STR("pics/background.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
-  addEffect("crash", CC_STR("sfx/crash.wav"));
-  addMusic("background", CC_STR("sfx/music.mp3"));
+  addEffect("attack", CC_STR("sfx/attack.wav"));
+  addEffect("bigHit", CC_STR("sfx/bigHit.wav"));
+  addEffect("boom", CC_STR("sfx/boom.wav"));
+  addEffect("defend", CC_STR("sfx/defend.wav"));
+  addEffect("lioncry", CC_STR("sfx/lioncry3.wav"));
+  addEffect("lionlaugh", CC_STR("sfx/lionlaugh4.wav"));
+  addEffect("mass", CC_STR("sfx/mass.wav"));
+  addEffect("pew", CC_STR("sfx/pew.wav"));
+  addEffect("smallHit", CC_STR("sfx/smallHit.wav"));
+  addEffect("spawn", CC_STR("sfx/spawn.wav"));
+  addMusic("background", CC_STR("sfx/Latin_Industries.mp3"));
 
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+
+  addFont("dft", CC_STR("fon/en/Courier.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
+  auto gz= gameSize();
+  if (rs.width == gz.width) {
+    CC_DTOR()->setContentScaleFactor(1);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

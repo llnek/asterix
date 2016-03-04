@@ -24,41 +24,27 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto p= MGMS()->reifyPool("Asteroids");
-  auto wb= cx::visBox();
-
-  p->preset([=]() -> f::Poolable* {
-    auto png = "asteroid_" + s::to_string(1 + (rand() % 3)) + ".png";
-    auto tmp = cx::reifySprite(png);
-    auto sz= CC_CSIZE(tmp);
-    CC_HIDE(tmp);
-    MGML()->addItem(tmp,-1);
-    auto body = c::PhysicsBody::createCircle(HWZ(sz));
-    body->setContactTestBitmask(true);
-    body->setDynamic(true);
-    body->setEnabled(false);
-    tmp->setPhysicsBody(body);
-    return mc_new1(Asteroid,tmp);
-  }, 32);
-
-  auto v=CC_CSV(c::Integer,"SHIP+SPEED");
-  auto s = cx::reifySprite("player.png");
-  auto py= mc_new1(SpaceShip,s);
-  auto sz= py->csize();
-  auto body = c::PhysicsBody::createCircle(HWZ(sz));
-  body->setContactTestBitmask(true);
-  body->setDynamic(true);
-  s->setPhysicsBody(body);
-  py->inflate(wb.cx, wb.cy);
-  MGML()->addItem(s,-1);
-
   auto ent= this->reifyEntity();
-  ent->checkin(mc_new(Gesture));
-  py->speed=v;
-  ent->checkin(py);
-
-  ent=this->reifyEntity();
+  auto wb= cx::visBox();
   ent->checkin(mc_new(GVars));
+
+  // human
+  ent= this->reifyEntity();
+  ent->checkin(mc_new(Render));
+  ent->checkin(mc_new(Health));
+  ent->checkin(mc_new(Team));
+  ent->checkin(mc_new(Player));
+  ent->checkin(mc_new(Gun));
+
+  // enemy
+  ent= this->reifyEntity();
+  ent->checkin(mc_new(Render));
+  ent->checkin(mc_new(Health));
+  ent->checkin(mc_new(Team));
+  ent->checkin(mc_new(Player));
+  ent->checkin(mc_new(Gun));
+  ent->checkin(mc_new(Automa));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,6 +55,72 @@ void GEngine::initSystems() {
   regoSystem(mc_new1(AI,this));
   regoSystem(mc_new1(Move,this));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* GEngine::createQuirkMonster(int team) {
+  auto s= cx::reifySprite("quirk"+s::to_string(team)+".png");
+  MGML()->addAtlasItem("game-pics",s);
+  auto ent = this->reifyEntity();
+
+  ent->checkin(new Melee(1.25,false,0.5,false,"smallHit"));
+  ent->checkin(new Move(c::Vec2(200, 200), 100, 100));
+  ent->checkin(mc_new1(Render,s));
+  ent->checkin(mc_new2(Health,5,5));
+  ent->checkin(mc_new1(Team,team));
+  ent->checkin(mc_new1(Monster, eMonsterTypeQuirk));
+
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* GEngine::createZapMonster(int team) {
+  auto s= cx::reifySprite("zap"+s::to_string(team)+".png");
+  MGML()->addAtlasItem("game-pics",s);
+  auto ent= this->reifyEntity();
+
+  ent->checkin(new Render(s));
+  ent->checkin(new Health(10, 10));
+  ent->checkin(new Move(c::Vec2(200, 200), 50, 50));
+  ent->checkin(new Team(team));
+  ent->checkin(new Gun(100, 5, 1.5,"pew"));
+  ent->checkin(new Monster(eMonsterTypeZap));
+
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* GEngine::createMunchMonster(int team) {
+  auto s= cx::reifySprite("munch"+s::to_string(team)+".png");
+  MGML()->addAtlasItem("game-pics",s);
+  auto ent= this->reifyEntity();
+
+  ent->checkin(new Render(s));
+  ent->checkin(new Health(50, 50));
+  ent->checkin(new Move(c::Vec2(200, 200), 25, 25));
+  ent->checkin(new Team(team));
+  ent->checkin(new Melee(10.0, false, 2.0, true, "bigHit"));
+  ent->checkin(new Monster(eMonsterTypeMunch));
+
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* GEngine::createLaser(int team) {
+  auto s= cx::reifySprite("laser"+s::to_string(team)+".png");
+  MGML()->addAtlasItem("game-pics",s);
+  auto ent= this->reifyEntity();
+
+  ent->checkin(new Render(s));
+  ent->checkin(new Team(team));
+  ent->checkin(new Melee(5, true, 1.0, false, "smallHit"));
+
+  return ent;
+}
+
 
 
 NS_END

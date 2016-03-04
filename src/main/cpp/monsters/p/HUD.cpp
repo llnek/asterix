@@ -23,8 +23,8 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  scoreLabel= cx::reifyLabel("dft", 24, "0");
-  scoreLabel->setPosition(wb.cx, wb.top * 0.1);
+  scoreLabel= cx::reifyBmfLabel("dft", "0");
+  scoreLabel->setPosition(wb.cx, wb.top * 0.9);
   addItem(scoreLabel);
 
   score=0;

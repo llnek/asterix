@@ -8,37 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
 #include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
 
-NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
 
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
-}
+#define CCRANDOM_X_Y(__X__, __Y__) (((__Y__) - (__X__)) * (rand() / (float)0xffffffff) + (__X__))
+#define OPPOSITE_TEAM(__X__) (__X__ == 1 ? 2 : 1)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Resolve::update(float dt) {
-  if (MGMS()->isLive()) {
-    process(dt);
-  }
-  return true;
-}
+#define COST_QUIRK  10
+#define COST_ZAP    25
+#define COST_MUNCH  50
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Resolve::process(float dt) {
-}
 
 NS_END
 

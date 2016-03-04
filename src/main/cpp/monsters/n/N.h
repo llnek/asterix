@@ -15,34 +15,49 @@
 #include "C.h"
 NS_BEGIN(monsters)
 
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL HumanNode : public a::NodeFactory {
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"render", "n/Render"},
+        {"health", "n/Health"},
+        {"team", "n/Team"},
+        {"player", "n/Player"},
+        {"gun", "n/Gun"}
+    });
+  }
+  MDECL_NFAC_TPID( "n/HumanNode")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL EnemyNode : public a::NodeFactory {
+  virtual owner<a::Node*> reifyNode() {
+    return reifyXXXNode({
+        {"render", "n/Render"},
+        {"health", "n/Health"},
+        {"team", "n/Team"},
+        {"player", "n/Player"},
+        {"gun", "n/Gun"},
+        {"ai", "n/Robot"}
+    });
+  }
+  MDECL_NFAC_TPID( "n/EnemyNode")
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SharedNode : public a::NodeFactory {
-
   virtual owner<a::Node*> reifyNode() {
     return reifyXXXNode({
         {"slots", "n/GVars" }
     });
   }
-
   MDECL_NFAC_TPID( "n/SharedNode")
-
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL PlayerNode : public a::NodeFactory {
-
-  virtual owner<a::Node*> reifyNode() {
-    return reifyXXXNode({
-        {"player", "n/SpaceShip" },
-        {"motion", "n/Gesture"}
-    });
-  }
-
-  MDECL_NFAC_TPID( "n/PlayerNode")
-
-};
 
 
 NS_END

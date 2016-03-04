@@ -22,24 +22,23 @@ NS_BEGIN(monsters)
 //
 void Splash::decoUI() {
 
-  auto play= cx::reifyMenuBtn("play-std.png", "play-sel.png");
-  auto title= cx::reifySprite("game-title.png");
-  auto menu= cx::mkMenu(play);
-  auto wb= cx::visBox();
+  auto txt= cx::reifyBmfLabel("dft", "Play");
+  auto btn= cx::reifyMenuBtn("button.png");
+  auto menu= cx::mkMenu(btn);
+  auto wb=cx::visBox();
 
-  // background, title
-  title->setPosition(wb.cx, wb.top * 0.8);
-  centerImage("gui.bg");
-  addItem(title);
+  centerImage("game.bg");
 
-  // one play button
-  play->setPosition(wb.cx, wb.top * 0.2);
-  play->setCallback([=](c::Ref*){
+  btn->setPosition(wb.cx, wb.cy);
+  btn->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
-    cx::runEx(Game::reify(new GameCtx() ));
+      cx::runEx(Game::reify( new f::GCX()));
   });
   addItem(menu);
 
+  txt->setPosition(wb.cx,wb.cy);
+  txt->setScale(0.75);
+  addItem(txt);
 }
 
 

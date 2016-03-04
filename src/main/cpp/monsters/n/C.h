@@ -21,9 +21,9 @@ NS_BEGIN(monsters)
 class AIState;
 
 enum MonsterType {
-  MonsterTypeQuirk = 0,
-  MonsterTypeZap,
-  MonsterTypeMunch
+  eMonsterTypeQuirk = 0,
+  eMonsterTypeZap,
+  eMonsterTypeMunch
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,8 +101,8 @@ struct CC_DLL Team : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL AI : public ecs::Component {
-  MDECL_COMP_TPID("n/AI")
+struct CC_DLL Automa : public ecs::Component {
+  MDECL_COMP_TPID("n/Automa")
   DECL_TD(AIState, state)
   virtual ~AI() {
     mc_del_ptr(state);
@@ -120,12 +120,14 @@ struct CC_DLL Gesture : public ecs::Component {
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  s_arr<c::Sprite*,2> bgSprites;
 };
 
 
 
 NS_END
+
+
+
 
 
 

@@ -18,7 +18,6 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public a::System {
-  DECL_PTR(a::NodeList, players)
   DECL_PTR(a::NodeList, shared)
   void process(float);
   void clamp(float);

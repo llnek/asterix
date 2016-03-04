@@ -13,6 +13,7 @@
 
 #include "ash/Engine.h"
 #include "n/N.h"
+#include "n/lib.h"
 
 NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
@@ -20,6 +21,11 @@ NS_BEGIN(monsters)
 class CC_DLL GEngine  : public a::Engine {
 
 public:
+
+  Entity* createMunchMonster(int team);
+  Entity* createQuirkMonster(int team);
+  Entity* createZapMonster(int team);
+  Entity* createLaser(int team);
 
   virtual void initEntities();
   virtual void initSystems();
