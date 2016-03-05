@@ -11,6 +11,8 @@
 
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////////
+//
 #include "nlohmann/json.hpp"
 #include "System.h"
 #include "Entity.h"
@@ -25,9 +27,11 @@ class FS_DLL Engine {
 
   DECL_TD(SystemList, systemList)
   DECL_TD(EntityCache, ents)
+
   DECL_PTR(TypeRegistry, types)
   DECL_BF(updating)
   DECL_IZ(lastId)
+
   s_vec<Entity*> garbo;
   NOCPYASS(Engine)
 
@@ -62,6 +66,7 @@ public:
   void doHouseKeeping();
   void ignite();
   void update(float time);
+
   j::json getCfg() { return config; }
 
   Engine(j::json c) { config=c; }
@@ -69,6 +74,7 @@ public:
   virtual ~Engine();
 
 };
+
 
 
 NS_END

@@ -33,6 +33,7 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //
 Engine::~Engine() {
   F__LOOP(it, ents) { delete it->second; }
+  doHouseKeeping();
   delete types;
 //  printf("Engine dtor\n");
 }
@@ -45,11 +46,12 @@ Engine::Engine() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*>& rc) {
+void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
   s_vec<CompoCache*> ccs;
   int pmin= INT_MAX;
-  CompoCache *pm;
+  CompoCache *pm= nullptr;
 
+  //find shortest cache
   F__LOOP(it,cs) {
     auto c= types->getCache(*it);
     if (c) {
@@ -61,25 +63,26 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*>& rc) {
     }
   }
 
-  F__POOP(it,pm) {
-    auto eid= it->first;
-    auto sum=0;
-    F__LOOP(it2,ccs) {
-      auto c= *it2;
-      if (c==pm) { ++sum; continue;}
-      auto it3= c->find(eid);
-      if (it3 != c->end()) {
-        ++sum;
+  if (NNP(pm))
+    F__POOP(it,pm) {
+      auto eid= it->first;
+      auto sum=0;
+      F__LOOP(it2,ccs) {
+        auto c= *it2;
+        if (c==pm) { ++sum; continue;}
+        auto it3= c->find(eid);
+        if (it3 != c->end()) {
+          ++sum;
+        }
+      }
+      if (sum == ccs.size()) {
+        // all matched
+        auto it4= ents.find(eid);
+        if (it4 != ents.end()) {
+          rc.push_back(it4->second);
+        }
       }
     }
-    if (sum == ccs.size()) {
-      // all matched
-      auto it4= ents.find(eid);
-      if (it4 != ents.end()) {
-        rc.push_back(it4->second);
-      }
-    }
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

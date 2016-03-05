@@ -20,24 +20,30 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct FS_DLL Poolable {
-  virtual void deflate(bool stop=true) { status=false; }
-  virtual void inflate() { status=true; }
-  virtual ~Poolable() {}
+class FS_DLL Poolable {
+  DECL_BF(_status)
+protected:
   Poolable() {}
-  DECL_BF(status)
+public:
+  virtual void yield() { _status=false; }
+  virtual void take() { _status=true; }
+  bool status() { return _status; }
+  virtual ~Poolable() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL FPool {
+
   s::function<Poolable* ()> ctor;
   s_vec<Poolable*> objs;
   DECL_BF(ownObjects)
   DECL_IZ(batch)
+
 public:
 
   const s_vec<Poolable*>& list() { return objs; }
+
   Poolable* select(s::function<bool (Poolable*)>);
   void preset(s::function<Poolable* ()>, int);
 
@@ -45,7 +51,7 @@ public:
   Poolable* get(bool create=false);
   Poolable* getAt(int n);
 
-  int size() { return (int)objs.size(); }
+  int size() { return objs.size(); }
   int countActives();
 
   void foreach(s::function<void (Poolable*)>);

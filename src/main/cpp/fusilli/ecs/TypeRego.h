@@ -8,7 +8,9 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+
 //////////////////////////////////////////////////////////////////////////////
 //
 #include "Ecs.h"
@@ -18,18 +20,20 @@ NS_BEGIN(ecs)
 //
 class FS_DLL TypeRegistry {
 
-  s_map<COMType,CompoCache*> rego;
+  s_map<COMType, CompoCache*> rego;
+  NOCPYASS(TypeRegistry)
 
 public:
 
   void unbind(not_null<Component*>, not_null<Entity*>);
+  void unbind(const COMType&, not_null<Entity*>);
+
   void bind(not_null<Component*>, not_null<Entity*>);
 
   CompoCache* getCache(const COMType&);
 
   virtual ~TypeRegistry();
   TypeRegistry() {}
-  NOCPYASS(TypeRegistry)
 
 };
 

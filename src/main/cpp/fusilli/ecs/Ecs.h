@@ -11,12 +11,13 @@
 
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////////
+//
 #include "aeon/fusilli.h"
 NS_BEGIN(ecs)
 
 #define MDECL_COMP_TPID(x) \
     virtual const ecs::COMType typeId() { return x; }
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +28,16 @@ typedef int EntId;
 
 //////////////////////////////////////////////////////////////////////////
 //
-class Entity;
-struct FS_DLL Component {
+class FS_DLL Component {
+protected:
+  Component() {}
+public:
   virtual const COMType typeId() = 0;
   virtual void dispose() {}
   virtual ~Component() {}
-  Component() {}
 };
 
+class Entity;
 typedef s::map<EntId,Component*> CompoCache ;
 typedef s::map<EntId,Entity*> EntityCache ;
 
@@ -53,6 +56,8 @@ enum SPV {
 
   Error = -1
 };
+
+
 
 NS_END
 

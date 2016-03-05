@@ -46,14 +46,14 @@ void Move::process(float dt) {
   auto wb= cx::visBox();
 
   F__LOOP(it,c) {
-      auto a= (ecs::Entity*) *it;
-    if (!a->status) { continue; }
+    auto a= (ecs::Entity*) *it;
+    if (!a->status()) { continue; }
     auto r= CC_GEC(f::CmRender,a,"f/CmRender");
     r->setPos(r->node->getPositionX(), r->node->getPositionY() - (0.75 * wb.top * dt));
     if (r->node->getPositionY() < wb.bottom-(wb.top * 0.2)) {
       r->node->getPhysicsBody()->setEnabled(false);
       r->deflate();
-      a->deflate();
+      a->yield();
     }
   }
 

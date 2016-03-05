@@ -16,8 +16,9 @@ NS_BEGIN(ecs)
 //////////////////////////////////////////////////////////////////////////////
 //
 TypeRegistry::~TypeRegistry() {
-  F__LOOP(it, rego) { delete it->second; }
   //printf("TypeRegistry dtor\n");
+  //shallow delete the caches
+  F__LOOP(it, rego) { delete it->second; }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,10 +35,15 @@ CompoCache* TypeRegistry::getCache(const COMType &c) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void TypeRegistry::unbind(not_null<Component*> c, not_null<Entity*> e) {
-  auto cid= c->typeId();
-  auto eid= e->getEid();
+  unbind( c->typeId(), e);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void TypeRegistry::unbind(const COMType &cid, not_null<Entity*> e) {
   auto it= rego.find(cid);
   if (it != rego.end()) {
+    auto eid= e->getEid();
     auto m= it->second;
     auto it2= m->find(eid);
     if (it2 != m->end()) {
@@ -49,10 +55,12 @@ void TypeRegistry::unbind(not_null<Component*> c, not_null<Entity*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void TypeRegistry::bind(not_null<Component*> c, not_null<Entity*> e) {
+
   auto cid= c->typeId();
   auto eid= e->getEid();
-  auto it= rego.find(cid);
   CompoCache *m;
+
+  auto it= rego.find(cid);
   if (it != rego.end()) {
     m= it->second;
   } else {

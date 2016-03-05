@@ -100,7 +100,6 @@ typedef std::string sstr;
 #define S__PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
 #define S__COPY(f,t) s::copy(s::begin(f), s::end(f), s::begin(t))
 
-
 //////////////////////////////////////////////////////////////////////////////
 // c++ casting
 #define DCAST(type,expr) dynamic_cast<type>(expr)

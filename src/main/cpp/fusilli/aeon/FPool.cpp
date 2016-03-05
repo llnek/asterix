@@ -42,7 +42,7 @@ Poolable* FPool::select(s::function<bool (Poolable*)> f) {
 Poolable* FPool::getAndSet(bool create) {
   auto rc= get(create);
   if (NNP(rc)) {
-    rc->status=true;
+    rc->take();
   }
   return rc;
 }
@@ -58,7 +58,7 @@ Poolable* FPool::getAt(int pos) {
 Poolable* FPool::get(bool create) {
   F__LOOP(it, objs) {
     auto e= *it;
-    if (! e->status) { return e; }
+    if (! e->status()) { return e; }
   }
   if (create &&  ctor) {
     preset(ctor,batch);
@@ -88,7 +88,7 @@ int FPool::countActives() {
   auto c=0;
   F__LOOP(it, objs) {
     auto z= *it;
-    if (z->status) {
+    if (z->status()) {
       ++c;
     }
   }
@@ -115,7 +115,7 @@ bool FPool::some(s::function<bool (Poolable*)> f) {
 void FPool::reset() {
   F__LOOP(it, objs) {
     auto z= *it;
-    z->deflate();
+    z->yield();
   }
 }
 
