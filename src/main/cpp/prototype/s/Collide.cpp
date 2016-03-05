@@ -23,7 +23,7 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-    engine->getEntities(s_vec<ecs::COMType>{"f/CmRender", "f/CmHuman"},players);
+  engine->getEntities(s_vec<ecs::COMType>{"f/CmRender", "f/CmHuman"},players);
   engine->getEntities("n/GVars",shared);
 }
 

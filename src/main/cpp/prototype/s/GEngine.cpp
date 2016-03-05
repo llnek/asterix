@@ -42,7 +42,7 @@ void GEngine::initEntities() {
     auto ent=this->reifyEntity();
     ent->checkin(rdr);
     return ent;
-  }, 32);
+  }, 1);
 
   auto v= CC_CSV(c::Integer,"SHIP+SPEED");
   auto s= cx::reifySprite("player.png");
@@ -60,10 +60,10 @@ void GEngine::initEntities() {
   mv->maxSpeed=v;
   mv->speed=v;
   auto ship= this->reifyEntity();
+  ship->checkin(mc_new(f::CmHuman));
   ship->checkin(rdr);
   ship->checkin(mo);
   ship->checkin(mv);
-
 
   // global
   this->reifyEntity()->checkin(mc_new(GVars));

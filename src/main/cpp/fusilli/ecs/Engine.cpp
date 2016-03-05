@@ -48,25 +48,34 @@ Engine::Engine() {
 //
 void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
   s_vec<CompoCache*> ccs;
+  bool missed=false;
   int pmin= INT_MAX;
   CompoCache *pm= nullptr;
 
   //find shortest cache
   F__LOOP(it,cs) {
-    auto c= types->getCache(*it);
-    if (c) {
-      if (c->size() < pmin) {
-        pmin= c->size();
-        pm=c;
-      }
-      ccs.push_back(c);
+    auto cid= *it;
+    auto c= types->getCache(cid);
+    if (!c) {
+      CCLOG("cache missed when looking for intersection on %s", cid.c_str());
+      missed=true;
+      break;
     }
+    if (c->size() < pmin) {
+      pmin= c->size();
+      pm=c;
+    }
+    ccs.push_back(c);
   }
 
-  if (NNP(pm))
+  CCLOG("intesection on %d caches", (int)ccs.size());
+
+  if (ccs.size() > 0) {
     F__POOP(it,pm) {
       auto eid= it->first;
       auto sum=0;
+
+      // look for intersection
       F__LOOP(it2,ccs) {
         auto c= *it2;
         if (c==pm) { ++sum; continue;}
@@ -75,6 +84,8 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
           ++sum;
         }
       }
+
+      // if found in all caches...
       if (sum == ccs.size()) {
         // all matched
         auto it4= ents.find(eid);
@@ -83,6 +94,7 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
         }
       }
     }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

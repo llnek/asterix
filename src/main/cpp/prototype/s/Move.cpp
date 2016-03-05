@@ -42,18 +42,25 @@ bool Move::update(float dt) {
 void Move::process(float dt) {
   auto ss= CC_GEC(GVars, shared[0], "n/GVars");
   auto p= MGMS()->getPool("Asteroids");
-  auto &c=p->list();
+  auto c=p->list();
+  auto wz= cx::visRect();
   auto wb= cx::visBox();
 
   F__LOOP(it,c) {
     auto a= (ecs::Entity*) *it;
     if (!a->status()) { continue; }
     auto r= CC_GEC(f::CmRender,a,"f/CmRender");
-    r->setPos(r->node->getPositionX(), r->node->getPositionY() - (0.75 * wb.top * dt));
-    if (r->node->getPositionY() < wb.bottom-(wb.top * 0.2)) {
-      r->node->getPhysicsBody()->setEnabled(false);
-      r->deflate();
-      a->yield();
+
+    r->setPos(
+        r->node->getPositionX(),
+        r->node->getPositionY() - (0.75 * wz.size.height * dt));
+
+    if (r->node->getPositionY() < wb.bottom) {
+      if (r->node->getPositionY() < wb.bottom-(2*r->csize().height)) {
+        r->node->getPhysicsBody()->setEnabled(false);
+        r->deflate();
+        a->yield();
+      }
     }
   }
 
