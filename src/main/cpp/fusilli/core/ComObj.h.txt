@@ -13,7 +13,7 @@
 
 #include "2d/CCSprite.h"
 #include "Primitives.h"
-#include "ash/Ash.h"
+#include "ecs/Ecs.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////

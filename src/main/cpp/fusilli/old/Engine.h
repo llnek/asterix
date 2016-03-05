@@ -12,6 +12,7 @@
 #pragma once
 
 #include "nlohmann/json.hpp"
+#include "NodeList.h"
 #include "System.h"
 #include "Entity.h"
 
@@ -20,49 +21,60 @@ NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class TypeRegistry;
+typedef f::FDList<Entity> EList;
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class FS_DLL Engine {
 
+  void purgeEntity(EList*, Entity*);
+  void maybeBind(NodeList*,Entity*);
+  void onModifyEntity(Entity*);
+  void onPurgeEntity(Entity*);
+  void onAddEntity(Entity*);
+  void houseKeeping();
+  s_vec<NodeList*> nodeLists;
+  s_map<sstr, EList*> groups;
+  s_vec<Entity*> freeList;
+  s_vec<Entity*> modList;
+  s_vec<Entity*> addList;
   DECL_TD(SystemList, systemList)
-  DECL_TD(EntityCache, ents)
-  DECL_PTR(TypeRegistry, types)
   DECL_BF(updating)
-  DECL_IZ(lastId)
-  s_vec<Entity*> garbo;
-  NOCPYASS(Engine)
+  DECL_BF(dirty)
 
-  void purgeEntity(Entity*);
-  EntId generateEid();
+public:
+
+  const s_vec<Entity*> getEntities(const sstr &grp);
+  const s_vec<Entity*> getEntities();
+
+  Entity* reifyEntity(const sstr &grp);
+  Entity* reifyEntity();
+
+  void purgeEntities(const sstr &grp);
+  void purgeEntities();
+  void purgeEntity(not_null<Entity*>);
+
+  void purgeSystem (not_null<System*> );
+  void purgeSystems();
+
+  NodeList* getNodeList(const NodeType& );
+  void notifyModify(not_null<Entity*>);
+  void regoSystem(not_null<System*> );
+  void forceSync();
+  void ignite();
+  void update(float time);
+  j::json getCfg() { return config; }
+
+  Engine(j::json c) { config=c; }
+  virtual ~Engine();
+  Engine() {}
+  NOCPYASS(Engine)
 
 protected:
 
   virtual void initEntities() = 0;
   virtual void initSystems() = 0;
   DECL_TD(j::json, config)
-
-public:
-
-  const s_vec<Entity*> getEntities(const s_vec<COMType>&);
-  const s_vec<Entity*> getEntities(const COMType&);
-  const s_vec<Entity*> getEntities();
-  TypeRegistry* rego() { return types; }
-
-  void purgeSystem (not_null<System*>);
-  void purgeSystems();
-  void purgeEntities();
-
-  void regoSystem(not_null<System*> );
-  Entity* reifyEntity();
-
-  void doHouseKeeping();
-  void ignite();
-  void update(float time);
-  j::json getCfg() { return config; }
-
-  Engine(j::json c) { config=c; }
-  Engine();
-  virtual ~Engine();
-
 };
 
 

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "Ecs.h"
+#include "NodeRego.h"
 NS_BEGIN(ecs)
 
 #define MDECL_SYS_TPID(x) \

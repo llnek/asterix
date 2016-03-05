@@ -11,46 +11,44 @@
 
 #pragma once
 
-//////////////////////////////////////////////////////////////////////////////
-//
-
-#include "Primitives.h"
-NS_BEGIN(fusii)
+#include "Ecs.h"
+NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL XPool {
-  s::function<Poolable* ()> ctor;
-  s_vec<Poolable*> objs;
-  DECL_IZ(batch)
+class Engine;
+class FS_DLL Entity : public f::FDListItem<Entity> {
+
+  //owns all the parts
+  s_map<COMType, Component*> parts;
+  DECL_PTR(Engine,engine)
+  DECL_TD(sstr, group)
+  DECL_BF(dead)
+
 public:
 
-  const s_vec<Poolable*>& list() { return objs; }
-  Poolable* select(s::function<bool (Poolable*)>);
-  void preset(s::function<Poolable* ()>, int);
+  Entity(const sstr &group, not_null<Engine*>);
+  NODFT(Entity)
+  NOCPYASS(Entity)
 
-  Poolable* getAndSet(bool create=false);
-  Poolable* get(bool create=false);
-  Poolable* getAt(int n);
+  // takeover the component
+  void checkin(not_null<Component*>);
+  void purge(const COMType&);
 
-  int size() { return (int)objs.size(); }
-  int countActives();
+  Component* get(const COMType& );
+  bool has(const COMType&);
 
-  void foreach(s::function<void (Poolable*)>);
-  bool some(s::function<bool (Poolable*)>);
-  void clearAll(bool del=true);
+  const sstr groupId() { return group; }
+  virtual ~Entity();
 
-  void checkin(not_null<Poolable*>);
-  void reset();
+  bool isOk() { return !dead; };
+  void markDelete();
 
-  virtual ~XPool() {  clearAll(true); }
-  XPool() {}
-  NOCPYASS(XPool)
+  const s_vec<Component*> getAll();
 };
 
 
 NS_END
-
 
 
 

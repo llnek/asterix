@@ -9,26 +9,21 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "TypeRegistry.h"
 #include "Engine.h"
 #include "Entity.h"
 NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(not_null<Engine*> e) {
-  this->eid= e->generateEid();
+Entity::Entity(const sstr &group, not_null<Engine*> e) {
+  this->group=group;
   this->engine= e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity::~Entity() {
-  F__LOOP(it, parts) {
-    auto c= it->second;
-    engine->rego()->unbind(c,this);
-    delete c;
-  }
+  F__LOOP(it, parts) { delete it->second; }
   //printf("Entity dtor\n");
 }
 
@@ -37,8 +32,14 @@ Entity::~Entity() {
 void Entity::checkin(not_null<Component*> c) {
   auto z = c->typeId();
   assert(! has(z));
-  engine->rego()->bind(c,this);
   parts.insert(S__PAIR(COMType, Component*, z, c));
+  engine->notifyModify(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Entity::markDelete() {
+  dead=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,10 +47,10 @@ void Entity::checkin(not_null<Component*> c) {
 void Entity::purge(const COMType &z) {
   auto it = parts.find(z);
   if (it != parts.end()) {
-    auto c= it->second;
+    auto rc= it->second;
     parts.erase(it);
-    engine->rego()->unbind(c,this);
-    delete c;
+    delete rc;
+    engine->notifyModify(this);
   }
 }
 

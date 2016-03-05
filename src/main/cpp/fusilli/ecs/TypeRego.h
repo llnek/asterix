@@ -11,43 +11,26 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 //
-
 #include "Ecs.h"
 NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class Engine;
-class FS_DLL Entity : public f::Poolable {
-friend class Engine;
+class FS_DLL TypeRegistry {
 
-  //owns all the parts
-  s_map<COMType, Component*> parts;
-  DECL_PTR(Engine,engine)
-  DECL_BF(dead)
-  DECL_TD(EntId, eid)
-
-  Entity(not_null<Engine*>);
-  void die() { dead=true; }
-
-  NOCPYASS(Entity)
-  NODFT(Entity)
-  virtual ~Entity();
+  s_map<COMType,CompoCache*> rego;
 
 public:
 
+  void unbind(not_null<Component*>, not_null<Entity*>);
+  void bind(not_null<Component*>, not_null<Entity*>);
 
-  // takeover the component
-  void checkin(not_null<Component*>);
-  void purge(const COMType&);
+  const CompoCache* getCache(const COMType&);
 
-  Component* get(const COMType& );
-  bool has(const COMType&);
+  virtual ~TypeRegistry();
+  TypeRegistry() {}
+  NOCPYASS(TypeRegistry)
 
-  bool isOk() { return !dead; };
-  EntId getEid() { return eid; }
-
-  const s_vec<Component*> getAll();
 };
 
 

@@ -22,7 +22,6 @@ NS_BEGIN(ecs)
 typedef s::string SystemType;
 typedef s::string COMType;
 typedef s::string NodeType;
-typedef int EntId;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -32,9 +31,6 @@ struct FS_DLL Component {
   virtual ~Component() {}
   Component() {}
 };
-
-typedef s::map<EntId,Component*> CompoCache ;
-typedef s::map<EntId,Entity*> EntityCache ;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -53,6 +49,7 @@ enum SPV {
 };
 
 NS_END
+NS_ALIAS(a, ecs)
 
 
 

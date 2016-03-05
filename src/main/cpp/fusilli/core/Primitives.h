@@ -354,16 +354,6 @@ public:
 
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Poolable {
-  virtual void deflate(bool stop=true) { status=false; }
-  virtual void inflate() { status=true; }
-  virtual ~Poolable() {}
-  Poolable() {}
-  DECL_BF(status)
-};
-
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Cell2D {

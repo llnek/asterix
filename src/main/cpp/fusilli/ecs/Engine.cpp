@@ -9,8 +9,6 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "NodeRego.h"
-#include "Node.h"
 #include "Engine.h"
 NS_BEGIN(ecs)
 
@@ -33,140 +31,133 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
-  F__LOOP(it, groups) { delete it->second; }
-  F__LOOP(it, nodeLists) { delete *it; }
+  F__LOOP(it, ents) { delete it->second; }
+  delete types;
 //  printf("Engine dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities(const sstr &g) {
-  auto it=groups.find(g);
-  if (it != groups.end()) {
-    return it->second->list();
-  } else {
-    return s_vec<Entity*> {};
-  }
+Engine::Engine() {
+  types= mc_new(TypeRegistry);
 }
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities() {
+const s_vec<Entity*> Engine::getEntities(const s_vec<COMType> &cs) {
+  s_vec<CompoCache*> ccs;
   s_vec<Entity*> rc;
-  F__LOOP(it, groups) {
-    auto v= it->second->list();
-    rc.insert(rc.end(), v.begin(), v.end());
+  int pmin= INT_MAX;
+  CompoCache *pm;
+
+  F__LOOP(it,cs) {
+    auto c= types->getCache(*it);
+    if (c) {
+      if (c->size() < pmin) {
+        pmin= c->size();
+        pm=c;
+      }
+      ccs.push_back(c);
+    }
+  }
+
+  F__POOP(it,pm) {
+    auto eid= *it;
+    auto sum=0;
+    F__LOOP(it2,ccs) {
+      auto c= *it2;
+      if (c==pm) { ++sum; continue;}
+      auto it3= c->find(eid);
+      if (it3 != c->end()) {
+        ++sum;
+      }
+    }
+    if (sum == ccs.size()) {
+      // all matched
+      auto it4= ents.find(eid);
+      if (it4 != ents.end()) {
+        rc.push_back(it4->second);
+      }
+    }
+  }
+
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_vec<Entity*> Engine::getEntities(const COMType &c) {
+  auto cc= types->getCache(c);
+  s_vec<Entity*> rc;
+  if (NNP(cc)) F__POOP(it,cc) {
+    auto z= *it;
+    auto it2= ents.find(z);
+    if (it2 != ents.end()) {
+      rc.push_back(it2->second);
+    }
   }
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::reifyEntity(const sstr &g) {
-  auto e= mc_new2(Entity,g, this);
-  auto it= groups.find(g);
-  EList *el;
-  if (it != groups.end()) {
-    el= it->second;
-  } else {
-    el= mc_new(EList);
-    groups.insert(S__PAIR(sstr, EList*, g, el));
+const s_vec<Entity*> Engine::getEntities() {
+  s_vec<Entity*> rc;
+  F__LOOP(it, ents) {
+    rc.push_back(it->second);
   }
-  el->add(e);
-  dirty=true;
-  addList.push_back(e);
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+EntId Engine::generateEid() {
+  auto rc= ++lastId;
+  if (rc < INT_MAX) {} else {
+    throw "too many entities";
+  }
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* Engine::reifyEntity() {
+  auto e= mc_new2(Entity,this);
+  auto eid=e->getEid();
+  ents.insert(S__PAIR(EntId,Entity*,eid,e));
   return e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// default entities put into group "*"
-Entity* Engine::reifyEntity() {
-  return reifyEntity("*");
-}
-
-//////////////////////////////////////////////////////////////////////////////
 //
-void Engine::notifyModify(not_null<Entity*> e) {
-  bool fnd=false;
-  F__LOOP(it, modList) {
-    if (e == *it)
-    { fnd=true; break; }
-  }
-  if (!fnd) {
-    modList.push_back(e);
-    dirty=true;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Engine::purgeEntity(not_null<Entity*> e) {
-  auto it = groups.find(e->groupId());
-  if (it != groups.end()) {
-    purgeEntity(it->second, e);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Engine::purgeEntity(EList* el, Entity* e) {
-  freeList.push_back(e);
-  e->markDelete();
-  el->release(e);
-  dirty=true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Engine::purgeEntities(const sstr &g) {
-  auto it = groups.find(g);
-  if (it != groups.end()) {
-    auto el=it->second;
-    while (NNP(el->head)) {
-      purgeEntity(el, el->head);
-    }
-  }
+void Engine::purgeEntity(Entity* e) {
+  // cannot purge twice!
+  assert(e->isOk);
+  e->die();
+  garbo.push_back(e);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeEntities() {
-  purgeEntities("*");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-NodeList* Engine::getNodeList( const NodeType& nodeType) {
-  auto nl = mc_new1(NodeList, nodeType);
-  auto rego = NodeRegistry::self();
-  F__LOOP(it, groups) {
-    auto &el= it->second;
-    Node *n= nullptr;
-    for (auto e= el->head; NNP(e); e=e->next) {
-      if (ENP(n)) {
-        n= rego->reifyNode(nodeType);
-      }
-      if (n->bindEntity(e)) {
-        nl->add(n);
-        SNPTR(n)
-      }
-    }
+  F__LOOP(it,ents) {
+    delete it->second;
   }
-  nodeLists.push_back(nl);
-  return nl;
+  ents.clear();
+  doHouseKeeping();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::regoSystem(not_null<System*> s) {
-  //s->addToEngine( this );
   systemList.add(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystem(not_null<System*> s ) {
-  //s->removeFromEngine(this);
   systemList.purge(s);
 }
 
@@ -185,59 +176,8 @@ void Engine::update(float time) {
       if (! s->update(time)) { break; }
     }
   }
-  if (dirty) { houseKeeping(); }
-  dirty=false;
+  doHouseKeeping();
   updating = false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// get rid of nodes bound to this entity
-void Engine::onPurgeEntity(Entity *e) {
-  F__LOOP(it, nodeLists) {
-    auto &nl= *it;
-    nl->removeEntity(e);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// sync existing nodes, add if necessary
-void Engine::onAddEntity(Entity *e) {
-  F__LOOP(it, nodeLists) {
-    maybeBind(*it, e);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Engine::maybeBind(NodeList* nl, Entity *e) {
-  auto rego = NodeRegistry::self();
-  auto n= rego->reifyNode(nl->getType());
-  if (n->bindEntity(e)) {
-    nl->add(n);
-  } else {
-    delete n;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// sync changes
-void Engine::onModifyEntity(Entity *e) {
-  F__LOOP(it, nodeLists) {
-    auto &nl = *it;
-    if (nl->containsWithin(e)) {
-      if (!nl->isCompatible(e)) {
-        nl->removeEntity(e);
-      }
-    } else {
-      maybeBind(nl,e);
-    }
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Engine::forceSync() {
-  houseKeeping();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -252,25 +192,12 @@ void Engine::ignite() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::houseKeeping() {
-  F__LOOP(it, freeList) {
-    auto e = *it;
-    onPurgeEntity(e);
-    delete e;
+void Engine::doHouseKeeping() {
+  F__LOOP(it, garbo) {
+    delete *it;
   }
-  F__LOOP(it, addList) {
-    auto e = *it;
-    onAddEntity(e);
-  }
-  F__LOOP(it, modList) {
-    auto e= *it;
-    onModifyEntity(e);
-  }
-  freeList.clear();
-  modList.clear();
-  addList.clear();
+  garbo.clear();
 }
-
 
 
 

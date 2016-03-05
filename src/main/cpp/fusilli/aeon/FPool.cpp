@@ -9,12 +9,12 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "XPool.h"
+#include "FPool.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 // Pre-populate a bunch of objects in the pool
-void XPool::preset(s::function<Poolable* ()> f, int count) {
+void FPool::preset(s::function<Poolable* ()> f, int count) {
   for (auto n=0; n < count; ++n) {
     auto rc= f();
     if (NNP(rc)) {
@@ -27,7 +27,7 @@ void XPool::preset(s::function<Poolable* ()> f, int count) {
 
 //////////////////////////////////////////////////////////////////////////
 // Find an object by applying this filter
-Poolable* XPool::select(s::function<bool (Poolable*)> f) {
+Poolable* FPool::select(s::function<bool (Poolable*)> f) {
   F__LOOP(it, objs) {
     auto e = *it;
     if (f(e)) {
@@ -39,7 +39,7 @@ Poolable* XPool::select(s::function<bool (Poolable*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool and set it's status to true
-Poolable* XPool::getAndSet(bool create) {
+Poolable* FPool::getAndSet(bool create) {
   auto rc= get(create);
   if (NNP(rc)) {
     rc->status=true;
@@ -49,13 +49,13 @@ Poolable* XPool::getAndSet(bool create) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-Poolable* XPool::getAt(int pos) {
+Poolable* FPool::getAt(int pos) {
   return objs.at(pos);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool.  More like a peek
-Poolable* XPool::get(bool create) {
+Poolable* FPool::get(bool create) {
   F__LOOP(it, objs) {
     auto e= *it;
     if (! e->status) { return e; }
@@ -69,13 +69,13 @@ Poolable* XPool::get(bool create) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::checkin(not_null<Poolable*> c) {
+void FPool::checkin(not_null<Poolable*> c) {
   objs.push_back(c);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::clearAll(bool del) {
+void FPool::clearAll(bool del) {
   if (del) {
     F__LOOP(it, objs) { delete *it; }
   }
@@ -84,7 +84,7 @@ void XPool::clearAll(bool del) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get the count of active objects
-int XPool::countActives() {
+int FPool::countActives() {
   auto c=0;
   F__LOOP(it, objs) {
     auto z= *it;
@@ -97,7 +97,7 @@ int XPool::countActives() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void XPool::foreach(s::function<void (Poolable*)> f) {
+void FPool::foreach(s::function<void (Poolable*)> f) {
   F__LOOP(it, objs) {
     f(*it);
   }
@@ -105,14 +105,14 @@ void XPool::foreach(s::function<void (Poolable*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool XPool::some(s::function<bool (Poolable*)> f) {
+bool FPool::some(s::function<bool (Poolable*)> f) {
   F__LOOP(it, objs) { if (f(*it)) { return true;} }
   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Hibernate (status off) all objects in the pool
-void XPool::reset() {
+void FPool::reset() {
   F__LOOP(it, objs) {
     auto z= *it;
     z->deflate();
