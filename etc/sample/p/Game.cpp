@@ -29,15 +29,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   void setPhysicsWorld(c::PhysicsWorld*);
 
   DECL_PTR(c::PhysicsWorld, pWorld);
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
+  s_vec<ecs::Entity*> players;
+  s_vec<ecs::Entity*> shared;
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
   virtual void onMouseMotion(const c::Vec2&);
-
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
@@ -54,9 +53,16 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  players = engine->getNodeList(PlayerNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto ss= CC_GNLF(GVars, shared, "slots");
+
+    engine->getEntities(s_vec<ecs::COMType>{
+      "f/CmHuman","f/CmMove","f/CmRender"}, players);
+  engine->getEntities("n/GVars",shared);
+
+  // just checking
+  assert(players.size()==1);
+  assert(shared.size()==1);
+
+  auto ss= (GVars*) shared[0]->get("n/GVars");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -98,24 +104,26 @@ bool GLayer::onContactBegin(c::PhysicsContact&) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
-  py->setPos(loc.x,loc.y);
+  auto r= CC_GEC(f::CmRender,players[0],"f/CmRender");
+  //auto m= CC_GEC(f::CmMove, players[0], "f/CmMove");
+  r->setPos(loc.x,loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
+  auto r= CC_GEC(f::CmRender,players[0],"f/CmRender");
   auto loc= touch->getLocation();
-  return cx::isClicked(py->node,loc);
+  return cx::isClicked(r->node,loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto py=CC_GNLF(SpaceShip,players,"player");
+  auto r= CC_GEC(f::CmRender,players[0],"f/CmRender");
+  //auto m= CC_GEC(f::CmMove, players[0], "f/CmMove");
   auto loc= touch->getLocation();
-  py->setPos(loc.x, loc.y);
+  r->setPos(loc.x, loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////

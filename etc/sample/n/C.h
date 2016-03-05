@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -20,31 +20,7 @@ NS_BEGIN(@@APPID@@)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL SpaceShip : public f::ComObj {
-  MDECL_COMP_TPID("n/SpaceShip")
-  SpaceShip(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Asteroid : public f::ComObj {
-  MDECL_COMP_TPID("n/Asteroid")
-  Asteroid(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
   s_arr<c::Sprite*,2> bgSprites;

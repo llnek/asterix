@@ -11,27 +11,27 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(@@APPID@@)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL AI : public a::System {
+class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(a::NodeList, shared)
   DECL_PTR(c::DelayTime, timer)
-  void process(float);
+  s_vec<ecs::Entity*> shared;
   void parallex(float);
+  void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::AI)
+  MDECL_SYS_PRIORITY( ecs::AI)
   MDECL_SYS_TPID("n/AI")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  AI(a::Engine *e)
+  AI(ecs::Engine *e)
   : System(e)
   {}
 

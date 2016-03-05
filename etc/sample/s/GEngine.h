@@ -11,13 +11,13 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 
 NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine  : public a::Engine {
+class CC_DLL GEngine  : public ecs::Engine {
 
 public:
 

@@ -42,7 +42,7 @@ void GEngine::initEntities() {
     auto ent=this->reifyEntity();
     ent->checkin(rdr);
     return ent;
-  }, 1);
+  }, 10);
 
   auto v= CC_CSV(c::Integer,"SHIP+SPEED");
   auto s= cx::reifySprite("player.png");
