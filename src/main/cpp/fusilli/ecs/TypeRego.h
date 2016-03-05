@@ -25,7 +25,7 @@ public:
   void unbind(not_null<Component*>, not_null<Entity*>);
   void bind(not_null<Component*>, not_null<Entity*>);
 
-  const CompoCache* getCache(const COMType&);
+  CompoCache* getCache(const COMType&);
 
   virtual ~TypeRegistry();
   TypeRegistry() {}

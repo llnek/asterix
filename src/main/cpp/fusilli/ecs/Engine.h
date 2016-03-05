@@ -45,6 +45,11 @@ public:
   const s_vec<Entity*> getEntities(const s_vec<COMType>&);
   const s_vec<Entity*> getEntities(const COMType&);
   const s_vec<Entity*> getEntities();
+
+  void getEntities(const s_vec<COMType>&, s_vec<Entity*>&);
+  void getEntities(const COMType&, s_vec<Entity*>&);
+  void getEntities(s_vec<Entity*>&);
+
   TypeRegistry* rego() { return types; }
 
   void purgeSystem (not_null<System*>);

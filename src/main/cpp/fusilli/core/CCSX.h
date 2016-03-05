@@ -14,7 +14,7 @@
 #include "platform/CCCommon.h"
 #include "base/ccTypes.h"
 #include "Primitives.h"
-#include "ComObj.h"
+#include "COMP.h"
 NS_BEGIN(fusii)
 
 #define HHZ(z) z.height * 0.5f
@@ -24,7 +24,9 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  void resolveElastic(not_null<ComObj*>, not_null<ComObj*>);
+  void resolveElastic(not_null<CmRender*> rA,
+      c::Vec2 &velA,
+      not_null<CmRender*> rB, c::Vec2 &velB);
 
   const c::Size scaleSize(const c::Size &z, float scale);
 
@@ -72,7 +74,7 @@ namespace ccsx {
   const c::Color3B black();
 
   bool collideN(not_null<c::Node*>, not_null<c::Node*> );
-  bool collide(not_null<ComObj*>, not_null<ComObj*>);
+  bool collide(not_null<CmRender*>, not_null<CmRender*>);
 
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
@@ -81,7 +83,7 @@ namespace ccsx {
   bool isIntersect(const Box4&, const Box4&);
   bool isPortrait();
 
-  bool outOfBound(not_null<ComObj*>, const Box4 &B);
+  bool outOfBound(not_null<CmRender*>, const Box4 &B);
   bool outOfBound(const Box4 &src, const Box4 &B);
 
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
@@ -107,9 +109,8 @@ namespace ccsx {
   float deltaY(not_null<c::Node*> a, not_null<c::Node*> b);
   bool isClicked(not_null<c::Node*>, const c::Vec2&);
 
-  const Box4 bbox4B4(not_null<ComObj*>);
-  const Box4 bbox4(not_null<c::Node*>);
-  inline const Box4 bbox4(not_null<ComObj*> c) {
+    const Box4 bbox4(not_null<c::Node*>);
+  inline const Box4 bbox4(not_null<CmRender*> c) {
     return bbox4(c->node);
   }
 
@@ -133,7 +134,7 @@ namespace ccsx {
 
   const c::Size calcSize(const sstr &frame);
 
-  const c::Size halfHW(not_null<ComObj*>);
+  const c::Size halfHW(not_null<CmRender*>);
   const c::Size halfHW(not_null<c::Node*>);
 
   const c::Rect bbox(not_null<c::Node*>);
@@ -148,11 +149,6 @@ namespace ccsx {
   float getRight(not_null<c::Node*>);
   float getTop(not_null<c::Node*>);
   float getBottom(not_null<c::Node*>);
-
-  float getLastLeft(not_null<ComObj*> );
-  float getLastRight(not_null<ComObj*> );
-  float getLastTop(not_null<ComObj*> );
-  float getLastBottom(not_null<ComObj*> );
 
   const c::Vec2 center();
   float centerX();

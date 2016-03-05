@@ -27,7 +27,7 @@ friend class Engine;
   DECL_BF(dead)
   DECL_TD(EntId, eid)
 
-  Entity(not_null<Engine*>);
+  Entity(not_null<Engine*>, EntId);
   void die() { dead=true; }
 
   NOCPYASS(Entity)

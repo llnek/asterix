@@ -75,8 +75,8 @@ void FPool::checkin(not_null<Poolable*> c) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void FPool::clearAll(bool del) {
-  if (del) {
+void FPool::clearAll() {
+  if (ownObjects) {
     F__LOOP(it, objs) { delete *it; }
   }
   objs.clear();

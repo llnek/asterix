@@ -9,15 +9,15 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "TypeRegistry.h"
+#include "TypeRego.h"
 #include "Engine.h"
 #include "Entity.h"
 NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(not_null<Engine*> e) {
-  this->eid= e->generateEid();
+Entity::Entity(not_null<Engine*> e, EntId eid) {
+  this->eid= eid;
   this->engine= e;
 }
 

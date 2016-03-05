@@ -20,7 +20,6 @@
 #define SENDMSGEX(t,m) MGMS()->sendMsgEx(t,m)
 #define SENDMSG(t) MGMS()->sendMsg(t)
 #include "platform/CCCommon.h"
-#include "core/XPool.h"
 #include "core/Odin.h"
 #include "core/JSON.h"
 #include "XScene.h"
@@ -50,7 +49,7 @@ protected:
 
   static void binds(not_null<GameScene*>);
 
-  s_map<sstr, XPool*> pools;
+  s_map<sstr, f::FPool*> pools;
   s_que<sstr> msgQ;
 
   DECL_TV(int, state, 0)
@@ -77,8 +76,8 @@ public:
   }
 
   void reifyPools(const s_vec<sstr> &names);
-  XPool* reifyPool(const sstr &n);
-  XPool* getPool(const sstr &n);
+  f::FPool* reifyPool(const sstr &n);
+  f::FPool* getPool(const sstr &n);
 
   int getLevel() { return level; }
   ws::OdinIO* wsock();

@@ -38,27 +38,35 @@ void GEngine::initEntities() {
     body->setDynamic(true);
     body->setEnabled(false);
     tmp->setPhysicsBody(body);
-    return mc_new1(Asteroid,tmp);
+    auto rdr=mc_new1(f::CmRender, tmp);
+    auto ent=this->reifyEntity();
+    ent->checkin(rdr);
+    return ent;
   }, 32);
 
-  auto v=CC_CSV(c::Integer,"SHIP+SPEED");
-  auto s = cx::reifySprite("player.png");
-  auto py= mc_new1(SpaceShip,s);
-  auto sz= py->csize();
+  auto v= CC_CSV(c::Integer,"SHIP+SPEED");
+  auto s= cx::reifySprite("player.png");
+  auto sz= CC_CSIZE(s);
   auto body = c::PhysicsBody::createCircle(HWZ(sz));
   body->setContactTestBitmask(true);
   body->setDynamic(true);
   s->setPhysicsBody(body);
-  py->inflate(wb.cx, wb.cy);
+
+  auto rdr= mc_new1(f::CmRender,s);
   MGML()->addItem(s,-1);
+  rdr->inflate(wb.cx, wb.cy);
+  auto mo= mc_new(f::CmGesture);
+  auto mv= mc_new(f::CmMove);
+  mv->maxSpeed=v;
+  mv->speed=v;
+  auto ship= this->reifyEntity();
+  ship->checkin(rdr);
+  ship->checkin(mo);
+  ship->checkin(mv);
 
-  auto ent= this->reifyEntity();
-  ent->checkin(mc_new(Gesture));
-  py->speed=v;
-  ent->checkin(py);
 
-  ent=this->reifyEntity();
-  ent->checkin(mc_new(GVars));
+  // global
+  this->reifyEntity()->checkin(mc_new(GVars));
 }
 
 //////////////////////////////////////////////////////////////////////////////

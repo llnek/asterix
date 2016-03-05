@@ -185,6 +185,7 @@ NS_END
 #include "FArrayPtr.h"
 #include "SMPtr.h"
 #include "FDList.h"
+#include "FPool.h"
 NS_ALIAS(f,fusii)
 NS_ALIAS(s,std)
 NS_USING(gsl)

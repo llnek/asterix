@@ -22,7 +22,7 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+  engine->getEntities("n/GVars", shared);
   timer= cx::reifyTimer(MGML(), 1500);
 }
 
@@ -39,7 +39,7 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::parallex(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  auto ss= CC_GEC(GVars, shared[0], "n/GVars");
   auto wb= cx::visBox();
 
   F__LOOP(it, ss->bgSprites) {
@@ -68,13 +68,14 @@ void AI::process(float dt) {
   }
 
   auto p= MGMS()->getPool("Asteroids");
-  auto tmp= (Asteroid*) p->getAndSet(true);
+    auto tmp= (ecs::Entity*) p->getAndSet(true);
+  auto r= CC_GEC(f::CmRender,tmp,"f/CmRender");
   auto wb= cx::visBox();
-  auto sz= tmp->csize();
+  auto sz= r->csize();
   auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
 
-  tmp->inflate(wb.left + rx , wb.top + sz.height);
-  tmp->node->getPhysicsBody()->setEnabled(true);
+  r->inflate(wb.left + rx , wb.top + sz.height);
+  r->node->getPhysicsBody()->setEnabled(true);
   timer= cx::reifyTimer(MGML(), 1500);
 }
 

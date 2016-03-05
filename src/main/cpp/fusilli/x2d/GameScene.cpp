@@ -62,7 +62,7 @@ f::JsonObj* GameScene::getLCfg() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::getPool(const sstr &key) {
+f::FPool* GameScene::getPool(const sstr &key) {
   auto it = pools.find(key);
   if (it != pools.end()) {
     return it->second;
@@ -73,14 +73,14 @@ XPool* GameScene::getPool(const sstr &key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-XPool* GameScene::reifyPool(const sstr &key) {
+f::FPool* GameScene::reifyPool(const sstr &key) {
+  auto p= mc_new1(f::FPool,false);
   auto it = pools.find(key);
-  auto p= mc_new( XPool);
   if (it != pools.end()) {
     delete it->second;
     pools.erase(it);
   }
-  pools.insert(S__PAIR(sstr, XPool*, key, p));
+  pools.insert(S__PAIR(sstr, f::FPool*, key, p));
   return p;
 }
 

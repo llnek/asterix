@@ -15,8 +15,7 @@
 //
 
 #include "base/CCEventKeyboard.h"
-#include "core/ComObj.h"
-#include "ash/Engine.h"
+#include "ecs/Engine.h"
 #include "XLayer.h"
 NS_BEGIN(fusii)
 
@@ -31,7 +30,8 @@ protected:
   virtual void decoPost();
   virtual void decoPre();
 
-  DECL_PTR(a::Engine,engine)
+  DECL_PTR(ecs::Engine,engine)
+
 public:
 
   virtual ~GameLayer();

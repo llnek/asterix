@@ -11,28 +11,28 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Move : public a::System {
+class CC_DLL Move : public ecs::System {
 
-  DECL_PTR(a::NodeList,players)
-  DECL_PTR(a::NodeList,shared)
+  s_vec<ecs::Entity*> players;
+  s_vec<ecs::Entity*> shared;
 
   void process(float);
   void onKeys(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_PRIORITY( ecs::Move)
   MDECL_SYS_TPID("n/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  Move(ecs::Engine *e)
   : System(e)
   {}
 

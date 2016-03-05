@@ -11,23 +11,24 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(prototype)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Resolve : public a::System {
-  DECL_PTR(a::NodeList, shared)
+//
+class CC_DLL Resolve : public ecs::System {
+  s_vec<ecs::Entity*> shared;
   void process(float);
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_PRIORITY( ecs::Resolve)
   MDECL_SYS_TPID("n/Resolve")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  Resolve(ecs::Engine *e)
   : System(e)
   {}
 

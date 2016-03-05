@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "TypeRego.h"
+#include "Entity.h"
 NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ TypeRegistry::~TypeRegistry() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const CompoCache* TypeRegistry::getCache(const COMType &c) {
+CompoCache* TypeRegistry::getCache(const COMType &c) {
   auto it= rego.find(c);
   if (it != rego.end()) {
     return it->second;

@@ -264,7 +264,7 @@ c::Label* reifyLabel(float x, float y,
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
-bool collide(not_null<ComObj*> a, not_null<ComObj*> b) {
+bool collide(not_null<CmRender*> a, not_null<CmRender*> b) {
   return (NNP(a) && NNP(b)) ? collideN(a->node, b->node) : false;
 }
 
@@ -326,7 +326,7 @@ j::json readJson(const sstr &fpath) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool outOfBound(not_null<ComObj*> ent, const Box4 &B) {
+bool outOfBound(not_null<CmRender*> ent, const Box4 &B) {
   return (NNP(ent) && NNP(ent->node)) ? outOfBound(bbox4(ent->node), B) : false;
 }
 
@@ -475,7 +475,7 @@ const c::Size calcSize(const sstr &frame) {
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size halfHW(not_null<ComObj*> n) {
+const c::Size halfHW(not_null<CmRender*> n) {
   return halfHW(n->node);
 }
 
@@ -497,17 +497,6 @@ const c::Rect bbox(not_null<c::Node*> s) {
                  GetBottom(s),
                  GetWidth(s),
                  GetHeight(s)); */
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Reify a rect from the last frame
-//
-const Box4 bbox4B4(not_null<ComObj*> ent) {
-  return Box4(
-    getLastTop(ent),
-    getLastRight(ent),
-    getLastBottom(ent),
-    getLastLeft(ent));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -572,30 +561,6 @@ float getBottom(not_null<c::Node*> s) {
 //
 float getTop(not_null<c::Node*> s) {
   return get_YYY(s, s->getPosition().y, anchorT().y);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-float getLastLeft(not_null<ComObj*> ent) {
-  return get_XXX(ent->node, ent->lastPos.x, anchorL().x);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-float getLastRight(not_null<ComObj*> ent) {
-  return get_XXX(ent->node, ent->lastPos.x, anchorR().x);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-float getLastTop(not_null<ComObj*> ent) {
-  return get_YYY(ent->node, ent->lastPos.y, anchorT().y);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-float getLastBottom(not_null<ComObj*> ent) {
-  return get_YYY(ent->node, ent->lastPos.y, anchorB().y);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -779,11 +744,15 @@ const c::Vec2 anchorTL() { return c::Vec2(0, 1); }
 //////////////////////////////////////////////////////////////////////////
 // not used for now.
 //
-void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
+void resolveElastic(
+    not_null<CmRender*> obj1,
+    c::Vec2 &vel1,
+    not_null<CmRender*> obj2, c::Vec2 &vel2) {
+
   auto pos2 = obj2->node->getPosition();
   auto pos1= obj1->node->getPosition();
-  auto sz2= obj2->node->getContentSize();
-  auto sz1= obj1->node->getContentSize();
+  auto sz2= CC_CSIZE(obj2->node);
+  auto sz1= CC_CSIZE(obj1->node);
   auto hh1= HHZ(sz1);
   auto hw1= HWZ(sz1);
   auto x = pos1.x;
@@ -793,35 +762,35 @@ void resolveElastic(not_null<ComObj*> obj1, not_null<ComObj*> obj2) {
 
   // coming from right
   if (bx1.left < bx2.right && bx2.right < bx1.right) {
-    obj2->vel.x = - fabs(obj2->vel.x);
-    obj1->vel.x = fabs(obj1->vel.x);
+    vel2.x = - fabs(vel2.x);
+    vel1.x = fabs(vel1.x);
     x= getRight(obj2->node) + hw1;
   }
   else
   // coming from left
   if (bx1.right > bx2.left && bx1.left < bx2.left) {
-    obj1->vel.x = - fabs( obj1->vel.x);
-    obj2->vel.x = fabs(obj2->vel.x);
+    vel1.x = - fabs(vel1.x);
+    vel2.x = fabs(vel2.x);
     x= getLeft(obj2->node) - hw1;
   }
   else
   // coming from top
   if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
-    obj2->vel.y = - fabs(obj2->vel.y);
-    obj1->vel.y = fabs(obj1->vel.y);
+    vel2.y = - fabs(vel2.y);
+    vel1.y = fabs(vel1.y);
     y= getTop(obj2->node) + hh1;
   }
   else
   // coming from bottom
   if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
-    obj1->vel.y = - fabs(obj1->vel.y);
-    obj2->vel.y = fabs(obj2->vel.y);
+    vel1.y = - fabs(vel1.y);
+    vel2.y = fabs(vel2.y);
     y= getBottom(obj2->node) - hh1;
   }
   else {
     return;
   }
-  obj1->updatePosition(x,y);
+  //obj1->updatePosition(x,y);
 }
 
 //////////////////////////////////////////////////////////////////////////////

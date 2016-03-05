@@ -17,6 +17,7 @@ NS_BEGIN(ecs)
 #define MDECL_COMP_TPID(x) \
     virtual const ecs::COMType typeId() { return x; }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 typedef s::string SystemType;
@@ -26,6 +27,7 @@ typedef int EntId;
 
 //////////////////////////////////////////////////////////////////////////
 //
+class Entity;
 struct FS_DLL Component {
   virtual const COMType typeId() = 0;
   virtual void dispose() {}

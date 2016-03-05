@@ -23,8 +23,8 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+    engine->getEntities(s_vec<ecs::COMType>{"f/CmRender", "f/CmHuman"},players);
+  engine->getEntities("n/GVars",shared);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::clamp(float dt) {
-  auto py=CC_GNLF(SpaceShip, players, "player");
+  auto py=CC_GEC(f::CmRender, players[0], "f/CmRender");
   auto sz= py->csize();
   auto loc= py->pos();
   auto wb= cx::visBox();

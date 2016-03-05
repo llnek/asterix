@@ -15,6 +15,7 @@
 //
 
 #include "fusilli.h"
+NS_ALIAS(s,std)
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,6 +33,7 @@ struct FS_DLL Poolable {
 class FS_DLL FPool {
   s::function<Poolable* ()> ctor;
   s_vec<Poolable*> objs;
+  DECL_BF(ownObjects)
   DECL_IZ(batch)
 public:
 
@@ -48,13 +50,13 @@ public:
 
   void foreach(s::function<void (Poolable*)>);
   bool some(s::function<bool (Poolable*)>);
-  void clearAll(bool del=true);
+  void clearAll();
 
   void checkin(not_null<Poolable*>);
   void reset();
 
-  virtual ~FPool() {  clearAll(true); }
-  FPool() {}
+  FPool(bool owner) { ownObjects=owner; }
+  virtual ~FPool() {  clearAll(); }
   NOCPYASS(FPool)
 };
 

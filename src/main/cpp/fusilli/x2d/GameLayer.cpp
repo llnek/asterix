@@ -37,7 +37,6 @@ GameLayer::GameLayer() {
 //
 void GameLayer::decoPost() {
   if (NNP(engine)) {
-    engine->forceSync();
     engine->ignite();
   }
   scheduleUpdate();

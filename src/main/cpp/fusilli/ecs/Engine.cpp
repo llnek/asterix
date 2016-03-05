@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "TypeRego.h"
 #include "Engine.h"
 NS_BEGIN(ecs)
 
@@ -42,12 +43,10 @@ Engine::Engine() {
   types= mc_new(TypeRegistry);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities(const s_vec<COMType> &cs) {
+void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*>& rc) {
   s_vec<CompoCache*> ccs;
-  s_vec<Entity*> rc;
   int pmin= INT_MAX;
   CompoCache *pm;
 
@@ -63,7 +62,7 @@ const s_vec<Entity*> Engine::getEntities(const s_vec<COMType> &cs) {
   }
 
   F__POOP(it,pm) {
-    auto eid= *it;
+    auto eid= it->first;
     auto sum=0;
     F__LOOP(it2,ccs) {
       auto c= *it2;
@@ -81,33 +80,51 @@ const s_vec<Entity*> Engine::getEntities(const s_vec<COMType> &cs) {
       }
     }
   }
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_vec<Entity*> Engine::getEntities(const s_vec<COMType> &cs) {
+  s_vec<Entity*> rc;
+  getEntities(cs, rc);
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities(const COMType &c) {
+void Engine::getEntities(const COMType &c, s_vec<Entity*> &rc) {
   auto cc= types->getCache(c);
-  s_vec<Entity*> rc;
   if (NNP(cc)) F__POOP(it,cc) {
-    auto z= *it;
+    auto z= it->first;
     auto it2= ents.find(z);
     if (it2 != ents.end()) {
       rc.push_back(it2->second);
     }
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_vec<Entity*> Engine::getEntities(const COMType &c) {
+  s_vec<Entity*> rc;
+  getEntities(c,rc);
   return rc;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Engine::getEntities(s_vec<Entity*> &rc) {
+  F__LOOP(it, ents) {
+    rc.push_back(it->second);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 const s_vec<Entity*> Engine::getEntities() {
   s_vec<Entity*> rc;
-  F__LOOP(it, ents) {
-    rc.push_back(it->second);
-  }
+  getEntities(rc);
   return rc;
 }
 
@@ -124,8 +141,8 @@ EntId Engine::generateEid() {
 //////////////////////////////////////////////////////////////////////////////
 //
 Entity* Engine::reifyEntity() {
-  auto e= mc_new2(Entity,this);
-  auto eid=e->getEid();
+  auto eid= this->generateEid();
+  auto e= mc_new2(Entity,this, eid);
   ents.insert(S__PAIR(EntId,Entity*,eid,e));
   return e;
 }
@@ -134,7 +151,7 @@ Entity* Engine::reifyEntity() {
 //
 void Engine::purgeEntity(Entity* e) {
   // cannot purge twice!
-  assert(e->isOk);
+  assert(e->isOk());
   e->die();
   garbo.push_back(e);
 }
