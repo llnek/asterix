@@ -8,31 +8,33 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Collide : public a::System {
-  DECL_PTR(a::NodeList, shared)
+class CC_DLL MeleeLogic : public ecs::System {
+
   void process(float);
-  void clamp(float);
+
 public:
 
-  MDECL_SYS_PRIORITY( a::Collide)
-  MDECL_SYS_TPID("n/Collide")
+  MDECL_SYS_PRIORITY( ecs::Collide)
+  MDECL_SYS_TPID("n/MeleeLogic")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Collide(a::Engine *e)
+  MeleeLogic(ecs::Engine *e)
   : System(e)
   {}
 
 };
+
 
 
 NS_END

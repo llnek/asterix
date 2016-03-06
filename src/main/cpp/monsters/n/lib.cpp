@@ -37,24 +37,24 @@ s_vec<ecs::Entity*> getEntsOnTeam(GEngine *engine, int team,  const COMType &ct)
 //
 Entity* closestEntOnTeam(GEngine *engine, Entity *ent, int team) {
 
-  auto ourRender = (f::CmRender*)ent->get("f/CmRender");
+  auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
   if (!ourRender) { return nullptr; }
 
-  float closestEntityDistance = -1;
-  Entity *closestEntity = nullptr;
+  auto others = getEntsOnTeam(engine, team, "f/CDraw");
+  Entity *closestEnt= nullptr;
+  float closestDist= -1;
 
-  auto others = getEntsOnTeam(engine, team, "f/CmRender");
   F__LOOP(it, others) {
     auto e= *it;
-    auto otherRender = (f::CmRender*)e->get("f/CmRender");
-    auto distance = c::ccpDistance(ourRender->pos(), otherRender->pos());
-    if (distance < closestEntityDistance || closestEntityDistance == -1) {
-      closestEntity = e;
-      closestEntityDistance = distance;
+    auto r2= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto distance = c::ccpDistance(ourRender->pos(), r2->pos());
+    if (distance < closestDist || closestDist == -1) {
+      closestEnt= e;
+      closestDist = distance;
     }
   }
 
-  return closestEntity;
+  return closestEnt;
 }
 
 

@@ -8,30 +8,33 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Move : public a::System {
+class CC_DLL MoveLogic : public ecs::System {
 
-  DECL_PTR(a::NodeList,shared)
+  c::Vec2 separate(Entity*, f::CMove*, f::CDraw*, Team*);
+  c::Vec2 arrive(Entity*, f::CMove*, f::CDraw*);
 
   void process(float);
   void onKeys(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Move)
-  MDECL_SYS_TPID("n/Move")
+  MDECL_SYS_PRIORITY( ecs::Move)
+  MDECL_SYS_TPID("n/MoveLogic")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  MoveLogic(ecs::Engine *e)
   : System(e)
   {}
 

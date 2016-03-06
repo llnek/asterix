@@ -28,7 +28,7 @@ enum MonsterType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CGun : public ecs::Component {
+struct CC_DLL Gun : public ecs::Component {
   MDECL_COMP_TPID("n/Gun")
   DECL_FZ(range)
   DECL_FZ(damage)
@@ -36,7 +36,7 @@ struct CC_DLL CGun : public ecs::Component {
   DECL_FZ(lastDamageTime)
   DECL_TD(sstr,sound)
 
-  CGun(float range, float damage,
+  Gun(float range, float damage,
       float damageRate,
       const sstr &sound) {
     this->damageRate = damageRate;
@@ -50,7 +50,7 @@ struct CC_DLL CGun : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CMelee : public ecs::CmMelee {
+struct CC_DLL Melee : public ecs::CMelee {
   MDECL_COMP_TPID("n/Melee")
   DECL_BF(aoe)
   DECL_TD(sstr,sound)
@@ -59,11 +59,11 @@ struct CC_DLL CMelee : public ecs::CmMelee {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CMonster : public ecs::Component {
+struct CC_DLL Monster : public ecs::Component {
   MDECL_COMP_TPID("n/Monster")
   DECL_TD(MonsterType, type)
 
-  CMonster(MonsterType t) {
+  Monster(MonsterType t) {
     this->type = t;
   }
 
@@ -71,8 +71,8 @@ struct CC_DLL CMonster : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CScore : public ecs::CmScore {
-  MDECL_COMP_TPID("n/Score")
+struct CC_DLL Stash : public ecs::CStash {
+  MDECL_COMP_TPID("n/Stash")
   DECL_IZ(coins)
   DECL_FZ(lastCoinDrop)
 
@@ -80,11 +80,11 @@ struct CC_DLL CScore : public ecs::CmScore {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CTeam : public ecs::Component {
+struct CC_DLL Team : public ecs::Component {
   MDECL_COMP_TPID("n/Team")
   DECL_IZ(team)
 
-  CTeam(int team) {
+  Team(int team) {
     this->team = team;
   }
 
@@ -92,13 +92,13 @@ struct CC_DLL CTeam : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CAutoma : public ecs::CmAutoma {
+struct CC_DLL Automa : public ecs::CAutoma {
   MDECL_COMP_TPID("n/Automa")
   DECL_TD(AIState, state)
 
-  virtual ~CAutoma() { mc_del_ptr(state); }
+  virtual ~Automa() { mc_del_ptr(state); }
 
-  CAutoma(not_null<AIState*> s) {
+  Automa(not_null<AIState*> s) {
     state = s.get();
   }
 

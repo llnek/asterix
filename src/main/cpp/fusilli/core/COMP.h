@@ -56,10 +56,10 @@ struct CC_DLL CHuman : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CScore : public ecs::Component {
-  MDECL_COMP_TPID("f/CScore")
-  DECL_FZ(value)
-  CScore(float v) { value=v;}
+struct CC_DLL CStash : public ecs::Component {
+  MDECL_COMP_TPID("f/CStash")
+  DECL_FZ(score)
+  CStash(float v) { score=v;}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,6 +107,10 @@ struct CC_DLL CDraw : public ecs::Component {
     if (node) { node->setPosition(x,y); show(); }
   }
   void releaseInnerNode() { node=nullptr; }
+  void removeInnerNode() {
+    if (node) {node->removeFromParent();}
+    node=nullptr;
+  }
   void inflate() { show(); }
   void deflate() {
     if (node) {

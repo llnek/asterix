@@ -8,7 +8,9 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+
 //////////////////////////////////////////////////////////////////////////////
 
 #include "Health.h"
@@ -16,13 +18,13 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HealthSystem::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+void HealthLogic::preamble() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool HealthSystem::update(float dt) {
+bool HealthLogic::update(float dt) {
   if (MGMS()->isLive()) {
     process(dt);
   }
@@ -31,32 +33,32 @@ bool HealthSystem::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HealthSystem::process(float dt) {
-
-  auto ents = engine->getNodesWith("n/Health");
-  F__LOOP(it, ents) {
+void HealthLogic::process(float dt) {
+  auto ents = engine->getEntities("n/Health");
+  F__LOOP(it,ents) {
     auto e= *it;
-    if (!e->status()) {
-    continue; }
-    auto health = (Health*)e->get("n/Health");
-    auto render = (Render*)e->get("n/Render");
+    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto health = CC_GEC(Health,e,"n/Health");
 
-    if (!health->alive) { return; }
-    if (health->maxHp == 0) { return; }
+    if (!health->alive ||
+        health->maxHp == 0) { return; }
+
     if (health->curHp <= 0) {
       health->alive = false;
       cx::sfxPlay("boom");
+
       if (render) {
         render->node->runAction(
-            c::Sequence::create(
+           c::Sequence::create(
             c::FadeOut::create(0.5),
-            c::RemoveSelf::create(true),
-            c::CallFunc::create([=](){
-              this->engine->deflate(e,true);
-              }),
+            c::CallFunc::create([=]() {
+              render->releaseInnerNode();
+              engine->purgeEntity(e);
+            }),
+            c::RemoveSelf::create(),
             CC_NIL));
       } else {
-        this->engine->deflate(e,true);
+        engine->purgeEntity(e);
       }
     }
   }
@@ -66,26 +68,23 @@ static int colorBuffer = 55;
 static int maxColor = 200;
 //////////////////////////////////////////////////////////////////////////////
 //
-void HealthSystem::draw() {
-  auto ents = engine->getNodesWith("n/Health");
+void HealthLogic::draw() {
+
+  auto ents = engine->getEntities(
+      s_vec<ecs::COMType>{ "n/Health","f/CDraw"});
   F__LOOP(it,ents) {
     auto e= *it;
-    if (!e->status()) {
-    continue; }
-    auto health = (Health*)e->get("n/Health");
-    auto render = (Render*)e->get("n/Render");
-    if (ENP(health) || ENP(render)) {
-    continue; }
+    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto health = CC_GEC(Health,e,"n/Health");
+
     auto sX = render->node->getPositionX() - HWZ(CC_CSIZE(render->node));
     auto eX = render->node->getPositionX() + HWZ(CC_CSIZE(render->node));
     auto actualY = render->node->getPositionY() + HHZ(CC_CSIZE(render->node));
 
-    auto percentage =
-      ((float) health->curHp) / ((float) health->maxHp);
-
-    int actualX = ((eX-sX) * percentage) + sX;
-    int amtRed = ((1.0f-percentage)*maxColor)+colorBuffer;
-    int amtGreen = (percentage*maxColor)+colorBuffer;
+    auto percentage = health->curHp / health->maxHp;
+    auto actualX = ((eX-sX) * percentage) + sX;
+    auto amtRed = ((1.0f-percentage)*maxColor)+colorBuffer;
+    auto amtGreen = (percentage*maxColor)+colorBuffer;
 
     glLineWidth(7);
     ccDrawColor4B(amtRed,amtGreen,0,255);

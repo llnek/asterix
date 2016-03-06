@@ -8,7 +8,9 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ecs/System.h"
@@ -17,19 +19,18 @@
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL HealthSystem : public ecs::System {
+class CC_DLL HealthLogic : public ecs::System {
 
-  DECL_PTR(a::NodeList, shared)
   void process(float);
 
 public:
 
-  MDECL_SYS_TPID("n/HealthSystem")
+  MDECL_SYS_TPID("n/HealthLogic")
   MDECL_SYS_PRIORITY( 10)
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  HealthSystem(a::Engine *e)
+  HealthLogic(ecs::Engine *e)
   : System(e)
   {}
 

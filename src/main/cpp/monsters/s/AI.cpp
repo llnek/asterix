@@ -46,17 +46,17 @@ void AI::process(float dt) {
   return; }
 
   auto aiEntity = ents[0];
-  auto aiTeam = (CTeam*)aiEntity->get("n/Team");
-  auto ai = (CAutoma*)aiEntity->get("n/Automa");
+  auto aiTeam = CC_GEC(Team,aiEntity,"n/Team");
+  auto ai = CC_GEC(Automa,aiEntity,"n/Automa");
 
   this->humanQuirkValue = 0;
   this->humanZapValue = 0;
   this->humanMunchValue = 0;
 
-  auto mons = getEntsOnTeam(engine, OTHER_TEAM(aiTeam.team), "n/Monster");
+  auto mons = getEntsOnTeam(engine, OTHER_TEAM(aiTeam->team), "n/Monster");
   F__LOOP(it,mons) {
     auto m= *it;
-    auto c= (CMonster*)m->get("n/Monster");
+    auto c= CC_GEC(Monster,m,"n/Monster");
     if (c->type == eMonsterTypeQuirk) {
       this->humanQuirkValue += COST_QUIRK;
     } else if (c->type == eMonsterTypeZap) {
@@ -74,7 +74,7 @@ void AI::process(float dt) {
   mons= getEntsOnTeam(engine, aiTeam->team, "n/Monster");
   F__LOOP(it, mons) {
     auto m= *it;
-    auto c= (CMonster*) m->get("n/Monster");
+    auto c= CC_GEC(Monster,m,"n/Monster");
     if (c->type == eMonsterTypeQuirk) {
       this->aiQuirkValue += COST_QUIRK;
     } else if (c->type == eMonsterTypeZap) {
@@ -89,8 +89,8 @@ void AI::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::changeStateForEntity(Entity *entity, AIState *state) {
-  auto ai = entity->get("n/Automa");
+void AI::changeStateForEntity(Entity *ent, AIState *state) {
+  auto ai = CC_GEC(Automa,ent,"n/Automa");
   if (!ai) return;
   //ai->state->exit();
   //ai.state = state;
@@ -102,11 +102,12 @@ void AI::changeStateForEntity(Entity *entity, AIState *state) {
 //
 void AI::spawnQuirkForEntity(GEngine *engine, Entity *entity) {
 
-  auto player = entity->get("n/Score");
+  auto player = entity->get("n/Stash");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  if (!player || player->coins < COST_QUIRK) { return; } else {
+  if (!player || player->coins < COST_QUIRK) {
+  return; } else {
     player->coins -= COST_QUIRK;
   }
 
@@ -114,7 +115,7 @@ void AI::spawnQuirkForEntity(GEngine *engine, Entity *entity) {
 
   for (auto i = 0; i < 2; ++i) {
     auto *m= engine->createQuirkMonster(2);
-    auto *render = (f::cmRender*)m->get("f/CmRender");
+    auto *render = CC_GEC(f::CDraw,m,"f/CDraw");
     if (render) {
       auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
       render->setPos(wb.right * 0.75, wb.cy + r);
@@ -126,7 +127,7 @@ void AI::spawnQuirkForEntity(GEngine *engine, Entity *entity) {
 //
 void AI::spawnZapForEntity(GEngine *engine, Entity *entity) {
 
-  auto player = entity->get("n/Score");
+  auto player = entity->get("n/Stash");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -137,7 +138,7 @@ void AI::spawnZapForEntity(GEngine *engine, Entity *entity) {
   cx::sfxPLay("spawn");
 
   auto m= engine->createZapMonster(2);
-  auto render = (f::CmRender*)m->get("f/CmRender");
+  auto render = CC_GEC(f::CDraw*,m,get("f/CDraw"));
   if (render) {
     auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
     render->setPos(wb.right * 0.75, wb.cy + r);
@@ -146,9 +147,9 @@ void AI::spawnZapForEntity(GEngine *engine, Entity *entity) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::spawnMunchForEntity(GEngine *engine, Entity *entity) {
+void AI::spawnMunchForEntity(GEngine *engine, Entity *ent) {
 
-  auto player = entity->get("n/Score");
+  auto player = CC_GEC(Stash,ent,"n/Stash");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -159,12 +160,13 @@ void AI::spawnMunchForEntity(GEngine *engine, Entity *entity) {
   cx::sfxPlay("spawn");
 
   auto m= engine->createMunchMonster(2);
-  auto render = (f::CmRender*)m->get("f/CmRender");
+  auto render = CC_GEC(f::CDraw,m,"f/CDraw");
   if (render) {
     auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
     render->setPos(wb.right * 0.75, wb.cy  + r);
   }
 }
+
 
 NS_END
 

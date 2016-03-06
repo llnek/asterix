@@ -35,7 +35,6 @@ class FS_DLL Engine {
   s_vec<Entity*> garbo;
   NOCPYASS(Engine)
 
-  void purgeEntity(Entity*);
   EntId generateEid();
 
 protected:
@@ -59,6 +58,7 @@ public:
   void purgeSystem (not_null<System*>);
   void purgeSystems();
   void purgeEntities();
+  void purgeEntity(Entity*);
 
   void regoSystem(not_null<System*> );
   Entity* reifyEntity();

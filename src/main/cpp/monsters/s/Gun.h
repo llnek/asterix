@@ -17,18 +17,18 @@
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Gun : public ecs::System {
+class CC_DLL GunLogic : public ecs::System {
 
   void process(float);
 
 public:
 
-  MDECL_SYS_TPID("n/Gun")
+  MDECL_SYS_TPID("n/GunLogic")
   MDECL_SYS_PRIORITY( 10)
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Gun(ecs::Engine *e)
+  GunLogic(ecs::Engine *e)
   : System(e)
   {}
 

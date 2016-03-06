@@ -13,11 +13,11 @@
 
 #include "ecs/System.h"
 #include "GEngine.h"
-
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class AIState;
 class CC_DLL AI : public ecs::System {
 
   void changeStateForEntity(Entity*, AIState*);

@@ -860,7 +860,7 @@ float degToRad(float deg) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-long long currentTimeInMillis() {
+long long timeInMillis() {
   return c::utils::getTimeInMilliseconds();
 }
 
@@ -910,7 +910,7 @@ VOIDFN throttle(VOIDFN func, int wait) {
   long long ww= (long long)wait;
   long long previous = 0;
   return [=]() mutable {
-    auto now = currentTimeInMillis();
+    auto now = timeInMillis();
     if (previous==0)
     { previous = now; }
     auto remaining = ww - (now - previous);

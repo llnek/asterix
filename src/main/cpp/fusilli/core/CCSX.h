@@ -129,7 +129,7 @@ namespace ccsx {
   float degToRad(float);
 
   VOIDFN throttle(VOIDFN func, int waitMillis);
-  long long currentTimeInMillis();
+  long long timeInMillis();
   bool isTransitioning();
 
   const c::Size calcSize(const sstr &frame);

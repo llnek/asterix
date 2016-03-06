@@ -21,13 +21,13 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Gun::preamble() {
+void GunLogic::preamble() {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Gun::update(float dt) {
+bool GunLogic::update(float dt) {
   if (MGMS()->isLive()) {
     process(dt);
   }
@@ -39,30 +39,30 @@ static float laserDistance = 1000;
 static float WIGGLE_ROOM = 5;
 //////////////////////////////////////////////////////////////////////////////
 //
-void Gun::process(float dt) {
+void GunLogic::process(float dt) {
   auto ents = engine->getEnts(
-      s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CmRender"});
+      s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CDraw"});
   F__LOOP(it,ents) {
     auto e= *it;
-    auto team = (CTeam*)e->get("n/Team");
-    auto gun = (CGun*) e->get("n/Gun");
-    auto render = (f::CmRender*)e->get("f/CmRender");
 
+    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto team = CC_GEC(Team,e,"n/Team");
+    auto gun = CC_GEC(Gun,e,"n/Gun");
     auto enemy = closestEntOnTeam(engine,e, OTHER_TEAM(team->team));
     if (!enemy) { return; }
 
-    auto enemyRender = (f::CmRender*)enemy->get("f/CmRender");
-    auto distance = c::ccpDistance(render->pos(), enemyRender->pos());
+    auto enemyRender = CC_GEC(f::CDraw,enemy,"f/CDraw");
+    auto dist = c::ccpDistance(render->pos(), enemyRender->pos());
 
-    if (abs(distance) <= (gun->range + WIGGLE_ROOM) &&
-        CACurrentMediaTime() - gun->lastDamageTime > gun->damageRate) {
+    if (abs(dist) <= (gun->range + WIGGLE_ROOM) &&
+        (cx::timeInMillis() - gun->lastDamageTime) > gun->damageRate) {
 
       cx::sfxPlay(gun->sound);
-      gun->lastDamageTime = CACurrentMediaTime();
+      gun->lastDamageTime = cx::timeInMillis();
 
       auto laser = engine->createLaser(team->team);
-      auto laserRender = (f::CmRender*)laser->get("f/CmRender");
-      auto laserMelee = (CMelee*)laser->get("n/Melee");
+      auto laserRender = CC_GEC(f::CDraw,laser,"f/CDraw");
+      auto laserMelee = CC_GEC(Melee,laser,"n/Melee");
       if (!laserRender || !laserMelee) { continue; }
 
       laserRender->node->setPosition(render->pos());
