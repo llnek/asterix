@@ -264,7 +264,7 @@ c::Label* reifyLabel(float x, float y,
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
-bool collide(not_null<CmRender*> a, not_null<CmRender*> b) {
+bool collide(not_null<CDraw*> a, not_null<CDraw*> b) {
   return (NNP(a) && NNP(b)) ? collideN(a->node, b->node) : false;
 }
 
@@ -326,7 +326,7 @@ j::json readJson(const sstr &fpath) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool outOfBound(not_null<CmRender*> ent, const Box4 &B) {
+bool outOfBound(not_null<CDraw*> ent, const Box4 &B) {
   return (NNP(ent) && NNP(ent->node)) ? outOfBound(bbox4(ent->node), B) : false;
 }
 
@@ -475,7 +475,7 @@ const c::Size calcSize(const sstr &frame) {
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size halfHW(not_null<CmRender*> n) {
+const c::Size halfHW(not_null<CDraw*> n) {
   return halfHW(n->node);
 }
 
@@ -745,9 +745,9 @@ const c::Vec2 anchorTL() { return c::Vec2(0, 1); }
 // not used for now.
 //
 void resolveElastic(
-    not_null<CmRender*> obj1,
+    not_null<CDraw*> obj1,
     c::Vec2 &vel1,
-    not_null<CmRender*> obj2, c::Vec2 &vel2) {
+    not_null<CDraw*> obj2, c::Vec2 &vel2) {
 
   auto pos2 = obj2->node->getPosition();
   auto pos1= obj1->node->getPosition();

@@ -55,7 +55,7 @@ GLayer::~GLayer() {
 void GLayer::onInited() {
 
     engine->getEntities(s_vec<ecs::COMType>{
-      "f/CmHuman","f/CmMove","f/CmRender"}, players);
+      "f/CHuman","f/CMove","f/CDraw"}, players);
   engine->getEntities("n/GVars",shared);
 
   // just checking
@@ -104,15 +104,14 @@ bool GLayer::onContactBegin(c::PhysicsContact&) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto r= CC_GEC(f::CmRender,players[0],"f/CmRender");
-  //auto m= CC_GEC(f::CmMove, players[0], "f/CmMove");
+  auto r= CC_GEC(f::CDraw,players[0],"f/CDraw");
   r->setPos(loc.x,loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto r= CC_GEC(f::CmRender,players[0],"f/CmRender");
+  auto r= CC_GEC(f::CDraw,players[0],"f/CDraw");
   auto loc= touch->getLocation();
   return cx::isClicked(r->node,loc);
 }
@@ -120,8 +119,7 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto r= CC_GEC(f::CmRender,players[0],"f/CmRender");
-  //auto m= CC_GEC(f::CmMove, players[0], "f/CmMove");
+  auto r= CC_GEC(f::CDraw,players[0],"f/CDraw");
   auto loc= touch->getLocation();
   r->setPos(loc.x, loc.y);
 }

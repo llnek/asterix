@@ -69,7 +69,7 @@ void AI::process(float dt) {
 
   auto p= MGMS()->getPool("Asteroids");
   auto tmp= (ecs::Entity*) p->getAndSet(true);
-  auto r= CC_GEC(f::CmRender,tmp,"f/CmRender");
+  auto r= CC_GEC(f::CDraw,tmp,"f/CDraw");
   auto wb= cx::visBox();
   auto sz= r->csize();
   auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );

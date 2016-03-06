@@ -21,13 +21,13 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GunSystem::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+void Gun::preamble() {
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GunSystem::update(float dt) {
+bool Gun::update(float dt) {
   if (MGMS()->isLive()) {
     process(dt);
   }
@@ -37,59 +37,59 @@ bool GunSystem::update(float dt) {
 static float laserPointsPerSecond = 100;
 static float laserDistance = 1000;
 static float WIGGLE_ROOM = 5;
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void GunSystem::process(float dt) {
-
-  auto ents= engine->getNodesWith("n/Gun");
-  F__LOOP(it, ents) {
+void Gun::process(float dt) {
+  auto ents = engine->getEnts(
+      s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CmRender"});
+  F__LOOP(it,ents) {
     auto e= *it;
-    if (!e->status()) {
-    continue; }
-    auto render= e->get("n/Render");
-    auto team= e->get("n/Team");
-    auto gun= e->get("n/Gun");
-    if (ENP(render) || ENP(team)) {
-    continue; }
+    auto team = (CTeam*)e->get("n/Team");
+    auto gun = (CGun*) e->get("n/Gun");
+    auto render = (f::CmRender*)e->get("f/CmRender");
 
-    auto enemy = closestOnTeam(e, OPPOSITE_TEAM(team->team));
-    if (ENP(enemy)) {
-    return; }
+    auto enemy = closestEntOnTeam(engine,e, OTHER_TEAM(team->team));
+    if (!enemy) { return; }
 
-    auto enemyRender = (Render*)enemy->get("n/Render");
-    if (ENP(enemyRender)) {
-    continue; }
-
+    auto enemyRender = (f::CmRender*)enemy->get("f/CmRender");
     auto distance = c::ccpDistance(render->pos(), enemyRender->pos());
+
     if (abs(distance) <= (gun->range + WIGGLE_ROOM) &&
         CACurrentMediaTime() - gun->lastDamageTime > gun->damageRate) {
+
       cx::sfxPlay(gun->sound);
       gun->lastDamageTime = CACurrentMediaTime();
 
       auto laser = engine->createLaser(team->team);
-      auto laserRender = (Render*)laser->get("n/Render");
-      auto laserMelee = (Melee*)laser->get("n/Melee");
+      auto laserRender = (f::CmRender*)laser->get("f/CmRender");
+      auto laserMelee = (CMelee*)laser->get("n/Melee");
+      if (!laserRender || !laserMelee) { continue; }
 
-      laserRender->setPos(render->pos());
+      laserRender->node->setPosition(render->pos());
       laserMelee->damage = gun->damage;
 
-      auto direction = c::ccpNormalize(c::ccpSub(enemyRender->pos(), render->pos()));
+      auto direction = c::ccpNormalize(
+          c::ccpSub(enemyRender->pos(), render->pos()));
 
       auto target = c::ccpMult(direction, laserDistance);
       auto duration = laserDistance / laserPointsPerSecond;
 
-      laserRender->node->setRotation(-1 * CC_RADIANS_TO_DEGREES(ccpToAngle(direction)));
+      laserRender->node->setRotation( -1 * CC_RADIANS_TO_DEGREES(c::ccpToAngle(direction)));
       laserRender->node->setZOrder(1);
 
       laserRender->node->runAction(
-             c::Sequence::create(
-              c::MoveBy::create(duration, target),
-              c::RemoveSelf::create(true),
-              CC_NIL));
+         c::Sequence::create(
+          c::MoveBy::create(duration, target),
+          c::CallFunc::create([=](){
+            laserRender->releaseInnerNode();
+            engine->purgeEntity(laser);
+            }),
+          c::RemoveSelf::create(),
+          CC_NIL));
     }
   }
 }
+
 
 
 NS_END

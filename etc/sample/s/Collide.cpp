@@ -23,7 +23,7 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  engine->getEntities(s_vec<ecs::COMType>{"f/CmRender", "f/CmHuman"},players);
+  engine->getEntities(s_vec<ecs::COMType>{"f/CDraw", "f/CHuman"},players);
   engine->getEntities("n/GVars",shared);
 }
 
@@ -40,7 +40,7 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::clamp(float dt) {
-  auto py=CC_GEC(f::CmRender, players[0], "f/CmRender");
+  auto py=CC_GEC(f::CDraw, players[0], "f/CDraw");
   auto sz= py->csize();
   auto loc= py->pos();
   auto wb= cx::visBox();

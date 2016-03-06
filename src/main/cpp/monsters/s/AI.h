@@ -17,10 +17,14 @@
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL AI : public a::System {
+//
+class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(a::NodeList, enemies)
-  DECL_PTR(a::NodeList, shared)
+  void changeStateForEntity(Entity*, AIState*);
+  void spawnQuirkForEntity(GEngine*, Entity*);
+  void spawnMunchForEntity(GEngine*, Entity*);
+  void spawnZapForEntity(GEngine*, Entity*);
+
   void process(float);
 
   DECL_FZ(humanQuirkValue)
@@ -32,20 +36,14 @@ class CC_DLL AI : public a::System {
   DECL_FZ(aiMunchValue)
   DECL_FZ(aiTotalValue)
 
-  void spawnQuirkForEntity(not_null<ecs::Node*>);
-  void spawnZapForEntity(not_null<ecs::Node*>);
-  void spawnMunchForEntity(not_null<ecs::Node*>);
-  void changeStateForEntity(
-      not_null<ecs::Node*>, not_null<AIState*>);
-
 public:
 
-  MDECL_SYS_PRIORITY( a::AI)
+  MDECL_SYS_PRIORITY( ecs::AI)
   MDECL_SYS_TPID("n/AI")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  AI(a::Engine *e)
+  AI(ecs::Engine *e)
   : System(e)
   {}
 

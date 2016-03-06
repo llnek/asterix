@@ -18,8 +18,8 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmGesture : public ecs::Component {
-  MDECL_COMP_TPID("f/CmGesture")
+struct CC_DLL CGesture : public ecs::Component {
+  MDECL_COMP_TPID("f/CGesture")
   DECL_BF(bottom)
   DECL_BF(top)
   DECL_BF(right)
@@ -29,11 +29,11 @@ struct CC_DLL CmGesture : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmHealth : public ecs::Component {
-  MDECL_COMP_TPID("f/CmHealth")
-  CmHealth(float h) {
+struct CC_DLL CHealth : public ecs::Component {
+  MDECL_COMP_TPID("f/CHealth")
+  CHealth(float h) {
     alive=true;
-      origHP=h;
+    origHP=h;
     curHP=h;
   }
   DECL_FZ(origHP)
@@ -44,40 +44,40 @@ struct CC_DLL CmHealth : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmAutoma : public ecs::Component {
-  MDECL_COMP_TPID("f/CmAutoma")
+struct CC_DLL CAutoma : public ecs::Component {
+  MDECL_COMP_TPID("f/CAutoma")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmHuman : public ecs::Component {
-  MDECL_COMP_TPID("f/CmHuman")
+struct CC_DLL CHuman : public ecs::Component {
+  MDECL_COMP_TPID("f/CHuman")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmScore : public ecs::Component {
-  MDECL_COMP_TPID("f/CmScore")
+struct CC_DLL CScore : public ecs::Component {
+  MDECL_COMP_TPID("f/CScore")
   DECL_FZ(value)
-  CmScore(float v) { value=v;}
+  CScore(float v) { value=v;}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmMelee : public ecs::Component {
-  MDECL_COMP_TPID("f/CmMelee")
+struct CC_DLL CMelee : public ecs::Component {
+  MDECL_COMP_TPID("f/CMelee")
   DECL_BF(attacking)
   DECL_FZ(hurt)
   DECL_BF(selfDie)
   DECL_FZ(hurtRate)
   DECL_FZ(lastHurt)
-  CmMelee() {}
+  CMelee() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmMove : public ecs::Component {
-  MDECL_COMP_TPID("f/CmMove")
+struct CC_DLL CMove : public ecs::Component {
+  MDECL_COMP_TPID("f/CMove")
 
   DECL_TD(c::Vec2, moveTarget)
   DECL_TD(c::Vec2, lastPos)
@@ -90,22 +90,23 @@ struct CC_DLL CmMove : public ecs::Component {
   DECL_FZ(speed)
   DECL_FZ(accel)
 
-  CmMove() {
+  CMove() {
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CmRender : public ecs::Component {
-  MDECL_COMP_TPID("f/CmRender")
+struct CC_DLL CDraw : public ecs::Component {
+  MDECL_COMP_TPID("f/CDraw")
   DECL_PTR(c::Node,node)
-  CmRender(not_null<c::Node*> n) { node=n; }
-  CmRender() {}
+  CDraw(not_null<c::Node*> n) { node=n; }
+  CDraw() {}
   void hide() { if (node) node->setVisible(false); }
   void show() { if (node) node->setVisible(true); }
   void inflate(float x, float y) {
     if (node) { node->setPosition(x,y); show(); }
   }
+  void releaseInnerNode() { node=nullptr; }
   void inflate() { show(); }
   void deflate() {
     if (node) {
@@ -123,7 +124,7 @@ struct CC_DLL CmRender : public ecs::Component {
   float circum() { return node ? CC_CSIZE(node).width : 0; }
   float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
   int tag() { return node ? node->getTag() : 0; }
-  virtual ~CmRender() {
+  virtual ~CDraw() {
      if (node) { node->removeFromParent(); node=nullptr; }
   }
 

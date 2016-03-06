@@ -17,19 +17,18 @@
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL GunSystem : public ecs::System {
+class CC_DLL Gun : public ecs::System {
 
-  DECL_PTR(a::NodeList, shared)
   void process(float);
 
 public:
 
-  MDECL_SYS_TPID("n/GunSystem")
+  MDECL_SYS_TPID("n/Gun")
   MDECL_SYS_PRIORITY( 10)
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  GunSystem(ecs::Engine *e)
+  Gun(ecs::Engine *e)
   : System(e)
   {}
 

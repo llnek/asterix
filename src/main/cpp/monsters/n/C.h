@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -28,7 +28,7 @@ enum MonsterType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gun : public ecs::Component {
+struct CC_DLL CGun : public ecs::Component {
   MDECL_COMP_TPID("n/Gun")
   DECL_FZ(range)
   DECL_FZ(damage)
@@ -36,7 +36,7 @@ struct CC_DLL Gun : public ecs::Component {
   DECL_FZ(lastDamageTime)
   DECL_TD(sstr,sound)
 
-  Gun(float range, float damage,
+  CGun(float range, float damage,
       float damageRate,
       const sstr &sound) {
     this->damageRate = damageRate;
@@ -47,53 +47,23 @@ struct CC_DLL Gun : public ecs::Component {
 
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Health : public ecs::Component {
-  MDECL_COMP_TPID("n/Health")
-  DECL_FZ(curHp)
-  DECL_FZ(maxHp)
-  DECL_BF(alive)
-
-  Health(float curHp, float maxHp) {
-    this->curHp = curHp;
-    this->maxHp = maxHp;
-    this->alive = true;
-  }
-
-};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Melee : public ecs::Component {
+struct CC_DLL CMelee : public ecs::CmMelee {
   MDECL_COMP_TPID("n/Melee")
-  DECL_FZ(lastDamageTime)
-  DECL_FZ(damage)
-  DECL_BF(destroySelf)
-  DECL_FZ(damageRate)
   DECL_BF(aoe)
   DECL_TD(sstr,sound)
 
-  Melee(float damage, bool destroySelf,
-        float damageRate, bool aoe,
-        const sstr &sound) {
-
-    this->destroySelf = destroySelf;
-    this->damage = damage;
-    this->damageRate = damageRate;
-    this->aoe = aoe;
-    this->sound = sound;
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Monster : public ecs::Component {
+struct CC_DLL CMonster : public ecs::Component {
   MDECL_COMP_TPID("n/Monster")
   DECL_TD(MonsterType, type)
 
-  Monster(MonsterType t) {
+  CMonster(MonsterType t) {
     this->type = t;
   }
 
@@ -101,32 +71,8 @@ struct CC_DLL Monster : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public ecs::Component {
-  MDECL_COMP_TPID("n/Move")
-  DECL_TD(c::Vec2, moveTarget)
-  DECL_TD(c::Vec2, velocity)
-  DECL_TD(c::Vec2, acceleration)
-  DECL_FZ(maxAcceleration)
-  DECL_FZ(maxVelocity)
-
-  Move(const c::Vec2 &moveTarget,
-       float maxVelocity,
-       float maxAcceleration) {
-
-    this->maxAcceleration = maxAcceleration;
-    this->acceleration = c::Vec2(0,0);
-    this->velocity = c::Vec2(0,0);
-    this->moveTarget = moveTarget;
-    this->maxVelocity = maxVelocity;
-  }
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Player : public ecs::Component {
-  MDECL_COMP_TPID("n/Player")
-  DECL_TV(bool, attacking,false)
+struct CC_DLL CScore : public ecs::CmScore {
+  MDECL_COMP_TPID("n/Score")
   DECL_IZ(coins)
   DECL_FZ(lastCoinDrop)
 
@@ -134,18 +80,11 @@ struct CC_DLL Player : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Render : public f::ComObj {
-  MDECL_COMP_TPID("n/Render")
-  Render(not_null<c::Node*> n) : ComObj(n) {}
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Team : public ecs::Component {
+struct CC_DLL CTeam : public ecs::Component {
   MDECL_COMP_TPID("n/Team")
   DECL_IZ(team)
 
-  Team(int team) {
+  CTeam(int team) {
     this->team = team;
   }
 
@@ -153,22 +92,16 @@ struct CC_DLL Team : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Automa : public ecs::Component {
+struct CC_DLL CAutoma : public ecs::CmAutoma {
   MDECL_COMP_TPID("n/Automa")
   DECL_TD(AIState, state)
 
-  virtual ~Automa() { mc_del_ptr(state); }
+  virtual ~CAutoma() { mc_del_ptr(state); }
 
-  Automa(not_null<AIState*> s) {
+  CAutoma(not_null<AIState*> s) {
     state = s.get();
   }
 
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public ecs::Component {
-  MDECL_COMP_TPID("n/Gesture")
 };
 
 //////////////////////////////////////////////////////////////////////////////

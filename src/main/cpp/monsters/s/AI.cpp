@@ -23,8 +23,7 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  enemies=engine->getNodeList(EnemyNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,136 +39,132 @@ bool AI::update(float dt) {
 //
 void AI::process(float dt) {
 
-  auto node = enemies->head;
-  if (ENP(node)) {
+  auto ents = engine->getEntities(
+      s_vec<ecs::COMType>{"n/Automa","n/Team"} );
+
+  if  (ents.size() == 0) {
   return; }
 
-  auto aiTeam = CC_GNF(Team,node,"team");
-  auto ai = CC_GNF(Automa,node,"ai");
-  auto otherTeam= OPPOSITE_TEAM(aiTeam->team);
+  auto aiEntity = ents[0];
+  auto aiTeam = (CTeam*)aiEntity->get("n/Team");
+  auto ai = (CAutoma*)aiEntity->get("n/Automa");
 
   this->humanQuirkValue = 0;
   this->humanZapValue = 0;
   this->humanMunchValue = 0;
 
-  auto po= MGMS()->getPool(s::to_string(otherTeam));
-  auto &hs=po->list();
-  F__LOOP(it,hs) {
+  auto mons = getEntsOnTeam(engine, OTHER_TEAM(aiTeam.team), "n/Monster");
+  F__LOOP(it,mons) {
     auto m= *it;
-    if (m->status) {
-      if (m->type == eMonsterTypeQuirk) {
-        this->humanQuirkValue += COST_QUIRK;
-      } else if (m->type == eMonsterTypeZap) {
-        this->humanZapValue += COST_ZAP;
-      } else if (m->type == eMonsterTypeMunch) {
-        this->humanMunchValue += COST_MUNCH;
-      }
+    auto c= (CMonster*)m->get("n/Monster");
+    if (c->type == eMonsterTypeQuirk) {
+      this->humanQuirkValue += COST_QUIRK;
+    } else if (c->type == eMonsterTypeZap) {
+      this->humanZapValue += COST_ZAP;
+    } else if (c->type == eMonsterTypeMunch) {
+      this->humanMunchValue += COST_MUNCH;
     }
   }
 
-  this->humanTotalValue =
-    this->humanQuirkValue +
-    this->humanZapValue + this->humanMunchValue;
-
+  humanTotalValue = humanQuirkValue + humanZapValue + humanMunchValue;
   this->aiQuirkValue = 0;
   this->aiZapValue = 0;
   this->aiMunchValue = 0;
 
-  po=MGMS()->getPool(s::to_string(aiTeam->team));
-  auto &es=po->list();
-  F__LOOP(it,es) {
+  mons= getEntsOnTeam(engine, aiTeam->team, "n/Monster");
+  F__LOOP(it, mons) {
     auto m= *it;
-    if (m->status) {
-      if (m->type == eMonsterTypeQuirk) {
-        this->aiQuirkValue += COST_QUIRK;
-      } else if (m->type == eMonsterTypeZap) {
-        this->aiZapValue += COST_ZAP;
-      } else if (m->type == eMonsterTypeMunch) {
-        this->aiMunchValue += COST_MUNCH;
-      }
+    auto c= (CMonster*) m->get("n/Monster");
+    if (c->type == eMonsterTypeQuirk) {
+      this->aiQuirkValue += COST_QUIRK;
+    } else if (c->type == eMonsterTypeZap) {
+      this->aiZapValue += COST_ZAP;
+    } else if (c->type == eMonsterTypeMunch) {
+      this->aiMunchValue += COST_MUNCH;
     }
   }
-
-  this->aiTotalValue =
-    this->aiQuirkValue +
-    this->aiZapValue + this->aiMunchValue;
-
-  ai->state->update(node,this);
+  aiTotalValue = aiQuirkValue + aiZapValue + aiMunchValue;
+  ai->state->update(aiEntity,this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::changeStateForEntity(
-    not_null<ecs::Node*> node,
-    not_null<AIState*> s) {
-
-  auto ai= CC_GNF(Automa,node.get(),"ai");
-  ai->clear();
-  ai->set(s);
+void AI::changeStateForEntity(Entity *entity, AIState *state) {
+  auto ai = entity->get("n/Automa");
+  if (!ai) return;
+  //ai->state->exit();
+  //ai.state = state;
+  //[ai.state enter];
+  ai->replaceState(state);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::spawnQuirkForEntity(not_null<ecs::Node*> node) {
+void AI::spawnQuirkForEntity(GEngine *engine, Entity *entity) {
 
-  auto player= CC_GNF(Player,node,"player");
-  auto wb=cx::visBox();
+  auto player = entity->get("n/Score");
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
-  if (player->coins < COST_QUIRK) {
-  return; }
+  if (!player || player->coins < COST_QUIRK) { return; } else {
+    player->coins -= COST_QUIRK;
+  }
 
-  player->coins -= COST_QUIRK;
   cx::sfxPlay("spawn");
 
   for (auto i = 0; i < 2; ++i) {
-    auto m= engine->createQuirkMonster(2);
-    auto render = (Render*)m->get("n/Render");
-    auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
+    auto *m= engine->createQuirkMonster(2);
+    auto *render = (f::cmRender*)m->get("f/CmRender");
+    if (render) {
+      auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
+      render->setPos(wb.right * 0.75, wb.cy + r);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::spawnZapForEntity(GEngine *engine, Entity *entity) {
+
+  auto player = entity->get("n/Score");
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
+
+  if (!player || player->coins < COST_ZAP) { return; } else {
+    player->coins -= COST_ZAP;
+  }
+
+  cx::sfxPLay("spawn");
+
+  auto m= engine->createZapMonster(2);
+  auto render = (f::CmRender*)m->get("f/CmRender");
+  if (render) {
+    auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
     render->setPos(wb.right * 0.75, wb.cy + r);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::spawnZapForEntity(not_null<ecs::Node*> node) {
+void AI::spawnMunchForEntity(GEngine *engine, Entity *entity) {
 
-  auto player= CC_GNF(Player,node,"player");
-  auto wb=cx::visBox();
+  auto player = entity->get("n/Score");
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
-  if (player->coins < COST_ZAP) {
-  return; }
-  player->coins -= COST_ZAP;
+  if (!player || player->coins < COST_MUNCH) { return; } else {
+    player->coins -= COST_MUNCH;
+  }
 
-  cx::sfxPlay("spawn");
-
-  auto m= engine->createZapMonster(2);
-  auto render = (Render*)m->get("n/Render");
-  auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
-  render->setPos(wb.right * 0.75, wb.cy + r);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void AI::spawnMunchForEntity(not_null<ecs::Node*> node) {
-
-  auto player= CC_GNF(Player,node,"player");
-  auto wb=cx::visBox();
-
-  if (player->coins < COST_MUNCH) {
-  return; }
-
-  player->coins -= COST_MUNCH;
   cx::sfxPlay("spawn");
 
   auto m= engine->createMunchMonster(2);
-  auto render = (Render*)m->get("n/Render");
-  auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
-  render->setPos(wb.right * 0.75, wb.cy + r);
+  auto render = (f::CmRender*)m->get("f/CmRender");
+  if (render) {
+    auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
+    render->setPos(wb.right * 0.75, wb.cy  + r);
+  }
 }
-
-
-
-
 
 NS_END
 

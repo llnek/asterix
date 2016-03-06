@@ -15,8 +15,47 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(monsters)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+s_vec<ecs::Entity*> getEntsOnTeam(GEngine *engine, int team,  const COMType &ct) {
 
+  auto ents= engine->getEntities(ct, ents);
+  s_vec<ecs::Entity*> out;
 
+  F__LOOP(it, ents) {
+    auto e = *it;
+    auto cur = (Team*) e->get("n/Team");
+    if (cur && cur->team == team) {
+      out.push_back(e);
+    }
+  }
+
+  return out;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* closestEntOnTeam(GEngine *engine, Entity *ent, int team) {
+
+  auto ourRender = (f::CmRender*)ent->get("f/CmRender");
+  if (!ourRender) { return nullptr; }
+
+  float closestEntityDistance = -1;
+  Entity *closestEntity = nullptr;
+
+  auto others = getEntsOnTeam(engine, team, "f/CmRender");
+  F__LOOP(it, others) {
+    auto e= *it;
+    auto otherRender = (f::CmRender*)e->get("f/CmRender");
+    auto distance = c::ccpDistance(ourRender->pos(), otherRender->pos());
+    if (distance < closestEntityDistance || closestEntityDistance == -1) {
+      closestEntity = e;
+      closestEntityDistance = distance;
+    }
+  }
+
+  return closestEntity;
+}
 
 
 NS_END
