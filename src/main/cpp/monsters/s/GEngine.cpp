@@ -19,6 +19,7 @@
 #include "Health.h"
 #include "Player.h"
 #include "Gun.h"
+#include "n/AIStateMass.h"
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -31,22 +32,32 @@ void GEngine::initEntities() {
   auto wb= cx::visBox();
   ent->checkin(mc_new(GVars));
 
+  auto s= cx::reifySprite("castle1_def.png");
+  s->setPosition(HWZ(CC_CSIZE(s)), wb.cy);
+  MGML()->addAtlasItem("game-pics",s);
   // human
   ent= this->reifyEntity();
-  ent->checkin(mc_new(f::CHealth));
-  ent->checkin(mc_new(f::CDraw));
-  ent->checkin(mc_new(Team));
+  ent->checkin(mc_new1(f::CHealth,200));
+  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new(f::CHuman));
+  ent->checkin(mc_new(Melee));
+  ent->checkin(mc_new1(Team,1));
   ent->checkin(mc_new(Stash));
-  ent->checkin(mc_new(Gun));
+  ent->checkin(mc_new4(Gun,200,5,2,"pew"));
 
+  s= cx::reifySprite("castle2_def.png");
+  s->setPosition(wb.right - HWZ(CC_CSIZE(s)), wb.cy);
+  MGML()->addAtlasItem("game-pics",s);
   // enemy
   ent= this->reifyEntity();
-  ent->checkin(mc_new(f::CHealth));
-  ent->checkin(mc_new(f::CDraw));
-  ent->checkin(mc_new(Team));
+  ent->checkin(mc_new1(f::CHealth,200));
+  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new(Melee));
+  ent->checkin(mc_new1(Team,2));
   ent->checkin(mc_new(Stash));
-  ent->checkin(mc_new(Gun));
-  ent->checkin(mc_new(Automa));
+  ent->checkin(mc_new4(Gun,200,5,2,"pew"));
+  auto sm= mc_new(AIStateMass);
+  ent->checkin(mc_new1(Automa,sm));
 
 }
 
@@ -64,7 +75,7 @@ void GEngine::initSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* GEngine::createQuirkMonster(int team) {
+ecs::Entity* GEngine::createQuirkMonster(int team) {
   auto s= cx::reifySprite("quirk"+s::to_string(team)+".png");
   MGML()->addAtlasItem("game-pics",s);
   auto ent = this->reifyEntity();
@@ -84,7 +95,7 @@ Entity* GEngine::createQuirkMonster(int team) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* GEngine::createZapMonster(int team) {
+ecs::Entity* GEngine::createZapMonster(int team) {
   auto s= cx::reifySprite("zap"+s::to_string(team)+".png");
   MGML()->addAtlasItem("game-pics",s);
   auto ent= this->reifyEntity();
@@ -101,7 +112,7 @@ Entity* GEngine::createZapMonster(int team) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* GEngine::createMunchMonster(int team) {
+ecs::Entity* GEngine::createMunchMonster(int team) {
   auto s= cx::reifySprite("munch"+s::to_string(team)+".png");
   MGML()->addAtlasItem("game-pics",s);
   auto ent= this->reifyEntity();
@@ -122,7 +133,7 @@ Entity* GEngine::createMunchMonster(int team) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* GEngine::createLaser(int team) {
+ecs::Entity* GEngine::createLaser(int team) {
   auto s= cx::reifySprite("laser"+s::to_string(team)+".png");
   MGML()->addAtlasItem("game-pics",s);
   auto ent= this->reifyEntity();

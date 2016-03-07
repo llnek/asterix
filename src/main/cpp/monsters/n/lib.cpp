@@ -18,9 +18,9 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 s_vec<ecs::Entity*> getEntsOnTeam(
-    GEngine *engine, int team,  const ecs::COMType &ct) {
+    ecs::Engine *engine, int team,  const ecs::COMType &ct) {
 
-  auto ents= engine->getEntities(ct);
+  auto ents= SCAST(GEngine*,engine)->getEntities(ct);
   s_vec<ecs::Entity*> out;
 
   F__LOOP(it, ents) {
@@ -36,10 +36,10 @@ s_vec<ecs::Entity*> getEntsOnTeam(
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* closestEntOnTeam(GEngine *engine, Entity *ent, int team) {
+ecs::Entity* closestEntOnTeam(ecs::Engine *engine, ecs::Entity *ent, int team) {
 
   auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
-  Entity *closestEnt= nullptr;
+    ecs::Entity *closestEnt= nullptr;
   float closestDist= -1;
 
   if (!ourRender) { return nullptr; }
@@ -60,11 +60,12 @@ Entity* closestEntOnTeam(GEngine *engine, Entity *ent, int team) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void createMonster(GEngine *engine, int cost, int team, int count) {
+void createMonsters(ecs::Engine *eng, int cost, int team, int count) {
+  auto engine= SCAST(GEngine*,eng);
   auto wz=cx::visRect();
   auto wb=cx::visBox();
   for (auto i = 0;  i < count; ++i) {
-    Entity *e=nullptr;
+      ecs::Entity *e=nullptr;
     switch (cost) {
       case COST_QUIRK:
         e= engine->createQuirkMonster(team);
@@ -86,14 +87,14 @@ void createMonster(GEngine *engine, int cost, int team, int count) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* playerForTeam(GEngine *engine, int team) {
+ecs::Entity* playerForTeam(ecs::Engine *engine, int team) {
   auto players = getEntsOnTeam(engine, team, "n/Stash");
   return players.size() > 0 ? players[0] : nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-s_vec<ecs::Entity*> entsWithinRange(GEngine *engine, Entity *ent, float range, int team) {
+s_vec<ecs::Entity*> entsWithinRange(ecs::Engine *engine, ecs::Entity *ent, float range, int team) {
 
   auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
   s_vec<ecs::Entity*> out;

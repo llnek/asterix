@@ -126,17 +126,17 @@ void App::preLaunch(const c::Size &dz) {
     spath="sd";
   }
 
-  CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
-  CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
-  CCLOG("image search path=%s", spath);
-  CCLOG("sound search path=%s", "sfx");
-  CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
-
   searchPaths.push_back(spath);
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   XCFG()->handleResolution(fz);
   XCFG()->runOnce();
+
+  CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
+  CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
+  CCLOG("image search path=%s", spath);
+  CCLOG("sound search path=%s", "sfx");
+  CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
 
   initAudio();
 }

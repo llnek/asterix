@@ -66,6 +66,7 @@ struct CC_DLL CStash : public ecs::Component {
   MDECL_COMP_TPID("f/CStash")
   DECL_FZ(score)
   CStash(float v) { score=v;}
+    CStash(){}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -77,6 +78,9 @@ struct CC_DLL CMelee : public ecs::Component {
   DECL_BF(selfDie)
   DECL_FZ(hurtRate)
   DECL_FZ(lastHurt)
+DECL_FZ(damage)
+    DECL_FZ(damageRate)
+    DECL_FZ(lastDamageTime)
   CMelee() {}
 };
 
@@ -105,6 +109,7 @@ struct CC_DLL CMove : public ecs::Component {
     maxSpeed=ms;
     maxAccel=ma;
   }
+    CMove() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////

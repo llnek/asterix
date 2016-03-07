@@ -12,7 +12,8 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-
+#include "ecs/Entity.h"
+#include "s/AI.h"
 #include "AIStateCounter.h"
 #include "AIStateDefend.h"
 
@@ -23,7 +24,7 @@ NS_BEGIN(monsters)
 //
 void AIStateCounter::update(ecs::Entity *e, AILogic *sys) {
 
-  ayto player = CC_GEC(Stash,e,"n/Stash");
+  auto player = CC_GEC(Stash,e,"n/Stash");
   auto team = CC_GEC(Team,e,"n/Team");
   auto ai = CC_GEC(Automa,e,"n/Automa");
 

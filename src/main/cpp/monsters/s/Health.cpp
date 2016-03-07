@@ -9,13 +9,11 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-
-//////////////////////////////////////////////////////////////////////////////
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Health.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
 
@@ -44,9 +42,9 @@ void HealthLogic::process(float dt) {
     auto render = CC_GEC(f::CDraw,e,"f/CDraw");
 
     if (!health->alive ||
-        health->maxHp == 0) { return; }
+        health->origHP == 0) { return; }
 
-    if (health->curHp <= 0) {
+    if (health->curHP <= 0) {
       health->alive = false;
       cx::sfxPlay("boom");
 
@@ -79,7 +77,7 @@ void HealthLogic::draw() {
     auto eX = render->node->getPositionX() + HWZ(CC_CSIZE(render->node));
     auto actualY = render->node->getPositionY() + HHZ(CC_CSIZE(render->node));
 
-    auto percentage = health->curHp / health->maxHp;
+    auto percentage = health->curHP / health->origHP;
     auto actualX = ((eX-sX) * percentage) + sX;
     auto amtRed = ((1.0f-percentage)*maxColor)+colorBuffer;
     auto amtGreen = (percentage*maxColor)+colorBuffer;

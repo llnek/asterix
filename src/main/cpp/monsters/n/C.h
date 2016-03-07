@@ -14,7 +14,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "AIState.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(monsters)
@@ -91,9 +90,23 @@ struct CC_DLL Team : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class AILogic;
+class Entity;
+class CC_DLL AIState {
+protected:
+    DECL_TV(sstr, _name, "?");
+public:
+    virtual void update(ecs::Entity*,AILogic*) {}
+    virtual void enter() {}
+    virtual void exit() {}
+    const sstr name() { return _name; }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Automa : public f::CAutoma {
   MDECL_COMP_TPID("n/Automa")
-  DECL_TD(AIState, state)
+  DECL_PTR(AIState, state)
 
   virtual ~Automa() { mc_del_ptr(state); }
 

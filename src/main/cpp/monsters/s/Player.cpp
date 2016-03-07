@@ -61,15 +61,15 @@ void PlayerLogic::process(float dt) {
         "castle"+s::to_string(team->team)+"_atk.png"
         :
         "castle"+s::to_string(team->team)+"_def.png";
-      render->node->setDisplayFrame(png);
+        SCAST(c::Sprite*,render->node)->setDisplayFrame(cx::getSpriteFrame(png));
     }
 
     // Update monster movement orders
     if (team) {
-      auto movers = getEntOnTeam(engine,team->team,"f/CMove");
+      auto movers = getEntsOnTeam(engine,team->team,"f/CMove");
       F__LOOP(it,movers) {
         auto m= *it;
-        handleMover(m,player->attacking);
+        handleMover(m,melee->attacking);
       }
     }
   }
@@ -97,7 +97,7 @@ void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
     if (!enemyRender) { return; }
     moverMove->moveTarget = enemyRender->pos();
 
-    auto gun = CC_GEC(Gun,e,"n/Gun");
+    auto gun = CC_GEC(Gun,mover,"n/Gun");
     if (gun) {
       auto vector = c::ccpNormalize(c::ccpSub(moverRender->pos(), enemyRender->pos()));
       moverMove->moveTarget = c::ccpAdd(enemyRender->pos(), c::ccpMult(vector, gun->range));
@@ -105,7 +105,7 @@ void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
 
   } else {
 
-    auto player = playerForTeam(engine,mover,moverTeam->team);
+    auto player = playerForTeam(engine,moverTeam->team);
     auto playerRender = CC_GEC(f::CDraw,player,"f/CDraw");
     if (playerRender) {
       moverMove->moveTarget = playerRender->pos();

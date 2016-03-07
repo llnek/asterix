@@ -35,12 +35,12 @@ bool MoveLogic::update(float dt) {
   return true;
 }
 
-void Move::onKeys(float dt) {
+void MoveLogic::onKeys(float dt) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::process(float dt) {
+void MoveLogic::process(float dt) {
 
   auto ents = engine->getEntities(
       s_vec<ecs::COMType>{"f/CMove","f/CDraw","n/Team"});

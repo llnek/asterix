@@ -14,21 +14,21 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "AILogic.h"
+#include "AI.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::preamble() {
+void AILogic::preamble() {
   auto out= engine->getEntities("n/Automa");
   _enemy=out[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool AI::update(float dt) {
+bool AILogic::update(float dt) {
   if (MGMS()->isLive()) {
     process(dt);
   }
@@ -37,7 +37,7 @@ bool AI::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::process(float dt) {
+void AILogic::process(float dt) {
   auto aiTeam = CC_GEC(Team,_enemy,"n/Team");
   auto ai = CC_GEC(Automa,_enemy,"n/Automa");
 
@@ -77,12 +77,12 @@ void AI::process(float dt) {
     }
   }
   aiTotalValue = aiQuirkValue + aiZapValue + aiMunchValue;
-  ai->state->update(aiEntity,this);
+  ai->state->update(_enemy,this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::changeStateForEntity(Entity *ent, AIState *state) {
+void AILogic::changeStateForEntity(ecs::Entity *ent, AIState *state) {
   auto ai = CC_GEC(Automa,ent,"n/Automa");
   if (ai) {
     ai->replaceState(state);
@@ -91,13 +91,14 @@ void AILogic::changeStateForEntity(Entity *ent, AIState *state) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::spawnMonster(Entity *e, int cost, int count) {
+void AILogic::spawnMonster(ecs::Entity *e, int cost, int count) {
 
   auto player = CC_GEC(Stash,e,"n/Stash");
   ecs::Entity *m;
   auto team=2;
   auto wz= cx::visRect();
   auto wb= cx::visBox();
+    auto eng= SCAST(GEngine*,engine);
 
   if (!player || player->coins < cost) {
   return; } else {
@@ -107,13 +108,13 @@ void AILogic::spawnMonster(Entity *e, int cost, int count) {
   for (auto i = 0; i < count; ++i) {
     switch (cost) {
       case COST_QUIRK:
-        m= engine->createQuirkMonster(team);
+        m= eng->createQuirkMonster(team);
       break;
       case COST_ZAP:
-        m= engine->createZapMonster(team);
+        m= eng->createZapMonster(team);
       break;
       case COST_MUNCH:
-        m= engine->createMunchMonster(team);
+        m= eng->createMunchMonster(team);
       break;
       default:
       throw "bad monster type!";
@@ -127,19 +128,19 @@ void AILogic::spawnMonster(Entity *e, int cost, int count) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::spawnQuirkForEntity(Entity *e) {
+void AILogic::spawnQuirkForEntity(ecs::Entity *e) {
   spawnMonster(e,COST_QUIRK,2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::spawnZapForEntity(GEngine *engine, Entity *entity) {
+void AILogic::spawnZapForEntity(ecs::Entity *e) {
   spawnMonster(e,COST_ZAP,1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::spawnMunchForEntity(GEngine *engine, Entity *ent) {
+void AILogic::spawnMunchForEntity(ecs::Entity *e) {
   spawnMonster(e,COST_MUNCH,1);
 }
 

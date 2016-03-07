@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-
+#include "s/AI.h"
 #include "AIStateDefend.h"
 #include "AIStateRush.h"
 
@@ -29,11 +29,12 @@ void AIStateDefend::enter() {
 //
 void AIStateDefend::update(ecs::Entity *e, AILogic *sys) {
 
+    auto melee = CC_GEC(Melee,e,"n/Melee");
   auto player = CC_GEC(Stash,e,"n/Stash");
   auto team = CC_GEC(Team,e,"n/Team");
   auto ai = CC_GEC(Automa,e,"n/Automa");
 
-  if (!team || !player || !ai) { return; }
+  if (!team || !player || !ai || !melee) { return; }
 
   auto enemies = entsWithinRange(sys->getEngine(),e,200, OTHER_TEAM(team->team));
   if (enemies.size() == 0) {
@@ -41,7 +42,7 @@ void AIStateDefend::update(ecs::Entity *e, AILogic *sys) {
     return;
   }
 
-  player->attacking = false;
+  melee->attacking = false;
 
   if (sys->aiQuirkValue < sys->humanZapValue &&
       player->coins > COST_QUIRK) {

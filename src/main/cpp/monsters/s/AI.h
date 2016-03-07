@@ -18,14 +18,16 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AILogic : public ecs::System {
-  void spawnMonster(ecs::Entity*, int cost, int count);
-  void changeStateForEntity(ecs::Entity*, AIState*);
-  void spawnQuirkForEntity(ecs::Entity*);
-  void spawnMunchForEntity(ecs::Entity*);
-  void spawnZapForEntity(ecs::Entity*);
-
   void process(float);
 
+public:
+
+    void spawnMonster(ecs::Entity*, int cost, int count);
+    void changeStateForEntity(ecs::Entity*, AIState*);
+    void spawnQuirkForEntity(ecs::Entity*);
+    void spawnMunchForEntity(ecs::Entity*);
+    void spawnZapForEntity(ecs::Entity*);
+    
   DECL_PTR(ecs::Entity, _enemy)
   DECL_FZ(humanQuirkValue)
   DECL_FZ(humanZapValue)
@@ -36,7 +38,6 @@ class CC_DLL AILogic : public ecs::System {
   DECL_FZ(aiMunchValue)
   DECL_FZ(aiTotalValue)
 
-public:
 
   MDECL_SYS_TPID("n/AILogic")
   MDECL_SYS_PRIORITY( 60)

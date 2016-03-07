@@ -12,9 +12,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
+#include "ecs/Engine.h"
 
 NS_BEGIN(monsters)
-
+class GEngine;
 
 #define CCRANDOM_X_Y(__X__, __Y__) (((__Y__) - (__X__)) * (rand() / (float)0xffffffff) + (__X__))
 #define OTHER_TEAM(__X__) (__X__ == 1 ? 2 : 1)
@@ -24,15 +25,15 @@ NS_BEGIN(monsters)
 #define COST_MUNCH  50
 
 
-s_vec<ecs::Entity*> getEntsOnTeam(GEngine*, int team,  const COMType&);
+s_vec<ecs::Entity*> getEntsOnTeam(ecs::Engine*, int team,  const ecs::COMType&);
 
-Entity* closestEntOnTeam(GEngine*, Entity*, int team);
+ecs::Entity* closestEntOnTeam(ecs::Engine*, ecs::Entity*, int team);
 
-s_vec<ecs::Entity*> entsWithinRange(GEngine*, Entity*, float range, int team);
+s_vec<ecs::Entity*> entsWithinRange(ecs::Engine*, ecs::Entity*, float range, int team);
 
-Entity* playerForTeam(GEngine*, int team);
+ecs::Entity* playerForTeam(ecs::Engine*, int team);
 
-void createMonster(GEngine*, int cost, int team, int count);
+void createMonsters(ecs::Engine*, int cost, int team, int count);
 
 
 NS_END

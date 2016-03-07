@@ -57,7 +57,7 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
     auto cid= *it;
     auto c= types->getCache(cid);
     if (!c) {
-      CCLOG("cache missed when looking for intersection on %s", cid.c_str());
+      //CCLOG("cache missed when looking for intersection on %s", cid.c_str());
       missed=true;
       break;
     }
@@ -68,7 +68,11 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
     ccs.push_back(c);
   }
 
-  CCLOG("intesection on %d caches", (int)ccs.size());
+  if (missed) {
+  return;
+  }
+
+  //CCLOG("intesection on %d caches", (int)ccs.size());
 
   if (ccs.size() > 0) {
     F__POOP(it,pm) {
@@ -169,6 +173,11 @@ void Engine::purgeEntity(Entity* e) {
   assert(e->isOk());
   e->die();
   garbo.push_back(e);
+
+    auto it=ents.find(e->getEid());
+    if (it != ents.end()) {
+        ents.erase(it);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////

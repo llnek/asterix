@@ -29,7 +29,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   void cfgBtn(c::MenuItem*, const sstr&);
   void lblBtn(c::MenuItem*, const sstr&);
   void onBtnTapped(int,int);
-
+  void onEnd();
 
   DECL_PTR(ecs::Entity,_human)
   DECL_PTR(ecs::Entity,_enemy)
@@ -50,6 +50,15 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 GLayer::~GLayer() {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onEnd() {
+  this->setOpacity(255 * 0.1);
+  surcease();
+  MGMS()->stop();
+  Ende::reify(MGMS(),4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -170,6 +179,29 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic=="/game/player/lose") {
+    y->onEnd();
+  }
+
+  if (topic=="/game/player/earnscore") {
+    auto msg= (j::json*) m;
+    y->getHUD()->updateCoins(
+      JS_INT(msg->operator[]("team")),
+      JS_INT(msg->operator[]("score")));
+  }
+
+  if (topic=="/game/hud/setstate") {
+    auto msg= (j::json*) m;
+    y->getHUD()->updateAIState(JS_STR(msg->operator[]("state")));
+  }
+
+  if (topic=="") {
+  }
+
+
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

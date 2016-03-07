@@ -54,7 +54,7 @@ void MeleeLogic::process(float dt) {
       auto enemyHealth = CC_GEC(f::CHealth,enemy,"f/CHealth");
       if (!enemyHealth) { continue; }
 
-      if (render->bbox().rectIntersectsRect(enemyRender->bbox())) {
+      if (render->bbox().intersectsRect(enemyRender->bbox())) {
         if (cx::timeInMillis() - melee->lastDamageTime > melee->damageRate) {
 
           cx::sfxPlay(melee->sound);
@@ -64,9 +64,9 @@ void MeleeLogic::process(float dt) {
           } else {
             melee->lastDamageTime = cx::timeInMillis();
           }
-          enemyHealth->curHp -= melee->damage;
-          if (enemyHealth->curHp < 0) {
-            enemyHealth->curHp = 0;
+          enemyHealth->curHP -= melee->damage;
+          if (enemyHealth->curHP < 0) {
+            enemyHealth->curHP = 0;
           }
           if (melee->selfDie) {
             render->removeInnerNode();

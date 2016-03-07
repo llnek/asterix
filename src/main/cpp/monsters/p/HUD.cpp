@@ -21,12 +21,12 @@ NS_BEGIN(monsters)
 //
 void HUDLayer::decoUI() {
 
-  auto _stateLabel = cx::reifyBmfLabel("dft", "Idle");
   auto MARGIN = 26 / CC_CONTENT_SCALE_FACTOR();
   auto coin1 = cx::reifySprite("coin.png");
   auto coin2 = cx::reifySprite("coin.png");
   auto wb= cx::visBox();
 
+  _stateLabel = cx::reifyBmfLabel("dft", "Idle");
   _stateLabel->setPosition(wb.cx, wb.top * 0.25);
   addItem(_stateLabel);
 

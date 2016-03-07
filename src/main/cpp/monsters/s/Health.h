@@ -34,6 +34,7 @@ public:
   : System(e)
   {}
 
+    void draw();
 };
 
 

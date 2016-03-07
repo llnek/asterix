@@ -59,7 +59,7 @@ void GunLogic::process(float dt) {
       cx::sfxPlay(gun->sound);
       gun->lastDamageTime = cx::timeInMillis();
 
-      auto laser = engine->createLaser(team->team);
+      auto laser = SCAST(GEngine*,engine)->createLaser(team->team);
       auto laserRender = CC_GEC(f::CDraw,laser,"f/CDraw");
       auto laserMelee = CC_GEC(Melee,laser,"n/Melee");
 

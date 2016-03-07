@@ -44,28 +44,38 @@ bool Resolve::update(float dt) {
 void Resolve::process(float dt) {
   auto h= CC_GEC(f::CHealth,_human,"f/CHealth");
 
-  if (h->curHp <= 0) {
+  if (h->curHP <= 0) {
     // gameover
     SENDMSG("/game/player/lose");
     return;
   }
 
   auto he= CC_GEC(f::CHealth,_enemy,"f/CHealth");
-  if (he->curHp <= 0) {
+  if (he->curHP <= 0) {
     SENDMSG("/game/player/lose");
     return;
   }
 
   // Display coins
   auto humanPlayer = CC_GEC(Stash,_human,"n/Stash");
-  auto msg
-  getHUD()->updateCoins(1, humanPlayer->coins);
   auto aiPlayer = CC_GEC(Stash,_enemy,"n/Stash");
-  getHUD()->updateCoins(2, aiPlayer->coins);
+  auto msg=j::json({
+        {"team", 1},
+        {"score", humanPlayer->coins }
+      });
+  SENDMSGEX("/game/player/earnscore", &msg);
+  msg=j::json({
+        {"team", 2},
+        {"score", aiPlayer->coins }
+      });
+  SENDMSGEX("/game/player/earnscore", &msg);
 
   // Display AI state
-  auto ai = CC_GEC(Automa,pe,"n/Automa");
-  getHUD()->updateAIState(ai->state->name());
+  auto ai = CC_GEC(Automa,_enemy,"n/Automa");
+  msg=j::json({
+        {"state", ai->state->name() }
+      });
+  SENDMSGEX("/game/hud/setstate", &msg);
 }
 
 
