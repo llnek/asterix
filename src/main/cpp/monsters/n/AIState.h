@@ -8,41 +8,30 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
-#include "GEngine.h"
-
+#include "core/XConfig.h"
+#include "lib.h"
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL MoveLogic : public ecs::System {
-
-  c::Vec2 separate(ecs::Entity*, f::CMove*, f::CDraw*, Team*);
-  c::Vec2 arrive(ecs::Entity*, f::CMove*, f::CDraw*);
-
-  void process(float);
-  void onKeys(float);
-
+//
+class AILogic;
+class Entity;
+class CC_DLL AIState {
+protected:
+  DECL_TV(sstr, _name, "?");
 public:
-
-  MDECL_SYS_TPID("n/MoveLogic")
-  MDECL_SYS_PRIORITY( 20)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  MoveLogic(ecs::Engine *e)
-  : System(e)
-  {}
-
+  virtual void update(ecs::Entity*,AILogic*) {}
+  virtual void enter() {}
+  virtual void exit() {}
+  const sstr name() { return _name; }
 };
 
 
-NS_END
 
+NS_END
 
 
 

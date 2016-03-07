@@ -40,11 +40,10 @@ static float WIGGLE_ROOM = 5;
 //////////////////////////////////////////////////////////////////////////////
 //
 void GunLogic::process(float dt) {
-  auto ents = engine->getEnts(
+  auto ents = engine->getEntities(
       s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CDraw"});
   F__LOOP(it,ents) {
     auto e= *it;
-
     auto render = CC_GEC(f::CDraw,e,"f/CDraw");
     auto team = CC_GEC(Team,e,"n/Team");
     auto gun = CC_GEC(Gun,e,"n/Gun");
@@ -63,7 +62,6 @@ void GunLogic::process(float dt) {
       auto laser = engine->createLaser(team->team);
       auto laserRender = CC_GEC(f::CDraw,laser,"f/CDraw");
       auto laserMelee = CC_GEC(Melee,laser,"n/Melee");
-      if (!laserRender || !laserMelee) { continue; }
 
       laserRender->node->setPosition(render->pos());
       laserMelee->damage = gun->damage;

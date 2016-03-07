@@ -10,21 +10,22 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
-#include "lib.h"
+#include "GEngine.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-s_vec<ecs::Entity*> getEntsOnTeam(GEngine *engine, int team,  const COMType &ct) {
+s_vec<ecs::Entity*> getEntsOnTeam(
+    GEngine *engine, int team,  const ecs::COMType &ct) {
 
-  auto ents= engine->getEntities(ct, ents);
+  auto ents= engine->getEntities(ct);
   s_vec<ecs::Entity*> out;
 
   F__LOOP(it, ents) {
     auto e = *it;
-    auto cur = (Team*) e->get("n/Team");
+    auto cur = CC_GEC(Team,e,"n/Team");
     if (cur && cur->team == team) {
       out.push_back(e);
     }
@@ -38,24 +39,84 @@ s_vec<ecs::Entity*> getEntsOnTeam(GEngine *engine, int team,  const COMType &ct)
 Entity* closestEntOnTeam(GEngine *engine, Entity *ent, int team) {
 
   auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
-  if (!ourRender) { return nullptr; }
-
-  auto others = getEntsOnTeam(engine, team, "f/CDraw");
   Entity *closestEnt= nullptr;
   float closestDist= -1;
 
+  if (!ourRender) { return nullptr; }
+
+  auto others = getEntsOnTeam(engine, team, "f/CDraw");
   F__LOOP(it, others) {
     auto e= *it;
     auto r2= CC_GEC(f::CDraw,e,"f/CDraw");
-    auto distance = c::ccpDistance(ourRender->pos(), r2->pos());
-    if (distance < closestDist || closestDist == -1) {
+    auto dist= c::ccpDistance(ourRender->pos(), r2->pos());
+    if (dist < closestDist || closestDist == -1) {
       closestEnt= e;
-      closestDist = distance;
+      closestDist = dist;
     }
   }
 
   return closestEnt;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void createMonster(GEngine *engine, int cost, int team, int count) {
+  auto wz=cx::visRect();
+  auto wb=cx::visBox();
+  for (auto i = 0;  i < count; ++i) {
+    Entity *e=nullptr;
+    switch (cost) {
+      case COST_QUIRK:
+        e= engine->createQuirkMonster(team);
+      break;
+      case COST_ZAP:
+        e= engine->createZapMonster(team);
+      break;
+      case COST_MUNCH:
+        e= engine->createMunchMonster(team);
+      break;
+    }
+    if (e)  {
+      auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+      auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
+      render->setPos(wb.right * 0.25, wb.cy  + r);
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Entity* playerForTeam(GEngine *engine, int team) {
+  auto players = getEntsOnTeam(engine, team, "n/Stash");
+  return players.size() > 0 ? players[0] : nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+s_vec<ecs::Entity*> entsWithinRange(GEngine *engine, Entity *ent, float range, int team) {
+
+  auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
+  s_vec<ecs::Entity*> out;
+
+  if (ourRender) {
+
+    auto all= getEntsOnTeam(engine,team,"f/CDraw");
+    F__LOOP(it,all) {
+      auto e = *it;
+      auto otherRender = CC_GEC(f::CDraw,e,"f/CDraw");
+      auto dist = c::ccpDistance(ourRender->pos(), otherRender->pos());
+      if (dist < range) {
+        out.push_back(e);
+      }
+    }
+
+  }
+
+  return out;
+}
+
+
+
 
 
 NS_END

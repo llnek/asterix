@@ -12,8 +12,11 @@
 #pragma once
 
 //////////////////////////////////////////////////////////////////////////////
-
+#include "x2d/GameScene.h"
+#include "core/XConfig.h"
+#include "core/CCSX.h"
 #include "Health.h"
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,11 +37,11 @@ bool HealthLogic::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HealthLogic::process(float dt) {
-  auto ents = engine->getEntities("n/Health");
+  auto ents = engine->getEntities("f/CHealth");
   F__LOOP(it,ents) {
     auto e= *it;
+    auto health = CC_GEC(f::CHealth,e,"f/CHealth");
     auto render = CC_GEC(f::CDraw,e,"f/CDraw");
-    auto health = CC_GEC(Health,e,"n/Health");
 
     if (!health->alive ||
         health->maxHp == 0) { return; }
@@ -51,15 +54,11 @@ void HealthLogic::process(float dt) {
         render->node->runAction(
            c::Sequence::create(
             c::FadeOut::create(0.5),
-            c::CallFunc::create([=]() {
-              render->releaseInnerNode();
-              engine->purgeEntity(e);
-            }),
             c::RemoveSelf::create(),
             CC_NIL));
-      } else {
-        engine->purgeEntity(e);
+        render->releaseInnerNode();
       }
+      engine->purgeEntity(e);
     }
   }
 }
@@ -71,12 +70,11 @@ static int maxColor = 200;
 void HealthLogic::draw() {
 
   auto ents = engine->getEntities(
-      s_vec<ecs::COMType>{ "n/Health","f/CDraw"});
+      s_vec<ecs::COMType>{ "f/CHealth","f/CDraw"});
   F__LOOP(it,ents) {
     auto e= *it;
+    auto health = CC_GEC(f::CHealth,e,"f/CHealth");
     auto render = CC_GEC(f::CDraw,e,"f/CDraw");
-    auto health = CC_GEC(Health,e,"n/Health");
-
     auto sX = render->node->getPositionX() - HWZ(CC_CSIZE(render->node));
     auto eX = render->node->getPositionX() + HWZ(CC_CSIZE(render->node));
     auto actualY = render->node->getPositionY() + HHZ(CC_CSIZE(render->node));
@@ -86,9 +84,9 @@ void HealthLogic::draw() {
     auto amtRed = ((1.0f-percentage)*maxColor)+colorBuffer;
     auto amtGreen = (percentage*maxColor)+colorBuffer;
 
-    glLineWidth(7);
-    ccDrawColor4B(amtRed,amtGreen,0,255);
-    ccDrawLine(c::Vec2(sX, actualY), c::Vec2(actualX, actualY));
+    //glLineWidth(7);
+    //ccDrawColor4B(amtRed,amtGreen,0,255);
+    //ccDrawLine(c::Vec2(sX, actualY), c::Vec2(actualX, actualY));
   }
 }
 

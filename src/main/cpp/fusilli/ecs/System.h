@@ -45,6 +45,7 @@ public:
   virtual void preamble()= 0;
   virtual int priority() = 0;
 
+  Engine* getEngine() { return engine; }
   bool isActive() { return active; }
   bool isa(const SystemType&  t) {
     return typeId() == t;

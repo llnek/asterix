@@ -31,6 +31,12 @@ struct CC_DLL CGesture : public ecs::Component {
 //
 struct CC_DLL CHealth : public ecs::Component {
   MDECL_COMP_TPID("f/CHealth")
+  CHealth(float h, float c) {
+    alive=true;
+    origHP=h;
+    curHP=c;
+    assert(c <= h);
+  }
   CHealth(float h) {
     alive=true;
     origHP=h;
@@ -90,7 +96,14 @@ struct CC_DLL CMove : public ecs::Component {
   DECL_FZ(speed)
   DECL_FZ(accel)
 
-  CMove() {
+  CMove(const c::Vec2 &t, float ms, float ma) {
+    moveTarget=t;
+    maxSpeed=ms;
+    maxAccel=ma;
+  }
+  CMove(float ms, float ma) {
+    maxSpeed=ms;
+    maxAccel=ma;
   }
 };
 

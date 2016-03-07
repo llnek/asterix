@@ -28,14 +28,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   c::MenuItem* mkBtn();
   void cfgBtn(c::MenuItem*, const sstr&);
   void lblBtn(c::MenuItem*, const sstr&);
-  void quirked();
-  void zapped();
-  void munched();
+  void onBtnTapped(int,int);
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, enemies)
-  DECL_PTR(a::NodeList, shared)
 
+  DECL_PTR(ecs::Entity,_human)
+  DECL_PTR(ecs::Entity,_enemy)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -57,74 +54,25 @@ GLayer::~GLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::quirked() {
-  auto humanPlayer= CC_GNLF(Player,players,"player");
-  auto wb=cx::visBox();
-
-  if (humanPlayer->coins < COST_QUIRK) {
-  return; }
-
-  humanPlayer->coins -= COST_QUIRK;
-  cx::sfxPlay("spawn");
-
-  for (auto i = 0; i < 2; ++i) {
-    auto ent = engine->createQuirkMonster(1);
-    auto render = (Render*)ent->get("n/Render");
-    if (render) {
-      auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
-      render->setPos(wb.right * 0.25, wb.cy + r);
-    }
+void GLayer::onBtnTapped(int cost, int count) {
+  auto player = CC_GEC(Stash,_human,"n/Stash");
+  if (player->coins < cost) { return; } else {
+    player->coins -= cost;
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::zapped() {
-  auto humanPlayer= CC_GNLF(Player,players,"player");
-  auto wb=cx::visBox();
-
-  if (humanPlayer->coins < COST_ZAP) {
-  return; }
-
-  humanPlayer->coins -= COST_ZAP;
-
+  createMonsters(engine,cost,1,count);
   cx::sfxPlay("spawn");
-
-  auto ent= engine->createZapMonster(1);
-  auto render = (Render*)ent->get("n/Render");
-  if (render) {
-    auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
-    render->setPos(wb.right * 0.25, wb.cy + r);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::munched() {
-  auto humanPlayer= CC_GNLF(Player,players,"player");
-  auto wb=cx::visBox();
-
-  if (humanPlayer->coins < COST_MUNCH) {
-  return; }
-
-  humanPlayer->coins -= COST_MUNCH;
-
-  cx::sfxPlay("spawn");
-
-  auto ent= engine->createMunchMonster(1);
-  auto render = (Render*)ent->get("n/Render");
-  if (render) {
-    auto r= CCRANDOM_X_Y(-wb.top * 0.25, wb.top * 0.25);
-    render->setPos(wb.right * 0.25, wb.cy + r);
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
 
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  auto v1= engine->getEntities("f/CHuman");
+  auto v2= engine->getEntities("n/Automa");
+
+  _human= v1[0];
+  _enemy= v2[0];
+
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -133,11 +81,10 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
-  auto player=CC_GNLF(Player,players,"player");
-  auto render=CC_GNLF(Render,players,"render");
-
+  auto render= CC_GEC(f::CDraw,_human,"f/CDraw");
+  auto melee= CC_GEC(Melee,_human,"n/Melee");
   if (render->bbox().containsPoint(loc)) {
-    player->attacking = !player->attacking;
+    melee->attacking = !melee->attacking;
   }
 }
 
@@ -197,9 +144,12 @@ void GLayer::decoUI() {
   auto bz= CC_CSIZE(btns[0]);
   auto menu= cx::mkHMenu(btns, bz.width/4);
   menu->setPosition(wb.cx, MARGIN + HHZ(bz));
-  btns[0]->setCallback([=](c::Ref*){ this->quirked(); });
-  btns[1]->setCallback([=](c::Ref*){ this->zapped(); });
-  btns[2]->setCallback([=](c::Ref*){ this->munched(); });
+  btns[0]->setCallback([=](c::Ref*){
+      this->onBtnTapped(COST_QUIRK,2); });
+  btns[1]->setCallback([=](c::Ref*){
+      this->onBtnTapped(COST_ZAP,1); });
+  btns[2]->setCallback([=](c::Ref*){
+      this->onBtnTapped(COST_MUNCH,1); });
   cfgBtn(btns[0], "quirk1.png");
   cfgBtn(btns[1], "zap1.png");
   cfgBtn(btns[2], "munch1.png");
@@ -210,39 +160,6 @@ void GLayer::decoUI() {
   lblBtn(btns[2], "50");
 
   addItem(menu);
-
-  auto _stateLabel = cx::reifyBmfLabel("dft", "Idle");
-  _stateLabel->setPosition(wb.cx, wb.top * 0.25);
-  addItem(_stateLabel);
-
-  auto coin1 = cx::reifySprite("coin.png");
-  coin1->setPosition(
-      MARGIN + HWZ(CC_CSIZE(coin1)),
-      wb.top - MARGIN - HHZ(CC_CSIZE(coin1)));
-  addItem(coin1);
-
-  auto coin2 = cx::reifySprite("coin.png");
-  coin2->setPosition(
-      wb.right - MARGIN - HWZ(CC_CSIZE(coin2)),
-      wb.top - MARGIN - HHZ(CC_CSIZE(coin2)));
-  addItem(coin2);
-
-  auto _coin1Label = cx::reifyBmfLabel("dft","10");
-//width:winSize.width * 0.25
-  _coin1Label->setAlignment(c::TextHAlignment::LEFT);
-  _coin1Label->setPosition(
-      coin1->getPositionX() + HWZ(CC_CSIZE(coin1)) + MARGIN/2 +
-      HWZ(CC_CSIZE(_coin1Label)),
-      wb.top - MARGIN*1.6);
-  addItem(_coin1Label);
-
-  auto _coin2Label = cx::reifyBmfLabel("dft", "10");
-//width:winSize.width * 0.25
-  _coin2Label->setAlignment(c::TextHAlignment::RIGHT);
-  _coin2Label->setPosition(coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
-      HWZ(CC_CSIZE(_coin2Label)),
-      wb.top - MARGIN*1.6);
-  addItem(_coin2Label);
 
   engine = mc_new(GEngine);
   //cx::sfxMusic("background", true);

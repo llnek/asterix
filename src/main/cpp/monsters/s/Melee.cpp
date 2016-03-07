@@ -9,12 +9,10 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-//////////////////////////////////////////////////////////////////////////////
-
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Collide.h"
+#include "Melee.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
@@ -23,7 +21,7 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MeleeLogic::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

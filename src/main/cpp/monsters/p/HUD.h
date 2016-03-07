@@ -22,10 +22,18 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
+  DECL_PTR(c::Label, _stateLabel)
   DECL_PTR(c::Label, scoreLabel)
   DECL_IZ(score)
 
+  s_arr<c::Label*,3> coinLabels;
+  s_arr<int,3> coins;
+
+  void updateCoins(int player, int score);
+  void updateAIState(const sstr&);
   void updateScore(int);
+  int getScore() { return score; }
+
 };
 
 

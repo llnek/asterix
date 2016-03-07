@@ -10,39 +10,19 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
-#include "GEngine.h"
-
+#import "AIState.h"
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL MoveLogic : public ecs::System {
-
-  c::Vec2 separate(ecs::Entity*, f::CMove*, f::CDraw*, Team*);
-  c::Vec2 arrive(ecs::Entity*, f::CMove*, f::CDraw*);
-
-  void process(float);
-  void onKeys(float);
-
-public:
-
-  MDECL_SYS_TPID("n/MoveLogic")
-  MDECL_SYS_PRIORITY( 20)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  MoveLogic(ecs::Engine *e)
-  : System(e)
-  {}
-
+//
+struct CC_DLL AIStateCounter : public AIState {
+  AIStateCounter() { _name="Counter"; }
+  virtual void update(ecs::Entity*,AILogic*);
 };
 
-
 NS_END
-
 
 
 

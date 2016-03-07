@@ -28,8 +28,11 @@ s_vec<ecs::Entity*> getEntsOnTeam(GEngine*, int team,  const COMType&);
 
 Entity* closestEntOnTeam(GEngine*, Entity*, int team);
 
+s_vec<ecs::Entity*> entsWithinRange(GEngine*, Entity*, float range, int team);
 
+Entity* playerForTeam(GEngine*, int team);
 
+void createMonster(GEngine*, int cost, int team, int count);
 
 
 NS_END

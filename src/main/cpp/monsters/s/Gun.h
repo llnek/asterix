@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +25,7 @@ class CC_DLL GunLogic : public ecs::System {
 public:
 
   MDECL_SYS_TPID("n/GunLogic")
-  MDECL_SYS_PRIORITY( 10)
+  MDECL_SYS_PRIORITY( 50)
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 

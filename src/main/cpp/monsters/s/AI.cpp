@@ -14,8 +14,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "AI.h"
-#include "AIState.h"
+#include "AILogic.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
@@ -23,7 +22,8 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-
+  auto out= engine->getEntities("n/Automa");
+  _enemy=out[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,21 +38,14 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
-
-  auto ents = engine->getEntities(
-      s_vec<ecs::COMType>{"n/Automa","n/Team"} );
-
-  if  (ents.size() == 0) {
-  return; }
-
-  auto aiEntity = ents[0];
-  auto aiTeam = CC_GEC(Team,aiEntity,"n/Team");
-  auto ai = CC_GEC(Automa,aiEntity,"n/Automa");
+  auto aiTeam = CC_GEC(Team,_enemy,"n/Team");
+  auto ai = CC_GEC(Automa,_enemy,"n/Automa");
 
   this->humanQuirkValue = 0;
   this->humanZapValue = 0;
   this->humanMunchValue = 0;
 
+  //get human soldiers
   auto mons = getEntsOnTeam(engine, OTHER_TEAM(aiTeam->team), "n/Monster");
   F__LOOP(it,mons) {
     auto m= *it;
@@ -89,82 +82,65 @@ void AI::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::changeStateForEntity(Entity *ent, AIState *state) {
+void AILogic::changeStateForEntity(Entity *ent, AIState *state) {
   auto ai = CC_GEC(Automa,ent,"n/Automa");
-  if (!ai) return;
-  //ai->state->exit();
-  //ai.state = state;
-  //[ai.state enter];
-  ai->replaceState(state);
+  if (ai) {
+    ai->replaceState(state);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::spawnQuirkForEntity(GEngine *engine, Entity *entity) {
+void AILogic::spawnMonster(Entity *e, int cost, int count) {
 
-  auto player = entity->get("n/Stash");
+  auto player = CC_GEC(Stash,e,"n/Stash");
+  ecs::Entity *m;
+  auto team=2;
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  if (!player || player->coins < COST_QUIRK) {
+  if (!player || player->coins < cost) {
   return; } else {
-    player->coins -= COST_QUIRK;
+    player->coins -= cost;
   }
 
-  cx::sfxPlay("spawn");
-
-  for (auto i = 0; i < 2; ++i) {
-    auto *m= engine->createQuirkMonster(2);
-    auto *render = CC_GEC(f::CDraw,m,"f/CDraw");
-    if (render) {
-      auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
-      render->setPos(wb.right * 0.75, wb.cy + r);
+  for (auto i = 0; i < count; ++i) {
+    switch (cost) {
+      case COST_QUIRK:
+        m= engine->createQuirkMonster(team);
+      break;
+      case COST_ZAP:
+        m= engine->createZapMonster(team);
+      break;
+      case COST_MUNCH:
+        m= engine->createMunchMonster(team);
+      break;
+      default:
+      throw "bad monster type!";
     }
+    auto render = CC_GEC(f::CDraw,m,"f/CDraw");
+    auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
+    render->setPos(wb.right * 0.75, wb.cy + r);
   }
+  cx::sfxPlay("spawn");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void AILogic::spawnQuirkForEntity(Entity *e) {
+  spawnMonster(e,COST_QUIRK,2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::spawnZapForEntity(GEngine *engine, Entity *entity) {
-
-  auto player = entity->get("n/Stash");
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-
-  if (!player || player->coins < COST_ZAP) { return; } else {
-    player->coins -= COST_ZAP;
-  }
-
-  cx::sfxPLay("spawn");
-
-  auto m= engine->createZapMonster(2);
-  auto render = CC_GEC(f::CDraw*,m,get("f/CDraw"));
-  if (render) {
-    auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
-    render->setPos(wb.right * 0.75, wb.cy + r);
-  }
+  spawnMonster(e,COST_ZAP,1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::spawnMunchForEntity(GEngine *engine, Entity *ent) {
-
-  auto player = CC_GEC(Stash,ent,"n/Stash");
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-
-  if (!player || player->coins < COST_MUNCH) { return; } else {
-    player->coins -= COST_MUNCH;
-  }
-
-  cx::sfxPlay("spawn");
-
-  auto m= engine->createMunchMonster(2);
-  auto render = CC_GEC(f::CDraw,m,"f/CDraw");
-  if (render) {
-    auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
-    render->setPos(wb.right * 0.75, wb.cy  + r);
-  }
+  spawnMonster(e,COST_MUNCH,1);
 }
 
 

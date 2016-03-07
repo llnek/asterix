@@ -14,11 +14,10 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
+#include "AIState.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(monsters)
-
-class AIState;
 
 enum MonsterType {
   eMonsterTypeQuirk = 0,
@@ -50,7 +49,7 @@ struct CC_DLL Gun : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Melee : public ecs::CMelee {
+struct CC_DLL Melee : public f::CMelee {
   MDECL_COMP_TPID("n/Melee")
   DECL_BF(aoe)
   DECL_TD(sstr,sound)
@@ -71,7 +70,7 @@ struct CC_DLL Monster : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stash : public ecs::CStash {
+struct CC_DLL Stash : public f::CStash {
   MDECL_COMP_TPID("n/Stash")
   DECL_IZ(coins)
   DECL_FZ(lastCoinDrop)
@@ -92,7 +91,7 @@ struct CC_DLL Team : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Automa : public ecs::CAutoma {
+struct CC_DLL Automa : public f::CAutoma {
   MDECL_COMP_TPID("n/Automa")
   DECL_TD(AIState, state)
 
@@ -102,6 +101,12 @@ struct CC_DLL Automa : public ecs::CAutoma {
     state = s.get();
   }
 
+  void replaceState(AIState *ns) {
+    state->exit();
+    delete state;
+    state=ns;
+    ns->enter();
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////

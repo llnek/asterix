@@ -79,7 +79,7 @@ void Move::process(float dt) {
 static float timeToTarget = 0.1;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::arrive(Entity *entity, f::CMove *move, f::CDraw *render) {
+c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CDraw *render) {
 
   auto vector = c::ccpSub(move->moveTarget, render->pos());
   auto dist = c::ccpLength(vector);
@@ -110,7 +110,7 @@ c::Vec2 MoveLogic::arrive(Entity *entity, f::CMove *move, f::CDraw *render) {
 static float SEPARATE_THRESHHOLD = 20;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::separate(Entity *entity, f::CMove *move, f::CDraw *render, Team *team) {
+c::Vec2 MoveLogic::separate(ecs::Entity *entity, f::CMove *move, f::CDraw *render, Team *team) {
 
   auto ents = getEntsOnTeam(engine,team->team,"f/CMove");
   auto steering = c::Vec2(0,0);

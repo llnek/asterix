@@ -11,21 +11,21 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 #include "n/lib.h"
 
 NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine  : public a::Engine {
+class CC_DLL GEngine  : public ecs::Engine {
 
 public:
 
-  Entity* createMunchMonster(int team);
-  Entity* createQuirkMonster(int team);
-  Entity* createZapMonster(int team);
-  Entity* createLaser(int team);
+  ecs::Entity* createMunchMonster(int team);
+  ecs::Entity* createQuirkMonster(int team);
+  ecs::Entity* createZapMonster(int team);
+  ecs::Entity* createLaser(int team);
 
   virtual void initEntities();
   virtual void initSystems();

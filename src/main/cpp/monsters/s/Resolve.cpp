@@ -19,11 +19,15 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(monsters)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+  auto a1= engine->getEntities("n/Automa");
+  auto a2= engine->getEntities("f/CHuman");
+  assert(a1.size()==1);
+  assert(a2.size()==1);
+  _human=a2[0];
+  _enemy=a1[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +42,32 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
+  auto h= CC_GEC(f::CHealth,_human,"f/CHealth");
+
+  if (h->curHp <= 0) {
+    // gameover
+    SENDMSG("/game/player/lose");
+    return;
+  }
+
+  auto he= CC_GEC(f::CHealth,_enemy,"f/CHealth");
+  if (he->curHp <= 0) {
+    SENDMSG("/game/player/lose");
+    return;
+  }
+
+  // Display coins
+  auto humanPlayer = CC_GEC(Stash,_human,"n/Stash");
+  auto msg
+  getHUD()->updateCoins(1, humanPlayer->coins);
+  auto aiPlayer = CC_GEC(Stash,_enemy,"n/Stash");
+  getHUD()->updateCoins(2, aiPlayer->coins);
+
+  // Display AI state
+  auto ai = CC_GEC(Automa,pe,"n/Automa");
+  getHUD()->updateAIState(ai->state->name());
 }
+
 
 NS_END
 

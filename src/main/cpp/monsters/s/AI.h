@@ -17,16 +17,16 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class AIState;
-class CC_DLL AI : public ecs::System {
-
-  void changeStateForEntity(Entity*, AIState*);
-  void spawnQuirkForEntity(GEngine*, Entity*);
-  void spawnMunchForEntity(GEngine*, Entity*);
-  void spawnZapForEntity(GEngine*, Entity*);
+class CC_DLL AILogic : public ecs::System {
+  void spawnMonster(ecs::Entity*, int cost, int count);
+  void changeStateForEntity(ecs::Entity*, AIState*);
+  void spawnQuirkForEntity(ecs::Entity*);
+  void spawnMunchForEntity(ecs::Entity*);
+  void spawnZapForEntity(ecs::Entity*);
 
   void process(float);
 
+  DECL_PTR(ecs::Entity, _enemy)
   DECL_FZ(humanQuirkValue)
   DECL_FZ(humanZapValue)
   DECL_FZ(humanMunchValue)
@@ -38,12 +38,12 @@ class CC_DLL AI : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::AI)
-  MDECL_SYS_TPID("n/AI")
+  MDECL_SYS_TPID("n/AILogic")
+  MDECL_SYS_PRIORITY( 60)
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  AI(ecs::Engine *e)
+  AILogic(ecs::Engine *e)
   : System(e)
   {}
 
