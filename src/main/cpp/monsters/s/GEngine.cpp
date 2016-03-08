@@ -62,6 +62,14 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
+  /*
+  [_healthSystem update:dt];
+    [_moveSystem update:dt];
+    [_playerSystem update:dt];
+    [_meleeSystem update:dt];
+    [_gunSystem update:dt];
+    [_aiSystem update:dt];
+    */
   regoSystem(mc_new1(Resolve,this));
   regoSystem(mc_new1(GunLogic,this));
   regoSystem(mc_new1(AILogic,this));
