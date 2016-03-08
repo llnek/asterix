@@ -43,9 +43,10 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
-
+    
   virtual ~GLayer();
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //

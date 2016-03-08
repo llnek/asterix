@@ -28,6 +28,7 @@ void HealthLogic::preamble() {
 bool HealthLogic::update(float dt) {
   if (MGMS()->isLive()) {
     process(dt);
+    //draw();
   }
   return true;
 }
@@ -77,14 +78,14 @@ void HealthLogic::draw() {
     auto eX = render->node->getPositionX() + HWZ(CC_CSIZE(render->node));
     auto actualY = render->node->getPositionY() + HHZ(CC_CSIZE(render->node));
 
-    auto percentage = health->curHP / health->origHP;
+    auto percentage = (float)health->curHP / (float)health->origHP;
     auto actualX = ((eX-sX) * percentage) + sX;
     auto amtRed = ((1.0f-percentage)*maxColor)+colorBuffer;
     auto amtGreen = (percentage*maxColor)+colorBuffer;
 
     //glLineWidth(7);
-    //ccDrawColor4B(amtRed,amtGreen,0,255);
-    //ccDrawLine(c::Vec2(sX, actualY), c::Vec2(actualX, actualY));
+    //c::ccDrawColor4B(amtRed,amtGreen,0,255);
+    //c::ccDrawLine(c::Vec2(sX, actualY), c::Vec2(actualX, actualY));
   }
 }
 
