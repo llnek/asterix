@@ -30,12 +30,11 @@ void AIStateMass::enter() {
 //
 void AIStateMass::update(ecs::Entity *e, AILogic *sys) {
 
-    auto melee = CC_GEC(Melee,e,"n/Melee");
-  auto player = CC_GEC(Stash,e,"n/Stash");
+  auto player = CC_GEC(Player,e,"n/Player");
   auto team = CC_GEC(Team,e,"n/Team");
   auto ai = CC_GEC(Automa,e,"n/Automa");
 
-  if (!team || !player || !ai || !melee) { return; }
+  if (!team || !player || !ai) { return; }
 
   auto enemies = entsWithinRange(sys->getEngine(),e,200, OTHER_TEAM(team->team));
   if (enemies.size() > 0) {
@@ -47,7 +46,7 @@ void AIStateMass::update(ecs::Entity *e, AILogic *sys) {
     return;
   }
 
-  melee->attacking = false;
+  player->attacking = false;
 }
 
 

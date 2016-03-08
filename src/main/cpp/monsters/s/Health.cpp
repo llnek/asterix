@@ -41,11 +41,11 @@ void HealthLogic::process(float dt) {
     auto health = CC_GEC(f::CHealth,e,"f/CHealth");
     auto render = CC_GEC(f::CDraw,e,"f/CDraw");
 
-    if (!health->alive ||
-        health->origHP == 0) { return; }
+//    if (!health->alive() ||
+//        health->origHP == 0) { return; }
 
     if (health->curHP <= 0) {
-      health->alive = false;
+      //health->alive = false;
       cx::sfxPlay("boom");
 
       if (render) {

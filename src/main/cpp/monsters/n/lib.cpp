@@ -88,7 +88,7 @@ void createMonsters(ecs::Engine *eng, int cost, int team, int count) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ecs::Entity* playerForTeam(ecs::Engine *engine, int team) {
-  auto players = getEntsOnTeam(engine, team, "n/Stash");
+  auto players = getEntsOnTeam(engine, team, "n/Player");
   return players.size() > 0 ? players[0] : nullptr;
 }
 

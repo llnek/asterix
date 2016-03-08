@@ -57,8 +57,8 @@ void Resolve::process(float dt) {
   }
 
   // Display coins
-  auto humanPlayer = CC_GEC(Stash,_human,"n/Stash");
-  auto aiPlayer = CC_GEC(Stash,_enemy,"n/Stash");
+  auto humanPlayer = CC_GEC(Player,_human,"n/Player");
+  auto aiPlayer = CC_GEC(Player,_enemy,"n/Player");
   auto msg=j::json({
         {"team", 1},
         {"score", humanPlayer->coins }

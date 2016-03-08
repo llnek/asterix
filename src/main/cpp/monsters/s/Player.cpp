@@ -40,13 +40,12 @@ static float COINS_PER_INTERVAL = 5;
 //////////////////////////////////////////////////////////////////////////////
 //
 void PlayerLogic::process(float dt) {
-  auto ents = engine->getEntities("n/Stash");
+  auto ents = engine->getEntities("n/Player");
   auto time = cx::timeInMillis();
   F__LOOP(it,ents) {
     auto e = *it;
-    auto player = CC_GEC(Stash,e,"n/Stash");
+    auto player = CC_GEC(Player,e,"n/Player");
     auto team = CC_GEC(Team,e,"n/Team");
-    auto melee = CC_GEC(Melee,e,"n/Melee");
     auto render = CC_GEC(f::CDraw,e,"f/CDraw");
 
     // Handle coins
@@ -56,8 +55,8 @@ void PlayerLogic::process(float dt) {
     }
 
     // Update player image
-    if (render && team && melee) {
-      auto png= melee->attacking ?
+    if (render && team) {
+      auto png= player->attacking ?
         "castle"+s::to_string(team->team)+"_atk.png"
         :
         "castle"+s::to_string(team->team)+"_def.png";
@@ -69,7 +68,7 @@ void PlayerLogic::process(float dt) {
       auto movers = getEntsOnTeam(engine,team->team,"f/CMove");
       F__LOOP(it,movers) {
         auto m= *it;
-        handleMover(m,melee->attacking);
+        handleMover(m,player->attacking);
       }
     }
   }

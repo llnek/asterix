@@ -64,7 +64,7 @@ void GLayer::onEnd() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onBtnTapped(int cost, int count) {
-  auto player = CC_GEC(Stash,_human,"n/Stash");
+  auto player = CC_GEC(Player,_human,"n/Player");
   if (player->coins < cost) { return; } else {
     player->coins -= cost;
   }
@@ -91,9 +91,9 @@ void GLayer::onInited() {
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
   auto render= CC_GEC(f::CDraw,_human,"f/CDraw");
-  auto melee= CC_GEC(Melee,_human,"n/Melee");
+  auto player= CC_GEC(Player,_human,"n/Player");
   if (render->bbox().containsPoint(loc)) {
-    melee->attacking = !melee->attacking;
+    player->attacking = !player->attacking;
   }
 }
 

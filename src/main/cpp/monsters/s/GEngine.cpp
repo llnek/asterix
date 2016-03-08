@@ -40,9 +40,8 @@ void GEngine::initEntities() {
   ent->checkin(mc_new1(f::CHealth,200));
   ent->checkin(mc_new1(f::CDraw,s));
   ent->checkin(mc_new(f::CHuman));
-  ent->checkin(mc_new(Melee));
   ent->checkin(mc_new1(Team,1));
-  ent->checkin(mc_new(Stash));
+  ent->checkin(mc_new(Player));
   ent->checkin(mc_new4(Gun,200,5,2,"pew"));
 
   s= cx::reifySprite("castle2_def.png");
@@ -52,9 +51,8 @@ void GEngine::initEntities() {
   ent= this->reifyEntity();
   ent->checkin(mc_new1(f::CHealth,200));
   ent->checkin(mc_new1(f::CDraw,s));
-  ent->checkin(mc_new(Melee));
   ent->checkin(mc_new1(Team,2));
-  ent->checkin(mc_new(Stash));
+  ent->checkin(mc_new(Player));
   ent->checkin(mc_new4(Gun,200,5,2,"pew"));
   auto sm= mc_new(AIStateMass);
   ent->checkin(mc_new1(Automa,sm));

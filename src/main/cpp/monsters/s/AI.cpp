@@ -93,7 +93,7 @@ void AILogic::changeStateForEntity(ecs::Entity *ent, AIState *state) {
 //
 void AILogic::spawnMonster(ecs::Entity *e, int cost, int count) {
 
-  auto player = CC_GEC(Stash,e,"n/Stash");
+  auto player = CC_GEC(Player,e,"n/Player");
   ecs::Entity *m;
   auto team=2;
   auto wz= cx::visRect();

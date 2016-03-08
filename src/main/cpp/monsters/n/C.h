@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -69,11 +70,11 @@ struct CC_DLL Monster : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Stash : public f::CStash {
-  MDECL_COMP_TPID("n/Stash")
+struct CC_DLL Player : public f::CPlayer {
+  MDECL_COMP_TPID("n/Player")
+  DECL_BF(attacking)
   DECL_IZ(coins)
-  DECL_FZ(lastCoinDrop)
-
+  long long lastCoinDrop;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -94,12 +95,12 @@ class AILogic;
 class Entity;
 class CC_DLL AIState {
 protected:
-    DECL_TV(sstr, _name, "?");
+  DECL_TV(sstr, _name, "?");
 public:
-    virtual void update(ecs::Entity*,AILogic*) {}
-    virtual void enter() {}
-    virtual void exit() {}
-    const sstr name() { return _name; }
+  virtual void update(ecs::Entity*,AILogic*) {}
+  virtual void enter() {}
+  virtual void exit() {}
+  const sstr name() { return _name; }
 };
 
 //////////////////////////////////////////////////////////////////////////////

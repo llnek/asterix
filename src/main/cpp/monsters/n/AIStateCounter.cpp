@@ -24,7 +24,7 @@ NS_BEGIN(monsters)
 //
 void AIStateCounter::update(ecs::Entity *e, AILogic *sys) {
 
-  auto player = CC_GEC(Stash,e,"n/Stash");
+  auto player = CC_GEC(Player,e,"n/Player");
   auto team = CC_GEC(Team,e,"n/Team");
   auto ai = CC_GEC(Automa,e,"n/Automa");
 

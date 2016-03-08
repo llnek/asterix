@@ -30,21 +30,19 @@ struct CC_DLL CGesture : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CHealth : public ecs::Component {
+  virtual bool alive() { curHP <= 0; }
   MDECL_COMP_TPID("f/CHealth")
-  CHealth(float h, float c) {
-    alive=true;
+  CHealth(int h, int c) {
     origHP=h;
     curHP=c;
     assert(c <= h);
   }
-  CHealth(float h) {
-    alive=true;
+  CHealth(int h) {
     origHP=h;
     curHP=h;
   }
-  DECL_FZ(origHP)
-  DECL_FZ(curHP)
-  DECL_BF(alive)
+  DECL_IZ(origHP)
+  DECL_IZ(curHP)
 
 };
 
@@ -62,25 +60,21 @@ struct CC_DLL CHuman : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CStash : public ecs::Component {
-  MDECL_COMP_TPID("f/CStash")
+struct CC_DLL CPlayer : public ecs::Component {
+  MDECL_COMP_TPID("f/CPlayer")
   DECL_FZ(score)
-  CStash(float v) { score=v;}
-    CStash(){}
+  CPlayer(int v) { score=v;}
+  CPlayer() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CMelee : public ecs::Component {
   MDECL_COMP_TPID("f/CMelee")
-  DECL_BF(attacking)
-  DECL_FZ(hurt)
+  long long lastDamageTime;
   DECL_BF(selfDie)
-  DECL_FZ(hurtRate)
-  DECL_FZ(lastHurt)
-DECL_FZ(damage)
-    DECL_FZ(damageRate)
-    DECL_FZ(lastDamageTime)
+  DECL_FZ(damage)
+  DECL_FZ(damageRate)
   CMelee() {}
 };
 
@@ -109,7 +103,7 @@ struct CC_DLL CMove : public ecs::Component {
     maxSpeed=ms;
     maxAccel=ma;
   }
-    CMove() {}
+  CMove() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
