@@ -17,7 +17,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Splash : public f::XScene {
-  s_vec<c::Sprite*> icons;
+  void decoUIXXX();
   void demo();
 public:
   STATIC_REIFY_SCENE(Splash)
