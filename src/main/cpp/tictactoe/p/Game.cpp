@@ -14,7 +14,7 @@
 #include "s/GEngine.h"
 #include "n/lib.h"
 #include "MMenu.h"
-#include "End.h"
+#include "Ende.h"
 #include "HUD.h"
 #include "Game.h"
 
@@ -22,14 +22,14 @@ NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 class CC_DLL GLayer : public f::GameLayer {
 
-  virtual bool onTouchBegan(c::Touch *t, c::Event*);
-  virtual void onTouchEnded(c::Touch *t, c::Event*);
-  virtual void onMouseUp(c::Event *e);
+  virtual void onMouseClick(const c::Vec2&);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
 
-  void onGUIXXX(const c::Vec2 &pos);
+  void onGUIXXX(const c::Vec2&);
   void showGrid();
 
 public:
@@ -45,28 +45,31 @@ public:
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void postReify();
+  virtual void onInited();
 
-  DECL_PTR(a::NodeList, board)
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Entity, board)
+  DECL_PTR(ecs::Entity, arena)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::postReify() {
-  board = engine->getNodeList(BoardNode().typeId());
-  arena = engine->getNodeList(ArenaNode().typeId());
+//
+void GLayer::onInited() {
+  arena = engine->getEntities("n/CSquares")[0];
+  board = engine->getEntities("n/Grid")[0];
 
   showGrid();
 
-  auto ps = CC_GNLF(Players,board,"players");
-  auto ss = CC_GNLF(GVars,arena,"slots");
+  auto ps = CC_GEC(Players,board,"n/Players");
+  auto ss = CC_GEC(GVars,arena,"n/GVars");
   auto human= CC_CSV(c::Integer,"HUMAN");
+  // random start?
   auto pnum= cx::randSign() > 0 ? 2 : 1;
 
   if (MGMS()->isOnline()) {
+    ss->pnum= 0;
     return;
   } else {
-    // randomly choose who starts
     ss->pnum= pnum;
   }
 
@@ -88,64 +91,61 @@ void GLayer::playTimeExpired() {
   MGMS()->msgQueue().push("forfeit");
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::overAndDone(int winner) {
   getHUD()->endGame(winner);
   surcease();
   auto x= mc_new1(ECX, arena);
-  ELayer::reify(getSceneX(), x, 999);
+  Ende::reify(getSceneX(), x, 4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::showMenu() {
-  auto f= [=]() { CC_DTOR()->popScene(); };
+  auto f= [=]() { cx::pop(); };
   auto m= MMenu::reify(mc_new1(MCX,f));
-  CC_DTOR()->pushScene(m);
+  cx::pushEx(m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchBegan(c::Touch *t, c::Event *e) {
+bool GLayer::onTouchStart(c::Touch *) {
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnded(c::Touch *t, c::Event*) {
-  auto p= CC_DTOR()->convertToGL(t->getLocationInView());
-  onGUIXXX(p);
+void GLayer::onTouchEnd(c::Touch *t) {
+  onGUIXXX(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseUp(c::Event *e) {
-  auto evt = (c::EventMouse*) e;
-  onGUIXXX(evt->getLocationInView());
+void GLayer::onMouseClick(const c::Vec2 &loc) {
+  onGUIXXX(loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onGUIXXX(const c::Vec2 &pos) {
 
-  auto sel= CC_GNLF(CellPos, board, "select");
-  auto css= CC_GNLF(CSquares,arena,"squares");
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto sel= CC_GEC(CellPos, board, "n/CellPos");
+  auto css= CC_GEC(CSquares,arena,"n/CSquares");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto cur = ss->pnum;
-  int n=0;
 
   sel->cell =  -1;
   sel->px= pos.x;
   sel->py= pos.y;
 
   if (cur <=  0) {
-    CCLOG("onGUIXXX:  OOOPS, cur ============== %d", cur);
+    CCLOG("onGUIXXX: OOOPS, cur ============== %d", cur);
     return;
   }
 
   //which cell did he click on?
+  auto n=0;
   F__LOOP(it, css->boxes) {
     auto &bx = *it;
     if (sel->px >= bx.left && sel->px <= bx.right &&
@@ -159,7 +159,8 @@ void GLayer::onGUIXXX(const c::Vec2 &pos) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::decorate() {
+//
+void GLayer::decoUI() {
 
   f::emptyQueue<sstr>( MGMS()->msgQueue() );
 
@@ -188,7 +189,7 @@ void GLayer::decorate() {
     }
   }
 
-  CCLOG("seed =\n%s", ctx->data.dump(0).c_str());
+  CCLOG("seed =\n%s", ctx->data.dump(2).c_str());
 
   engine = mc_new1(GEngine,pnum);
 
@@ -197,19 +198,20 @@ void GLayer::decorate() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::showGrid() {
-  auto css= CC_GNLF(CSquares,arena, "squares");
+  auto css= CC_GEC(CSquares,arena, "n/CSquares");
   auto gps= mapGridPos(1);
-  for (int i=0; i < gps.size(); ++i) {
+  for (auto i=0; i < gps.size(); ++i) {
     auto s= css->sqs[i];
     auto &bx= gps[i];
     assert(s->cell == i);
-    s->sprite->setPosition(cx::vboxMID(bx));
-    addAtlasItem("game-pics", s->sprite);
+    s->node->setPosition(cx::vboxMID(bx));
+    addAtlasItem("game-pics", s->node);
   }
 }
 
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
@@ -265,7 +267,8 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+//
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();
@@ -273,7 +276,8 @@ void Game::decorate() {
 
 
 
-NS_END(tttoe)
+NS_END
+
 
 
 

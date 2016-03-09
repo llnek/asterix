@@ -32,19 +32,18 @@ void NetPlay::showWaitOthers() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
   auto wb = cx::visBox();
-  auto cw= cx::center();
 
   //clear layer
   removeAll();
 
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   addItem(qn);
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
 
-  menu->setPosition(cw.x, wb.top * 0.1f);
+  menu->setPosition(wb.cx, wb.top * 0.1);
   b1->setCallback(
       [=](c::Ref*) { this->onCancel(); });
   addItem(menu);
@@ -140,17 +139,16 @@ void NetPlay::onLogin() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::decorate() {
+void NetPlay::decoUI() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
-  auto cw= cx::center();
   auto wb= cx::visBox();
 
   centerImage("game.bg");
 
   // text msg
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   addItem(qn);
 
   // editbox for user
@@ -162,8 +160,9 @@ void NetPlay::decorate() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
-  uid->setPosition(c::Vec2(cw.x, cw.y+bxz.height*0.5f+2));
-  addItem(uid, lastZ, USER_TAG);
+  uid->setPosition(c::Vec2(wb.cx, wb.cy+ HHZ(bxz)+2));
+    uid->setTag(USER_TAG);
+  addItem(uid);
 
   // editbox for password
   auto pwd = c::ui::TextField::create();
@@ -174,8 +173,9 @@ void NetPlay::decorate() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
-  pwd->setPosition(c::Vec2(cw.x, cw.y-bxz.height*0.5f-2));
-  addItem(pwd, lastZ, PSWD_TAG);
+  pwd->setPosition(c::Vec2(wb.cx, wb.cy- HHZ(bxz)-2));
+    pwd->setTag(PSWD_TAG);
+  addItem(pwd);
 
   // btns
   auto b1= cx::reifyMenuBtn("continue.png");
@@ -183,7 +183,7 @@ void NetPlay::decorate() {
   s_vec<c::MenuItem*> btns {b1, b2};
   auto menu= cx::mkVMenu(btns);
 
-  menu->setPosition(cw.x, wb.top * 0.1f);
+  menu->setPosition(wb.cx, wb.top * 0.1);
   b1->setCallback(
       [=](c::Ref*) { this->onLogin(); });
 
@@ -201,6 +201,6 @@ NetPlay::~NetPlay() {
 }
 
 
-NS_END(tttoe)
+NS_END
 
 

@@ -13,45 +13,37 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Game.h"
-#include "End.h"
-#include "n/N.h"
+#include "Ende.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onReplay() {
-  auto x= (GCXX*)getSceneX()->emitCtx();
+void Ende::onReplay() {
+  auto x= (GCXX*)getSceneX()->ejectCtx();
   x->count++;
   cx::runEx(Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onQuit() {
+void Ende::onQuit() {
   cx::runEx(XCFG()->prelude());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::decorate() {
+void Ende::decoUI() {
 
   auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
   auto ctx= (ECX*) getCtx();
-  auto cw= cx::center();
   auto wb= cx::visBox();
 
-  // clear out the grid
-  auto css= CC_GNLF(CSquares,ctx->arena,"squares");
-  F__LOOP(it,css->sqs) {
-    auto q= *it;
-    q->sprite->setOpacity(0.1f * 255);
-  }
-
   // text msg
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(cw.x, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   qn->setColor(XCFG()->getColor("text"));
   addItem(qn);
 
@@ -67,11 +59,11 @@ void ELayer::decorate() {
   b2->setCallback(
       [=](c::Ref*) { this->onQuit(); });
 
-  menu->setPosition(cw.x, wb.top * 0.5f);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 }
 
 
-NS_END(tttoe)
+NS_END
 
 

@@ -141,6 +141,10 @@ typedef std::string sstr;
 #define DECL_TD(T,m) T m;
 #define DECL_TV(T,m,v) T m=v;
 
+  // halve this value
+#define HTV(v) (v) * 0.5
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 NS_BEGIN(fusii)

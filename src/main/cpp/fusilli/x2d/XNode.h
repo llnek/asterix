@@ -72,7 +72,7 @@ public:
 
   virtual void setCtx(SCTX*, bool clean=true);
   virtual SCTX* getCtx() { return context; }
-  virtual SCTX* emitCtx();
+  virtual SCTX* ejectCtx();
 
   virtual ~XNode();
 };

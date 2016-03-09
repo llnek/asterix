@@ -23,9 +23,10 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 void Logic::preamble() {
-  robot= engine->getNodeList(RobotNode().typeId());
-  arena= engine->getNodeList(ArenaNode().typeId());
-  board= engine->getNodeList(BoardNode().typeId());
+  auto ents= engine->getEntities("n/SmartAI");
+  robot= ents.size() > 0 ? ents[0] : CC_NIL;
+  arena= engine->getEntities("n/CSquares")[0];
+  board= engine->getEntities("n/Grid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,19 +34,19 @@ void Logic::preamble() {
 bool Logic::update(float dt) {
   if (MGMS()->isLive() &&
       !MGMS()->isOnline()) {
-    doIt(dt);
+    process(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Logic::doIt(float dt) {
+void Logic::process(float dt) {
 
-  auto ps = CC_GNLF(Players, board, "players");
-  auto sel = CC_GNLF(CellPos, board, "select");
-  auto grid= CC_GNLF(Grid, board, "grid");
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto sel = CC_GEC(CellPos, board, "n/CellPos");
+  auto ps = CC_GEC(Players, board, "n/Players");
+  auto grid= CC_GEC(Grid, board, "n/Grid");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto bot= CC_CSV(c::Integer, "BOT");
   auto cfg= MGMS()->getLCfg()->getValue();
   // current player
@@ -59,7 +60,7 @@ void Logic::doIt(float dt) {
     }
     else
     if (cx::timerDone(botTimer)) {
-      auto bd= CC_GNLF(TTToe,robot,"robot");
+      auto bd= CC_GEC(TTToe,robot,"n/SmartAI");
       bd->syncState(grid->vals, cp->value);
       int rc= bd->getFirstMove();
       if (rc < 0) {
@@ -83,8 +84,8 @@ void Logic::doIt(float dt) {
 //
 void Logic::sync(int pos, int value, Grid *grid) {
 
-  auto ps= CC_GNLF(Players, board, "players");
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto ps= CC_GEC(Players, board, "n/Players");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto human= CC_CSV(c::Integer,"HUMAN");
   auto other=0;
   auto snd="";
@@ -105,6 +106,7 @@ void Logic::sync(int pos, int value, Grid *grid) {
     // switch player
     grid->vals[pos] = value;
     ss->pnum= other;
+
     auto msg= j::json({
         {"category", ps->parr[other]->category},
         {"running", MGMS()->isLive() },
@@ -121,6 +123,6 @@ void Logic::sync(int pos, int value, Grid *grid) {
 }
 
 
-NS_END(tttoe)
+NS_END
 
 

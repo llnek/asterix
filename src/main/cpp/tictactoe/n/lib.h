@@ -8,9 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 
 //////////////////////////////////////////////////////////////////////////////
+//
 #include "x2d/GameScene.h"
 #include "core/JSON.h"
 
@@ -23,10 +25,10 @@ typedef s_arr<int, BD_SZ> ArrDim;
 NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_arr<f::Box4, GD_SZ> mapGridPos(float scale = 1.0f);
+const s_arr<f::Box4, GD_SZ> mapGridPos(float scale = 1);
 const s_vec<ArrDim> mapGoalSpace();
 j::json fmtGameData(f::GMode );
 
-NS_END(tttoe)
+NS_END
 
 

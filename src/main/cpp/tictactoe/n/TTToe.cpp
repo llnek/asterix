@@ -17,11 +17,11 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 bool not_any(const ArrCells &arr, int v) {
-  for (int i=0; i < arr.size(); ++i) {
+  for (auto i=0; i < arr.size(); ++i) {
     if (arr[i] == v) { return false; }
   }
   return arr.size() > 0;
@@ -30,13 +30,13 @@ bool not_any(const ArrCells &arr, int v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool every(const ArrCells &arr, int v) {
-  for (int i=0; i < arr.size(); ++i) {
+  for (auto i=0; i < arr.size(); ++i) {
     if (arr[i] != v) { return false; }
   }
   return arr.size() > 0;
 }
 
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 TTToe::TTToe(int p1v, int p2v) {
@@ -72,7 +72,7 @@ TTToe::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
   auto sz= snap->state.size();
   s_vec<int> rc;
 
-  for (int pos= 0; pos < sz; ++pos) {
+  for (auto pos= 0; pos < sz; ++pos) {
     if (isNil(snap->state[pos])) {
       rc.push_back(pos);
     }
@@ -192,8 +192,8 @@ int TTToe::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 //
 bool TTToe::testWin(const ArrCells &vs, int actor, const ArrDim &g) {
 
-  int cnt=g.size();
-  for (int n= 0; n < g.size(); ++n) {
+  auto cnt=g.size();
+  for (auto n= 0; n < g.size(); ++n) {
     if (actor == vs[g[n]]) {
       --cnt;
     }
@@ -202,5 +202,7 @@ bool TTToe::testWin(const ArrCells &vs, int actor, const ArrDim &g) {
 }
 
 
-NS_END(tttoe)
+
+NS_END
+
 

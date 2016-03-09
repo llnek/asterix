@@ -20,13 +20,13 @@ NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-void Splash::demo() {
-  auto ps= mapGridPos(0.75f);
+/*
+void Splash::XXXdemo() {
+  auto ps= mapGridPos(0.75);
   auto fm= "";
 
   // we scale down the icons to make it look nicer
-  for (int i = 0; i < ps.size(); ++i) {
+  for (auto i = 0; i < ps.size(); ++i) {
     // set up the grid icons
     if (i == 1 || i == 5 || i == 6 || i == 7)
     { fm= "x.png"; }
@@ -37,25 +37,69 @@ void Splash::demo() {
     { fm= "o.png"; }
     auto sp= cx::reifySprite(fm);
     auto bx= cx::vboxMID( ps[i]);
-    sp->setScale(0.75f);
+    sp->setScale(0.75);
     sp->setPosition(bx);
+    addAtlasItem("game-pics", sp);
+  }
+}
+*/
+static s_arr<sstr,3> PNGS= {"z.png", "x.png", "o.png"};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::demo() {
+  // we scale down the icons to make it look nicer
+  auto ps= mapGridPos(0.75);
+  auto fm= "";
+
+  s::srand(cx::timeInMillis());
+
+  for (auto i = 0; i < ps.size(); ++i) {
+    auto n= rand() % 3;
+    auto sp= cx::reifySprite(PNGS[n]);
+    auto bx= cx::vboxMID( ps[i]);
+    sp->setScale(0);
+    sp->setPosition(bx);
+    sp->runAction(
+        c::RepeatForever::create(
+        c::Sequence::create(
+          c::ScaleTo::create(0.1,0.75),
+          c::DelayTime::create(0.2),
+          c::CallFuncN::create([=](c::Node *r) {
+            SCAST(c::Sprite*,r)->setSpriteFrame(PNGS[rand() % 3]);
+            }),
+          c::DelayTime::create(1),
+          c::ScaleTo::create(0.1,0),
+          c::DelayTime::create(0.1),
+          c::CallFuncN::create([=](c::Node *r) {
+            SCAST(c::Sprite*,r)->setSpriteFrame(PNGS[rand() % 3]);
+            }),
+          CC_NIL)));
+
+    icons.push_back(sp);
     addAtlasItem("game-pics", sp);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
 
   centerImage( "game.bg");
   regoAtlas("game-pics");
 
-  // title
-  auto cw = cx::center();
+  auto title= cx::reifySprite("title.png");
   auto wb = cx::visBox();
-  addAtlasFrame(
-      "game-pics", "title.png",
-      c::Vec2(cw.x, wb.top * 0.9f));
+
+  title->setPosition(wb.cx, wb.top * 1.2);
+  title->runAction(
+      c::Sequence::createWithTwoActions(
+        c::DelayTime::create(0.3),
+        c::EaseBackOut::create(
+          c::MoveTo::create(0.5,
+            c::ccp(wb.cx, wb.top * 0.9)))));
+
+  addAtlasItem("game-pics", title);
 
   demo();
 
@@ -67,11 +111,20 @@ void Splash::decorate() {
         cx::runEx(MMenu::reify(mc_new1(MCX, f)));
       });
 
-  menu->setPosition( cw.x, wb.top * 0.1f);
+  b1->setPosition(wb.cx, wb.top * -0.15);
+  b1->runAction(
+      c::Sequence::createWithTwoActions(
+        c::DelayTime::create(0.3),
+        c::EaseBackOut::create(
+          c::MoveTo::create(0.5,
+            c::Vec2(wb.cx, wb.top * 0.1)))));
+
   addItem(menu);
+
+  //schedule(CC_SCHEDULE_SELECTOR(Splash::jiggle), 1);
 }
 
 
 
-NS_END(tttoe)
+NS_END
 

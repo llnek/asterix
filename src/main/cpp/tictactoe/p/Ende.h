@@ -8,36 +8,40 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/NodeRego.h"
+#include "ecs/Entity.h"
 #include "x2d/XLayer.h"
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ECX : public f::SCTX {
-  ECX(a::NodeList* n) {
+  ECX(ecs::Entity *n) {
     arena=n;
   }
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Entity, arena)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ELayer : public f::XLayer {
+class CC_DLL Ende : public f::XLayer {
 
   void onReplay();
   void onQuit();
 
 public:
 
-  STATIC_REIFY_LAYER_CTX(ELayer)
+  STATIC_REIFY_LAYER_CTX(Ende)
   MDECL_DECORATE()
   MDECL_GET_IID(4)
 
 };
 
-NS_END(tttoe)
+
+NS_END
+
+
 

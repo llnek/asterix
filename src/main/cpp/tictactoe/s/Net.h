@@ -8,10 +8,12 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
+
 #include "core/OdinEvent.h"
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_ALIAS(ws, fusii::odin)
@@ -19,7 +21,7 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Net : public a::System {
+class CC_DLL Net : public ecs::System {
 
   void onSocket(ws::OdinEvent*);
   void onSess(ws::OdinEvent*);
@@ -30,21 +32,21 @@ class CC_DLL Net : public a::System {
 
 public:
 
-  MDECL_SYS_PRIORITY(a::NetPlay)
+  MDECL_SYS_PRIORITY(ecs::NetPlay)
   MDECL_SYS_TPID( "n/Net")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(a::NodeList, board)
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Entity, board)
+  DECL_PTR(ecs::Entity, arena)
 
-  Net(a::Engine *e)
+  Net(ecs::Engine *e)
   : System(e)
   {}
 
 };
 
 
-NS_END(tttoe)
+NS_END
 
 

@@ -12,8 +12,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
-#include "n/C.h"
 #include "n/lib.h"
+#include "n/C.h"
 #include "Net.h"
 
 NS_ALIAS(ws, fusii::odin)
@@ -33,10 +33,9 @@ bool Net::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::preamble() {
-  board = engine->getNodeList(BoardNode().typeId());
-  arena = engine->getNodeList(ArenaNode().typeId());
-  auto ps= CC_GNLF(Players,board,"players");
-  auto ss= CC_GNLF(GVars, arena, "slots");
+  arena = engine->getEntities("n/CSquares")[0];
+  board = engine->getEntities("n/Grid")[0];
+  auto ss= CC_GEC(GVars, arena, "n/GVars");
   ss->pnum= 0; // no one is current yet
   initOnline();
 }
@@ -75,7 +74,7 @@ void Net::initOnline() {
 //
 void Net::sync() {
 
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto active = MGMS()->isLive();
   int pnum;
 
@@ -97,10 +96,10 @@ void Net::sync() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::process() {
-  auto ps = CC_GNLF(Players, board, "players");
-  auto sel = CC_GNLF(CellPos, board, "select");
-  auto grid= CC_GNLF(Grid, board, "grid");
-  auto ss= CC_GNLF(GVars,arena, "slots");
+  auto sel = CC_GEC(CellPos, board, "n/CellPos");
+  auto ps = CC_GEC(Players, board, "n/Players");
+  auto grid= CC_GEC(Grid, board, "n/Grid");
+  auto ss= CC_GEC(GVars,arena, "n/GVars");
   auto pos = sel->cell;
   auto cur = ss->pnum;
 
@@ -161,9 +160,9 @@ void Net::onNet(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::onSess(ws::OdinEvent *evt) {
-  auto ps= CC_GNLF(Players, board, "players");
-  auto grid= CC_GNLF(Grid, board, "grid");
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto ps= CC_GEC(Players, board, "n/Players");
+  auto grid= CC_GEC(Grid, board, "n/Grid");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto src= evt->doco["source"];
   auto pnum= JS_INT(src["pnum"]);
   auto cmd= src["cmd"];
@@ -217,6 +216,6 @@ void Net::onSocket(ws::OdinEvent *evt) {
 
 
 
-NS_END(tttoe)
+NS_END
 
 

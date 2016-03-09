@@ -44,10 +44,10 @@ void GEngine::initEntities() {
   auto ps= mc_new(Players);
   auto gvs= mc_new(GVars);
   auto gps= mapGridPos(1);
-  a::Entity *arena;
-  a::Entity *board;
-  a::Entity *p2;
-  a::Entity *p1;
+  ecs::Entity *arena;
+  ecs::Entity *board;
+  ecs::Entity *p2;
+  ecs::Entity *p1;
   auto cat1= human;
   auto cat2= bot;
   ArrCells seed;
@@ -74,20 +74,21 @@ void GEngine::initEntities() {
   if (mode == f::GMode::NET) {
     cat2= netp;
     cat1= netp;
-    p2->checkin(mc_new(Gesture));
-    p1->checkin(mc_new(Gesture));
+    p2->checkin(mc_new(f::CHuman));
+    p1->checkin(mc_new(f::CHuman));
   }
   else
   if (mode == f::GMode::ONE) {
     p2->checkin( mc_new2(TTToe, xv, ov));
-    p1->checkin(mc_new(Gesture));
+    p2->checkin(mc_new(f::CAutoma));
+    p1->checkin(mc_new(f::CHuman));
   }
   else
   if (mode == f::GMode::TWO) {
     cat2= human;
     cat1= human;
-    p2->checkin(mc_new(Gesture));
-    p1->checkin(mc_new(Gesture));
+    p2->checkin(mc_new(f::CHuman));
+    p1->checkin(mc_new(f::CHuman));
   }
 
   ps->parr[2]= mc_new3(Player, cat2, ov, 2);
@@ -103,8 +104,11 @@ void GEngine::initEntities() {
   board->checkin(mc_new1( Grid, seed));
   board->checkin(ps);
   board->checkin(mc_new(CellPos));
-};
+}
 
-NS_END(tttoe)
+
+
+
+NS_END
 
 

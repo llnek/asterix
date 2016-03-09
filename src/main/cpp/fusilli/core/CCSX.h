@@ -17,8 +17,8 @@
 #include "COMP.h"
 NS_BEGIN(fusii)
 
-#define HHZ(z) z.height * 0.5f
-#define HWZ(z) z.width * 0.5f
+#define HHZ(z) z.height * 0.5
+#define HWZ(z) z.width * 0.5
 
 //////////////////////////////////////////////////////////////////////////////
 //

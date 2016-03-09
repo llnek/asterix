@@ -8,20 +8,23 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+
 //////////////////////////////////////////////////////////////////////////////
+//
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "TTToe.h"
+#include "lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Grid : public a::Component {
+// stores the grid values and the set of winning goals
+struct CC_DLL Grid : public ecs::Component {
   Grid(const ArrCells &seed) {
     GOALS= mapGoalSpace();
     S__COPY(seed,vals);
@@ -33,32 +36,32 @@ struct CC_DLL Grid : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Player : public a::Component {
-  Player(int category, int value, int id) {
+struct CC_DLL Player : public f::CPlayer {
+  Player(int category, int value, int id)
+    : CPlayer(value) {
     this->category= category;
     this->pnum=id;
-    this->value= value;
   }
   Player& operator=(const Player &other) {
     category= other.category;
     pidlong= other.pidlong;
     pnum= other.pnum;
-    value= other.value;
     pid = other.pid;
+    CPlayer::operator=(other);
     return *this;
   }
-  Player(const Player &other) {
+  Player(const Player &other)
+    : CPlayer(other){
+
     category= other.category;
     pidlong= other.pidlong;
     pid = other.pid;
     pnum= other.pnum;
-    value= other.value;
   }
   Player(int pnum) { this->pnum= pnum; }
   Player() {}
   DECL_TV(int, category, 0)
   DECL_TV(int, pnum,  -1)
-  DECL_IZ(value)
   DECL_TD(sstr, pidlong)
   DECL_TD(sstr, pid)
   DECL_TD(sstr, color)
@@ -67,7 +70,7 @@ struct CC_DLL Player : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Players : public a::Component {
+struct CC_DLL Players : public ecs::Component {
   MDECL_COMP_TPID("n/Players")
   //~owner
   s_arr<Player*,3> parr;
@@ -75,17 +78,11 @@ struct CC_DLL Players : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL CSquare  {
-  CSquare(int cell) {
+struct CC_DLL CSquare : public f::CDraw {
+  CSquare(int cell)
+    : CDraw( cx::reifySprite("z.png")) {
     this->cell=cell;
     this->png= "z";
-    sprite= cx::reifySprite(png+ ".png");
   }
   void toggle(int nv) {
     auto x= CC_CSV(c::Integer,"CV_X");
@@ -94,25 +91,20 @@ struct CC_DLL CSquare  {
       if (nv == x) { png= "x"; }
       if (nv == o) { png= "o"; }
       value=nv;
-      sprite->setSpriteFrame(png + ".png");
+        SCAST(c::Sprite*,node)->setSpriteFrame(png + ".png");
     }
   }
-  void dispose() {
-    if (NNP(sprite)) { sprite->removeFromParent(); }
-    SNPTR(sprite)
-  }
   void flip() {
-    sprite->setSpriteFrame(png + ".i.png");
+    SCAST(c::Sprite*,node)->setSpriteFrame(png + ".i.png");
   }
-  DECL_PTR(c::Sprite,sprite)
+  DECL_TD(sstr,png)
   DECL_IZ(value)
   DECL_IZ(cell)
-  DECL_TD(sstr,png)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CSquares  : public a::Component {
+struct CC_DLL CSquares  : public ecs::Component {
   MDECL_COMP_TPID( "n/CSquares" )
   s_arr<f::Box4,GD_SZ> boxes;
   s_arr<CSquare*,GD_SZ> sqs;
@@ -120,7 +112,7 @@ struct CC_DLL CSquares  : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CellPos  : public a::Component {
+struct CC_DLL CellPos  : public ecs::Component {
   MDECL_COMP_TPID( "n/CellPos" )
   DECL_TV(int, cell,  -1)
   DECL_TV(int, px, -1)
@@ -129,14 +121,14 @@ struct CC_DLL CellPos  : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
   DECL_IZ(pnum)
   DECL_IZ(lastWinner)
 };
 
 
-NS_END(tttoe)
+NS_END
 
 
 

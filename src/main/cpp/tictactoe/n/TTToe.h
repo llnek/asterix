@@ -8,10 +8,13 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////////
+//
 #include "algos/NegaMax.h"
-#include "ash/Ash.h"
+#include "ecs/Ecs.h"
 #include "lib.h"
 
 NS_ALIAS(ag, fusii::algos)
@@ -19,7 +22,17 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 // A Tic Tac Toe board
-struct CC_DLL TTToe : public ag::GameBoard<BD_SZ>, public a::Component {
+class CC_DLL TTToe : public ag::GameBoard<BD_SZ>, public f::CAutoma {
+
+  bool testWin(const ArrCells& , int actor, const ArrDim&);
+
+  DECL_TD(ArrCells, grid)
+  DECL_IZ(nil)
+
+  s_vec<ArrDim> GOALS;
+  s_arr<int,3> actors;
+
+public:
 
   virtual const s_vec<int> getNextMoves(not_null<ag::FFrame<BD_SZ>*>);
   virtual int evalScore(not_null<ag::FFrame<BD_SZ>*>);
@@ -45,17 +58,9 @@ struct CC_DLL TTToe : public ag::GameBoard<BD_SZ>, public a::Component {
 
   MDECL_COMP_TPID( "n/SmartAI" )
 
-private:
-
-  bool testWin(const ArrCells& , int actor, const ArrDim&);
-
-  DECL_TD(ArrCells, grid)
-  DECL_IZ(nil)
-
-  s_vec<ArrDim> GOALS;
-  s_arr<int,3> actors;
 };
 
-NS_END(tttoe)
+
+NS_END
 
 

@@ -19,13 +19,12 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
   auto soff= CC_CSV(c::Integer, "S_OFF");
   auto tile= CC_CSV(c::Integer, "TILE");
   auto color = XCFG()->getColor("dft");
   auto scale= XCFG()->getScale();
-  auto cw= cx::center();
   auto wb= cx::visBox();
 
   regoAtlas("game-pics");
@@ -49,30 +48,30 @@ void HUDLayer::decorate() {
   // status
   status= cx::reifyBmfLabel( "font.CoffeeBuzzed");
   status->setColor(XCFG()->getColor("text"));
-  status->setScale(scale * 0.3f);
-  status->setPosition(cw.x, wb.bottom + tile * 10);
+  status->setScale(scale * 0.3);
+  status->setPosition(wb.cx, wb.bottom + tile * 10);
   addItem(status);
 
   // result
   result= cx::reifyBmfLabel( "font.CoffeeBuzzed");
   result->setColor(XCFG()->getColor("text"));
-  result->setScale(scale * 0.3f);
-  result->setPosition(cw.x, wb.bottom + tile * 10);
+  result->setScale(scale * 0.3);
+  result->setPosition(wb.cx, wb.bottom + tile * 10);
   result->setVisible(false);
   addItem(result);
 
   //title
   title = cx::reifyBmfLabel("font.JellyBelly");
-  title->setScale(scale * 0.6f);
+  title->setScale(scale * 0.6);
   title->setAnchorPoint(cx::anchorT());
   title->setColor(color);
-  title->setPosition(cw.x, wb.top - 2*tile);
+  title->setPosition(wb.cx, wb.top - 2*tile);
   addItem(title);
 
   //menu icon
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = cx::getHeight(b) * 0.5f;
-  auto hw = cx::getWidth(b) * 0.5f;
+  auto hh = HTV( cx::getHeight(b));
+  auto hw = HTV( cx::getWidth(b));
   b->setColor(color);
   b->setCallback(
       [=](c::Ref*) { SENDMSG("/hud/showmenu"); });
@@ -89,7 +88,6 @@ void HUDLayer::showTimer() {
   auto ptt= JS_INT(cfg["HUMAN+THINK"]);
   auto tile= CC_CSV(c::Integer,"TILE");
   auto scale= XCFG()->getScale();
-  auto cw= cx::center();
   auto wb= cx::visBox();
 
   // timer is already showing, go away
@@ -99,9 +97,9 @@ void HUDLayer::showTimer() {
 
   if (ENP(countDown)) {
     countDown= cx::reifyBmfLabel( "font.AutoMission");
-    countDown->setPosition(cw.x, wb.top - 10*tile);
+    countDown->setPosition(wb.cx, wb.top - 10*tile);
     countDown->setAnchorPoint(cx::anchorC());
-    countDown->setScale(scale * 0.5f);
+    countDown->setScale(HTV(scale));
     countDown->setColor(XCFG()->getColor("text"));
     addItem(countDown);
   }
@@ -111,7 +109,7 @@ void HUDLayer::showTimer() {
 
   showCountDown(s::to_string(ptt));
   schedule(
-      CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1.0f);
+      CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,8 +166,8 @@ void HUDLayer::draw(bool running, int category, int pnum) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::endGame(int winner) {
-  status->setVisible(false);
-  result->setVisible(true);
+  CC_HIDE(status);
+  CC_SHOW(result);
   killTimer();
   drawResult(winner);
 }
@@ -250,12 +248,14 @@ void HUDLayer::resetAsNew() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::reset() {
-  result->setVisible(false);
-  status->setVisible(true);
+  CC_HIDE(result);
+  CC_SHOW(status);
   scores = {0,0,0};
 }
 
 
-NS_END(tttoe)
+
+NS_END
+
 
 

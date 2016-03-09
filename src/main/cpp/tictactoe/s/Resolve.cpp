@@ -20,8 +20,8 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  arena= engine->getNodeList(ArenaNode().typeId());
-  board= engine->getNodeList(BoardNode().typeId());
+  arena= engine->getEntities("n/CSquares")[0];
+  board= engine->getEntities("n/Grid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ void Resolve::preamble() {
 bool Resolve::update(float dt) {
   if (MGMS()->isLive()) {
     sync();
-    doIt(dt);
+    process(dt);
   }
   return true;
 }
@@ -37,10 +37,10 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::sync() {
-  auto css= CC_GNLF(CSquares, arena, "squares");
-  auto grid= CC_GNLF(Grid, board, "grid");
+  auto css= CC_GEC(CSquares, arena, "n/CSquares");
+  auto grid= CC_GEC(Grid, board, "n/Grid");
 
-  for (int i=0; i < grid->vals.size(); ++i) {
+  for (auto i=0; i < grid->vals.size(); ++i) {
     auto v= grid->vals[i];
     if (v != 0) {
       auto sq= css->sqs[i];
@@ -53,14 +53,14 @@ void Resolve::sync() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doIt(float dt) {
+void Resolve::process(float dt) {
 
-  auto ps = CC_GNLF(Players, board, "players");
-  auto gd = CC_GNLF(Grid, board, "grid");
+  auto ps = CC_GEC(Players, board, "n/Players");
+  auto gd = CC_GEC(Grid, board, "n/Grid");
   auto winner= -1;
   ArrDim combo;
 
-  for (int i=1; i < ps->parr.size(); ++i) {
+  for (auto i=1; i < ps->parr.size(); ++i) {
     if (checkWin(ps->parr[i], gd, combo)) {
       winner=i;
       break;
@@ -103,7 +103,7 @@ void Resolve::doWin(Player *winner, const ArrDim &combo) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::doDraw() {
-  auto ps= CC_GNLF(Players, board, "players");
+  auto ps= CC_GEC(Players, board, "n/Players");
   Player dummy;
   doDone(&dummy);
 }
@@ -111,9 +111,9 @@ void Resolve::doDraw() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::doForfeit() {
-  auto css= CC_GNLF(CSquares, arena, "squares");
-  auto ps= CC_GNLF(Players, board, "players");
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto css= CC_GEC(CSquares, arena, "n/CSquares");
+  auto ps= CC_GEC(Players, board, "n/Players");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto cur=ss->pnum;
   auto other= cur == 1 ? 2 : cur == 2 ? 1 : 0;
 
@@ -141,7 +141,7 @@ void Resolve::doForfeit() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::showWinningIcons(const ArrDim &combo) {
-  auto css= CC_GNLF(CSquares, arena, "squares");
+  auto css= CC_GEC(CSquares, arena, "n/CSquares");
 
   //flip the losing cells to gray
   for (int i=0; i < css->sqs.size(); ++i) {
@@ -159,7 +159,7 @@ void Resolve::showWinningIcons(const ArrDim &combo) {
 //
 void Resolve::doDone(Player *pobj) {
 
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto ss= CC_GEC(GVars,arena,"n/GVars");
   auto msg= j::json({
     {"winner", pobj->pnum  }
   });
@@ -191,7 +191,7 @@ bool Resolve::checkWin(Player *p, Grid *game, ArrDim &combo) {
     auto &g = *it;
     int cnt=0;
 
-    for (int i=0; i < g.size(); ++i) {
+    for (auto i=0; i < g.size(); ++i) {
       auto pos = g[i];
       if (game->vals[pos] == p->value) {
         ++cnt;
@@ -208,6 +208,6 @@ bool Resolve::checkWin(Player *p, Grid *game, ArrDim &combo) {
 
 
 
-NS_END(tttoe)
+NS_END
 
 

@@ -23,13 +23,12 @@ NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decorate() {
+void MMenu::decoUI() {
   auto tile = CC_CSV(c::Integer,"TILE");
   auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
-  auto cw = cx::center();
   auto lb = cx::reifyBmfLabel(
-      cw.x, wb.top * 0.9f,
+      wb.cx, wb.top * 0.9,
       "font.JellyBelly", gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
@@ -55,7 +54,7 @@ void MMenu::decorate() {
   //add btns to menu
   s_vec<c::MenuItem*> btns {b1,b2,b3};
   auto menu= cx::mkVMenu(btns);
-  menu->setPosition(cw);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
@@ -74,11 +73,11 @@ void MMenu::decorate() {
 
   // ctrl btns
   s_vec<c::MenuItem*> ctrl {back, quit};
-  auto sz= back->getContentSize();
+  auto sz= CC_CSIZE(back);
   auto m2= cx::mkHMenu(ctrl);
 
-  m2->setPosition(wb.left+tile+sz.width*1.1f,
-                  wb.bottom+tile+sz.height*0.45f);
+  m2->setPosition(wb.left+tile+sz.width*1.1,
+                  wb.bottom+tile+sz.height*0.45);
   addItem(m2);
 
   // audio
@@ -129,6 +128,6 @@ void MMenu::onPlayXXX(f::GMode mode) {
 }
 
 
-NS_END(tttoe)
+NS_END
 
 

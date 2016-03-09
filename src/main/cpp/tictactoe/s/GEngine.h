@@ -8,15 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-#include "ash/Engine.h"
+
+#include "ecs/Engine.h"
 #include "core/JSON.h"
-#include "n/N.h"
+#include "n/C.h"
 NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine  : public a::Engine {
+class CC_DLL GEngine  : public ecs::Engine {
   DECL_IZ(mynum)
 public:
   GEngine(int pnum) { mynum=pnum; }
@@ -24,6 +26,6 @@ public:
   virtual void initSystems();
 };
 
-NS_END(tttoe)
+NS_END
 
 

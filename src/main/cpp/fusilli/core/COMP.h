@@ -62,8 +62,8 @@ struct CC_DLL CHuman : public ecs::Component {
 //
 struct CC_DLL CPlayer : public ecs::Component {
   MDECL_COMP_TPID("f/CPlayer")
-  DECL_FZ(score)
-  CPlayer(int v) { score=v;}
+  DECL_FZ(value)
+  CPlayer(int v) { value=v;}
   CPlayer() {}
 };
 
@@ -118,11 +118,12 @@ struct CC_DLL CDraw : public ecs::Component {
   void inflate(float x, float y) {
     if (node) { node->setPosition(x,y); show(); }
   }
-  void releaseInnerNode() { node=nullptr; }
-  void removeInnerNode() {
+  void ejectNode() { node=nullptr; }
+  void removeNode() {
     if (node) {node->removeFromParent();}
     node=nullptr;
   }
+  void dispose() { removeNode(); }
   void inflate() { show(); }
   void deflate() {
     if (node) {

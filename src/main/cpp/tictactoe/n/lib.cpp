@@ -23,22 +23,22 @@ const s_arr<f::Box4,GD_SZ> mapGridPos(float scale) {
   // memorize the co-ordinates of each cell on the board, so
   // we know which cell the user has clicked on
   auto csz = cx::scaleSize(cx::calcSize("z.png"), scale);
-  auto ro= 8.0f/72.0f * scale;
+  auto ro= 8.0/72.0 * scale;
   auto gh = csz.height * ro;
   auto gw = csz.width * ro;
   auto zh= csz.height * BD_SZ + gh * (BD_SZ-1);
   auto zw= csz.width * BD_SZ + gw * (BD_SZ-1);
 
   s_arr<f::Box4, GD_SZ> boxes;
-  auto cw = cx::center();
-  auto x0 = cw.x - zw * 0.5f;
-  auto y0 = cw.y + zh * 0.5f;
+  auto wb = cx::visBox();
+  auto x0 = wb.cx - HTV(zw);
+  auto y0 = wb.cy + HTV(zh);
   auto x1= x0;
   auto y1= y0;
   int x2, y2;
 
-  for (int r=0; r < BD_SZ; ++r) {
-    for (int c= 0; c < BD_SZ; ++c) {
+  for (auto r=0; r < BD_SZ; ++r) {
+    for (auto c= 0; c < BD_SZ; ++c) {
       auto &bx= boxes[r*BD_SZ+c];
       y2 = y1 - csz.height;
       x2 = x1 + csz.width;
@@ -63,12 +63,12 @@ const s_vec<ArrDim> mapGoalSpace() {
   ArrDim dx;
   ArrDim dy;
 
-  for (int r=0; r < BD_SZ; ++r) {
+  for (auto r=0; r < BD_SZ; ++r) {
 
     ArrDim h;
     ArrDim v;
 
-    for (int c=0; c < BD_SZ; ++c) {
+    for (auto c=0; c < BD_SZ; ++c) {
       h[c] = r * BD_SZ + c;
       v[c] = c * BD_SZ + r;
     }
@@ -128,6 +128,6 @@ j::json fmtGameData(f::GMode m) {
   throw "bad game mode!";
 }
 
-NS_END(tttoe)
+NS_END
 
 
