@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +22,8 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GCXX : public f::GCX {
-  GCXX(f::GMode m, ws::OdinIO* io, j::json pms)
-    : f::GCX(m,io) {
+  GCXX(f::GMode m, ws::OdinIO *io, j::json pms)
+    : GCX(m,io) {
     data=pms;
   }
   DECL_TD(j::json, data)
@@ -31,7 +32,7 @@ struct CC_DLL GCXX : public f::GCX {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : f::GameScene {
+struct CC_DLL Game : public f::GameScene {
 
   virtual void sendMsgEx(const MsgTopic&, void*);
 
@@ -45,6 +46,6 @@ struct CC_DLL Game : f::GameScene {
 };
 
 
-NS_END(pong)
+NS_END
 
 

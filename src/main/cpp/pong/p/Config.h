@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +28,7 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_HEIGHT; }
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
   virtual const c::Size gameSize() { return c::Size(320,480); }
 
   virtual void handleResolution(const c::Size&);
@@ -39,6 +40,6 @@ public:
 
 
 
-NS_END(pong)
+NS_END
 
 

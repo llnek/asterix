@@ -37,14 +37,14 @@ void NetPlay::showWaitOthers() {
 
   removeAll();
 
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(wb.cx, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   addItem(qn);
 
   b1->setCallback(
       [=](c::Ref*) { this->onCancel(); });
 
-  menu->setPosition(wb.cx, wb.top * 0.1f);
+  b1->setPosition(wb.cx, wb.top * 0.1);
   addItem(menu);
 }
 
@@ -109,7 +109,7 @@ void NetPlay::sessionEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::odinEvent(ws::OdinEvent *evt) {
-  CCLOG("odin event = %s", evt->doco.dump(0).c_str());
+  CCLOG("odin event = %s", evt->doco.dump(2).c_str());
   switch (evt->type) {
     case ws::MType::NETWORK:
       networkEvent(evt);
@@ -141,15 +141,15 @@ void NetPlay::onLogin() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void NetPlay::decorate() {
+void NetPlay::decoUI() {
   auto qn= cx::reifyBmfLabel("OCR", gets("signinplay"));
   auto wb= cx::visBox();
 
   centerImage("gui.mmenu.menu.bg");
 
   // text msg
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(wb.cx, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   addItem(qn);
 
   // editbox for user
@@ -161,7 +161,7 @@ void NetPlay::decorate() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
-  uid->setPosition(c::Vec2(wb.cx, wb.cy+bxz.height*0.5f+2));
+  uid->setPosition(c::Vec2(wb.cx, wb.cy+HHZ(bxz)+2));
   addItem(uid, 0, USERTAG);
 
   // editbox for password
@@ -173,7 +173,7 @@ void NetPlay::decorate() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
-  pwd->setPosition(c::Vec2(wb.cx, wb.cy-bxz.height*0.5f-2));
+  pwd->setPosition(c::Vec2(wb.cx, wb.cy-HHZ(bxz)-2));
   addItem(pwd, 0, PASSTAG);
 
   // btns
@@ -188,12 +188,12 @@ void NetPlay::decorate() {
   b2->setCallback(
       [=](c::Ref*) { this->onCancel(); });
 
-  menu->setPosition(wb.cx, wb.top * 0.1f);
+  menu->setPosition(wb.cx, wb.top * 0.1);
   addItem(menu);
 }
 
 
 
-NS_END(pong)
+NS_END
 
 

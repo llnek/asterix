@@ -13,30 +13,30 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Game.h"
-#include "End.h"
+#include "Ende.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onReplay() {
-  auto x= (GCXX*) getSceneX()->emitCtx();
+void Ende::onReplay() {
+  auto x= (GCXX*) getSceneX()->ejectCtx();
   x->count++;
   cx::runEx( Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::decorate() {
+void Ende::decoUI() {
 
   auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
   // text msg
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(wb.cx, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   qn->setColor(XCFG()->getColor("text"));
   addItem(qn);
 
@@ -52,11 +52,11 @@ void ELayer::decorate() {
   b2->setCallback(
       [=](c::Ref*) { cx::prelude();  });
 
-  menu->setPosition(wb.cx, wb.top * 0.5f);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 }
 
 
-NS_END(pong)
+NS_END
 
 

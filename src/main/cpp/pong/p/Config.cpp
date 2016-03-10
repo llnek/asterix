@@ -44,8 +44,6 @@ void Config::initCsts() {
   addColor("hud", CC_STR("#ffffff"));
 
   addCst("syncMillis", CC_FLOAT(3000.0f));
-  addCst("showFPS", CC_BOOL(false));
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,6 +74,9 @@ void Config::initAssets() {
   addEffect("x_hit", CC_STR("sfx/ElevatorBeep.mp3"));
   addEffect("o_hit", CC_STR("sfx/MineBeep.mp3"));
   addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("click", CC_STR("sfx/button-click.wav"));
+  addMusic("background", CC_STR("sfx/music.mp3"));
+
 
   addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
@@ -112,6 +113,6 @@ void Config::runOnce() {
 }
 
 
-NS_END(pong)
+NS_END
 
 

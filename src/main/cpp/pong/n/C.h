@@ -8,10 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -19,18 +20,16 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ball : public f::ComObj {
-  Ball(not_null<c::Sprite*> s, float v)
-    : ComObj(s) {
-    speed.x=v;
-    speed.y=v;
+struct CC_DLL Ball : public f::CDraw {
+  Ball(not_null<c::Node*> s)
+    : CDraw(s) {
   }
   MDECL_COMP_TPID( "n/Ball")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Paddle : public f::ComObj {
+class CC_DLL Paddle : public f::CDraw {
 
   const s_arr<KEYCODE,2> p1Keys() {
     return s_arr<KEYCODE,2> {KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ARROW};
@@ -42,13 +41,11 @@ class CC_DLL Paddle : public f::ComObj {
 
 public:
 
-  Paddle(not_null<c::Sprite*> s, int pnum, float v)
-    : ComObj(s) {
+  Paddle(not_null<c::Node*> s, int pnum)
+    : CDraw(s) {
     this->kcodes = pnum == 1 ? p1Keys() : p2Keys();
     this->snd = pnum == 1 ? "x_hit" : "o_hit";
     this->pnum= pnum;
-    speed.x=v;
-    speed.y=v;
   }
 
   MDECL_COMP_TPID( "n/Paddle")
@@ -59,19 +56,13 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID( "n/Gesture")
-};
+struct CC_DLL Player : public f::CPlayer {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Player : public a::Component {
-
-  Player(int category, int value, int pnum, const sstr &color) {
+  Player(int category, int value, int pnum, const sstr &color)
+    : CPlayer(value) {
     this->category= category;
     this->color= color;
     this->pnum=pnum;
-    this->value= value;
   }
 
   void setName(const sstr &id, const sstr &name) {
@@ -84,7 +75,6 @@ struct CC_DLL Player : public a::Component {
   MDECL_COMP_TPID( "n/Player")
   DECL_IZ(category)
   DECL_IZ(pnum)
-  DECL_IZ(value)
   DECL_TD(sstr, color)
   DECL_TD(sstr, pid)
   DECL_TD(sstr, pname)
@@ -92,20 +82,20 @@ struct CC_DLL Player : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Players : public a::Component {
+struct CC_DLL Players : public ecs::Component {
   MDECL_COMP_TPID( "n/Players")
   s_arr<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Faux : public a::Component {
+struct CC_DLL Faux : public ecs::Component {
   MDECL_COMP_TPID("n/Faux")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Position : public a::Component {
+struct CC_DLL Position : public ecs::Component {
 
   MDECL_COMP_TPID( "n/Position")
 
@@ -120,7 +110,7 @@ struct CC_DLL Position : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   DECL_TD(c::Vec2, p2p)
   DECL_TD(c::Vec2, p1p)
   DECL_TD(c::Size, pz)
@@ -132,6 +122,6 @@ struct CC_DLL GVars : public a::Component {
 };
 
 
-NS_END(pong)
+NS_END
 
 

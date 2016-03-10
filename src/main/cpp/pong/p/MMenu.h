@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 #include "x2d/GameScene.h"
@@ -30,13 +31,12 @@ struct CC_DLL MMenu : public f::XScene {
 
   void onPlayXXX(f::GMode, ws::OdinIO*, j::json);
   void onPlay3();
-  void onPlay2();
   void onPlay1();
 
 };
 
 
-NS_END(pong)
+NS_END
 
 
 

@@ -20,12 +20,12 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
 
   auto wb = cx::visBox();
 
   centerImage("game.bg");
-  addFrame("title.png", c::ccp(wb.cx, wb.top * 0.9f));
+  addFrame("title.png", c::Vec2(wb.cx, wb.top * 0.9));
 
   auto b = cx::reifyMenuBtn("play.png");
   auto f = []() { cx::prelude(); };
@@ -35,12 +35,12 @@ void Splash::decorate() {
   b->setCallback(
       [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
 
-  menu->setPosition(wb.cx, wb.top * 0.1f);
+  b->setPosition(wb.cx, wb.top * 0.1);
   addItem(menu);
 
 }
 
 
 
-NS_END(pong)
+NS_END
 

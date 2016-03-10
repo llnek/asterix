@@ -26,13 +26,13 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
   float tw2;
 
   title->setString(p1.pid + " / " + p2.pid);
-  tw2= cx::getScaledWidth(title) * 0.5f;
+  tw2= cx::getScaledWidth(title) * 0.5;
   parr[2]= p2;
   parr[1]= p1;
 
-  score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(score1) * 0.5f - 10,
+  score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(score1) * 0.5 - 10,
       wb.top - tile * 6 /2 - 2);
-  score2->setPosition(wb.cx + tw2 + cx::getScaledWidth(score2) * 0.5f + 6,
+  score2->setPosition(wb.cx + tw2 + cx::getScaledWidth(score2) * 0.5 + 6,
       wb.top - tile * 6 /2 - 2);
 
 }
@@ -40,35 +40,34 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::endGame() {
-  resultMsg->setVisible(true);
+  CC_SHOW(resultMsg);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
   auto tile = CC_CSV(c::Float, "TILE");
   auto wb= cx::visBox();
 
   title= cx::reifyBmfLabel("TinyBoxBB");
-  title->setScale(XCFG()->getScale() * 0.3f);
+  title->setScale(XCFG()->getScale() * 0.3);
   title->setPosition(wb.cx, wb.top - tile * 6 /2 );
   addItem(title);
 
   score1= cx::reifyBmfLabel("OCR", "8");
-  score1->setScale(XCFG()->getScale() * 0.25f);
+  score1->setScale(XCFG()->getScale() * 0.25);
   addItem(score1);
 
   score2= cx::reifyBmfLabel("OCR", "8");
-  score2->setScale(XCFG()->getScale() * 0.25f);
+  score2->setScale(XCFG()->getScale() * 0.25);
   addItem(score2);
 
   resultMsg = cx::reifyBmfLabel("CoffeeBuzzed");
-  resultMsg->setVisible(false);
+  CC_HIDE(resultMsg);
   resultMsg->setPosition(wb.cx, 100);
-  resultMsg->setScale(XCFG()->getScale() * 0.15f);
+  resultMsg->setScale(XCFG()->getScale() * 0.15);
   addItem(resultMsg);
 
-  resultMsg->setVisible(false);
   scores.fill(0);
   drawScores();
 }
@@ -131,6 +130,6 @@ void HUDLayer::drawResult(int winner) {
 
 
 
-NS_END(pong)
+NS_END
 
 

@@ -20,10 +20,9 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  faux = engine->getNodeList(FauxPaddleNode().typeId());
-  arena = engine->getNodeList(ArenaNode().typeId());
-  paddle = engine->getNodeList(PaddleNode().typeId());
-  ball = engine->getNodeList(BallNode().typeId());
+  arena = engine->getEntities("n/Players")[0];
+  engine->getEntities("n/Paddle",paddles);
+  ball = engine->getEntities("n/Ball")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -31,18 +30,19 @@ void Collide::preamble() {
 bool Collide::update(float dt) {
 
   if (MGMS()->isLive()) {
-    checkNodes(paddle);
-    checkNodes(faux);
+    process(dt);
   }
+
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::checkNodes(a::NodeList *nl) {
-  auto ba = CC_GNLF(Ball, ball,"ball");
-  for (auto node=nl->head; node; node=node->next) {
-    auto p= CC_GNF(Paddle,node, "paddle");
+void Collide::process(float dt) {
+  auto ba = CC_GEC(Ball, ball, "n/Ball");
+  F__LOOP(it, paddles) {
+    auto e= *it;
+    auto p= CC_GEC(Paddle,e, "n/Paddle");
     if (cx::collide(p, ba)) {
       check(p, ba);
     }
@@ -52,8 +52,8 @@ void Collide::checkNodes(a::NodeList *nl) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::check(Paddle *pad, Ball *ball) {
-  auto hw2= cx::halfHW(ball->sprite);
-  auto bb4 = cx::bbox4(pad->sprite);
+  auto hw2= cx::halfHW(ball->node);
+  auto bb4 = cx::bbox4(pad->node);
   auto pos = ball->pos();
   auto x= pos.x;
   auto y= pos.y;
@@ -73,6 +73,6 @@ void Collide::check(Paddle *pad, Ball *ball) {
 }
 
 
-NS_END(pong)
+NS_END
 
 

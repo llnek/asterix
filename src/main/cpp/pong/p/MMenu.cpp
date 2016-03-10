@@ -15,7 +15,7 @@
 #include "NetPlay.h"
 #include "MMenu.h"
 #include "Game.h"
-#include "n/N.h"
+#include "n/C.h"
 #include "n/lib.h"
 
 NS_ALIAS(ws, fusii::odin)
@@ -24,12 +24,12 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decorate() {
+void MMenu::decoUI() {
   auto tile = CC_CSV(c::Float,"TILE");
   auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
   auto lb = cx::reifyBmfLabel(
-      wb.cx, wb.top * 0.9f,
+      wb.cx, wb.top * 0.9,
       "JellyBelly", gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
@@ -42,15 +42,11 @@ void MMenu::decorate() {
   b1->setCallback(
       [=](c::Ref*) { this->onPlay3();  });
 
-  auto b2 = cx::reifyMenuBtn("player2.png");
-  b2->setCallback(
-      [=](c::Ref*) { this->onPlay2();  });
-
   auto b3 = cx::reifyMenuBtn("player1.png");
   b3->setCallback(
       [=](c::Ref*) { this->onPlay1();  } );
 
-  s_vec<c::MenuItem*> btns {b1,b2,b3};
+  s_vec<c::MenuItem*> btns {b1,b3};
   auto menu= cx::mkVMenu( btns);
   menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
@@ -60,7 +56,7 @@ void MMenu::decorate() {
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   s_vec<c::MenuItem*> bns {back, quit} ;
   auto ctx = getCtx();
-  auto sz= back->getContentSize();
+  auto sz= CC_CSIZE(back);
   auto m2= cx::mkHMenu(bns);
 
   quit->setColor(c);
@@ -72,8 +68,8 @@ void MMenu::decorate() {
   quit->setCallback(
       [=](c::Ref*) { cx::prelude();  });
 
-  m2->setPosition(wb.left+tile+sz.width*1.1f,
-                  wb.bottom+tile+sz.height*0.45f);
+  m2->setPosition(wb.left+tile+sz.width*1.1,
+                  wb.bottom+tile+sz.height*0.45);
   addItem(m2);
 
   // audio
@@ -102,16 +98,9 @@ void MMenu::onPlay3() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void MMenu::onPlay2() {
-  auto m=f::GMode::TWO;
-  onPlayXXX(m, nullptr, fmtGameData(m));
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 void MMenu::onPlay1() {
   auto m= f::GMode::ONE;
-  onPlayXXX(m, nullptr, fmtGameData(m));
+  onPlayXXX(m, CC_NIL, fmtGameData(m));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -123,7 +112,7 @@ void MMenu::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
 }
 
 
-NS_END(pong)
+NS_END
 
 
 

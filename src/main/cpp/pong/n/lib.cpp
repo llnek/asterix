@@ -61,7 +61,7 @@ j::json fmtGameData(f::GMode m) {
 }
 
 
-NS_END(pong)
+NS_END
 
 
 

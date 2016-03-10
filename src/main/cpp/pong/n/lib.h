@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -15,8 +16,9 @@
 #include "core/CCSX.h"
 NS_BEGIN(pong)
 
-  j::json fmtGameData(fusii::GMode );
+j::json fmtGameData(fusii::GMode );
 
-NS_END(pong)
+
+NS_END
 
 
