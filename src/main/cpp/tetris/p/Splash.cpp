@@ -38,6 +38,6 @@ void Splash::decoUI() {
 }
 
 
-NS_END(tetris)
+NS_END
 
 

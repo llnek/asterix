@@ -18,7 +18,7 @@ NS_USING(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate()  : App("tetris") {
   Config::reify();
 }
 

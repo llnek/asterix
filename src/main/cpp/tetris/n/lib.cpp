@@ -23,7 +23,7 @@ static void reifyBricks(const s_vec<c::Vec2> &bs,
   F__LOOP(it, bs) {
     auto obj= Brick::reify( *it, png );
     bricks.push_back(obj);
-    MGML()->addAtlasItem("game-pics", obj->sprite);
+    MGML()->addAtlasItem("game-pics", obj->node);
   }
 }
 

@@ -167,7 +167,7 @@ GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *t) {
-  onGUI(touch->getLocation());
+  onGUI(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *msg) {
   }
 
   if ("/hud/end" == topic) {
-    y->endGame();
+    y->onEnd();
   }
 
   if ("/hud/showmenu" == topic) {

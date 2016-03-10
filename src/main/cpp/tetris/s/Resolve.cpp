@@ -22,7 +22,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  arena = engine->getEntities("n/BlockGrid");
+  arena = engine->getEntities("n/BlockGrid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ void Resolve::fastDrop() {
   // drop at fast-drop rate
   dp->dropSpeed= JS_FLOAT(cfg["speed"]);
   dp->dropRate = JS_FLOAT(cfg["drate"]);
-  setDropper(dp, dp->dropRate, dp->dropSpeed);
+  setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
 
 }
 

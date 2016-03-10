@@ -94,7 +94,7 @@ void Move::doFall() {
 
   } else {
     // drop at fast-drop rate
-    setDropper(dp, dp->dropRate, dp->dropSpeed);
+    setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
   }
 
 }

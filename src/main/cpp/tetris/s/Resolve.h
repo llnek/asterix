@@ -22,7 +22,7 @@ NS_BEGIN(tetris)
 class CC_DLL Resolve : public ecs::System {
 
   void fastDrop();
-  void doIt();
+  void process(float);
 
 public:
 
