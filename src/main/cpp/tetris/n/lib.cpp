@@ -16,32 +16,30 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////
 //
-static void reifyBricks(not_null<f::XLayer*> layer,
-    const s_vec<c::Vec2> &bs,
+static void reifyBricks(const s_vec<c::Vec2> &bs,
     const sstr &png,
     s_vec<Brick*> &bricks) {
 
   F__LOOP(it, bs) {
     auto obj= Brick::reify( *it, png );
     bricks.push_back(obj);
-    layer->addAtlasItem("game-pics", obj->sprite);
+    MGML()->addAtlasItem("game-pics", obj->sprite);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static owner<Shape*> mkShape(not_null<f::XLayer*> layer,
+static owner<Shape*> mkShape(const ShapeInfo &info,
     float x, float y,
-    const ShapeInfo &info,
     const s_vec<c::Vec2> &bbox) {
 
-  Shape *rc=nullptr;
+  Shape *rc= CC_NIL;
 
   if (bbox.size() > 0) {
     rc= mc_new1(Shape, info);
     rc->x=x;
     rc->y=y;
-    reifyBricks(layer, bbox, info.png, rc->bricks);
+    reifyBricks(bbox, info.png, rc->bricks);
   }
 
   return rc;
@@ -51,11 +49,10 @@ static owner<Shape*> mkShape(not_null<f::XLayer*> layer,
 //
 static void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
 
-  auto zs = z->sprite->getPosition();
+  auto zs = z->node->getPosition();
   auto &e= emap[0];
-  auto hlen= emap.size();
   auto last= e.size() - 1;
-  auto t= xrefTile(zs);
+  auto t= xrefTile(zs); // cell
 
   // must be inside the 2 walls
   assert(t.col > 0 && t.col < last);
@@ -63,16 +60,20 @@ static void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
 
   auto &em= emap[t.row];
   auto c= em.get(t.col);
+
+  // should be empty
   assert(ENP(c));
+
+  // lock the desired brick in place
   em.set(t.col, z);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-static void postLock(not_null<a::Node*> node,
+static void postLock(not_null<ecs::Entity*> node,
     s_vec<FArrBrick> &emap) {
 
-  auto flines = CC_GNF(FilledLines, node, "flines");
+  auto flines = CC_GEC(FilledLines, node, "n/FilledLines");
   // search bottom up until top.
   auto top= emap.size();
   s_vec<int> rc;
@@ -84,6 +85,7 @@ static void postLock(not_null<a::Node*> node,
     }
   }
 
+  // found some filled rows
   if (rc.size() > 0) {
     pauseForClearance(node, true, 0.5f);
     flashFilled(emap, flines, rc);
@@ -92,29 +94,25 @@ static void postLock(not_null<a::Node*> node,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Shape*> reifyShape(not_null<f::XLayer*> layer,
-    s_vec<FArrBrick> &emap,
+owner<Shape*> reifyShape(s_vec<FArrBrick> &emap,
     float x, float y, const ShapeInfo &info) {
-
-  return mkShape(layer, x, y, info,
+  return mkShape(info, x,y,
       findBBox(emap, info.model, x, y, info.rot));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-owner<Shape*> previewShape(not_null<f::XLayer*> layer,
-    float x, float y,
-    const ShapeInfo &info) {
+owner<Shape*> previewShape(const ShapeInfo &info, float x, float y) {
 
   s_vec<FArrBrick> dummy;
-  return mkShape(layer, x, y, info,
+  return mkShape(info, x, y,
       findBBox(dummy, info.model, x, y, info.rot, true));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-int topLine(not_null<a::Node*> node) {
-  auto bks= CC_GNF(BlockGrid, node, "blocks");
+int topLine(not_null<ecs::Entity*> node) {
+  auto bks= CC_GEC(BlockGrid, node, "n/BlockGrid");
   return (int) bks->grid.size();
 }
 
@@ -156,7 +154,7 @@ const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
             maybeCollide(emap, x, y)) {
           return s_vec<c::Vec2> {};
         }
-        bs.push_back(c::ccp(x,y));
+        bs.push_back(c::Vec2(x,y));
       }
     }
   }
@@ -204,7 +202,7 @@ const f::Cell2D xrefTile(const c::Vec2 &pos) {
 const f::Cell2D xrefTile(float x, float y) {
   // find center, instead of top left
   auto tile = CC_CSV(c::Float, "TILE") ;
-  auto co = tile * 0.5f;
+  auto co = HTV(tile);
   auto bx= CC_CSV(f::Box4R, "CBOX");
   y -= co;
   x += co;
@@ -234,8 +232,8 @@ void setDropper(not_null<c::Node*> par,
 
 //////////////////////////////////////////////////////////////////////////
 //
-void lock(not_null<a::Node*> node, Shape *shape) {
-  auto bs= CC_GNF(BlockGrid, node, "blocks");
+void lock(not_null<ecs::Entity*> node, Shape *shape) {
+  auto bs= CC_GEC(BlockGrid, node, "n/BlockGrid");
   auto &emap= bs->grid;
 
   F__LOOP(it, shape->bricks) {
@@ -251,9 +249,9 @@ bool testFilledRow(s_vec<FArrBrick> &emap, int r) {
   auto &row= emap[r];
   auto last= row.size() -1;
 
-  // negative if any holes in the row
+  // false if any holes in the row
   for (auto c=1; c < last; ++c) {
-    if (row.get(c) == nullptr) { return false; }
+    if (row.get(c) == CC_NIL) { return false; }
   }
 
   // entire row must be filled.
@@ -271,7 +269,7 @@ void flashFilled(s_vec<FArrBrick> &emap,
     auto last= row.size()-1;
     for (auto c=1; c < last; ++c) {
       auto b= row.get(c);
-      if (NNP(b)) { b->blink(); }
+      if (b) { b->blink(); }
     }
   }
 
@@ -280,13 +278,13 @@ void flashFilled(s_vec<FArrBrick> &emap,
 
 //////////////////////////////////////////////////////////////////////////
 //
-void pauseForClearance(not_null<a::Node*> node, bool b, float delay) {
-  auto flines = CC_GNF(FilledLines, node, "flines");
-  auto pu= CC_GNF(Pauser, node, "pauser");
+void pauseForClearance(not_null<ecs::Entity*> node, bool b, float delay) {
+  auto flines = CC_GEC(FilledLines, node, "n/FilledLines");
+  auto pu= CC_GEC(Pauser, node, "n/Pauser");
 
   flines->lines.clear();
   pu->pauseToClear=b;
-  pu->timer=nullptr;
+  pu->timer= CC_NIL;
 
   if (b) {
     pu->timer= cx::reifyTimer(MGML(), delay);
@@ -295,9 +293,7 @@ void pauseForClearance(not_null<a::Node*> node, bool b, float delay) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool moveDown(not_null<f::XLayer*> layer,
-    s_vec<FArrBrick> &emap,
-    Shape *shape) {
+bool moveDown(s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto tile= CC_CSV(c::Float, "TILE");
   auto new_y = shape->y - tile;
@@ -308,7 +304,7 @@ bool moveDown(not_null<f::XLayer*> layer,
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);
     shape->y= new_y;
-    reifyBricks(layer, bs, shape->info.png, shape->bricks);
+    reifyBricks(bs, shape->info.png, shape->bricks);
     rc= true;
   }
 
@@ -317,9 +313,7 @@ bool moveDown(not_null<f::XLayer*> layer,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool shiftRight(not_null<f::XLayer*> layer,
-    s_vec<FArrBrick> &emap,
-    Shape *shape) {
+bool shiftRight(s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto tile = CC_CSV(c::Float, "TILE");
   auto new_x= shape->x + tile;
@@ -330,7 +324,7 @@ bool shiftRight(not_null<f::XLayer*> layer,
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);
     shape->x= new_x;
-    reifyBricks(layer, bs, shape->info.png, shape->bricks);
+    reifyBricks(bs, shape->info.png, shape->bricks);
     rc= true;
   }
 
@@ -339,8 +333,7 @@ bool shiftRight(not_null<f::XLayer*> layer,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool shiftLeft(not_null<f::XLayer*> layer,
-    s_vec<FArrBrick> &emap, Shape *shape) {
+bool shiftLeft(s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto tile= CC_CSV(c::Float, "TILE");
   auto new_x= shape->x - tile;
@@ -351,7 +344,7 @@ bool shiftLeft(not_null<f::XLayer*> layer,
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);
     shape->x= new_x;
-    reifyBricks(layer, bs, shape->info.png, shape->bricks);
+    reifyBricks(bs, shape->info.png, shape->bricks);
     rc= true;
   }
 
@@ -360,8 +353,7 @@ bool shiftLeft(not_null<f::XLayer*> layer,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool rotateRight(not_null<f::XLayer*> layer,
-    s_vec<FArrBrick> &emap, Shape *shape) {
+bool rotateRight(s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto nF = f::modulo( (shape->info.rot+1),
       shape->info.model->size());
@@ -376,7 +368,7 @@ bool rotateRight(not_null<f::XLayer*> layer,
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);
     shape->info.rot= nF;
-    reifyBricks(layer, bs, shape->info.png, shape->bricks);
+    reifyBricks(bs, shape->info.png, shape->bricks);
     rc= true;
   }
 
@@ -385,8 +377,7 @@ bool rotateRight(not_null<f::XLayer*> layer,
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool rotateLeft(not_null<f::XLayer*> layer,
-    s_vec<FArrBrick> &emap, Shape *shape) {
+bool rotateLeft(s_vec<FArrBrick> &emap, Shape *shape) {
 
   auto nF = f::modulo( (shape->info.rot-1) ,
       shape->info.model->size());
@@ -400,7 +391,7 @@ bool rotateLeft(not_null<f::XLayer*> layer,
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);
     shape->info.rot= nF;
-    reifyBricks(layer, bs, shape->info.png, shape->bricks);
+    reifyBricks(bs, shape->info.png, shape->bricks);
     rc= true;
   }
 
@@ -408,6 +399,8 @@ bool rotateLeft(not_null<f::XLayer*> layer,
 }
 
 
-NS_END(tetris)
+
+
+NS_END
 
 

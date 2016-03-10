@@ -42,7 +42,6 @@ void Config::initCsts() {
   addCst("FIELD_W", CC_INT(12));
   addCst("BTN+SIZE", CC_INT(32));
 
-  addCst("showFPS", CC_BOOL(false));
   addCst("FENCE", CC_INT(0));
   addCst("TILE", CC_FLOAT(16.0f));
 
@@ -65,6 +64,8 @@ void Config::initAssets() {
 
   addEffect("game_end", CC_STR("sfx/MineExplosion.mpg"));
   addEffect("game_quit", CC_STR("sfx/Death.mpg"));
+  addEffect("button", CC_STR("sfx/click.wav"));
+  addMusic("background", CC_STR("sfx/music.mpg"));
 
   addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
@@ -122,5 +123,7 @@ void Config::runOnce() {
 
 
 
-NS_END(tetris)
+NS_END
+
+
 

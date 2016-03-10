@@ -13,14 +13,14 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Game.h"
-#include "End.h"
+#include "Ende.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onReplay() {
+void Ende::onReplay() {
   getSceneX()->setCtx(nullptr);
   cx::runEx(
       Game::reify(mc_new(f::GCX)));
@@ -28,7 +28,7 @@ void ELayer::onReplay() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::decorate() {
+void Ende::decoUI() {
 
   auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
   auto wz= cx::visRect();
@@ -52,11 +52,11 @@ void ELayer::decorate() {
   b2->setCallback(
       [](c::Ref*) { cx::prelude(); });
 
-  menu->setPosition(wb.cx, wb.top * 0.5f);
+  menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 }
 
 
-NS_END(tetris)
+NS_END
 
 

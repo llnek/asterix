@@ -8,25 +8,25 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XLayer.h"
-#include "n/N.h"
+#include "n/C.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Shape*> reifyShape(not_null<f::XLayer*>,
-    s_vec<FArrBrick>& ,
-    float x, float y, const ShapeInfo&);
 
-owner<Shape*> previewShape(not_null<f::XLayer*>,
+owner<Shape*> previewShape(const ShapeInfo&, float x, float y);
+
+owner<Shape*> reifyShape(s_vec<FArrBrick>& ,
     float x, float y,
     const ShapeInfo&);
 
-int topLine(not_null<a::Node*>);
+int topLine(not_null<ecs::Entity*>);
 
 void clearOldBricks(s_vec<Brick*>&);
 void disposeShape(Shape*);
@@ -44,7 +44,7 @@ void initDropper(Dropper*);
 
 void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
 
-void lock(not_null<a::Node*>, Shape*);
+void lock(not_null<ecs::Entity*>, Shape*);
 
 bool testFilledRow(s_vec<FArrBrick>&, int r);
 
@@ -52,18 +52,19 @@ void flashFilled(s_vec<FArrBrick>&,
     FilledLines*,
     const s_vec<int>& lines);
 
-void pauseForClearance(not_null<a::Node*>, bool b, float delay);
+void pauseForClearance(not_null<ecs::Entity*>, bool b, float delay);
 
-bool moveDown(not_null<f::XLayer*> , s_vec<FArrBrick>&, Shape*);
+bool moveDown(s_vec<FArrBrick>&, Shape*);
 
-bool shiftRight(not_null<f::XLayer*>, s_vec<FArrBrick>&, Shape*);
-bool shiftLeft(not_null<f::XLayer*>, s_vec<FArrBrick>&, Shape*);
+bool shiftRight(s_vec<FArrBrick>&, Shape*);
+bool shiftLeft(s_vec<FArrBrick>&, Shape*);
 
-bool rotateRight(not_null<f::XLayer*>, s_vec<FArrBrick>&, Shape*);
-bool rotateLeft(not_null<f::XLayer*>, s_vec<FArrBrick>&, Shape*);
+bool rotateRight(s_vec<FArrBrick>&, Shape*);
+bool rotateLeft(s_vec<FArrBrick>&, Shape*);
 
 
-NS_END(tetris)
+
+NS_END
 
 
 

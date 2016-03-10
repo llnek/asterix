@@ -19,7 +19,7 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
 
   auto b= cx::reifyMenuBtn("play.png");
   auto f= []() { cx::prelude(); };
@@ -33,7 +33,7 @@ void Splash::decorate() {
       [=](c::Ref*)
       { cx::runEx( MMenu::reify(ctx)); });
 
-  menu->setPosition(wb.cx, wb.top * 0.1f);
+  b->setPosition(wb.cx, wb.top * 0.1);
   addItem(menu);
 }
 

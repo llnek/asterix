@@ -8,16 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
 
-#include "ash/System.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Clear : public a::System {
+class CC_DLL Clear : public ecs::System {
 
   void clearFilled();
   void clearOneRow( int);
@@ -28,23 +30,25 @@ class CC_DLL Clear : public a::System {
   int findLastEmpty( int);
   bool isEmptyRow( int);
   void copyLine( int, int);
+  void process(float);
 
 public:
 
-  virtual int priority() { return a::AI + 50; }
+  virtual int priority() { return ecs::AI + 50; }
+
   MDECL_SYS_TPID("s/Clear")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Clear(a::Engine *e)
+  Clear(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Entity, arena)
 
 };
 
 
-NS_END(tetris)
+NS_END
 
 

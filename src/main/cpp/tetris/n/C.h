@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +18,7 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tetris)
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 // base class for different shape configurations
 struct CC_DLL BModel {
   virtual bool test(int rID, int row, int col) = 0;
@@ -35,8 +36,8 @@ struct CC_DLL Brick {
 
   static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
     auto b = mc_new1(Brick, f0);
-    b->sprite->setAnchorPoint(cx::anchorTL());
-    b->sprite->setPosition(pos);
+    b->node->setAnchorPoint(cx::anchorTL());
+    b->node->setPosition(pos);
     b->startPos=pos;
     b->show();
     return b;
@@ -45,7 +46,7 @@ struct CC_DLL Brick {
   Brick(bool used) { this->colliable=used; }
 
   Brick(const sstr& f0) {
-    sprite= c::Sprite::create();
+    node= c::Sprite::create();
     frame0=f0;
     colliable=true;
   }
@@ -53,25 +54,28 @@ struct CC_DLL Brick {
   Brick() {}
 
   void blink() {
-    if (NNP(sprite)) sprite->setSpriteFrame( frame1);
+    if (node) node->setSpriteFrame( frame1);
   }
 
   void show() {
-    if (NNP(sprite)) sprite->setSpriteFrame( frame0);
+    if (node) node->setSpriteFrame( frame0);
   }
 
   void dispose() {
-    if (NNP(sprite)) sprite->removeFromParent();
+    if (node) node->removeFromParent();
     colliable=false;
   }
 
   DECL_TV(sstr, frame1, "0.png")
-  DECL_PTR(c::Sprite,sprite)
-  DECL_TD(c::Vec2, startPos)
-  DECL_BF(colliable)
   DECL_TD(sstr, frame0)
+
+  DECL_TD(c::Vec2, startPos)
+  DECL_PTR(c::Sprite,node)
+  DECL_BF(colliable)
+
 };
 
+// a row of bricks
 typedef fusii::FArrayPtr<Brick> FArrBrick;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,7 +94,7 @@ struct CC_DLL ShapeInfo {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Shape : public a::Component {
+struct CC_DLL Shape : public ecs::Component {
   Shape(const ShapeInfo& si) { info=si; }
   DECL_TD(ShapeInfo, info)
   s_vec<Brick*> bricks;
@@ -101,28 +105,28 @@ struct CC_DLL Shape : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL ShapeShell : public a::Component {
+struct CC_DLL ShapeShell : public ecs::Component {
   MDECL_COMP_TPID( "n/ShapeShell")
   DECL_PTR(Shape, shape)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CtrlPad : public a::Component {
+struct CC_DLL CtrlPad : public ecs::Component {
   MDECL_COMP_TPID( "n/CtrlPad")
   s::map<sstr,f::Box4> hotspots;
 };
 
 //////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GridBox : public a::Component {
+// size and location of the game area
+struct CC_DLL GridBox : public ecs::Component {
   MDECL_COMP_TPID( "n/GridBox")
   DECL_TD(f::Box4, box)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 // the game area as a grid
-struct CC_DLL BlockGrid  : public a::Component {
+struct CC_DLL BlockGrid  : public ecs::Component {
   MDECL_COMP_TPID( "n/BlockGrid")
   s_vec<FArrBrick> grid;
 };
@@ -157,7 +161,7 @@ public:
 // piece = L
 struct CC_DLL ElModel : public BModel {
 
-  s_arr<int, 4 * 3 * 3> layout {
+  s_arr<int, 3*3*4> layout {
       0,1,0,
       0,1,0,
       0,1,1,
@@ -178,7 +182,7 @@ struct CC_DLL ElModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID * sq() + row * dim + col] == 1;
+    return layout[rID * sq() + row * dim + col] == 1;
   }
   virtual int size() { return 4; }
   ElModel() { dim=3; }
@@ -189,7 +193,7 @@ public:
 // piece J
 struct CC_DLL ElxModel : public BModel {
 
-  s_arr<int, 4*3*3> layout {
+  s_arr<int, 3*3*4> layout {
       0,1,0,
       0,1,0,
       1,1,0,
@@ -256,7 +260,7 @@ public:
 // piece T
 struct CC_DLL NubModel : public BModel {
 
-  s_arr<int, 4 * 3 * 3> layout {
+  s_arr<int, 3*3*4> layout {
       0,0,0,
       0,1,0,
       1,1,1,
@@ -277,7 +281,7 @@ struct CC_DLL NubModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-     return layout[rID * sq() + dim * row + col] == 1 ;
+    return layout[rID * sq() + dim * row + col] == 1 ;
   }
   virtual int size() { return 4; }
   NubModel() { dim=3; }
@@ -288,7 +292,7 @@ public:
 // piece S
 struct CC_DLL StModel : public BModel {
 
-  s_arr<int,4*3*3> layout {
+  s_arr<int,3*3*4> layout {
       0,1,0,
       0,1,1,
       0,0,1,
@@ -320,7 +324,7 @@ public:
 // piece Z
 struct CC_DLL StxModel : public BModel {
 
-  s_arr<int,4*3*3> layout {
+  s_arr<int,3*3*4> layout {
       0,1,0,
       1,1,0,
       1,0,0,
@@ -350,7 +354,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Dropper : public a::Component {
+struct CC_DLL Dropper : public ecs::Component {
   MDECL_COMP_TPID( "n/Dropper")
   DECL_FZ(dropSpeed)
   DECL_FZ(dropRate)
@@ -359,14 +363,14 @@ struct CC_DLL Dropper : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL FilledLines : public a::Component {
+struct CC_DLL FilledLines : public ecs::Component {
   MDECL_COMP_TPID( "n/FilledLines")
   s_vec<int> lines;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
+struct CC_DLL Gesture : public f::CGesture {
   MDECL_COMP_TPID( "n/Gesture")
   void reset() {
     right=false;
@@ -375,16 +379,13 @@ struct CC_DLL Gesture : public a::Component {
     rotl=false;
     down=false;
   }
-  DECL_BF(right)
-  DECL_BF(left)
   DECL_BF(rotr)
   DECL_BF(rotl)
-  DECL_BF(down)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Pauser  : public a::Component {
+struct CC_DLL Pauser  : public ecs::Component {
   DECL_PTR(c::DelayTime, timer)
   MDECL_COMP_TPID("n/Pauser")
   DECL_BF(pauseToClear)
@@ -392,10 +393,12 @@ struct CC_DLL Pauser  : public a::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars  : public a::Component {
+struct CC_DLL GVars  : public ecs::Component {
   MDECL_COMP_TPID("n/GVars")
 
 };
 
-NS_END(tetris)
+
+
+NS_END
 

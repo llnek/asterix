@@ -19,7 +19,7 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
   auto tile = CC_CSV(c::Float, "TILE");
   auto gz= XCFG()->gameSize();
@@ -38,18 +38,18 @@ void HUDLayer::decorate() {
   addItem(scoreLabel);
 
   status= cx::reifyBmfLabel("CoffeeBuzzed");
-  status->setScale( XCFG()->getScale() * 0.5f );
-  status->setPosition(wb.cx * 1.5f, wb.cy);
-  status->setVisible(false);
+  status->setScale( XCFG()->getScale() * 0.5 );
+  status->setPosition(wb.cx * 1.5, wb.cy);
+  CC_HIDE(status);
   addItem(status);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = cx::getHeight(b) * 0.5f;
-  auto hw = cx::getWidth(b) * 0.5f;
+  auto hh = HHZ(CC_CSIZE(b));
+  auto hw = HWZ(CC_CSIZE(b));
   auto menu = cx::mkMenu(b);
 
   b->setCallback([](c::Ref*) { SENDMSG("/hud/showmenu"); });
-  menu->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
+  b->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
   addItem(menu);
 }
 
@@ -57,7 +57,7 @@ void HUDLayer::decorate() {
 //
 void HUDLayer::endGame() {
   drawStatusText(gets("gameover"));
-  status->setVisible(true);
+  CC_SHOW(status);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -75,6 +75,6 @@ void HUDLayer::updateScore(int n) {
 }
 
 
-NS_END(tetris)
+NS_END
 
 

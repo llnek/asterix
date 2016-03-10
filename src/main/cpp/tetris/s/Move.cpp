@@ -38,9 +38,8 @@ static void scanInput(Gesture *mo) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  arena = engine->getNodeList(ArenaNode().typeId());
-  initKeyOps(
-    arena->head, CC_CSV(c::Integer, "THROTTLE+WAIT"));
+  arena = engine->getEntities("n/BlockGrid")[0];
+  initKeyOps(arena, CC_CSV(c::Integer, "THROTTLE+WAIT"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,15 +47,15 @@ void Move::preamble() {
 bool Move::update(float dt) {
 
   if (MGMS()->isLive()) {
-    auto sh= CC_GNLF(ShapeShell, arena, "shell");
-    auto dp= CC_GNLF(Dropper, arena, "dropper");
+    auto sh= CC_GEC(ShapeShell, arena, "n/ShapeShell");
+    auto dp= CC_GEC(Dropper, arena, "n/Dropper");
 
     scanner();
 
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
       cx::undoTimer(dp->timer);
-      dp->timer=nullptr;
+      dp->timer= CC_NIL;
       doFall();
     }
   }
@@ -67,18 +66,18 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::doFall() {
-  auto sh= CC_GNLF(ShapeShell, arena, "shell");
-  auto bs= CC_GNLF(BlockGrid, arena, "blocks");
-  auto dp= CC_GNLF(Dropper, arena, "dropper");
-  auto pu= CC_GNLF(Pauser, arena, "pauser");
+  auto sh= CC_GEC(ShapeShell, arena, "n/ShapeShell");
+  auto bs= CC_GEC(BlockGrid, arena, "n/BlockGrid");
+  auto dp= CC_GEC(Dropper, arena, "n/Dropper");
+  auto pu= CC_GEC(Pauser, arena, "n/Pauser");
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
   if (NNP(shape) &&
-      ! moveDown(MGML(), emap, shape)) {
+      ! moveDown(emap, shape)) {
 
     // lock shape in place
-    lock(arena->head,shape);
+    lock(arena,shape);
 
     /*
     //TODO: what is this???
@@ -90,20 +89,21 @@ void Move::doFall() {
     */
 
     shape->bricks.clear();
-    sh->shape=nullptr;
-    mc_del_ptr(shape);
+    sh->shape= CC_NIL;
+    delete shape;
 
   } else {
     // drop at fast-drop rate
-    setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
+    setDropper(dp, dp->dropRate, dp->dropSpeed);
   }
 
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::initKeyOps(a::Node *node, int w) {
+void Move::initKeyOps(ecs::Entity *node, int w) {
 
-  auto mo = CC_GNF(Gesture,node,"motion");
+  auto mo = CC_GEC(Gesture,node,"n/Gesture");
 
   scanner = cx::throttle([=]() {
       scanInput(mo);
@@ -112,6 +112,6 @@ void Move::initKeyOps(a::Node *node, int w) {
 }
 
 
-NS_END(tetris)
+NS_END
 
 

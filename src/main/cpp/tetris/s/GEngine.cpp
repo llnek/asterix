@@ -43,6 +43,7 @@ void GEngine::initEntities() {
   ent->checkin(mc_new(CtrlPad));
 }
 
-NS_END(tetris)
+
+NS_END
 
 

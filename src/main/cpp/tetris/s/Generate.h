@@ -8,16 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
 
-#include "ash/System.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Generate : public a::System {
+class CC_DLL Generate : public ecs::System {
 
   const ShapeInfo randNextInfo();
   owner<Shape*> reifyNextShape();
@@ -25,22 +27,22 @@ class CC_DLL Generate : public a::System {
 
 public:
 
-  virtual int priority() { return a::AI + 60; }
+  virtual int priority() { return ecs::AI + 60; }
   MDECL_SYS_TPID( "s/Generate")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Generate(a::Engine *e)
+  Generate(ecs::Engine *e)
   : System(e)
   {}
 
   DECL_TD(ShapeInfo, nextShapeInfo)
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Entity, arena)
   DECL_PTR(Shape, nextShape)
 
 };
 
 
-NS_END(tetris)
+NS_END
 
 

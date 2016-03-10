@@ -20,8 +20,8 @@ NS_BEGIN(fusii)
 //
 struct CC_DLL CGesture : public ecs::Component {
   MDECL_COMP_TPID("f/CGesture")
-  DECL_BF(bottom)
-  DECL_BF(top)
+  DECL_BF(down)
+  DECL_BF(up)
   DECL_BF(right)
   DECL_BF(left)
 };

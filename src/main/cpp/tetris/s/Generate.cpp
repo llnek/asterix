@@ -20,7 +20,7 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 
 LineModel m1;
 BoxModel m2;
@@ -40,14 +40,14 @@ s_arr<BModel*,7> ListOfModels = {
   &m7
 };
 
-END_NS_UNAMED()
+END_NS_UNAMED
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::preamble() {
-  arena = engine->getNodeList(ArenaNode().typeId());
+  arena = engine->getEntities("n/BlockGrid")[0];
   nextShapeInfo= randNextInfo();
-  nextShape=nullptr;
+  nextShape=CC_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,14 +55,14 @@ void Generate::preamble() {
 bool Generate::update(float dt) {
 
   if (MGMS()->isLive()) {
-    auto sl = CC_GNLF(ShapeShell, arena, "shell");
-    auto dp = CC_GNLF(Dropper, arena, "dropper");
+    auto sl = CC_GEC(ShapeShell, arena, "n/ShapeShell");
+    auto dp = CC_GEC(Dropper, arena, "n/Dropper");
     auto cfg= MGMS()->getLCfg()->getValue();
-    Shape *sp = sl->shape;
+    auto sp = sl->shape;
 
     if (ENP(sp)) {
       sp = reifyNextShape();
-      if (NNP(sp)) {
+      if (sp) {
         previewNextShape();
         sl->shape= sp;
         //activate drop timer
@@ -81,14 +81,12 @@ bool Generate::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> Generate::reifyNextShape() {
-  auto bks= CC_GNLF(BlockGrid, arena, "blocks");
-  auto gbox= CC_GNLF(GridBox, arena, "gbox");
+  auto bks= CC_GEC(BlockGrid, arena, "n/BlockGrid");
+  auto gbox= CC_GEC(GridBox, arena, "n/GridBox");
   auto tile= CC_CSV(c::Float, "TILE");
   auto x = gbox->box.left + 5 * tile;
   auto y = gbox->box.top - tile;
-  auto shape= reifyShape(MGML(), bks->grid,
-      x,y,
-      nextShapeInfo);
+  auto shape= reifyShape(bks->grid, x,y, nextShapeInfo);
   if (ENP(shape)) {
     CCLOG("game over.  you lose.");
     bks->grid.clear();
@@ -101,22 +99,22 @@ owner<Shape*> Generate::reifyNextShape() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::previewNextShape() {
-  auto gbox= CC_GNLF(GridBox, arena, "gbox");
+  auto gbox= CC_GEC(GridBox, arena, "n/GridBox");
   auto tile = CC_CSV(c::Float, "TILE");
   auto info = randNextInfo();
   auto wb = cx::visBox();
 
   auto sz = (1 + info.model->getDim()) * tile;
-  auto x = wb.cx + (wb.right - wb.cx) * 0.5f;
-  auto y = wb.top * 0.7f;
+  auto x = wb.cx + (wb.right - wb.cx) * 0.5;
+  auto y = wb.top * 0.7;
 
-  x -= sz * 0.5f;
-  y += sz * 0.5f;
+  x -= HTV(sz);
+  y += HTV(sz);
 
   disposeShape(nextShape);
   SNPTR(nextShape)
 
-  nextShape= previewShape(MGML(), x, y, info);
+  nextShape= previewShape(info, x, y);
   nextShapeInfo= info;
 }
 
@@ -132,6 +130,6 @@ const ShapeInfo Generate::randNextInfo() {
 }
 
 
-NS_END(tetris)
+NS_END
 
 

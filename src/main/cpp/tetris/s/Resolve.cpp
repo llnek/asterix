@@ -22,7 +22,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  arena = engine->getNodeList(ArenaNode().typeId());
+  arena = engine->getEntities("n/BlockGrid");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ void Resolve::preamble() {
 bool Resolve::update(float dt) {
 
   if (MGMS()->isLive()) {
-    doIt();
+    process(dt);
   }
 
   return true;
@@ -38,11 +38,11 @@ bool Resolve::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Resolve::doIt() {
+void Resolve::process(float dt) {
 
-  auto sh = CC_GNLF(ShapeShell, arena, "shell");
-  auto bs= CC_GNLF(BlockGrid, arena, "blocks");
-  auto mo = CC_GNLF(Gesture, arena, "motion");
+  auto sh = CC_GEC(ShapeShell, arena, "n/ShapeShell");
+  auto bs= CC_GEC(BlockGrid, arena, "n/BlockGrid");
+  auto mo = CC_GEC(Gesture, arena, "n/Gesture");
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
@@ -51,19 +51,19 @@ void Resolve::doIt() {
   }
 
   if ( mo->right) {
-    shiftRight( MGML(), emap, shape);
+    shiftRight( emap, shape);
   }
 
   if ( mo->left) {
-    shiftLeft( MGML(), emap, shape);
+    shiftLeft( emap, shape);
   }
 
   if ( mo->rotr) {
-    rotateRight( MGML(), emap, shape);
+    rotateRight( emap, shape);
   }
 
   if ( mo->rotl) {
-    rotateLeft( MGML(), emap, shape);
+    rotateLeft( emap, shape);
   }
 
   if ( mo->down) {
@@ -76,16 +76,17 @@ void Resolve::doIt() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::fastDrop() {
-  auto dp = CC_GNLF(Dropper, arena, "dropper");
+  auto dp = CC_GEC(Dropper, arena, "n/Dropper");
   auto cfg = MGMS()->getLCfg()->getValue();
   cx::undoTimer(dp->timer);
   // drop at fast-drop rate
   dp->dropSpeed= JS_FLOAT(cfg["speed"]);
   dp->dropRate = JS_FLOAT(cfg["drate"]);
-  setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
+  setDropper(dp, dp->dropRate, dp->dropSpeed);
+
 }
 
 
-NS_END(tetris)
+NS_END
 
 
