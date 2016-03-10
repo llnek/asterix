@@ -69,6 +69,8 @@ void Config::initAssets() {
   addEffect("x_pick", CC_STR("sfx/ElevatorBeep.mp3"));
   addEffect("o_pick", CC_STR("sfx/MineBeep.mp3"));
   addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("button", CC_STR("sfx/click.wav"));
+  addMusic("background", CC_STR("sfx/music.mp3"));
 
   addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));

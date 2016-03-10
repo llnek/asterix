@@ -20,35 +20,50 @@ NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 static s_arr<sstr,3> PNGS= {"z.png", "x.png", "o.png"};
+static int PSZ= PNGS.size();
+static float SCALEZ= 0.9;
+
+//////////////////////////////////////////////////////////////////////////////
+//
+static const sstr GNP() {
+  return PNGS[ rand() % PSZ ];
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+static c::Sprite* mkIcon(const sstr &png) {
+  auto sp= cx::reifySprite(png);
+  sp->setScale(SCALEZ);
+  return sp;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::demo() {
   // we scale down the icons to make it look nicer
-  auto ps= mapGridPos(0.75);
-  auto fm= "";
-
-  s::srand(cx::timeInMillis());
+  auto ps= mapGridPos(SCALEZ);
 
   for (auto i = 0; i < ps.size(); ++i) {
-    auto n= rand() % 3;
-    auto sp= cx::reifySprite(PNGS[n]);
     auto bx= cx::vboxMID( ps[i]);
-    sp->setScale(0.75);
+    auto sp= mkIcon("z.png");
+    sp->setPosition(bx);
+    addAtlasItem("game-pics", sp);
+
+    sp= mkIcon(GNP());
     sp->setPosition(bx);
     sp->runAction(
         c::RepeatForever::create(
         c::Sequence::create(
-          c::FadeIn::create(cx::rand() * 2),
+          c::FadeIn::create(cx::rand() * 5),
           c::DelayTime::create(cx::rand()*5),
           c::CallFuncN::create([=](c::Node *r) {
-            SCAST(c::Sprite*,r)->setSpriteFrame(PNGS[rand() % 3]);
+            SCAST(c::Sprite*,r)->setSpriteFrame(GNP());
             }),
           c::DelayTime::create(cx::rand() *5),
-          c::FadeOut::create(cx::rand() * 2),
+          c::FadeOut::create(cx::rand() * 5),
           c::DelayTime::create(cx::rand() * 5),
           c::CallFuncN::create([=](c::Node *r) {
-            SCAST(c::Sprite*,r)->setSpriteFrame(PNGS[rand() % 3]);
+            SCAST(c::Sprite*,r)->setSpriteFrame(GNP());
             }),
           CC_NIL)));
 
@@ -88,6 +103,7 @@ void Splash::decoUIXXX() {
   b1->setCallback(
       [=](c::Ref*) {
         cx::runEx(MMenu::reify(mc_new1(MCX, f)));
+        cx::sfxPlay("button");
       });
 
   b1->setPosition(wb.cx, wb.top * -0.15);
@@ -104,6 +120,8 @@ void Splash::decoUIXXX() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
+
+  s::srand(cx::timeInMillis());
 
   centerImage( "game.bg");
   regoAtlas("game-pics");

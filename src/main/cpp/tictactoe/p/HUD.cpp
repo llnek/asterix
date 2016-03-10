@@ -21,8 +21,8 @@ NS_BEGIN(tttoe)
 //
 void HUDLayer::decoUI() {
 
-  auto soff= CC_CSV(c::Integer, "S_OFF");
-  auto tile= CC_CSV(c::Integer, "TILE");
+  auto soff= CC_CSV(c::Float, "S_OFF");
+  auto tile= CC_CSV(c::Float, "TILE");
   auto color = XCFG()->getColor("dft");
   auto scale= XCFG()->getScale();
   auto wb= cx::visBox();
