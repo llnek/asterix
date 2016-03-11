@@ -31,12 +31,14 @@ struct CC_DLL Ball : public f::CDraw {
 //
 class CC_DLL Paddle : public f::CDraw {
 
-  const s_arr<KEYCODE,2> p1Keys() {
-    return s_arr<KEYCODE,2> {KEYCODE::KEY_LEFT_ARROW , KEYCODE::KEY_RIGHT_ARROW};
-  }
-
   const s_arr<KEYCODE,2> p2Keys() {
     return s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D };
+  }
+
+  const s_arr<KEYCODE,2> p1Keys() {
+    return s_arr<KEYCODE,2> {
+      KEYCODE::KEY_LEFT_ARROW ,
+      KEYCODE::KEY_RIGHT_ARROW };
   }
 
 public:

@@ -30,9 +30,9 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
   parr[2]= p2;
   parr[1]= p1;
 
-  score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(score1) * 0.5 - 10,
+  _score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(_score1) * 0.5 - 10,
       wb.top - tile * 6 /2 - 2);
-  score2->setPosition(wb.cx + tw2 + cx::getScaledWidth(score2) * 0.5 + 6,
+  _score2->setPosition(wb.cx + tw2 + cx::getScaledWidth(_score2) * 0.5 + 6,
       wb.top - tile * 6 /2 - 2);
 
 }
@@ -40,7 +40,7 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::endGame() {
-  CC_SHOW(resultMsg);
+  CC_SHOW(_resultMsg);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,21 +54,21 @@ void HUDLayer::decoUI() {
   title->setPosition(wb.cx, wb.top - tile * 6 /2 );
   addItem(title);
 
-  score1= cx::reifyBmfLabel("OCR", "8");
-  score1->setScale(XCFG()->getScale() * 0.25);
-  addItem(score1);
+  _score1= cx::reifyBmfLabel("OCR", "8");
+  _score1->setScale(XCFG()->getScale() * 0.25);
+  addItem(_score1);
 
-  score2= cx::reifyBmfLabel("OCR", "8");
-  score2->setScale(XCFG()->getScale() * 0.25);
-  addItem(score2);
+  _score2= cx::reifyBmfLabel("OCR", "8");
+  _score2->setScale(XCFG()->getScale() * 0.25);
+  addItem(_score2);
 
-  resultMsg = cx::reifyBmfLabel("CoffeeBuzzed");
-  CC_HIDE(resultMsg);
-  resultMsg->setPosition(wb.cx, 100);
-  resultMsg->setScale(XCFG()->getScale() * 0.15);
-  addItem(resultMsg);
+  _resultMsg = cx::reifyBmfLabel("CoffeeBuzzed");
+  CC_HIDE(_resultMsg);
+  _resultMsg->setPosition(wb.cx, 100);
+  _resultMsg->setScale(XCFG()->getScale() * 0.15);
+  addItem(_resultMsg);
 
-  scores.fill(0);
+  _scores.fill(0);
   drawScores();
 }
 
@@ -77,8 +77,8 @@ void HUDLayer::decoUI() {
 int HUDLayer::isDone() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto pts = JS_INT(cfg["NUM+POINTS"]);
-  auto s2= scores[2];
-  auto s1= scores[1];
+  auto s2= _scores[2];
+  auto s1= _scores[1];
   int rc= -1;
 
   if (s2 >= pts) { rc = 2; }
@@ -91,26 +91,26 @@ int HUDLayer::isDone() {
 void HUDLayer::updateScores(j::json scs) {
   auto &p2=parr[2];
   auto &p1=parr[1];
-  scores[2] = JS_INT(scs[p2.color]);
-  scores[1] = JS_INT(scs[p1.color]);
+  _scores[2] = JS_INT(scs[p2.color]);
+  _scores[1] = JS_INT(scs[p1.color]);
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(const sstr &color, int pnum, int value) {
-  assert(pnum > 0 && pnum < scores.size());
-  scores[pnum] += value;
+  assert(pnum > 0 && pnum < _scores.size());
+  _scores[pnum] += value;
   drawScores();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawScores() {
-  auto s2 = scores[2];
-  auto s1 = scores[1];
-  score1->setString(s::to_string(s1));
-  score2->setString(s::to_string(s2));
+  auto s2 = _scores[2];
+  auto s1 = _scores[1];
+  _score1->setString(s::to_string(s1));
+  _score2->setString(s::to_string(s2));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ void HUDLayer::drawResult(int winner) {
   if (pn.length() > 0) {
     msg= gets("whowin", s_vec<sstr> { pn });
   }
-  resultMsg->setString(msg);
+  _resultMsg->setString(msg);
 }
 
 

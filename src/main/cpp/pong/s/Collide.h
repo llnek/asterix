@@ -35,9 +35,9 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(ecs::Entity, arena)
-  DECL_PTR(ecs::Entity, ball)
-  s_vec<ecs::Entity*> paddles;
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ball)
+  s_vec<ecs::Node*> _paddles;
 
 };
 

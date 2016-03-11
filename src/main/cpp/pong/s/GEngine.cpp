@@ -24,9 +24,9 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 GEngine::GEngine(int cur, const Player &p1, const Player &p2)  {
-  parr[2]= p2;
-  parr[1]= p1;
-  parr[0].pnum=cur;
+  _parr[2]= p2;
+  _parr[1]= p1;
+  _parr[0].pnum=cur;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,25 +41,25 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  mkOnePaddle(parr[2]);
+  mkOnePaddle(_parr[2]);
   mkArena();
   mkBall();
-  mkOnePaddle(parr[1]);
+  mkOnePaddle(_parr[1]);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::mkArena() {
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode();
   auto ps= mc_new(Players);
   auto ss= mc_new(GVars);
 
-  ss->pnum= parr[0].pnum;
+  ss->pnum= _parr[0].pnum;
   ss->poked=false;
 
-  ps->parr[2]= parr[2];
-  ps->parr[1]= parr[1];
-  ps->parr[0]= parr[0];
+  ps->parr[2]= _parr[2];
+  ps->parr[1]= _parr[1];
+  ps->parr[0]= _parr[0];
 
   ent->checkin(ps);
   ent->checkin(ss);
@@ -70,7 +70,7 @@ void GEngine::mkArena() {
 void GEngine::mkBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["BALL+SPEED"]);
-  auto ent = this->reifyEntity();
+  auto ent = this->reifyNode();
   auto vy = sd * cx::randSign();
   auto vx = sd * cx::randSign();
 
@@ -97,7 +97,7 @@ void GEngine::mkOnePaddle(const Player &p) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto ent = this->reifyEntity();
+  auto ent = this->reifyNode();
   auto cur= parr[0].pnum;
   float lp=0;
   sstr res;

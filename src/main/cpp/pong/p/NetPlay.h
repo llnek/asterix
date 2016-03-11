@@ -44,8 +44,8 @@ class CC_DLL NetPlay : public f::XScene {
   void onCancel();
   void onLogin();
 
-  DECL_PTR(ws::OdinIO, odin)
-  DECL_IZ(player)
+  DECL_PTR(ws::OdinIO, _odin)
+  DECL_IZ(_player)
 
 public:
 
@@ -53,8 +53,8 @@ public:
   MDECL_DECORATE()
 
   virtual ~NetPlay() {
-    ws::disconnect(odin);
-    delete odin;
+    ws::disconnect(_odin);
+    mc_del_ptr(_odin);
   }
 
 };

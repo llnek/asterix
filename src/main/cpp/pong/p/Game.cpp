@@ -52,9 +52,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   void showMenu();
   void doDone(int);
 
-  DECL_PTR(ecs::Entity, arena)
-  DECL_PTR(ecs::Entity, ball)
-  s_vec<ecs::Entity*> paddles;
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ball)
+  s_vec<ecs::Node*> _paddles;
 
 };
 
@@ -92,7 +92,7 @@ void GLayer::onMotion(const c::Vec2 &loc, bool isTouch) {
   auto box= MGMS()->getEnclosureBox();
   auto wb= cx::visBox();
 
-  F__LOOP(it, paddles) {
+  F__LOOP(it, _paddles) {
     auto e= *it;
     if (! e->has("n/Gesture")) {
     continue; }
@@ -183,18 +183,18 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
   p2.setName(p2k,p2n);
   p1.setName(p1k,p1n);
 
-  this->engine= mc_new3(GEngine, cur, p1, p2);
+  this->_engine= mc_new3(GEngine, cur, p1, p2);
   getHUD()->regoPlayers(p1,p2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  arena= engine->getEntities("n/Players")[0];
-  ball= engine->getEntities("n/Ball")[0];
-  engine->getEntities("n/Paddle", paddles);
+  _arena= _engine->getNodes("n/Players")[0];
+  _ball= _engine->getNodes("n/Ball")[0];
+  _engine->getNodes("n/Paddle", paddles);
   //
-  auto ss= CC_GEC(GVars, arena, "n/GVars");
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto world = MGMS()->getEnclosureBox();
   auto ps= cx::calcSize("red_paddle.png");
   auto bs= cx::calcSize("pongball.png");
@@ -221,7 +221,7 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initPaddles(GVars *ss) {
-  F__LOOP(it, paddles) {
+  F__LOOP(it, _paddles) {
     auto e = *it;
     auto p= CC_GEC(Paddle,e,"n/Paddle");
     if (p->pnum == 2) { p->inflate(ss->p2p.x, ss->p2p.y); }
@@ -306,7 +306,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this,3);
   GLayer::reify(this,2);
   play();

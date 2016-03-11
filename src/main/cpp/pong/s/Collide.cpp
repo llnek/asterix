@@ -20,9 +20,9 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  arena = engine->getEntities("n/Players")[0];
-  engine->getEntities("n/Paddle",paddles);
-  ball = engine->getEntities("n/Ball")[0];
+  _arena = _engine->getNodes("n/Players")[0];
+  _ball = _engine->getNodes("n/Ball")[0];
+  _engine->getNodes("n/Paddle", _paddles);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,26 +39,29 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto ba = CC_GEC(Ball, ball, "n/Ball");
-  F__LOOP(it, paddles) {
+  auto ba = CC_GEC(Ball, _ball, "n/Ball");
+  F__LOOP(it, _paddles) {
     auto e= *it;
     auto p= CC_GEC(Paddle,e, "n/Paddle");
     if (cx::collide(p, ba)) {
-      check(p, ba);
+      check(e, _ball);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::check(Paddle *pad, Ball *ball) {
+void Collide::check(ecs::Node *p, ecs::Node *ball) {
+  auto pad= CC_GEC(Paddle, p, "n/Paddle");
+  auto ba = CC_GEC(Ball, ball, "n/Ball");
+  auto bm= CC_GEC(f::CMove, ball, "f/CMove");
   auto hw2= cx::halfHW(ball->node);
   auto bb4 = cx::bbox4(pad->node);
   auto pos = ball->pos();
   auto x= pos.x;
   auto y= pos.y;
 
-  ball->vel.y = - ball->vel.y;
+  bm->vel.y = - bm->vel.y;
 
   if (pad->pnum == 1) {
     y=bb4.top + hw2.height + 1;
@@ -68,7 +71,7 @@ void Collide::check(Paddle *pad, Ball *ball) {
     y = bb4.bottom - hw2.height - 1;
   }
 
-  ball->setPos(x,y);
+  ba->setPos(x,y);
   cx::sfxPlay(pad->snd);
 }
 

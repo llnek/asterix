@@ -19,7 +19,16 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
+class CC_DLL HUDLayer : public f::XLayer {
+
+  DECL_PTR(c::Label, _resultMsg)
+  DECL_PTR(c::Label, _score2)
+  DECL_PTR(c::Label, _score1)
+  DECL_PTR(c::Label, _title)
+  s_arr<Player,3> _parr;
+  s_arr<int,3> _scores;
+
+public:
 
   void regoPlayers(const Player&, const Player&);
   void updateScore(const sstr&, int,  int score);
@@ -28,13 +37,6 @@ struct CC_DLL HUDLayer : public f::XLayer {
   void updateScores(j::json);
   void endGame();
   int isDone();
-
-  DECL_PTR(c::Label, resultMsg)
-  DECL_PTR(c::Label, score2)
-  DECL_PTR(c::Label, score1)
-  DECL_PTR(c::Label, title)
-  s_arr<Player,3> parr;
-  s_arr<int,3> scores;
 
   STATIC_REIFY_LAYER(HUDLayer)
   MDECL_DECORATE()

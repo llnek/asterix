@@ -55,42 +55,42 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
   auto obj= fmtGameData(f::GMode::NET);
   auto ctx = getCtx();
 
-  obj["ppids"] = evt->doco["source"]["ppids"];
-  obj["pnum"]= player;
+  obj["ppids"] = evt->_doco["source"]["ppids"];
+  obj["pnum"]= _player;
 
-  SCAST(NPCX*, ctx)->yes(odin,obj);
-  SNPTR(odin)
+  SCAST(NPCX*, ctx)->yes(_odin,obj);
+  SNPTR(_odin)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onCancel() {
   auto f= []() { cx::prelude(); };
-  ws::disconnect(odin);
-  mc_del_ptr(odin);
+  ws::disconnect(_odin);
+  mc_del_ptr(_odin);
   cx::runEx( MMenu::reify(mc_new1(MCX, f)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onPlayReply(ws::OdinEvent *evt) {
-  player= JS_INT( evt->doco["pnum"]);
-  assert(player > 0);
-  CCLOG("player %d: ok", player);
+  player= JS_INT( evt->_doco["pnum"]);
+  assert(_player > 0);
+  CCLOG("player %d: ok", _player);
   showWaitOthers();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::networkEvent(ws::OdinEvent *evt) {
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::PLAYER_JOINED:
       //TODO
       //CCLOG("another player joined room: ", evt.source.puid);
     break;
     case ws::EType::START:
       CCLOG("play room is ready, game can start");
-      odin->cancelAll();
+      _odin->cancelAll();
       onStart(evt);
     break;
   }
@@ -99,7 +99,7 @@ void NetPlay::networkEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::sessionEvent(ws::OdinEvent *evt) {
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
     break;
@@ -109,8 +109,8 @@ void NetPlay::sessionEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::odinEvent(ws::OdinEvent *evt) {
-  CCLOG("odin event = %s", evt->doco.dump(2).c_str());
-  switch (evt->type) {
+  CCLOG("odin event = %s", evt->_doco.dump(2).c_str());
+  switch (evt->_type) {
     case ws::MType::NETWORK:
       networkEvent(evt);
     break;
@@ -129,13 +129,13 @@ void NetPlay::onLogin() {
   auto pwd= p->getString();
 
   if (uid.length() > 0 && pwd.length() > 0) {
-    this->odin= ws::reifyPlayRequest(
+    _odin= ws::reifyPlayRequest(
         XCFG()->getGameId(),
         uid, pwd);
-    this->odin->listen([=](ws::OdinEvent *e) {
+    _odin->listen([=](ws::OdinEvent *e) {
         this->odinEvent(e);
         });
-    ws::connect(odin, XCFG()->getWSUrl());
+    ws::connect(_odin, XCFG()->getWSUrl());
   }
 }
 

@@ -36,14 +36,14 @@ c::Scene* Config::prelude() {
 //
 void Config::initCsts() {
 
-  game_id = "fa0860f9-76dc-4135-8bc7-bd5af3147d55";
-  app_id = "pong";
+  _game_id = "fa0860f9-76dc-4135-8bc7-bd5af3147d55";
+  _app_id = "pong";
 
   addColor("text", CC_STR("#32baf4"));
   addColor("dft", CC_STR("#edff90"));
   addColor("hud", CC_STR("#ffffff"));
 
-  addCst("syncMillis", CC_FLOAT(3000.0f));
+  addCst("syncMillis", CC_FLOAT(3000));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ void Config::initAssets() {
 void Config::handleResolution(const c::Size &rs) {
   auto z= gameSize();
   //for default font, we use 48pt
-  scale = (52.0f / 256) * (rs.width / z.width);
+  scale = (52.0 / 256) * (rs.width / z.width);
 }
 
 //////////////////////////////////////////////////////////////////////////////
