@@ -21,5 +21,5 @@ struct CC_DLL Splash : public f::XScene {
   MDECL_DECORATE()
 };
 
-NS_END(invaders)
+NS_END
 

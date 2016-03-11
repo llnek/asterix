@@ -20,8 +20,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::preamble() {
-  aliens = engine->getNodeList(AlienMotionNode().typeId());
-  cannon = engine->getNodeList(CannonCtrlNode().typeId());
+  _aliens = _engine->getNodes("n/AlienMotion")[0];
+  _cannon = _engine->getNodes("n/CannonCtrl")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,23 +40,23 @@ bool Motions::update(float dt) {
 //
 void Motions::processCannon(float dt) {
 
-  auto gun = CC_GNLF(Cannon, cannon, "cannon");
-  auto lpr= CC_GNLF(Looper, cannon, "looper");
-  auto ship= CC_GNLF(Ship, cannon, "ship");
+  auto gun = CC_GEC(Cannon, _cannon, "n/Cannon");
+  auto lpr= CC_GEC(Looper, _cannon, "n/Looper");
+  auto ship= CC_GEC(f::CDraw, _cannon, "f/CDraw");
   auto t= lpr->timer7;
 
   //throttle the cannon with timer
-  if (gun->hasAmmo) { return;}
   if (!cx::timerDone(t)) { return;}
+  if (gun->hasAmmo) { return;}
 
-  ship->sprite->setSpriteFrame(ship->frame0);
+  ship->node->setSpriteFrame(node->frame0);
   gun->hasAmmo=true;
   cx::undoTimer(t);
   SNPTR(lpr->timer7)
 
   auto cfg= MGMS()->getLCfg()->getValue();
-  auto p= MGMS()->getPool("missiles");
-  auto top= cx::getTop(ship->sprite);
+  auto p= MGMS()->getPool("Missiles");
+  auto top= cx::getTop(ship->node);
   auto pos= ship->pos();
   auto ent= p->get();
 
@@ -69,7 +69,7 @@ void Motions::processCannon(float dt) {
 
   lpr->timer7 = cx::reifyTimer( MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   gun->hasAmmo=false;
-  ship->sprite->setSpriteFrame(ship->frame1);
+  ship->node->setSpriteFrame(ship->frame1);
 
   cx::sfxPlay("ship-missile");
 }
@@ -78,8 +78,8 @@ void Motions::processCannon(float dt) {
 //
 void Motions::processAlienMotions(float) {
 
-  auto sqad= CC_GNLF(AlienSquad, aliens, "aliens");
-  auto lpr = CC_GNLF(Looper, aliens, "looper");
+  auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
+  auto lpr = CC_GEC(Looper, _aliens, "n/Looper");
   auto cfg= MGMS()->getLCfg()->getValue();
 
   if (ENP(lpr->timer0)) {
@@ -92,6 +92,6 @@ void Motions::processAlienMotions(float) {
 }
 
 
-NS_END(invaders)
+NS_END
 
 

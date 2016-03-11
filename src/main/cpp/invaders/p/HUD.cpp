@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
   auto soff = CC_CSV(c::Float, "S_OFF");
   auto tile = CC_CSV(c::Float, "TILE");
@@ -29,17 +29,17 @@ void HUDLayer::decorate() {
 
   regoAtlas("game-pics");
 
-  scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
-  scoreLabel->setAnchorPoint(cx::anchorTR());
-  scoreLabel->setScale(XCFG()->getScale());
-  scoreLabel->setPosition(wb.right-tile-soff, wb.top-tile);
-  addItem(scoreLabel);
+  _scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
+  _scoreLabel->setAnchorPoint(cx::anchorTR());
+  _scoreLabel->setScale(XCFG()->getScale());
+  _scoreLabel->setPosition(wb.right-tile-soff, wb.top-tile);
+  addItem(_scoreLabel);
 
-  this->lives= f::reifyRefType<f::XLives>();
-  this->lives->decorate("health.png", 3,
+  _lives= f::reifyRefType<f::XLives>();
+  _lives->decorate("health.png", 3,
       tile + soff,
       wb.top - tile - soff);
-  addItem(lives);
+  addItem(_lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto menu = cx::mkMenu(b);
@@ -49,26 +49,26 @@ void HUDLayer::decorate() {
   menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
   addItem(menu);
 
-  lives->resurrect();
-  score=0;
+  _lives->resurrect();
+  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  lives->reduce(n);
-  return lives->isDead();
+  _lives->reduce(n);
+  return _lives->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString(s::to_string(score));
+  _score += n;
+  _scoreLabel->setString(s::to_string(_score));
 }
 
 
 
-NS_END(invaders)
+NS_END
 
 

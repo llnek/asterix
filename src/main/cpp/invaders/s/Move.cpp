@@ -20,35 +20,42 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  ship = engine->getNodeList(ShipMotionNode().typeId());
+  _player = _engine->getNodes("n/ShipMotion")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-    processShipMotions( dt);
-    moveMissiles(dt);
-    moveBombs(dt);
+    process(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
+void Move::process(float dt) {
+  processShipMotions( dt);
+  moveMissiles(dt);
+  moveBombs(dt);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 void Move::processShipMotions( float dt) {
 
-  auto sp= CC_GNLF(Ship, ship,"ship");
+  auto mv= CC_GEC(f::CMove, _player,"f/CMove");
+  auto sp= CC_GEC(Ship, _player,"f/CDraw");
   auto pos = sp->pos();
   auto x= pos.x;
   auto y= pos.y;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    x = pos.x + dt * sp->vel.x;
+    x = pos.x + dt * mv->vel.x;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    x = pos.x - dt * sp->vel.x;
+    x = pos.x - dt * mv->vel.x;
   }
 
   sp->setPos(x,y);
@@ -59,16 +66,16 @@ void Move::processShipMotions( float dt) {
 //
 void Move::clamp(Ship *ship) {
 
-  auto sz= ship->sprite->getContentSize();
   auto tile= CC_CSV(c::Float,"TILE");
   auto wz = cx::visRect();
+  auto sz= ship->csize();
   auto pos= ship->pos();
 
-  if (cx::getRight(ship->sprite) > wz.size.width - tile) {
-    ship->setPos(wz.size.width - tile - sz.width * 0.5f, pos.y);
+  if (cx::getRight(ship->node) > wz.size.width - tile) {
+    ship->setPos(wz.size.width - tile - HWZ(sz), pos.y);
   }
-  if (cx::getLeft(ship->sprite) < tile) {
-    ship->setPos(tile + sz.width * 0.5f, pos.y);
+  if (cx::getLeft(ship->node) < tile) {
+    ship->setPos(tile + HWZ(sz), pos.y);
   }
 }
 
@@ -76,15 +83,17 @@ void Move::clamp(Ship *ship) {
 //
 void Move::moveBombs(float dt) {
 
-  auto bbs= MGMS()->getPool("bombs");
-  auto c= bbs->list();
+  auto bbs= MGMS()->getPool("Bombs");
+  auto c= bbs->ls();
 
   F__LOOP(it, c) {
-    auto &b = *it;
-    if (b->status) {
-      auto pos= b->pos();
-      auto y = pos.y + dt * b->vel.y;
-      b->setPos(pos.x, y);
+    auto b = *it;
+    if (b->status()) {
+      auto mv= CC_GEC(f::CMove,b,"f/CMove");
+      auto s= CC_GEC(f::CDraw,b,"f/CDraw");
+      auto pos= s->pos();
+      auto y = pos.y + dt * mv->speed;
+      s->setPos(pos.x, y);
     }
   }
 }
@@ -93,21 +102,22 @@ void Move::moveBombs(float dt) {
 //
 void Move::moveMissiles(float dt) {
 
-  auto mss= MGMS()->getPool("missiles");
-  auto c= mss->list();
+  auto mss= MGMS()->getPool("Missiles");
+  auto c= mss->ls();
 
   F__LOOP(it, c) {
-
-    auto &m = *it;
-    auto pos= m->pos();
-    auto y = pos.y + dt * m->vel.y;
-    m->setPos(pos.x, y);
+    auto e = *it;
+    auto mv= CC_GEC(f::CMove,e,"f/CMove");
+    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto pos= s->pos();
+    auto y = pos.y + dt * mv->speed;
+    s->setPos(pos.x, y);
   }
 }
 
 
 
-NS_END(invaders)
+NS_END
 
 
 

@@ -8,25 +8,26 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Aliens : public a::System {
+struct CC_DLL Aliens : public ecs::System {
 
   MDECL_SYS_TPID( "n/Aliens")
-  MDECL_SYS_PRIORITY(a::AI)
+  MDECL_SYS_PRIORITY(ecs::AI)
   MDECL_SYS_UPDATE()
   MDECL_SYS_PREAMBLE()
 
-  void forwardOneAlien(f::ComObj*, float delta);
-  void shuffleOneAlien(f::ComObj*, int stepx);
+  void forwardOneAlien(ecs::Node*, float delta);
+  void shuffleOneAlien(ecs::Node*, int stepx);
 
   void processMovement(float dt);
   void processBombs( float dt);
@@ -34,22 +35,23 @@ struct CC_DLL Aliens : public a::System {
   void dropBomb(float x, float y);
   void checkBomb(AlienSquad* );
 
-  bool testDirX(f::ComObj* , int stepx);
+  bool testDirX(ecs::Node* , int stepx);
   void maybeShuffleAliens(AlienSquad* );
 
   bool doShuffle(AlienSquad* );
   bool doForward(AlienSquad* );
 
-  f::ComObj* findMinX(AlienSquad* );
-  f::ComObj* findMaxX(AlienSquad* );
+  ecs::Node* findMinX(AlienSquad* );
+  ecs::Node* findMaxX(AlienSquad* );
 
-  DECL_PTR(a::NodeList, baddies)
+  DECL_PTR(ecs::Node, _baddies)
 
-  Aliens(a::Engine *e)
+  Aliens(ecs::Engine *e)
   : System(e)
   {}
+
 };
 
 
-NS_END(invaders)
+NS_END
 

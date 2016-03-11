@@ -13,27 +13,27 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Game.h"
-#include "End.h"
+#include "Ende.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::onReplay() {
-  auto x= (f::GCX*)getSceneX()->emitCtx();
+void Ende::onReplay() {
+  auto x= (f::GCX*)getSceneX()->ejectCtx();
   cx::runEx(Game::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void ELayer::decorate() {
+void Ende::decoUI() {
 
   auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
   auto wb= cx::visBox();
 
   // text msg
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(wb.cx, wb.top * 0.75f);
+  qn->setScale(XCFG()->getScale() * 0.3);
+  qn->setPosition(wb.cx, wb.top * 0.75);
   qn->setColor(XCFG()->getColor("text"));
   addItem(qn);
 
@@ -47,11 +47,11 @@ void ELayer::decorate() {
   b1->setCallback(
       [=](c::Ref*) { this->onReplay(); });
 
-  menu->setPosition(wb.cx, wb.top * 0.5f);
+  menu->setPosition(wb.cx, wb.top * 0.5);
   addItem(menu);
 }
 
 
-NS_END(invaders)
+NS_END
 
 

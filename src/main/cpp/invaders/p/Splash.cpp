@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
 
   auto b1 = cx::reifyMenuBtn("play.png");
   auto f= []() { cx::prelude(); };
@@ -31,15 +31,15 @@ void Splash::decorate() {
 
   centerImage("game.bg");
 
-  addFrame( "title.png", c::Vec2(wb.cx, wb.top * 0.9f));
+  addFrame( "title.png", c::Vec2(wb.cx, wb.top * 0.9));
 
   b1->setCallback(
       [=](c::Ref*) { cx::runEx(MMenu::reify(x)); });
-
-  menu->setPosition( wb.cx, wb.top * 0.1f);
-
+  b1->setPosition( wb.cx, wb.top * 0.1);
   addItem(menu);
 }
 
-NS_END(invaders)
+
+NS_END
+
 

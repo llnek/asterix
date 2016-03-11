@@ -8,37 +8,41 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Resolve : public a::System {
-
-  MDECL_SYS_PRIORITY( a::Resolve)
-  MDECL_SYS_TPID( "s/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+class CC_DLL Resolve : public ecs::System {
 
   void checkAliens();
   void checkShip();
   void checkMissiles();
   void checkBombs();
+  void process(float);
 
-  DECL_PTR(a::NodeList, aliens)
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _aliens)
+  DECL_PTR(ecs::Node, _player)
 
-  Resolve(a::Engine *e)
+public:
+
+  MDECL_SYS_PRIORITY( ecs::Resolve)
+  MDECL_SYS_TPID( "s/Resolve")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Resolve(ecs::Engine *e)
   : System(e) {}
 
 };
 
 
-NS_END(invaders)
+NS_END
 
 

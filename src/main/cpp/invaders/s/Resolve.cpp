@@ -20,36 +20,44 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  aliens= engine->getNodeList(AlienMotionNode().typeId());
-  ship= engine->getNodeList(ShipMotionNode().typeId());
+  _aliens= _engine->getNodes("n/AlienMotion")[0];
+  _player= _engine->getNodes("n/ShipMotion")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Resolve::update(float dt) {
   if (MGMS()->isLive() ) {
-    checkMissiles();
-    checkBombs();
-    checkAliens();
-    checkShip();
+    process(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
+void Resolve::process(float dt) {
+  checkMissiles();
+  checkBombs();
+  checkAliens();
+  checkShip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
 void Resolve::checkMissiles() {
 
-  auto mss = MGMS()->getPool("missiles");
+  auto mss = MGMS()->getPool("Missiles");
   auto ht = cx::visRect().size.height;
-  auto c = mss->list();
+  auto c = mss->ls();
 
   F__LOOP(it, c) {
-    auto &m = *it;
-    if (m->status) {
-      if (m->pos().y >= ht ||
-          m->HP <= 0) {
-        m->deflate();
+    auto e = *it;
+    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    if (e->status()) {
+      if (s->pos().y >= ht ||
+          !h->alive()) {
+        e->deflate();
       }
     }
   }
@@ -59,17 +67,18 @@ void Resolve::checkMissiles() {
 //
 void Resolve::checkBombs() {
 
-  auto bbs = MGMS()->getPool("bombs");
-  auto c = bbs->list();
-  int bt = 0;
+  auto bbs = MGMS()->getPool("Bombs");
+  auto c = bbs->ls();
+  auto wb= cx::visBox();
 
   F__LOOP(it, c) {
-
-    auto &b = *it;
-    if (b->status) {
-      if (b->HP <= 0 ||
-          b->pos().y <= bt) {
-        b->deflate();
+    auto e = *it;
+    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    if (e->status()) {
+      if (!h->alive() ||
+          s->pos().y <= wb.bottom) {
+        e->deflate();
       }
     }
   }
@@ -78,19 +87,19 @@ void Resolve::checkBombs() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkAliens() {
-  auto sqad= CC_GNLF(AlienSquad, aliens, "aliens");
-  auto c= sqad->list();
+  auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
+  auto c= sqad->aliens->ls();
 
   F__LOOP(it, c) {
-
-    auto &en= *it;
-    if (en->status) {
-      if (en->HP <= 0) {
+    auto e= *it;
+    auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    if (e->status()) {
+      if (!h->alive()) {
         auto msg= j::json({
               {"score", en->score }
             });
         SENDMSGEX("/game/player/earnscore", &msg);
-        en->deflate();
+        e->deflate();
       }
     }
   }
@@ -99,15 +108,13 @@ void Resolve::checkAliens() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip() {
-  auto sp = CC_GNLF(Ship, ship, "ship");
-
-  if (sp->status &&
-      sp->HP <= 0) {
-    sp->deflate();
+  auto h = CC_GEC(f::CHealth, _player, "f/CHealth");
+  if (_player->status() && !h->alive()) {
+    _player->deflate();
     SENDMSG("/game/player/killed");
   }
 }
 
 
-NS_END(invaders)
+NS_END
 

@@ -42,7 +42,7 @@ class FS_DLL FPool {
 
 public:
 
-  const s_vec<Poolable*>& list() { return _objs; }
+  const s_vec<Poolable*>& ls() { return _objs; }
 
   Poolable* select(s::function<bool (Poolable*)>);
   void preset(s::function<Poolable* ()>, int);

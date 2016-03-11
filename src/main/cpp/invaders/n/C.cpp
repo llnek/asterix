@@ -17,35 +17,17 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
-Bomb::Bomb(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  auto gz= XCFG()->gameSize();
-  auto wz= cx::visRect();
-  vel.x=0;
-  vel.y= -50.0f * wz.size.height / gz.height;
-}
+  //auto gz= XCFG()->gameSize();
+  //auto wz= cx::visRect();
+  //vel.x=0;
+  //vel.y= -50.0f * wz.size.height / gz.height;
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Explosion::inflate(float x, float y) {
-
-  auto cache = c::AnimationCache::getInstance();
-  auto anim= cache->getAnimation("boom!");
-  if (ENP(anim)) {
-    anim = c::Animation::create();
-    anim->addSpriteFrame(cx::getSpriteFrame("boom_0.png"));
-    anim->addSpriteFrame(cx::getSpriteFrame("boom_1.png"));
-    anim->addSpriteFrame(cx::getSpriteFrame("boom_2.png"));
-    anim->addSpriteFrame(cx::getSpriteFrame("boom_3.png"));
-    anim->setRestoreOriginalFrame(true);
-    anim->setDelayPerUnit(frameTime);
-    cache->addAnimation(anim, "boom!");
-    anim= cache->getAnimation("boom!");
-  }
-
-  ComObj::inflate(x,y);
-
-  sprite->runAction(
+  auto anim= CC_ACAC()->getAnimation("boom!");
+  f::CDraw::inflate(x,y);
+  node->runAction(
     c::Sequence::createWithTwoActions(c::Animate::create(anim),
     c::CallFunc::create([=]() { this->deflate(); })));
 }
@@ -59,15 +41,12 @@ Looper::~Looper() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Missile::Missile(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  auto gz= XCFG()->gameSize();
-  auto wz= cx::visRect();
-  vel.x= 0;
-  vel.y= 150.0f * wz.size.height / gz.height;
-}
+  //auto gz= XCFG()->gameSize();
+  //auto wz= cx::visRect();
+  //vel.x= 0;
+  //vel.y= 150.0f * wz.size.height / gz.height;
 
 
-NS_END(invaders)
+NS_END
 
 

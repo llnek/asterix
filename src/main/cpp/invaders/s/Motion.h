@@ -8,35 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Motions : public a::System {
-
-  MDECL_SYS_PRIORITY( a::Motion)
-  MDECL_SYS_TPID( "n/Motions")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+class CC_DLL Motions : public ecs::System {
 
   void processAlienMotions(float dt);
   void processCannon( float dt);
 
-  DECL_PTR(a::NodeList, cannon)
-  DECL_PTR(a::NodeList, aliens)
+  DECL_PTR(ecs::Node, _cannon)
+  DECL_PTR(ecs::Node, _aliens)
 
-  Motions(a::Engine *e)
+public:
+
+  MDECL_SYS_PRIORITY( ecs::Motion)
+  MDECL_SYS_TPID( "n/Motions")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  Motions(ecs::Engine *e)
   : System(e) {}
 
 };
 
 
-NS_END(invaders)
+NS_END
 
 

@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decorate() {
+void MMenu::decoUI() {
 
   auto tile = CC_CSV(c::Float, "TILE");
   auto dfc= XCFG()->getColor("dft");
@@ -31,7 +31,7 @@ void MMenu::decorate() {
   centerImage("mmenus.bg");
 
   // title
-  auto lb= cx::reifyBmfLabel(wb.cx, wb.top * 0.9f, "JellyBelly", gets("mmenu"));
+  auto lb= cx::reifyBmfLabel(wb.cx, wb.top * 0.9, "JellyBelly", gets("mmenu"));
   lb->setColor(XCFG()->getColor("text"));
   lb->setScale(XCFG()->getScale());
   addItem(lb);
@@ -43,14 +43,13 @@ void MMenu::decorate() {
 
   b1->setCallback(
       [=](c::Ref*) { cx::runEx(Game::reify(x)); });
-
-  menu->setPosition(wb.cx, wb.cy);
+  b1->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit buttons
   auto b= cx::reifyMenuBtn("icon_back.png");
   auto q= cx::reifyMenuBtn("icon_quit.png");
-  auto sz= b->getContentSize();
+  auto sz= CC_CSIZE(b);
 
   q->setCallback([](c::Ref*) { cx::prelude();  });
   b->setCallback([=](c::Ref*) { ctx->back(); });
@@ -71,5 +70,5 @@ void MMenu::decorate() {
 }
 
 
-NS_END(invaders)
+NS_END
 

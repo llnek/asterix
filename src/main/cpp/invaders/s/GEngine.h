@@ -8,20 +8,20 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XPool.h"
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public ecs::Engine {
 
   const c::Size getRankInfo(int r, c::Dictionary*);
-  void fillSquad(f::XPool* );
+  void fillSquad(f::FPool* );
 
 public:
 
@@ -32,13 +32,13 @@ public:
   virtual void initEntities();
   virtual void initSystems();
 
-  a::Entity* reifyAliens();
-  a::Entity* reifyShip();
-  a::Entity* reifyArena();
+  ecs::Node* reifyAliens();
+  ecs::Node* reifyShip();
+  ecs::Node* reifyArena();
 
 };
 
 
-NS_END(invaders)
+NS_END
 
 

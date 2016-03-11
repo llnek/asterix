@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "core/XPool.h"
 #include "Splash.h"
 #include "Config.h"
 NS_BEGIN(invaders)
@@ -41,13 +40,22 @@ void Config::handleResolution(const c::Size& rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
+  auto anim= c::Animation::create();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
   fp= getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  anim->addSpriteFrame(cx::getSpriteFrame("boom_0.png"));
+  anim->addSpriteFrame(cx::getSpriteFrame("boom_1.png"));
+  anim->addSpriteFrame(cx::getSpriteFrame("boom_2.png"));
+  anim->addSpriteFrame(cx::getSpriteFrame("boom_3.png"));
+  anim->setRestoreOriginalFrame(true);
+  anim->setDelayPerUnit(0.1);
+  CC_ACAC()->addAnimation(anim, "boom!");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -79,6 +87,8 @@ void Config::initAssets() {
   addEffect("ship-missile", CC_STR("sfx/missile.mp3"));
   addEffect("bugs-march", CC_STR("sfx/march.mp3"));
   addEffect("xxx-explode", CC_STR("sfx/explode.mp3"));
+  addEffect("click", CC_STR("sfx/button-click.wav"));
+  addMusic("background", CC_STR("sfx/music.mp3"));
 
   addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
@@ -97,8 +107,8 @@ void Config::initAssets() {
 //
 void Config::initCsts() {
 
-  game_id = "d39bf198-518a-4de7-88a0-5e28c88571b0";
-  app_id = "invaders";
+  _game_id = "d39bf198-518a-4de7-88a0-5e28c88571b0";
+  _app_id = "invaders";
 
   addColor("text", CC_STR("#ffffff"));
   addColor("dft", CC_STR("#5e3178"));
@@ -114,6 +124,6 @@ void Config::initCsts() {
 
 }
 
-NS_END(invaders)
+NS_END
 
 

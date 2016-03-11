@@ -8,34 +8,32 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "2d/CCActionInterval.h"
-#include "core/ComObj.h"
-#include "core/XPool.h"
+#include "core/COMP.h"
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Alien : public f::ComObj {
+struct CC_DLL Alien : public f::CDraw {
 
-  Alien(not_null<c::Sprite*> s, int value, int rank)
-    : ComObj(s,1,value) {
-    this->rank=rank;
+  Alien(not_null<c::Node*> s)
+    : CDraw(s) {
   }
 
   MDECL_COMP_TPID("n/Alien")
-  DECL_IZ(rank)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL AlienSquad : public a::Component {
+struct CC_DLL AlienSquad : public ecs::Component {
 
-  const s_vec<f::ComObj*>& list() { return aliens->list(); }
+  const s_vec<f::Poolable*>& list() { return aliens->list(); }
 
-  AlienSquad(not_null<f::XPool*> aliens, int step) {
+  AlienSquad(not_null<f::FPool*> aliens, int step) {
     this->aliens=aliens;
     this->stepx=step;
   }
@@ -45,96 +43,83 @@ struct CC_DLL AlienSquad : public a::Component {
   MDECL_COMP_TPID("n/AlienSquad")
 
   //not owner of pool
-  DECL_PTR(f::XPool, aliens)
+  DECL_PTR(f::FPool, aliens)
   DECL_IZ(stepx)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Bomb : public f::ComObj {
+struct CC_DLL Bomb : public f::CDraw {
 
-  Bomb(not_null<c::Sprite*>);
-
+  Bomb(not_null<c::Node*> s)
+    : CDraw(s) {
+  }
   MDECL_COMP_TPID("n/Bomb")
 };
 
 //////////////////////////////////////////////////////////////////////////////
-struct CC_DLL Cannon : public a::Component {
+struct CC_DLL Cannon : public ecs::Component {
 
   MDECL_COMP_TPID( "n/Cannon")
-
   DECL_BT(hasAmmo)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Explosion : public f::ComObj {
+struct CC_DLL Explosion : public f::CDraw {
 
   virtual void inflate(float x, float y);
 
-  Explosion(not_null<c::Sprite*> s)
-    : ComObj(s) {
+  Explosion(not_null<c::Node*> s)
+    : CDraw(s) {
     frameTime=0.1f ;
   }
 
   MDECL_COMP_TPID("n/Explosion")
-
   DECL_FZ(frameTime)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Looper : public a::Component {
+struct CC_DLL Looper : public ecs::Component {
 
   MDECL_COMP_TPID("n/Looper")
-
   virtual ~Looper();
 
-  DECL_PTR(c::DelayTime,timer7)
-  DECL_PTR(c::DelayTime,timer0)
-  DECL_PTR(c::DelayTime,timer1)
+  DECL_PTR(c::DelayTime, timer7)
+  DECL_PTR(c::DelayTime, timer0)
+  DECL_PTR(c::DelayTime, timer1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Missile : public f::ComObj {
-
-  Missile(not_null<c::Sprite*>);
+struct CC_DLL Missile : public f::CDraw {
 
   MDECL_COMP_TPID( "n/Missile")
-
+  Missile(not_null<c::Node*> s)
+  : CDraw(s) {
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
+struct CC_DLL Ship : public f::CDraw {
 
-  MDECL_COMP_TPID("n/Gesture")
-
-  DECL_BF(right)
-  DECL_BF(left)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Ship : public f::ComObj {
-
-  Ship(not_null<c::Sprite*> s,
+  Ship(not_null<c::Node*> s,
       const sstr& s0, const sstr& s1)
-    : ComObj(s) {
+    : CDraw(s) {
     frame0=s0;
     frame1=s1;
   }
 
   MDECL_COMP_TPID("n/Ship")
-
   DECL_TD(sstr, frame0)
   DECL_TD(sstr, frame1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars  : public a::Component {
+struct CC_DLL GVars  : public ecs::Component {
 
   DECL_TD(c::Size, alienSize)
   DECL_TD(c::Size, shipSize)
@@ -144,6 +129,6 @@ struct CC_DLL GVars  : public a::Component {
 
 
 
-NS_END(invaders)
+NS_END
 
 

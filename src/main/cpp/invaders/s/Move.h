@@ -18,27 +18,31 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
-
-  MDECL_SYS_PRIORITY( a::Move)
-  MDECL_SYS_TPID("s/Move")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+struct CC_DLL Move : public ecs::System {
 
   void processShipMotions(float dt);
+  void process(float);
   void clamp(Ship* );
   void moveBombs(float dt);
   void moveMissiles(float dt);
 
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _player)
 
-  Move(a::Engine *e)
+public:
+
+  MDECL_SYS_PRIORITY( ecs::Move)
+  MDECL_SYS_TPID("s/Move")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+
+  Move(ecs::Engine *e)
   : System(e) {}
 
 };
 
 
-NS_END(invaders)
+NS_END
 
 
 
