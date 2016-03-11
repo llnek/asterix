@@ -22,7 +22,7 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  arena = engine->getEntities("n/BlockGrid")[0];
+  _arena = _engine->getNodes("n/BlockGrid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@ bool Resolve::update(float dt) {
 //
 void Resolve::process(float dt) {
 
-  auto sh = CC_GEC(ShapeShell, arena, "n/ShapeShell");
-  auto bs= CC_GEC(BlockGrid, arena, "n/BlockGrid");
-  auto mo = CC_GEC(Gesture, arena, "n/Gesture");
+  auto sh = CC_GEC(ShapeShell, _arena, "n/ShapeShell");
+  auto bs= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
+  auto mo = CC_GEC(Gesture, _arena, "n/Gesture");
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
@@ -76,14 +76,13 @@ void Resolve::process(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::fastDrop() {
-  auto dp = CC_GEC(Dropper, arena, "n/Dropper");
+  auto dp = CC_GEC(Dropper, _arena, "n/Dropper");
   auto cfg = MGMS()->getLCfg()->getValue();
   cx::undoTimer(dp->timer);
   // drop at fast-drop rate
   dp->dropSpeed= JS_FLOAT(cfg["speed"]);
   dp->dropRate = JS_FLOAT(cfg["drate"]);
   setDropper(MGML(), dp, dp->dropRate, dp->dropSpeed);
-
 }
 
 

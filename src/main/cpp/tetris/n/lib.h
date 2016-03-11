@@ -26,7 +26,7 @@ owner<Shape*> reifyShape(s_vec<FArrBrick>& ,
     float x, float y,
     const ShapeInfo&);
 
-int topLine(not_null<ecs::Entity*>);
+int topLine(not_null<ecs::Node*>);
 
 void clearOldBricks(s_vec<Brick*>&);
 void disposeShape(Shape*);
@@ -44,7 +44,7 @@ void initDropper(Dropper*);
 
 void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
 
-void lock(not_null<ecs::Entity*>, Shape*);
+void lock(not_null<ecs::Node*>, Shape*);
 
 bool testFilledRow(s_vec<FArrBrick>&, int r);
 
@@ -52,7 +52,7 @@ void flashFilled(s_vec<FArrBrick>&,
     FilledLines*,
     const s_vec<int>& lines);
 
-void pauseForClearance(not_null<ecs::Entity*>, bool b, float delay);
+void pauseForClearance(not_null<ecs::Node*>, bool b, float delay);
 
 bool moveDown(s_vec<FArrBrick>&, Shape*);
 

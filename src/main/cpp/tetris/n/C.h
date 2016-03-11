@@ -22,12 +22,12 @@ NS_BEGIN(tetris)
 // base class for different shape configurations
 struct CC_DLL BModel {
   virtual bool test(int rID, int row, int col) = 0;
-  int sq() { return dim * dim; }
-  int getDim() { return dim; }
+  int sq() { return _dim * _dim; }
+  int dim() { return _dim; }
   virtual int size() = 0;
   virtual ~BModel() {}
 protected:
-  DECL_IZ(dim)
+  DECL_IZ(_dim)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ struct CC_DLL Brick {
   DECL_TD(sstr, frame0)
 
   DECL_TD(c::Vec2, startPos)
-  DECL_PTR(c::Sprite,node)
+  DECL_PTR(c::Sprite, node)
   DECL_BF(colliable)
 
 };
@@ -135,7 +135,7 @@ struct CC_DLL BlockGrid  : public ecs::Component {
 // piece = O
 class CC_DLL BoxModel : public BModel {
 
-  s_arr<int, 2*2*4> layout {
+  s_arr<int, 2*2*4> _layout {
      1,1,
      1,1,
 
@@ -151,17 +151,17 @@ class CC_DLL BoxModel : public BModel {
 
 public:
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * sq() + row * dim + col] == 1;
+    return _layout[rID * sq() + row * _dim + col] == 1;
   }
   virtual int size() { return 4; }
-  BoxModel() { dim=2; }
+  BoxModel() { _dim=2; }
 };
 
 //////////////////////////////////////////////////////////////////////////
 // piece = L
 struct CC_DLL ElModel : public BModel {
 
-  s_arr<int, 3*3*4> layout {
+  s_arr<int, 3*3*4> _layout {
       0,1,0,
       0,1,0,
       0,1,1,
@@ -182,10 +182,10 @@ struct CC_DLL ElModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * sq() + row * dim + col] == 1;
+    return _layout[rID * sq() + row * _dim + col] == 1;
   }
   virtual int size() { return 4; }
-  ElModel() { dim=3; }
+  ElModel() { _dim=3; }
 
 };
 
@@ -193,7 +193,7 @@ public:
 // piece J
 struct CC_DLL ElxModel : public BModel {
 
-  s_arr<int, 3*3*4> layout {
+  s_arr<int, 3*3*4> _layout {
       0,1,0,
       0,1,0,
       1,1,0,
@@ -214,10 +214,10 @@ struct CC_DLL ElxModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * sq() + row * dim + col] == 1;
+    return _layout[rID * sq() + row * _dim + col] == 1;
   }
   virtual int size() { return 4; }
-  ElxModel() { dim=3; }
+  ElxModel() { _dim=3; }
 
 };
 
@@ -225,7 +225,7 @@ public:
 // piece I
 struct CC_DLL LineModel : public BModel {
 
-  s_arr<int, 4*4*4> layout {
+  s_arr<int, 4*4*4> _layout {
       0,0,0,0,
       1,1,1,1,
       0,0,0,0,
@@ -250,17 +250,17 @@ struct CC_DLL LineModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID*sq() + row * dim + col] == 1;
+    return _layout[rID*sq() + row * _dim + col] == 1;
   }
   virtual int size() { return 4; }
-  LineModel() { dim=4; }
+  LineModel() { _dim=4; }
 };
 
 //////////////////////////////////////////////////////////////////////////
 // piece T
 struct CC_DLL NubModel : public BModel {
 
-  s_arr<int, 3*3*4> layout {
+  s_arr<int, 3*3*4> _layout {
       0,0,0,
       0,1,0,
       1,1,1,
@@ -281,10 +281,10 @@ struct CC_DLL NubModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * sq() + dim * row + col] == 1 ;
+    return _layout[rID * sq() + _dim * row + col] == 1 ;
   }
   virtual int size() { return 4; }
-  NubModel() { dim=3; }
+  NubModel() { _dim=3; }
 
 };
 
@@ -292,7 +292,7 @@ public:
 // piece S
 struct CC_DLL StModel : public BModel {
 
-  s_arr<int,3*3*4> layout {
+  s_arr<int,3*3*4> _layout {
       0,1,0,
       0,1,1,
       0,0,1,
@@ -313,10 +313,10 @@ struct CC_DLL StModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * sq() + row * dim + col] == 1;
+    return _layout[rID * sq() + row * _dim + col] == 1;
   }
   virtual int size() { return 4; }
-  StModel() { dim=3; }
+  StModel() { _dim=3; }
 
 };
 
@@ -324,7 +324,7 @@ public:
 // piece Z
 struct CC_DLL StxModel : public BModel {
 
-  s_arr<int,3*3*4> layout {
+  s_arr<int,3*3*4> _layout {
       0,1,0,
       1,1,0,
       1,0,0,
@@ -345,10 +345,10 @@ struct CC_DLL StxModel : public BModel {
 public:
 
   virtual bool test(int rID, int row, int col) {
-    return layout[rID * sq() + dim * row + col] == 1;
+    return _layout[rID * sq() + _dim * row + col] == 1;
   }
   virtual int size() { return 4; }
-  StxModel() { dim=3; }
+  StxModel() { _dim=3; }
 
 };
 

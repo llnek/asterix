@@ -20,15 +20,15 @@ NS_BEGIN(tetris)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::preamble() {
-  arena = engine->getEntities("n/BlockGrid")[0];
+  _arena = _engine->getNodes("n/BlockGrid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Clear::update(float dt) {
-
+  auto rc=true;
   if (MGMS()->isLive()) {
-    auto ps= CC_GEC(Pauser, arena, "n/Pauser");
+    auto ps= CC_GEC(Pauser, _arena, "n/Pauser");
     // while we pause, clear the filled lines, disallow
     // other things => return false
     if (ps->pauseToClear) {
@@ -38,22 +38,16 @@ bool Clear::update(float dt) {
         clearFilled();
         ps->pauseToClear=false;
       }
-      return false;
+      rc= false;
     }
   }
-
-  return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Clear::process(float dt) {
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::clearFilled() {
-  auto flines = CC_GEC(FilledLines, arena, "n/FilledLines");
+  auto flines = CC_GEC(FilledLines, _arena, "n/FilledLines");
   auto score= flines->lines.size();
 
   F__LOOP(it, flines->lines) {
@@ -72,7 +66,7 @@ void Clear::clearFilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::clearOneRow( int r) {
-  auto bks= CC_GEC(BlockGrid, arena, "n/BlockGrid");
+  auto bks= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
   auto &row= bks->grid[r];
   auto last = row.size() - 1;
 
@@ -93,7 +87,7 @@ void Clear::resetOneRow( int r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::shiftDownLines() {
-  auto top= topLine(arena);
+  auto top= topLine(_arena);
   int f0,e0;
   // top down search
   f0= findFirstDirty();
@@ -123,7 +117,7 @@ void Clear::shiftDownLines() {
 //////////////////////////////////////////////////////////////////////////////
 //
 int Clear::findFirstDirty() {
-  auto t = topLine(arena);// - 1,
+  auto t = topLine(_arena);// - 1,
 
   for (auto r = t; r > 0; --r) {
     if (!isEmptyRow(r)) { return r; }
@@ -155,7 +149,7 @@ int Clear::findLastEmpty( int t) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Clear::isEmptyRow( int r) {
-  auto bs= CC_GEC(BlockGrid, arena, "n/BlockGrid");
+  auto bs= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
   auto &row= bs->grid[r];
   auto len= row.size() - 1;
 
@@ -171,7 +165,7 @@ bool Clear::isEmptyRow( int r) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Clear::copyLine( int from, int to) {
-  auto bs = CC_GEC(BlockGrid, arena, "n/BlockGrid");
+  auto bs = CC_GEC(BlockGrid, _arena, "n/BlockGrid");
   auto tile = CC_CSV(c::Float, "TILE");
   auto &g_f = bs->grid[from];
   auto &g_t = bs->grid[to];

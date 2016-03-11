@@ -21,8 +21,10 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Resolve : public ecs::System {
 
-  void fastDrop();
+  DECL_PTR(ecs::Node, _arena)
+
   void process(float);
+  void fastDrop();
 
 public:
 
@@ -34,8 +36,6 @@ public:
   Resolve(ecs::Engine *e)
   : System(e)
   {}
-
-  DECL_PTR(ecs::Entity, arena)
 
 };
 

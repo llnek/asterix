@@ -27,21 +27,21 @@ void HUDLayer::decoUI() {
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
-  score=0;
+  _score=0;
 
-  scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
-  scoreLabel->setAnchorPoint(cx::anchorTR());
-  scoreLabel->setScale(XCFG()->getScale());
-  scoreLabel->setPosition(
+  _scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
+  _scoreLabel->setAnchorPoint(cx::anchorTR());
+  _scoreLabel->setScale(XCFG()->getScale());
+  _scoreLabel->setPosition(
       wb.right - (tile * wz.size.width/gz.width),
       wb.top - (wz.size.height/gz.height * tile));
-  addItem(scoreLabel);
+  addItem(_scoreLabel);
 
-  status= cx::reifyBmfLabel("CoffeeBuzzed");
-  status->setScale( XCFG()->getScale() * 0.5 );
-  status->setPosition(wb.cx * 1.5, wb.cy);
-  CC_HIDE(status);
-  addItem(status);
+  _status= cx::reifyBmfLabel("CoffeeBuzzed");
+  _status->setScale( XCFG()->getScale() * 0.5 );
+  _status->setPosition(wb.cx * 1.5, wb.cy);
+  CC_HIDE(_status);
+  addItem(_status);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto hh = HHZ(CC_CSIZE(b));
@@ -57,21 +57,21 @@ void HUDLayer::decoUI() {
 //
 void HUDLayer::endGame() {
   drawStatusText(gets("gameover"));
-  CC_SHOW(status);
+  CC_SHOW(_status);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawStatusText(const sstr &msg) {
-  status->setString( msg);
+  _status->setString( msg);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString(s::to_string(score));
+  _score += n;
+  _scoreLabel->setString(s::to_string(_score));
 }
 
 

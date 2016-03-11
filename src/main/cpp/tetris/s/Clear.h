@@ -21,6 +21,8 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Clear : public ecs::System {
 
+  DECL_PTR(ecs::Node, _arena)
+
   void clearFilled();
   void clearOneRow( int);
   void resetOneRow( int);
@@ -30,7 +32,6 @@ class CC_DLL Clear : public ecs::System {
   int findLastEmpty( int);
   bool isEmptyRow( int);
   void copyLine( int, int);
-  void process(float);
 
 public:
 
@@ -43,8 +44,6 @@ public:
   Clear(ecs::Engine *e)
   : System(e)
   {}
-
-  DECL_PTR(ecs::Entity, arena)
 
 };
 

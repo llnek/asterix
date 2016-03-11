@@ -38,8 +38,8 @@ static void scanInput(Gesture *mo) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  arena = engine->getEntities("n/BlockGrid")[0];
-  initKeyOps(arena, CC_CSV(c::Integer, "THROTTLE+WAIT"));
+  _arena = _engine->getNodes("n/BlockGrid")[0];
+  initKeyOps(_arena, CC_CSV(c::Integer, "THROTTLE+WAIT"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,10 +47,10 @@ void Move::preamble() {
 bool Move::update(float dt) {
 
   if (MGMS()->isLive()) {
-    auto sh= CC_GEC(ShapeShell, arena, "n/ShapeShell");
-    auto dp= CC_GEC(Dropper, arena, "n/Dropper");
+    auto sh= CC_GEC(ShapeShell, _arena, "n/ShapeShell");
+    auto dp= CC_GEC(Dropper, _arena, "n/Dropper");
 
-    scanner();
+    _scanner();
 
     if (cx::timerDone(dp->timer) &&
         NNP(sh->shape)) {
@@ -66,10 +66,10 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::doFall() {
-  auto sh= CC_GEC(ShapeShell, arena, "n/ShapeShell");
-  auto bs= CC_GEC(BlockGrid, arena, "n/BlockGrid");
-  auto dp= CC_GEC(Dropper, arena, "n/Dropper");
-  auto pu= CC_GEC(Pauser, arena, "n/Pauser");
+  auto sh= CC_GEC(ShapeShell, _arena, "n/ShapeShell");
+  auto bs= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
+  auto dp= CC_GEC(Dropper, _arena, "n/Dropper");
+  auto pu= CC_GEC(Pauser, _arena, "n/Pauser");
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
@@ -77,7 +77,7 @@ void Move::doFall() {
       ! moveDown(emap, shape)) {
 
     // lock shape in place
-    lock(arena,shape);
+    lock(_arena, shape);
 
     /*
     //TODO: what is this???
@@ -101,14 +101,13 @@ void Move::doFall() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::initKeyOps(ecs::Entity *node, int w) {
+void Move::initKeyOps(ecs::Node *node, int w) {
 
   auto mo = CC_GEC(Gesture,node,"n/Gesture");
 
-  scanner = cx::throttle([=]() {
+  _scanner = cx::throttle([=]() {
       scanInput(mo);
       }, w);
-
 }
 
 

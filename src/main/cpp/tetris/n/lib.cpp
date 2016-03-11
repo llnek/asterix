@@ -70,7 +70,7 @@ static void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-static void postLock(not_null<ecs::Entity*> node,
+static void postLock(not_null<ecs::Node*> node,
     s_vec<FArrBrick> &emap) {
 
   auto flines = CC_GEC(FilledLines, node, "n/FilledLines");
@@ -111,7 +111,7 @@ owner<Shape*> previewShape(const ShapeInfo &info, float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-int topLine(not_null<ecs::Entity*> node) {
+int topLine(not_null<ecs::Node*> node) {
   auto bks= CC_GEC(BlockGrid, node, "n/BlockGrid");
   return (int) bks->grid.size();
 }
@@ -141,7 +141,7 @@ const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
     int rID, bool skipCollide) {
 
   auto tile = CC_CSV(c::Float, "TILE");
-  auto dim= model->getDim();
+  auto dim= model->dim();
   s_vec<c::Vec2> bs;
   float x,y;
 
@@ -232,7 +232,7 @@ void setDropper(not_null<c::Node*> par,
 
 //////////////////////////////////////////////////////////////////////////
 //
-void lock(not_null<ecs::Entity*> node, Shape *shape) {
+void lock(not_null<ecs::Node*> node, Shape *shape) {
   auto bs= CC_GEC(BlockGrid, node, "n/BlockGrid");
   auto &emap= bs->grid;
 
@@ -278,7 +278,7 @@ void flashFilled(s_vec<FArrBrick> &emap,
 
 //////////////////////////////////////////////////////////////////////////
 //
-void pauseForClearance(not_null<ecs::Entity*> node, bool b, float delay) {
+void pauseForClearance(not_null<ecs::Node*> node, bool b, float delay) {
   auto flines = CC_GEC(FilledLines, node, "n/FilledLines");
   auto pu= CC_GEC(Pauser, node, "n/Pauser");
 
@@ -363,7 +363,7 @@ bool rotateRight(s_vec<FArrBrick> &emap, Shape *shape) {
 
   CCLOG("shape.rot = %d , dim = %d , rot-right , nF = %d",
       shape->info.rot,
-      shape->info.model->getDim(), nF);
+      shape->info.model->dim(), nF);
 
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);
@@ -386,7 +386,7 @@ bool rotateLeft(s_vec<FArrBrick> &emap, Shape *shape) {
 
   CCLOG("shape.rot = %d , dim = %d , rot-left , nF = %d",
       shape->info.rot,
-      shape->info.model->getDim(), nF);
+      shape->info.model->dim(), nF);
 
   if (bs.size() > 0) {
     clearOldBricks(shape->bricks);

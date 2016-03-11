@@ -31,7 +31,8 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode();
+
   ent->checkin(mc_new(FilledLines));
   ent->checkin(mc_new(ShapeShell));
   ent->checkin(mc_new(BlockGrid));

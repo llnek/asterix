@@ -47,14 +47,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   const f::Box4 initBlockMap(BlockGrid*, const c::Size&);
   void doCtrl();
 
-  DECL_PTR(ecs::Entity, arena)
+  DECL_PTR(ecs::Node, _arena)
 
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::doCtrl() {
-  auto cpad= CC_GEC(CtrlPad, arena, "n/CtrlPad");
+  auto cpad= CC_GEC(CtrlPad, _arena, "n/CtrlPad");
   auto& hsps= cpad->hotspots;
   auto wb= cx::visBox();
   auto sp= cx::reifySprite("shadedDark09.png");
@@ -179,8 +179,8 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onGUI(const c::Vec2 &pos) {
-  auto motion= CC_GEC(Gesture, arena, "n/Gesture");
-  auto cpad= CC_GEC(CtrlPad, arena, "n/CtrlPad");
+  auto motion= CC_GEC(Gesture, _arena, "n/Gesture");
+  auto cpad= CC_GEC(CtrlPad, _arena, "n/CtrlPad");
   auto &hsps= cpad->hotspots;
 
   if (cx::pointInBox(hsps["rr"], pos)) {
@@ -208,10 +208,10 @@ void GLayer::onGUI(const c::Vec2 &pos) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  arena= engine->getEntities("n/BlockGrid")[0];
+  _arena= _engine->getNodes("n/BlockGrid")[0];
 
-  auto blocks= CC_GEC(BlockGrid, arena, "n/BlockGrid");
-  auto gbox= CC_GEC(GridBox, arena, "n/GridBox");
+  auto blocks= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
+  auto gbox= CC_GEC(GridBox, _arena, "n/GridBox");
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
   auto bz= cx::calcSize("gray.png");
   auto box= initBlockMap(blocks, bz);
@@ -234,7 +234,7 @@ void GLayer::onInited() {
 //
 void GLayer::decoUI() {
 
-  this->engine = mc_new(GEngine);
+  this->_engine = mc_new(GEngine);
 
   centerImage("game.bg");
 

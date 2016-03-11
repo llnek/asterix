@@ -21,10 +21,11 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Move : public ecs::System {
 
-  void initKeyOps(ecs::Entity*, int);
+  void initKeyOps(ecs::Node*, int);
   void doFall();
 
-  VOIDFN scanner;
+  DECL_PTR(ecs::Node, _arena)
+  VOIDFN _scanner;
 
 public:
 
@@ -36,8 +37,6 @@ public:
   Move(ecs::Engine *e)
   : System(e)
   {}
-
-  DECL_PTR(ecs::Entity, arena)
 
 };
 

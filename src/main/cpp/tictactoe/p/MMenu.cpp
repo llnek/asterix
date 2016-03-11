@@ -66,7 +66,7 @@ void MMenu::decoUI() {
 
   back->setCallback(
       [=](c::Ref*){
-      SCAST(MCX*, getCtx())->_back(); });
+      SCAST(MCX*, getCtx())->back(); });
 
   quit->setCallback(
       [=](c::Ref*){ cx::prelude(); });

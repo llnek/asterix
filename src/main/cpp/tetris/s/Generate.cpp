@@ -45,18 +45,18 @@ END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::preamble() {
-  arena = engine->getEntities("n/BlockGrid")[0];
-  nextShapeInfo= randNextInfo();
-  nextShape=CC_NIL;
+  _arena = _engine->getNodes("n/BlockGrid")[0];
+  _nextShapeInfo= randNextInfo();
+  _nextShape=CC_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Generate::update(float dt) {
-
+  auto rc=true;
   if (MGMS()->isLive()) {
-    auto sl = CC_GEC(ShapeShell, arena, "n/ShapeShell");
-    auto dp = CC_GEC(Dropper, arena, "n/Dropper");
+    auto sl = CC_GEC(ShapeShell, _arena, "n/ShapeShell");
+    auto dp = CC_GEC(Dropper, _arena, "n/Dropper");
     auto cfg= MGMS()->getLCfg()->getValue();
     auto sp = sl->shape;
 
@@ -70,23 +70,22 @@ bool Generate::update(float dt) {
         dp->dropRate= JS_FLOAT(cfg["nrate"]);
         initDropper(dp);
       } else {
-        return false;
+        rc= false;
       }
     }
   }
-
-  return true;
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 owner<Shape*> Generate::reifyNextShape() {
-  auto bks= CC_GEC(BlockGrid, arena, "n/BlockGrid");
-  auto gbox= CC_GEC(GridBox, arena, "n/GridBox");
+  auto bks= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
+  auto gbox= CC_GEC(GridBox, _arena, "n/GridBox");
   auto tile= CC_CSV(c::Float, "TILE");
   auto x = gbox->box.left + 5 * tile;
   auto y = gbox->box.top - tile;
-  auto shape= reifyShape(bks->grid, x,y, nextShapeInfo);
+  auto shape= reifyShape(bks->grid, x,y, _nextShapeInfo);
   if (ENP(shape)) {
     CCLOG("game over.  you lose.");
     bks->grid.clear();
@@ -99,23 +98,23 @@ owner<Shape*> Generate::reifyNextShape() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::previewNextShape() {
-  auto gbox= CC_GEC(GridBox, arena, "n/GridBox");
+  auto gbox= CC_GEC(GridBox, _arena, "n/GridBox");
   auto tile = CC_CSV(c::Float, "TILE");
   auto info = randNextInfo();
   auto wb = cx::visBox();
 
-  auto sz = (1 + info.model->getDim()) * tile;
-  auto x = wb.cx + (wb.right - wb.cx) * 0.5;
+  auto sz = (1 + info.model->dim()) * tile;
+  auto x = wb.cx + (wb.right-wb.cx) * 0.5;
   auto y = wb.top * 0.7;
 
   x -= HTV(sz);
   y += HTV(sz);
 
-  disposeShape(nextShape);
-  SNPTR(nextShape)
+  disposeShape(_nextShape);
+  SNPTR(_nextShape)
 
-  nextShape= previewShape(info, x, y);
-  nextShapeInfo= info;
+  _nextShape= previewShape(info, x, y);
+  _nextShapeInfo= info;
 }
 
 //////////////////////////////////////////////////////////////////////////////

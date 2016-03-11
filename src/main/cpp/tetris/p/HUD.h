@@ -17,15 +17,17 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
+class CC_DLL HUDLayer : public f::XLayer {
+
+  DECL_PTR(c::Label, _scoreLabel)
+  DECL_PTR(c::Label, _status)
+  DECL_IZ(_score)
+
+public:
 
   STATIC_REIFY_LAYER(HUDLayer)
   MDECL_GET_IID(3)
   MDECL_DECORATE()
-
-  DECL_PTR(c::Label, scoreLabel)
-  DECL_PTR(c::Label, status)
-  DECL_IZ(score)
 
   void drawStatusText(const sstr&);
   void updateScore(int );
