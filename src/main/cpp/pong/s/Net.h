@@ -8,10 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "core/Odin.h"
 #include "GEngine.h"
 
@@ -20,38 +21,37 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Net : public a::System {
+class CC_DLL Net : public ecs::System {
 
-  void syncPaddles(a::NodeList*, ws::OdinEvent*);
-  void syncOnePaddle(a::Node*, j::json);
+  void syncOnePaddle(ecs::Node*, j::json);
+  void syncPaddles(ws::OdinEvent*);
   void onceOnly();
   void onEvent(ws::OdinEvent*);
   void onnetw(ws::OdinEvent*);
   void onsess(ws::OdinEvent*);
   void syncScores(j::json);
   void process(ws::OdinEvent*);
-  void reposPaddles(a::NodeList*);
-  void reposEntities();
+  void reposPaddles();
+  void reposNodes();
 
 public:
 
-  MDECL_SYS_PRIORITY( a::NetPlay)
+  MDECL_SYS_PRIORITY( ecs::NetPlay)
   MDECL_SYS_TPID( "s/Net")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Net(a::Engine *e)
+  Net(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList,paddle)
-  DECL_PTR(a::NodeList,faux)
-  DECL_PTR(a::NodeList,ball)
-  DECL_PTR(a::NodeList,arena)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ball)
+  s_vec<ecs::Node*> _paddles;
 
 };
 
 
-NS_END(pong)
+NS_END
 
 

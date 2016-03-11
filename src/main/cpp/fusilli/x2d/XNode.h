@@ -25,7 +25,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SCTX {
-  DECL_TV(int, _count,1)
+  DECL_TV(int, count,1)
   virtual ~SCTX() {}
 };
 

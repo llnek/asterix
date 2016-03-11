@@ -21,7 +21,7 @@ NS_BEGIN(pong)
 //
 class CC_DLL Collide : public ecs::System {
 
-  void check(Paddle*, Ball*);
+    void check(ecs::Node*, ecs::Node*);
   void process(float);
 
 public:

@@ -97,7 +97,7 @@ void Config::initAssets() {
 void Config::handleResolution(const c::Size &rs) {
   auto z= gameSize();
   //for default font, we use 48pt
-  scale = (52.0 / 256) * (rs.width / z.width);
+  _scale = (52.0 / 256) * (rs.width / z.width);
 }
 
 //////////////////////////////////////////////////////////////////////////////

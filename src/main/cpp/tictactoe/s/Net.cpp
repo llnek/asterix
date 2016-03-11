@@ -49,7 +49,7 @@ void Net::initOnline() {
   });
 
   auto ctx= MGMS()->getCtx();
-  if (ctx->_count > 1) {
+  if (ctx->count > 1) {
     // a replay
     auto evt = new ws::OdinEvent(
         ws::MType::SESSION ,

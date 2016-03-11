@@ -98,7 +98,7 @@ void GEngine::mkOnePaddle(const Player &p) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto ent = this->reifyNode();
-  auto cur= parr[0].pnum;
+  auto cur= _parr[0].pnum;
   float lp=0;
   sstr res;
 
@@ -129,7 +129,7 @@ void GEngine::mkOnePaddle(const Player &p) {
   }
   else {
     ent->checkin(mc_new(f::CHuman));
-    ent->checkin(mc_new(Gesture));
+    ent->checkin(mc_new(f::CGesture));
   }
 
 }

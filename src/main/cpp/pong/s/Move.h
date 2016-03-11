@@ -11,42 +11,41 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public a::System {
+class CC_DLL Move : public ecs::System {
 
-  void simuMove(a::Node*, float);
-  void moveRobot(a::Node*,  float);
+  void simuMove(ecs::Node*, float);
+  void moveRobot(ecs::Node*,  float);
   void processBall( float);
-  void doit(a::Node*, float);
-  void notifyServer(a::Node*, int);
-  void clamp(c::Sprite*);
-
+  void doit(ecs::Node*, float);
+  void notifyServer(ecs::Node*, int);
+  void clamp(c::Node*);
+    void process(float);
+    
 public:
 
-  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_PRIORITY( ecs::Move)
   MDECL_SYS_TPID( "s/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  Move(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddle)
-  DECL_PTR(a::NodeList, faux)
-  DECL_PTR(a::NodeList, ball)
-  DECL_PTR(a::NodeList, arena)
-
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ball)
+  s_vec<ecs::Node*> _paddles;
 };
 
 
-NS_END(pong)
+NS_END
 
 
 

@@ -25,10 +25,10 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
   auto wb= cx::visBox();
   float tw2;
 
-  title->setString(p1.pid + " / " + p2.pid);
-  tw2= cx::getScaledWidth(title) * 0.5;
-  parr[2]= p2;
-  parr[1]= p1;
+  _title->setString(p1.pid + " / " + p2.pid);
+  tw2= cx::getScaledWidth(_title) * 0.5;
+  _parr[2]= p2;
+  _parr[1]= p1;
 
   _score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(_score1) * 0.5 - 10,
       wb.top - tile * 6 /2 - 2);
@@ -49,10 +49,10 @@ void HUDLayer::decoUI() {
   auto tile = CC_CSV(c::Float, "TILE");
   auto wb= cx::visBox();
 
-  title= cx::reifyBmfLabel("TinyBoxBB");
-  title->setScale(XCFG()->getScale() * 0.3);
-  title->setPosition(wb.cx, wb.top - tile * 6 /2 );
-  addItem(title);
+  _title= cx::reifyBmfLabel("TinyBoxBB");
+  _title->setScale(XCFG()->getScale() * 0.3);
+  _title->setPosition(wb.cx, wb.top - tile * 6 /2 );
+  addItem(_title);
 
   _score1= cx::reifyBmfLabel("OCR", "8");
   _score1->setScale(XCFG()->getScale() * 0.25);
@@ -89,8 +89,8 @@ int HUDLayer::isDone() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScores(j::json scs) {
-  auto &p2=parr[2];
-  auto &p1=parr[1];
+  auto &p2= _parr[2];
+  auto &p1= _parr[1];
   _scores[2] = JS_INT(scs[p2.color]);
   _scores[1] = JS_INT(scs[p1.color]);
   drawScores();
@@ -116,8 +116,8 @@ void HUDLayer::drawScores() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawResult(int winner) {
-  auto &p2=parr[2];
-  auto &p1=parr[1];
+  auto &p2= _parr[2];
+  auto &p1= _parr[1];
   sstr msg;
   sstr pn;
   if (winner == 2) { pn= p2.pname; }

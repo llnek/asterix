@@ -55,9 +55,9 @@ void Collide::check(ecs::Node *p, ecs::Node *ball) {
   auto pad= CC_GEC(Paddle, p, "n/Paddle");
   auto ba = CC_GEC(Ball, ball, "n/Ball");
   auto bm= CC_GEC(f::CMove, ball, "f/CMove");
-  auto hw2= cx::halfHW(ball->node);
+  auto hw2= cx::halfHW(ba->node);
   auto bb4 = cx::bbox4(pad->node);
-  auto pos = ball->pos();
+  auto pos = ba->pos();
   auto x= pos.x;
   auto y= pos.y;
 

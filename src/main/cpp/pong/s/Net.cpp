@@ -21,10 +21,9 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::preamble() {
-  paddle= engine->getNodeList(PaddleNode().typeId());
-  ball= engine->getNodeList(BallNode().typeId());
-  faux= engine->getNodeList(FauxPaddleNode().typeId());
-  arena= engine->getNodeList(ArenaNode().typeId());
+  _arena= _engine->getNodes("n/Players")[0];
+  _ball= _engine->getNodes("n/Ball")[0];
+  _engine->getNodes("n/Paddle", _paddles);
   if (MGMS()->isLive() &&
       MGMS()->isOnline()) {
     onceOnly();
@@ -40,8 +39,8 @@ bool Net::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onceOnly() {
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
   auto cfg= MGMS()->getLCfg()->getValue();
-  auto ss= CC_GNLF(GVars,arena,"slots");
   auto w= MGMS()->getEnclosureBox();
   auto p2= CC_CSS("P2_COLOR");
   auto p1= CC_CSS("P1_COLOR");
@@ -91,8 +90,8 @@ void Net::onceOnly() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onEvent(ws::OdinEvent *evt) {
-  CCLOG("process: => %s", evt->doco.dump(0).c_str());
-  switch (evt->type) {
+  CCLOG("process: => %s", evt->_doco.dump(2).c_str());
+  switch (evt->_type) {
     case ws::MType::NETWORK:
       onnetw(evt);
     break;
@@ -105,16 +104,16 @@ void Net::onEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onnetw(ws::OdinEvent *evt) {
-  auto ss= CC_GNLF(GVars,arena,"slots");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
   j::json msg;
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
       SENDMSG("/game/restart");
     break;
     case ws::EType::STOP:
       CCLOG("game will stop");
-      msg= evt->doco;
+      msg= evt->_doco;
       SENDMSGEX("/game/stop", &msg);
     break;
     case ws::EType::SYNC_ARENA:
@@ -128,11 +127,11 @@ void Net::onnetw(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::onsess(ws::OdinEvent *evt) {
-  auto ss= CC_GNLF(GVars,arena,"slots");
-  auto msg= evt->doco;
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  auto msg= evt->_doco;
   if (!msg.is_object()) { return; }
   auto pnum= JS_INT(msg["pnum"]);
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::POKE_MOVE:
       CCLOG("activate arena, start to rumble!");
       if (ss->pnum == pnum) {
@@ -152,7 +151,7 @@ void Net::onsess(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::syncScores(j::json scores) {
-  auto ps= CC_GNLF(Players,arena,"players");
+  auto ps= CC_GEC(Players, _arena,"n/Players");
   auto p2=ps->parr[2].color;
   auto p1=ps->parr[1].color;
   auto rc = j::json({
@@ -165,8 +164,8 @@ void Net::syncScores(j::json scores) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::process(ws::OdinEvent *evt) {
-  auto ps= CC_GNLF(Players,arena,"players");
-  auto source = evt->doco["source"];
+  auto ps= CC_GEC(Players, _arena,"n/Players");
+  auto source = evt->_doco["source"];
   auto ok= true;
 
   if (source["winner"].is_object()) {
@@ -188,31 +187,32 @@ void Net::process(ws::OdinEvent *evt) {
     // once we get a new score, we reposition the entities
     // and pause the game (no moves) until the server
     // tells us to begin a new point.
-    reposEntities();
+    reposNodes();
     ok=false;
     //ss->poked=false;
   }
 
   if (source["ball"].is_object()) {
-    auto ba= CC_GNLF(Ball,ball,"ball");
+      auto bm=CC_GEC(f::CMove,_ball,"f/CMove");
+    auto ba= CC_GEC(Ball, _ball,"n/Ball");
     auto c = source["ball"];
     CCLOG("server says: Ball got SYNC'ED !!!");
     ba->setPos(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
-    ba->vel.y= JS_FLOAT(c["vy"]);
-    ba->vel.x= JS_FLOAT(c["vx"]);
+    bm->vel.y= JS_FLOAT(c["vy"]);
+    bm->vel.x= JS_FLOAT(c["vx"]);
   }
 
-  syncPaddles(paddle, evt);
-  syncPaddles(faux, evt);
+  syncPaddles(evt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::reposPaddles(a::NodeList *nl) {
-  auto ss= CC_GNLF(GVars,arena,"slots");
-  for (auto node=nl->head; node; node=node->next) {
-    auto last= CC_GNF(Position,node,"lastpos");
-    auto p= CC_GNF(Paddle,node,"paddle");
+void Net::reposPaddles() {
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  F__LOOP(it, _paddles) {
+    auto e= *it;
+    auto last= CC_GEC(Position, e,"n/Position");
+    auto p= CC_GEC(Paddle, e,"n/Paddle");
     if (p->pnum == 2) {
       p->setPos(ss->p2p.x, ss->p2p.y);
       last->lastDir=0;
@@ -227,47 +227,48 @@ void Net::reposPaddles(a::NodeList *nl) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::reposEntities() {
-  auto ss= CC_GNLF(GVars,arena,"slots");
-  auto b= CC_GNLF(Ball,ball,"ball");
+void Net::reposNodes() {
+  auto m= CC_GEC(f::CMove, _ball,"f/CMove");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  auto b= CC_GEC(Ball, _ball,"n/Ball");
 
-  reposPaddles(paddle);
-  reposPaddles(faux);
+  reposPaddles();
 
   b->setPos(ss->bp.x, ss->bp.y);
-  b->vel.y=0;
-  b->vel.x=0;
+  m->vel.y=0;
+  m->vel.x=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::syncPaddles(a::NodeList *nl, ws::OdinEvent *evt) {
-  auto ps= CC_GNLF(Players,arena,"players");
-  auto source = evt->doco["source"];
+void Net::syncPaddles(ws::OdinEvent *evt) {
+  auto ps= CC_GEC(Players, _arena,"n/Players");
+  auto source = evt->_doco["source"];
   auto p2= ps->parr[2].color;
   auto p1= ps->parr[1].color;
-  for (auto node = nl->head; node; node=node->next) {
-    auto p= CC_GNF(Paddle,node,"paddle");
+  F__LOOP(it, _paddles) {
+    auto e= *it;
+    auto p= CC_GEC(Paddle, e,"n/Paddle");
 
     if (source[p2].is_object() &&
         p->pnum == 2) {
       CCLOG("server says: P2 got SYNC'ED !!!");
-      syncOnePaddle(node, source[p2]);
+      syncOnePaddle(e, source[p2]);
     }
 
     if (source[p1].is_object() &&
         p->pnum == 1) {
       CCLOG("server says: P1 got SYNC'ED !!!");
-      syncOnePaddle(node, source[p1]);
+      syncOnePaddle(e, source[p1]);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Net::syncOnePaddle(a::Node *node, j::json c) {
-  auto last= CC_GNF(Position,node,"lastpos");
-  auto p= CC_GNF(Paddle,node,"paddle");
+void Net::syncOnePaddle(ecs::Node *node, j::json c) {
+  auto last= CC_GEC(Position,node,"n/Position");
+  auto p= CC_GEC(Paddle,node,"n/Paddle");
   auto dir=0;
 
   p->setPos(JS_FLOAT(c["x"]), JS_FLOAT(c["y"]));
@@ -278,6 +279,6 @@ void Net::syncOnePaddle(a::Node *node, j::json c) {
 
 
 
-NS_END(pong)
+NS_END
 
 

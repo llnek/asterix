@@ -94,7 +94,7 @@ void GLayer::onMotion(const c::Vec2 &loc, bool isTouch) {
 
   F__LOOP(it, _paddles) {
     auto e= *it;
-    if (! e->has("n/Gesture")) {
+    if (! e->has("f/CGesture")) {
     continue; }
     auto p= CC_GEC(Paddle,e,"n/Paddle");
     auto pos= p->pos();
@@ -124,8 +124,8 @@ void GLayer::decoUI() {
   regoAtlas("lang-pics");
 
   auto ctx = (GCXX*) MGMS()->getCtx();
-  auto pnum= JS_INT(ctx->data["pnum"]);
-  auto ppids = ctx->data["ppids"];
+  auto pnum= JS_INT(ctx->_data["pnum"]);
+  auto ppids = ctx->_data["ppids"];
   sstr p2k;
   sstr p1k;
   sstr p2n;
@@ -153,7 +153,7 @@ void GLayer::decoUI() {
 
   deco(pnum, p1k, p1n, p2k, p2n);
 
-  CCLOG("seed =\n%s", ctx->data.dump(2).c_str());
+  CCLOG("seed =\n%s", ctx->_data.dump(2).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
 void GLayer::onInited() {
   _arena= _engine->getNodes("n/Players")[0];
   _ball= _engine->getNodes("n/Ball")[0];
-  _engine->getNodes("n/Paddle", paddles);
+  _engine->getNodes("n/Paddle", _paddles);
   //
   auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto world = MGMS()->getEnclosureBox();
@@ -212,7 +212,7 @@ void GLayer::onInited() {
   ss->p1p= c::Vec2(wb.cx, p1y);
   ss->p2p= c::Vec2(wb.cx, p2y);
 
-  auto ball=CC_GEC(Ball,ball, "n/Ball");
+  auto ball=CC_GEC(Ball, _ball, "n/Ball");
   ball->inflate(ss->bp.x, ss->bp.y);
 
   initPaddles(ss);

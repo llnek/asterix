@@ -20,9 +20,9 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  arena= engine->getEntities("n/Players")[0];
-  ball= engine->getEntities("n/Ball")[0];
-  engine->getEntities("n/Paddle", paddles);
+  _arena= _engine->getNodes("n/Players")[0];
+  _ball= _engine->getNodes("n/Ball")[0];
+  _engine->getNodes("n/Paddle", _paddles);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,9 +37,9 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto ps = CC_GEC(Players,arena,"n/Players");
+  auto ps = CC_GEC(Players, _arena,"n/Players");
 
-  F__LOOP(it,paddles) {
+  F__LOOP(it, _paddles) {
     auto e= *it;
     auto p = CC_GEC(Paddle,e,"n/Paddle");
     auto f = CC_GEC(Faux,e,"n/Faux");
@@ -63,13 +63,13 @@ void Move::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::simuMove(ecs::Entity *node, float dt) {
-  auto lastpos= CC_GNF(Position, node, "lastpos");
-  auto pad = CC_GNF(Paddle,node,"paddle");
+void Move::simuMove(ecs::Node *node, float dt) {
+  auto lastpos= CC_GEC(Position, node, "n/Position");
+  auto pad = CC_GEC(Paddle,node,"n/Paddle");
   auto cfg = MGMS()->getLCfg()->getValue();
   auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto world= MGMS()->getEnclosureBox();
-  auto hw2 = cx::halfHW(pad->sprite);
+  auto hw2 = cx::halfHW(pad->node);
   auto pos = pad->pos();
   f::MaybeFloat x;
   f::MaybeFloat y;
@@ -84,20 +84,21 @@ void Move::simuMove(ecs::Entity *node, float dt) {
 
   if (! x.isNone()) {
     pad->setPos(x.get(), pos.y);
-    clamp(pad->sprite);
+    clamp(pad->node);
   }
   if (! y.isNone()) {
     pad->setPos(pos.x, y.get());
-    clamp(pad->sprite);
+    clamp(pad->node);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 //TODO: better AI please
-void Move::moveRobot(a::Node *node, float dt) {
-  auto pad= CC_GNF(Paddle,node, "paddle");
-  auto ba= CC_GNLF(Ball,ball,"ball");
+void Move::moveRobot(ecs::Node *node, float dt) {
+  auto pad= CC_GEC(Paddle,node, "n/Paddle");
+  auto ba= CC_GEC(Ball, _ball,"n/Ball");
+    auto bm=CC_GEC(f::CMove, _ball, "f/CMove");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto pos = pad->pos();
@@ -106,47 +107,48 @@ void Move::moveRobot(a::Node *node, float dt) {
   f::MaybeFloat x;
 
   if (bp.x > pos.x) {
-    if (ba->vel.x > 0) {
+    if (bm->vel.x > 0) {
       x = f::MaybeFloat(pos.x + dt * speed);
     }
   } else {
-    if (ba->vel.x < 0) {
+    if (bm->vel.x < 0) {
       x = f::MaybeFloat(pos.x - dt * speed);
     }
   }
 
   if (! x.isNone()) {
     pad->setPos(x.get(),pos.y);
-    clamp(pad->sprite);
+    clamp(pad->node);
   }
 
   if (! y.isNone()) {
     pad->setPos(pos.x, y.get());
-    clamp(pad->sprite);
+    clamp(pad->node);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processBall(float dt) {
+  auto m= CC_GEC(f::CMove, _ball, "f/CMove");
+  auto b= CC_GEC(Ball, _ball, "n/Ball");
   auto world= MGMS()->getEnclosureBox();
-  auto b= CC_GNLF(Ball, ball, "ball");
-  c::Vec2 outVel;
   c::Vec2 outPos;
+  c::Vec2 outVel;
   auto rc= cx::traceEnclosure(
-      dt,world, cx::bbox4(b->sprite),
-      b->vel, outPos, outVel);
+      dt,world, cx::bbox4(b->node),
+      m->vel, outPos, outVel);
 
-  b->vel.x = outVel.x;
-  b->vel.y = outVel.y;
+  m->vel.x = outVel.x;
+  m->vel.y = outVel.y;
   b->setPos(outPos.x,outPos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::doit(a::Node *node, float dt) {
-  auto last= CC_GNF(Position, node, "lastpos");
-  auto p= CC_GNF(Paddle, node, "paddle");
+void Move::doit(ecs::Node *node, float dt) {
+  auto last= CC_GEC(Position, node, "n/Position");
+  auto p= CC_GEC(Paddle, node, "n/Paddle");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto s= JS_FLOAT(cfg["PADDLE+SPEED"]) * dt;
   auto ld = last->lastDir;
@@ -167,7 +169,7 @@ void Move::doit(a::Node *node, float dt) {
     p->setPos(x,y);
   }
 
-  clamp(p->sprite);
+  clamp(p->node);
 
   // below is really for wsock stuff
   if (! MGMS()->isOnline()) {
@@ -195,10 +197,10 @@ void Move::doit(a::Node *node, float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::notifyServer(a::Node *node, int dir) {
-  auto ps= CC_GNLF(Players,arena,"players");
-  auto ss= CC_GNLF(GVars,arena,"slots");
-  auto pad = CC_GNF(Paddle, node, "paddle");
+void Move::notifyServer(ecs::Node *node, int dir) {
+  auto ps= CC_GEC(Players, _arena,"n/Players");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  auto pad = CC_GEC(Paddle, node, "n/Paddle");
   auto p2= ps->parr[2].color;
   auto p1= ps->parr[1].color;
   auto cfg= MGMS()->getLCfg()->getValue();
@@ -224,7 +226,7 @@ void Move::notifyServer(a::Node *node, int dir) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::clamp(c::Sprite *sprite) {
+void Move::clamp(c::Node *sprite) {
   auto world = MGMS()->getEnclosureBox();
   auto hw2= cx::halfHW(sprite);
   auto bb4= cx::bbox4(sprite);

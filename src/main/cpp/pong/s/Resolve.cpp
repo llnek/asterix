@@ -20,10 +20,9 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  faux= engine->getNodeList(FauxPaddleNode().typeId());
-  arena = engine->getNodeList(ArenaNode().typeId());
-  paddle = engine->getNodeList(PaddleNode().typeId());
-  ball = engine->getNodeList(BallNode().typeId());
+  _arena = _engine->getNodes("n/Players")[0];
+  _ball = _engine->getNodes("n/Ball")[0];
+  _engine->getNodes("n/Paddle", _paddles);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -32,27 +31,26 @@ bool Resolve::update(float dt) {
 
   if (!MGMS()->isOnline() &&
       MGMS()->isLive()) {
-
-    int win= checkNodes(paddle);
-    if (win > 0) {
-      onWin(win);
-    }
-    else {
-      win= checkNodes(faux);
-      if (win > 0) {
-        onWin(win);
-      }
-    }
+    process(dt);
   }
-
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Resolve::checkNodes(a::NodeList *nl) {
-  for (auto node=nl->head; node; node=node->next) {
-    auto winner = check(node);
+void Resolve::process(float dt) {
+  int win= checkNodes();
+  if (win > 0) {
+    onWin(win);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+int Resolve::checkNodes() {
+  F__LOOP(it, _paddles) {
+    auto e= *it;
+    auto winner = check(e);
     if (winner > 0) {
       return winner;
     }
@@ -63,18 +61,19 @@ int Resolve::checkNodes(a::NodeList *nl) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::onWin(int winner) {
-  auto ps= CC_GNLF(Players,arena, "players");
-  auto ss= CC_GNLF(GVars,arena,"slots");
-  auto ba= CC_GNLF(Ball, ball, "ball");
+  auto ps= CC_GEC(Players, _arena, "n/Players");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  auto ba= CC_GEC(Ball, _ball, "n/Ball");
+  auto bm= CC_GEC(f::CMove, _ball, "f/CMove");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["BALL+SPEED"]);
 
   assert(winner > 0 && winner < ps->parr.size());
   CCLOG("winner ====== %d", winner);
 
-  ba->vel.x = speed * cx::randSign();
-  ba->vel.y = speed * cx::randSign();
-  ba->setPos( ss->bp.x, ss->bp.y);
+  bm->vel.x = speed * cx::randSign();
+  bm->vel.y = speed * cx::randSign();
+  ba->setPos(ss->bp.x, ss->bp.y);
 
   auto msg= j::json({
         {"score", 1},
@@ -87,22 +86,22 @@ void Resolve::onWin(int winner) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int Resolve::check(a::Node *node) {
-  auto pd= CC_GNF(Paddle, node, "paddle");
-  auto b= CC_GNLF(Ball, ball, "ball");
+int Resolve::check(ecs::Node *node) {
+  auto pd= CC_GEC(Paddle, node, "n/Paddle");
+  auto b= CC_GEC(Ball, _ball, "n/Ball");
   auto pc= pd->pnum;
   auto bp= b->pos();
 
   if (pc == 1) {
-    return bp.y < cx::getBottom(pd->sprite) ? 2 : 0;
+    return bp.y < cx::getBottom(pd->node) ? 2 : 0;
   }
 
   if (pc == 2) {
-    return bp.y > cx::getTop(pd->sprite) ? 1 : 0;
+    return bp.y > cx::getTop(pd->node) ? 1 : 0;
   }
 
 }
 
-NS_END(pong)
+NS_END
 
 

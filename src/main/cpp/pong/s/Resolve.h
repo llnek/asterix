@@ -8,40 +8,41 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public ecs::System {
 
-  int checkNodes(a::NodeList*);
+  int check(ecs::Node*);
+  int checkNodes();
   void onWin(int);
-  int check(a::Node*);
+  void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_PRIORITY( ecs::Resolve)
   MDECL_SYS_TPID( "s/Resolve")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  Resolve(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddle);
-  DECL_PTR(a::NodeList, ball);
-  DECL_PTR(a::NodeList, faux);
-  DECL_PTR(a::NodeList, arena);
+  DECL_PTR(ecs::Node, _arena);
+  DECL_PTR(ecs::Node, _ball);
+  s_vec<ecs::Node*> _paddles;
 
 };
 
 
-NS_END(pong)
+NS_END
 
 

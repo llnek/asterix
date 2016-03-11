@@ -22,7 +22,7 @@ NS_BEGIN(pong)
 //
 void Ende::onReplay() {
   auto x= (GCXX*) getSceneX()->ejectCtx();
-  ++x->_count;
+  ++x->count;
   cx::runEx( Game::reify(x));
 }
 

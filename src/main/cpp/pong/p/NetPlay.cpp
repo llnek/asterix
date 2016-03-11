@@ -74,7 +74,7 @@ void NetPlay::onCancel() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onPlayReply(ws::OdinEvent *evt) {
-  player= JS_INT( evt->_doco["pnum"]);
+  _player= JS_INT( evt->_doco["pnum"]);
   assert(_player > 0);
   CCLOG("player %d: ok", _player);
   showWaitOthers();

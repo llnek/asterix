@@ -23,7 +23,7 @@ NS_BEGIN(tttoe)
 //
 void Ende::onReplay() {
   auto x= (GCXX*)getSceneX()->ejectCtx();
-  ++x->_count;
+  ++x->count;
   cx::runEx(Game::reify(x));
 }
 
