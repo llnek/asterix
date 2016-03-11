@@ -23,16 +23,16 @@ NS_BEGIN(fusii)
 class CC_DLL XLives : public c::Node {
 protected:
 
-  DECL_TD(c::Size, lifeSize)
-  DECL_TD(c::Vec2, refPt)
-  DECL_TD(sstr, frameId)
+  DECL_TD(c::Size, _lifeSize)
+  DECL_TD(c::Vec2, _refPt)
+  DECL_TD(sstr, _frameId)
 
-  s_vec<c::Node*> icons;
+  s_vec<c::Node*> _icons;
 
-  DECL_IZ(totalLives)
-  DECL_IZ(curLives)
-  DECL_TV(int, dir, 1)
-  DECL_TV(float, scale, 1.0f)
+  DECL_IZ(_totalLives)
+  DECL_IZ(_curLives)
+  DECL_TV(int, _dir, 1)
+  DECL_TV(float, _scale, 1.0f)
 
 public:
 
@@ -40,8 +40,8 @@ public:
       float x, float y,
       float scale=1.0f, int dir= 1);
 
-  bool isDead() { return curLives < 0; }
-  int getLives() { return curLives; }
+  bool isDead() { return _curLives < 0; }
+  int getLives() { return _curLives; }
 
   void reduce(int cnt = 1);
   void reset();

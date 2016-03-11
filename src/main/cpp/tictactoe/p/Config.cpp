@@ -48,8 +48,8 @@ void Config::initCsts() {
   addColor("dft", CC_STR("#5e3178"));
   addColor("x", CC_STR("#f6b17f"));
 
-  game_id= "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
-  app_id = "tictactoe";
+  _game_id= "bd5f79bb-eb41-4ed5-bb44-2529dc27ed3c";
+  _app_id = "tictactoe";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ void Config::initAssets() {
 void Config::handleResolution(const c::Size &rs) {
   //for default font, we use 48pt
   auto gz= gameSize();
-  scale = 52.0f/256.0f * rs.width / gz.width;
+  _scale = 52.0f/256.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////

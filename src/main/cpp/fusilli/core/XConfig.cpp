@@ -58,15 +58,15 @@ XConfig* XConfig::self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::~XConfig() {
-  CC_DROP(frags)
-  CC_DROP(l10n)
+  CC_DROP(_frags)
+  CC_DROP(_l10n)
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XConfig::XConfig() {
-  frags = CC_DICT();
-  CC_KEEP(frags)
+  _frags = CC_DICT();
+  CC_KEEP(_frags)
 
   ATLASES= "atlases";
   LEVELS= "levels";
@@ -79,15 +79,15 @@ XConfig::XConfig() {
   CSTS= "csts";
   CFG= "cfg";
 
-  frags->setObject(CC_DICT(), ATLASES);
-  frags->setObject(CC_DICT(), TILES);
-  frags->setObject(CC_DICT(), CSTS);
-  frags->setObject(CC_DICT(), IMAGES);
-  frags->setObject(CC_DICT(), COLORS);
-  frags->setObject(CC_DICT(), FONTS);
-  frags->setObject(CC_DICT(), MUSIC);
-  frags->setObject(CC_DICT(), EFX);
-  frags->setObject(CC_DICT(), LEVELS);
+  _frags->setObject(CC_DICT(), ATLASES);
+  _frags->setObject(CC_DICT(), TILES);
+  _frags->setObject(CC_DICT(), CSTS);
+  _frags->setObject(CC_DICT(), IMAGES);
+  _frags->setObject(CC_DICT(), COLORS);
+  _frags->setObject(CC_DICT(), FONTS);
+  _frags->setObject(CC_DICT(), MUSIC);
+  _frags->setObject(CC_DICT(), EFX);
+  _frags->setObject(CC_DICT(), LEVELS);
 
   loadL10NStrings();
   addLevel("1");
@@ -114,7 +114,7 @@ void XConfig::loadL10NStrings() {
   }
 
   CC_KEEP(b)
-  l10n = b;
+  _l10n = b;
   CCLOG("loaded L10N strings");
 }
 
@@ -137,7 +137,7 @@ const sstr XConfig::getL10NStr(const sstr &key, const s_vec<sstr> &pms) {
 //
 const sstr XConfig::getL10NStr(const sstr &key) {
   sstr lang= c::Application::getInstance()->getCurrentLanguageCode();
-  auto d = dictVal<c::Dictionary>(l10n, lang);
+  auto d = dictVal<c::Dictionary>(_l10n, lang);
   auto obj=NNP(d) ?
     dictVal<c::String>(d, key) : nullptr;
 
@@ -183,33 +183,33 @@ void XConfig::setCsts() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::toggleAudio(bool b) {
-  audioState= b;
+  _audioState= b;
   if (! b) {
     setMusicVolume(0);
     setVolume(0);
   } else {
-    setMusicVolume(lastMusicVol);
-    setVolume(lastSfxVol);
+    setMusicVolume(_lastMusicVol);
+    setVolume(_lastSfxVol);
   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 bool XConfig::hasAudio() {
-  return audioState;
+  return _audioState;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::setMusicVolume(float v) {
-  lastMusicVol= getMusicVolume();
+  _lastMusicVol= getMusicVolume();
   den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::setVolume(float v) {
-  lastSfxVol = getVolume();
+  _lastSfxVol = getVolume();
   den::SimpleAudioEngine::getInstance()->setEffectsVolume(v);
 }
 
@@ -314,7 +314,7 @@ c::Dictionary* XConfig::addLevel(const sstr &level) {
 ///////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* XConfig::getFragment(const sstr &key) {
-  auto obj = frags->objectForKey(key);
+  auto obj = _frags->objectForKey(key);
   return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
 }
 

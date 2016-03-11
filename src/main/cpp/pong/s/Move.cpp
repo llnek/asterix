@@ -20,44 +20,50 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  faux= engine->getNodeList(FauxPaddleNode().typeId());
-  paddle= engine->getNodeList(PaddleNode().typeId());
-  ball= engine->getNodeList(BallNode().typeId());
-  arena= engine->getNodeList(ArenaNode().typeId());
-
+  arena= engine->getEntities("n/Players")[0];
+  ball= engine->getEntities("n/Ball")[0];
+  engine->getEntities("n/Paddle", paddles);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Move::update(float dt) {
   if (MGMS()->isLive()) {
-    auto ps = CC_GNLF(Players,arena,"players");
-
-    for (auto node= paddle->head; node; node=node->next) {
-      doit(node, dt);
-    }
-
-    for (auto node= faux->head; node; node=node->next) {
-      auto p = CC_GNF(Paddle,node,"paddle");
-      auto &y= ps->parr[p->pnum];
-      if (y.category == CC_CSV(c::Integer, "BOT")) {
-        moveRobot(node, dt);
-      }
-      else
-      if (y.category == CC_CSV(c::Integer, "NET")) {
-        simuMove(node, dt);
-      }
-    }
-
-    processBall(dt);
+    process(dt);
   }
-
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::simuMove(a::Node *node, float dt) {
+void Move::process(float dt) {
+  auto ps = CC_GEC(Players,arena,"n/Players");
+
+  F__LOOP(it,paddles) {
+    auto e= *it;
+    auto p = CC_GEC(Paddle,e,"n/Paddle");
+    auto f = CC_GEC(Faux,e,"n/Faux");
+    auto &y= ps->parr[p->pnum];
+
+    if (!f) {
+      doit(e,dt);
+    }
+    else
+    if (y.category == CC_CSV(c::Integer, "BOT")) {
+      moveRobot(e, dt);
+    }
+    else
+    if (y.category == CC_CSV(c::Integer, "NET")) {
+      simuMove(e, dt);
+    }
+  }
+
+  processBall(dt);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::simuMove(ecs::Entity *node, float dt) {
   auto lastpos= CC_GNF(Position, node, "lastpos");
   auto pad = CC_GNF(Paddle,node,"paddle");
   auto cfg = MGMS()->getLCfg()->getValue();
@@ -244,6 +250,6 @@ void Move::clamp(c::Sprite *sprite) {
 }
 
 
-NS_END(pong)
+NS_END
 
 

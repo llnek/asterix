@@ -37,8 +37,8 @@ public:
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(ecs::Entity, board)
-  DECL_PTR(ecs::Entity, arena)
+  DECL_PTR(ecs::Node, _board)
+  DECL_PTR(ecs::Node, _arena)
 
   Net(ecs::Engine *e)
   : System(e)

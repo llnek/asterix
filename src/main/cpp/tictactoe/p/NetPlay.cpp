@@ -53,14 +53,14 @@ void NetPlay::showWaitOthers() {
 //
 void NetPlay::onStart(ws::OdinEvent *evt) {
   auto obj= fmtGameData( f::GMode::NET);
-  auto io=odin;
+  auto io= _odin;
 
-  obj["ppids"] = evt->doco["source"]["ppids"];
-  obj["pnum"]= player; //j::json(player);
+  obj["ppids"] = evt->_doco["source"]["ppids"];
+  obj["pnum"]= _player; //j::json(player);
 
   io->cancelAll();
-  SNPTR(odin)
-  SCAST(NPCX*, getCtx())->yes(io,obj);
+  SNPTR( _odin)
+  SCAST(NPCX*, getCtx())->_yes(io,obj);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -75,15 +75,15 @@ void NetPlay::onCancel() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onPlayReply(ws::OdinEvent *evt) {
-  player= JS_INT( evt->doco["pnum"]);
-  CCLOG("player %d: ok", player);
+  _player= JS_INT( evt->_doco["pnum"]);
+  CCLOG("player %d: ok", _player);
   showWaitOthers();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::networkEvent(ws::OdinEvent *evt) {
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::PLAYER_JOINED:
       //CCLOG("another player joined room: ", evt.source.puid);
     break;
@@ -97,7 +97,7 @@ void NetPlay::networkEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::sessionEvent(ws::OdinEvent *evt) {
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
     break;
@@ -108,7 +108,7 @@ void NetPlay::sessionEvent(ws::OdinEvent *evt) {
 //
 void NetPlay::odinEvent(ws::OdinEvent *evt) {
   //CCLOG("odin event = %p", evt);
-  switch (evt->type) {
+  switch (evt->_type) {
     case ws::MType::NETWORK:
       networkEvent(evt);
     break;
@@ -127,13 +127,13 @@ void NetPlay::onLogin() {
   auto pwd = p->getString();
 
   if (uid.length() > 0 && pwd.length() > 0) {
-    odin= ws::reifyPlayRequest(
+    _odin= ws::reifyPlayRequest(
         XCFG()->getGameId(),
         uid, pwd);
-    odin->listen([=](ws::OdinEvent *e) {
+    _odin->listen([=](ws::OdinEvent *e) {
         this->odinEvent(e);
         });
-    ws::connect(odin, XCFG()->getWSUrl());
+    ws::connect(_odin, XCFG()->getWSUrl());
   }
 }
 
@@ -196,8 +196,8 @@ void NetPlay::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 NetPlay::~NetPlay() {
-  ws::disconnect(odin);
-  delete odin;
+  ws::disconnect(_odin);
+  mc_del_ptr(_odin);
 }
 
 

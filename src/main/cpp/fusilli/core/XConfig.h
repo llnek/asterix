@@ -39,13 +39,13 @@ protected:
   void addCst(const sstr& , c::Ref*);
   void addColor(const sstr& , c::Ref*);
 
-  DECL_PTR(c::Dictionary ,frags)
-  DECL_PTR(c::Dictionary ,l10n)
+  DECL_PTR(c::Dictionary, _frags)
+  DECL_PTR(c::Dictionary, _l10n)
 
-  DECL_TV(float, lastMusicVol,0.5f)
-  DECL_TV(float, lastSfxVol, 0.5f)
-  DECL_TV(float, scale, 1.0f)
-  DECL_BT(audioState)
+  DECL_TV(float, _lastMusicVol,0.5f)
+  DECL_TV(float, _lastSfxVol, 0.5f)
+  DECL_TV(float, _scale, 1.0f)
+  DECL_BT(_audioState)
 
   void loadL10NStrings();
   void setCsts();
@@ -64,7 +64,7 @@ protected:
 public:
 
   virtual void handleResolution(const c::Size& ) {}
-  virtual float getScale() { return scale; }
+  virtual float getScale() { return _scale; }
   virtual void runOnce() {}
 
   virtual ResolutionPolicy policy() = 0;
@@ -79,11 +79,11 @@ public:
   virtual bool isPortrait() { return true; }
 
   void setRoomId(const sstr &s) {
-    room_id=s;
+    _room_id=s;
   }
 
-  const sstr getGameId() { return game_id; }
-  const sstr getRoomId() { return room_id; }
+  const sstr getGameId() { return _game_id; }
+  const sstr getRoomId() { return _room_id; }
 
   const filepath getAtlas(const sstr& );
   const filepath getFont(const sstr& );
@@ -124,9 +124,9 @@ public:
   XConfig();
   NOCPYASS(XConfig)
 
-  DECL_TD(sstr, room_id)
-  DECL_TD(sstr, app_id)
-  DECL_TD(sstr, game_id)
+  DECL_TD(sstr, _room_id)
+  DECL_TD(sstr, _app_id)
+  DECL_TD(sstr, _game_id)
 
   static XConfig* self();
   static void bind(not_null<XConfig*>);

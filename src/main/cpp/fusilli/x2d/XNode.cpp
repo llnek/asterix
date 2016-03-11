@@ -41,31 +41,31 @@ c::Menu* XNode::addAudioIcons( const s_arr<c::MenuItem*,2> &audios,
   audio->setAnchorPoint(anchor);
 
   // need null to end var-args
-  auto menu= c::Menu::create(audio, nullptr);
+  auto menu= c::Menu::create(audio, CC_NIL);
   menu->setPosition(pos);
-  self->addChild(menu);
+  _self->addChild(menu);
   return menu;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 void XNode:: setCtx(SCTX *x, bool clean) {
-  if (clean) { mc_del_ptr(context); }
-  context=x;
+  if (clean) { mc_del_ptr(_context); }
+  _context=x;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 SCTX* XNode::ejectCtx() {
-  auto x= context;
-  SNPTR(context)
+  auto x= _context;
+  SNPTR(_context)
   return x;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XNode::~XNode() {
-  mc_del_ptr(context);
+  mc_del_ptr(_context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,8 +85,8 @@ const sstr XNode::gets(const sstr &key) {
 c::SpriteBatchNode*
 XNode::regoAtlas( const sstr &name, int zx) {
   auto a= cx::reifySpriteBatch(name);
-  atlases.insert(S__PAIR(sstr, c::SpriteBatchNode*, name, a));
-  self->addChild(a, zx);
+  _atlases.insert(S__PAIR(sstr, c::SpriteBatchNode*, name, a));
+  _self->addChild(a, zx);
   return a;
 }
 
@@ -94,8 +94,8 @@ XNode::regoAtlas( const sstr &name, int zx) {
 // Get the atlas
 //
 c::SpriteBatchNode* XNode::getAtlas(const sstr &name) {
-  auto it= atlases.find(name);
-  if (it != atlases.end()) {
+  auto it= _atlases.find(name);
+  if (it != _atlases.end()) {
     return it->second;
   } else {
     return nullptr;
@@ -158,7 +158,7 @@ void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n) {
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
 void XNode::addItem( not_null<c::Node*> n, int z, int tag) {
-  self->addChild(n.get(), z, tag);
+  _self->addChild(n.get(), z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ void XNode::centerImage(const sstr &name, int z) {
   auto t= c::TextureCache::getInstance()->addImage(XCFG()->getImage(name));
   auto s= c::Sprite::createWithTexture(t);
   s->setPosition(cx::center());
-  self->addChild(s,z);
+  _self->addChild(s,z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ void XNode::removeAtlasAll(const sstr &atlas) {
 // Remove all children
 //
 void XNode::removeAll() {
-  self->removeAllChildren();
+  _self->removeAllChildren();
 }
 
 //////////////////////////////////////////////////////////////////////////////

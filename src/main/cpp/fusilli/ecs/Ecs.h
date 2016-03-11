@@ -24,7 +24,7 @@ NS_BEGIN(ecs)
 typedef s::string SystemType;
 typedef s::string COMType;
 typedef s::string NodeType;
-typedef int EntId;
+typedef int NodeId;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -37,9 +37,9 @@ public:
   virtual ~Component() {}
 };
 
-class Entity;
-typedef s::map<EntId,Component*> CompoCache ;
-typedef s::map<EntId,Entity*> EntityCache ;
+class Node;
+typedef s::map<NodeId,Component*> CompoCache ;
+typedef s::map<NodeId,Node*> NodeCache ;
 
 //////////////////////////////////////////////////////////////////////////
 //

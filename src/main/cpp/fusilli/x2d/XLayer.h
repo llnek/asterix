@@ -25,10 +25,10 @@ class CC_DLL XLayer : public XNode, public c::Layer {
 protected:
 
   //c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
-  c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ONE_BY_ONE;
+  c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ONE_BY_ONE;
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
   DECL_BF(_mouseEnabled)
-  s_arr<bool, 256> keys;
+  s_arr<bool, 256> _keys;
 
   virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
   virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
@@ -73,15 +73,6 @@ public:
 
   XLayer();
   NOCPYASS(XLayer)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL SingleLayer : public XLayer {
-  virtual void decoUI() {}
-  virtual ~SingleLayer() {}
-  SingleLayer() {}
-  NOCPYASS(SingleLayer)
 };
 
 

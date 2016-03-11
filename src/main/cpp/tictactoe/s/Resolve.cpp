@@ -20,8 +20,8 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  arena= engine->getEntities("n/CSquares")[0];
-  board= engine->getEntities("n/Grid")[0];
+  _arena= _engine->getNodes("n/CSquares")[0];
+  _board= _engine->getNodes("n/Grid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,8 +37,8 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::sync() {
-  auto css= CC_GEC(CSquares, arena, "n/CSquares");
-  auto grid= CC_GEC(Grid, board, "n/Grid");
+  auto css= CC_GEC(CSquares, _arena, "n/CSquares");
+  auto grid= CC_GEC(Grid, _board, "n/Grid");
 
   for (auto i=0; i < grid->vals.size(); ++i) {
     auto v= grid->vals[i];
@@ -55,8 +55,8 @@ void Resolve::sync() {
 //
 void Resolve::process(float dt) {
 
-  auto ps = CC_GEC(Players, board, "n/Players");
-  auto gd = CC_GEC(Grid, board, "n/Grid");
+  auto ps = CC_GEC(Players, _board, "n/Players");
+  auto gd = CC_GEC(Grid, _board, "n/Grid");
   auto winner= -1;
   ArrDim combo;
 
@@ -103,7 +103,7 @@ void Resolve::doWin(Player *winner, const ArrDim &combo) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::doDraw() {
-  auto ps= CC_GEC(Players, board, "n/Players");
+  auto ps= CC_GEC(Players, _board, "n/Players");
   Player dummy;
   doDone(&dummy);
 }
@@ -111,9 +111,9 @@ void Resolve::doDraw() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::doForfeit() {
-  auto css= CC_GEC(CSquares, arena, "n/CSquares");
-  auto ps= CC_GEC(Players, board, "n/Players");
-  auto ss= CC_GEC(GVars,arena,"n/GVars");
+  auto css= CC_GEC(CSquares, _arena, "n/CSquares");
+  auto ps= CC_GEC(Players, _board, "n/Players");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
   auto cur=ss->pnum;
   auto other= cur == 1 ? 2 : cur == 2 ? 1 : 0;
 
@@ -141,7 +141,7 @@ void Resolve::doForfeit() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::showWinningIcons(const ArrDim &combo) {
-  auto css= CC_GEC(CSquares, arena, "n/CSquares");
+  auto css= CC_GEC(CSquares, _arena, "n/CSquares");
 
   //flip the losing cells to gray
   for (int i=0; i < css->sqs.size(); ++i) {
@@ -159,7 +159,7 @@ void Resolve::showWinningIcons(const ArrDim &combo) {
 //
 void Resolve::doDone(Player *pobj) {
 
-  auto ss= CC_GEC(GVars,arena,"n/GVars");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
   auto msg= j::json({
     {"winner", pobj->pnum  }
   });

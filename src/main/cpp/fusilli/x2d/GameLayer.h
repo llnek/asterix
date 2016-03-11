@@ -30,7 +30,7 @@ protected:
   virtual void decoPost();
   virtual void decoPre();
 
-  DECL_PTR(ecs::Engine,engine)
+  DECL_PTR(ecs::Engine, _engine)
 
 public:
 

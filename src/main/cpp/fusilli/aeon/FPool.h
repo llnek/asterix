@@ -35,14 +35,14 @@ public:
 //
 class FS_DLL FPool {
 
-  s::function<Poolable* ()> ctor;
-  s_vec<Poolable*> objs;
-  DECL_BF(ownObjects)
-  DECL_IZ(batch)
+  s::function<Poolable* ()> _ctor;
+  s_vec<Poolable*> _objs;
+  DECL_BF(_ownObjects)
+  DECL_IZ(_batch)
 
 public:
 
-  const s_vec<Poolable*>& list() { return objs; }
+  const s_vec<Poolable*>& list() { return _objs; }
 
   Poolable* select(s::function<bool (Poolable*)>);
   void preset(s::function<Poolable* ()>, int);
@@ -51,7 +51,7 @@ public:
   Poolable* get(bool create=false);
   Poolable* getAt(int n);
 
-  int size() { return objs.size(); }
+  int size() { return _objs.size(); }
   int countActives();
 
   void foreach(s::function<void (Poolable*)>);
@@ -61,7 +61,7 @@ public:
   void checkin(not_null<Poolable*>);
   void reset();
 
-  FPool(bool owner) { ownObjects=owner; }
+  FPool(bool owner) { _ownObjects=owner; }
   virtual ~FPool() {  clearAll(); }
   NOCPYASS(FPool)
 };

@@ -20,15 +20,15 @@ NS_BEGIN(ecs)
 //
 class FS_DLL TypeRegistry {
 
-  s_map<COMType, CompoCache*> rego;
+  s_map<COMType, CompoCache*> _rego;
   NOCPYASS(TypeRegistry)
 
 public:
 
-  void unbind(not_null<Component*>, not_null<Entity*>);
-  void unbind(const COMType&, not_null<Entity*>);
+  void unbind(not_null<Component*>, not_null<Node*>);
+  void unbind(const COMType&, not_null<Node*>);
 
-  void bind(not_null<Component*>, not_null<Entity*>);
+  void bind(not_null<Component*>, not_null<Node*>);
 
   CompoCache* getCache(const COMType&);
 

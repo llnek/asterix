@@ -31,7 +31,7 @@ XLayer* XScene::getLayer(int tag) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool XScene::init() {
-  bool ok= usePhysics ? c::Scene::initWithPhysics() : c::Scene::init();
+  bool ok= _usePhysics ? c::Scene::initWithPhysics() : c::Scene::init();
   if (ok) {
     decoUI();
     return true;
@@ -53,15 +53,8 @@ XScene::XScene() {
 /////////////////////////////////////////////////////////////////////////////
 //
 XScene::XScene(bool physics) {
-  usePhysics=physics;
+  _usePhysics=physics;
   bind(this);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-SceneWithOne::SceneWithOne() {
-  layer=reifyRefType<SingleLayer>();
-  addChild(layer);
 }
 
 

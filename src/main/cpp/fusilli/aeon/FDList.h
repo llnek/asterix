@@ -19,16 +19,16 @@ NS_BEGIN(fusii)
 //
 template<typename T>
 struct FS_DLL FDListItem {
-  DECL_PTR(T , previous)
-  DECL_PTR(T , next)
+  DECL_PTR(T , _prev)
+  DECL_PTR(T , _next)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 struct FS_DLL FDListAnchor {
-  DECL_PTR(T , head)
-  DECL_PTR(T , tail)
+  DECL_PTR(T , _head)
+  DECL_PTR(T , _tail)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ struct FS_DLL FDListAnchor {
 template <typename T>
 struct FS_DLL FDList {
 
-  virtual bool isEmpty() { return head==nullptr; }
+  virtual bool isEmpty() { return _head==nullptr; }
   virtual void release(not_null<T*>);
   virtual void purge(not_null<T*>);
   virtual void add(not_null<T*> );
@@ -45,8 +45,8 @@ struct FS_DLL FDList {
   void clear() ;
   int size();
 
-  DECL_PTR(T , head)
-  DECL_PTR(T , tail)
+  DECL_PTR(T , _head)
+  DECL_PTR(T , _tail)
 
   virtual ~FDList();
   FDList() {}
@@ -57,26 +57,26 @@ struct FS_DLL FDList {
 //
 template <typename T>
 void FDList<T>::add(not_null<T*> e) {
-  if (ENP(head)) {
-    assert(tail == nullptr);
-    SNPTR(e->previous)
-    SNPTR(e->next)
-    head = tail = e;
+  if (ENP(_head)) {
+    assert(_tail == nullptr);
+    SNPTR(e->_prev)
+    SNPTR(e->_next)
+    _head = _tail = e;
   } else {
-    e->previous = tail;
-    SNPTR(e->next)
-    tail->next = e;
-    tail = e;
+    e->_prev = _tail;
+    SNPTR(e->_next)
+    _tail->_next = e;
+    _tail = e;
   }
 }
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 int FDList<T>::size() {
-  auto n= head;
+  auto n= _head;
   int c=0;
   while (NNP(n)) {
-    n = n->next;
+    n = n->_next;
     ++c;
   }
   return c;
@@ -86,16 +86,16 @@ int FDList<T>::size() {
 //
 template <typename T>
 void FDList<T>::release(not_null<T*> e) {
-  if (tail == e) { tail = tail->previous; }
-  if (head == e) { head = head->next; }
-  if (NNP(e->previous)) {
-    e->previous->next = e->next;
+  if (_tail == e) { _tail = _tail->_prev; }
+  if (_head == e) { _head = _head->_next; }
+  if (NNP(e->_prev)) {
+    e->_prev->_next = e->_next;
   }
-  if (NNP(e->next)) {
-    e->next->previous = e->previous;
+  if (NNP(e->_next)) {
+    e->_next->_prev = e->_prev;
   }
-  SNPTR(e->previous)
-  SNPTR(e->next)
+  SNPTR(e->_prev)
+  SNPTR(e->_next)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,13 +110,13 @@ void FDList<T>::purge(not_null<T*> e) {
 //
 template <typename T>
 void FDList<T>::clear() {
-  while (NNP(head)) {
-    auto e= head;
-    head = head->next;
+  while (NNP(_head)) {
+    auto e= _head;
+    _head = _head->_next;
     delete e;
   }
-  SNPTR(head)
-  SNPTR(tail)
+  SNPTR(_head)
+  SNPTR(_tail)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ void FDList<T>::clear() {
 template <typename T>
 const s_vec<T*> FDList<T>::list() {
   s_vec<T*> v;
-  for (auto p= head; NNP(p); p=p->next) {
+  for (auto p= _head; NNP(p); p=p->_next) {
     v.push_back(p);
   }
   return v;

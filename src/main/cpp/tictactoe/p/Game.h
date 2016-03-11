@@ -22,15 +22,13 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GCXX : public f::GCX {
-  GCXX(f::GMode m, ws::OdinIO *io, j::json msg)
-    : GCX(m,io) {
-    data=msg;
+  GCXX(f::GMode m, ws::OdinIO *io, j::json msg) : GCX(m,io) {
+    _data=msg;
   }
-  GCXX(f::GMode m, j::json msg)
-    : GCX(m) {
-    data=msg;
+  GCXX(f::GMode m, j::json msg) : GCX(m) {
+    _data=msg;
   }
-  DECL_TD(j::json, data)
+  DECL_TD(j::json, _data)
 };
 
 //////////////////////////////////////////////////////////////////////////////

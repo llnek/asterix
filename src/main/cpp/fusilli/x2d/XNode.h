@@ -25,7 +25,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SCTX {
-  DECL_TV(int, count,1)
+  DECL_TV(int, _count,1)
   virtual ~SCTX() {}
 };
 
@@ -38,11 +38,11 @@ protected:
     const c::Vec2 &anchor, const c::Vec2 &pos);
 
   virtual c::SpriteBatchNode* regoAtlas( const sstr &name, int zx = 0);
-  s_map<sstr, c::SpriteBatchNode*> atlases;
-  virtual void bind(c::Node* p) { self = p; }
+  virtual void bind(c::Node* p) { _self = p; }
 
-  DECL_PTR(c::Node, self)
-  DECL_PTR(SCTX, context)
+  s_map<sstr, c::SpriteBatchNode*> _atlases;
+  DECL_PTR(c::Node, _self)
+  DECL_PTR(SCTX, _context)
 
   XNode() {}
 
@@ -71,7 +71,7 @@ public:
   virtual void removeAll();
 
   virtual void setCtx(SCTX*, bool clean=true);
-  virtual SCTX* getCtx() { return context; }
+  virtual SCTX* getCtx() { return _context; }
   virtual SCTX* ejectCtx();
 
   virtual ~XNode();

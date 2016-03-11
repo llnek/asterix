@@ -80,23 +80,26 @@ void GEngine::mkBall() {
   }
 
   auto sp= cx::reifySprite("pongball.png");
-  auto b= mc_new2(Ball, sp, sd);
+  auto b= mc_new1(Ball, sp);
+  auto m= mc_new(f::CMove);
 
   MGML()->addAtlasItem("game-pics", sp);
-  b->vel.x=vx;
-  b->vel.y=vy;
+  m->vel.x=vx;
+  m->vel.y=vy;
+
+  ent->checkin(m);
   ent->checkin(b);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::mkOnePaddle( const Player &p) {
+void GEngine::mkOnePaddle(const Player &p) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto ent = this->reifyEntity();
   auto cur= parr[0].pnum;
-  float lp;
+  float lp=0;
   sstr res;
 
   if (p.pnum == 2) {
@@ -106,12 +109,15 @@ void GEngine::mkOnePaddle( const Player &p) {
   }
 
   auto sp = cx::reifySprite(res);
+  auto m= mc_new(f::CMove);
 
-  ent->checkin(mc_new3(Paddle, sp, p.pnum, sd));
-  ent->checkin(mc_new1(Player, p));
-  MGML()->addAtlasItem("game-pics", sp);
-
+  ent->checkin(mc_new2(Paddle, sp, p.pnum));
   ent->checkin(mc_new1(Position, lp));
+  ent->checkin(m);
+  ent->checkin(mc_new1(Player, p));
+
+  MGML()->addAtlasItem("game-pics", sp);
+  m->speed=sd;
 
   if (MGMS()->isOnline() && cur != p.pnum) {
     ent->checkin(mc_new(Faux));
@@ -122,6 +128,7 @@ void GEngine::mkOnePaddle( const Player &p) {
     ent->checkin(mc_new(Faux));
   }
   else {
+    ent->checkin(mc_new(f::CHuman));
     ent->checkin(mc_new(Gesture));
   }
 
@@ -129,6 +136,6 @@ void GEngine::mkOnePaddle( const Player &p) {
 
 
 
-NS_END(pong)
+NS_END
 
 

@@ -24,11 +24,11 @@ typedef std::function<void (ws::OdinIO*, j::json)> NPCX_Yes;
 //
 struct CC_DLL NPCX : public f::SCTX {
   NPCX(NPCX_Yes yes, VOIDFN no) {
-    this->yes=yes;
-    this->no=no;
+    this->_yes=yes;
+    this->_no=no;
   }
-  DECL_TD(NPCX_Yes, yes)
-  DECL_TD(VOIDFN, no)
+  DECL_TD(NPCX_Yes, _yes)
+  DECL_TD(VOIDFN, _no)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,8 +46,8 @@ class CC_DLL NetPlay : public f::XScene {
   void onCancel();
   void onLogin();
 
-  DECL_PTR(ws::OdinIO, odin)
-  DECL_IZ(player)
+  DECL_PTR(ws::OdinIO, _odin)
+  DECL_IZ(_player)
 
 public:
 

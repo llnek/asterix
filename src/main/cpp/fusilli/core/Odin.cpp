@@ -29,9 +29,9 @@ j::json evtToDoc(MType type, EType code, j::json body) {
 //
 j::json evtToDoc(not_null<OdinEvent*> evt) {
   return j::json({
-    {"type", (int) evt->type },
-    {"code", (int) evt->code },
-    {"source", evt->doco }
+    {"type", (int) evt->_type },
+    {"code", (int) evt->_code },
+    {"source", evt->_doco }
   });
 }
 
@@ -72,7 +72,7 @@ owner<OdinEvent*> mkJoinRequest(
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<OdinEvent*> getPlayRequest(not_null<OdinIO*> wss) {
-  return mkPlayRequest(wss->game, wss->user, wss->passwd);
+  return mkPlayRequest(wss->_game, wss->_user, wss->_passwd);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -108,9 +108,9 @@ OdinIO::~OdinIO() {
 owner<OdinIO*> reifyPlayRequest(const sstr &game,
     const sstr &user, const sstr &pwd) {
   auto w= mc_new( OdinIO);
-  w->game= game;
-  w->user= user;
-  w->passwd= pwd;
+  w->_game= game;
+  w->_user= user;
+  w->_passwd= pwd;
   return w;
 }
 
@@ -119,35 +119,35 @@ owner<OdinIO*> reifyPlayRequest(const sstr &game,
 owner<OdinIO*> reifyJoinRequest(const sstr &room,
     const sstr &user, const sstr &pwd) {
   auto w= mc_new( OdinIO);
-  w->room= room;
-  w->user= user;
-  w->passwd= pwd;
+  w->_room= room;
+  w->_user= user;
+  w->_passwd= pwd;
   return w;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Send this event through the socket
 void netSend(not_null<OdinIO*> wss, not_null<OdinEvent*> evt) {
-  if (wss->state == CType::S_CONNECTED) {
+  if (wss->_state == CType::S_CONNECTED) {
     auto d= evtToDoc(evt);
-    wss->socket->send(d.dump());
+    wss->_socket->send(d.dump());
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Send this msg through the socket
 void netSend(not_null<OdinIO*> wss, MType m, EType e, j::json body) {
-  if (wss->state == CType::S_CONNECTED) {
+  if (wss->_state == CType::S_CONNECTED) {
     auto d = evtToDoc(m,e,body);
-    wss->socket->send(d.dump());
+    wss->_socket->send(d.dump());
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Send this msg through the socket
 void netSendMsg(not_null<OdinIO*> wss, j::json msg) {
-  if (wss->state == CType::S_CONNECTED) {
-    wss->socket->send(msg.dump());
+  if (wss->_state == CType::S_CONNECTED) {
+    wss->_socket->send(msg.dump());
   }
 }
 
@@ -205,8 +205,8 @@ void OdinIO::cancel(MType t) {
 //////////////////////////////////////////////////////////////////////////////
 // Reset and clear everything
 void OdinIO::reset() {
-  state= CType::S_NOT_CONNECTED;
-  mc_del_ptr(socket);
+  _state= CType::S_NOT_CONNECTED;
+  mc_del_ptr(_socket);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ void close(OdinIO *wss) {
   if (ENP(wss)) { return; }
   try {
     wss->cancelAll();
-    wss->socket->close();
+    wss->_socket->close();
   }
   catch (...)
   {}
@@ -233,8 +233,8 @@ void disconnect(OdinIO *wss) {
 void OdinIO::onOpen(n::WebSocket *ws) {
   // send the play game request
   // connection success
-  state= CType::S_CONNECTED;
-  socket=ws;
+  _state= CType::S_CONNECTED;
+  _socket=ws;
   auto evt= getPlayRequest(this);
   c::RefPtr<OdinEvent> ref(evt);
   ws->send(evtToDoc(evt).dump());
@@ -246,13 +246,13 @@ void OdinIO::onMessage(n::WebSocket *ws, const n::WebSocket::Data &data) {
   auto evt= json_decode(data);
   c::RefPtr<OdinEvent>
   ref(evt);
-  switch (evt->type) {
+  switch (evt->_type) {
     case MType::NETWORK:
     case MType::SESSION:
       onEvent(evt);
     break;
     default:
-      CCLOG("unhandled server event: %d, code: %d", (int) evt->type, (int) evt->code);
+      CCLOG("unhandled server event: %d, code: %d", (int) evt->_type, (int) evt->_code);
   }
 }
 
@@ -271,7 +271,7 @@ void OdinIO::onError(n::WebSocket *ws, const n::WebSocket::ErrorCode &error) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void OdinIO::onEvent(OdinEvent *evt) {
-  switch (evt->type) {
+  switch (evt->_type) {
     case MType::NETWORK:
       if (NNP(cbNetwork)) { cbNetwork(evt); }
       if (NNP(cbAll)) { cbAll(evt); }
@@ -291,7 +291,7 @@ n::WebSocket* connect(not_null<OdinIO*> wss, const sstr &url) {
   if (!ws->init(*wss, url)) {
     mc_del_ptr(ws);
   } else {
-    wss->socket=ws;
+    wss->_socket=ws;
   }
   return ws;
 }

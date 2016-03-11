@@ -17,22 +17,22 @@ NS_BEGIN(odin)
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::OdinEvent(MType t, EType c, j::json body) : OdinEvent() {
-  this->doco = j::json( {
+  this->_doco = j::json( {
     { "type", (int)t },
     { "code", (int)c }
   });
-  this->type= t;
-  this->code= c;
+  this->_type= t;
+  this->_code= c;
   if (!body.is_null()) {
-    this->doco["source"] = body;
+    this->_doco["source"] = body;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::OdinEvent(MType t, EType c) : OdinEvent() {
-  type= t;
-  code= c;
+  _type= t;
+  _code= c;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,15 +41,15 @@ OdinEvent::OdinEvent(j::json full_msg) : OdinEvent() {
   if (full_msg.is_object()) {
     auto v= full_msg["type"];
     if (v.is_number()) {
-      type = SCAST(MType, JS_INT(v));
+      _type = SCAST(MType, JS_INT(v));
     }
     v= full_msg["code"];
     if (v.is_number()) {
-      code = SCAST(EType, JS_INT(v));
+      _code = SCAST(EType, JS_INT(v));
     }
     v= full_msg["source"];
     if (v.is_object()) {
-      doco =v;
+      _doco =v;
     }
   }
 }
@@ -57,8 +57,8 @@ OdinEvent::OdinEvent(j::json full_msg) : OdinEvent() {
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::OdinEvent() : c::EventCustom("odin") {
-  tstamp = c::utils::getTimeInMilliseconds();
-  doco= j::json::object_t();
+  _tstamp = c::utils::getTimeInMilliseconds();
+  _doco= j::json::object_t();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 GameLayer::~GameLayer() {
-  mc_del_ptr(engine)
+  mc_del_ptr(_engine)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@ GameLayer::GameLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::decoPost() {
-  if (NNP(engine)) {
-    engine->ignite();
+  if (NNP(_engine)) {
+    _engine->ignite();
   }
   scheduleUpdate();
 }
@@ -62,8 +62,8 @@ void GameLayer::surcease() {
 void GameLayer::update(float dt) {
   if (!cx::isTransitioning() &&
       MGMS()->isLive() &&
-      NNP(engine)) {
-    engine->update(dt);
+      NNP(_engine)) {
+    _engine->update(dt);
   }
 }
 

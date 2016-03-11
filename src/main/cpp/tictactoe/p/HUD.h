@@ -23,23 +23,23 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, countDown)
-  DECL_PTR(c::Label, result)
-  DECL_PTR(c::Label, status)
-  DECL_PTR(c::Label, title)
-  DECL_PTR(c::Label, score1)
-  DECL_PTR(c::Label, score2)
-  DECL_BF(countDownState)
-  DECL_IZ(countDownValue)
+  DECL_PTR(c::Label, _countDown)
+  DECL_PTR(c::Label, _result)
+  DECL_PTR(c::Label, _status)
+  DECL_PTR(c::Label, _title)
+  DECL_PTR(c::Label, _score1)
+  DECL_PTR(c::Label, _score2)
+  DECL_BF(_countDownState)
+  DECL_IZ(_countDownValue)
 
-  s_arr<int, 3> scores;
+  s_arr<int, 3> _scores;
 
-  DECL_TD(sstr, p2Long)
-  DECL_TD(sstr, p1Long)
-  DECL_TD(sstr, play2)
-  DECL_TD(sstr, play1)
-  DECL_TD(sstr, p2ID)
-  DECL_TD(sstr, p1ID)
+  DECL_TD(sstr, _p2Long)
+  DECL_TD(sstr, _p1Long)
+  DECL_TD(sstr, _play2)
+  DECL_TD(sstr, _play1)
+  DECL_TD(sstr, _p2ID)
+  DECL_TD(sstr, _p1ID)
 
   void regoPlayers(const sstr &color1,
                    const sstr &p1k, const sstr &p1n,

@@ -20,22 +20,22 @@ NS_BEGIN(ecs)
 //////////////////////////////////////////////////////////////////////////////
 //
 class Engine;
-class FS_DLL Entity : public f::Poolable {
+class FS_DLL Node : public f::Poolable {
 friend class Engine;
 
   //owns all the parts
-  s_map<COMType, Component*> parts;
+  s_map<COMType, Component*> _parts;
 
-  DECL_PTR(Engine,engine)
-  DECL_BF(dead)
-  DECL_TD(EntId, eid)
+  DECL_PTR(Engine, _engine)
+  DECL_BF(_dead)
+  DECL_TD(NodeId, _eid)
 
-  Entity(not_null<Engine*>, EntId);
-  void die() { dead=true; }
+  Node(not_null<Engine*>, NodeId);
+  void die() { _dead=true; }
 
-  NOCPYASS(Entity)
-  NODFT(Entity)
-  virtual ~Entity();
+  NOCPYASS(Node)
+  NODFT(Node)
+  virtual ~Node();
 
 public:
 
@@ -46,8 +46,8 @@ public:
   Component* get(const COMType& );
   bool has(const COMType&);
 
-  bool isOk() { return !dead; };
-  EntId getEid() { return eid; }
+  NodeId getEid() { return _eid; }
+  bool isOk() { return !_dead; };
 
   const s_vec<Component*> getAll();
 };

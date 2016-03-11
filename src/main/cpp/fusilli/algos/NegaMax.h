@@ -22,10 +22,10 @@ const int PINF = 1000000;
 //
 template<int Z>
 struct FS_DLL FFrame {
-  s_arr<int, Z*Z> state;
-  DECL_IZ(lastBestMove)
-  DECL_IZ(other)
-  DECL_IZ(cur)
+  s_arr<int, Z*Z> _state;
+  DECL_IZ(_lastBestMove)
+  DECL_IZ(_other)
+  DECL_IZ(_cur)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ int negaMax(not_null<GameBoard<Z>*> board,
   int bestValue = -PINF;
 
   if (depth == maxDepth) {
-    game->lastBestMove = openMoves[0];
+    game->_lastBestMove = openMoves[0];
   }
 
   F__LOOP(it, openMoves) {
@@ -85,7 +85,7 @@ int negaMax(not_null<GameBoard<Z>*> board,
       alpha = rc;
       bestMove = move;
       if (depth == maxDepth) {
-        game->lastBestMove = move;
+        game->_lastBestMove = move;
       }
       if (alpha >= beta) { break; }
     }
@@ -102,7 +102,7 @@ int evalNegaMax(not_null<GameBoard<Z>*> board) {
   auto ptr= board->takeFFrame();
   SMPtr<FFrame<Z>> f(ptr);
   negaMax<Z>(board, ptr, 10, 10, -PINF, PINF);
-  return f->lastBestMove;
+  return f->_lastBestMove;
 }
 
 

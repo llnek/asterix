@@ -44,19 +44,19 @@ void GEngine::initEntities() {
   auto ps= mc_new(Players);
   auto gvs= mc_new(GVars);
   auto gps= mapGridPos(1);
-  ecs::Entity *arena;
-  ecs::Entity *board;
-  ecs::Entity *p2;
-  ecs::Entity *p1;
+  ecs::Node *arena;
+  ecs::Node *board;
+  ecs::Node *p2;
+  ecs::Node *p1;
   auto cat1= human;
   auto cat2= bot;
   ArrCells seed;
   seed.fill(0);
 
-  arena= this->reifyEntity();
-  board= this->reifyEntity();
-  p2 = this->reifyEntity();
-  p1 = this->reifyEntity();
+  arena= this->reifyNode();
+  board= this->reifyNode();
+  p2 = this->reifyNode();
+  p1 = this->reifyNode();
 
   // config global vars
   gvs->pnum= mynum;

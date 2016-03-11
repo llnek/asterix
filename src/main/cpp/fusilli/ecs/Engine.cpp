@@ -32,21 +32,21 @@ Will_Get_Function_Pointer(myA, 1.00, 2.00, &A::Minus);
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::~Engine() {
-  F__LOOP(it, ents) { delete it->second; }
+  F__LOOP(it, _ents) { delete it->second; }
   doHouseKeeping();
-  delete types;
+  delete _types;
 //  printf("Engine dtor\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Engine::Engine() {
-  types= mc_new(TypeRegistry);
+  _types= mc_new(TypeRegistry);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
+void Engine::getNodes(const s_vec<COMType> &cs, s_vec<Node*> &rc) {
   s_vec<CompoCache*> ccs;
   bool missed=false;
   int pmin= INT_MAX;
@@ -55,7 +55,7 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
   //find shortest cache
   F__LOOP(it,cs) {
     auto cid= *it;
-    auto c= types->getCache(cid);
+    auto c= _types->getCache(cid);
     if (!c) {
       //CCLOG("cache missed when looking for intersection on %s", cid.c_str());
       missed=true;
@@ -92,8 +92,8 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
       // if found in all caches...
       if (sum == ccs.size()) {
         // all matched
-        auto it4= ents.find(eid);
-        if (it4 != ents.end()) {
+        auto it4= _ents.find(eid);
+        if (it4 != _ents.end()) {
           rc.push_back(it4->second);
         }
       }
@@ -103,20 +103,20 @@ void Engine::getEntities(const s_vec<COMType> &cs, s_vec<Entity*> &rc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities(const s_vec<COMType> &cs) {
-  s_vec<Entity*> rc;
-  getEntities(cs, rc);
+const s_vec<Node*> Engine::getNodes(const s_vec<COMType> &cs) {
+  s_vec<Node*> rc;
+  getNodes(cs, rc);
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::getEntities(const COMType &c, s_vec<Entity*> &rc) {
-  auto cc= types->getCache(c);
+void Engine::getNodes(const COMType &c, s_vec<Node*> &rc) {
+  auto cc= _types->getCache(c);
   if (NNP(cc)) F__POOP(it,cc) {
     auto z= it->first;
-    auto it2= ents.find(z);
-    if (it2 != ents.end()) {
+    auto it2= _ents.find(z);
+    if (it2 != _ents.end()) {
       rc.push_back(it2->second);
     }
   }
@@ -124,33 +124,33 @@ void Engine::getEntities(const COMType &c, s_vec<Entity*> &rc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities(const COMType &c) {
-  s_vec<Entity*> rc;
-  getEntities(c,rc);
+const s_vec<Node*> Engine::getNodes(const COMType &c) {
+  s_vec<Node*> rc;
+  getNodes(c,rc);
   return rc;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::getEntities(s_vec<Entity*> &rc) {
-  F__LOOP(it, ents) {
+void Engine::getNodes(s_vec<Node*> &rc) {
+  F__LOOP(it, _ents) {
     rc.push_back(it->second);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Entity*> Engine::getEntities() {
-  s_vec<Entity*> rc;
-  getEntities(rc);
+const s_vec<Node*> Engine::getNodes() {
+  s_vec<Node*> rc;
+  getNodes(rc);
   return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EntId Engine::generateEid() {
-  auto rc= ++lastId;
+NodeId Engine::generateEid() {
+  auto rc= ++_lastId;
   if (rc < INT_MAX) {} else {
     throw "too many entities";
   }
@@ -159,66 +159,66 @@ EntId Engine::generateEid() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity* Engine::reifyEntity() {
+Node* Engine::reifyNode() {
   auto eid= this->generateEid();
-  auto e= mc_new2(Entity,this, eid);
-  ents.insert(S__PAIR(EntId,Entity*,eid,e));
+  auto e= mc_new2(Node,this, eid);
+  _ents.insert(S__PAIR(NodeId,Node*,eid,e));
   return e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::purgeEntity(Entity* e) {
+void Engine::purgeNode(not_null<Node*> e) {
   // cannot purge twice!
   assert(e->isOk());
   e->die();
-  garbo.push_back(e);
+  _garbo.push_back(e);
 
-    auto it=ents.find(e->getEid());
-    if (it != ents.end()) {
-        ents.erase(it);
-    }
+  auto it= _ents.find(e->getEid());
+  if (it != _ents.end()) {
+    _ents.erase(it);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Engine::purgeEntities() {
-  F__LOOP(it,ents) {
+void Engine::purgeNodes() {
+  F__LOOP(it, _ents) {
     delete it->second;
   }
-  ents.clear();
+  _ents.clear();
   doHouseKeeping();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::regoSystem(not_null<System*> s) {
-  systemList.add(s);
+  _systemList.add(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystem(not_null<System*> s ) {
-  systemList.purge(s);
+  _systemList.purge(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::purgeSystems() {
-  systemList.clear();
+  _systemList.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::update(float time) {
-  updating = true;
-  for (auto s= systemList.head; NNP(s); s= s->next) {
+  _updating = true;
+  for (auto s= _systemList._head; NNP(s); s= s->_next) {
     if (s->isActive()) {
       if (! s->update(time)) { break; }
     }
   }
   doHouseKeeping();
-  updating = false;
+  _updating = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ void Engine::update(float time) {
 void Engine::ignite() {
   initEntities();
   initSystems();
-  for (auto s= systemList.head; NNP(s); s=s->next) {
+  for (auto s= _systemList._head; NNP(s); s=s->_next) {
     s->preamble();
   }
 }
@@ -234,10 +234,10 @@ void Engine::ignite() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Engine::doHouseKeeping() {
-  F__LOOP(it, garbo) {
+  F__LOOP(it, _garbo) {
     delete *it;
   }
-  garbo.clear();
+  _garbo.clear();
 }
 
 

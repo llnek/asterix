@@ -31,9 +31,9 @@ public:
   MDECL_SYS_UPDATE()
 
   DECL_PTR(c::DelayTime, botTimer)
-  DECL_PTR(ecs::Entity, robot)
-  DECL_PTR(ecs::Entity, board)
-  DECL_PTR(ecs::Entity, arena)
+  DECL_PTR(ecs::Node, robot)
+  DECL_PTR(ecs::Node, board)
+  DECL_PTR(ecs::Node, arena)
 
   Logic(ecs::Engine *e)
   : System(e)

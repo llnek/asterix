@@ -35,8 +35,8 @@ class Engine;
 class FS_DLL System : public f::FDListItem<System> {
 protected:
 
-  DECL_PTR(Engine ,engine)
-  DECL_BT(active)
+  DECL_PTR(Engine, _engine)
+  DECL_BT(_active)
 
 public:
 
@@ -45,16 +45,16 @@ public:
   virtual void preamble()= 0;
   virtual int priority() = 0;
 
-  Engine* getEngine() { return engine; }
-  bool isActive() { return active; }
+  Engine* getEngine() { return _engine; }
+  bool isActive() { return _active; }
   bool isa(const SystemType&  t) {
     return typeId() == t;
   }
 
-  void restart() { active=true; }
-  void suspend() { active=false; }
+  void restart() { _active=true; }
+  void suspend() { _active=false; }
 
-  System(not_null<Engine*> e) { engine= e; }
+  System(not_null<Engine*> e) { _engine= e; }
   virtual ~System() {}
   NODFT(System)
   NOCPYASS(System)
@@ -72,8 +72,8 @@ struct FS_DLL SystemList  : public f::FDList<System> {
   NOCPYASS(SystemList)
 };
 
-NS_END
 
+NS_END
 #include "Engine.h"
 
 

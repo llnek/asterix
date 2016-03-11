@@ -21,7 +21,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(usePhysics)
+  DECL_BF(_usePhysics)
   NOCPYASS(XScene)
 public:
 
@@ -35,21 +35,6 @@ public:
   XScene(bool physics);
   XScene();
   virtual ~XScene();
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL SceneWithOne : public XScene {
-protected:
-
-  DECL_PTR(SingleLayer, layer)
-
-public:
-
-  virtual ~SceneWithOne() {}
-  SceneWithOne();
-  NOCPYASS(SceneWithOne)
-
 };
 
 

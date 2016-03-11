@@ -33,9 +33,9 @@ bool Net::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Net::preamble() {
-  arena = engine->getEntities("n/CSquares")[0];
-  board = engine->getEntities("n/Grid")[0];
-  auto ss= CC_GEC(GVars, arena, "n/GVars");
+  _arena = _engine->getNodes("n/CSquares")[0];
+  _board = _engine->getNodes("n/Grid")[0];
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   ss->pnum= 0; // no one is current yet
   initOnline();
 }
@@ -49,7 +49,7 @@ void Net::initOnline() {
   });
 
   auto ctx= MGMS()->getCtx();
-  if (ctx->count > 1) {
+  if (ctx->_count > 1) {
     // a replay
     auto evt = new ws::OdinEvent(
         ws::MType::SESSION ,
@@ -74,7 +74,7 @@ void Net::initOnline() {
 //
 void Net::sync() {
 
-  auto ss= CC_GEC(GVars,arena,"n/GVars");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
   auto active = MGMS()->isLive();
   int pnum;
 
@@ -96,10 +96,10 @@ void Net::sync() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::process() {
-  auto sel = CC_GEC(CellPos, board, "n/CellPos");
-  auto ps = CC_GEC(Players, board, "n/Players");
-  auto grid= CC_GEC(Grid, board, "n/Grid");
-  auto ss= CC_GEC(GVars,arena, "n/GVars");
+  auto sel = CC_GEC(CellPos, _board, "n/CellPos");
+  auto ps = CC_GEC(Players, _board, "n/Players");
+  auto grid= CC_GEC(Grid, _board, "n/Grid");
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto pos = sel->cell;
   auto cur = ss->pnum;
 
@@ -141,7 +141,7 @@ void Net::process() {
 //
 void Net::onNet(ws::OdinEvent *evt) {
 
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
       SENDMSG("/net/restart");
@@ -160,10 +160,10 @@ void Net::onNet(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::onSess(ws::OdinEvent *evt) {
-  auto ps= CC_GEC(Players, board, "n/Players");
-  auto grid= CC_GEC(Grid, board, "n/Grid");
-  auto ss= CC_GEC(GVars,arena,"n/GVars");
-  auto src= evt->doco["source"];
+  auto ps= CC_GEC(Players, _board, "n/Players");
+  auto grid= CC_GEC(Grid, _board, "n/Grid");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  auto src= evt->_doco["source"];
   auto pnum= JS_INT(src["pnum"]);
   auto cmd= src["cmd"];
   auto snd="";
@@ -185,7 +185,7 @@ void Net::onSess(ws::OdinEvent *evt) {
 
   if (pnum < 1) { return; }
 
-  switch (evt->code) {
+  switch (evt->_code) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
       SENDMSG("/hud/timer/show");
@@ -203,7 +203,7 @@ void Net::onSess(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::onSocket(ws::OdinEvent *evt) {
-  switch (evt->type) {
+  switch (evt->_type) {
     case ws::MType::NETWORK:
       onNet(evt);
     break;

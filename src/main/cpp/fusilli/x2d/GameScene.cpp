@@ -33,7 +33,7 @@ GameScene* GameScene::self() {
 //////////////////////////////////////////////////////////////////////////////
 //
 GameScene::~GameScene() {
-  F__LOOP(it, pools) { delete it->second; }
+  F__LOOP(it, _pools) { delete it->second; }
 }
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -51,20 +51,20 @@ GameScene::GameScene(bool usePhysics)
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Dictionary* GameScene::getCurLevel() {
-  return XCFG()->getLevel(s::to_string(level));
+  return XCFG()->getLevel(s::to_string(_level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 f::JsonObj* GameScene::getLCfg() {
-  return XCFG()->getLevelCfg(s::to_string(level));
+  return XCFG()->getLevelCfg(s::to_string(_level));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 f::FPool* GameScene::getPool(const sstr &key) {
-  auto it = pools.find(key);
-  if (it != pools.end()) {
+  auto it = _pools.find(key);
+  if (it != _pools.end()) {
     return it->second;
   } else {
     return nullptr;
@@ -75,19 +75,19 @@ f::FPool* GameScene::getPool(const sstr &key) {
 //
 f::FPool* GameScene::reifyPool(const sstr &key) {
   auto p= mc_new1(f::FPool,false);
-  auto it = pools.find(key);
-  if (it != pools.end()) {
+  auto it = _pools.find(key);
+  if (it != _pools.end()) {
     delete it->second;
-    pools.erase(it);
+    _pools.erase(it);
   }
-  pools.insert(S__PAIR(sstr, f::FPool*, key, p));
+  _pools.insert(S__PAIR(sstr, f::FPool*, key, p));
   return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameScene::resetPools() {
-  F__LOOP(it, pools) {
+  F__LOOP(it, _pools) {
     it->second->clearAll();
   }
 }
@@ -101,19 +101,19 @@ void GameScene::binds(not_null<GameScene*> m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ws::OdinIO* GameScene::wsock() {
-  return static_cast<GCX*>(context)->odin;
+  return static_cast<GCX*>(_context)->_odin;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 GMode GameScene::getMode() {
-  return static_cast<GCX*>(context)->mode;
+  return static_cast<GCX*>(_context)->_mode;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GameScene::isOnline() {
-  return static_cast<GCX*>(context)->odin != nullptr;
+  return static_cast<GCX*>(_context)->_odin != CC_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////////

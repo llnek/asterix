@@ -16,34 +16,34 @@ NS_BEGIN(ecs)
 //
 void SystemList::add(not_null<System*> sys) {
   auto s = sys.get();
-  if (ENP(head)) {
-    s->next = s->previous = nullptr;
-    head = tail = s;
+  if (ENP(_head)) {
+    s->_next = s->_prev = nullptr;
+    _head = _tail = s;
   } else {
     System *node=nullptr;
-    for(node = tail; NNP(node); node = node->previous) {
+    for(node = _tail; NNP(node); node = node->_prev) {
       if (node->priority() <= s->priority() ) {
         break;
       }
     }
-    if (node == tail ) {
-      tail->next = s;
-      s->previous = tail;
-      s->next = nullptr;
-      tail = s;
+    if (node == _tail ) {
+      _tail->_next = s;
+      s->_prev = _tail;
+      s->_next = nullptr;
+      _tail = s;
     }
     else
     if ( ENP(node )) {
-      s->previous = nullptr;
-      s->next = head;
-      head->previous = s;
-      head = s;
+      s->_prev = nullptr;
+      s->_next = _head;
+      _head->_prev = s;
+      _head = s;
     }
     else {
-      s->next = node->next;
-      s->previous = node;
-      node->next->previous = s;
-      node->next = s;
+      s->_next = node->_next;
+      s->_prev = node;
+      node->_next->_prev = s;
+      node->_next = s;
     }
   }
 }
@@ -51,7 +51,7 @@ void SystemList::add(not_null<System*> sys) {
 //////////////////////////////////////////////////////////////////////////////
 //
 System* SystemList::get(const SystemType &type) {
-  for (auto s = head; NNP(s); s = s->next) {
+  for (auto s = _head; NNP(s); s = s->_next) {
     if (s->isa(type) ) { return s; }
   }
   return nullptr;

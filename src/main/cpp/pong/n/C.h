@@ -89,7 +89,7 @@ struct CC_DLL Players : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Faux : public ecs::Component {
+struct CC_DLL Faux : public f::CAutoma {
   MDECL_COMP_TPID("n/Faux")
 };
 

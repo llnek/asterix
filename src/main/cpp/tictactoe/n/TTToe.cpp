@@ -40,28 +40,28 @@ END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 TTToe::TTToe(int p1v, int p2v) {
-  this->actors = {this->nil, p1v, p2v};
-  this->GOALS= mapGoalSpace();
+  _actors = {this->_nil, p1v, p2v};
+  _GOALS= mapGoalSpace();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool TTToe::isNil(int cellv) {
-  return cellv == this->nil;
+  return cellv == _nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // if brand new game, just make a random move
 int TTToe::getFirstMove() {
-  auto sz= grid.size();
-  return sz > 0 && every(grid, nil) ? cx::randInt(sz) : -1;
+  auto sz= _grid.size();
+  return sz > 0 && every(_grid, _nil) ? cx::randInt(sz) : -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void TTToe::syncState(const ArrCells &seed, int actor) {
-  S__COPY(seed, grid);
-  actors[0] = actor;
+  S__COPY(seed, _grid);
+  _actors[0] = actor;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,11 +69,11 @@ void TTToe::syncState(const ArrCells &seed, int actor) {
 const s_vec<int>
 TTToe::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 
-  auto sz= snap->state.size();
+  auto sz= snap->_state.size();
   s_vec<int> rc;
 
   for (auto pos= 0; pos < sz; ++pos) {
-    if (isNil(snap->state[pos])) {
+    if (isNil(snap->_state[pos])) {
       rc.push_back(pos);
     }
   }
@@ -84,16 +84,16 @@ TTToe::getNextMoves(not_null<ag::FFrame<BD_SZ>*> snap) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void TTToe::undoMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
-  assert(move >= 0 && move < snap->state.size());
-  snap->state[move] = nil;
+  assert(move >= 0 && move < snap->_state.size());
+  snap->_state[move] = _nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void TTToe::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
-  assert(move >= 0 && move < snap->state.size());
-  if (isNil(snap->state[move])) {
-    snap->state[move] = snap->cur;
+  assert(move >= 0 && move < snap->_state.size());
+  if (isNil(snap->_state[move])) {
+    snap->_state[move] = snap->_cur;
   } else {
     throw "cell [" + s::to_string(move) + "] is not free";
   }
@@ -102,23 +102,23 @@ void TTToe::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void TTToe::switchPlayer(not_null<ag::FFrame<BD_SZ>*> snap) {
-  auto t = snap->cur;
-  snap->cur= snap->other;
-  snap->other=t;
+  auto t = snap->_cur;
+  snap->_cur= snap->_other;
+  snap->_other=t;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 int TTToe::getOtherPlayer(int pv) {
-  if (pv == actors[1]) {
-    return actors[2];
+  if (pv == _actors[1]) {
+    return _actors[2];
   }
 
-  if (pv == actors[2]) {
-    return actors[1];
+  if (pv == _actors[2]) {
+    return _actors[1];
   }
 
-  return nil;
+  return _nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -126,10 +126,10 @@ int TTToe::getOtherPlayer(int pv) {
 owner<ag::FFrame<BD_SZ>*>  TTToe::takeFFrame() {
   auto ff = mc_new( ag::FFrame<BD_SZ> );
 
-  ff->other= getOtherPlayer(actors[0]);
-  ff->cur= actors[0];
-  ff->lastBestMove= -1;
-  S__COPY(grid, ff->state);
+  ff->_other= getOtherPlayer(_actors[0]);
+  ff->_cur= _actors[0];
+  ff->_lastBestMove= -1;
+  S__COPY(_grid, ff->_state);
 
   return ff;
 }
@@ -138,8 +138,8 @@ owner<ag::FFrame<BD_SZ>*>  TTToe::takeFFrame() {
 //
 int TTToe::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
-  F__LOOP(it, GOALS) {
-    if (testWin(snap->state, snap->other, *it)) {
+  F__LOOP(it, _GOALS) {
+    if (testWin(snap->_state, snap->_other, *it)) {
       return -100;
     }
   }
@@ -150,10 +150,10 @@ int TTToe::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
 //
 bool TTToe::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
 
-  F__LOOP(it, GOALS) {
+  F__LOOP(it, _GOALS) {
     auto &t = *it;
-    if (testWin(snap->state, snap->other, t) ||
-        testWin(snap->state, snap->cur, t)) {
+    if (testWin(snap->_state, snap->_other, t) ||
+        testWin(snap->_state, snap->_cur, t)) {
       return true;
     }
   }
@@ -163,7 +163,7 @@ bool TTToe::isOver(not_null<ag::FFrame<BD_SZ>*> snap) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool TTToe::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
-  return not_any(snap->state, nil);
+  return not_any(snap->_state, _nil);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -171,14 +171,14 @@ bool TTToe::isStalemate(not_null<ag::FFrame<BD_SZ>*> snap) {
 int TTToe::getWinner(not_null<ag::FFrame<BD_SZ>*> snap, ArrDim &combo) {
 
   int win= -1;
-  F__LOOP(it, GOALS) {
+  F__LOOP(it, _GOALS) {
     auto &t= *it;
-    if (testWin(snap->state, snap->other, t)) {
-      win=snap->other;
+    if (testWin(snap->_state, snap->_other, t)) {
+      win=snap->_other;
     }
     else
-    if (testWin(snap->state, snap->cur, t)) {
-      win=snap->cur;
+    if (testWin(snap->_state, snap->_cur, t)) {
+      win=snap->_cur;
     }
     if (win > 0) {
       S__COPY(t,combo);

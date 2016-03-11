@@ -11,53 +11,53 @@
 
 #include "TypeRego.h"
 #include "Engine.h"
-#include "Entity.h"
+#include "Node.h"
 NS_BEGIN(ecs)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::Entity(not_null<Engine*> e, EntId eid) {
-  this->engine= e;
-  this->eid= eid;
+Node::Node(not_null<Engine*> e, NodeId eid) {
+  this->_engine= e;
+  this->_eid= eid;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Entity::~Entity() {
-  //printf("Entity dtor\n");
-  F__LOOP(it, parts) {
+Node::~Node() {
+  //printf("Node dtor\n");
+  F__LOOP(it, _parts) {
     auto c= it->second;
-    engine->rego()->unbind(c,this);
+    _engine->rego()->unbind(c,this);
     delete c;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::checkin(not_null<Component*> c) {
+void Node::checkin(not_null<Component*> c) {
   auto z = c->typeId();
   assert(! has(z));
-  engine->rego()->bind(c,this);
-  parts.insert(S__PAIR(COMType, Component*, z, c));
+  _engine->rego()->bind(c,this);
+  _parts.insert(S__PAIR(COMType, Component*, z, c));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Entity::purge(const COMType &z) {
-  auto it = parts.find(z);
-  if (it != parts.end()) {
+void Node::purge(const COMType &z) {
+  auto it = _parts.find(z);
+  if (it != _parts.end()) {
     auto c= it->second;
-    parts.erase(it);
-    engine->rego()->unbind(c,this);
+    _parts.erase(it);
+    _engine->rego()->unbind(c,this);
     delete c;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Component* Entity::get(const COMType &z) {
-  auto it=  parts.find(z);
-  if (it != parts.end()) {
+Component* Node::get(const COMType &z) {
+  auto it=  _parts.find(z);
+  if (it != _parts.end()) {
     return it->second;
   } else {
     return nullptr;
@@ -66,9 +66,9 @@ Component* Entity::get(const COMType &z) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<Component*> Entity::getAll() {
+const s_vec<Component*> Node::getAll() {
   s_vec<Component*> v;
-  F__LOOP(it, parts) {
+  F__LOOP(it, _parts) {
     v.push_back(it->second);
   }
   return v;
@@ -76,8 +76,8 @@ const s_vec<Component*> Entity::getAll() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Entity::has(const COMType &z) {
-  return parts.find(z) != parts.end();
+bool Node::has(const COMType &z) {
+  return _parts.find(z) != _parts.end();
 }
 
 

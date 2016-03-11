@@ -54,7 +54,7 @@ XLayer::XLayer() {
 //
 bool XLayer::keyPoll(KEYCODE key) {
   int k= (int) key;
-  return k >= 0 && k < 256 ? keys[k] : false;
+  return k >= 0 && k < 256 ? _keys[k] : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ void XLayer::disableListeners() {
   try { setKeyboardEnabled(false); } catch (...) { }
   try { setMouseEnabled(false); } catch (...) { }
   try { setTouchEnabled(false); } catch (...) { }
-  keys.fill(false);
+  _keys.fill(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ void XLayer::enableListeners() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
-  if (tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
+  if (_tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
     onTouchStart( ts);
   } else {
     onTouchStart( ts[0]);
@@ -107,7 +107,7 @@ void XLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::onTouchesMoved(const s_vec<c::Touch*> &ts, c::Event*) {
-  if (tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
+  if (_tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
     onTouchMotion( ts);
   } else {
     onTouchMotion( ts[0]);
@@ -117,7 +117,7 @@ void XLayer::onTouchesMoved(const s_vec<c::Touch*> &ts, c::Event*) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::onTouchesEnded(const s_vec<c::Touch*> &ts, c::Event*) {
-  if (tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
+  if (_tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
     onTouchEnd( ts);
   } else {
     onTouchEnd( ts[0]);
@@ -173,7 +173,7 @@ void XLayer::onTouchMotion( c::Touch *tap) {
 void XLayer::onKeyPressed(KEYCODE k, c::Event*) {
   int n= (int)k;
   if (n >= 0 && n < 256) {
-    this->keys[n]= true;
+    this->_keys[n]= true;
   }
 }
 
@@ -182,7 +182,7 @@ void XLayer::onKeyPressed(KEYCODE k, c::Event*) {
 void XLayer::onKeyReleased(KEYCODE k, c::Event*) {
   int n= (int)k;
   if (n >= 0 && n < 256) {
-    this->keys[n]=false;
+    this->_keys[n]=false;
   }
 }
 

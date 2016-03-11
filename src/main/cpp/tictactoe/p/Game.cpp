@@ -47,21 +47,21 @@ public:
 
   virtual void onInited();
 
-  DECL_PTR(ecs::Entity, board)
-  DECL_PTR(ecs::Entity, arena)
+  DECL_PTR(ecs::Node, _board)
+  DECL_PTR(ecs::Node, _arena)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  arena = engine->getEntities("n/CSquares")[0];
-  board = engine->getEntities("n/Grid")[0];
+  _arena = _engine->getNodes("n/CSquares")[0];
+  _board = _engine->getNodes("n/Grid")[0];
 
   showGrid();
 
-  auto ps = CC_GEC(Players,board,"n/Players");
-  auto ss = CC_GEC(GVars,arena,"n/GVars");
+  auto ps = CC_GEC(Players,_board,"n/Players");
+  auto ss = CC_GEC(GVars,_arena,"n/GVars");
   auto human= CC_CSV(c::Integer,"HUMAN");
   // random start?
   auto pnum= cx::randSign() > 0 ? 2 : 1;
@@ -96,7 +96,7 @@ void GLayer::playTimeExpired() {
 void GLayer::overAndDone(int winner) {
   getHUD()->endGame(winner);
   surcease();
-  auto x= mc_new1(ECX, arena);
+  auto x= mc_new1(ECX, _arena);
   Ende::reify(getSceneX(), x, 4);
 }
 
@@ -130,9 +130,9 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
 //
 void GLayer::onGUIXXX(const c::Vec2 &pos) {
 
-  auto sel= CC_GEC(CellPos, board, "n/CellPos");
-  auto css= CC_GEC(CSquares,arena,"n/CSquares");
-  auto ss= CC_GEC(GVars,arena,"n/GVars");
+  auto css= CC_GEC(CSquares, _arena,"n/CSquares");
+  auto sel= CC_GEC(CellPos, _board, "n/CellPos");
+  auto ss= CC_GEC(GVars, _arena,"n/GVars");
   auto cur = ss->pnum;
 
   sel->cell =  -1;
@@ -170,8 +170,8 @@ void GLayer::decoUI() {
   regoAtlas("lang-pics");
 
   auto ctx = (GCXX*) getSceneX()->getCtx();
-  auto pnum= JS_INT(ctx->data["pnum"]);
-  auto ppids = ctx->data["ppids"];
+  auto pnum= JS_INT(ctx->_data["pnum"]);
+  auto ppids = ctx->_data["ppids"];
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
@@ -189,9 +189,9 @@ void GLayer::decoUI() {
     }
   }
 
-  CCLOG("seed =\n%s", ctx->data.dump(2).c_str());
+  CCLOG("seed =\n%s", ctx->_data.dump(2).c_str());
 
-  engine = mc_new1(GEngine,pnum);
+  _engine = mc_new1(GEngine,pnum);
 
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   CCLOG("init-game - ok");
@@ -200,7 +200,7 @@ void GLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::showGrid() {
-  auto css= CC_GEC(CSquares,arena, "n/CSquares");
+  auto css= CC_GEC(CSquares, _arena, "n/CSquares");
   auto gps= mapGridPos(1);
   for (auto i=0; i < gps.size(); ++i) {
     auto s= css->sqs[i];

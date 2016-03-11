@@ -23,7 +23,7 @@ protected:
 
   void preLaunch(const c::Size &designSize);
   void initAudio();
-  DECL_TD(sstr, appName)
+  DECL_TD(sstr, _appName)
 
 public:
 
@@ -48,7 +48,7 @@ public:
 
   virtual void initGLContextAttrs();
 
-  App(const sstr &n) { appName=n; }
+  App(const sstr &n) { _appName=n; }
   virtual ~App() {}
   NOCPYASS(App)
 };

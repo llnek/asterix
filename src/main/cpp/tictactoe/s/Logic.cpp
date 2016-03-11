@@ -23,10 +23,10 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////
 //
 void Logic::preamble() {
-  auto ents= engine->getEntities("n/SmartAI");
+  auto ents= _engine->getNodes("n/SmartAI");
   robot= ents.size() > 0 ? ents[0] : CC_NIL;
-  arena= engine->getEntities("n/CSquares")[0];
-  board= engine->getEntities("n/Grid")[0];
+  arena= _engine->getNodes("n/CSquares")[0];
+  board= _engine->getNodes("n/Grid")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////

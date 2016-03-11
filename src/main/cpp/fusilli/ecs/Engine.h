@@ -15,7 +15,7 @@
 //
 #include "nlohmann/json.hpp"
 #include "System.h"
-#include "Entity.h"
+#include "Node.h"
 
 NS_ALIAS(j, nlohmann)
 NS_BEGIN(ecs)
@@ -25,51 +25,51 @@ NS_BEGIN(ecs)
 class TypeRegistry;
 class FS_DLL Engine {
 
-  DECL_TD(SystemList, systemList)
-  DECL_TD(EntityCache, ents)
+  DECL_TD(SystemList, _systemList)
+  DECL_TD(NodeCache, _ents)
 
-  DECL_PTR(TypeRegistry, types)
-  DECL_BF(updating)
-  DECL_IZ(lastId)
+  DECL_PTR(TypeRegistry, _types)
+  DECL_BF(_updating)
+  DECL_IZ(_lastId)
 
-  s_vec<Entity*> garbo;
+  s_vec<Node*> _garbo;
   NOCPYASS(Engine)
 
-  EntId generateEid();
+  NodeId generateEid();
 
 protected:
 
   virtual void initEntities() = 0;
   virtual void initSystems() = 0;
-  DECL_TD(j::json, config)
+  DECL_TD(j::json, _config)
 
 public:
 
-  const s_vec<Entity*> getEntities(const s_vec<COMType>&);
-  const s_vec<Entity*> getEntities(const COMType&);
-  const s_vec<Entity*> getEntities();
+  const s_vec<Node*> getNodes(const s_vec<COMType>&);
+  const s_vec<Node*> getNodes(const COMType&);
+  const s_vec<Node*> getNodes();
 
-  void getEntities(const s_vec<COMType>&, s_vec<Entity*>&);
-  void getEntities(const COMType&, s_vec<Entity*>&);
-  void getEntities(s_vec<Entity*>&);
+  void getNodes(const s_vec<COMType>&, s_vec<Node*>&);
+  void getNodes(const COMType&, s_vec<Node*>&);
+  void getNodes(s_vec<Node*>&);
 
-  TypeRegistry* rego() { return types; }
+  TypeRegistry* rego() { return _types; }
 
   void purgeSystem (not_null<System*>);
   void purgeSystems();
-  void purgeEntities();
-  void purgeEntity(Entity*);
+  void purgeNodes();
+  void purgeNode(not_null<Node*>);
 
   void regoSystem(not_null<System*> );
-  Entity* reifyEntity();
+  Node* reifyNode();
 
   void doHouseKeeping();
   void ignite();
   void update(float time);
 
-  j::json getCfg() { return config; }
+  j::json getCfg() { return _config; }
 
-  Engine(j::json c) { config=c; }
+  Engine(j::json c) { _config=c; }
   Engine();
   virtual ~Engine();
 

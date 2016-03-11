@@ -34,12 +34,12 @@ enum GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GCX : public SCTX {
-  GCX(GMode m, ws::OdinIO *io) { mode=m; odin=io; }
-  virtual ~GCX() { mc_del_ptr(odin) }
-  GCX(GMode m) { mode=m; }
+  GCX(GMode m, ws::OdinIO *io) { _mode=m; _odin=io; }
+  virtual ~GCX() { mc_del_ptr(_odin) }
+  GCX(GMode m) { _mode=m; }
   GCX() {}
-  DECL_PTR(ws::OdinIO ,odin)
-  DECL_TV(GMode,mode,GMode::ONE)
+  DECL_PTR(ws::OdinIO ,_odin)
+  DECL_TV(GMode,_mode,GMode::ONE)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,11 +49,11 @@ protected:
 
   static void binds(not_null<GameScene*>);
 
-  s_map<sstr, f::FPool*> pools;
-  s_que<sstr> msgQ;
+  s_map<sstr, f::FPool*> _pools;
+  s_que<sstr> _msgQ;
 
-  DECL_TV(int, state, 0)
-  DECL_TV(int, level, 1)
+  DECL_TV(int, _state, 0)
+  DECL_TV(int, _level, 1)
   NOCPYASS(GameScene)
 
 public:
@@ -61,9 +61,9 @@ public:
   virtual const c::Rect getEnclosureRect();
   virtual const Box4 getEnclosureBox();
 
-  virtual bool isLive() { return state > 0; }
-  virtual void stop() { state=0; }
-  virtual void play() { state=911; }
+  virtual bool isLive() { return _state > 0; }
+  virtual void stop() { _state=0; }
+  virtual void play() { _state=911; }
 
   static GameScene* self();
   static GameLayer* get();
@@ -79,7 +79,7 @@ public:
   f::FPool* reifyPool(const sstr &n);
   f::FPool* getPool(const sstr &n);
 
-  int getLevel() { return level; }
+  int getLevel() { return _level; }
   ws::OdinIO* wsock();
   GMode getMode();
   bool isOnline();
@@ -88,7 +88,7 @@ public:
   f::JsonObj* getLCfg();
   void resetPools();
 
-  s_que<sstr>& msgQueue() { return msgQ; }
+  s_que<sstr>& msgQueue() { return _msgQ; }
 
   GameScene(bool usePhysics );
   GameScene();

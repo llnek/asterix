@@ -27,33 +27,33 @@ NS_BEGIN(fusii)
 //
 template<typename T> class CC_DLL Maybe {
 
-  DECL_TD(T, value)
-  DECL_BF(isset)
+  DECL_TD(T, _value)
+  DECL_BF(_isset)
 
 public:
-  explicit Maybe(T t) { value=t; isset=true; }
+  explicit Maybe(T t) { _value=t; _isset=true; }
   Maybe<T>& operator=(const Maybe<T> &arg) {
-    value=arg.value;
-    isset=arg.isset;
+    _value=arg._value;
+    _isset=arg._isset;
     return *this;
   }
   Maybe(const Maybe<T> &arg) {
-    value=arg.value;
-    isset=arg.isset;
+    _value=arg._value;
+    _isset=arg._isset;
   }
   Maybe<T>& operator=(Maybe<T> &&arg) {
-    value=arg.value;
-    isset=arg.isset;
+    _value=arg._value;
+    _isset=arg._isset;
     return *this;
   }
   Maybe(Maybe<T> &&arg) {
-    value=arg.value;
-    isset=arg.isset;
+    _value=arg._value;
+    _isset=arg._isset;
   }
   ~Maybe() {}
   Maybe() {}
-  T get() const { return value; }
-  bool isNone() const { return !isset; }
+  T get() const { return _value; }
+  bool isNone() const { return !_isset; }
 };
 
 typedef Maybe<float> MaybeFloat;

@@ -19,22 +19,22 @@ NS_BEGIN(fusii)
 //
 void XLives::reduce(int x) {
   while (x > 0) {
-    if (icons.size() > 0) {
-      auto it= icons.back();
+    if (_icons.size() > 0) {
+      auto it= _icons.back();
       it->removeFromParent();
-      icons.pop_back();
+      _icons.pop_back();
     }
     --x;
-    --curLives;
+    --_curLives;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLives::reset() {
-  F__LOOP(it, icons) { auto n= *it; n->removeFromParent(); }
-  icons.clear();
-  curLives = totalLives;
+  F__LOOP(it, _icons) { auto n= *it; n->removeFromParent(); }
+  _icons.clear();
+  _curLives = _totalLives;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,21 +50,21 @@ void XLives::drawLives() {
   float y;
   float x;
 
-  for (int n = 0; n < curLives; ++n) {
-    auto v= cx::reifySprite(frameId);
-    v->setScale(scale);
+  for (int n = 0; n < _curLives; ++n) {
+    auto v= cx::reifySprite(_frameId);
+    v->setScale(_scale);
     if (n==0) {
-      lifeSize = cx::scaleSize(v->getContentSize(),scale);
-      y= refPt.y - HHZ(lifeSize);
-      x= refPt.x + HWZ(lifeSize);
+      _lifeSize = cx::scaleSize(CC_CSIZE(v), _scale);
+      y= _refPt.y - HHZ(_lifeSize);
+      x= _refPt.x + HWZ(_lifeSize);
     }
     v->setPosition(x,y);
     addChild(v);
-    icons.push_back(v);
-    if (this->dir > 0) {
-      x += lifeSize.width * 1.2f;
+    _icons.push_back(v);
+    if (this->_dir > 0) {
+      x += _lifeSize.width * 1.2f;
     } else {
-      x -= lifeSize.width * 1.2f;
+      x -= _lifeSize.width * 1.2f;
     }
   }
 }
@@ -74,13 +74,13 @@ void XLives::drawLives() {
 void XLives::decorate(const sstr &frame, int lives,
     float x, float y, float scale, int d) {
 
-  totalLives = lives;
-  frameId = frame;
-  curLives = 0;
-  dir = d;
-  this->scale=scale;
+  _totalLives = lives;
+  _frameId = frame;
+  _curLives = 0;
+  _dir = d;
+  this->_scale=scale;
 
-  refPt= c::Vec2(x,y);
+  _refPt= c::Vec2(x,y);
   reset();
   drawLives();
 }
