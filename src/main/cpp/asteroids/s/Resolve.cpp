@@ -20,8 +20,8 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  ships = engine->getNodeList(ShipMotionNode().typeId());
-  arenas = engine->getNodeList(ArenaNode().typeId());
+  _arena = _engine->getNodes("n/GVars")[0];
+  _ship = _engine->getNodes("n/Ship")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,29 +42,37 @@ bool Resolve::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkXXX(f::XPool *p) {
+void Resolve::checkXXX(f::FPool *po) {
   auto B= MGMS()->getEnclosureBox();
-  p->foreach([=](f::ComObj *b) {
-    if (b->status) {
-      if (b->HP <= 0 ||
-          cx::outOfBound(cx::bbox4(b), B)) {
-      b->deflate();
+  po->foreach([=](f::Poolable *b) {
+      auto e= (ecs::Node*)b;
+      auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+      auto s=CC_GEC(f::CDraw,e,"f/CDraw");
+    if (e->status()) {
+      if (!h->alive() ||
+          cx::outOfBound(cx::bbox4(s), B)) {
+      s->deflate();
+      e->yield();
     }}
   });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::checkAstrosXXX(f::XPool *p, bool cr) {
-  p->foreach([=](f::ComObj *a) {
-    if (a->status && a->HP <= 0) {
-      auto msg= j::json({ {"score", a->score} });
+void Resolve::checkAstrosXXX(f::FPool *po, bool cr) {
+  po->foreach([=](f::Poolable *p) {
+    auto e= (ecs::Node*)p;
+    auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+    auto s=CC_GEC(f::CDraw,e,"f/CDraw");
+    auto a=CC_GEC(Asteroid,e,"n/Asteroid");
+    if (e->status() && !h->alive()) {
+      auto msg= j::json({ {"score", a->value} });
       SENDMSGEX("/game/players/earnscore", &msg);
       if (cr) {
-        SCAST(GEngine*,engine)->createAsteroids(
-                                                SCAST(Asteroid*,a)->rank +1);
+        SCAST(GEngine*,engine)->createAsteroids(a->rank +1);
       }
-      a->deflate();
+      s->deflate();
+      e->yield();
     }
   });
 }
@@ -72,15 +80,17 @@ void Resolve::checkAstrosXXX(f::XPool *p, bool cr) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip() {
-  auto ship = CC_GNLF(Ship,ships,"ship");
-  if (ship->status && ship->HP <= 0) {
-    ship->deflate();
+  auto h = CC_GEC(f::CHealth, _ship,"f/CHealth");
+  auto s= CC_GEC(Ship, _ship,"n/Ship");
+  if (_ship->status() && !h->alive()) {
+    _ship->yield();
+    s->deflate();
     SENDMSG("/game/players/killed");
   }
 }
 
 
 
-NS_END(asteroids)
+NS_END
 
 

@@ -113,21 +113,28 @@ struct CC_DLL CMove : public ecs::Component {
   DECL_TD(c::Vec2, lastPos)
   DECL_TD(c::Vec2, nextPos)
 
+  DECL_TD(c::Vec2, maxSpeed)
+  DECL_TD(c::Vec2, maxAccel)
+  DECL_TD(c::Vec2, speed)
+  DECL_TD(c::Vec2, accel)
   DECL_TD(c::Vec2, vel)
   DECL_TD(c::Vec2, acc)
-  DECL_FZ(maxSpeed)
-  DECL_FZ(maxAccel)
-  DECL_FZ(speed)
-  DECL_FZ(accel)
+
+  DECL_FZ(power)
+  DECL_FZ(angle)
 
   CMove(const c::Vec2 &t, float ms, float ma) {
     moveTarget=t;
-    maxSpeed=ms;
-    maxAccel=ma;
+    maxSpeed.y=ms;
+    maxSpeed.x=ms;
+    maxAccel.y=ma;
+    maxAccel.x=ma;
   }
   CMove(float ms, float ma) {
-    maxSpeed=ms;
-    maxAccel=ma;
+    maxSpeed.y=ms;
+    maxSpeed.x=ms;
+    maxAccel.y=ma;
+    maxAccel.x=ma;
   }
   CMove() {}
 };

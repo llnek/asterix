@@ -14,10 +14,11 @@
 #include "s/GEngine.h"
 #include "HUD.h"
 #include "Game.h"
+//#include "Ende.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GLayer : public f::GameLayer {
@@ -27,35 +28,31 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_GET_IID(2)
   MDECL_DECORATE()
 
-  DECL_PTR(a::NodeList, arena)
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
 
-  virtual void postReify();
+  virtual void onInited();
   void spawnPlayer();
   void showMenu();
   void onDone();
   void onPlayerKilled();
-  void onEarnScore(j::json*);
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
+void GLayer::decoUI() {
 
+  _engine = mc_new(GEngine);
   centerImage("game.bg");
   regoAtlas("game-pics");
-
-  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
-
-  ship= engine->getNodeList(ShipMotionNode().typeId());
-  arena= engine->getNodeList(ArenaNode().typeId());
-
+void GLayer::onInited() {
+  _ship= _engine->getNodes("f/CGesture")[0];
+  _arena= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -67,8 +64,7 @@ void GLayer::showMenu() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
-  auto sp = CC_GNLF(Ship, ship, "ship");
-  SCAST(GEngine*,engine)->bornShip(sp);
+  SCAST(GEngine*,engine)->bornShip(_ship);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,17 +80,13 @@ void GLayer::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
-  surcease();
+  this->setOpacity(0.1 * 255);
   MGMS()->stop();
+  surcease();
+  //Ende::reify(MGMS(), 4);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onEarnScore(j::json *msg) {
-  getHUD()->updateScore(JS_INT(msg->operator[]("score")));
-}
-
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &t, void *m) {
@@ -130,7 +122,8 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 
   if (t == "/game/players/earnscore") {
     auto msg = (j::json*) m;
-    y->onEarnScore(msg);
+    getHUD()->updateScore(
+        JS_INT(msg->operator[]("score")));
   }
 
   if (t == "/hud/showmenu") {
@@ -143,12 +136,13 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this,2);
   play();
 }
 
-NS_END(asteroids)
+
+NS_END
 
 

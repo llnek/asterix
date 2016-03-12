@@ -33,8 +33,8 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "339a5c13-24b3-4069-9a0a-661820573fb3";
-  app_id= "asteroids";
+  _game_id= "339a5c13-24b3-4069-9a0a-661820573fb3";
+  _app_id= "asteroids";
 
   addCst("P_LMS", CC_STR("Live-Missiles"));
   addCst("P_LLS",  CC_STR("Live-Lasers"));
@@ -43,7 +43,6 @@ void Config::initCsts() {
   addCst("P_LAS", CC_STR("Live-Asteroids"));
 
   addCst("THROTTLE+WAIT", CC_INT(300));
-  addCst("showFPS", CC_BOOL(false));
 
   addCst("GRID_W", CC_INT(60));
   addCst("GRID_H", CC_INT(40));
@@ -122,26 +121,22 @@ void Config::initLevels() {
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 52/256.0f * rs.width / gz.width;
+  _scale = 52/256.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
-  fp= getAtlas("img-pics");
-  c->addSpriteFramesWithFile( fp);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp= getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 
-NS_END(asteroids)
+NS_END
 

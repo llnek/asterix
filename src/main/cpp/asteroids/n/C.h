@@ -8,24 +8,20 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Asteroid : public f::ComObj {
+struct CC_DLL Asteroid : public f::CStats {
 
-  Asteroid(not_null<c::Sprite*> s,
-      int value, int rank,
-      float deg, const c::Vec2 &v)
-    : ComObj(s, 1, value) {
-    this->angle= deg;
-    this->rank=rank;
-    this->speed= v;
-    this->vel=v;
+  Asteroid(int value, int rank)
+    : CStats(value) {
+    this->rank= rank;
   }
 
   MDECL_COMP_TPID("n/Asteroid")
@@ -34,7 +30,7 @@ struct CC_DLL Asteroid : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Cannon : public a::Component {
+struct CC_DLL Cannon : public ecs::Component {
 
   MDECL_COMP_TPID("n/Cannon")
   DECL_BT(hasAmmo)
@@ -42,66 +38,35 @@ struct CC_DLL Cannon : public a::Component {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Looper : public a::Component {
-
-  DECL_PTR(c::DelayTime, timer1)
-  DECL_PTR(c::DelayTime, timer0)
-  MDECL_COMP_TPID("n/Looper")
-
-};
+//missile speed=20
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Missile : public f::ComObj {
-
-  Missile(not_null<c::Sprite*> s, float d=20)
-    : ComObj(s) {
-    speed.x= d;
-    speed.y= d ;
-  }
-
-  MDECL_COMP_TPID("n/Missile")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-
-  MDECL_COMP_TPID("n/Gesture")
-  DECL_BF(right)
-  DECL_BF(left)
-  DECL_BF(up)
-  DECL_BF(down)
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Ship : public f::ComObj {
+struct CC_DLL Ship : public f::CDraw {
 
   DECL_TV(sstr,frame0,"rship_0.png")
   DECL_TV(sstr,frame1,"rship_1.png")
   MDECL_COMP_TPID("n/Ship")
 
-  Ship(not_null<c::Sprite*> s)
-    : ComObj(s) {
+  Ship(not_null<c::Node*> s)
+    : CDraw(s) {
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID("n/GVars")
-  c::Size playerSize;
-  c::Size ufoSize;
-  c::Size astro3;
-  c::Size astro2;
-  c::Size astro1;
+  DECL_TD(c::Size, playerSize)
+  DECL_TD(c::Size, ufoSize)
+  DECL_TD(c::Size, astro3)
+  DECL_TD(c::Size, astro2)
+  DECL_TD(c::Size, astro1)
 
 };
 
 
-NS_END(asteroids)
+NS_END
 
 

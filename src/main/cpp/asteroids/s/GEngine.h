@@ -8,17 +8,18 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public ecs::Engine {
 
   bool maybeOverlap(const f::Box4&);
   s_arr<c::Size, 4> astroSizes;
@@ -28,15 +29,16 @@ public:
 
   virtual void initEntities();
   virtual void initSystems();
-  void createMissiles(int count=36);
-  void createLasers(int count=36);
+
+  void createMissiles(int count=16);
+  void createLasers(int count=16);
   void createShip();
-  void bornShip(Ship*);
+  void bornShip(ecs::Node*);
   void createAsteroids(int rank);
 
 };
 
 
-NS_END(asteroids)
+NS_END
 
 

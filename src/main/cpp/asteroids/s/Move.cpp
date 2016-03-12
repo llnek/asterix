@@ -20,28 +20,32 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  ships = engine->getNodeList(ShipMotionNode().typeId());
-  arenas = engine->getNodeList(ArenaNode().typeId());
+  _arena = _engine->getNodes("n/GVars")[0];
+  _ship = _engine->getNodes("n/Ship")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::moveXXX(f::XPool *p, float dt) {
-  p->foreach([=](f::ComObj *a) {
-    if (a->status) { this->moveAstros(a, dt); }
+void Move::moveXXX(f::FPool *p, float dt) {
+  p->foreach([=](f::Poolable *a) {
+      auto e= (ecs::Node*) a;
+    if (e->status()) { this->moveAstros(e, dt); }
   });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::moveBBB(f::XPool *p, float dt) {
-  p->foreach([=](f::ComObj *m) {
-    if (m->status) {
-        auto pos= m->pos();
-        auto y = pos.y + dt * m->vel.y * m->speed.y;
-        auto x = pos.x + dt * m->vel.x * m->speed.x;
-        m->setPos(x, y);
-      }
+void Move::moveBBB(f::FPool *po, float dt) {
+  po->foreach([=](f::Poolable *p) {
+      auto e= (ecs::Node*)p;
+    if (e->status()) {
+      auto sp=CC_GEC(f::CDraw,e,"f/CDraw");
+      auto mv=CC_GEC(f::CMove,e,"f/CMove");
+      auto pos= sp->pos();
+      auto y = pos.y + dt * mv->vel.y * mv->speed.y;
+      auto x = pos.x + dt * mv->vel.x * mv->speed.x;
+      sp->setPos(x, y);
+    }
   });
 }
 
@@ -81,30 +85,30 @@ const c::Vec2 Move::thrust(float angle, float power) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processShipMotions(float dt) {
-  auto mo= CC_GNLF(Gesture,ships, "motion");
-  auto ship= CC_GNLF(Ship,ships, "ship");
-  auto sp = ship->sprite;
-  auto pos = sp->getPosition();
+  auto mo= CC_GEC(f::CGesture, _ship, "f/CGesture");
+  auto sp= CC_GEC(Ship, _ship, "n/Ship");
+  auto mv= CC_GEC(f::CMove, _ship, "f/CMove");
+  auto pos = sp->pos();
   auto x= pos.x;
   auto y= pos.y;
 
   if (mo->right) {
-    ship->angle= rotateShip(ship->angle, 3);
-    sp->setRotation(ship->angle);
+    mv->angle= rotateShip(mv->angle, 3);
+    sp->node->setRotation(mv->angle);
   }
 
   if (mo->left) {
-    ship->angle= rotateShip(ship->angle, -3);
-    sp->setRotation(ship->angle);
+    mv->angle= rotateShip(mv->angle, -3);
+    sp->node->setRotation(mv->angle);
   }
 
   if (mo->up) {
-    auto acc= thrust(ship->angle, ship->power);
-    sp->setSpriteFrame(ship->frame1);
-    ship->acc.x= acc.x;
-    ship->acc.y= acc.y;
+    auto acc= thrust(mv->angle, mv->power);
+    SCAST(c::Sprite*,sp->node)->setSpriteFrame(sp->frame1);
+    mv->acc.x= acc.x;
+    mv->acc.y= acc.y;
   } else {
-    sp->setSpriteFrame(ship->frame0);
+    SCAST(c::Sprite*,sp->node)->setSpriteFrame(ship->frame0);
   }
   moveShip(dt);
 }
@@ -112,118 +116,119 @@ void Move::processShipMotions(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::moveShip(float dt) {
-  auto ship = CC_GNLF(Ship,ships,"ship");
+  auto mv = CC_GEC(f::CMove, _ship,"f/CMove");
+  auto sp = CC_GEC(Ship, _ship,"n/Ship");
   auto B = MGMS()->getEnclosureBox();
-  auto sp= ship->sprite;
-  auto sz = sp->getContentSize();
-  auto pos= sp->getPosition();
+  auto sz = sp->csize();
+  auto pos= sp->pos();
   float x,y;
 
-  ship->vel.y = ship->vel.y + dt * ship->acc.y;
-  ship->vel.x = ship->vel.x + dt * ship->acc.x;
+  mv->vel.y = mv->vel.y + dt * mv->acc.y;
+  mv->vel.x = mv->vel.x + dt * mv->acc.x;
 
-  if (ship->vel.y > ship->maxVel.y) {
-    ship->vel.y = ship->maxVel.y;
+  if (mv->vel.y > mv->maxSpeed.y) {
+    mv->vel.y = mv->maxSpeed.y;
   }
   else
-  if (ship->vel.y < - ship->maxVel.y) {
-    ship->vel.y = - ship->maxVel.y;
+  if (mv->vel.y < - mv->maxSpeed.y) {
+    mv->vel.y = - mv->maxSpeed.y;
   }
 
-  if (ship->vel.x > ship->maxVel.x) {
-    ship->vel.x = ship->maxVel.x;
+  if (mv->vel.x > mv->maxSpeed.x) {
+    mv->vel.x = mv->maxSpeed.x;
   }
   else
-  if (ship->vel.x < -ship->maxVel.x) {
-    ship->vel.x = -ship->maxVel.x;
+  if (mv->vel.x < -mv->maxSpeed.x) {
+    mv->vel.x = -mv->maxSpeed.x;
   }
 
-  y = pos.y + dt * ship->vel.y;
-  x = pos.x + dt * ship->vel.x;
+  y = pos.y + dt * mv->vel.y;
+  x = pos.x + dt * mv->vel.x;
 
-  sp->setPosition(x,y);
+  sp->setPos(x,y);
 
   //wrap?
   auto r= cx::bbox4(sp);
 
   if (r.bottom > B.top) {
-    if (ship->vel.y > 0) {
+    if (mv->vel.y > 0) {
       y = B.bottom - sz.height;
     }
   }
 
   if (r.top < B.bottom) {
-    if (ship->vel.y < 0) {
+    if (mv->vel.y < 0) {
       y = B.top + sz.height;
     }
   }
 
   if (r.left > B.right) {
-    if (ship->vel.x > 0) {
+    if (mv->vel.x > 0) {
       x = B.left - sz.width;
     }
   }
 
   if (r.right < B.left) {
-    if (ship->vel.x < 0) {
+    if (mv->vel.x < 0) {
       x = B.right + sz.width;
     }
   }
 
-  sp->setRotation(ship->angle);
-  sp->setPosition(x,y);
+  sp->node->setRotation(mv->angle);
+  sp->setPos(x,y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::moveAstros(f::ComObj *astro, float dt) {
-  auto B = MGMS()->getEnclosureBox();
-  auto rot= astro->angle;
-  auto sp= astro->sprite;
-  auto sz= sp->getContentSize();
-  auto pos= sp->getPosition();
-  auto x = pos.x + dt * astro->vel.x;
-  auto y = pos.y + dt * astro->vel.y;
+void Move::moveAstros(ecs::Node *astro, float dt) {
+  auto mv= CC_GEC(f::CMove,astro,"f/CMove");
+  auto sp= CC_GEC(f::CDraw,astro,"f/CDraw");
+  auto B= MGMS()->getEnclosureBox();
+  auto rot= mv->angle;
+  auto sz= sp->csize();
+  auto pos= sp->pos();
+  auto x = pos.x + dt * mv->vel.x;
+  auto y = pos.y + dt * mv->vel.y;
 
   rot += 0.1f;
   if (rot > 360) { rot -= 360; }
 
-  sp->setRotation(rot);
-  astro->angle = rot;
-  sp->setPosition(x,y);
+  sp->node->setRotation(rot);
+  mv->angle = rot;
+  sp->setPos(x,y);
 
   //wrap?
   auto r= cx::bbox4(sp);
 
   if (r.bottom > B.top) {
-    if (astro->vel.y > 0) {
+    if (mv->vel.y > 0) {
       y = B.bottom - sz.height;
     }
   }
 
   if (r.top < B.bottom) {
-    if (astro->vel.y < 0) {
+    if (mv->vel.y < 0) {
       y = B.top + sz.height;
     }
   }
 
   if (r.left > B.right) {
-    if (astro->vel.x > 0) {
+    if (mv->vel.x > 0) {
         x = B.left - sz.width;
       }
     }
 
   if (r.right < B.left) {
-    if (astro->vel.x < 0) {
+    if (mv->vel.x < 0) {
       x = B.right + sz.width;
     }
   }
 
-  sp->setPosition(x,y);
+  sp->setPos(x,y);
 }
 
 
-NS_END(asteroids)
+NS_END
 
 
 

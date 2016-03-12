@@ -8,41 +8,41 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Motions : public a::System {
+class CC_DLL Motions : public ecs::System {
 
   void controlCannon(float);
   void fireMissile(float);
-  void scanInput(Gesture*);
+  void scanInput(f::CGesture*);
 
   DECL_TD(VOIDFN, scanner)
 
 public:
 
-  MDECL_SYS_PRIORITY(a::Motion)
+  MDECL_SYS_PRIORITY(ecs::Motion)
   MDECL_SYS_TPID("s/Motions")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Motions(a::Engine *e)
+  Motions(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, cannon)
-  DECL_PTR(a::NodeList, ship)
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
 
 };
 
 
-NS_END(asteroids)
+NS_END
 
 

@@ -20,26 +20,26 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
+  _score += n;
   drawScore();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  lives->reduce(n);
-  return lives->isDead();
+  _lives->reduce(n);
+  return _lives->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawScore() {
-  scoreLabel->setString(s::to_string(score));
+  _scoreLabel->setString(s::to_string(_score));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
   auto soff = CC_CSV(c::Float, "S_OFF");
   auto tile = CC_CSV(c::Float, "TILE");
   auto wz= cx::visRect();
@@ -47,32 +47,32 @@ void HUDLayer::decorate() {
 
   regoAtlas( "game-pics");
 
-  scoreLabel = cx::reifyBmfLabel("TinyBoxBB", "0");
-  scoreLabel->setAnchorPoint(cx::anchorBR());
-  scoreLabel->setScale( 12/72.0f);
-  scoreLabel->setPosition( wz.size.width - tile - soff,
-    wz.size.height - tile - soff - cx::getScaledHeight(scoreLabel));
-  addItem(scoreLabel);
+  _scoreLabel = cx::reifyBmfLabel("TinyBoxBB", "0");
+  _scoreLabel->setAnchorPoint(cx::anchorBR());
+  _scoreLabel->setScale( 12/72.0);
+  _scoreLabel->setPosition( wz.size.width - tile - soff,
+    wz.size.height - tile - soff - cx::getScaledHeight(_scoreLabel));
+  addItem(_scoreLabel);
 
-  this->lives= f::reifyRefType<f::XLives>();
-  this->lives->decorate("rship_1.png", 3,
+  _lives= f::reifyRefType<f::XLives>();
+  _lives->decorate("rship_1.png", 3,
       tile + soff,
-      wb.top - tile - soff, 0.5f);
-  addItem(lives);
+      wb.top - tile - soff, 0.5);
+  addItem(_lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
   auto menu = cx::mkMenu(b);
   auto z2= cx::halfHW(b);
 
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
-  menu->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
+  b->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
   addItem(menu);
 
-  lives->resurrect();
-  score = 0;
+  _lives->resurrect();
+  _score = 0;
 }
 
 
-NS_END(asteroids)
+NS_END
 
 

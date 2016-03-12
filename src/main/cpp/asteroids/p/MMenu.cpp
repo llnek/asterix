@@ -19,7 +19,7 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decorate() {
+void MMenu::decoUI() {
 
   auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
   auto tile = CC_CSV(c::Float, "TILE");
@@ -28,7 +28,7 @@ void MMenu::decorate() {
 
   centerImage("gui.mmenus.menu.bg");
 
-  tt->setPosition(wb.cx, wb.top * 0.9f);
+  tt->setPosition(wb.cx, wb.top * 0.9);
   tt->setScale(XCFG()->getScale());
   tt->setColor(c);
   addItem(tt);
@@ -39,14 +39,14 @@ void MMenu::decorate() {
 
   b->setCallback(
       [=](c::Ref*){ cx::runEx(Game::reify(x)); });
-  menu->setPosition(wb.cx, wb.cy);
+  b->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
   auto quit= cx::reifyMenuBtn("icon_quit.png");
   auto ctx= (MCX*) getCtx();
-  auto sz= back->getContentSize();
+  auto sz= CC_CSIZE(back);
 
   back->setColor(c);
   quit->setColor(c);
@@ -71,5 +71,5 @@ void MMenu::decorate() {
 }
 
 
-NS_END(asteroids)
+NS_END
 

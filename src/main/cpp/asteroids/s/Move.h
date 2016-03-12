@@ -8,43 +8,43 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XPool.h"
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public a::System {
+class CC_DLL Move : public ecs::System {
 
   const c::Vec2 thrust(float angle, float power);
   float rotateShip(float cur, float deg);
   void processShipMotions(float dt);
   void moveShip(float);
-  void moveAstros(f::ComObj*, float);
-  void moveXXX(f::XPool*, float);
-  void moveBBB(f::XPool*, float);
+  void moveAstros(ecs::Node*, float);
+  void moveXXX(f::FPool*, float);
+  void moveBBB(f::FPool*, float);
 
 public:
 
-  MDECL_SYS_PRIORITY(a::Move)
+  MDECL_SYS_PRIORITY(ecs::Move)
   MDECL_SYS_TPID("s/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  Move(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arenas)
-  DECL_PTR(a::NodeList, ships)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
 
 };
 
 
-NS_END(asteroids)
+NS_END
 
 

@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,7 @@ public:
   virtual void runOnce();
 
   virtual ResolutionPolicy policy() {
-    return ResolutionPolicy::FIXED_HEIGHT;
+    return ResolutionPolicy::FIXED_WIDTH;
   }
 
   virtual bool isPortrait() { return false; }
@@ -43,5 +44,5 @@ public:
 };
 
 
-NS_END(asteroids)
+NS_END
 

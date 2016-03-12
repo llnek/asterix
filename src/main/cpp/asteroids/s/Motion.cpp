@@ -20,11 +20,9 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::preamble() {
-  cannon = engine->getNodeList(CannonCtrlNode().typeId());
-  ship= engine->getNodeList(ShipMotionNode().typeId());
-  arena= engine->getNodeList(ArenaNode().typeId());
-
-  auto mo= CC_GNLF(Gesture,ship,"motion");
+  _arena= _engine->getNodes("n/GVars")[0];
+  _ship= _engine->getNodes("n/Ship")[0];
+  auto mo= CC_GEC(f::CGesture,ship,"f/CGesture");
   scanner= cx::throttle(
       [=]() { scanInput(mo); },
       CC_CSV(c::Integer, "THROTTLE+WAIT"));
@@ -43,12 +41,12 @@ bool Motions::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::controlCannon(float dt) {
-  auto gun = CC_GNLF(Cannon,cannon,"cannon");
-  auto lpr= CC_GNLF(Looper,cannon, "looper");
+  auto lpr= CC_GEC(f::Looper, _ship, "f/Looper");
+  auto gun = CC_GEC(Cannon, _ship,"n/Cannon");
 
   if (! gun->hasAmmo) {
-    if (cx::timerDone(lpr->timer0)) {
-      SNPTR( lpr->timer0)
+    if (cx::timerDone(lpr->timer)) {
+      SNPTR(lpr->timer)
       gun->hasAmmo=true;
     }
   }
@@ -61,35 +59,33 @@ void Motions::controlCannon(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::fireMissile(float dt) {
-  auto lpr= CC_GNLF(Looper,cannon,"looper");
-  auto gun= CC_GNLF(Cannon,cannon,"cannon");
-  auto sp= CC_GNLF(Ship,ship, "ship");
-  auto sz= sp->sprite->getContentSize();
-  auto deg= sp->sprite->getRotation();
+  auto lpr= CC_GEC(f::Looper, _ship,"f/Looper");
+  auto gun= CC_GEC(Cannon, _ship,"n/Cannon");
+  auto sp= CC_GEC(Ship, _ship, "n/Ship");
   auto p= MGMS()->getPool("Missiles");
-  auto top= cx::getTop(sp->sprite);
-  auto pos= sp->pos();
-  auto ent= p->get();
-
-  if (ENP(ent)) {
-    SCAST(GEngine*,engine)->createMissiles(30);
-    ent= p->get();
-  }
-
-  auto rc= cx::calcXY(deg, sz.height * 0.5f);
   auto cfg= MGMS()->getLCfg()->getValue();
-  ent->vel.x = rc.x;
-  ent->vel.y = rc.y;
-  ent->inflate( pos.x + rc.x, pos.y + rc.y);
-  ent->sprite->setRotation(deg);
+  auto sz= sp->csize();
+  auto deg= sp->node->getRotation();
+  auto top= cx::getTop(sp->node);
+  auto pos= sp->pos();
+  auto ent= p->getAndSet(true);
+  auto mv= CC_GEC(f::CMove,ent,"f/CMove");
+  auto dw= CC_GEC(f::CDraw,ent,"f/CDraw");
+  auto h= CC_GEC(f::CHealth,ent,"f/CHealth");
+  auto rc= cx::calcXY(deg, HHZ(sz));
+  mv->vel.x = rc.x;
+  mv->vel.y = rc.y;
+  h->reset();
+  dw->inflate(pos.x + rc.x, pos.y + rc.y);
+  dw->node->setRotation(deg);
 
-  lpr->timer0 = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWnd"]));
+  lpr->timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWnd"]));
   gun->hasAmmo=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Motions::scanInput(Gesture *mo) {
+void Motions::scanInput(f::CGesture *mo) {
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
     mo->right=true;
   }
@@ -105,6 +101,6 @@ void Motions::scanInput(Gesture *mo) {
 }
 
 
-NS_END(asteroids)
+NS_END
 
 
