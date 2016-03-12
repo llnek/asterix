@@ -25,9 +25,9 @@ class CC_DLL GEngine : public ecs::Engine {
 
 public:
 
-  void reifyExplosions(int count = 24);
-  void reifyMissiles(int count= 36);
-  void reifyBombs(int count = 24);
+  void reifyExplosions(int count = 16);
+  void reifyMissiles(int count= 16);
+  void reifyBombs(int count = 16);
 
   virtual void initEntities();
   virtual void initSystems();

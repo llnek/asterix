@@ -9,35 +9,20 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
 #include "AppDelegate.h"
-NS_USING(invaders)
+#include "p/Config.h"
 NS_USING(fusii)
-NS_USING(ash)
+NS_USING(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() : App("invaders") {
-
-  // step.1: register all ash::node factories here
-  auto r= NodeRegistry::self();
-
-  r->rego( mc_new(AlienMotionNode));
-  r->rego( mc_new(ShipMotionNode));
-  r->rego( mc_new(ArenaNode));
-  r->rego( mc_new(CannonCtrlNode));
-
-  // step.2: set up app-config
   Config::reify();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
   delete XConfig::self();
 }
 

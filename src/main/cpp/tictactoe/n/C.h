@@ -36,9 +36,9 @@ struct CC_DLL Grid : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Player : public f::CPlayer {
+struct CC_DLL Player : public f::CStats {
   Player(int category, int value, int id)
-    : CPlayer(value) {
+    : CStats(value) {
     this->category= category;
     this->pnum=id;
   }
@@ -47,11 +47,11 @@ struct CC_DLL Player : public f::CPlayer {
     pidlong= other.pidlong;
     pnum= other.pnum;
     pid = other.pid;
-    CPlayer::operator=(other);
+    CStats::operator=(other);
     return *this;
   }
   Player(const Player &other)
-    : CPlayer(other){
+    : CStats(other){
 
     category= other.category;
     pidlong= other.pidlong;

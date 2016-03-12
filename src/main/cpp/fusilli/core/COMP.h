@@ -30,20 +30,46 @@ struct CC_DLL CGesture : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CHealth : public ecs::Component {
-  virtual bool alive() { curHP <= 0; }
+  virtual bool alive() { return curHP > 0; }
   MDECL_COMP_TPID("f/CHealth")
   CHealth(int h, int c) {
     origHP=h;
     curHP=c;
     assert(c <= h);
   }
-  CHealth(int h) {
+  CHealth(int h=1) {
     origHP=h;
     curHP=h;
+  }
+  void hurt(int damage=1) {
+    curHP -= damage;
+  }
+  void reset() {
+    curHP=origHP;
   }
   DECL_IZ(origHP)
   DECL_IZ(curHP)
 
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Looper : public ecs::Component {
+  virtual ~Looper() { CC_DROP(timer); }
+  Looper() {}
+  MDECL_COMP_TPID("f/Looper")
+  DECL_PTR(c::DelayTime, timer)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Loopers : public ecs::Component {
+  virtual ~Loopers() {
+    F__LOOP(it,timers) { CC_DROP(*it); }
+  }
+  Loopers() {}
+  MDECL_COMP_TPID("f/Loopers")
+  s_vec<c::DelayTime*> timers;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,11 +86,11 @@ struct CC_DLL CHuman : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CPlayer : public ecs::Component {
-  MDECL_COMP_TPID("f/CPlayer")
+struct CC_DLL CStats : public ecs::Component {
+  MDECL_COMP_TPID("f/CStats")
   DECL_FZ(value)
-  CPlayer(int v) { value=v;}
-  CPlayer() {}
+  CStats(int v) { value=v;}
+  CStats() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////

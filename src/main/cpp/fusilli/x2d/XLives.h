@@ -40,7 +40,7 @@ public:
       float x, float y,
       float scale=1.0f, int dir= 1);
 
-  bool isDead() { return _curLives < 0; }
+  bool isDead() { return _curLives <= 0; }
   int getLives() { return _curLives; }
 
   void reduce(int cnt = 1);

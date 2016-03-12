@@ -18,27 +18,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Alien : public f::CDraw {
-
-  Alien(not_null<c::Node*> s)
-    : CDraw(s) {
-  }
-
-  MDECL_COMP_TPID("n/Alien")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL AlienSquad : public ecs::Component {
-
-  const s_vec<f::Poolable*>& list() { return aliens->list(); }
 
   AlienSquad(not_null<f::FPool*> aliens, int step) {
     this->aliens=aliens;
     this->stepx=step;
   }
-
-  int size() { return aliens->size(); }
 
   MDECL_COMP_TPID("n/AlienSquad")
 
@@ -48,18 +33,20 @@ struct CC_DLL AlienSquad : public ecs::Component {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Bomb : public f::CDraw {
-
-  Bomb(not_null<c::Node*> s)
-    : CDraw(s) {
+struct CC_DLL Rank : public f::CStats {
+  MDECL_COMP_TPID( "n/Rank")
+  DECL_IZ(rank)
+  Rank(int v, int r)
+  : CStats(v) {
+   rank=r;
   }
-  MDECL_COMP_TPID("n/Bomb")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL Cannon : public ecs::Component {
 
+  Cannon(bool b) { hasAmmo=b; }
+  Cannon() {}
   MDECL_COMP_TPID( "n/Cannon")
   DECL_BT(hasAmmo)
 };
@@ -68,37 +55,20 @@ struct CC_DLL Cannon : public ecs::Component {
 //
 struct CC_DLL Explosion : public f::CDraw {
 
-  virtual void inflate(float x, float y);
-
-  Explosion(not_null<c::Node*> s)
-    : CDraw(s) {
+  Explosion(not_null<c::Node*> s) : CDraw(s) {
     frameTime=0.1f ;
+  }
+
+  virtual void inflate(float x, float y) {
+    auto anim= CC_ACAC()->getAnimation("boom!");
+    f::CDraw::inflate(x,y);
+    node->runAction(
+      c::Sequence::createWithTwoActions(c::Animate::create(anim),
+      c::CallFunc::create([=]() { this->deflate(); })));
   }
 
   MDECL_COMP_TPID("n/Explosion")
   DECL_FZ(frameTime)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Looper : public ecs::Component {
-
-  MDECL_COMP_TPID("n/Looper")
-  virtual ~Looper();
-
-  DECL_PTR(c::DelayTime, timer7)
-  DECL_PTR(c::DelayTime, timer0)
-  DECL_PTR(c::DelayTime, timer1)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Missile : public f::CDraw {
-
-  MDECL_COMP_TPID( "n/Missile")
-  Missile(not_null<c::Node*> s)
-  : CDraw(s) {
-  }
 };
 
 //////////////////////////////////////////////////////////////////////////////

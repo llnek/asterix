@@ -33,8 +33,8 @@
 #define CC_FILER() cocos2d::FileUtils::getInstance()
 #define CC_DTOR() cocos2d::Director::getInstance()
 #define CC_PCAST(T) static_cast<T>(getParent())
-#define CC_KEEP(x) if (x) {x->retain();}
-#define CC_DROP(x) if (x) {x->release();}
+#define CC_KEEP(x) if (x) { (x)->retain();}
+#define CC_DROP(x) if (x) { (x)->release();}
 
 #define CC_CSIZE(s) s->getBoundingBox().size
 #define CC_BBOX(s) s->getBoundingBox()

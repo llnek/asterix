@@ -20,8 +20,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Motions::preamble() {
-  _aliens = _engine->getNodes("n/AlienMotion")[0];
-  _cannon = _engine->getNodes("n/CannonCtrl")[0];
+  _aliens = _engine->getNodes("n/AlienSquad")[0];
+  _cannon = _engine->getNodes("n/Cannon")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,36 +40,33 @@ bool Motions::update(float dt) {
 //
 void Motions::processCannon(float dt) {
 
+  auto lpr= CC_GEC(f::Looper, _cannon, "f/Looper");
   auto gun = CC_GEC(Cannon, _cannon, "n/Cannon");
-  auto lpr= CC_GEC(Looper, _cannon, "n/Looper");
-  auto ship= CC_GEC(f::CDraw, _cannon, "f/CDraw");
-  auto t= lpr->timer7;
+  auto ship= CC_GEC(Ship, _cannon, "n/Ship");
+  auto t= lpr->timer;
 
   //throttle the cannon with timer
-  if (!cx::timerDone(t)) { return;}
-  if (gun->hasAmmo) { return;}
+  if (cx::timerDone(t)) {
+    gun->hasAmmo=true;
+    cx::undoTimer(t);
+    SNPTR(lpr->timer)
+  }
 
-  ship->node->setSpriteFrame(node->frame0);
-  gun->hasAmmo=true;
-  cx::undoTimer(t);
-  SNPTR(lpr->timer7)
+  if (!gun->hasAmmo) {
+  return;}
 
+  // release a missile
   auto cfg= MGMS()->getLCfg()->getValue();
   auto p= MGMS()->getPool("Missiles");
   auto top= cx::getTop(ship->node);
   auto pos= ship->pos();
-  auto ent= p->get();
-
-  if (ENP(ent)) {
-    SCAST(GEngine*,engine)->reifyMissiles(36);
-    ent= p->get();
-  }
-
-  ent->inflate(pos.x, top+4);
-
-  lpr->timer7 = cx::reifyTimer( MGML(), JS_FLOAT(cfg["coolDownWindow"]));
+  auto ent= (ecs::Node*) p->getAndSet(true);
+  auto h= CC_GEC(f::CHealth, ent, "f/CHealth");
+  auto sp= CC_GEC(f::CDraw, ent, "f/CDraw");
+  lpr->timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
+  sp->inflate(pos.x, top+4);
+  h->reset();
   gun->hasAmmo=false;
-  ship->node->setSpriteFrame(ship->frame1);
 
   cx::sfxPlay("ship-missile");
 }
@@ -79,15 +76,15 @@ void Motions::processCannon(float dt) {
 void Motions::processAlienMotions(float) {
 
   auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
-  auto lpr = CC_GEC(Looper, _aliens, "n/Looper");
+  auto lpr = CC_GEC(f::Loopers, _aliens, "f/Loopers");
   auto cfg= MGMS()->getLCfg()->getValue();
 
-  if (ENP(lpr->timer0)) {
-    lpr->timer0= cx::reifyTimer(MGML(), JS_FLOAT(cfg["marching"]));
+  if (ENP(lpr->timers[0])) {
+    lpr->timers[0]= cx::reifyTimer(MGML(), JS_FLOAT(cfg["marching"]));
   }
 
-  if (ENP(lpr->timer1)) {
-    lpr->timer1= cx::reifyTimer(MGML(), JS_FLOAT(cfg["bombing"]));
+  if (ENP(lpr->timers[1])) {
+    lpr->timers[1]= cx::reifyTimer(MGML(), JS_FLOAT(cfg["bombing"]));
   }
 }
 

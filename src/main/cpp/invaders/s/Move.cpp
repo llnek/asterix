@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  _player = _engine->getNodes("n/ShipMotion")[0];
+  _player = _engine->getNodes("n/Ship")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,17 +45,17 @@ void Move::process(float dt) {
 void Move::processShipMotions( float dt) {
 
   auto mv= CC_GEC(f::CMove, _player,"f/CMove");
-  auto sp= CC_GEC(Ship, _player,"f/CDraw");
+  auto sp= CC_GEC(Ship, _player,"n/Ship");
   auto pos = sp->pos();
   auto x= pos.x;
   auto y= pos.y;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    x = pos.x + dt * mv->vel.x;
+    x = pos.x + dt * mv->speed;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    x = pos.x - dt * mv->vel.x;
+    x = pos.x - dt * mv->speed;
   }
 
   sp->setPos(x,y);
@@ -87,7 +87,7 @@ void Move::moveBombs(float dt) {
   auto c= bbs->ls();
 
   F__LOOP(it, c) {
-    auto b = *it;
+    auto b = (ecs::Node*) *it;
     if (b->status()) {
       auto mv= CC_GEC(f::CMove,b,"f/CMove");
       auto s= CC_GEC(f::CDraw,b,"f/CDraw");
@@ -106,12 +106,14 @@ void Move::moveMissiles(float dt) {
   auto c= mss->ls();
 
   F__LOOP(it, c) {
-    auto e = *it;
-    auto mv= CC_GEC(f::CMove,e,"f/CMove");
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
-    auto pos= s->pos();
-    auto y = pos.y + dt * mv->speed;
-    s->setPos(pos.x, y);
+    auto e = (ecs::Node*) *it;
+    if (e->status()) {
+      auto mv= CC_GEC(f::CMove,e,"f/CMove");
+      auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+      auto pos= s->pos();
+      auto y = pos.y + dt * mv->speed;
+      s->setPos(pos.x, y);
+    }
   }
 }
 

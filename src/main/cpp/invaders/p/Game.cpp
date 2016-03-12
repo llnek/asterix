@@ -30,6 +30,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  virtual void onMouseMotion(const c::Vec2&);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchMotion(c::Touch*);
   virtual void onInited();
   void onPlayerKilled();
   void showMenu();
@@ -41,21 +44,42 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onMouseMotion(const c::Vec2 &loc) {
+  auto sp= CC_GEC(f::CDraw,_player,"n/Ship");
+  auto pos= sp->node->getPosition();
+  if (loc.y <= pos.y) {
+    sp->node->setPosition(loc.x, pos.y);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(c::Touch *t) {
+  auto sp= CC_GEC(f::CDraw,_player,"n/Ship");
+  auto y= sp->node->getPositionY();
+  auto loc= t->getLocation();
+  return loc.y <= y;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(c::Touch *t) {
+  auto sp= CC_GEC(f::CDraw,_player,"n/Ship");
+  auto y= sp->node->getPositionY();
+  auto loc= t->getLocation();
+  if ( loc.y <= y) {
+    onMouseMotion(loc);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onInited() {
-  auto cannon = _engine->getNodes("n/CannonCtrl")[0];
-  auto gun = CC_GEC(Cannon, cannon, "n/Cannon");
-  auto lpr= CC_GEC(Looper, cannon, "n/Looper");
-  auto cfg= MGMS()->getLCfg()->getValue();
-
   _player = _engine->getNodes("n/Ship")[0];
-
   // pre-population objects in pools
   SCAST(GEngine*,_engine)->reifyExplosions();
   SCAST(GEngine*,_engine)->reifyMissiles();
   SCAST(GEngine*,_engine)->reifyBombs();
-
-  lpr->timer7 = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
-  gun->hasAmmo=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,7 +109,11 @@ void GLayer::onPlayerKilled() {
     MGMS()->stop();
     Ende::reify(MGMS(),4);
   } else {
-    CC_GEC(Ship,_player,"n/Ship")->inflate();
+    auto h= CC_GEC(f::CHealth,_player,"f/CHealth");
+    auto sp= CC_GEC(Ship,_player,"n/Ship");
+    _player->take();
+    sp->inflate();
+    h->reset();
   }
 }
 

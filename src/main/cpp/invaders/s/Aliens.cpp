@@ -21,7 +21,11 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::preamble() {
-  _baddies = _engine->getNodes("n/AlienMotion")[0];
+  _baddies = _engine->getNodes("n/AlienSquad")[0];
+  auto lpr = CC_GEC(f::Loopers, _baddies, "f/Loopers");
+  // 2 timers, 1 for moves, 1 for bombs
+  lpr->timers.push_back(CC_NIL);
+  lpr->timers.push_back(CC_NIL);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -39,12 +43,12 @@ bool Aliens::update(float dt) {
 void Aliens::processMovement(float dt) {
 
   auto sqad= CC_GEC(AlienSquad, _baddies, "n/AlienSquad");
-  auto lpr = CC_GEC(Looper, _baddies, "n/Looper");
-  auto tm= lpr->timer0;
+  auto lpr = CC_GEC(f::Loopers, _baddies, "f/Loopers");
+  auto tm= lpr->timers[0];
 
   if (cx::timerDone(tm)) {
+    lpr->timers[0]= CC_NIL;
     cx::undoTimer(tm);
-    SNPTR(lpr->timer0)
     maybeShuffleAliens(sqad);
   }
 }
@@ -54,12 +58,12 @@ void Aliens::processMovement(float dt) {
 void Aliens::processBombs(float dt) {
 
   auto sqad= CC_GEC(AlienSquad, _baddies, "n/AlienSquad");
-  auto lpr = CC_GEC(Looper, _baddies, "n/Looper");
-  auto tm= lpr->timer1;
+  auto lpr = CC_GEC(f::Loopers, _baddies, "f/Loopers");
+  auto tm= lpr->timers[1];
 
   if (cx::timerDone(tm)) {
+    lpr->timers[1]= CC_NIL;
     cx::undoTimer(tm);
-    SNPTR(lpr->timer1)
     checkBomb(sqad);
   }
 }
@@ -67,22 +71,25 @@ void Aliens::processBombs(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::checkBomb(AlienSquad *sqad) {
-  auto sz= sqad->aliens-size();
-  auto c= sqad->ls();
+  auto c= sqad->aliens->ls();
+  auto sz= c.size();
   s_vec<int> rc;
   int idx=0;
 
   F__LOOP(it, c) {
-    auto &a= *it;
+    auto a= *it;
     if (a->status()) { rc.push_back(idx); }
     ++idx;
   }
 
+  // randomly pick an alien to drop bomb
   sz= rc.size();
   if (sz > 0) {
     idx = sz == 1 ? 0 : cx::randInt(sz);
     auto n=rc[idx];
-    auto v= sqad->aliens->getAt(n)->pos();
+    auto e= (ecs::Node*) sqad->aliens->getAt(n);
+    auto s= CC_GEC(f::CDraw, e, "f/CDraw");
+    auto v= s->pos();
     dropBomb(v.x, v.y-4);
   }
 }
@@ -91,14 +98,13 @@ void Aliens::checkBomb(AlienSquad *sqad) {
 //
 void Aliens::dropBomb(float x, float y) {
   auto bbs = MGMS()->getPool("Bombs");
-  auto ent = bbs->get();
-
-  if (NNP(ent)) {
-    SCAST(GEngine*, _engine)->reifyBombs(25);
-    ent = bbs->get();
-  }
-
-  ent->inflate(x, y);
+    auto e = (ecs::Node*) bbs->getAndSet(true);
+    if (e) {
+      auto h= CC_GEC(f::CHealth,e, "f/CHealth");
+      auto s= CC_GEC(f::CDraw,e, "f/CDraw");
+      s->inflate(x,y);
+      h->reset();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,9 +124,10 @@ void Aliens::maybeShuffleAliens(AlienSquad *sqad) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::testDirX(ecs::Node *b, int stepx) {
-  auto sp= CC_GEC(f::CDraw,b,"f/CDraw")->node;
+  auto cd= CC_GEC(f::CDraw,b,"f/CDraw");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
+  auto sp= cd->node;
   auto delta= 2/40.0 * wz.size.width;
 
   if (stepx > 0) {
@@ -133,7 +140,8 @@ bool Aliens::testDirX(ecs::Node *b, int stepx) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::shuffleOneAlien(ecs::Node *a, int stepx) {
-  auto sp= CC_GEC(f::CDraw,a,"f/CDraw")->node;
+  auto cd= CC_GEC(f::CDraw,a,"f/CDraw");
+  auto sp= cd->node;
   auto pos= sp->getPosition();
   sp->setPosition(pos.x + stepx, pos.y);
 }
@@ -141,7 +149,8 @@ void Aliens::shuffleOneAlien(ecs::Node *a, int stepx) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::forwardOneAlien(ecs::Node *a, float delta) {
-  auto sp= CC_GEC(f::CDraw,a,"f/CDraw")->node;
+  auto cd= CC_GEC(f::CDraw,a,"f/CDraw");
+  auto sp= cd->node;
   auto pos= sp->getPosition();
   sp->setPosition(pos.x, pos.y - delta);
 }
@@ -149,11 +158,11 @@ void Aliens::forwardOneAlien(ecs::Node *a, float delta) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::doShuffle(AlienSquad *sqad) {
-  auto c= sqad->ls();
+  auto c= sqad->aliens->ls();
   auto found=false;
 
   F__LOOP(it, c) {
-    auto &e= *it;
+    auto e= (ecs::Node*) *it;
     if (e->status()) {
       shuffleOneAlien(e, sqad->stepx);
       found=true;
@@ -166,11 +175,11 @@ bool Aliens::doShuffle(AlienSquad *sqad) {
 //
 bool Aliens::doForward(AlienSquad *sqad) {
   auto delta= abs(sqad->stepx);
-  auto c= sqad->ls();
+  auto c= sqad->aliens->ls();
   auto found= false;
 
   F__LOOP(it, c) {
-    auto e= *it;
+    auto e= (ecs::Node*) *it;
     if (e->status()) {
       forwardOneAlien(e, delta);
       found=true;
@@ -184,15 +193,15 @@ bool Aliens::doForward(AlienSquad *sqad) {
 //
 ecs::Node* Aliens::findMinX(AlienSquad *sqad) {
   auto cur= (float) INT32_MAX;
-  auto c= sqad->ls();
+  auto co= sqad->aliens->ls();
   ecs::Node *rc= nullptr;
   float v;
 
-  F__LOOP(it, c) {
-    auto e= *it;
-    auto sp=CC_GEC(f::CDraw,e,"f/CDraw");
+  F__LOOP(it, co) {
+    auto e= (ecs::Node*) *it;
+    auto c=CC_GEC(f::CDraw,e,"f/CDraw");
     if (e->status()) {
-      v= cx::getLeft(sp->node);
+      v= cx::getLeft(c->node);
       if (v < cur) {
         cur=v;
         rc=e;
@@ -207,15 +216,15 @@ ecs::Node* Aliens::findMinX(AlienSquad *sqad) {
 //
 ecs::Node* Aliens::findMaxX(AlienSquad *sqad) {
   auto cur= (float) INT32_MIN;
-  auto c= sqad->ls();
+  auto co= sqad->aliens->ls();
   ecs::Node* rc= nullptr;
   float v;
 
-  F__LOOP(it, c) {
-    auto e= *it;
-    auto sp= CC_GEC(f::CDraw,e,"f/CDraw");
+  F__LOOP(it, co) {
+    auto e= (ecs::Node*) *it;
+    auto c= CC_GEC(f::CDraw,e,"f/CDraw");
     if (e->status()) {
-      v= cx::getRight(sp->node);
+      v= cx::getRight(c->node);
       if (v > cur) {
         cur = v;
         rc=e;

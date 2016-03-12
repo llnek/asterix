@@ -58,10 +58,10 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Player : public f::CPlayer {
+struct CC_DLL Player : public f::CStats {
 
   Player(int category, int value, int pnum, const sstr &color)
-    : CPlayer(value) {
+    : CStats(value) {
     this->category= category;
     this->color= color;
     this->pnum=pnum;

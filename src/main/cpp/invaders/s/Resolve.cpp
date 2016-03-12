@@ -20,8 +20,8 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  _aliens= _engine->getNodes("n/AlienMotion")[0];
-  _player= _engine->getNodes("n/ShipMotion")[0];
+  _aliens= _engine->getNodes("n/AlienSquad")[0];
+  _player= _engine->getNodes("n/Ship")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,17 +47,18 @@ void Resolve::process(float dt) {
 void Resolve::checkMissiles() {
 
   auto mss = MGMS()->getPool("Missiles");
-  auto ht = cx::visRect().size.height;
+  auto wb = cx::visBox();
   auto c = mss->ls();
 
   F__LOOP(it, c) {
-    auto e = *it;
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto e = (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
     if (e->status()) {
-      if (s->pos().y >= ht ||
+      if (s->pos().y >= wb.top ||
           !h->alive()) {
-        e->deflate();
+        s->deflate();
+        e->yield();
       }
     }
   }
@@ -72,13 +73,14 @@ void Resolve::checkBombs() {
   auto wb= cx::visBox();
 
   F__LOOP(it, c) {
-    auto e = *it;
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto e = (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
     if (e->status()) {
       if (!h->alive() ||
           s->pos().y <= wb.bottom) {
-        e->deflate();
+        s->deflate();
+        e->yield();
       }
     }
   }
@@ -91,15 +93,19 @@ void Resolve::checkAliens() {
   auto c= sqad->aliens->ls();
 
   F__LOOP(it, c) {
-    auto e= *it;
+    auto e= (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto r= CC_GEC(Rank,e,"n/Rank");
+
     if (e->status()) {
       if (!h->alive()) {
         auto msg= j::json({
-              {"score", en->score }
+              {"score", r->value }
             });
         SENDMSGEX("/game/player/earnscore", &msg);
-        e->deflate();
+        s->deflate();
+        e->yield();
       }
     }
   }
@@ -109,8 +115,11 @@ void Resolve::checkAliens() {
 //
 void Resolve::checkShip() {
   auto h = CC_GEC(f::CHealth, _player, "f/CHealth");
+  auto s = CC_GEC(Ship, _player, "n/Ship");
+
   if (_player->status() && !h->alive()) {
-    _player->deflate();
+    s->deflate();
+    _player->yield();
     SENDMSG("/game/player/killed");
   }
 }

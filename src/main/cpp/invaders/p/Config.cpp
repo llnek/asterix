@@ -9,8 +9,11 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Splash.h"
 #include "Config.h"
+
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +37,7 @@ owner<Config*> Config::reify() {
 void Config::handleResolution(const c::Size& rs) {
   auto z= this->gameSize();
   //for default font, we use 48pt
-  scale = 52/256.0f * rs.width / z.width;
+  _scale = 52/256.0f * rs.width / z.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////
