@@ -9,34 +9,20 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
 #include "AppDelegate.h"
+#include "p/Config.h"
 NS_USING(breakout)
 NS_USING(fusii)
-NS_USING(ash)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() : App("breakout") {
-
-  // step.1: register all ash::node factories here
-  auto r= NodeRegistry::self();
-
-  r->rego( mc_new(PaddleMotionNode));
-  r->rego( mc_new(ArenaNode));
-  r->rego( mc_new(BricksNode));
-  r->rego( mc_new(BallMotionNode));
-
-  // step.2: set up app-config
   Config::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
   delete XConfig::self();
 }
 

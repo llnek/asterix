@@ -8,42 +8,43 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "n/N.h"
+#include "ecs/System.h"
+#include "n/C.h"
 
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide : public a::System {
+class CC_DLL Collide : public ecs::System {
 
+  void onBrick(Brick*);
   bool onPlayerKilled();
   void check();
   void checkNodes();
   void checkBricks();
-  void onBrick(Brick*);
 
 public:
 
-  MDECL_SYS_PRIORITY(a::Collide)
+  MDECL_SYS_PRIORITY(ecs::Collide)
   MDECL_SYS_TPID("s/Collide")
   MDECL_SYS_UPDATE()
   MDECL_SYS_PREAMBLE()
 
-  Collide(a::Engine *e)
+  Collide(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddle)
-  DECL_PTR(a::NodeList, ball)
-  DECL_PTR(a::NodeList, fence)
+  DECL_PTR(ecs::Node, _paddle)
+  DECL_PTR(ecs::Node, _ball)
+  DECL_PTR(ecs::Node, _fence)
 
 };
 
 
-NS_END(breakout)
+NS_END
 
 

@@ -19,7 +19,7 @@ NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
   auto b= cx::reifyMenuBtn("play.png");
   auto f= []() { cx::prelude(); };
   auto menu= cx::mkMenu(b);
@@ -30,12 +30,11 @@ void Splash::decorate() {
 
   b->setCallback(
       [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
-
-  menu->setPosition(wb.cx, wb.top * 0.1f);
+  b->setPosition(wb.cx, wb.top * 0.1);
   addItem(menu);
 }
 
 
-NS_END(breakout)
+NS_END
 
 

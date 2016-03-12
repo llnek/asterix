@@ -20,8 +20,8 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  paddle = engine->getNodeList(PaddleMotionNode().typeId());
-  ball = engine->getNodeList( BallMotionNode().typeId());
+  _paddle = _engine->getNodes("f/CGesture")[0];
+  _ball = _engine->getNodes("f/CAutoma")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,38 +37,38 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processBallMotions(float dt) {
-  auto ba= CC_GNLF(Ball, ball, "ball");
+  auto ba= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto mv= CC_GEC(f::CMove, _ball, "f/CMove");
   auto B = MGMS()->getEnclosureBox();
   auto pos= ba->pos();
   auto rect= cx::bbox4(ba);
-
   c::Vec2 outPos;
   c::Vec2 outVel;
   bool rc=cx::traceEnclosure(dt, B,
                          rect,
-                         ba->vel,
+                         mv->vel,
                          outPos, outVel);
 
-  ba->vel.x = outVel.x;
-  ba->vel.y = outVel.y;
+  mv->vel.x = outVel.x;
+  mv->vel.y = outVel.y;
   ba->setPos(outPos.x, outPos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processPaddleMotions(float dt) {
-  auto motion = CC_GNLF(Gesture,paddle,"motion");
-  auto pad = CC_GNLF(Paddle,paddle,"paddle");
+  auto pad = CC_GEC(f::CDraw, _paddle,"f/CDraw");
+  auto mv = CC_GEC(f::CMove, _paddle,"f/CMove");
   auto pos = pad->pos();
   auto x= pos.x;
   auto y= pos.y;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    x = pos.x + dt * pad->vel.x;
+    x = pos.x + dt * mv->speed;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    x = pos.x - dt * pad->vel.x;
+    x = pos.x - dt * mv->speed;
   }
 
   pad->setPos(x,y);
@@ -78,21 +78,22 @@ void Move::processPaddleMotions(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::clamp(Paddle *pad) {
-  auto sz= pad->sprite->getContentSize();
+void Move::clamp(f::CDraw *pad) {
   auto tile = CC_CSV(c::Float, "TILE");
-  auto pos= pad->sprite->getPosition();
+  auto sz= pad->csize();
+  auto pos= pad->pos();
   auto wz = cx::visRect();
 
-  if (cx::getRight(pad->sprite) > wz.size.width - tile) {
-    pad->setPos(wz.size.width - tile - sz.width * 0.5f, pos.y);
+  if (cx::getRight(pad->node) > wz.size.width - tile) {
+    pad->setPos(wz.size.width - tile - HWZ(sz), pos.y);
   }
 
-  if (cx::getLeft(pad->sprite) < tile) {
-    pad->setPos( tile + sz.width * 0.5f, pos.y);
+  if (cx::getLeft(pad->node) < tile) {
+    pad->setPos(tile + HWZ(sz), pos.y);
   }
 }
 
-NS_END(breakout)
+
+NS_END
 
 

@@ -14,13 +14,12 @@
 
 NS_BEGIN(breakout)
 
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 const s_arr<sstr,8> CANDIES {
   "red_candy.png", "amber_candy.png","white_candy.png","green_candy.png",
   "yellow_candy.png","blue_candy.png", "purple_plus_candy.png", "purple_minus_candy.png"
 };
-
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Config*> Config::reify() {
@@ -34,7 +33,7 @@ owner<Config*> Config::reify() {
 //////////////////////////////////////////////////////////////////////////////
 //
 const sstr Config::getCandy(int pos) {
-  assert(pos >=0 && pos < CANDIES.size());
+  assert(pos >= 0 && pos < CANDIES.size());
   return CANDIES[pos];
 }
 
@@ -47,10 +46,9 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id = "7d943e06-0849-4bf4-a16d-64a401f72a3e";
-  app_id= "breakout";
+  _game_id = "7d943e06-0849-4bf4-a16d-64a401f72a3e";
+  _app_id= "breakout";
 
-  addCst("showFPS", CC_BOOL(false));
   addCst("GRID_W", CC_INT(40));
   addCst("GRID_H", CC_INT(60));
 
@@ -64,13 +62,11 @@ void Config::initCsts() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
+  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
-  addAtlas("game-pics", CC_STR("pics/sprites.plist"));
-  addAtlas("img-pics", CC_STR("pics/images.plist"));
 
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("lang-pics", CC_STR("l10n/en/images.png"));
-  addImage("game-pics", CC_STR("pics/sprites.png"));
-  addImage("img-pics", CC_STR("pics/images.png"));
 
   addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
   addImage("game.bg", CC_STR("pics/bg.png"));
@@ -79,6 +75,9 @@ void Config::initAssets() {
   addEffect("game_quit", CC_STR("sfx/Death.mp3"));
   addEffect("ball-paddle", CC_STR("sfx/ElevatorBeep.mp3"));
   addEffect("ball-brick", CC_STR("sfx/MineBeep.mp3"));
+
+  addEffect("click", CC_STR("sfx/button-click.wav"));
+  addMusic("background", CC_STR("sfx/music.mp3"));
 
   addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
   addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
@@ -124,27 +123,23 @@ void Config::initLevels() {
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 52.0f/256 * rs.width / gz.width;
+  _scale = 52.0f/256 * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
-  fp= getAtlas("img-pics");
-  c->addSpriteFramesWithFile( fp);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp= getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 
-NS_END(breakout)
+NS_END
 
 

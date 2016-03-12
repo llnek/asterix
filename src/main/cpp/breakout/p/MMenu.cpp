@@ -19,7 +19,7 @@ NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decorate() {
+void MMenu::decoUI() {
   auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
   auto tile = CC_CSV(c::Float,"TILE");
   auto dfc = XCFG()->getColor("dft");
@@ -27,7 +27,7 @@ void MMenu::decorate() {
 
   centerImage("gui.mmenus.menu.bg");
 
-  tt->setPosition(wb.cx, wb.top * 0.9f);
+  tt->setPosition(wb.cx, wb.top * 0.9);
   tt->setColor(XCFG()->getColor("dft"));
   tt->setScale(XCFG()->getScale());
   addItem(tt);
@@ -37,13 +37,13 @@ void MMenu::decorate() {
   auto x= mc_new(f::GCX);
   btn->setCallback(
       [=](c::Ref*){ cx::runEx(Game::reify(x)); });
-  menu->setPosition(wb.cx, wb.cy);
+  btn->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit buttons
   auto b= cx::reifyMenuBtn("icon_back.png");
   auto q= cx::reifyMenuBtn("icon_quit.png");
-  auto sz= b->getContentSize();
+  auto sz= CC_CSIZE(b);
   auto ctx = (MCX*) getCtx();
 
   q->setCallback([=](c::Ref*) { cx::prelude(); });
@@ -51,8 +51,8 @@ void MMenu::decorate() {
 
   s_vec<c::MenuItem*> bqs {b, q} ;
   auto m2= cx::mkHMenu(bqs);
-  m2->setPosition(wb.left + tile + sz.width * 1.1f,
-                  wb.bottom + tile + sz.height * 0.45f);
+  m2->setPosition(wb.left + tile + sz.width * 1.1,
+                  wb.bottom + tile + sz.height * 0.45);
   addItem(m2);
 
   auto audios = cx::reifyAudioIcons();
@@ -65,7 +65,7 @@ void MMenu::decorate() {
 }
 
 
-NS_END(breakout)
+NS_END
 
 
 

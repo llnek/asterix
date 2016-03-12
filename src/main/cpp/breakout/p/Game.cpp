@@ -14,10 +14,11 @@
 #include "s/GEngine.h"
 #include "Game.h"
 #include "HUD.h"
+//#include "Ende.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GLayer : public f::GameLayer {
@@ -27,28 +28,25 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void postReify();
+  virtual void onInited();
 
-  void onEarnScore(j::json*);
   void onPlayerKilled();
   void spawnPlayer();
   void onDone();
   void showMenu();
 
-  DECL_PTR(a::NodeList, paddle)
-  DECL_PTR(a::NodeList, ball)
-  DECL_PTR(a::NodeList, arena)
+  DECL_PTR(ecs::Node, _paddle)
+  DECL_PTR(ecs::Node, _ball)
+  DECL_PTR(ecs::Node, _arena)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
-  paddle=engine->getNodeList(PaddleMotionNode().typeId());
-  ball=engine->getNodeList(BallMotionNode().typeId());
-  arena=engine->getNodeList(ArenaNode().typeId());
-
-  motionees.push_back(CC_GNLF(Paddle,paddle,"paddle"));
+void GLayer::onInited() {
+  _paddle= _engine->getNodes("f/CGesture")[0];
+  _ball= _engine->getNodes("f/CAutoma")[0];
+  _arena= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,18 +57,16 @@ void GLayer::showMenu() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
+void GLayer::decoUI() {
+  _engine = mc_new(GEngine);
   regoAtlas("game-pics");
-  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
 
-  SCAST(GEngine*,engine)->bornPaddle(
-      CC_GNLF(Paddle,paddle,"paddle"),
-      CC_GNLF(Ball,ball,"ball"));
+  SCAST(GEngine*, _engine)->bornPaddle(_paddle,_ball);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,18 +82,13 @@ void GLayer::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onDone() {
+  this->setOpacity(0.1 * 255);
+  MGMS()->stop();
   surcease();
-  //ELayer::reify(this, 9999);
+  //Ende::reify(this, 4);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onEarnScore(j::json *msg) {
-  getHUD()->updateScore(
-      JS_INT(msg->operator[]("value")));
-}
-
-END_NS_UNAMED()
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &t, void *m) {
@@ -114,7 +105,8 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 
   if (t == "/game/players/earnscore") {
     auto msg = (j::json*)m;
-    y->onEarnScore(msg);
+    y->getHUD()->updateScore(
+      JS_INT(msg->operator[]("value")));
   }
 
   if (t == "/hud/showmenu") {
@@ -139,14 +131,14 @@ const f::Box4 Game::getEnclosureBox() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this,3);
   GLayer::reify(this,2);
   play();
 }
 
 
-NS_END(breakout)
+NS_END
 
 
 

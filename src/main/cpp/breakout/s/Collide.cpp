@@ -20,9 +20,9 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  paddle = engine->getNodeList(PaddleMotionNode().typeId());
-  ball = engine->getNodeList(BallMotionNode().typeId());
-  fence= engine->getNodeList(BricksNode().typeId());
+  _paddle = _engine->getNodes("f/CGesture")[0];
+  _fence= _engine->getNodes("n/BrickFence")[0];
+  _ball = _engine->getNodes("f/CAutoma")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,16 +34,17 @@ bool Collide::update(float dt) {
       checkBricks();
     }
   }
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Collide::onPlayerKilled() {
-  auto pad= CC_GNLF(Paddle,paddle,"paddle");
-  auto ba= CC_GNLF(Ball,ball,"ball");
+  auto pad= CC_GEC(f::CDraw, _paddle, "f/CDraw");
+  auto ba= CC_GEC(f::CDraw, _ball, "f/CDraw");
   auto pos= ba->pos();
 
-  if (pos.y < cx::getBottom(pad->sprite)) {
+  if (pos.y < cx::getBottom(pad->node)) {
     SENDMSG("/game/players/killed");
     return true;
   } else {
@@ -54,8 +55,8 @@ bool Collide::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkNodes() {
-  auto pad= CC_GNLF(Paddle,paddle,"paddle");
-  auto ba = CC_GNLF(Ball,ball,"ball");
+  auto pad= CC_GEC(f::CDraw, _paddle, "f/CDraw");
+  auto ba = CC_GEC(f::CDraw, _ball, "f/CDraw");
 
   if (cx::collide(pad,ba)) {
     check();
@@ -65,28 +66,30 @@ void Collide::checkNodes() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::check() {
-  auto pad= CC_GNLF(Paddle,paddle,"paddle");
-  auto ba= CC_GNLF(Ball,ball,"ball");
-  auto sz= ba->sprite->getContentSize();
-  auto hh= sz.height * 0.5f;
+  auto pad= CC_GEC(f::CDraw, _paddle, "f/CDraw");
+  auto ba= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto mv= CC_GEC(f::CMove, _ball, "f/CMove");
+  auto sz= ba->csize();
+  auto hh= HHZ(sz);
   auto pos= ba->pos();
-  auto top= cx::getTop(pad->sprite);
+  auto top= cx::getTop(pad->node);
 
   ba->setPos(pos.x, top+hh);
-  ba->vel.y = - ba->vel.y;
+  mv->vel.y = - mv->vel.y;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkBricks() {
-  auto fen= CC_GNLF(BrickFence,fence,"fence");
-  auto ba = CC_GNLF(Ball,ball,"ball");
+  auto fen= CC_GEC(BrickFence, _fence,"n/BrickFence");
+  auto ba = CC_GEC(f::CDraw, _ball, "f/CDraw");
   auto &bss= fen->bricks;
 
-  for (auto n=0; n < bss.size(); ++n) {
-    if (! bss[n]->status) { continue; }
-    if (cx::collide(ba, bss[n])) {
-      onBrick(bss[n]);
+  F__LOOP(it,bss) {
+    auto e= *it;
+    if (!e->flipped &&
+        cx::collide(ba, e)) {
+      onBrick(e);
       break;
     }
   }
@@ -95,44 +98,47 @@ void Collide::checkBricks() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::onBrick(Brick *brick) {
-  auto bal= CC_GNLF(Ball,ball,"ball");
-  auto bz = bal->sprite->getContentSize();
-  auto kz= brick->sprite->getContentSize();
-  auto ks= brick->sprite;
-  auto bs= bal->sprite;
-  auto ka= cx::bbox4(ks);
-  auto ba = cx::bbox4(bs);
+  auto bs= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto mv= CC_GEC(f::CMove, _ball, "f/CMove");
+  auto ka= cx::bbox4(brick);
+  auto ba= cx::bbox4(bs);
 
   // ball coming down from top?
-  if (ba.top > ka.top &&  ka.top > ba.bottom) {
-    bal->vel.y = - bal->vel.y;
+  if (ba.top > ka.top &&
+      ka.top > ba.bottom) {
+    mv->vel.y = - mv->vel.y;
   }
   else
   // ball coming from bottom?
-  if (ba.top > ka.bottom &&  ka.bottom > ba.bottom) {
-    bal->vel.y = - bal->vel.y;
+  if (ba.top > ka.bottom &&
+      ka.bottom > ba.bottom) {
+    mv->vel.y = - mv->vel.y;
   }
   else
   // ball coming from left?
-  if (ka.left > ba.left && ba.right > ka.left) {
-    bal->vel.x = - bal->vel.x;
+  if (ka.left > ba.left &&
+      ba.right > ka.left) {
+    mv->vel.x = - mv->vel.x;
   }
   else
   // ball coming from right?
-  if (ka.right > ba.left && ba.right > ka.right) {
-    bal->vel.x = - bal->vel.x;
+  if (ka.right > ba.left &&
+      ba.right > ka.right) {
+    mv->vel.x = - mv->vel.x;
   }
   else {
-    throw "Failed to determine the collide of ball and brick.";
+    throw "Can't find the hit of ball & brick";
   }
 
   auto msg= j::json({
-      {"value", brick->score }
+      {"value", brick->value }
       });
   SENDMSGEX("/game/players/earnscore", &msg);
+  brick->flipped=true;
   brick->deflate();
 }
 
-NS_END(breakout)
+
+NS_END
 
 

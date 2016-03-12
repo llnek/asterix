@@ -8,37 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "n/N.h"
+#include "ecs/System.h"
+#include "n/C.h"
 
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Move : public a::System {
+struct CC_DLL Move : public ecs::System {
 
-  MDECL_SYS_PRIORITY(a::Move)
+  MDECL_SYS_PRIORITY(ecs::Move)
   MDECL_SYS_TPID("s/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  Move(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, paddle)
-  DECL_PTR(a::NodeList, ball)
+  DECL_PTR(ecs::Node, _paddle)
+  DECL_PTR(ecs::Node, _ball)
 
   void processPaddleMotions(float);
   void processBallMotions(float);
-  void clamp(Paddle*);
+  void clamp(f::CDraw*);
 
 };
 
 
-NS_END(breakout)
+NS_END
 
 

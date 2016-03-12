@@ -8,21 +8,22 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GEngine : public a::Engine {
+struct CC_DLL GEngine : public ecs::Engine {
 
   virtual void initEntities();
   virtual void initSystems();
 
-  void bornPaddle(Paddle*, Ball*);
+  void bornPaddle(ecs::Node*, ecs::Node*);
   void createBricks();
   void createPaddle();
   void createBall();
@@ -30,5 +31,5 @@ struct CC_DLL GEngine : public a::Engine {
 };
 
 
-NS_END(breakout)
+NS_END
 

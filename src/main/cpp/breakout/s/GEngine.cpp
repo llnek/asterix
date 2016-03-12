@@ -23,6 +23,10 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
+  auto ent= this->reifyNode();
+  ent->take();
+  ent->checkin(mc_new(GVars));
+
   createBricks();
   createPaddle();
   createBall();
@@ -45,7 +49,7 @@ void GEngine::createBricks() {
 
   auto loff= CC_CSV(c::Integer,"LEFT+OFF");
   auto csz= cx::calcSize("red_candy.png");
-    j::json rows= JS_ARR(cfg["ROWS"]);
+  j::json rows= JS_ARR(cfg["ROWS"]);
   auto cols= JS_INT(cfg["COLS"]);
   auto tr= JS_INT(cfg["TOP+ROW"]);
   auto y= wz.size.height - tr*tile;
@@ -56,11 +60,10 @@ void GEngine::createBricks() {
     auto &rr = *it;
     auto r= JS_INT(rr);
     auto cn= cg->getCandy(r);
-    x= csz.width * 0.5f + tile + loff;
-    for (int c=0; c < cols; ++c) {
+    x= HWZ(csz) + tile + loff;
+    for (auto c=0; c < cols; ++c) {
       auto sp= cx::reifySprite(cn);
       auto v= JS_INT(cfg["CDS"][cn]);
-
       MGML()->addAtlasItem("game-pics", sp);
       auto b = mc_new3(Brick,sp,v,r);
       bf->bricks.push_back(b);
@@ -70,19 +73,23 @@ void GEngine::createBricks() {
     y -= csz.height - 2;
   }
 
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode();
+  ent->take();
   ent->checkin(bf);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::bornPaddle(Paddle *p, Ball *ball) {
+void GEngine::bornPaddle(ecs::Node *p, ecs::Node *b) {
+  auto pad= CC_GEC(f::CDraw, p, "f/CDraw");
+  auto mv= CC_GEC(f::CMove, b, "f/CMove");
+  auto ba= CC_GEC(f::CDraw, b, "f/CDraw");
   auto wb= cx::visBox();
 
-  ball->inflate(wb.cx, 250);
-  p->inflate();
-  ball->vel.y = ball->speed.y * cx::randSign();
-  ball->vel.x = ball->speed.x * cx::randSign();
+  ba->inflate(wb.cx, wb.cy);
+  pad->inflate();
+  mv->vel.y = mv->speed * cx::randSign();
+  mv->vel.x = mv->speed * cx::randSign();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,40 +97,46 @@ void GEngine::bornPaddle(Paddle *p, Ball *ball) {
 void GEngine::createPaddle() {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto sp = cx::reifySprite("paddle.png");
-  auto vx= JS_INT(cfg["PADDLE+SPEED"]);
+  auto p= mc_new1(f::CDraw, sp);
+  auto mv= mc_new(f::CMove);
   auto wb= cx::visBox();
-  MGML()->addAtlasItem("game-pics",sp);
-  auto p= mc_new1(Paddle, sp);
-  p->speed.x= vx;
-  p->vel.x= vx;
-  p->inflate( wb.cx, 56);
-  auto ent= this->reifyEntity();
+
+  mv->speed= JS_INT(cfg["PADDLE+SPEED"]);
+  MGML()->addAtlasItem("game-pics", sp);
+  p->inflate(wb.cx, 56);
+
+  auto ent= this->reifyNode();
+  ent->take();
+  ent->checkin(mv);
   ent->checkin(p);
-  ent->checkin(mc_new(Gesture));
+  ent->checkin(mc_new(f::CHuman));
+  ent->checkin(mc_new(f::CGesture));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
-  auto bsp= JS_INT(cfg["BALL+SPEED"]);
   auto sp = cx::reifySprite("ball.png");
+  auto b= mc_new1(f::CDraw, sp);
+  auto mv= mc_new(f::CMove);
   auto wb= cx::visBox();
-  auto b= mc_new1(Ball, sp);
 
+  mv->speed = JS_INT(cfg["BALL+SPEED"]);
   MGML()->addAtlasItem("game-pics", sp);
-  b->speed.x= bsp;
-  b->speed.y= bsp;
-  b->vel.x= bsp * cx::randSign();
-  b->vel.y= bsp * cx::randSign();
-  b->inflate( wb.cx, 250);
+  mv->vel.x= mv->speed * cx::randSign();
+  mv->vel.y= mv->speed * cx::randSign();
+  b->inflate(wb.cx, wb.cy);
 
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode();
+  ent->take();
+  ent->checkin(mv);
   ent->checkin(b);
+  ent->checkin(mc_new(f::CAutoma));
 }
 
 
-NS_END(breakout)
+NS_END
 
 
 
