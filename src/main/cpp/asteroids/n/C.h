@@ -46,7 +46,8 @@ struct CC_DLL Ship : public f::CDraw {
 
   DECL_TV(sstr,frame0,"rship_0.png")
   DECL_TV(sstr,frame1,"rship_1.png")
-  MDECL_COMP_TPID("n/Ship")
+  //MDECL_COMP_TPID("n/Ship")
+  MDECL_COMP_TPID("f/CDraw")
 
   Ship(not_null<c::Node*> s)
     : CDraw(s) {

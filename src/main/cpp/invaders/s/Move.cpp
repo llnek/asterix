@@ -51,11 +51,11 @@ void Move::processShipMotions( float dt) {
   auto y= pos.y;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    x = pos.x + dt * mv->speed;
+    x = pos.x + dt * mv->speed.x;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    x = pos.x - dt * mv->speed;
+    x = pos.x - dt * mv->speed.x;
   }
 
   sp->setPos(x,y);
@@ -92,7 +92,7 @@ void Move::moveBombs(float dt) {
       auto mv= CC_GEC(f::CMove,b,"f/CMove");
       auto s= CC_GEC(f::CDraw,b,"f/CDraw");
       auto pos= s->pos();
-      auto y = pos.y + dt * mv->speed;
+      auto y = pos.y + dt * mv->speed.y;
       s->setPos(pos.x, y);
     }
   }
@@ -111,7 +111,7 @@ void Move::moveMissiles(float dt) {
       auto mv= CC_GEC(f::CMove,e,"f/CMove");
       auto s= CC_GEC(f::CDraw,e,"f/CDraw");
       auto pos= s->pos();
-      auto y = pos.y + dt * mv->speed;
+      auto y = pos.y + dt * mv->speed.y;
       s->setPos(pos.x, y);
     }
   }

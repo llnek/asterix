@@ -46,6 +46,9 @@ void GEngine::initEntities() {
 
   createAsteroids(1);
   createShip();
+
+  createMissiles();
+  createLasers();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,9 +68,12 @@ void GEngine::createMissiles(int count) {
     auto sp = cx::reifySprite("laserGreen.png");
     CC_HIDE(sp);
     auto e= this->reifyNode();
+    auto mv= mc_new(f::CMove);
+    mv->speed.x=20;
+    mv->speed.y=20;
     MGML()->addAtlasItem("game-pics", sp);
     e->checkin(mc_new(f::CHealth));
-    e->checkin(mc_new(f::CMove));
+    e->checkin(mv);
     e->checkin(mc_new1(f::CDraw,sp));
     return e;
   }, count);
@@ -81,9 +87,12 @@ void GEngine::createLasers(int count) {
     auto sp = cx::reifySprite("laserRed.png");
     CC_HIDE(sp);
     auto e= this->reifyNode();
+    auto mv= mc_new(f::CMove);
+    mv->speed.x=20;
+    mv->speed.y=20;
     MGML()->addAtlasItem("game-pics", sp);
     e->checkin(mc_new(f::CHealth));
-    e->checkin(mc_new(f::CMove));
+    e->checkin(mv);
     e->checkin(mc_new1(f::CDraw,sp));
     return e;
   }, count);
@@ -98,14 +107,15 @@ void GEngine::createShip() {
   auto mv= mc_new(f::CMove);
   MGML()->addAtlasItem("game-pics", sp);
   sp->setRotation(90);
-  mv->maxSpeed= 150;
+  mv->maxSpeed.x= 150;
+  mv->maxSpeed.y= 150;
   mv->power=25;
   mv->angle=90;
-  ent-take();
+  ent->take();
   ent->checkin(mv);
   ent->checkin(s);
   ent->checkin(mc_new(f::CGesture));
-  ent->checkin(mc_new(f::CHuman));
+  ent->checkin(mc_new(f::CHealth));
   ent->checkin(mc_new(Cannon));
   ent->checkin(mc_new(f::Looper));
   bornShip(ent);
@@ -114,7 +124,7 @@ void GEngine::createShip() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::bornShip(ecs::Node *node) {
-  auto ship= CC_GEC(Ship,node,"n/Ship");
+  auto ship= CC_GEC(Ship,node,"f/CDraw");
   auto B= MGMS()->getEnclosureBox();
   auto sz = ship->csize();
   auto wz = cx::visRect();
@@ -183,13 +193,16 @@ void GEngine::createAsteroids(int rank) {
         auto mv=mc_new(f::CMove);
         mv->vel.y= speed * cx::randSign();
         mv->vel.x= speed * cx::randSign();
-        mv->speed= speed;
+        mv->speed.x= speed;
+        mv->speed.y= speed;
         mv->angle=deg;
-        ent->checkin(mc_new1(f::CDraw,sp));
+          auto dw=mc_new1(f::CDraw,sp);
+        ent->checkin(dw);
         ent->checkin(mc_new(f::CHealth));
         ent->checkin(mv);
         ent->checkin(a);
-        a->inflate(x, y);
+        dw->inflate(x, y);
+        ent->take();
         return ent;
       }, 1);
       ++n;
@@ -205,7 +218,7 @@ bool GEngine::maybeOverlap(const f::Box4 &bx) {
   auto p= MGMS()->getPool(astroPools[1]);
   auto rc=false;
 
-  rc= p->some([=](f::Poolablej*z) -> bool {
+  rc= p->some([=](f::Poolable *z) -> bool {
       auto e= (ecs::Node*)z;
       auto s= CC_GEC(f::CDraw,e,"f/CDraw");
       return e->status() ? cx::isIntersect(bx, cx::bbox4(s)) : false;

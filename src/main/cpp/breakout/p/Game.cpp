@@ -28,7 +28,10 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  virtual void onMouseMotion(const c::Vec2&);
   virtual void onInited();
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchMotion(c::Touch*);
 
   void onPlayerKilled();
   void spawnPlayer();
@@ -40,6 +43,31 @@ struct CC_DLL GLayer : public f::GameLayer {
   DECL_PTR(ecs::Node, _arena)
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const c::Vec2 &loc) {
+  auto p= CC_GEC(f::CDraw, _paddle,"f/CDraw");
+  auto pos= p->pos();
+  if (loc.y <= pos.y) {
+    p->setPos(loc.x, pos.y);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(c::Touch *t) {
+  auto p= CC_GEC(f::CDraw, _paddle,"f/CDraw");
+  auto y= p->node->getPositionY();
+  auto loc= t->getLocation();
+  return loc.y <= y;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(c::Touch *t) {
+  onMouseMotion(t->getLocation());
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //

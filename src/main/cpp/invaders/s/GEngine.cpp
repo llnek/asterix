@@ -67,7 +67,7 @@ void GEngine::reifyMissiles(int count) {
     auto sp = cx::reifySprite("missile.png");
     auto mv= mc_new(f::CMove);
     CC_HIDE(sp);
-    mv->speed= 150.0 * wz.size.height / gz.height;
+    mv->speed.y = 150.0 * wz.size.height / gz.height;
     MGML()->addAtlasItem("game-pics", sp);
     auto ent= this->reifyNode();
     ent->checkin(mc_new1(f::CDraw, sp));
@@ -102,7 +102,7 @@ void GEngine::reifyBombs(int count) {
     auto mv= mc_new(f::CMove);
     auto ent= this->reifyNode();
     c->hide();
-    mv->speed= -50.0 * wz.size.height / gz.height;
+    mv->speed.y= -50.0 * wz.size.height / gz.height;
     MGML()->addAtlasItem("game-pics", c->node);
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(mv);
@@ -215,7 +215,7 @@ ecs::Node* GEngine::reifyShip() {
 
   MGML()->addAtlasItem("game-pics", s);
   ship->inflate(wb.cx,y);
-  mv->speed=150;
+  mv->speed.x =150;
 
   ent->checkin(mc_new1(Cannon,true));
   ent->checkin(mc_new(f::CHealth));

@@ -117,7 +117,7 @@ void GEngine::mkOnePaddle(const Player &p) {
   ent->checkin(mc_new1(Player, p));
 
   MGML()->addAtlasItem("game-pics", sp);
-  m->speed=sd;
+  m->speed.x=sd;
 
   if (MGMS()->isOnline() && cur != p.pnum) {
     ent->checkin(mc_new(Faux));

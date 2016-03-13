@@ -56,11 +56,11 @@ void Config::initCsts() {
 void Config::initAssets() {
 
   addAtlas("lang-pics",  CC_STR("l10n/en/images.plist"));
-  addAtlas("game-pics", CC_STR("pics/sprites.plist"));
+  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("img-pics", CC_STR("pics/images.plist"));
 
   addImage("lang-pics",  CC_STR("l10n/en/images.png"));
-  addImage("game-pics", CC_STR("pics/sprites.png"));
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("img-pics", CC_STR("pics/images.png"));
 
   addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));

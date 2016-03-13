@@ -64,7 +64,7 @@ void GLayer::showMenu() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
-  SCAST(GEngine*,engine)->bornShip(_ship);
+  SCAST(GEngine*,_engine)->bornShip(_ship);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ void Game::sendMsgEx(const MsgTopic &t, void *m) {
 
   if (t == "/game/players/earnscore") {
     auto msg = (j::json*) m;
-    getHUD()->updateScore(
+    y->getHUD()->updateScore(
         JS_INT(msg->operator[]("score")));
   }
 

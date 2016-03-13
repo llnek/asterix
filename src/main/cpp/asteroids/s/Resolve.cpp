@@ -20,8 +20,8 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
+  _ship = _engine->getNodes("f/CGesture")[0];
   _arena = _engine->getNodes("n/GVars")[0];
-  _ship = _engine->getNodes("n/Ship")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ void Resolve::checkAstrosXXX(f::FPool *po, bool cr) {
       auto msg= j::json({ {"score", a->value} });
       SENDMSGEX("/game/players/earnscore", &msg);
       if (cr) {
-        SCAST(GEngine*,engine)->createAsteroids(a->rank +1);
+        SCAST(GEngine*,_engine)->createAsteroids(a->rank +1);
       }
       s->deflate();
       e->yield();
@@ -81,7 +81,7 @@ void Resolve::checkAstrosXXX(f::FPool *po, bool cr) {
 //
 void Resolve::checkShip() {
   auto h = CC_GEC(f::CHealth, _ship,"f/CHealth");
-  auto s= CC_GEC(Ship, _ship,"n/Ship");
+  auto s= CC_GEC(Ship, _ship,"f/CDraw");
   if (_ship->status() && !h->alive()) {
     _ship->yield();
     s->deflate();

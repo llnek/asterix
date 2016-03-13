@@ -1,4 +1,4 @@
-// This library is distributed in  the hope that it will be useful but without
+ // This library is distributed in  the hope that it will be useful but without
 // any  warranty; without  even  the  implied  warranty of  merchantability or
 // fitness for a particular purpose.
 // The use and distribution terms for this software are covered by the Eclipse
@@ -20,8 +20,8 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
+  _ship = _engine->getNodes("f/CGesture")[0];
   _arena = _engine->getNodes("n/GVars")[0];
-  _ship = _engine->getNodes("n/Ship")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ const c::Vec2 Move::thrust(float angle, float power) {
 //
 void Move::processShipMotions(float dt) {
   auto mo= CC_GEC(f::CGesture, _ship, "f/CGesture");
-  auto sp= CC_GEC(Ship, _ship, "n/Ship");
+  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
   auto mv= CC_GEC(f::CMove, _ship, "f/CMove");
   auto pos = sp->pos();
   auto x= pos.x;
@@ -108,7 +108,7 @@ void Move::processShipMotions(float dt) {
     mv->acc.x= acc.x;
     mv->acc.y= acc.y;
   } else {
-    SCAST(c::Sprite*,sp->node)->setSpriteFrame(ship->frame0);
+    SCAST(c::Sprite*,sp->node)->setSpriteFrame(sp->frame0);
   }
   moveShip(dt);
 }
@@ -117,7 +117,7 @@ void Move::processShipMotions(float dt) {
 //
 void Move::moveShip(float dt) {
   auto mv = CC_GEC(f::CMove, _ship,"f/CMove");
-  auto sp = CC_GEC(Ship, _ship,"n/Ship");
+  auto sp = CC_GEC(Ship, _ship,"f/CDraw");
   auto B = MGMS()->getEnclosureBox();
   auto sz = sp->csize();
   auto pos= sp->pos();

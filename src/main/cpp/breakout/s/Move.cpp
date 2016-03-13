@@ -64,11 +64,11 @@ void Move::processPaddleMotions(float dt) {
   auto y= pos.y;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    x = pos.x + dt * mv->speed;
+    x = pos.x + dt * mv->speed.x;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    x = pos.x - dt * mv->speed;
+    x = pos.x - dt * mv->speed.x;
   }
 
   pad->setPos(x,y);

@@ -20,9 +20,9 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Motions::preamble() {
+  _ship= _engine->getNodes("f/CGesture")[0];
   _arena= _engine->getNodes("n/GVars")[0];
-  _ship= _engine->getNodes("n/Ship")[0];
-  auto mo= CC_GEC(f::CGesture,ship,"f/CGesture");
+  auto mo= CC_GEC(f::CGesture,_ship,"f/CGesture");
   scanner= cx::throttle(
       [=]() { scanInput(mo); },
       CC_CSV(c::Integer, "THROTTLE+WAIT"));
@@ -44,14 +44,17 @@ void Motions::controlCannon(float dt) {
   auto lpr= CC_GEC(f::Looper, _ship, "f/Looper");
   auto gun = CC_GEC(Cannon, _ship,"n/Cannon");
 
-  if (! gun->hasAmmo) {
-    if (cx::timerDone(lpr->timer)) {
-      SNPTR(lpr->timer)
-      gun->hasAmmo=true;
-    }
+  if (gun->hasAmmo) {
+    fireMissile(dt);
   }
   else
-  if (MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
+  if (cx::timerDone(lpr->timer)) {
+    cx::undoTimer(lpr->timer);
+    SNPTR(lpr->timer)
+    gun->hasAmmo=true;
+  }
+  else
+  if (false && MGML()->keyPoll(KEYCODE::KEY_SPACE)) {
     fireMissile(dt);
   }
 }
@@ -61,14 +64,14 @@ void Motions::controlCannon(float dt) {
 void Motions::fireMissile(float dt) {
   auto lpr= CC_GEC(f::Looper, _ship,"f/Looper");
   auto gun= CC_GEC(Cannon, _ship,"n/Cannon");
-  auto sp= CC_GEC(Ship, _ship, "n/Ship");
+  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
   auto p= MGMS()->getPool("Missiles");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto sz= sp->csize();
   auto deg= sp->node->getRotation();
   auto top= cx::getTop(sp->node);
   auto pos= sp->pos();
-  auto ent= p->getAndSet(true);
+  auto ent= (ecs::Node*)p->getAndSet(true);
   auto mv= CC_GEC(f::CMove,ent,"f/CMove");
   auto dw= CC_GEC(f::CDraw,ent,"f/CDraw");
   auto h= CC_GEC(f::CHealth,ent,"f/CHealth");

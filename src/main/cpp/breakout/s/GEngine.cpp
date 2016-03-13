@@ -88,8 +88,8 @@ void GEngine::bornPaddle(ecs::Node *p, ecs::Node *b) {
 
   ba->inflate(wb.cx, wb.cy);
   pad->inflate();
-  mv->vel.y = mv->speed * cx::randSign();
-  mv->vel.x = mv->speed * cx::randSign();
+  mv->vel.y = mv->speed.y * cx::randSign();
+  mv->vel.x = mv->speed.x * cx::randSign();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ void GEngine::createPaddle() {
   auto mv= mc_new(f::CMove);
   auto wb= cx::visBox();
 
-  mv->speed= JS_INT(cfg["PADDLE+SPEED"]);
+  mv->speed.x = JS_INT(cfg["PADDLE+SPEED"]);
   MGML()->addAtlasItem("game-pics", sp);
   p->inflate(wb.cx, 56);
 
@@ -122,10 +122,11 @@ void GEngine::createBall() {
   auto mv= mc_new(f::CMove);
   auto wb= cx::visBox();
 
-  mv->speed = JS_INT(cfg["BALL+SPEED"]);
+  mv->speed.x = JS_INT(cfg["BALL+SPEED"]);
+  mv->speed.y=mv->speed.x;
   MGML()->addAtlasItem("game-pics", sp);
-  mv->vel.x= mv->speed * cx::randSign();
-  mv->vel.y= mv->speed * cx::randSign();
+  mv->vel.x= mv->speed.x * cx::randSign();
+  mv->vel.y= mv->speed.y * cx::randSign();
   b->inflate(wb.cx, wb.cy);
 
   auto ent= this->reifyNode();
