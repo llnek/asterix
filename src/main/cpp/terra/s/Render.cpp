@@ -20,27 +20,28 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Render::preamble() {
+  _arena=_engine->getNodes("n/GVars");
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Render::update(float dt) {
   if (MGMS()->isLive()) {
-    processMovement(dt);
+    process(dt);
   }
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Render::processMovement(float dt) {
+void Render::process(float dt) {
   // background's moving rate is 16 pixel per second
-  auto g= (Game*) MGMS();
+  auto g= CC_GEC(GVars,_arena,"n/GVars");
   auto locSkyHeight = g->backSkyDim.height;
   auto locBackSkyRe = g->backSkyRe;
   auto locBackSky = g->backSky;
-  auto posy= locBackSky->sprite->getPositionY();
-  auto movingDist = 16.0f * dt;
+  auto posy= locBackSky->node->getPositionY();
+  auto movingDist = 16.0 * dt;
   auto wz = cx::visRect();
   auto currPosY = posy - movingDist;
 
@@ -54,25 +55,26 @@ void Render::processMovement(float dt) {
     locBackSkyRe = g->backSky;
 
     //create a new background
-    g->backSky = MGMS()->getPool("BackSkies")->get();
+    g->backSky = MGMS()->getPool("BackSkies")->getAndSet();
     locBackSky = g->backSky;
     locBackSky->inflate(0, currPosY + locSkyHeight - 2);
   } else {
-    locBackSky->sprite->setPositionY(currPosY);
+    locBackSky->node->setPositionY(currPosY);
   }
 
   if (NNP(locBackSkyRe)) {
-    currPosY = locBackSkyRe->sprite->getPositionY() - movingDist;
+    currPosY = locBackSkyRe->node->getPositionY() - movingDist;
     if (currPosY + locSkyHeight < 0.0f) {
-      g->backSkyRe = nullptr;
+      g->backSkyRe = CC_NIL;
       locBackSkyRe->deflate();
+      locBackSkyRe->yield();
     } else {
-      locBackSkyRe->sprite->setPositionY(currPosY);
+      locBackSkyRe->node->setPositionY(currPosY);
     }
   }
 }
 
 
-NS_END(terra)
+NS_END
 
 

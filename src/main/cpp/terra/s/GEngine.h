@@ -8,16 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public ecs::Engine {
 
   void createArena();
   void createShip();
@@ -27,8 +28,8 @@ public:
   virtual void initEntities();
   virtual void initSystems();
 
-  void createMissiles(int count = 36);
-  void createBombs(int count = 36);
+  void createMissiles(int count = 16);
+  void createBombs(int count = 16);
   void createExplosions(int count = 6);
   void createHitEffects(int count = 10);
   void createSparks(int count = 6);
@@ -39,6 +40,6 @@ public:
 };
 
 
-NS_END(terra)
+NS_END
 
 

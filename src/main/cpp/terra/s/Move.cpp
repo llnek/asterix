@@ -20,7 +20,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  ship = engine->getNodeList(ShipNode().typeId());
+  _ship = _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,31 +37,31 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::onKeys(float dt) {
+  auto sp = CC_GEC(f::CDraw, _ship, "f/CDraw");
   auto ssp = CC_CSV(c::Float, "SHIP+SPEED");
-  auto sp = CC_GNLF(Ship, ship, "ship");
+  auto wb= cx::visBox();
   auto pos = sp->pos();
-  auto wz= cx::visRect();
   auto x = pos.x;
   auto y = pos.y;
   auto ok = false;
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW) &&
-      pos.x <= wz.size.width) {
+      pos.x <= wb.right) {
     x = pos.x + dt * ssp;
     ok= true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW) &&
-      pos.x >= 0) {
+      pos.x >= wb.left) {
     x = pos.x - dt * ssp;
     ok= true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW) &&
-      pos.y >= 0) {
+      pos.y >= wb.bottom) {
     y = pos.y - dt * ssp;
     ok= true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW) &&
-      pos.y <= wz.size.height) {
+      pos.y <= wb.top) {
     y = pos.y + dt * ssp;
     ok= true;
   }
@@ -71,43 +71,47 @@ void Move::onKeys(float dt) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::moveOneBomb(f::ComObj *bomb, float dt) {
-  auto pos = bomb->pos();
-  bomb->setPos(pos.x + bomb->vel.x * dt,
-               pos.y + bomb->vel.y * dt);
+void Move::moveOneBomb(ecs::Node *bomb, float dt) {
+  auto ui=CC_GEC(f::CDraw,bomb,"f/CDraw");
+  auto mv=CC_GEC(f::CMove,bomb,"f/CMove");
+  auto pos = ui->pos();
+  ui->setPos(pos.x + mv->vel.x * dt,
+             pos.y + mv->vel.y * dt);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::move(float dt) {
-  auto p = MGMS()->getPool("Bombs");
-  p->foreach([=](f::ComObj* b) {
-    if (b->status) {
-      this->moveOneBomb(b,dt);
+  auto po = MGMS()->getPool("Bombs");
+  po->foreach([=](f::Poolable* p) {
+    if (p->status()) {
+    this->moveOneBomb((ecs::Node*)p,dt);
     }
   });
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Move::moveOneMissile(f::ComObj *m, float dt) {
-  auto pos = m->pos();
-  m->setPos(pos.x + m->vel.x * dt,
-            pos.y + m->vel.y * dt);
+void Move::moveOneMissile(ecs::Node *m, float dt) {
+  auto ui=CC_GEC(f::CDraw,m,"f/CDraw");
+  auto mv=CC_GEC(f::CMove,m,"f/CMove");
+  auto pos = ui->pos();
+  ui->setPos(pos.x + mv->vel.x * dt,
+             pos.y + mv->vel.y * dt);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::moveMissiles(float dt) {
-  auto p= MGMS()->getPool("Missiles");
-  p->foreach([=](f::ComObj* v) {
-    if (v->status) {
-      this->moveOneMissile(v,dt);
+  auto po= MGMS()->getPool("Missiles");
+  po->foreach([=](f::Poolable *p) {
+    if (p->status()) {
+    this->moveOneMissile((ecs::Node*)p,dt);
     }
   });
 }
 
 
-NS_END(terra)
+NS_END
 
 

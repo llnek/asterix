@@ -8,42 +8,43 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public ecs::System {
 
-  void onBulletDeath(f::ComObj*);
+  void onBulletDeath(ecs::Node*);
   void checkMissiles();
   void checkBombs();
-  void onEnemyDeath(f::ComObj*);
-  void onShipDeath(f::ComObj*);
+  void onEnemyDeath(ecs::Node*);
+  void onShipDeath(ecs::Node*);
   void checkAliens();
   void checkShip();
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Resolve)
+  MDECL_SYS_PRIORITY( ecs::Resolve)
   MDECL_SYS_TPID( "n/Resolve")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  Resolve(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arena)
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
 
 };
 
 
-NS_END(terra)
+NS_END
 
 
 

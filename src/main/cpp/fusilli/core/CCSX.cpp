@@ -922,6 +922,38 @@ VOIDFN throttle(VOIDFN func, int wait) {
 }
 
 
+
+void testCollisions(f::FPool *p1, f::FPool *p2) {
+  p1->foreach([=](f::Poolable* _p1) {
+  p2->foreach([=](f::Poolable* _p2) {
+    auto e2= (ecs::Node*) _p2;
+    auto e1= (ecs::Node*) _p1;
+    testCollision(e1,e2);
+  }}
+}
+
+void testCollision(ecs::Node *n1, ecs::Node *n1) {
+  auto mss = MGMS()->getPool("Missiles");
+  auto bombs = MGMS()->getPool("Bombs");
+  bombs->foreach([=](f::Poolable* b) {
+    mss->foreach([=](f::Poolable* m) {
+      auto e2= (ecs::Node*)b;
+      auto e1= (ecs::Node*)m;
+      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+      auto s1= CC_GEC(f::CDraw,e1,"f/CDraw");
+      if (e2->status() &&
+          e1->status() &&
+          cx::collide(s2,s1)) {
+        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
+        auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
+        h2->hurt();
+        h1->hurt();
+      }
+    });
+  });
+}
+
+
 NS_END
 NS_END
 

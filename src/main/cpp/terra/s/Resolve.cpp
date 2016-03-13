@@ -20,11 +20,8 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  ArenaNode a;
-  ShipNode n;
-
-  arena = engine->getNodeList(a.typeId());
-  ship = engine->getNodeList(n.typeId());
+  _ship = _engine->getNodes("f/CGesture")[0];
+  _arena = _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,32 +39,30 @@ bool Resolve::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onBulletDeath(f::ComObj *b) {
+void Resolve::onBulletDeath(ecs::Node *node) {
+  auto m= CC_GEC(f::CDraw, node,"f/CDraw");
   auto pe= MGMS()->getPool("HitEffects");
-  auto pos= b->pos();
-  auto e= pe->get();
-
-  if (ENP(e)) {
-    SCAST(GEngine*,engine)->createHitEffects();
-    e= pe->get();
-  }
-
+  auto e= pe->getAndSet(true);
+  auto pos= m->pos();
   e->inflate(pos.x, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkMissiles() {
+  auto po = MGMS()->getPool("Missiles");
   auto box= MGMS()->getEnclosureBox();
-  auto p = MGMS()->getPool("Missiles");
 
-  p->foreach([=](f::ComObj *m) {
-    if (m->status) {
+  po->foreach([=](f::Poolable *p) {
+    if (p->status()) {
+      auto e=(ecs::Node*)p;
+      auto m=CC_GEC(Missile,e,"f/CDraw");
       auto pos= m->pos();
       if (m->HP <= 0 ||
           !cx::pointInBox(box, pos.x, pos.y)) {
-        this->onBulletDeath(m);
+        this->onBulletDeath(e);
         m->deflate();
+        e->yield();
       }
     }
   });
@@ -77,15 +72,18 @@ void Resolve::checkMissiles() {
 //
 void Resolve::checkBombs() {
   auto box= MGMS()->getEnclosureBox();
-  auto p = MGMS()->getPool("Bombs");
+  auto po = MGMS()->getPool("Bombs");
 
-  p->foreach([=](f::ComObj *b) {
-    if (b->status) {
+  po->foreach([=](f::Poolable *p) {
+    if (p->status()) {
+      auto e=(ecs::Node*)p
+      auto b=CC_GEC(Bomb,e,"f/CDraw");
       auto pos= b->pos();
       if (b->HP <= 0 ||
           !cx::pointInBox(box, pos)) {
-        this->onBulletDeath(b);
+        this->onBulletDeath(e);
         b->deflate();
+        e->yield();
       }
     }
   });
@@ -93,38 +91,26 @@ void Resolve::checkBombs() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onEnemyDeath(f::ComObj *alien) {
+void Resolve::onEnemyDeath(ecs::Node *alien) {
+  auto ui=CC_GEC(f::CDraw,alien,"f/CDraw");
   auto pe= MGMS()->getPool("Explosions");
   auto ps= MGMS()->getPool("Sparks");
-  auto pos= alien->pos();
-  auto e= pe->get();
-  auto s= ps->get();
-  if (ENP(e)) {
-    SCAST(GEngine*,engine)->createExplosions();
-    e= pe->get();
-  }
+  auto pos= ui->pos();
+  auto e= pe->getAndSet(true);
+  auto s= ps->getAndSet(true);
   e->inflate(pos.x, pos.y);
-  if (ENP(s)) {
-    SCAST(GEngine*,engine)->createSparks();
-    s=ps->get();
-  }
-  s->inflate( pos.x, pos.y);
+  s->inflate(pos.x, pos.y);
   cx::sfxPlay("explodeEffect");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Resolve::onShipDeath(f::ComObj *ship) {
+void Resolve::onShipDeath(ecs::Node *ship) {
+  auto ui= CC_GEC(f::CDraw,ship,"f/CDraw");
   auto pe= MGMS()->getPool("Explosions");
-  auto pos= ship->pos();
-  auto e= pe->get();
-
-  if (ENP(e)) {
-    SCAST(GEngine*,engine)->createExplosions();
-    e= pe->get();
-  }
-
-  e->inflate( pos.x, pos.y);
+  auto pos= ui->pos();
+  auto e= pe->getAndSet(true);
+  e->inflate(pos.x, pos.y);
   cx::sfxPlay("shipDestroyEffect");
 }
 
@@ -132,16 +118,22 @@ void Resolve::onShipDeath(f::ComObj *ship) {
 //
 void Resolve::checkAliens() {
   auto box= MGMS()->getEnclosureBox();
-  auto p= MGMS()->getPool("Baddies");
+  auto po= MGMS()->getPool("Baddies");
 
-  p->foreach([=](f::ComObj *a) {
-    if (a->status) {
-      auto pos= a->pos();
-      if (a->HP <= 0 ||
+  po->foreach([=](f::Poolable *p) {
+    if (p->status()) {
+      auto e=(ecs::Node*)p
+      auto ui=CC_GEC(f::CDraw,e,"f/CDraw");
+      auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+      auto z=CC_GEC(Enemy,e,"n/Enemy");
+      auto pos= ui->pos();
+      if (!h->alive() ||
           !cx::pointInBox(box, pos)) {
-        this->onEnemyDeath(a);
-        a->deflate();
-        auto msg = j::json({ {"score", a->score} });
+        this->onEnemyDeath(e);
+        ui->deflate();
+        e->yield();
+        auto msg = j::json({
+            {"score", z.enemyType.scoreValue} });
         SENDMSGEX("/game/players/earnscore", &msg);
       }
     }
@@ -151,19 +143,20 @@ void Resolve::checkAliens() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip() {
-  auto sp = CC_GNLF(Ship, ship, "ship");
-  if (sp->status) {
-    if (sp->HP <= 0) {
-      this->onShipDeath(sp);
+  auto h = CC_GEC(f::CHealth, _ship, "f/CHealth");
+  auto sp = CC_GEC(f::CDraw, _ship, "f/CDraw");
+  if (_ship->status() &&
+      !h->alive()) {
+      this->onShipDeath(_ship);
       sp->deflate();
+      _ship->yield();
       SENDMSG("/game/players/killed");
-    }
   }
 }
 
 
 
-NS_END(terra)
+NS_END
 
 
 

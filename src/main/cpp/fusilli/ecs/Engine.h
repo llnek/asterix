@@ -61,7 +61,7 @@ public:
   void purgeNode(not_null<Node*>);
 
   void regoSystem(not_null<System*> );
-  Node* reifyNode();
+  Node* reifyNode(bool take=false);
 
   void doHouseKeeping();
   void ignite();

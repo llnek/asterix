@@ -154,6 +154,14 @@ void Config::runOnce() {
   fp = getAtlas("back-tiles");
   CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  auto anim= c::Animation::create();
+  //WithSpriteFrames(fs,01.f), "ShipAni");
+  anim->addSpriteFrame(cx::getSpriteFrame("ship01.png"));
+  anim->addSpriteFrame(cx::getSpriteFrame("ship02.png"));
+  anim->setDelayPerUnit(1);
+  anim->setLoops(-1);
+  CC_ACAC()->addAnimation(anim, "ShipAni");
 }
 
 

@@ -8,33 +8,34 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Render : public a::System {
+class CC_DLL Render : public ecs::System {
 
-  void processMovement(float);
+  void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Render)
+  MDECL_SYS_PRIORITY( ecs::Render)
   MDECL_SYS_TPID( "n/Render")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Render(a::Engine *e)
+  Render(ecs::Engine *e)
   : System(e)
   {}
 
 };
 
 
-NS_END(terra)
+NS_END
 
 
