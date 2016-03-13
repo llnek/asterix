@@ -21,15 +21,15 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decorate() {
-  auto tt= cx::reifyBmfLabel( "JellyBelly", gets("mmenu"));
+void MMenu::decoUI() {
+  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
   auto tile = CC_CSV(c::Float, "TILE");
   auto c= XCFG()->getColor("text");
   auto wb= cx::visBox();
 
   centerImage("gui.mmenus.menu.bg");
 
-  tt->setPosition( wb.cx, wb.top * 0.9f);
+  tt->setPosition(wb.cx, wb.top * 0.9);
   tt->setScale(XCFG()->getScale());
   tt->setColor(c);
   addItem(tt);
@@ -42,12 +42,12 @@ void MMenu::decorate() {
       [=](c::Ref*)
       { cx::runEx( Game::reify(mc_new(f::GCX))); });
 
-  menu->setPosition(wb.cx, wb.cy);
+  b->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto sz= back->getContentSize();
+  auto sz= CC_CSIZE(back);
   back->setCallback([=](c::Ref*) { ctx->back(); });
   back->setColor(c);
 
@@ -71,5 +71,9 @@ void MMenu::decorate() {
     c::Vec2(wb.right - tile, wb.bottom + tile));
 }
 
-NS_END(terra)
+
+
+NS_END
+
+
 

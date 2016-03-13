@@ -8,39 +8,41 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Aliens : public a::System {
+class CC_DLL Aliens : public ecs::System {
 
-  Enemy* getB(const EnemyType&);
+  ecs::Node* getB(const EnemyType&);
   void addEnemyToGame( int );
   void addEnemy( j::json& );
-  void dropBombs(Enemy*);
-  void doIt(float);
+  void dropBombs(ecs::Node*);
+  void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Motion)
+  MDECL_SYS_PRIORITY( ecs::Motion)
   MDECL_SYS_TPID( "n/Aliens")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Aliens(a::Engine *e)
+  Aliens(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arena)
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
+
 };
 
 
-NS_END(terra)
+NS_END
 
 

@@ -19,8 +19,8 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  arena = engine->getNodeList(ArenaNode().typeId());
-  ship = engine->getNodeList(ShipNode().typeId());
+  _ship = _engine->getNodes("f/CGesture")[0];
+  _arena = _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,13 +41,19 @@ bool Collide::update(float dt) {
 void Collide::checkMissilesBombs() {
   auto mss = MGMS()->getPool("Missiles");
   auto bombs = MGMS()->getPool("Bombs");
-  bombs->foreach([=](f::ComObj* b) {
-    mss->foreach([=](f::ComObj* m) {
-      if (b->status &&
-          m->status &&
-          cx::collide(b, m)) {
-        m->hurt();
-        b->hurt();
+  bombs->foreach([=](f::Poolable* b) {
+    mss->foreach([=](f::Poolable* m) {
+      auto e2= (ecs::Node*)b;
+      auto e1= (ecs::Node*)m;
+      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+      auto s1= CC_GEC(f::CDraw,e1,"f/CDraw");
+      if (e2->status() &&
+          e1->status() &&
+          cx::collide(s2,s1)) {
+        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
+        auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
+        h2->hurt();
+        h1->hurt();
       }
     });
   });
@@ -58,13 +64,19 @@ void Collide::checkMissilesBombs() {
 void Collide::checkMissilesAliens() {
   auto enemies= MGMS()->getPool("Baddies");
   auto mss= MGMS()->getPool("Missiles");
-  enemies->foreach([=](f::ComObj* en) {
-    mss->foreach([=](f::ComObj* b) {
-      if (en->status &&
-          b->status &&
-          cx::collide(en, b)) {
-        en->hurt();
-        b->hurt();
+  enemies->foreach([=](f::Poolable* en) {
+    mss->foreach([=](f::Poolable* b) {
+      auto e2= (ecs::Node*)b;
+      auto e1= (ecs::Node*)en;
+      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+      auto s1= CC_GEC(f::CDraw,e1,"f/CDraw");
+      if (e2->status() &&
+          e1->status() &&
+          cx::collide(s1,s2)) {
+        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
+        auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
+        h2->hurt();
+        h1->hurt();
       }
     });
   });
@@ -73,37 +85,45 @@ void Collide::checkMissilesAliens() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipBombs() {
-  auto sp = CC_GNLF(Ship, ship, "ship");
+  auto sp = CC_GEC(Ship, _ship, "f/CDraw");
   auto bombs = MGMS()->getPool("Bombs");
 
-  if (!sp->status) { return; }
-  bombs->foreach([=](f::ComObj* b) {
-    if (b->status &&
-        cx::collide(b, sp)) {
-      sp->hurt();
-      b->hurt();
-    }
-  });
+  if (_ship->status())
+    bombs->foreach([=](f::Poolable* b) {
+      auto e2= (ecs::Node*)b;
+      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+      if (e2->status() &&
+          cx::collide(s2, sp)) {
+        auto h2= CC_GEC(f::CHealth,_ship,"f/CHealth");
+        auto h1= CC_GEC(f::CHealth,e2,"f/CHealth");
+        h2->hurt();
+        h1->hurt();
+      }
+    });
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipAliens() {
   auto enemies= MGMS()->getPool("Baddies");
-  auto sp= CC_GNLF(Ship, ship, "ship");
+  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
 
-  if (! sp->status) { return; }
-  enemies->foreach([=](f::ComObj* en) {
-    if (en->status &&
-        cx::collide(en, sp)) {
-      sp->hurt();
-      en->hurt();
-    }
-  });
+  if (_ship->status())
+    enemies->foreach([=](f::Poolable* en) {
+      auto e2= (ecs::Node*)en;
+      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+      if (e2->status() &&
+          cx::collide(s2, sp)) {
+        auto h2= CC_GEC(f::CHealth,_ship,"f/CHealth");
+        auto h1= CC_GEC(f::CHealth,e2,"f/CHealth");
+        h2->hurt();
+        h1->hurt();
+      }
+    });
 }
 
 
-NS_END(terra)
+NS_END
 
 
 

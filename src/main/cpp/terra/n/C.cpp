@@ -74,6 +74,6 @@ void HitEffect::inflate(float x, float y) {
 }
 
 
-NS_END(terra)
+NS_END
 
 

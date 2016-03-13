@@ -191,11 +191,8 @@ void XLayer::onKeyReleased(KEYCODE k, c::Event*) {
 void XLayer::onMouseDown(c::Event *event) {
   if (_mouseDown) { return; }
   auto e= (c::EventMouse*)event;
-  auto b= e->getMouseButton();
-  auto t= MOUSE_BUTTON_LEFT;
   _mouseDown=true;
-  if (_mouseBtn >= 0) { t= _mouseBtn; }
-  if (b == t) {
+  if (e->getMouseButton() == _mouseBtn) {
     onMouseStart(e->getLocationInView());
   }
 }
@@ -204,11 +201,8 @@ void XLayer::onMouseDown(c::Event *event) {
 //
 void XLayer::onMouseUp(c::Event *event) {
   auto e= (c::EventMouse*)event;
-  auto b= e->getMouseButton();
-  auto t= MOUSE_BUTTON_LEFT;
-  if (_mouseBtn >= 0) { t= _mouseBtn; }
   _mouseDown=false;
-  if (b == t) {
+  if (e->getMouseButton() == _mouseBtn) {
     onMouseClick(e->getLocationInView());
   }
 }

@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -23,16 +24,16 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, scoreLabel)
-  DECL_PTR(f::XLives, lives)
-  DECL_IZ(score)
+  DECL_PTR(c::Label, _scoreLabel)
+  DECL_PTR(f::XLives, _lives)
+  DECL_IZ(_score)
 
-  bool reduceLives(int =1);
+  bool reduceLives(int = 1);
   void updateScore(int);
 
 };
 
 
-NS_END(terra)
+NS_END
 
 

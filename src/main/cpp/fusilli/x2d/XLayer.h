@@ -27,7 +27,7 @@ protected:
   //c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
   c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ONE_BY_ONE;
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
-  DECL_TV(int, _mouseBtn, -911)
+  DECL_TV(int, _mouseBtn, MOUSE_BUTTON_LEFT)
   DECL_BF(_mouseEnabled)
   DECL_BF(_mouseDown)
   s_arr<bool, 256> _keys;

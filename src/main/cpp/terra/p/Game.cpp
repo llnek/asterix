@@ -14,11 +14,12 @@
 #include "s/GEngine.h"
 #include "HUD.h"
 #include "Game.h"
+//#include "Ende.h"
 #include "n/lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
-BEGIN_NS_UNAMED()
+BEGIN_NS_UNAMED
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -26,8 +27,7 @@ struct CC_DLL BLayer : public f::XLayer {
   STATIC_REIFY_LAYER(BLayer)
   MDECL_DECORATE()
 };
-
-void BLayer::decorate() {
+void BLayer::decoUI() {
   regoAtlas("back-tiles", 1);
   regoAtlas("game-pics", 0);
 };
@@ -40,15 +40,14 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   STATIC_REIFY_LAYER(GLayer)
 
-  virtual void postReify();
+  virtual void onInited();
 
   MDECL_GET_IID(2)
   MDECL_DECORATE()
 
-  DECL_PTR(a::NodeList, arena)
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
 
-  void onEarnScore(j::json* );
   void incSecCount(float);
   void onPlayerKilled();
   void moveBackTiles(float);
@@ -70,29 +69,30 @@ void GLayer::showMenu() {
 //
 void GLayer::initBackTiles() {
   moveBackTiles(0);
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::moveBackTiles), 5.0f);
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::moveBackTiles), 5.0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::moveBackTiles(float) {
-  auto ps= MGMS()->getPool("BackTiles");
+  auto po= MGMS()->getPool("BackTiles");
   auto wz= cx::visRect();
-  auto tm = ps->get();
-
+  auto tm = po->getAndSet(true);
+  auto ui= CC_GEC(f::CDraw, tm, "f/CDraw");
+/*
   if (ENP(tm)) {
     SCAST(GEngine*,engine)->createBackTiles();
     tm= ps->get();
   }
+*/
+  ui->inflate(cx::randFloat(wz.size.width), wz.size.height);
 
-  tm->inflate(cx::randFloat(wz.size.width), wz.size.height);
-
-  auto fun = c::CallFunc::create([=]() { tm->deflate(); });
+  auto fun = c::CallFunc::create([=]() { ui->deflate(); });
   auto move = c::MoveBy::create(
       cx::randInt(2) + 10,
-      c::ccp(0, -wz.size.height - wz.size.height * 0.5f));
+      c::Vec2(0, -wz.size.height - HHZ(wz.size)));
 
-  tm->sprite->runAction(c::Sequence::create(move,fun,nullptr));
+  ui->node->runAction(c::Sequence::create(move,fun,CC_NIL));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,39 +100,37 @@ void GLayer::moveBackTiles(float) {
 void GLayer::initBackSkies() {
   auto p = MGMS()->getPool("BackSkies");
   auto g = (Game*) getSceneX();
-  auto bs = p->get();
-
-  assert(bs != nullptr);
-  bs->inflate(0, 0);
+  auto bs = p->getAndSet(true);
+  auto ui= CC_GEC(f::CDraw, bs, "f/CDraw");
+  ui->inflate(0, 0);
 
   g->backSkyDim = bs->csize();
-  g->backSkyRe = nullptr;
+  g->backSkyRe = CC_NIL;
   g->backSky = bs;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::sharedExplosion() {
-  c::Vector<c::SpriteFrame*> fs;
+  auto a = c::Animation::create();//WithSpriteFrames(fs, 0.04);
   sstr str;
   for (auto n = 1; n < 35; ++n) {
     auto ns= s::to_string(n);
     if (n < 10 ) { str= "0" + ns; } else { str= ns; }
-    fs.pushBack( cx::getSpriteFrame( "explosion_" + str + ".png"));
+    a->addSpriteFrame(
+      cx::getSpriteFrame("explosion_" + str + ".png"));
   }
-  auto a = c::Animation::createWithSpriteFrames(fs, 0.04f);
-  c::AnimationCache::getInstance()->addAnimation(a, "Explosion");
+  a->setDelayPerUnit(0.04);
+  CC_ACAC()->addAnimation(a, "Explosion");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
-  arena = engine->getNodeList(ArenaNode().typeId());
-  ship = engine->getNodeList(ShipNode().typeId());
+void GLayer::onInited() {
+  _ship = _engine->getNodes("f/CGesture")[0];
+  _arena = _engine->getNodes("n/GVars")[0];
 
-  this->motionees.push_back(CC_GNLF(Ship,ship,"ship"));
-
-  bornShip(SCAST(GEngine*,engine), CC_GNLF(Ship,ship,"ship"));
+  bornShip(SCAST(GEngine*,engine), _ship);
   sharedExplosion();
   initBackSkies();
   initBackTiles();
@@ -140,25 +138,25 @@ void GLayer::postReify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
+void GLayer::decoUI() {
+
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0);
+  _engine= mc_new(GEngine);
 
   auto a= regoAtlas("explosions");
   a->setBlendFunc(BDFUNC::ADDITIVE);
   a= regoAtlas("game-pics");
   a= regoAtlas("op-pics");
   a->setBlendFunc(BDFUNC::ADDITIVE);
-  incIndexZ();
 
-  this->engine= mc_new(GEngine);
   cx::sfxMusic("bgMusic", true);
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::incSecCount(float) {
   // counter used to spawn enemies
-  auto ss= CC_GNLF(GVars, arena, "slots");
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   ss->secCount += 1;
 }
 
@@ -169,30 +167,26 @@ void GLayer::onPlayerKilled() {
   if ( getHUD()->reduceLives(1)) {
     onDone();
   } else {
-    bornShip(SCAST(GEngine*,engine), CC_GNLF(Ship,ship,"ship"));
+    bornShip(SCAST(GEngine*,engine), _ship);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onEarnScore(j::json *msg) {
-  auto n= JS_INT(msg->operator[]("score"));
-  getHUD()->updateScore(n);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::onDone() {
+  this->setOpacity(0.1 * 255);
+  MGMS()->stop();
   surcease();
-  //ELayer::reify(getSceneX(), 999);
+  //Ende::reify(MGMS(), 4);
 }
 
-END_NS_UNAMED()
+
+END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 const f::Box4 Game::getEnclosureBox() {
   auto wb= cx::visBox();
-  return f::Box4( wb.top + 10, wb.right, wb.bottom, wb.left);
+  return f::Box4(wb.top + 10, wb.right, wb.bottom, wb.left);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -203,7 +197,8 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
   if ("/game/players/earnscore" == topic) {
     auto msg= (j::json*) m;
-    y->onEarnScore(msg);
+    y->getHUD()->updateScore(
+        JS_INT(msg->operator[]("score")));
   }
   else
   if ("/game/backtiles" == topic) {
@@ -225,7 +220,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   BLayer::reify(this, 1);
   GLayer::reify(this, 2);
@@ -233,6 +228,6 @@ void Game::decorate() {
 }
 
 
-NS_END(terra)
+NS_END
 
 

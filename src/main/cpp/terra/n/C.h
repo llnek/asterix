@@ -8,11 +8,12 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "lib.h"
 
@@ -86,17 +87,6 @@ struct CC_DLL Ship : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
-
-  MDECL_COMP_TPID( "n/Gesture")
-  DECL_BF(right)
-  DECL_BF(left)
-  DECL_BF(down)
-  DECL_BF(up)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Spark : public f::ComObj {
 
   Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
@@ -145,13 +135,13 @@ struct CC_DLL HitEffect : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID("n/GVars")
   DECL_IZ(secCount)
 };
 
 
 
-NS_END(terra)
+NS_END
 
 

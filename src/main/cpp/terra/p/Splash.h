@@ -8,7 +8,9 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XScene.h"
 NS_BEGIN(terra)
@@ -21,12 +23,12 @@ struct CC_DLL Splash : public f::XScene {
   MDECL_UPDATE()
   MDECL_DECORATE()
 
-  DECL_PTR(c::Sprite, flare)
-  DECL_PTR(c::Sprite, ship)
+  DECL_PTR(c::Sprite, _flare)
+  DECL_PTR(c::Sprite, _ship)
 
 };
 
 
-NS_END(terra)
+NS_END
 
 

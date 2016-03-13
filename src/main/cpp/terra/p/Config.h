@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 
 #include "core/XConfig.h"
@@ -24,7 +25,7 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(320,480); }
+  virtual const c::Size gameSize() { return c::Size(480,720); }
 
   virtual void handleResolution(const c::Size& );
 
@@ -38,7 +39,9 @@ public:
   static owner<Config*> reify();
 };
 
-NS_END(terra)
+
+
+NS_END
 
 
 

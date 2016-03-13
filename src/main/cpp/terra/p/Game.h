@@ -8,7 +8,9 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/GameScene.h"
 NS_BEGIN(terra)
@@ -27,13 +29,13 @@ struct CC_DLL Game : public f::GameScene {
   STATIC_REIFY_SCENE_CTX(Game)
   MDECL_DECORATE()
 
-  DECL_PTR(f::ComObj, backSkyRe)
-  DECL_PTR(f::ComObj, backSky)
+  DECL_PTR(ecs::Node, backSkyRe)
+  DECL_PTR(ecs::Node, backSky)
   DECL_TD(c::Size, backSkyDim)
 
 };
 
 
-NS_END(terra)
+NS_END
 
 

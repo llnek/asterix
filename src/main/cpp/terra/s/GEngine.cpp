@@ -238,6 +238,6 @@ void GEngine::createBackTiles(int count) {
 }
 
 
-NS_END(terra)
+NS_END
 
 

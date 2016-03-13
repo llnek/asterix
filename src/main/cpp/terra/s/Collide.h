@@ -8,16 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Collide : public a::System {
+class CC_DLL Collide : public ecs::System {
 
   void checkMissilesAliens();
   void checkMissilesBombs();
@@ -26,22 +27,22 @@ class CC_DLL Collide : public a::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Collide)
+  MDECL_SYS_PRIORITY( ecs::Collide)
   MDECL_SYS_TPID( "n/Collide")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Collide(a::Engine *e)
+  Collide(ecs::Engine *e)
   : System(e)
   {}
 
-  DECL_PTR(a::NodeList, arena)
-  DECL_PTR(a::NodeList, ship)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
 
 };
 
 
 
-NS_END(terra)
+NS_END
 
 

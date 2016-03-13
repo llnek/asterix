@@ -34,14 +34,13 @@ c::Scene* Config::prelude() {
 //
 void Config::initCsts() {
 
-  game_id=  "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a";
-  app_id= "terra";
+  _game_id= "4d6b93c4-05d7-42f1-95cc-98ce8adeac0a";
+  _app_id= "terra";
 
   addCst("MISSILE+SPEED", CC_FLOAT(900.f));
   addCst("BOMB+SPEED", CC_FLOAT(200.f));
   addCst("SHIP+SPEED", CC_FLOAT(200.f));
   addCst("SHIP+ZX", CC_INT(3000));
-  addCst("showFPS", CC_BOOL(false));
 
   addCst("menuHeight", CC_INT(36));
   addCst("menuWidth", CC_INT(123));
@@ -125,40 +124,40 @@ void Config::initLevels() {
 void Config::handleResolution(const c::Size& rs) {
   auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 52.0f/256.0f * rs.width / gz.width;
+  _scale = 52.0f/256.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
 
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp = getAtlas("images-pics");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp = getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp= getAtlas("op-pics");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp = getAtlas("explosions");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
   fp = getAtlas("back-tiles");
-  c->addSpriteFramesWithFile(fp);
+  CC_SCAC()->addSpriteFramesWithFile(fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 
-NS_END(terra)
+
+NS_END
 
 

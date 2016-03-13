@@ -20,19 +20,18 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
   auto wz = cx::visRect();
   auto wb = cx::visBox();
 
   centerImage("game.bg");
 
-  flare = c::Sprite::create("pics/flare.jpg");
-  flare->setVisible(false);
-  ship = cx::reifySprite("ship03.png");
-  ship->setPosition(
-      cx::randFloat(wz.size.width), 0);
-  addChild(flare, 15, 10);
-  addChild(ship, 0, 4);
+  _flare = c::Sprite::create("pics/flare.jpg");
+  CC_HIDE(_flare);
+  _ship = cx::reifySprite("ship03.png");
+  _ship->setPosition(cx::randFloat(wz.size.width), 0);
+  addChild(_flare, 15, 10);
+  addChild(_ship, 0, 4);
 
   auto b= cx::reifyMenuBtn("play.png");
   auto f= []() { cx::prelude(); };
@@ -40,12 +39,12 @@ void Splash::decorate() {
   auto x= mc_new1(MCX,f);
   b->setCallback([=](c::Ref*) {
     btnEffect();
-    flareEffect(flare, [=]() {
+    flareEffect(_flare, [=]() {
       cx::runEx(MMenu::reify(x));
     });
   });
 
-  menu->setPosition( wb.cx, wb.top * 0.1f);
+  b->setPosition(wb.cx, wb.top * 0.1);
   addItem(menu);
 
   scheduleOnce(CC_SCHEDULE_SELECTOR(Splash::update),0);
@@ -57,17 +56,18 @@ void Splash::decorate() {
 void Splash::update(float dt) {
   auto wz = cx::visRect();
   auto g= [=]() {
-    this->ship->setPosition( cx::randFloat(wz.size.width), 10);
+    this->_ship->setPosition( cx::randFloat(wz.size.width), 10);
     this->update(0);
   };
-  this->ship->runAction(
+  this->_ship->runAction(
       c::Sequence::create(
-        c::MoveBy::create(2, c::ccp(cx::randFloat(wz.size.width),
+        c::MoveBy::create(2, c::Vec2(cx::randFloat(wz.size.width),
             wz.size.height + 100)),
-        c::CallFunc::create(g), nullptr));
+        c::CallFunc::create(g),
+        CC_NIL));
 }
 
 
-NS_END(terra)
+NS_END
 
 
