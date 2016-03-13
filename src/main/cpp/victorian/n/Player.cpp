@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Player.h"
 
@@ -28,7 +28,7 @@ Player::~Player(){
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Player::Player(not_null<c::Sprite*> s)
+Player::Player(not_null<c::Node*> s)
   : Widget(s) {
 
   auto wb=cx::visBox();
@@ -40,7 +40,7 @@ Player::Player(not_null<c::Sprite*> s)
   _floatingTimer = 0;
   _floating = false;
   nextPos= c::Vec2(0,0);
-  nextPos.y = wb.top * 0.6f;
+  nextPos.y = wb.top * 0.6;
   _state = kPlayerMoving;
   _jumping = false;
   _hasFloated = false;
@@ -90,19 +90,19 @@ void Player::update (float dt) {
     case kPlayerDying:
       vel.y -= G_FORCE;
       vel.x = -speed;
-      sprite->setPositionX(sprite->getPositionX() + vel.x);
+      node->setPositionX(node->getPositionX() + vel.x);
     break;
   }
 
   if (_jumping) {
     _state = kPlayerFalling;
-    vel.y += PLAYER_JUMP * 0.25f;
+    vel.y += PLAYER_JUMP * 0.25;
     if (vel.y > PLAYER_JUMP ) _jumping = false;
   }
 
   if (vel.y < -TERMINAL_VELOCITY) vel.y = -TERMINAL_VELOCITY;
 
-  nextPos.y = sprite->getPositionY() + vel.y;
+  nextPos.y = node->getPositionY() + vel.y;
 
   if (vel.x * vel.x < 0.01) vel.x = 0;
   if (vel.y * vel.y < 0.01) vel.y = 0;
@@ -110,8 +110,8 @@ void Player::update (float dt) {
   if (_floating) {
     _floatingTimer += dt;
     if (_floatingTimer > _floatingTimerMax) {
-      _floatingTimer = 0;
       cx::sfxPlay("falling");
+      _floatingTimer = 0;
       this->setFloating(false);
     }
   }
@@ -130,10 +130,10 @@ void Player::reset () {
   vel = c::Vec2(0,0);
 
   this->setFloating(false);
-  sprite->setRotation(0);
+  node->setRotation(0);
 
-  nextPos.y = wb.top * 0.6f;
-  sprite->setPosition(wb.right * 0.2f, nextPos.y);
+  nextPos.y = wb.top * 0.6;
+  node->setPosition(wb.right * 0.2, nextPos.y);
   _state = kPlayerMoving;
   _jumping = false;
   _hasFloated = false;
@@ -143,22 +143,22 @@ void Player::reset () {
 //
 void Player::setFloating (bool value) {
 
-  if (_floating == value) return;
-
-  if (value && _hasFloated) return;
+  if (_floating == value) {
+  return; }
+  if (value && _hasFloated) {
+  return; }
 
   _floating = value;
-
-  sprite->stopAllActions();
+  node->stopAllActions();
 
   if (value) {
     _hasFloated = true;
     cx::sfxPlay("openUmbrella");
-    sprite->setDisplayFrame(cx::getSpriteFrame("player_float.png"));
-    sprite->runAction(_floatAnimation);
-    vel.y += PLAYER_JUMP * 0.5f;
+      SCAST(c::Sprite*,node)->setDisplayFrame(cx::getSpriteFrame("player_float.png"));
+    node->runAction(_floatAnimation);
+    vel.y += HTV(PLAYER_JUMP);
   } else {
-    sprite->runAction(_rideAnimation);
+    node->runAction(_rideAnimation);
   }
 }
 
@@ -168,32 +168,31 @@ void Player::initPlayer() {
 
   auto wb=cx::visBox();
 
-  sprite->setAnchorPoint(cx::anchorT());
-  sprite->setPosition(wb.right * 0.2f, nextPos.y);
+  node->setAnchorPoint(cx::anchorT());
+  node->setPosition(wb.right * 0.2, nextPos.y);
 
-  _height = 252 * 0.95f;
+  _height = 252 * 0.95;
   _width = 184;
 
-    auto animation = c::Animation::create();
-    c::SpriteFrame *frame;
+  auto anim= c::Animation::create();
   for (auto i = 1; i <= 3; ++i) {
-    frame = cx::getSpriteFrame("player_"+s::to_string(i)+".png");
-    animation->addSpriteFrame(frame);
+    auto f= cx::getSpriteFrame("player_"+s::to_string(i)+".png");
+    anim->addSpriteFrame(f);
   }
-  animation->setDelayPerUnit(0.2f / 3.0f);
-  animation->setRestoreOriginalFrame(false);
-  animation->setLoops(-1);
-    _rideAnimation = c::Animate::create(animation);
-  _rideAnimation->retain();
+  anim->setRestoreOriginalFrame(false);
+  anim->setDelayPerUnit(0.2 / 3.0);
+  anim->setLoops(-1);
+  _rideAnimation = c::Animate::create(anim);
+  CC_KEEP(_rideAnimation);
 
   auto easeSwing = c::Sequence::create(
-         c::EaseInOut::create(c::RotateTo::create(0.8f, -10), 2),
-         c::EaseInOut::create(c::RotateTo::create(0.8f, 10), 2),
-         nullptr);
+         c::EaseInOut::create(c::RotateTo::create(0.8, -10), 2),
+         c::EaseInOut::create(c::RotateTo::create(0.8, 10), 2),
+         CC_NIL);
   _floatAnimation = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
-  _floatAnimation->retain();
+  CC_KEEP(_floatAnimation);
 
-  sprite->runAction(_rideAnimation);
+  node->runAction(_rideAnimation);
 }
 
 

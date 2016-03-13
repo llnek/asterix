@@ -21,23 +21,23 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(victorian)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  terrains=engine->getNodeList(TerrainNode().typeId());
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _terrain= _engine->getNodes("n/Terrain")[0];
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto tn=CC_GNLF(Terrain,terrains,"terrain");
-  auto py=CC_GNLF(Player,players,"player");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto tn=CC_GEC(Terrain, _terrain,"n/Terrain");
+  auto py=CC_GEC(Player, _player,"f/CDraw");
+  auto ss=CC_GEC(GVars, _shared,"n/GVars");
   auto atlas=MGML()->getAtlas("game-pics");
-    auto wb=cx::visBox();
+  auto wb=cx::visBox();
+
   py->update(dt);
   tn->move(py->vel.x);
 
@@ -47,51 +47,49 @@ void Move::process(float dt) {
 
   py->place();
 
-  if (py->nextPos.y > wb.top * 0.6f) {
-    atlas->setPositionY((wb.top * 0.6f - py->nextPos.y) * 0.8f);
+  if (py->nextPos.y > wb.top * 0.6) {
+    atlas->setPositionY((wb.top * 0.6 - py->nextPos.y) * 0.8);
   } else {
     atlas->setPositionY(0);
   }
 
-    //update paralax
+    //update parallax
   if (py->vel.x > 0) {
     ss->background->setPositionX(
-        ss->background->getPosition().x - py->vel.x * 0.25f);
+        ss->background->getPositionX() - py->vel.x * 0.25);
 
     float diffx;
-    if (ss->background->getPositionX() < -ss->background->getContentSize().width) {
-      diffx = fabs(ss->background->getPositionX()) - ss->background->getContentSize().width;
+    if (ss->background->getPositionX() < - CC_CSIZE(ss->background).width) {
+      diffx = fabs(ss->background->getPositionX()) - CC_CSIZE(ss->background).width;
       ss->background->setPositionX(-diffx);
     }
 
     ss->foreground->setPositionX(
-        ss->foreground->getPosition().x - py->vel.x * 4);
+        ss->foreground->getPositionX() - py->vel.x * 4);
 
-    if (ss->foreground->getPositionX() < -ss->foreground->getContentSize().width * 4) {
-      diffx = fabs(ss->foreground->getPositionX()) - ss->foreground->getContentSize().width * 4;
+    if (ss->foreground->getPositionX() < - CC_CSIZE(ss->foreground).width * 4) {
+      diffx = fabs(ss->foreground->getPositionX()) - CC_CSIZE(ss->foreground).width * 4;
       ss->foreground->setPositionX(-diffx);
     }
 
-    auto &ps=MGMS()->getPool("Clouds")->list();
+    auto ps=MGMS()->getPool("Clouds")->ls();
     F__LOOP(it,ps) {
-      auto c= *it;
-      c->sprite->setPositionX(
-          c->sprite->getPositionX() - py->vel.x * 0.15f);
-      if (c->sprite->getPositionX() +
-          c->sprite->boundingBox().size.width * 0.5f < 0 )
-        c->sprite->setPositionX(
-            wb.right + c->sprite->boundingBox().size.width * 0.5f);
+      auto e= (ecs::Node*) *it;
+      auto ui=CC_GEC(f::CDraw,e,"f/CDraw");
+      ui->node->setPositionX(
+          ui->node->getPositionX() - py->vel.x * 0.15);
+      if (ui->node->getPositionX() + HWZ(ui->csize()) < 0 )
+        ui->node->setPositionX(
+            wb.right + HWZ(ui->csize()));
     }
   }
 
   if (ss->jam->isVisible()) {
-    if (ss->jam->getPositionX() < -wb.right * 0.2f) {
+    if (ss->jam->getPositionX() < -wb.right * 0.2) {
       ss->jam->stopAllActions();
       CC_HIDE(ss->jam);
     }
   }
-
-
 
 }
 

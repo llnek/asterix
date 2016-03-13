@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -60,7 +61,7 @@ struct CC_DLL Terrain : public Widget {
     return w;
   }
 
-  Terrain(not_null<c::Sprite*> s);
+  Terrain(not_null<c::Node*> s);
   virtual ~Terrain();
   static Terrain* create();
 

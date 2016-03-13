@@ -41,10 +41,10 @@ struct CC_DLL CHealth : public ecs::Component {
     origHP=h;
     curHP=h;
   }
-  void hurt(int damage=1) {
+  virtual void hurt(int damage=1) {
     curHP -= damage;
   }
-  void reset() {
+  virtual void reset() {
     curHP=origHP;
   }
   DECL_IZ(origHP)
@@ -146,34 +146,34 @@ struct CC_DLL CDraw : public ecs::Component {
   DECL_PTR(c::Node,node)
   CDraw(not_null<c::Node*> n) { node=n; }
   CDraw() {}
-  void hide() { if (node) node->setVisible(false); }
-  void show() { if (node) node->setVisible(true); }
-  void inflate(float x, float y) {
+  virtual void hide() { if (node) node->setVisible(false); }
+  virtual void show() { if (node) node->setVisible(true); }
+  virtual void inflate(float x, float y) {
     if (node) { node->setPosition(x,y); show(); }
   }
-  void ejectNode() { node=nullptr; }
-  void removeNode() {
+  virtual void ejectNode() { node=nullptr; }
+  virtual void removeNode() {
     if (node) {node->removeFromParent();}
     node=nullptr;
   }
-  void dispose() { removeNode(); }
-  void inflate() { show(); }
-  void deflate() {
+  virtual void dispose() { removeNode(); }
+  virtual void inflate() { show(); }
+  virtual void deflate() {
     if (node) {
       node->unscheduleAllCallbacks();
       node->stopAllActions();
       hide();
     }
   }
-  float height() { return node ? node->boundingBox().size.height : 0; }
-  float width() { return node ? node->boundingBox().size.width : 0; }
-  const c::Rect bbox() { return node ? node->boundingBox() : c::Rect(0,0,0,0); }
-  void setPos(float x, float y) { if (node) node->setPosition(x,y); }
-  const c::Vec2 pos() { return node ? node->getPosition() : c::Vec2(0,0); }
-  const c::Size csize() { return node ? CC_CSIZE(node) : c::Size(0,0); }
-  float circum() { return node ? CC_CSIZE(node).width : 0; }
-  float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
-  int tag() { return node ? node->getTag() : 0; }
+  virtual float height() { return node ? node->boundingBox().size.height : 0; }
+  virtual float width() { return node ? node->boundingBox().size.width : 0; }
+  virtual const c::Rect bbox() { return node ? node->boundingBox() : c::Rect(0,0,0,0); }
+  virtual void setPos(float x, float y) { if (node) node->setPosition(x,y); }
+  virtual const c::Vec2 pos() { return node ? node->getPosition() : c::Vec2(0,0); }
+  virtual const c::Size csize() { return node ? CC_CSIZE(node) : c::Size(0,0); }
+  virtual float circum() { return node ? CC_CSIZE(node).width : 0; }
+  virtual float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
+  virtual int tag() { return node ? node->getTag() : 0; }
   virtual ~CDraw() {
      if (node) { node->removeFromParent(); node=nullptr; }
   }

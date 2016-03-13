@@ -27,7 +27,9 @@ protected:
   //c::Touch::DispatchMode tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
   c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ONE_BY_ONE;
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
+  DECL_TV(int, _mouseBtn, -911)
   DECL_BF(_mouseEnabled)
+  DECL_BF(_mouseDown)
   s_arr<bool, 256> _keys;
 
   virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
@@ -47,7 +49,9 @@ protected:
   virtual void onTouchEnd( const s_vec<c::Touch*>& );
   virtual void onTouchEnd( c::Touch*);
   virtual void onMouseMotion( const c::Vec2&);
-  virtual void onMouseClick( const c::Vec2&);
+
+  virtual void onMouseStart(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
 
   void disableListeners();
   void enableListeners();

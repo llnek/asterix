@@ -25,9 +25,9 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  terrains=engine->getNodeList(TerrainNode().typeId());
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _terrain= _engine->getNodes("n/Terrain")[0];
+  _player= _engine->getNodes("f/CDraw")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,14 +42,13 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
-  auto tn=CC_GNLF(Terrain,terrains,"terrain");
-  auto py=CC_GNLF(Player,players,"player");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto tn=CC_GEC(Terrain,_terrain,"n/Terrain");
+  auto py=CC_GEC(Player,_player,"f/CDraw");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
-  if (py->sprite->getPositionY() < -py->height() ||
-      py->sprite->getPositionX() < -py->width() * 0.5f) {
-
+  if (py->node->getPositionY() < -py->height() ||
+      py->node->getPositionX() < - HTV(py->width()) ) {
     if (ss->state == kGamePlay) {
       //_running = false;
 
@@ -62,12 +61,12 @@ void Resolve::process(float dt) {
       //_scoreDisplay->setAnchorPoint(Vec2(0.5f, 0.5f));
       //_scoreDisplay->setPosition(Vec2(_screenSize.width * 0.5f,
                                      //_screenSize.height * 0.88f));
-      ss->hat->setPosition(wb.right * 0.2f, -wb.top * 0.1f);
+      ss->hat->setPosition(wb.right * 0.2, -wb.top * 0.1);
       CC_SHOW(ss->hat);
 
-      auto rotate = c::RotateBy::create(2.0f, 660);
-      auto jump = c::JumpBy::create(2.0f,
-          c::Vec2(0,10), wb.top * 0.8f, 1);
+      auto rotate = c::RotateBy::create(2.0, 660);
+      auto jump = c::JumpBy::create(2.0,
+          c::Vec2(0,10), wb.top * 0.8, 1);
       ss->hat->runAction(rotate);
       ss->hat->runAction(jump);
       cx::pauseMusic();

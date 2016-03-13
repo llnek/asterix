@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -23,19 +24,18 @@
 
 NS_BEGIN(victorian)
 
-typedef enum {
-    kPlayerMoving,
-    kPlayerFalling,
-    kPlayerDying
-
-} PlayerState;
+enum PlayerState {
+  kPlayerMoving,
+  kPlayerFalling,
+  kPlayerDying
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Player : public Widget {
 
-    DECL_PTR(c::Action, _floatAnimation)
-    DECL_PTR(c::Action, _rideAnimation)
+  DECL_PTR(c::Action, _floatAnimation)
+  DECL_PTR(c::Action, _rideAnimation)
 
   DECL_BF(_hasFloated)
 
@@ -45,7 +45,7 @@ struct CC_DLL Player : public Widget {
 
   void initPlayer();
 
-  Player(not_null<c::Sprite*>);
+  Player(not_null<c::Node*>);
   virtual ~Player();
 
   static Player* create();
@@ -56,37 +56,38 @@ struct CC_DLL Player : public Widget {
 
   virtual void place () {
     auto wb=cx::visBox();
-    sprite->setPositionY(nextPos.y);
-    if (vel.x > 0 && sprite->getPositionX() < wb.right * 0.2f) {
-      sprite->setPositionX(sprite->getPositionX() + vel.x);
-      if (sprite->getPositionX() > wb.right * 0.2f) {
-        sprite->setPositionX(wb.right * 0.2f);
+    node->setPositionY(nextPos.y);
+    if (vel.x > 0 &&
+        node->getPositionX() < wb.right * 0.2) {
+      node->setPositionX(node->getPositionX() + vel.x);
+      if (node->getPositionX() > wb.right * 0.2) {
+        node->setPositionX(wb.right * 0.2);
       }
     }
   }
 
   virtual float left() {
-    return sprite->getPositionX() - _width * 0.5f;
+    return node->getPositionX() - HTV(_width);
   }
 
   virtual float right() {
-    return sprite->getPositionX() + _width * 0.5f;
+    return node->getPositionX() + HTV(_width);
   }
 
   virtual float top() {
-    return sprite->getPositionY() ;
+    return node->getPositionY() ;
   }
 
   virtual float bottom() {
-    return sprite->getPositionY() - _height  ;
+    return node->getPositionY() - _height  ;
   }
 
   virtual float next_left() {
-    return nextPos.x - _width * 0.5f;
+    return nextPos.x - HTV(_width);
   }
 
   virtual float next_right() {
-    return nextPos.x + _width * 0.5f;
+    return nextPos.x + HTV(_width);
   }
 
   virtual float next_top() {
@@ -97,7 +98,8 @@ struct CC_DLL Player : public Widget {
     return nextPos.y - _height;
   }
 
-  MDECL_COMP_TPID("n/Player")
+  //MDECL_COMP_TPID("n/Player")
+  MDECL_COMP_TPID("f/CDraw")
 
   CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
   CC_SYNTHESIZE(PlayerState, _state, State);

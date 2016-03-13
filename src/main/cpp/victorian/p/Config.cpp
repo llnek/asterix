@@ -9,8 +9,8 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "Game.h"
 #include "Config.h"
+#include "Game.h"
 NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -34,8 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "cd5dfd6a-6941-4377-ae1a-9d624afd1127";
-  app_id = "victorian";
+  _game_id= "cd5dfd6a-6941-4377-ae1a-9d624afd1127";
+  _app_id = "victorian";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,22 +78,21 @@ void Config::handleResolution(const c::Size &rs) {
   }
 
   CC_DTOR()->setContentScaleFactor(h/dz.height);
-  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
+  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-    return Game::reify(mc_new(f::GCX));
+  return Game::reify(mc_new(f::GCX));
 }
 
 

@@ -22,10 +22,6 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  GLayer() {
-    tMode= c::Touch::DispatchMode::ONE_BY_ONE;
-  }
-
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
@@ -33,79 +29,82 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual bool onTouchStart(f::ComObj*, c::Touch*);
-  virtual void onTouchEnd(f::ComObj*, c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
 
-  virtual void postReify();
+  virtual void onMouseStart(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
+
+  virtual void onInited();
   void startGame();
 
-  DECL_PTR(a::NodeList, terrains)
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(ecs::Node, _terrain)
+  DECL_PTR(ecs::Node, _player)
+  DECL_PTR(ecs::Node, _shared)
 };
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::postReify() {
-  terrains = engine->getNodeList(TerrainNode().typeId());
-  players = engine->getNodeList(PlayerNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto py=CC_GNLF(Player,players,"player");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+void GLayer::onInited() {
+  _terrain = _engine->getNodes("n/Terrain")[0];
+  _player = _engine->getNodes("f/CGesture")[0];
+  _shared = _engine->getNodes("n/GVars")[0];
+
+  auto bg = cx::reifySprite("background.png");
+  auto ss=CC_GEC(GVars, _shared,"n/GVars");
   auto wb=cx::visBox();
 
-  auto background = cx::reifySprite("background.png");
-  background->setAnchorPoint(cx::anchorBL());
-  addAtlasItem("game-pics",background, kBackground);
+  bg->setAnchorPoint(cx::anchorBL());
+  addAtlasItem("game-pics",bg, kBackground);
 
   auto repeat = cx::reifySprite("background.png");
-  auto rw= repeat->getContentSize().width;
+  auto rw= CC_CSIZE(repeat).width;
   repeat->setAnchorPoint(cx::anchorBL());
   repeat->setPosition(rw - 1, 0);
-  background->addChild(repeat, kBackground);
+  bg->addChild(repeat, kBackground);
 
   repeat = cx::reifySprite("background.png");
   repeat->setAnchorPoint(cx::anchorBL());
   repeat->setPosition(2 * (rw - 1), 0);
-  background->addChild(repeat, kBackground);
+  bg->addChild(repeat, kBackground);
 
-  auto foreground = cx::reifySprite("lamp.png");
-  foreground->setAnchorPoint(cx::anchorBL());
-  addAtlasItem("game-pics",foreground, kForeground);
+  auto fg = cx::reifySprite("lamp.png");
+  fg->setAnchorPoint(cx::anchorBL());
+  addAtlasItem("game-pics", fg, kForeground);
 
   repeat = cx::reifySprite("lamp.png");
   repeat->setAnchorPoint(cx::anchorBL());
   repeat->setPosition(rw * 4, 0);
-  foreground->addChild(repeat, kBackground);
+  fg->addChild(repeat, kBackground);
 
   repeat = cx::reifySprite("lamp.png");
   repeat->setAnchorPoint(cx::anchorBL());
   repeat->setPosition(rw * 8, 0);
-  foreground->addChild(repeat, kBackground);
+  fg->addChild(repeat, kBackground);
 
-  ss->background=background;
-  ss->foreground=foreground;
+  ss->background= bg;
+  ss->foreground= fg;
 
   ss->jam = cx::reifySprite("jam_1.png");
   ss->hat = cx::reifySprite("hat.png");
   CC_HIDE(ss->hat);
   addAtlasItem("game-pics", ss->hat, kMiddleground);
 
-  auto animation = c::Animation::create();
+  auto anim= c::Animation::create();
   for (auto i = 1; i <= 3; ++i) {
     auto f = cx::getSpriteFrame("jam_" + s::to_string(i) + ".png");
-    animation->addSpriteFrame(f);
+    anim->addSpriteFrame(f);
   }
-  animation->setDelayPerUnit(0.2f / 3.0f);
-  animation->setRestoreOriginalFrame(false);
-  animation->setLoops(-1);
-  ss->jamAnimate = c::Animate::create(animation);
-  ss->jamAnimate->retain();
+  anim->setRestoreOriginalFrame(false);
+  anim->setDelayPerUnit(0.2 / 3.0);
+  anim->setLoops(-1);
+  ss->jamAnimate = c::Animate::create(anim);
+  CC_KEEP(ss->jamAnimate);
   addAtlasItem("game-pics", ss->jam, kBackground);
 
-  ss->jam->setPosition(wb.right * 0.19f, wb.top * 0.47f);
-  ss->jamMove = c::MoveTo::create(6.0f,
-      c::Vec2(-wb.right * 0.3f, ss->jam->getPositionY()));
-  ss->jamMove->retain();
+  ss->jam->setPosition(wb.right * 0.19, wb.top * 0.47);
+  ss->jamMove = c::MoveTo::create(6.0,
+      c::Vec2(-wb.right * 0.3, ss->jam->getPositionY()));
+  CC_KEEP(ss->jamMove);
 
   ss->speedIncreaseInterval = 15;
   ss->speedIncreaseTimer = 0;
@@ -114,14 +113,13 @@ void GLayer::postReify() {
   //_intro->setVisible(true);
   //_mainMenu->setVisible(true);
 
-  ss->jam->setPosition(wb.right * 0.19f, wb.top * 0.47f);
+  ss->jam->setPosition(wb.right * 0.19, wb.top * 0.47);
   CC_SHOW(ss->jam);
   ss->jam->runAction(ss->jamAnimate);
 
   cx::pauseMusic();
   cx::sfxMusic("background3", true);
 
-  this->motionees.push_back(py);
   startGame();
 }
 
@@ -131,8 +129,8 @@ void GLayer::startGame() {
     //_tutorialLabel->setVisible(false);
     //_intro->setVisible(false);
     //_mainMenu->setVisible(false);
-  auto t=CC_GNLF(Terrain,terrains,"terrain");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto t=CC_GEC(Terrain, _terrain,"n/Terrain");
+  auto ss=CC_GEC(GVars, _shared,"n/GVars");
   ss->jam->runAction(ss->jamMove);
   cx::sfxPlay("start");
   t->setStartTerrain (true);
@@ -140,20 +138,27 @@ void GLayer::startGame() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::decorate() {
+void GLayer::decoUI() {
+  _engine = mc_new(GEngine);
   centerImage("game.bg");
   regoAtlas("game-pics");
-
-  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
-  auto tn=CC_GNLF(Terrain,terrains,"terrain");
-  auto py=CC_GNLF(Player,players,"player");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+bool GLayer::onTouchStart(c::Touch *touch) {
   auto tap = touch->getLocation();
+  onMouseStart(tap);
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseStart(const c::Vec2 &loc) {
+
+  auto tn=CC_GEC(Terrain, _terrain,"n/Terrain");
+  auto py=CC_GEC(Player, _player,"f/CDraw");
+  auto ss=CC_GEC(GVars, _shared,"n/GVars");
 
   switch (ss->state) {
 
@@ -173,11 +178,11 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
 
     case kGamePlay:
       if (py->getState() == kPlayerFalling) {
-        py->setFloating(py->getFloating() ? false : true);
+        py->setFloating(!py->getFloating());
       } else {
         if (py->getState() != kPlayerDying) {
-          cx::sfxPlay("jump");
           py->setJumping(true);
+          cx::sfxPlay("jump");
         }
       }
       tn->activateChimneysAt(py);
@@ -192,8 +197,8 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
 
     case kGameTutorialJump:
       if (py->getState() == kPlayerMoving) {
-        cx::sfxPlay("jump");
         py->setJumping(true);
+        cx::sfxPlay("jump");
       }
     break;
 
@@ -209,20 +214,23 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
       //_running = true;
     break;
   }
-
-  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
-  auto p=CC_GNLF(Player,players,"player");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+void GLayer::onMouseClick(const c::Vec2 &loc) {
+  auto p=CC_GEC(Player, _player,"f/CDraw");
+  auto ss=CC_GEC(GVars, _shared,"n/GVars");
   if (ss->state == kGamePlay) {
     p->setJumping(false);
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
+}
 
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
@@ -232,7 +240,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();

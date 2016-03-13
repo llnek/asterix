@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "BBlock.h"
 
@@ -34,26 +34,23 @@ Block::~Block () {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Block::Block (not_null<c::Sprite*> s)
+Block::Block (not_null<c::Node*> s)
   : Widget(s) {
 
   auto wz=cx::visRect();
-
+  CC_HIDE(s);
 //  _wallTiles= 20;
 //  _roofTiles=5;
 //  _chimneys=5;
-
   _tileHeight = wz.size.height / TILE_H_SIZE;
   _tileWidth = wz.size.width / TILE_W_SIZE;
   _puffing = false;
-
-  CC_HIDE(sprite);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Block* Block::create () {
-  auto s=cx::reifySprite("blank.png");
+  auto s= cx::reifySprite("blank.png");
   auto block = mc_new1(Block,s);
   block->initBlock();
   return block;
@@ -66,20 +63,20 @@ void Block::setPuffing (bool value) {
   _puffing = value;
 
   if (value) {
-    sprite->runAction(_puffSpawn->clone());
+    node->runAction(_puffSpawn->clone());
     auto hide = c::Sequence::create(
-        c::DelayTime::create(2.5f),
+        c::DelayTime::create(2.5),
         c::CallFunc::create([=](){
           this->hidePuffs();
           }),
         CC_NIL);
-    sprite->runAction(hide);
+    node->runAction(hide);
   } else {
     //reset all puffs
     _puffIndex = 0;
-    for (auto chimney : _chimneys) {
+    for (auto ch : _chimneys) {
       for (auto j = 0; j < TOTAL_PUFFS; ++j) {
-        auto puff = (c::Sprite*) chimney->getChildByTag(j);
+        auto puff = (c::Sprite*) ch->getChildByTag(j);
         CC_HIDE(puff);
         puff->stopAllActions();
         puff->setScale(1.0);
@@ -92,80 +89,73 @@ void Block::setPuffing (bool value) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Block::hidePuffs() {
-  setPuffing(false);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Block::setupBlock(int width, int height, int type) {
+void Block::setupBlock(int w, int h, int type) {
 
   this->setPuffing(false);
 
+  _height = h * _tileHeight + _tileHeight * 0.49;
+  _width = w * _tileWidth;
   _type = type;
-  _width = width * _tileWidth;
-  _height = height * _tileHeight + _tileHeight * 0.49f;
-  sprite->setPositionY(_height);
+  node->setPositionY(_height);
 
-    c::SpriteFrame *wallFrame;
-    c::SpriteFrame *roofFrame = rand() % 10 > 6 ? _roof1 : _roof2;
-
+  auto roof= rand() % 10 > 6 ? _roof1 : _roof2;
   float chimneyX[] = {0,0,0,0,0};
   int num_chimneys;
+  auto wall=roof;
 
   switch (type) {
 
     case kBlockGap:
-      CC_HIDE(sprite);
+      CC_HIDE(node);
     return;
 
     case kBlock1:
-      wallFrame = _tile1;
-      chimneyX[0] = 0.2f;
-      chimneyX[1] = 0.8f;
+      chimneyX[0] = 0.2;
+      chimneyX[1] = 0.8;
       num_chimneys = 2;
+      wall= _tile1;
     break;
 
     case kBlock2:
-      wallFrame = _tile2;
-      chimneyX[0] = 0.2f;
-      chimneyX[1] = 0.8f;
-      chimneyX[2] = 0.5f;
+      chimneyX[0] = 0.2;
+      chimneyX[1] = 0.8;
+      chimneyX[2] = 0.5;
       num_chimneys = 3;
+      wall= _tile2;
     break;
 
     case kBlock3:
-      wallFrame = _tile3;
-      chimneyX[0] = 0.2f;
-      chimneyX[1] = 0.8f;
-      chimneyX[2] = 0.5f;
+      chimneyX[0] = 0.2;
+      chimneyX[1] = 0.8;
+      chimneyX[2] = 0.5;
       num_chimneys = 3;
+      wall= _tile3;
     break;
 
     case kBlock4:
-      wallFrame = _tile4;
-      chimneyX[0] = 0.2f;
-      chimneyX[1] = 0.5f;
+      chimneyX[0] = 0.2;
+      chimneyX[1] = 0.5;
       num_chimneys = 2;
+      wall= _tile4;
     break;
   }
 
   for (auto i=0; i < _chimneys.size(); ++i) {
-    auto chimney = _chimneys.at(i);
+    auto ch= _chimneys.at(i);
     if (i < num_chimneys) {
-      chimney->setPosition(chimneyX[i] * _width, 0);
-      CC_SHOW(chimney);
+      ch->setPosition(chimneyX[i] * _width, 0);
+      CC_SHOW(ch);
     } else {
-      CC_HIDE(chimney);
+      CC_HIDE(ch);
     }
   }
 
-  CC_SHOW(sprite);
+  CC_SHOW(node);
 
   for (auto tile : _roofTiles) {
     if (tile->getPositionX() < _width) {
       CC_SHOW(tile);
-      tile->setDisplayFrame(roofFrame);
+      tile->setDisplayFrame(roof);
     } else {
       CC_HIDE(tile);
     }
@@ -175,7 +165,7 @@ void Block::setupBlock(int width, int height, int type) {
     if (tile->getPositionX() < _width &&
         tile->getPositionY() > -_height) {
       CC_SHOW(tile);
-      tile->setDisplayFrame(wallFrame);
+      tile->setDisplayFrame(wall);
     } else {
       CC_HIDE(tile);
     }
@@ -200,62 +190,61 @@ void Block::initBlock() {
     tile->setAnchorPoint(cx::anchorTL());
     tile->setPosition(i*_tileWidth, 0);
     CC_HIDE(tile);
-    sprite->addChild(tile, kMiddleground, kRoofTile);
+    node->addChild(tile, kMiddleground, kRoofTile);
     _roofTiles.pushBack(tile);
 
     for (auto j = 0; j < 4; ++j) {
       tile = cx::reifySprite("building_1.png");
       tile->setAnchorPoint(cx::anchorTL());
       tile->setPosition(
-          i*_tileWidth, -1 * (_tileHeight*0.47f + j*_tileHeight));
+          i*_tileWidth, -1 * (_tileHeight*0.47 + j*_tileHeight));
       CC_HIDE(tile);
-      sprite->addChild(tile, kBackground, kWallTile);
+      node->addChild(tile, kBackground, kWallTile);
       _wallTiles.pushBack(tile);
     }
   }
 
   for (auto i = 0; i < 5; ++i) {
-    auto chimney = cx::reifySprite("chimney.png");
-    CC_HIDE(chimney);
-    sprite->addChild(chimney, kForeground, kChimney);
-    _chimneys.pushBack(chimney);
+    auto ch= cx::reifySprite("chimney.png");
+    CC_HIDE(ch);
+    node->addChild(ch, kForeground, kChimney);
+    _chimneys.pushBack(ch);
 
     for (auto j = 0; j < TOTAL_PUFFS; ++j) {
       auto puff = cx::reifySprite("puff_1.png");
-        puff->setAnchorPoint(c::Vec2(0,-0.5));
+      puff->setAnchorPoint(c::Vec2(0,-0.5));
       CC_HIDE(puff);
-      chimney->addChild(puff, -1, j);
+      ch->addChild(puff, -1, j);
     }
   }
 
-    auto animation = c::Animation::create();
-    c::SpriteFrame *frame;
-
+  auto anim= c::Animation::create();
   for (auto i = 1; i <= 4; ++i) {
-    frame = cx::getSpriteFrame("puff_"+s::to_string(i)+".png");
-    animation->addSpriteFrame(frame);
+    auto f= cx::getSpriteFrame("puff_"+s::to_string(i)+".png");
+    anim->addSpriteFrame(f);
   }
 
-  animation->setDelayPerUnit(0.75f / 4.0f);
-  animation->setRestoreOriginalFrame(false);
-  animation->setLoops(-1);
-    _puffAnimation = c::Animate::create(animation);
-  _puffAnimation->retain();
+  anim->setRestoreOriginalFrame(false);
+  anim->setDelayPerUnit(0.75 / 4.0);
+  anim->setLoops(-1);
+  _puffAnimation = c::Animate::create(anim);
+  CC_KEEP(_puffAnimation);
 
   _puffSpawn = c::Repeat::create(
-      c::Sequence::create(c::DelayTime::create(0.5f),
+      c::Sequence::create(
+        c::DelayTime::create(0.5),
         c::CallFunc::create(
           [=](){ this->createPuff(); }),
         CC_NIL),
       TOTAL_PUFFS);
-  _puffSpawn->retain();
+  CC_KEEP(_puffSpawn);
 
-  _puffMove = c::MoveBy::create(1.0f, c::Vec2(-100,80));
-  _puffMove->retain();
-  _puffFade = c::FadeOut::create(2.0f);
-  _puffFade->retain();
-  _puffScale = c::ScaleBy::create(1.5f, 1.5);
-  _puffScale->retain();
+  _puffMove = c::MoveBy::create(1.0, c::Vec2(-100,80));
+  _puffFade = c::FadeOut::create(2.0);
+  _puffScale = c::ScaleBy::create(1.5, 1.5);
+  CC_KEEP(_puffMove);
+  CC_KEEP(_puffFade);
+  CC_KEEP(_puffScale);
 
   _puffIndex = 0;
 }
@@ -264,9 +253,9 @@ void Block::initBlock() {
 //
 void Block::createPuff() {
 
-  for (auto chimney : _chimneys) {
-    if (chimney->isVisible()) {
-      auto puff = chimney->getChildByTag(_puffIndex);
+  for (auto ch : _chimneys) {
+    if (ch->isVisible()) {
+      auto puff = ch->getChildByTag(_puffIndex);
       CC_SHOW(puff);
       puff->stopAllActions();
       puff->setScale(1.0);

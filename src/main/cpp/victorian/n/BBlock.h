@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -19,24 +20,24 @@
 NS_BEGIN(victorian)
 
 enum {
-    kWallTile,
-    kRoofTile,
-    kChimney
+  kWallTile,
+  kRoofTile,
+  kChimney
 };
 
 enum {
-    kBlockGap,
-    kBlock1,
-    kBlock2,
-    kBlock3,
-    kBlock4
+  kBlockGap,
+  kBlock1,
+  kBlock2,
+  kBlock3,
+  kBlock4
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Block : public Widget, public c::Ref {
 
-  Block(not_null<c::Sprite*> s);
+  Block(not_null<c::Node*> s);
   virtual ~Block();
   MDECL_COMP_TPID("n/Block")
 
@@ -68,14 +69,14 @@ struct CC_DLL Block : public Widget, public c::Ref {
 
   void setupBlock(int width, int height, int type);
   void setPuffing(bool value);
-  void hidePuffs();
+  void hidePuffs() { setPuffing(false); }
 
   virtual float left() {
-    return sprite->getPositionX();
+    return node->getPositionX();
   }
 
   virtual float right() {
-    return sprite->getPositionX() + _width;
+    return node->getPositionX() + _width;
   }
 
   virtual float top() {

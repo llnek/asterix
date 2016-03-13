@@ -8,19 +8,20 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 enum {
-
     kBackground,
     kMiddleground,
     kForeground
@@ -34,8 +35,7 @@ enum {
     kSpritePuff
 };
 
-
-typedef enum {
+enum GameState {
     kGameIntro,
     kGamePlay,
     kGameOver,
@@ -43,51 +43,34 @@ typedef enum {
     kGameTutorialJump,
     kGameTutorialFloat,
     kGameTutorialDrop
-} GameState;
+};
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Widget : public f::ComObj {
+struct CC_DLL Widget : public f::CDraw {
 
-  Widget(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-
-  virtual float radius() {
-    return _width * 0.5f;
-  }
-
+  virtual float radius() { return HTV(_width); }
   virtual float height() { return _height; }
   virtual float width() { return _width; }
 
+  Widget(not_null<c::Node*> s) : CDraw(s) {}
   void setSize() {
-    _height = sprite->boundingBox().size.height;
-    _width = sprite->boundingBox().size.width;
+    _height = CC_CSIZE(node).height;
+    _width = CC_CSIZE(node).width;
   }
 
+  DECL_TD(c::Vec2, nextPos)
+  DECL_TD(c::Vec2, vel)
+  DECL_FZ(maxSpeed)
+  DECL_FZ(speed)
   DECL_FZ(_height)
   DECL_FZ(_width)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Cloud : public f::ComObj {
-  Cloud(not_null<c::Sprite*> s) :
-    ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Cloud")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   DECL_PTR(c::Animate,jamAnimate)
   DECL_PTR(c::MoveTo,jamMove)
   DECL_PTR(c::Sprite,jam)

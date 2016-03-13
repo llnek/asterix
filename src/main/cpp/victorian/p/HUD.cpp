@@ -19,18 +19,18 @@ NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  scoreLabel= cx::reifyBmfLabel("dft", "000000");
-  scoreLabel->setAlignment(c::TextHAlignment::CENTER);
-  scoreLabel->setWidth(wz.size.width * 0.3f);
-  scoreLabel->setAnchorPoint(cx::anchorBR());
-  scoreLabel->setPosition(wb.right * 0.95f, wb.top * 0.88f);
-  addItem(scoreLabel);
+  _scoreLabel= cx::reifyBmfLabel("dft", "000000");
+  _scoreLabel->setAlignment(c::TextHAlignment::CENTER);
+  _scoreLabel->setWidth(wz.size.width * 0.3);
+  _scoreLabel->setAnchorPoint(cx::anchorBR());
+  _scoreLabel->setPosition(wb.right * 0.95, wb.top * 0.88);
+  addItem(_scoreLabel);
 
-  score=0;
+  _score=0;
 }
 
 

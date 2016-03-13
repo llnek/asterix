@@ -9,9 +9,8 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Terrain.h"
 
@@ -39,7 +38,7 @@ Terrain::~Terrain () {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Terrain::Terrain(not_null<c::Sprite*> s)
+Terrain::Terrain(not_null<c::Node*> s)
   : Widget(s) {
 
   _startTerrain=false;
@@ -76,11 +75,11 @@ void Terrain::initTerrain() {
   //init object pools
   for (auto i = 0; i < 20; ++i) {
     auto block = Block::create();
-    sprite->addChild(block->sprite);
+    node->addChild(block->node);
     _blockPool.pushBack(block);
   }
 
-  _minTerrainWidth = wz.size.width * 1.5f;
+  _minTerrainWidth = wz.size.width * 1.5;
 
   random_shuffle(_blockPattern.begin(), _blockPattern.end());
   random_shuffle(_blockWidths.begin(), _blockWidths.end());
@@ -93,7 +92,7 @@ void Terrain::initTerrain() {
 //
 void Terrain::activateChimneysAt(Player *player) {
 
-  auto spos= sprite->getPosition();
+  auto spos= node->getPosition();
   auto wb=cx::visBox();
 
   for (auto i = 0; i < _blocks.size(); ++i) {
@@ -101,11 +100,12 @@ void Terrain::activateChimneysAt(Player *player) {
     auto block = _blocks.at(i);
     auto pos=block->pos();
 
-    if (block->getType() == kBlockGap) continue;
-    if (block->getPuffing()) continue;
+    if (block->getType() == kBlockGap ||
+        block->getPuffing())  {
+    continue; }
 
-    if (spos.x + pos.x >= wb.right * 0.2f &&
-        spos.x + pos.x < wb.right * 0.8f) {
+    if (spos.x + pos.x >= wb.right * 0.2 &&
+        spos.x + pos.x < wb.right * 0.8) {
       block->setPuffing(true);
     }
   }
@@ -116,15 +116,15 @@ void Terrain::activateChimneysAt(Player *player) {
 void Terrain::checkCollision(Player *player) {
 
   if (player->getState() == kPlayerDying) {
-    return;
-  }
+  return; }
 
-  auto spos= sprite->getPosition();
+  auto spos= node->getPosition();
   bool inAir = true;
 
   for (auto block : _blocks) {
 
-    if (block->getType() == kBlockGap) continue;
+    if (block->getType() == kBlockGap) {
+    continue; }
 
     //if within x, check y (bottom collision)
     if (player->right() >= spos.x + block->left() &&
@@ -136,18 +136,19 @@ void Terrain::checkCollision(Player *player) {
         player->nextPos=
             c::Vec2(player->nextPos.x, block->top() + player->height());
         player->vel= c::Vec2(player->vel.x, 0);
-        player->sprite->setRotation(0.0);
+        player->node->setRotation(0);
         inAir = false;
         break;
       }
     }
   }
 
-  spos= sprite->getPosition();
+  spos= node->getPosition();
 
   for (auto block : _blocks) {
 
-    if (block->getType() == kBlockGap) continue;
+    if (block->getType() == kBlockGap) {
+    continue; }
 
     //now if within y, check x (side collision)
     if ((player->bottom() < block->top() &&
@@ -155,17 +156,17 @@ void Terrain::checkCollision(Player *player) {
         (player->next_bottom() < block->top() &&
          player->next_top() > block->bottom())) {
 
-      if (player->right() >= spos.x + block->sprite->getPositionX() &&
-          player->left() < spos.x + block->sprite->getPositionX()) {
+      if (player->right() >= spos.x + block->node->getPositionX() &&
+          player->left() < spos.x + block->node->getPositionX()) {
 
-        player->sprite->setPositionX(
-            spos.x + block->sprite->getPositionX() - player->width() * 0.5f);
+        player->node->setPositionX(
+            spos.x + block->node->getPositionX() - player->width() * 0.5);
 
         player->nextPos=
-            c::Vec2(spos.x + block->sprite->getPositionX() - player->width()*0.5f, player->nextPos.y);
-        player->vel= c::Vec2(player->vel.x * -0.5f, player->vel.y);
+            c::Vec2(spos.x + block->node->getPositionX() - player->width()*0.5, player->nextPos.y);
+        player->vel= c::Vec2(player->vel.x * -0.5, player->vel.y);
 
-        if (player->bottom() + player->height() * 0.2f < block->top()) {
+        if (player->bottom() + player->height() * 0.2 < block->top()) {
           player->setState(kPlayerDying);
           cx::sfxPlay("hitBuilding");
           return;
@@ -190,25 +191,28 @@ void Terrain::checkCollision(Player *player) {
 //
 void Terrain::move(float xMove) {
 
-  if (xMove < 0) return;
+  if (xMove < 0)
+  return;
 
   if (_startTerrain) {
-    if (xMove > 0 && _gapSize < 5) _increaseGapTimer += xMove;
+    if (xMove > 0 && _gapSize < 5) {
+      _increaseGapTimer += xMove;
+    }
     if (_increaseGapTimer > _increaseGapInterval) {
       _increaseGapTimer = 0;
       _gapSize += 1;
     }
   }
 
-  sprite->setPositionX(sprite->getPositionX() - xMove);
+  node->setPositionX(node->getPositionX() - xMove);
 
-  auto spos= sprite->getPosition();
+  auto spos= node->getPosition();
   auto block = _blocks.at(0);
   if (spos.x + block->width() < 0) {
     auto firstBlock = _blocks.at(0);
     _blocks.erase(0);
     _blocks.pushBack(firstBlock);
-    sprite->setPositionX(spos.x + block->width());
+    node->setPositionX(spos.x + block->width());
 
     auto width_cnt = width() - block->width() - _blocks.at(0)->width();
     this->initBlock(block);
@@ -220,7 +224,7 @@ void Terrain::move(float xMove) {
 //
 void Terrain::reset() {
 
-  sprite->setPosition(0,0);
+  node->setPosition(0,0);
   _startTerrain = false;
 
   int currentWidth = 0;
@@ -267,17 +271,14 @@ void Terrain::addBlocks(int currentWidth) {
 void Terrain::distributeBlocks() {
 
   int count = (int) _blocks.size();
-  Block *block;
-  Block *prev_block;
-
-  for (auto i = 0; i < count; i++) {
-    block =  _blocks.at(i);
+  for (auto i = 0; i < count; ++i) {
+    auto block =  _blocks.at(i);
     if (i != 0) {
-      prev_block = _blocks.at(i - 1);
-      block->sprite->setPositionX(
-          prev_block->sprite->getPositionX() + prev_block->width());
+      auto prev_block = _blocks.at(i - 1);
+      block->node->setPositionX(
+          prev_block->node->getPositionX() + prev_block->width());
     } else {
-      block->sprite->setPositionX(0);
+      block->node->setPositionX(0);
     }
   }
 }
