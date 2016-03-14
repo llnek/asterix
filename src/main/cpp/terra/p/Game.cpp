@@ -77,8 +77,8 @@ void GLayer::initBackTiles() {
 void GLayer::moveBackTiles(float) {
   auto po= MGMS()->getPool("BackTiles");
   auto wz= cx::visRect();
-  auto tm = po->getAndSet(true);
-  auto ui= CC_GEC(f::CDraw, tm, "f/CDraw");
+  auto tm = po->take(true);
+  auto ui= CC_GEC(f::CPixie, tm, "f/CPixie");
 /*
   if (ENP(tm)) {
     SCAST(GEngine*,engine)->createBackTiles();
@@ -98,15 +98,14 @@ void GLayer::moveBackTiles(float) {
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initBackSkies() {
+  auto ss=CC_GEC(GVars,_arena,"n/GVars");
   auto p = MGMS()->getPool("BackSkies");
-  auto g = (Game*) getSceneX();
-  auto bs = p->getAndSet(true);
-  auto ui= CC_GEC(f::CDraw, bs, "f/CDraw");
+  auto bs = p->take(true);
+  auto ui= CC_GEC(f::CPixie, bs, "f/CPixie");
   ui->inflate(0, 0);
-
-  g->backSkyDim = bs->csize();
-  g->backSkyRe = CC_NIL;
-  g->backSky = bs;
+  ss->backSkyDim = ui->csize();
+  ss->backSkyRe = CC_NIL;
+  ss->backSky = PCAST(ecs::Node,bs);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,7 +129,7 @@ void GLayer::onInited() {
   _ship = _engine->getNodes("f/CGesture")[0];
   _arena = _engine->getNodes("n/GVars")[0];
 
-  bornShip(SCAST(GEngine*,engine), _ship);
+  bornShip(SCAST(GEngine*,_engine), _ship);
   sharedExplosion();
   initBackSkies();
   initBackTiles();
@@ -167,7 +166,7 @@ void GLayer::onPlayerKilled() {
   if ( getHUD()->reduceLives(1)) {
     onDone();
   } else {
-    bornShip(SCAST(GEngine*,engine), _ship);
+    bornShip(SCAST(GEngine*,_engine), _ship);
   }
 }
 

@@ -17,60 +17,62 @@ NS_BEGIN(terra)
 //
 void Spark::inflate(float x, float y) {
 
-  auto scaleBy = c::ScaleBy::create(duration, 3.0f, 3.0f);
-  auto right = c::RotateBy::create(duration, 45.0f);
+  auto scaleBy = c::ScaleBy::create(duration, 3.0, 3.0);
+  auto right = c::RotateBy::create(duration, 45.0);
   auto seq = c::Sequence::createWithTwoActions(
       c::FadeOut::create(duration),
       c::CallFunc::create([=]() { this->deflate(); }));
 
   sprite2->setRotation( cx::randInt(360));
-  sprite2->setOpacity(255.0f);
+  sprite2->setOpacity(255);
   sprite2->setPosition(x,y);
   sprite2->setScale(scale);
-  sprite2->setVisible(true);
+  CC_SHOW(sprite2);
   sprite2->runAction(scaleBy->clone());
   sprite2->runAction(seq->clone());
 
-  sprite->setOpacity(255.0f);
-  sprite->setScale(scale);
-  sprite->runAction(right);
-  sprite->runAction(scaleBy);
-  sprite->runAction(seq);
+  node->setOpacity(255);
+  node->setScale(scale);
+  node->runAction(right);
+  node->runAction(scaleBy);
+  node->runAction(seq);
 
-  ComObj::inflate(x,y);
+  f::CPixie::inflate(x,y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Spark::deflate() {
-  sprite2->setVisible(false);
+  CC_HIDE(sprite2);
   sprite2->stopAllActions();
-  ComObj::deflate();
+  f::CPixie::deflate();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Explosion::inflate(float x, float y) {
-  auto ac = c::AnimationCache::getInstance();
-  auto ani= ac->getAnimation("Explosion");
-  sprite->runAction(c::Sequence::create(
+  auto ani= CC_ACAC()->getAnimation("Explosion");
+  node->runAction(c::Sequence::create(
         c::Animate::create(ani),
         c::CallFunc::create([=]() {
           this->deflate();
-        }), nullptr));
-  ComObj::inflate(x, y);
+        }), CC_NIL));
+  f::CPixie::inflate(x, y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HitEffect::inflate(float x, float y) {
-  sprite->runAction(c::ScaleBy::create(0.3f, 2.0f, 2.0f));
-  sprite->runAction(
-      c::Sequence::create(c::FadeOut::create(0.3f),
-      c::CallFunc::create([=]() { this->deflate();  } ), nullptr));
-  sprite->setRotation( cx::randInt(360));
-  sprite->setScale(scale);
-  ComObj::inflate(x,y);
+  node->runAction(c::ScaleBy::create(0.3, 2, 2));
+  node->runAction(
+      c::Sequence::create(
+        c::FadeOut::create(0.3),
+        c::CallFunc::create(
+          [=]() { this->deflate(); }),
+        CC_NIL));
+  node->setRotation(cx::randInt(360));
+  node->setScale(scale);
+  f::CPixie::inflate(x,y);
 }
 
 

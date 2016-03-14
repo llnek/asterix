@@ -48,13 +48,13 @@ enum GameState {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Widget : public f::CDraw {
+struct CC_DLL Widget : public f::CPixie {
 
   virtual float radius() { return HTV(_width); }
   virtual float height() { return _height; }
   virtual float width() { return _width; }
 
-  Widget(not_null<c::Node*> s) : CDraw(s) {}
+  Widget(not_null<c::Node*> s) : CPixie(s) {}
   void setSize() {
     _height = CC_CSIZE(node).height;
     _width = CC_CSIZE(node).width;

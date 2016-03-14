@@ -66,7 +66,7 @@ void Enemy::sync() {
 //
 void Enemy::shoot(float dt) {
   auto po= MGMS()->getPool("Bullets");
-  auto b= (Projectile*) po->getAndSet(true);
+  auto b= (Projectile*) po->take(true);
   auto pos= this->pos();
   auto sz= b->csize();
 

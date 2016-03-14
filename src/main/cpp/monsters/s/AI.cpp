@@ -119,7 +119,7 @@ void AILogic::spawnMonster(ecs::Entity *e, int cost, int count) {
       default:
       throw "bad monster type!";
     }
-    auto render = CC_GEC(f::CDraw,m,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,m,"f/CPixie");
     auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
     render->setPos(wb.right * 0.75, wb.cy + r);
   }

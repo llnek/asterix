@@ -59,12 +59,12 @@ void Collide::checkMissilesBombs() {
   F__LOOP(it, m) {
     auto e= (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status())
       F__LOOP(it2, b) {
         auto e2 = (ecs::Node*) *it2;
         auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+        auto s2= CC_GEC(f::CPixie,e2,"f/CPixie");
         if (e2->status() && cx::collide(s2,s)) {
           h2->hurt();
           h->hurt();
@@ -86,12 +86,12 @@ void Collide::checkMissilesAliens() {
   F__LOOP(it, c2) {
     auto e = (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status())
       F__LOOP(it2, c) {
         auto e2= (ecs::Node*) *it2;
         auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
+        auto s2= CC_GEC(f::CPixie,e2,"f/CPixie");
         if (e2->status() &&
             cx::collide(s,s2)) {
           h2->hurt();
@@ -107,7 +107,7 @@ void Collide::checkMissilesAliens() {
 void Collide::checkShipBombs() {
 
   auto h2= CC_GEC(f::CHealth,_player,"f/CHealth");
-  auto p= CC_GEC(f::CDraw, _player, "n/Ship");
+  auto p= CC_GEC(f::CPixie, _player, "n/Ship");
   auto bbs= MGMS()->getPool("Bombs");
   auto c= bbs->ls();
 
@@ -115,7 +115,7 @@ void Collide::checkShipBombs() {
     F__LOOP(it, c) {
       auto b = (ecs::Node*) *it;
       auto h= CC_GEC(f::CHealth,b,"f/CHealth");
-      auto bs= CC_GEC(f::CDraw, b, "f/CDraw");
+      auto bs= CC_GEC(f::CPixie, b, "f/CPixie");
       if (b->status() &&
           cx::collide(p, bs)) {
         h2->hurt();
@@ -131,7 +131,7 @@ void Collide::checkShipAliens() {
 
   auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
   auto h2= CC_GEC(f::CHealth,_player,"f/CHealth");
-  auto p = CC_GEC(f::CDraw, _player, "n/Ship");
+  auto p = CC_GEC(f::CPixie, _player, "n/Ship");
   auto c = sqad->aliens->ls();
   auto sz= c.size();
 
@@ -139,7 +139,7 @@ void Collide::checkShipAliens() {
     F__LOOP(it, c) {
       auto a = (ecs::Node*) *it;
       auto h= CC_GEC(f::CHealth,a,"f/CHealth");
-      auto s= CC_GEC(f::CDraw,a,"f/CDraw");
+      auto s= CC_GEC(f::CPixie,a,"f/CPixie");
       if (a->status() &&
           cx::collide(p, s)) {
         h2->hurt();

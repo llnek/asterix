@@ -91,7 +91,7 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
-  auto render= CC_GEC(f::CDraw,_human,"f/CDraw");
+  auto render= CC_GEC(f::CPixie,_human,"f/CPixie");
   auto player= CC_GEC(Player,_human,"n/Player");
   if (render->bbox().containsPoint(loc)) {
     player->attacking = !player->attacking;

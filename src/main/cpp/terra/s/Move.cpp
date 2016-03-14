@@ -37,7 +37,7 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::onKeys(float dt) {
-  auto sp = CC_GEC(f::CDraw, _ship, "f/CDraw");
+  auto sp = CC_GEC(Ship, _ship, "f/CPixie");
   auto ssp = CC_CSV(c::Float, "SHIP+SPEED");
   auto wb= cx::visBox();
   auto pos = sp->pos();
@@ -72,8 +72,8 @@ void Move::onKeys(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::moveOneBomb(ecs::Node *bomb, float dt) {
-  auto ui=CC_GEC(f::CDraw,bomb,"f/CDraw");
   auto mv=CC_GEC(f::CMove,bomb,"f/CMove");
+  auto ui=CC_GEC(Bomb,bomb,"f/CPixie");
   auto pos = ui->pos();
   ui->setPos(pos.x + mv->vel.x * dt,
              pos.y + mv->vel.y * dt);
@@ -93,7 +93,7 @@ void Move::move(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::moveOneMissile(ecs::Node *m, float dt) {
-  auto ui=CC_GEC(f::CDraw,m,"f/CDraw");
+  auto ui=CC_GEC(Missile,m,"f/CPixie");
   auto mv=CC_GEC(f::CMove,m,"f/CMove");
   auto pos = ui->pos();
   ui->setPos(pos.x + mv->vel.x * dt,
@@ -106,7 +106,7 @@ void Move::moveMissiles(float dt) {
   auto po= MGMS()->getPool("Missiles");
   po->foreach([=](f::Poolable *p) {
     if (p->status()) {
-    this->moveOneMissile((ecs::Node*)p,dt);
+      this->moveOneMissile((ecs::Node*)p,dt);
     }
   });
 }

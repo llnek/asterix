@@ -90,7 +90,7 @@ void Move::moveBombs(float dt) {
     auto b = (ecs::Node*) *it;
     if (b->status()) {
       auto mv= CC_GEC(f::CMove,b,"f/CMove");
-      auto s= CC_GEC(f::CDraw,b,"f/CDraw");
+      auto s= CC_GEC(f::CPixie,b,"f/CPixie");
       auto pos= s->pos();
       auto y = pos.y + dt * mv->speed.y;
       s->setPos(pos.x, y);
@@ -109,7 +109,7 @@ void Move::moveMissiles(float dt) {
     auto e = (ecs::Node*) *it;
     if (e->status()) {
       auto mv= CC_GEC(f::CMove,e,"f/CMove");
-      auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+      auto s= CC_GEC(f::CPixie,e,"f/CPixie");
       auto pos= s->pos();
       auto y = pos.y + dt * mv->speed.y;
       s->setPos(pos.x, y);

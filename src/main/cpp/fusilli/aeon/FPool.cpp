@@ -39,7 +39,7 @@ Poolable* FPool::select(s::function<bool (Poolable*)> f) {
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool and set it's status to true
-Poolable* FPool::getAndSet(bool create) {
+Poolable* FPool::take(bool create) {
   auto rc= get(create);
   if (NNP(rc)) {
     rc->take();

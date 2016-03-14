@@ -26,7 +26,7 @@ NS_BEGIN(victorian)
 //
 void Resolve::preamble() {
   _terrain= _engine->getNodes("n/Terrain")[0];
-  _player= _engine->getNodes("f/CDraw")[0];
+  _player= _engine->getNodes("f/CPixie")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -43,7 +43,7 @@ bool Resolve::update(float dt) {
 //
 void Resolve::process(float dt) {
   auto tn=CC_GEC(Terrain,_terrain,"n/Terrain");
-  auto py=CC_GEC(Player,_player,"f/CDraw");
+  auto py=CC_GEC(Player,_player,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 

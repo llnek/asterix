@@ -39,18 +39,18 @@ bool MeleeLogic::update(float dt) {
 void MeleeLogic::process(float dt) {
 
   auto ents = engine->getEntities(
-      s_vec<ecs::COMType>{"n/Team","n/Melee","f/CDraw"});
+      s_vec<ecs::COMType>{"n/Team","n/Melee","f/CPixie"});
 
   F__LOOP(it,ents) {
     auto e = *it;
-    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto melee = CC_GEC(Melee,e,"n/Melee");
     auto team = CC_GEC(Team,e,"n/Team");
     auto aoeDamageCaused = false;
-    auto enemies = getEntsOnTeam(engine,OTHER_TEAM(team->team),"f/CDraw");
+    auto enemies = getEntsOnTeam(engine,OTHER_TEAM(team->team),"f/CPixie");
     F__LOOP(it2,enemies) {
       auto enemy= *it2;
-      auto enemyRender = CC_GEC(f::CDraw,enemy,"f/CDraw");
+      auto enemyRender = CC_GEC(f::CPixie,enemy,"f/CPixie");
       auto enemyHealth = CC_GEC(f::CHealth,enemy,"f/CHealth");
       if (!enemyHealth) { continue; }
 

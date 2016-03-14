@@ -13,7 +13,7 @@
 
 #include "2d/CCSprite.h"
 #include "Primitives.h"
-#include "ecs/Ecs.h"
+#include "ecs/Node.h"
 NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -141,11 +141,11 @@ struct CC_DLL CMove : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CDraw : public ecs::Component {
-  MDECL_COMP_TPID("f/CDraw")
+struct CC_DLL CPixie : public ecs::Component {
+  MDECL_COMP_TPID("f/CPixie")
   DECL_PTR(c::Node,node)
-  CDraw(not_null<c::Node*> n) { node=n; }
-  CDraw() {}
+  CPixie(not_null<c::Node*> n) { node=n; }
+  CPixie() {}
   virtual void hide() { if (node) node->setVisible(false); }
   virtual void show() { if (node) node->setVisible(true); }
   virtual void inflate(float x, float y) {
@@ -174,7 +174,7 @@ struct CC_DLL CDraw : public ecs::Component {
   virtual float circum() { return node ? CC_CSIZE(node).width : 0; }
   virtual float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
   virtual int tag() { return node ? node->getTag() : 0; }
-  virtual ~CDraw() {
+  virtual ~CPixie() {
      if (node) { node->removeFromParent(); node=nullptr; }
   }
 

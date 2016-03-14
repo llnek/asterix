@@ -18,9 +18,9 @@ NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Brick : public f::CDraw, public f::CStats {
+struct CC_DLL Brick : public f::CPixie, public f::CStats {
   Brick(not_null<c::Node*> s, int v, int color)
-  : CDraw(s) {
+  : CPixie(s) {
     this->color=color;
     this->value=v;
   }

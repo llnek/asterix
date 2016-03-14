@@ -41,16 +41,16 @@ static float WIGGLE_ROOM = 5;
 //
 void GunLogic::process(float dt) {
   auto ents = engine->getEntities(
-      s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CDraw"});
+      s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CPixie"});
   F__LOOP(it,ents) {
     auto e= *it;
-    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto team = CC_GEC(Team,e,"n/Team");
     auto gun = CC_GEC(Gun,e,"n/Gun");
     auto enemy = closestEntOnTeam(engine,e, OTHER_TEAM(team->team));
     if (!enemy) { return; }
 
-    auto enemyRender = CC_GEC(f::CDraw,enemy,"f/CDraw");
+    auto enemyRender = CC_GEC(f::CPixie,enemy,"f/CPixie");
     auto dist = c::ccpDistance(render->pos(), enemyRender->pos());
 
     if (abs(dist) <= (gun->range + WIGGLE_ROOM) &&
@@ -60,7 +60,7 @@ void GunLogic::process(float dt) {
       gun->lastDamageTime = cx::timeInMillis();
 
       auto laser = SCAST(GEngine*,engine)->createLaser(team->team);
-      auto laserRender = CC_GEC(f::CDraw,laser,"f/CDraw");
+      auto laserRender = CC_GEC(f::CPixie,laser,"f/CPixie");
       auto laserMelee = CC_GEC(Melee,laser,"n/Melee");
 
       laserRender->node->setPosition(render->pos());

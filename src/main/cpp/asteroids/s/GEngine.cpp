@@ -74,7 +74,7 @@ void GEngine::createMissiles(int count) {
     MGML()->addAtlasItem("game-pics", sp);
     e->checkin(mc_new(f::CHealth));
     e->checkin(mv);
-    e->checkin(mc_new1(f::CDraw,sp));
+    e->checkin(mc_new1(f::CPixie,sp));
     return e;
   }, count);
 }
@@ -93,7 +93,7 @@ void GEngine::createLasers(int count) {
     MGML()->addAtlasItem("game-pics", sp);
     e->checkin(mc_new(f::CHealth));
     e->checkin(mv);
-    e->checkin(mc_new1(f::CDraw,sp));
+    e->checkin(mc_new1(f::CPixie,sp));
     return e;
   }, count);
 }
@@ -124,7 +124,7 @@ void GEngine::createShip() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::bornShip(ecs::Node *node) {
-  auto ship= CC_GEC(Ship,node,"f/CDraw");
+  auto ship= CC_GEC(Ship,node,"f/CPixie");
   auto B= MGMS()->getEnclosureBox();
   auto sz = ship->csize();
   auto wz = cx::visRect();
@@ -196,7 +196,7 @@ void GEngine::createAsteroids(int rank) {
         mv->speed.x= speed;
         mv->speed.y= speed;
         mv->angle=deg;
-          auto dw=mc_new1(f::CDraw,sp);
+          auto dw=mc_new1(f::CPixie,sp);
         ent->checkin(dw);
         ent->checkin(mc_new(f::CHealth));
         ent->checkin(mv);
@@ -220,7 +220,7 @@ bool GEngine::maybeOverlap(const f::Box4 &bx) {
 
   rc= p->some([=](f::Poolable *z) -> bool {
       auto e= (ecs::Node*)z;
-      auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+      auto s= CC_GEC(f::CPixie,e,"f/CPixie");
       return e->status() ? cx::isIntersect(bx, cx::bbox4(s)) : false;
   });
   if (rc) { return true; }
@@ -228,7 +228,7 @@ bool GEngine::maybeOverlap(const f::Box4 &bx) {
   p= MGMS()->getPool(astroPools[2]);
   rc= p->some([=](f::Poolable *z) -> bool {
       auto e= (ecs::Node*)z;
-      auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+      auto s= CC_GEC(f::CPixie,e,"f/CPixie");
       return z->status() ? cx::isIntersect(bx, cx::bbox4(s)) : false;
   });
   if (rc) { return true; }
@@ -236,7 +236,7 @@ bool GEngine::maybeOverlap(const f::Box4 &bx) {
   p= MGMS()->getPool(astroPools[3]);
   rc= p->some([=](f::Poolable *z) -> bool {
       auto e= (ecs::Node*)z;
-      auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+      auto s= CC_GEC(f::CPixie,e,"f/CPixie");
       return z->status() ? cx::isIntersect(bx, cx::bbox4(s)) : false;
   });
   if (rc) { return true; }

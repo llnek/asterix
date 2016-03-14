@@ -43,12 +43,12 @@ void MoveLogic::onKeys(float dt) {
 void MoveLogic::process(float dt) {
 
   auto ents = engine->getEntities(
-      s_vec<ecs::COMType>{"f/CMove","f/CDraw","n/Team"});
+      s_vec<ecs::COMType>{"f/CMove","f/CPixie","n/Team"});
   auto wz= cx::visRect();
 
   F__LOOP(it,ents) {
     auto e= *it;
-    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto move = CC_GEC(f::CMove,e,"f/CMove");
     auto team = CC_GEC(Team,e,"n/Team");
 
@@ -79,7 +79,7 @@ void MoveLogic::process(float dt) {
 static float timeToTarget = 0.1;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CDraw *render) {
+c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CPixie *render) {
 
   auto vector = c::ccpSub(move->moveTarget, render->pos());
   auto dist = c::ccpLength(vector);
@@ -110,7 +110,7 @@ c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CDraw *render)
 static float SEPARATE_THRESHHOLD = 20;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::separate(ecs::Entity *entity, f::CMove *move, f::CDraw *render, Team *team) {
+c::Vec2 MoveLogic::separate(ecs::Entity *entity, f::CMove *move, f::CPixie *render, Team *team) {
 
   auto ents = getEntsOnTeam(engine,team->team,"f/CMove");
   auto steering = c::Vec2(0,0);
@@ -120,7 +120,7 @@ c::Vec2 MoveLogic::separate(ecs::Entity *entity, f::CMove *move, f::CDraw *rende
     if (otherEntity->getEid() == entity->getEid()) {
     continue; }
 
-    auto otherRender = CC_GEC(f::CDraw,otherEntity,"f/CDraw");
+    auto otherRender = CC_GEC(f::CPixie,otherEntity,"f/CPixie");
     if (!otherRender) { continue; }
 
     auto direction = c::ccpSub(render->pos(), otherRender->pos());

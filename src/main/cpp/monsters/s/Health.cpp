@@ -40,7 +40,7 @@ void HealthLogic::process(float dt) {
   F__LOOP(it,ents) {
     auto e= *it;
     auto health = CC_GEC(f::CHealth,e,"f/CHealth");
-    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,e,"f/CPixie");
 
 //    if (!health->alive() ||
 //        health->origHP == 0) { return; }
@@ -69,11 +69,11 @@ static int maxColor = 200;
 void HealthLogic::draw() {
 
   auto ents = engine->getEntities(
-      s_vec<ecs::COMType>{ "f/CHealth","f/CDraw"});
+      s_vec<ecs::COMType>{ "f/CHealth","f/CPixie"});
   F__LOOP(it,ents) {
     auto e= *it;
     auto health = CC_GEC(f::CHealth,e,"f/CHealth");
-    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto sX = render->node->getPositionX() - HWZ(CC_CSIZE(render->node));
     auto eX = render->node->getPositionX() + HWZ(CC_CSIZE(render->node));
     auto actualY = render->node->getPositionY() + HHZ(CC_CSIZE(render->node));

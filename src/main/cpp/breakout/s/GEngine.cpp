@@ -81,9 +81,9 @@ void GEngine::createBricks() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::bornPaddle(ecs::Node *p, ecs::Node *b) {
-  auto pad= CC_GEC(f::CDraw, p, "f/CDraw");
+  auto pad= CC_GEC(f::CPixie, p, "f/CPixie");
   auto mv= CC_GEC(f::CMove, b, "f/CMove");
-  auto ba= CC_GEC(f::CDraw, b, "f/CDraw");
+  auto ba= CC_GEC(f::CPixie, b, "f/CPixie");
   auto wb= cx::visBox();
 
   ba->inflate(wb.cx, wb.cy);
@@ -97,7 +97,7 @@ void GEngine::bornPaddle(ecs::Node *p, ecs::Node *b) {
 void GEngine::createPaddle() {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto sp = cx::reifySprite("paddle.png");
-  auto p= mc_new1(f::CDraw, sp);
+  auto p= mc_new1(f::CPixie, sp);
   auto mv= mc_new(f::CMove);
   auto wb= cx::visBox();
 
@@ -118,7 +118,7 @@ void GEngine::createPaddle() {
 void GEngine::createBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sp = cx::reifySprite("ball.png");
-  auto b= mc_new1(f::CDraw, sp);
+  auto b= mc_new1(f::CPixie, sp);
   auto mv= mc_new(f::CMove);
   auto wb= cx::visBox();
 

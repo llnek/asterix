@@ -38,16 +38,16 @@ s_vec<ecs::Entity*> getEntsOnTeam(
 //
 ecs::Entity* closestEntOnTeam(ecs::Engine *engine, ecs::Entity *ent, int team) {
 
-  auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
+  auto ourRender = CC_GEC(f::CPixie,ent,"f/CPixie");
     ecs::Entity *closestEnt= nullptr;
   float closestDist= -1;
 
   if (!ourRender) { return nullptr; }
 
-  auto others = getEntsOnTeam(engine, team, "f/CDraw");
+  auto others = getEntsOnTeam(engine, team, "f/CPixie");
   F__LOOP(it, others) {
     auto e= *it;
-    auto r2= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto r2= CC_GEC(f::CPixie,e,"f/CPixie");
     auto dist= c::ccpDistance(ourRender->pos(), r2->pos());
     if (dist < closestDist || closestDist == -1) {
       closestEnt= e;
@@ -78,7 +78,7 @@ void createMonsters(ecs::Engine *eng, int cost, int team, int count) {
       break;
     }
     if (e)  {
-      auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+      auto render = CC_GEC(f::CPixie,e,"f/CPixie");
       auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
       render->setPos(wb.right * 0.25, wb.cy  + r);
     }
@@ -96,15 +96,15 @@ ecs::Entity* playerForTeam(ecs::Engine *engine, int team) {
 //
 s_vec<ecs::Entity*> entsWithinRange(ecs::Engine *engine, ecs::Entity *ent, float range, int team) {
 
-  auto ourRender = CC_GEC(f::CDraw,ent,"f/CDraw");
+  auto ourRender = CC_GEC(f::CPixie,ent,"f/CPixie");
   s_vec<ecs::Entity*> out;
 
   if (ourRender) {
 
-    auto all= getEntsOnTeam(engine,team,"f/CDraw");
+    auto all= getEntsOnTeam(engine,team,"f/CPixie");
     F__LOOP(it,all) {
       auto e = *it;
-      auto otherRender = CC_GEC(f::CDraw,e,"f/CDraw");
+      auto otherRender = CC_GEC(f::CPixie,e,"f/CPixie");
       auto dist = c::ccpDistance(ourRender->pos(), otherRender->pos());
       if (dist < range) {
         out.push_back(e);

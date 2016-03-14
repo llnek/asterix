@@ -39,7 +39,7 @@ void Move::moveBBB(f::FPool *po, float dt) {
   po->foreach([=](f::Poolable *p) {
       auto e= (ecs::Node*)p;
     if (e->status()) {
-      auto sp=CC_GEC(f::CDraw,e,"f/CDraw");
+      auto sp=CC_GEC(f::CPixie,e,"f/CPixie");
       auto mv=CC_GEC(f::CMove,e,"f/CMove");
       auto pos= sp->pos();
       auto y = pos.y + dt * mv->vel.y * mv->speed.y;
@@ -86,7 +86,7 @@ const c::Vec2 Move::thrust(float angle, float power) {
 //
 void Move::processShipMotions(float dt) {
   auto mo= CC_GEC(f::CGesture, _ship, "f/CGesture");
-  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
+  auto sp= CC_GEC(Ship, _ship, "f/CPixie");
   auto mv= CC_GEC(f::CMove, _ship, "f/CMove");
   auto pos = sp->pos();
   auto x= pos.x;
@@ -117,7 +117,7 @@ void Move::processShipMotions(float dt) {
 //
 void Move::moveShip(float dt) {
   auto mv = CC_GEC(f::CMove, _ship,"f/CMove");
-  auto sp = CC_GEC(Ship, _ship,"f/CDraw");
+  auto sp = CC_GEC(Ship, _ship,"f/CPixie");
   auto B = MGMS()->getEnclosureBox();
   auto sz = sp->csize();
   auto pos= sp->pos();
@@ -182,7 +182,7 @@ void Move::moveShip(float dt) {
 //
 void Move::moveAstros(ecs::Node *astro, float dt) {
   auto mv= CC_GEC(f::CMove,astro,"f/CMove");
-  auto sp= CC_GEC(f::CDraw,astro,"f/CDraw");
+  auto sp= CC_GEC(f::CPixie,astro,"f/CPixie");
   auto B= MGMS()->getEnclosureBox();
   auto rot= mv->angle;
   auto sz= sp->csize();

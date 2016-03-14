@@ -47,7 +47,7 @@ void Resolve::checkXXX(f::FPool *po) {
   po->foreach([=](f::Poolable *b) {
       auto e= (ecs::Node*)b;
       auto h=CC_GEC(f::CHealth,e,"f/CHealth");
-      auto s=CC_GEC(f::CDraw,e,"f/CDraw");
+      auto s=CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       if (!h->alive() ||
           cx::outOfBound(cx::bbox4(s), B)) {
@@ -63,7 +63,7 @@ void Resolve::checkAstrosXXX(f::FPool *po, bool cr) {
   po->foreach([=](f::Poolable *p) {
     auto e= (ecs::Node*)p;
     auto h=CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s=CC_GEC(f::CDraw,e,"f/CDraw");
+    auto s=CC_GEC(f::CPixie,e,"f/CPixie");
     auto a=CC_GEC(Asteroid,e,"n/Asteroid");
     if (e->status() && !h->alive()) {
       auto msg= j::json({ {"score", a->value} });
@@ -81,7 +81,7 @@ void Resolve::checkAstrosXXX(f::FPool *po, bool cr) {
 //
 void Resolve::checkShip() {
   auto h = CC_GEC(f::CHealth, _ship,"f/CHealth");
-  auto s= CC_GEC(Ship, _ship,"f/CDraw");
+  auto s= CC_GEC(Ship, _ship,"f/CPixie");
   if (_ship->status() && !h->alive()) {
     _ship->yield();
     s->deflate();

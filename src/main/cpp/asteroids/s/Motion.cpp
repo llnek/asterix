@@ -64,16 +64,16 @@ void Motions::controlCannon(float dt) {
 void Motions::fireMissile(float dt) {
   auto lpr= CC_GEC(f::Looper, _ship,"f/Looper");
   auto gun= CC_GEC(Cannon, _ship,"n/Cannon");
-  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
+  auto sp= CC_GEC(Ship, _ship, "f/CPixie");
   auto p= MGMS()->getPool("Missiles");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto sz= sp->csize();
   auto deg= sp->node->getRotation();
   auto top= cx::getTop(sp->node);
   auto pos= sp->pos();
-  auto ent= (ecs::Node*)p->getAndSet(true);
+  auto ent= (ecs::Node*)p->take(true);
   auto mv= CC_GEC(f::CMove,ent,"f/CMove");
-  auto dw= CC_GEC(f::CDraw,ent,"f/CDraw");
+  auto dw= CC_GEC(f::CPixie,ent,"f/CPixie");
   auto h= CC_GEC(f::CHealth,ent,"f/CHealth");
   auto rc= cx::calcXY(deg, HHZ(sz));
   mv->vel.x = rc.x;

@@ -53,7 +53,7 @@ void Resolve::checkMissiles() {
   F__LOOP(it, c) {
     auto e = (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       if (s->pos().y >= wb.top ||
           !h->alive()) {
@@ -75,7 +75,7 @@ void Resolve::checkBombs() {
   F__LOOP(it, c) {
     auto e = (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       if (!h->alive() ||
           s->pos().y <= wb.bottom) {
@@ -95,7 +95,7 @@ void Resolve::checkAliens() {
   F__LOOP(it, c) {
     auto e= (ecs::Node*) *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     auto r= CC_GEC(Rank,e,"n/Rank");
 
     if (e->status()) {

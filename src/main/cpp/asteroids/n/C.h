@@ -42,15 +42,15 @@ struct CC_DLL Cannon : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ship : public f::CDraw {
+struct CC_DLL Ship : public f::CPixie {
 
   DECL_TV(sstr,frame0,"rship_0.png")
   DECL_TV(sstr,frame1,"rship_1.png")
   //MDECL_COMP_TPID("n/Ship")
-  MDECL_COMP_TPID("f/CDraw")
+  MDECL_COMP_TPID("f/CPixie")
 
   Ship(not_null<c::Node*> s)
-    : CDraw(s) {
+    : CPixie(s) {
   }
 
 };

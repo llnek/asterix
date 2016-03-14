@@ -42,5 +42,5 @@ public:
 };
 
 
-NS_END(terra)
+NS_END
 

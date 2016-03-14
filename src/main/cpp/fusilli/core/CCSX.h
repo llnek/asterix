@@ -24,9 +24,13 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  void resolveElastic(not_null<CDraw*> rA,
+  void testCollision(ecs::Node*, ecs::Node*);
+  void testCollisions(f::FPool*, f::FPool*);
+  void testCollisions(f::FPool*, ecs::Node*);
+
+  void resolveElastic(not_null<CPixie*> rA,
       c::Vec2 &velA,
-      not_null<CDraw*> rB, c::Vec2 &velB);
+      not_null<CPixie*> rB, c::Vec2 &velB);
 
   const c::Size scaleSize(const c::Size &z, float scale);
 
@@ -74,7 +78,7 @@ namespace ccsx {
   const c::Color3B black();
 
   bool collideN(not_null<c::Node*>, not_null<c::Node*> );
-  bool collide(not_null<CDraw*>, not_null<CDraw*>);
+  bool collide(not_null<CPixie*>, not_null<CPixie*>);
 
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
@@ -83,7 +87,7 @@ namespace ccsx {
   bool isIntersect(const Box4&, const Box4&);
   bool isPortrait();
 
-  bool outOfBound(not_null<CDraw*>, const Box4 &B);
+  bool outOfBound(not_null<CPixie*>, const Box4 &B);
   bool outOfBound(const Box4 &src, const Box4 &B);
 
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
@@ -110,7 +114,7 @@ namespace ccsx {
   bool isClicked(not_null<c::Node*>, const c::Vec2&);
 
     const Box4 bbox4(not_null<c::Node*>);
-  inline const Box4 bbox4(not_null<CDraw*> c) {
+  inline const Box4 bbox4(not_null<CPixie*> c) {
     return bbox4(c->node);
   }
 
@@ -135,7 +139,7 @@ namespace ccsx {
   const c::Size calcSize(const sstr &frame);
 
   const c::Size halfHW(not_null<c::Node*>);
-  const c::Size halfHW(not_null<CDraw*>);
+  const c::Size halfHW(not_null<CPixie*>);
 
   const c::Rect bbox(not_null<c::Node*>);
 

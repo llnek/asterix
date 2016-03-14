@@ -70,7 +70,7 @@ void GEngine::reifyMissiles(int count) {
     mv->speed.y = 150.0 * wz.size.height / gz.height;
     MGML()->addAtlasItem("game-pics", sp);
     auto ent= this->reifyNode();
-    ent->checkin(mc_new1(f::CDraw, sp));
+    ent->checkin(mc_new1(f::CPixie, sp));
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(mv);
     return ent;
@@ -98,7 +98,7 @@ void GEngine::reifyBombs(int count) {
   auto gz= XCFG()->gameSize();
   auto wz= cx::visRect();
   p->preset([=]() -> f::Poolable* {
-    auto c = new f::CDraw(cx::reifySprite("bomb.png"));
+    auto c = new f::CPixie(cx::reifySprite("bomb.png"));
     auto mv= mc_new(f::CMove);
     auto ent= this->reifyNode();
     c->hide();
@@ -160,7 +160,7 @@ void GEngine::fillSquad(f::FPool *pool) {
          : y - az.height - wz.size.height * 4/gz.height;
     x = wb.left + (8/gz.width * wz.size.width) + HWZ(az);
     for (auto c=0; c < cols; ++c) {
-      auto aa = new f::CDraw(cx::reifySprite(CC_GDS(info, "img0")));
+      auto aa = new f::CPixie(cx::reifySprite(CC_GDS(info, "img0")));
       auto anim= c::Animation::create();
       auto f1= CC_GDS(info, "img0");
       auto f2= CC_GDS(info, "img1");

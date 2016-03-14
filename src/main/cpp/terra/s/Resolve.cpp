@@ -40,11 +40,12 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::onBulletDeath(ecs::Node *node) {
-  auto m= CC_GEC(f::CDraw, node,"f/CDraw");
+  auto m= CC_GEC(f::CPixie, node,"f/CPixie");
   auto pe= MGMS()->getPool("HitEffects");
-  auto e= pe->getAndSet(true);
+  auto e= pe->take(true);
   auto pos= m->pos();
-  e->inflate(pos.x, pos.y);
+    auto s=CC_GEC(f::CPixie,e,"f/CPixie");
+    s->inflate(pos.x, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,14 +56,14 @@ void Resolve::checkMissiles() {
 
   po->foreach([=](f::Poolable *p) {
     if (p->status()) {
-      auto e=(ecs::Node*)p;
-      auto m=CC_GEC(Missile,e,"f/CDraw");
+      auto h=CC_GEC(f::CHealth,p,"f/CHealth");
+      auto m=CC_GEC(Missile,p,"f/CPixie");
       auto pos= m->pos();
-      if (m->HP <= 0 ||
+      if (!h->alive() ||
           !cx::pointInBox(box, pos.x, pos.y)) {
-        this->onBulletDeath(e);
+        this->onBulletDeath(PCAST(ecs::Node,p));
         m->deflate();
-        e->yield();
+        p->yield();
       }
     }
   });
@@ -76,14 +77,14 @@ void Resolve::checkBombs() {
 
   po->foreach([=](f::Poolable *p) {
     if (p->status()) {
-      auto e=(ecs::Node*)p
-      auto b=CC_GEC(Bomb,e,"f/CDraw");
+      auto h=CC_GEC(f::CHealth,p,"f/CHealth");
+      auto b=CC_GEC(Bomb,p,"f/CPixie");
       auto pos= b->pos();
-      if (b->HP <= 0 ||
+      if (!h->alive() ||
           !cx::pointInBox(box, pos)) {
-        this->onBulletDeath(e);
+        this->onBulletDeath(PCAST(ecs::Node,p));
         b->deflate();
-        e->yield();
+        p->yield();
       }
     }
   });
@@ -92,25 +93,29 @@ void Resolve::checkBombs() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::onEnemyDeath(ecs::Node *alien) {
-  auto ui=CC_GEC(f::CDraw,alien,"f/CDraw");
+  auto ui=CC_GEC(f::CPixie,alien,"f/CPixie");
   auto pe= MGMS()->getPool("Explosions");
   auto ps= MGMS()->getPool("Sparks");
   auto pos= ui->pos();
-  auto e= pe->getAndSet(true);
-  auto s= ps->getAndSet(true);
-  e->inflate(pos.x, pos.y);
-  s->inflate(pos.x, pos.y);
+  auto e= pe->take(true);
+  auto k= ps->take(true);
+    auto s1=CC_GEC(f::CPixie,e,"f/CPixie");
+    auto s2=CC_GEC(f::CPixie,k,"f/CPixie");
+    
+  s1->inflate(pos.x, pos.y);
+  s2->inflate(pos.x, pos.y);
   cx::sfxPlay("explodeEffect");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::onShipDeath(ecs::Node *ship) {
-  auto ui= CC_GEC(f::CDraw,ship,"f/CDraw");
+  auto ui= CC_GEC(f::CPixie,ship,"f/CPixie");
   auto pe= MGMS()->getPool("Explosions");
   auto pos= ui->pos();
-  auto e= pe->getAndSet(true);
-  e->inflate(pos.x, pos.y);
+  auto e= pe->take(true);
+    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
+  s->inflate(pos.x, pos.y);
   cx::sfxPlay("shipDestroyEffect");
 }
 
@@ -122,18 +127,17 @@ void Resolve::checkAliens() {
 
   po->foreach([=](f::Poolable *p) {
     if (p->status()) {
-      auto e=(ecs::Node*)p
-      auto ui=CC_GEC(f::CDraw,e,"f/CDraw");
-      auto h=CC_GEC(f::CHealth,e,"f/CHealth");
-      auto z=CC_GEC(Enemy,e,"n/Enemy");
+      auto h=CC_GEC(f::CHealth,p,"f/CHealth");
+      auto ui=CC_GEC(f::CPixie,p,"f/CPixie");
+      auto z=CC_GEC(Enemy,p,"n/Enemy");
       auto pos= ui->pos();
       if (!h->alive() ||
           !cx::pointInBox(box, pos)) {
-        this->onEnemyDeath(e);
+        this->onEnemyDeath(PCAST(ecs::Node,p));
         ui->deflate();
-        e->yield();
+        p->yield();
         auto msg = j::json({
-            {"score", z.enemyType.scoreValue} });
+            {"score", z->value} });
         SENDMSGEX("/game/players/earnscore", &msg);
       }
     }
@@ -144,7 +148,7 @@ void Resolve::checkAliens() {
 //
 void Resolve::checkShip() {
   auto h = CC_GEC(f::CHealth, _ship, "f/CHealth");
-  auto sp = CC_GEC(f::CDraw, _ship, "f/CDraw");
+  auto sp = CC_GEC(f::CPixie, _ship, "f/CPixie");
   if (_ship->status() &&
       !h->alive()) {
       this->onShipDeath(_ship);

@@ -47,7 +47,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto p= CC_GEC(f::CDraw, _paddle,"f/CDraw");
+  auto p= CC_GEC(f::CPixie, _paddle,"f/CPixie");
   auto pos= p->pos();
   if (loc.y <= pos.y) {
     p->setPos(loc.x, pos.y);
@@ -57,7 +57,7 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *t) {
-  auto p= CC_GEC(f::CDraw, _paddle,"f/CDraw");
+  auto p= CC_GEC(f::CPixie, _paddle,"f/CPixie");
   auto y= p->node->getPositionY();
   auto loc= t->getLocation();
   return loc.y <= y;

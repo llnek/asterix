@@ -88,7 +88,7 @@ void Aliens::checkBomb(AlienSquad *sqad) {
     idx = sz == 1 ? 0 : cx::randInt(sz);
     auto n=rc[idx];
     auto e= (ecs::Node*) sqad->aliens->getAt(n);
-    auto s= CC_GEC(f::CDraw, e, "f/CDraw");
+    auto s= CC_GEC(f::CPixie, e, "f/CPixie");
     auto v= s->pos();
     dropBomb(v.x, v.y-4);
   }
@@ -98,10 +98,10 @@ void Aliens::checkBomb(AlienSquad *sqad) {
 //
 void Aliens::dropBomb(float x, float y) {
   auto bbs = MGMS()->getPool("Bombs");
-    auto e = (ecs::Node*) bbs->getAndSet(true);
+    auto e = (ecs::Node*) bbs->take(true);
     if (e) {
       auto h= CC_GEC(f::CHealth,e, "f/CHealth");
-      auto s= CC_GEC(f::CDraw,e, "f/CDraw");
+      auto s= CC_GEC(f::CPixie,e, "f/CPixie");
       s->inflate(x,y);
       h->reset();
     }
@@ -124,7 +124,7 @@ void Aliens::maybeShuffleAliens(AlienSquad *sqad) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::testDirX(ecs::Node *b, int stepx) {
-  auto cd= CC_GEC(f::CDraw,b,"f/CDraw");
+  auto cd= CC_GEC(f::CPixie,b,"f/CPixie");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   auto sp= cd->node;
@@ -140,7 +140,7 @@ bool Aliens::testDirX(ecs::Node *b, int stepx) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::shuffleOneAlien(ecs::Node *a, int stepx) {
-  auto cd= CC_GEC(f::CDraw,a,"f/CDraw");
+  auto cd= CC_GEC(f::CPixie,a,"f/CPixie");
   auto sp= cd->node;
   auto pos= sp->getPosition();
   sp->setPosition(pos.x + stepx, pos.y);
@@ -149,7 +149,7 @@ void Aliens::shuffleOneAlien(ecs::Node *a, int stepx) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::forwardOneAlien(ecs::Node *a, float delta) {
-  auto cd= CC_GEC(f::CDraw,a,"f/CDraw");
+  auto cd= CC_GEC(f::CPixie,a,"f/CPixie");
   auto sp= cd->node;
   auto pos= sp->getPosition();
   sp->setPosition(pos.x, pos.y - delta);
@@ -199,7 +199,7 @@ ecs::Node* Aliens::findMinX(AlienSquad *sqad) {
 
   F__LOOP(it, co) {
     auto e= (ecs::Node*) *it;
-    auto c=CC_GEC(f::CDraw,e,"f/CDraw");
+    auto c=CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       v= cx::getLeft(c->node);
       if (v < cur) {
@@ -222,7 +222,7 @@ ecs::Node* Aliens::findMaxX(AlienSquad *sqad) {
 
   F__LOOP(it, co) {
     auto e= (ecs::Node*) *it;
-    auto c= CC_GEC(f::CDraw,e,"f/CDraw");
+    auto c= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       v= cx::getRight(c->node);
       if (v > cur) {

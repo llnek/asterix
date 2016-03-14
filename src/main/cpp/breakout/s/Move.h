@@ -35,7 +35,7 @@ struct CC_DLL Move : public ecs::System {
 
   void processPaddleMotions(float);
   void processBallMotions(float);
-  void clamp(f::CDraw*);
+  void clamp(f::CPixie*);
 
 };
 

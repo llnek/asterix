@@ -9,9 +9,10 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "core/CCSX.h"
 #include "Config.h"
 #include "Splash.h"
-
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -123,6 +124,7 @@ void Config::initLevels() {
 //
 void Config::handleResolution(const c::Size& rs) {
   auto gz= gameSize();
+  CC_DTOR()->setContentScaleFactor(0.5);
   //for default font, we use 48pt
   _scale = 52.0f/256.0f * rs.width / gz.width;
 }

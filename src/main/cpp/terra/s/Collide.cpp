@@ -39,87 +39,29 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissilesBombs() {
-  auto mss = MGMS()->getPool("Missiles");
-  auto bombs = MGMS()->getPool("Bombs");
-  bombs->foreach([=](f::Poolable* b) {
-    mss->foreach([=](f::Poolable* m) {
-      auto e2= (ecs::Node*)b;
-      auto e1= (ecs::Node*)m;
-      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
-      auto s1= CC_GEC(f::CDraw,e1,"f/CDraw");
-      if (e2->status() &&
-          e1->status() &&
-          cx::collide(s2,s1)) {
-        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
-        h2->hurt();
-        h1->hurt();
-      }
-    });
-  });
+  cx::testCollisions(
+    MGMS()->getPool("Missiles"),
+    MGMS()->getPool("Bombs"));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissilesAliens() {
-  auto enemies= MGMS()->getPool("Baddies");
-  auto mss= MGMS()->getPool("Missiles");
-  enemies->foreach([=](f::Poolable* en) {
-    mss->foreach([=](f::Poolable* b) {
-      auto e2= (ecs::Node*)b;
-      auto e1= (ecs::Node*)en;
-      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
-      auto s1= CC_GEC(f::CDraw,e1,"f/CDraw");
-      if (e2->status() &&
-          e1->status() &&
-          cx::collide(s1,s2)) {
-        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
-        h2->hurt();
-        h1->hurt();
-      }
-    });
-  });
+  cx::testCollisions(
+    MGMS()->getPool("Missiles"),
+    MGMS()->getPool("Baddies"));
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipBombs() {
-  auto sp = CC_GEC(Ship, _ship, "f/CDraw");
-  auto bombs = MGMS()->getPool("Bombs");
-
-  if (_ship->status())
-    bombs->foreach([=](f::Poolable* b) {
-      auto e2= (ecs::Node*)b;
-      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
-      if (e2->status() &&
-          cx::collide(s2, sp)) {
-        auto h2= CC_GEC(f::CHealth,_ship,"f/CHealth");
-        auto h1= CC_GEC(f::CHealth,e2,"f/CHealth");
-        h2->hurt();
-        h1->hurt();
-      }
-    });
+    cx::testCollisions(MGMS()->getPool("Bombs"), _ship);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipAliens() {
-  auto enemies= MGMS()->getPool("Baddies");
-  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
-
-  if (_ship->status())
-    enemies->foreach([=](f::Poolable* en) {
-      auto e2= (ecs::Node*)en;
-      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
-      if (e2->status() &&
-          cx::collide(s2, sp)) {
-        auto h2= CC_GEC(f::CHealth,_ship,"f/CHealth");
-        auto h1= CC_GEC(f::CHealth,e2,"f/CHealth");
-        h2->hurt();
-        h1->hurt();
-      }
-    });
+  cx::testCollisions(MGMS()->getPool("Baddies"), _ship);
 }
 
 

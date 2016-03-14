@@ -24,7 +24,7 @@ NS_BEGIN(prototype)
 //
 void Move::preamble() {
     engine->getEntities(s_vec<ecs::COMType>{
-      "f/CDraw","f/CMove","f/CHuman"}, players);
+      "f/CPixie","f/CMove","f/CHuman"}, players);
   engine->getEntities("n/GVars",shared);
 }
 
@@ -49,7 +49,7 @@ void Move::process(float dt) {
   F__LOOP(it,c) {
     auto a= (ecs::Entity*) *it;
     if (!a->status()) { continue; }
-    auto r= CC_GEC(f::CDraw,a,"f/CDraw");
+    auto r= CC_GEC(f::CPixie,a,"f/CPixie");
 
     r->setPos(
         r->node->getPositionX(),
@@ -71,7 +71,7 @@ void Move::process(float dt) {
 //
 void Move::onKeys(float dt) {
 
-  auto r= CC_GEC(f::CDraw, players[0], "f/CDraw");
+  auto r= CC_GEC(f::CPixie, players[0], "f/CPixie");
   auto m= CC_GEC(f::CMove, players[0], "f/CMove");
   auto pos= r->pos();
   auto x=pos.x;

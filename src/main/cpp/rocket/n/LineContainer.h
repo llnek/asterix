@@ -11,7 +11,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "2d/CCDrawNode.h"
+#include "2d/CCPixieNode.h"
 NS_BEGIN(rocket)
 
 typedef enum lineTypes {

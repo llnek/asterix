@@ -8,9 +8,10 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "cocos2d.h"
 
@@ -26,8 +27,8 @@ struct EnemyType {
 
   EnemyType(Attacks attackMode, Moves moveType,
     int type,
-    const sstr& textureName,
-    const sstr& bulletType, int HP, int scoreValue) {
+    const sstr &textureName,
+    const sstr &bulletType, int HP, int scoreValue) {
 
     this->attackMode = attackMode;
     this->moveType= moveType;
@@ -65,11 +66,12 @@ void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb);
 
 inline void btnEffect() {  cx::sfxPlay("btnEffect"); }
 
-void fireMissiles(GEngine*, not_null<f::ComObj*> ship, float dt);
+void fireMissiles(GEngine*, not_null<ecs::Node*> ship, float dt);
 
-void bornShip(GEngine*, not_null<f::ComObj*> ship);
+void bornShip(GEngine*, not_null<ecs::Node*> ship);
 
-void processTouch(not_null<f::ComObj*> ship, const c::Vec2& delta);
+void processTouch(not_null<ecs::Node*> ship, const c::Vec2& delta);
 
-NS_END(terra)
+
+NS_END
 

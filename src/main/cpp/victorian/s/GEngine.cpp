@@ -36,7 +36,7 @@ void GEngine::initEntities() {
   for (auto i = 0; i < 4; ++i) {
     auto cy = wb.top * (i % 2 == 0 ? 0.7 : 0.8);
     auto c = cx::reifySprite("cloud.png");
-    auto ui= mc_new1(f::CDraw,c);
+    auto ui= mc_new1(f::CPixie,c);
     auto ent= this->reifyNode();
     ent->take();
     ent->checkin(ui);

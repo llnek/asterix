@@ -22,64 +22,63 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Missile : public f::ComObj {
+struct CC_DLL Missile : public f::CPixie {
 
   DECL_TV(Attacks, attackMode, Attacks::NORMAL)
-  MDECL_COMP_TPID( "n/Missile")
+  MDECL_COMP_TPID("f/CPixie")
 
-  Missile(not_null<c::Sprite*> s, Attacks m = Attacks::NORMAL)
-    : ComObj(s,1,0) {
-    speed.y= CC_CSV(c::Float, "MISSILE+SPEED");
-    speed.x= 0;
-    vel.y= speed.y;
-    vel.x= 0;
-    attackMode = m;
+  Missile(not_null<c::Sprite*> s, Attacks m)
+  : CPixie(s) {
+    attackMode=m;
+  }
+  Missile(not_null<c::Sprite*> s)
+  : CPixie(s) {
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Bomb : public f::ComObj {
+struct CC_DLL Bomb : public f::CPixie {
 
   DECL_TV(Attacks, attackMode, Attacks::NORMAL)
-  MDECL_COMP_TPID( "n/Bomb")
+  MDECL_COMP_TPID("f/CPixie")
 
-  Bomb(not_null<c::Sprite*> s, Attacks m = Attacks::NORMAL)
-    : ComObj(s,1,0) {
-    speed.y= - CC_CSV(c::Float, "BOMB+SPEED");
-    speed.x= 0;
-    vel.y= speed.y;
-    vel.x= 0;
-    attackMode = m;
+  Bomb(not_null<c::Node*> s, Attacks m)
+  : CPixie(s) {
+    attackMode=m;
+  }
+  Bomb(not_null<c::Node*> s)
+    : CPixie(s) {
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Enemy : public f::ComObj {
+struct CC_DLL Enemy : public f::CStats {
 
   DECL_TD(EnemyType, enemyType)
   DECL_FZ(delayTime)
   MDECL_COMP_TPID( "n/Enemy")
 
-  Enemy(not_null<c::Sprite*> s, const EnemyType &et)
-    : ComObj(s, et.HP, et.scoreValue) {
-    delayTime= 1.2f * c::rand_0_1() + 1.0f;
+  Enemy(const EnemyType &et)
+  : CStats(et.scoreValue) {
+    delayTime= 1.2 * c::rand_0_1() + 1.0;
     enemyType= et;
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ship : public f::ComObj {
+struct CC_DLL Ship : public f::CPixie {
 
   DECL_PTR(c::Sprite, bornSprite)
   DECL_BF(canBeAttack)
-  MDECL_COMP_TPID( "n/Ship")
+  MDECL_COMP_TPID( "f/CPixie")
 
   Ship(not_null<c::Sprite*> s,
-       not_null<c::Sprite*> x, int health=5)
-    : ComObj(s, health, 0) {
+       not_null<c::Sprite*> x) 
+    : CPixie(s) {
     bornSprite = x;
   }
 
@@ -87,10 +86,10 @@ struct CC_DLL Ship : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Spark : public f::ComObj {
+struct CC_DLL Spark : public f::CPixie {
 
   Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
-    : ComObj(sp1,1,0) {
+    : CPixie(sp1) {
     sprite2= sp2;
   }
 
@@ -100,36 +99,36 @@ struct CC_DLL Spark : public f::ComObj {
   DECL_TV(float, duration, 0.7f)
   DECL_TV(float, scale, 1.2f)
   DECL_PTR(c::Sprite, sprite2)
-  MDECL_COMP_TPID( "n/Spark")
+  MDECL_COMP_TPID( "f/CPixie")
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Explosion : public f::ComObj {
+struct CC_DLL Explosion : public f::CPixie {
 
   virtual void inflate(float x, float y);
 
   Explosion(not_null<c::Sprite*> s)
-    : ComObj(s) {
+    : CPixie(s) {
   }
 
-  MDECL_COMP_TPID( "n/Explosion")
+  MDECL_COMP_TPID( "f/CPixie")
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HitEffect : public f::ComObj {
+struct CC_DLL HitEffect : public f::CPixie {
 
   virtual void inflate(float x, float y);
 
   HitEffect(not_null<c::Sprite*> s)
-    : ComObj(s) {
+    : CPixie(s) {
   }
 
-  MDECL_COMP_TPID("n/HitEffect")
-  DECL_TV(float, scale, 0.75f)
+  DECL_TV(float, scale, 0.75)
+  MDECL_COMP_TPID("f/CPixie")
 
 };
 
@@ -138,6 +137,9 @@ struct CC_DLL HitEffect : public f::ComObj {
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID("n/GVars")
   DECL_IZ(secCount)
+  DECL_PTR(ecs::Node, backSkyRe)
+  DECL_PTR(ecs::Node, backSky)
+  DECL_TD(c::Size, backSkyDim)
 };
 
 

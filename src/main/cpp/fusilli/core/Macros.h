@@ -51,7 +51,7 @@
 #define CC_ZPT   cocos2d::Vec2(0,0)
 #define CC_NIL nullptr
 
-#define CC_GEC(t,e,c) (t*)e->get(c)
+#define CC_GEC(t,e,c) (t*)((ecs::Node*)e)->get(c)
 
 
 //////////////////////////////////////////////////////////////////////////////

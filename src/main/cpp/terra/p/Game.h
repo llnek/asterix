@@ -29,9 +29,6 @@ struct CC_DLL Game : public f::GameScene {
   STATIC_REIFY_SCENE_CTX(Game)
   MDECL_DECORATE()
 
-  DECL_PTR(ecs::Node, backSkyRe)
-  DECL_PTR(ecs::Node, backSky)
-  DECL_TD(c::Size, backSkyDim)
 
 };
 

@@ -47,7 +47,7 @@ public:
   Poolable* select(s::function<bool (Poolable*)>);
   void preset(s::function<Poolable* ()>, int);
 
-  Poolable* getAndSet(bool create=false);
+  Poolable* take(bool create=false);
   Poolable* get(bool create=false);
   Poolable* getAt(int n);
 

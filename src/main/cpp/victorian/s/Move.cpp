@@ -33,7 +33,7 @@ void Move::preamble() {
 //
 void Move::process(float dt) {
   auto tn=CC_GEC(Terrain, _terrain,"n/Terrain");
-  auto py=CC_GEC(Player, _player,"f/CDraw");
+  auto py=CC_GEC(Player, _player,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
   auto atlas=MGML()->getAtlas("game-pics");
   auto wb=cx::visBox();
@@ -75,7 +75,7 @@ void Move::process(float dt) {
     auto ps=MGMS()->getPool("Clouds")->ls();
     F__LOOP(it,ps) {
       auto e= (ecs::Node*) *it;
-      auto ui=CC_GEC(f::CDraw,e,"f/CDraw");
+      auto ui=CC_GEC(f::CPixie,e,"f/CPixie");
       ui->node->setPositionX(
           ui->node->getPositionX() - py->vel.x * 0.15);
       if (ui->node->getPositionX() + HWZ(ui->csize()) < 0 )

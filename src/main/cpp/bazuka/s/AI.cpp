@@ -62,7 +62,7 @@ void AI::processEnemies(float dt) {
   }
 
   auto po= MGMS()->getPool("Enemies");
-  auto e= (Enemy*)po->getAndSet(true);
+  auto e= (Enemy*)po->take(true);
   auto mrand = 1 + (rand()%3);
   auto wz= cx::visRect();
   auto wb= cx::visBox();

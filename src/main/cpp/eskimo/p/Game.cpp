@@ -130,7 +130,7 @@ void GLayer::loadLevel(int level) {
     levelData.at("platforms").asValueVector();
 
   for (auto pData : platforms) {
-    auto pm = (Platform*)po->getAndSet(true);
+    auto pm = (Platform*)po->take(true);
     auto data = pData.asValueMap();
     auto ps= (PlatformSprite*) pm->node;
     ps->initPlatform (
@@ -181,7 +181,7 @@ void GLayer::resetLevel() {
   auto po= MGMS()->getPool("Switches");
   for (auto n = 0; n < switches.size();  ++n) {
     auto data = switches.at(n).asValueMap();
-    auto gs = (GSwitch*)po->getAndSet(true);
+    auto gs = (GSwitch*)po->take(true);
     if ( n < switches.size()) {
       gs->initGSwitch(
                      data.at("gravity").asInt(),

@@ -442,8 +442,8 @@ void onGridCollapseComplete(GVars *ss) {
           if (randomGem->getType() == TYPE_GEM_WHITE) { randomGem = CC_NIL; }
         }
 
-        auto diamondParticle = p1->getAndSet(true);
-        auto diamond = p2->getAndSet(true);
+        auto diamondParticle = p1->take(true);
+        auto diamond = p2->take(true);
         auto pos= randomGem->pos();
 
         diamondParticle->node->setPosition(pos.x, pos.y);
@@ -521,7 +521,7 @@ void showMatchParticle(GVars *ss, const s_vec<f::Cell2I> &matches) {
   F__LOOP(it,matches) {
     auto &pos= *it;
     auto gem = ss->gridGemsColumnMap[pos.x]->get(pos.y);
-    auto particle = p->getAndSet(true);
+    auto particle = p->take(true);
     particle->node->setPosition(
         gem->node->getPositionX() + ss->gemsContainer->getPositionX(),
         gem->node->getPositionY() + ss->gemsContainer->getPositionY());

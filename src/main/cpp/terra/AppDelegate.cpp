@@ -16,7 +16,7 @@ NS_USING(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate() : App("terra") {
   Config::reify();
 }
 

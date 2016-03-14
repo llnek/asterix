@@ -60,9 +60,9 @@ void Motions::processCannon(float dt) {
   auto p= MGMS()->getPool("Missiles");
   auto top= cx::getTop(ship->node);
   auto pos= ship->pos();
-  auto ent= (ecs::Node*) p->getAndSet(true);
+  auto ent= (ecs::Node*) p->take(true);
   auto h= CC_GEC(f::CHealth, ent, "f/CHealth");
-  auto sp= CC_GEC(f::CDraw, ent, "f/CDraw");
+  auto sp= CC_GEC(f::CPixie, ent, "f/CPixie");
   lpr->timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   sp->inflate(pos.x, top+4);
   h->reset();

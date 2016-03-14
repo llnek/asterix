@@ -21,8 +21,8 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL MoveLogic : public ecs::System {
 
-  c::Vec2 separate(ecs::Entity*, f::CMove*, f::CDraw*, Team*);
-  c::Vec2 arrive(ecs::Entity*, f::CMove*, f::CDraw*);
+  c::Vec2 separate(ecs::Entity*, f::CMove*, f::CPixie*, Team*);
+  c::Vec2 arrive(ecs::Entity*, f::CMove*, f::CPixie*);
 
   void process(float);
   void onKeys(float);

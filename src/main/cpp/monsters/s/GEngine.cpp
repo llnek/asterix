@@ -38,7 +38,7 @@ void GEngine::initEntities() {
   // human
   ent= this->reifyEntity();
   ent->checkin(mc_new1(f::CHealth,200));
-  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new1(f::CPixie,s));
   ent->checkin(mc_new(f::CHuman));
   ent->checkin(mc_new1(Team,1));
   ent->checkin(mc_new(Player));
@@ -50,7 +50,7 @@ void GEngine::initEntities() {
   // enemy
   ent= this->reifyEntity();
   ent->checkin(mc_new1(f::CHealth,200));
-  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new1(f::CPixie,s));
   ent->checkin(mc_new1(Team,2));
   ent->checkin(mc_new(Player));
   ent->checkin(mc_new4(Gun,200,5,2,"pew"));
@@ -91,7 +91,7 @@ ecs::Entity* GEngine::createQuirkMonster(int team) {
   m->sound="smallHit";
   ent->checkin(m);
   ent->checkin(mc_new3(f::CMove,c::Vec2(200, 200), 100, 100));
-  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new1(f::CPixie,s));
   ent->checkin(mc_new1(f::CHealth,5));
   ent->checkin(mc_new1(Team,team));
   ent->checkin(mc_new1(Monster, eMonsterTypeQuirk));
@@ -108,7 +108,7 @@ ecs::Entity* GEngine::createZapMonster(int team) {
 
   ent->checkin(mc_new3(f::CMove,c::Vec2(200, 200), 50, 50));
   ent->checkin(mc_new1(f::CHealth,10));
-  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new1(f::CPixie,s));
   ent->checkin(mc_new1(Team,team));
   ent->checkin(mc_new4(Gun,100, 5, 1.5,"pew"));
   ent->checkin(mc_new1(Monster, eMonsterTypeZap));
@@ -128,7 +128,7 @@ ecs::Entity* GEngine::createMunchMonster(int team) {
   m->aoe=true;
   m->sound="bigHit";
   ent->checkin(m);
-  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new1(f::CPixie,s));
   ent->checkin(mc_new1(f::CHealth,50));
   ent->checkin(mc_new3(f::CMove,c::Vec2(200, 200), 25, 25));
   ent->checkin(mc_new1(Team,team));
@@ -149,7 +149,7 @@ ecs::Entity* GEngine::createLaser(int team) {
   m->selfDie=true;
   m->sound="smallHit";
   ent->checkin(m);
-  ent->checkin(mc_new1(f::CDraw,s));
+  ent->checkin(mc_new1(f::CPixie,s));
   ent->checkin(mc_new1(Team,team));
 
   return ent;

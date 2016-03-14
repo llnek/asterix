@@ -36,14 +36,14 @@ bool Aliens::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::process(float) {
-  auto enemies= MGMS()->getPool("Baddies");
   auto ss= CC_GEC(GVars, _arena,"n/GVars");
+  auto ens= MGMS()->getPool("Baddies");
   auto json= MGMS()->getLCfg();
   auto cfg= json->getValue();
   auto dirty=false;
   auto dt= ss->secCount;
 
-  if (enemies->countActives() < JS_INT(cfg["enemyMax"])) {
+  if (ens->countActives() < JS_INT(cfg["enemyMax"])) {
     j::json arr= JS_ARR(cfg["enemies"]);
     J__LOOP(it, arr) {
       auto &a = *it;
@@ -81,41 +81,40 @@ void Aliens::addEnemy(j::json &obj) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::dropBombs(ecs::Node *enemy) {
-  auto ui= CC_GEC(f::CDraw, enemy, "f/CDraw");
+  auto ui= CC_GEC(f::CPixie, enemy, "f/CPixie");
   auto et= CC_GEC(Enemy, enemy, "n/Enemy");
   auto bombs= MGMS()->getPool("Bombs");
+  auto b = bombs->take(true);
   auto sz= ui->csize();
   auto pos= ui->pos();
-  auto b = (ecs::Node*) bombs->getAndSet(true);
-  auto bs= CC_GEC(f::CDraw, b, "f/CDraw");
-  SCAST(Bomb*,b)->attackMode= et->attackMode;
+  auto bs= CC_GEC(Bomb, b, "f/CPixie");
+  bs->attackMode= et->enemyType.attackMode;
   bs->inflate(pos.x, pos.y - sz.height * 0.2);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 ecs::Node* Aliens::getB(const EnemyType &arg) {
-  auto enemies = MGMS()->getPool("Baddies");
+  auto ens = MGMS()->getPool("Baddies");
   auto pred= [=](f::Poolable *p) -> bool {
-    auto e = (ecs::Node*)p;
-    auto ui= CC_GEC(f::CDraw, e, "f/CDraw");
-    auto et= CC_GEC(Enemy, e, "n/Enemy");
+    auto ui= CC_GEC(f::CPixie, p, "f/CPixie");
+    auto et= CC_GEC(Enemy, p, "n/Enemy");
     return (et->enemyType.type == arg.type &&
-            e->status() == false);
+            p->status() == false);
   };
 
-  auto en= enemies->select(pred);
+  auto en= ens->select(pred);
   ecs::Node *y= CC_NIL;
 
-  if (ENP(en)) {
-    SCAST(GEngine*,engine)->createEnemies(1);
-    en= enemies->select(pred);
+  if (! en) {
+    SCAST(GEngine*, _engine)->createEnemies(1);
+    en= ens->select(pred);
   }
 
-  if (NNP(en)) {
-    y = (ecs::Node*) en;
+  if (en) {
+    y = PCAST(ecs::Node,en);
     auto h= CC_GEC(f::CHealth, y, "f/CHealth");
-    auto ui= CC_GEC(f::CDraw, y, "f/CDraw");
+    auto ui= CC_GEC(f::CPixie, y, "f/CPixie");
     auto et= CC_GEC(Enemy, y, "n/Enemy");
     ui->node->schedule([=](float) {
       this->dropBombs(y);
@@ -131,19 +130,21 @@ ecs::Node* Aliens::getB(const EnemyType &arg) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::addEnemyToGame(int enemyType) {
-  auto sp= CC_GEC(Ship, _ship, "f/CDraw");
+  auto sp= CC_GEC(Ship, _ship, "f/CPixie");
   auto &arg = EnemyTypes[enemyType];
   auto wz = cx::visRect();
   auto en = getB(arg);
-  if (ENP(en)) { return; }
-  auto ens= CC_GEC(f::CDraw, en, "f/CDraw");
+  if (! en) { return; }
+  auto ens= CC_GEC(f::CPixie, en, "f/CPixie");
   auto et= CC_GEC(Enemy, en, "n/Enemy");
-  auto pos= sp->pos();
   auto sz= ens->csize();
   auto epos= ens->pos();
+  auto pos= sp->pos();
   c::Action *act;
 
-  ens->setPos(cx::randFloat(HWZ(wz.size) + 80.0), wz.size.height);
+  ens->setPos(cx::randFloat(HWZ(wz.size) + 80.0),
+              wz.size.height);
+
   switch (et->enemyType.moveType) {
     case Moves::RUSH:
       act = c::MoveTo::create(1, c::Vec2(pos.x, pos.y));

@@ -78,9 +78,9 @@ struct CC_DLL Players : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CSquare : public f::CDraw {
+struct CC_DLL CSquare : public f::CPixie {
   CSquare(int cell)
-    : CDraw( cx::reifySprite("z.png")) {
+    : CPixie( cx::reifySprite("z.png")) {
     this->cell=cell;
     this->png= "z";
   }

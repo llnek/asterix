@@ -170,7 +170,7 @@ void GLayer::fireRocket(Hero *hero) {
   auto po= MGMS()->getPool("Rockets");
     auto sz= hero->csize();
   auto pos = hero->pos();
-  auto r= (Projectile*) po->getAndSet(true);
+  auto r= (Projectile*) po->take(true);
 
   r->inflate( pos.x + HWZ(sz), pos.y - sz.height * 0.05);
 

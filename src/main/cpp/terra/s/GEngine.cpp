@@ -68,65 +68,87 @@ void GEngine::createArena() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createShip() {
-  auto zx= CC_CSV(c::Integer, "SHIP+ZX");
+  auto ani= CC_ACAC()->getAnimation("ShipAni");
+  auto bs = cx::reifySprite("ship03.png");
   auto sp= cx::reifySprite("ship01.png");
+  auto zx= CC_CSV(c::Integer,"SHIP+ZX");
   auto ent= this->reifyNode(true);
   auto sz= CC_CSIZE(sp);
   auto wb= cx::visBox();
 
-  auto ani= CC_ACAC()->getAnimation("ShipAni");
+  MGML()->addAtlasItem("game-pics", sp, zx);
+
+  // ship sprite
   sp->setPosition(wb.cx, sz.height);
-  sp->runAction(c::RepeatForever::create(c::Animate::create(ani)));
-  auto bs = cx::reifySprite("ship03.png");
+  sp->runAction(
+      c::RepeatForever::create(
+        c::Animate::create(ani)));
+
+  //born sprite
   bs->setBlendFunc(BDFUNC::ADDITIVE);
   bs->setPosition(HWZ(sz), 12);
   CC_HIDE(bs);
-  sp->addChild(bs, zx, 911);//99999);
+  sp->addChild(bs, zx, 911);
 
-  MGML()->addAtlasItem("game-pics", sp, zx);
   ent->checkin(mc_new2(Ship, sp, bs));
   ent->checkin(mc_new(f::CGesture));
-  ent->checkin(mc_new(f::CHealth));
+  ent->checkin(mc_new1(f::CHealth,5));
   ent->checkin(mc_new(f::CMove));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createMissiles(int count) {
+  auto speed= CC_CSV(c::Float, "MISSILE+SPEED");
   auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto po = MGMS()->getPool("Missiles");
-
   po->preset([=]() -> f::Poolable* {
     auto sp= cx::reifySprite("W1.png");
     auto ui= mc_new1(Missile, sp);
-    auto mv= mc_new(f::Move);
+    auto mv= mc_new(f::CMove);
     auto ent=this->reifyNode();
+
     MGML()->addAtlasItem("op-pics", sp, zx);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
+
+    mv->speed.y= speed;
+    mv->vel.y= speed;
+
+    ent->checkin(mc_new(f::CHealth));
     ent->checkin(ui);
     ent->checkin(mv);
+
     return ent;
+
   }, count);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createBombs(int count) {
+  auto speed= CC_CSV(c::Float, "BOMB+SPEED");
   auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto po = MGMS()->getPool("Bombs");
 
   po->preset([=]() -> f::Poolable* {
     auto sp= cx::reifySprite("W2.png");
     auto ui= mc_new1(Bomb, sp);
-    auto mv= mc_new(f::Move);
+    auto mv= mc_new(f::CMove);
     auto ent=this->reifyNode();
+
     MGML()->addAtlasItem("op-pics", sp, zx);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
+
+    mv->speed.y= -speed;
+    mv->vel.y= -speed;
+
+    ent->checkin(mc_new(f::CHealth));
     ent->checkin(ui);
     ent->checkin(mv);
     return ent;
+
   }, count);
 }
 
@@ -139,11 +161,14 @@ void GEngine::createExplosions(int count) {
   po->preset([=]() -> f::Poolable* {
     auto sp = cx::reifySprite("explosion_01.png");
     auto ent= this->reifyNode();
+
     MGML()->addAtlasItem("explosions", sp);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
+
     ent->checkin(mc_new1(Explosion, sp));
     return ent;
+
   }, count);
 }
 
@@ -159,6 +184,7 @@ void GEngine::createHitEffects(int count) {
     MGML()->addAtlasItem("op-pics", sp);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
+
     ent->checkin(mc_new1(HitEffect, sp));
     return ent;
   }, count);
@@ -182,6 +208,7 @@ void GEngine::createSparks(int count) {
     CC_HIDE(sp3);
     ent->checkin(mc_new2(Spark, sp2, sp3));
     return ent;
+
   }, count);
 }
 
@@ -190,13 +217,14 @@ void GEngine::createSparks(int count) {
 void GEngine::createEnemies(int count) {
   auto zx = CC_CSV(c::Integer, "SHIP+ZX") - 1;
   auto po = MGMS()->getPool("Baddies");
-  auto cr= [=](const EnemyType& arg) -> f::Poolable* {
+  auto cr= [=](const EnemyType& arg)
+    -> f::Poolable* {
     auto sp= cx::reifySprite(arg.textureName);
     auto ent= this->reifyNode();
     MGML()->addAtlasItem("game-pics", sp,zx);
     CC_HIDE(sp);
-    ent->checkin(mc_new1(f::CDraw, sp));
-    ent->checkin(mc_new(f::Health));
+    ent->checkin(mc_new1(f::CHealth,arg.HP));
+    ent->checkin(mc_new1(f::CPixie, sp));
     ent->checkin(mc_new(f::CMove));
     ent->checkin(mc_new1(Enemy, arg));
     return ent;
@@ -223,7 +251,7 @@ void GEngine::createBackSkies() {
     layer->addAtlasItem("game-pics", bg, -10);
     bg->setAnchorPoint(cx::anchorBL());
     CC_HIDE(bg);
-    ent->checkin(mc_new1(f::CDraw, bg));
+    ent->checkin(mc_new1(f::CPixie, bg));
     return ent;
   }, 2);
 }
@@ -239,13 +267,13 @@ void GEngine::createBackTiles(int count) {
     layer->addAtlasItem("back-tiles", sp, -9);
     sp->setAnchorPoint(cx::anchorL());
     CC_HIDE(sp);
-    ent->checkin(mc_new1(f::CDraw, sp));
+    ent->checkin(mc_new1(f::CPixie, sp));
     return ent;
   };
 
   F__LOOP(it, BackTileMap) {
     auto &n = *it;
-    p->preset([=]() -> f::Poolable* {
+    po->preset([=]() -> f::Poolable* {
       return cr(n);
     }, count);
   }

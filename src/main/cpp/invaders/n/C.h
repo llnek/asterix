@@ -53,15 +53,15 @@ struct CC_DLL Cannon : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Explosion : public f::CDraw {
+struct CC_DLL Explosion : public f::CPixie {
 
-  Explosion(not_null<c::Node*> s) : CDraw(s) {
+  Explosion(not_null<c::Node*> s) : CPixie(s) {
     frameTime=0.1f ;
   }
 
   virtual void inflate(float x, float y) {
     auto anim= CC_ACAC()->getAnimation("boom!");
-    f::CDraw::inflate(x,y);
+    f::CPixie::inflate(x,y);
     node->runAction(
       c::Sequence::createWithTwoActions(c::Animate::create(anim),
       c::CallFunc::create([=]() { this->deflate(); })));
@@ -73,11 +73,11 @@ struct CC_DLL Explosion : public f::CDraw {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ship : public f::CDraw {
+struct CC_DLL Ship : public f::CPixie {
 
   Ship(not_null<c::Node*> s,
       const sstr& s0, const sstr& s1)
-    : CDraw(s) {
+    : CPixie(s) {
     frame0=s0;
     frame1=s1;
   }

@@ -20,7 +20,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void Render::preamble() {
-  _arena=_engine->getNodes("n/GVars");
+  _arena=_engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,11 +36,12 @@ bool Render::update(float dt) {
 //
 void Render::process(float dt) {
   // background's moving rate is 16 pixel per second
-  auto g= CC_GEC(GVars,_arena,"n/GVars");
-  auto locSkyHeight = g->backSkyDim.height;
-  auto locBackSkyRe = g->backSkyRe;
-  auto locBackSky = g->backSky;
-  auto posy= locBackSky->node->getPositionY();
+  auto ss= CC_GEC(GVars,_arena,"n/GVars");
+  auto locSkyHeight = ss->backSkyDim.height;
+  auto locBackSkyRe = ss->backSkyRe;
+  auto locBackSky = ss->backSky;
+  auto ui= CC_GEC(f::CPixie,locBackSky,"f/CPixie");
+  auto posy= ui->node->getPositionY();
   auto movingDist = 16.0 * dt;
   auto wz = cx::visRect();
   auto currPosY = posy - movingDist;
@@ -51,25 +52,27 @@ void Render::process(float dt) {
       throw "The memory is leaking at moving background";
     }
 
-    g->backSkyRe = g->backSky;
-    locBackSkyRe = g->backSky;
+    ss->backSkyRe = ss->backSky;
+    locBackSkyRe = ss->backSky;
 
     //create a new background
-    g->backSky = MGMS()->getPool("BackSkies")->getAndSet();
-    locBackSky = g->backSky;
-    locBackSky->inflate(0, currPosY + locSkyHeight - 2);
+      ss->backSky = (ecs::Node*)MGMS()->getPool("BackSkies")->take();
+    locBackSky = ss->backSky;
+      ui=CC_GEC(f::CPixie,locBackSky,"f/CPixie");
+    ui->inflate(0, currPosY + locSkyHeight - 2);
   } else {
-    locBackSky->node->setPositionY(currPosY);
+    ui->node->setPositionY(currPosY);
   }
 
-  if (NNP(locBackSkyRe)) {
-    currPosY = locBackSkyRe->node->getPositionY() - movingDist;
-    if (currPosY + locSkyHeight < 0.0f) {
-      g->backSkyRe = CC_NIL;
-      locBackSkyRe->deflate();
+  if (locBackSkyRe) {
+    ui=CC_GEC(f::CPixie,locBackSkyRe,"f/CPixie");
+    currPosY = ui->node->getPositionY() - movingDist;
+    if (currPosY + locSkyHeight < 0.0) {
+      ss->backSkyRe = CC_NIL;
+      ui->deflate();
       locBackSkyRe->yield();
     } else {
-      locBackSkyRe->node->setPositionY(currPosY);
+      ui->node->setPositionY(currPosY);
     }
   }
 }

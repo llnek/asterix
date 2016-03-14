@@ -38,7 +38,7 @@ void GEngine::initEntities() {
     body->setDynamic(true);
     body->setEnabled(false);
     tmp->setPhysicsBody(body);
-    auto rdr=mc_new1(f::CDraw, tmp);
+    auto rdr=mc_new1(f::CPixie, tmp);
     auto ent=this->reifyEntity();
     ent->checkin(rdr);
     return ent;
@@ -52,7 +52,7 @@ void GEngine::initEntities() {
   body->setDynamic(true);
   s->setPhysicsBody(body);
 
-  auto rdr= mc_new1(f::CDraw,s);
+  auto rdr= mc_new1(f::CPixie,s);
   MGML()->addItem(s,-1);
   rdr->inflate(wb.cx, wb.cy);
   auto mo= mc_new(f::CGesture);

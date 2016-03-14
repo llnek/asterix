@@ -20,16 +20,16 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ball : public f::CDraw {
+struct CC_DLL Ball : public f::CPixie {
   Ball(not_null<c::Node*> s)
-    : CDraw(s) {
+    : CPixie(s) {
   }
   MDECL_COMP_TPID( "n/Ball")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Paddle : public f::CDraw {
+class CC_DLL Paddle : public f::CPixie {
 
   const s_arr<KEYCODE,2> p2Keys() {
     return s_arr<KEYCODE,2> {KEYCODE::KEY_A , KEYCODE::KEY_D };
@@ -44,7 +44,7 @@ class CC_DLL Paddle : public f::CDraw {
 public:
 
   Paddle(not_null<c::Node*> s, int pnum)
-    : CDraw(s) {
+    : CPixie(s) {
     this->kcodes = pnum == 1 ? p1Keys() : p2Keys();
     this->snd = pnum == 1 ? "x_hit" : "o_hit";
     this->pnum= pnum;

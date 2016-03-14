@@ -37,7 +37,7 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processBallMotions(float dt) {
-  auto ba= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto ba= CC_GEC(f::CPixie, _ball, "f/CPixie");
   auto mv= CC_GEC(f::CMove, _ball, "f/CMove");
   auto B = MGMS()->getEnclosureBox();
   auto pos= ba->pos();
@@ -57,7 +57,7 @@ void Move::processBallMotions(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processPaddleMotions(float dt) {
-  auto pad = CC_GEC(f::CDraw, _paddle,"f/CDraw");
+  auto pad = CC_GEC(f::CPixie, _paddle,"f/CPixie");
   auto mv = CC_GEC(f::CMove, _paddle,"f/CMove");
   auto pos = pad->pos();
   auto x= pos.x;
@@ -78,7 +78,7 @@ void Move::processPaddleMotions(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::clamp(f::CDraw *pad) {
+void Move::clamp(f::CPixie *pad) {
   auto tile = CC_CSV(c::Float, "TILE");
   auto sz= pad->csize();
   auto pos= pad->pos();

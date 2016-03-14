@@ -264,7 +264,7 @@ c::Label* reifyLabel(float x, float y,
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
-bool collide(not_null<CDraw*> a, not_null<CDraw*> b) {
+bool collide(not_null<CPixie*> a, not_null<CPixie*> b) {
   return (NNP(a) && NNP(b)) ? collideN(a->node, b->node) : false;
 }
 
@@ -326,7 +326,7 @@ j::json readJson(const sstr &fpath) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool outOfBound(not_null<CDraw*> ent, const Box4 &B) {
+bool outOfBound(not_null<CPixie*> ent, const Box4 &B) {
   return (NNP(ent) && NNP(ent->node)) ? outOfBound(bbox4(ent->node), B) : false;
 }
 
@@ -475,7 +475,7 @@ const c::Size calcSize(const sstr &frame) {
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size halfHW(not_null<CDraw*> n) {
+const c::Size halfHW(not_null<CPixie*> n) {
   return halfHW(n->node);
 }
 
@@ -745,9 +745,9 @@ const c::Vec2 anchorTL() { return c::Vec2(0, 1); }
 // not used for now.
 //
 void resolveElastic(
-    not_null<CDraw*> obj1,
+    not_null<CPixie*> obj1,
     c::Vec2 &vel1,
-    not_null<CDraw*> obj2, c::Vec2 &vel2) {
+    not_null<CPixie*> obj2, c::Vec2 &vel2) {
 
   auto pos2 = obj2->node->getPosition();
   auto pos1= obj1->node->getPosition();
@@ -921,36 +921,42 @@ VOIDFN throttle(VOIDFN func, int wait) {
   };
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void testCollisions(f::FPool *p1, ecs::Node *node) {
+  if (node->status())
+    p1->foreach([=](f::Poolable* _p1) {
+      auto e1= (ecs::Node*) _p1;
+      testCollision(e1,node);
+    });
+}
 
 
+//////////////////////////////////////////////////////////////////////////////
+//
 void testCollisions(f::FPool *p1, f::FPool *p2) {
   p1->foreach([=](f::Poolable* _p1) {
   p2->foreach([=](f::Poolable* _p2) {
     auto e2= (ecs::Node*) _p2;
     auto e1= (ecs::Node*) _p1;
     testCollision(e1,e2);
-  }}
+  });
+  });
 }
 
-void testCollision(ecs::Node *n1, ecs::Node *n1) {
-  auto mss = MGMS()->getPool("Missiles");
-  auto bombs = MGMS()->getPool("Bombs");
-  bombs->foreach([=](f::Poolable* b) {
-    mss->foreach([=](f::Poolable* m) {
-      auto e2= (ecs::Node*)b;
-      auto e1= (ecs::Node*)m;
-      auto s2= CC_GEC(f::CDraw,e2,"f/CDraw");
-      auto s1= CC_GEC(f::CDraw,e1,"f/CDraw");
-      if (e2->status() &&
-          e1->status() &&
-          cx::collide(s2,s1)) {
-        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
-        h2->hurt();
-        h1->hurt();
-      }
-    });
-  });
+//////////////////////////////////////////////////////////////////////////////
+//
+void testCollision(ecs::Node *e1, ecs::Node *e2) {
+  auto s2= CC_GEC(f::CPixie,e2,"f/CPixie");
+  auto s1= CC_GEC(f::CPixie,e1,"f/CPixie");
+  if (e2->status() &&
+      e1->status() &&
+      collide(s2,s1)) {
+    auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
+    auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
+    h2->hurt();
+    h1->hurt();
+  }
 }
 
 

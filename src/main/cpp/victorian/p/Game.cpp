@@ -157,7 +157,7 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 void GLayer::onMouseStart(const c::Vec2 &loc) {
 
   auto tn=CC_GEC(Terrain, _terrain,"n/Terrain");
-  auto py=CC_GEC(Player, _player,"f/CDraw");
+  auto py=CC_GEC(Player, _player,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
 
   switch (ss->state) {
@@ -219,7 +219,7 @@ void GLayer::onMouseStart(const c::Vec2 &loc) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
-  auto p=CC_GEC(Player, _player,"f/CDraw");
+  auto p=CC_GEC(Player, _player,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
   if (ss->state == kGamePlay) {
     p->setJumping(false);

@@ -46,7 +46,7 @@ void PlayerLogic::process(float dt) {
     auto e = *it;
     auto player = CC_GEC(Player,e,"n/Player");
     auto team = CC_GEC(Team,e,"n/Team");
-    auto render = CC_GEC(f::CDraw,e,"f/CDraw");
+    auto render = CC_GEC(f::CPixie,e,"f/CPixie");
 
     // Handle coins
     if (time - player->lastCoinDrop > COIN_DROP_INTERVAL) {
@@ -78,7 +78,7 @@ void PlayerLogic::process(float dt) {
 //
 void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
 
-  auto moverRender = CC_GEC(f::CDraw,mover,"f/CDraw");
+  auto moverRender = CC_GEC(f::CPixie,mover,"f/CPixie");
   auto moverTeam = CC_GEC(Team,mover,"n/Team");
   auto moverMove = CC_GEC(f::CMove,mover,"f/CMove");
 
@@ -92,7 +92,7 @@ void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
       return;
     }
 
-    auto enemyRender = CC_GEC(f::CDraw,enemy,"f/CDraw");
+    auto enemyRender = CC_GEC(f::CPixie,enemy,"f/CPixie");
     if (!enemyRender) { return; }
     moverMove->moveTarget = enemyRender->pos();
 
@@ -105,7 +105,7 @@ void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
   } else {
 
     auto player = playerForTeam(engine,moverTeam->team);
-    auto playerRender = CC_GEC(f::CDraw,player,"f/CDraw");
+    auto playerRender = CC_GEC(f::CPixie,player,"f/CPixie");
     if (playerRender) {
       moverMove->moveTarget = playerRender->pos();
     }

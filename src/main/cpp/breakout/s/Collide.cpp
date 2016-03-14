@@ -40,8 +40,8 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Collide::onPlayerKilled() {
-  auto pad= CC_GEC(f::CDraw, _paddle, "f/CDraw");
-  auto ba= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto pad= CC_GEC(f::CPixie, _paddle, "f/CPixie");
+  auto ba= CC_GEC(f::CPixie, _ball, "f/CPixie");
   auto pos= ba->pos();
 
   if (pos.y < cx::getBottom(pad->node)) {
@@ -55,8 +55,8 @@ bool Collide::onPlayerKilled() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkNodes() {
-  auto pad= CC_GEC(f::CDraw, _paddle, "f/CDraw");
-  auto ba = CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto pad= CC_GEC(f::CPixie, _paddle, "f/CPixie");
+  auto ba = CC_GEC(f::CPixie, _ball, "f/CPixie");
 
   if (cx::collide(pad,ba)) {
     check();
@@ -66,8 +66,8 @@ void Collide::checkNodes() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::check() {
-  auto pad= CC_GEC(f::CDraw, _paddle, "f/CDraw");
-  auto ba= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto pad= CC_GEC(f::CPixie, _paddle, "f/CPixie");
+  auto ba= CC_GEC(f::CPixie, _ball, "f/CPixie");
   auto mv= CC_GEC(f::CMove, _ball, "f/CMove");
   auto sz= ba->csize();
   auto hh= HHZ(sz);
@@ -82,7 +82,7 @@ void Collide::check() {
 //
 void Collide::checkBricks() {
   auto fen= CC_GEC(BrickFence, _fence,"n/BrickFence");
-  auto ba = CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto ba = CC_GEC(f::CPixie, _ball, "f/CPixie");
   auto &bss= fen->bricks;
 
   F__LOOP(it,bss) {
@@ -98,7 +98,7 @@ void Collide::checkBricks() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::onBrick(Brick *brick) {
-  auto bs= CC_GEC(f::CDraw, _ball, "f/CDraw");
+  auto bs= CC_GEC(f::CPixie, _ball, "f/CPixie");
   auto mv= CC_GEC(f::CMove, _ball, "f/CMove");
   auto ka= cx::bbox4(brick);
   auto ba= cx::bbox4(bs);
