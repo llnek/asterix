@@ -50,7 +50,7 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::mkArena() {
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Arena");
   auto ps= mc_new(Players);
   auto ss= mc_new(GVars);
 
@@ -70,7 +70,7 @@ void GEngine::mkArena() {
 void GEngine::mkBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["BALL+SPEED"]);
-  auto ent = this->reifyNode();
+  auto ent = this->reifyNode("Ball");
   auto vy = sd * cx::randSign();
   auto vx = sd * cx::randSign();
 
@@ -97,7 +97,7 @@ void GEngine::mkOnePaddle(const Player &p) {
 
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto ent = this->reifyNode();
+  auto ent = this->reifyNode("Paddle");
   auto cur= _parr[0].pnum;
   float lp=0;
   sstr res;

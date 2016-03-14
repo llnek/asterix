@@ -31,7 +31,7 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Arena");
 
   ent->checkin(mc_new(FilledLines));
   ent->checkin(mc_new(ShapeShell));

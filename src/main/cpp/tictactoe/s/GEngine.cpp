@@ -53,10 +53,10 @@ void GEngine::initEntities() {
   ArrCells seed;
   seed.fill(0);
 
-  arena= this->reifyNode();
-  board= this->reifyNode();
-  p2 = this->reifyNode();
-  p1 = this->reifyNode();
+  arena= this->reifyNode("Arena");
+  board= this->reifyNode("Board");
+  p2 = this->reifyNode("Player2");
+  p1 = this->reifyNode("Player1");
 
   // config global vars
   gvs->pnum= mynum;

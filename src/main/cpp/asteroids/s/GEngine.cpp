@@ -40,7 +40,7 @@ void GEngine::initEntities() {
   astroPools[2]= "Astros2";
   astroPools[1]= "Astros1";
 
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Arena");
   ent->take();
   ent->checkin(mc_new(GVars));
 
@@ -67,7 +67,7 @@ void GEngine::createMissiles(int count) {
   po->preset([=]() -> f::Poolable* {
     auto sp = cx::reifySprite("laserGreen.png");
     CC_HIDE(sp);
-    auto e= this->reifyNode();
+    auto e= this->reifyNode("Missile");
     auto mv= mc_new(f::CMove);
     mv->speed.x=20;
     mv->speed.y=20;
@@ -86,7 +86,7 @@ void GEngine::createLasers(int count) {
   po->preset([=]() -> f::Poolable* {
     auto sp = cx::reifySprite("laserRed.png");
     CC_HIDE(sp);
-    auto e= this->reifyNode();
+    auto e= this->reifyNode("Laser");
     auto mv= mc_new(f::CMove);
     mv->speed.x=20;
     mv->speed.y=20;
@@ -102,7 +102,7 @@ void GEngine::createLasers(int count) {
 //
 void GEngine::createShip() {
   auto sp= cx::reifySprite("rship_0.png");
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Ship");
   auto s= mc_new1(Ship, sp);
   auto mv= mc_new(f::CMove);
   MGML()->addAtlasItem("game-pics", sp);
@@ -189,7 +189,7 @@ void GEngine::createAsteroids(int rank) {
         sp->setRotation(deg);
         MGML()->addAtlasItem("game-pics", sp);
         auto a= new Asteroid(value, rank);
-        auto ent=this->reifyNode();
+        auto ent=this->reifyNode("Asteroid");
         auto mv=mc_new(f::CMove);
         mv->vel.y= speed * cx::randSign();
         mv->vel.x= speed * cx::randSign();

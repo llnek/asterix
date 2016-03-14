@@ -23,7 +23,7 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Arena");
   ent->take();
   ent->checkin(mc_new(GVars));
 
@@ -73,7 +73,7 @@ void GEngine::createBricks() {
     y -= csz.height - 2;
   }
 
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("BrickFence");
   ent->take();
   ent->checkin(bf);
 }
@@ -105,7 +105,7 @@ void GEngine::createPaddle() {
   MGML()->addAtlasItem("game-pics", sp);
   p->inflate(wb.cx, 56);
 
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Paddle");
   ent->take();
   ent->checkin(mv);
   ent->checkin(p);
@@ -129,7 +129,7 @@ void GEngine::createBall() {
   mv->vel.y= mv->speed.y * cx::randSign();
   b->inflate(wb.cx, wb.cy);
 
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Ball");
   ent->take();
   ent->checkin(mv);
   ent->checkin(b);

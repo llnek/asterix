@@ -37,7 +37,7 @@ void GEngine::initEntities() {
     auto cy = wb.top * (i % 2 == 0 ? 0.7 : 0.8);
     auto c = cx::reifySprite("cloud.png");
     auto ui= mc_new1(f::CPixie,c);
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Cloud");
     ent->take();
     ent->checkin(ui);
     ui->inflate(wb.right * 0.15 + i * wb.right * 0.25, cy);
@@ -45,13 +45,13 @@ void GEngine::initEntities() {
     pool->checkin(ent);
   }
 
-  auto ent=this->reifyNode();
+  auto ent=this->reifyNode("Arena");
   ent->checkin(mc_new(GVars));
 
-  ent=this->reifyNode();
+  ent=this->reifyNode("Terrain");
   ent->checkin(t);
 
-  ent=this->reifyNode();
+  ent=this->reifyNode("Player");
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
   ent->checkin(mc_new(f::CMove));

@@ -47,7 +47,7 @@ ecs::Node* GEngine::reifyArena() {
   //pick purple since it is the largest
   auto z0= cx::calcSize("purple_bug_0.png");
   auto s0= cx::calcSize("ship_0.png");
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Arena");
   auto ss = mc_new(GVars);
 
   ss->alienSize = z0;
@@ -69,7 +69,7 @@ void GEngine::reifyMissiles(int count) {
     CC_HIDE(sp);
     mv->speed.y = 150.0 * wz.size.height / gz.height;
     MGML()->addAtlasItem("game-pics", sp);
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Missile");
     ent->checkin(mc_new1(f::CPixie, sp));
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(mv);
@@ -83,7 +83,7 @@ void GEngine::reifyExplosions(int count) {
   auto p= MGMS()->getPool("Explosions");
   p->preset([=]() -> f::Poolable* {
     auto sp = cx::reifySprite("boom_0.png");
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Explosion");
     CC_HIDE(sp);
     MGML()->addAtlasItem("game-pics", sp);
     ent->checkin(mc_new1(Explosion, sp));
@@ -100,7 +100,7 @@ void GEngine::reifyBombs(int count) {
   p->preset([=]() -> f::Poolable* {
     auto c = new f::CPixie(cx::reifySprite("bomb.png"));
     auto mv= mc_new(f::CMove);
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Bomb");
     c->hide();
     mv->speed.y= -50.0 * wz.size.height / gz.height;
     MGML()->addAtlasItem("game-pics", c->node);
@@ -164,7 +164,7 @@ void GEngine::fillSquad(f::FPool *pool) {
       auto anim= c::Animation::create();
       auto f1= CC_GDS(info, "img0");
       auto f2= CC_GDS(info, "img1");
-      auto ent= this->reifyNode();
+      auto ent= this->reifyNode("Alien");
       anim->addSpriteFrame( cx::getSpriteFrame(f1));
       anim->addSpriteFrame( cx::getSpriteFrame(f2));
       anim->setDelayPerUnit(1);
@@ -188,7 +188,7 @@ ecs::Node* GEngine::reifyAliens() {
   // use the largest one to calc size
   auto z0= cx::calcSize("purple_bug_0.png");
   auto stepx= z0.width / 3.0;
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("AlienSquad");
   auto p = MGMS()->getPool("Aliens");
 
   fillSquad(p);
@@ -204,7 +204,7 @@ ecs::Node* GEngine::reifyShip() {
 
   auto s= cx::reifySprite("ship_1.png");
   auto sz= cx::calcSize("ship_0.png");
-  auto ent= this->reifyNode();
+  auto ent= this->reifyNode("Ship");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
