@@ -27,6 +27,7 @@ namespace ccsx {
   void testCollision(ecs::Node*, ecs::Node*);
   void testCollisions(f::FPool*, f::FPool*);
   void testCollisions(f::FPool*, ecs::Node*);
+  void resurrect(not_null<ecs::Node*>);
 
   void resolveElastic(not_null<CPixie*> rA,
       c::Vec2 &velA,

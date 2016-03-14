@@ -61,6 +61,8 @@ void fireMissiles(GEngine *eg, not_null<ecs::Node*> obj, float dt) {
   auto m1= po1->take(true);
   auto s2=CC_GEC(f::CPixie,m2,"f/CPixie");
   auto s1=CC_GEC(f::CPixie,m1,"f/CPixie");
+  cx::resurrect((ecs::Node*)m2);
+  cx::resurrect((ecs::Node*)m1);
   s2->inflate( pos.x - offx, pos.y + offy );
   s1->inflate( pos.x + offx, pos.y + offy );
 }
@@ -68,6 +70,7 @@ void fireMissiles(GEngine *eg, not_null<ecs::Node*> obj, float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void bornShip(GEngine *eg, not_null<ecs::Node*> ccc) {
+  auto h = CC_GEC(f::CHealth,ccc.get(),"f/CHealth");
   auto ship = CC_GEC(Ship,ccc.get(),"f/CPixie");
   auto normal = [=]() {
     CC_HIDE(ship->bornSprite);
@@ -77,7 +80,6 @@ void bornShip(GEngine *eg, not_null<ecs::Node*> ccc) {
     }, 1.0f/6, "fm");
     ship->inflate();
   };
-
   ship->bornSprite->setScale(8);
   ship->canBeAttack = false;
   CC_SHOW(ship->bornSprite);
@@ -88,6 +90,9 @@ void bornShip(GEngine *eg, not_null<ecs::Node*> ccc) {
       c::Sequence::create(c::DelayTime::create(0.5),
         c::Blink::create(3,9),
         c::CallFunc::create(normal), CC_NIL));
+
+  h->reset();
+  ccc->take();
 }
 
 //////////////////////////////////////////////////////////////////////////////

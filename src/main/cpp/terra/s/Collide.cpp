@@ -55,12 +55,16 @@ void Collide::checkMissilesAliens() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipBombs() {
-    cx::testCollisions(MGMS()->getPool("Bombs"), _ship);
+  auto sp=CC_GEC(Ship,_ship,"f/CPixie");
+  if (sp->canBeAttack)
+  cx::testCollisions(MGMS()->getPool("Bombs"), _ship);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipAliens() {
+  auto sp=CC_GEC(Ship,_ship,"f/CPixie");
+  if (sp->canBeAttack)
   cx::testCollisions(MGMS()->getPool("Baddies"), _ship);
 }
 

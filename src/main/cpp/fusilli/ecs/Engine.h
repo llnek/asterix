@@ -53,6 +53,7 @@ public:
   void getNodes(const COMType&, s_vec<Node*>&);
   void getNodes(s_vec<Node*>&);
 
+  Node* reifyNode(const sstr &n, bool take=false);
   TypeRegistry* rego() { return _types; }
 
   void purgeSystem (not_null<System*>);
@@ -61,7 +62,6 @@ public:
   void purgeNode(not_null<Node*>);
 
   void regoSystem(not_null<System*> );
-  Node* reifyNode(bool take=false);
 
   void doHouseKeeping();
   void ignite();

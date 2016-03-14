@@ -159,9 +159,9 @@ NodeId Engine::generateEid() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Node* Engine::reifyNode(bool take) {
+Node* Engine::reifyNode(const sstr &n, bool take) {
   auto eid= this->generateEid();
-  auto e= mc_new2(Node,this, eid);
+  auto e= mc_new3(Node,this, n, eid);
   _ents.insert(S__PAIR(NodeId,Node*,eid,e));
   if (take) {e->take();}
   return e;

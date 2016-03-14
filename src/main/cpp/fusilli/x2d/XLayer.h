@@ -29,6 +29,7 @@ protected:
   DECL_PTR(c::EventListenerMouse ,_mouseListener)
   DECL_TV(int, _mouseBtn, MOUSE_BUTTON_LEFT)
   DECL_BF(_mouseEnabled)
+  DECL_BF(_mouseTarget)
   DECL_BF(_mouseDown)
   s_arr<bool, 256> _keys;
 
@@ -50,7 +51,7 @@ protected:
   virtual void onTouchEnd( c::Touch*);
   virtual void onMouseMotion( const c::Vec2&);
 
-  virtual void onMouseStart(const c::Vec2&);
+  virtual bool onMouseStart(const c::Vec2&);
   virtual void onMouseClick(const c::Vec2&);
 
   void disableListeners();

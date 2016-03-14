@@ -29,8 +29,9 @@ friend class Engine;
   DECL_PTR(Engine, _engine)
   DECL_BF(_dead)
   DECL_TD(NodeId, _eid)
+  DECL_TD(sstr, _name)
 
-  Node(not_null<Engine*>, NodeId);
+  Node(not_null<Engine*>, const sstr&, NodeId);
   void die() { _dead=true; }
 
   NOCPYASS(Node)

@@ -88,6 +88,7 @@ void Aliens::dropBombs(ecs::Node *enemy) {
   auto sz= ui->csize();
   auto pos= ui->pos();
   auto bs= CC_GEC(Bomb, b, "f/CPixie");
+    cx::resurrect((ecs::Node*)b);
   bs->attackMode= et->enemyType.attackMode;
   bs->inflate(pos.x, pos.y - sz.height * 0.2);
 }

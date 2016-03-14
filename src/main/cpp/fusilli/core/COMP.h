@@ -175,7 +175,7 @@ struct CC_DLL CPixie : public ecs::Component {
   virtual float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
   virtual int tag() { return node ? node->getTag() : 0; }
   virtual ~CPixie() {
-     if (node) { node->removeFromParent(); node=nullptr; }
+    //if (node) { node->removeFromParent(); node=nullptr; }
   }
 
 };

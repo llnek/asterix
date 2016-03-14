@@ -959,6 +959,12 @@ void testCollision(ecs::Node *e1, ecs::Node *e2) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void resurrect(not_null<ecs::Node*> node) {
+  auto h=CC_GEC(f::CHealth,node.get(),"f/CHealth");
+  h->reset();
+}
 
 NS_END
 NS_END

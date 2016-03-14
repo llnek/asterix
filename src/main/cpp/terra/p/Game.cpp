@@ -40,6 +40,10 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   STATIC_REIFY_LAYER(GLayer)
 
+  virtual void onMouseMotion(const c::Vec2&);
+  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onTouchMotion(c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
   MDECL_GET_IID(2)
@@ -59,6 +63,35 @@ struct CC_DLL GLayer : public f::GameLayer {
   void deco();
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
+  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
+  return ui->bbox().containsPoint(tap);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const c::Vec2 &tap) {
+  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
+  return ui->node->setPosition(tap);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(c::Touch *t) {
+  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
+  return ui->node->setPosition(t->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(c::Touch *t) {
+  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
+  return ui->bbox().containsPoint(
+                t->getLocation());
+}
 
 //////////////////////////////////////////////////////////////////////////
 //

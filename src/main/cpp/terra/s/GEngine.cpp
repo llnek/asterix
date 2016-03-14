@@ -61,7 +61,7 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createArena() {
-  auto ent= this->reifyNode(true);
+  auto ent= this->reifyNode("Arena",true);
   ent->checkin(mc_new(GVars));
 }
 
@@ -72,7 +72,7 @@ void GEngine::createShip() {
   auto bs = cx::reifySprite("ship03.png");
   auto sp= cx::reifySprite("ship01.png");
   auto zx= CC_CSV(c::Integer,"SHIP+ZX");
-  auto ent= this->reifyNode(true);
+  auto ent= this->reifyNode("Ship", true);
   auto sz= CC_CSIZE(sp);
   auto wb= cx::visBox();
 
@@ -106,7 +106,7 @@ void GEngine::createMissiles(int count) {
     auto sp= cx::reifySprite("W1.png");
     auto ui= mc_new1(Missile, sp);
     auto mv= mc_new(f::CMove);
-    auto ent=this->reifyNode();
+    auto ent=this->reifyNode("Missile");
 
     MGML()->addAtlasItem("op-pics", sp, zx);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
@@ -135,7 +135,7 @@ void GEngine::createBombs(int count) {
     auto sp= cx::reifySprite("W2.png");
     auto ui= mc_new1(Bomb, sp);
     auto mv= mc_new(f::CMove);
-    auto ent=this->reifyNode();
+    auto ent=this->reifyNode("Bomb");
 
     MGML()->addAtlasItem("op-pics", sp, zx);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
@@ -160,7 +160,7 @@ void GEngine::createExplosions(int count) {
 
   po->preset([=]() -> f::Poolable* {
     auto sp = cx::reifySprite("explosion_01.png");
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Explosion");
 
     MGML()->addAtlasItem("explosions", sp);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
@@ -180,7 +180,7 @@ void GEngine::createHitEffects(int count) {
 
   po->preset([=]() -> f::Poolable* {
     auto sp = cx::reifySprite("hit.png");
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("HitEffect");
     MGML()->addAtlasItem("op-pics", sp);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
@@ -199,7 +199,7 @@ void GEngine::createSparks(int count) {
   po->preset([=]() -> f::Poolable* {
     auto sp2 = cx::reifySprite("explode2.png");
     auto sp3 = cx::reifySprite("explode3.png");
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Spark");
     MGML()->addAtlasItem("op-pics", sp2);
     MGML()->addAtlasItem("op-pics", sp3);
     sp2->setBlendFunc(BDFUNC::ADDITIVE);
@@ -220,7 +220,7 @@ void GEngine::createEnemies(int count) {
   auto cr= [=](const EnemyType& arg)
     -> f::Poolable* {
     auto sp= cx::reifySprite(arg.textureName);
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("Enemy");
     MGML()->addAtlasItem("game-pics", sp,zx);
     CC_HIDE(sp);
     ent->checkin(mc_new1(f::CHealth,arg.HP));
@@ -247,7 +247,7 @@ void GEngine::createBackSkies() {
 
   po->preset([=]() -> f::Poolable* {
     auto bg = cx::reifySprite("bg01.png");
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("BackSky");
     layer->addAtlasItem("game-pics", bg, -10);
     bg->setAnchorPoint(cx::anchorBL());
     CC_HIDE(bg);
@@ -263,7 +263,7 @@ void GEngine::createBackTiles(int count) {
   auto layer= MGMS()->getLayer(1);
   auto cr= [=](const sstr &name) -> f::Poolable* {
     auto sp = cx::reifySprite(name);
-    auto ent= this->reifyNode();
+    auto ent= this->reifyNode("BackTile");
     layer->addAtlasItem("back-tiles", sp, -9);
     sp->setAnchorPoint(cx::anchorL());
     CC_HIDE(sp);

@@ -191,9 +191,10 @@ void XLayer::onKeyReleased(KEYCODE k, c::Event*) {
 void XLayer::onMouseDown(c::Event *event) {
   if (_mouseDown) { return; }
   auto e= (c::EventMouse*)event;
+  _mouseTarget=false;
   _mouseDown=true;
   if (e->getMouseButton() == _mouseBtn) {
-    onMouseStart(e->getLocationInView());
+    _mouseTarget=onMouseStart(e->getLocationInView());
   }
 }
 
@@ -201,30 +202,32 @@ void XLayer::onMouseDown(c::Event *event) {
 //
 void XLayer::onMouseUp(c::Event *event) {
   auto e= (c::EventMouse*)event;
-  _mouseDown=false;
   if (e->getMouseButton() == _mouseBtn) {
     onMouseClick(e->getLocationInView());
   }
+  _mouseTarget=false;
+  _mouseDown=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onMouseStart( const c::Vec2 &loc) {
+bool XLayer::onMouseStart( const c::Vec2 &loc) {
+  return true;
+  //CCLOG("mouse Down!");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::onMouseClick( const c::Vec2 &loc) {
+  //CCLOG("mouse Up!");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XLayer::onMouseMove(c::Event* event) {
   auto e= (c::EventMouse*)event;
-  auto b= e->getMouseButton();
-  auto t= MOUSE_BUTTON_LEFT;
-  if (_mouseBtn >= 0) { t= _mouseBtn; }
-  if (b == t) {
+  if (_mouseTarget &&
+      _mouseBtn == e->getMouseButton()) {
     onMouseMotion(e->getLocationInView());
   }
 }
