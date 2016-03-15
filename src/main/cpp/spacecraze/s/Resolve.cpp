@@ -24,8 +24,8 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  aliens = engine->getNodeList(AlienNode().typeId());
-  ships = engine->getNodeList(ShipNode().typeId());
+  _aliens = _engine->getNodes("n/AlienSquad")[0];
+  _ship = _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////

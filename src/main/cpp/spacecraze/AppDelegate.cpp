@@ -9,35 +9,21 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
 #include "AppDelegate.h"
+#include "p/Config.h"
 
-NS_USING(fusii)
-NS_USING(ash)
 NS_USING(spacecraze)
+NS_USING(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-AppDelegate::AppDelegate() : App("space craze") {
-
-  // step.1: register all ash::node factories here
-  auto r= NodeRegistry::self();
-
-  r->rego( mc_new( AlienNode));
-  r->rego( mc_new( ShipNode));
-  //r->rego( mc_new( RobotNode));
-  //r->rego( mc_new( ArenaNode));
-
-  // step.2: set up app-config
+AppDelegate::AppDelegate() : App("spacecraze") {
   Config::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
   delete XConfig::self();
 }
 

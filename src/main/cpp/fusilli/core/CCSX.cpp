@@ -925,7 +925,7 @@ VOIDFN throttle(VOIDFN func, int wait) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void testCollisions(f::FPool *p1, ecs::Node *node) {
+void testCollisions(not_null<f::FPool*> p1, not_null<ecs::Node*> node) {
   if (node->status())
     p1->foreach([=](f::Poolable* _p1) {
       auto e1= (ecs::Node*) _p1;
@@ -933,10 +933,9 @@ void testCollisions(f::FPool *p1, ecs::Node *node) {
     });
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void testCollisions(f::FPool *p1, f::FPool *p2) {
+void testCollisions(not_null<f::FPool*> p1, not_null<f::FPool*> p2) {
   p1->foreach([=](f::Poolable* _p1) {
   p2->foreach([=](f::Poolable* _p2) {
     auto e2= (ecs::Node*) _p2;
@@ -948,14 +947,14 @@ void testCollisions(f::FPool *p1, f::FPool *p2) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void testCollision(ecs::Node *e1, ecs::Node *e2) {
-  auto s2= CC_GEC(f::CPixie,e2,"f/CPixie");
-  auto s1= CC_GEC(f::CPixie,e1,"f/CPixie");
+void testCollision(not_null<ecs::Node*> e1, not_null<ecs::Node*> e2) {
+  auto s2= CC_GEC(f::CPixie,e2.get(),"f/CPixie");
+  auto s1= CC_GEC(f::CPixie,e1.get(),"f/CPixie");
   if (e2->status() &&
       e1->status() &&
       collide(s2,s1)) {
-    auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-    auto h1= CC_GEC(f::CHealth,e1,"f/CHealth");
+    auto h2= CC_GEC(f::CHealth,e2.get(),"f/CHealth");
+    auto h1= CC_GEC(f::CHealth,e1.get(),"f/CHealth");
     h2->hurt();
     h1->hurt();
   }

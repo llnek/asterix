@@ -20,7 +20,6 @@ NS_BEGIN(spacecraze)
 //
 class CC_DLL Splash : public f::XScene {
 
-  DECL_PTR(c::Label, title)
   void demo(float);
 
 public:

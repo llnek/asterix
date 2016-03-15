@@ -95,6 +95,13 @@ void emptyQueue(s_que<T> &q) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+struct DLTimer {
+  DECL_PTR(c::DelayTime, timer)
+  DECL_FZ(duration)
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 struct CC_DLL Box4 {
   Box4(float t, float r, float b, float l)
     : top(t), right(r), bottom(b), left(l)

@@ -17,39 +17,40 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
+  auto lfsz = cx::calcSize("sflifei");
   auto s= cx::reifySprite("sfscore");
   auto wb= cx::visBox();
-  float y= wb.top*0.925f;
-  float x;
+  auto y= wb.top*0.925;
+  float x=0;
 
   regoAtlas("game-pics");
 
-  s->setPosition(wb.right *0.15f, y);
+  s->setPosition(wb.right * 0.15, y);
   addAtlasItem("game-pics", s);
 
   s= cx::reifySprite("sflives");
-  s->setPosition(wb.right*0.7f, y);
+  s->setPosition(wb.right*0.7, y);
   addAtlasItem("game-pics", s);
 
-  x += s->getPositionX() + s->getContentSize().width;
-  y += cx::calcSize("sflifei").height * 0.5;
-  this->lives= f::reifyRefType<f::XLives>();
-  this->lives->decorate("sflifei", 3, x, y);
-  addItem(lives);
+  x += s->getPositionX() + CC_CSIZE(s).width;
+  y += HHZ(lfsz);
 
-  y= wb.top*0.925f;
+  _lives= f::reifyRefType<f::XLives>();
+  _lives->decorate("sflifei", 3, x, y);
+  addItem(_lives);
 
-  scoreLabel = cx::reifyBmfLabel("sftext", "0");
-  scoreLabel->setPosition(wb.right * 0.3f, y);
-  addItem(scoreLabel);
+  y= wb.top*0.925;
 
+  _scoreLabel= cx::reifyBmfLabel("sftext", "0");
+  _scoreLabel->setPosition(wb.right * 0.3, y);
+  addItem(_scoreLabel);
 
   auto b= cx::reifyMenuBtn("sfpause");
   auto menu = cx::mkMenu(b);
 
-  b->setPosition(wb.right*0.95f, y);
+  b->setPosition(wb.right*0.95, y);
   b->setCallback([=](c::Ref*) {
       });
   addItem(menu);
@@ -58,15 +59,15 @@ void HUDLayer::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  lives->reduce(n);
-  return lives->isDead();
+  _lives->reduce(n);
+  return _lives->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString(s::to_string(score));
+  _score += n;
+  _scoreLabel->setString(s::to_string(_score));
 }
 
 

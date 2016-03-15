@@ -24,7 +24,7 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Aliens::preamble() {
-  aliens = engine->getNodeList(AlienNode().typeId());
+  _aliens = _engine->getNodes("n/AlienSquad")[0];
   startEnemies();
 }
 
@@ -32,7 +32,7 @@ void Aliens::preamble() {
 //
 void Aliens::startEnemies() {
 
-  auto squad= CC_GNLF(AlienSquad,aliens,"squad");
+  auto squad= CC_GEC(AlienSquad,aliens,"n/AlienSquad");
   auto maxSz= cx::calcSize("sfenmy3");
   auto stepx = HWZ(maxSz);
   auto wb= cx::visBox();
@@ -42,15 +42,17 @@ void Aliens::startEnemies() {
   auto max_moves_right = (int) floor(deltaRt/stepx);
   auto max_moves_left = (int) floor(deltaLf/stepx);
 
-  auto move_left = c::Sequence::createWithTwoActions(
+  auto move_left = c::Sequence::create(
       c::DelayTime::create(squad->duration),
       c::EaseSineOut::create(
-        c::MoveBy::create(0.25f, c::ccp(stepx*-1, 0))));
+        c::MoveBy::create(0.25, c::Vec2(stepx*-1, 0))),
+      CC_NIL);
 
-  auto move_right = c::Sequence::createWithTwoActions(
+  auto move_right = c::Sequence::create(
       c::DelayTime::create(squad->duration),
       c::EaseSineOut::create(
-        c::MoveBy::create(0.25f, c::ccp(stepx, 0))));
+        c::MoveBy::create(0.25, c::Vec2(stepx, 0))),
+      CC_NIL);
 
   auto move_left_to_start = c::Repeat::create(move_right, max_moves_left);
   auto move_start_to_left = c::Repeat::create(move_left, max_moves_left);
@@ -58,14 +60,16 @@ void Aliens::startEnemies() {
   auto move_start_to_right = c::Repeat::create(move_right, max_moves_right);
   auto move_right_to_start = c::Repeat::create(move_left, max_moves_right);
 
-  auto movement_sequence = c::Sequence::create(move_start_to_left, move_left_to_start, move_start_to_right, move_right_to_start, nullptr);
+  auto movement_sequence = c::Sequence::create(move_start_to_left, move_left_to_start, move_start_to_right, move_right_to_start, CC_NIL);
 
   auto pool = MGMS()->getPool("Aliens");
-  pool->foreach([=](f::ComObj* obj) {
-      obj->sprite->runAction(
-          c::RepeatForever::create(
-                                   (c::ActionInterval*) movement_sequence->clone() ));
-      });
+  pool->foreach([=](f::Poolable *p) {
+    auto ui=CC_GEC(Alien,p,"f/CPixie");
+    ui->node->runAction(
+        c::RepeatForever::create(
+          (c::ActionInterval*)
+          movement_sequence->clone() ));
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////////

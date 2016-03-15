@@ -82,6 +82,19 @@ void FPool::clearAll() {
   _objs.clear();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_vec<Poolable*> FPool::actives() {
+  s_vec<Poolable*> out;
+  F__LOOP(it, _objs) {
+    auto z= *it;
+    if (z->status()) {
+      out.push_back(z);
+    }
+  }
+  return out;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Get the count of active objects
 int FPool::countActives() {

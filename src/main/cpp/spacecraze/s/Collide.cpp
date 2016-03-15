@@ -24,8 +24,8 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  aliens = engine->getNodeList(AlienNode().typeId());
-  ships = engine->getNodeList(ShipNode().typeId());
+  _aliens = _engine->getNodes("n/AlienSquad")[0];
+  _ship = _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,43 +41,22 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissiles() {
-  auto ms = MGMS()->getPool("Missiles")->list();
-  auto sq = CC_GNLF(AlienSquad,aliens,"squad");
-  auto ss= sq->aliens->list();
-
-  F__LOOP(it,ss) {
-    auto a= *it;
-    F__LOOP(it2,ms) {
-      auto m= *it2;
-      if (a->status && m->status) {
-        if (cx::collide(a,m)) {
-          a->hurt();
-          m->hurt();
-        }
-      }
-    }
-  }
+  auto po = MGMS()->getPool("Missiles");
+  auto pa = MGMS()->getPool("Aliens");
+  cx::testCollisions(po,pa);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkBombs() {
-  auto bs = MGMS()->getPool("Bombs")->list();
-  auto ship = CC_GNLF(Ship,ships,"ship");
 
-  if (ship->godMode) { return;}
+  auto h=CC_GEC(f::CHealth,_ship,"f/CHealth");
+  if (h->isGod()) {
+  return; }
 
-  F__LOOP(it,bs) {
-    auto b= *it;
-    if (b->status && ship->status ) {
-      if (cx::collide(b,ship)) {
-        ship->hurt();
-        b->hurt();
-      }
-    }
-  }
+  cx::testCollisions(
+      MGMS()->getPool("Bombs"),_ship);
 }
-
 
 
 NS_END

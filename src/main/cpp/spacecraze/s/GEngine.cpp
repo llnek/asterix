@@ -25,47 +25,89 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  MGMS()->reifyPool("Missiles");
-  MGMS()->reifyPool("Bombs");
-  MGMS()->reifyPool("Aliens");
+  MGMS()->reifyPools(
+      s_vec<sstr>{"Missiles", "Bombs", "Aliens"});
 
   createMissiles();
   createBombs();
-
+  createArena();
   createAliens();
   createShip();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GEngine::createArena() {
+  auto ent= this->reifyNode("Arena",true);
+  auto cfg= this->getCfg();
+  auto ees= cfg["enemy"];
+  auto p= cfg["player"];
+  auto lpr= mc_new(f::Loopers);
+  auto ss= mc_new(GVars);
+  f::DLTimer t;
+
+  // player
+  t.duration = JS_FLOAT(p["fireRate"]) * 1000;
+  t.timer= cx::reifyTimer(MGML(), t.duration);
+  lpr.tms.push_back(t);
+
+  // aliens
+  t.duration= JS_FLOAT(ees["fireRate"]) * 1000;
+  t.timer=cx::reifyTimer(MGML(), t.duration);
+  lpr.tms.push_back(t);
+
+  ent->checkin(lpr);
+  ent->checkin(ss);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GEngine::createMissiles(int cnt) {
-  auto p= MGMS()->getPool("Missiles");
+  auto po= MGMS()->getPool("Missiles");
   auto g= this->getCfg()["player"];
   auto d= JS_INT(g["speed"]);
-  p->preset([=]() {
+  po->preset([=]() {
     auto sp=cx::reifySprite("sfbullet");
     auto c= mc_new1(Missile,sp);
-    c->speed.y=d;
-    c->vel.y=d;
+    auto mv=mc_new(f::CMove);
+    auto ent= this->reifyNode("Missile");
+
     MGML()->addAtlasItem("game-pics", sp);
-    return c;
+    mv->speed.y=d;
+    mv->vel.y=d;
+    c->hide();
+
+    ent->checkin(mc_new(f::CHealth));
+    ent->checkin(mv);
+    ent->checkin(c);
+    return ent;
+
   },cnt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createBombs(int cnt) {
-  auto p= MGMS()->getPool("Bombs");
+  auto po= MGMS()->getPool("Bombs");
   auto g= this->getCfg()["enemy"];
   auto d= JS_INT(g["speed"]);
-  p->preset([=]() {
+  po->preset([=]() {
     auto sp=c::Sprite::create();
     auto c= mc_new1(Bomb,sp);
-    c->speed.y=d;
-    c->vel.y=d;
-    c->morph(1);
+    auto mv=mc_new(f::CMove);
+    auto ent=this->reifyNode("Bomb");
+
     MGML()->addAtlasItem("game-pics", sp);
-    return c;
+    mv->speed.y=d;
+    mv->vel.y=d;
+    c->morph(1);
+    c->hide();
+
+    ent->checkin(mc_new(f::CHealth));
+    ent->checkin(mv);
+    ent->checkin(c);
+    return ent;
+
   },cnt);
 }
 
@@ -83,22 +125,16 @@ void GEngine::initSystems() {
 //
 void GEngine::createShip() {
 
-  auto p = cx::reifySprite("sfgun");
-  auto ent= this->reifyEntity();
-  auto z= p->getContentSize();
-  auto c= mc_new1(Ship,p);
-  auto t= mc_new(Looper);
-  auto cfg= this->getCfg();
-  auto d= cfg["player"];
+  auto ent= this->reifyNode("Ship",true);
+  auto s= cx::reifySprite("sfgun");
+  auto c= mc_new1(Ship,s);
 
-  t->duration = JS_FLOAT(d["fireRate"]) * 1000;
-  t->timer = cx::reifyTimer(MGML(), t->duration);
-
-  ent->checkin(mc_new(Gesture));
-  ent->checkin(t);
+  ent->checkin(mc_new(f::CGesture));
+  ent->checkin(mc_new(f::CHealth));
+  ent->checkin(mc_new(f::CMove));
   ent->checkin(c);
 
-  MGML()->addAtlasItem("game-pics", p, 999,0);
+  MGML()->addAtlasItem("game-pics", s, 999);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -109,24 +145,23 @@ void GEngine::createAliens() {
   auto map= this->getCfg();
   auto wz= cx::visRect();
   auto wb= cx::visBox();
-  auto top = wb.top * 0.8f;
-  auto enemies= map["enemy"];
-  auto dur= JS_FLOAT(enemies["moveDuration"]);
-  auto r2= JS_FLOAT(enemies["fireRate"]);
-  auto scores= enemies["scores"];
-  auto layout= enemies["layout"];
+  auto top = wb.top * 0.8;
+  auto ees= map["enemy"];
+  auto scores= ees["scores"];
+  auto layout= ees["layout"];
   auto maxRight=wb.left;
   auto minLeft=wb.right;
+
   J__LOOP(it,layout) {
     auto obj = *it;
     float height_t=0;
     float width_t=0;
-    auto gap= JS_FLOAT(obj["gap"]);
     j::json fmt= JS_ARR(obj["fmt"]);
+    auto gap= JS_FLOAT(obj["gap"]);
     s_vec<Alien*> aliens;
     J__LOOP(it2, fmt) {
       auto n = *it2;
-      auto a = new Alien(JS_INT(n),1,10);
+      auto a = new Alien(JS_INT(n));//,1,10);
       auto sz= a->csize();
       width_t += sz.width;
       height_t= MAX(sz.height, height_t);
@@ -134,33 +169,32 @@ void GEngine::createAliens() {
     }
     width_t += gap * (aliens.size()-1);
 
-    auto lf= wb.left + 0.5f * (wb.right - wb.left - width_t);
+    auto lf= wb.left + 0.5 * (wb.right - wb.left - width_t);
     auto rt= lf + width_t;
     maxRight=MAX(maxRight, rt);
     minLeft=MIN(minLeft,lf);
     F__LOOP(it,aliens) {
+      auto e= this->reifyNode("Alien",true);
       auto a= *it;
-      auto sw= a->csize().width;
-      a->inflate(lf + sw * 0.5f, top);
-      lf += sw + gap;
-      pool->checkin(a);
+      auto sz= a->csize();
+      a->inflate(lf + HWZ(sz), top);
+      lf += sz.width + gap;
+      e->checkin(mc_new1(f::CStats, 10));
+      e->checkin(mc_new(f::CHealth));
+      e->checkin(mc_new(f::CMove));
+      e->checkin(a);
+      pool->checkin(e);
     }
-    top -= height_t * 1.5f;
+    top -= height_t * 1.5;
   }
 
-  auto q= mc_new1(AlienSquad,pool);
-  auto ent= this->reifyEntity();
-  auto lpr= mc_new(Looper);
-
+  auto ent= this->reifyNode("AlienSquad");
+  auto q= mc_new(AlienSquad);
   q->rightEdge= maxRight;
   q->leftEdge= minLeft;
-  q->duration=dur;
-
-  lpr->duration= r2 * 1000;
-  lpr->timer=cx::reifyTimer(MGML(), lpr->duration);
+  q->duration= JS_FLOAT(ees["moveDuration"]);
 
   ent->checkin(q);
-  ent->checkin(lpr);
 }
 
 

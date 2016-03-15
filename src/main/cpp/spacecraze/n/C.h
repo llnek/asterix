@@ -14,99 +14,81 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/GameScene.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "core/XPool.h"
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Alien : public f::ComObj {
-  MDECL_COMP_TPID("n/Alien")
-  Alien(int n, int health, int value) {
+struct CC_DLL Alien : public f::CPixie {
+  MDECL_COMP_TPID("f/CPixie")
+  Alien(int n) {
     assert(n > 0 && n < 4);
-    sprite = cx::reifySprite("sfenmy" + s::to_string(n));
-    MGML()->addAtlasItem("game-pics",sprite);
-    init(sprite,health,value);
+    node = cx::reifySprite("sfenmy" + s::to_string(n));
     type=n;
+    //MGML()->addAtlasItem("game-pics",node);
   }
   DECL_IZ(type)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Missile : public f::ComObj {
-  MDECL_COMP_TPID("n/Missile")
-  Missile(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
+struct CC_DLL Missile : public f::CPixie {
+  Missile(not_null<c::Node*> s)
+  : CPixie(s) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Bomb : public f::ComObj {
+struct CC_DLL Bomb : public f::CPixie {
+  Bomb(not_null<c::Node*> s)
+  : CPixie(s) {}
   MDECL_COMP_TPID("n/Bomb")
-  Bomb(not_null<c::Sprite*> s)
-  : ComObj(s) {
-  }
   void morph(int type) {
     assert(type > 0 && type < 4);
-    sprite->setSpriteFrame("sfbullet" + s::to_string(type));
+    node->setSpriteFrame(
+        "sfbullet" + s::to_string(type));
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ship : public f::ComObj {
-  MDECL_COMP_TPID("n/Ship")
-  Ship(not_null<c::Sprite*> s)
-  : ComObj(s,1,0) {
-    speed.x= 250;
-    vel.x=250;
+struct CC_DLL Ship : public f::CPixie {
+  MDECL_COMP_TPID("f/CPixie")
+  Ship(not_null<c::Node*> s)
+  : CPixie(s) {
+    //speed.x= 250;
+    //vel.x=250;
   }
   //virtual const c::Size csize() { return c::Size(64,64);//84,96); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Looper : public a::Component {
-  MDECL_COMP_TPID("n/Looper")
-  DECL_PTR(c::DelayTime, timer)
-  DECL_FZ(duration);
-};
+struct CC_DLL AlienSquad : public ecs::Component {
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-  DECL_BF(right)
-  DECL_BF(left)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL AlienSquad : public a::Component {
-
-  const s_vec<f::ComObj*>& list() { return aliens->list(); }
-
-  AlienSquad(not_null<f::XPool*> aliens) {
+  AlienSquad(not_null<f::FPool*> aliens) {
     this->aliens=aliens;
   }
-
-  int size() { return aliens->size(); }
 
   MDECL_COMP_TPID("n/AlienSquad")
 
   //not owner of pool
-  DECL_PTR(f::XPool, aliens)
+  DECL_PTR(f::FPool, aliens)
   DECL_FZ(rightEdge)
   DECL_FZ(leftEdge)
   DECL_FZ(duration)
 
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GVars : public ecs::Component {
+  MDECL_COMP_TPID("n/GVars")
+
+};
 
 
 NS_END

@@ -24,9 +24,9 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  void testCollision(ecs::Node*, ecs::Node*);
-  void testCollisions(f::FPool*, f::FPool*);
-  void testCollisions(f::FPool*, ecs::Node*);
+  void testCollision(not_null<ecs::Node*>, not_null<ecs::Node*>);
+  void testCollisions(not_null<f::FPool*>, not_null<f::FPool*>);
+  void testCollisions(not_null<f::FPool*>, not_null<ecs::Node*>);
   void resurrect(not_null<ecs::Node*>);
 
   void resolveElastic(not_null<CPixie*> rA,

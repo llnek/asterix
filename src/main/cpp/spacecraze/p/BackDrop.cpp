@@ -18,11 +18,10 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void BackDrop::decorate() {
+void BackDrop::decoUI() {
 
-    auto num= CC_CSV(c::Integer, "MAX+STARS");
+  auto num= CC_CSV(c::Integer, "MAX+STARS");
   auto wb= cx::visBox();
-  c::Size sz;
 
   centerImage("game.bg");
   regoAtlas("game-pics");
@@ -31,10 +30,12 @@ void BackDrop::decorate() {
   for (auto i = 0; i < num; ++i) {
     auto s = cx::reifySprite("star");
     if (i==0) {
-      sz= s->getContentSize();
+      this->_sz= CC_CSIZE(s);
     }
-      s->setPosition(cx::rand() * wb.right, cx::rand() * wb.top);
-    stars.push_back(s);
+    s->setPosition(
+        cx::rand() * wb.right,
+        cx::rand() * wb.top);
+    _stars.push_back(s);
     addAtlasItem("game-pics", s);
   }
 
@@ -44,15 +45,16 @@ void BackDrop::decorate() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void BackDrop::update(float dt) {
-    auto di= CC_CSV(c::Float, "star+speed+inc");
-    auto d= CC_CSV(c::Float, "star+speed");
-    auto wb = cx::visBox();
-  F__LOOP(it, stars) {
+  auto di= CC_CSV(c::Float, "star+speed+inc");
+  auto d= CC_CSV(c::Float, "star+speed");
+  auto wb = cx::visBox();
+
+  F__LOOP(it, _stars) {
     auto s= *it;
     auto y= s->getPositionY() - d;
 
-    if(y < sz.height * -0.5) {
-      y = wb.top + sz.height * 0.5;
+    if(y < _sz.height * -0.5) {
+      y = wb.top + HHZ(_sz);
     }
 
     s->setPositionY(y);

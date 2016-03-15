@@ -33,8 +33,8 @@ c::Scene* Config::prelude() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "f86694e1-5604-4d53-b684-eae696894546";
-  app_id= "space craze";
+  _game_id= "f86694e1-5604-4d53-b684-eae696894546";
+  _app_id= "space craze";
 
   addCst("star+speed+inc", CC_FLOAT(0.5f));
   addCst("star+speed", CC_FLOAT(10.0f));
@@ -50,7 +50,7 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  //addAtlas("lang-pics",  CC_STR("l10n/en/images.plist"));
+  addAtlas("explosions", CC_STR("pics/explosion.plist"));
   //addAtlas("game-pics", CC_STR("pics/sprites.plist"));
   addAtlas("game-pics", CC_STR("pics/spacetex.plist"));
 
@@ -87,23 +87,16 @@ void Config::initLevels() {
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
   //for default font, we use 48pt
-  scale = 48.0f * rs.width / gz.width;
+  _scale = 48.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  //fp= getAtlas("lang-pics");
-  //c->addSpriteFramesWithFile(fp);
-  //CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
 }
-
 
 
 

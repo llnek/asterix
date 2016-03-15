@@ -17,23 +17,26 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void spawnPlayer(Ship* ship) {
+void spawnPlayer(ecs::Node *node) {
 
+  auto h=CC_GEC(f::CHealth,node,"f/CHealth");
+  auto s=CC_GEC(Ship,node,"f/CPixie");
   auto wb = cx::visBox();
 
-  auto movement = c::EaseBackOut::create(
-      c::MoveTo::create(1.0f,
-        c::ccp(wb.cx, wb.top * 0.1f)));
-  auto movement_over = c::CallFunc::create([=]() {
-      ship->mortal();
-  });
-
-  ship->inflate(wb.cx, wb.top * -0.1f);
-  ship->sprite->setOpacity(255);
-  ship->sprite->setScale(1);
-  ship->god();
-  ship->sprite->runAction(c::Sequence::createWithTwoActions(
-        movement, movement_over));
+  s->inflate(wb.cx, wb.top * -0.1);
+  h->reset();
+  s->node->setOpacity(255);
+  s->node->setScale(1);
+  s->enterGodMode();
+  s->node->runAction(
+      c::Sequence::create(
+        c::EaseBackOut::create(
+          c::MoveTo::create(1,
+            c::Vec2(wb.cx, wb.top * 0.1))),
+        c::CallFunc::create(
+          [=]() { h->exitGodMode(); }),
+        CC_NIL));
+  node->take();
 }
 
 //////////////////////////////////////////////////////////////////////////////

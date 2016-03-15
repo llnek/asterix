@@ -20,7 +20,7 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
 
   auto title = cx::reifySprite("sftitle");
   auto wz= cx::visRect();
@@ -30,13 +30,14 @@ void Splash::decorate() {
 
   regoAtlas("game-pics");
 
-  title->setPosition(wb.cx, wb.top * 1.2f);
+  title->setPosition(wb.cx, wb.top * 1.2);
   title->runAction(
-      c::Sequence::createWithTwoActions(
-        c::DelayTime::create(0.5f),
+      c::Sequence::create(
+        c::DelayTime::create(0.5),
         c::EaseBackOut::create(
-          c::MoveBy::create(0.5f,
-            c::ccp(wb.left, wb.top * -0.5f)))));
+          c::MoveBy::create(0.5,
+            c::Vec2(wb.left, wb.top * -0.5))),
+        CC_NIL));
   addAtlasItem("game-pics", title);
 
   auto b= cx::reifyMenuBtn("play");
@@ -45,18 +46,18 @@ void Splash::decorate() {
 
   b->setPosition(wb.cx, wb.top * -0.15);
   b->runAction(
-      c::Sequence::createWithTwoActions(
-        c::DelayTime::create(1.0f),
+      c::Sequence::create(
+        c::DelayTime::create(1),
         c::EaseBackOut::create(
-          c::MoveBy::create(0.5f,
-            c::ccp(wb.left, wb.top * 0.5f)))));
-
+          c::MoveBy::create(0.5,
+            c::Vec2(wb.left, HTV(wb.top)))),
+        CC_NIL));
   b->setCallback(
       [=](c::Ref*) { cx::runEx(Game::reify(ctx)); });
   addItem(menu);
 
   demo(0);
-  schedule(CC_SCHEDULE_SELECTOR(Splash::demo), 0.5f);
+  schedule(CC_SCHEDULE_SELECTOR(Splash::demo), 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,18 +69,18 @@ void Splash::demo(float dt) {
   c::Vec2 dist;
   c::Vec2 src;
 
-  if(cx::randSign() > 0) {
+  if (cx::randSign() > 0) {
     // left-to-right
-    src.x = cx::randSign() * wb.right * 0.25f;
-    src.y = wb.top * 0.25f + cx::rand() * wb.top * 0.5f;
-    dist.x = src.x < 0 ? wb.right*1.5f : wb.right*-1.5f;
+    src.x = cx::randSign() * wb.right * 0.25;
+    src.y = wb.top * 0.25 + cx::rand() * HTV(wb.top);
+    dist.x = src.x < 0 ? wb.right*1.5 : wb.right*-1.5;
     dist.y = cx::rand() * wb.top;
   } else {
     // top-to-bottom
-    src.x = wb.right * 0.25f + cx::rand() * wb.right * 0.5f;
-    src.y = cx::randSign() * wb.top * 0.25f;
+    src.x = wb.right * 0.25 + cx::rand() * HTV(wb.right);
+    src.y = cx::randSign() * wb.top * 0.25;
     dist.x = cx::rand() * wb.right;
-    dist.y = src.y < 0 ? wb.top*1.5f : wb.top*-1.5f;
+    dist.y = src.y < 0 ? wb.top*1.5 : wb.top*-1.5;
   }
 
   // choose an enemy ship 1 <= x <= 3
@@ -91,10 +92,11 @@ void Splash::demo(float dt) {
   enemy->setPosition(src);
 
   // create & run sequence of move & remove
-  auto move= c::MoveBy::create(duration, dist);
-  auto remove = c::RemoveSelf::create(true);
-  enemy->runAction(c::Sequence::createWithTwoActions(move, remove));
-
+  enemy->runAction(
+      c::Sequence::create(
+        c::MoveBy::create(duration, dist),
+        c::RemoveSelf::create(true),
+        CC_NIL));
 }
 
 

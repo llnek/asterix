@@ -13,12 +13,12 @@
 
 //////////////////////////////////////////////////////////////////////////////
 #include "core/JSON.h"
-#include "N.h"
+#include "C.h"
 
 NS_BEGIN(spacecraze)
 
+void spawnPlayer(ecs::Node*);
 j::json loadLevel(int n);
-void spawnPlayer(Ship*);
 
 
 

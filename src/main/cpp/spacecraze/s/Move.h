@@ -13,16 +13,15 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "n/N.h"
+#include "GEngine.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Move : public a::System {
+class CC_DLL Move : public ecs::System {
 
-  void firePlayerBullet(float);
-  void fireBombs(Alien*);
+  void firePlayerBullet(Ship*, float);
+  void fireBombs(ecs::Node*);
   void processMissiles(float);
   void processBombs(float);
   void processAliens(float);
@@ -30,17 +29,19 @@ class CC_DLL Move : public a::System {
 
 public:
 
-  MDECL_SYS_PRIORITY(a::Move)
+  MDECL_SYS_PRIORITY(ecs::Move)
   MDECL_SYS_TPID("s/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  Move(ecs::Engine *e)
     : System(e) {
   }
 
-  DECL_PTR(a::NodeList,aliens)
-  DECL_PTR(a::NodeList,ships)
+  DECL_PTR(ecs::Node, _aliens)
+  DECL_PTR(ecs::Node, _arena)
+  DECL_PTR(ecs::Node, _ship)
+
 };
 
 

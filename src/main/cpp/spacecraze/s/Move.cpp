@@ -24,45 +24,48 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  aliens = engine->getNodeList(AlienNode().typeId());
-  ships = engine->getNodeList(ShipNode().typeId());
+  _aliens = _engine->getNodes("n/AlienSquad")[0];
+  _ship = _engine->getNodes("f/CGesture")[0];
+  _arena = _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processAliens(float dt) {
 
-  auto squad = CC_GNLF(AlienSquad,aliens,"squad");
-  auto lpr = CC_GNLF(Looper,aliens,"looper");
-  auto a = squad->aliens->randGet();
+  auto squad = CC_GEC(AlienSquad,_aliens,"n/AlienSquad");
+  auto lpr = CC_GNLF(f::Loopers,_arena,"f/Loopers");
+  auto po=MGMS()->getPool("Aliens");
+  auto pa= po->actives();
+  if (pa.size() == 0) { return; }
+  auto idx = cx::randInt(pa.size());
+  auto a= pa[idx];
 
-  if (cx::timerDone(lpr->timer)) {
-    cx::undoTimer(lpr->timer);
-    fireBombs((Alien*) a);
-    lpr->timer=cx::reifyTimer(MGML(), lpr->duration);
+  if (cx::timerDone(lpr->tms[1].timer)) {
+    cx::undoTimer(lpr->tms[1].timer);
+    fireBombs(a);
+    lpr->tms[1].timer=cx::reifyTimer(MGML(), lpr->tms[1].duration);
   }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::fireBombs(Alien* enemy) {
+void Move::fireBombs(ecs::Node *node) {
 
-  auto scale_up = c::ScaleTo::create(0.25f, 1.0f);
-  auto pos = c::ccpSub(enemy->pos(),
-      c::ccp(0, enemy->csize().height * 0.3f));
-  auto p= MGMS()->getPool("Bombs");
-  auto b= p->get();
-
-  if (ENP(b)) {
-    SCAST(GEngine*,engine)->createBombs();
-    b= p->get();
-  }
-
-  SCAST(Bomb*,b)->morph(enemy->type);
+  auto scale_up = c::ScaleTo::create(0.25, 1.0);
+  auto ui=CC_GEC(Alien,node,"f/CPixie");
+  auto pos = c::ccpSub(ui->pos(),
+      c::Vec2(0, ui->csize().height * 0.3));
+  auto po= MGMS()->getPool("Bombs");
+  auto e= po->take(true);
+  auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+  auto b=CC_GEC(Bomb,e,"f/CPixie");
+  b->morph(ui->type);
   b->inflate(pos.x, pos.y);
-  b->sprite->setScale(0.5f);
-  b->sprite->runAction(scale_up);
+  h->reset();
+  b->node->setScale(0.5);
+  b->node->runAction(scale_up);
 
   cx::sfxPlay("shoot_enemy");
 }
@@ -70,58 +73,56 @@ void Move::fireBombs(Alien* enemy) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processShip(float dt) {
-  auto lpr = CC_GNLF(Looper,ships,"looper");
-  auto ship = CC_GNLF(Ship,ships,"ship");
+  auto lpr = CC_GEC(f::Loopers,_arena,"f/Loopers");
+  auto mv = CC_GEC(f::CMove,_ship,"f/CMove");
+  auto sp = CC_GEC(Ship,_ship,"f/CPixie");
   auto bx= MGMS()->getEnclosureBox();
-  auto pos = ship->pos();
+  auto pos = sp->pos();
   auto dirty=false;
   auto x= pos.x;
   auto y= pos.y;
 
-  if (ship->godMode) { return; }
+  if (_ship->isGod()) { return; }
 
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW)) {
-    x += ship->vel.x * dt;
+    x += mv->vel.x * dt;
     dirty=true;
   }
 
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW)) {
-    x -= ship->vel.x * dt;
+    x -= mv->vel.x * dt;
     dirty=true;
   }
 
   if (dirty) {
-    ship->setPos(cx::clamp(
-          c::Vec2(x,y), ship->csize(), bx).x, pos.y);
+    sp->setPos(cx::clamp(
+          c::Vec2(x,y), sp->csize(), bx).x, pos.y);
   }
 
-  if (cx::timerDone(lpr->timer)) {
-    cx::undoTimer(lpr->timer);
+  if (cx::timerDone(lpr->tms[0].timer)) {
+    cx::undoTimer(lpr->tms[0].timer);
     firePlayerBullet(dt);
-    lpr->timer= cx::reifyTimer(MGML(), lpr->duration);
+    lpr->tms[0].timer= cx::reifyTimer(MGML(), lpr->tms[0].duration);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::firePlayerBullet(float dt) {
+void Move::firePlayerBullet(Ship *sp, float dt) {
 
-  auto ship = CC_GNLF(Ship,ships,"ship");
-  auto wb= cx::visBox();
-  auto pos = c::ccpAdd(ship->pos(),
-      c::ccp(0, ship->csize().height * 0.3f));
+  auto scale_up = c::CCScaleTo::create(0.25, 1.0);
+  auto pos = c::ccpAdd(sp->pos(),
+      c::Vec2(0, sp->csize().height * 0.3));
+  auto po= MGMS()->getPool("Missiles");
+  auto m = po->take(true);
 
-  auto scale_up = c::CCScaleTo::create(0.25f, 1.0f);
-  auto p= MGMS()->getPool("Missiles");
-  auto m = p->get();
-  if (ENP(m)) {
-    SCAST(GEngine*,engine)->createMissiles();
-    m=p->get();
-  }
+  auto h=CC_GEC(f::CHealth,m,"f/CHealth");
+  auto ui=CC_GEC(f::CPixie,m,"f/CPixie");
 
-  m->inflate(pos.x,pos.y);
-  m->sprite->setScale(0.5f);
-  m->sprite->runAction(scale_up);
+  ui->inflate(pos.x,pos.y);
+  h->reset();
+  ui->node->setScale(0.5);
+  ui->node->runAction(scale_up);
 
   cx::sfxPlay("shoot_player");
 }
@@ -131,16 +132,20 @@ void Move::firePlayerBullet(float dt) {
 void Move::processMissiles(float dt) {
   auto world = MGMS()->getEnclosureBox();
   auto p= MGMS()->getPool("Missiles");
-  auto ms= p->list();
+  auto ms= p->ls();
+
   F__LOOP(it,ms) {
-    auto m = (Missile*) *it;
-    if (m->status) {
-      auto pos= m->pos();
-      pos.y += m->vel.y * dt;
+    auto m = *it;
+    if (m->status()) {
+      auto ui=CC_GEC(f::CPixie,m,"f/CPixie");
+      auto mv=CC_GEC(f::CMove,m,"f/CMove");
+      auto pos= ui->pos();
+      pos.y += mv->vel.y * dt;
       if (pos.y > world.top) {
-        m->deflate();
+        ui->deflate();
+        m->yield();
       } else {
-        m->setPos(pos.x,pos.y);
+        ui->setPos(pos.x,pos.y);
       }
     }
   };
@@ -150,17 +155,21 @@ void Move::processMissiles(float dt) {
 //
 void Move::processBombs(float dt) {
   auto world = MGMS()->getEnclosureBox();
-  auto p= MGMS()->getPool("Bombs");
-  auto bs= p->list();
+  auto po= MGMS()->getPool("Bombs");
+  auto bs= po->ls();
+
   F__LOOP(it,bs) {
-    auto b = (Bomb*) *it;
-    if (b->status) {
-      auto pos= b->pos();
-      pos.y -= b->vel.y * dt;
+    auto b = *it;
+    if (b->status()) {
+      auto ui=CC_GEC(f::CPixie,b,"f/CPixie");
+      auto mv=CC_GEC(f::CMove,b,"f/CMove");
+      auto pos= ui->pos();
+      pos.y -= mv->vel.y * dt;
       if (pos.y < world.bottom) {
-        b->deflate();
+        ui->deflate();
+        b->yield();
       } else {
-        b->setPos(pos.x,pos.y);
+        ui->setPos(pos.x,pos.y);
       }
     }
   };

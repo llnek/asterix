@@ -13,16 +13,17 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine : public a::Engine {
+class CC_DLL GEngine : public ecs::Engine {
 
   void createAliens();
   void createShip();
+  void createArena();
 
 public:
 
@@ -31,7 +32,7 @@ public:
 
   virtual void initEntities();
   virtual void initSystems();
-  virtual ~GEngine() {}
+
   GEngine(j::json c)
     : Engine(c) {
   }

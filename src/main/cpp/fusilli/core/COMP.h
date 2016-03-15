@@ -42,34 +42,45 @@ struct CC_DLL CHealth : public ecs::Component {
     curHP=h;
   }
   virtual void hurt(int damage=1) {
-    curHP -= damage;
+    if (!godMode) {
+      curHP -= damage;
+    }
   }
   virtual void reset() {
+    godMode=false;
     curHP=origHP;
   }
+
+  void enterGodMode() { godMode=true; }
+  void exitGodMode() { godMode=false; }
+  bool isGod() { return godMode; }
+
   DECL_IZ(origHP)
   DECL_IZ(curHP)
-
+  DECL_BF(godMode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Looper : public ecs::Component {
-  virtual ~Looper() { CC_DROP(timer); }
+  virtual ~Looper() { CC_DROP(tm.timer); }
   Looper() {}
   MDECL_COMP_TPID("f/Looper")
-  DECL_PTR(c::DelayTime, timer)
+  DECL_TD(DLTimer, tm)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Loopers : public ecs::Component {
+  MDECL_COMP_TPID("f/Loopers")
   virtual ~Loopers() {
-    F__LOOP(it,timers) { CC_DROP(*it); }
+    F__LOOP(it,tms) {
+      auto &z= *it;
+      CC_DROP(z.timer);
+    }
   }
   Loopers() {}
-  MDECL_COMP_TPID("f/Loopers")
-  s_vec<c::DelayTime*> timers;
+  s_vec<DLTimer> tms;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -120,6 +131,7 @@ struct CC_DLL CMove : public ecs::Component {
   DECL_TD(c::Vec2, vel)
   DECL_TD(c::Vec2, acc)
 
+  DECL_FZ(interval)//millis
   DECL_FZ(power)
   DECL_FZ(angle)
 

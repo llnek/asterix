@@ -22,18 +22,17 @@ NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
 BEGIN_NS_UNAMED
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  virtual void onMouseMotion(f::ComObj*, const c::Vec2&);
-  virtual void postReify();
+  virtual void onMouseMotion(const c::Vec2&);
+  virtual void onInited();
 
   HUDLayer* getHUD() {
     return (HUDLayer*) getSceneX()->getLayer(3); }
 
-  void onAlienKilled(Alien*);
+  void onAlienKilled(ecs::Node*);
   void onPlayerKilled();
   void onEnd();
 
@@ -41,54 +40,62 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  DECL_PTR(a::NodeList,aliens)
-  DECL_PTR(a::NodeList,ships)
+  DECL_PTR(ecs::Node, _aliens)
+  DECL_PTR(ecs::Node,_ship)
+  DECL_PTR(ecs::Node, _shared)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseMotion(f::ComObj *c, const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const c::Vec2 &tap) {
+  auto ui= CC_GEC(Ship,_ship,"f/CPixie");
   auto bx= MGMS()->getEnclosureBox();
-  auto pos= c->pos();
-  c->setPos(cx::clamp(loc, c->csize(), bx).x, pos.y);
+  auto pos= ui->pos();
+  auto loc= cx::clamp(tap, ui->csize(), bx);
+  ui->setPos(loc.x, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onEnd() {
+  this->setOpacity(0.1 * 255);
   MGMS()->stop();
+  surcease();
+  //Ende::reify(MGMS(),4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onPlayerKilled() {
 
-  auto death = c::Spawn::createWithTwoActions(
-      c::FadeOut::create(0.5f),
-      c::ScaleTo::create(0.5f, 1.5f));
-  auto ship= CC_GNLF(Ship,ships,"ship");
-  auto d1=c::CallFunc::create([=]() {
-        ship->deflate();
-    });
-  auto pos= ship->pos();
+  auto sp= CC_GEC(Ship,_ship,"f/CPixie");
+  auto pos= sp->pos();
   c::CallFunc *d2;
 
   if (getHUD()->reduceLives(1)) {
     d2=c::CallFunc::create([=]() {
         this->onEnd();
     });
-  } else  {
+  } else {
     d2= c::CallFunc::create([=]() {
-        spawnPlayer(ship);
+        spawnPlayer(_ship);
     });
   }
 
-  ship->sprite->runAction(
-      c::Sequence::create( death, d1,d2,nullptr));
+  sp->node->runAction(
+      c::Sequence::create(
+        c::Spawn::create(
+          c::FadeOut::create(0.5),
+          c::ScaleTo::create(0.5, 1.5),CC_NIL),
+        c::CallFunc::create(
+          [=]() { sp->deflate(); }),
+        d2,
+        CC_NIL));
 
-  auto explosion = c::ParticleSystemQuad::create("pics/explosion.plist");
+  auto explosion =
+    c::ParticleSystemQuad::create(
+        XCFG()->getAtlas("explosions"));
   explosion->setAutoRemoveOnFinish(true);
   explosion->setPosition(pos);
   MGML()->addItem(explosion);
@@ -98,56 +105,55 @@ void GLayer::onPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onAlienKilled(Alien *obj) {
+void GLayer::onAlienKilled(ecs::Node *node) {
 
-  obj->sprite->stopAllActions();
+  auto cs=CC_GEC(AlienType,node,"f/CStats");
+  auto ui=CC_GEC(Alien,node,"f/CPixie");
 
-  auto blast = c::ScaleTo::create(0.25f, 0.0f);
-  auto remove =c::CallFunc::create([=]() {
-      obj->deflate();
-  });
-  obj->sprite->runAction(
-      c::Sequence::createWithTwoActions(blast, remove));
+  ui->node->stopAllActions();
+  ui->node->runAction(
+      c::Sequence::create(
+        c::ScaleTo::create(0.25, 0.0),
+        c::CallFunc::create(
+          [=]() {
+            ui->deflate();
+            node->yield(); }),
+        CC_NIL));
 
-  auto exp = c::ParticleSystemQuad::create("pics/explosion.plist");
+  auto exp = c::ParticleSystemQuad::create( XCFG()->getAtlas("explosion"));
   auto pc= c::ccc4f(0.9569, 0.2471, 0.3373, 1);
+  exp->setAutoRemoveOnFinish(true);
+  exp->setPosition(ui->pos());
   exp->setStartColor(pc);
   exp->setEndColor(pc);
-  exp->setAutoRemoveOnFinish(true);
-  exp->setPosition(obj->pos());
   MGML()->addItem(exp);
 
-  getHUD()->updateScore(obj->score);
+  getHUD()->updateScore(cs->value);
   cx::sfxPlay("blast_enemy");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
+void GLayer::decoUI() {
   auto c= loadLevel(MGMS()->getLevel());
   regoAtlas("game-pics");
-  engine= mc_new1(GEngine,c);
+  _engine= mc_new1(GEngine,c);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
-  aliens = engine->getNodeList(AlienNode().typeId());
-  ships = engine->getNodeList(ShipNode().typeId());
-  auto lpr2= CC_GNLF(Looper,aliens,"looper");
-  auto lpr1= CC_GNLF(Looper,ships,"looper");
-  auto s= CC_GNLF(Ship,ships,"ship");
+void GLayer::onInited() {
+  _aliens = _engine->getNodes("n/AlienSquad")[0];
+  _ship= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 
-  this->motionees.push_back(s);
-  spawnPlayer(s);
+  spawnPlayer(_ship);
 
+  auto lpr= CC_GEC(Loopers,_shared,"f/Loopers");
   // timers for bullets
-  lpr2->timer = cx::reifyTimer(MGML(), 1.0f);
-  lpr1->timer = cx::reifyTimer(MGML(), 1.0f);
+  lpr->timers[0]= cx::reifyTimer(MGML(), 1000);
+  lpr->timers[1]= cx::reifyTimer(MGML(), 1000);
 }
-
-
-
 
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
@@ -168,13 +174,12 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Game::decorate() {
+void Game::decoUI() {
   BackDrop::reify(this, 1);
   HUDLayer::reify(this, 3);
   GLayer::reify(this,2);
   play();
 }
-
 
 
 NS_END

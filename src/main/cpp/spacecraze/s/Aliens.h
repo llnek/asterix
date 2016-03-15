@@ -13,28 +13,27 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
-#include "n/N.h"
+#include "s/GEngine.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Aliens : public a::System {
+class CC_DLL Aliens : public ecs::System {
 
+  DECL_PTR(ecs::Node,_aliens)
   void startEnemies();
 
 public:
 
+  MDECL_SYS_PRIORITY(ecs::AI)
   MDECL_SYS_TPID("s/Aliens")
-  MDECL_SYS_PRIORITY(a::AI)
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Aliens(a::Engine *e)
+  Aliens(ecs::Engine *e)
     : System(e) {
   }
 
-  DECL_PTR(a::NodeList,aliens)
 };
 
 
