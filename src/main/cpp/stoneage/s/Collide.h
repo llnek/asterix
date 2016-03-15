@@ -8,25 +8,26 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Collide : public a::System {
+class CC_DLL Collide : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Collide)
+  MDECL_SYS_PRIORITY( ecs::Collide)
   MDECL_SYS_TPID("n/Collide")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Collide(a::Engine *e)
+  Collide(ecs::Engine *e)
   : System(e)
   {}
 

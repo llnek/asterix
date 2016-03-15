@@ -20,38 +20,40 @@ NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
 
   auto wb=cx::visBox();
 
   centerImage("intro.bg");
 
   //create pterodactyl animation
-  auto p= cx::loadSprite("ptero_frame1.png");
-  p->setPosition(wb.right + 100, wb.top * 0.8f);
+  auto p= cx::reifySprite("ptero_frame1.png");
+  p->setPosition(wb.right + 100, wb.top * 0.8);
   addItem(p);
 
-  auto animation = c::Animation::create();
+  auto anim= c::Animation::create();
   for (auto i=1; i < 4; ++i) {
-    auto name = "pics/ptero_frame"+s::to_string(i)+".png";
-    animation->addSpriteFrameWithFile(name);
+    auto name = "ptero_frame"+s::to_string(i)+".png";
+    anim->addSpriteFrame(
+        cx::getSpriteFrame(name));
   }
-  animation->setDelayPerUnit(0.5 / 3.0);
-  animation->setRestoreOriginalFrame(true);
-  animation->setLoops(-1);
+  anim->setDelayPerUnit(0.5 / 3.0);
+  anim->setRestoreOriginalFrame(true);
+  anim->setLoops(-1);
 
-  auto animate = c::Animate::create(animation);
+  auto animate = c::Animate::create(anim);
   p->runAction(animate);
 
-  auto moveOut = c::MoveTo::create(0,
-      c::Vec2(wb.right + 100, wb.top * 0.8));
-  auto moveIn = c::MoveTo::create(4.0,
-      c::Vec2(-100, wb.top * 0.8));
-  auto delay = c::DelayTime::create(2.5);
   p->runAction(c::RepeatForever::create(
-        c::Sequence::create(moveOut, moveIn, delay,CC_NIL)));
+        c::Sequence::create(
+          c::MoveTo::create(0,
+              c::Vec2(wb.right + 100, wb.top * 0.8)),
+          c::MoveTo::create(4.0,
+              c::Vec2(-100, wb.top * 0.8)),
+          c::DelayTime::create(2.5),
+          CC_NIL)));
 
-  auto ch= cx::loadSprite("introCharacter.png");
+  auto ch= cx::reifySprite("introCharacter.png");
   ch->setPosition(wb.cx, wb.cy + 110);
   addItem(ch);
 
@@ -59,7 +61,8 @@ void Splash::decorate() {
   frame->setPosition(wb.cx, wb.cy);
   addItem(frame);
 
-  auto btn = c::MenuItemImage::create("pics/playBtn.png", "pics/playBtnOver.png");
+  auto btn = cx::reifyMenuBtn("playBtn.png",
+                              "playBtnOver.png");
   btn->setPosition(wb.cx, wb.top * 0.2);
   btn->setCallback([=](c::Ref*) {
     cx::sfxMusic("background",true);
@@ -67,7 +70,6 @@ void Splash::decorate() {
   });
   auto menu  = cx::mkMenu(btn);
   addItem(menu);
-
 }
 
 

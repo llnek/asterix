@@ -19,10 +19,10 @@ NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
-  auto diamondScoreBg = cx::loadSprite("diamondScore.png");
-  auto scoreBg = cx::loadSprite("gemsScore.png");
+  auto diamondScoreBg = cx::reifySprite("diamondScore.png");
+  auto scoreBg = cx::reifySprite("gemsScore.png");
   auto wb= cx::visBox();
 
   diamondScoreBg->setPosition(100, wb.top - 30);
@@ -31,31 +31,31 @@ void HUDLayer::decorate() {
   scoreBg->setPosition(280, wb.top - 30);
   addItem(scoreBg);
 
-  dscoreLabel = cx::reifyLabel("dft", 20, "0");
-  dscoreLabel->setAlignment(c::TextHAlignment::RIGHT);
-  dscoreLabel->setMaxLineWidth(150);
-  dscoreLabel->setPosition (140, wb.top - 30);
-  addItem(dscoreLabel);
+  _dscoreLabel = cx::reifyLabel("dft", 20, "0");
+  _dscoreLabel->setAlignment(c::TextHAlignment::RIGHT);
+  _dscoreLabel->setMaxLineWidth(150);
+  _dscoreLabel->setPosition (140, wb.top - 30);
+  addItem(_dscoreLabel);
 
-  scoreLabel = cx::reifyLabel("dft", 20, "0");
-  scoreLabel->setAlignment(c::TextHAlignment::RIGHT);
-  scoreLabel->setMaxLineWidth(150);
-  scoreLabel->setPosition (330, wb.top - 30);
-  addItem(scoreLabel);
+  _scoreLabel = cx::reifyLabel("dft", 20, "0");
+  _scoreLabel->setAlignment(c::TextHAlignment::RIGHT);
+  _scoreLabel->setMaxLineWidth(150);
+  _scoreLabel->setPosition (330, wb.top - 30);
+  addItem(_scoreLabel);
 
-  dscore=0;
-  score=0;
+  _dscore=0;
+  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(const sstr &type, int value) {
   if ("diamond" == type) {
-    dscore += value;
-    dscoreLabel->setString(s::to_string(dscore));
+    _dscore += value;
+    _dscoreLabel->setString(s::to_string(_dscore));
   } else {
-    score += value;
-    scoreLabel->setString(s::to_string(score));
+    _score += value;
+    _scoreLabel->setString(s::to_string(_score));
   }
 }
 

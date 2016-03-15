@@ -9,8 +9,6 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-//////////////////////////////////////////////////////////////////////////////
-
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -33,6 +31,7 @@ bool AI::update(float dt) {
   }
   return true;
 }
+
 
 NS_END
 

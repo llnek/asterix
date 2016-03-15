@@ -8,10 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 
 NS_BEGIN(stoneage)
 
@@ -40,9 +41,9 @@ class GemInfo;
 class Gem;
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
 
-  s_vec<f::FArrayPtr<Gem>*> gridGemsColumnMap;
+  s_vec<f::FArrayPtr<Gem>*> gemsColMap;
   s_vec<f::FArrInt*> grid;
   s_vec<Gem*> allGems;
   s_vec<f::Cell2I> matchArray;
@@ -55,7 +56,7 @@ struct CC_DLL GVars : public a::Component {
   DECL_PTR(Gem,targetGem)
   DECL_TD(f::Cell2I,selectedIndex)
   DECL_TD(f::Cell2I,targetIndex)
-  DECL_TD(c::Vec2,selectedGemPosition)
+  DECL_TD(c::Vec2,selectedGemPos)
   DECL_IZ(combos)
   DECL_BF(addingCombos)
 };
@@ -64,20 +65,17 @@ struct CC_DLL GVars : public a::Component {
 //
 
 bool isValidTarget(GVars*, int px, int py, const c::Vec2 &);
-GemInfo findGemAtPosition(GVars*, const c::Vec2&);
+GemInfo findGemAtPos(GVars*, const c::Vec2&);
 bool checkGridMatches(GVars*);
 void selectStartGem(GVars*, const GemInfo&);
 void selectTargetGem(GVars*, const GemInfo&);
 
-
-const sstr getGemPngPath(int type);
 const sstr getGemPng(int type);
-
 int getGemType(int pos);
 int getNewGem();
 
-int getVerticalHorizontalUnique(GVars*, int col, int row);
-int getVerticalUnique(GVars*, int col, int row);
+int getVertHorzUnique(GVars*, int col, int row);
+int getVertUnique(GVars*, int col, int row);
 
 void dropSelectedGem(GVars*);
 void collapseGrid(GVars*);
@@ -97,7 +95,7 @@ void swapGems(GVars*, Gem*, Gem*, VOIDFN);
 
 void dropGemTo(Gem*, float y, float delay, VOIDFN );
 void animateCollapse(GVars*, VOIDFN );
-void collectDiamonds(const s_vec<f::ComObj*>&);
+void collectDiamonds(const s_vec<ecs::Node*>&);
 
 
 void dbgGemTypes(GVars*,int);

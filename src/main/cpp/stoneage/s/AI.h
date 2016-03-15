@@ -8,25 +8,26 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
+#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL AI : public a::System {
+class CC_DLL AI : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( a::AI)
+  MDECL_SYS_PRIORITY( ecs::AI)
   MDECL_SYS_TPID("n/AI")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  AI(a::Engine *e)
+  AI(ecs::Engine *e)
   : System(e)
   {}
 

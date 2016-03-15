@@ -11,7 +11,6 @@
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
-#include "core/ComObj.h"
 #include "core/CCSX.h"
 #include "lib.h"
 #include "C.h"
@@ -37,7 +36,8 @@ static s_arr<sstr,GEMSET_SIZE> SKINS = {
 static bool find (const f::Cell2I &np, const s_vec<f::Cell2I> &arr) {
   F__LOOP(it, arr) {
     auto &a= *it;
-    if (a.x == np.x and a.y == np.y) return true;
+    if (a.x == np.x &&
+        a.y == np.y) return true;
   }
   return false;
 }
@@ -47,7 +47,7 @@ static bool find (const f::Cell2I &np, const s_vec<f::Cell2I> &arr) {
 static void addMatches(GVars *ss, const s_vec<f::Cell2I> &matches) {
   F__LOOP(it, matches) {
     auto &m= *it;
-    if (! find(m,ss->matchArray)) {
+    if (! find(m, ss->matchArray)) {
       ss->matchArray.push_back(m);
     }
   }
@@ -63,10 +63,10 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
   auto stepR = r;
 
   //check top
-  while (stepR -1 >= 0 &&
+  while (stepR-1 >= 0 &&
     ss->grid[c]->get(stepR-1) == type) {
     --stepR;
-    temp.push_back(f::Cell2I( c, stepR));
+    temp.push_back(f::Cell2I(c, stepR));
   }
 
   if (temp.size() >= 2) { addMatches(ss, temp); }
@@ -74,7 +74,8 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
   //check bottom
   temp.clear();
   stepR = r;
-  while (stepR + 1 < GRID_SIZE_Y && ss->grid[c]->get(stepR + 1) == type) {
+  while (stepR+1 < GRID_SIZE_Y &&
+         ss->grid[c]->get(stepR+1) == type) {
     ++stepR;
     temp.push_back(f::Cell2I(c, stepR));
   }
@@ -83,7 +84,8 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
 
   //check left
   temp.clear();
-  while (stepC - 1 >= 0 && ss->grid[stepC - 1]->get(r) == type) {
+  while (stepC-1 >= 0 &&
+         ss->grid[stepC-1]->get(r) == type) {
     --stepC;
     temp.push_back(f::Cell2I(stepC, r));
   }
@@ -93,7 +95,8 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
   //check right
   temp.clear();
   stepC = c;
-  while (stepC + 1 < GRID_SIZE_X && ss->grid[stepC + 1]->get(r) == type) {
+  while (stepC+1 < GRID_SIZE_X &&
+         ss->grid[stepC+1]->get(r) == type) {
     ++stepC;
     temp.push_back(f::Cell2I(stepC,  r));
   }
@@ -108,23 +111,23 @@ bool isValidTarget(GVars *ss, int px, int py, const c::Vec2 &touch) {
   auto offbounds = false;
   auto rc=true;
 
-  if (px > ss->selectedIndex.x + 1) offbounds = true;
-  if (px < ss->selectedIndex.x - 1) offbounds = true;
-  if (py > ss->selectedIndex.y + 1) offbounds = true;
-  if (py < ss->selectedIndex.y - 1) offbounds = true;
+  if (px > ss->selectedIndex.x + 1 ||
+      px < ss->selectedIndex.x - 1 ||
+      py > ss->selectedIndex.y + 1 ||
+      py < ss->selectedIndex.y - 1) {
+  offbounds = true; }
 
   auto cell = sin(atan2(pow(ss->selectedIndex.x - px, 2),
-        pow( ss->selectedIndex.y- py, 2)));
+        pow(ss->selectedIndex.y- py, 2)));
 
   if (cell != 0 && cell != 1) {
     offbounds = true;
   }
 
   if (offbounds ) {
-    return false;
-  }
+  return false; }
 
-  auto touchedGem = ss->gridGemsColumnMap[px]->get(py);
+  auto touchedGem = ss->gemsColMap[px]->get(py);
   if (touchedGem == ss->selectedGem ||
       (px == ss->selectedIndex.x &&
        py == ss->selectedIndex.y)) {
@@ -137,10 +140,10 @@ bool isValidTarget(GVars *ss, int px, int py, const c::Vec2 &touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GemInfo findGemAtPosition(GVars *ss, const c::Vec2 &position) {
+GemInfo findGemAtPos(GVars *ss, const c::Vec2 &pos) {
 
-  auto mx = position.x - ss->gemsContainer->getPositionX();
-  auto my = position.y - ss->gemsContainer->getPositionY();
+  auto mx = pos.x - ss->gemsContainer->getPositionX();
+  auto my = pos.y - ss->gemsContainer->getPositionY();
   auto gridHeight = GRID_SIZE_Y * TILE_GRID;
   auto gridWidth = GRID_SIZE_X * TILE_GRID;
 
@@ -150,8 +153,8 @@ GemInfo findGemAtPosition(GVars *ss, const c::Vec2 &position) {
   if (my > gridHeight) my = gridHeight;
   if (mx > gridWidth) mx = gridWidth;
 
-  auto x = ceil((mx - TILE_SIZE * 0.5f) / TILE_GRID);
-  auto y = ceil((my - TILE_SIZE * 0.5f) / TILE_GRID);
+  auto x = ceil((mx - HTV(TILE_SIZE)) / TILE_GRID);
+  auto y = ceil((my - HTV(TILE_SIZE)) / TILE_GRID);
 
   if (x < 1) x = 1;
   if (y < 1) y = 1;
@@ -161,30 +164,30 @@ GemInfo findGemAtPosition(GVars *ss, const c::Vec2 &position) {
   // coz arrays are zero based
   --x;
   --y;
-  return GemInfo(x, y , ss->gridGemsColumnMap[x]->get(y));
+  return GemInfo(x, y , ss->gemsColMap[x]->get(y));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void selectStartGem(GVars *ss, const GemInfo &touchedGem) {
-  if (ENP(ss->selectedGem)) {
-    ss->selectedGem = touchedGem.gem;
+void selectStartGem(GVars *ss, const GemInfo &touched) {
+  if (!ss->selectedGem) {
+    ss->selectedGem = touched.gem;
     ss->targetIndex = f::Cell2I();
     ss->targetGem = CC_NIL;
-    touchedGem.gem->node->setLocalZOrder(Z_SWAP_2);
-    ss->selectedIndex = f::Cell2I(touchedGem.x, touchedGem.y);
-    ss->selectedGemPosition = touchedGem.gem->pos();
-    animateSelected(touchedGem.gem);
+    touched.gem->node->setLocalZOrder(Z_SWAP_2);
+    ss->selectedIndex = f::Cell2I(touched.x, touched.y);
+    ss->selectedGemPos = touched.gem->pos();
+    animateSelected(touched.gem);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void selectTargetGem(GVars *ss, const GemInfo &touchedGem) {
+void selectTargetGem(GVars *ss, const GemInfo &touched) {
   if (ss->targetGem != CC_NIL) { return; }
   ss->enabled = false;
-  ss->targetIndex = f::Cell2I(touchedGem.x, touchedGem.y);
-  ss->targetGem = touchedGem.gem;
+  ss->targetIndex = f::Cell2I(touched.x, touched.y);
+  ss->targetGem = touched.gem;
   ss->targetGem->node->setLocalZOrder(Z_SWAP_1);
   swapGemsToNewPosition(ss);
 }
@@ -198,7 +201,7 @@ bool checkGridMatches(GVars *ss) {
 
   for (auto c = 0; c < GRID_SIZE_X; ++c) {
     for (auto r = 0; r < GRID_SIZE_Y; ++r) {
-      checkTypeMatch(ss, c,r);
+      checkTypeMatch(ss, c, r);
     }
   }
 
@@ -221,12 +224,6 @@ int getGemType(int idx) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const sstr getGemPngPath(int type) {
-  return "pics/" + getGemPng(type);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 const sstr getGemPng(int type) {
   assert(type >= 0 && type < GEMSET_SIZE);
   return SKINS[type];
@@ -234,7 +231,7 @@ const sstr getGemPng(int type) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int getVerticalUnique(GVars *ss, int col, int row) {
+int getVertUnique(GVars *ss, int col, int row) {
   assert(col >=0 && col < GRID_SIZE_X);
   assert(row >=0 && row < GRID_SIZE_Y);
   auto t = cx::randInt(GEMSET_SIZE);
@@ -250,16 +247,16 @@ int getVerticalUnique(GVars *ss, int col, int row) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-int getVerticalHorizontalUnique(GVars *ss, int col, int row) {
+int getVertHorzUnique(GVars *ss, int col, int row) {
 
-  auto t= getVerticalUnique(ss, col, row);
+  auto t= getVertUnique(ss, col, row);
 
   if (col > 1 && row >= 0 &&
       ss->grid[col-1]->get(row) == t &&
       ss->grid[col-2]->get(row) == t) {
     auto unique = false;
     while (!unique) {
-      t = getVerticalUnique(ss, col, row);
+      t = getVertUnique(ss, col, row);
       if (ss->grid[col-1]->get(row) == t &&
           ss->grid[col-2]->get(row) == t)
       {}
@@ -282,10 +279,10 @@ void dropSelectedGem(GVars *ss) {
 //
 void onNewSwapComplete(GVars *ss) {
 
-  ss->gridGemsColumnMap[ss->selectedIndex.x]->set(
+  ss->gemsColMap[ss->selectedIndex.x]->set(
       ss->selectedIndex.y, ss->targetGem);
 
-  ss->gridGemsColumnMap[ss->targetIndex.x]->set(
+  ss->gemsColMap[ss->targetIndex.x]->set(
       ss->targetIndex.y, ss->selectedGem);
 
   ss->grid[ss->selectedIndex.x]->set(
@@ -327,9 +324,9 @@ void onNewSwapComplete(GVars *ss) {
         ss->selectedGem,
         [=]() { ss->enabled = true; });
 
-    ss->gridGemsColumnMap[ss->selectedIndex.x]->set(
+    ss->gemsColMap[ss->selectedIndex.x]->set(
         ss->selectedIndex.y, ss->selectedGem);
-    ss->gridGemsColumnMap[ss->targetIndex.x]->set(
+    ss->gemsColMap[ss->targetIndex.x]->set(
         ss->targetIndex.y, ss->targetGem);
 
     ss->grid[ss->selectedIndex.x]->set(
@@ -367,7 +364,7 @@ void dbgGemTypes(GVars *ss, int col) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void dbgGems(GVars *ss, int c) {
-  auto g= ss->gridGemsColumnMap[c];
+  auto g= ss->gemsColMap[c];
   for (auto n=0; n < g->size(); ++n) {
     auto c= g->get(n);
     CCLOG("gem[%d].pos= %d, %d",
@@ -383,11 +380,11 @@ void onGridCollapseComplete(GVars *ss) {
   F__LOOP(it,ss->allGems) {
     auto gem = *it;
     auto pos=gem->pos();
-    auto yIndex = ceil((pos.y - TILE_SIZE * 0.5f)/TILE_GRID);
-    auto xIndex = ceil((pos.x - TILE_SIZE * 0.5f)/TILE_GRID);
-      --yIndex;
-      --xIndex;// zero based
-    ss->gridGemsColumnMap[xIndex]->set(yIndex, gem);
+    auto yIndex = ceil((pos.y - HTV(TILE_SIZE))/TILE_GRID);
+    auto xIndex = ceil((pos.x - HTV(TILE_SIZE))/TILE_GRID);
+    --yIndex;
+    --xIndex;// zero based
+    ss->gemsColMap[xIndex]->set(yIndex, gem);
     ss->grid[xIndex]->set(yIndex, gem->getType());
   }
 
@@ -421,13 +418,13 @@ void onGridCollapseComplete(GVars *ss) {
     if (ss->combos > 0) {
       //now turn random gems into diamonds
       s_vec<f::Cell2I> removeGems;
-      s_vec<f::ComObj*> diamonds;
+      s_vec<ecs::Node*> diamonds;
       int i = 0;
 
       auto p1=MGMS()->getPool("DiamondParticles");
       auto p2=MGMS()->getPool("Diamonds");
 
-      //math.randomseed(os.clock())
+      f::randSeed();
 
       while (i < ss->combos) {
         ++i;
@@ -435,22 +432,24 @@ void onGridCollapseComplete(GVars *ss) {
         int randomY = 0;
         int randomX=0;
 
-        while (ENP(randomGem)) {
+        while (!randomGem) {
           randomX = cx::randInt(GRID_SIZE_X);
           randomY = cx::randInt(GRID_SIZE_Y);
-          randomGem = ss->gridGemsColumnMap[randomX]->get(randomY);
+          randomGem = ss->gemsColMap[randomX]->get(randomY);
           if (randomGem->getType() == TYPE_GEM_WHITE) { randomGem = CC_NIL; }
         }
 
-        auto diamondParticle = p1->take(true);
+        auto diamondPart = p1->take(true);
         auto diamond = p2->take(true);
+        auto s1=CC_GEC(f::CPixie,diamondPart,"f/CPixie");
+        auto s2=CC_GEC(f::CPixie,diamond,"f/CPixie");
         auto pos= randomGem->pos();
 
-        diamondParticle->node->setPosition(pos.x, pos.y);
-        diamond->node->setPosition(pos.x,pos.y);
+        s1->setPos(pos.x, pos.y);
+        s2->setPos(pos.x,pos.y);
 
         removeGems.push_back(f::Cell2I(randomX, randomY));
-        diamonds.push_back(diamond);
+        diamonds.push_back((ecs::Node*)diamond);
       }
 
       auto msg= j::json({
@@ -505,12 +504,14 @@ void collapseGrid(GVars *ss) {
     }
   }
 
-  animateCollapse( ss, [=]() { onGridCollapseComplete(ss); });
+  animateCollapse(ss,
+      [=]() { onGridCollapseComplete(ss); });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 int getNewGem() {
+  f::randSeed();
   return cx::randInt(GEMSET_SIZE);
 }
 
@@ -520,9 +521,10 @@ void showMatchParticle(GVars *ss, const s_vec<f::Cell2I> &matches) {
   auto p= MGMS()->getPool("MatchParticles");
   F__LOOP(it,matches) {
     auto &pos= *it;
-    auto gem = ss->gridGemsColumnMap[pos.x]->get(pos.y);
-    auto particle = p->take(true);
-    particle->node->setPosition(
+    auto gem = ss->gemsColMap[pos.x]->get(pos.y);
+    auto part= p->take(true);
+    auto ps= CC_GEC(f::CPixie,part,"f/CPixie");
+    ps->setPos(
         gem->node->getPositionX() + ss->gemsContainer->getPositionX(),
         gem->node->getPositionY() + ss->gemsContainer->getPositionY());
   }
@@ -552,7 +554,7 @@ void dropColumn(GVars *ss, int col) {
   };
 
   float delay = col>0 ? cx::rand() * 1.5f : 0;
-  auto m= ss->gridGemsColumnMap[col];
+  auto m= ss->gemsColMap[col];
   Gem *gem;
   for (auto i=0; i < m->size(); ++i) {
     gem = m->get(i);
@@ -577,13 +579,14 @@ void animateSelected(Gem *gem) {
   gem->select();
   gem->node->stopAllActions();
   gem->node->runAction(
-  c::EaseBounceOut::create(c::RotateBy::create(0.5, 360)));
+    c::EaseBounceOut::create(
+      c::RotateBy::create(0.5, 360)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void resetSelectedGem(GVars *ss) {
-  auto gemPosition = ss->selectedGemPosition;
+  auto gemPosition = ss->selectedGemPos;
   auto gem = ss->selectedGem;
   gem->node->runAction(
       c::EaseElasticOut::create(
@@ -594,13 +597,13 @@ void resetSelectedGem(GVars *ss) {
 //
 void swapGems(GVars *ss, Gem *gemOrigin, Gem *gemTarget, VOIDFN onComplete) {
 
-  auto origin = ss->selectedGemPosition;
+  auto origin = ss->selectedGemPos;
   auto target = gemTarget->pos();
 
   auto moveSelected = c::EaseBackOut::create(
-      c::MoveTo::create(0.8f, target));
+      c::MoveTo::create(0.8, target));
   auto moveTarget = c::EaseBackOut::create(
-      c::MoveTo::create(0.8f, origin) );
+      c::MoveTo::create(0.8, origin) );
 
   gemOrigin->deselect();
   gemOrigin->node->runAction(moveSelected);
@@ -630,11 +633,12 @@ void animateMatches(
 
   F__LOOP(it,matches) {
     auto &pt= *it;
-    auto gem = ss->gridGemsColumnMap[pt.x]->get(pt.y);
+    auto gem = ss->gemsColMap[pt.x]->get(pt.y);
     gem->node->stopAllActions();
     gem->node->runAction(
         c::Sequence::create(
-          c::EaseBackOut::create(c::ScaleTo::create(0.3, 0)),
+          c::EaseBackOut::create(
+            c::ScaleTo::create(0.3, 0)),
           c::CallFunc::create(onCompleteMe),
           CC_NIL));
   }
@@ -649,7 +653,7 @@ void animateCollapse(GVars *ss, VOIDFN onComplete) {
   animatedCollapsedGems = 0;
 
   for (auto c = 0; c < GRID_SIZE_X; ++c) {
-    auto cm = ss->gridGemsColumnMap[c];
+    auto cm = ss->gemsColMap[c];
     int drop = 1;
     for (auto r = 0; r < cm->size(); ++r) {
         auto gem = cm->get(r);
@@ -660,7 +664,7 @@ void animateCollapse(GVars *ss, VOIDFN onComplete) {
         gem->setType(getNewGem());
         gem->show();
         auto newY = (GRID_SIZE_Y - (drop - 1)) * TILE_GRID;
-        dropGemTo(gem, newY,  0.2f, onComplete);
+        dropGemTo(gem, newY, 0.2, onComplete);
         drop += 1;
       } else {
         if (drop > 1) {
@@ -688,19 +692,20 @@ void dropGemTo(Gem *gem, float y, float delay, VOIDFN onComplete)  {
     }
   };
 
-  auto move = c::EaseBounceOut::create(
-      c::MoveTo::create(0.6f, c::Vec2(gem->node->getPositionX(), y)));
   auto action = c::Sequence::create(
       c::DelayTime::create(delay),
-      move,
+      c::EaseBounceOut::create(
+        c::MoveTo::create(
+          0.6, c::Vec2(gem->node->getPositionX(), y))),
       c::CallFunc::create(onCompleteMe),
       CC_NIL);
+
   gem->node->runAction(action);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void collectDiamonds(const s_vec<f::ComObj*> &diamonds) {
+void collectDiamonds(const s_vec<ecs::Node*> &diamonds) {
 
   auto removeDiamond=[=](c::Node *n) {
     CC_HIDE(n);
@@ -710,16 +715,16 @@ void collectDiamonds(const s_vec<f::ComObj*> &diamonds) {
 
   F__LOOP(it,diamonds) {
     auto d= *it;
-    auto delay = c::DelayTime::create(i * 0.05f);
-    auto moveTo = c::EaseBackIn::create(
-        c::MoveTo::create(
-          0.8f, c::Vec2(50, wb.top - 50)));
     auto action = c::Sequence::create(
-        delay,
-        moveTo,
+        c::DelayTime::create(i * 0.05),
+        c::EaseBackIn::create(
+          c::MoveTo::create(
+            0.8, c::Vec2(50, wb.top - 50))),
         c::CallFuncN::create(removeDiamond),
         CC_NIL);
-    d->node->runAction(action);
+    auto sp=CC_GEC(f::CPixie,d,"f/CPixie");
+    sp->node->runAction(action);
+    ++i;
   }
 }
 

@@ -24,40 +24,43 @@ NS_BEGIN(stoneage)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto p= MGMS()->reifyPool( "DiamondParticles");
-  p->preset([=]() -> f::ComObj* {
-    auto p = c::ParticleSystemQuad::create("pics/diamond.plist");
+  auto po= MGMS()->reifyPool( "DiamondParticles");
+  po->preset([=]() -> f::Poolable* {
+    auto p = c::ParticleSystemQuad::create( XCFG()->getAtlas("diamonds"));
     p->stopSystem();
-    p->setVisible(false);
+    CC_HIDE(p);
     MGML()->addItem(p);
-    return mc_new1(Particle,p);
-  },50);
+    auto ent= this->reifyNode("DiamondParticle");
+    ent->checkin(mc_new1(Particle,p));
+    return ent;
+  }, 32);
 
-  p= MGMS()->reifyPool( "MatchParticles");
-  p->preset([=]() -> f::ComObj* {
-    auto p = c::ParticleSystemQuad::create("pics/match.plist");
+  po= MGMS()->reifyPool( "MatchParticles");
+  po->preset([=]() -> f::Poolable* {
+    auto p = c::ParticleSystemQuad::create(
+        XCFG()->getAtlas("matches"));
     p->stopSystem();
-    p->setVisible(false);
+    CC_HIDE(p);
     MGML()->addItem(p);
-    return mc_new1(Particle,p);
-  },50);
+    auto ent= this->reifyNode("MatchParticle");
+    ent->checkin(mc_new1(Particle,p));
+    return ent;
+  },32);
 
-  p= MGMS()->reifyPool( "Diamonds");
-  p->preset([=]() -> f::ComObj* {
-    auto p = cx::loadSprite("gem_white.png");
+  po= MGMS()->reifyPool( "Diamonds");
+  po->preset([=]() -> f::Poolable* {
+    auto p = cx::reifySprite("gem_white.png");
     p->setLocalZOrder(Z_DIAMOND);
-    p->setVisible(false);
+    CC_HIDE(p);
     MGML()->addItem(p);
-    return mc_new1(Diamond,p);
-  },50);
+    auto ent= this->reifyNode("Diamond");
+    ent->checkin(mc_new1(Diamond,p));
+    return ent;
+  },32);
 
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode("Arena");
   auto ss= mc_new(GVars);
   ent->checkin(ss);
-
-  ent= this->reifyEntity();
-  ent->checkin(mc_new(Player));
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

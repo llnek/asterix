@@ -8,32 +8,45 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/CCSX.h"
+#include "core/COMP.h"
 #include "lib.h"
+NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Gem : public f::ComObj {
+class CC_DLL Gem : public f::CPixie {
 
-  Gem(not_null<c::Node*>,int);
+  Gem( int t) {
+    node= cx::reifySprite(getGemPng(t));
+    type=t;
+  }
 
   DECL_TV(int,type,-1)
   DECL_BF(selected)
 
 public:
 
-  static Gem* create();
+  static Gem* create() {
+    return mc_new1(Gem,TYPE_GEM_BLUE);
+  }
 
   void deselect() {selected=false; }
   void select() { selected=true; }
-  void reset();
-
+  void reset() {
+    node->setScale(1, 1);
+    node->setRotation(0);
+  }
   int getType() { return type; }
-  void setType(int);
+  void setType(int t) {
+    SCAST(c::Sprite*,node)->setSpriteFrame(getGemPng(t));
+    type = t;
+  }
 
 };
 

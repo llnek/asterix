@@ -25,9 +25,13 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  void onTouchMotion(f::ComObj*, c::Touch*);
-  void onTouchEnd(f::ComObj*, c::Touch*);
-  bool onTouchStart(f::ComObj*, c::Touch*);
+  virtual void onTouchMotion(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
+
+  virtual void onMouseMotion(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
+  virtual bool onMouseStart(const c::Vec2&);
 
   void buildGrid(GVars*);
   void addToScore();
@@ -38,38 +42,42 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void postReify();
+  virtual void onInited();
 
-  DECL_PTR(a::NodeList, player)
-  DECL_PTR(a::NodeList, shared)
-  DECL_BF(touchDown)
-  DECL_PTR(c::Sprite, timeBar)
+  DECL_PTR(c::Sprite, _timeBar)
+  DECL_PTR(ecs::Node, _shared)
+  DECL_BF(_touchDown)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
+bool GLayer::onTouchStart(c::Touch *touch) {
+  return onMouseStart(touch->getLocation());
+}
 
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto loc=touch->getLocation();
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const c::Vec2 &loc) {
 
-  this->touchDown = true;
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+
+  this->_touchDown = true;
   if (!ss->enabled ) { return false; }
 
-  auto touchedGem = findGemAtPosition(ss, loc);
-  if (touchedGem.gem != CC_NIL ) {
-    if (ENP(ss->selectedGem)) {
-      selectStartGem(ss,touchedGem);
+  auto touched= findGemAtPos(ss, loc);
+  if (touched.gem != CC_NIL ) {
+    if (!ss->selectedGem) {
+      selectStartGem(ss,touched);
     } else {
-      if (isValidTarget(ss, touchedGem.x, touchedGem.y, loc) ) {
-        selectTargetGem(ss,touchedGem);
+      if (isValidTarget(ss, touched.x, touched.y, loc)) {
+        selectTargetGem(ss,touched);
       }
       else {
         if (ss->selectedGem != CC_NIL) {
           ss->selectedGem->deselect();
         }
         ss->selectedGem = CC_NIL;
-        selectStartGem (ss,touchedGem);
+        selectStartGem (ss,touched);
       }
     }
   }
@@ -79,50 +87,60 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
-  auto ss=CC_GNLF(GVars,shared,"slots");
+void GLayer::onMouseClick(const c::Vec2 &loc) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   if (!MGMS()->isLive()) { return; }
-  this->touchDown = false;
+  this->_touchDown = false;
   if (!ss->enabled) { return; }
   if (ss->selectedGem != CC_NIL) { dropSelectedGem(ss); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(f::ComObj *co, c::Touch *touch) {
+void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
+}
 
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto loc=touch->getLocation();
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(c::Touch *touch) {
+  onMouseMotion(touch->getLocation());
+}
 
-  if (!MGMS()->isLive()) { return; }
-  if (!ss->enabled ) { return; }
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const c::Vec2 &loc) {
+
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+
+  if (!MGMS()->isLive() ||
+      !ss->enabled ) {
+  return; }
 
   //track to see if we have a valid target
-  if (ss->selectedGem != CC_NIL && this->touchDown ) {
+  if (ss->selectedGem != CC_NIL && this->_touchDown ) {
     ss->selectedGem->setPos(
       loc.x - ss->gemsContainer->getPositionX(),
       loc.y - ss->gemsContainer->getPositionY());
-    auto touchedGem = findGemAtPosition(ss, loc);
-    if (touchedGem.gem != CC_NIL &&
-        isValidTarget(ss, touchedGem.x, touchedGem.y, loc)) {
-      selectTargetGem(ss,touchedGem);
+    auto touched= findGemAtPos(ss, loc);
+    if (touched.gem != CC_NIL &&
+        isValidTarget(ss, touched.x, touched.y, loc)) {
+      selectTargetGem(ss,touched);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
+void GLayer::onInited() {
 
-  player=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _shared=_engine->getNodes("n/GVars")[0];
 
-  auto py=CC_GNLF(Player,player,"player");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
 
-  ss->selectedGemPosition = c::Vec2(0,0);
   ss->gemsContainer = c::Node::create();
+  ss->selectedGemPos = c::Vec2(0,0);
   ss->selectedIndex = f::Cell2I();
   ss->targetIndex = f::Cell2I();
   ss->selectedGem = CC_NIL;
@@ -130,22 +148,22 @@ void GLayer::postReify() {
   ss->combos = 0;
   ss->addingCombos = false;
 
-  ss->gemsContainer->setPosition( 25, 80);
+  ss->gemsContainer->setPosition(25, 80);
   addItem(ss->gemsContainer);
 
-  auto frame = cx::loadSprite("frame.png");
+  auto frame = cx::createSprite("frame");
   frame->setPosition(wb.cx, wb.cy);
   addItem(frame);
 
   buildGrid(ss);
-  this->motionees.push_back(py);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
-  engine= mc_new(GEngine);
+void GLayer::decoUI() {
+  _engine= mc_new(GEngine);
   centerImage("game.bg");
+  regoAtlas("game-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,19 +175,19 @@ void GLayer::buildGrid(GVars *ss) {
     auto m= new f::FArrayPtr<Gem>(GRID_SIZE_Y);
     auto g= mc_new1(f::FArrInt,GRID_SIZE_Y);
 
-    ss->gridGemsColumnMap.push_back(m);
+    ss->gemsColMap.push_back(m);
     ss->grid.push_back(g);
 
     for (auto r = 1; r <= GRID_SIZE_Y; ++r) {
       auto gem = Gem::create();
       auto idx= c<3
-        ? getVerticalUnique(ss,c-1,r-1)
-        : getVerticalHorizontalUnique(ss,c-1,r-1);
+        ? getVertUnique(ss,c-1,r-1)
+        : getVertHorzUnique(ss,c-1,r-1);
       auto t= getGemType(idx);
 
       gem->setType(t);
       g->set(r-1,t); // zero based
-      gem->inflate( c*TILE_GRID, r*TILE_GRID);
+      gem->inflate(c*TILE_GRID, r*TILE_GRID);
 
       ss->gemsContainer->addChild(gem->node);
       m->set(r-1,gem); // zero based
@@ -183,10 +201,10 @@ void GLayer::buildGrid(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::addToScore() {
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   F__LOOP(it, ss->matchArray) {
-    auto position = *it;
-    auto gem = ss->gridGemsColumnMap[position.x]->get(position.y);
+    auto &pos= *it;
+    auto gem = ss->gemsColMap[pos.x]->get(pos.y);
     if (gem->getType() == TYPE_GEM_WHITE) {
         //got a diamond
     }
@@ -197,16 +215,16 @@ void GLayer::addToScore() {
 //
 void GLayer::startTimer() {
 
-  auto timeBarBg = cx::loadSprite("timeBarBg.png");
+  auto timeBarBg = cx::reifySprite("timeBarBg.png");
   auto wb = cx::visBox();
 
   timeBarBg->setPosition(wb.cx, 40);
   addItem(timeBarBg);
 
-  timeBar = cx::loadSprite("timeBar.png");
-  timeBar->setAnchorPoint(cx::anchorL());
-  timeBar->setPosition(wb.cx - 290, 40);
-  addItem(timeBar);
+  _timeBar = cx::reifySprite("timeBar.png");
+  _timeBar->setAnchorPoint(cx::anchorL());
+  _timeBar->setPosition(wb.cx - 290, 40);
+  addItem(_timeBar);
 
   this->schedule(CC_SCHEDULE_SELECTOR(GLayer::tick), 1);
 }
@@ -214,20 +232,20 @@ void GLayer::startTimer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::tick(float dt) {
-  auto scaleNow = timeBar->getScaleX();
-  auto speed = 0.007f;
+  auto scaleNow = _timeBar->getScaleX();
+  auto speed = 0.007;
   auto wb= cx::visBox();
 
   if (scaleNow - speed > 0) {
-    timeBar->setScaleX(scaleNow - speed);
+    _timeBar->setScaleX(scaleNow - speed);
   } else {
     this->unschedule(CC_SCHEDULE_SELECTOR(GLayer::tick));
       //GameOver!!!
-    timeBar->setScaleX(0);
+    _timeBar->setScaleX(0);
     cx::pauseAudio();
     MGMS()->stop();
     // show game over
-    auto gameOver = cx::loadSprite("gameOver.png");
+    auto gameOver = cx::reifySprite("gameOver.png");
     gameOver->setPosition(wb.cx, wb.cy);
     addItem(gameOver);
   }
@@ -257,7 +275,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();

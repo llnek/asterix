@@ -34,17 +34,22 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "6acae825-6061-48ac-92b2-cdcf055ef23b";
-  app_id = "stoneage";
-
+  _game_id= "6acae825-6061-48ac-92b2-cdcf055ef23b";
+  _app_id = "stoneage";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
 
+  addAtlas("game-pics",CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("diamonds",CC_STR("pics/diamond.plist"));
+  addAtlas("matches",CC_STR("pics/match.plist"));
+
+  addImage("game-pics",CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg", CC_STR("pics/background.jpg"));
   addImage("intro.bg", CC_STR("pics/introbg.jpg"));
+  addImage("frame", CC_STR("pics/frame.png"));
 
   addMusic("background", CC_STR("sfx/background.mp3"));
   addEffect("match", CC_STR("sfx/match.wav"));
@@ -69,7 +74,7 @@ void Config::handleResolution(const c::Size &rs) {
     p="sd";
   }
 
-  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
+  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
   CC_DTOR()->setContentScaleFactor(w/dz.width);
 }
 
@@ -77,9 +82,9 @@ void Config::handleResolution(const c::Size &rs) {
 //
 void Config::runOnce() {
   auto c= c::SpriteFrameCache::getInstance();
-  //auto fp= getAtlas("game-pics");
-  //c->addSpriteFramesWithFile( fp);
-  //CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  auto fp= getAtlas("game-pics");
+  c->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -8,11 +8,12 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Gem.h"
 
@@ -21,51 +22,39 @@ NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Particle : public f::ComObj {
-  MDECL_COMP_TPID("n/Particle")
+struct CC_DLL Particle : public f::CPixie {
   Particle(not_null<c::Node*> n)
-  : ComObj(n) {
-  }
+  : CPixie(n) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Diamond : public f::ComObj {
-  MDECL_COMP_TPID("n/Diamond")
+struct CC_DLL Diamond : public f::CPixie {
   Diamond(not_null<c::Node*> n)
-  : ComObj(n) {
-  }
+  : CPixie(n) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GemInfo {
-  GemInfo(int x, int y, Gem *g) {
-    this->x =x;
+  GemInfo(int x, int y, not_null<Gem*> g) {
     this->y = y;
+    this->x =x;
     this->gem=g;
   }
+  DECL_PTR(Gem,gem)
   DECL_IZ(y)
   DECL_IZ(x)
-  DECL_PTR(Gem,gem)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Player : public f::ComObj {
+struct CC_DLL Player : public ecs::Component {
   MDECL_COMP_TPID("n/Player")
-  Player() {
-  }
+  Player() {}
 };
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-
 
 
 NS_END
