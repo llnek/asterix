@@ -827,7 +827,9 @@ const c::Vec2 clamp(const c::Vec2 &cur, const Box4 &bx) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int randInt(int upper) {
-  return (int) floor(cocos2d::rand_0_1() * upper);
+    //auto r=cocos2d::rand_0_1();
+    //CCLOG("rand01 ===== %f", r);
+  return (int) floor( cocos2d::rand_0_1()*  upper);
 }
 
 //////////////////////////////////////////////////////////////////////////////

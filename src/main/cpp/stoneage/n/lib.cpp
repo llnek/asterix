@@ -19,6 +19,8 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 static int GEMS_TOTAL= GRID_SIZE_X * GRID_SIZE_Y;
 static int TILE_GRID= TILE_SIZE+GRID_SPACE;
 
@@ -441,8 +443,8 @@ void onGridCollapseComplete(GVars *ss) {
 
         auto diamondPart = p1->take(true);
         auto diamond = p2->take(true);
-        auto s1=CC_GEC(f::CPixie,diamondPart,"f/CPixie");
-        auto s2=CC_GEC(f::CPixie,diamond,"f/CPixie");
+        auto s1=CC_GEC(Particle,diamondPart,"f/CPixie");
+        auto s2=CC_GEC(Diamond,diamond,"f/CPixie");
         auto pos= randomGem->pos();
 
         s1->setPos(pos.x, pos.y);
@@ -511,7 +513,6 @@ void collapseGrid(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int getNewGem() {
-  f::randSeed();
   return cx::randInt(GEMSET_SIZE);
 }
 
@@ -651,6 +652,8 @@ static int animatedCollapsedGems = 0;
 void animateCollapse(GVars *ss, VOIDFN onComplete) {
 
   animatedCollapsedGems = 0;
+
+  f::randSeed();
 
   for (auto c = 0; c < GRID_SIZE_X; ++c) {
     auto cm = ss->gemsColMap[c];

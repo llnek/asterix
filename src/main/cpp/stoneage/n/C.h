@@ -49,13 +49,6 @@ struct CC_DLL GemInfo {
   DECL_IZ(x)
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Player : public ecs::Component {
-  MDECL_COMP_TPID("n/Player")
-  Player() {}
-};
-
 
 NS_END
 
