@@ -22,38 +22,38 @@ NS_BEGIN(skyfox)
 //
 void HUDLayer::updateEnergy(float v) {
   auto e=(int)v;
-  energyLabel->setString( s::to_string(e) + "% ");
+  _energyLabel->setString( FTOS(e) + "% ");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int v) {
-  score += v;
-  scoreLabel->setString( s::to_string(score) );
+  _score += v;
+  _scoreLabel->setString( FTOS(_score) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
 
-  scoreLabel= cx::reifyBmfLabel("dft", "0");
-  scoreLabel->setAnchorPoint(cx::anchorR());
-  scoreLabel->setPosition(wb.right * 0.8f, wb.top * 0.94f);
-  addItem(scoreLabel);
+  _scoreLabel= cx::reifyBmfLabel("dft", "0");
+  _scoreLabel->setAnchorPoint(cx::anchorR());
+  _scoreLabel->setPosition(wb.right * 0.8, wb.top * 0.94);
+  addItem(_scoreLabel);
 
-  energyLabel = cx::reifyBmfLabel("dft", "100%");
-  energyLabel->setAlignment(c::TextHAlignment::RIGHT);
-  energyLabel->setPosition(wb.right * 0.3f, wb.top * 0.94f);
-  addItem(energyLabel);
+  _energyLabel = cx::reifyBmfLabel("dft", "100%");
+  _energyLabel->setAlignment(c::TextHAlignment::RIGHT);
+  _energyLabel->setPosition(wb.right * 0.3, wb.top * 0.94);
+  addItem(_energyLabel);
 
   auto icon = cx::reifySprite("health_icon.png");
-  icon->setPosition(wb.right * 0.15f, wb.top * 0.94f);
+  icon->setPosition(wb.right * 0.15, wb.top * 0.94);
   addAtlasItem("game-pics",icon, kBackground);
 
-  score=0;
+  _score=0;
 }
 
 

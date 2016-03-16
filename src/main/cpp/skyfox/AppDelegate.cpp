@@ -9,35 +9,22 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "ash/NodeRego.h"
-#include "n/N.h"
-#include "p/Config.h"
 #include "AppDelegate.h"
+#include "p/Config.h"
 
-NS_USING(fusii)
-NS_USING(ash)
 NS_USING(skyfox)
+NS_USING(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::AppDelegate() : App("skyfox") {
-
-  // register all ash::node factories here
-  auto r= NodeRegistry::self();
-
-  r->rego( mc_new(SharedNode));
-  r->rego( mc_new(UfoNode));
-  r->rego( mc_new(BombNode));
-  // set up app-config
   Config::reify();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 AppDelegate::~AppDelegate() {
-  delete NodeRegistry::self();
   delete XConfig::self();
 }
-
 
 

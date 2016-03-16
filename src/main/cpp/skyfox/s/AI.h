@@ -8,38 +8,38 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL AI : public a::System {
+class CC_DLL AI : public ecs::System {
 
-  void fallingObjectDone(f::ComObj*);
+  void fallingObjectDone(ecs::Node*);
   void increaseDifficulty();
   void resetMeteor();
-  void resetUfo(Ufo*);
+  void resetUfo(ecs::Node*);
   void resetHealth();
   void process(float);
   void changeEnergy(float);
 
+  DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _bomb)
+  DECL_PTR(ecs::Node, _ufo)
+
 public:
 
-  MDECL_SYS_PRIORITY( a::AI)
+  MDECL_SYS_PRIORITY( ecs::AI)
   MDECL_SYS_TPID("n/AI")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(a::NodeList, shared)
-  DECL_PTR(a::NodeList, bombs)
-  DECL_PTR(a::NodeList, ufos)
-
-  AI(a::Engine *e)
+  AI(ecs::Engine *e)
   : System(e)
   {}
 

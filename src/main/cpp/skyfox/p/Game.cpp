@@ -28,64 +28,57 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  void onGUIXXX(f::ComObj *co, const c::Vec2 &tap);
+  void onGUIXXX(const c::Vec2 &tap);
 
-  virtual void onMouseClick(f::ComObj*,const c::Vec2&);
-  virtual bool onTouchStart(f::ComObj*, c::Touch*);
-  virtual void postReify();
-  void updateScore(int);
+  virtual void onMouseClick(const c::Vec2&);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onInited();
+
   void updateEnergy();
   void createActions();
   void onDone();
 
-  DECL_PTR(a::NodeList, shared)
-  DECL_PTR(a::NodeList, ufos)
-  DECL_PTR(a::NodeList, bombs)
+  DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _ufos)
+  DECL_PTR(ecs::Node, _bombs)
 
-  GLayer() {
-    tMode= c::Touch::DispatchMode::ONE_BY_ONE;
-  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
-  if (ENP(touch)) { return false; }
-  onGUIXXX(co, touch->getLocation());
+bool GLayer::onTouchStart(c::Touch *touch) {
+  onGUIXXX(touch->getLocation());
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(f::ComObj *co, const c::Vec2 &loc) {
-  onGUIXXX(co,loc);
+void GLayer::onMouseClick(const c::Vec2 &loc) {
+  onGUIXXX(loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onGUIXXX(f::ComObj *co, const c::Vec2 &tap) {
+void GLayer::onGUIXXX(const c::Vec2 &tap) {
 
-  auto ss= CC_GNLF(GVars,shared,"slots");
-  auto sp=co->sprite;
+  auto co=CC_GEC(f::CPixie,_bomb,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto pos= co->pos();
 
-  if (sp->isVisible()) {
+  if (co->node->isVisible()) {
 
-    auto child = sp->getChildByTag(kSpriteHalo);
-    auto pos= co->pos();
+    co->node->getChildByTag(kSpriteSparkle)->stopAllActions();
+    co->node->getChildByTag(kSpriteHalo)->stopAllActions();
+    co->node->stopAllActions();
 
-    child->stopAllActions();
-    sp->stopAllActions();
-    child = sp->getChildByTag(kSpriteSparkle);
-    child->stopAllActions();
-
-    if (sp->getScale() > 0.25f) {
+    if (co->node->getScale() > 0.25) {
       ss->shockWave->setPosition(pos.x,pos.y);
       CC_SHOW(ss->shockWave);
       ss->shockWave->setOpacity(255);
-      ss->shockWave->setScale(0.1f);
+      ss->shockWave->setScale(0.1);
       ss->shockWave->runAction(
-          c::ScaleTo::create(0.5f,
-            sp->getScale() * 2.0f));
+          c::ScaleTo::create(0.5,
+            co->node->getScale() * 2.0));
       ss->shockWave->runAction(
           ss->shockwaveSequence->clone());
       cx::sfxPlay("bombRelease");
@@ -93,32 +86,25 @@ void GLayer::onGUIXXX(f::ComObj *co, const c::Vec2 &tap) {
       cx::sfxPlay("bombFail");
     }
     ss->shockwaveHits = 0;
-    CC_HIDE(sp);
+    co->hide();
   } else {
-    sp->stopAllActions();
-    sp->setScale(0.1f);
+    co->node->stopAllActions();
+    co->node->setScale(0.1);
     co->setPos(tap.x,tap.y);
-    CC_SHOW(sp);
-    sp->setOpacity(50);
-    sp->runAction(ss->growBomb->clone() );
-    auto child = sp->getChildByTag(kSpriteHalo);
-    child->runAction( ss->rotateSprite->clone());
-    child = sp->getChildByTag(kSpriteSparkle);
-    child->runAction( ss->rotateSprite->clone());
+    co->show();
+    co->node->setOpacity(50);
+    co->node->runAction(ss->growBomb->clone() );
+    CC_GCT(co->node,kSpriteHalo)->runAction(
+        ss->rotateSprite->clone());
+    CC_GCT(co->node,kSpriteSparkle)->runAction(
+        ss->rotateSprite->clone());
   }
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::updateScore(int n) {
-  getHUD()->updateScore(n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::updateEnergy() {
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   getHUD()->updateEnergy(ss->energy);
 }
 
@@ -126,45 +112,47 @@ void GLayer::updateEnergy() {
 //
 void GLayer::onDone() {
 
-  auto ss= CC_GNLF(GVars,shared,"slots");
-  auto bomb=CC_GNLF(Bomb,bombs,"bomb");
-  auto ufo=CC_GNLF(Ufo,ufos,"ufo");
+  auto bomb=CC_GEC(f::CPixie,_bomb,"f/CPixie");
+  auto ufo=CC_GEC(f::CPixie,_ufo,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
   //_gameOverMessage->setVisible(true);
+  this->setOpacity(0.1 * 255);
   cx::sfxPlay("fire_truck");
   MGMS()->stop();
+  surcease();
 
   F__LOOP(it,ss->fallingObjects) {
-    it->second->sprite->stopAllActions();
-    CC_HIDE(it->second->sprite);
+    it->second->node->stopAllActions();
+    CC_HIDE(it->second->node);
   }
 
   ss->fallingObjects.clear();
 
-  if (bomb->sprite->isVisible()) {
-      bomb->sprite->stopAllActions();
-      CC_HIDE(bomb->sprite);
-      auto child = bomb->sprite->getChildByTag(kSpriteHalo);
-      child->stopAllActions();
-      child = bomb->sprite->getChildByTag(kSpriteSparkle);
-      child->stopAllActions();
+  if (bomb->node->isVisible()) {
+    auto child = CC_GCT(bomb->node,kSpriteHalo);
+    child->stopAllActions();
+    child = CC_GCT(bomb->node,kSpriteSparkle);
+    child->stopAllActions();
+    bomb->node->stopAllActions();
+    CC_HIDE(bomb->node);
   }
   if (ss->shockWave->isVisible()) {
-      ss->shockWave->stopAllActions();
-      CC_HIDE(ss->shockWave);
+    ss->shockWave->stopAllActions();
+    CC_HIDE(ss->shockWave);
   }
-  if (ufo->sprite->isVisible()) {
-      ufo->sprite->stopAllActions();
-      CC_HIDE(ufo->sprite);
-      auto ray = ufo->sprite->getChildByTag(kSpriteRay);
-      ray->stopAllActions();
-      CC_HIDE(ray);
+  if (ufo->node->isVisible()) {
+    auto ray = CC_GCT(ufo->node,kSpriteRay);
+    ray->stopAllActions();
+    CC_HIDE(ray);
+    ufo->node->stopAllActions();
+    CC_HIDE(ufo->node);
   }
 
   auto btn=cx::reifyMenuBtn("gameover.png");
   auto mnu=cx::mkMenu(btn);
-  btn->setPosition(wb.cx,wb.top*0.65f);
+  btn->setPosition(wb.cx,wb.top*0.65);
   btn->setCallback([=](c::Ref*){
     cx::runEx(Game::reify(mc_new(f::GCX)));
   });
@@ -173,20 +161,17 @@ void GLayer::onDone() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
+void GLayer::onInited() {
 
-  shared = engine->getNodeList(SharedNode().typeId());
-  ufos = engine->getNodeList(UfoNode().typeId());
-  bombs = engine->getNodeList(BombNode().typeId());
+  _shared = _engine->getNodes("n/GVars")[0];
+  _ufo = _engine->getNodes("n/Ufo")[0];
+  _bomb = _engine->getNodes("n/Bomb")[0];
 
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto bb= CC_GNLF(Bomb,bombs,"bomb");
-
-  cx::sfxMusic("bg", true);
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->energy = 100;
 
   ss->meteorInterval = 3.5;
-  ss->meteorTimer = ss->meteorInterval * 0.99f;
+  ss->meteorTimer = ss->meteorInterval * 0.99;
   ss->meteorSpeed = 10;//in seconds to reach ground
 
   ss->ufoInterval = 20;
@@ -205,12 +190,12 @@ void GLayer::postReify() {
   getHUD()->updateEnergy(ss->energy);
   getHUD()->updateScore(0);
 
-  this->motionees.push_back(bb);
+  cx::sfxMusic("bg", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
+void GLayer::decoUI() {
 
   auto wb= cx::visBox();
 
@@ -221,12 +206,12 @@ void GLayer::decorate() {
   for (auto i = 0; i < 2; ++i) {
     auto s= cx::reifySprite("city_dark.png");
     s->setAnchorPoint(cx::anchorB());
-    s->setPosition(wb.right * (0.25f+i*0.5f), 0);
+    s->setPosition(wb.right * (0.25+i*0.5), 0);
     addAtlasItem("game-pics", s, kMiddleground);
-
+    //
     s= cx::reifySprite("city_light.png");
     s->setAnchorPoint(cx::anchorB());
-    s->setPosition(wb.right * (0.25f+i*0.5f), wb.top * 0.1f);
+    s->setPosition(wb.right * (0.25+i*0.5), wb.top * 0.1);
     addAtlasItem("game-pics", s, kBackground);
   }
 
@@ -234,70 +219,73 @@ void GLayer::decorate() {
   for (auto i = 0; i < 3; ++i) {
     auto s= cx::reifySprite("trees.png");
     s->setAnchorPoint(cx::anchorB());
-    s->setPosition(wb.right * (0.2f+i*0.3f), 0);
+    s->setPosition(wb.right * (0.2+i*0.3), 0);
     addAtlasItem("game-pics",s, kMiddleground);
   }
 
-  engine = mc_new(GEngine);
+  _engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createActions() {
 
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto wb= cx::visBox();
   auto easeSwing = c::Sequence::create(
       c::EaseInOut::create(
-        c::RotateTo::create(1.2f, -10), 2),
-        c::EaseInOut::create(c::RotateTo::create(1.2f, 10), 2), CC_NIL);
-  auto ss= CC_GNLF(GVars,shared,"slots");
-  auto wb= cx::visBox();
+        c::RotateTo::create(1.2, -10), 2),
+        c::EaseInOut::create(
+          c::RotateTo::create(1.2, 10), 2),
+        CC_NIL);
 
-  ss->swingHealth = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
+  ss->swingHealth = c::RepeatForever::create(
+      (c::ActionInterval*) easeSwing );
   CC_KEEP(ss->swingHealth)
 
   ss->shockwaveSequence = c::Sequence::create(
-      c::FadeOut::create(1.0f),
+      c::FadeOut::create(1.0),
       c::CallFunc::create([=]() { CC_HIDE(ss->shockWave); }),
       CC_NIL);
   CC_KEEP(ss->shockwaveSequence)
 
-  ss->growBomb = c::ScaleTo::create(4.0f, 1);
+  ss->growBomb = c::ScaleTo::create(4.0, 1);
   CC_KEEP(ss->growBomb)
 
   ss->rotateSprite = c::RepeatForever::create(
-      c::RotateBy::create(0.5f ,  -90));
+      c::RotateBy::create(0.5,  -90));
   CC_KEEP(ss->rotateSprite)
 
   //animations
-  auto animation = c::Animation::create();
+  auto anim= c::Animation::create();
   for (auto i = 1; i <= 10; ++i) {
-    animation->addSpriteFrame(
-        cx::getSpriteFrame("boom"+s::to_string(i)+".png"));
+    anim->addSpriteFrame(
+        cx::getSpriteFrame("boom"+FTOS(i)+".png"));
   }
-  animation->setRestoreOriginalFrame(true);
-  animation->setDelayPerUnit(1 / 10.0f);
+  anim->setRestoreOriginalFrame(true);
+  anim->setDelayPerUnit(1 / 10.0);
   ss->groundHit = c::Sequence::create(
-              c::MoveBy::create(0, c::Vec2(0,wb.top * 0.12f)),
-              c::Animate::create(animation),
+              c::MoveBy::create(0, c::Vec2(0,wb.top * 0.12)),
+              c::Animate::create(anim),
               c::CallFuncN::create(
                 [](c::Node *p) { CC_HIDE(p); }),
               CC_NIL);
-  CC_KEEP(ss->groundHit)
+  CC_KEEP(ss->groundHit);
 
-  animation = c::Animation::create();
+  anim= c::Animation::create();
   for (auto i = 1; i <= 7; ++i) {
-    animation->addSpriteFrame(
+    anim->addSpriteFrame(
         cx::getSpriteFrame(
-          "explosion_small"+s::to_string(i)+".png"));
+          "explosion_small"+FTOS(i)+".png"));
   }
-  animation->setRestoreOriginalFrame(true);
-  animation->setDelayPerUnit(0.5 / 7.0f);
+  anim->setRestoreOriginalFrame(true);
+  anim->setDelayPerUnit(0.5 / 7.0);
   ss->explosion = c::Sequence::create(
-          c::Animate::create(animation),
+          c::Animate::create(anim),
           c::CallFuncN::create(
             [](c::Node *p) { CC_HIDE(p); }),
           CC_NIL);
-  CC_KEEP(ss->explosion)
+  CC_KEEP(ss->explosion);
 }
 
 END_NS_UNAMED
@@ -308,7 +296,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
   if (topic=="/game/player/earnscore") {
     auto msg=(j::json*)m;
-    y->updateScore(
+    y->getHUD()->updateScore(
         JS_INT(msg->operator[]("score")));
   }
   else
@@ -322,7 +310,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();

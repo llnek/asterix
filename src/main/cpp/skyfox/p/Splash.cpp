@@ -20,14 +20,14 @@ NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
   auto b = cx::reifyMenuBtn("logo.png");
-  auto wb=cx::visBox();
   auto menu=cx::mkMenu(b);
+  auto wb=cx::visBox();
 
   centerImage("game.bg");
 
-  b->setPosition(wb.cx,wb.top * 0.6f);
+  b->setPosition(wb.cx,wb.top * 0.6);
   b->setCallback([=](c::Ref*) {
       cx::runEx(Game::reify(mc_new(f::GCX)));
   });

@@ -8,11 +8,12 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -37,59 +38,39 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Cloud : public f::ComObj {
-  Cloud(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Cloud")
+struct CC_DLL Cloud : public f::CPixie {
+  Cloud(not_null<c::Node*> s)
+  : CPixie(s) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Meteor : public f::ComObj {
-  Meteor(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Meteor")
+struct CC_DLL Meteor : public f::CPixie {
+  Meteor(not_null<c::Node*> s)
+  : CPixie(s) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Health : public f::ComObj {
-  Health(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Health")
+struct CC_DLL Bomb : public f::CPixie {
+  Bomb(not_null<c::Node*> s)
+    : CPixie(s) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Bomb : public f::ComObj {
-  Bomb(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Bomb")
+struct CC_DLL Ufo : public f::CPixie {
+  Ufo(not_null<c::Node*> s)
+  : CPixie(s) {}
+  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ufo : public f::ComObj {
-  Ufo(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Ufo")
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
   DECL_FZ(difficultyInterval)
@@ -120,7 +101,7 @@ struct CC_DLL GVars : public a::Component {
   DECL_PTR(c::ScaleTo,growBomb)
   DECL_PTR(c::Animate,ufoAnimation)
 
-  s_map<f::ComObj*,f::ComObj*> fallingObjects;
+  s_map<ecs::Node*,ecs::Node*> fallingObjects;
 };
 
 

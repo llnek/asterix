@@ -22,9 +22,9 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  shared = engine->getNodeList(SharedNode().typeId());
-  bombs = engine->getNodeList(BombNode().typeId());
-  ufos = engine->getNodeList(UfoNode().typeId());
+  _shared = _engine->getNodes("n/GVars")[0];
+  _bomb = _engine->getNodes("n/Bomb")[0];
+  _ufo = _engine->getNodes("n/Ufo")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@ bool AI::update(float dt) {
 //
 void AI::process(float dt) {
 
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto bomb=CC_GNLF(Bomb,bombs,"bomb");
-  auto ufo=CC_GNLF(Ufo,ufos,"ufo");
+  auto bomb=CC_GEC(f::CPixie,_bomb,"f/CPixie");
+  auto ufo=CC_GEC(f::CPixie,_ufo,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
   ss->meteorTimer += dt;
@@ -54,7 +54,7 @@ void AI::process(float dt) {
   ss->ufoTimer += dt;
   if (ss->ufoTimer > ss->ufoInterval) {
     ss->ufoTimer = 0;
-    resetUfo(ufo);
+    resetUfo(_ufo);
   }
 
   ss->healthTimer += dt;
@@ -69,20 +69,20 @@ void AI::process(float dt) {
     increaseDifficulty();
   }
 
-  if (bomb->sprite->isVisible()) {
-    if (bomb->sprite->getScale() > 0.3f) {
-      if (bomb->sprite->getOpacity() != 255) {
-        bomb->sprite->setOpacity(255);
+  if (bomb->node->isVisible()) {
+    if (bomb->node->getScale() > 0.3) {
+      if (bomb->node->getOpacity() != 255) {
+        bomb->node->setOpacity(255);
       }
     }
   }
 
-  auto ray = ufo->sprite->getChildByTag(kSpriteRay);
+  auto ray = CC_GCT(ufo->node,kSpriteRay);
   auto pos=ufo->pos();
-  if (ufo->sprite->isVisible() &&
+  if (ufo->node->isVisible() &&
       ray->isVisible()) {
-    if (pos.x > wb.right * 0.1f &&
-        pos.x <= wb.right * 0.9f) {
+    if (pos.x > wb.right * 0.1 &&
+        pos.x <= wb.right * 0.9) {
       changeEnergy(-0.25);
     }
   }
@@ -92,62 +92,59 @@ void AI::process(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::resetMeteor() {
-  auto wb=cx::visBox();
-  auto mtx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto mx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto ss = CC_GNLF(GVars,shared,"slots");
-  auto p= MGMS()->getPool("Meteors");
-
   if (ss->fallingObjects.size() > 30) {
-    return;
-  }
-
-  auto meteor = p->get();
-  if (ENP(meteor)) {
-    SCAST(GEngine*,engine)->createMeteors();
-    meteor=p->get();
-  }
+  return; }
+  auto wb=cx::visBox();
+  auto mtx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
+  auto mx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
+  auto ss = CC_GEC(GVars,_shared,"n/GVars");
+  auto po= MGMS()->getPool("Meteors");
+  auto e = po->take(true);
+  auto meteor=CC_GEC(f::CPixie,e,"f/CPixie");
   auto sz= meteor->csize();
 
-  meteor->sprite->stopAllActions();
-  meteor->sprite->setPosition(mx, wb.top + HHZ(sz));
+  meteor->node->setPosition(mx, wb.top + HHZ(sz));
+  meteor->node->stopAllActions();
 
-  auto rr = c::RepeatForever::create( c::RotateBy::create(0.5f , -90));
+  auto rr = c::RepeatForever::create(
+      c::RotateBy::create(0.5 , -90));
   auto seq= c::Sequence::create(
       c::MoveTo::create(ss->meteorSpeed,
-        c::Vec2(mtx, wb.top * 0.15f)),
+        c::Vec2(mtx, wb.top * 0.15)),
       c::CallFunc::create(
-        [=]() { this->fallingObjectDone(meteor); }),
+        [=]() { this->fallingObjectDone(e); }),
       CC_NIL);
 
   meteor->show();
-  meteor->sprite->runAction(rr);
-  meteor->sprite->runAction(seq);
-  ss->fallingObjects.insert(S__PAIR(f::ComObj*,f::ComObj*,meteor,meteor));
+  meteor->node->runAction(rr);
+  meteor->node->runAction(seq);
+
+  ss->fallingObjects.insert(
+      S__PAIR(ecs::Node*,ecs::Node*,e,e));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::resetUfo(Ufo *ufo) {
+void AI::resetUfo(ecs::Node *node) {
 
   auto UFO_SPEED = CC_CSV(c::Integer,"UFO+SPEED");
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ufo=CC_GEC(f::CPixie,node,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
-  auto sp= ufo->sprite;
-  auto newY = cx::randFloat(wb.top * 0.3f) + wb.top * 0.3f;
+  auto newY = cx::randFloat(wb.top * 0.3) + wb.top * 0.3;
   auto newX= cx::randSign() > 0 ? 0 : wb.right;
 
-  if (sp->isVisible()) { return; }
+  if (ufo->node->isVisible()) { return; }
 
-  if (newY > wb.top * 0.7f) {
-    newY = wb.top * 0.7f;
+  if (newY > wb.top * 0.7) {
+    newY = wb.top * 0.7;
   }
 
-  sp->stopAllActions();
+  ufo->node->stopAllActions();
   ufo->setPos(newX, newY);
-  sp->runAction(ss->ufoAnimation->clone());
+  ufo->node->runAction(ss->ufoAnimation->clone());
 
-  auto ray = sp->getChildByTag(kSpriteRay);
+  auto ray = CC_GCT(ufo->node,kSpriteRay);
   CC_HIDE(ray);
   ray->stopAllActions();
   ray->runAction(ss->blinkRay->clone());
@@ -171,8 +168,8 @@ void AI::resetUfo(Ufo *ufo) {
         CC_NIL);
   }
 
-  CC_SHOW(sp);
-  sp->runAction(seq);
+  ufo->show();
+  ufo->node->runAction(seq);
   ss->ufoKilled = false;
   cx::sfxPlay("pew");
 }
@@ -181,42 +178,41 @@ void AI::resetUfo(Ufo *ufo) {
 //
 void AI::resetHealth() {
 
-  auto ss= CC_GNLF(GVars,shared,"slots");
-  auto hp= MGMS()->getPool("Healths");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
-  auto health = hp->get();
 
-  if (ss->fallingObjects.size() > 30) { return; }
-  if (ENP(health)) {
-    SCAST(GEngine*,engine)->createHealths();
-    health=hp->get();
-  }
+  if (ss->fallingObjects.size() > 30) {
+  return; }
 
-  auto htx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto hx = cx::randFloat(wb.right * 0.8f) + wb.right * 0.1f;
-  auto sp=health->sprite;
+  auto htx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
+  auto hx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
+  auto hp= MGMS()->getPool("Healths");
+  auto e = hp->take(true);
+  auto health=CC_GEC(f::CPixie,e,"f/CPixie");
   auto sz= health->csize();
 
-  sp->stopAllActions();
-  sp->setPosition(hx, wb.top + HHZ(sz));
+  health->setPos(hx, wb.top + HHZ(sz));
+  health->node->stopAllActions();
 
   auto seq = c::Sequence::create(
          c::MoveTo::create(ss->healthSpeed,
-           c::Vec2(htx, wb.top * 0.15f)),
+           c::Vec2(htx, wb.top * 0.15)),
          c::CallFunc::create(
-           [=]() { this->fallingObjectDone(health); }),
+           [=]() { this->fallingObjectDone(e); }),
          CC_NIL);
 
-  CC_SHOW(sp);
-  sp->runAction( ss->swingHealth->clone());
-  sp->runAction(seq);
-    ss->fallingObjects.insert(S__PAIR(f::ComObj*,f::ComObj*,health,health));
+  health->show();
+  health->node->runAction( ss->swingHealth->clone());
+  health->node->runAction(seq);
+
+  ss->fallingObjects.insert(
+      S__PAIR(ecs::Node*,ecs::Node*,e,e));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::changeEnergy(float value) {
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   ss->energy += value;
 
   if (ss->energy <= 0) {
@@ -234,11 +230,11 @@ void AI::changeEnergy(float value) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::increaseDifficulty () {
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
-  ss->meteorInterval -= 0.15f;
-  if (ss->meteorInterval < 0.25f) {
-    ss->meteorInterval = 0.25f;
+  ss->meteorInterval -= 0.15;
+  if (ss->meteorInterval < 0.25) {
+    ss->meteorInterval = 0.25;
   }
 
   ss->meteorSpeed -= 1;
@@ -246,7 +242,7 @@ void AI::increaseDifficulty () {
     ss->meteorSpeed = 4;
   }
 
-  ss->ufoInterval -= 0.1f;
+  ss->ufoInterval -= 0.1;
   if (ss->ufoInterval < 5) {
     ss->ufoInterval = 5;
   }
@@ -260,21 +256,23 @@ void AI::increaseDifficulty () {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::fallingObjectDone(f::ComObj *pSender) {
+void AI::fallingObjectDone(ecs::Node *node) {
 
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ui= CC_GEC(f::CPixie,node,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
 
-  ss->fallingObjects.erase(pSender);
-  pSender->sprite->stopAllActions();
-  pSender->sprite->setRotation(0);
+  ss->fallingObjects.erase(node);
 
-  if (pSender->sprite->getTag() == kSpriteMeteor) {
+  ui->node->stopAllActions();
+  ui->node->setRotation(0);
+
+  if (ui->node->getTag() == kSpriteMeteor) {
     changeEnergy(-15);
-    pSender->sprite->runAction(ss->groundHit->clone() );
+    ui->node->runAction(ss->groundHit->clone() );
     //play explosion sound
     cx::sfxPlay("boom");
   } else {
-    CC_HIDE(pSender->sprite);
+    ui->hide();
     if ((int)ss->energy == 100) {
       auto msg= j::json({
           {"score", 25}
@@ -286,7 +284,8 @@ void AI::fallingObjectDone(f::ComObj *pSender) {
     //play health bonus sound
     cx::sfxPlay("health");
   }
-  pSender->deflate();
+
+  cx::hibernate(node);
 }
 
 

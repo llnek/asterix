@@ -19,7 +19,14 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(skyfox)
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::preamble() {
+}
 
+bool Resolve::update(float dt) {
+  return true;
+}
 
 NS_END
 

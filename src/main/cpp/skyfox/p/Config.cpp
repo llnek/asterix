@@ -34,8 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "f0c462b4-ba02-46e8-a991-508401172546";
-  app_id = "skyfox";
+  _game_id= "f0c462b4-ba02-46e8-a991-508401172546";
+  _app_id = "skyfox";
   addCst("UFO+SPEED", CC_INT(8));
 }
 
@@ -75,7 +75,7 @@ void Config::handleResolution(const c::Size &fs) {
     CC_DTOR()->setContentScaleFactor(380/gz.height);
   }
 
-    c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
+  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////

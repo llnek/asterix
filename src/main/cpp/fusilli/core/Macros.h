@@ -40,6 +40,7 @@
 #define CC_BBOX(s) s->getBoundingBox()
 #define CC_HIDE(s) s->setVisible(false)
 #define CC_SHOW(s) s->setVisible(true)
+#define CC_GCT(s,t) s->getChildByTag(t)
 
 #define CC_DICT() cocos2d::Dictionary::create()
 #define CC_FLOAT(x) cocos2d::Float::create(x)

@@ -22,8 +22,8 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
-    ufos=engine->getNodeList(UfoNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
+  _ufo= _engine->getNodes("n/Ufo")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,47 +39,47 @@ bool Collide::update(float dt) {
 //
 void Collide::process(float dt) {
 
-  auto ss= CC_GNLF(GVars,shared,"slots");
-  auto ufo= CC_GNLF(Ufo,ufos,"ufo");
-  auto ray = ufo->sprite->getChildByTag(kSpriteRay);
-  auto sz= CC_CSIZE(ss->shockWave);
-  s_vec<f::ComObj*> dead;
-  float dx,dy;
+  if (!ss->shockWave->isVisible()) { return; }
 
-  if (!ss->shockWave->isVisible()) {
-    return;
-  }
+  auto ufo= CC_GEC(f::CPixie,_ufo,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto ray = CC_GCT(ufo->node,kSpriteRay);
+  auto sz= CC_CSIZE(ss->shockWave);
+  s_vec<ecs::Node*> dead;
 
   F__LOOP(it,ss->fallingObjects) {
-    auto co= it->second;
-    dx = ss->shockWave->getPositionX() - co->sprite->getPositionX();
-    dy = ss->shockWave->getPositionY() - co->sprite->getPositionY();
+    auto e= it->second;
+    auto co=CC_GEC(f::CPixie,e,"f/CPixie");
+
+    auto dx = ss->shockWave->getPositionX() - co->node->getPositionX();
+    auto dy = ss->shockWave->getPositionY() - co->node->getPositionY();
+
     if (pow(dx, 2) + pow(dy, 2) <= pow(HWZ(sz), 2)) {
-      co->sprite->stopAllActions();
-      co->sprite->runAction( ss->explosion->clone());
+      co->node->stopAllActions();
+      co->node->runAction( ss->explosion->clone());
       cx::sfxPlay("boom");
-      if (co->sprite->getTag() == kSpriteMeteor) {
-          ++ss->shockwaveHits;
-          auto msg= j::json({
-              {"score" , (int) (ss->shockwaveHits * 13 + ss->shockwaveHits * 2 )}});
-          SENDMSGEX("/game/player/earnscore", &msg);
+      if (co->node->getTag() == kSpriteMeteor) {
+        ++ss->shockwaveHits;
+        auto msg= j::json({
+            {"score" , (int) (ss->shockwaveHits * 13 + ss->shockwaveHits * 2 )}});
+        SENDMSGEX("/game/player/earnscore", &msg);
       }
-      dead.push_back(co);
+      dead.push_back(e);
     }
   }
 
   F__LOOP(it,dead) { ss->fallingObjects.erase(*it); }
 
-  if (ufo->sprite->isVisible() && ! ss->ufoKilled) {
-    dx = ss->shockWave->getPositionX() - ufo->sprite->getPositionX();
-    dy = ss->shockWave->getPositionY() - ufo->sprite->getPositionY();
-    if (pow(dx, 2) + pow(dy, 2) <= pow(CC_CSIZE(ss->shockWave).width * 0.6f, 2)) {
+  if (ufo->node->isVisible() && ! ss->ufoKilled) {
+    auto dx = ss->shockWave->getPositionX() - ufo->node->getPositionX();
+    auto dy = ss->shockWave->getPositionY() - ufo->node->getPositionY();
+    if (pow(dx, 2) + pow(dy, 2) <= pow(CC_CSIZE(ss->shockWave).width * 0.6, 2)) {
       ss->ufoKilled = true;
       cx::pauseEffects();
-      ufo->sprite->stopAllActions();
+      ufo->node->stopAllActions();
       ray->stopAllActions();
       CC_HIDE(ray);
-      ufo->sprite->runAction( ss->explosion->clone());
+      ufo->node->runAction( ss->explosion->clone());
       cx::sfxPlay("boom");
       ++ss->shockwaveHits;
       auto msg = j::json({
