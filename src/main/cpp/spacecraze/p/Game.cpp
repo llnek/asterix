@@ -27,6 +27,9 @@ BEGIN_NS_UNAMED
 struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onMouseMotion(const c::Vec2&);
+  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onTouchMotion(c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
   HUDLayer* getHUD() {
@@ -48,12 +51,32 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
+  auto ui= CC_GEC(Ship,_ship,"f/CPixie");
+  auto bx= ui->bbox();
+  return bx.containsPoint(tap);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(c::Touch *t) {
+  return onMouseStart(t->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onMouseMotion(const c::Vec2 &tap) {
   auto ui= CC_GEC(Ship,_ship,"f/CPixie");
   auto bx= MGMS()->getEnclosureBox();
   auto pos= ui->pos();
   auto loc= cx::clamp(tap, ui->csize(), bx);
   ui->setPos(loc.x, pos.y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTouchMotion(c::Touch *t) {
+  onMouseMotion(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,15 +93,16 @@ void GLayer::onEnd() {
 void GLayer::onPlayerKilled() {
 
   auto sp= CC_GEC(Ship,_ship,"f/CPixie");
-  auto pos= sp->pos();
   c::CallFunc *d2;
+
+  _ship->yield();
 
   if (getHUD()->reduceLives(1)) {
     d2=c::CallFunc::create([=]() {
         this->onEnd();
     });
   } else {
-    d2= c::CallFunc::create([=]() {
+    d2=c::CallFunc::create([=]() {
         spawnPlayer(_ship);
     });
   }
@@ -89,13 +113,15 @@ void GLayer::onPlayerKilled() {
           c::FadeOut::create(0.5),
           c::ScaleTo::create(0.5, 1.5),CC_NIL),
         c::CallFunc::create(
-          [=]() { sp->deflate(); }),
+          [=]() { cx::hibernate(_ship); }),
         d2,
         CC_NIL));
 
   auto explosion =
     c::ParticleSystemQuad::create(
         XCFG()->getAtlas("explosions"));
+  auto pos= sp->pos();
+
   explosion->setAutoRemoveOnFinish(true);
   explosion->setPosition(pos);
   MGML()->addItem(explosion);
@@ -107,20 +133,19 @@ void GLayer::onPlayerKilled() {
 //
 void GLayer::onAlienKilled(ecs::Node *node) {
 
-  auto cs=CC_GEC(AlienType,node,"f/CStats");
+  auto cs=CC_GEC(f::CStats,node,"f/CStats");
   auto ui=CC_GEC(Alien,node,"f/CPixie");
 
+  node->yield();
   ui->node->stopAllActions();
   ui->node->runAction(
       c::Sequence::create(
         c::ScaleTo::create(0.25, 0.0),
         c::CallFunc::create(
-          [=]() {
-            ui->deflate();
-            node->yield(); }),
+          [=]() { cx::hibernate(node); }),
         CC_NIL));
 
-  auto exp = c::ParticleSystemQuad::create( XCFG()->getAtlas("explosion"));
+  auto exp = c::ParticleSystemQuad::create( XCFG()->getAtlas("explosions"));
   auto pc= c::ccc4f(0.9569, 0.2471, 0.3373, 1);
   exp->setAutoRemoveOnFinish(true);
   exp->setPosition(ui->pos());
@@ -149,10 +174,12 @@ void GLayer::onInited() {
 
   spawnPlayer(_ship);
 
-  auto lpr= CC_GEC(Loopers,_shared,"f/Loopers");
+    auto lpr= CC_GEC(f::Loopers,_shared,"f/Loopers");
   // timers for bullets
-  lpr->timers[0]= cx::reifyTimer(MGML(), 1000);
-  lpr->timers[1]= cx::reifyTimer(MGML(), 1000);
+  lpr->tms[0].timer= cx::reifyTimer(MGML(), 1000);
+  lpr->tms[0].duration= 1000;
+  lpr->tms[1].timer= cx::reifyTimer(MGML(), 1000);
+  lpr->tms[1].duration= 1000;
 }
 
 END_NS_UNAMED
@@ -167,7 +194,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   }
   else
   if ("/game/alien/killed" == topic) {
-    y->onAlienKilled((Alien*) m);
+    y->onAlienKilled((ecs::Node*) m);
   }
 
 }

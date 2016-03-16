@@ -43,33 +43,25 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkMissiles() {
-  auto ms = MGMS()->getPool("Missiles");
-  ms->foreach([=](f::ComObj *c) {
-    if (!c->status || c->HP <=0) {
-      c->deflate();
-    }
-  });
+  cx::resolveNodes(MGMS()->getPool("Missiles"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkBombs() {
-  auto ms = MGMS()->getPool("Bombs");
-  ms->foreach([=](f::ComObj *c) {
-    if (!c->status || c->HP <=0) {
-      c->deflate();
-    }
-  });
+  cx::resolveNodes(MGMS()->getPool("Bombs"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkAliens() {
-  auto sq = CC_GNLF(AlienSquad,aliens,"squad");
-  sq->aliens->foreach([=](f::ComObj *c) {
-    if (c->status && c->HP <=0) {
-      c->freeze();
-      SENDMSGEX("/game/alien/killed", c);
+  auto po = MGMS()->getPool("Aliens");
+  po->foreach([=](f::Poolable *p) {
+    if (p->status()) {
+      auto ht=CC_GEC(f::CHealth,p,"f/CHealth");
+      if (!ht->alive()) {
+        SENDMSGEX("/game/alien/killed", p);
+      }
     }
   });
 }
@@ -77,12 +69,10 @@ void Resolve::checkAliens() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::checkShip() {
-  auto ship = CC_GNLF(Ship,ships,"ship");
-
-  if (ship->godMode) { return; }
-
-  if (ship->status && ship->HP <= 0) {
-    ship->freeze();
+  auto ht = CC_GEC(f::CHealth,_ship,"f/CHealth");
+  if (!_ship->status() || ht->isGod()  ) {}
+  else
+  if (!ht->alive()) {
     SENDMSG("/game/player/killed");
   }
 }

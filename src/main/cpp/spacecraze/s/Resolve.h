@@ -13,13 +13,15 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
 #include "GEngine.h"
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Resolve : public a::System {
+class CC_DLL Resolve : public ecs::System {
+
+  DECL_PTR(ecs::Node, _aliens)
+  DECL_PTR(ecs::Node, _ship)
 
   void checkMissiles();
   void checkBombs();
@@ -28,17 +30,14 @@ class CC_DLL Resolve : public a::System {
 
 public:
 
-  MDECL_SYS_PRIORITY(a::Resolve)
+  MDECL_SYS_PRIORITY(ecs::Resolve)
   MDECL_SYS_TPID("s/Resolve")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Resolve(a::Engine *e)
+  Resolve(ecs::Engine *e)
   : System(e) {
   }
-
-  DECL_PTR(a::NodeList, aliens)
-  DECL_PTR(a::NodeList, ships)
 
 };
 

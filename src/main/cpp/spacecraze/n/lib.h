@@ -17,7 +17,7 @@
 
 NS_BEGIN(spacecraze)
 
-void spawnPlayer(ecs::Node*);
+void spawnPlayer(not_null<ecs::Node*>);
 j::json loadLevel(int n);
 
 

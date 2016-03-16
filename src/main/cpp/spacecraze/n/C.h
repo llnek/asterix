@@ -23,13 +23,12 @@ NS_BEGIN(spacecraze)
 //
 struct CC_DLL Alien : public f::CPixie {
   MDECL_COMP_TPID("f/CPixie")
+  DECL_IZ(type)
   Alien(int n) {
     assert(n > 0 && n < 4);
-    node = cx::reifySprite("sfenmy" + s::to_string(n));
+    node = cx::reifySprite("sfenmy" + FTOS(n));
     type=n;
-    //MGML()->addAtlasItem("game-pics",node);
   }
-  DECL_IZ(type)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,13 +42,12 @@ struct CC_DLL Missile : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Bomb : public f::CPixie {
+  MDECL_COMP_TPID("f/CPixie")
   Bomb(not_null<c::Node*> s)
   : CPixie(s) {}
-  MDECL_COMP_TPID("n/Bomb")
   void morph(int type) {
     assert(type > 0 && type < 4);
-    node->setSpriteFrame(
-        "sfbullet" + s::to_string(type));
+      SCAST(c::Sprite*,node)->setSpriteFrame("sfbullet" + FTOS(type));
   }
 };
 
@@ -59,24 +57,14 @@ struct CC_DLL Ship : public f::CPixie {
   MDECL_COMP_TPID("f/CPixie")
   Ship(not_null<c::Node*> s)
   : CPixie(s) {
-    //speed.x= 250;
-    //vel.x=250;
   }
-  //virtual const c::Size csize() { return c::Size(64,64);//84,96); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL AlienSquad : public ecs::Component {
 
-  AlienSquad(not_null<f::FPool*> aliens) {
-    this->aliens=aliens;
-  }
-
   MDECL_COMP_TPID("n/AlienSquad")
-
-  //not owner of pool
-  DECL_PTR(f::FPool, aliens)
   DECL_FZ(rightEdge)
   DECL_FZ(leftEdge)
   DECL_FZ(duration)

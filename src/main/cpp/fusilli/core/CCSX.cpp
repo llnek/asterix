@@ -21,6 +21,15 @@ NS_BEGIN(ccsx)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void randomPos(not_null<c::Node*> node) {
+  auto wb=visBox();
+  node->setPosition(
+        rand() * wb.right,
+        rand() * wb.top);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 c::Menu* mkHMenu(const s_vec<c::MenuItem*> &items, float pad) {
   return mkMenu(items, false, pad);
 }
@@ -962,10 +971,45 @@ void testCollision(not_null<ecs::Node*> e1, not_null<ecs::Node*> e2) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void hibernate(not_null<ecs::Node*> node) {
+  auto s=CC_GEC(f::CPixie,node.get(),"f/CPixie");
+  if (s) { s->deflate(); }
+  node->yield();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void resurrect(not_null<ecs::Node*> node, float x, float y) {
+  auto h=CC_GEC(f::CHealth,node.get(),"f/CHealth");
+  auto s=CC_GEC(f::CPixie,node.get(),"f/CPixie");
+  if (s) { s->inflate(x,y); }
+  if (h) { h->reset(); }
+  node->take();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void resurrect(not_null<ecs::Node*> node) {
   auto h=CC_GEC(f::CHealth,node.get(),"f/CHealth");
-  h->reset();
+  auto s=CC_GEC(f::CPixie,node.get(),"f/CPixie");
+  if (s) { s->inflate(); }
+  if (h) { h->reset(); }
+  node->take();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void resolveNodes(not_null<f::FPool*> pool) {
+  pool->foreach([=](f::Poolable *p) {
+    if (p->status()) {
+      auto ht=CC_GEC(f::CHealth,p,"f/CHealth");
+      if (ht &&
+          !ht->alive())
+        hibernate(PCAST(ecs::Node,p));
+    }
+  });
+}
+
 
 NS_END
 NS_END

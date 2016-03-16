@@ -20,6 +20,9 @@ NS_BEGIN(spacecraze)
 //
 class CC_DLL Collide : public ecs::System {
 
+  DECL_PTR(ecs::Node, _aliens)
+  DECL_PTR(ecs::Node, _ship)
+
   void checkMissiles();
   void checkBombs();
 
@@ -33,9 +36,6 @@ public:
   Collide(ecs::Engine *e)
   : System(e) {
   }
-
-  DECL_PTR(ecs::Node, _aliens)
-  DECL_PTR(ecs::Node, _ship)
 
 };
 

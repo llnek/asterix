@@ -17,9 +17,6 @@
 #include "COMP.h"
 NS_BEGIN(fusii)
 
-#define HHZ(z) z.height * 0.5
-#define HWZ(z) z.width * 0.5
-
 //////////////////////////////////////////////////////////////////////////////
 //
 namespace ccsx {
@@ -27,7 +24,12 @@ namespace ccsx {
   void testCollision(not_null<ecs::Node*>, not_null<ecs::Node*>);
   void testCollisions(not_null<f::FPool*>, not_null<f::FPool*>);
   void testCollisions(not_null<f::FPool*>, not_null<ecs::Node*>);
+
+  void resolveNodes(not_null<f::FPool*>);
+
+  void resurrect(not_null<ecs::Node*>, float x, float y);
   void resurrect(not_null<ecs::Node*>);
+  void hibernate(not_null<ecs::Node*>);
 
   void resolveElastic(not_null<CPixie*> rA,
       c::Vec2 &velA,
@@ -77,6 +79,8 @@ namespace ccsx {
   bool pointInBox(const Box4 &box, float x,  float y);
   const c::Color3B white();
   const c::Color3B black();
+
+  void randomPos(not_null<c::Node*>);
 
   bool collideN(not_null<c::Node*>, not_null<c::Node*> );
   bool collide(not_null<CPixie*>, not_null<CPixie*>);

@@ -101,6 +101,7 @@ typedef std::string sstr;
 #define F__LOOP(x,c) for (auto x=c.begin(); x != c.end(); ++x)
 #define S__PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
 #define S__COPY(f,t) s::copy(s::begin(f), s::end(f), s::begin(t))
+#define S__ADD(c,n) c.push_back(n)
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ casting
@@ -142,9 +143,10 @@ typedef std::string sstr;
 #define DECL_TD(T,m) T m;
 #define DECL_TV(T,m,v) T m=v;
 
-  // halve this value
+// handy macros
+#define FTOS(n) s::to_string(n)
+// halve this value
 #define HTV(v) (v) * 0.5
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

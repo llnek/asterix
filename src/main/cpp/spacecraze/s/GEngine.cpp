@@ -49,12 +49,12 @@ void GEngine::createArena() {
   // player
   t.duration = JS_FLOAT(p["fireRate"]) * 1000;
   t.timer= cx::reifyTimer(MGML(), t.duration);
-  lpr.tms.push_back(t);
+  lpr->tms.push_back(t);
 
   // aliens
   t.duration= JS_FLOAT(ees["fireRate"]) * 1000;
   t.timer=cx::reifyTimer(MGML(), t.duration);
-  lpr.tms.push_back(t);
+  lpr->tms.push_back(t);
 
   ent->checkin(lpr);
   ent->checkin(ss);
@@ -92,7 +92,7 @@ void GEngine::createBombs(int cnt) {
   auto g= this->getCfg()["enemy"];
   auto d= JS_INT(g["speed"]);
   po->preset([=]() {
-    auto sp=c::Sprite::create();
+    auto sp=cx::reifySprite("sfbullet1");
     auto c= mc_new1(Bomb,sp);
     auto mv=mc_new(f::CMove);
     auto ent=this->reifyNode("Bomb");
@@ -100,7 +100,6 @@ void GEngine::createBombs(int cnt) {
     MGML()->addAtlasItem("game-pics", sp);
     mv->speed.y=d;
     mv->vel.y=d;
-    c->morph(1);
     c->hide();
 
     ent->checkin(mc_new(f::CHealth));
@@ -128,13 +127,16 @@ void GEngine::createShip() {
   auto ent= this->reifyNode("Ship",true);
   auto s= cx::reifySprite("sfgun");
   auto c= mc_new1(Ship,s);
+  auto mv= mc_new(f::CMove);
+
+  MGML()->addAtlasItem("game-pics", s, 999);
+  mv->speed.x= 250;
+  mv->vel.x=250;
 
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
-  ent->checkin(mc_new(f::CMove));
+  ent->checkin(mv);
   ent->checkin(c);
-
-  MGML()->addAtlasItem("game-pics", s, 999);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -161,7 +163,7 @@ void GEngine::createAliens() {
     s_vec<Alien*> aliens;
     J__LOOP(it2, fmt) {
       auto n = *it2;
-      auto a = new Alien(JS_INT(n));//,1,10);
+      auto a = new Alien(JS_INT(n));
       auto sz= a->csize();
       width_t += sz.width;
       height_t= MAX(sz.height, height_t);
@@ -177,6 +179,7 @@ void GEngine::createAliens() {
       auto e= this->reifyNode("Alien",true);
       auto a= *it;
       auto sz= a->csize();
+      MGML()->addAtlasItem("game-pics", a->node);
       a->inflate(lf + HWZ(sz), top);
       lf += sz.width + gap;
       e->checkin(mc_new1(f::CStats, 10));

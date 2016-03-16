@@ -29,13 +29,10 @@ void BackDrop::decoUI() {
   //sprinkle stars
   for (auto i = 0; i < num; ++i) {
     auto s = cx::reifySprite("star");
+    cx::randomPos(s);
+    S__ADD(_stars,s);
     if (i==0) {
-      this->_sz= CC_CSIZE(s);
-    }
-    s->setPosition(
-        cx::rand() * wb.right,
-        cx::rand() * wb.top);
-    _stars.push_back(s);
+      this->_sz= CC_CSIZE(s); }
     addAtlasItem("game-pics", s);
   }
 
@@ -53,7 +50,7 @@ void BackDrop::update(float dt) {
     auto s= *it;
     auto y= s->getPositionY() - d;
 
-    if(y < _sz.height * -0.5) {
+    if(y < CC_ZH(_sz) * -0.5) {
       y = wb.top + HHZ(_sz);
     }
 

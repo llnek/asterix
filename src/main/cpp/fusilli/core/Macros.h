@@ -47,12 +47,16 @@
 #define CC_STR(x) cocos2d::String::create(x)
 #define CC_INT(x) cocos2d::Integer::create(x)
 
-#define CC_SIZE  cocos2d::Size(0,0)
-#define CC_ZPT   cocos2d::Vec2(0,0)
+#define CC_ZSZ  cocos2d::Size(0,0)
+#define CC_ZPT  cocos2d::Vec2(0,0)
 #define CC_NIL nullptr
 
-#define CC_GEC(t,e,c) (t*)((ecs::Node*)e)->get(c)
+#define CC_GEC(t,e,c) (t*)((ecs::Node*)(e))->get(c)
 
+#define HHZ(z) (z).height * 0.5
+#define HWZ(z) (z).width * 0.5
+#define CC_ZH(z) (z).height
+#define CC_ZW(z) (z).width
 
 //////////////////////////////////////////////////////////////////////////////
 //

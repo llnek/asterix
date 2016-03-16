@@ -17,17 +17,16 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void spawnPlayer(ecs::Node *node) {
+void spawnPlayer(not_null<ecs::Node*> node) {
 
-  auto h=CC_GEC(f::CHealth,node,"f/CHealth");
-  auto s=CC_GEC(Ship,node,"f/CPixie");
+  auto h=CC_GEC(f::CHealth,node.get(),"f/CHealth");
+  auto s=CC_GEC(Ship,node.get(),"f/CPixie");
   auto wb = cx::visBox();
 
-  s->inflate(wb.cx, wb.top * -0.1);
-  h->reset();
+  cx::resurrect(node,wb.cx, wb.top * -0.1);
   s->node->setOpacity(255);
   s->node->setScale(1);
-  s->enterGodMode();
+  h->enterGodMode();
   s->node->runAction(
       c::Sequence::create(
         c::EaseBackOut::create(
@@ -36,7 +35,6 @@ void spawnPlayer(ecs::Node *node) {
         c::CallFunc::create(
           [=]() { h->exitGodMode(); }),
         CC_NIL));
-  node->take();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,7 +42,7 @@ void spawnPlayer(ecs::Node *node) {
 j::json loadLevel(int n) {
   //char level_file[64] = {0}; //::sprintf(level_file, "Level%02d.xml", MGMS()->getLevel());
   sstr fp = n < 10 ? "0" : "";
-  return cx::readJson("pics/Level" + fp + s::to_string(n) + ".json");
+  return cx::readJson("pics/Level"+fp+FTOS(n)+".json");
 }
 
 

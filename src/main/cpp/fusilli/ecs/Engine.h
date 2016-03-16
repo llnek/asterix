@@ -69,7 +69,7 @@ public:
 
   j::json getCfg() { return _config; }
 
-  Engine(j::json c) { _config=c; }
+  Engine(j::json c) : Engine() { _config=c; }
   Engine();
   virtual ~Engine();
 

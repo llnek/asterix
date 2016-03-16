@@ -34,7 +34,7 @@ void HUDLayer::decoUI() {
   s->setPosition(wb.right*0.7, y);
   addAtlasItem("game-pics", s);
 
-  x += s->getPositionX() + CC_CSIZE(s).width;
+  x += s->getPositionX() + CC_ZW(CC_CSIZE(s));
   y += HHZ(lfsz);
 
   _lives= f::reifyRefType<f::XLives>();
@@ -67,7 +67,7 @@ bool HUDLayer::reduceLives(int n) {
 //
 void HUDLayer::updateScore(int n) {
   _score += n;
-  _scoreLabel->setString(s::to_string(_score));
+  _scoreLabel->setString(FTOS(_score));
 }
 
 

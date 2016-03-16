@@ -32,43 +32,42 @@ void Aliens::preamble() {
 //
 void Aliens::startEnemies() {
 
-  auto squad= CC_GEC(AlienSquad,aliens,"n/AlienSquad");
+  auto squad= CC_GEC(AlienSquad,_aliens,"n/AlienSquad");
   auto maxSz= cx::calcSize("sfenmy3");
   auto stepx = HWZ(maxSz);
   auto wb= cx::visBox();
   auto deltaRt = wb.right - squad->rightEdge;
   auto deltaLf= squad->leftEdge - wb.left;
+  auto maxright = (int) floor(deltaRt/stepx);
+  auto maxleft = (int) floor(deltaLf/stepx);
 
-  auto max_moves_right = (int) floor(deltaRt/stepx);
-  auto max_moves_left = (int) floor(deltaLf/stepx);
-
-  auto move_left = c::Sequence::create(
+  auto moveleft = c::Sequence::create(
       c::DelayTime::create(squad->duration),
       c::EaseSineOut::create(
-        c::MoveBy::create(0.25, c::Vec2(stepx*-1, 0))),
+        c::MoveBy::create(
+          0.25, c::Vec2(stepx*-1, 0))),
       CC_NIL);
 
-  auto move_right = c::Sequence::create(
+  auto moveright = c::Sequence::create(
       c::DelayTime::create(squad->duration),
       c::EaseSineOut::create(
-        c::MoveBy::create(0.25, c::Vec2(stepx, 0))),
+        c::MoveBy::create(
+          0.25, c::Vec2(stepx, 0))),
       CC_NIL);
 
-  auto move_left_to_start = c::Repeat::create(move_right, max_moves_left);
-  auto move_start_to_left = c::Repeat::create(move_left, max_moves_left);
+  auto moveseq= c::Sequence::create(
+    c::Repeat::create(moveleft, maxleft),
+    c::Repeat::create(moveright, maxleft),
+    c::Repeat::create(moveright, maxright),
+    c::Repeat::create(moveleft, maxright),
+    CC_NIL);
 
-  auto move_start_to_right = c::Repeat::create(move_right, max_moves_right);
-  auto move_right_to_start = c::Repeat::create(move_left, max_moves_right);
-
-  auto movement_sequence = c::Sequence::create(move_start_to_left, move_left_to_start, move_start_to_right, move_right_to_start, CC_NIL);
-
-  auto pool = MGMS()->getPool("Aliens");
-  pool->foreach([=](f::Poolable *p) {
+  auto po= MGMS()->getPool("Aliens");
+  po->foreach([=](f::Poolable *p) {
     auto ui=CC_GEC(Alien,p,"f/CPixie");
     ui->node->runAction(
         c::RepeatForever::create(
-          (c::ActionInterval*)
-          movement_sequence->clone() ));
+          (c::ActionInterval*) moveseq->clone() ));
   });
 }
 
