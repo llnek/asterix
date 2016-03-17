@@ -34,17 +34,19 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "6943f96b-c913-436a-b1c9-6bcb8d08fc5c";
-  app_id = "hockey";
+  _game_id= "6943f96b-c913-436a-b1c9-6bcb8d08fc5c";
+  _app_id = "hockey";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
+
+  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg", CC_STR("pics/court.png"));
-  addImage("mallet", CC_STR("pics/mallet.png"));
-  addImage("puck", CC_STR("pics/puck.png"));
-  addImage("logo", CC_STR("pics/logo.png"));
+
+
   addFont("arial", CC_STR("fon/en/arial.ttf"));
 }
 
@@ -62,12 +64,15 @@ void Config::handleResolution(const c::Size &fz) {
     p="hd";
   }
 
-  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
+  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
+  auto fp= getAtlas("game-pics");
+  CC_SCAC()->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

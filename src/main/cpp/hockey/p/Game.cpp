@@ -28,26 +28,30 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual bool onTouchStart(f::ComObj*, const s_vec<c::Touch*>& );
-  virtual void onTouchMotion(f::ComObj*, const s_vec<c::Touch*>& );
-  virtual void onTouchEnd(f::ComObj*, const s_vec<c::Touch*>& );
-  void updateScore(int,int);
-  virtual void postReify();
+  virtual bool onTouchStart(const s_vec<c::Touch*>& );
+  virtual void onTouchMotion(const s_vec<c::Touch*>& );
+  virtual void onTouchEnd(const s_vec<c::Touch*>& );
 
-  DECL_PTR(a::NodeList, mallets)
-  DECL_PTR(a::NodeList, pucks)
-  DECL_PTR(a::NodeList, shared)
+  void updateScore(int,int);
+  virtual void onInited();
+
+  DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _puck)
+  s_vec<ecs::Node*> _mallets;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
-  auto m = (Mallet*) cobj;
-  F__LOOP(it,touches) {
-    auto t = *it;
-    auto tap = t->getLocation();
-    if (m->bbox().containsPoint(tap)) {
-      m->tap= t;
+bool GLayer::onTouchStart(const s_vec<c::Touch*> &touches) {
+  F__LOOP(it2, _mallets) {
+    auto e2= *it2;
+    auto m=CC_GEC(Mallet,e2,"f/CPixie");
+    F__LOOP(it,touches) {
+      auto t = *it;
+      if (m->bbox().containsPoint(t->getLocation())) {
+        m->tap= t;
+      }
     }
   }
   return true;
@@ -55,47 +59,55 @@ bool GLayer::onTouchStart(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
+void GLayer::onTouchMotion(const s_vec<c::Touch*> &touches) {
   auto wb= cx::visBox();
-  auto m= (Mallet*)cobj;
-  F__LOOP(it,touches) {
-    auto t = *it;
-    auto tap = t->getLocation();
-    if (m->tap == t) {
-      auto r= m->radius();
-      auto cp= m->pos();
-      auto npos= tap;
-      //clamp
-      if (npos.y < r) { npos.y  = r; }
-      if (npos.x < r) { npos.x = r; }
-      if (npos.x > wb.right - r) { npos.x = wb.right - r; }
-      if (npos.y > wb.top - r) { npos.y = wb.top - r; }
-      //keep player inside its court
-      if (cp.y < wb.cy) {
-        if (npos.y > wb.cy - r) {
-          npos.y = wb.cy - r;
+  F__LOOP(it2, _mallets) {
+    auto e2= *it2;
+    auto mv=CC_GEC(f::CMove,e2,"f/CMove");
+    auto m=CC_GEC(Mallet,e2,"f/CPixie");
+    F__LOOP(it,touches) {
+      auto t = *it;
+      auto tap = t->getLocation();
+      if (m->tap == t) {
+        auto r= m->radius();
+        auto cp= m->pos();
+        auto npos= tap;
+        //clamp
+        if (npos.y < r) { npos.y  = r; }
+        if (npos.x < r) { npos.x = r; }
+        if (npos.x > wb.right - r) { npos.x = wb.right - r; }
+        if (npos.y > wb.top - r) { npos.y = wb.top - r; }
+        //keep player inside its court
+        if (cp.y < wb.cy) {
+          if (npos.y > wb.cy - r) {
+            npos.y = wb.cy - r;
+          }
+        } else {
+          if (npos.y < wb.cy + r) {
+            npos.y = wb.cy + r;
+          }
         }
-      } else {
-        if (npos.y < wb.cy + r) {
-          npos.y = wb.cy + r;
-        }
-      }
 
-      m->nextPos= npos;
-      m->vel= c::Vec2(tap.x - cp.x, tap.y - cp.y);
+        mv->moveTarget= npos;
+        mv->vel= c::Vec2(tap.x - cp.x, tap.y - cp.y);
+      }
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnd(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
-  auto m = (Mallet*) cobj;
-  F__LOOP(it,touches) {
-    auto t= *it;
-    if (m->tap == t) {
-      m->vel= CC_ZPT;
-      m->tap= CC_NIL;
+void GLayer::onTouchEnd(const s_vec<c::Touch*> &touches) {
+  F__LOOP(it2,_mallets) {
+    auto e2= *it2;
+    auto mv=CC_GEC(f::CMove,e2,"f/CMove");
+    auto m=CC_GEC(Mallet,e2,"f/CPixie");
+    F__LOOP(it,touches) {
+      auto t= *it;
+      if (m->tap == t) {
+        mv->vel= CC_ZPT;
+        m->tap= CC_NIL;
+      }
     }
   }
 }
@@ -103,25 +115,29 @@ void GLayer::onTouchEnd(f::ComObj *cobj, const s_vec<c::Touch*> &touches) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::updateScore(int player, int score) {
-  auto ball= CC_GNLF(Puck,pucks,"puck");
+  auto bv= CC_GEC(f::CMove,_puck,"f/CMove");
+  auto ball= CC_GEC(Puck,_puck,"f/CPixie");
   auto bc= ball->circum();
   auto wb= cx::visBox();
 
-    getHUD()->updateScore(player, score);
-  ball->vel= CC_ZPT;
+  getHUD()->updateScore(player, score);
+  bv->vel= CC_ZPT;
 
   if (player == 1) {
         //move ball to player 2 court
-    ball->nextPos = c::Vec2(wb.cx, wb.cy + bc);
+    bv->moveTarget= c::Vec2(wb.cx, wb.cy + bc);
   } else {
       //move ball to player 1 court
-    ball->nextPos = c::Vec2(wb.cx, wb.cy - bc);
+    bv->moveTarget = c::Vec2(wb.cx, wb.cy - bc);
   }
 
-  for (auto node=mallets->head;node;node=node->next) {
-    auto m= CC_GNF(Mallet,node,"mallet");
-    auto mc= m->circum();
-    if (m->pnum == 1) {
+  F__LOOP(it,_mallets) {
+    auto e= *it;
+    auto mv= CC_GEC(f::CMove,e,"f/CMove");
+    auto m= CC_GEC(Mallet,e,"f/CPixie");
+    auto p= CC_GEC(Player,e,"f/CStats");
+    auto c= m->circum();
+    if (p->value == 1) {
       m->setPos(wb.cx, mc);
     } else {
       m->setPos(wb.cx, wb.top - mc);
@@ -129,14 +145,14 @@ void GLayer::updateScore(int player, int score) {
     m->tap=CC_NIL;
   }
 
-  SCAST(GEngine*,engine)->readyPoint(mallets,pucks->head);
+  SCAST(GEngine*,_engine)->readyPt(_mallets,_puck);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::postReify() {
-  mallets = engine->getNodeList(MalletNode().typeId());
-  pucks = engine->getNodeList(PuckNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
+void GLayer::onInited() {
+  _puck = _engine->getNodes("f/CAutoma")[0];
+  _shared = _engine->getNodes("n/GVars")[0];
+  _engine->getNodes("f/CGesture",_mallets);
 
   auto mr=CC_GNLF(Mallet,mallets,"mallet")->radius();
   auto br=CC_GNLF(Puck,pucks,"puck")->radius();
