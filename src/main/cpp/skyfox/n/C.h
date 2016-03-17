@@ -54,14 +54,14 @@ struct CC_DLL Meteor : public f::CPixie {
 //
 struct CC_DLL Health : public f::CPixie {
   Health(not_null<c::Node*> s)
-    : CPixie(s) {}
+  : CPixie(s) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Bomb : public f::CPixie {
   Bomb(not_null<c::Node*> s)
-    : CPixie(s) {}
+  : CPixie(s) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////

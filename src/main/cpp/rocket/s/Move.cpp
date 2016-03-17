@@ -19,13 +19,12 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(rocket)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  drawings=engine->getNodeList(LineDrawingNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
-  rockets=engine->getNodeList(RocketNode().typeId());
+  _rocket= _engine->getNodes("f/CGesture")[0];
+  _drawing= _engine->getNodes("n/RPath")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,14 +39,14 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto dw=CC_GEC(RPath,_drawing,"n/RPath");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
   processRocket(dt);
 
-  if (dw->lines->lineType != LINE_NONE) {
-    dw->lines->tip= rock->pos();
+  if (dw->lineType != LINE_NONE) {
+    dw->tip= rock->pos();
   }
 
   if (!ss->jet->isActive()) {
@@ -56,8 +55,8 @@ void Move::process(float dt) {
   ss->jet->setRotation(rock->node->getRotation());
   ss->jet->setPosition(rock->pos());
 
-  dw->lines->update(dt);
-  rock->node->setOpacity(dw->lines->energy * 255);
+  dw->update(dt);
+  rock->node->setOpacity(dw->energy * 255);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -170,6 +169,7 @@ bool Move::collidedWithSides() {
 
   return false;
 }
+
 
 NS_END
 

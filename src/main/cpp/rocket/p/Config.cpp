@@ -44,6 +44,13 @@ void Config::initAssets() {
 
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
 
+  addAtlas("jet", CC_STR("pics/jet.plist"));
+  addAtlas("plink", CC_STR("pics/plink.plist"));
+  addAtlas("star", CC_STR("pics/star.plist"));
+  addAtlas("warp", CC_STR("pics/warp.plist"));
+  addAtlas("boom", CC_STR("pics/boom.plist"));
+  addAtlas("comet", CC_STR("pics/comet.plist"));
+
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg",  CC_STR("pics/bg.png"));
 

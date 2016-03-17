@@ -12,7 +12,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "2d/CCPixieNode.h"
+#include "2d/CCDrawNode.h"
 NS_BEGIN(rocket)
 
 enum LineType {
@@ -25,15 +25,17 @@ enum LineType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL LineContainer : public c::DrawNode {
+class CC_DLL RPath : public c::DrawNode, public ecs::Component {
 
-  LineContainer() {}
 
 public:
 
-  static owner<LineContainer*> create() {
-    return f::reifyRefType<LineContainer>();
+  static owner<RPath*> create() {
+    return f::reifyRefType<RPath>();
   }
+  RPath() {}
+
+  MDECL_COMP_TPID("n/RPath");
 
   DECL_FZ(energyDecrement)
   DECL_FZ(lineAngle)

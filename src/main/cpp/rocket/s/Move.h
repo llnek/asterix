@@ -8,33 +8,35 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Move : public a::System {
+class CC_DLL Move : public ecs::System {
 
+  DECL_PTR(ecs::Node, _rocket)
+  DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _drawing)
+
+  void processRocket(float);
+  bool collidedWithSides();
   void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::Move)
+  MDECL_SYS_PRIORITY( ecs::Move)
   MDECL_SYS_TPID("n/Move")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  Move(a::Engine *e)
+  Move(ecs::Engine *e)
   : System(e)
   {}
-
-  DECL_PTR(a::NodeList, rockets)
-  DECL_PTR(a::NodeList, shared)
-  DECL_PTR(a::NodeList, drawings)
 
 };
 

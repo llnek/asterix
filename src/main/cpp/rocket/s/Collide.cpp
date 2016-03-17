@@ -22,9 +22,9 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  _drawings= _engine->getNodes("n/LineDrawings")[0];
-  _shared= _engine->getNodes("n/GVars")[0];
   _rocket= _engine->getNodes("f/CGesture")[0];
+  _drawing= _engine->getNodes("n/RPath")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,9 +39,9 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto dw=CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
-  auto rock= CC_GEC(Rocket,_rocket,"f/CPixie");
   auto rmv= CC_GEC(RocketMotion,_rocket,"f/CMove");
+  auto rock= CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto dw=CC_GEC(RPath,_drawing,"n/RPath");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto po=MGMS()->getPool("Planets");
   auto ps= po->ls();
@@ -84,12 +84,12 @@ void Collide::process(float dt) {
 
     ss->pickup->setPosition(ss->star->getPosition());
     ss->pickup->resetSystem();
-    if (dw->lines->energy + 0.25 < 1) {
-      dw->lines->energy= dw->lines->energy + 0.25;
+    if (dw->energy + 0.25 < 1) {
+      dw->energy= dw->energy + 0.25;
     } else {
-      dw->lines->energy= 1.0;
+      dw->energy= 1.0;
     }
-    dw->lines->setEnergyDecrement(0.0002);
+    dw->setEnergyDecrement(0.0002);
     rmv->speed.x = rmv->speed.x + 2;
     rmv->speed.y= rmv->speed.y;
     cx::sfxPlay("pickup");
@@ -105,7 +105,7 @@ void Collide::process(float dt) {
   }
 
   ss->timeBetweenPickups += dt;
-  if (dw->lines->energy == 0) {
+  if (dw->energy == 0) {
     if (rock->isOvert()) {
       SENDMSG("/game/player/killed");
     }

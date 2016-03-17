@@ -49,7 +49,7 @@ struct CC_DLL RocketMotion : public f::CMove {
   DECL_FZ(angularSpeed)
 
   static owner<RocketMotion*> create();
-
+  RocketMotion();
 };
 
 void rocketReset(not_null<Rocket*>, not_null<RocketMotion*>);

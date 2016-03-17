@@ -20,7 +20,7 @@ NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-RocketMotion::RocketMotion() {
+RocketMotion::RocketMotion()
   : CMove() {
   targetRotation=0;
   dr=0;
@@ -50,7 +50,7 @@ void rocketReset(not_null<Rocket*> r, not_null<RocketMotion*> m) {
 //
 void rocketSelect(not_null<Rocket*> r, bool flag) {
   auto f= flag ? "rocket_on.png" : "rocket.png";
-  r->node->setDisplayFrame(cx::getSpriteFrame(f));
+    SCAST(c::Sprite*,r->node)->setDisplayFrame(cx::getSpriteFrame(f));
 }
 
 

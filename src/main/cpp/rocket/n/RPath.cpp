@@ -11,14 +11,14 @@
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
-#include "LineContainer.h"
+#include "RPath.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool LineContainer::init() {
+bool RPath::init() {
 
   if (!DrawNode::init()) {
   return false; }
@@ -38,14 +38,14 @@ bool LineContainer::init() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void LineContainer::reset() {
+void RPath::reset() {
   energyDecrement = 0.005;
   energy = 1.0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void LineContainer::update(float dt) {
+void RPath::update(float dt) {
   auto c4= c::Color4F(c::Color3B::WHITE);
   auto wb=cx::visBox();
 
@@ -93,7 +93,7 @@ void LineContainer::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void LineContainer::setEnergyDecrement(float value) {
+void RPath::setEnergyDecrement(float value) {
   energyDecrement += value;
 }
 

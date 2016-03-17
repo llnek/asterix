@@ -28,10 +28,10 @@ void GEngine::initEntities() {
   auto wb=cx::visBox();
   ent->checkin(mc_new(GVars));
 
-  auto c= LineContainer::create();
+  ent= this->reifyNode("RPath", true);
+  auto c= RPath::create();
+  ent->checkin(c);
   MGML()->addItem(c,1);
-  ent= this->reifyNode("LineDrawings", true);
-  ent->checkin(mc_new1(LineDrawings,c));
 
   auto r= new Rocket(cx::reifySprite("rocket.png"));
   auto mv= mc_new(RocketMotion);
@@ -41,6 +41,7 @@ void GEngine::initEntities() {
       "game-pics",
       r->node, kForeground, kSpriteRocket);
   ent= this->reifyNode("Rocket", true);
+  ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
   ent->checkin(mv);
   ent->checkin(r);

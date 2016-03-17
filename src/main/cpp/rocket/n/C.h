@@ -16,7 +16,7 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Rocket.h"
-#include "LineContainer.h"
+#include "RPath.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(rocket)
@@ -39,17 +39,6 @@ enum GameState {
   kGamePaused,
   kGamePlay,
   kGameOver
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL LineDrawings : public ecs::Component {
-  LineDrawings(not_null<LineContainer*> c) {
-    lines=c;
-  }
-  DECL_PTR(LineContainer,lines)
-  MDECL_COMP_TPID("n/LineDrawings")
 };
 
 //////////////////////////////////////////////////////////////////////////////

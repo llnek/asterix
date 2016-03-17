@@ -43,7 +43,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   void killPlayer();
   void createStarGrid();
 
-  DECL_PTR(ecs::Node, _drawings)
+  DECL_PTR(ecs::Node, _drawing)
   DECL_PTR(ecs::Node, _shared)
   DECL_PTR(ecs::Node, _rocket)
 
@@ -62,12 +62,13 @@ static s_arr<c::Vec2,7> PPOS = {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  _drawings= _engine->getNodes("n/LineDrawing")[0];
-  _shared = _engine->getNodes("n/GVars")[0];
   _rocket= _engine->getNodes("f/CGesture")[0];
+  _drawing= _engine->getNodes("n/RPath")[0];
+  _shared = _engine->getNodes("n/GVars")[0];
 
-  auto dw= CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+  auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto dw= CC_GEC(RPath,_drawing,"n/RPath");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto po= MGMS()->getPool("Planets");
   auto wb=cx::visBox();
@@ -80,7 +81,7 @@ void GLayer::onInited() {
   for (auto i=0; i < PPOS.size(); ++i) {
     auto s= cx::reifySprite("planet_"+FTOS(i+1)+".png");
     auto &pos= PPOS[i];
-    auto e=this->reifyNode("Planet", true);
+    auto e=_engine->reifyNode("Planet", true);
     s->setPosition(wb.right * pos.x, wb.top * pos.y);
     addAtlasItem("game-pics",s,kBackground,kSpritePlanet);
     e->checkin(mc_new1(Planet,s));
@@ -93,7 +94,7 @@ void GLayer::onInited() {
   rock->setPos(wb.cx, wb.top * 0.1);
   rock->node->setOpacity(255);
   rock->show();
-  rock->reset();
+  rocketReset(rock, mv);
 
   ss->timeBetweenPickups = 0.0;
   ss->cometInterval = 4;
@@ -101,7 +102,7 @@ void GLayer::onInited() {
 
   //getHUD()->updateScore(0);
 
-  dw->lines->reset();
+  dw->reset();
 
   //shuffle grid cells
   s::random_shuffle(ss->grid.begin(), ss->grid.end());
@@ -124,17 +125,17 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onMouseStart(const c::Vec2 &tap) {
-
-  auto dw=CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+    auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto dw=CC_GEC(RPath,_drawing,"n/RPath");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto rpos=rock->pos();
   auto dx = rpos.x - tap.x;
   auto dy = rpos.y - tap.y;
 
   if (dx * dx + dy * dy <= pow(rock->radius(), 2)) {
-    rock->rotationOrientation= ROTATE_NONE;
-    dw->lines->lineType= LINE_NONE;
+    mv->rotationOrientation= ROTATE_NONE;
+    dw->lineType= LINE_NONE;
     ss->drawing = true;
   }
 
@@ -152,18 +153,18 @@ void GLayer::onTouchMotion(c::Touch *touch) {
 void GLayer::onMouseMotion(const c::Vec2 &tap) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   if (ss->drawing) {
-    auto dw=CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
     auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+    auto dw=CC_GEC(RPath,_drawing,"n/RPath");
     auto rpos=rock->pos();
     auto dx = rpos.x - tap.x;
     auto dy = rpos.y - tap.y;
 
     if (dx * dx + dy * dy > pow(ss->minLineLength, 2)) {
-      dw->lines->lineType= LINE_TEMP;
-      dw->lines->pivot= tap;
+      dw->lineType= LINE_TEMP;
+      dw->pivot= tap;
       rocketSelect(rock,true);
     } else {
-      dw->lines->lineType= LINE_NONE;
+      dw->lineType= LINE_NONE;
       rocketSelect(rock, false);
     }
   }
@@ -178,8 +179,9 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &tap) {
-  auto dw= CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+  auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto dw= CC_GEC(RPath,_drawing,"n/RPath");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
   //track if tapping on ship
@@ -187,34 +189,34 @@ void GLayer::onMouseClick(const c::Vec2 &tap) {
   rocketSelect(rock, false);
 
   //if we are showing a temp line
-  if (dw->lines->lineType == LINE_TEMP) {
+  if (dw->lineType == LINE_TEMP) {
     //set up dashed line
-    dw->lines->pivot= tap;
-    dw->lines->lineLength= rock->pos().distance(tap);
+    dw->pivot= tap;
+    dw->lineLength= rock->pos().distance(tap);
 
     //set up rocket
-    auto circlelen = dw->lines->lineLength * 2 * M_PI;
-    auto iters = floor(circlelen / rock->speed.x);
-    rock->pivot=tap;
-    rock->angularSpeed= 2 * M_PI / iters;
+    auto circlelen = dw->lineLength * 2 * M_PI;
+    auto iters = floor(circlelen / mv->speed.x);
+    mv->pivot=tap;
+    mv->angularSpeed= 2 * M_PI / iters;
 
     auto diff = rock->pos();
-    diff.subtract(rock->pivot);
+    diff.subtract(mv->pivot);
     auto clkwise = diff.getRPerp();
-    auto dot =clkwise.dot(rock->vel);
+    auto dot =clkwise.dot(mv->vel);
 
     if (dot > 0) {
-      rock->angularSpeed= rock->angularSpeed * -1;
-      rock->rotationOrientation= ROTATE_CLOCKWISE;
-      rock->targetRotation=
+      mv->angularSpeed= mv->angularSpeed * -1;
+      mv->rotationOrientation= ROTATE_CLOCKWISE;
+      mv->targetRotation=
         CC_RADIANS_TO_DEGREES(atan2(clkwise.y, clkwise.x));
     } else {
-      rock->rotationOrientation= ROTATE_COUNTER;
-      rock->targetRotation=
+      mv->rotationOrientation= ROTATE_COUNTER;
+      mv->targetRotation=
         CC_RADIANS_TO_DEGREES(atan2(-1 * clkwise.y,
               -1 * clkwise.x));
     }
-    dw->lines->lineType= LINE_DASHED;
+    dw->lineType= LINE_DASHED;
   }
 
 }
@@ -230,35 +232,41 @@ void GLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createParticles() {
-  auto rocket=CC_GEC(Rocket,rockets,"rocket");
-  auto ss=CC_GEC(GVars,shared,"slots");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
-  ss->jet = c::ParticleSystemQuad::create("pics/jet.plist");
-  ss->jet->setSourcePosition(c::Vec2(-rocket->radius() * 0.8f,0));
+  ss->jet = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("jet"));
+  ss->jet->setSourcePosition(c::Vec2(-rock->radius() * 0.8,0));
   ss->jet->setAngle(180);
   ss->jet->stopSystem();
   addItem(ss->jet, kBackground);
 
-  ss->boom = c::ParticleSystemQuad::create("pics/boom.plist");
+  ss->boom = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("boom"));
   ss->boom->stopSystem();
   addItem(ss->boom, kForeground);
 
-  ss->comet = c::ParticleSystemQuad::create("pics/comet.plist");
+  ss->comet = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("comet"));
   ss->comet->stopSystem();
-  ss->comet->setPosition(c::Vec2(0, wb.top * 0.6f));
+  ss->comet->setPosition(c::Vec2(0, wb.top * 0.6));
   CC_HIDE(ss->comet);
   addItem(ss->comet, kForeground);
 
-  ss->pickup = c::ParticleSystemQuad::create("pics/plink.plist");
+  ss->pickup = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("plink"));
   ss->pickup->stopSystem();
   addItem(ss->pickup, kMiddleground);
 
-  ss->warp = c::ParticleSystemQuad::create("pics/warp.plist");
-  ss->warp->setPosition(rocket->pos());
+  ss->warp = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("warp"));
+  ss->warp->setPosition(rock->pos());
   addItem(ss->warp, kBackground);
 
-  ss->star = c::ParticleSystemQuad::create("pics/star.plist");
+  ss->star = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("star"));
   ss->star->stopSystem();
   CC_HIDE(ss->star);
   addItem(ss->star, kBackground, kSpriteStar);
@@ -267,24 +275,25 @@ void GLayer::createParticles() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createStarGrid() {
-  auto ss=CC_GEC(GVars,shared,"slots");
-  auto p=MGMS()->getPool("Planets");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto po=MGMS()->getPool("Planets");
   auto wz=cx::visRect();
-  auto &ps= p->list();
+  auto ps= po->ls();
   auto tile = 32;
-  auto gridFrame = wz.size.width * 0.1f;
-  auto rows = (wz.size.height - 4 * gridFrame)/tile;
-  auto cols = (wz.size.width - 2 * gridFrame)/tile;
+  auto gridFrame = CC_ZW(wz.size) * 0.1;
+  auto rows = (CC_ZH(wz.size) - 4 * gridFrame)/tile;
+  auto cols = (CC_ZW(wz.size) - 2 * gridFrame)/tile;
 
   for (auto r = 0; r < rows; ++r) {
     for (auto c = 0; c < cols; ++c) {
       auto cell = c::Vec2(gridFrame + c * tile, 2 * gridFrame + r * tile);
       auto overlaps = false;
       F__LOOP(it,ps) {
-        auto pt= *it;
+        auto e= *it;
+        auto pt=CC_GEC(Planet,e,"f/CPixie");
         auto pos= pt->pos();
         if (pow(pos.x - cell.x, 2) + pow(pos.y - cell.y, 2) <=
-            pow(pt->radius() * 1.2f, 2)) {
+            pow(pt->radius() * 1.2, 2)) {
           overlaps = true;
         }
       }
@@ -298,8 +307,8 @@ void GLayer::createStarGrid() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::resetStar() {
-  auto rock=CC_GEC(Rocket,rockets,"rocket");
-  auto ss=CC_GEC(GVars,shared,"slots");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto rpos=rock->pos();
 
   while (true) {
@@ -319,9 +328,9 @@ void GLayer::resetStar() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::killPlayer() {
-  auto dw=CC_GEC(LineDrawing,drawings,"drawing");
-  auto rock=CC_GEC(Rocket,rockets,"rocket");
-  auto ss=CC_GEC(GVars,shared,"slots");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto dw=CC_GEC(RPath,_drawing,"n/RPath");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
   cx::pauseAudio();
@@ -331,16 +340,17 @@ void GLayer::killPlayer() {
   ss->boom->resetSystem();
   rock->hide();
   ss->jet->stopSystem();
-  dw->lines->lineType= LINE_NONE;
+  dw->lineType= LINE_NONE;
 
   auto gameOver = cx::reifySprite("gameOver.png");
-  gameOver->setPosition(wb.cx, wb.top * 0.55f);
+  gameOver->setPosition(wb.cx, wb.top * 0.55);
   addAtlasItem("game-pics",gameOver, kForeground);
 
+  this->setOpacity(0.1 * 255);
   ss->state = kGameOver;
   MGMS()->stop();
+  surcease();
 }
-
 
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
@@ -364,7 +374,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();
