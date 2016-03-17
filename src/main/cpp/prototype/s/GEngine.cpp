@@ -24,11 +24,11 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto p= MGMS()->reifyPool("Asteroids");
+  auto po= MGMS()->reifyPool("Asteroids");
   auto wb= cx::visBox();
 
-  p->preset([=]() -> f::Poolable* {
-    auto png = "asteroid_" + s::to_string(1 + (rand() % 3)) + ".png";
+  po->preset([=]() -> f::Poolable* {
+    auto png = "asteroid_" + FTOS(1 + (rand() % 3)) + ".png";
     auto tmp = cx::reifySprite(png);
     auto sz= CC_CSIZE(tmp);
     CC_HIDE(tmp);
@@ -39,7 +39,7 @@ void GEngine::initEntities() {
     body->setEnabled(false);
     tmp->setPhysicsBody(body);
     auto rdr=mc_new1(f::CPixie, tmp);
-    auto ent=this->reifyEntity();
+    auto ent=this->reifyNode("Asteroid");
     ent->checkin(rdr);
     return ent;
   }, 10);
@@ -52,21 +52,23 @@ void GEngine::initEntities() {
   body->setDynamic(true);
   s->setPhysicsBody(body);
 
+  auto ship= this->reifyNode("Ship", true);
   auto rdr= mc_new1(f::CPixie,s);
   MGML()->addItem(s,-1);
   rdr->inflate(wb.cx, wb.cy);
   auto mo= mc_new(f::CGesture);
   auto mv= mc_new(f::CMove);
-  mv->maxSpeed=v;
-  mv->speed=v;
-  auto ship= this->reifyEntity();
-  ship->checkin(mc_new(f::CHuman));
+  mv->maxSpeed.y=v;
+    mv->maxSpeed.x=v;
+  mv->speed.y=v;
+    mv->speed.x=v;
   ship->checkin(rdr);
   ship->checkin(mo);
   ship->checkin(mv);
 
   // global
-  this->reifyEntity()->checkin(mc_new(GVars));
+  auto ent= this->reifyNode("Shared",true);
+  ent->checkin(mc_new(GVars));
 }
 
 //////////////////////////////////////////////////////////////////////////////

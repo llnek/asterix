@@ -23,18 +23,18 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  scoreLabel= cx::reifyLabel("dft", 24, "0");
-  scoreLabel->setPosition(wb.cx, wb.top * 0.1);
-  addItem(scoreLabel);
+  _scoreLabel= cx::reifyLabel("dft", 24, "0");
+  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
+  addItem(_scoreLabel);
 
-  score=0;
+  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString(s::to_string(score));
+  _score += n;
+  _scoreLabel->setString(FTOS(_score));
 }
 
 

@@ -28,9 +28,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   bool onContactBegin(c::PhysicsContact&);
   void setPhysicsWorld(c::PhysicsWorld*);
 
-  DECL_PTR(c::PhysicsWorld, pWorld);
-  s_vec<ecs::Entity*> players;
-  s_vec<ecs::Entity*> shared;
+  DECL_PTR(c::PhysicsWorld, _pWorld);
+  DECL_PTR(ecs::Node, _player)
+  DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -54,15 +54,10 @@ GLayer::~GLayer() {
 //
 void GLayer::onInited() {
 
-    engine->getEntities(s_vec<ecs::COMType>{
-      "f/CHuman","f/CMove","f/CPixie"}, players);
-  engine->getEntities("n/GVars",shared);
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 
-  // just checking
-  assert(players.size()==1);
-  assert(shared.size()==1);
-
-  auto ss= (GVars*) shared[0]->get("n/GVars");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -71,7 +66,7 @@ void GLayer::onInited() {
     ss->bgSprites[n]=s;
     s->setPosition(
         wb.cx,
-        (-1 * wz.size.height * n) + wb.cy);
+        (-1 * CC_ZH(wz.size) * n) + wb.cy);
     addItem(s, -2);
   }
 
@@ -86,17 +81,17 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
-  pWorld = world;
-  pWorld->setGravity(c::Vec2(0, 0));
+  _pWorld = world;
+  _pWorld->setGravity(c::Vec2(0, 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onContactBegin(c::PhysicsContact&) {
-  setOpacity(255 * 0.1);
+  this->setOpacity(0.1 * 255);
   cx::sfxPlay("crash");
-  surcease();
   MGMS()->stop();
+  surcease();
   Ende::reify(MGMS(), 4);
   return true;
 }
@@ -104,14 +99,14 @@ bool GLayer::onContactBegin(c::PhysicsContact&) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto r= CC_GEC(f::CPixie,players[0],"f/CPixie");
+  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
   r->setPos(loc.x,loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto r= CC_GEC(f::CPixie,players[0],"f/CPixie");
+  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
   auto loc= touch->getLocation();
   return cx::isClicked(r->node,loc);
 }
@@ -119,7 +114,7 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto r= CC_GEC(f::CPixie,players[0],"f/CPixie");
+  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
   auto loc= touch->getLocation();
   r->setPos(loc.x, loc.y);
 }
@@ -146,7 +141,7 @@ void GLayer::decoUI() {
   auto menu = cx::mkMenu(btn);
   addItem(menu);
 
-  engine = mc_new(GEngine);
+  _engine = mc_new(GEngine);
   cx::sfxMusic("background", true);
 }
 

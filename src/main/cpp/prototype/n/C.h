@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +23,6 @@ NS_BEGIN(prototype)
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-
   s_arr<c::Sprite*,2> bgSprites;
 };
 

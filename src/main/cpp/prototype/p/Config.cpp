@@ -34,8 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "6b708e18-c38f-4b57-bace-dbeb7c529263";
-  app_id = "prototype";
+  _game_id= "6b708e18-c38f-4b57-bace-dbeb7c529263";
+  _app_id = "prototype";
 
   addCst("SHIP+SPEED", CC_INT(200));
 }

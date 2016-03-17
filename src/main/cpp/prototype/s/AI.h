@@ -8,10 +8,10 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(prototype)
@@ -19,8 +19,8 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime, timer)
-  s_vec<ecs::Entity*> shared;
+  DECL_PTR(c::DelayTime, _timer)
+  DECL_PTR(ecs::Node, _shared)
   void parallex(float);
   void process(float);
 

@@ -22,8 +22,8 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  engine->getEntities("n/GVars", shared);
-  timer= cx::reifyTimer(MGML(), 1500);
+  _shared= _engine->getNodes("n/GVars")[0];
+  _timer= cx::reifyTimer(MGML(), 1500);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::parallex(float dt) {
-  auto ss= CC_GEC(GVars, shared[0], "n/GVars");
+  auto ss= CC_GEC(GVars, _shared, "n/GVars");
   auto wb= cx::visBox();
 
   F__LOOP(it, ss->bgSprites) {
@@ -62,21 +62,22 @@ void AI::parallex(float dt) {
 //
 void AI::process(float dt) {
 
-  if (!cx::timerDone(timer)) { return; }
+  if (!cx::timerDone(_timer)) { return; }
   else {
-    cx::undoTimer(timer);
+    cx::undoTimer(_timer);
   }
 
-  auto p= MGMS()->getPool("Asteroids");
-  auto tmp= (ecs::Entity*) p->take(true);
-  auto r= CC_GEC(f::CPixie,tmp,"f/CPixie");
+  auto po= MGMS()->getPool("Asteroids");
+  auto e= (ecs::Node*)po->take(true);
+  auto r= CC_GEC(f::CPixie,e,"f/CPixie");
   auto wb= cx::visBox();
   auto sz= r->csize();
-  auto rx = HWZ(sz) + cx::randInt( wb.right - sz.width );
+  auto rx = HWZ(sz) + cx::randInt(wb.right - CC_ZW(sz));
 
-  r->inflate(wb.left + rx , wb.top + sz.height);
+  cx::resurrect(e, wb.left + rx , wb.top + sz.height);
   r->node->getPhysicsBody()->setEnabled(true);
-  timer= cx::reifyTimer(MGML(), 1500);
+
+  _timer= cx::reifyTimer(MGML(), 1500);
 }
 
 
