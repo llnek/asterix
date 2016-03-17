@@ -34,8 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "@@GAMEID@@";
-  app_id = "@@APPID@@";
+  _game_id= "@@GAMEID@@";
+  _app_id = "@@APPID@@";
 
   addCst("SHIP+SPEED", CC_INT(200));
 }

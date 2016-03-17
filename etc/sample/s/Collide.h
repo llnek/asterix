@@ -8,20 +8,23 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(@@APPID@@)
 
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
-  s_vec<ecs::Entity*> players;
-  s_vec<ecs::Entity*> shared;
+
+  DECL_PTR(ecs::Node, _player)
+  DECL_PTR(ecs::Node, _shared)
+
   void process(float);
   void clamp(float);
+
 public:
 
   MDECL_SYS_PRIORITY( ecs::Collide)
