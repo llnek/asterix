@@ -34,8 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "47641fcb-a939-4fac-87e4-91e219c44cc8";
-  app_id = "rocket";
+  _game_id= "47641fcb-a939-4fac-87e4-91e219c44cc8";
+  _app_id = "rocket";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ void Config::handleResolution(const c::Size &rs) {
   }
 
   CC_DTOR()->setContentScaleFactor(w/dz.width);
-  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
+  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////

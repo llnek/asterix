@@ -22,9 +22,7 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  drawings=engine->getNodeList(LineDrawingNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
-  rockets=engine->getNodeList(RocketNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,8 +37,7 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
   //update timers
@@ -49,33 +46,15 @@ void AI::process(float dt) {
     ss->cometTimer = 0;
     if (!ss->comet->isVisible()) {
       ss->comet->setPositionX(0);
-      auto newY = (float)rand()/((float)RAND_MAX/wb.top * 0.6f) + wb.top * 0.2f;
-      if (newY > wb.top * 0.9f) { newY = wb.top * 0.9f; }
+      auto newY = (float)rand()/((float)RAND_MAX/wb.top * 0.6) + wb.top * 0.2;
+      if (newY > wb.top * 0.9) { newY = wb.top * 0.9; }
       ss->comet->setPositionY(newY);
       CC_SHOW(ss->comet);
       ss->comet->resetSystem();
     }
   }
 
-  if (ss->comet->isVisible()) {
-    //collision with comet
-    if (pow(ss->comet->getPositionX() - rock->sprite->getPositionX(), 2) +
-        pow(ss->comet->getPositionY() - rock->sprite->getPositionY(), 2) <= pow (rock->radius() , 2)) {
-      if (rock->sprite->isVisible()) {
-        SENDMSG("/game/player/killed");
-      }
-    }
-    ss->comet->setPositionX(ss->comet->getPositionX() + 50 * dt);
-    if (ss->comet->getPositionX() > wb.right * 1.5f) {
-      ss->comet->stopSystem();
-      CC_HIDE(ss->comet);
-    }
-  }
-
-
 }
-
-
 
 
 NS_END

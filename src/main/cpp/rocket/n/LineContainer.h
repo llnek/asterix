@@ -8,19 +8,20 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "2d/CCPixieNode.h"
 NS_BEGIN(rocket)
 
-typedef enum lineTypes {
+enum LineType {
 
   LINE_TEMP,
   LINE_DASHED,
   LINE_NONE
 
-} LineType;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -30,7 +31,9 @@ class CC_DLL LineContainer : public c::DrawNode {
 
 public:
 
-  static LineContainer* create();
+  static owner<LineContainer*> create() {
+    return f::reifyRefType<LineContainer>();
+  }
 
   DECL_FZ(energyDecrement)
   DECL_FZ(lineAngle)
@@ -50,6 +53,7 @@ public:
   void reset();
 
   virtual bool init();
+
 };
 
 

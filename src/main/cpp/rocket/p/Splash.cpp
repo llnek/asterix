@@ -20,7 +20,7 @@ NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decorate() {
+void Splash::decoUI() {
   auto play = cx::reifyMenuBtn("label_play.png");
   auto intro = cx::reifySprite("logo.png");
   auto menu= cx::mkMenu(play);
@@ -29,7 +29,7 @@ void Splash::decorate() {
   centerImage("game.bg");
   regoAtlas("game-pics");
 
-  intro->setPosition(wb.cx, wb.top * 0.55f);
+  intro->setPosition(wb.cx, wb.top * 0.55);
 
   play->setPosition(wb.cx, wb.top * 0.2);
   play->setCallback([=](c::Ref*) {

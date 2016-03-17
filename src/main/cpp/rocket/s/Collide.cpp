@@ -19,14 +19,12 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(rocket)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  drawings=engine->getNodeList(LineDrawingNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
-  rockets=engine->getNodeList(RocketNode().typeId());
-
+  _drawings= _engine->getNodes("n/LineDrawings")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
+  _rocket= _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,55 +39,59 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
-  auto rock= CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto pool=MGMS()->getPool("Planets");
-  auto &ps= pool->list();
+  auto dw=CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+  auto rock= CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto rmv= CC_GEC(RocketMotion,_rocket,"f/CMove");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto po=MGMS()->getPool("Planets");
+  auto ps= po->ls();
   auto wb=cx::visBox();
-
-  //update jet particle so it follow rocket
-  //track collision with sides
-  rock->collidedWithSides();
-  rock->update(dt);
-  if (!ss->jet->isActive()) {
-    ss->jet->resetSystem();
-  }
-  ss->jet->setRotation(rock->sprite->getRotation());
-  ss->jet->setPosition(rock->pos());
-
-  dw->lines->update(dt);
-  rock->sprite->setOpacity(dw->lines->energy * 255);
 
   //collision with planets
   F__LOOP(it,ps) {
-    auto p= *it;
+    auto e= *it;
+    auto p= CC_GEC(Planet,e,"f/CPixie");
     auto pos=p->pos();
-    if (pow(pos.x - rock->sprite->getPositionX(), 2)
-        + pow(pos.y - rock->sprite->getPositionY(), 2) <=
-        pow(rock->radius() * 0.8f + p->radius() * 0.65f, 2)) {
-      if (rock->sprite->isVisible()) {
+    if (pow(pos.x - rock->node->getPositionX(), 2)
+        + pow(pos.y - rock->node->getPositionY(), 2) <=
+        pow(rock->radius() * 0.8 + p->radius() * 0.65, 2)) {
+      if (rock->isOvert()) {
         SENDMSG("/game/player/killed");
       }
       break;
     }
   }
 
+  //collision with comet
+  if (ss->comet->isVisible()) {
+    if (pow(ss->comet->getPositionX() - rock->node->getPositionX(), 2) +
+        pow(ss->comet->getPositionY() - rock->node->getPositionY(), 2) <= pow (rock->radius() , 2)) {
+      if (rock->isOvert()) {
+        SENDMSG("/game/player/killed");
+      }
+    }
+    ss->comet->setPositionX(ss->comet->getPositionX() + 50 * dt);
+    if (ss->comet->getPositionX() > wb.right * 1.5f) {
+      ss->comet->stopSystem();
+      CC_HIDE(ss->comet);
+    }
+  }
+
   //collision with star
-  if (pow(ss->star->getPositionX() - rock->sprite->getPositionX(), 2)
-      + pow(ss->star->getPositionY() - rock->sprite->getPositionY(), 2) <=
-      pow(rock->radius() * 1.2f, 2)) {
+  if (pow(ss->star->getPositionX() - rock->node->getPositionX(), 2)
+      + pow(ss->star->getPositionY() - rock->node->getPositionY(), 2) <=
+      pow(rock->radius() * 1.2, 2)) {
 
     ss->pickup->setPosition(ss->star->getPosition());
     ss->pickup->resetSystem();
-    if (dw->lines->energy + 0.25f < 1) {
-      dw->lines->energy= dw->lines->energy + 0.25f;
+    if (dw->lines->energy + 0.25 < 1) {
+      dw->lines->energy= dw->lines->energy + 0.25;
     } else {
-      dw->lines->energy= 1.0f;
+      dw->lines->energy= 1.0;
     }
-    dw->lines->setEnergyDecrement(0.0002f);
-    rock->speed.x = rock->speed.x + 2;
-    rock->speed.y= rock->speed.y;
+    dw->lines->setEnergyDecrement(0.0002);
+    rmv->speed.x = rmv->speed.x + 2;
+    rmv->speed.y= rmv->speed.y;
     cx::sfxPlay("pickup");
     SENDMSG("/game/resetstar");
 
@@ -104,7 +106,7 @@ void Collide::process(float dt) {
 
   ss->timeBetweenPickups += dt;
   if (dw->lines->energy == 0) {
-    if (rock->sprite->isVisible()) {
+    if (rock->isOvert()) {
       SENDMSG("/game/player/killed");
     }
   }

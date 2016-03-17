@@ -24,73 +24,74 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  virtual void onTouchMotion(f::ComObj*, c::Touch*);
-  virtual bool onTouchStart(f::ComObj*, c::Touch*);
-  virtual void onTouchEnd(f::ComObj*, c::Touch*);
+  virtual void onTouchMotion(c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
+
+  virtual void onMouseMotion(const c::Vec2&);
+  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void postReify();
+  virtual void onInited();
 
   void createParticles();
   void resetStar();
   void killPlayer();
   void createStarGrid();
 
-  DECL_PTR(a::NodeList, drawings)
-  DECL_PTR(a::NodeList, shared)
-  DECL_PTR(a::NodeList, rockets)
-
-  GLayer() {
-    tMode= c::Touch::DispatchMode::ONE_BY_ONE;
-  }
+  DECL_PTR(ecs::Node, _drawings)
+  DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _rocket)
 
 };
 
 static s_arr<c::Vec2,7> PPOS = {
-  c::Vec2(0.25f,0.8f),
-  c::Vec2(0.8f,0.45f),
-  c::Vec2(0.75f,0.8f),
-  c::Vec2(0.5f,0.5f),
-  c::Vec2(0.18f,0.45f),
-  c::Vec2(0.8f,0.15f),
-  c::Vec2(0.18f,0.1f)
+  c::Vec2(0.25,0.8),
+  c::Vec2(0.8,0.45),
+  c::Vec2(0.75,0.8),
+  c::Vec2(0.5,0.5),
+  c::Vec2(0.18,0.45),
+  c::Vec2(0.8,0.15),
+  c::Vec2(0.18,0.1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::postReify() {
-  drawings=engine->getNodeList(LineDrawingNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
-  rockets=engine->getNodeList(RocketNode().typeId());
-  auto dw= CC_GNLF(LineDrawing,drawings,"drawing");
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto pool= MGMS()->getPool("Planets");
+void GLayer::onInited() {
+  _drawings= _engine->getNodes("n/LineDrawing")[0];
+  _shared = _engine->getNodes("n/GVars")[0];
+  _rocket= _engine->getNodes("f/CGesture")[0];
+
+  auto dw= CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto po= MGMS()->getPool("Planets");
   auto wb=cx::visBox();
 
-  this->motionees.push_back(rock);
-
-  ss->minLineLength = wb.right * 0.07f;
+  ss->minLineLength = wb.right * 0.07;
   ss->drawing = false;
   ss->state = kGamePlay;//kGameIntro;
 
   //add planets
   for (auto i=0; i < PPOS.size(); ++i) {
-    auto s= cx::reifySprite("planet_"+s::to_string(i+1)+".png");
+    auto s= cx::reifySprite("planet_"+FTOS(i+1)+".png");
     auto &pos= PPOS[i];
+    auto e=this->reifyNode("Planet", true);
     s->setPosition(wb.right * pos.x, wb.top * pos.y);
     addAtlasItem("game-pics",s,kBackground,kSpritePlanet);
-    pool->checkin(mc_new1(Planet,s));
+    e->checkin(mc_new1(Planet,s));
+    po->checkin(e);
   }
 
   createParticles();
   createStarGrid();
 
-  rock->setPos(wb.cx, wb.top * 0.1f);
-  rock->sprite->setOpacity(255);
+  rock->setPos(wb.cx, wb.top * 0.1);
+  rock->node->setOpacity(255);
   rock->show();
   rock->reset();
 
@@ -110,18 +111,23 @@ void GLayer::postReify() {
 
   ss->warp->stopSystem();
 
-  cx::sfxPlay("rocket.wav");
-  cx::sfxMusic("background.mp3", true);
+  cx::sfxPlay("rocket");
+  cx::sfxMusic("background", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
+bool GLayer::onTouchStart(c::Touch *touch) {
+  return onMouseStart(touch->getLocation());
+}
 
-  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto tap = touch->getLocation();
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
+
+  auto dw=CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto rpos=rock->pos();
   auto dx = rpos.x - tap.x;
   auto dy = rpos.y - tap.y;
@@ -137,38 +143,48 @@ bool GLayer::onTouchStart(f::ComObj *co, c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(f::ComObj *co, c::Touch *touch) {
-  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+void GLayer::onTouchMotion(c::Touch *touch) {
+  onMouseMotion(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const c::Vec2 &tap) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   if (ss->drawing) {
-    auto tap = touch->getLocation();
+    auto dw=CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+    auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
     auto rpos=rock->pos();
     auto dx = rpos.x - tap.x;
     auto dy = rpos.y - tap.y;
 
     if (dx * dx + dy * dy > pow(ss->minLineLength, 2)) {
-      rock->select(true);
-      dw->lines->pivot= tap;
       dw->lines->lineType= LINE_TEMP;
+      dw->lines->pivot= tap;
+      rocketSelect(rock,true);
     } else {
-      rock->select(false);
       dw->lines->lineType= LINE_NONE;
+      rocketSelect(rock, false);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
-  auto dw= CC_GNLF(LineDrawing,drawings,"drawing");
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
-  auto tap = touch->getLocation();
+void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseClick(const c::Vec2 &tap) {
+  auto dw= CC_GEC(LineDrawings,_drawings,"n/LineDrawings");
+  auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
   //track if tapping on ship
   ss->drawing = false;
-  rock->select(false);
+  rocketSelect(rock, false);
 
   //if we are showing a temp line
   if (dw->lines->lineType == LINE_TEMP) {
@@ -205,20 +221,17 @@ void GLayer::onTouchEnd(f::ComObj *co, c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::decorate() {
-  auto wb=cx::visBox();
-
+void GLayer::decoUI() {
+  _engine = mc_new(GEngine);
   centerImage("game.bg");
   regoAtlas("game-pics");
-
-  engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createParticles() {
-  auto rocket=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto rocket=CC_GEC(Rocket,rockets,"rocket");
+  auto ss=CC_GEC(GVars,shared,"slots");
   auto wb=cx::visBox();
 
   ss->jet = c::ParticleSystemQuad::create("pics/jet.plist");
@@ -254,7 +267,7 @@ void GLayer::createParticles() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createStarGrid() {
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,shared,"slots");
   auto p=MGMS()->getPool("Planets");
   auto wz=cx::visRect();
   auto &ps= p->list();
@@ -285,8 +298,8 @@ void GLayer::createStarGrid() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::resetStar() {
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto rock=CC_GEC(Rocket,rockets,"rocket");
+  auto ss=CC_GEC(GVars,shared,"slots");
   auto rpos=rock->pos();
 
   while (true) {
@@ -306,9 +319,9 @@ void GLayer::resetStar() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::killPlayer() {
-  auto dw=CC_GNLF(LineDrawing,drawings,"drawing");
-  auto rock=CC_GNLF(Rocket,rockets,"rocket");
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto dw=CC_GEC(LineDrawing,drawings,"drawing");
+  auto rock=CC_GEC(Rocket,rockets,"rocket");
+  auto ss=CC_GEC(GVars,shared,"slots");
   auto wb=cx::visBox();
 
   cx::pauseAudio();

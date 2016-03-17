@@ -8,8 +8,6 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
@@ -20,30 +18,17 @@ NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-LineContainer* LineContainer::create() {
-  auto obj = mc_new(LineContainer);
-  if (obj && obj->init()) {
-    obj->autorelease();
-    return obj;
-  }
-  CC_SAFE_DELETE(obj);
-  return nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 bool LineContainer::init() {
 
   if (!DrawNode::init()) {
-      return false;
-  }
+  return false; }
 
   auto wz=cx::visRect();
   dash = 10;
   dashSpace = 10;
   lineType = LINE_NONE;
-  energyHeight = wz.size.height * 0.8f;
-  energyLineX = wz.size.width * 0.96f;
+  energyHeight = CC_ZH(wz.size) * 0.8;
+  energyLineX = CC_ZW(wz.size) * 0.96;
 
   this->reset();
   this->scheduleUpdate();
@@ -54,14 +39,13 @@ bool LineContainer::init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void LineContainer::reset() {
+  energyDecrement = 0.005;
   energy = 1.0;
-  energyDecrement = 0.005f;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void LineContainer::update(float dt) {
-
   auto c4= c::Color4F(c::Color3B::WHITE);
   auto wb=cx::visBox();
 
@@ -98,12 +82,12 @@ void LineContainer::update(float dt) {
   }
 
   //draw energy bar
-  drawLine(c::Vec2(energyLineX, wb.top * 0.1f),
-      c::Vec2(energyLineX, wb.top * 0.9f),
+  drawLine(c::Vec2(energyLineX, wb.top * 0.1),
+      c::Vec2(energyLineX, wb.top * 0.9),
       c::Color4F(0.0, 0.0, 0.0, 1.0));
 
-  drawLine(c::Vec2(energyLineX, wb.top * 0.1f),
-      c::Vec2(energyLineX, wb.top * 0.1f + energy * energyHeight),
+  drawLine(c::Vec2(energyLineX, wb.top * 0.1),
+      c::Vec2(energyLineX, wb.top * 0.1 + energy * energyHeight),
       c::Color4F(1.0, 0.5, 0.0, 1.0));
 }
 

@@ -24,21 +24,25 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto c= LineContainer::create();
-  auto r= Rocket::create();
+  auto ent= this->reifyNode("Shared", true);
   auto wb=cx::visBox();
-
-  MGML()->addAtlasItem("game-pics", r->sprite, kForeground, kSpriteRocket);
-  MGML()->addItem(c,1);
-
-  auto ent= this->reifyEntity();
   ent->checkin(mc_new(GVars));
 
-  ent= this->reifyEntity();
-  ent->checkin(mc_new1(LineDrawing,c));
+  auto c= LineContainer::create();
+  MGML()->addItem(c,1);
+  ent= this->reifyNode("LineDrawings", true);
+  ent->checkin(mc_new1(LineDrawings,c));
 
-  ent= this->reifyEntity();
-  r->setPos(wb.cx, wb.top * 0.1f);
+  auto r= new Rocket(cx::reifySprite("rocket.png"));
+  auto mv= mc_new(RocketMotion);
+  r->setPos(wb.cx, wb.top * 0.1);
+  rocketReset(r,mv);
+  MGML()->addAtlasItem(
+      "game-pics",
+      r->node, kForeground, kSpriteRocket);
+  ent= this->reifyNode("Rocket", true);
+  ent->checkin(mc_new(f::CHealth));
+  ent->checkin(mv);
   ent->checkin(r);
 
   MGMS()->reifyPool("Planets");

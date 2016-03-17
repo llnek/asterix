@@ -8,16 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
 
 NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine  : public a::Engine {
+class CC_DLL GEngine  : public ecs::Engine {
 
 public:
 

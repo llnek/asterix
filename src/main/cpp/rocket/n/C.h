@@ -8,11 +8,12 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Rocket.h"
 #include "LineContainer.h"
@@ -21,56 +22,46 @@ NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(rocket)
 
 enum {
-    kBackground,
-    kMiddleground,
-    kForeground
+  kBackground,
+  kMiddleground,
+  kForeground
 };
 
 enum {
-    kSpriteRocket,
-    kSpritePlanet,
-    kSpriteBoost,
-    kSpriteStar
+  kSpriteRocket,
+  kSpritePlanet,
+  kSpriteBoost,
+  kSpriteStar
 };
 
-typedef enum gamestates {
-    kGameIntro,
-    kGamePaused,
-    kGamePlay,
-    kGameOver
-} GameState;
-
+enum GameState {
+  kGameIntro,
+  kGamePaused,
+  kGamePlay,
+  kGameOver
+};
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL LineDrawing : public a::Component {
-  LineDrawing(not_null<LineContainer*> c) {
+struct CC_DLL LineDrawings : public ecs::Component {
+  LineDrawings(not_null<LineContainer*> c) {
     lines=c;
   }
   DECL_PTR(LineContainer,lines)
-  MDECL_COMP_TPID("n/LineDrawing")
+  MDECL_COMP_TPID("n/LineDrawings")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Planet : public f::ComObj {
-  Planet(not_null<c::Sprite*> s)
-    : ComObj(s) {
-  }
-  MDECL_COMP_TPID("n/Planet")
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
+struct CC_DLL Planet : public f::CPixie {
+  Planet(not_null<c::Node*> s)
+  : CPixie(s) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
 
   DECL_PTR(c::ParticleSystemQuad, pickup)
   DECL_PTR(c::ParticleSystemQuad, jet)

@@ -8,10 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 NS_BEGIN(rocket)
 
 enum {
@@ -22,11 +23,19 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Rocket : public f::ComObj {
+struct CC_DLL Rocket : public f::CPixie {
+  Rocket(not_null<c::Node*> s)
+  : CPixie(s)
+  {}
+};
 
-  Rocket(not_null<c::Sprite*>);
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL RocketMotion : public f::CMove {
 
-public:
+  void setRotationFromVector () {
+    targetRotation= CC_RADIANS_TO_DEGREES(atan2(-vel.y, vel.x));
+  }
 
   DECL_FZ(rotationDamping)
   DECL_FZ(rotationSpring)
@@ -35,24 +44,17 @@ public:
   DECL_FZ(ar)
   DECL_FZ(vr)
 
-  void setRotationFromVector () {
-    targetRotation= CC_RADIANS_TO_DEGREES(atan2(-vel.y, vel.x));
-  }
-
-  static Rocket* create();
-
   DECL_IZ(rotationOrientation)
   DECL_TD(c::Vec2, pivot)
   DECL_FZ(angularSpeed)
 
-  void update(float);
-  void reset();
-  void select(bool flag);
+  static owner<RocketMotion*> create();
 
-  bool collidedWithSides();
-
-  MDECL_COMP_TPID("n/Rocket")
 };
+
+void rocketReset(not_null<Rocket*>, not_null<RocketMotion*>);
+void rocketSelect(not_null<Rocket*>, bool flag);
+
 
 
 NS_END

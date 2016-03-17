@@ -23,9 +23,6 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  drawings=engine->getNodeList(LineDrawingNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
-  rockets=engine->getNodeList(RocketNode().typeId());
 }
 
 //////////////////////////////////////////////////////////////////////////////
