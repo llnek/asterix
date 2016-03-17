@@ -41,7 +41,6 @@ enum {
 struct CC_DLL Cloud : public f::CPixie {
   Cloud(not_null<c::Node*> s)
   : CPixie(s) {}
-  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,7 +48,13 @@ struct CC_DLL Cloud : public f::CPixie {
 struct CC_DLL Meteor : public f::CPixie {
   Meteor(not_null<c::Node*> s)
   : CPixie(s) {}
-  MDECL_COMP_TPID("f/CPixie")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Health : public f::CPixie {
+  Health(not_null<c::Node*> s)
+    : CPixie(s) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,7 +62,6 @@ struct CC_DLL Meteor : public f::CPixie {
 struct CC_DLL Bomb : public f::CPixie {
   Bomb(not_null<c::Node*> s)
     : CPixie(s) {}
-  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,7 +69,6 @@ struct CC_DLL Bomb : public f::CPixie {
 struct CC_DLL Ufo : public f::CPixie {
   Ufo(not_null<c::Node*> s)
   : CPixie(s) {}
-  MDECL_COMP_TPID("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////

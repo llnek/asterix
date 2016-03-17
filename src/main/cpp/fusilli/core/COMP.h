@@ -160,6 +160,8 @@ struct CC_DLL CPixie : public ecs::Component {
   CPixie() {}
   virtual void hide() { if (node) node->setVisible(false); }
   virtual void show() { if (node) node->setVisible(true); }
+  virtual bool isOvert() {
+    return node ? node->isVisible() : false; }
   virtual void inflate(float x, float y) {
     if (node) { node->setPosition(x,y); show(); }
   }

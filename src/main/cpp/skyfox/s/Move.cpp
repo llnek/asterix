@@ -37,15 +37,15 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto p= MGMS()->getPool("Clouds");
+  auto po= MGMS()->getPool("Clouds");
   auto wb= cx::visBox();
-  auto c= p->ls();
+  auto c= po->ls();
 
   F__LOOP(it,c) {
     auto e= *it;
-    auto co=CC_GEC(f::CPixie,e,"f/CPixie");
+    auto co=CC_GEC(Cloud,e,"f/CPixie");
     auto z= co->csize();
-    co->setPos(co->node->getPositionX() + dt * 20);
+    co->node->setPositionX(co->node->getPositionX() + dt * 20);
     if (co->node->getPositionX() > wb.right + HWZ(z)) {
       co->node->setPositionX(- HWZ(z));
     }

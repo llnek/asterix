@@ -23,7 +23,7 @@ NS_BEGIN(skyfox)
 //
 void Collide::preamble() {
   _shared= _engine->getNodes("n/GVars")[0];
-  _ufo= _engine->getNodes("n/Ufo")[0];
+  _ufo= _engine->getNodes("f/CAutoma")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,20 +39,20 @@ bool Collide::update(float dt) {
 //
 void Collide::process(float dt) {
 
-  if (!ss->shockWave->isVisible()) { return; }
 
-  auto ufo= CC_GEC(f::CPixie,_ufo,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto ufo= CC_GEC(Ufo,_ufo,"f/CPixie");
   auto ray = CC_GCT(ufo->node,kSpriteRay);
   auto sz= CC_CSIZE(ss->shockWave);
   s_vec<ecs::Node*> dead;
+    if (!ss->shockWave->isVisible()) { return; }
 
   F__LOOP(it,ss->fallingObjects) {
     auto e= it->second;
     auto co=CC_GEC(f::CPixie,e,"f/CPixie");
-
-    auto dx = ss->shockWave->getPositionX() - co->node->getPositionX();
-    auto dy = ss->shockWave->getPositionY() - co->node->getPositionY();
+    auto pos= co->pos();
+    auto dx = ss->shockWave->getPositionX() - pos.x;
+    auto dy = ss->shockWave->getPositionY() - pos.y;
 
     if (pow(dx, 2) + pow(dy, 2) <= pow(HWZ(sz), 2)) {
       co->node->stopAllActions();
@@ -68,11 +68,15 @@ void Collide::process(float dt) {
     }
   }
 
-  F__LOOP(it,dead) { ss->fallingObjects.erase(*it); }
+  F__LOOP(it,dead) {
+    ss->fallingObjects.erase(*it);
+    cx::hibernate(*it);
+  }
 
-  if (ufo->node->isVisible() && ! ss->ufoKilled) {
-    auto dx = ss->shockWave->getPositionX() - ufo->node->getPositionX();
-    auto dy = ss->shockWave->getPositionY() - ufo->node->getPositionY();
+  if (ufo->isOvert() && ! ss->ufoKilled) {
+    auto pos= ufo->pos();
+    auto dx = ss->shockWave->getPositionX() - pos.x;
+    auto dy = ss->shockWave->getPositionY() - pos.y;
     if (pow(dx, 2) + pow(dy, 2) <= pow(CC_CSIZE(ss->shockWave).width * 0.6, 2)) {
       ss->ufoKilled = true;
       cx::pauseEffects();

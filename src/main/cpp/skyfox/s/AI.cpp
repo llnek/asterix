@@ -23,8 +23,8 @@ NS_BEGIN(skyfox)
 //
 void AI::preamble() {
   _shared = _engine->getNodes("n/GVars")[0];
-  _bomb = _engine->getNodes("n/Bomb")[0];
-  _ufo = _engine->getNodes("n/Ufo")[0];
+  _bomb = _engine->getNodes("f/CGesture")[0];
+  _ufo = _engine->getNodes("f/CAutoma")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@ bool AI::update(float dt) {
 //
 void AI::process(float dt) {
 
-  auto bomb=CC_GEC(f::CPixie,_bomb,"f/CPixie");
-  auto ufo=CC_GEC(f::CPixie,_ufo,"f/CPixie");
+  auto bomb=CC_GEC(Bomb,_bomb,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ufo=CC_GEC(Ufo,_ufo,"f/CPixie");
   auto wb=cx::visBox();
 
   ss->meteorTimer += dt;
@@ -69,17 +69,16 @@ void AI::process(float dt) {
     increaseDifficulty();
   }
 
-  if (bomb->node->isVisible()) {
-    if (bomb->node->getScale() > 0.3) {
-      if (bomb->node->getOpacity() != 255) {
-        bomb->node->setOpacity(255);
-      }
+  if (bomb->isOvert() &&
+      bomb->node->getScale() > 0.3) {
+    if (bomb->node->getOpacity() != 255) {
+      bomb->node->setOpacity(255);
     }
   }
 
   auto ray = CC_GCT(ufo->node,kSpriteRay);
   auto pos=ufo->pos();
-  if (ufo->node->isVisible() &&
+  if (ufo->isOvert() &&
       ray->isVisible()) {
     if (pos.x > wb.right * 0.1 &&
         pos.x <= wb.right * 0.9) {
@@ -92,15 +91,15 @@ void AI::process(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::resetMeteor() {
-  if (ss->fallingObjects.size() > 30) {
-  return; }
   auto wb=cx::visBox();
   auto mtx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
   auto mx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
   auto ss = CC_GEC(GVars,_shared,"n/GVars");
+    if (ss->fallingObjects.size() > 30) {
+        return; }
   auto po= MGMS()->getPool("Meteors");
-  auto e = po->take(true);
-  auto meteor=CC_GEC(f::CPixie,e,"f/CPixie");
+    auto e = (ecs::Node*)po->take(true);
+  auto meteor=CC_GEC(Meteor,e,"f/CPixie");
   auto sz= meteor->csize();
 
   meteor->node->setPosition(mx, wb.top + HHZ(sz));
@@ -128,13 +127,13 @@ void AI::resetMeteor() {
 void AI::resetUfo(ecs::Node *node) {
 
   auto UFO_SPEED = CC_CSV(c::Integer,"UFO+SPEED");
-  auto ufo=CC_GEC(f::CPixie,node,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto ufo=CC_GEC(Ufo,node,"f/CPixie");
   auto wb= cx::visBox();
   auto newY = cx::randFloat(wb.top * 0.3) + wb.top * 0.3;
   auto newX= cx::randSign() > 0 ? 0 : wb.right;
 
-  if (ufo->node->isVisible()) { return; }
+  if (ufo->isOvert()) { return; }
 
   if (newY > wb.top * 0.7) {
     newY = wb.top * 0.7;
@@ -187,8 +186,8 @@ void AI::resetHealth() {
   auto htx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
   auto hx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
   auto hp= MGMS()->getPool("Healths");
-  auto e = hp->take(true);
-  auto health=CC_GEC(f::CPixie,e,"f/CPixie");
+    auto e = (ecs::Node*)hp->take(true);
+  auto health=CC_GEC(Health,e,"f/CPixie");
   auto sz= health->csize();
 
   health->setPos(hx, wb.top + HHZ(sz));

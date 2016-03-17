@@ -28,8 +28,6 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  void onGUIXXX(const c::Vec2 &tap);
-
   virtual void onMouseClick(const c::Vec2&);
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
@@ -39,36 +37,30 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onDone();
 
   DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _ufos)
-  DECL_PTR(ecs::Node, _bombs)
+  DECL_PTR(ecs::Node, _ufo)
+  DECL_PTR(ecs::Node, _bomb)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  onGUIXXX(touch->getLocation());
+  onMouseClick(touch->getLocation());
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-  onGUIXXX(loc);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onGUIXXX(const c::Vec2 &tap) {
+void GLayer::onMouseClick(const c::Vec2 &tap) {
 
   auto co=CC_GEC(f::CPixie,_bomb,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto pos= co->pos();
 
-  if (co->node->isVisible()) {
+  if (co->isOvert()) {
 
-    co->node->getChildByTag(kSpriteSparkle)->stopAllActions();
-    co->node->getChildByTag(kSpriteHalo)->stopAllActions();
+    CC_GCT(co->node,kSpriteSparkle)->stopAllActions();
+    CC_GCT(co->node,kSpriteHalo)->stopAllActions();
     co->node->stopAllActions();
 
     if (co->node->getScale() > 0.25) {
@@ -124,30 +116,27 @@ void GLayer::onDone() {
   surcease();
 
   F__LOOP(it,ss->fallingObjects) {
-    it->second->node->stopAllActions();
-    CC_HIDE(it->second->node);
+    auto ui=CC_GEC(f::CPixie,it->second,"f/CPixie");
+    ui->node->stopAllActions();
+    ui->hide();
   }
 
   ss->fallingObjects.clear();
 
-  if (bomb->node->isVisible()) {
-    auto child = CC_GCT(bomb->node,kSpriteHalo);
-    child->stopAllActions();
-    child = CC_GCT(bomb->node,kSpriteSparkle);
-    child->stopAllActions();
+  if (bomb->isOvert()) {
+    CC_GCT(bomb->node,kSpriteSparkle)->stopAllActions();
+    CC_GCT(bomb->node,kSpriteHalo)->stopAllActions();
     bomb->node->stopAllActions();
-    CC_HIDE(bomb->node);
+    bomb->hide();
   }
   if (ss->shockWave->isVisible()) {
     ss->shockWave->stopAllActions();
     CC_HIDE(ss->shockWave);
   }
-  if (ufo->node->isVisible()) {
-    auto ray = CC_GCT(ufo->node,kSpriteRay);
-    ray->stopAllActions();
-    CC_HIDE(ray);
+  if (ufo->isOvert()) {
+    CC_GCT(ufo->node,kSpriteRay)->stopAllActions();
     ufo->node->stopAllActions();
-    CC_HIDE(ufo->node);
+    ufo->hide();
   }
 
   auto btn=cx::reifyMenuBtn("gameover.png");
@@ -164,8 +153,8 @@ void GLayer::onDone() {
 void GLayer::onInited() {
 
   _shared = _engine->getNodes("n/GVars")[0];
-  _ufo = _engine->getNodes("n/Ufo")[0];
-  _bomb = _engine->getNodes("n/Bomb")[0];
+  _ufo = _engine->getNodes("f/CAutoma")[0];
+  _bomb = _engine->getNodes("f/CGesture")[0];
 
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->energy = 100;

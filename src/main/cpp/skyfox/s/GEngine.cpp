@@ -24,12 +24,12 @@ NS_BEGIN(skyfox)
 //
 void GEngine::createMeteors(int cnt) {
   auto po= MGMS()->getPool("Meteors");
-  po->preset([=]() {
+  po->preset([=]() -> f::Poolable* {
     auto m= new Meteor(cx::reifySprite("meteor.png"));
     auto e=this->reifyNode("Meteor");
     MGML()->addAtlasItem(
-        "game-pics",m->node,
-        kMiddleground, kSpriteMeteor);
+        "game-pics",
+        m->node, kMiddleground, kSpriteMeteor);
     m->hide();
     e->checkin(m);
     return e;
@@ -40,13 +40,13 @@ void GEngine::createMeteors(int cnt) {
 //
 void GEngine::createHealths(int cnt) {
   auto po= MGMS()->getPool("Healths");
-  po->preset([=]() {
+  po->preset([=]() -> f::Poolable* {
     auto h= new Health(cx::reifySprite("health.png"));
     auto e= this->reifyNode("Health");
     h->node->setAnchorPoint(c::Vec2(0.5, 0.8));
     MGML()->addAtlasItem(
-        "game-pics",h->node,
-        kMiddleground, kSpriteHealth);
+        "game-pics",
+        h->node, kMiddleground, kSpriteHealth);
     h->hide();
     e->checkin(h);
     return e;
@@ -81,6 +81,7 @@ void GEngine::initEntities() {
   MGML()->addAtlasItem("game-pics",sp);
   ent= this->reifyNode("Bomb",true);
   ent->checkin(mc_new1(Bomb,sp));
+  ent->checkin(mc_new(f::CGesture));
 
   //add shockwave
   ss->shockWave = cx::reifySprite("shockwave.png");
@@ -116,7 +117,10 @@ void GEngine::initEntities() {
 
   ent=this->reifyNode("Ufo", true);
   ent->checkin(mc_new1(Ufo,sp));
+  ent->checkin(mc_new(f::CAutoma));
 
+  createMeteors();
+  createHealths();
   createClouds();
 }
 
