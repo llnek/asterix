@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Tower.h"
 
@@ -26,7 +26,7 @@ void Tower::init() {
   auto wb= cx::visBox();
   // create the first pair of towers
   // they should be two whole screens away from the dragon
-  auto initialPosition = c::Vec2(wz.size.width*2, wb.cy);
+  auto initialPosition = c::Vec2(CC_ZW(wz.size)*2, wb.cy);
   firstTowerIndex = 0;
   createTower(initialPosition);
   // create the remaining towers
@@ -47,7 +47,7 @@ void Tower::createTower(const c::Vec2 &position) {
   tower.lowerSprite = cx::reifySprite("opst_02");
   tower.lowerSprite->setPosition(
       position.x,
-      position.y + VERT_GAP_BWN_TOWERS * -0.5 + towerSpriteSize.height * -0.5 );
+      position.y - HTV(VERT_GAP_BWN_TOWERS) - HHZ(towerSpriteSize));
 
   parentNode->addAtlasItem("dhtex", tower.lowerSprite, E_LAYER_TOWER);
 
@@ -55,7 +55,7 @@ void Tower::createTower(const c::Vec2 &position) {
   tower.upperSprite = cx::reifySprite("opst_01");
   tower.upperSprite->setPosition(
       position.x,
-      position.y + VERT_GAP_BWN_TOWERS * 0.5 + towerSpriteSize.height * 0.5 );
+      position.y + HTV(VERT_GAP_BWN_TOWERS) + HHZ(towerSpriteSize));
   parentNode->addAtlasItem("dhtex", tower.upperSprite, E_LAYER_TOWER);
 
   towers.push_back(tower);
@@ -93,22 +93,23 @@ void Tower::repositionTower(int index) {
   tower.position = getNextTowerPosition();
   tower.lowerSprite->setPosition(
       tower.position.x,
-      tower.position.y + VERT_GAP_BWN_TOWERS * -0.5 + towerSpriteSize.height * -0.5);
+      tower.position.y - HTV(VERT_GAP_BWN_TOWERS) - HHZ(towerSpriteSize));
   tower.upperSprite->setPosition(
       tower.position.x,
-      tower.position.y + VERT_GAP_BWN_TOWERS * 0.5 + towerSpriteSize.height * 0.5);
+      tower.position.y + HTV(VERT_GAP_BWN_TOWERS)+ HHZ(towerSpriteSize));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Vec2 Tower::getNextTowerPosition() {
   // randomly select either above or below last tower
-  auto offset = cx::rand() * VERT_GAP_BWN_TOWERS * 0.75;
-  auto isAbove = (cx::rand() > 0.5);
+  auto r=  cx::rand();
+  auto offset = r * VERT_GAP_BWN_TOWERS * 0.75;
+  auto isAbove = r > 0.5;
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  offset *= (isAbove) ? 1:-1;
+  offset *= (isAbove) ? 1 : -1;
 
   auto &tower = towers[lastTowerIndex];
   // new position calculated by adding to last tower's position
@@ -117,10 +118,10 @@ c::Vec2 Tower::getNextTowerPosition() {
 
   // limit the point to stay within 30-80% of the screen
   if (newPositionY >= wb.top  * 0.8) {
-      newPositionY -= VERT_GAP_BWN_TOWERS;
+    newPositionY -= VERT_GAP_BWN_TOWERS;
   }
   else if (newPositionY <= wb.top * 0.3) {
-      newPositionY += VERT_GAP_BWN_TOWERS;
+    newPositionY += VERT_GAP_BWN_TOWERS;
   }
 
   // return the new tower position

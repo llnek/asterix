@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Fairytale.h"
 
@@ -22,9 +22,10 @@ NS_BEGIN(flappy)
 //
 void Fairytale::init() {
   // this makes a nice midnight sky
-  auto background = c::LayerGradient::create(
-      c::Color4B(15, 15, 25, 255), c::Color4B(84, 83, 104, 255));
-  parentNode->addItem(background, E_LAYER_BG);
+  auto bg = c::LayerGradient::create(
+      c::Color4B(15, 15, 25, 255),
+      c::Color4B(84, 83, 104, 255));
+  parentNode->addItem(bg, E_LAYER_BG);
 
   createCastle();
   createSilhouette();
@@ -39,7 +40,8 @@ void Fairytale::createCastle() {
     // initial position
   auto nextPosition = HWZ(castleSpriteSize);
   auto wz= cx::visRect();
-  auto len= wz.size.width * 1.5;
+  auto len= CC_ZW(wz.size) * 1.5;
+
     // fill up one & a half screen
   while (nextPosition < len) {
     // create castle wall sprite and add it to the parent's batch node
@@ -49,8 +51,9 @@ void Fairytale::createCastle() {
     // store this sprite...we need to update it
     castleSprites.push_back(castleSprite);
     // the next wall depends on this variable
-    nextPosition += castleSpriteSize.width;
+    nextPosition += CC_ZW(castleSpriteSize);
   }
+
   // we need this to position the next wall sprite
   lastCastleIndex = castleSprites.size() -1;
 }
@@ -63,7 +66,8 @@ void Fairytale::createSilhouette() {
     // initial position
   auto nextPosition = 0;
   auto wz= cx::visRect();
-  auto len= wz.size.width * 1.5;
+  auto len= CC_ZW(wz.size) * 1.5;
+
     // fill up one & a half screen
   while (nextPosition < len) {
     // create silhouette sprite and add it to the parent's batch node
@@ -73,8 +77,9 @@ void Fairytale::createSilhouette() {
     // store this sprite...we need to update it
     silhouetteSprites.push_back(silhouetteSprite);
     // the next silhouette depends on this variable
-    nextPosition += silhouetteSpriteSize.width;
+    nextPosition += CC_ZW(silhouetteSpriteSize);
   }
+
     // we need this to position the next silhouette sprite
   lastSilhouetteIndex = silhouetteSprites.size() -1;
 }
@@ -84,13 +89,14 @@ void Fairytale::createSilhouette() {
 void Fairytale::createStars() {
     // random number of stars...this night sky always changes
   auto numStars = MAX_STARS + floor(cx::rand() * MAX_STARS);
-    auto wz=cx::visRect();
+  auto wz=cx::visRect();
+
   for (auto i = 0; i < numStars; ++i) {
-    // either big star or small
-    auto png= (cx::rand() > 0.5) ? "dhstar1" : "dhstar2";
+      auto png= cx::rand() > 0.5 ? "dhstar1" : "dhstar2";
     auto star = cx::reifySprite(png);
+    // either big star or small
     // random position
-    star->setPosition(cx::rand() * wz.size.width, cx::rand() * wz.size.height);
+    star->setPosition(cx::rand() * CC_ZW(wz.size), cx::rand() * CC_ZH(wz.size));
     // twinkle twinkle randomly star
     auto duration = 1 + cx::rand() * 2;
     auto action = c::RepeatForever::create(
@@ -124,7 +130,7 @@ void Fairytale::updateCastle() {
     // check if the sprite has gone completely out of the left edge of the screen
     if (castleSprite->getPositionX() < (castleSpriteSize.width * -0.5)) {
       // reposition it after the last wall sprite
-      auto positionX = castleSprites[lastCastleIndex]->getPositionX() + castleSpriteSize.width - MAX_SCROLLING_SPEED;
+      auto positionX = castleSprites[lastCastleIndex]->getPositionX() + CC_ZW(castleSpriteSize) - MAX_SCROLLING_SPEED;
       castleSprite->setPosition(positionX, castleSprite->getPositionY());
       // this sprite now becomes the new last wall
       lastCastleIndex = n;
@@ -143,9 +149,9 @@ void Fairytale::updateSilhouette() {
     silhouetteSprite->setPosition(silhouetteSprite->getPositionX() - MAX_SCROLLING_SPEED*0.3, silhouetteSprite->getPositionY());
 
     // check if the sprite has gone completely out of the left edge of the screen
-    if (silhouetteSprite->getPositionX() < (silhouetteSpriteSize.width * -0.5)) {
+    if (silhouetteSprite->getPositionX() < -HWZ(silhouetteSpriteSize)) {
         // reposition it after the last silhouette sprite
-      auto positionX = silhouetteSprites[lastSilhouetteIndex]->getPositionX() + silhouetteSpriteSize.width - MAX_SCROLLING_SPEED*0.3;
+      auto positionX = silhouetteSprites[lastSilhouetteIndex]->getPositionX() + CC_ZW(silhouetteSpriteSize) - MAX_SCROLLING_SPEED*0.3;
       silhouetteSprite->setPosition(positionX, silhouetteSprite->getPositionY());
       // this sprite now becomes the new last silhouette
       lastSilhouetteIndex = n;

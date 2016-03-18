@@ -25,7 +25,7 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,11 +40,11 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   // first find out which tower is right in front
   auto frontTower = ss->towers->getFrontTower();
   // fetch the bounding boxes of the respective sprites
-  auto dragonAABB = CC_BBOX(ss->dragon->dragonSprite);
+  auto dragonAABB = CC_BBOX(ss->dragon->node);
   auto lowerTowerAABB = CC_BBOX(frontTower.lowerSprite);
   auto upperTowerAABB = CC_BBOX(frontTower.upperSprite);
 

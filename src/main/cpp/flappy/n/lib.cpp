@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "lib.h"
 
@@ -20,21 +20,26 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void addDragon(f::XNode *node) {
-  auto dragonSprite = cx::reifySprite("dhch_1");
+  auto sp = cx::reifySprite("dhch_1");
   auto wb= cx::visBox();
 
-  dragonSprite->setPosition(wb.right * 0.2, wb.top * 0.5);
-  node->addAtlasItem("dhtex", dragonSprite, E_LAYER_PLAYER);
+  sp->setPosition(wb.right * 0.2, HTV(wb.top));
+  node->addAtlasItem("dhtex", sp, E_LAYER_PLAYER);
 
-  auto animation = c::AnimationCache::getInstance()->getAnimation("dragonFlying");
-  dragonSprite->runAction(c::RepeatForever::create(c::Animate::create(animation)));
+  auto anim= CC_ACAC()->getAnimation("dragonFlying");
+  sp->runAction(
+      c::RepeatForever::create(c::Animate::create(anim)));
 
-  auto flySequence = c::Sequence::create(
-      c::EaseSineOut::create(c::MoveBy::create(animation->getDuration()/2, c::Vec2(0, 10))),
-      c::EaseSineOut::create(c::MoveBy::create(animation->getDuration()/2, c::Vec2(0, -10))),
+  auto seq = c::Sequence::create(
+      c::EaseSineOut::create(
+        c::MoveBy::create(
+          anim->getDuration()/2, c::Vec2(0, 10))),
+      c::EaseSineOut::create(
+        c::MoveBy::create(
+          anim->getDuration()/2, c::Vec2(0, -10))),
       CC_NIL);
 
-  dragonSprite->runAction(c::RepeatForever::create(flySequence));
+  sp->runAction(c::RepeatForever::create(seq));
 }
 
 

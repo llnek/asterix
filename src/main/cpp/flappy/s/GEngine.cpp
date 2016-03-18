@@ -24,7 +24,7 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto ent=this->reifyEntity();
+  auto ent=this->reifyNode("Shared", true);
   ent->checkin(mc_new(GVars));
 }
 

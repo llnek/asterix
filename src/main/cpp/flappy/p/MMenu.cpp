@@ -28,8 +28,8 @@ void MMenu::decoUI() {
   auto wb= cx::visBox();
 
   auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
-  }, wz.size.height/4);
+    resume,retry,splash
+  }, CC_ZH(wz.size)/4);
 
   resume->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
@@ -64,7 +64,7 @@ void MMenu::decoUI() {
   // audio
   auto audios= cx::reifyAudioIcons();
   auto sz= CC_CSIZE(audios[0]);
-  auto gap= sz.width /4;
+  auto gap= CC_ZW(sz)/4;
   auto c= cx::white();
 
   audios[0]->setColor(c);

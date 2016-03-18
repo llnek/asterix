@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -19,14 +20,15 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Fairytale {
+
   DECL_TV(c::Size,silhouetteSpriteSize,c::Size(0,0))
   DECL_TV(c::Size,castleSpriteSize,c::Size(0,0))
   DECL_PTR(f::XNode,parentNode)
   s_vec<c::Sprite*> silhouetteSprites;
   s_vec<c::Sprite*> castleSprites;
 
-  DECL_IZ(lastCastleIndex)
   DECL_IZ(lastSilhouetteIndex)
+  DECL_IZ(lastCastleIndex)
 
   void createSilhouette();
   void createCastle();
@@ -38,7 +40,8 @@ public:
 
   Fairytale(f::XNode *n) { parentNode=n; }
   void update(float);
-    void init();
+  void init();
+
 };
 
 NS_END

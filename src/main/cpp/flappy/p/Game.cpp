@@ -30,17 +30,14 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
   void onEnd();
 
-  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void onMouseClick(const c::Vec2&);
-
-  virtual void onTouchMotion(c::Touch*);
+  virtual bool onMouseStart(const c::Vec2&);
   virtual bool onTouchStart(c::Touch*);
-  virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
   virtual ~GLayer();
@@ -54,8 +51,9 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  _shared = _engine->getNodes("n/GVars")[0];
+
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
@@ -75,34 +73,25 @@ void GLayer::onInited() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
+bool GLayer::onMouseStart(const c::Vec2 &loc) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
 
   ss->hasGameStarted = true;
   getHUD()->getReady();
 
   // inform DragonManager that the game has started
   ss->dragon->onGameStart();
+
   // fly dragon...fly!!!
   ss->dragon->dragonFlap();
-}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onTouchStart(c::Touch *touch) {
-  onMouseClick(touch->getLocation());
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(c::Touch *touch) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchEnd(c::Touch *touch) {
+bool GLayer::onTouchStart(c::Touch *touch) {
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,8 +111,7 @@ void GLayer::decoUI() {
   regoAtlas("game-pics", E_LAYER_BG + 1);
   regoAtlas("dhtex", E_LAYER_BG + 1);
 
-
-  engine = mc_new(GEngine);
+  _engine = mc_new(GEngine);
 }
 
 END_NS_UNAMED
@@ -158,11 +146,6 @@ void Game::decoUI() {
   play();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::Game()
-  : f::GameScene(true) {
-}
 
 NS_END
 

@@ -37,8 +37,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "@@GAMEID@@";
-  app_id = "flappy";
+    _game_id= "516c557d-4402-4698-9fa5-72ad3ad34a3f";
+  _app_id = "flappy";
 
   addCst("SHIP+SPEED", CC_INT(200));
 }

@@ -26,7 +26,7 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
 
   ss->dragon->update(dt);

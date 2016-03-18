@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -19,28 +20,27 @@ NS_BEGIN(flappy)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Dragon {
+class CC_DLL Dragon : public f::CPixie {
 
   DECL_PTR(f::XNode, parentNode)
   DECL_PTR(GVars,ss)
 
 public:
-  void dragonFlap();
-  void dragonDeath();
 
+  void dragonDeath();
+  void dragonFlap();
 
   Dragon(GVars *ss, f::XNode *n) {
     this->ss=ss;
-     parentNode=n;
+    parentNode=n;
   }
 
-  void init();
   void onGameStart();
   void update(float);
+  void init();
 
   DECL_TV(c::Vec2, dragonPosition, c::Vec2(0,0))
   DECL_TV(c::Vec2, dragonSpeed, c::Vec2(0,0))
-  DECL_PTR(c::Sprite,dragonSprite)
   DECL_BF(mustApplyGravity)
 
 };

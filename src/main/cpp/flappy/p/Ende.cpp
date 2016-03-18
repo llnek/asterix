@@ -28,7 +28,7 @@ void Ende::decoUI() {
   auto wb=cx::visBox();
   auto popup = c::LayerColor::create(
       c::Color4B(0, 0, 0, 196),
-      wz.size.width, wz.size.height);
+      CC_ZW(wz.size), CC_ZH(wz.size));
 
   popup->setOpacity(0);
   popup->runAction(c::FadeTo::create(0.25, 196));
@@ -48,7 +48,7 @@ void Ende::decoUI() {
   addItem(menu);
 
   auto score= getHUD()->getScore();
-  auto scoreLabel = cx::reifyLabel("dft", 60, "Score: " + s::to_string(score));
+  auto scoreLabel = cx::reifyLabel("dft", 60, "Score: " + FTOS(score));
   scoreLabel->setPosition(wb.cx, wb.top * 0.6);
   scoreLabel->runAction(
       c::Sequence::create(
@@ -59,7 +59,7 @@ void Ende::decoUI() {
   addItem(scoreLabel);
 
   auto oldHighScore = CC_APPDB()->getIntegerForKey(HIGHSCORE_KEY);
-  auto highScoreLabel = cx::reifyLabel("dft", 60, "Your Best: " + s::to_string(oldHighScore));
+  auto highScoreLabel = cx::reifyLabel("dft", 60, "Your Best: " + FTOS(oldHighScore));
   highScoreLabel->setPosition(wb.cx, wb.cy);
   addItem(highScoreLabel);
 
@@ -73,7 +73,7 @@ void Ende::decoUI() {
           c::DelayTime::create(1),
           c::EaseSineIn::create(c::ScaleTo::create(0.25, 1.1)),
           c::CallFunc::create([=]() {
-             highScoreLabel->setString( "Your Best: " + s::to_string(score));
+             highScoreLabel->setString("Your Best: " + FTOS(score));
             }),
           c::EaseSineOut::create(c::ScaleTo::create(0.25, 1)),
           CC_NIL));
