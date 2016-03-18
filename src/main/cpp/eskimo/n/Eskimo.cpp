@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Eskimo.h"
 
@@ -19,10 +19,26 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EskimoSprite::EskimoSprite(GVars *ss) {
+owner<Eskimo*> Eskimo::create(not_null<GVars*> ss) {
+  return new Eskimo(EskimoSprite::create(ss));
+}
 
-  this->initWithSpriteFrameName("player_circle.png");
-  this->ss= ss;
+//////////////////////////////////////////////////////////////////////////////
+//
+EskimoSprite* EskimoSprite::create(GVars *ss) {
+  auto sp = new EskimoSprite();
+  sp->initWithSpriteFrameName("player_circle.png");
+  sp->autorelease();
+  sp->bind(ss);
+  return sp;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void EskimoSprite::bind(GVars *ss) {
+
+  this->_switchShape = false;
+  this->ss = ss;
 
   //create body
   b2BodyDef bodyDef; bodyDef.type = b2_dynamicBody;
@@ -31,15 +47,6 @@ EskimoSprite::EskimoSprite(GVars *ss) {
   _body->SetUserData(this);
 
   makeCircleShape();
-  _switchShape = false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-EskimoSprite* EskimoSprite::create(not_null<GVars*> gv) {
-  auto sprite = new EskimoSprite(gv);
-  sprite->autorelease();
-  return sprite;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +61,7 @@ void EskimoSprite::reset() {
   _body->SetLinearVelocity(b2Vec2_zero);
 
   setVisible(true);
-  setRotation(0.0);
+  setRotation(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -34,9 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id="9c1f0a53-1757-43df-bed1-50176a24eea2";
-  app_id = "eskimo";
-  addCst("showFPS", CC_BOOL(false));
+  _game_id="9c1f0a53-1757-43df-bed1-50176a24eea2";
+  _app_id = "eskimo";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,9 +80,8 @@ void Config::handleResolution(const c::Size &rs) {
     w=320;
   }
 
-  c::FileUtils::getInstance()->setSearchPaths(s_vec<sstr> {p});
-
   CC_DTOR()->setContentScaleFactor(w/gz.width);
+  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////

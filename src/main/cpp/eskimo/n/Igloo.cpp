@@ -42,7 +42,7 @@ Igloo::Igloo(GVars *ss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Igloo* Igloo::create(not_null<GVars*> ss) {
+owner<Igloo*> Igloo::create(not_null<GVars*> ss) {
   auto sprite = mc_new1(Igloo, ss.get());
   sprite->initWithSpriteFrameName("igloo_off.png");
   sprite->autorelease();

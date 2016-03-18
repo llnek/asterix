@@ -8,12 +8,14 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "ash/Ash.h"
 #include "Box2D/Box2D.h"
+#include "ecs/Ecs.h"
+
 NS_BEGIN(eskimo)
 
 enum {
@@ -83,7 +85,8 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 //
 class Igloo;
-struct CC_DLL GVars : public ash::Component {
+struct CC_DLL GVars : public ecs::Component {
+
   MDECL_COMP_TPID( "n/GVars" )
 
   DECL_PTR(c::ParticleSystem, smoke)

@@ -33,8 +33,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   DECL_TD(c::ValueVector, _levels)
   DECL_PTR(b2World, _world)
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(ecs::Node, _player)
+  DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -55,19 +55,15 @@ struct CC_DLL GLayer : public f::GameLayer {
   void initPhysics(GVars*);
   void switchShape(bool);
 
-    virtual ~GLayer();
+  virtual ~GLayer() {
+    mc_del_ptr(_world);
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GLayer::~GLayer() {
-  mc_del_ptr(_world);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::switchShape(bool t) {
-  auto py= CC_GNLF(Eskimo,players,"player");
+  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
   auto player= (EskimoSprite*) py->node;
   player->_switchShape= t;
 }
@@ -94,9 +90,10 @@ void GLayer::initPhysics(GVars *ss) {
 //
 void GLayer::onInited() {
   _levels = CC_FILER()->getValueVectorFromFile("pics/levels.plist");
-  players = engine->getNodeList(EskimoNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  _player = _engine->getNodes("f/CGesture")[0];
+  _shared = _engine->getNodes("n/GVars")[0];
+
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto ctx= (GameCtx*) MGMS()->getCtx();
 
   getHUD()->setG(ss);
@@ -117,7 +114,7 @@ void GLayer::onInited() {
 //
 void GLayer::loadLevel(int level) {
 
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto po= MGMS()->getPool("Platforms");
   ss->currentLevel = level;
 
@@ -130,7 +127,8 @@ void GLayer::loadLevel(int level) {
     levelData.at("platforms").asValueVector();
 
   for (auto pData : platforms) {
-    auto pm = (Platform*)po->take(true);
+    auto e= po->take(true);
+    auto pm = CC_GEC(Platform,e,"f/CPixie");
     auto data = pData.asValueMap();
     auto ps= (PlatformSprite*) pm->node;
     ps->initPlatform (
@@ -151,8 +149,8 @@ void GLayer::resetLevel() {
    play again or the reset level button)
    */
 
-  auto py= CC_GNLF(Eskimo,players,"player");
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto player= (EskimoSprite*) py->node;
   auto levelData =
     _levels.at(ss->currentLevel).asValueMap();
@@ -179,16 +177,18 @@ void GLayer::resetLevel() {
   //create switches
   auto switches = levelData.at("switches").asValueVector();
   auto po= MGMS()->getPool("Switches");
+
   for (auto n = 0; n < switches.size();  ++n) {
     auto data = switches.at(n).asValueMap();
-    auto gs = (GSwitch*)po->take(true);
-    if ( n < switches.size()) {
+    auto e = po->take(true);
+    auto gs = CC_GEC(GSwitch,e,"f/CPixie");
+    if (n < switches.size()) {
       gs->initGSwitch(
                      data.at("gravity").asInt(),
                      c::Vec2(data.at("x").asFloat() * TILE,
                           data.at("y").asFloat() * TILE));
     } else {
-      gs->deflate();
+      cx::hiberante(e);
     }
     //++n;
   }
@@ -207,14 +207,14 @@ void GLayer::resetLevel() {
 
   //reset smoke particle to match igloo position
   ss->smoke->setPosition(ss->igloo->getPositionX() + TILE,
-                         ss->igloo->getPositionY() + TILE * 0.5f);
+                         ss->igloo->getPositionY() + HTV(TILE));
   //hide smoke. only shown when level is completed
   CC_HIDE(ss->smoke);
   ss->smoke->stopSystem();
 
   //if _currentLevel == 0 this is tutorial level
   if (ss->currentLevel != 0) {
-    getHUD()->showMsg("level " + s::to_string(ss->currentLevel));
+    getHUD()->showMsg("level " + FTOS(ss->currentLevel));
   } else {
     getHUD()->showMsg("tutorial");
     ss->tutorialStep = 0;
@@ -231,23 +231,26 @@ void GLayer::resetLevel() {
 //
 //hide elements from previous level
 void GLayer::clearLayer() {
-  auto p=MGMS()->getPool("Platforms");
+  auto po=MGMS()->getPool("Platforms");
 
-  p->foreach([=](f::Poolable *p) {
-    auto s= (b2Sprite*) SCAST(Platform*,p)->node;
+  po->foreach([=](f::Poolable *p) {
+    auto pf=CC_GEC(Platform,p,"f/CPixie");
+    auto s= (b2Sprite*) pf->node;
     s->_body->SetActive(false);
-    p->deflate();
+    cx::hibernate((ecs::Node*)p);
   });
 
-  p= MGMS()->getPool("Switches");
-  p->reset();
+  po= MGMS()->getPool("Switches");
+  po->foreach([=](f::Poolable *p) {
+    cx::hibernate((ecs::Node*)p);
+  });
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onAcceleration(c::Acceleration *acc, c::Event *event) {
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->acc= c::Vec2(acc->x * ACCELEROMETER_MULTIPLIER,
                    acc->y * ACCELEROMETER_MULTIPLIER);
   //CCLOG("oh yeah! %f,%f", ss->acc.x, ss->acc.y);
@@ -262,7 +265,7 @@ void GLayer::decoUI() {
   _world->SetAllowSleeping(true);
   _world->SetContinuousPhysics(true);
 
-  engine = mc_new1(GEngine, _world);
+  _engine = mc_new1(GEngine, _world);
   centerImage("game.bg");
   regoAtlas("game-pics", kMiddleground);
 }
@@ -271,7 +274,8 @@ void GLayer::decoUI() {
 //
 void GLayer::createScreen(GVars *ss) {
 
-  ss->smoke = c::ParticleSystemQuad::create("pics/smoke.plist");
+  ss->smoke = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("smoke"));
   ss->smoke->stopSystem();
   CC_HIDE(ss->smoke);
   addItem(ss->smoke, kForeground);
@@ -285,11 +289,11 @@ void GLayer::createScreen(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::newLevel() {
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto ctx= (GameCtx*) MGMS()->getCtx();
 
   if (ss->currentLevel + 1 >= _levels.size()) {
-    return; }
+  return; }
 
   loadLevel(ss->currentLevel + 1);
 
@@ -304,7 +308,7 @@ void GLayer::newLevel() {
 //
 void GLayer::readyNewLevel() {
   auto seq= c::Sequence::create(
-      c::DelayTime::create(2.5f),
+      c::DelayTime::create(2.5),
       c::CallFunc::create([=]() {
         this->newLevel();
         }),

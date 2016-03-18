@@ -19,9 +19,7 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-PlatformSprite::PlatformSprite(not_null<GVars*> ss) {
-
-  this->ss = ss.get();
+void PlatformSprite::bind(GVars *ss) {
 
   //create body
   b2BodyDef bodyDef; bodyDef.type = b2_staticBody;
@@ -37,6 +35,7 @@ PlatformSprite::PlatformSprite(not_null<GVars*> ss) {
   };
 
   ADD_NOTIFICATION(this, NOTIFY_GSWITCH, onGravityChanged);
+  this->ss = ss;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,10 +46,11 @@ PlatformSprite::~PlatformSprite() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-PlatformSprite* PlatformSprite::create(not_null<GVars*> ss) {
-  auto sprite = new PlatformSprite(ss);
+PlatformSprite* PlatformSprite::create(GVars *ss) {
+  auto sprite = mc_new(PlatformSprite);
   sprite->initWithSpriteFrameName("blank.png");
   sprite->autorelease();
+  sprite->bind(ss);
   sprite->createTiles();
   //CC_HIDE(sprite);
   return sprite;
@@ -62,8 +62,8 @@ void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &positio
 
   //Define fixture
   //Define shape
-  b2PolygonShape box; box.SetAsBox(width * 0.5f /PTM_RATIO,
-      PLATFORM_HEIGHT * 0.5f / PTM_RATIO);
+  b2PolygonShape box; box.SetAsBox(HTV(width)/PTM_RATIO,
+      HTV(PLATFORM_HEIGHT) / PTM_RATIO);
   b2FixtureDef fixtureDef;
   fixtureDef.shape = &box;
   fixtureDef.density = 1;
@@ -81,7 +81,7 @@ void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &positio
   _body->SetActive(true);
 
   //set unused tiles in the platform invisible
-  auto startX = -width * 0.5f + TILE * 0.5f;
+  auto startX = -HTV(width) + HTV(TILE)f;
   int i=0;
   F__LOOP(it,_tiles) {
     auto block = *it;
@@ -90,10 +90,10 @@ void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &positio
       block->setPosition(startX + i * TILE, 0);
       block->setFlippedX(false);
       block->setFlippedY(false);
-      if (angle == 0.0f) {
+      if ((int)angle == 0) {
         if (position.y >= TILE * 13) block->setFlippedY(true);
       }
-      if (angle == 90.0f) {
+      if ((int)angle == 90) {
         if (position.x > TILE * 5) block->setFlippedX(true);
       }
     }
@@ -114,7 +114,7 @@ void PlatformSprite::switchTexture() {
     auto block= *it;
     if (block->isVisible()) {
       block->setSpriteFrame(
-                            cx::getSpriteFrame( fmtPng("block_",ss->gravity)));
+          cx::getSpriteFrame( fmtPng("block_",ss->gravity)));
     }
   }
 }

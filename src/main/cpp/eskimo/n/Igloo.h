@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -25,8 +26,8 @@ class CC_DLL Igloo : public c::Sprite {
 
 public:
 
+  static owner<Igloo*> create(not_null<GVars*>);
   void initIgloo(int gravity, const c::Vec2&);
-  static Igloo* create(not_null<GVars*>);
   virtual ~Igloo();
 
 };

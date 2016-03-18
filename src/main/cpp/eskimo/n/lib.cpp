@@ -15,7 +15,7 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 const sstr fmtPng(const sstr& pfx, int n) {
-  return pfx + s::to_string(n) + ".png";
+  return pfx + FTOS(n) + ".png";
 }
 
 

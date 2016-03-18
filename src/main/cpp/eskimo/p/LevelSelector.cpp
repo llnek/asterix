@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "n/lib.h"
 #include "Game.h"
@@ -27,7 +27,7 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL LabelBtn {
-  LabelBtn(c::Label* a, c::Sprite* b) {
+  LabelBtn(c::Label *a, c::Sprite *b) {
     label=a;
     btn=b;
   }
@@ -63,13 +63,12 @@ struct CC_DLL LLayer : public f::XLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void LLayer::decoUI() {
-  auto db = c::UserDefault::getInstance();
 
-  _levelsCompleted = db->getIntegerForKey("levelsCompleted");
+  _levelsCompleted = CC_APPDB()->getIntegerForKey("levelsCompleted");
   if (_levelsCompleted == 0) {
     _levelsCompleted = 1;
-    db->setIntegerForKey("levelsCompleted", 1);
-    db->flush();
+    CC_APPDB()->setIntegerForKey("levelsCompleted", 1);
+    CC_APPDB()->flush();
   }
 
   _firstIndex = 1 + floor(_levelsCompleted/LEVELS_PER_SCREEN) * LEVELS_PER_SCREEN;
@@ -126,7 +125,8 @@ void LLayer::createScreen() {
   centerImage("game.bg");
 
     //add snow particle
-  auto snow = c::ParticleSystemQuad::create("pics/snow.plist");
+  auto snow = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("snow");
   snow->setPosition(c::Vec2(wb.cx, wb.top));
   addItem(snow, kBackground);
 
@@ -150,8 +150,8 @@ void LLayer::createScreen() {
 
   for (auto r = 0; r < rows; ++r) {
     for (auto c = 0; c < cols; ++c) {
-      auto position = c::Vec2(wb.right * 0.2f + c * wb.right * 0.15f,
-                     wb.top * 0.65f - wb.right * 0.15f * r );
+      auto position = c::Vec2(wb.right * 0.2 + c * wb.right * 0.15,
+                     wb.top * 0.65 - wb.right * 0.15 * r );
       if (i > _levelsCompleted) {
         mi = cx::reifySprite("btn_num_on.png");
         tag= kTagButtonOn;
@@ -161,7 +161,7 @@ void LLayer::createScreen() {
       }
       mi->setPosition(position);
 
-      auto label= cx::reifyBmfLabel("font_levels", s::to_string(i));
+      auto label= cx::reifyBmfLabel("font_levels", FTOS(i));
       label->setAnchorPoint(cx::anchorC());
       label->setPosition(position);
 
@@ -177,7 +177,7 @@ void LLayer::createScreen() {
   // next
   auto btn= cx::reifyMenuBtn("switch_2.png");
   auto m= cx::mkMenu(btn);
-  btn->setPosition(wb.right * 0.85f, wb.top * 0.1f);
+  btn->setPosition(wb.right * 0.85, wb.top * 0.1);
   btn->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     if (_firstIndex < TOTAL_LEVELS - LEVELS_PER_SCREEN) {
@@ -191,22 +191,22 @@ void LLayer::createScreen() {
   // back
   btn= cx::reifyMenuBtn("switch_3.png");
   m= cx::mkMenu(btn);
-  btn->setPosition(wb.right * 0.15f, wb.top * 0.1f);
+  btn->setPosition(wb.right * 0.15, wb.top * 0.1);
   btn->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     if (_firstIndex == 1) {
       CC_DTOR()->replaceScene(
-          c::TransitionMoveInL::create(0.2f, Splash::reify()));
+          c::TransitionMoveInL::create(0.2, Splash::reify()));
     } else {
       _firstIndex -= LEVELS_PER_SCREEN;
       createMenu();
-      _btnNext->setVisible(true);
+      CC_SHOW(_btnNext);
     }
   });
   addItem(m, kForeground);
 
   if (_firstIndex == TOTAL_LEVELS - LEVELS_PER_SCREEN + 1) {
-    _btnNext->setVisible(false);
+    CC_HIDE(_btnNext);
   }
 }
 
@@ -230,7 +230,7 @@ void LLayer::createMenu() {
   }
 
   if (_firstIndex == TOTAL_LEVELS - LEVELS_PER_SCREEN + 1) {
-    _btnNext->setVisible(false);
+    CC_HIDE(_btnNext);
   }
 }
 

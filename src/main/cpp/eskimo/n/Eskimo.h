@@ -8,10 +8,11 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "b2Sprite.h"
 
 NS_BEGIN(eskimo)
@@ -19,20 +20,19 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL EskimoSprite : public b2Sprite {
+friend class Eskimo;
+
+  static EskimoSprite* create(GVars*);
+  void bind(GVars*);
 
   void makeCircleShape();
   void makeBoxShape();
-  EskimoSprite(GVars*);
 
 public:
-
-  static EskimoSprite* create(not_null<GVars*>);
 
   DECL_BF(_switchShape)
   DECL_IZ(_state)
   DECL_PTR(GVars,ss)
-
-  virtual ~EskimoSprite() {}
 
   virtual void update();
   virtual void reset();
@@ -42,13 +42,17 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Eskimo : public f::ComObj {
+class CC_DLL Eskimo : public f::CPixie {
 
-  MDECL_COMP_TPID("n/Eskimo")
-
-  Eskimo(not_null<GVars*> g) {
-    node= EskimoSprite::create(g);
+  Eskimo(not_null<c::Node*> n)
+  : CPixie(n) {
     MGML()->addAtlasItem("game-pics", node, kMiddleground);
+  }
+
+public:
+
+  static owner<Eskimo*> create(not_null<GVars*> ss) {
+    return new Eskimo(EskimoSprite::create(ss));
   }
 
 };

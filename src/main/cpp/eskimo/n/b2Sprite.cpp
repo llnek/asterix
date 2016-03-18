@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "b2Sprite.h"
 
@@ -19,14 +19,14 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void b2Sprite::setSpritePosition(const c::Vec2 &position) {
+void b2Sprite::setSpritePosition(const c::Vec2 &pos) {
 
-  setPosition(position);
+  setPosition(pos);
 
   if (_body) {
     _body->SetTransform(b2Vec2(
-                          position.x / PTM_RATIO,
-                          position.y/ PTM_RATIO),
+                          pos.x / PTM_RATIO,
+                          pos.y/ PTM_RATIO),
                           _body->GetAngle());
   }
 }

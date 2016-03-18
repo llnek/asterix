@@ -8,28 +8,28 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "lib.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GSwitch : public f::ComObj {
+class CC_DLL GSwitch : public f::CPixie {
 
   GSwitch(GVars*, c::Node *n)
-    : ComObj(n) {
+  : CPixie(n) {
   }
 
 public:
 
   void initGSwitch(int direction, const c::Vec2& );
 
-  static GSwitch* create(not_null<GVars*>);
+  static owner<GSwitch*> create(not_null<GVars*>);
   DECL_IZ(direction)
 
-  MDECL_COMP_TPID("n/GSwitch")
 };
 
 

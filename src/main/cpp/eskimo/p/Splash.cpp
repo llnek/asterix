@@ -61,7 +61,7 @@ void Splash::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::showLevels() {
-  auto newScene = c::TransitionMoveInR::create(0.2f, LevelSelector::reify());
+  auto newScene = c::TransitionMoveInR::create(0.2, LevelSelector::reify());
   cx::sfxPlay("button");
   CC_DTOR()->replaceScene(newScene);
 }
@@ -82,7 +82,8 @@ void Splash::showHelp() {
 //
 void Splash::createScreen() {
 
-  auto snow = c::ParticleSystemQuad::create("pics/snow.plist");
+  auto snow = c::ParticleSystemQuad::create(
+      XCFG()->getAtlas("snow"));
   auto wb= cx::visBox();
 
   snow->setPosition(c::Vec2(wb.cx, wb.top));
@@ -91,12 +92,12 @@ void Splash::createScreen() {
   regoAtlas("game-pics", kMiddleground);
 
   auto ground = cx::reifySprite("intro_igloo.png");
-  ground->setAnchorPoint(c::Vec2(0.5f, 0.05f));
-  ground->setPosition(wb.right * 0.5f, 0.0);
+  ground->setAnchorPoint(c::Vec2(0.5, 0.05));
+  ground->setPosition(HTV(wb.right), 0.0);
   addAtlasItem("game-pics", ground);
 
   auto logo = cx::reifySprite("logo.png");
-  logo->setPosition(wb.cx, wb.top * 0.75f);
+  logo->setPosition(wb.cx, wb.top * 0.75);
   addAtlasItem("game-pics", logo);
 
   //create menu
@@ -116,7 +117,7 @@ void Splash::createScreen() {
 
   //add balloon caption
   _balloon = cx::reifySprite("cap.png");
-  _balloon->setPosition(wb.right * 0.36f, wb.top * 0.25f);
+  _balloon->setPosition(wb.right * 0.36, wb.top * 0.25);
   addAtlasItem("game-pics", _balloon, kForeground);
   CC_HIDE(_balloon);
 
@@ -128,8 +129,8 @@ void Splash::createScreen() {
   _balloon->addChild(_caption2);
 
   auto rect = _balloon->getTextureRect();
-  _caption1->setPosition(rect.size.width * 0.42f, rect.size.height * 0.45f);
-  _caption2->setPosition(rect.size.width * 0.42f, rect.size.height * 0.45f);
+  _caption1->setPosition(rect.size.width * 0.42, rect.size.height * 0.45);
+  _caption2->setPosition(rect.size.width * 0.42, rect.size.height * 0.45);
 
 }
 

@@ -23,7 +23,7 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
 
   ss->world->Step(dt, 10, 10);
   ss->world->ClearForces();

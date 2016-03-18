@@ -8,21 +8,24 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "b2Sprite.h"
+
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL PlatformSprite : public b2Sprite {
+friend class Platform;
 
+  static PlatformSprite* create(GVars*);
   s_vec<c::Sprite*> _tiles;
   DECL_PTR(GVars, ss)
 
-  PlatformSprite(not_null<GVars*>);
   void switchTexture();
   void createTiles();
 
@@ -32,16 +35,20 @@ public:
 
   virtual ~PlatformSprite();
 
-  static PlatformSprite* create(not_null<GVars*>);
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Platform : public f::ComObj {
-  MDECL_COMP_TPID("n/Platform")
+class CC_DLL Platform : public f::CPixie {
 
-  Platform(not_null<GVars*> ss) {
-    node=PlatformSprite::create(ss);
+  Platform(not_null<c::Node*> n)
+    : CPixie(n) {
+  }
+
+public:
+
+  static owner<Platform*> create(not_null<GVars*> ss) {
+    return new Platform(PlatformSprite::create(ss));
   }
 
 };

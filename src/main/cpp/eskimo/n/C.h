@@ -8,22 +8,17 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(eskimo)
 
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
 
 
 

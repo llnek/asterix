@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +24,7 @@ class CC_DLL HUDLayer : public f::XLayer {
   void createBtns();
 
   DECL_PTR(c::Label, _tutorialLabel)
-  DECL_PTR(c::Label, scoreLabel)
+  DECL_PTR(c::Label, _scoreLabel)
   DECL_PTR(c::Label, _messages)
 
   DECL_PTR(c::Sprite, _btnStart)
@@ -31,7 +32,7 @@ class CC_DLL HUDLayer : public f::XLayer {
   DECL_PTR(c::Sprite, _btnPause)
   DECL_PTR(c::Sprite, _btnAgain)
   DECL_PTR(c::Sprite, _btnMenu)
-  DECL_IZ(score)
+  DECL_IZ(_score)
   DECL_PTR(GVars,ss)
 
 public:

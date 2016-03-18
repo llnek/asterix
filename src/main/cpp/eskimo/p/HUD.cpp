@@ -69,7 +69,7 @@ void HUDLayer::touchEnd(c::Touch *touch) {
         !btn->boundingBox().containsPoint(tap)) {
       continue; }
 
-    CC_HIDE(btn->getChildByTag(kSpriteBtnOn));
+    CC_HIDE(CC_GCT(btn,kSpriteBtnOn));
     switch (btn->getTag()) {
       case kSpriteBtnAgain:
         cx::sfxPlay("button");
@@ -126,7 +126,7 @@ bool HUDLayer::touchStart(c::Touch *touch) {
     auto btn = *it;
     if (btn->isVisible()) {
       if (btn->boundingBox().containsPoint(tap)) {
-        CC_SHOW(btn->getChildByTag(kSpriteBtnOn));
+        CC_SHOW(CC_GCT(btn,kSpriteBtnOn));
         return true;
       }
     }
@@ -225,7 +225,7 @@ void HUDLayer::decoUI() {
 
   //scoreLabel= cx::reifyBmfLabel("font_msgs", "0");
   //addItem(scoreLabel);
-  score=0;
+  _score=0;
 }
 
 

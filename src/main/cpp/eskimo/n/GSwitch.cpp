@@ -10,7 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "GSwitch.h"
 
@@ -19,7 +19,7 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GSwitch* GSwitch::create(not_null<GVars*> ss) {
+owner<GSwitch*> GSwitch::create(not_null<GVars*> ss) {
   auto s= cx::reifySprite("blank.png");
   CC_HIDE(s);
   return mc_new2(GSwitch,ss.get(), s);
