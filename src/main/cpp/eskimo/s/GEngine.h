@@ -8,19 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "Box2D/Box2D.h"
-#include "ash/Engine.h"
-#include "n/N.h"
+#include "ecs/Engine.h"
+#include "n/C.h"
+#include "n/lib.h"
 
 NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine  : public a::Engine {
+class CC_DLL GEngine  : public ecs::Engine {
 
-  DECL_PTR(b2World, world)
+  DECL_PTR(b2World, _world)
 
 public:
 
@@ -28,7 +30,7 @@ public:
   virtual void initSystems();
 
   GEngine(not_null<b2World*> w) {
-    world=w;
+    _world=w;
   }
 };
 

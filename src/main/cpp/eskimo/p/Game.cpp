@@ -188,7 +188,7 @@ void GLayer::resetLevel() {
                      c::Vec2(data.at("x").asFloat() * TILE,
                           data.at("y").asFloat() * TILE));
     } else {
-      cx::hiberante(e);
+        cx::hibernate((ecs::Node*)e);
     }
     //++n;
   }

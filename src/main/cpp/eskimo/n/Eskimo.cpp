@@ -19,12 +19,6 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Eskimo*> Eskimo::create(not_null<GVars*> ss) {
-  return new Eskimo(EskimoSprite::create(ss));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 EskimoSprite* EskimoSprite::create(GVars *ss) {
   auto sp = new EskimoSprite();
   sp->initWithSpriteFrameName("player_circle.png");

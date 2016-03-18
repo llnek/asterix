@@ -81,7 +81,7 @@ void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &positio
   _body->SetActive(true);
 
   //set unused tiles in the platform invisible
-  auto startX = -HTV(width) + HTV(TILE)f;
+  auto startX = -HTV(width) + HTV(TILE);
   int i=0;
   F__LOOP(it,_tiles) {
     auto block = *it;

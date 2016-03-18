@@ -28,7 +28,7 @@ friend class Platform;
 
   void switchTexture();
   void createTiles();
-
+    void bind(GVars*);
 public:
 
   void initPlatform(int width, float angle, const c::Vec2&);

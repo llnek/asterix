@@ -27,8 +27,8 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  players=engine->getNodeList(EskimoNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,19 +43,20 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto &sws = MGMS()->getPool("Switches")->list();
-  auto py= CC_GNLF(Eskimo,players,"player");
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto sws = MGMS()->getPool("Switches")->ls();
+  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto player= (EskimoSprite*) py->node;
   float dx,dy;
   float x,y;
   F__LOOP(it, sws) {
-    auto gw= (GSwitch*) *it;
-    if (!gw->node->isVisible()) {
-      continue; }
+    auto e= *it;
+    auto gw= CC_GEC(GSwitch,e,"f/CPixie");
+    if (!gw->isOvert()) {
+    continue; }
     dx = cx::deltaX(gw->node,player);
     dy = cx::deltaY(gw->node,player);
-    if (pow(dx, 2) + pow (dy, 2) < PLAYER_SWITCH_RADII) {
+    if (pow(dx,2) + pow (dy,2) < PLAYER_SWITCH_RADII) {
       ss->gravity = gw->direction;
       gw->hide();
       cx::sfxPlay("switch");
@@ -78,7 +79,7 @@ void Collide::process(float dt) {
   //check for level complete (collision with Igloo)
   dx = cx::deltaX(player, ss->igloo);
   dy = cx::deltaY(player, ss->igloo);
-  if (pow(dx, 2) + pow(dy, 2) < IGLOO_SQ_RADIUS) {
+  if (pow(dx,2) + pow(dy,2) < IGLOO_SQ_RADIUS) {
     cx::sfxPlay("igloo");
     CC_HIDE(player);
     auto m2=j::json({ {"tag", kSpriteBtnReset } });

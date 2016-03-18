@@ -102,12 +102,12 @@ void Splash::createScreen() {
 
   //create menu
   auto play=cx::reifyMenuBtn(
-      "btn_play_on.png", "btn_play_off.png", "btn_play_off.png" );
+      "btn_play_on.png", "btn_play_off.png");
   play->setCallback(
       [=](c::Ref*) { this->showLevels(); });
 
   auto help= cx::reifyMenuBtn(
-      "btn_help_on.png", "btn_help_off.png", "btn_help_off.png");
+      "btn_help_on.png", "btn_help_off.png");
   help->setCallback(
       [=](c::Ref*){ this->showHelp(); });
 

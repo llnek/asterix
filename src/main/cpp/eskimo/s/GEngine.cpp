@@ -30,25 +30,30 @@ void GEngine::initEntities() {
 
   auto pp= MGMS()->reifyPool("Platforms");
   auto ps= MGMS()->reifyPool("Switches");
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode("Shared", true);
   auto ss= mc_new(GVars);
-  ss->world=this->world;
+  ss->world= this->_world;
   ent->checkin(ss);
 
   pp->preset([=]() -> f::Poolable* {
-    auto p= mc_new1(Platform,ss);
+    auto e= this->reifyNode("Platform");
+    auto p= Platform::create(ss);
     MGML()->addAtlasItem("game-pics",p->node);
-    return p;
+    e->checkin(p);
+    return e;
   }, 50);
 
   ps->preset([=]() -> f::Poolable* {
+    auto e= this->reifyNode("GSwitch");
     auto s= GSwitch::create(ss);
     MGML()->addAtlasItem("game-pics", s->node);
-    return s;
+    e->checkin(s);
+    return e;
   }, 30);
 
-  ent= this->reifyEntity();
-  ent->checkin(mc_new1(Eskimo,ss));
+  ent= this->reifyNode("Eskimo", true);
+  ent->checkin(Eskimo::create(ss));
+  ent->checkin(mc_new(f::CGesture));
 }
 
 //////////////////////////////////////////////////////////////////////////////

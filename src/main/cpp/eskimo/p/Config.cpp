@@ -44,6 +44,10 @@ void Config::initAssets() {
 
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
 
+  addAtlas("smoke",CC_STR("pics/smoke.plist"));
+  addAtlas("snow",CC_STR("pics/snow.plist"));
+  addAtlas("levels",CC_STR("pics/levels.plist"));
+
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg", CC_STR("pics/bg.jpg"));
 

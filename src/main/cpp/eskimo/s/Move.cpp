@@ -55,8 +55,8 @@ static void applyLinearImpulse(b2Body *body, float acc, float mult, bool x) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  players=engine->getNodeList(EskimoNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,8 +71,8 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto py= CC_GNLF(Eskimo,players,"player");
-  auto ss= CC_GNLF(GVars,shared,"slots");
+  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto player= (EskimoSprite*) py->node;
 
   player->update();

@@ -126,7 +126,7 @@ void LLayer::createScreen() {
 
     //add snow particle
   auto snow = c::ParticleSystemQuad::create(
-      XCFG()->getAtlas("snow");
+      XCFG()->getAtlas("snow"));
   snow->setPosition(c::Vec2(wb.cx, wb.top));
   addItem(snow, kBackground);
 
