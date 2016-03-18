@@ -22,9 +22,9 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  mallets= engine->getNodeList(MalletNode().typeId());
-  pucks= engine->getNodeList(PuckNode().typeId());
-  shared= engine->getNodeList(SharedNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
+  _puck= _engine->getNodes("f/CAutoma")[0];
+  _engine->getNodes("f/CGesture",_mallets);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,24 +39,25 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto ss = CC_GNLF(GVars,shared,"slots");
-  auto puck = CC_GNLF(Puck,pucks,"puck");
-  auto gw2= ss->goalWidth * 0.5f;
+  auto mv = CC_GEC(f::CMove,_puck,"f/CMove");
+  auto ss = CC_GEC(GVars,_shared,"n/GVars");
+  auto puck = CC_GEC(Puck,_puck,"f/CPixie");
+    auto gw2= HTV(ss->goalWidth);
   auto br= puck->radius();
   auto bps= puck->pos();
-    auto wb= cx::visBox();
+  auto wb= cx::visBox();
   auto bnps = ss->ballNextPos;
   auto bvec = ss->ballVec;
 
   //check collision of ball and sides
   if (bnps.x > wb.right - br) {
     bnps.x = wb.right - br;
-    bvec.x *= -0.8f;
+    bvec.x *= -0.8;
     cx::sfxPlay("hit");
   }
   if (bnps.x < br) {
     bnps.x = br;
-    bvec.x *= -0.8f;
+    bvec.x *= -0.8;
     cx::sfxPlay("hit");
   }
 
@@ -65,22 +66,23 @@ void Collide::process(float dt) {
     if (bps.x < wb.cx - gw2 ||
       bps.x > wb.cx + gw2) {
       bnps.y = wb.top - br;
-      bvec.y *= -0.8f;
+      bvec.y *= -0.8;
       cx::sfxPlay("hit");
     }
   }
   //ball and bottom of the court
   if (bnps.y < br) {
-    if (bps.x < wb.cx - gw2 || bps.x > wb.cx + gw2) {
+    if (bps.x < wb.cx - gw2 ||
+        bps.x > wb.cx + gw2) {
       bnps.y = br;
-      bvec.y *= -0.8f;
+      bvec.y *= -0.8;
       cx::sfxPlay("hit");
     }
   }
 
   //finally, update ball's vector and next position
-  puck->nextPos = bnps;
-  puck->vel = bvec;
+  mv->moveTarget = bnps;
+  mv->vel = bvec;
 
 }
 

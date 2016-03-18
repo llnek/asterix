@@ -22,9 +22,9 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  mallets = engine->getNodeList(MalletNode().typeId());
-  pucks = engine->getNodeList(PuckNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
+  _shared = _engine->getNodes("n/GVars")[0];
+  _puck = _engine->getNodes("f/CAutoma")[0];
+  _engine->getNodes("f/CGesture", _mallets);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,23 +39,26 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto ss= CC_GNLF(GVars,shared,"slots");
-  auto puck= CC_GNLF(Puck,pucks,"puck");
-  auto bnpos = puck->nextPos;
+  auto pv= CC_GEC(f::CMove,_puck,"f/CMove");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto puck= CC_GEC(Puck,_puck,"f/CPixie");
+  auto bnpos = pv->moveTarget;
   auto br= puck->radius();
-  auto bv = puck->vel;
-  bv *=  0.98f;
+  auto bv = pv->vel;
+  bv *=  0.98;
 
   bnpos.x += bv.x;
   bnpos.y += bv.y;
 
-  for (auto node=mallets->head;node;node=node->next) {
-    auto m=CC_GNF(Mallet,node,"mallet");
-    auto pnpos = m->nextPos;
+  F__LOOP(it,_mallets) {
+    auto node= *it;
+    auto mv=CC_GEC(f::CMove,node,"f/CMove");
+    auto m=CC_GEC(Mallet,node,"f/CPixie");
+    auto pnpos = mv->moveTarget;
     auto bpos= puck->pos();
     auto mpos= m->pos();
     auto mr= m->radius();
-    auto pv = m->vel;
+    auto pv = mv->vel;
     auto dx = bnpos.x - mpos.x;
     auto dy = bnpos.y - mpos.y;
     auto dist1 = pow(dx, 2) + pow(dy, 2);

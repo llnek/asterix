@@ -9,38 +9,27 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
-
-#include "GEngine.h"
-
+#include "C.h"
 NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Move : public ecs::System {
+//
+void setPos(not_null<ecs::Node*> node, float x, float y) {
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _puck)
-  s_vec<ecs::Node*> _mallets;
+  auto p= CC_GEC(f::CPixie,node, "f/CPixie");
+  auto mv= CC_GEC(f::CMove,node,"f/CMove");
+  auto pos= c::Vec2(x,y);
 
-  void process(float);
+  if (!mv->moveTarget.equals(pos)) {
+    mv->moveTarget= pos;
+  }
 
-public:
+  p->node->setPosition(x,y);
 
-  MDECL_SYS_PRIORITY( ecs::Move)
-  MDECL_SYS_TPID("n/Move")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-
-  Move(ecs::Engine *e)
-  : System(e)
-  {}
-
-};
+}
 
 
 NS_END
-
 
 
 

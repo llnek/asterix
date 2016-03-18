@@ -21,47 +21,26 @@ NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Widget : public f::CPixie {
-  virtual void setPos(float x, float y) {
-    auto pos= c::Vec2(x,y);
-    if (!nextPos.equals(pos)) {
-      nextPos = pos;
-    }
-    f::CPixie::setPos(x,y);
-  }
-  void syncPos() {
-    f::CPixie::setPos(nextPos.x,nextPos.y);
-  }
-
-  Widget(not_null<c::Node*> s)
-  : CPixie(s) {}
-
-  DECL_TD(c::Vec2,nextPos)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Mallet : public Widget {
-  Mallet(not_null<c::Node*> s, int pnum)
-    : Widget(s) {
-    this->pnum=pnum;
+struct CC_DLL Mallet : public f::CPixie {
+  Mallet(not_null<c::Node*> s)
+  : CPixie(s) {
   }
   DECL_PTR(c::Touch, tap)
-  DECL_IZ(pnum)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Puck : public Widget {
+struct CC_DLL Puck : public f::CPixie {
   Puck(not_null<c::Node*> s)
-    : Widget(s) {
+  : CPixie(s) {
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Player : public ecs::Component {
+struct CC_DLL Player : public f::CStats {
   MDECL_COMP_TPID("n/Player")
+  Player(int n) : CStats(n) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,6 +61,8 @@ struct CC_DLL GVars : public ecs::Component {
 };
 
 
+class Node;
+void setPos(not_null<ecs::Node*>, float x, float y);
 
 NS_END
 

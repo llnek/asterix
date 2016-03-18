@@ -22,9 +22,9 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  shared= engine->getNodeList(SharedNode().typeId());
-  pucks= engine->getNodeList(PuckNode().typeId());
-  mallets= engine->getNodeList(MalletNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
+  _puck= _engine->getNodes("f/CAutoma")[0];
+  _engine->getNodes("f/CGesture",_mallets);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,13 +39,14 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process() {
-  auto ss = CC_GNLF(GVars,shared,"slots");
-  auto puck = CC_GNLF(Puck,pucks,"puck");
+  auto pv = CC_GEC(f::CMove,_puck,"f/CMove");
+  auto ss = CC_GEC(GVars,_shared,"n/GVars");
+  auto puck = CC_GEC(Puck,_puck,"f/CPixie");
   auto bc= puck->circum();
-    auto wb= cx::visBox();
+  auto wb= cx::visBox();
   //check for goals!
 
-  if (puck->nextPos.y > wb.top + bc) {
+  if (pv->moveTarget.y > wb.top + bc) {
     auto msg=j::json({
         {"pnum", 1},
         {"score",1}
@@ -53,7 +54,7 @@ void Resolve::process() {
     SENDMSGEX("/game/player/earnscore",&msg);
   }
   else
-  if (puck->nextPos.y < -bc) {
+  if (pv->moveTarget.y < -bc) {
     auto msg=j::json({
         {"pnum", 2},
         {"score",1}
@@ -62,14 +63,16 @@ void Resolve::process() {
   }
 
   //move pieces to next position
-  for(auto node=mallets->head;node;node=node->next) {
-    auto m=CC_GNF(Mallet,node,"mallet");
-    m->syncPos();
+
+  puck->node->setPosition(pv->moveTarget);
+  F__LOOP(it,_mallets) {
+      auto node= *it;
+    auto mv=CC_GEC(f::CMove,node,"f/CMove");
+    auto m=CC_GEC(Mallet,node,"f/CPixie");
+    m->node->setPosition(mv->moveTarget);
   }
 
-  puck->syncPos();
 }
-
 
 
 NS_END

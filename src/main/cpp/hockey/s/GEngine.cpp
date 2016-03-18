@@ -24,24 +24,33 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto sp= cx::loadSprite("mallet.png");
-  auto ent= this->reifyEntity();
-  MGML()->addItem(sp);
-  ent->checkin( mc_new2(Mallet,sp,1));
-  ent->checkin(mc_new(Gesture));
+  auto ent= this->reifyNode("Mallet", true);
+  auto sp= cx::reifySprite("mallet.png");
+  // player1
+  MGML()->addAtlasItem("game-pics", sp);
+  ent->checkin(mc_new1(Mallet,sp));
+  ent->checkin(mc_new1(Player,1));
+  ent->checkin(mc_new(f::CGesture));
+  ent->checkin(mc_new(f::CMove));
 
-  sp= cx::loadSprite("mallet.png");
-  ent= this->reifyEntity();
-  MGML()->addItem(sp);
-  ent->checkin( mc_new2(Mallet,sp,2));
-  ent->checkin(mc_new(Gesture));
+  // player2
+  ent= this->reifyNode("Mallet", true);
+  sp= cx::reifySprite("mallet.png");
+  MGML()->addAtlasItem("game-pics", sp);
+  ent->checkin(mc_new1(Mallet,sp));
+  ent->checkin(mc_new1(Player,2));
+  ent->checkin(mc_new(f::CGesture));
+  ent->checkin(mc_new(f::CMove));
 
-  sp= cx::loadSprite("puck.png");
-  MGML()->addItem(sp);
-  ent= this->reifyEntity();
+  // the ball
+  ent= this->reifyNode("Puck", true);
+  sp= cx::reifySprite("puck.png");
+  MGML()->addAtlasItem("game-pics", sp);
+  ent->checkin(mc_new(f::CAutoma));
+  ent->checkin(mc_new(f::CMove));
   ent->checkin(mc_new1(Puck,sp));
 
-  ent= this->reifyEntity();
+  ent= this->reifyNode("Shared", true);
   ent->checkin(mc_new(GVars));
 }
 
@@ -55,20 +64,29 @@ void GEngine::initSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::readyPoint(a::NodeList *mallets, a::Node *ball) {
-  auto puck= CC_GNF(Puck,ball,"puck");
+void GEngine::readyPt(
+    const s_vec<ecs::Node*>& mallets, ecs::Node *ball) {
+
+  auto pv= CC_GEC(f::CMove,ball,"f/CMove");
+  auto puck= CC_GEC(Puck,ball,"f/CPixie");
   auto wb=cx::visBox();
-  for (auto node=mallets->head;node;node=node->next) {
-    auto m=CC_GNF(Mallet,node,"mallet");
-    if (m->pnum == 2) {
-      m->setPos(wb.cx, wb.top - m->circum());
+
+  F__LOOP(it,mallets) {
+    auto node= *it;
+    auto mv=CC_GEC(f::CMove,node,"f/CMove");
+    auto p=CC_GEC(Player,node,"n/Player");
+    auto m=CC_GEC(Mallet,node,"f/CPixie");
+
+    if (p->value == 2) {
+      setPos(node, wb.cx, wb.top - m->circum());
     } else {
-      m->setPos(wb.cx, m->circum());
+      setPos(node, wb.cx, m->circum());
     }
   }
-  puck->setPos(wb.cx, wb.cy - puck->circum());
-    puck->vel.x= -10;
-    puck->vel.y=10;
+
+  setPos(ball, wb.cx, wb.cy - puck->circum());
+  pv->vel.x= -10;
+  pv->vel.y= 10;
 }
 
 

@@ -39,6 +39,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   DECL_PTR(ecs::Node, _puck)
   s_vec<ecs::Node*> _mallets;
 
+  GLayer() {
+    _tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -112,6 +115,7 @@ void GLayer::onTouchEnd(const s_vec<c::Touch*> &touches) {
   }
 }
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::updateScore(int player, int score) {
@@ -135,12 +139,12 @@ void GLayer::updateScore(int player, int score) {
     auto e= *it;
     auto mv= CC_GEC(f::CMove,e,"f/CMove");
     auto m= CC_GEC(Mallet,e,"f/CPixie");
-    auto p= CC_GEC(Player,e,"f/CStats");
-    auto c= m->circum();
+    auto p= CC_GEC(Player,e,"n/Player");
+    auto mc= m->circum();
     if (p->value == 1) {
-      m->setPos(wb.cx, mc);
+      setPos(e, wb.cx, mc);
     } else {
-      m->setPos(wb.cx, wb.top - mc);
+      setPos(e, wb.cx, wb.top - mc);
     }
     m->tap=CC_NIL;
   }
@@ -150,29 +154,27 @@ void GLayer::updateScore(int player, int score) {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::onInited() {
-  _puck = _engine->getNodes("f/CAutoma")[0];
   _shared = _engine->getNodes("n/GVars")[0];
+  _puck = _engine->getNodes("f/CAutoma")[0];
   _engine->getNodes("f/CGesture",_mallets);
 
-  auto mr=CC_GNLF(Mallet,mallets,"mallet")->radius();
-  auto br=CC_GNLF(Puck,pucks,"puck")->radius();
-  auto ss=CC_GNLF(GVars,shared,"slots");
+  auto m=CC_GEC(Mallet,_mallets[0],"f/CPixie");
+  auto mr= m->radius();
+  auto b=CC_GEC(Puck,_puck,"f/CPixie");
+  auto br= b->radius();
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
   ss->sq_radii = pow(mr+br, 2);
   ss->goalWidth= 400;
 
-  for (auto node=mallets->head;node;node=node->next) {
-    auto m=CC_GNF(Mallet,node,"mallet");
-    this->motionees.push_back(m);
-  }
-
-  SCAST(GEngine*,engine)->readyPoint(mallets,pucks->head);
+  SCAST(GEngine*,_engine)->readyPt(_mallets, _puck);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void GLayer::decorate() {
-  engine = mc_new(GEngine);
+void GLayer::decoUI() {
+  _engine = mc_new(GEngine);
   centerImage("game.bg");
+  regoAtlas("game-pics");
 }
 
 END_NS_UNAMED
@@ -191,7 +193,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void Game::decorate() {
+void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();

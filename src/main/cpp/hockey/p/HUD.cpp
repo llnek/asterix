@@ -19,31 +19,31 @@ NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::decorate() {
+void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
-  auto b= cx::reifyLabel(wb.right-60, wb.top * 0.5f + 80, "arial", 60, "888");
+  auto b= cx::reifyLabel(wb.right-60, HTV(wb.top) + 80, "arial", 60, "888");
   b->setRotation(90);
   addItem(b);
-  slabels[2]=b;
-  scores[2]=0;
+  _slabels[2]=b;
+  _scores[2]=0;
 
-  b= cx::reifyLabel(wb.right-60, wb.top * 0.5f - 80, "arial", 60, "888");
+  b= cx::reifyLabel(wb.right-60, HTV(wb.top) - 80, "arial", 60, "888");
   b->setRotation(90);
   addItem(b);
-  slabels[1]=b;
-  scores[1]=0;
+  _slabels[1]=b;
+  _scores[1]=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int pnum, int value) {
 
-  assert(pnum > 0 && pnum < scores.size());
-  auto sum = scores[pnum] + value;
+  assert(pnum > 0 && pnum < _scores.size());
+  auto sum = _scores[pnum] + value;
 
-  slabels[pnum]->setString(s::to_string(sum));
-  scores[pnum] = sum;
+  _slabels[pnum]->setString(FTOS(sum));
+  _scores[pnum] = sum;
 }
 
 
