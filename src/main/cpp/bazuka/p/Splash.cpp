@@ -32,9 +32,9 @@ void Splash::decoUI() {
   auto roll= CC_CSV(c::Float, "BG+SCROLL");
   auto wb= cx::visBox();
 
-  bg = f::reifyRefType<ScrollingBgLayer>();
-  bg->set(roll);
-  addItem(bg);
+  _bg = f::reifyRefType<ScrollingBgLayer>();
+  _bg->set(roll);
+  addItem(_bg);
 
   auto nameLabel = cx::reifyBmfLabel("pixel", "Ms.tinyBazooka");
   nameLabel->setPosition(wb.cx, wb.top * 0.8);
@@ -73,7 +73,7 @@ void Splash::decoUI() {
   addItem(highScoreLabel, 10);
 
   auto highScore = CC_APPDB()->getIntegerForKey("GameHighScore");
-  highScoreLabel->setString(s::to_string(highScore));
+  highScoreLabel->setString(FTOS(highScore));
 
   this->scheduleUpdate();
 }

@@ -8,23 +8,23 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/ComObj.h"
+#include "core/COMP.h"
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Enemy : public f::ComObj {
+struct CC_DLL Enemy : public f::CPixie {
 
-  Enemy(not_null<c::Sprite*> s)
-  : ComObj(s) {
+  Enemy(not_null<c::Node*> s)
+  : CPixie(s) {
   }
 
 public:
 
-  MDECL_COMP_TPID("n/Enemy")
   DECL_PTR(c::Action,idle)
 
   virtual ~Enemy() {

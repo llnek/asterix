@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -18,8 +19,8 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL HUDLayer : public f::XLayer {
 
-  DECL_PTR(c::Label, scoreLabel)
-  DECL_IZ(score)
+  DECL_PTR(c::Label, _scoreLabel)
+  DECL_IZ(_score)
 
 public:
 
@@ -28,7 +29,7 @@ public:
   MDECL_GET_IID(3)
 
   void updateScore(int);
-  int getScore() { return score; }
+  int getScore() { return _score; }
 
 };
 

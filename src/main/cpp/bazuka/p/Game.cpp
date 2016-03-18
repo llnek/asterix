@@ -28,9 +28,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   void fireRocket(Hero*);
   void onStop();
 
-  DECL_PTR(ScrollingBgLayer, bgLayer)
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
+  DECL_PTR(ScrollingBgLayer, _bgLayer)
+  DECL_PTR(ecs::Node, _player)
+  DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -55,31 +55,32 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onStop() {
+  this->setOpacity(255 * 0.1);
   MGMS()->stop();
   surcease();
-  this->setOpacity(255 * 0.1);
   Ende::reify(MGMS(), 4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  players = engine->getNodeList(PlayerNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto hero=CC_GNLF(Hero,players,"player");
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  _player = _engine->getNodes("f/CGesture")[0];
+  _shared = _engine->getNodes("n/GVars")[0];
+
+  auto hero=CC_GEC(Hero,_player,"f/CPixie");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
   // player setup
-  hero->inflate(wb.right * 0.125, wb.top * 0.5);
+  hero->inflate(wb.right * 0.125, HTV(wb.top));
   addItem(hero->node, 5);
 
   // player idle
   auto anim = c::Animation::create();
   for (auto n=1; n <= 4; ++n) {
     anim->addSpriteFrame(
-        cx::getSpriteFrame("player_idle_"+s::to_string(n)+".png"));
+        cx::getSpriteFrame("player_idle_"+FTOS(n)+".png"));
   }
   anim->setDelayPerUnit(0.25);
 
@@ -90,7 +91,7 @@ void GLayer::onInited() {
   anim = c::Animation::create();
   for (auto n=1; n <= 4; ++n) {
     anim->addSpriteFrame(
-        cx::getSpriteFrame("player_boost_"+s::to_string(n)+".png"));
+        cx::getSpriteFrame("player_boost_"+FTOS(n)+".png"));
   }
   anim->setDelayPerUnit(0.25);
 
@@ -116,16 +117,14 @@ void GLayer::decoUI() {
   addItem(bgLayer);
 
   regoAtlas("game-pics");
-
-
-  engine = mc_new(GEngine);
+  _engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
 
-  auto hero= CC_GNLF(Hero, players, "player");
+  auto hero= CC_GEC(Hero,_player,"f/CPixie");
   auto wb= cx::visBox();
 
   if (MGMS()->isLive()) {
@@ -147,7 +146,7 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
 
-  auto hero= CC_GNLF(Hero, players, "player");
+  auto hero= CC_GEC(Hero,_player,"f/CPixie");
   auto loc= touch->getLocation();
   auto wb= cx::visBox();
 
@@ -168,12 +167,12 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 void GLayer::fireRocket(Hero *hero) {
 
   auto po= MGMS()->getPool("Rockets");
-    auto sz= hero->csize();
+  auto sz= hero->csize();
   auto pos = hero->pos();
-  auto r= (Projectile*) po->take(true);
+  auto e= po->take(true);
+  auto r= CC_GEC(Projectile,e,"f/CPixie");
 
-  r->inflate( pos.x + HWZ(sz), pos.y - sz.height * 0.05);
-
+  r->inflate( pos.x + HWZ(sz), pos.y - CC_ZH(sz) * 0.05);
   cx::sfxPlay("fireRocket");
 
   auto emitter = c::ParticleExplosion::create();
@@ -214,12 +213,6 @@ void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::Game()
-  : f::GameScene(true) {
 }
 
 NS_END

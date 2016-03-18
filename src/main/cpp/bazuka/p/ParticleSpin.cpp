@@ -21,8 +21,8 @@ NS_BEGIN(bazuka)
 ParticleSpin* ParticleSpin::create(const sstr &name, const c::Vec2 &pos) {
   auto pc = mc_new(ParticleSpin);
   pc->initWithSpriteFrameName(name);
-  pc->setPosition(pos);
   pc->autorelease();
+  pc->setPosition(pos);
   return pc;
 }
 

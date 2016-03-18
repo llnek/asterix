@@ -23,10 +23,10 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  scoreLabel = cx::reifyBmfLabel("pixel", "0");
-  scoreLabel->setPosition(wb.cx, wb.top * 0.9);
-  scoreLabel->setScale(0.5);
-  addItem(scoreLabel, 10);
+  _scoreLabel = cx::reifyBmfLabel("pixel", "0");
+  _scoreLabel->setPosition(wb.cx, wb.top * 0.9);
+  _scoreLabel->setScale(0.5);
+  addItem(_scoreLabel, 10);
 
   auto pause = cx::reifyMenuBtn("pause.png");
   auto mnu = cx::mkMenu(pause);
@@ -38,14 +38,14 @@ void HUDLayer::decoUI() {
   });
   addItem(mnu);
 
-  score=0;
+  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString(s::to_string(score));
+  _score += n;
+  _scoreLabel->setString(FTOS(_score));
 }
 
 

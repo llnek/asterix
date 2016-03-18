@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL MMenu : public f::XScene {
 
-  DECL_PTR(ScrollingBgLayer, bgLayer)
+  DECL_PTR(ScrollingBgLayer,_bgLayer)
 
 public:
 

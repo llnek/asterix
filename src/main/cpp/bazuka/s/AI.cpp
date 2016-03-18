@@ -23,13 +23,13 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
+  _shared= _engine->getNodes("n/GVars")[0];
   spawnEnemyTimer();
 }
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::spawnEnemyTimer() {
-  enemyTimer= cx::reifyTimer(MGML(), CC_CSV(c::Integer, "ENEMY+SPAWN+DELAY"));
+  _enemyTimer= cx::reifyTimer(MGML(), CC_CSV(c::Integer, "ENEMY+SPAWN+DELAY"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -45,9 +45,7 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::parallex(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
-  auto wb= cx::visBox();
-
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   ss->bgLayer->sync();
 }
 
@@ -55,20 +53,21 @@ void AI::parallex(float dt) {
 //
 void AI::processEnemies(float dt) {
 
-  if (cx::timerDone(enemyTimer)) {
-    cx::undoTimer(enemyTimer);
+  if (cx::timerDone(_enemyTimer)) {
+    cx::undoTimer(_enemyTimer);
   } else {
     return;
   }
 
   auto po= MGMS()->getPool("Enemies");
-  auto e= (Enemy*)po->take(true);
+  auto m= (Enemy*)po->take(true);
+  auto e= CC_GEC(Enemy,m,"f/CPixie");
   auto mrand = 1 + (rand()%3);
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   auto sz= e->csize();
 
-  e->inflate(wb.right + HWZ(sz), wz.size.height * mrand * 0.25);
+  e->inflate(wb.right + HWZ(sz), CC_ZH(wz) * mrand * 0.25);
   e->lockAndLoad();
 
   spawnEnemyTimer();

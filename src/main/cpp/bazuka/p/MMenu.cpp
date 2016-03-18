@@ -22,9 +22,9 @@ NS_BEGIN(bazuka)
 //
 void MMenu::decoUI() {
 
-  bgLayer = f::reifyRefType<ScrollingBgLayer>();
-  bgLayer->set(3);
-  addItem(bgLayer);
+  _bgLayer = f::reifyRefType<ScrollingBgLayer>();
+  _bgLayer->set(3);
+  addItem(_bgLayer);
 
   auto nameLabel = cx::reifyBmfLabel("pixel", "Options Menu");
   auto wz= cx::visRect();
@@ -35,7 +35,10 @@ void MMenu::decoUI() {
 
   auto splash = cx::reifyMenuBtn("mainmenu.png");
   auto back = cx::reifyMenuBtn("resume.png");
-  auto menu = cx::mkHMenu(s_vec<c::MenuItem*>{splash,back}, CC_CSIZE(splash).width /4);
+  auto menu = cx::mkHMenu(
+      s_vec<c::MenuItem*>{splash,back},
+      CC_ZW(CC_CSIZE(splash))/4);
+
   splash->setCallback([=](c::Ref*) {
     cx::sfxPlay("pop");
     cx::pop();
@@ -54,7 +57,7 @@ void MMenu::decoUI() {
   auto n2= "soundON.png";
   s_arr<c::MenuItem*,2> audios= { cx::reifyMenuBtn(n3,n3), cx::reifyMenuBtn(n2,n2) };
   auto sz= CC_CSIZE(audios[0]);
-  auto gap= sz.width /4;
+  auto gap= CC_ZW(sz) /4;
   auto c= cx::white();
 
   audios[0]->setColor(c);

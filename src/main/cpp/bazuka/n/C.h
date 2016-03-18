@@ -8,16 +8,19 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ScrollingBgLayer.h"
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(bazuka)
 
+//////////////////////////////////////////////////////////////////////////////
+//
 enum ActionState {
   kActionStateNone = 0,
   kActionStateIdle ,
@@ -37,10 +40,9 @@ enum ProjectileType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Hero : public f::ComObj {
-  MDECL_COMP_TPID("n/Hero")
-  Hero(not_null<c::Sprite*> s)
-  : ComObj(s) {
+struct CC_DLL Hero : public f::CPixie {
+  Hero(not_null<c::Node*> s)
+  : CPixie(s) {
   }
   virtual ~Hero() {
     CC_DROP(boost);
@@ -67,11 +69,10 @@ struct CC_DLL Hero : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Projectile : public f::ComObj {
-  MDECL_COMP_TPID("n/Projectile")
+struct CC_DLL Projectile : public f::CPixie {
   DECL_IZ(type)
-  Projectile(not_null<c::Sprite*> s, int type)
-  : ComObj(s) {
+  Projectile(not_null<c::Node*> s, int type)
+  : CPixie(s) {
     this->type=type;
   }
   void sync() {
@@ -86,13 +87,7 @@ struct CC_DLL Projectile : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
   DECL_PTR(ScrollingBgLayer, bgLayer)

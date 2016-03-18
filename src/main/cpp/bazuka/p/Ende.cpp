@@ -23,11 +23,11 @@ NS_BEGIN(bazuka)
 //
 void Ende::decoUI() {
 
+  auto btn = cx::reifyMenuBtn("mainmenu.png");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
-
-  auto btn = cx::reifyMenuBtn("mainmenu.png");
   auto mnu= cx::mkMenu(btn);
+
   btn->setCallback([=](c::Ref*) {
       cx::sfxPlay("pop");
       cx::runEx(Splash::reify());
@@ -49,7 +49,7 @@ void Ende::decoUI() {
     text->setScale(0.75);
     addItem(text, 10);
 
-    text = cx::reifyBmfLabel("pixel", s::to_string(score));
+    text = cx::reifyBmfLabel("pixel", FTOS(score));
     text->setPosition(wb.cx, wb.top * 0.4);
     text->setScale(0.75);
     addItem(text, 10);

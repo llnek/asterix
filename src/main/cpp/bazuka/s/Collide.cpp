@@ -25,8 +25,8 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,21 +41,23 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto hero=CC_GNLF(Hero,players,"player");
+  auto hero=CC_GEC(Hero,_player,"f/CPixie");
   auto pr= MGMS()->getPool("Rockets");
   auto pe= MGMS()->getPool("Enemies");
   auto pb= MGMS()->getPool("Bullets");
-  auto &rs= pr->list();
-  auto &es= pe->list();
-  auto &bs= pb->list();
+  auto rs= pr->list();
+  auto es= pe->list();
+  auto bs= pb->list();
   bool gameOver=false;
 
   F__LOOP(it, rs) {
-    auto r= (Projectile*) *it;
-    if (!r->status) { continue;  }
+    auto pe= *it;
+    if (!pe->status) { continue;  }
+    auto r= CC_GEC(Projectile,pe,"f/CPixie");
     F__LOOP(it2, es) {
-      auto e = (Enemy*) *it;
-      if (e->status && cx::collide(r,e)) {
+      auto e2= *it2;
+      auto e = CC_GEC(Enemy,e2,"f/CPixie");
+      if (e2->status && cx::collide(r,e)) {
         auto pLayer = mc_new1(ParticleLayer, e->pos());
         MGML()->addItem(pLayer);
         cx::sfxPlay("rocketExplode");

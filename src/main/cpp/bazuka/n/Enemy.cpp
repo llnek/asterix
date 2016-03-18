@@ -8,8 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
+
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -35,7 +34,7 @@ Enemy* Enemy::create() {
 
   for (auto i = 1; i <= 4; ++i) {
     anim->addSpriteFrame(
-        cx::getSpriteFrame("enemy_idle_"+s::to_string(i)+".png"));
+        cx::getSpriteFrame("enemy_idle_"+ FTOS(i)+".png"));
   }
   anim->setDelayPerUnit(0.25);
 
@@ -66,13 +65,15 @@ void Enemy::sync() {
 //
 void Enemy::shoot(float dt) {
   auto po= MGMS()->getPool("Bullets");
-  auto b= (Projectile*) po->take(true);
+  auto e=po->take(true);
+  auto b= CC_GEC(Projectile,e,"f/CPixie");
   auto pos= this->pos();
   auto sz= b->csize();
 
-  b->inflate(pos.x - HWZ(sz), pos.y - sz.height * 0.05);
+  b->inflate(pos.x - HWZ(sz), pos.y - CC_ZH(sz) * 0.05);
   cx::sfxPlay("gunshot");
 }
+
 
 NS_END
 

@@ -34,8 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  game_id= "31b3f51c-d0e8-4ec4-8a04-8896e22c070b";
-  app_id = "bazuka";
+  _game_id= "31b3f51c-d0e8-4ec4-8a04-8896e22c070b";
+  _app_id = "bazuka";
 
   addCst("ENEMY+FIRE+DELAY", CC_FLOAT(1.8f));
   addCst("ENEMY+SPAWN+DELAY", CC_INT(3000));
