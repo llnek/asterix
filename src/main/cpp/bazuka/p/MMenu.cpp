@@ -77,7 +77,7 @@ void MMenu::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::update(float ) {
-  bgLayer->sync();
+  _bgLayer->sync();
 }
 
 NS_END

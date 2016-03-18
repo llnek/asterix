@@ -41,46 +41,53 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
+  auto hh=CC_GEC(f::CHealth,_player,"f/CHealth");
   auto hero=CC_GEC(Hero,_player,"f/CPixie");
   auto pr= MGMS()->getPool("Rockets");
   auto pe= MGMS()->getPool("Enemies");
   auto pb= MGMS()->getPool("Bullets");
-  auto rs= pr->list();
-  auto es= pe->list();
-  auto bs= pb->list();
+  auto rs= pr->ls();
+  auto es= pe->ls();
+  auto bs= pb->ls();
   bool gameOver=false;
 
   F__LOOP(it, rs) {
     auto pe= *it;
-    if (!pe->status) { continue;  }
+    if (!pe->status()) { continue;  }
+    auto h= CC_GEC(f::CHealth,pe,"f/CHealth");
     auto r= CC_GEC(Projectile,pe,"f/CPixie");
     F__LOOP(it2, es) {
       auto e2= *it2;
+      auto h2 = CC_GEC(f::CHealth,e2,"f/CHealth");
       auto e = CC_GEC(Enemy,e2,"f/CPixie");
-      if (e2->status && cx::collide(r,e)) {
+      if (e2->status() && cx::collide(r,e)) {
         auto pLayer = mc_new1(ParticleLayer, e->pos());
         MGML()->addItem(pLayer);
         cx::sfxPlay("rocketExplode");
         cx::sfxPlay("enemyKill");
-        r->hurt();
-        e->hurt();
+        h2->hurt();
+        h->hurt();
         auto msg= j::json({
             {"score", 1}
             });
         SENDMSGEX("/game/player/earnscore", &msg);
-        r->deflate();
-        e->deflate();
+        cx::hibernate((ecs::Node*)pe);
+        cx::hibernate((ecs::Node*)e2);
+        break;
       }
     }
   }
 
   F__LOOP(it, bs) {
-    auto b= (Projectile*) *it;
-    if (b->status && cx::collide(b, hero)) {
+    auto e= *it;
+    auto h= CC_GEC(f::CHealth,e,"f/CHealth");
+    auto b= CC_GEC(Projectile,e,"f/CPixie");
+    if (e->status() && cx::collide(b, hero)) {
       cx::sfxPlay("playerKill");
-      hero->hurt();
-      b->hurt();
-      b->deflate();
+      hh->hurt();
+      h->hurt();
+      cx::hibernate((ecs::Node*)e);
+      cx::hibernate(_player);
       gameOver=true;
       break;
     }

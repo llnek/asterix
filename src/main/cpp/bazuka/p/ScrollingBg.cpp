@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "ScrollingBg.h"
 

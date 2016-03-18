@@ -28,34 +28,52 @@ void GEngine::initEntities() {
 
   auto po= MGMS()->reifyPool("Rockets");
   po->preset([=]() -> f::Poolable* {
+    auto ent= this->reifyNode("Rocket");
     auto sp= cx::reifySprite("rocket.png");
-    CC_HIDE(sp);
+    auto c= mc_new2(Projectile,sp,kTypeRocket);
+
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new2(Projectile,sp,kTypeRocket);
+    CC_HIDE(sp);
+
+    ent->checkin(mc_new(f::CHealth));
+    ent->checkin(c);
+    return ent;
+
   }, 32);
 
   po= MGMS()->reifyPool("Bullets");
   po->preset([=]() -> f::Poolable* {
+    auto ent= this->reifyNode("Bullet");
     auto sp= cx::reifySprite("bullet.png");
-    CC_HIDE(sp);
+    auto c= mc_new2(Projectile,sp,kTypeBullet);
+
     MGML()->addAtlasItem("game-pics", sp);
-    return mc_new2(Projectile,sp,kTypeBullet);
+    CC_HIDE(sp);
+
+    ent->checkin(mc_new(f::CHealth));
+    ent->checkin(c);
+    return ent;
+
   }, 32);
 
   po= MGMS()->reifyPool("Enemies");
   po->preset([=]() -> f::Poolable* {
-    return Enemy::create();
+    auto ent= this->reifyNode("Enemy");
+    ent->checkin( Enemy::create());
+    ent->checkin(mc_new(f::CHealth));
+    return ent;
   }, 32);
 
   auto sp = cx::reifySprite("player.png");
-  auto ent= this->reifyEntity();
+  auto ent= this->reifyNode("Hero");
   auto py= mc_new1(Hero,sp);
   auto wb= cx::visBox();
 
-  ent->checkin(mc_new(Gesture));
+  ent->checkin(mc_new(f::CGesture));
+  ent->checkin(mc_new(f::CHealth));
   ent->checkin(py);
 
-  ent=this->reifyEntity();
+  ent=this->reifyNode("Shared",true);
   ent->checkin(mc_new(GVars));
 }
 

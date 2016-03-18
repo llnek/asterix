@@ -67,7 +67,7 @@ void AI::processEnemies(float dt) {
   auto wb= cx::visBox();
   auto sz= e->csize();
 
-  e->inflate(wb.right + HWZ(sz), CC_ZH(wz) * mrand * 0.25);
+  e->inflate(wb.right + HWZ(sz), CC_ZH(wz.size) * mrand * 0.25);
   e->lockAndLoad();
 
   spawnEnemyTimer();

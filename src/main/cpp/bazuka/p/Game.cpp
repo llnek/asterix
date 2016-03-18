@@ -102,7 +102,7 @@ void GLayer::onInited() {
 
 
   ss->gravity = c::Vec2(0, -5);
-  ss->bgLayer=this->bgLayer;
+  ss->bgLayer=this->_bgLayer;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -112,9 +112,9 @@ void GLayer::decoUI() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  bgLayer = f::reifyRefType<ScrollingBgLayer>();
-  bgLayer->set(roll);
-  addItem(bgLayer);
+  _bgLayer = f::reifyRefType<ScrollingBgLayer>();
+  _bgLayer->set(roll);
+  addItem(_bgLayer);
 
   regoAtlas("game-pics");
   _engine = mc_new(GEngine);
