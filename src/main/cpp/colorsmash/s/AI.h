@@ -8,32 +8,32 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ash/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(colorsmash)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL AI : public a::System {
+class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime, timer)
-  DECL_PTR(a::NodeList, shared)
-  DECL_IZ(time)
+  DECL_PTR(c::DelayTime, _timer)
+  DECL_PTR(ecs::Node, _shared)
+  DECL_IZ(_time)
 
-  void process(float);
   void parallex(float);
+  void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( a::AI)
+  MDECL_SYS_PRIORITY( ecs::AI)
   MDECL_SYS_TPID("n/AI")
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  AI(a::Engine *e)
+  AI(ecs::Engine *e)
   : System(e)
   {}
 

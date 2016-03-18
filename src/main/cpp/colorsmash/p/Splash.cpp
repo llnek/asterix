@@ -23,11 +23,14 @@ NS_BEGIN(colorsmash)
 //
 void Splash::decoUI() {
 
-    auto wz= cx::visRect();
-    auto wb= cx::visBox();
+  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
   // create a coloured layer as background
-  auto background = c::LayerColor::create(c::Color4B(25, 0, 51, 255), wz.size.width, wz.size.height);
+  auto background = c::LayerColor::create(
+      c::Color4B(25, 0, 51, 255),
+      CC_ZW(wz.size),
+      CC_ZH(wz.size));
   addItem(background);
 
   // create a label to display the name of the game

@@ -8,22 +8,21 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/XConfig.h"
-#include "core/ComObj.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(colorsmash)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GameTile : public f::ComObj {
-  MDECL_COMP_TPID("n/GameTile")
-  GameTile(not_null<c::Node*> n) : ComObj(n) {
+struct CC_DLL GameTile : public f::CPixie {
+  GameTile(not_null<c::Node*> n) : CPixie(n) {
   }
   DECL_TV(int,index,-1)
   DECL_TV(int,type,-1)
@@ -31,15 +30,8 @@ struct CC_DLL GameTile : public f::ComObj {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Gesture : public a::Component {
-  MDECL_COMP_TPID("n/Gesture")
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GVars : public a::Component {
+struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-
 };
 
 

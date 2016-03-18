@@ -25,9 +25,8 @@ void Ende::decoUI() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  auto popup = c::LayerColor::create(c::Color4B(0, 0, 0, 196),
-      wz.size.width,
-      wz.size.height);
+  auto popup = c::LayerColor::create(
+      c::Color4B(0, 0, 0, 196), CC_ZW(wz.size), CC_ZH(wz.size));
   //popup->setOpacity(0);
   //popup->runAction(c::FadeTo::create(0.25, 196));
   addItem(popup, 10);
@@ -37,7 +36,7 @@ void Ende::decoUI() {
   addItem(title);
 
   auto score = getHUD()->getScore();
-  auto scoreLabel = cx::reifyLabel("dft", 48, "Score: " + s::to_string(score));
+  auto scoreLabel = cx::reifyLabel("dft", 48, "Score: " + FTOS(score));
   scoreLabel->setPosition(wb.cx, wb.top * 0.6);
   scoreLabel->runAction(
       c::Sequence::create(
@@ -50,7 +49,7 @@ void Ende::decoUI() {
   auto b1 = c::MenuItemLabel::create(
       cx::reifyLabel("dft", 32, "Replay"),
       [=](c::Ref*) {
-      cx::runEx(Game::reify( new f::GCX() ));
+        cx::runEx(Game::reify( new f::GCX() ));
       });
   auto b2 = c::MenuItemLabel::create(
       cx::reifyLabel("dft", 32, "Quit"),

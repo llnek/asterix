@@ -35,14 +35,13 @@ struct CC_DLL GLayer : public f::GameLayer {
   bool onGUI(const c::Vec2 &);
   void findTilesToShift();
 
-  DECL_PTR(a::NodeList, players)
-  DECL_PTR(a::NodeList, shared)
-  DECL_BF(busySignal)
+  DECL_PTR(ecs::Node, _shared)
+  DECL_BF(_busySignal)
 
-  s_vec<GameTile*> tileShifted;
-  s_vec<GameTile*> tileSprites;
-  s_vec<int> tileBin;
-  s_vec<int> tileData;
+  s_vec<GameTile*> _tileShifted;
+  s_vec<GameTile*> _tileSprites;
+  s_vec<int> _tileBin;
+  s_vec<int> _tileData;
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -66,15 +65,14 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  players = engine->getNodeList(PlayerNode().typeId());
-  shared = engine->getNodeList(SharedNode().typeId());
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  _shared = _engine->getNodes("n/GVars")[0];
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  this->busySignal=true;
+  this->_busySignal=true;
 
-    s_vec<c::Label*> labels;
+  s_vec<c::Label*> labels;
   for (auto i = 0; i < 4; ++i) {
     auto b= cx::reifyLabel("dft",52,"");
     b->setPosition(wb.cx, wb.cy);
@@ -106,7 +104,7 @@ void GLayer::onInited() {
   this->runAction(c::Sequence::create(
         c::DelayTime::create(4),
         c::CallFunc::create([=]() {
-          this->busySignal=false;
+          this->_busySignal=false;
           }),
         CC_NIL));
 }
@@ -119,7 +117,9 @@ void GLayer::decoUI() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
   auto bg = c::LayerColor::create(
-      c::Color4B(25, 0, 51, 255), wz.size.width,wz.size.height);
+      c::Color4B(25, 0, 51, 255),
+      CC_ZW(wz.size),
+      CC_ZH(wz.size));
   addItem(bg);
 
   // generate vertices for the gameplay frame
@@ -145,13 +145,13 @@ void GLayer::decoUI() {
   // generate tile data randomly
   auto len= NUM_COLS * NUM_ROWS;
   for (auto i = 0;  i < len; ++i) {
-    tileData.push_back(1 + floor(cx::rand() * MAX_COLORS));
+    _tileData.push_back(1 + floor(cx::rand() * MAX_COLORS));
   }
 
   regoAtlas("game-pics");
 
   auto n=0;
-  F__LOOP(it, tileData) {
+  F__LOOP(it, _tileData) {
     auto s= cx::reifySprite("tile.png");
     auto type = *it;
     auto co= mc_new1(GameTile,s);
@@ -165,10 +165,10 @@ void GLayer::decoUI() {
     ++n;
 
     co->inflate(pos.x, pos.y);
-    tileSprites.push_back(co);
+    _tileSprites.push_back(co);
   }
 
-  engine = mc_new(GEngine);
+  _engine = mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ bool GLayer::onGUI(const c::Vec2 &loc) {
   auto x=CC_CSV(c::Float,"GAMEPLAY+OFFSET+X");
   auto y=CC_CSV(c::Float,"GAMEPLAY+OFFSET+Y");
 
-  if (busySignal) { return false; }
+  if (_busySignal) { return false; }
 
   // calculate touch within the grid
   auto touchWithinGrid = c::ccpSub(loc, c::Vec2(x,y));
@@ -199,14 +199,13 @@ bool GLayer::onGUI(const c::Vec2 &loc) {
 
   // simple bounds checking to ignore touches outside of the grid
   if (col < 0 || col >= NUM_COLS || row < 0 || row >= NUM_ROWS) {
-    return false;
-  }
+  return false; }
 
   // disable touch so that the subsequent
   // functions have time to execute
-  this->busySignal=true;
+  this->_busySignal=true;
 
-  findTilesToRemove(tileData, tileBin, col, row, tileData[touchedTile]);
+  findTilesToRemove(_tileData, _tileBin, col, row, _tileData[touchedTile]);
   updateScore(loc);
   removeTilesWithAnimation();
   findTilesToShift();
@@ -216,7 +215,7 @@ bool GLayer::onGUI(const c::Vec2 &loc) {
 //
 void GLayer::findTilesToShift() {
   // first sort the tiles to be removed, in descending order
-  s::sort(tileBin.begin(), tileBin.end(),
+  s::sort(_tileBin.begin(),_tileBin.end(),
       [=](int a, int b) -> bool {
         //return a < b; // asc
         return a > b; // dec
@@ -225,7 +224,7 @@ void GLayer::findTilesToShift() {
   // for each tile, bring down all the tiles
   // belonging to the same column that are above the current tile
   auto i=0;
-  F__LOOP(it, tileBin) {
+  F__LOOP(it, _tileBin) {
     auto z= *it;
     auto col = floor(z % NUM_COLS);
     auto row = floor(z / NUM_COLS);
@@ -234,37 +233,37 @@ void GLayer::findTilesToShift() {
       // each tile gets the data of the tile exactly above it
       auto cjm1= (j-1) * NUM_COLS + col;
       auto cj= j * NUM_COLS + col;
-      tileData[cjm1] = tileData[cj];
+      _tileData[cjm1] = _tileData[cj];
       // each tile now refers to the sprite of the tile exactly above it
-      tileSprites[cjm1] = tileSprites[cj];
+      _tileSprites[cjm1] = _tileSprites[cj];
       // null checking...this sprite may have already been nullified by removeTilesWithAnimation
-      if (tileSprites[cjm1]) {
+      if (_tileSprites[cjm1]) {
         // save the new index as user data
-        tileSprites[cjm1]->index= cjm1;
+        _tileSprites[cjm1]->index= cjm1;
         // save this tile's sprite so that it is animated, but only if it hasn't already been saved
-          if (s::find(tileShifted.begin(),
-                      tileShifted.end(), tileSprites[cjm1]) == tileShifted.end()) {
-          tileShifted.push_back(tileSprites[cjm1]);
+        if (s::find(_tileShifted.begin(),
+                    _tileShifted.end(), _tileSprites[cjm1]) == _tileShifted.end()) {
+          _tileShifted.push_back(_tileSprites[cjm1]);
         }
       }
     }
     // after shifting the whole column down, the tile at the top of the column will be empty
     // set the data to -1...-1 means empty
-    tileData[(NUM_ROWS-1) * NUM_COLS + col] = -1;
+    _tileData[(NUM_ROWS-1) * NUM_COLS + col] = -1;
     // nullify the sprite's reference
-    tileSprites[(NUM_ROWS-1) * NUM_COLS + col] = CC_NIL;
+    _tileSprites[(NUM_ROWS-1) * NUM_COLS + col] = CC_NIL;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::removeTilesWithAnimation() {
-  F__LOOP(it, tileBin) {
+  F__LOOP(it, _tileBin) {
     auto pos= *it;
     // first clear the tile's data
-    tileData[pos] = E_COLOR_NONE;
+    _tileData[pos] = E_COLOR_NONE;
     // the tile should scale down with easing and then remove itself
-    auto ptr= tileSprites[pos];
+    auto ptr= _tileSprites[pos];
     ptr->node->runAction(
         c::Sequence::create(
           c::EaseBackIn::create(c::ScaleTo::create(0.25, 0.0)),
@@ -274,7 +273,7 @@ void GLayer::removeTilesWithAnimation() {
             }),
           CC_NIL));
     // nullify the tile's sprite
-    tileSprites[pos] = CC_NIL;
+    _tileSprites[pos] = CC_NIL;
   }
   // wait for the scale down animation to finish then bring down the tiles from above
   this->runAction(
@@ -289,7 +288,7 @@ void GLayer::removeTilesWithAnimation() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::bringDownTiles() {
-  F__LOOP(it, tileShifted) {
+  F__LOOP(it, _tileShifted) {
     auto t= *it;
     auto id = t->index;
     // the tiles should move to their new positions with an awesome looking bounce
@@ -312,7 +311,7 @@ void GLayer::addNewTiles() {
   // first search for all tiles having value -1...-1 means empty
   s_vec<int> empty;
   auto n = 0;
-  F__LOOP(it, tileData) {
+  F__LOOP(it, _tileData) {
     auto v= *it;
     if (v < 0) { empty.push_back(n); }
     ++n;
@@ -322,7 +321,7 @@ void GLayer::addNewTiles() {
   F__LOOP(it, empty) {
     auto pos= *it;
     // generate tile data randomly
-    tileData[pos] = 1 + floor(cx::rand() * MAX_COLORS);
+    _tileData[pos] = 1 + floor(cx::rand() * MAX_COLORS);
     // create tile sprite based on tile data
     createTileSprite(pos);
   }
@@ -331,9 +330,9 @@ void GLayer::addNewTiles() {
   F__LOOP(it, empty) {
     auto pos = *it;
     // set the scale to 0
-    tileSprites[pos]->node->setScale(0);
+    _tileSprites[pos]->node->setScale(0);
     // scale the sprite up with a neat easing effect
-    tileSprites[pos]->node->runAction(
+    _tileSprites[pos]->node->runAction(
         c::EaseBackOut::create(c::ScaleTo::create(0.125, 1)));
   }
 
@@ -345,9 +344,9 @@ void GLayer::addNewTiles() {
 //
 void GLayer::cleanUpAfterMove() {
   // empty the arrays
-  tileShifted.clear();
-  tileBin.clear();
-  this->busySignal= false;
+  _tileShifted.clear();
+  _tileBin.clear();
+  this->_busySignal= false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -355,13 +354,13 @@ void GLayer::cleanUpAfterMove() {
 void GLayer::createTileSprite(int tileId) {
   auto s= cx::reifySprite("tile.png");
   auto co= mc_new1(GameTile,s);
-  auto t= tileData[tileId];
+  auto t= _tileData[tileId];
   auto pos= getPositionForTile(tileId);
 
   s->setColor(getColorForTile(t));
   co->index= tileId;
   co->type= t;
-  tileSprites[tileId] = co;
+  _tileSprites[tileId] = co;
   MGML()->addAtlasItem("game-pics", s);
   co->inflate(pos.x, pos.y);
 }
@@ -372,7 +371,7 @@ void GLayer::createTileSprite(int tileId) {
 void GLayer::updateScore(const c::Vec2 &point) {
 
   // count the number of tiles the user just removed
-  auto numTiles= tileBin.size();
+  auto numTiles= _tileBin.size();
   // calculate score for this move
   auto scoreToAdd = numTiles * SCORE_PER_TILE;
   auto cfg= MGMS()->getLCfg()->getValue();
@@ -442,12 +441,6 @@ void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
   play();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::Game()
-  : f::GameScene(true) {
 }
 
 NS_END

@@ -24,16 +24,16 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  time = 0;
-  score=0;
+  _time = 0;
+  _score=0;
 
-  scoreLabel = cx::reifyLabel("dft", 18, "");
-  scoreLabel->setPosition(wb.right * 0.33, wb.top * 0.875);
-  addItem(scoreLabel);
+  _scoreLabel = cx::reifyLabel("dft", 18, "");
+  _scoreLabel->setPosition(wb.right * 0.33, wb.top * 0.875);
+  addItem(_scoreLabel);
 
-  timeLabel = cx::reifyLabel("dft", 18, "");
-  timeLabel->setPosition(wb.right * 0.66, wb.top * 0.875);
-  addItem(timeLabel);
+  _timeLabel = cx::reifyLabel("dft", 18, "");
+  _timeLabel->setPosition(wb.right * 0.66, wb.top * 0.875);
+  addItem(_timeLabel);
 
   auto pause= cx::reifyMenuBtn("pause_button.png");
   pause->setCallback([=](c::Ref*){
@@ -55,28 +55,28 @@ void HUDLayer::flashAlert() {
       c::EaseSineIn::create(c::ScaleTo::create(0.125, 1.1)),
       c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
                                 CC_NIL);
-  timeLabel->runAction(c::RepeatForever::create(seq));
+  _timeLabel->runAction(c::RepeatForever::create(seq));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::pause() {
-  timeLabel->stopAllActions();
+  _timeLabel->stopAllActions();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateTimer(int n) {
-  time = n;
-  timeLabel->setString("Time: " + s::to_string(time));
+  _time = n;
+  _timeLabel->setString("Time: " + FTOS(_time));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString("Score: " + s::to_string(score));
-  scoreLabel->runAction(
+  _score += n;
+  _scoreLabel->setString("Score: " + FTOS(_score));
+  _scoreLabel->runAction(
       c::Sequence::create(
         c::EaseSineIn::create( c::ScaleTo::create(0.125, 1.1)),
         c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),

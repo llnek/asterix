@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +41,7 @@ c::Color3B getColorForTile(int colorData);
 c::Vec2 getRandomPositionForTile();
 
 c::Vec2 getPositionForTile(int);
+
 
 NS_END
 

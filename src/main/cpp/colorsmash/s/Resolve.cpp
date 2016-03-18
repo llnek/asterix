@@ -23,8 +23,8 @@ NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////

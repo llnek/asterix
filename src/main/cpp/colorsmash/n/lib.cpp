@@ -23,20 +23,18 @@ void findTilesToRemove(const s_vec<int> &tiles,
 
   // first do bounds checking
   if (col < 0 || col >= NUM_COLS || row < 0 || row >= NUM_ROWS) {
-    return;
-  }
+  return; }
 
   auto tileId = row * NUM_COLS + col;
 
   // now check if tile is of required colour
   if (tiles[tileId] != tileColor) {
-    return;
-  }
+  return; }
 
   // check if tile is already saved
-    if (s::find(garbo.begin(),garbo.end(),tileId) != garbo.end()) {
-    return;
-  }
+  if (s::find(garbo.begin(),garbo.end(),tileId)
+      != garbo.end()) {
+  return; }
 
   // save the tile to be removed
   garbo.push_back(tileId);
@@ -74,7 +72,6 @@ c::Vec2 getPositionForTile(int id) {
       c::Vec2(x,y),
       c::Vec2(col * TILE_SIZE + TILE_SIZE/2, row * TILE_SIZE + TILE_SIZE/2));
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 //

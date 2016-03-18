@@ -26,7 +26,9 @@ void MMenu::decoUI() {
   auto wb= cx::visBox();
 
   auto bg = c::LayerColor::create(
-      c::Color4B(25, 0, 51, 255), wz.size.width,wz.size.height);
+      c::Color4B(25, 0, 51, 255),
+      CC_ZW(wz.size),
+      CC_ZH(wz.size));
   addItem(bg);
 
   auto title = cx::reifyLabel("dft",52, "Options");
@@ -55,14 +57,14 @@ void MMenu::decoUI() {
       });
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{
       b1,b2,b3
-      }, CC_CSIZE(b1).width/4);
+      }, CC_ZW(CC_CSIZE(b1))/4);
   menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
 
   // audio
   auto audios= cx::reifyAudioIcons();
   auto sz= CC_CSIZE(audios[0]);
-  auto gap= sz.width /4;
+  auto gap= CC_ZW(sz)/4;
   auto c= cx::white();
 
   audios[0]->setColor(c);

@@ -22,9 +22,9 @@ NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
-  shared=engine->getNodeList(SharedNode().typeId());
-  timer=cx::reifyTimer(MGML(), 1000);
-  time=10;
+  _shared= _engine->getNodes("n/GVars")[0];
+  _timer=cx::reifyTimer(MGML(), 1000);
+  _time=60;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,31 +40,29 @@ bool AI::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::parallex(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
-  auto wb= cx::visBox();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
-  if (!cx::timerDone(timer)) { return; }  else {
-    cx::undoTimer(timer);
+  if (!cx::timerDone(_timer)) { return; }  else {
+    cx::undoTimer(_timer);
   }
-  --time;
+  --_time;
   auto msg= j::json({
-      {"time", time}
+      {"time", _time}
       });
   SENDMSGEX("/game/hud/updatetimer", &msg);
 
-  if (time <= 0) {
+  if (_time <= 0) {
     SENDMSG("/game/player/lose");
     return;
   }
-   if (time == 5) {
+   if (_time == 5) {
     SENDMSG("/game/hud/redzone");
   }
-    timer=cx::reifyTimer(MGML(), 1000);
 
+  _timer=cx::reifyTimer(MGML(), 1000);
 }
 
 

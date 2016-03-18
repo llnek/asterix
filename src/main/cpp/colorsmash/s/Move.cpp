@@ -23,8 +23,8 @@ NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  players=engine->getNodeList(PlayerNode().typeId());
-  shared=engine->getNodeList(SharedNode().typeId());
+  _player= _engine->getNodes("f/CGesture")[0];
+  _shared= _engine->getNodes("n/GVars")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto ss= CC_GNLF(GVars, shared, "slots");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   onKeys(dt);
 }
 

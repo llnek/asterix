@@ -40,8 +40,8 @@ void Config::initLevels() {
 //
 void Config::initCsts() {
 
-  game_id="9ff45f09-570d-4563-a80d-106ba0912cd1";
-  app_id = "colorsmash";
+  _game_id="9ff45f09-570d-4563-a80d-106ba0912cd1";
+  _app_id = "colorsmash";
 
   // offset so that game is not stuck to the bottom-left
   addCst("GAMEPLAY+OFFSET+X", CC_FLOAT(TILE_SIZE/2));
