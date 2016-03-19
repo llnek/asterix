@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -25,13 +26,13 @@ class GEngine;
 #define COST_MUNCH  50
 
 
-s_vec<ecs::Entity*> getEntsOnTeam(ecs::Engine*, int team,  const ecs::COMType&);
+s_vec<ecs::Node*> getEntsOnTeam(ecs::Engine*, int team,  const ecs::COMType&);
 
-ecs::Entity* closestEntOnTeam(ecs::Engine*, ecs::Entity*, int team);
+ecs::Node* closestEntOnTeam(ecs::Engine*, ecs::Node*, int team);
 
-s_vec<ecs::Entity*> entsWithinRange(ecs::Engine*, ecs::Entity*, float range, int team);
+s_vec<ecs::Node*> entsWithinRange(ecs::Engine*, ecs::Node*, float range, int team);
 
-ecs::Entity* playerForTeam(ecs::Engine*, int team);
+ecs::Node* playerForTeam(ecs::Engine*, int team);
 
 void createMonsters(ecs::Engine*, int cost, int team, int count);
 

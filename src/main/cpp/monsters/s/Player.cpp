@@ -40,7 +40,7 @@ static float COINS_PER_INTERVAL = 5;
 //////////////////////////////////////////////////////////////////////////////
 //
 void PlayerLogic::process(float dt) {
-  auto ents = engine->getEntities("n/Player");
+  auto ents = _engine->getNodes("n/Player");
   auto time = cx::timeInMillis();
   F__LOOP(it,ents) {
     auto e = *it;
@@ -57,15 +57,15 @@ void PlayerLogic::process(float dt) {
     // Update player image
     if (render && team) {
       auto png= player->attacking ?
-        "castle"+s::to_string(team->team)+"_atk.png"
+        "castle"+FTOS(team->team)+"_atk.png"
         :
-        "castle"+s::to_string(team->team)+"_def.png";
+        "castle"+FTOS(team->team)+"_def.png";
         SCAST(c::Sprite*,render->node)->setDisplayFrame(cx::getSpriteFrame(png));
     }
 
     // Update monster movement orders
     if (team) {
-      auto movers = getEntsOnTeam(engine,team->team,"f/CMove");
+      auto movers = getEntsOnTeam(_engine,team->team,"f/CMove");
       F__LOOP(it,movers) {
         auto m= *it;
         handleMover(m,player->attacking);
@@ -76,7 +76,7 @@ void PlayerLogic::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
+void PlayerLogic::handleMover(ecs::Node *mover, bool attacking) {
 
   auto moverRender = CC_GEC(f::CPixie,mover,"f/CPixie");
   auto moverTeam = CC_GEC(Team,mover,"n/Team");
@@ -86,7 +86,7 @@ void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
   return; }
 
   if (attacking) {
-    auto enemy = closestEntOnTeam(engine,mover,OTHER_TEAM(moverTeam->team));
+    auto enemy = closestEntOnTeam(_engine,mover,OTHER_TEAM(moverTeam->team));
     if (!enemy) {
       moverMove->moveTarget = moverRender->pos();
       return;
@@ -104,7 +104,7 @@ void PlayerLogic::handleMover(ecs::Entity *mover, bool attacking) {
 
   } else {
 
-    auto player = playerForTeam(engine,moverTeam->team);
+    auto player = playerForTeam(_engine,moverTeam->team);
     auto playerRender = CC_GEC(f::CPixie,player,"f/CPixie");
     if (playerRender) {
       moverMove->moveTarget = playerRender->pos();

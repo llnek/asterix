@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -23,16 +24,16 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_GET_IID(3)
 
   DECL_PTR(c::Label, _stateLabel)
-  DECL_PTR(c::Label, scoreLabel)
-  DECL_IZ(score)
+  DECL_PTR(c::Label, _scoreLabel)
+  DECL_IZ(_score)
 
-  s_arr<c::Label*,3> coinLabels;
-  s_arr<int,3> coins;
+  s_arr<c::Label*,3> _coinLabels;
+  s_arr<int,3> _coins;
 
   void updateCoins(int player, int score);
   void updateAIState(const sstr&);
   void updateScore(int);
-  int getScore() { return score; }
+  int getScore() { return _score; }
 
 };
 

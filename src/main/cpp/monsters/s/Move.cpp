@@ -42,7 +42,7 @@ void MoveLogic::onKeys(float dt) {
 //
 void MoveLogic::process(float dt) {
 
-  auto ents = engine->getEntities(
+  auto ents = _engine->getNodes(
       s_vec<ecs::COMType>{"f/CMove","f/CPixie","n/Team"});
   auto wz= cx::visRect();
 
@@ -58,14 +58,14 @@ void MoveLogic::process(float dt) {
 
     // Update current acceleration based on the above, and clamp
     move->acc = c::ccpAdd(move->acc, newAccel);
-    if (c::ccpLength(move->acc) > move->maxAccel) {
-      move->acc = c::ccpMult(c::ccpNormalize(move->acc), move->maxAccel);
+    if (c::ccpLength(move->acc) > move->maxAccel.x) {
+      move->acc = c::ccpMult(c::ccpNormalize(move->acc), move->maxAccel.x);
     }
 
     // Update current velocity based on acceleration and dt, and clamp
     move->vel= c::ccpAdd(move->vel, c::ccpMult(move->acc, dt));
-    if (c::ccpLength(move->vel) > move->maxSpeed) {
-      move->vel= c::ccpMult(c::ccpNormalize(move->vel), move->maxSpeed);
+    if (c::ccpLength(move->vel) > move->maxSpeed.x) {
+      move->vel= c::ccpMult(c::ccpNormalize(move->vel), move->maxSpeed.x);
     }
 
     // Update position based on velocity
@@ -79,7 +79,7 @@ void MoveLogic::process(float dt) {
 static float timeToTarget = 0.1;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CPixie *render) {
+c::Vec2 MoveLogic::arrive(ecs::Node *entity, f::CMove *move, f::CPixie *render) {
 
   auto vector = c::ccpSub(move->moveTarget, render->pos());
   auto dist = c::ccpLength(vector);
@@ -93,16 +93,16 @@ c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CPixie *render
 
   float targetSpeed;
   if (dist > slowRadius) {
-    targetSpeed = move->maxSpeed;
+    targetSpeed = move->maxSpeed.x;
   } else {
-    targetSpeed = move->maxSpeed * dist / slowRadius;
+    targetSpeed = move->maxSpeed.x * dist / slowRadius;
   }
 
   auto targetVelocity = c::ccpMult(c::ccpNormalize(vector), targetSpeed);
 
   auto acceleration = c::ccpMult(c::ccpSub(targetVelocity, move->vel), 1/timeToTarget);
-  if (c::ccpLength(acceleration) > move->maxAccel) {
-    acceleration = c::ccpMult(c::ccpNormalize(acceleration), move->maxAccel);
+  if (c::ccpLength(acceleration) > move->maxAccel.x) {
+    acceleration = c::ccpMult(c::ccpNormalize(acceleration), move->maxAccel.x);
   }
   return acceleration;
 }
@@ -110,9 +110,9 @@ c::Vec2 MoveLogic::arrive(ecs::Entity *entity, f::CMove *move, f::CPixie *render
 static float SEPARATE_THRESHHOLD = 20;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::separate(ecs::Entity *entity, f::CMove *move, f::CPixie *render, Team *team) {
+c::Vec2 MoveLogic::separate(ecs::Node *entity, f::CMove *move, f::CPixie *render, Team *team) {
 
-  auto ents = getEntsOnTeam(engine,team->team,"f/CMove");
+  auto ents = getEntsOnTeam(_engine,team->team,"f/CMove");
   auto steering = c::Vec2(0,0);
   F__LOOP(it,ents) {
     auto otherEntity = *it;
@@ -128,7 +128,7 @@ c::Vec2 MoveLogic::separate(ecs::Entity *entity, f::CMove *move, f::CPixie *rend
 
     if (dist < SEPARATE_THRESHHOLD) {
       direction = c::ccpNormalize(direction);
-      steering = c::ccpAdd(steering, c::ccpMult(direction, move->maxAccel));
+      steering = c::ccpAdd(steering, c::ccpMult(direction, move->maxAccel.x));
     }
   }
 

@@ -22,12 +22,8 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  auto a1= engine->getEntities("n/Automa");
-  auto a2= engine->getEntities("f/CHuman");
-  assert(a1.size()==1);
-  assert(a2.size()==1);
-  _human=a2[0];
-  _enemy=a1[0];
+  _enemy= _engine->getNodes("f/CAutoma")[0];
+  _human= _engine->getNodes("f/CHuman")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,14 +40,14 @@ bool Resolve::update(float dt) {
 void Resolve::process(float dt) {
   auto h= CC_GEC(f::CHealth,_human,"f/CHealth");
 
-  if (h->curHP <= 0) {
+  if (!h->alive() ) {
     // gameover
     SENDMSG("/game/player/lose");
     return;
   }
 
   auto he= CC_GEC(f::CHealth,_enemy,"f/CHealth");
-  if (he->curHP <= 0) {
+  if (!he->alive() ) {
     SENDMSG("/game/player/lose");
     return;
   }
@@ -71,7 +67,7 @@ void Resolve::process(float dt) {
   SENDMSGEX("/game/player/earnscore", &msg);
 
   // Display AI state
-  auto ai = CC_GEC(Automa,_enemy,"n/Automa");
+  auto ai = CC_GEC(Automa,_enemy,"f/CAutoma");
   msg=j::json({
         {"state", ai->state->name() }
       });

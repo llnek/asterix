@@ -8,10 +8,10 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(monsters)
@@ -19,7 +19,7 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL PlayerLogic : public ecs::System {
 
-  void handleMover(ecs::Entity*, bool attacking);
+  void handleMover(ecs::Node*, bool attacking);
   void process(float);
 public:
 

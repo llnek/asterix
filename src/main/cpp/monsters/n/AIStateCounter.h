@@ -19,7 +19,7 @@ NS_BEGIN(monsters)
 //
 struct CC_DLL AIStateCounter : public AIState {
   AIStateCounter() { _name="Counter"; }
-  virtual void update(ecs::Entity*,AILogic*);
+  virtual void update(ecs::Node*,AILogic*);
 };
 
 NS_END

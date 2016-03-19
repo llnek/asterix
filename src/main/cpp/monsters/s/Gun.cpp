@@ -40,37 +40,37 @@ static float WIGGLE_ROOM = 5;
 //////////////////////////////////////////////////////////////////////////////
 //
 void GunLogic::process(float dt) {
-  auto ents = engine->getEntities(
+  auto ents = _engine->getNodes(
       s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CPixie"});
   F__LOOP(it,ents) {
     auto e= *it;
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto team = CC_GEC(Team,e,"n/Team");
     auto gun = CC_GEC(Gun,e,"n/Gun");
-    auto enemy = closestEntOnTeam(engine,e, OTHER_TEAM(team->team));
-    if (!enemy) { return; }
+    auto other = closestEntOnTeam(_engine,e, OTHER_TEAM(team->team));
+    if (!other) { return; }
 
-    auto enemyRender = CC_GEC(f::CPixie,enemy,"f/CPixie");
-    auto dist = c::ccpDistance(render->pos(), enemyRender->pos());
+    auto otherRender = CC_GEC(f::CPixie,other,"f/CPixie");
+    auto dist = c::ccpDistance(render->pos(), otherRender->pos());
 
     if (abs(dist) <= (gun->range + WIGGLE_ROOM) &&
         (cx::timeInMillis() - gun->lastDamageTime) > gun->damageRate) {
 
-      cx::sfxPlay(gun->sound);
       gun->lastDamageTime = cx::timeInMillis();
+      cx::sfxPlay(gun->sound);
 
-      auto laser = SCAST(GEngine*,engine)->createLaser(team->team);
+      auto laser = SCAST(GEngine*,_engine)->createLaser(team->team);
       auto laserRender = CC_GEC(f::CPixie,laser,"f/CPixie");
-      auto laserMelee = CC_GEC(Melee,laser,"n/Melee");
+      auto laserMelee = CC_GEC(Melee,laser,"f/CMelee");
 
       laserRender->node->setPosition(render->pos());
       laserMelee->damage = gun->damage;
 
       auto direction = c::ccpNormalize(
-          c::ccpSub(enemyRender->pos(), render->pos()));
+          c::ccpSub(otherRender->pos(), render->pos()));
 
-      auto target = c::ccpMult(direction, laserDistance);
       auto duration = laserDistance / laserPointsPerSecond;
+      auto target = c::ccpMult(direction, laserDistance);
 
       laserRender->node->setRotation( -1 * CC_RADIANS_TO_DEGREES(c::ccpToAngle(direction)));
       laserRender->node->setZOrder(1);
@@ -79,8 +79,8 @@ void GunLogic::process(float dt) {
          c::Sequence::create(
           c::MoveBy::create(duration, target),
           c::CallFunc::create([=](){
-            laserRender->releaseInnerNode();
-            engine->purgeEntity(laser);
+            laserRender->ejectNode();
+            _engine->purgeNode(laser);
             }),
           c::RemoveSelf::create(),
           CC_NIL));

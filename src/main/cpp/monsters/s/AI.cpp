@@ -22,8 +22,7 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AILogic::preamble() {
-  auto out= engine->getEntities("n/Automa");
-  _enemy=out[0];
+  _enemy= _engine->getNodes("f/CAutoma")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,15 +37,15 @@ bool AILogic::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AILogic::process(float dt) {
+  auto ai = CC_GEC(Automa,_enemy,"f/CAutoma");
   auto aiTeam = CC_GEC(Team,_enemy,"n/Team");
-  auto ai = CC_GEC(Automa,_enemy,"n/Automa");
 
-  this->humanQuirkValue = 0;
-  this->humanZapValue = 0;
   this->humanMunchValue = 0;
+  this->humanZapValue = 0;
+  this->humanQuirkValue = 0;
 
   //get human soldiers
-  auto mons = getEntsOnTeam(engine, OTHER_TEAM(aiTeam->team), "n/Monster");
+  auto mons = getEntsOnTeam(_engine, OTHER_TEAM(aiTeam->team), "n/Monster");
   F__LOOP(it,mons) {
     auto m= *it;
     auto c= CC_GEC(Monster,m,"n/Monster");
@@ -64,7 +63,7 @@ void AILogic::process(float dt) {
   this->aiZapValue = 0;
   this->aiMunchValue = 0;
 
-  mons= getEntsOnTeam(engine, aiTeam->team, "n/Monster");
+  mons= getEntsOnTeam(_engine, aiTeam->team, "n/Monster");
   F__LOOP(it, mons) {
     auto m= *it;
     auto c= CC_GEC(Monster,m,"n/Monster");
@@ -82,8 +81,8 @@ void AILogic::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::changeStateForEntity(ecs::Entity *ent, AIState *state) {
-  auto ai = CC_GEC(Automa,ent,"n/Automa");
+void AILogic::changeStateForEntity(ecs::Node *ent, AIState *state) {
+  auto ai = CC_GEC(Automa,ent,"f/CAutoma");
   if (ai) {
     ai->replaceState(state);
   }
@@ -91,14 +90,22 @@ void AILogic::changeStateForEntity(ecs::Entity *ent, AIState *state) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::spawnMonster(ecs::Entity *e, int cost, int count) {
-
-  auto player = CC_GEC(Player,e,"n/Player");
-  ecs::Entity *m;
-  auto team=2;
+static void cfgMonster(ecs::Node *m) {
+  auto render = CC_GEC(f::CPixie,m,"f/CPixie");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
-    auto eng= SCAST(GEngine*,engine);
+  auto r= CCRANDOM_X_Y(-CC_ZH(wz.size) * 0.25, CC_ZH(wz.size) * 0.25);
+  render->setPos(wb.right * 0.75, wb.cy + r);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void AILogic::spawnMonster(ecs::Node *e, int cost, int count) {
+
+  auto player = CC_GEC(Player,e,"n/Player");
+  auto eng= SCAST(GEngine*,_engine);
+  ecs::Node *m;
+  auto team=2;
 
   if (!player || player->coins < cost) {
   return; } else {
@@ -108,39 +115,37 @@ void AILogic::spawnMonster(ecs::Entity *e, int cost, int count) {
   for (auto i = 0; i < count; ++i) {
     switch (cost) {
       case COST_QUIRK:
-        m= eng->createQuirkMonster(team);
+        cfgMonster( eng->createQuirkMonster(team));
       break;
       case COST_ZAP:
-        m= eng->createZapMonster(team);
+        cfgMonster( eng->createZapMonster(team));
       break;
       case COST_MUNCH:
-        m= eng->createMunchMonster(team);
+        cfgMonster( eng->createMunchMonster(team));
       break;
       default:
       throw "bad monster type!";
     }
-    auto render = CC_GEC(f::CPixie,m,"f/CPixie");
-    auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
-    render->setPos(wb.right * 0.75, wb.cy + r);
   }
+
   cx::sfxPlay("spawn");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::spawnQuirkForEntity(ecs::Entity *e) {
+void AILogic::spawnQuirkForEntity(ecs::Node *e) {
   spawnMonster(e,COST_QUIRK,2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::spawnZapForEntity(ecs::Entity *e) {
+void AILogic::spawnZapForEntity(ecs::Node *e) {
   spawnMonster(e,COST_ZAP,1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AILogic::spawnMunchForEntity(ecs::Entity *e) {
+void AILogic::spawnMunchForEntity(ecs::Node *e) {
   spawnMonster(e,COST_MUNCH,1);
 }
 

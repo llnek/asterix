@@ -31,19 +31,17 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onBtnTapped(int,int);
   void onEnd();
 
-  DECL_PTR(ecs::Entity,_human)
-  DECL_PTR(ecs::Entity,_enemy)
+  DECL_PTR(ecs::Node,_human)
+  DECL_PTR(ecs::Node,_enemy)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void onMouseClick(const c::Vec2&);
-  virtual void onTouchMotion(c::Touch*);
+  virtual bool onMouseStart(const c::Vec2&);
   virtual bool onTouchStart(c::Touch*);
-  virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
-    
+
   virtual ~GLayer();
 };
 
@@ -69,7 +67,7 @@ void GLayer::onBtnTapped(int cost, int count) {
   if (player->coins < cost) { return; } else {
     player->coins -= cost;
   }
-  createMonsters(engine,cost,1,count);
+  createMonsters(_engine,cost,1,count);
   cx::sfxPlay("spawn");
 }
 
@@ -77,42 +75,26 @@ void GLayer::onBtnTapped(int cost, int count) {
 //
 void GLayer::onInited() {
 
-  auto v1= engine->getEntities("f/CHuman");
-  auto v2= engine->getEntities("n/Automa");
-
-  _human= v1[0];
-  _enemy= v2[0];
-
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
+  _human= _engine->getNodes("f/CGesture")[0];
+  _enemy= _engine->getNodes("f/CAutoma")[0];
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const c::Vec2 &loc) {
   auto render= CC_GEC(f::CPixie,_human,"f/CPixie");
   auto player= CC_GEC(Player,_human,"n/Player");
   if (render->bbox().containsPoint(loc)) {
     player->attacking = !player->attacking;
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onTouchStart(c::Touch *touch) {
-  onMouseClick(touch->getLocation());
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchMotion(c::Touch *touch) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchEnd(c::Touch *touch) {
+bool GLayer::onTouchStart(c::Touch *touch) {
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,7 +107,7 @@ c::MenuItem* GLayer::mkBtn() {
 //
 void GLayer::cfgBtn(c::MenuItem *b, const sstr &png) {
   auto s = cx::reifySprite(png);
-  s->setPosition(CC_CSIZE(b).width * 0.25, HHZ(CC_CSIZE(b)));
+  s->setPosition(CC_ZW(CC_CSIZE(b)) * 0.25, HHZ(CC_CSIZE(b)));
   b->addChild(s);
 }
 
@@ -134,7 +116,7 @@ void GLayer::cfgBtn(c::MenuItem *b, const sstr &png) {
 void GLayer::lblBtn(c::MenuItem *b, const sstr &msg) {
 
   auto txt = cx::reifyBmfLabel("dft", msg);
-  txt->setPosition(CC_CSIZE(b).width * 0.75, HHZ(CC_CSIZE(b)));
+  txt->setPosition(CC_ZW(CC_CSIZE(b)) * 0.75, HHZ(CC_CSIZE(b)));
    // txt->setVerticalAlignment(c::TextVAlignment::TOP);
   b->addChild(txt);
 }
@@ -152,7 +134,7 @@ void GLayer::decoUI() {
   // quirk,zap,munch
   s_vec<c::MenuItem*> btns {mkBtn(),mkBtn(),mkBtn()};
   auto bz= CC_CSIZE(btns[0]);
-  auto menu= cx::mkHMenu(btns, bz.width/4);
+  auto menu= cx::mkHMenu(btns, CC_ZW(bz)/4);
   menu->setPosition(wb.cx, MARGIN + HHZ(bz));
   btns[0]->setCallback([=](c::Ref*){
       this->onBtnTapped(COST_QUIRK,2); });
@@ -171,7 +153,7 @@ void GLayer::decoUI() {
 
   addItem(menu);
 
-  engine = mc_new(GEngine);
+  _engine = mc_new(GEngine);
   //cx::sfxMusic("background", true);
 }
 
@@ -200,9 +182,6 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   if (topic=="") {
   }
 
-
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -212,11 +191,6 @@ void Game::decoUI() {
   play();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::Game()
-  : f::GameScene(true) {
-}
 
 NS_END
 

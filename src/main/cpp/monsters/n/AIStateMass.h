@@ -19,7 +19,7 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL AIStateMass : public AIState {
-  virtual void update(ecs::Entity*, AILogic*);
+  virtual void update(ecs::Node*, AILogic*);
   virtual void enter();
   AIStateMass() { _name="Mass"; }
 };

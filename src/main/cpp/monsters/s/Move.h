@@ -13,7 +13,6 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(monsters)
@@ -21,8 +20,8 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL MoveLogic : public ecs::System {
 
-  c::Vec2 separate(ecs::Entity*, f::CMove*, f::CPixie*, Team*);
-  c::Vec2 arrive(ecs::Entity*, f::CMove*, f::CPixie*);
+  c::Vec2 separate(ecs::Node*, f::CMove*, f::CPixie*, Team*);
+  c::Vec2 arrive(ecs::Node*, f::CMove*, f::CPixie*);
 
   void process(float);
   void onKeys(float);

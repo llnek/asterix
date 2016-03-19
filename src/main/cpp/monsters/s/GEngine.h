@@ -8,6 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
@@ -22,10 +23,10 @@ class CC_DLL GEngine  : public ecs::Engine {
 
 public:
 
-  ecs::Entity* createMunchMonster(int team);
-  ecs::Entity* createQuirkMonster(int team);
-  ecs::Entity* createZapMonster(int team);
-  ecs::Entity* createLaser(int team);
+  ecs::Node* createMunchMonster(int team);
+  ecs::Node* createQuirkMonster(int team);
+  ecs::Node* createZapMonster(int team);
+  ecs::Node* createLaser(int team);
 
   virtual void initEntities();
   virtual void initSystems();

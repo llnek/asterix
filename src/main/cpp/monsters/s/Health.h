@@ -13,7 +13,6 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
 #include "GEngine.h"
 
 NS_BEGIN(monsters)
@@ -34,7 +33,8 @@ public:
   : System(e)
   {}
 
-    void draw();
+  void draw();
+
 };
 
 

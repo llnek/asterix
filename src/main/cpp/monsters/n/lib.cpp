@@ -17,11 +17,11 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-s_vec<ecs::Entity*> getEntsOnTeam(
+s_vec<ecs::Node*> getEntsOnTeam(
     ecs::Engine *engine, int team,  const ecs::COMType &ct) {
 
-  auto ents= SCAST(GEngine*,engine)->getEntities(ct);
-  s_vec<ecs::Entity*> out;
+  auto ents= SCAST(GEngine*,engine)->getNodes(ct);
+  s_vec<ecs::Node*> out;
 
   F__LOOP(it, ents) {
     auto e = *it;
@@ -36,19 +36,21 @@ s_vec<ecs::Entity*> getEntsOnTeam(
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ecs::Entity* closestEntOnTeam(ecs::Engine *engine, ecs::Entity *ent, int team) {
+ecs::Node* closestEntOnTeam(
+    ecs::Engine *engine, ecs::Node *ent, int team) {
 
-  auto ourRender = CC_GEC(f::CPixie,ent,"f/CPixie");
-    ecs::Entity *closestEnt= nullptr;
+  auto me = CC_GEC(f::CPixie,ent,"f/CPixie");
+  ecs::Node *closestEnt= CC_NIL;;
   float closestDist= -1;
 
-  if (!ourRender) { return nullptr; }
+  if (!me) { return CC_NIL; }
 
   auto others = getEntsOnTeam(engine, team, "f/CPixie");
+  auto pos= me->pos();
   F__LOOP(it, others) {
     auto e= *it;
     auto r2= CC_GEC(f::CPixie,e,"f/CPixie");
-    auto dist= c::ccpDistance(ourRender->pos(), r2->pos());
+    auto dist= c::ccpDistance(pos, r2->pos());
     if (dist < closestDist || closestDist == -1) {
       closestEnt= e;
       closestDist = dist;
@@ -60,57 +62,58 @@ ecs::Entity* closestEntOnTeam(ecs::Engine *engine, ecs::Entity *ent, int team) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void createMonsters(ecs::Engine *eng, int cost, int team, int count) {
-  auto engine= SCAST(GEngine*,eng);
+static void cfgMonster(ecs::Node *node) {
+  auto c = CC_GEC(f::CPixie,node,"f/CPixie");
   auto wz=cx::visRect();
   auto wb=cx::visBox();
+  auto r= CCRANDOM_X_Y(-CC_ZH(wz.size) * 0.25, CC_ZH(wz.size) * 0.25);
+  c->setPos(wb.right * 0.25, wb.cy  + r);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void createMonsters(ecs::Engine *eng, int cost, int team, int count) {
+  auto engine= SCAST(GEngine*,eng);
   for (auto i = 0;  i < count; ++i) {
-      ecs::Entity *e=nullptr;
     switch (cost) {
       case COST_QUIRK:
-        e= engine->createQuirkMonster(team);
+        cfgMonster( engine->createQuirkMonster(team));
       break;
       case COST_ZAP:
-        e= engine->createZapMonster(team);
+        cfgMonster( engine->createZapMonster(team));
       break;
       case COST_MUNCH:
-        e= engine->createMunchMonster(team);
+        cfgMonster( engine->createMunchMonster(team));
       break;
-    }
-    if (e)  {
-      auto render = CC_GEC(f::CPixie,e,"f/CPixie");
-      auto r= CCRANDOM_X_Y(-wz.size.height * 0.25, wz.size.height * 0.25);
-      render->setPos(wb.right * 0.25, wb.cy  + r);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ecs::Entity* playerForTeam(ecs::Engine *engine, int team) {
+ecs::Node* playerForTeam(ecs::Engine *engine, int team) {
   auto players = getEntsOnTeam(engine, team, "n/Player");
-  return players.size() > 0 ? players[0] : nullptr;
+  return players.size() > 0 ? players[0] : CC_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-s_vec<ecs::Entity*> entsWithinRange(ecs::Engine *engine, ecs::Entity *ent, float range, int team) {
+s_vec<ecs::Node*> entsWithinRange(ecs::Engine *engine, ecs::Node *ent, float range, int team) {
 
-  auto ourRender = CC_GEC(f::CPixie,ent,"f/CPixie");
-  s_vec<ecs::Entity*> out;
+  auto me = CC_GEC(f::CPixie,ent,"f/CPixie");
+  s_vec<ecs::Node*> out;
 
-  if (ourRender) {
-
+  if (me) {
     auto all= getEntsOnTeam(engine,team,"f/CPixie");
+    auto pos= me->pos();
     F__LOOP(it,all) {
       auto e = *it;
-      auto otherRender = CC_GEC(f::CPixie,e,"f/CPixie");
-      auto dist = c::ccpDistance(ourRender->pos(), otherRender->pos());
+      auto other= CC_GEC(f::CPixie,e,"f/CPixie");
+      auto dist = c::ccpDistance(pos, other->pos());
       if (dist < range) {
         out.push_back(e);
       }
     }
-
   }
 
   return out;

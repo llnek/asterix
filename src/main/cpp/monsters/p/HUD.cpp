@@ -40,31 +40,30 @@ void HUDLayer::decoUI() {
       wb.top - MARGIN - HHZ(CC_CSIZE(coin2)));
   addItem(coin2);
 
-  auto _coin1Label = cx::reifyBmfLabel("dft","10");
-  coinLabels[1]= _coin1Label;
+  auto coin1Label = cx::reifyBmfLabel("dft","10");
+  _coinLabels[1]= coin1Label;
 
-  _coin1Label->setAlignment(c::TextHAlignment::LEFT);
-  _coin1Label->setPosition(
+  coin1Label->setAlignment(c::TextHAlignment::LEFT);
+  coin1Label->setPosition(
       coin1->getPositionX() + HWZ(CC_CSIZE(coin1)) + MARGIN/2 +
-      HWZ(CC_CSIZE(_coin1Label)),
+      HWZ(CC_CSIZE(coin1Label)),
       wb.top - MARGIN*1.6);
-  addItem(_coin1Label);
+  addItem(coin1Label);
 
-  auto _coin2Label = cx::reifyBmfLabel("dft", "10");
-  coinLabels[2]= _coin2Label;
-  _coin2Label->setAlignment(c::TextHAlignment::RIGHT);
-  _coin2Label->setPosition(coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
-      HWZ(CC_CSIZE(_coin2Label)),
+  auto coin2Label = cx::reifyBmfLabel("dft", "10");
+  _coinLabels[2]= coin2Label;
+  coin2Label->setAlignment(c::TextHAlignment::RIGHT);
+  coin2Label->setPosition(coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
+      HWZ(CC_CSIZE(coin2Label)),
       wb.top - MARGIN*1.6);
-  addItem(_coin2Label);
+  addItem(coin2Label);
 
+  _scoreLabel= cx::reifyBmfLabel("dft", "0");
+  _scoreLabel->setPosition(wb.cx, wb.top * 0.9);
+  addItem(_scoreLabel);
 
-  scoreLabel= cx::reifyBmfLabel("dft", "0");
-  scoreLabel->setPosition(wb.cx, wb.top * 0.9);
-  addItem(scoreLabel);
-
-  coins.fill(10);
-  score=0;
+  _coins.fill(10);
+  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,15 +75,15 @@ void HUDLayer::updateAIState(const sstr &msg) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateCoins(int p, int v) {
-  coins[p]=v;
-  coinLabels[p]->setString(s::to_string(v));
+  _coins[p]=v;
+  _coinLabels[p]->setString(FTOS(v));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
-  score += n;
-  scoreLabel->setString(s::to_string(score));
+  _score += n;
+  _scoreLabel->setString(FTOS(_score));
 }
 
 

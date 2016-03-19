@@ -19,7 +19,7 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL AIStateRush : public AIState {
-  virtual void update(ecs::Entity*, AILogic*);
+  virtual void update(ecs::Node*, AILogic*);
   virtual void enter();
   AIStateRush() { _name="Rush"; }
 };

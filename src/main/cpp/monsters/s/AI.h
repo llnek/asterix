@@ -8,27 +8,28 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ecs/System.h"
 #include "GEngine.h"
 NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL AILogic : public ecs::System {
+
   void process(float);
 
 public:
 
-    void spawnMonster(ecs::Entity*, int cost, int count);
-    void changeStateForEntity(ecs::Entity*, AIState*);
-    void spawnQuirkForEntity(ecs::Entity*);
-    void spawnMunchForEntity(ecs::Entity*);
-    void spawnZapForEntity(ecs::Entity*);
-    
-  DECL_PTR(ecs::Entity, _enemy)
+  void spawnMonster(ecs::Node*, int cost, int count);
+  void changeStateForEntity(ecs::Node*, AIState*);
+  void spawnQuirkForEntity(ecs::Node*);
+  void spawnMunchForEntity(ecs::Node*);
+  void spawnZapForEntity(ecs::Node*);
+
+  DECL_PTR(ecs::Node, _enemy)
   DECL_FZ(humanQuirkValue)
   DECL_FZ(humanZapValue)
   DECL_FZ(humanMunchValue)
@@ -37,7 +38,6 @@ public:
   DECL_FZ(aiZapValue)
   DECL_FZ(aiMunchValue)
   DECL_FZ(aiTotalValue)
-
 
   MDECL_SYS_TPID("n/AILogic")
   MDECL_SYS_PRIORITY( 60)

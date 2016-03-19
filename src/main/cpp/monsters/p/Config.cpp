@@ -35,8 +35,8 @@ void Config::initLevels() {
 //
 void Config::initCsts() {
 
-  game_id= "aff2dd9a-2fa4-487e-8eea-f2ce786a36e8";
-  app_id = "monsters";
+  _game_id= "aff2dd9a-2fa4-487e-8eea-f2ce786a36e8";
+  _app_id = "monsters";
 
   addCst("SHIP+SPEED", CC_INT(200));
 }

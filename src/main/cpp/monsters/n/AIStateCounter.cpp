@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "ecs/Entity.h"
+#include "ecs/Node.h"
 #include "s/AI.h"
 #include "AIStateCounter.h"
 #include "AIStateDefend.h"
@@ -22,15 +22,18 @@ NS_BEGIN(monsters)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AIStateCounter::update(ecs::Entity *e, AILogic *sys) {
+void AIStateCounter::update(ecs::Node *e, AILogic *sys) {
 
   auto player = CC_GEC(Player,e,"n/Player");
   auto team = CC_GEC(Team,e,"n/Team");
-  auto ai = CC_GEC(Automa,e,"n/Automa");
+  auto ai = CC_GEC(Automa,e,"f/CAutoma");
 
-  if (!team || !player || !ai) { return; }
+  if (!team || !player || !ai) {
+  return; }
 
-  auto enemies = entsWithinRange(sys->getEngine(),e,200, OTHER_TEAM(team->team));
+  auto enemies = entsWithinRange(
+      sys->getEngine(),e,200, OTHER_TEAM(team->team));
+
   if (enemies.size() > 0) {
     while (player->coins > COST_QUIRK) {
       if (sys->aiQuirkValue < sys->humanZapValue &&

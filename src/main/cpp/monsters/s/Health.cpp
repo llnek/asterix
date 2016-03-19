@@ -36,17 +36,14 @@ bool HealthLogic::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HealthLogic::process(float dt) {
-  auto ents = engine->getEntities("f/CHealth");
+  auto ents = _engine->getNodes("f/CHealth");
   F__LOOP(it,ents) {
     auto e= *it;
     auto health = CC_GEC(f::CHealth,e,"f/CHealth");
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
 
-//    if (!health->alive() ||
-//        health->origHP == 0) { return; }
+    if (!health->alive()) {
 
-    if (health->curHP <= 0) {
-      //health->alive = false;
       cx::sfxPlay("boom");
 
       if (render) {
@@ -55,9 +52,10 @@ void HealthLogic::process(float dt) {
             c::FadeOut::create(0.5),
             c::RemoveSelf::create(),
             CC_NIL));
-        render->releaseInnerNode();
+        render->ejectNode();
       }
-      engine->purgeEntity(e);
+
+      _engine->purgeNode(e);
     }
   }
 }
@@ -68,7 +66,7 @@ static int maxColor = 200;
 //
 void HealthLogic::draw() {
 
-  auto ents = engine->getEntities(
+  auto ents = _engine->getNodes(
       s_vec<ecs::COMType>{ "f/CHealth","f/CPixie"});
   F__LOOP(it,ents) {
     auto e= *it;
