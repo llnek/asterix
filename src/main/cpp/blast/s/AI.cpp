@@ -23,7 +23,6 @@ NS_BEGIN(blast)
 //
 void AI::preamble() {
   _shared= _engine->getNodes("n/GVars")[0];
-  _timer= cx::reifyTimer(MGML(), 1500);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,42 +41,12 @@ void AI::parallex(float dt) {
   auto ss= CC_GEC(GVars, _shared, "n/GVars");
   auto wb= cx::visBox();
 
-  F__LOOP(it, ss->bgSprites) {
-    auto s= *it;
-    if (s->getPosition().y >= wb.top + wb.cy - 1) {
-      s->setPosition(wb.cx, (-1 * wb.top) + wb.cy);
-    }
-  }
-
-  F__LOOP(it, ss->bgSprites) {
-    auto s= *it;
-    s->setPosition(
-        s->getPosition().x,
-        s->getPosition().y + (0.75 * wb.top * dt));
-  }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
 
-  if (!cx::timerDone(_timer)) { return; }
-  else {
-    cx::undoTimer(_timer);
-  }
-
-  auto po= MGMS()->getPool("Asteroids");
-  auto e= (ecs::Node*)po->take(true);
-  auto r= CC_GEC(f::CPixie,e,"f/CPixie");
-  auto wb= cx::visBox();
-  auto sz= r->csize();
-  auto rx = HWZ(sz) + cx::randInt(wb.right - CC_ZW(sz));
-
-  cx::resurrect(e, wb.left + rx , wb.top + sz.height);
-  r->node->getPhysicsBody()->setEnabled(true);
-
-  _timer= cx::reifyTimer(MGML(), 1500);
 }
 
 

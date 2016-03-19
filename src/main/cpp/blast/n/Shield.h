@@ -9,22 +9,46 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "MMenu.h"
-#include "Splash.h"
-#include "Game.h"
+#include "lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decoUI() {
-}
+class Player;
+class Shield : public PowerUp {
+
+  DECL_IZ(_shield_time_left)
+  DECL_PTR(Player, _ship)
+
+public:
+
+  static owner<Shield*> create(Player *p) {
+    auto s= f::reifyRefType<Shield>();
+    s->_ship=p;
+    return s;
+  }
+
+  virtual bool init();
+
+  virtual void update();
+  virtual void tick();
+  virtual void activate();
+  virtual void deactivate();
+  virtual void reset();
+
+};
 
 
 NS_END
+
 
 
 

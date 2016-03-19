@@ -28,8 +28,6 @@ struct CC_DLL Game : public f::GameScene {
   STATIC_REIFY_SCENE_CTX(Game)
   MDECL_DECORATE()
 
-  virtual ~Game() {}
-  Game();
 };
 
 

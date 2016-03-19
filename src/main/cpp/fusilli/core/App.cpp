@@ -127,6 +127,8 @@ void App::preLaunch(const c::Size &dz) {
   }
 
   searchPaths.push_back(spath);
+  // for win32
+  searchPaths.push_back("Resources");
   c::FileUtils::getInstance()->setSearchPaths(searchPaths);
 
   XCFG()->handleResolution(fz);

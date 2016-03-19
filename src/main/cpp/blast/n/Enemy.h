@@ -9,19 +9,49 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "MMenu.h"
-#include "Splash.h"
-#include "Game.h"
+#include "lib.h"
+
+#define NUM_SPIKES 10
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decoUI() {
-}
+class Enemy : public c::DrawNode {
+protected:
+
+  void generateVertices(const c::Vec2 vertices[]);
+  DECL_TV(float, _speed_multiplier,0.25)
+  DECL_IZ(_time_alive)
+
+public:
+
+  static owner<Enemy*> create() {
+     return f::reifyRefType<Enemy>();
+  }
+
+  virtual bool init();
+
+  void update(const c::Vec2 &player, bool towards_player);
+  void tick();
+  void spawn(float delay);
+  void finishSpawn();
+  void die();
+
+  DECL_TV(c::Vec2, _speed, c::Vec2(0,0))
+  DECL_BF(_is_spawning)
+  DECL_BF(_is_dead)
+  DECL_BF(_must_be_removed)
+
+};
+
 
 
 NS_END

@@ -22,12 +22,13 @@ NS_BEGIN(blast)
 void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
-
-  _scoreLabel= cx::reifyLabel("dft", 24, "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
-  addItem(_scoreLabel);
-
   _score=0;
+
+  _scoreLabel= cx::reifyBmfLabel("dft", "Score: 0");
+  _scoreLabel->setAnchorPoint(cx::anchorBL());
+  _scoreLabel->setPosition(wb.right * 0.1, wb.top * 0.9);
+
+  addItem(_scoreLabel, E_LAYER_HUD);
 }
 
 //////////////////////////////////////////////////////////////////////////////

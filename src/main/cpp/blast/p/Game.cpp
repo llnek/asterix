@@ -25,12 +25,10 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  bool onContactBegin(c::PhysicsContact&);
-  void setPhysicsWorld(c::PhysicsWorld*);
-
-  DECL_PTR(c::PhysicsWorld, _pWorld);
   DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
+
+  DECL_TD(c::Rect,_boundRect)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -42,6 +40,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
+  void createBoundary();
   virtual ~GLayer();
 };
 
@@ -61,39 +60,6 @@ void GLayer::onInited() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  for (auto n = 0; n < 2;  ++n) {
-    auto s = cx::createSprite("game.bg");
-    ss->bgSprites[n]=s;
-    s->setPosition(
-        wb.cx,
-        (-1 * CC_ZH(wz.size) * n) + wb.cy);
-    addItem(s, -2);
-  }
-
-  setPhysicsWorld(MGMS()->getPhysicsWorld());
-
-  auto ln = c::EventListenerPhysicsContact::create();
-  ln->onContactBegin = CC_CALLBACK_1(GLayer::onContactBegin, this);
-  getEventDispatcher()->addEventListenerWithSceneGraphPriority(ln, this);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
-  _pWorld = world;
-  _pWorld->setGravity(c::Vec2(0, 0));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onContactBegin(c::PhysicsContact&) {
-  this->setOpacity(0.1 * 255);
-  cx::sfxPlay("crash");
-  MGMS()->stop();
-  surcease();
-  Ende::reify(MGMS(), 4);
-  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -126,23 +92,47 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
-  auto btn= cx::reifyMenuBtn("pause-std.png","pause-sel.png");
-  auto sz= CC_CSIZE(btn);
-  auto gap= sz.width / 4;
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-  btn->setPosition(
-      wb.left + sz.width - gap,
-      wb.top - sz.height + gap);
-  btn->setCallback([=](c::Ref*){
-    cx::sfxPlay("button");
-    cx::pushEx(MMenu::reify());
-  });
-  auto menu = cx::mkMenu(btn);
-  addItem(menu);
+
+  auto background = f::reifyRefType<BackgroundManager>();
+  addItem(background, E_LAYER_BACKGROUND);
+
+  createBoundary();
+/*
+
+  // initially add some enemies & a powerup
+  AddPowerUp();
+*/
+  //schedule(schedule_selector(GameWorld::Tick), 1.0f);
 
   _engine = mc_new(GEngine);
-  cx::sfxMusic("background", true);
+  //cx::sfxMusic("background", true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::createBoundary() {
+  auto wb= cx::visBox();
+  auto offset = 0.025;
+  auto x= wb.right * offset;
+  auto y= wb.top * offset;
+  auto w= wb.right - wb.right * offset * 2;
+  auto h= wb.top - wb.top * offset * 4;
+
+  // calculate the position & dimension of the game's boundary
+  _boundRect = c::Rect(x,y,w,h);
+
+  // generate vertices for the boundary
+  c::Vec2 vs[4] = {
+    c::Vec2(x, y),
+    c::Vec2(x, y + h),
+    c::Vec2(x + w, y + h),
+    c::Vec2(x + w, y)
+  };
+
+  // draw the boundary
+  auto bdy = c::DrawNode::create();
+  bdy->drawPolygon(vs, 4, c::ccc4f(0,0,0,0), 1, c::ccc4f(1,1,1,0.3));
+  addItem(bdy, E_LAYER_FOREGROUND);
 }
 
 END_NS_UNAMED
@@ -159,11 +149,6 @@ void Game::decoUI() {
   play();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Game::Game()
-  : f::GameScene(true) {
-}
 
 NS_END
 

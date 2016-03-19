@@ -9,22 +9,49 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "MMenu.h"
-#include "Splash.h"
-#include "Game.h"
+#include "lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decoUI() {
-}
+class Shield;
+class Player : public c::DrawNode {
+protected:
+
+  DECL_PTR(Shield, _shield)
+
+public:
+
+  static owner<Player*> create() {
+    return f::reifyRefType<Player>();
+  }
+
+  virtual void update(float dt);
+  virtual bool init();
+
+  void updateRotation(const c::Vec2& prev);
+  void updatePosition();
+  void dead();
+  void die();
+
+  Shield* getShield() { return _shield; }
+  void setShield(Shield*);
+
+  DECL_TV(c::Vec2, _speed, c::Vec2(0,0))
+  DECL_TV(float, _radius,PLAYER_RADIUS)
+  DECL_BF(_is_dying)
+
+};
 
 
 NS_END
-
 
 

@@ -39,13 +39,13 @@ NS_BEGIN(blast)
 
 #define SHIELD_BLINK_TAG 111
 
-#define CIRCLE_INTERSECTS_CIRCLE(circle1_position, circle1_radius, circle2_position, circle2_radius) (ccpDistance((circle1_position), (circle2_position)) <= ((circle1_radius) + (circle2_radius)))
-#define CIRCLE_CONTAINS_POINT(circle_position, circle_radius, point) (ccpDistance((circle_position), (point)) <= (circle_radius))
+#define CIRCLE_INTERSECTS_CIRCLE(circle1_position, circle1_radius, circle2_position, circle2_radius) (cocos2d::ccpDistance((circle1_position), (circle2_position)) <= ((circle1_radius) + (circle2_radius)))
+#define CIRCLE_CONTAINS_POINT(circle_position, circle_radius, point) (cocos2d::ccpDistance((circle_position), (point)) <= (circle_radius))
 #define RECT_CONTAINS_CIRCLE(rect, circle_position, circle_radius) \
-  ((rect).containsPoint(ccp((circle_position).x - (circle_radius), (circle_position).y)) && \
-  (rect).containsPoint(ccp((circle_position).x, (circle_position).y + (circle_radius))) && \
-  (rect).containsPoint(ccp((circle_position).x + (circle_radius), (circle_position).y)) && \
-  (rect).containsPoint(ccp((circle_position).x, (circle_position).y - (circle_radius))))
+  ((rect).containsPoint(cocos2d::Vec2((circle_position).x - (circle_radius), (circle_position).y)) && \
+  (rect).containsPoint(cocos2d::Vec2((circle_position).x, (circle_position).y + (circle_radius))) && \
+  (rect).containsPoint(cocos2d::Vec2((circle_position).x + (circle_radius), (circle_position).y)) && \
+  (rect).containsPoint(cocos2d::Vec2((circle_position).x, (circle_position).y - (circle_radius))))
 
 // enum used for proper z-ordering
 enum EZIndex {
@@ -102,12 +102,7 @@ enum EPowerUpType {
 //////////////////////////////////////////////////////////////////////////////
 //
 
-void init();
-
-void loadData();
-
-void getRegularPolygonVertices(
-    s_vec<c::Vec2>&vertices, int num_vertices, float circum_radius);
+void getRegularPolygonVertices( s_vec<c::Vec2>&vertices, int num_vertices, float circum_radius);
 
 void getRegularPolygonVertices(s_vec<c::Vec2> &vertices, int num_vertices, float circum_radius, float start_angle);
 
@@ -129,22 +124,9 @@ void generatePolygonFormation(
     EEnemyFormation type, s_vec<c::Vec2> &vertices, int num_vertices,
     const c::Rect& boundary, const c::Vec2& anchor_point);
 
-/*
-  static const int skill1_formations_size = 2;
-  static const int skill1_formations[];
-  static const int skill2_formations_size = 10;
-  static const int skill2_formations[];
-  static const int skill3_formations_size = 17;
-  static const int skill3_formations[];
-  static const int skill4_formations_size = 17;
-  static const int skill4_formations[];
-  static const int skill5_formations_size = 17;
-  static const int skill5_formations[];
-  static const int skill6_formations_size = 17;
-  static const int skill6_formations[];
-  static const int powerup_frequency_size = 10;
-  static const int powerup_frequency[];
-*/
+
+
+
 
 
 

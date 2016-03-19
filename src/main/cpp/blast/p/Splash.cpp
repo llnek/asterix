@@ -22,23 +22,35 @@ NS_BEGIN(blast)
 //
 void Splash::decoUI() {
 
-  auto play= cx::reifyMenuBtn("play-std.png", "play-sel.png");
-  auto title= cx::reifySprite("game-title.png");
-  auto menu= cx::mkMenu(play);
+  auto background= f::reifyRefType<BackgroundManager>();
+  addItem(background, E_LAYER_BACKGROUND);
+
+  auto title = cx::reifySprite("iutitle");
   auto wb= cx::visBox();
 
-  // background, title
-  title->setPosition(wb.cx, wb.top * 0.8);
-  centerImage("gui.bg");
-  addItem(title);
+  title->setPosition(wb.cx, wb.top* 1.2);
+  title->runAction(
+      c::Sequence::create(
+        c::DelayTime::create(0.5),
+        c::EaseBackOut::create(
+          c::MoveBy::create(0.5, c::Vec2(0, -wb.cy))),
+        CC_NIL));
+  addChild(title, E_LAYER_FOREGROUND);
 
-  // one play button
-  play->setPosition(wb.cx, wb.top * 0.2);
+  auto play = cx::reifyMenuBtn("play_button.png");
+  auto menu= cx::mkMenu(play);
+  play->setColor(c::ccc3(77, 210, 245));
+  play->setPosition(wb.cx, wb.top * -0.15);
+  play->runAction(
+      c::Sequence::create(
+        c::DelayTime::create(1),
+        c::EaseBackOut::create(
+          c::MoveBy::create(0.5, c::Vec2(0, wb.cy))),
+        CC_NIL));
   play->setCallback([=](c::Ref*){
-    cx::sfxPlay("button");
-    cx::runEx(Game::reify(new GameCtx() ));
-  });
-  addItem(menu);
+      cx::runEx(Game::reify( new GameCtx()  ));
+      });
+  addItem(menu, E_LAYER_FOREGROUND);
 
 }
 

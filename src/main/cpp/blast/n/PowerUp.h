@@ -9,22 +9,37 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "MMenu.h"
-#include "Splash.h"
-#include "Game.h"
+#include "lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void MMenu::decoUI() {
-}
+struct PowerUp : public c::DrawNode {
+
+  virtual bool init();
+  virtual void update();
+  virtual void tick();
+  virtual void spawn();
+  virtual void activate();
+  virtual void deactivate();
+
+  DECL_TV(c::Vec2, _speed, c::Vec2(0,0))
+  DECL_IZ(_time_left)
+  DECL_BF(_is_active)
+  DECL_BF(_must_be_removed)
+
+};
+
 
 
 NS_END
-
 
 

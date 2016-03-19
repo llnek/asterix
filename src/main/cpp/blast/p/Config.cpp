@@ -45,16 +45,23 @@ void Config::initCsts() {
 void Config::initAssets() {
 
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addAtlas("iutexure", CC_STR("pics/iutexure.plist"));
 
-  addImage("game.bg", CC_STR("pics/background.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
+  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("iutexure", CC_STR("pics/iutexure.png"));
+
+  addEffect("big_blast",CC_STR("sfx/big_blast.wav"));
+  addEffect("blast_player", CC_STR("sfx/blast_player.wav"));
+  addEffect("enemy_death",CC_STR("sfx/enemy_death.wav"));
+  addEffect("game_over",CC_STR("sfx/game_over.wav"));
+  addEffect("missile",CC_STR("sfx/missile.wav"));
+  addEffect("shield",CC_STR("sfx/shield.wav"));
+  addEffect("small_blast",CC_STR("sfx/small_blast.wav"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
-  addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("dft", CC_STR("fon/en/infont.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,9 +73,12 @@ void Config::handleResolution(const c::Size &rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
   auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+
+  fp= getAtlas("iutexure");
+  CC_SCAC()->addSpriteFramesWithFile( fp);
   CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
