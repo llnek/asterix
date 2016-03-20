@@ -9,10 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "core/XConfig.h"
-#include "core/COMP.h"
-#include "core/CCSX.h"
-#include "lib.h"
+#include "x2d/GameScene.h"
 #include "PowerUp.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -26,15 +23,15 @@ bool PowerUp::init() {
   return false; }
 
   // calculate how much time the power-up should wait on screen before activation
-  _time_left = MAX_POWERUP_WAIT_ON_SCREEN / 2 + cx::rand() * MAX_POWERUP_WAIT_ON_SCREEN / 2;
+  timeLeft = MAX_POWERUP_WAIT_ON_SCREEN / 2 + cx::randInt(MAX_POWERUP_WAIT_ON_SCREEN / 2);
   // calculate speed
-  _speed = c::Vec2(CCRANDOM_MINUS1_1() * 2, CCRANDOM_MINUS1_1() * 2);
+  speed = c::Vec2(CCRANDOM_MINUS1_1() * 2, CCRANDOM_MINUS1_1() * 2);
 
   // draw the brown coloured ring
-  drawDot(c::Vec2(0,0),
-      POWERUP_ICON_OUTER_RADIUS, c::ccc4f(0.73725f, 0.5451f, 0, 1));
-  drawDot(c::Vec2(0,0),
-      POWERUP_ICON_OUTER_RADIUS - 3, c::ccc4f(0, 0, 0, 1));
+  drawDot(CC_ZPT, POWERUP_ICON_OUTER_RADIUS,
+      c::ccc4f(0.73725f, 0.5451f, 0, 1));
+
+  drawDot(CC_ZPT, POWERUP_ICON_OUTER_RADIUS - 3, c::ccc4f(0, 0, 0, 1));
 
   setScale(0);
 
@@ -45,30 +42,32 @@ bool PowerUp::init() {
 //
 void PowerUp::update() {
   auto box= MGMS()->getEnclosureRect();
+    auto pt= getPosition();
   // bounce within the boundary
-  if (!RECT_CONTAINS_CIRCLE(box, m_obPosition, POWERUP_ICON_OUTER_RADIUS)) {
+  if (!RECT_CONTAINS_CIRCLE(box, pt, POWERUP_ICON_OUTER_RADIUS)) {
     // bounce off the left & right edge
-    if ((m_obPosition.x - POWERUP_ICON_OUTER_RADIUS) < box.origin.x ||
-        (m_obPosition.x + POWERUP_ICON_OUTER_RADIUS) > (box.origin.x + box.size.width) )
-      _speed.x *= -1;
+    if ((pt.x - POWERUP_ICON_OUTER_RADIUS) < box.origin.x ||
+        (pt.x + POWERUP_ICON_OUTER_RADIUS) > (box.origin.x + box.size.width) )
+      speed.x *= -1;
 
     // bounce off the top & bottom edge
-    if ((m_obPosition.y + POWERUP_ICON_OUTER_RADIUS) > (box.origin.y + box.size.height) ||
-      (m_obPosition.y - POWERUP_ICON_OUTER_RADIUS) < box.origin.y )
-      _speed.y *= -1;
+    if ((pt.y + POWERUP_ICON_OUTER_RADIUS) > (box.origin.y + box.size.height) ||
+      (pt.y - POWERUP_ICON_OUTER_RADIUS) < box.origin.y )
+      speed.y *= -1;
   }
 
-  setPosition(m_obPosition.x + _speed.x, m_obPosition.y + _speed.y);
+  setPosition(pt.x + speed.x, pt.y + speed.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void PowerUp::tick() {
-  --_time_left;
+
+  --timeLeft;
 
   // remove this power-up in the next iteration when it's on-screen time is over
-  if (_time_left < 0) {
-    _must_be_removed = true;
+  if (timeLeft < 0) {
+    mustBeRemoved = true;
     runAction(
         c::Sequence::create(
           c::EaseBackIn::create(
@@ -103,7 +102,7 @@ void PowerUp::spawn() {
 void PowerUp::activate() {
   // clear the geometry and stop all actions
   // now the child classes can add their own behaviour
-  _is_active = true;
+  isActive = true;
   clear();
   stopAllActions();
 }
@@ -117,7 +116,7 @@ void PowerUp::deactivate() {
         c::DelayTime::create(0.01),
         c::RemoveSelf::create(true),
         CC_NIL));
-  _must_be_removed = true;
+  mustBeRemoved = true;
 }
 
 

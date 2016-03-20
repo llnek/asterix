@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
+#include "n/lib.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)

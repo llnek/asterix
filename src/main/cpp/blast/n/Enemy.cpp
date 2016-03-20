@@ -9,10 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "core/XConfig.h"
-#include "core/COMP.h"
-#include "core/CCSX.h"
-#include "lib.h"
+#include "x2d/GameScene.h"
 #include "Enemy.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -33,7 +30,7 @@ bool Enemy::init() {
       vertices, NUM_SPIKES*2,
       c::ccc4f(1,0,0,1), 1.5, c::ccc4f(1,0,0,1));
   // draw a black hole in the middle
-  drawDot(c::Vec2(0,0), ENEMY_RADIUS, c::ccc4f(0,0,0,1));
+  drawDot(CC_ZPT, ENEMY_RADIUS, c::ccc4f(0,0,0,1));
 
   setScale(0);
   return true;
@@ -62,26 +59,27 @@ void Enemy::generateVertices(c::Vec2 vertices[]) {
 //
 void Enemy::update(const c::Vec2 &playerpos, bool towards_player) {
   // no movement while spawning
-  if (_is_spawning) {
+  if (isSpawning) {
   return; }
-
+    auto box=MGMS()->getEnclosureRect();
+    auto pt=getPosition();
   // first find a vector pointing to the player
-  auto dir= c::ccpSub(playerpos, m_obPosition);
+  auto dir= c::ccpSub(playerpos, pt);
   // normalize direction then multiply with the speed_multiplier_
-  _speed = c::ccpMult(dir.normalize(), _speed_multiplier * (towards_player ? 1 : -1));
+  speed = c::ccpMult(dir.getNormalized(), speedMultiplier * (towards_player ? 1 : -1));
 
   // restrict movement within the boundary of the game
-  auto nextpos= c::ccpAdd(m_obPosition, _speed);
+  auto nextpos= c::ccpAdd(pt, speed);
   if (RECT_CONTAINS_CIRCLE(box, nextpos, ENEMY_RADIUS * 1.5)) {
     setPosition(nextpos);
   }
   else if (RECT_CONTAINS_CIRCLE(box,
-        c::Vec2(nextpos.x - _speed.x, nextpos.y), ENEMY_RADIUS * 1.5)) {
-    setPosition(nextpos.x - _speed.x, nextpos.y);
+        c::Vec2(nextpos.x - speed.x, nextpos.y), ENEMY_RADIUS * 1.5)) {
+    setPosition(nextpos.x - speed.x, nextpos.y);
   }
   else if (RECT_CONTAINS_CIRCLE(box,
-        c::Vec2(nextpos.x, nextpos.y - _speed.y), ENEMY_RADIUS * 1.5)) {
-    setPosition(nextpos.x, nextpos.y - _speed.y);
+        c::Vec2(nextpos.x, nextpos.y - speed.y), ENEMY_RADIUS * 1.5)) {
+    setPosition(nextpos.x, nextpos.y - speed.y);
   }
 }
 
@@ -89,24 +87,24 @@ void Enemy::update(const c::Vec2 &playerpos, bool towards_player) {
 //
 void Enemy::tick() {
   // no ticking while spawning
-  if (_is_spawning) {
+  if (isSpawning) {
   return; }
 
-  ++_time_alive;
+  ++timeAlive;
 
   // as time increases, so does speed
-  switch (_time_alive) {
+  switch (timeAlive) {
     case E_SLOW:
-      _speed_multiplier = 0.5;
+      speedMultiplier = 0.5;
     break;
     case E_MEDIUM:
-      _speed_multiplier = 0.75;
+      speedMultiplier = 0.75;
     break;
     case E_FAST:
-      _speed_multiplier = 1.25;
+      speedMultiplier = 1.25;
     break;
     case E_SUPER_FAST:
-      _speed_multiplier = 1.5;
+      speedMultiplier = 1.5;
     break;
   }
 }
@@ -115,7 +113,7 @@ void Enemy::tick() {
 //
 void Enemy::spawn(float delay) {
   // play a scale-up animation
-  _is_spawning = true;
+  isSpawning = true;
   runAction(
       c::Sequence::create(
         c::DelayTime::create(delay),
@@ -130,19 +128,19 @@ void Enemy::spawn(float delay) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::finishSpawn() {
-  _is_spawning = false;
+  isSpawning = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::die() {
   // shouldn't die once already dead
-  if (_is_dead) {
+  if (isDead) {
   return; }
 
   // remove this enemy in the next iteration
-  _must_be_removed = true;
-  _is_dead = true;
+  mustBeRemoved = true;
+  isDead = true;
 
   // animate death then remove with cleanup
   runAction(

@@ -29,11 +29,11 @@ bool Bomb::init() {
   if (!PowerUp::init()) {
   return false; }
 
-  // get vertices for a triangle
-  s_vec<c::Vec2> vertices;
-  getRegularPolygonVertices(vertices, 3, POWERUP_ICON_INNER_RADIUS);
   // draw a triangle with a green border
-  drawPolygon(&vertices[0], 3,
+  // get vertices for a triangle
+  s_vec<c::Vec2> vs;
+  getRegularPolygonVertices(vs, 3, POWERUP_ICON_INNER_RADIUS);
+  drawPolygon(&vs[0], 3,
       c::ccc4f(0, 0, 0, 0), 3, c::ccc4f(0, 1, 0, 1));
 
   return true;
@@ -42,7 +42,7 @@ bool Bomb::init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Bomb::update() {
-  if (! _is_active) {
+  if (! isActive) {
     PowerUp::update();
   }
 }
@@ -51,21 +51,22 @@ void Bomb::update() {
 //
 void Bomb::activate() {
   // must activate only once
-  if (_is_active) {
+  if (isActive) {
   return; }
 
   // first call parent function
   PowerUp::activate();
 
   // create a blast 8 times the size of the player that should last for 2 seconds
-  auto blast = Blast::create(PLAYER_RADIUS * 8, 2.0);
+  auto blast = Blast::create(PLAYER_RADIUS * 8, 2);
   // position blast over bomb
-  blast->setPosition(m_obPosition);
-  game_world_->AddBlast(blast);
+  blast->setPosition(getPosition());
+  addBlast(ss, blast);
   cx::sfxPlay("big_blast");
 
   PowerUp::deactivate();
 }
+
 
 NS_END
 

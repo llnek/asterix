@@ -16,6 +16,11 @@
 #include "core/CCSX.h"
 #include "Resolve.h"
 
+#include "n/Missile.h"
+#include "n/Enemy.h"
+#include "n/Blast.h"
+#include "n/Bomb.h"
+
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
 
@@ -39,10 +44,11 @@ bool Resolve::update(float dt) {
 //
 void Resolve::process(float dt) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
+    USING_NS_CC;
   c::Object *object = CC_NIL;
   CCARRAY_FOREACH(ss->enemies, object) {
     auto enemy = (Enemy*)object;
-    if(enemy && enemy->getMustBeRemoved()) {
+    if(enemy && enemy->mustBeRemoved) {
       ss->enemies->removeObject(enemy);
     }
   }
@@ -50,7 +56,7 @@ void Resolve::process(float dt) {
   object = CC_NIL;
   CCARRAY_FOREACH(ss->powerups, object) {
     auto powerup = (PowerUp*)object;
-    if(powerup && powerup->getMustBeRemoved()) {
+    if(powerup && powerup->mustBeRemoved) {
       ss->powerups->removeObject(powerup);
     }
   }
@@ -58,7 +64,7 @@ void Resolve::process(float dt) {
   object = CC_NIL;
   CCARRAY_FOREACH(ss->blasts, object) {
     auto blast = (Blast*)object;
-    if(blast && blast->getMustBeRemoved()) {
+    if(blast && blast->mustBeRemoved) {
       ss->blasts->removeObject(blast);
     }
   }
@@ -66,7 +72,7 @@ void Resolve::process(float dt) {
   object = NULL;
   CCARRAY_FOREACH(ss->missiles, object) {
     auto missile = (Missile*)object;
-    if (missile && missile->getMustBeRemoved()) {
+    if (missile && missile->mustBeRemoved) {
       ss->missiles->removeObject(missile);
     }
   }

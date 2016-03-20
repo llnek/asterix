@@ -153,7 +153,7 @@ struct CC_DLL CMove : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL UIComObj : public ecs::Component {
+class CC_DLL UICObj : public ecs::Component {
 protected:
   void bindNode(c::Node* n) { _node=n; _auto=true; }
   virtual bool isAuto() { return _auto; }
@@ -164,9 +164,9 @@ public:
   MDECL_COMP_TPID("f/CPixie")
   DECL_PTR(c::Node, _node)
 
-  UIComObj(c::Node *n) { _node=n; }
-  UIComObj() {}
-  virtual ~UIComObj() {
+  UICObj(c::Node *n) { _node=n; }
+  UICObj() {}
+  virtual ~UICObj() {
     CCLOG("Poo! I am dead %p", this);
   }
 
@@ -207,8 +207,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL CPixie : public c::Sprite, public UIComObj {
-
+class CC_DLL CPixie : public c::Sprite, public UICObj {
+protected:
   CPixie() { bindNode(this); }
 
 public:
@@ -232,8 +232,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL CDrawNode : public c::DrawNode, public UIComObj {
-
+class CC_DLL CDrawNode : public c::DrawNode, public UICObj {
+protected:
   CDrawNode() {
     bindNode(this);
   }
@@ -252,8 +252,8 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL C2DNode : public c::Node, public UIComObj {
-
+class CC_DLL C2DNode : public c::Node, public UICObj {
+protected:
   C2DNode() {
     bindNode(this);
   }

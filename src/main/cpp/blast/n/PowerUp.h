@@ -16,13 +16,14 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "lib.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct PowerUp : public c::DrawNode {
+struct PowerUp : public f::CDrawNode {
 
   virtual bool init();
   virtual void update();
@@ -31,10 +32,11 @@ struct PowerUp : public c::DrawNode {
   virtual void activate();
   virtual void deactivate();
 
-  DECL_TV(c::Vec2, _speed, c::Vec2(0,0))
-  DECL_IZ(_time_left)
-  DECL_BF(_is_active)
-  DECL_BF(_must_be_removed)
+  DECL_TV(c::Vec2, speed, CC_ZPT)
+  DECL_IZ(timeLeft)
+  DECL_BF(isActive)
+  DECL_BF(mustBeRemoved)
+  DECL_PTR(GVars,ss)
 
 };
 

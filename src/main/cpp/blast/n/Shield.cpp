@@ -10,10 +10,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "core/XConfig.h"
-#include "core/COMP.h"
-#include "core/CCSX.h"
-#include "lib.h"
+#include "Player.h"
 #include "Shield.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -28,11 +25,11 @@ bool Shield::init() {
   return false; }
 
   // generate vertices for a hexagon
-  s_vec<c::Vec2> vertices;
-  getRegularPolygonVertices(vertices, 6, POWERUP_ICON_INNER_RADIUS, M_PI/6);
+  s_vec<c::Vec2> vs;
+  getRegularPolygonVertices(vs, 6, POWERUP_ICON_INNER_RADIUS, M_PI/6);
   // draw a hexagon with cyan border
   drawPolygon(
-      &vertices[0], 6,
+      &vs[0], 6,
       c::ccc4f(0,0,0,0), 3, c::ccc4f(0, 0.96862, 1, 1));
 
   return true;
@@ -42,12 +39,14 @@ bool Shield::init() {
 //
 void Shield::update() {
 
-  if (! _is_active) {
+  auto s= PCAST(c::Node,_ship);
+
+  if (! isActive) {
     PowerUp::update();
   } else {
     // after activation, shield will follow the player
-    setPosition(_ship->getPosition());
-    setRotation(_ship->getRotation());
+    setPosition(s->getPosition());
+    setRotation(s->getRotation());
   }
 }
 
@@ -55,15 +54,15 @@ void Shield::update() {
 //
 void Shield::tick() {
 
-  if (_is_active) {
-    --_shield_time_left;
+  if (isActive) {
+    --shieldTimeLeft;
 
     // deactivate the shield when it's time is over
-    if (_shield_time_left <= 0) {
+    if (shieldTimeLeft <= 0) {
       deactivate();
     }
     // start blinking the shield when there are just two seconds left
-    else if( _shield_time_left == 2) {
+    else if (shieldTimeLeft == 2) {
       auto blink = c::Blink::create(2, 8);
       blink->setTag(SHIELD_BLINK_TAG);
       runAction(blink);
@@ -78,7 +77,7 @@ void Shield::tick() {
 //
 void Shield::activate() {
 
-  if (_is_active) {
+  if (isActive) {
   return; }
 
   // if a shield already exists on the player,
@@ -94,13 +93,13 @@ void Shield::activate() {
     PowerUp::activate();
 
     // set the shield duration
-    _shield_time_left = SHIELD_DURATION;
+    shieldTimeLeft = SHIELD_DURATION;
     setScale(0);
 
     // generate & draw a bigger cyan hexagon
-    s_vec<c::Vec2> vertices;
-    getRegularPolygonVertices(vertices, 6, PLAYER_RADIUS * 2.5);
-    drawPolygon(&vertices[0], 6,
+    s_vec<c::Vec2> vs;
+    getRegularPolygonVertices(vs, 6, PLAYER_RADIUS * 2.5);
+    drawPolygon(&vs[0], 6,
         c::ccc4f(0, 0, 0, 0), 4, c::ccc4f(0, 0.96862, 1, 1));
 
     // animate the activation & life of the shield
@@ -128,7 +127,7 @@ void Shield::deactivate() {
 
   PowerUp::deactivate();
 
-  if (_is_active) {
+  if (isActive) {
     // inform the player that it no longer has a shield around it
     _ship->setShield(CC_NIL);
   }
@@ -138,7 +137,7 @@ void Shield::deactivate() {
 //
 void Shield::reset() {
   // reset the shield duration
-  _shield_time_left = SHIELD_DURATION;
+  shieldTimeLeft = SHIELD_DURATION;
   // stop any blinking action & show the shield if it was hidden due to the blink
   stopActionByTag(SHIELD_BLINK_TAG);
   setVisible(true);

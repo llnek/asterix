@@ -23,15 +23,19 @@ NS_BEGIN(blast)
 //////////////////////////////////////////////////////////////////////////////
 //
 class Shield;
-class Player : public c::DrawNode {
+class Player : public f::CDrawNode {
 protected:
 
   DECL_PTR(Shield, _shield)
-
+    Player() {}
+    
 public:
 
   static owner<Player*> create() {
-    return f::reifyRefType<Player>();
+    auto z= new Player();
+    z->init();
+    z->autorelease();
+    return z;
   }
 
   virtual void update(float dt);
@@ -45,9 +49,9 @@ public:
   Shield* getShield() { return _shield; }
   void setShield(Shield*);
 
-  DECL_TV(c::Vec2, _speed, c::Vec2(0,0))
-  DECL_TV(float, _radius,PLAYER_RADIUS)
-  DECL_BF(_is_dying)
+  DECL_TV(float, radius,PLAYER_RADIUS)
+  DECL_TV(c::Vec2, speed, CC_ZPT)
+  DECL_BF(isDying)
 
 };
 

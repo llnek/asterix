@@ -24,17 +24,20 @@ NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class Enemy : public c::DrawNode {
+class Enemy : public f::CDrawNode {
 protected:
 
-  void generateVertices(const c::Vec2 vertices[]);
-  DECL_TV(float, _speed_multiplier,0.25)
-  DECL_IZ(_time_alive)
+  void generateVertices(c::Vec2 vertices[]);
+  DECL_TV(float, speedMultiplier,0.25)
+  DECL_IZ(timeAlive)
 
 public:
 
   static owner<Enemy*> create() {
-     return f::reifyRefType<Enemy>();
+    auto z= new Enemy();
+    z->init();
+    z->autorelease();
+    return z;
   }
 
   virtual bool init();
@@ -45,10 +48,10 @@ public:
   void finishSpawn();
   void die();
 
-  DECL_TV(c::Vec2, _speed, c::Vec2(0,0))
-  DECL_BF(_is_spawning)
-  DECL_BF(_is_dead)
-  DECL_BF(_must_be_removed)
+  DECL_TV(c::Vec2, speed, CC_ZPT)
+  DECL_BF(isSpawning)
+  DECL_BF(isDead)
+  DECL_BF(mustBeRemoved)
 
 };
 

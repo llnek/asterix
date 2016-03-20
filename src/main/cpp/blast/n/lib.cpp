@@ -9,10 +9,19 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "lib.h"
+#include "C.h"
+#include "Enemy.h"
+#include "Missile.h"
+#include "MissileLauncher.h"
+#include "Shield.h"
+#include "Player.h"
+#include "Bomb.h"
+#include "Blast.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
@@ -30,11 +39,11 @@ void init(GVars *ss) {
   ss->skill6_formations = {8, 8, 8, 5, 5, 6, 6, 9, 9, 10, 10, 7, 7, 7, 11, 11, 11};
   ss->powerup_frequency = {0, 0, 0, 0, 0, 1, 1, 1, 1, 2};
 
-  ss->enemies_killed_total = 0;
-  ss->enemies_killed_combo = 0;
-  ss->is_popup_active = false;
-  ss->seconds = 0;
-  ss->combo_timer = 0;
+  //ss->enemies_killed_total = 0;
+  //ss->enemies_killed_combo = 0;
+  //ss->is_popup_active = false;
+  //ss->seconds = 0;
+  //ss->combo_timer = 0;
 
   // create & retain CCArray container lists
   ss->enemies = c::Array::createWithCapacity(MAX_ENEMIES);
@@ -46,11 +55,67 @@ void init(GVars *ss) {
   ss->missiles = c::Array::createWithCapacity(MAX_MISSILES);
   CC_KEEP(ss->missiles);
 
-  addEnemyFormation(ss);
-  addPowerUp(ss);
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void addEnemyFormation(GVars *ss, Player *player) {
+    auto box=MGMS()->getEnclosureRect();
+  // fetch an enemy formation formation
+  auto type = getEnemyFormationType(ss);
+  auto py= PCAST(c::Node,player);
+  // fetch a list of positions for the given formation
+  auto formation =
+    getEnemyFormation(type, box, py->getPosition());
+  auto num_enemies_on_screen = ss->enemies->count();
+  auto num_enemies_to_create = formation.size();
+  // limit the total number of enemies to MAX_ENEMIES
+  if (num_enemies_on_screen + num_enemies_to_create >= MAX_ENEMIES) {
+    num_enemies_to_create = MAX_ENEMIES - num_enemies_on_screen;
+  }
+  // create, add & position enemies based on the formation
+  for (auto i = 0; i < num_enemies_to_create; ++i) {
+    auto enemy = Enemy::create();
+    enemy->setPosition(formation[i]);
+    enemy->spawn(i * ENEMY_SPAWN_DELAY);
+    MGML()->addItem(enemy, E_LAYER_ENEMIES);
+    ss->enemies->addObject(enemy);
+  }
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+EEnemyFormation getEnemyFormationType(GVars *ss) {
+  // return a formation type from a list of formation types, based on time user has been playing
+  // the longer the user has survived, the more difficult the formations will be
+  int rc= E_FORMATION_RANDOM_EASY;
 
+  if (ss->seconds > E_SKILL6) {
+    auto i = cx::rand() * GVars::skill6_formations_size;
+    rc= ss->skill6_formations[i];
+  }
+  else if (ss->seconds > E_SKILL5) {
+    auto i = cx::rand() * GVars::skill5_formations_size;
+    rc= ss->skill5_formations[i];
+  }
+  else if (ss->seconds > E_SKILL4) {
+    auto i = cx::rand() * GVars::skill4_formations_size;
+    rc= ss->skill4_formations[i];
+  }
+  else if (ss->seconds > E_SKILL3) {
+    auto i = cx::rand() * GVars::skill3_formations_size;
+    rc= ss->skill3_formations[i];
+  }
+  else if (ss->seconds > E_SKILL2) {
+    auto i = cx::rand() * GVars::skill2_formations_size;
+    rc= ss->skill2_formations[i];
+  }
+  else if (ss->seconds > E_SKILL1) {
+    auto i = cx::rand() * GVars::skill1_formations_size;
+    rc= ss->skill1_formations[i];
+  }
+
+  return (EEnemyFormation) rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,11 +137,12 @@ void enemyKilled(GVars *ss, Enemy *e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void addPowerUp(GVars *ss) {
+void addPowerUp(GVars *ss, Player *py) {
   // limit the number of power-ups on screen
   if (ss->powerups->count() >= MAX_POWERUPS) {
   return; }
 
+    auto box= MGMS()->getEnclosureRect();
   // randomly pick a type of power-up from the power-up frequency array
   auto i = cx::randInt(ss->powerup_frequency_size);
   auto ptype = (EPowerUpType)ss->powerup_frequency[i];
@@ -88,7 +154,7 @@ void addPowerUp(GVars *ss) {
       powerup = MissileLauncher::create(ss);
     break;
     case E_POWERUP_SHIELD:
-      powerup = Shield::create(ss);
+      powerup = Shield::create(py);
     break;
     case E_POWERUP_BOMB:
     default:

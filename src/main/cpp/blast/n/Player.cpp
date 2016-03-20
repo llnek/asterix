@@ -8,7 +8,7 @@
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
-
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
@@ -43,7 +43,7 @@ bool Player::init() {
 //
 void Player::update(float dt) {
   c::DrawNode::update(dt);
-  auto prev= m_obPosition;
+  auto prev= getPosition();
   updatePosition();
   updateRotation(prev);
 }
@@ -52,21 +52,21 @@ void Player::update(float dt) {
 //
 void Player::updatePosition() {
   auto box= MGMS()->getEnclosureRect();
-
+    auto pt= getPosition();
   // don't move if speed is too low
-  if (c::ccpLength(_speed) > 0.75) {
+  if (c::ccpLength(speed) > 0.75) {
     // add speed but limit movement within the boundary
-    auto nextpos= c::ccpAdd(m_obPosition, _speed);
+    auto nextpos= c::ccpAdd(pt, speed);
     if (RECT_CONTAINS_CIRCLE(box, nextpos, PLAYER_RADIUS)) {
       setPosition(nextpos);
     }
     else
-    if (RECT_CONTAINS_CIRCLE(box, c::Vec2(nextpos.x - _speed.x, nextpos.y), PLAYER_RADIUS)) {
-      setPosition(nextpos.x - _speed.x, nextpos.y);
+    if (RECT_CONTAINS_CIRCLE(box, c::Vec2(nextpos.x - speed.x, nextpos.y), PLAYER_RADIUS)) {
+      setPosition(nextpos.x - speed.x, nextpos.y);
     }
     else
-    if (RECT_CONTAINS_CIRCLE(box, c::Vec2(nextpos.x, nextpos.y - _speed.y), PLAYER_RADIUS)) {
-      setPosition(nextpos.x, nextpos.y - _speed.y);
+    if (RECT_CONTAINS_CIRCLE(box, c::Vec2(nextpos.x, nextpos.y - speed.y), PLAYER_RADIUS)) {
+      setPosition(nextpos.x, nextpos.y - speed.y);
     }
   }
 }
@@ -74,15 +74,16 @@ void Player::updatePosition() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Player::updateRotation(const c::Vec2 &prev) {
+    auto pt= getPosition();
   // don't rotate if speed is too low
-  if (c::ccpLength(_speed) > 1.0) {
+  if (c::ccpLength(speed) > 1) {
     auto prevrot= getRotation();
     // calculate target angle based on previous & current position
-    auto targetrot= CC_RADIANS_TO_DEGREES(c::ccpToAngle(c::ccpSub(m_obPosition, prev)) * -1);
+    auto targetrot= CC_RADIANS_TO_DEGREES(c::ccpToAngle(c::ccpSub(pt, prev)) * -1);
 
     // add some easing to the rotation
     auto rotstep = 0.0f;
-    if (targetrot > 90 && prev < -90) {
+    if (targetrot > 90 && prevrot < -90) {
       rotstep = (360.0 - fabs(targetrot - prevrot)) / -4;
     }
     else if(targetrot < -90 && prevrot > 90) {
@@ -97,7 +98,7 @@ void Player::updateRotation(const c::Vec2 &prev) {
     if ( finalrot > 180) {
       finalrot -= 360;
     }
-    else if( finalro < -180) {
+    else if( finalrot < -180) {
       finalrot += 360;
     }
 
@@ -109,13 +110,13 @@ void Player::updateRotation(const c::Vec2 &prev) {
 //
 void Player::die() {
   // don't die if already dying
-  if (_is_dying) {
+  if (isDying) {
   return; }
 
   // stop moving
-  _is_dying = true;
-  _speed.x = 0;
-  _speed.y = 0;
+  isDying = true;
+  speed.x = 0;
+  speed.y = 0;
 
   auto shake_duration = 0.5;
   auto num_shakes = 8;
@@ -149,7 +150,7 @@ void Player::dead() {
 void Player::setShield(Shield *s) {
   _shield = s;
   // with shield enabled, the collision radius must be increased to the size of the shield
-  _radius = _shield ? PLAYER_RADIUS * 3 : PLAYER_RADIUS;
+  radius = _shield ? PLAYER_RADIUS * 3 : PLAYER_RADIUS;
 }
 
 

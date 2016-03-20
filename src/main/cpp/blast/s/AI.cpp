@@ -15,6 +15,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "AI.h"
+#include "n/Player.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
@@ -30,8 +31,8 @@ void AI::preamble() {
 //
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
-    auto s=CC_GEC(Ship,_player,"f/CPixie");
-    if(s->_is_dying) return false;
+    auto s=CC_GEC(Player,_player,"f/CPixie");
+    if(s->isDying) return false;
     process(dt);
   }
   return true;

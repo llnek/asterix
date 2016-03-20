@@ -9,10 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "core/XConfig.h"
-#include "core/COMP.h"
-#include "core/CCSX.h"
-#include "lib.h"
+#include "x2d/GameScene.h"
 #include "Missile.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -53,7 +50,7 @@ bool MissileLauncher::init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MissileLauncher::update() {
-  if (! _is_active) {
+  if (! isActive) {
     PowerUp::update();
   }
 }
@@ -61,7 +58,7 @@ void MissileLauncher::update() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void MissileLauncher::activate() {
-  if (_is_active) {
+  if (isActive) {
   return; }
 
   PowerUp::activate();
@@ -70,16 +67,17 @@ void MissileLauncher::activate() {
   s_vec<c::Vec2> initial_direction;
   auto target = generateTargets();
   auto wz= cx::visRect();
+    auto pt=getPosition();
   // generate an initial direction vertor for each missile
   getRegularPolygonVertices(initial_direction, 5, CC_ZW(wz.size)/4, M_PI * 2/20);
 
   for (auto i = 0; i < 5; ++i) {
     // create a missile with a target, initial direction & speed
-    auto missile = Missile::createWithTarget(target[i],
-        c::ccpMult(initial_direction[i].normalize(), MISSILE_SPEED));
+    auto missile = Missile::create(ss, target[i],
+        c::ccpMult(initial_direction[i].getNormalized(), MISSILE_SPEED));
     // position the missile over the launcher
-    missile->setPosition(m_obPosition);
-    game_world_->AddMissile(missile);
+    missile->setPosition(pt);
+    addMissile(ss, missile);
   }
 
   cx::sfxPlay("missile");

@@ -31,8 +31,10 @@ class MissileLauncher : public PowerUp {
 public:
 
   static MissileLauncher* create(GVars *ss) {
-    auto r= f::reifyRefType<MissileLauncher>();
+    auto r= new MissileLauncher();
     r->ss=ss;
+    r->init();
+    r->autorelease();
     return r;
   }
 

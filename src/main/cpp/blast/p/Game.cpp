@@ -16,6 +16,10 @@
 #include "MMenu.h"
 #include "Ende.h"
 #include "Game.h"
+#include "n/Player.h"
+#include "n/Enemy.h"
+#include "n/PowerUp.h"
+
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
@@ -25,20 +29,28 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
+  DECL_PTR(BackgroundManager, _background)
   DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
-
-  DECL_TD(c::Rect,_boundRect)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
+
+    void  comboTimeUp(GVars *ss, Player *sp) ;
+
+    virtual bool onMouseStart(const c::Vec2&);
+    virtual void onMouseClick(const c::Vec2&);
 
   virtual void onMouseMotion(const c::Vec2&);
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
+    void tick(float);
+    void  handleInput(const c::Vec2 &tap);
+    void pauseGame();
+    virtual void onAcceleration(c::Acceleration* acc, c::Event*);
 
   void createBoundary();
   virtual ~GLayer();
@@ -60,8 +72,6 @@ void GLayer::onInited() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
-  init(ss);
-
   setAccelerometerEnabled(true);
   schedule(CC_SCHEDULE_SELECTOR(GLayer::tick), 1);
 }
@@ -71,10 +81,10 @@ void GLayer::onInited() {
 void GLayer::handleInput(const c::Vec2 &tap) {
 
   auto mv= CC_GEC(f::CMove,_player,"f/CMove");
-  auto py= CC_GEC(Ship,_player,"f/CPixie");
+  auto py= CC_GEC(Player,_player,"f/CPixie");
 
-  if (!MGMS()->isLive()
-      py->_is_dying) { return;  }
+  if (!MGMS()->isLive() ||
+      py->isDying) { return;  }
 
   auto input_abs = c::Vec2(fabs(tap.x), fabs(tap.y));
 
@@ -89,25 +99,26 @@ void GLayer::handleInput(const c::Vec2 &tap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::didAccelerate(c::Acceleration *acc) {
+void GLayer::onAcceleration(c::Acceleration* acc, c::Event*) {
   handleInput(c::Vec2(acc->x, acc->y));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
   auto box= MGMS()->getEnclosureRect();
   auto wz= cx::visRect();
 
   if(!box.containsPoint(tap)) {
     pauseGame();
-    return;
+    return false;
   }
 
   auto input = CC_ZPT;
   input.x = (tap.x - HWZ(wz.size)) / CC_ZW(wz.size);
   input.y = (tap.y - HHZ(wz.size)) / CC_ZH(wz.size);
   handleInput(input);
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -115,8 +126,8 @@ void GLayer::onMouseStart(const c::Vec2 &tap) {
 void GLayer::onMouseMotion(const c::Vec2 &tap) {
   auto wz= cx::visRect();
   auto input = CC_ZPT;
-  input.x = (tap.x - HWZ(wb.size)) / CC_ZW(wz.size);
-  input.y = (tap.y - HHZ(wb.size)) / CC_ZH(wz.size);
+  input.x = (tap.x - HWZ(wz.size)) / CC_ZW(wz.size);
+  input.y = (tap.y - HHZ(wz.size)) / CC_ZH(wz.size);
   handleInput(input);
 }
 
@@ -152,8 +163,8 @@ void GLayer::pauseGame() {
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
 
-  auto background = f::reifyRefType<BackgroundManager>();
-  addItem(background, E_LAYER_BACKGROUND);
+  _background = f::reifyRefType<BackgroundManager>();
+  addItem(_background, E_LAYER_BACKGROUND);
 
   createBoundary();
 
@@ -182,11 +193,11 @@ void GLayer::createBoundary() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::tick(float dt) {
-  auto py=CC_GEC(Ship,_player,"f/CPixie");
+  auto py=CC_GEC(Player,_player,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
   // don't tick if player is dying
-  if(py->_is_dying) {
+  if(py->isDying) {
   return; }
 
   ss->seconds += 1;
@@ -220,26 +231,27 @@ void GLayer::tick(float dt) {
 
   // add an enemy formation every 5 seconds
   if(ss->seconds % 5 == 0) {
-    addEnemyFormation(ss);
+    addEnemyFormation(ss,py);
   }
 
   // add a powerup formation every 4 seconds
   if(ss->seconds % 4 == 0) {
-    addPowerUp(ss);
+    addPowerUp(ss,py);
   }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::comboTimeUp(GVars *ss, Ship *sp) {
+void GLayer::comboTimeUp(GVars *ss, Player *sp) {
   // combo is considered only more than 5 enemies were killed
   if(ss->enemies_killed_combo < 5) {
   return; }
 
   // add combo to score and update the label
   getHUD()->updateScore(ss->enemies_killed_combo * 10);
-  getHUD()->flashCombo(ss->enemies_killed_combo, sp->pos());
+  getHUD()->flashCombo(ss->enemies_killed_combo,
+      PCAST(c::Node,sp)->getPosition());
 
   // reset combo kill counter
   ss->enemies_killed_combo = 0;

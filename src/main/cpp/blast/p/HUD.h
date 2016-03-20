@@ -26,6 +26,9 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_PTR(c::Label, _scoreLabel)
   DECL_IZ(_score)
 
+    void  flashCombo(int n, const c::Vec2 &pos) ;
+        
+
   int getScore() { return _score; }
   void updateScore(int);
 };

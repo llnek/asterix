@@ -22,21 +22,23 @@ NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class Missile : public c::DrawNode {
+class Missile : public f::CDrawNode {
 
   DECL_TV(c::Vec2, prevPos, CC_ZPT)
+  DECL_PTR(GVars,ss)
 
 public:
 
-  static owner<Missile*> create(const c::Vec2 &target, const c::Vec2 &speed);
+  static owner<Missile*> create(GVars*, const c::Vec2 &target, const c::Vec2 &speed);
 
   virtual void update(float dt);
+  virtual bool init();
   void explode(float dt = 0);
 
-  DECL_TV(c::Vec2, _target, CC_ZPT)
-  DECL_TV(c::Vec2, _speed_, CC_ZPT)
-  DECL_BF(_must_be_removed)
-  DECL_BF(_has_exploded)
+  DECL_TV(c::Vec2, target, CC_ZPT)
+  DECL_TV(c::Vec2, speed, CC_ZPT)
+  DECL_BF(mustBeRemoved)
+  DECL_BF(hasExploded)
 
 };
 

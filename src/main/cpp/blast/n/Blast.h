@@ -26,11 +26,11 @@ struct Blast : public c::DrawNode {
 
   static owner<Blast*> create(float radius, float duration);
 
-  void cooldown();
+  void coolDown();
 
-  DECL_BF(_must_be_removed)
-  DECL_FZ(_radius)
-  DECL_FZ(_duration)
+  DECL_BF(mustBeRemoved)
+  DECL_FZ(radius)
+  DECL_FZ(duration)
 
 };
 

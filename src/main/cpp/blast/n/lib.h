@@ -99,6 +99,9 @@ enum EPowerUpType {
   E_POWERUP_MAX// 3
 };
 
+class Player;
+class GVars;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 
@@ -124,11 +127,18 @@ void generatePolygonFormation(
     EEnemyFormation type, s_vec<c::Vec2> &vertices, int num_vertices,
     const c::Rect& boundary, const c::Vec2& anchor_point);
 
+class Blast;
+class Missile;
+class Enemy;
 
+void addBlast(GVars *ss, Blast *blast);
+void addMissile(GVars *ss, Missile *missile);
+void addPowerUp(GVars *ss, Player*);
+void enemyKilled(GVars *ss, Enemy *e);
+void init(GVars *ss);
 
-
-
-
+EEnemyFormation getEnemyFormationType(GVars *ss);
+void addEnemyFormation(GVars *ss, Player *player);
 
 NS_END
 

@@ -25,8 +25,10 @@ NS_BEGIN(blast)
 //
 struct Bomb : public PowerUp {
 
-  static owner<Bomb*> create() {
-    return f::reifyRefType<Bomb>();
+  static owner<Bomb*> create(GVars *ss) {
+    auto z= f::reifyRefType<Bomb>();
+    z->ss=ss;
+    return z;
   }
 
   virtual void activate();

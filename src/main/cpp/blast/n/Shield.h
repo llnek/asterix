@@ -16,6 +16,8 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "lib.h"
+#include "C.h"
+#include "PowerUp.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
@@ -25,8 +27,8 @@ NS_BEGIN(blast)
 class Player;
 class Shield : public PowerUp {
 
-  DECL_IZ(_shield_time_left)
   DECL_PTR(Player, _ship)
+  DECL_IZ(shieldTimeLeft)
 
 public:
 

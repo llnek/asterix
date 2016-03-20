@@ -107,7 +107,7 @@ typedef std::string sstr;
 // c++ casting
 #define DCAST(type,expr) dynamic_cast<type>(expr)
 #define SCAST(type,expr) static_cast<type>(expr)
-#define PCAST(type,expr) (type*)(expr)
+#define PCAST(type,expr) ((type*)(expr))
 
 //////////////////////////////////////////////////////////////////////////////
 // pointer macros
