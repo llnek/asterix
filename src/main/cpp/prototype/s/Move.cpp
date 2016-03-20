@@ -48,16 +48,16 @@ void Move::process(float dt) {
   F__LOOP(it,c) {
     auto a= *it;
     if (!a->status()) { continue; }
-    auto r= CC_GEC(f::CPixie,a,"f/CPixie");
+      auto r= (c::Sprite*)CC_GEC(f::CPixie,a,"f/CPixie");
 
-    r->setPos(
-        r->node->getPositionX(),
-        r->node->getPositionY() - (0.75 * CC_ZH(wz.size) * dt));
+    r->setPosition(
+        r->getPositionX(),
+        r->getPositionY() - (0.75 * CC_ZH(wz.size) * dt));
 
-    if (r->node->getPositionY() < wb.bottom) {
-      if (r->node->getPositionY() <
-          wb.bottom-(2* CC_ZH(r->csize()))) {
-        r->node->getPhysicsBody()->setEnabled(false);
+    if (r->getPositionY() < wb.bottom) {
+      if (r->getPositionY() <
+          wb.bottom-(2* CC_ZH(CC_CSIZE(r)))) {
+        r->getPhysicsBody()->setEnabled(false);
         cx::hibernate((ecs::Node*)a);
       }
     }

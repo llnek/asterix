@@ -106,9 +106,9 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
+  auto r= CC_GEC(c::Node,_player,"f/CPixie");
   auto loc= touch->getLocation();
-  return cx::isClicked(r->node,loc);
+  return cx::isClicked(r,loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////

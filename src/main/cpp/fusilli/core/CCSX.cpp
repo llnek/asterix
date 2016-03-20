@@ -274,7 +274,7 @@ c::Label* reifyLabel(float x, float y,
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
 bool collide(not_null<CPixie*> a, not_null<CPixie*> b) {
-  return (NNP(a) && NNP(b)) ? collideN(a->node, b->node) : false;
+  return (NNP(a) && NNP(b)) ? collideN(a, b) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -336,7 +336,7 @@ j::json readJson(const sstr &fpath) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool outOfBound(not_null<CPixie*> ent, const Box4 &B) {
-  return (NNP(ent) && NNP(ent->node)) ? outOfBound(bbox4(ent->node), B) : false;
+  return NNP(ent) ? outOfBound(bbox4(ent), B) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -485,7 +485,7 @@ const c::Size calcSize(const sstr &frame) {
 // Calculate halves of width and height of this sprite
 //
 const c::Size halfHW(not_null<CPixie*> n) {
-  return halfHW(n->node);
+  return halfHW(n);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -758,43 +758,43 @@ void resolveElastic(
     c::Vec2 &vel1,
     not_null<CPixie*> obj2, c::Vec2 &vel2) {
 
-  auto pos2 = obj2->node->getPosition();
-  auto pos1= obj1->node->getPosition();
-  auto sz2= CC_CSIZE(obj2->node);
-  auto sz1= CC_CSIZE(obj1->node);
+  auto pos2 = obj2->getPosition();
+  auto pos1= obj1->getPosition();
+  auto sz2= CC_CSIZE(obj2);
+  auto sz1= CC_CSIZE(obj1);
   auto hh1= HHZ(sz1);
   auto hw1= HWZ(sz1);
   auto x = pos1.x;
   auto y= pos1.y;
-  auto bx2 = bbox4(obj2->node);
-  auto bx1 = bbox4(obj1->node);
+  auto bx2 = bbox4(obj2);
+  auto bx1 = bbox4(obj1);
 
   // coming from right
   if (bx1.left < bx2.right && bx2.right < bx1.right) {
     vel2.x = - fabs(vel2.x);
     vel1.x = fabs(vel1.x);
-    x= getRight(obj2->node) + hw1;
+    x= getRight(obj2) + hw1;
   }
   else
   // coming from left
   if (bx1.right > bx2.left && bx1.left < bx2.left) {
     vel1.x = - fabs(vel1.x);
     vel2.x = fabs(vel2.x);
-    x= getLeft(obj2->node) - hw1;
+    x= getLeft(obj2) - hw1;
   }
   else
   // coming from top
   if (bx1.bottom < bx2.top && bx1.top > bx2.top) {
     vel2.y = - fabs(vel2.y);
     vel1.y = fabs(vel1.y);
-    y= getTop(obj2->node) + hh1;
+    y= getTop(obj2) + hh1;
   }
   else
   // coming from bottom
   if (bx1.top > bx2.bottom && bx2.bottom > bx1.bottom) {
     vel1.y = - fabs(vel1.y);
     vel2.y = fabs(vel2.y);
-    y= getBottom(obj2->node) - hh1;
+    y= getBottom(obj2) - hh1;
   }
   else {
     return;

@@ -32,6 +32,7 @@ class FS_DLL Component {
 protected:
   Component() {}
 public:
+  virtual bool isAuto() { return false; }
   virtual const COMType typeId() = 0;
   virtual void dispose() {}
   virtual ~Component() {}

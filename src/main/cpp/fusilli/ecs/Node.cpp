@@ -29,6 +29,7 @@ Node::~Node() {
   F__LOOP(it, _parts) {
     auto c= it->second;
     _engine->rego()->unbind(c,this);
+    if (!c->isAuto())
     delete c;
   }
 }
@@ -50,6 +51,7 @@ void Node::purge(const COMType &z) {
     auto c= it->second;
     _parts.erase(it);
     _engine->rego()->unbind(c,this);
+    if (!c->isAuto())
     delete c;
   }
 }

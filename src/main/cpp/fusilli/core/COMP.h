@@ -153,85 +153,122 @@ struct CC_DLL CMove : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CPixie : public c::Sprite, public ecs::Component {
+class CC_DLL UIComObj : public ecs::Component {
+protected:
+  void bindNode(c::Node* n) { _node=n; _auto=true; }
+  virtual bool isAuto() { return _auto; }
+  DECL_BF(_auto)
+  void flipAuto(bool b) { _auto=b; }
+public:
 
-  CPixie(const sstr &fn, const sstr& path) : c::Sprite() {
-    initWithFile(path +"/" + fn);
+  MDECL_COMP_TPID("f/CPixie")
+  DECL_PTR(c::Node, _node)
+
+  UIComObj(c::Node *n) { _node=n; }
+  UIComObj() {}
+  virtual ~UIComObj() {
+    CCLOG("Poo! I am dead %p", this);
   }
 
-  CPixie(const sstr &fn) : c::Sprite() {
-    initWithSpriteFrameName(fn);
-  }
-
-  virtual void hide() { setVisible(false); }
-  virtual void show() { setVisible(true); }
+  virtual void hide() { if (_node) _node->setVisible(false); }
+  virtual void show() { if (_node) _node->setVisible(true); }
   virtual void inflate(float x, float y) {
-    setPosition(x,y);
-    show();
+    if (_node) {
+      _node->setPosition(x,y);
+      show();
+    }
   }
   virtual void inflate() { show(); }
   virtual void deflate() {
-    unscheduleAllCallbacks();
-    stopAllActions();
-    hide();
+    if (_node) {
+      _node->unscheduleAllCallbacks();
+      _node->stopAllActions();
+      hide();
+    }
   }
-  virtual float height() { return boundingBox().size.height; }
-  virtual float width() { return boundingBox().size.width; }
-  virtual const c::Rect bbox() { return boundingBox(); }
-  virtual void setPos(float x, float y) { setPosition(x,y); }
-  virtual const c::Vec2 pos() { return getPosition(); }
-  virtual const c::Size csize() { return CC_CSIZE(this); }
-  virtual float circum() { return CC_CSIZE(this).width; }
-  virtual float radius() { return CC_CSIZE(this).width * 0.5; }
-  virtual int tag() { return getTag(); }
-  virtual ~CPixie() {
-  }
-  MDECL_COMP_TPID("f/CPixie")
+  virtual float height() {
+    return _node ? _node->boundingBox().size.height : 0; }
+  virtual float width() {
+    return _node ? _node->boundingBox().size.width : 0; }
+  virtual const c::Rect bbox() {
+    return _node ? _node->boundingBox() : CC_ZRT; }
+  virtual void setPos(float x, float y) { if (_node) _node->setPosition(x,y); }
+  virtual const c::Vec2 pos() {
+    return _node ? _node->getPosition() : CC_ZPT; }
+  virtual const c::Size csize() {
+    return _node ? CC_CSIZE(_node) : CC_ZSZ; }
+  virtual float circum() {
+    return _node ? CC_CSIZE(_node).width : 0; }
+  virtual float radius() {
+    return _node ? CC_CSIZE(_node).width * 0.5 : 0; }
+  virtual int tag() { return _node ? _node->getTag() : 0; }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CNode : public ecs::Component {
-  MDECL_COMP_TPID("f/CPixie")
-  DECL_PTR(c::Node,node)
-  CNode(not_null<c::Node*> n) { node=n; }
-  CNode() {}
-  virtual void hide() { if (node) node->setVisible(false); }
-  virtual void show() { if (node) node->setVisible(true); }
-  virtual bool isOvert() {
-    return node ? node->isVisible() : false; }
-  virtual void inflate(float x, float y) {
-    if (node) { node->setPosition(x,y); show(); }
-  }
-  virtual void ejectNode() { node=nullptr; }
-  virtual void removeNode() {
-    if (node) {node->removeFromParent();}
-    node=nullptr;
-  }
-  virtual void dispose() { removeNode(); }
-  virtual void inflate() { show(); }
-  virtual void deflate() {
-    if (node) {
-      node->unscheduleAllCallbacks();
-      node->stopAllActions();
-      hide();
-    }
-  }
-  virtual float height() { return node ? node->boundingBox().size.height : 0; }
-  virtual float width() { return node ? node->boundingBox().size.width : 0; }
-  virtual const c::Rect bbox() { return node ? node->boundingBox() : c::Rect(0,0,0,0); }
-  virtual void setPos(float x, float y) { if (node) node->setPosition(x,y); }
-  virtual const c::Vec2 pos() { return node ? node->getPosition() : c::Vec2(0,0); }
-  virtual const c::Size csize() { return node ? CC_CSIZE(node) : c::Size(0,0); }
-  virtual float circum() { return node ? CC_CSIZE(node).width : 0; }
-  virtual float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
-  virtual int tag() { return node ? node->getTag() : 0; }
-  virtual ~CNode() {
+class CC_DLL CPixie : public c::Sprite, public UIComObj {
+
+  CPixie() { bindNode(this); }
+
+public:
+
+  static owner<CPixie*> reifyFrame(const sstr &n) {
+    auto z= new CPixie();
+    z->initWithSpriteFrameName(n);
+    z->autorelease();
+    return z;
   }
 
+  static owner<CPixie*> reifyFile(const sstr &n) {
+    auto z= new CPixie();
+    z->initWithFile(n);
+    z->autorelease();
+    return z;
+  }
+
+  virtual ~CPixie() {}
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL CDrawNode : public c::DrawNode, public UIComObj {
 
+  CDrawNode() {
+    bindNode(this);
+  }
+
+public:
+
+  static owner<CDrawNode*> reify() {
+    auto z= new CDrawNode();
+    z->init();
+    z->autorelease();
+    return z;
+  }
+
+  virtual ~CDrawNode() {}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL C2DNode : public c::Node, public UIComObj {
+
+  C2DNode() {
+    bindNode(this);
+  }
+
+public:
+
+  static owner<C2DNode*> reify() {
+    auto z= new C2DNode();
+    z->init();
+    z->autorelease();
+    return z;
+  }
+
+  virtual ~C2DNode() {}
+};
 
 
 NS_END

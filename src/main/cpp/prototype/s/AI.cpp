@@ -69,13 +69,13 @@ void AI::process(float dt) {
 
   auto po= MGMS()->getPool("Asteroids");
   auto e= (ecs::Node*)po->take(true);
-  auto r= CC_GEC(f::CPixie,e,"f/CPixie");
+    auto r= (c::Sprite*)CC_GEC(f::CPixie,e,"f/CPixie");
   auto wb= cx::visBox();
-  auto sz= r->csize();
+  auto sz= CC_CSIZE(r);
   auto rx = HWZ(sz) + cx::randInt(wb.right - CC_ZW(sz));
 
   cx::resurrect(e, wb.left + rx , wb.top + sz.height);
-  r->node->getPhysicsBody()->setEnabled(true);
+  r->getPhysicsBody()->setEnabled(true);
 
   _timer= cx::reifyTimer(MGML(), 1500);
 }

@@ -26,7 +26,6 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_PTR(c::Label, _scoreLabel)
   DECL_IZ(_score)
 
-  int getScore() { return _score; }
   void updateScore(int);
 };
 
