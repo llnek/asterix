@@ -40,6 +40,66 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
+  auto py= CC_GEC(Ship,_player,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto player_position = py->pos();
+  auto player_radius = py->radius();
+
+  // iterate through all enemies
+  c::Object *object = CC_NIL;
+  CCARRAY_FOREACH(ss->enemies, object) {
+    auto enemy = (Enemy*)object;
+    if(enemy) {
+      auto enemy_position = enemy->getPosition();
+      // check with Player
+      if (CIRCLE_INTERSECTS_CIRCLE(player_position, player_radius, enemy_position, ENEMY_RADIUS)) {
+        // if shield is enabled, kill enemy
+        if(py->getShield()) {
+          enemy->die();
+          enemyKilled(ss,enemy);
+        }
+        // else kill player...but only if enemy has finished spawning
+        else if(!enemy->getIsSpawning()) {
+          py->die();
+        }
+      }
+
+      // check with all blasts
+      c::Object *object2 = CC_NIL;
+      CCARRAY_FOREACH(ss->blasts, object2) {
+        auto blast = (Blast*)object2;
+        if(blast) {
+          if (CIRCLE_INTERSECTS_CIRCLE(blast->getPosition(), blast->radius, enemy_position, ENEMY_RADIUS*1.5)) {
+            enemy->die();
+            enemyKilled(ss,enemy);
+          }
+        }
+      }
+
+      // check with all missiles
+      object2 = NULL;
+      CCARRAY_FOREACH(ss->missiles, object2) {
+        auto missile = (Missile*)object2;
+        if(missile) {
+          if (CIRCLE_INTERSECTS_CIRCLE(missile->getPosition(), MISSILE_RADIUS, enemy_position, ENEMY_RADIUS*1.5)) {
+            missile->explode();
+          }
+        }
+      }
+    }
+  }
+
+  // check if player collides with any of the power-ups
+  // activate the power-up if collision is found
+  object = CC_NIL;
+  CCARRAY_FOREACH(ss->powerups, object) {
+    auto powerup = (PowerUp*)object;
+    if (powerup && !powerup->getIsActive()) {
+      if (CIRCLE_INTERSECTS_CIRCLE(player_position, player_radius, powerup->getPosition(), POWERUP_ICON_OUTER_RADIUS)) {
+        powerup->activate();
+      }
+    }
+  }
 }
 
 NS_END

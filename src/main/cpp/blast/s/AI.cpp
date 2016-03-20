@@ -22,6 +22,7 @@ NS_BEGIN(blast)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -29,7 +30,8 @@ void AI::preamble() {
 //
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
-    parallex(dt);
+    auto s=CC_GEC(Ship,_player,"f/CPixie");
+    if(s->_is_dying) return false;
     process(dt);
   }
   return true;
@@ -37,16 +39,7 @@ bool AI::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::parallex(float dt) {
-  auto ss= CC_GEC(GVars, _shared, "n/GVars");
-  auto wb= cx::visBox();
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void AI::process(float dt) {
-
 }
 
 

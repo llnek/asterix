@@ -38,7 +38,41 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  c::Object *object = CC_NIL;
+  CCARRAY_FOREACH(ss->enemies, object) {
+    auto enemy = (Enemy*)object;
+    if(enemy && enemy->getMustBeRemoved()) {
+      ss->enemies->removeObject(enemy);
+    }
+  }
+
+  object = CC_NIL;
+  CCARRAY_FOREACH(ss->powerups, object) {
+    auto powerup = (PowerUp*)object;
+    if(powerup && powerup->getMustBeRemoved()) {
+      ss->powerups->removeObject(powerup);
+    }
+  }
+
+  object = CC_NIL;
+  CCARRAY_FOREACH(ss->blasts, object) {
+    auto blast = (Blast*)object;
+    if(blast && blast->getMustBeRemoved()) {
+      ss->blasts->removeObject(blast);
+    }
+  }
+
+  object = NULL;
+  CCARRAY_FOREACH(ss->missiles, object) {
+    auto missile = (Missile*)object;
+    if (missile && missile->getMustBeRemoved()) {
+      ss->missiles->removeObject(missile);
+    }
+  }
+
 }
+
 
 NS_END
 

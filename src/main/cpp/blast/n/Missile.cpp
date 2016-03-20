@@ -1,85 +1,102 @@
-#include "Missile.h"
-#include "GameWorld.h"
+// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
+#include "core/XConfig.h"
+#include "core/COMP.h"
+#include "core/CCSX.h"
+#include "lib.h"
 #include "Blast.h"
+#include "Missile.h"
 
-Missile* Missile::createWithTarget(GameWorld* instance, CCPoint target, CCPoint speed)
-{
-	Missile* missile = new Missile();
-	if(missile && missile->initWithTarget(instance, target, speed))
-	{
-		missile->autorelease();
-		return missile;
-	}
-	CC_SAFE_DELETE(missile);
-	return NULL;
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(blast)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Missile*> Missile::create(const c::Vec2 &target, const c::Vec2 &speed) {
+  auto missile = f::reifyRefType<Missile>();
+  missile->_target = target;
+  missile->_speed = speed;
+  // generate vertices for the missile
+  c::Vec2 vertices[] = {
+    c::Vec2(MISSILE_RADIUS * 1.75, 0),
+    c::Vec2(MISSILE_RADIUS * -0.875, MISSILE_RADIUS),
+    c::Vec2(MISSILE_RADIUS * -1.75, 0),
+    c::Vec2(MISSILE_RADIUS * -0.875, MISSILE_RADIUS * -1)
+  };
+  // draw a yellow coloured missile
+  drawPolygon(vertices, 4,
+      c::ccc4f(0.91765, 1, 0.14118f, 1), 0, c::ccc4f(0, 0, 0, 0));
+
+  // schedule to explode after 5 seconds
+  scheduleOnce(schedule_selector(Missile::Explode), 5.0f);
+  scheduleUpdate();
+  return true;
 }
 
-bool Missile::initWithTarget(GameWorld* instance, CCPoint target, CCPoint speed)
-{
-	if(!CCDrawNode::init())
-	{
-		return false;
-	}
+//////////////////////////////////////////////////////////////////////////////
+//
+void Missile::update(float dt) {
+  // find a vector pointing to the target
+  auto direction = c::ccpSub(_target, m_obPosition).normalize();
+  // add the direction to the speed for smooth curved movement
+  _speed.x += direction.x;
+  _speed.y += direction.y;
+  // normalize the speed & multiply with a constant
+  _speed = c::ccpMult(_speed.normalize(), MISSILE_SPEED);
 
-	game_world_ = instance;
-	target_ = target;
-	speed_ = speed;
+  setPosition(m_obPosition.x + _speed.x, m_obPosition.y + _speed.y);
 
-	// generate vertices for the missile
-	CCPoint vertices[] = {CCPoint(MISSILE_RADIUS * 1.75f, 0), CCPoint(MISSILE_RADIUS * -0.875f, MISSILE_RADIUS), CCPoint(MISSILE_RADIUS * -1.75f, 0), CCPoint(MISSILE_RADIUS * -0.875f, MISSILE_RADIUS * -1)};
-	// draw a yellow coloured missile
-	drawPolygon(vertices, 4, ccc4f(0.91765f, 1, 0.14118f, 1), 0, ccc4f(0, 0, 0, 0));
+  // update the rotation of the missile
+  float angle = c::ccpToAngle(c::ccpSub(m_obPosition, prevPos));
+  setRotation(CC_RADIANS_TO_DEGREES(angle * -1));
+  prevPos= m_obPosition;
 
-	// schedule to explode after 5 seconds
-	scheduleOnce(schedule_selector(Missile::Explode), 5.0f);
-	scheduleUpdate();
-
-	return true;
+  // explode the missile if it has roughly reached the target
+  if (m_obPosition.fuzzyEquals(_target, ENEMY_RADIUS * 1.5)) {
+    explode();
+  }
 }
 
-void Missile::update(float dt)
-{
-	// find a vector pointing to the target
-	CCPoint direction = ccpSub(target_, m_obPosition).normalize();
-	// add the direction to the speed for smooth curved movement
-	speed_.x += direction.x;
-	speed_.y += direction.y;
-	// normalize the speed & multiply with a constant
-	speed_ = ccpMult(speed_.normalize(), MISSILE_SPEED);
+//////////////////////////////////////////////////////////////////////////////
+//
+void Missile::explode(float dt) {
+  // can't expode more than once
+  if (_has_exploded) {
+  return; }
 
-	setPosition(m_obPosition.x + speed_.x, m_obPosition.y + speed_.y);
+  _has_exploded = true;
+  // create three blasts on explosion
+  for (auto i = 0; i < 3; ++i) {
+    // create a blast twice the size of the player that should last for quarter of a second
+    auto blast = Blast::create(PLAYER_RADIUS * 2, 0.25f);
+    // position it randomly around the missile
+    blast->setPosition(c::ccpAdd(m_obPosition,
+          c::Vec2(cx::randInt(PLAYER_RADIUS * 2 * i),
+            cx::randInt(PLAYER_RADIUS * 2 * i))));
+    game_world_->AddBlast(blast);
+  }
+  // remove this missile in the next iteration
+  _must_be_removed_ = true;
+  runAction(
+      c::Sequence::create(
+        c::DelayTime::create(0.01),
+        c::RemoveSelf::create(true),
+        CC_NIL));
 
-	// update the rotation of the missile
-	float angle = ccpToAngle(ccpSub(m_obPosition, previous_position_));
-	setRotation(CC_RADIANS_TO_DEGREES(angle * -1));
-	previous_position_ = m_obPosition;
-
-	// explode the missile if it has roughly reached the target
-	if(m_obPosition.fuzzyEquals(target_, ENEMY_RADIUS * 1.5f))
-	{
-		Explode();
-	}
+  cx::sfxPlay("small_blast");
 }
 
-void Missile::Explode(float dt)
-{
-	// can't expode more than once
-	if(has_exploded_)
-		return;
 
-	has_exploded_ = true;
-	// create three blasts on explosion
-	for(int i = 0; i < 3; ++i)
-	{
-		// create a blast twice the size of the player that should last for quarter of a second
-		Blast* blast = Blast::createWithRadiusAndDuration(PLAYER_RADIUS * 2, 0.25f);
-		// position it randomly around the missile
-		blast->setPosition(ccpAdd(m_obPosition, CCPoint(CCRANDOM_0_1() * PLAYER_RADIUS * 2 * i, CCRANDOM_0_1() * PLAYER_RADIUS * 2 * i)));
-		game_world_->AddBlast(blast);
-	}
-	// remove this missile in the next iteration
-	must_be_removed_ = true;
-	runAction(CCSequence::createWithTwoActions(CCDelayTime::create(0.01f), CCRemoveSelf::create(true)));
-	SOUND_ENGINE->playEffect("small_blast.wav");
-}
+NS_END
+
+
 

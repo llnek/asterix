@@ -17,16 +17,108 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
 
-/*
-// arrays to store the frequency of formations for each skill level
-const int GameGlobals::skill1_formations[] = {0, 4};
-const int GameGlobals::skill2_formations[] = {4, 4, 4, 4, 1, 1, 1, 2, 2, 2};
-const int GameGlobals::skill3_formations[] = {4, 4, 4, 8, 8, 1, 1, 2, 2, 5, 5, 5, 6, 6, 6, 3, 3};
-const int GameGlobals::skill4_formations[] = {4, 4, 8, 8, 8, 5, 5, 5, 6, 6, 6, 3, 3, 3, 7, 7, 7};
-const int GameGlobals::skill5_formations[] = {8, 8, 8, 3, 3, 3, 5, 5, 6, 6, 9, 9, 10, 10, 7, 7, 7};
-const int GameGlobals::skill6_formations[] = {8, 8, 8, 5, 5, 6, 6, 9, 9, 10, 10, 7, 7, 7, 11, 11, 11};
-const int GameGlobals::powerup_frequency[] = {0, 0, 0, 0, 0, 1, 1, 1, 1, 2};
-*/
+//////////////////////////////////////////////////////////////////////////////
+//
+void init(GVars *ss) {
+
+  // arrays to store the frequency of formations for each skill level
+  ss->skill1_formations = {0, 4};
+  ss->skill2_formations = {4, 4, 4, 4, 1, 1, 1, 2, 2, 2};
+  ss->skill3_formations = {4, 4, 4, 8, 8, 1, 1, 2, 2, 5, 5, 5, 6, 6, 6, 3, 3};
+  ss->skill4_formations = {4, 4, 8, 8, 8, 5, 5, 5, 6, 6, 6, 3, 3, 3, 7, 7, 7};
+  ss->skill5_formations = {8, 8, 8, 3, 3, 3, 5, 5, 6, 6, 9, 9, 10, 10, 7, 7, 7};
+  ss->skill6_formations = {8, 8, 8, 5, 5, 6, 6, 9, 9, 10, 10, 7, 7, 7, 11, 11, 11};
+  ss->powerup_frequency = {0, 0, 0, 0, 0, 1, 1, 1, 1, 2};
+
+  ss->enemies_killed_total = 0;
+  ss->enemies_killed_combo = 0;
+  ss->is_popup_active = false;
+  ss->seconds = 0;
+  ss->combo_timer = 0;
+
+  // create & retain CCArray container lists
+  ss->enemies = c::Array::createWithCapacity(MAX_ENEMIES);
+  CC_KEEP(ss->enemies);
+  ss->powerups = c::Array::createWithCapacity(MAX_POWERUPS);
+  CC_KEEP(ss->powerups);
+  ss->blasts = c::Array::createWithCapacity(MAX_BLASTS);
+  CC_KEEP(ss->blasts);
+  ss->missiles = c::Array::createWithCapacity(MAX_MISSILES);
+  CC_KEEP(ss->missiles);
+
+  addEnemyFormation(ss);
+  addPowerUp(ss);
+
+
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void enemyKilled(GVars *ss, Enemy *e) {
+  e->die();
+
+  // increment counters
+  ss->enemies_killed_total += 1;
+  ss->enemies_killed_combo += 1;
+  // reset combo time
+  ss->combo_timer = COMBO_TIME;
+
+  auto msg= j::json({
+      {"score", 7}
+      });
+  SENDMSGEX("/game/hud/earnscore", &msg);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void addPowerUp(GVars *ss) {
+  // limit the number of power-ups on screen
+  if (ss->powerups->count() >= MAX_POWERUPS) {
+  return; }
+
+  // randomly pick a type of power-up from the power-up frequency array
+  auto i = cx::randInt(ss->powerup_frequency_size);
+  auto ptype = (EPowerUpType)ss->powerup_frequency[i];
+  PowerUp *powerup;
+
+  // create the power-up
+  switch (ptype) {
+    case E_POWERUP_MISSILE_LAUNCHER:
+      powerup = MissileLauncher::create(ss);
+    break;
+    case E_POWERUP_SHIELD:
+      powerup = Shield::create(ss);
+    break;
+    case E_POWERUP_BOMB:
+    default:
+      powerup = Bomb::create(ss);
+    break;
+  }
+
+  // position it within the boundary & add it
+  powerup->setPosition(box.origin.x + cx::randInt(CC_ZW(box.size)),
+      box.origin.y + cx::randInt(CC_ZH(box.size)));
+  powerup->spawn();
+  MGML()->addItem(powerup, E_LAYER_POWERUPS);
+  ss->powerups->addObject(powerup);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void addBlast(GVars *ss, Blast *blast) {
+  // add Blast to screen & respective container
+  MGML()->addItem(blast, E_LAYER_BLASTS);
+  ss->blasts->addObject(blast);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void addMissile(GVars *ss, Missile *missile) {
+  // add Missile to screen & respective container
+  MGML()->addItem(missile, E_LAYER_MISSILES);
+  ss->missiles->addObject(missile);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //

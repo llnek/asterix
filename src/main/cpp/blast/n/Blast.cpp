@@ -1,50 +1,72 @@
+// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+
+#include "core/XConfig.h"
+#include "core/COMP.h"
+#include "core/CCSX.h"
+#include "lib.h"
 #include "Blast.h"
-#include "GameWorld.h"
 
-Blast* Blast::createWithRadiusAndDuration(float radius, float duration)
-{
-	Blast* blast = new Blast();
-	if(blast && blast->initWithRadiusAndDuration(radius, duration))
-	{
-		blast->autorelease();
-		return blast;
-	}
-	CC_SAFE_DELETE(blast);
-	return NULL;
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(blast)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Blast*> Blast::create(float radius, float duration) {
+  auto b = f::reifyRefType<Blast>();
+
+  b->_duration = duration;
+  b->_radius = radius;
+
+  // initially scale down completely
+  b->setScale(0);
+  b->drawDot(CC_ZPT, _radius, c::ccc4f(1, 0.34118, 0, 1));
+  b->drawDot(CC_ZPT, _radius * 0.8, c::ccc4f(1, 0.68235, 0, 0.25));
+  b->drawDot(CC_ZPT, _radius * 0.75, c::ccc4f(1, 0.68235, 0, 0.5));
+  b->drawDot(CC_ZPT, _radius * 0.7, c::ccc4f(1, 0.68235, 0, 0.5));
+  b->drawDot(CC_ZPT, _radius * 0.6, c::ccc4f(1, 0.83529, 0.40392, 0.25));
+  b->drawDot(CC_ZPT, _radius * 0.55, c::ccc4f(1, 0.83529, 0.40392, 0.5));
+  b->drawDot(CC_ZPT, _radius * 0.5, c::ccc4f(1, 0.83529, 0.40392, 0.5));
+  b->drawDot(CC_ZPT, _radius * 0.4, c::ccc4f(1, 1, 1, 0.25));
+  b->drawDot(CC_ZPT, _radius * 0.35, c::ccc4f(1, 1, 1, 0.75));
+  b->drawDot(CC_ZPT, _radius * 0.3, c::ccc4f(1, 1, 1, 1));
+  // scale-up, then wait for 'duration_' amount of seconds before cooling down
+  b->runAction(
+      c::Sequence::create(
+        c::EaseSineOut::create(
+          c::ScaleTo::create(0.25, 1)),
+        c::DelayTime::create(_duration),
+        c::CallFunc::create([=]() {
+          b->coolDown();
+          }),
+        CC_NIL));
+
+  return b;
 }
 
-bool Blast::initWithRadiusAndDuration(float radius, float duration)
-{
-	if(!CCDrawNode::init())
-	{
-		return false;
-	}
-
-	radius_ = radius;
-	duration_ = duration;
-
-	// initially scale down completely
-	setScale(0.0f);
-	drawDot(CCPointZero, radius_, ccc4f(1, 0.34118f, 0, 1));
-	drawDot(CCPointZero, radius_ * 0.8f, ccc4f(1, 0.68235f, 0, 0.25f));
-	drawDot(CCPointZero, radius_ * 0.75f, ccc4f(1, 0.68235f, 0, 0.5f));
-	drawDot(CCPointZero, radius_ * 0.7f, ccc4f(1, 0.68235f, 0, 0.5f));
-	drawDot(CCPointZero, radius_ * 0.6f, ccc4f(1, 0.83529f, 0.40392f, 0.25f));
-	drawDot(CCPointZero, radius_ * 0.55f, ccc4f(1, 0.83529f, 0.40392f, 0.5f));
-	drawDot(CCPointZero, radius_ * 0.5f, ccc4f(1, 0.83529f, 0.40392f, 0.5));
-	drawDot(CCPointZero, radius_ * 0.4f, ccc4f(1, 1, 1, 0.25f));
-	drawDot(CCPointZero, radius_ * 0.35f, ccc4f(1, 1, 1, 0.75f));
-	drawDot(CCPointZero, radius_ * 0.3f, ccc4f(1, 1, 1, 1));
-	// scale-up, then wait for 'duration_' amount of seconds before cooling down
-	runAction(CCSequence::create(CCEaseSineOut::create(CCScaleTo::create(0.25f, 1.0f)), CCDelayTime::create(duration_), CCCallFunc::create(this, callfunc_selector(Blast::Cooldown)), NULL));
-
-	return true;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Blast::cooldown() {
+  // remove this blast in the next iteration
+  _must_be_removed = true;
+  // animate exit then remove with cleanup
+  runAction(
+      c::Sequence::create(
+        c::EaseSineOut::create(
+          c::ScaleTo::create(0.5, 0)),
+        c::RemoveSelf::create(true),
+        CC_NIL));
 }
 
-void Blast::Cooldown()
-{
-	// remove this blast in the next iteration
-	must_be_removed_ = true;
-	// animate exit then remove with cleanup
-	runAction(CCSequence::createWithTwoActions(CCEaseSineOut::create(CCScaleTo::create(0.5f, 0.0f)), CCRemoveSelf::create(true)));
-}
+
+NS_END
+
+

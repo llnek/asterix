@@ -33,6 +33,27 @@ void HUDLayer::decoUI() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void HUDLayer::flashCombo(int n, const c::Vec2 &pos) {
+
+  auto msg= "X"+ FTOS(n);
+
+  auto label = cx::reifyBmfLabel("dft", msg);
+  label->setPosition(pos.x, pos.y + CC_ZH(CC_CSIZE(label)));
+  label->setScale(0.6);
+
+  // animate it to move upwards then remove it
+  label->runAction(
+      c::Sequence::create(
+        c::MoveBy::create(1, c::Vec2(0, 50)),
+        c::DelayTime::create(0.5),
+        c::RemoveSelf::create(true),
+        CC_NIL));
+  addItem(label, E_LAYER_HUD);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::updateScore(int n) {
   _score += n;
   _scoreLabel->setString(FTOS(_score));

@@ -51,20 +51,23 @@ struct CC_DLL CPlayer : public f::CPixie {
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  static const int skill1_formations_size = 2;
-  static const int skill1_formations[];
-  static const int skill2_formations_size = 10;
-  static const int skill2_formations[];
-  static const int skill3_formations_size = 17;
-  static const int skill3_formations[];
-  static const int skill4_formations_size = 17;
-  static const int skill4_formations[];
-  static const int skill5_formations_size = 17;
-  static const int skill5_formations[];
-  static const int skill6_formations_size = 17;
-  static const int skill6_formations[];
   static const int powerup_frequency_size = 10;
-  static const int powerup_frequency[];
+  static const int skill6_formations_size = 17;
+  static const int skill5_formations_size = 17;
+  static const int skill4_formations_size = 17;
+  static const int skill3_formations_size = 17;
+  static const int skill2_formations_size = 10;
+  static const int skill1_formations_size = 2;
+
+  s_arr<int,skill1_formations_size> skill1_formations;
+  s_arr<int,skill2_formations_size> skill2_formations;
+  s_arr<int,skill3_formations_size> skill3_formations;
+  s_arr<int,skill4_formations_size> skill4_formations;
+  s_arr<int,skill5_formations_size> skill5_formations;
+  s_arr<int,skill6_formations_size> skill6_formations;
+  s_arr<int,powerup_frequency_size> powerup_frequency;
+
+
 };
 
 

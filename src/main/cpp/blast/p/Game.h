@@ -19,7 +19,11 @@ NS_BEGIN(blast)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
+
   virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual const c::Rect getEnclosureRect();
+  virtual const f::Box4 getEnclosureBox();
+
   virtual f::GameLayer* getGLayer() {
     return
        (f::GameLayer*) getLayer(2);

@@ -19,8 +19,8 @@ NS_BEGIN(blast)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
+  DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
-  void parallex(float);
   void process(float);
 
 public:

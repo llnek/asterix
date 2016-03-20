@@ -1,30 +1,46 @@
-#ifndef MISSILE_H_
-#define MISSILE_H_
+// This library is distributed in  the hope that it will be useful but without
+// any  warranty; without  even  the  implied  warranty of  merchantability or
+// fitness for a particular purpose.
+// The use and distribution terms for this software are covered by the Eclipse
+// Public License 1.0  (http://opensource.org/licenses/eclipse-1.0.php)  which
+// can be found in the file epl-v10.html at the root of this distribution.
+// By using this software in any  fashion, you are agreeing to be bound by the
+// terms of this license. You  must not remove this notice, or any other, from
+// this software.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "GameGlobals.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-class GameWorld;
+#include "core/XConfig.h"
+#include "core/COMP.h"
+#include "core/CCSX.h"
+#include "lib.h"
 
-class Missile : public CCDrawNode
-{
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(blast)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class Missile : public c::DrawNode {
+
+  DECL_TV(c::Vec2, prevPos, CC_ZPT)
+
 public:
-	Missile() : target_(CCPointZero), speed_(CCPointZero), must_be_removed_(false), has_exploded_(false), game_world_(NULL), previous_position_(CCPointZero) {};
-	virtual ~Missile(){};
 
-	static Missile* createWithTarget(GameWorld* instance, CCPoint target, CCPoint speed);
+  static owner<Missile*> create(const c::Vec2 &target, const c::Vec2 &speed);
 
-	virtual bool initWithTarget(GameWorld* instance, CCPoint target, CCPoint speed);
-	virtual void update(float dt);
-	void Explode(float dt = 0);
+  virtual void update(float dt);
+  void explode(float dt = 0);
 
-	CC_SYNTHESIZE(CCPoint, target_, Target);
-	CC_SYNTHESIZE(CCPoint, speed_, Speed);
-	CC_SYNTHESIZE(bool, must_be_removed_, MustBeRemoved);
-	CC_SYNTHESIZE(bool, has_exploded_, HasExploded);
+  DECL_TV(c::Vec2, _target, CC_ZPT)
+  DECL_TV(c::Vec2, _speed_, CC_ZPT)
+  DECL_BF(_must_be_removed)
+  DECL_BF(_has_exploded)
 
-protected:
-	GameWorld* game_world_;
-	CCPoint previous_position_;
 };
 
-#endif // MISSILE_H_
+
+NS_END
+
+
