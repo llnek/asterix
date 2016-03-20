@@ -153,11 +153,49 @@ struct CC_DLL CMove : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CPixie : public ecs::Component {
+struct CC_DLL CPixie : public c::Sprite, public ecs::Component {
+
+  CPixie(const sstr &fn, const sstr& path) : c::Sprite() {
+    initWithFile(path +"/" + fn);
+  }
+
+  CPixie(const sstr &fn) : c::Sprite() {
+    initWithSpriteFrameName(fn);
+  }
+
+  virtual void hide() { setVisible(false); }
+  virtual void show() { setVisible(true); }
+  virtual void inflate(float x, float y) {
+    setPosition(x,y);
+    show();
+  }
+  virtual void inflate() { show(); }
+  virtual void deflate() {
+    unscheduleAllCallbacks();
+    stopAllActions();
+    hide();
+  }
+  virtual float height() { return boundingBox().size.height; }
+  virtual float width() { return boundingBox().size.width; }
+  virtual const c::Rect bbox() { return boundingBox(); }
+  virtual void setPos(float x, float y) { setPosition(x,y); }
+  virtual const c::Vec2 pos() { return getPosition(); }
+  virtual const c::Size csize() { return CC_CSIZE(this); }
+  virtual float circum() { return CC_CSIZE(this).width; }
+  virtual float radius() { return CC_CSIZE(this).width * 0.5; }
+  virtual int tag() { return getTag(); }
+  virtual ~CPixie() {
+  }
+  MDECL_COMP_TPID("f/CPixie")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL CNode : public ecs::Component {
   MDECL_COMP_TPID("f/CPixie")
   DECL_PTR(c::Node,node)
-  CPixie(not_null<c::Node*> n) { node=n; }
-  CPixie() {}
+  CNode(not_null<c::Node*> n) { node=n; }
+  CNode() {}
   virtual void hide() { if (node) node->setVisible(false); }
   virtual void show() { if (node) node->setVisible(true); }
   virtual bool isOvert() {
@@ -188,12 +226,10 @@ struct CC_DLL CPixie : public ecs::Component {
   virtual float circum() { return node ? CC_CSIZE(node).width : 0; }
   virtual float radius() { return node ? CC_CSIZE(node).width * 0.5 : 0; }
   virtual int tag() { return node ? node->getTag() : 0; }
-  virtual ~CPixie() {
-    //if (node) { node->removeFromParent(); node=nullptr; }
+  virtual ~CNode() {
   }
 
 };
-
 
 
 
