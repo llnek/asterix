@@ -87,74 +87,113 @@ void GLayer::createCheckButton() {
 //
 void GLayer::onInited() {
 
-  _shared= _engine->getNodes("n/GVars")[0];
-
+  auto cv= CC_APPDB()->getIntegerForKey(kCurrentLevel);
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
+  _shared= _engine->getNodes("n/GVars")[0];
 
-}
+  if (ss->gameState == eStateTutorial &&
+      cv == 0) {
+    initializeGameTutorial();
+  } else {
+    auto dict= cx::readXmlAsDict( XCFG()->getAtlas("levels"));
+    auto k= "Level" + FTOS(cv);
+    auto levelDict= CC_GDV(c::Dictionary,dict,k);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
-  r->setPos(loc.x,loc.y);
+    _leftNumber = cx::reifySprite(CC_GDS(levelDict, "left number") + ".png");
+    _leftNumber->setPosition(wb.right / 5 - HWZ(CC_CSIZE(_leftNumber)), wb.cy);
+    addAtlasItem("game-pics", _leftNumber);
+
+    _operator = cx::reifySprite(CC_GDS(levelDict, "operation") + ".png");
+    _operator->setPosition(2 * wb.right / 5 - HWZ(CC_CSIZE(_operator)), wb.cy);
+    addAtlasItem("game-pics", _operator);
+
+    _equalsSymbol = cx::reifySprite("equals.png");
+    _equalsSymbol->setPosition(4 * wb.right / 5 - HWZ(CC_CSIZE(_equalsSymbol)), wb.cy);
+    addAtlasItem("game-pics", _equalsSymbol);
+
+    _result = cx::reifySprite(CC_GDS(levelDict, "result") + ".png");
+    _result->setPosition(5 * wb.right / 5 - HWZ(CC_CSIZE(_result)), wb.cy);
+    addAtlasItem("game-pics", _result);
+
+    _solution = CC_GDS(levelDict, "solution");
+
+    // Load options data
+    auto levelOptions= CC_GDV(c::Dictionary,levelDict, "options");
+    auto options = levelOptions->allKeys();
+    auto cnt= options->count();
+
+    _arrayOfOptions = c::Array::createWithCapacity(kNUM_TUTORIAL_OPTIONS);
+    for (auto i = 0; i < cnt; ++i) {
+      auto s= (c::String*)options->objectAtIndex(i)
+      auto name= CC_GDS(levelOptions, s->getCString());
+        // Initialize number
+      auto optNum = cx::reifySprite(name + ".png");
+      optNum->setName(name);
+        // Set number position
+      optNum->setPosition(((i+1) * wb.right/cn - HWZ(CC_CSIZE(optNum)), HHZ(CC_CSIZE(optNum)));
+      addAtlasItem("game-pics", optNum);
+      _arrayOfOptions->addObject(optNum);
+    }
+
+    _tutorialLabel = cx::reifyLabel("text",22, "Level "+cv);
+    _tutorialLabel->setColor(cx::white());
+    _tutorialLabel->setPosition(wb.cx, wb.top - 2 * CC_HZ(CC_CSIZE(_tutorialLabel)));
+
+    _tutorialLabel->setAnchorPoint(c::Vec2(0.5, 0.5));
+    addItem(_tutorialLabel);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto r= CC_GEC(c::Node,_player,"f/CPixie");
-  auto loc= touch->getLocation();
-  return cx::isClicked(r,loc);
+  return onMouseStart(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
+  if (ss->gameState < eStateTutorialCheckingSolution) {
+    defineDroppableArea();
+  }
+  checkNumberTouched(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
-  auto loc= touch->getLocation();
-  r->setPos(loc.x, loc.y);
+  onMouseMotion(touch->getLocation());
 }
-
-
--(void)touchBegan:(UITouch *)touch withEvent:(UIEvent *)event {
-    if ((int)_gameState < stateTutorialCheckingSolution) {
-        // Load droppable area
-        [self defineDroppableArea];
-    }
-    // Check what number has been touched
-    CGPoint touchLocation = [touch locationInNode:self];
-    [self checkNumberTouched:touchLocation];
-
-}
-
--(void)touchMoved:(UITouch *)touch withEvent:(UIEvent *)event
-{
-    if ((int)_gameState < stateTutorialCheckingSolution && [[NSUserDefaults standardUserDefaults] integerForKey:kCurrentLevel] == 0) {
-        [_tutorialLabel setFontSize:20];
-        [_tutorialLabel setString:@"Drop the number in the highlighted area"];
-    } else {
-        [_tutorialLabel setFontSize:22];
-        [_tutorialLabel setString:[NSString stringWithFormat:@"Level %d", [[NSUserDefaults standardUserDefaults] integerForKey:kCurrentLevel]]];
-    }
-    // Moving the number along the screen
-    CGPoint touchLocation = [touch locationInNode:self];
-    _rightNumber.position = touchLocation;
-
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const c::Vec2 &tap) {
+  auto cv= CC_APPDB()->getIntegerForKey(kCurrentLevel);
+  if (ss->gameState < eStateTutorialCheckingSolution &&
+      cv == 0) {
+    getHUD()->setTutMsg("Drop the number in the highlighted area",20);
+  } else {
+    getHUD()->setTutMsg("Level "+ FTOS(cv), 22);
+  }
+  _rightNumber->setPosition(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseClick(const c::Vec2 &tap) {
   auto eq_sz= CC_CSIZE(_equalsSymbol);
   auto op_sz= CC_CSIZE(_operator);
   auto rt_sz= CC_CSIZE(_rightNumber);
   auto wz= cx::visRect();
   auto wb= cx::visBox();
-  auto tap= touch->getLocation();
 
   // Define area to drop the number
   auto boardRect =
@@ -167,7 +206,6 @@ void GLayer::onTouchEnd(c::Touch *touch) {
   // Only drop number inside the defined area
   if (boardRect.containsPoint(tap)) {
     _rightNumber->setPosition(3 * CC_ZW(wz.size)/5 - HWZ(rt_sz), wb.cy);
-
     // Set button visible
     CC_SHOW(_buttonCheckSolution);
 
