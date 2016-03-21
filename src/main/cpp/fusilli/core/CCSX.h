@@ -183,6 +183,7 @@ namespace ccsx {
    * Get the sprite from the frame cache using
    * its id (e.g. ship.png)
    */
+  c::SpriteFrame* getSpriteFrame(const sstr &frameid, const c::Rect&);
   c::SpriteFrame* getSpriteFrame(const sstr &frameid);
 
   const c::Vec2 anchorC();

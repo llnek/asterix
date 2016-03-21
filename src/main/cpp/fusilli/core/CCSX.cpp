@@ -710,8 +710,17 @@ bool isIntersect(const Box4 &a1, const Box4 &a2) {
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
+c::SpriteFrame* getSpriteFrame(const sstr &frameid, const c::Rect &r) {
+  auto f= CC_SCAC()->getSpriteFrameByName(frameid);
+  f->setRect(r);
+  return f;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Get the sprite from the frame cache using its id (e.g. #ship)
+//
 c::SpriteFrame* getSpriteFrame(const sstr &frameid) {
-  return c::SpriteFrameCache::getInstance()->getSpriteFrameByName(frameid);
+  return CC_SCAC()->getSpriteFrameByName(frameid);
 }
 
 //////////////////////////////////////////////////////////////////////////
