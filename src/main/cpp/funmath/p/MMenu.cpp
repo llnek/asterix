@@ -21,62 +21,6 @@ NS_BEGIN(funmath)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
-  }, wz.size.height/4);
-
-  resume->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::resumeMusic();
-    }
-  });
-
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
-
-  splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Splash::reify());
-  });
-
-  menu->setPosition(wb.cx,wb.cy);
-  centerImage("gui.bg");
-  addItem(menu);
-
-  // audio
-  auto audios= cx::reifyAudioIcons();
-  auto sz= CC_CSIZE(audios[0]);
-  auto gap= sz.width /4;
-  auto c= cx::white();
-
-  audios[0]->setColor(c);
-  audios[1]->setColor(c);
-
-  addAudioIcons(audios,
-      cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
-
-  if (XCFG()->hasAudio()) {
-    cx::pauseMusic();
-  }
 }
 
 

@@ -67,7 +67,7 @@ public:
 
   virtual void centerImage(const sstr &n, int z= -1);
   virtual void removeAtlasAll(const sstr &atlas) ;
-  virtual void removeItem(not_null<c::Node*> n);
+  virtual void removeItem(c::Node*);
   virtual void removeAll();
 
   virtual void setCtx(SCTX*, bool clean=true);

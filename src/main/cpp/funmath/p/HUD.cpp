@@ -23,17 +23,11 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  _scoreLabel= cx::reifyLabel("dft", 24, "0");
+  _scoreLabel= cx::reifyLabel("dft", 24, "");
   _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
   addItem(_scoreLabel);
 
   _score=0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::setTutMsg(const sstr &msg) {
-  _tutorialLabel->setString(msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////

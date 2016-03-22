@@ -607,6 +607,12 @@ const c::Rect visRect() {
   return CC_DTOR()->getOpenGLView()->getVisibleRect();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+const c::Size visSize() {
+  return CC_DTOR()->getOpenGLView()->getVisibleRect().size;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen box
 //

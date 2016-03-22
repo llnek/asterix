@@ -194,7 +194,7 @@ void XNode::removeAll() {
 //////////////////////////////////////////////////////////////////////////////
 // Remove a child
 //
-void XNode::removeItem(not_null<c::Node*> n) {
+void XNode::removeItem(c::Node *n) {
   if (NNP(n)) {
     n->removeFromParent();
   }

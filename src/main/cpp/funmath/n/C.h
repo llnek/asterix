@@ -16,6 +16,19 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 
+
+#define kTutorialSucceded "Tutorial_Succeded"
+#define kNUM_TUTORIAL_OPTIONS 4
+#define kCurrentLevel "Current_Level"
+
+enum GameState {
+  eStateTutorial = 0,
+  eStateTutorialDragging,
+  eStateTutorialCheckingSolution,
+  eStateTutorialSuccess
+};
+
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(funmath)
 
@@ -23,7 +36,6 @@ NS_BEGIN(funmath)
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  s_arr<c::Sprite*,2> bgSprites;
 };
 
 

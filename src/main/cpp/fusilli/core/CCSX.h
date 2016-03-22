@@ -168,6 +168,7 @@ namespace ccsx {
 
   const c::Vec2 vboxMID(const Box4& );
   const c::Rect visRect();
+  const c::Size visSize();
   const Box4 visBox();
 
   const c::Vec2 scenter();

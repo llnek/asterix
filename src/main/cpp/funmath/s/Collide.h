@@ -19,7 +19,6 @@ NS_BEGIN(funmath)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
 
-  DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
 
   void process(float);

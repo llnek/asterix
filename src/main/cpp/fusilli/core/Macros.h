@@ -36,7 +36,10 @@
 #define CC_KEEP(x) if (x) { (x)->retain();}
 #define CC_DROP(x) if (x) { (x)->release();}
 
-#define CC_CSIZE(s) s->getBoundingBox().size
+#define CC_CSIZE(s) (s)->getBoundingBox().size
+#define CC_CSZ(s) CC_CSIZE(s)
+
+
 #define CC_BBOX(s) s->getBoundingBox()
 #define CC_HIDE(s) s->setVisible(false)
 #define CC_SHOW(s) s->setVisible(true)
