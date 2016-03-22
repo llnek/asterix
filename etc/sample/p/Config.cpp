@@ -37,7 +37,6 @@ void Config::initCsts() {
   _game_id= "@@GAMEID@@";
   _app_id = "@@APPID@@";
 
-  addCst("SHIP+SPEED", CC_INT(200));
 }
 
 //////////////////////////////////////////////////////////////////////////////

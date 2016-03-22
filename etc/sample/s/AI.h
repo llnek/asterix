@@ -19,7 +19,6 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime, _timer)
   DECL_PTR(ecs::Node, _shared)
   void parallex(float);
   void process(float);

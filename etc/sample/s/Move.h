@@ -19,7 +19,6 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
-  DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
 
   void process(float);

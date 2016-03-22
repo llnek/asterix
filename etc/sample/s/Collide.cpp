@@ -23,7 +23,6 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
-  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -40,27 +39,6 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::clamp(float dt) {
-    auto py= (c::Sprite*) CC_GEC(f::CPixie, _player, "f/CPixie");
-  auto loc= py->getPosition();
-  auto sz= CC_CSIZE(py);
-  auto wb= cx::visBox();
-
-  if (loc.x <= wb.left + HWZ(sz)) {
-    py->setPositionX(wb.left + HWZ(sz));
-  }
-
-  if (loc.x >= wb.right - HWZ(sz)) {
-    py->setPositionX(wb.right - HWZ(sz));
-  }
-
-  if (loc.y <= wb.bottom + HHZ(sz)) {
-    py->setPositionY(wb.bottom + HHZ(sz));
-  }
-
-  if (loc.y >= wb.top - HHZ(sz)) {
-    py->setPositionY(wb.top - HHZ(sz));
-  }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////

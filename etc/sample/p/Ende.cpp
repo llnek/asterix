@@ -21,40 +21,6 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      retry,splash
-  }, wz.size.height/4);
-
-  menu->setPosition(wb.cx,wb.cy);
-
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
-
-  splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Splash::reify());
-  });
-
-  auto title= cx::reifySprite("game-over.png");
-  title->setPosition(wb.cx, wb.top * 0.8);
-
-  centerImage("gui.bg");
-
-  addItem(title);
-  addItem(menu);
 }
 
 
