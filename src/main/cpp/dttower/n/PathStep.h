@@ -10,52 +10,23 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+
 //////////////////////////////////////////////////////////////////////////////
-
-#include "core/XConfig.h"
 #include "core/COMP.h"
-#include "core/CCSX.h"
 
-NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(dttower)
-
-// Number of path steps
-#define NUM_PATH_STEPS 10
-// Number of defenses
-#define NUM_DEFENSES 30
-// Number of enemies
-#define NUM_ENEMIES 10
-// Base number of enemies for each wave
-#define WAVES_NUM_ENEMIES 10
-// Number of waves
-#define NUM_WAVES 10
-// Waves interval
-#define WAVES_INTERVAL 24
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class PathStep;
-class Defense;
-class Enemy;
-struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+struct CC_DLL PathStep : public f::CPixie {
 
-  s_vec<c::Sprite*> defensePositions;
-  s_vec<PathStep*> pathSteps;
-  s_vec<Defense*> defenses;
-  s_vec<Enemy*> enemies;
+  static owner<PathStep*> create(const c::Vec2&);
 
-  DECL_FZ(squareSize)
-  DECL_IZ(waveNumber)
-  DECL_IZ(countEnemies)
-  DECL_IZ(lifePoints)
+  DECL_PTR(PathStep, next)
 
 };
 
 
-
 NS_END
-
-
 
 

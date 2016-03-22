@@ -12,50 +12,35 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
 #include "core/COMP.h"
-#include "core/CCSX.h"
 
-NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(dttower)
-
-// Number of path steps
-#define NUM_PATH_STEPS 10
-// Number of defenses
 #define NUM_DEFENSES 30
-// Number of enemies
-#define NUM_ENEMIES 10
-// Base number of enemies for each wave
-#define WAVES_NUM_ENEMIES 10
-// Number of waves
-#define NUM_WAVES 10
-// Waves interval
-#define WAVES_INTERVAL 24
+#define SPEED 5
 
+NS_BEGIN(dttower)
 //////////////////////////////////////////////////////////////////////////////
 //
 class PathStep;
 class Defense;
-class Enemy;
-struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+class GVars;
+struct CC_DLL Enemy : public f::CPixie {
 
-  s_vec<c::Sprite*> defensePositions;
-  s_vec<PathStep*> pathSteps;
-  s_vec<Defense*> defenses;
-  s_vec<Enemy*> enemies;
+  void outOfRangeFromDefense(Defense*);
+  void addAttackingDefense(not_null<Defense*> );
+    void removeEnemyFromScene();
+    
+  static owner<Enemy*> create(GVars*, not_null<PathStep*> );
+  virtual void update(float);
 
-  DECL_FZ(squareSize)
-  DECL_IZ(waveNumber)
-  DECL_IZ(countEnemies)
-  DECL_IZ(lifePoints)
+  s_vec<Defense*> attackingDefenses;
+  DECL_PTR(PathStep, pathStep)
+  DECL_PTR(GVars,ss)
+  DECL_TV(int, lifePoints,1)
 
 };
 
 
-
 NS_END
-
 
 
 

@@ -16,6 +16,9 @@
 #include "MMenu.h"
 #include "Ende.h"
 #include "Game.h"
+#include "n/PathStep.h"
+#include "n/Defense.h"
+#include "n/Enemy.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(dttower)
@@ -25,17 +28,15 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  DECL_PTR(ecs::Node, _shared)
+  void loadDefensePositions();
+  void loadPathSteps();
+  void enemyReachedTower();
+  void loadEnemy(float);
+  void loadWave(float);
 
-    NSMutableArray *_pathSteps;
-    float _squareSize;
-    NSMutableArray *_defensePositions;
-    NSMutableArray *_defenses;
-    int _waveNumber;
-    CCLabelTTF *_waveLabel;
-    int _countEnemies;
-    int _lifePoints;
-    CCLabelTTF *_lifePointsLabel;
+  DECL_PTR(c::Label,_lifePointsLabel)
+  DECL_PTR(c::Label, _waveLabel)
+  DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -70,28 +71,84 @@ void GLayer::onInited() {
   auto wb= cx::visBox();
 
   ss->squareSize = wz.height / 8;
+  ss->lifePoints = 10;
+  ss->waveNumber=1;
 
-  loadPathSteps(ss);
+  _waveLabel = cx::reifyLabel("text",15, "Wave " + FTOS(ss->waveNumber));
+  _waveLabel->setPosition(40 , wz.height - 25);
+  _waveLabel->setColor(cx::black());
+  addItem(_waveLabel);
+
+  _lifePointsLabel = cx::reifyLabel(
+      "text",15,
+      sstr("Life: ") + FTOS(ss->lifePoints) +" ");
+
+  _lifePointsLabel->setPosition(wb.right - 50 , 20);
+  _lifePointsLabel->setColor(cx::black());
+  addItem(_lifePointsLabel);
+
   loadDefensePositions();
+  loadPathSteps();
 
-  _defenses.clear();
-
-
-  // Schedule waves
-  //[self schedule:@selector(loadWave) interval:WAVES_INTERVAL repeat:NUM_WAVES delay:0.0];
-
-  // Add tower
+  // tower
   auto tower = cx::reifySprite("tower.png");
-  auto pos= _pathSteps[0].position;
+  auto pos= ss->pathSteps[0]->getPosition();
   tower->setPosition(pos);
   addAtlasItem("game-pics", tower, 2);
+
+  // waves of attack
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadWave), WAVES_INTERVAL, NUM_WAVES, 0.0);
+
+  //cx::sfxMusic("background", true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::loadDefensePositions() {
+  auto arr= cx::readXmlAsList(XCFG()->getAtlas("defenses"));
+  auto sz = cx::calcSize("defense_level_1.png");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto cnt= arr->count();
+  auto sw= sz.width;
+  auto gap = 19;
+
+  ss->defensePositions.clear();
+
+  for (auto i=0; i < cnt; ++i) {
+    auto s = cx::reifySprite("defense_position.png");
+    auto d= (c::Dictionary*) arr->objectAtIndex(i);
+      
+      auto mX = f::dictVal<c::String>(d,"x")->floatValue();
+      auto mY = f::dictVal<c::String>(d,"y")->floatValue();
+
+    s->setPosition(sw * mX + gap, sw * mY);
+    addAtlasItem("game-pics",s);
+
+    ss->defensePositions.push_back(s);
+  }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::loadPathSteps(GVars *ss) {
+void GLayer::loadEnemy(float) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  if (ss->countEnemies < WAVES_NUM_ENEMIES) {
+    auto it = ss->pathSteps.back();
+    auto e= Enemy::create(ss,it);
 
+    addAtlasItem("game-pics",e);
+    ss->enemies.push_back(e);
+    ss->countEnemies += 1;
+  } else {
+    unschedule(CC_SCHEDULE_SELECTOR(GLayer::loadEnemy));
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::loadPathSteps() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
   s_vec<c::Vec2> pts = {
     c::Vec2(-50, wb.top - ss->squareSize * 3.30),
@@ -106,17 +163,15 @@ void GLayer::loadPathSteps(GVars *ss) {
     c::Vec2(wb.right - ss->squareSize * 1.2, wb.top - ss->squareSize * 2)
   };
 
-  _pathSteps.clear();
+  ss->pathSteps.clear();
 
   PathStep *ps= CC_NIL;
   F__LOOP(it, pts) {
     auto pt= *it;
-    auto p= PathStep::create();
-    auto s= (c::Sprite*)p;
-    s->setPosition(pt);
-    _pathSteps.push_back(p);
-    addAtlasItem("game-pics",s);
-    CC_HIDE(s);
+    auto p= PathStep::create(pt);
+    ss->pathSteps.push_back(p);
+    addAtlasItem("game-pics",p);
+    CC_HIDE(p);
     if (ps) {
       ps->next=p;
       ps=p;
@@ -137,14 +192,22 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
-  return true;
+bool GLayer::onTouchStart(c::Touch *touch) {
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(c::Touch *touch) {
-  return true;
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  F__LOOP(it,ss->defensePositions) {
+    auto dp= *it;
+    if (dp->boundingBox().containsPoint(tap)) {
+      auto d= Defense::create(ss, levelOne, dp->getPosition());
+      addAtlasItem("game-pics",d,1);
+      ss->defenses.push_back(d);
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -158,29 +221,33 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::loadWave(float) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+
+  _waveLabel->setString("Wave " + FTOS(ss->waveNumber));
+
+  ss->countEnemies = 0;
+  ss->enemies.clear();
+
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadEnemy), 1);
+  ss->waveNumber += 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::enemyReachedTower() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  ss->lifePoints -= 1;
+  _lifePointsLabel->setString("Life: " + FTOS(ss->lifePoints));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
 
   _engine = mc_new(GEngine);
   centerImage("game.bg");
   regoAtlas("game-pics");
-
-  _waveLabel = cx::reifyLabel("text",15,"Wave " + FTOS(_level));
-  _waveLabel->setPosition(40 , wz.height - 25);
-  _waveLabel->setColor(cx::black());
-  addItem(_waveLabel);
-
-  // Initialize life points
-  _lifePoints = 10;
-  _lifePointsLabel = cx::reifyLabel(
-      "text",15,
-      sstr("Life: ") + FTOS(_lifePoints) +" ");
-
-  _lifePointsLabel->setPosition(wb.right - 50 , 20);
-  _lifePointsLabel->setColor(cx::black());
-
-  addItem(_lifePointsLabel);
-
-  //cx::sfxMusic("background", true);
 }
 
 END_NS_UNAMED

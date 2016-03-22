@@ -12,50 +12,41 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
 #include "core/COMP.h"
-#include "core/CCSX.h"
-
-NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(dttower)
 
-// Number of path steps
-#define NUM_PATH_STEPS 10
-// Number of defenses
-#define NUM_DEFENSES 30
-// Number of enemies
-#define NUM_ENEMIES 10
-// Base number of enemies for each wave
-#define WAVES_NUM_ENEMIES 10
-// Number of waves
-#define NUM_WAVES 10
-// Waves interval
-#define WAVES_INTERVAL 24
+enum DefenseLevel {
+  levelOne = 0,
+  levelTwo
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class PathStep;
-class Defense;
 class Enemy;
-struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+class GVars;
+class Defense;
+struct CC_DLL Defense  : public f::CPixie {
 
-  s_vec<c::Sprite*> defensePositions;
-  s_vec<PathStep*> pathSteps;
-  s_vec<Defense*> defenses;
-  s_vec<Enemy*> enemies;
+  DECL_TD(DefenseLevel, defenseLevel)
+  DECL_IZ(attackPoints)
+  DECL_PTR(Enemy, enemyInRange)
+  DECL_PTR(GVars, ss)
 
-  DECL_FZ(squareSize)
-  DECL_IZ(waveNumber)
-  DECL_IZ(countEnemies)
-  DECL_IZ(lifePoints)
+  static owner<Defense*> create(GVars *ss, DefenseLevel, const c::Vec2&);
+  virtual void update(float);
+    void attackEnemy(float);
+    void enemyOutOfRange();
+  void enemyKilled();
+    bool detectEnemyWithDefenseAtPos(
+                                     const c::Vec2 &pos,
+                                     float defenseRadius,
+                                     const c::Vec2 &enemyPosition,
+                                     float enemyRadius);
 
 };
 
 
-
 NS_END
-
 
 
 
