@@ -40,16 +40,33 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
-  F__LOOP(it,ss->defenses) {
+  auto po= MGMS()->getPool("Defense1");
+  processDefense(po,dt);
+  po= MGMS()->getPool("Defense2");
+  processDefense(po,dt);
+
+  po= MGMS()->getPool("Enemies");
+  auto p1= po->ls();
+  F__LOOP(it,p1) {
     auto e= *it;
-    e->update(dt);
+    auto n= CC_GEC(Enemy,e,"f/CPixie");
+    if (e->status()) {
+      n->update(dt);
+    }
   }
+}
 
-  F__LOOP(it,ss->enemies) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::processDefense(f::FPool *po, float dt) {
+  auto p1= po->ls();
+  F__LOOP(it,p1) {
     auto e= *it;
-    e->update(dt);
+    auto d= CC_GEC(Defense,e,"f/CPixie");
+    if (e->status()) {
+      d->update(dt);
+    }
   }
 }
 

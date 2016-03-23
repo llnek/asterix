@@ -21,17 +21,22 @@ NS_BEGIN(dttower)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Enemy*> Enemy::create(GVars *ss, not_null<PathStep*> step) {
+owner<Enemy*> Enemy::create(GVars *ss) {
 
   auto rc= mc_new(Enemy);
 
   rc->initWithSpriteFrameName("enemy.png");
   rc->autorelease();
-  rc->setPosition(step->getPosition());
-  rc->pathStep = step;
   rc->ss=ss;
 
   return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Enemy::set(not_null<PathStep*> p) {
+  setPosition(p->getPosition());
+  pathStep = p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,42 +71,10 @@ void Enemy::update(float dt) {
     pathStep = pathStep->next;
   } else {
     SENDMSGEX("/game/player/enemyreachedtower", this);
-    removeEnemyFromScene();
+    cx::hibernate(this->getNode());
   }
 
-  if (lifePoints <= 0) {
-    removeEnemyFromScene();
-  }
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Enemy::addAttackingDefense(not_null<Defense*> d) {
-  attackingDefenses.push_back(d.get());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Enemy::outOfRangeFromDefense(Defense *attacker) {
-  if (attacker) {
-    auto it= s::find(attackingDefenses.begin(),
-        attackingDefenses.end(),attacker);
-    if (it != attackingDefenses.end()) {
-      attackingDefenses.erase(it);
-    }
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Enemy::removeEnemyFromScene() {
-  F__LOOP(it,attackingDefenses) {
-    auto d = *it;
-    d->enemyKilled();
-  }
-  removeFromParent();
-}
-
 
 NS_END
 

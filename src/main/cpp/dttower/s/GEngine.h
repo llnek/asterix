@@ -20,6 +20,8 @@ NS_BEGIN(dttower)
 //
 class CC_DLL GEngine  : public ecs::Engine {
 
+  void loadPathSteps(GVars *ss);
+
 public:
 
   virtual void initEntities();

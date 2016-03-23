@@ -25,17 +25,12 @@ class Defense;
 class GVars;
 struct CC_DLL Enemy : public f::CPixie {
 
-  void outOfRangeFromDefense(Defense*);
-  void addAttackingDefense(not_null<Defense*> );
-    void removeEnemyFromScene();
-    
-  static owner<Enemy*> create(GVars*, not_null<PathStep*> );
+  void set(not_null<PathStep*>);
+  static owner<Enemy*> create(GVars*);
   virtual void update(float);
 
-  s_vec<Defense*> attackingDefenses;
   DECL_PTR(PathStep, pathStep)
   DECL_PTR(GVars,ss)
-  DECL_TV(int, lifePoints,1)
 
 };
 

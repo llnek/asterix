@@ -29,14 +29,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
   void loadDefensePositions();
-  void loadPathSteps();
   void enemyReachedTower();
-  void loadEnemy(float);
-  void loadWave(float);
+  void onEnd();
 
-  DECL_PTR(c::Label,_lifePointsLabel)
-  DECL_PTR(c::Label, _waveLabel)
   DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _player)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
@@ -63,42 +60,14 @@ GLayer::~GLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-
+  _player= _engine->getNodes("f/CHuman")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  ss->squareSize = wz.height / 8;
-  ss->lifePoints = 10;
-  ss->waveNumber=1;
-
-  _waveLabel = cx::reifyLabel("text",15, "Wave " + FTOS(ss->waveNumber));
-  _waveLabel->setPosition(40 , wz.height - 25);
-  _waveLabel->setColor(cx::black());
-  addItem(_waveLabel);
-
-  _lifePointsLabel = cx::reifyLabel(
-      "text",15,
-      sstr("Life: ") + FTOS(ss->lifePoints) +" ");
-
-  _lifePointsLabel->setPosition(wb.right - 50 , 20);
-  _lifePointsLabel->setColor(cx::black());
-  addItem(_lifePointsLabel);
-
   loadDefensePositions();
-  loadPathSteps();
-
-  // tower
-  auto tower = cx::reifySprite("tower.png");
-  auto pos= ss->pathSteps.back()->getPosition();
-  tower->setPosition(pos);
-  //CC_HIDE(tower);
-  addAtlasItem("game-pics", tower, 2);
-
-  // waves of attack
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadWave), WAVES_INTERVAL, NUM_WAVES, 1.0);
 
   //cx::sfxMusic("background", true);
 }
@@ -108,8 +77,8 @@ void GLayer::onInited() {
 void GLayer::loadDefensePositions() {
   auto dict= cx::readXmlAsDict(XCFG()->getAtlas("defenses"));
   auto sz = cx::calcSize("defense_level_1.png");
+  auto arr= f::dictVal<c::Array>(dict, "data");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-    auto arr= f::dictVal<c::Array>(dict, "data");
   auto cnt= arr->count();
   auto sw= sz.width;
   auto gap = 19;
@@ -125,67 +94,6 @@ void GLayer::loadDefensePositions() {
     s->setPosition(sw * mX + gap, sw * mY);
     addAtlasItem("game-pics",s);
     ss->defensePositions.push_back(s);
-  }
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::loadEnemy(float) {
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  if (ss->countEnemies < WAVES_NUM_ENEMIES) {
-    auto it = ss->pathSteps.front();
-    auto e= Enemy::create(ss,it);
-
-    addAtlasItem("game-pics",e);
-    ss->enemies.push_back(e);
-    ss->countEnemies += 1;
-  } else {
-    unschedule(CC_SCHEDULE_SELECTOR(GLayer::loadEnemy));
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::loadPathSteps() {
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto wb= cx::visBox();
-  s_arr<c::Vec2,10> pts = {
-    c::Vec2(-50, wb.top - ss->squareSize * 3.30),
-    c::Vec2(ss->squareSize * 2.5, wb.top - ss->squareSize * 3.3),
-    c::Vec2(ss->squareSize * 2.5, ss->squareSize * 2),
-    c::Vec2(ss->squareSize * 5.2, ss->squareSize * 2),
-    c::Vec2(ss->squareSize * 5.2, wb.top - ss->squareSize*2),
-    c::Vec2(ss->squareSize * 7.8, wb.top - ss->squareSize*2),
-    c::Vec2(ss->squareSize * 7.8, ss->squareSize * 3.5),
-    c::Vec2(ss->squareSize * 10.5, ss->squareSize * 3.5),
-    c::Vec2(ss->squareSize * 10.5, wb.top - ss->squareSize*2),
-    c::Vec2(wb.right - ss->squareSize * 1.2, wb.top - ss->squareSize * 2)
-  };
-
-  ss->pathSteps.clear();
-
-  PathStep *prev= CC_NIL;
-  F__LOOP(it, pts) {
-    auto &pt= *it;
-    auto p= PathStep::create(pt);
-    ss->pathSteps.push_back(p);
-    addAtlasItem("game-pics",p);
-    CC_HIDE(p);
-    if (!prev) {
-      prev=p;
-    } else {
-      prev->next = p;
-      prev=p;
-    }
-  }
-
-  //debug
-  prev=ss->pathSteps.front();
-  while (prev) {
-    auto pos= prev->getPosition();
-    prev=prev->next;
-    CCLOG("pathstep.pos = %d,%d", (int)pos.x, (int)pos.y);
   }
 
 }
@@ -213,9 +121,11 @@ bool GLayer::onMouseStart(const c::Vec2 &tap) {
   F__LOOP(it,ss->defensePositions) {
     auto dp= *it;
     if (dp->boundingBox().containsPoint(tap)) {
-      auto d= Defense::create(ss, levelOne, dp->getPosition());
-      addAtlasItem("game-pics",d,1);
-      ss->defenses.push_back(d);
+      auto po=MGMS()->getPool("Defense1");
+      auto e= po->take(true);
+      auto d= CC_GEC(Defense,e,"f/CPixie");
+      auto pos= dp->getPosition();
+      d->inflate(pos.x, pos.y);
     }
   }
 }
@@ -232,24 +142,22 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::loadWave(float) {
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
-
-  _waveLabel->setString("Wave " + FTOS(ss->waveNumber));
-
-  ss->countEnemies = 0;
-  ss->enemies.clear();
-
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadEnemy), 1.0);
-  ss->waveNumber += 1;
+void GLayer::onEnd() {
+  this->setOpacity(255 * 0.1);
+  MGMS()->stop();
+  surcease();
+  Ende::reify(MGMS(), 4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::enemyReachedTower() {
+  auto h = CC_GEC(f::CHealth,_player,"f/CHealth");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  ss->lifePoints -= 1;
-  _lifePointsLabel->setString("Life: " + FTOS(ss->lifePoints));
+  h->hurt(1);
+  getHUD()->updateLifePts(h->curHP);
+
+  if (!h->alive()) { onEnd(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -265,7 +173,19 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic == "/game/hud/updatewave") {
+    auto msg= (j::json*)m;
+    y->getHUD()->updateWave(
+        JS_INT(msg->operator[]("wave")));
+  }
+
+  if ("/game/player/enemyreachedtower" == topic) {
+    y->enemyReachedTower();
+  }
+
 }
+
 
 //////////////////////////////////////////////////////////////////////////////
 void Game::decoUI() {

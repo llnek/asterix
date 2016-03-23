@@ -21,6 +21,7 @@ class CC_DLL Move : public ecs::System {
 
   DECL_PTR(ecs::Node, _shared)
 
+  void processDefense(f::FPool *po, float dt);
   void process(float);
   void onKeys(float);
 

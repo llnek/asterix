@@ -23,11 +23,17 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
+  DECL_PTR(c::Label, _lifePointsLabel)
   DECL_PTR(c::Label, _scoreLabel)
+  DECL_PTR(c::Label, _waveLabel)
   DECL_IZ(_score)
 
   int getScore() { return _score; }
+
+  void updateLifePts(int );
+  void updateWave(int w);
   void updateScore(int);
+
 };
 
 

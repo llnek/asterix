@@ -40,6 +40,7 @@ void Node::checkin(not_null<Component*> c) {
   auto z = c->typeId();
   assert(! has(z));
   _engine->rego()->bind(c,this);
+  c->setNode(this);
   _parts.insert(S__PAIR(COMType, Component*, z, c));
 }
 

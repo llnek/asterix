@@ -27,7 +27,31 @@ void HUDLayer::decoUI() {
   _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
   addItem(_scoreLabel);
 
+  _waveLabel = cx::reifyLabel("text",15, "Wave " + FTOS(0));
+  _waveLabel->setPosition(40 , wb.top - 25);
+  _waveLabel->setColor(cx::black());
+  addItem(_waveLabel);
+
+  _lifePointsLabel = cx::reifyLabel(
+      "text",15,
+      "Life: " + FTOS(10) + " ");
+  _lifePointsLabel->setPosition(wb.right - 50 , 20);
+  _lifePointsLabel->setColor(cx::black());
+  addItem(_lifePointsLabel);
+
   _score=0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateLifePts(int p) {
+  _lifePointsLabel->setString( "Life: " + FTOS(p) +" ");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateWave(int w) {
+  _waveLabel->setString("Wave " + FTOS(w));
 }
 
 //////////////////////////////////////////////////////////////////////////////

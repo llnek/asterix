@@ -28,17 +28,21 @@ typedef int NodeId;
 
 //////////////////////////////////////////////////////////////////////////
 //
+class Node;
 class FS_DLL Component {
+friend class Node;
+  void setNode(not_null<Node*> n) { _compParentNode=n.get(); }
+  DECL_PTR(Node, _compParentNode)
 protected:
   Component() {}
 public:
   virtual bool isAuto() { return false; }
   virtual const COMType typeId() = 0;
   virtual void dispose() {}
+  virtual Node* getNode() { return _compParentNode; }
   virtual ~Component() {}
 };
 
-class Node;
 typedef s::map<NodeId,Component*> CompoCache ;
 typedef s::map<NodeId,Node*> NodeCache ;
 

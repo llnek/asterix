@@ -21,7 +21,7 @@ NS_BEGIN(dttower)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Defense*> Defense::create(GVars *ss, DefenseLevel level, const c::Vec2 &pos) {
+owner<Defense*> Defense::create(GVars *ss, DefenseLevel level) {
 
   auto rc= mc_new(Defense);
   sstr fn;
@@ -44,7 +44,6 @@ owner<Defense*> Defense::create(GVars *ss, DefenseLevel level, const c::Vec2 &po
   rc->defenseLevel = level;
   rc->attackPoints = pts;
   rc->ss= ss;
-  rc->setPosition(pos);
 
   return rc;
 }
@@ -52,46 +51,30 @@ owner<Defense*> Defense::create(GVars *ss, DefenseLevel level, const c::Vec2 &po
 //////////////////////////////////////////////////////////////////////////////
 //
 void Defense::update(float dt) {
-
-  auto pos= getPosition();
-  auto sz= CC_CSZ(this);
-
-  if (!this->enemyInRange ) {
-
-    F__LOOP(it, ss->enemies) {
-      auto e= *it;
-      if (detectEnemyWithDefenseAtPos(
-            pos,
-            1.5*sz.width,
-            e->getPosition(),
-            CC_CSZ(e).width)) {
-        enemyInRange = e;
-        e->addAttackingDefense(this);
-        schedule(CC_SCHEDULE_SELECTOR(Defense::attackEnemy),0.5);
-        break;
-      }
+  auto po= MGMS()->getPool("Enemies");
+  auto ps= po->ls();
+  F__LOOP(it, ps) {
+    auto p= *it;
+    if (!p->status()) { continue; }
+    auto e=CC_GEC(Enemy,p,"f/CPixie");
+    if (detectEnemy(e)) {
+      attackEnemy((ecs::Node*)p);
+      break;
     }
+  }
 
-  }
-  else
-  if (!detectEnemyWithDefenseAtPos(pos,
-        1.5*sz.width,
-        enemyInRange->getPosition(),
-        CC_CSZ(enemyInRange).width)) {
-    enemyOutOfRange();
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Defense::detectEnemyWithDefenseAtPos(
-    const c::Vec2 &pos,
-    float defenseRadius,
-    const c::Vec2 &enemyPosition,
-    float enemyRadius) {
+bool Defense::detectEnemy(Enemy *e) {
 
-  auto distanceX = pos.x - enemyPosition.x;
-  auto distanceY = pos.y - enemyPosition.y;
+  auto defenseRadius= 1.5 * CC_CSZ(this).width;
+  auto enemyRadius= CC_CSZ(e).width;
+  auto enemyPos= e->getPosition();
+  auto pos= this->getPosition();
+  auto distanceX = pos.x - enemyPos.x;
+  auto distanceY = pos.y - enemyPos.y;
   auto distance = sqrt(distanceX * distanceX + distanceY * distanceY);
 
   return (distance <= defenseRadius + enemyRadius);
@@ -99,21 +82,19 @@ bool Defense::detectEnemyWithDefenseAtPos(
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Defense::attackEnemy(float dt) {
-  if (!enemyInRange ) {
-  return; }
+void Defense::attackEnemy(ecs::Node *node) {
 
   auto bullet = cx::reifySprite("bullet.png");
+  auto e=CC_GEC(Enemy,node,"f/CPixie");
   auto pos= getPosition();
 
-  bullet->setPosition(pos.x, pos.y);
   MGML()->addAtlasItem("game-pics", bullet, 2);
-
+  bullet->setPosition(pos.x, pos.y);
   bullet->runAction(
       c::Sequence::create(
-        c::MoveTo::create(0.2, enemyInRange->getPosition()),
+        c::MoveTo::create(0.2, e->getPosition()),
         c::CallFunc::create([=]() {
-          enemyInRange->lifePoints -= attackPoints;
+          this->checkEnemy(node,bullet);
         }),
         c::RemoveSelf::create(true),
         CC_NIL));
@@ -121,21 +102,18 @@ void Defense::attackEnemy(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Defense::enemyOutOfRange() {
-  unschedule(CC_SCHEDULE_SELECTOR(Defense::attackEnemy));
-  enemyInRange->outOfRangeFromDefense(this);
-  enemyInRange = CC_NIL;
-}
+void Defense::checkEnemy(ecs::Node *node, c::Sprite *bullet) {
+  auto h=CC_GEC(f::CHealth,node,"f/CHealth");
+  auto e=CC_GEC(Enemy,node,"f/CPixie");
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Defense::enemyKilled() {
-  if (!enemyInRange) {
-  return; }
-  auto it= s::find(ss->enemies.begin(),ss->enemies.end(), enemyInRange);
-  if (it != ss->enemies.end()) {
-    ss->enemies.erase(it);
+  if (cx::collideN(e,bullet)) {
+    h->hurt(attackPoints);
   }
+
+  if (!h->alive()) {
+    cx::hibernate(node);
+  }
+
 }
 
 

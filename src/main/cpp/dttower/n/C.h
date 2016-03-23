@@ -42,13 +42,10 @@ struct CC_DLL GVars : public ecs::Component {
 
   s_vec<c::Sprite*> defensePositions;
   s_vec<PathStep*> pathSteps;
-  s_vec<Defense*> defenses;
-  s_vec<Enemy*> enemies;
 
   DECL_FZ(squareSize)
   DECL_IZ(waveNumber)
   DECL_IZ(countEnemies)
-  DECL_IZ(lifePoints)
 
 };
 

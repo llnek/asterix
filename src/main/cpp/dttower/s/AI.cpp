@@ -15,6 +15,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "AI.h"
+#include "n/Enemy.h"
+#include "n/Defense.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(dttower)
@@ -29,7 +31,6 @@ void AI::preamble() {
 //
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
-    parallex(dt);
     process(dt);
   }
   return true;
@@ -37,15 +38,61 @@ bool AI::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::parallex(float dt) {
-
+void AI::process(float dt) {
+  loadEnemy(dt);
+  loadWave(dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::process(float dt) {
+void AI::loadEnemy(float dt) {
+  if (!cx::timerDone(_timer2)) {
+  return; }
+
+  cx::undoTimer(_timer2);
+  _timer2=CC_NIL;
+
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto po=MGMS()->getPool("Enemies");
+
+  if (ss->countEnemies < WAVES_NUM_ENEMIES) {
+    auto e= po->take(true);
+    auto n= CC_GEC(Enemy,e,"f/CPixie");
+    cx::resurrect((ecs::Node*)e);
+    n->set(ss->pathSteps[0] );
+    ss->countEnemies += 1;
+    _timer2= cx::reifyTimer(MGML(), 1000);
+  }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::loadWave(float dt) {
+    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  if (ss->waveNumber < 0) {
+    ss->waveNumber= 0;
+  }
+  else
+  if (!cx::timerDone(_timer1)) {
+  return; }
+
+  cx::undoTimer(_timer1);
+  _timer1=CC_NIL;
+
+  if (ss->waveNumber > NUM_WAVES) {
+  return; }
+  ss->waveNumber += 1;
+
+  auto msg= j::json({
+        {"wave", ss->waveNumber}
+      });
+
+  SENDMSGEX("/game/hud/updatewave", &msg);
+  ss->countEnemies = 0;
+
+  _timer2= cx::reifyTimer(MGML(), 1000);
+  _timer1= cx::reifyTimer(MGML(), WAVES_INTERVAL*1000);
+}
 
 
 NS_END

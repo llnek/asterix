@@ -17,6 +17,9 @@
 #include "Move.h"
 #include "AI.h"
 #include "GEngine.h"
+#include "n/Defense.h"
+#include "n/Enemy.h"
+#include "n/PathStep.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(dttower)
@@ -24,9 +27,103 @@ NS_BEGIN(dttower)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  // global
   auto ent= this->reifyNode("Shared",true);
-  ent->checkin(mc_new(GVars));
+  auto wz= cx::visSize();
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
+
+  // global
+  ss->squareSize = wz.height / 8;
+  ss->waveNumber= -1;
+  loadPathSteps(ss);
+
+  // make some enemies
+  auto po= MGMS()->reifyPool("Enemies");
+  po->preset([=]() -> f::Poolable * {
+    auto e= this->reifyNode("Enemy");
+    auto n= Enemy::create(ss);
+    MGML()->addAtlasItem("game-pics",n);
+    CC_HIDE(n);
+    e->checkin(mc_new(f::CHealth));
+    e->checkin(mc_new(f::CMove));
+    e->checkin(n);
+    return e;
+  }, 16);
+
+  // make some defenses
+  po= MGMS()->reifyPool("Defense1");
+  po->preset([=]() -> f::Poolable *  {
+    auto e= this->reifyNode("Defense1");
+    auto n= Defense::create(ss, levelOne);
+    MGML()->addAtlasItem("game-pics",n);
+    CC_HIDE(n);
+    e->checkin(n);
+    return e;
+  }, 16);
+  po= MGMS()->reifyPool("Defense2");
+  po->preset([=]() -> f::Poolable * {
+    auto e= this->reifyNode("Defense2");
+    auto n= Defense::create(ss, levelTwo);
+    MGML()->addAtlasItem("game-pics",n);
+    CC_HIDE(n);
+    e->checkin(n);
+    return e;
+  }, 16);
+
+  // tower = player
+  auto tower= f::CPixie::reifyFrame("tower.png");
+  auto pos= ss->pathSteps.back()->getPosition();
+  ent= this->reifyNode("Tower", true);
+  tower->setPosition(pos);
+  MGML()->addAtlasItem("game-pics", tower, 2);
+  //CC_HIDE(tower);
+  ent->checkin(mc_new1(f::CHealth,10));
+  ent->checkin(mc_new(f::CHuman));
+  ent->checkin(tower);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GEngine::loadPathSteps(GVars *ss) {
+  auto wb= cx::visBox();
+  s_arr<c::Vec2,10> pts = {
+    c::Vec2(-50, wb.top - ss->squareSize * 3.30),
+    c::Vec2(ss->squareSize * 2.5, wb.top - ss->squareSize * 3.3),
+    c::Vec2(ss->squareSize * 2.5, ss->squareSize * 2),
+    c::Vec2(ss->squareSize * 5.2, ss->squareSize * 2),
+    c::Vec2(ss->squareSize * 5.2, wb.top - ss->squareSize*2),
+    c::Vec2(ss->squareSize * 7.8, wb.top - ss->squareSize*2),
+    c::Vec2(ss->squareSize * 7.8, ss->squareSize * 3.5),
+    c::Vec2(ss->squareSize * 10.5, ss->squareSize * 3.5),
+    c::Vec2(ss->squareSize * 10.5, wb.top - ss->squareSize*2),
+    c::Vec2(wb.right - ss->squareSize * 1.2, wb.top - ss->squareSize * 2)
+  };
+
+  ss->pathSteps.clear();
+
+  PathStep *prev= CC_NIL;
+  F__LOOP(it, pts) {
+    auto &pt= *it;
+    auto p= PathStep::create(pt);
+    ss->pathSteps.push_back(p);
+    MGML()->addAtlasItem("game-pics",p);
+    CC_HIDE(p);
+    if (!prev) {
+      prev=p;
+    } else {
+      prev->next = p;
+      prev=p;
+    }
+  }
+
+  //debug
+  prev=ss->pathSteps.front();
+  while (prev) {
+    auto pos= prev->getPosition();
+    prev=prev->next;
+    CCLOG("pathstep.pos = %d,%d", (int)pos.x, (int)pos.y);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

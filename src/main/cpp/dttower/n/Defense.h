@@ -29,19 +29,13 @@ struct CC_DLL Defense  : public f::CPixie {
 
   DECL_TD(DefenseLevel, defenseLevel)
   DECL_IZ(attackPoints)
-  DECL_PTR(Enemy, enemyInRange)
   DECL_PTR(GVars, ss)
 
-  static owner<Defense*> create(GVars *ss, DefenseLevel, const c::Vec2&);
+  static owner<Defense*> create(GVars *ss, DefenseLevel);
   virtual void update(float);
-    void attackEnemy(float);
-    void enemyOutOfRange();
-  void enemyKilled();
-    bool detectEnemyWithDefenseAtPos(
-                                     const c::Vec2 &pos,
-                                     float defenseRadius,
-                                     const c::Vec2 &enemyPosition,
-                                     float enemyRadius);
+  bool detectEnemy(Enemy*);
+  void checkEnemy(ecs::Node *node, c::Sprite *bullet);
+  void attackEnemy(ecs::Node *node);
 
 };
 
