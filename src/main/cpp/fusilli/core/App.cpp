@@ -56,9 +56,9 @@ bool App::applicationDidFinishLaunching() {
   }
 
   register_all_packages();
+  f::randSeed();
 
   preLaunch(sz);
-
   //CCLOG("about to run start scene");
   // run
   CC_DTOR()->runWithScene( XCFG()->prelude());
