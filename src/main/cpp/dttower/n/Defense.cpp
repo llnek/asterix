@@ -44,6 +44,7 @@ owner<Defense*> Defense::create(GVars *ss, DefenseLevel level, const c::Vec2 &po
   rc->defenseLevel = level;
   rc->attackPoints = pts;
   rc->ss= ss;
+  rc->setPosition(pos);
 
   return rc;
 }
@@ -129,6 +130,8 @@ void Defense::enemyOutOfRange() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Defense::enemyKilled() {
+  if (!enemyInRange) {
+  return; }
   auto it= s::find(ss->enemies.begin(),ss->enemies.end(), enemyInRange);
   if (it != ss->enemies.end()) {
     ss->enemies.erase(it);

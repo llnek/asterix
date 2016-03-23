@@ -92,12 +92,13 @@ void GLayer::onInited() {
 
   // tower
   auto tower = cx::reifySprite("tower.png");
-  auto pos= ss->pathSteps[0]->getPosition();
+  auto pos= ss->pathSteps.back()->getPosition();
   tower->setPosition(pos);
+  //CC_HIDE(tower);
   addAtlasItem("game-pics", tower, 2);
 
   // waves of attack
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadWave), WAVES_INTERVAL, NUM_WAVES, 0.0);
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadWave), WAVES_INTERVAL, NUM_WAVES, 1.0);
 
   //cx::sfxMusic("background", true);
 }
@@ -105,9 +106,10 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::loadDefensePositions() {
-  auto arr= cx::readXmlAsList(XCFG()->getAtlas("defenses"));
+  auto dict= cx::readXmlAsDict(XCFG()->getAtlas("defenses"));
   auto sz = cx::calcSize("defense_level_1.png");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
+    auto arr= f::dictVal<c::Array>(dict, "data");
   auto cnt= arr->count();
   auto sw= sz.width;
   auto gap = 19;
@@ -117,13 +119,11 @@ void GLayer::loadDefensePositions() {
   for (auto i=0; i < cnt; ++i) {
     auto s = cx::reifySprite("defense_position.png");
     auto d= (c::Dictionary*) arr->objectAtIndex(i);
-      
-      auto mX = f::dictVal<c::String>(d,"x")->floatValue();
-      auto mY = f::dictVal<c::String>(d,"y")->floatValue();
+    auto mX = f::dictVal<c::String>(d,"x")->floatValue();
+    auto mY = f::dictVal<c::String>(d,"y")->floatValue();
 
     s->setPosition(sw * mX + gap, sw * mY);
     addAtlasItem("game-pics",s);
-
     ss->defensePositions.push_back(s);
   }
 
@@ -134,7 +134,7 @@ void GLayer::loadDefensePositions() {
 void GLayer::loadEnemy(float) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   if (ss->countEnemies < WAVES_NUM_ENEMIES) {
-    auto it = ss->pathSteps.back();
+    auto it = ss->pathSteps.front();
     auto e= Enemy::create(ss,it);
 
     addAtlasItem("game-pics",e);
@@ -150,7 +150,7 @@ void GLayer::loadEnemy(float) {
 void GLayer::loadPathSteps() {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
-  s_vec<c::Vec2> pts = {
+  s_arr<c::Vec2,10> pts = {
     c::Vec2(-50, wb.top - ss->squareSize * 3.30),
     c::Vec2(ss->squareSize * 2.5, wb.top - ss->squareSize * 3.3),
     c::Vec2(ss->squareSize * 2.5, ss->squareSize * 2),
@@ -165,17 +165,27 @@ void GLayer::loadPathSteps() {
 
   ss->pathSteps.clear();
 
-  PathStep *ps= CC_NIL;
+  PathStep *prev= CC_NIL;
   F__LOOP(it, pts) {
-    auto pt= *it;
+    auto &pt= *it;
     auto p= PathStep::create(pt);
     ss->pathSteps.push_back(p);
     addAtlasItem("game-pics",p);
     CC_HIDE(p);
-    if (ps) {
-      ps->next=p;
-      ps=p;
+    if (!prev) {
+      prev=p;
+    } else {
+      prev->next = p;
+      prev=p;
     }
+  }
+
+  //debug
+  prev=ss->pathSteps.front();
+  while (prev) {
+    auto pos= prev->getPosition();
+    prev=prev->next;
+    CCLOG("pathstep.pos = %d,%d", (int)pos.x, (int)pos.y);
   }
 
 }
@@ -230,7 +240,7 @@ void GLayer::loadWave(float) {
   ss->countEnemies = 0;
   ss->enemies.clear();
 
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadEnemy), 1);
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::loadEnemy), 1.0);
   ss->waveNumber += 1;
 }
 

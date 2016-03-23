@@ -15,6 +15,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
+#include "n/Defense.h"
+#include "n/Enemy.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(dttower)
@@ -38,7 +40,17 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  onKeys(dt);
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+
+  F__LOOP(it,ss->defenses) {
+    auto e= *it;
+    e->update(dt);
+  }
+
+  F__LOOP(it,ss->enemies) {
+    auto e= *it;
+    e->update(dt);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
