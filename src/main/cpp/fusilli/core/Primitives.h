@@ -21,6 +21,7 @@
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
+typedef FArrayPtr<c::Node> NodePtrArray;
 #define ZEROPT c::ccp(0,0)
 
 //////////////////////////////////////////////////////////////////////////////
