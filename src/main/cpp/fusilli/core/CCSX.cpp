@@ -1004,6 +1004,15 @@ void resurrect(not_null<ecs::Node*> node, float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void kumakaze(not_null<ecs::Node*> node) {
+  auto h=CC_GEC(f::CHealth,node.get(),"f/CHealth");
+  if (h) {
+    h->curHP = 0;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void resurrect(not_null<ecs::Node*> node) {
   auto h=CC_GEC(f::CHealth,node.get(),"f/CHealth");
   auto s=CC_GEC(f::CPixie,node.get(),"f/CPixie");

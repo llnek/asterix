@@ -19,8 +19,10 @@ NS_BEGIN(astros)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
+  DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
 
+    void processShip(float);
   void process(float);
   void onKeys(float);
 

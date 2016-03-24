@@ -155,8 +155,11 @@ struct CC_DLL CMove : public ecs::Component {
 //
 class CC_DLL UICObj : public ecs::Component {
 protected:
-  void bindNode(c::Node* n) { _node=n; _auto=true; }
   virtual bool isAuto() { return _auto; }
+  void bindNode(c::Node *n) {
+    _auto=true; _node=dynamic_cast<c::Node*>(n);
+    CCLOG("ecs called, node= %p", _node);
+  }
   DECL_BF(_auto)
   void flipAuto(bool b) { _auto=b; }
 public:
@@ -165,7 +168,9 @@ public:
   DECL_PTR(c::Node, _node)
 
   UICObj(c::Node *n) { _node=n; }
-  UICObj() {}
+  UICObj() {
+    CCLOG("inside UICObj ctor");
+  }
   virtual ~UICObj() {
     CCLOG("Poo! I am dead %p", this);
   }
@@ -210,7 +215,6 @@ public:
 class CC_DLL CPixie : public c::Sprite, public UICObj {
 protected:
   CPixie() { bindNode(this); }
-
 public:
 
   static owner<CPixie*> reifyFrame(const sstr &n) {
@@ -234,10 +238,7 @@ public:
 //
 class CC_DLL CDrawNode : public c::DrawNode, public UICObj {
 protected:
-  CDrawNode() {
-    bindNode(this);
-  }
-
+  CDrawNode() { bindNode(this); }
 public:
 
   static owner<CDrawNode*> reify() {
@@ -254,10 +255,7 @@ public:
 //
 class CC_DLL C2DNode : public c::Node, public UICObj {
 protected:
-  C2DNode() {
-    bindNode(this);
-  }
-
+  C2DNode() { bindNode(this); }
 public:
 
   static owner<C2DNode*> reify() {

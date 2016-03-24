@@ -44,35 +44,16 @@ void Move::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::processAstro(float dt) {
-  auto ship=CC_GEC(Ship,_player,"f/CPixie");
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto shipBoundingBox = ship->getBoundingBox();
-  auto asteroidBoundingBox = astro->getBoundingBox();
-  auto wb= cx::visBox();
-
-  if (cx::collideN(ship,astro) &&
-      !h->alive()) {
-    gameLayer.removeAsteroid(this);
-    SENDMSG("/game/player/lose");
-  }
-
-  if(astro->getPositionX() < wb.left -50) {
-    gameLayer.removeAsteroid(this)
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Move::processShip(float dt) {
   auto h=CC_GEC(f::CHealth,_player,"f/CHealth");
   auto mv=CC_GEC(f::CMove,_player,"f/CMove");
-  auto ship=CC_GEC(Ship,_player,"f/CPixie");
+    auto ship= (c::Sprite*)CC_GEC(Ship,_player,"f/CPixie");
+    auto px= (Ship*) ship;
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
   float sx=0;
-
-  if (ship->engineOn) {
+    
+  if (px->engineOn) {
     mv->vel.y += ss->gameThrust;
     sx=ship->getPositionX()-25;
   } else {
@@ -80,15 +61,16 @@ void Move::processShip(float dt) {
   }
   ss->emitter->setPosition(sx,ship->getPositionY());
 
-  if(h->alive()) {
-    h->hurt();
-    ship->setOpacity(255- ship->getOpacity());
-  }
+  ship->setOpacity(255- ship->getOpacity());
   ship->setPosition(ship->getPositionX(), ship->getPositionY()+mv->vel.y);
   mv->vel.y += ss->gameGravity;
+
   if (ship->getPositionY() < wb.bottom ||
       ship->getPositionY() > wb.top) {
-    SENDMSG("/game/player/lose");
+      auto pos= ship->getPosition();
+      auto ppos= px->pos();
+      cx::kumakaze(_player);
+      SENDMSG("/game/player/lose");
   }
 
   onKeys(dt);

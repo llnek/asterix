@@ -23,6 +23,7 @@ NS_BEGIN(astros)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -38,6 +39,21 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
+
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto po= MGMS()->getPool("Astros");
+  auto ps= po->ls();
+  auto wb= cx::visBox();
+
+  F__LOOP(it,ps) {
+      auto e= (ecs::Node*)*it;
+    auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+    auto a=CC_GEC(Asteroid,e,"f/CPixie");
+    if(!h->alive() ||
+       a->getPositionX() < wb.left -50) {
+      cx::hibernate(e);
+    }
+  }
 }
 
 NS_END

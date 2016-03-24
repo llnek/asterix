@@ -30,6 +30,7 @@ namespace ccsx {
   void resurrect(not_null<ecs::Node*>, float x, float y);
   void resurrect(not_null<ecs::Node*>);
   void hibernate(not_null<ecs::Node*>);
+  void kumakaze(not_null<ecs::Node*>);
 
   void resolveElastic(not_null<CPixie*> rA,
       c::Vec2 &velA,

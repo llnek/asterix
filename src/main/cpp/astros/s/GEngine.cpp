@@ -26,7 +26,8 @@ NS_BEGIN(astros)
 void GEngine::initEntities() {
   // global
   auto ent= this->reifyNode("Shared",true);
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 
   auto po= MGMS()->reifyPool("Astros");
   po->preset([=]() -> f::Poolable* {
@@ -40,24 +41,34 @@ void GEngine::initEntities() {
     return e;
   }, 16);
 
-  auto ship= Ship::create();
-  MGML()->addAtlasItem("game-pics",ship);
-  ship->setPosition(60,160);
   ent= this->reifyNode("Ship", true);
-  ent->checkin(mc_new(f::CHealth,100));
+  auto ship= Ship::create();
+  auto wb=cx::visBox();
+  auto sz=CC_CSZ(ship);
+  MGML()->addAtlasItem("game-pics",ship);
+  ship->setPosition(wb.right * 0.1,wb.cy);
+    auto box= cx::bbox4((c::Sprite*)ship);
+  ent->checkin(mc_new1(f::CHealth,100));
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CMove));
   ent->checkin(ship);
 
+  ss->emitter = c::ParticleSun::create();
+  MGML()->addItem(ss->emitter);
+  auto sp= cx::reifySprite("particle.png");
+  ss->emitter->setTexture(sp->getTexture());
+  ss->emitter->setStartSize(2);
+  ss->emitter->setEndSize(4);
+  ss->emitter->setPosition(box.left,ship->getPositionY());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
+  //regoSystem(mc_new1(Resolve,this));
+  //regoSystem(mc_new1(Collide,this));
   regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
+  //regoSystem(mc_new1(Move,this));
 }
 
 

@@ -20,9 +20,9 @@ NS_BEGIN(astros)
 class CC_DLL Collide : public ecs::System {
 
   DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _player)
 
   void process(float);
-  void clamp(float);
 
 public:
 

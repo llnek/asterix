@@ -24,7 +24,9 @@ BEGIN_NS_UNAMED
 struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  void onEnd();
 
+  DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
@@ -51,8 +53,18 @@ GLayer::~GLayer() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void GLayer::onEnd() {
+  this->setOpacity(255 * 0.1);
+  MGMS()->stop();
+  surcease();
+  Ende::reify(MGMS(),4);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onInited() {
 
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
@@ -61,15 +73,9 @@ void GLayer::onInited() {
 
   ss->background = ScrollingBG::create();
   ss->background->setPosition(480,160);
-  addItem(ss->background);
+  addItem(ss->background,-1);
 
-  ss->emitter = c::ParticleSun::create();
-  addItem(ss->emitter,1);
 
-  auto sp= cx::reifySprite("particle.png");
-  ss->emitter.setTexture(sp->getTexture());
-  ss->emitter.setStartSize(2);
-  ss->emitter.setEndSize(4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -115,7 +121,7 @@ void GLayer::decoUI() {
   _engine = mc_new(GEngine);
   regoAtlas("game-pics");
 
-  cx::sfxMusic("background", true);
+  //cx::sfxMusic("background", true);
 }
 
 END_NS_UNAMED
@@ -123,6 +129,12 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic == "/game/player/lose") {
+    y->onEnd();
+  }
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,7 @@ struct CC_DLL ScrollingBG : public f::CPixie {
     z->autorelease();
     return z;
   }
+  virtual ~ScrollingBG() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +40,9 @@ struct CC_DLL Asteroid : public f::CPixie {
     z->autorelease();
     return z;
   }
+  virtual ~Asteroid() {}
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -50,8 +53,8 @@ struct CC_DLL Ship : public f::CPixie {
     z->autorelease();
     return z;
   }
+  virtual ~Ship() {}
   DECL_BF(engineOn)
-  DECL_IZ(energy,100)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,7 +65,7 @@ struct CC_DLL GVars : public ecs::Component {
   DECL_TV(int,scrollSpeed, 1)
   DECL_TV(float,gameGravity, -0.05)
   DECL_TV(float, gameThrust, 0.1)
-  DECL_TD(c::ParticleSun, emitter)
+  DECL_PTR(c::ParticleSun, emitter)
 
 };
 

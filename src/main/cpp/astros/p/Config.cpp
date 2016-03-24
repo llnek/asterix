@@ -59,50 +59,7 @@ void Config::initAssets() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
-#if defined(BLAH)
-  // retina iPad
-  if (2048 == rs.width || 2048 == rs.height ) {
-    resDirOrders.push_back("ipadhd");
-    resDirOrders.push_back("ipad");
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(1536, 2048, ResolutionPolicy::NO_BORDER);
-  }
-  else // non retina iPad
-  if (1024 == rs.width || 1024 == rs.height ) {
-    resDirOrders.push_back("ipad");
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(768, 1024, ResolutionPolicy::NO_BORDER);
-  }
-  else // retina iPhone (5 and 5S)
-  if (1136 == rs.width || 1136 == rs.height ) {
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(640, 1136, ResolutionPolicy::NO_BORDER);
-  }
-  else // retina iPhone (4 and 4S)
-  if ( 960 == rs.width || 960 == rs.height ) {
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(640, 960, ResolutionPolicy::NO_BORDER);
-  }
-  else { // non retina iPhone and Android devices
-    if (1080 < screenSize.width ) { // android devices that have a high resolution
-      resDirOrders.push_back("iphonehd");
-      resDirOrders.push_back("iphone");
-      glview->setDesignResolutionSize(640, 960, ResolutionPolicy::NO_BORDER);
-    } else { // non retina iPhone and Android devices with lower resolutions
-      resDirOrders.push_back("iphone");
-      glview->setDesignResolutionSize(320, 480, ResolutionPolicy::NO_BORDER);
-    }
-  }
-
-  fileUtils->setSearchPaths(resDirOrders);
-#endif
+  auto gz= gameSize();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +74,7 @@ void Config::runOnce() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Game::reify();
+  return Game::reify(new GameCtx());
 }
 
 

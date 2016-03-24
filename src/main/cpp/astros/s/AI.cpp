@@ -41,6 +41,7 @@ bool AI::update(float dt) {
 void AI::parallex(float dt) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto bg= ss->background;
+  auto wb= cx::visBox();
 
   bg->setPosition(bg->getPositionX() - ss->scrollSpeed, bg->getPositionY());
   if(bg->getPositionX() < wb.left) {
@@ -51,19 +52,20 @@ void AI::parallex(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
-  if (!cx::timerDone(_astroTimer)) {
-  return; }
+
+  if (!cx::timerDone(_astroTimer)) { return; }
+
   cx::undoTimer(_astroTimer);
   _astroTimer=CC_NIL;
-
   spawnAstro(dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::spawnAstro(float dt) {
+  return;
   auto po= MGMS()->getPool("Astros");
-  auto e= po->take(true);
+    auto e= (ecs::Node*)po->take(true);
   auto wb= cx::visBox();
   auto a= CC_GEC(Asteroid,e,"f/CPixie");
 
@@ -72,7 +74,7 @@ void AI::spawnAstro(float dt) {
       c::MoveTo::create(2.5,
         c::Vec2(wb.left -100, cx::randInt(wb.top))));
 
-  _astroTimer=cx::reifyTimer(MGML(),500);
+  _astroTimer=cx::reifyTimer(MGML(),800);
 }
 
 

@@ -27,7 +27,7 @@ public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual const c::Size gameSize() { return c::Size(960,320); }
+  virtual const c::Size gameSize() { return c::Size(480,320); }
   virtual bool isPortrait() { return false; }
 
   virtual void handleResolution(const c::Size &rs);

@@ -23,6 +23,7 @@ NS_BEGIN(astros)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -30,20 +31,37 @@ void Collide::preamble() {
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
-    clamp(dt);
     process(dt);
   }
   return true;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Collide::clamp(float dt) {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
+
+  auto h=CC_GEC(f::CHealth,_player,"f/CHealth");
+  auto ship=CC_GEC(Ship,_player,"f/CPixie");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto po= MGMS()->getPool("Astros");
+  auto ps= po->ls();
+  auto wb= cx::visBox();
+
+  F__LOOP(it,ps) {
+    auto e= *it;
+    auto a=CC_GEC(Asteroid,e,"f/CPixie");
+    auto h2=CC_GEC(f::CHealth,e,"f/CHealth");
+    if (cx::collide(ship,a)) {
+      h2->hurt();
+      h->hurt();
+    }
+    if (!h->alive()) {
+      SENDMSG("/game/player/lose");
+      break;
+    }
+  }
+
 }
 
 NS_END
