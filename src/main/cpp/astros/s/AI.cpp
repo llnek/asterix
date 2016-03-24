@@ -63,9 +63,9 @@ void AI::process(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::spawnAstro(float dt) {
-  return;
+
   auto po= MGMS()->getPool("Astros");
-    auto e= (ecs::Node*)po->take(true);
+  auto e= (ecs::Node*)po->take(true);
   auto wb= cx::visBox();
   auto a= CC_GEC(Asteroid,e,"f/CPixie");
 

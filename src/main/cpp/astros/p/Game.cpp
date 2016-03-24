@@ -72,7 +72,7 @@ void GLayer::onInited() {
   auto wb= cx::visBox();
 
   ss->background = ScrollingBG::create();
-  ss->background->setPosition(480,160);
+  ss->background->setPosition(wb.right,wb.cy);
   addItem(ss->background,-1);
 
 

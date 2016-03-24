@@ -50,6 +50,7 @@ void Collide::process(float dt) {
 
   F__LOOP(it,ps) {
     auto e= *it;
+    if (!e->status()) { continue; }
     auto a=CC_GEC(Asteroid,e,"f/CPixie");
     auto h2=CC_GEC(f::CHealth,e,"f/CHealth");
     if (cx::collide(ship,a)) {

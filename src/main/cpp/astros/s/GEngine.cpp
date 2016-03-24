@@ -47,28 +47,28 @@ void GEngine::initEntities() {
   auto sz=CC_CSZ(ship);
   MGML()->addAtlasItem("game-pics",ship);
   ship->setPosition(wb.right * 0.1,wb.cy);
-    auto box= cx::bbox4((c::Sprite*)ship);
-  ent->checkin(mc_new1(f::CHealth,100));
+  //auto box= cx::bbox4((c::Sprite*)ship);
+  ent->checkin(mc_new1(f::CHealth,1));
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CMove));
   ent->checkin(ship);
 
+  auto sp= cx::reifySprite("particle.png");
   ss->emitter = c::ParticleSun::create();
   MGML()->addItem(ss->emitter);
-  auto sp= cx::reifySprite("particle.png");
   ss->emitter->setTexture(sp->getTexture());
   ss->emitter->setStartSize(2);
   ss->emitter->setEndSize(4);
-  ss->emitter->setPosition(box.left,ship->getPositionY());
+  ss->emitter->setPosition(wb.left - 100,ship->getPositionY());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initSystems() {
-  //regoSystem(mc_new1(Resolve,this));
-  //regoSystem(mc_new1(Collide,this));
+  regoSystem(mc_new1(Resolve,this));
+  regoSystem(mc_new1(Collide,this));
   regoSystem(mc_new1(AI,this));
-  //regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(Move,this));
 }
 
 

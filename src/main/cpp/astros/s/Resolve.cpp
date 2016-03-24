@@ -46,7 +46,8 @@ void Resolve::process(float dt) {
   auto wb= cx::visBox();
 
   F__LOOP(it,ps) {
-      auto e= (ecs::Node*)*it;
+    auto e= (ecs::Node*)*it;
+    if (!e->status()) { continue; }
     auto h=CC_GEC(f::CHealth,e,"f/CHealth");
     auto a=CC_GEC(Asteroid,e,"f/CPixie");
     if(!h->alive() ||

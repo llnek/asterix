@@ -47,30 +47,27 @@ void Move::process(float dt) {
 void Move::processShip(float dt) {
   auto h=CC_GEC(f::CHealth,_player,"f/CHealth");
   auto mv=CC_GEC(f::CMove,_player,"f/CMove");
-    auto ship= (c::Sprite*)CC_GEC(Ship,_player,"f/CPixie");
-    auto px= (Ship*) ship;
+  auto ship= CC_GEC(Ship,_player,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb= cx::visBox();
   float sx=0;
-    
-  if (px->engineOn) {
+
+  if (ship->engineOn) {
     mv->vel.y += ss->gameThrust;
     sx=ship->getPositionX()-25;
   } else {
-    sx=ship->getPositionX()-250;
+    sx=wb.left - 100;
   }
   ss->emitter->setPosition(sx,ship->getPositionY());
 
-  ship->setOpacity(255- ship->getOpacity());
+  ship->setOpacity(255 - ship->getOpacity());
   ship->setPosition(ship->getPositionX(), ship->getPositionY()+mv->vel.y);
   mv->vel.y += ss->gameGravity;
 
   if (ship->getPositionY() < wb.bottom ||
       ship->getPositionY() > wb.top) {
-      auto pos= ship->getPosition();
-      auto ppos= px->pos();
-      cx::kumakaze(_player);
-      SENDMSG("/game/player/lose");
+    cx::kumakaze(_player);
+    SENDMSG("/game/player/lose");
   }
 
   onKeys(dt);
