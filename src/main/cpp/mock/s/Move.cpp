@@ -38,7 +38,37 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  onKeys(dt);
+
+  auto pm=CC_GEC(PlayerMotion,_player,"f/CMove");
+  auto py=CC_GEC(Player,_player,"f/CPixie");
+  auto ps=CC_GEC(PlayerStats,_player,"f/CStats");
+  auto te=CC_GEC(Terrain,_terrain,"f/CPixie");
+  auto batch=MGML()->getAtlas("blank");
+
+  if (py->getPositionY() < -py->height() ||
+      py->getPositionX() < -HTV(py->width()) ) {
+     SENDMSG("/game/stop");
+     return;
+  }
+
+  py->update(dt);
+  te->move(pm->vel.x);
+
+  if (ps->state != kPlayerDying) { te->checkCollision(_player); }
+  py->place();
+  batch->setPositionY (0);
+  if (pm->nextPos.y > wb.top * 0.6) {
+    batch->setPositionY( (wb.top * 0.6 - pm->nextPos.y) * 0.8);
+  }
+
+  if (te->startTerrain && pm->vel.x > 0) {
+    ss->speedIncreaseTimer += dt;
+    if (ss->speedIncreaseTimer > ss->speedIncreaseInterval) {
+      ss->speedIncreaseTimer = 0;
+      pm->maxSpeed.x= pm->maxSpeed.x + 4;
+      pm->maxSpeed.y= pm->maxSpeed.y + 4;
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
+  DECL_PTR(ecs::Node, _terrain)
+  DECL_PTR(ecs::Node, _player)
   DECL_PTR(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
@@ -53,6 +55,8 @@ GLayer::~GLayer() {
 //
 void GLayer::onInited() {
 
+  _terrain= _engine->getNodes("n/Terrain")[0];
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
@@ -64,6 +68,8 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
+  auto mv=CC_GEC(PlayerMotion,_player,"f/CMove");
+  mv->jumping= false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -73,14 +79,43 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const c::Vec2 &tap) {
+
+  auto ps=CC_GEC(PlayerStats,_player,"f/CStats");
+  auto py=CC_GEC(Player,_player,"f/CPixie");
+  auto te=CC_GEC(Terrain,_terrain,"f/CPixie");
+
+  if (!MGMS()->isLive()) {
+
+    if (ps->state == kPlayerDying) {
+      te->reset();
+      py->reset();
+      resetGame();
+    }
+
+    return true;
+  }
+
+  if (!te->startTerrain) {
+    te->startTerrain= true;
+    return true;
+  }
+
+  if (ps->state == kPlayerFalling) {
+    pm->setFloating(!pm->getFloating());
+  }
+  else
+  if (ps->state !=  kPlayerDying) {
+    pm->setJumping(true);
+  }
+
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  return true;
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -91,6 +126,7 @@ void GLayer::onTouchMotion(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
