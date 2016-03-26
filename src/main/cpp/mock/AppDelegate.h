@@ -9,37 +9,18 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+#include "aeon/fusilli.h"
+#include "core/App.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+struct CC_DLL AppDelegate : public fusii::App {
+  virtual ~AppDelegate();
+  AppDelegate();
+};
 
 
-NS_END
 

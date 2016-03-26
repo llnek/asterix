@@ -9,37 +9,60 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
+#include "GameSprite.h"
 
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(mock)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
-
-}
+enum  {
+    kBlockGap,
+    kBlock1,
+    kBlock2,
+    kBlock3,
+    kBlock4
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+class CC_DLL Block : public GameSprite {
 
+  DECL_IZ(_tileHeight)
+  DECL_IZ(_tileWidth)
+  DECL_IZ(_type)
+
+public:
+
+  static owner<Block*> create(const c::Rect &frame);
+  void setupBlock(int width, int height, int type);
+
+  DECL_MTDS(int,_type,Type);
+
+  virtual int left() {
+    return this->getPositionX();
+  }
+
+  virtual int right() {
+    return this->getPositionX() + _width;
+  }
+
+  virtual int top() {
+      return height();
+  }
+
+  virtual int bottom() {
+    return 0;
+  }
+
+
+};
 
 NS_END
+
+
 

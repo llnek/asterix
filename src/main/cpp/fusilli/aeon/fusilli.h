@@ -123,6 +123,12 @@ typedef std::string sstr;
 #define s_map std::map
 
 //////////////////////////////////////////////////////////////////////////////
+//
+#define DECL_MTDS(varType, varName, funName) \
+virtual varType get##funName() const { return varName; } \
+virtual void set##funName(varType var){ varName = var; }
+
+//////////////////////////////////////////////////////////////////////////////
 // c++ constructor stuff
 #define NOCPYASS(T) \
   T&operator =(const T&) = delete;  \

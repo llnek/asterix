@@ -9,37 +9,46 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+//////////////////////////////////////////////////////////////////////////////
+
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
 #include "AI.h"
-#include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+void AI::preamble() {
+  _shared= _engine->getNodes("n/GVars")[0];
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool AI::update(float dt) {
+  if (MGMS()->isLive()) {
+    parallex(dt);
+    process(dt);
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void AI::parallex(float dt) {
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
+void AI::process(float dt) {
 }
+
 
 
 NS_END
+
+
 

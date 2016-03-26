@@ -1,4 +1,4 @@
-// This library is distributed in  the hope that it will be useful but without
+﻿// This library is distributed in  the hope that it will be useful but without
 // any  warranty; without  even  the  implied  warranty of  merchantability or
 // fitness for a particular purpose.
 // The use and distribution terms for this software are covered by the Eclipse
@@ -9,37 +9,39 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
+#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
 
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_ALIAS(cx, fusii::ccsx)
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+struct CC_DLL GameSprite : public f::CPixie {
 
-}
+	CC_SYNTHESIZE(Point, _nextPosition, NextPosition);
+	CC_SYNTHESIZE(float, _width, Width);
+	CC_SYNTHESIZE(float, _height, Height);
+	CC_SYNTHESIZE(Point, _vector, Vector);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+
+    inline virtual void place () { this->setPosition(_nextPosition); };
+
+
+    inline void setSize() {
+    	_width = this->boundingBox().size.width;
+		_height = this->boundingBox().size.height;
+    }
+
+};
 
 
 NS_END
+
+
+
 

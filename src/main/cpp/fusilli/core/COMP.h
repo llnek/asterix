@@ -99,7 +99,8 @@ struct CC_DLL CHuman : public ecs::Component {
 //
 struct CC_DLL CStats : public ecs::Component {
   MDECL_COMP_TPID("f/CStats")
-  DECL_FZ(value)
+  DECL_IZ(state)
+  DECL_IZ(value)
   CStats(int v) { value=v;}
   CStats() {}
 };

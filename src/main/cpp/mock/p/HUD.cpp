@@ -12,34 +12,33 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
+#include "HUD.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(mock)
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+void HUDLayer::decoUI() {
 
+  auto wb= cx::visBox();
+
+  _scoreLabel= cx::reifyLabel("dft", 24, "0");
+  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
+  addItem(_scoreLabel);
+
+  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
+void HUDLayer::updateScore(int n) {
+  _score += n;
+  _scoreLabel->setString(FTOS(_score));
 }
 
 
 NS_END
+
+
 

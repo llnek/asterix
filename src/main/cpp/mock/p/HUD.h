@@ -9,37 +9,29 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
-
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
-
+#pragma once
 //////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
 
-}
+#include "x2d/XLayer.h"
+NS_BEGIN(mock)
 
-//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+struct CC_DLL HUDLayer : public f::XLayer {
+
+  STATIC_REIFY_LAYER(HUDLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(3)
+
+  DECL_PTR(c::Label, _scoreLabel)
+  DECL_IZ(_score)
+
+  int getScore() { return _score; }
+  void updateScore(int);
+};
 
 
 NS_END
+
+
 

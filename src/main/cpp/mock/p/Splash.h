@@ -9,37 +9,22 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
 
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+#include "x2d/XScene.h"
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+struct CC_DLL Splash : public f::XScene {
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+  STATIC_REIFY_SCENE(Splash)
+  MDECL_DECORATE()
+};
 
 
 NS_END
+
+
 

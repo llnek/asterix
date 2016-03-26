@@ -9,37 +9,36 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
-
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+class CC_DLL Config : public f::XConfig {
 
-}
+  void initAssets();
+  void initLevels();
+  void initCsts();
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+public:
+
+  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
+
+  virtual const c::Size gameSize() { return c::Size(320,480); }
+
+  virtual void handleResolution(const c::Size &rs);
+  virtual c::Scene* prelude();
+
+  virtual void runOnce();
+  static owner<Config*> reify();
+
+};
 
 
 NS_END
+
+
 

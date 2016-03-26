@@ -9,37 +9,35 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "GEngine.h"
 
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+class CC_DLL AI : public ecs::System {
 
-}
+  DECL_PTR(ecs::Node, _shared)
+  void parallex(float);
+  void process(float);
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+public:
+
+  MDECL_SYS_PRIORITY( ecs::AI)
+  MDECL_SYS_TPID("n/AI")
+  MDECL_SYS_PREAMBLE()
+  MDECL_SYS_UPDATE()
+
+  AI(ecs::Engine *e)
+  : System(e)
+  {}
+
+};
 
 
 NS_END
+
+
 

@@ -19,15 +19,21 @@
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  // global
   auto ent= this->reifyNode("Shared",true);
   auto ss= mc_new(GVars);
   ent->checkin(ss);
+
+  //terrain
+  //
+  ent= this->reifyNode();
+
+  //player
+  ent= this->reifyNode();
 
 }
 

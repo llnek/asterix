@@ -9,37 +9,36 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#pragma once
+//////////////////////////////////////////////////////////////////////////////
+
 #include "x2d/GameScene.h"
-#include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "Resolve.h"
-#include "Collide.h"
-#include "Move.h"
-#include "AI.h"
-#include "GEngine.h"
 
-NS_ALIAS(cx,fusii::ccsx)
-NS_BEGIN(@@APPID@@)
+NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initEntities() {
-  // global
-  auto ent= this->reifyNode("Shared",true);
-  auto ss= mc_new(GVars);
-  ent->checkin(ss);
+struct CC_DLL Game : public f::GameScene {
+  virtual void sendMsgEx(const MsgTopic&, void*);
+  virtual f::GameLayer* getGLayer() {
+    return
+       (f::GameLayer*) getLayer(2);
+  }
 
-}
+  STATIC_REIFY_SCENE_CTX(Game)
+  MDECL_DECORATE()
+
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::initSystems() {
-  regoSystem(mc_new1(Resolve,this));
-  regoSystem(mc_new1(Collide,this));
-  regoSystem(mc_new1(AI,this));
-  regoSystem(mc_new1(Move,this));
-}
+struct CC_DLL GameCtx : public f::GCX {
+};
 
 
 NS_END
+
+
+
 
