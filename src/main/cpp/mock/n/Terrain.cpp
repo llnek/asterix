@@ -24,10 +24,10 @@ static int widths[] = {2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4};
 static int heights[] = {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,4};
 static int types[] = {1,2,3,4,1,3,2,4,3,2,1,4,2,3,1,4,2,3,1,2,3,2,3,4,1,2,4,3,1,3,1,4,2,4,2,1,2,3};
 
-static vector<int> _blockPattern(patterns, patterns+sizeof(patterns) / sizeof(int));
-static vector<int> _blockWidths(widths, widths+sizeof(widths) / sizeof(int));
-static vector<int> _blockHeights(heights, heights+sizeof(heights) / sizeof(int));
-static vector<int> _blockTypes(types, types+sizeof(types) / sizeof(int));
+static s_vec<int> _blockPattern(patterns, patterns+SIZEOFX(patterns,int));
+static s_vec<int> _blockWidths(widths, widths+SIZEOFX(widths,int));
+static s_vec<int> _blockHeights(heights, heights+SIZEOFX(heights,int));
+static s_vec<int> _blockTypes(types, types+SIZEOFX(types,int));
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -78,7 +78,7 @@ void Terrain::checkCollision(ecs::Node *node) {
 
   auto ps= CC_GEC(PlayerStats,node,"f/CStats");
   auto py= CC_GEC(Player,node,"f/CPixie");
-  auto mv= CC_GEC(f::CMove,node,"f/CMove");
+  auto mv= CC_GEC(PlayerMotion,node,"f/CMove");
 
   if (ps->state == kPlayerDying) {
   return; }
@@ -87,48 +87,51 @@ void Terrain::checkCollision(ecs::Node *node) {
 
   for (auto block : _blocks) {
 
-    if (block->getType() == kBlockGap) {
+    if (block->isGap()) {
     continue; }
 
     //if within x, check y (bottom collision)
-    if (py->right() >= this->getPositionX() + block->left() &&
-        py->left() <= this->getPositionX() + block->right()) {
+    if (cx::getRight(py) >= this->getPositionX() + cx::getLeft(block) &&
+        cx::getLeft(py) <= this->getPositionX() + cx::getRight(block)) {
 
-      if (py->bottom() >= block->top() &&
-          py->next_bottom() <= block->top() &&
-          py->top() > block->top()) {
+      if (cx::getBottom(py) >= cx::getTop(block) &&
+          mv->nextPos.y - cx::getHeight(py) <= cx::getTop(block) &&
+          cx::getTop() > cx::getTop()) {
 
-        py->setNextPosition(c::Vec2(py->getNextPosition().x,
-                                    block->top() + py->height()));
-        py->setVector(c::Vec2(py->getVector().x, 0));
+        mv->nextPos = c::Vec2(mv->nextPos.x, cx::getTop(block) + cx::getHeight(py));
+        mv->vel= c::Vec2(mv.vel.x, 0);
         py->setRotation(0);
         inAir = false;
         break;
       }
-
     }
   }
 
   for (auto block : _blocks) {
-    if (block->getType() == kBlockGap) {
+
+    if (block->isGap()) {
     continue; }
 
     //now if within y, check x (side collision)
-    if ((py->bottom() < block->top() &&
-         py->top() > block->bottom()) ||
-        (py->next_bottom() < block->top() &&
-         py->next_top() > block->bottom())) {
+    if ((cx::getBottom(py) < cx::getTop(block) &&
+          cx::getTop(py) > cx::getBottom(block)) ||
+        (mv->nextPos.y - cx::getHeight(py) < cx::getTop(block) &&
+         mv->nextPos.y > cx::getBottom(block))) {
 
-      if (py->right() >= this->getPositionX() + block->getPositionX() &&
-          py->left() < this->getPositionX() + block->getPositionX()) {
+      if (cx::getRight(py) >= this->getPositionX() + block->getPositionX() &&
+          cx::getLeft(py) < this->getPositionX() + block->getPositionX()) {
 
-        py->setPositionX(this->getPositionX() + block->getPositionX() - HTV(py->width()));
-        py->setNextPosition(c::Vec2(this->getPositionX() + block->getPositionX() - HTV(py->width()), py->getNextPosition().y));
-        py->setVector(c::Vec2(py->getVector().x * -0.5, py->getVector().y));
-        if (py->bottom() + py->height() * 0.2 < block->top()) {
+        py->setPositionX(this->getPositionX() +
+                         block->getPositionX() - HTV(py->width()));
+
+        mv->nextPos= c::Vec2(this->getPositionX() + block->getPositionX() - HTV(cx::getWidth(py)), mv.nextPos.y);
+
+        mv->vel= c::Vec2(mv.vel.x * -0.5, mv.vel.y);
+        if (cx::getBottom(py) + cx::getHeight(py) * 0.2 < cx::getTop(block)) {
           ps->state= kPlayerDying;
           return;
         }
+
         break;
       }
     }
@@ -138,8 +141,9 @@ void Terrain::checkCollision(ecs::Node *node) {
     py->state= kPlayerFalling;
   } else {
     py->state= kPlayerMoving;
-    py->floating= false;
+    py->setFloating(false);
   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -165,17 +169,19 @@ void Terrain::move(float xMove) {
   auto pos= this->getPosition();
   auto block = _blocks.at(0);
 
-  if (pos.x + block->width() < 0) {
+  if (pos.x + cx::getWidth(block) < 0) {
 
     auto firstBlock = _blocks.at(0);
     _blocks.erase(0);
     _blocks.pushBack(firstBlock);
-    this->setPositionX(pos.x + block->width());
+    this->setPositionX(pos.x + cx::getWidth(block));
 
-    float width_cnt = this->width() - block->width() - (_blocks.at(0))->width();
+    float width_cnt = cx::getWidth(this) - cx::getWidth(block) - cx::getWidth(_blocks.at(0));
+
     this->initBlock(block);
     this->addBlocks(width_cnt);
   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,7 +194,7 @@ void Terrain::reset() {
   auto currentWidth = 0;
   for (auto block : _blocks) {
     this->initBlock(block);
-    currentWidth += block->width();
+    currentWidth += cx::getWidth(block);
   }
 
   while (currentWidth < _minTerrainWidth) {
@@ -199,7 +205,7 @@ void Terrain::reset() {
     }
     _blocks.pushBack(block);
     this->initBlock(block);
-    currentWidth += block->width();
+    currentWidth += cx::getWidth(block);
   }
 
   this->distributeBlocks();
@@ -236,7 +242,7 @@ void Terrain::distributeBlocks() {
     auto block = _blocks.at(i);
     if (i != 0) {
       auto prev = _blocks.at(i - 1);
-      block->setPositionX(prev->getPositionX() + prev->width());
+      block->setPositionX(prev->getPositionX() + cx::getWidth(prev));
     } else {
       block->setPositionX(0);
     }
@@ -245,17 +251,17 @@ void Terrain::distributeBlocks() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Terrain::initBlock(Block * block) {
+void Terrain::initBlock(Block *block) {
 
   auto type = _blockTypes[_currentTypeIndex];
   ++_currentTypeIndex;
 
-  int blockWidth;
-  int blockHeight;
-
   if (_currentTypeIndex == _blockTypes.size()) {
     _currentTypeIndex = 0;
   }
+
+  float blockHeight;
+  float blockWidth;
 
   //check if min distance reached;
   if (_startTerrain) {
@@ -265,7 +271,7 @@ void Terrain::initBlock(Block * block) {
       auto gap = cx::randInt(_gapSize);
       if (gap < 2) { gap = 2; }
 
-      block->setupBlock(gap, 0, kBlockGap);
+      block->setupBlock(_visRect, gap, 0, kBlockGap);
       _showGap = false;
     } else {
 
@@ -296,7 +302,7 @@ void Terrain::initBlock(Block * block) {
         s::random_shuffle(_blockHeights.begin(), _blockHeights.end());
       }
 
-      block->setupBlock(blockWidth, blockHeight, type);
+      block->setupBlock(_visRect, blockWidth, blockHeight, type);
       _lastBlockWidth = blockWidth;
       _lastBlockHeight = blockHeight;
 
@@ -318,7 +324,7 @@ void Terrain::initBlock(Block * block) {
   } else {
     _lastBlockHeight = 2;
     _lastBlockWidth = rand() % 2 + 2;
-    block->setupBlock(_lastBlockWidth, _lastBlockHeight, type);
+    block->setupBlock(_visRect, _lastBlockWidth, _lastBlockHeight, type);
   }
 
 }

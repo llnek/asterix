@@ -30,6 +30,9 @@ enum {
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
+  DECL_IZ(speedIncreaseInterval)
+  DECL_IZ(speedIncreaseTimer)
+
 };
 
 

@@ -12,9 +12,6 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
-#include "core/COMP.h"
-#include "core/CCSX.h"
 #include "GameSprite.h"
 
 #define PLAYER_INITIAL_SPEED 8
@@ -36,38 +33,60 @@ enum PlayerState {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class CC_DLL PlayerMotion : public f::CMove {
+
+  DECL_BF(_floating)
+  DECL_BF(_jumping)
+  DECL_BF(_inAir)
+
+public:
+
+  DECL_IZ(floatingTimerMax)
+  DECL_FZ(floatingTimer)
+  DECL_IZ(floatingInterval)
+  DECL_BF(hasFloated)
+
+  bool getFloating() { return _floating; }
+  void setFloating(bool b) {
+    _floating=b;
+  }
+
+  bool getJumping() { return _jumping; }
+  void setJumping(bool b) {
+    _jumping=b;
+  }
+
+  bool getInAir() { return _inAir; }
+  void setInAir(bool b) {
+    _inAir=b;
+  }
+
+  PlayerMotion(const c::Rect&);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL PlayerStats : public f::CStats {
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 class CC_DLL Player : public GameSprite {
-
-    float _speed;
-  int _floatingTimerMax;
-  float _floatingTimer;
-  int _floatingInterval;
-  bool _hasFloated;
-
-  Size _screenSize;
 
   void initPlayer();
 
 public:
 
-  Player(void);
   virtual ~Player(void);
+  Player(void);
 
-  CC_SYNTHESIZE(PlayerState, _state, State);
-  CC_SYNTHESIZE(bool, _inAir, InAir);
-  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
-    CC_SYNTHESIZE(bool, _jumping, Jumping);
-    CC_SYNTHESIZE(float, _maxSpeed, MaxSpeed);
+  static owner<Player*> create();
 
-    static Player * create (void);
+  virtual void update(float dt);
+  void reset();
 
-  virtual void update (float dt);
-
-    void setFloating (bool value);
-
-    void reset (void);
-
-  inline virtual void place () {
+  virtual void place () {
     this->setPositionY( _nextPosition.y );
         if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
             this->setPositionX(this->getPositionX() + _vector.x);
@@ -77,35 +96,35 @@ public:
         }
   };
 
-    inline int left() {
+    int left() {
       return this->getPositionX() - _width * 0.5f;
   }
 
-  inline int right() {
+  int right() {
       return this->getPositionX() + _width * 0.5f;
   }
 
-    inline int top() {
+    int top() {
       return this->getPositionY() ;
     }
 
-    inline int bottom() {
+    int bottom() {
     return this->getPositionY() - _height ;
     }
 
-    inline int next_left() {
+    int next_left() {
       return _nextPosition.x - _width * 0.5f;
     }
 
-    inline int next_right() {
+    int next_right() {
       return _nextPosition.x + _width * 0.5f;
     }
 
-    inline int next_top() {
+    int next_top() {
       return _nextPosition.y ;
     }
 
-    inline int next_bottom() {
+    int next_bottom() {
       return _nextPosition.y - _height;
     }
 

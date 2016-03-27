@@ -510,32 +510,35 @@ const c::Rect bbox(not_null<c::Node*> s) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-float getScaledHeight(not_null<c::Node*> s) {
-  return s->getContentSize().height * s->getScaleY();
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
 float getHeight(not_null<c::Node*> s) {
-  return s->getContentSize().height;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-float getScaledWidth(not_null<c::Node*> s) {
-  return s->getContentSize().width * s->getScaleX();
+  //return s->getContentSize().height * s->getScaleY();
+  return s->getBoundingBox().size.height;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 float getWidth(not_null<c::Node*> s) {
+  //return s->getContentSize().width * s->getScaleX();
+  return s->getBoundingBox().size.width;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+float getContentHeight(not_null<c::Node*> s) {
+  return s->getContentSize().height;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+float getContentWidth(not_null<c::Node*> s) {
   return s->getContentSize().width;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 static float get_XXX(not_null<c::Node*> s, float px, float bound) {
-  auto w= s->getContentSize().width;
+  //auto w= s->getContentSize().width;
+  auto w= s->getBoundingBox().size.width;
   auto a= s->getAnchorPoint().x;
   return px + (bound - a) * w ;
 }
@@ -543,7 +546,8 @@ static float get_XXX(not_null<c::Node*> s, float px, float bound) {
 //////////////////////////////////////////////////////////////////////////
 //
 static float get_YYY(not_null<c::Node*> s, float py, float bound) {
-  auto h= s->getContentSize().height;
+  //auto h= s->getContentSize().height;
+  auto h= s->getBoundingBox().size.height;
   auto a= s->getAnchorPoint().y;
   return py + (bound - a) * h ;
 }

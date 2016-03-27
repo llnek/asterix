@@ -15,14 +15,11 @@
 #include "Player.h"
 #include "Block.h"
 
-#define TILE_H_SIZE 6
-#define TILE_W_SIZE 8
-
 NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Terrain : public Sprite {
+class CC_DLL Terrain : public f::CPixie {
 protected:
 
   c::Vector<Block*> _blockPool;
@@ -55,7 +52,8 @@ protected:
   void distributeBlocks();
   void initBlock(Block*);
 
-  float width () {
+
+  float totalWidth () {
     auto w= 0;
     for (auto block : _blocks) {
       w += block->width();
@@ -65,16 +63,14 @@ protected:
 
 public:
 
-  virtual ~Terrain();
-  Terrain() {}
-
-  //CC_SYNTHESIZE(bool, _startTerrain, StartTerrain);
-
   static owner<Terrain*> create(const c::Rect&);
 
   void checkCollision(ecs::Node*);
   void move (float xMove);
   void reset();
+
+  virtual ~Terrain();
+  Terrain() {}
 
 };
 

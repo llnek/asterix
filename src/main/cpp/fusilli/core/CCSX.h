@@ -119,7 +119,7 @@ namespace ccsx {
   float deltaY(not_null<c::Node*> a, not_null<c::Node*> b);
   bool isClicked(not_null<c::Node*>, const c::Vec2&);
 
-    const Box4 bbox4(not_null<c::Node*>);
+  const Box4 bbox4(not_null<c::Node*>);
   inline const Box4 bbox4(not_null<CPixie*> c) {
     return bbox4(c);
   }
@@ -149,8 +149,8 @@ namespace ccsx {
 
   const c::Rect bbox(not_null<c::Node*>);
 
-  float getScaledHeight(not_null<c::Node*>);
-  float getScaledWidth(not_null<c::Node*>);
+  float getContentHeight(not_null<c::Node*>);
+  float getContentWidth(not_null<c::Node*>);
 
   float getHeight(not_null<c::Node*>);
   float getWidth(not_null<c::Node*>);

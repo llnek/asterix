@@ -14,19 +14,14 @@
 #include "core/CCSX.h"
 #include "Block.h"
 
-#define TILE_H_SIZE 6
-#define TILE_W_SIZE 8
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Block*> Block::create(const c::Rect &frame) {
+owner<Block*> Block::create() {
 
   auto b= mc_new(Block);
-  b->_tileHeight = frame.size.height / TILE_H_SIZE;
-  b->_tileWidth = frame.size.width / TILE_W_SIZE;
   b->initWithFile("pics/blank.png");
   CC_HIDE(b);
   b->autorelease();
@@ -35,13 +30,14 @@ owner<Block*> Block::create(const c::Rect &frame) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Block::setupBlock(int width, int height, int type) {
+void Block::setupBlock(constc::Rect &wz, int wd, int ht, int type) {
 
-  _height = height * _tileHeight;
-  _width = width * _tileWidth;
+  auto height = ht * wz.size.height / TILE_H_SIZE;
+  auto width = wd * wz.size.width / TILE_W_SIZE;
+
   _type = type;
 
-  this->setTextureRect(c::Rect(0, 0, _width, _height));
+  this->setTextureRect(c::Rect(0, 0, width, height));
   this->setAnchorPoint(cx::anchorBL());
 
   switch (type) {

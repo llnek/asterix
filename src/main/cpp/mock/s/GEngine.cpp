@@ -30,10 +30,16 @@ void GEngine::initEntities() {
 
   //terrain
   //
-  ent= this->reifyNode();
+  ent= this->reifyNode("Terrain", true);
+  auto t=Terrain::create(wz);
+  MGML()->addAtlasItem("blank", t, kMiddleground);
+  ent->checkin(t);
 
   //player
-  ent= this->reifyNode();
+  ent= this->reifyNode("Player", true);
+  auto p=Player::create(wz);
+  MGML()->addAtlasItem("blank", p, kMiddleground);
+  ent->checkin(p);
 
 }
 

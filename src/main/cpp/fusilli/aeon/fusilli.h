@@ -149,6 +149,9 @@ virtual void set##funName(varType var){ varName = var; }
 #define DECL_TD(T,m) T m;
 #define DECL_TV(T,m,v) T m=v;
 
+// find length of array
+#define SIZEOFX(var,type) (sizeof(var)/sizeof(type))
+
 // handy macros
 #define FTOS(n) s::to_string(n)
 // halve this value

@@ -12,55 +12,39 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
 #include "core/COMP.h"
-#include "core/CCSX.h"
-#include "GameSprite.h"
+
+#define TILE_H_SIZE 6
+#define TILE_W_SIZE 8
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(mock)
 
 enum  {
-    kBlockGap,
-    kBlock1,
-    kBlock2,
-    kBlock3,
-    kBlock4
+
+  kBlockGap,
+  kBlock1,
+  kBlock2,
+  kBlock3,
+  kBlock4
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Block : public GameSprite {
+class CC_DLL Block : public c::Sprite {
 
-  DECL_IZ(_tileHeight)
-  DECL_IZ(_tileWidth)
   DECL_IZ(_type)
 
 public:
 
-  static owner<Block*> create(const c::Rect &frame);
-  void setupBlock(int width, int height, int type);
+  void setupBlock(const c::Rect&, int width, int height, int type);
+  bool isGap() { return _type== kBlockGap; }
+  static owner<Block*> create();
 
   DECL_MTDS(int,_type,Type);
-
-  virtual int left() {
-    return this->getPositionX();
-  }
-
-  virtual int right() {
-    return this->getPositionX() + _width;
-  }
-
-  virtual int top() {
-      return height();
-  }
-
-  virtual int bottom() {
-    return 0;
-  }
-
-
 };
+
 
 NS_END
 

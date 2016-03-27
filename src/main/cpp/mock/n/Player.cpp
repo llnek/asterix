@@ -22,30 +22,34 @@ NS_BEGIN(mock)
 //////////////////////////////////////////////////////////////////////////////
 //
 Player::Player() {
-  _floatingTimerMax = 2;
-  _floatingTimer = 0;
-  _speed = PLAYER_INITIAL_SPEED;
-  _maxSpeed = PLAYER_INITIAL_SPEED;
-  _floating = false;
-  _nextPosition = Vec2(0,0);
-  _nextPosition.y = _screenSize.height * 0.6f;
-  _state = kPlayerMoving;
-  _jumping = false;
-  _hasFloated = false;
 }
 
-PlayerMotion::PlayerMotion() {
-  _floatingTimerMax = 2;
-  _floatingTimer = 0;
-  _speed = PLAYER_INITIAL_SPEED;
-  _maxSpeed = PLAYER_INITIAL_SPEED;
+//////////////////////////////////////////////////////////////////////////////
+//
+PlayerMotion::PlayerMotion(const c::Rect &frame) {
+
+  nextPos = c::Vec2(0,_visRect.size.height * 0.6);
+
+  floatingTimerMax = 2;
+  floatingTimer = 0;
+  hasFloated = false;
+
   _floating = false;
-  _nextPosition = Vec2(0,0);
-  _nextPosition.y = _screenSize.height * 0.6f;
-  _state = kPlayerMoving;
   _jumping = false;
-  _hasFloated = false;
+  _visRect=frame;
+
+  maxSpeed.x = PLAYER_INITIAL_SPEED;
+  maxSpeed.y = PLAYER_INITIAL_SPEED;
+  speed.x = PLAYER_INITIAL_SPEED;
+  speed.y = PLAYER_INITIAL_SPEED;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+PlayerStats::PlayerStats() {
+  state = kPlayerMoving;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Player*> Player::create() {

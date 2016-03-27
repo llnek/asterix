@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "Splash.h"
+#include "Game.h"
 #include "Config.h"
 NS_BEGIN(mock)
 
@@ -34,75 +34,45 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  _game_id= "@@GAMEID@@";
+  _game_id= "c2371c3e-293a-4d27-880a-90e3a889e386";
   _app_id = "mock";
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-
-  addImage("game.bg", CC_STR("pics/background.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
-
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
+  addImage("blank", CC_STR("pics/blank.png"));
+
+  addFont("text", CC_STR("fon/en/arial.ttf"));
   addFont("dft", CC_STR("fon/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
-#if defined(BLAH)
-  // retina iPad
-  if (2048 == rs.width || 2048 == rs.height ) {
-    resDirOrders.push_back("ipadhd");
-    resDirOrders.push_back("ipad");
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(1536, 2048, ResolutionPolicy::NO_BORDER);
+  auto gz= gameSize();
+  float h;
+  sstr d="sd";
+
+  if (rs.height > 768) {
+    h=1536;
+    d="rd";
   }
-  else // non retina iPad
-  if (1024 == rs.width || 1024 == rs.height ) {
-    resDirOrders.push_back("ipad");
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(768, 1024, ResolutionPolicy::NO_BORDER);
-  }
-  else // retina iPhone (5 and 5S)
-  if (1136 == rs.width || 1136 == rs.height ) {
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(640, 1136, ResolutionPolicy::NO_BORDER);
-  }
-  else // retina iPhone (4 and 4S)
-  if ( 960 == rs.width || 960 == rs.height ) {
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(640, 960, ResolutionPolicy::NO_BORDER);
-  }
-  else { // non retina iPhone and Android devices
-    if (1080 < screenSize.width ) { // android devices that have a high resolution
-      resDirOrders.push_back("iphonehd");
-      resDirOrders.push_back("iphone");
-      glview->setDesignResolutionSize(640, 960, ResolutionPolicy::NO_BORDER);
-    } else { // non retina iPhone and Android devices with lower resolutions
-      resDirOrders.push_back("iphone");
-      glview->setDesignResolutionSize(320, 480, ResolutionPolicy::NO_BORDER);
-    }
+  else if (rs.height > 320) {
+    h=768;
+    d="hd";
+  } else {
+    h=380;
+    d="sd";
   }
 
-  fileUtils->setSearchPaths(resDirOrders);
-#endif
+  CC_DTOR()->setContentScaleFactor(h/gz.height);
+  fileUtils->setSearchPaths(s_vec<sstr>{d,"sfx"});
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +87,7 @@ void Config::runOnce() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Splash::reify();
+  return Game::reify(new GameCtx());
 }
 
 

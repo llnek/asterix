@@ -33,6 +33,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
+  void reset();
+
   virtual void onMouseMotion(const c::Vec2&);
   virtual bool onMouseStart(const c::Vec2&);
   virtual void onMouseClick(const c::Vec2&);
@@ -63,13 +65,14 @@ void GLayer::onInited() {
   auto wz= cx::visRect();
   auto wb= cx::visBox();
 
+  reset();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onMouseClick(const c::Vec2 &loc) {
   auto mv=CC_GEC(PlayerMotion,_player,"f/CMove");
-  mv->jumping= false;
+  mv->setJumping(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -130,16 +133,20 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::reset() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  ss->speedIncreaseInterval = 15;
+  ss->speedIncreaseTimer = 0;
+  MGMS()->play();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
+
+  regoAtlas("blank", kMiddleground);
   _engine = mc_new(GEngine);
 
-  auto b= regoAtlas("blank", kMiddleground);
-
-  _terrain = Terrain::create();
-  addAtlasItem("blank", _terrain, kMiddleground);
-
-  _player = Player::create();
-  addAtlasItem("blank", _player, kBackground);
 
   //cx::sfxMusic("background", true);
 }
