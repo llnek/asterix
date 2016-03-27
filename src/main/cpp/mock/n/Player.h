@@ -12,8 +12,6 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "GameSprite.h"
-
 #define PLAYER_INITIAL_SPEED 8
 #define PLAYER_JUMP 42
 #define FORCE_GRAVITY 1.5
@@ -42,21 +40,19 @@ class CC_DLL PlayerMotion : public f::CMove {
 public:
 
   DECL_IZ(floatingTimerMax)
-  DECL_FZ(floatingTimer)
   DECL_IZ(floatingInterval)
+  DECL_FZ(floatingTimer)
   DECL_BF(hasFloated)
 
-  bool getFloating() { return _floating; }
-  void setFloating(bool b) {
-    _floating=b;
-  }
+  bool isFloating() { return _floating; }
+  void setFloating(bool b);
 
-  bool getJumping() { return _jumping; }
+  bool isJumping() { return _jumping; }
   void setJumping(bool b) {
     _jumping=b;
   }
 
-  bool getInAir() { return _inAir; }
+  bool isInAir() { return _inAir; }
   void setInAir(bool b) {
     _inAir=b;
   }
@@ -68,65 +64,47 @@ public:
 //
 class CC_DLL PlayerStats : public f::CStats {
 
+  PlayerStats::PlayerStats() {
+    state = kPlayerMoving;
+  }
+
+  void reset() {
+    state = kPlayerMoving;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Player : public GameSprite {
+class CC_DLL Player : public f::CPixie {
+
+  DECL_TD(c::Rect, _visRect)
+  DECL_FZ(_height)
+  DECL_FZ(_width)
 
   void initPlayer();
 
 public:
 
-  virtual ~Player(void);
-  Player(void);
-
   static owner<Player*> create();
 
-  virtual void update(float dt);
-  void reset();
+  virtual ~Player();
+  Player();
+
+  void reset() {
+    this->setPosition(_visRect.size.width * 0.2, _visRect.size.height * 0.6);
+    this->setRotation(0);
+  }
 
   virtual void place () {
     this->setPositionY( _nextPosition.y );
-        if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
-            this->setPositionX(this->getPositionX() + _vector.x);
-            if (this->getPositionX() > _screenSize.width * 0.2f) {
-                this->setPositionX(_screenSize.width * 0.2f);
-            }
+    if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
+        this->setPositionX(this->getPositionX() + _vector.x);
+        if (this->getPositionX() > _screenSize.width * 0.2f) {
+            this->setPositionX(_screenSize.width * 0.2f);
         }
+    }
   };
-
-    int left() {
-      return this->getPositionX() - _width * 0.5f;
-  }
-
-  int right() {
-      return this->getPositionX() + _width * 0.5f;
-  }
-
-    int top() {
-      return this->getPositionY() ;
-    }
-
-    int bottom() {
-    return this->getPositionY() - _height ;
-    }
-
-    int next_left() {
-      return _nextPosition.x - _width * 0.5f;
-    }
-
-    int next_right() {
-      return _nextPosition.x + _width * 0.5f;
-    }
-
-    int next_top() {
-      return _nextPosition.y ;
-    }
-
-    int next_bottom() {
-      return _nextPosition.y - _height;
-    }
 
 };
 

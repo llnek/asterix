@@ -23,6 +23,8 @@ NS_BEGIN(mock)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
+  _terrain= _engine->getNodes("n/Terrain")[0];
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -45,8 +47,8 @@ void Move::process(float dt) {
   auto te=CC_GEC(Terrain,_terrain,"f/CPixie");
   auto batch=MGML()->getAtlas("blank");
 
-  if (py->getPositionY() < -py->height() ||
-      py->getPositionX() < -HTV(py->width()) ) {
+  if (py->getPositionY() < -cx::getHeight(py) ||
+      py->getPositionX() < -HTV(cx::getWidth(py)) ) {
      SENDMSG("/game/stop");
      return;
   }
@@ -73,7 +75,58 @@ void Move::process(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::onKeys(float dt) {
+void Move::processPlayer(float dt) {
+
+  if (mv.speed.x + P_ACCELERATION <= mv.maxSpeed.x) {
+    mv.speed.x += P_ACCELERATION;
+  } else {
+    mv.speed.x = mv.maxSpeed.x;
+  }
+
+  mv.vel.x = mv.speed.x;
+
+  switch (ps->state) {
+    case kPlayerMoving:
+      if (mv->hasFloated) { mv->hasFloated = false; }
+      mv->vel.y -= FORCE_GRAVITY;
+    break;
+
+    case kPlayerFalling:
+      if (mv->isFloating() ) {
+        mv->vel.x *= FLOATING_FRICTION;
+        mv->vel.y -= FLOATNG_GRAVITY;
+      } else {
+        mv->vel.y -= FORCE_GRAVITY;
+        mv->vel.x *= AIR_FRICTION;
+        mv->floatingTimer = 0;
+      }
+    break;
+
+    case kPlayerDying:
+      mv->vel.y -= FORCE_GRAVITY;
+      mv->vel.x = -mv->speed.x;
+      py->setPositionX(py->getPositionX() + mv->vel.x);
+    break;
+  }
+
+  if (mv->isJumping() ) {
+    mv->vel.y += PLAYER_JUMP * 0.25;
+    ps->state = kPlayerFalling;
+    if (mv->vel.y > PLAYER_JUMP) { mv->setJumping(false); }
+  }
+
+  if (mv->vel.y < -TERMINAL_VELOCITY) { mv->vel.y = -TERMINAL_VELOCITY; }
+
+  mv->nextPos.y = py->getPositionY() + mv->vel.y;
+
+  if (mv->isFloating() ) {
+    mv->floatingTimer += dt;
+    if (mv->floatingTimer > mv->floatingTimerMax) {
+      mv->floatingTimer = 0;
+      mv->setFloating(false);
+    }
+  }
+
 }
 
 
