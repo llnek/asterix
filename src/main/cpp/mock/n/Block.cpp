@@ -20,7 +20,6 @@ NS_BEGIN(mock)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Block*> Block::create() {
-
   auto b= mc_new(Block);
   b->initWithFile("pics/blank.png");
   CC_HIDE(b);
@@ -30,45 +29,44 @@ owner<Block*> Block::create() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Block::setupBlock(constc::Rect &wz, int wd, int ht, int type) {
+void Block::setupBlock(const c::Rect &wz, const c::Size &sz, int type) {
 
-  auto height = ht * wz.size.height / TILE_H_SIZE;
-  auto width = wd * wz.size.width / TILE_W_SIZE;
+  auto h= sz.height * wz.size.height / TILE_H_SIZE;
+  auto w= sz.width * wz.size.width / TILE_W_SIZE;
 
-  _type = type;
-
-  this->setTextureRect(c::Rect(0, 0, width, height));
+  this->setTextureRect(c::Rect(0, 0, w, h));
   this->setAnchorPoint(cx::anchorBL());
+  _type = type;
 
   switch (type) {
 
     case kBlockGap:
       CC_HIDE(this);
-      return;
+    return;
 
     case kBlock1:
       this->setColor(c::Color3B(200,200,200));
-      break;
+    break;
 
     case kBlock2:
       this->setColor(c::Color3B(150,150,150));
-      break;
+    break;
 
     case kBlock3:
       this->setColor(c::Color3B(100,100,100));
-      break;
+    break;
 
     case kBlock4:
       this->setColor(c::Color3B(50,50,50));
-      break;
+    break;
+
   }
 
   CC_SHOW(this);
-
 }
 
 
-
 NS_END
+
 
 

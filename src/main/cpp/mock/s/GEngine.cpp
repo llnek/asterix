@@ -28,18 +28,25 @@ void GEngine::initEntities() {
   auto ss= mc_new(GVars);
   ent->checkin(ss);
 
+  ss->speedIncreaseInterval= 15;
+  ss->speedIncreaseTimer=0;
+
   //terrain
   //
   ent= this->reifyNode("Terrain", true);
-  auto t=Terrain::create(wz);
+  auto t=Terrain::create();
   MGML()->addAtlasItem("blank", t, kMiddleground);
   ent->checkin(t);
+  ent->checkin(mc_new(f::CAutoma));
 
   //player
   ent= this->reifyNode("Player", true);
-  auto p=Player::create(wz);
+  auto p=Player::create();
   MGML()->addAtlasItem("blank", p, kMiddleground);
+  ent->checkin(mc_new(PlayerMotion));
+  ent->checkin(mc_new(PlayerStats));
   ent->checkin(p);
+  ent->checkin(mc_new(f::CGesture));
 
 }
 

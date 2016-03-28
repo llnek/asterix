@@ -14,87 +14,89 @@
 #include "core/CCSX.h"
 #include "Player.h"
 
-#define P_ACCELERATION 0.5
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Player*> Player::create(const c::Rect &frame) {
+owner<Player*> Player::create() {
 
   auto p= mc_new(Player);
   p->initWithFile("pics/blank.png");
-  p->initPlayer(frame);
   p->autorelease();
   return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-PlayerMotion::PlayerMotion(const c::Rect &frame) {
+bool Player::initWithFile(const sstr &fn) {
+  auto rc= c::Sprite::initWithFile(fn);
+  if (!rc) { return false; }
 
-  nextPos = c::Vec2(0,_visRect.size.height * 0.6);
+  this->setTextureRect(c::Rect(0, 0, 180, 228));
+  this->setAnchorPoint(cx::anchorT());
+  this->setColor(c::Color3B(255,255,255));
+  reset();
 
-  floatingTimerMax = 2;
-  floatingTimer = 0;
-  hasFloated = false;
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Player::reset() {
+  auto wz= cx::visRect();
+  this->setPosition(wz.size.width * 0.2, wz.size.height * 0.6);
+  this->setRotation(0);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+PlayerMotion::PlayerMotion() {
+
+  auto wz= cx::visRect();
+
+  _floatingTimerMax = 2;
+  _floatingTimer = 0;
+
+  nextPos= c::Vec2(0, wz.size.height * 0.6);
+  maxSpeed.x = PLAYER_INITIAL_SPEED;
+  speed.x = PLAYER_INITIAL_SPEED;
 
   _floating = false;
   _jumping = false;
-  _visRect=frame;
-
-  maxSpeed.x = PLAYER_INITIAL_SPEED;
-  maxSpeed.y = PLAYER_INITIAL_SPEED;
-  speed.x = PLAYER_INITIAL_SPEED;
-  speed.y = PLAYER_INITIAL_SPEED;
+  _hasFloated = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void PlayerMotion::reset() {
 
+  auto wz= cx::visRect();
+
   maxSpeed.x = PLAYER_INITIAL_SPEED;
-  maxSpeed.y = PLAYER_INITIAL_SPEED;
   speed.x = PLAYER_INITIAL_SPEED;
-  speed.y = PLAYER_INITIAL_SPEED;
+
   vel = CC_ZPT;
 
-  nextPos.y = _visRect.size.height * 0.6;
-  setFloating(false);
+  this->setFloating(false);
+
+  nextPos.y = wz.size.height * 0.6;
   _jumping = false;
-  hasFloated = false;
+  _hasFloated = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlayerMotion::setFloating(bool v) {
-
-  if (_floating == v ||
-      (v && hasFloated)) { return; }
-
-  _floating = v;
-  if (v) {
+void PlayerMotion::setFloating(bool value) {
+  if (_floating == value ||
+      (value && _hasFloated)) { return; }
+  _floating = value;
+  if (value) {
     vel.y += HTV(PLAYER_JUMP);
-    hasFloated = true;
+    _hasFloated = true;
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Player::initPlayer(const c::Rect &wz, const c::Vec2 &pos) {
-
-  this->setAnchorPoint(cx::anchorT());
-  //this->setPosition(wz.size.width * 0.2, _nextPosition.y);
-  this->setPosition(pos.x, pos.y);
-
-  _height = 228;
-  _width = 180;
-  _visRect=wz;
-
-  this->setTextureRect(c::Rect(0, 0, _width, _height));
-  this->setColor(c::Color3B(255,255,255));
-}
 
 
 NS_END

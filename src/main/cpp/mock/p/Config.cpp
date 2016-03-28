@@ -72,16 +72,16 @@ void Config::handleResolution(const c::Size &rs) {
   }
 
   CC_DTOR()->setContentScaleFactor(h/gz.height);
-  fileUtils->setSearchPaths(s_vec<sstr>{d,"sfx"});
+  CC_FILER()->setSearchPaths(s_vec<sstr>{d,"sfx"});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  //auto c= c::SpriteFrameCache::getInstance();
+  //auto fp= getAtlas("game-pics");
+  //c->addSpriteFramesWithFile( fp);
+  //CCLOG("loaded sprite-sheet: %s", fp.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

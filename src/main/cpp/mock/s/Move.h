@@ -19,10 +19,12 @@ NS_BEGIN(mock)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
+  DECL_PTR(ecs::Node, _terrain)
   DECL_PTR(ecs::Node, _shared)
+  DECL_PTR(ecs::Node, _player)
 
   void process(float);
-  void onKeys(float);
+  void processPlayer(float);
 
 public:
 

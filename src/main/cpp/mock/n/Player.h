@@ -12,6 +12,10 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "core/XConfig.h"
+#include "core/COMP.h"
+#include "core/CCSX.h"
+
 #define PLAYER_INITIAL_SPEED 8
 #define PLAYER_JUMP 42
 #define FORCE_GRAVITY 1.5
@@ -19,9 +23,12 @@
 #define TERMINAL_VELOCITY 70
 #define FLOATING_FRICTION 0.98f
 #define AIR_FRICTION 0.99f
+#define P_ACCELERATION 0.5
+
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(mock)
+
 
 enum PlayerState {
   kPlayerMoving,
@@ -32,81 +39,46 @@ enum PlayerState {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL PlayerMotion : public f::CMove {
-
-  DECL_BF(_floating)
-  DECL_BF(_jumping)
-  DECL_BF(_inAir)
-
 public:
+int _floatingTimerMax;
+float _floatingTimer;
+int _floatingInterval;
+bool _hasFloated;
+  void setFloating(bool value);
+  CC_SYNTHESIZE(bool, _inAir, InAir);
+  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
+  CC_SYNTHESIZE(bool, _jumping, Jumping);
+void reset();
+  PlayerMotion();
 
-  DECL_IZ(floatingTimerMax)
-  DECL_IZ(floatingInterval)
-  DECL_FZ(floatingTimer)
-  DECL_BF(hasFloated)
-
-  bool isFloating() { return _floating; }
-  void setFloating(bool b);
-
-  bool isJumping() { return _jumping; }
-  void setJumping(bool b) {
-    _jumping=b;
-  }
-
-  bool isInAir() { return _inAir; }
-  void setInAir(bool b) {
-    _inAir=b;
-  }
-
-  PlayerMotion(const c::Rect&);
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL PlayerStats : public f::CStats {
-
-  PlayerStats::PlayerStats() {
+struct CC_DLL PlayerStats : public f::CStats {
+  PlayerStats() {
     state = kPlayerMoving;
   }
-
   void reset() {
     state = kPlayerMoving;
   }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Player : public f::CPixie {
+protected:
 
-  DECL_TD(c::Rect, _visRect)
-  DECL_FZ(_height)
-  DECL_FZ(_width)
-
-  void initPlayer();
+  virtual bool initWithFile(const sstr &fn);
+  Player() {}
 
 public:
 
   static owner<Player*> create();
-
-  virtual ~Player();
-  Player();
-
-  void reset() {
-    this->setPosition(_visRect.size.width * 0.2, _visRect.size.height * 0.6);
-    this->setRotation(0);
-  }
-
-  virtual void place () {
-    this->setPositionY( _nextPosition.y );
-    if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
-        this->setPositionX(this->getPositionX() + _vector.x);
-        if (this->getPositionX() > _screenSize.width * 0.2f) {
-            this->setPositionX(_screenSize.width * 0.2f);
-        }
-    }
-  };
+  void reset();
 
 };
+
 
 
 NS_END

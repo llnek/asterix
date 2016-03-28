@@ -57,7 +57,7 @@ GLayer::~GLayer() {
 //
 void GLayer::onInited() {
 
-  _terrain= _engine->getNodes("n/Terrain")[0];
+  _terrain= _engine->getNodes("f/CAutoma")[0];
   _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 
@@ -84,6 +84,7 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 //
 bool GLayer::onMouseStart(const c::Vec2 &tap) {
 
+    auto pm=CC_GEC(PlayerMotion,_player,"f/CMove");
   auto ps=CC_GEC(PlayerStats,_player,"f/CStats");
   auto py=CC_GEC(Player,_player,"f/CPixie");
   auto te=CC_GEC(Terrain,_terrain,"f/CPixie");
@@ -93,14 +94,14 @@ bool GLayer::onMouseStart(const c::Vec2 &tap) {
     if (ps->state == kPlayerDying) {
       te->reset();
       py->reset();
-      resetGame();
+      reset();
     }
 
     return true;
   }
 
-  if (!te->startTerrain) {
-    te->startTerrain= true;
+  if (!te->isStartTerrain()) {
+    te->setStartTerrain(true);
     return true;
   }
 

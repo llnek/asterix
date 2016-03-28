@@ -13,21 +13,17 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/COMP.h"
+NS_BEGIN(mock)
 
 #define TILE_H_SIZE 6
 #define TILE_W_SIZE 8
 
-NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(mock)
-
 enum  {
-
-  kBlockGap,
+  kBlockGap= 0,
   kBlock1,
   kBlock2,
   kBlock3,
   kBlock4
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,15 +34,13 @@ class CC_DLL Block : public c::Sprite {
 
 public:
 
-  void setupBlock(const c::Rect&, int width, int height, int type);
-  bool isGap() { return _type== kBlockGap; }
+  void setupBlock(const c::Rect&, const c::Size&, int type);
   static owner<Block*> create();
 
-  DECL_MTDS(int,_type,Type);
+  DECL_GSMS(int,_type,Type)
 };
 
 
 NS_END
-
 
 

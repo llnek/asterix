@@ -12,72 +12,67 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Player.h"
+#include "core/CCSX.h"
+#include "core/COMP.h"
 #include "Block.h"
+#include "Player.h"
 
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(mock)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Terrain : public f::CPixie {
-protected:
 
   c::Vector<Block*> _blockPool;
   c::Vector<Block*> _blocks;
 
-  DECL_IZ(_blockPoolIndex)
-  DECL_IZ(_lastBlockHeight)
-  DECL_IZ(_lastBlockWidth)
-  DECL_IZ(_minTerrainWidth)
+  DECL_FZ(_lastBlockHeight)
+  DECL_FZ(_lastBlockWidth)
+  DECL_TD(c::Rect,_visRect)
 
-  DECL_IZ(_currentPatternIndex)
   DECL_TV(int,_currentPatternCnt,1)
-
+  DECL_IZ(_currentPatternIndex)
+  DECL_IZ(_blockPoolIndex)
   DECL_IZ(_currentWidthIndex)
   DECL_IZ(_currentHeightIndex)
-
   DECL_IZ(_currentTypeIndex)
 
-  DECL_IZ(_increaseGapInterval)
-  DECL_FZ(_increaseGapTimer)
+  DECL_FZ(_minTerrainWidth)
   DECL_IZ(_gapSize)
-
-  DECL_TD(c::Rect, _visRect)
-
   DECL_BF(_startTerrain)
   DECL_BF(_showGap)
+  DECL_FZ(_increaseGapInterval)
+  DECL_FZ(_increaseGapTimer)
 
-  void addBlocks(int currentWidth);
-  void initTerrain();
+  void addBlocks(float currentWidth);
   void distributeBlocks();
   void initBlock(Block*);
 
-
-  float totalWidth () {
-    auto w= 0;
+  float totalWidth() {
+    float width = 0;
     for (auto block : _blocks) {
-      w += block->width();
+      width += cx::getWidth(block);
     }
-    return w;
+    return width;
   }
+
+  virtual bool initWithFile(const sstr&);
+  Terrain() {}
 
 public:
 
-  static owner<Terrain*> create(const c::Rect&);
-
-  void checkCollision(ecs::Node*);
-  void move (float xMove);
-  void reset();
+  DECL_GSMS_IS(bool, _startTerrain, StartTerrain);
+  static owner<Terrain*> create();
 
   virtual ~Terrain();
-  Terrain() {}
 
+  void checkCollision(ecs::Node* player);
+  void move (float xMove);
+  void reset();
 };
 
 
 NS_END
-
-
-
 
 

@@ -122,11 +122,17 @@ typedef std::string sstr;
 #define s_arr std::array
 #define s_map std::map
 
-//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 //
-#define DECL_MTDS(varType, varName, funName) \
-virtual varType get##funName() const { return varName; } \
-virtual void set##funName(varType var){ varName = var; }
+#define DECL_GSMS_IS(varType, v, funName) \
+virtual varType is##funName() { return v; } \
+virtual void set##funName(varType p) { v=p; }
+
+/////////////////////////////////////////////////////////////////////////////
+//
+#define DECL_GSMS(varType, v, funName) \
+virtual varType get##funName() { return v; } \
+virtual void set##funName(varType p) { v=p; }
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ constructor stuff
