@@ -11,68 +11,85 @@
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
-#include "core/COMP.h"
 #include "core/CCSX.h"
-#include "n/Unit.h"
+#include "s/GEngine.h"
+#include "HUD.h"
+#include "MMenu.h"
+#include "Ende.h"
+#include "Game.h"
 
+NS_ALIAS(cui, cocos2d::ui)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(gmath)
+BEGIN_NS_UNAMED
+//////////////////////////////////////////////////////////////////////////////
+struct CC_DLL GLayer : public f::GameLayer {
 
+  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-#define KeyFinishedTutorial "keyFinishedTutorial"
-#define KeySound "keySound"
-#define KeyMusic "keyMusic"
-#define DataHighScores "highScores"
-#define DictTotalScore "totalScore"
-#define DictTurnsSurvived "turnsSurvived"
-#define DictUnitsKilled "unitsKilled"
-#define DictHighScoreIndex "hsIndex"
+  DECL_PTR(ecs::Node, _shared)
+
+  STATIC_REIFY_LAYER(GLayer)
+  MDECL_DECORATE()
+  MDECL_GET_IID(2)
+
+  virtual void onMouseMotion(const c::Vec2&);
+  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onMouseClick(const c::Vec2&);
+
+  virtual void onTouchMotion(c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
+
+  virtual void onInited();
+
+  virtual ~GLayer() {}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decoUI() {
 
-  auto bg= c::LayerColor(c::Color4B(c::Color3B::WHITE),
-                         wz.width*5,
-                         wz.height*5);
+  c::Color3B c(52/255.0, 73/255.0, 94/255.0);
   auto wb=cx::visBox();
-
+  auto bg= c::LayerColor(c::Color4B::WHITE,
+                         wz.width*5, wz.height*5);
   bg->setPosition(wb.cx, wb.cy);
   addItem(bg, -2);
 
-  auto lblTurnsSurvivedDesc = cx::reifyBmfLabel("dft", "Turns Survived:");
-  lblTurnsSurvivedDesc->setPosition(wb.right * 0.125, wb.top * 0.9);
-  addItem(lblTurnsSurvivedDesc);
+  regoAtlas("game-pics");
+
+  auto desc = cx::reifyBmfLabel("dft", "Turns Survived:");
+  desc->setPosition(wb.right * 0.125, wb.top * 0.9);
+  desc->setColor(c);
+  addItem(desc);
 
   _lblTurnsSurvived= cx::reifyBmfLabel("dft","0");
   _lblTurnsSurvived->setPosition(wb.right * 0.125, wb.top * 0.82);
+  _lblTurnsSurvived->setColor(c);
   addItem(_lblTurnsSurvived);
 
-  auto lblUnitsKilledDesc= cx::reifyBmfLabel("dft","Units Killed:");
-  lblUnitsKilledDesc->setPosition(wb.right * 0.125, wb.top * 0.7);
-  addItem(lblUnitsKilledDesc);
+  desc= cx::reifyBmfLabel("dft","Units Killed:");
+  desc->setPosition(wb.right * 0.125, wb.top * 0.7);
+  desc->setColor(c);
+  addItem(desc);
 
   _lblUnitsKilled= cx::reifyBmfLabel("dft","0");
   _lblUnitsKilled->setPosition(wb.right * 0.125, wb.top * 0.62);
+  _lblUnitsKilled->setColor(c);
   addItem(_lblUnitsKilled);
 
-  auto lblTotalScoreDesc= cx::reifyBmfLabel("dft","Total Score:");
-  lblTotalScoreDesc->setPosition(wb.right * 0.125, wb.cy);
-  addItem(lblTotalScoreDesc);
+  desc= cx::reifyBmfLabel("dft","Total Score:");
+  desc->setPosition(wb.right * 0.125, wb.cy);
+  desc->setColor(c);
+  addItem(desc);
 
   _lblTotalScore= cx::reifyBmfLabel("dft","1");
   _lblTotalScore->setPosition(wb.right * 0.125, wb.top * 0.42);
-  addItem(_lblTotalScore);
-
-  c::Color3B c(52/255.0, 73/255.0, 94/255.0);
-  lblTurnsSurvivedDesc->setColor(c);
-  _lblTurnsSurvived->setColor(c);
-  lblTotalScoreDesc->setColor(c);
   _lblTotalScore->setColor(c);
-  lblUnitsKilledDesc->setColor(c);
-  _lblUnitsKilled->setColor(c);
+  addItem(_lblTotalScore);
 
   auto btnR= cx::reifyMenuBtn("btnRestart.png");
   auto btnM= cx::reifyMenuBtn("btnMenu.png");
@@ -91,9 +108,11 @@ void GLayer::decoUI() {
   board->setPosition(wb.right * 0.625, wb.cy);
   addAtlasItem("game-pics", board);
 
-  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+  if (c::ApplicationProtocol::Platform::OS_IPHONE ==
+      XCFG()->getPlatform()) {
     board->setScale(0.8);
   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,65 +120,66 @@ void GLayer::decoUI() {
 void GLayer::onInited() {
 
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto friendly = Unit::friendlyUnit();
-  friendly->setPosition(getPosForGridCoord(friendly->_gridPos));
-  addAtlasItem("game-pics", friendly);
+  auto fu = Unit::friendly();
+  fu->setPosition(getPosAsGrid(fu->_gridPos));
+  addAtlasItem("game-pics", fu);
 
-  ss->arrFriendlies.push_back(friendly);
-  ss->arrEnemies.clear();
+  //ss->enemies.removeAllObjects();
+  ss->friends.addObject(fu);
 
-  _numTotalScore = 1;
   _numTurnSurvived = 0;
+  _numTotalScore = 1;
   _numUnitsKilled = 0;
 
-  addObserver(this,@selector(moveUnit),
-      kTurnCompletedNotification, CC_NIL);
+  c::NotificationCenter::getInstance()->addObserver(
+      this, moveUnit, kTurnCompletedNotification, CC_NIL);
 
   if (CC_APPDB()->getBoolForKey(KeyFinishedTutorial)) {
     spawnNewEnemy(getRandomEnemy());
     _tutorialPhase = 0;
   } else {
       //spawn enemy on far right with value of 1
-    auto newEnemy= Unit::enemyUnitWithNumber(1, c::Vec2(9, 5));
-    newEnemy->setPosition(getPosForGridCoord(newEnemy->_gridPos));
-    newEnemy->setDirection(DirLeft); //2 is right wall
-    spawnNewEnemy(newEnemy);
+    auto enemy= Unit::enemyWith(1, c::Vec2(9, 5));
+    enemy->setPosition(getPosAsGrid(enemy->_gridPos));
+    enemy->setDirection(DirLeft); //2 is right wall
+    spawnNewEnemy(enemy);
     _tutorialPhase = 1;
-    showTutorialInstructions();
+    showTutHelp();
   }
+
+  _engine=mc_new(GEngine);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::showTutorialInstructions() {
-  sstr tutString = "";
+void GLayer::showTutHelp() {
+  auto tutString = "";
   if (_tutorialPhase == 1) {
-    tutString = "Drag Friendly Units";
-    auto lblHowToPlay= cx::reifyBmfLabel("dft","How to Play:");
-    lblHowToPlay->setColor(c::Color3B(52/255, 73/255, 94/255));
-    lblHowToPlay->setPosition(getPosForGridCoord(c::Vec2(5,1)));
-    lblHowToPlay->setName("lblHowToPlay");
-    lblHowToPlay->setScale(0.8);
-    addItem(lblHowToPlay, 2);
+    auto lbl= cx::reifyBmfLabel("dft", "How to Play:");
+    lbl->setPosition(getPosAsGrid(c::Vec2(5,1)));
+    lbl->setColor(c::Color3B(52, 73, 94));
+    lbl->setName("lblHowToPlay");
+    lbl->setScale(0.8);
+    addItem(lbl, 2);
 
     auto bgHowTo=
-      c::Sprite9Slice::createWithSpriteFrameName("imgUnit.png");
-    bgHowTo->setMargin(0.2);
+      cui::Scale9Sprite::createWithSpriteFrameName("imgUnit.png");
+    //bgHowTo->setMargin(0.2);
     bgHowTo->setPosition(0.5,0.4);
     //bgHowTo->setPositionType(c::PositionTypeNormalized);
     bgHowTo->setContentSize(c::Size(1.05,1.2));
     //bgHowTo.contentSizeType = CCSizeTypeNormalized;
-    lblHowToPlay->addChild(bgHowTo,-1);
+    lbl->addChild(bgHowTo,-1);
+
+    tutString = "Drag Friendly Units";
   }
   else if (_tutorialPhase == 2) {
-    tutString = "Combine Friendly Units";
-
-    auto fadeRemoveHowToPlay =
+    getChildByName("lblHowToPlay")->runAction(
       c::Sequence::create(
           c::EaseInOut::create(c::FadeOut::create(0.5), 2),
           c::RemoveSelf::create(true),
-          CC_NIL);
-    getChildByName("lblHowToPlay")->runAction(fadeRemoveHowToPlay);
+          CC_NIL));
+    tutString = "Combine Friendly Units";
   }
   else if (_tutorialPhase == 3) {
     tutString = "Defeat Enemies";
@@ -174,121 +194,123 @@ void GLayer::showTutorialInstructions() {
     tutString = "Enjoy! :)";
   }
 
-  auto lblTutorialText= cx::reifyBmfLabel("dft",tutString);
-  lblTutorialText->setColor(c::Color3B(52/255,73/255,94/255));
-  lblTutorialText->setPosition(getPosForGridCoord(c::Vec2(5,2)));
-  lblTutorialText->setName("tutorialText");
-  addItem(lblTutorialText,2);
+  auto lbl= cx::reifyBmfLabel("dft", tutString);
+  lbl->setPosition(getPosAsGrid(c::Vec2(5,2)));
+  lbl->setColor(c::Color3B(52,73,94));
+  lbl->setName("tutorialText");
+  addItem(lbl,2);
 
   auto bg =
-    c::Sprite9Slice::createWithSpriteFrameName("imgUnit.png");
-  background->setMargin(0.2);
-  background->setPosition(0.5,0.4);
+    cui::Scale9Sprite::createWithSpriteFrameName("imgUnit.png");
+  bg->setContentSize(c::Size(1.05, 1.2));
+  //bg->setMargin(0.2);
+  bg->setPosition(0.5,0.4);
   //background.positionType = CCPositionTypeNormalized;
-  background->setContentSize(c::Size(1.05f, 1.2f));
   //background.contentSizeType = CCSizeTypeNormalized;
-  lblTutorialText->addChild(bg,-1);
+  lbl->addChild(bg,-1);
 
   auto finger = cx::reifySprite("imgFinger.png");
+  finger->setPosition(getPosAsGrid(c::Vec2(5,5)));
   finger->setAnchorPoint(c::Vec2(0.4,1));
-  finger->setPosition(getPosForGridCoord(c::Vec2(5,5)));
   finger->setName("finger");
   finger->setOpacity(0);
   addAtlasItem("game-pics",finger,2);
-  runFingerArrowActionsWithFinger(finger);
+  runFingerArrowActions(finger);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::runFingerArrowActionsWithFinger(c::Sprite *finger) {
-  auto u = Unit::friendlyUnit();
-  if (_tutorialPhase == 1 || _tutorialPhase == 3) {
-    auto slideRight= c::Sequence::create(
-        c::EaseIn::create(c::FadeIn::create(0.25),2),
-        c::EaseInOut::create(
-          c::MoveBy::create(1, c::Vec2(u->_gridWidth*2, 0)), 2),
-        c::Delay::create(0.5),
-        CC_NIL);
-
-    auto fadeOutAndReposition =
-      c::Sequence::create(
-          c::Delay::create(0.25),
-          c::EaseInOut::create(
-            c::FadeOut::create(1), 2),
-          c::Delay::create(0.5),
-          c::CallFunc::create([=]() {
-            finger->setPosition(getPosForGridCoord(c::Vec2(5,5)));
-            }),
-          CC_NIL);
+void GLayer::runFingerArrowActions(c::Sprite *finger) {
+  auto u = Unit::friendly();
+  if (_tutorialPhase == 1 ||
+      _tutorialPhase == 3) {
 
     finger->runAction(
-        c::RepeatForever::create(slideRight));
+        c::RepeatForever::create(
+          c::Sequence::create(
+            c::EaseIn::create(c::FadeIn::create(0.25),2),
+            c::EaseInOut::create(
+              c::MoveBy::create(1, c::Vec2(u->_gridWidth*2, 0)), 2),
+            c::Delay::create(0.5),
+            CC_NIL)));
+
     finger->runAction(
-        c::RepeatForever::create(fadeOutAndReposition));
+        c::RepeatForever::create(
+          c::Sequence::create(
+              c::Delay::create(0.25),
+              c::EaseInOut::create(
+                c::FadeOut::create(1), 2),
+              c::Delay::create(0.5),
+              c::CallFunc::create([=]() {
+                finger->setPosition(getPosAsGrid(c::Vec2(5,5)));
+                }),
+              CC_NIL)));
   }
   else if (_tutorialPhase == 2) {
-    finger->setPosition(getPosForGridCoord(c::Vec2(6,5)));
-    auto slideLeft= c::Sequence::create(
-        c::EaseIn::create(
-          c::FadeIn::create(0.25), 2),
-        c::EaseInOut::create(
-          c::MoveBy::create(1, c::Vec2(-u->_gridWidth*2, 0)), 2),
-        c::Delay::create(0.5),
-        CC_NIL);
 
-    auto fadeOutAndReposition = c::Sequence::create(
-        c::Delay::create(0.25),
-        c::EaseInOut::create(
-          c::FadeOut::create(1), 2),
-        c::Delay::create(0.5),
-        c::CallFunc::create([=]() {
-          finger->setPosition(getPosForGridCoord(c::Vec2(6,5)));
-          }),
-        CC_NIL);
+    finger->setPosition(getPosAsGrid(c::Vec2(6,5)));
 
     finger->runAction(
-        c::RepeatForever::create(slideLeft));
+        c::RepeatForever::create(
+          c::Sequence::create(
+              c::EaseIn::create(
+                c::FadeIn::create(0.25), 2),
+              c::EaseInOut::create(
+                c::MoveBy::create(1, c::Vec2(-u->_gridWidth*2, 0)), 2),
+              c::Delay::create(0.5),
+              CC_NIL)));
+
     finger->runAction(
-        c::RepeatForever::create(fadeOutAndReposition));
+        c::RepeatForever::create(
+          c::Sequence::create(
+              c::Delay::create(0.25),
+              c::EaseInOut::create(
+                c::FadeOut::create(1), 2),
+              c::Delay::create(0.5),
+              c::CallFunc::create([=]() {
+                finger->setPosition(getPosAsGrid(c::Vec2(6,5)));
+                }),
+              CC_NIL)));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::advanceTutorial() {
+
   ++_tutorialPhase;
-  removePreviousTutorialPhase();
+  removePrevTut();
 
   if (_tutorialPhase < 7) {
-    showTutorialInstructions();
+    showTutHelp();
   } else {
     //the tutorial should be marked as "visible"
-    CC_APPDB()->setKeyForBool(KeyFinishedTutorial,true);
+    CC_APPDB()->setBoolForKey(KeyFinishedTutorial,true);
     CC_APPDB()->flush();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::removePreviousTutorialPhase() {
-  auto lblInstructions = (cc::Label*)getChildByName("tutorialText");
-  lblInstructions->setName("old_instructions");
+void GLayer::removePrevTut() {
 
-  auto fadeRemoveInstructions = c::Sequence::create(
-      c::EaseInOut::create(
-        c::FadeTo::create(0.5, 0), 2),
-      c::RemoveSelf::create(true),
-      CC_NIL);
-  lblInstructions->runAction(fadeRemoveInstructions);
+  auto lbl= (c::Label*) getChildByName("tutorialText");
+  lbl->setName("old_instructions");
+  lbl->runAction(
+    c::Sequence::create(
+        c::EaseInOut::create(
+          c::FadeTo::create(0.5, 0), 2),
+        c::RemoveSelf::create(true),
+        CC_NIL));
 
   auto finger = (c::Sprite*)getChildByName("finger");
   finger->setName("old_finger");
-  auto fadeRemoveFinger = c::Sequence::create(
-      c::EaseInOut::create(
-        c::FadeTo::create(0.5,0), 2),
-      c::RemoveSelf::create(true),
-      CC_NIL);
-  finger->runAction(fadeRemoveFinger);
+  finger->runAction(
+    c::Sequence::create(
+        c::EaseInOut::create(
+          c::FadeTo::create(0.5,0), 2),
+        c::RemoveSelf::create(true),
+        CC_NIL));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -315,20 +337,20 @@ Unit* GLayer::getRandomEnemy() {
   //base difficulty: 3
   auto upperBound = 3 + (_numTurnSurvived / 17); //up difficulty every 17 turns (15 felt a little harsh, 20 might be too easy)
 
-  auto unitValue = (rand() % _upperBound) + 1;
+  auto unitValue = (rand() % upperBound) + 1;
 
-  auto newEnemy = Unit::enemyUnitWithNumber(unitValue, c::Vec2(xPos, yPos));
-  newEnemy->setPosition(getPosForGridCoord(newEnemy->_gridPos));
-  newEnemy->setDirectionBasedOnWall(wall);
+  auto e = Unit::enemyWith(unitValue, c::Vec2(xPos, yPos));
+  e->setPosition(getPosAsGrid(e->_gridPos));
+  e->setDir(wall);
 
-  return newEnemy;
+  return e;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnNewEnemy(Unit *enemy) {
   addAtlasItem("game-pics",enemy);
-  ss->arrEnemies.push_back(enemy);
+  ss->enemies.addObject(enemy);
   enemy->setScale(0);
   pulseUnit(enemy);
 }
@@ -337,7 +359,7 @@ void GLayer::spawnNewEnemy(Unit *enemy) {
 //
 void GLayer::goToMenu() {
   cx::sfxPlay("click");
-  rubberBandToScene(this, 0.5, kMoveDirectionDown);
+  //rubberBandToScene(this, 0.5, kMoveDirectionDown);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -349,13 +371,14 @@ void GLayer::restartGame() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 GLayer::getPosForGridCoord(const c::Vec2 &pos) {
-  auto u = Unit::friendlyUnit();
+const c::Vec2 GLayer::getPosAsGrid(const c::Vec2 &pos) {
+  auto u = Unit::friendly();
   auto ux= u->getBoundingBox();
   auto wz= cx::visSize();
   auto borderValue = 0.6;
 
-  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+  if (c::ApplicationProtocol::Platform::OS_IPAD ==
+      XCFG()->getPlatform()) {
     borderValue = 0.75;
   }
 
@@ -366,42 +389,43 @@ c::Vec2 GLayer::getPosForGridCoord(const c::Vec2 &pos) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::slideAllUnitsWithDistance(float dist, int dir) {
-  for (Unit* u in ss->arrFriendlies) {
-    u->slideUnitWithDistance(dist, dir);
+void GLayer::slideAllByDist(float dist, int dir) {
+  for (Unit* u in ss->friends) {
+    u->slideWithDist(dist, dir);
   }
-
-  for (Unit* u in arrEnemies) {
-    u->slideUnitWithDistance(dist, dir);
+  for (Unit* u in ss->enemies) {
+    u->slideWithDist(dist, dir);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::moveUnit(NSNotification *notif) {
+void GLayer::moveUnit(Unit *u) {
 
-  if (_tutorialPhase == 5 || _tutorialPhase == 6) {
+  if (_tutorialPhase == 5 ||
+      _tutorialPhase == 6) {
+
     advanceTutorial();
   }
 
-  NSDictionary *userInfo = [notif userInfo];
-  auto u = (Unit*)userInfo[@"unit"];
-  u->setPosition(getPosForGridCoord(u->_gridPos));
-
+  u->setPosition(getPosAsGrid(u->_gridPos));
   cx::sfxPlay("moveUnit");
   ++numTurnSurvived;
 
-  checkForNewFriendlyUnit();
+  checkForNewFriend();
   moveAllUnits();
 
-  auto rate = 3; //spawn a unit every 3 turns
+  //spawn a unit every 3 turns
+  auto rate = 3;
 
-  if (_numTurnSurvived % rate == 0 || ss->arrEnemies.count() == 0) {
+  if (_numTurnSurvived % rate == 0 ||
+      ss->enemies.count() == 0) {
+
     if (_tutorialPhase == 4) {
-      auto newEnemy = Unit::enemyUnitWithNumber(4, c::Vec2(5,9));
-      newEnemy->setDirection(DirUp);
-      newEnemy->setPosition(getPosForGridCoord(c::Vec2(5,9)));
-      spawnNewEnemy(newEnemy);
+      auto e = Unit::enemyWith(4, c::Vec2(5,9));
+      e->setDirection(DirUp);
+      e->setPosition(getPosAsGrid(c::Vec2(5,9)));
+      spawnNewEnemy(e);
     } else {
       if (_numTurnSurvived > 200) {
         //10% chance to spawn a 2nd unit... hehe... and at this level of difficulty? Upper bound of, 18? HAH! Good luck.
@@ -414,12 +438,12 @@ void GLayer::moveUnit(NSNotification *notif) {
   }
 
   checkForAllCombines();
-  checkForAllCollisions();
+  checkForAllHits();
 
   updateLabels();
 
   auto hasUnitAtCenter = false;
-  for (Unit* u in ss->arrFriendlies) {
+  for (Unit* u in ss->friends) {
     if (u->_gridPos.x == 5 &&
         u->_gridPos.y == 5) {
       hasUnitAtCenter = true;
@@ -439,133 +463,136 @@ void GLayer::moveUnit(NSNotification *notif) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::checkForNewFriendlyUnit() {
+void GLayer::checkForNewFriend() {
   //if there's a unit standing, that means there's one at the center, so return
   //don't worry about (5,5), as that should be a "combine" case if it ever were to come up...
-  for (Unit *friendly in ss->arrFriendlies) {
-    if (friendly->direction == DirStanding) {
+  for (Unit *f in ss->friends) {
+    if (f->_direction == DirStanding) {
       return;
     }
   }
 
-  auto newFriendly = Unit::friendlyUnit();
-  newFriendly->setPosition(getPosForGridCoord(newFriendly->_gridPos));
-  addAtlasItem("game-pics",newFriendly, 1);
-  ss->arrFriendlies.addObject(newFriendly);
+  auto f = Unit::friendly();
+  f->setPosition(getPosAsGrid(f->_gridPos));
+  addAtlasItem("game-pics",f, 1);
+  ss->friends.addObject(f);
   ++numTotalScore;
-  newFriendly->setName("new");
-  newFriendly->setScale(0);
-  pulseUnit(newFriendly);
+  f->setName("new");
+  f->setScale(0);
+  pulseUnit(f);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::updateLabels() {
-  _lblTotalScore->setString(FTOS(numTotalScore));
-  _lblTurnsSurvived->setString(FTOS(numTurnSurvived));
-  _lblUnitsKilled->setString(FTOS(numUnitsKilled));
+  _lblTotalScore->setString(FTOS(_numTotalScore));
+  _lblTurnsSurvived->setString(FTOS(_numTurnSurvived));
+  _lblUnitsKilled->setString(FTOS(_numUnitsKilled));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::moveAllUnits() {
 
-  c::Array arrTaggedForDeletion;
+  auto arrDel= c::Array::create();
 
-  for (Unit *friendly in ss->arrFriendlies) {
+  for (Unit *f in ss->friends) {
 
-    if (friendly->getName() == "new") {
-      friendly->setName("");
+    if (f->getName() == "new") {
+      f->setName("");
     }
     else
-    if (friendly->moveUnitDidIncreaseNumber()) {
-      ++numTotalScore;
+    if (f->didMoveIncNumber()) {
+      ++_numTotalScore;
     }
 
-    friendly->setPosition(getPosForGridCoord(friendly->_gridPos));
+    f->setPosition(getPosAsGrid(f->_gridPos));
 
-    if (friendly->_unitValue == 0) {
-      arrTaggedForDeletion.addObject(friendly);
+    if (f->_unitValue == 0) {
+      arrDel.addObject(f);
     }
     //if he's not already dead
-    else if (! friendly->getName() == "dead") {
-      for (Unit *other in ss->arrFriendlies) {
+    else if (! f->getName() == "dead") {
+      for (Unit *other in ss->friends) {
         //if other unit... and neither are dead... and
-        checkForCombineWithUnit(friendly, other, arrTaggedForDeletion);
+        checkForCombine(f, other, arrDel);
       }
     }
   }
 
-  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
-  for (Unit *u in arrTaggedForDeletion) {
+  ss->friends.removeObjectsInArray(arrDel);
+  for (Unit *u in arrDel) {
     removeItem(u);
   }
 
-  arrTaggedForDeletion.removeAllObjects();
+  arrDel.removeAllObjects();
 
-  checkForDirectionalCollisions();
+  checkForDirHits();
 
   //move all enemies
-  for (Unit *enemy in arrEnemies) {
-    enemy->moveUnitDidIncreaseNumber();
-    enemy->setPosition(getPosForGridCoord(enemy->_gridPos));
-    enemy->setNewDirectionForEnemy();
+  for (Unit *e in ss->enemies) {
+    e->didMoveIncNumber();
+    e->setPosition(getPosAsGrid(e->_gridPos));
+    e->setNewDirForEnemy();
 
-    if (! enemy->getName() == "dead") {
-      for (Unit *other in ss->arrEnemies) {
-        checkForCombineWithUnit(enemy, other, arrTaggedForDeletion);
+    if (! e->getName() == "dead") {
+      for (Unit *other in ss->enemies) {
+        checkForCombine(e, other, arrDel);
       }
     }
   }
 
-  ss->arrEnemies.removeObjectsInArray(arrTaggedForDeletion);
-  for (Unit *u in arrTaggedForDeletion) {
+  ss->enemies.removeObjectsInArray(arrDel);
+  for (Unit *u in arrDel) {
     removeItem(u);
   }
 
-  checkForAllCollisions();
+  checkForAllHits();
   checkForAllCombines();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::checkForAllCombines() {
-  c::Array arrTaggedForDeletion;
-  for (Unit *friendly in ss->arrFriendlies) {
-    for (Unit *otherFriendly in ss->arrFriendlies) {
-      if (friendly != otherFriendly)
-        checkForAnyDirectionCombineWithUnit(friendly, otherFriendly, arrTaggedForDeletion);
+  auto arrDel= c::Array::create();
+  for (Unit *f in ss->friends) {
+    for (Unit *other in ss->friends) {
+      if (f != other)
+        checkForAnyDirCombine(f, other, arrDel);
     }
   }
 
-  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
-  for (Unit *u in arrTaggedForDeletion) {
+  ss->friends.removeObjectsInArray(arrDel);
+  for (Unit *u in arrDel) {
     removeItem(u);
   }
-  arrTaggedForDeletion.removeAllObjects();
+  arrDel.removeAllObjects();
 
-  for (Unit *enemy in ss->arrEnemies) {
-    for (Unit *otherEnemy in ss->arrEnemies) {
-      if (enemy != otherEnemy)
-        checkForAnyDirectionCombineWithUnit(enemy, otherEnemy, arrTaggedForDeletion);
+  for (Unit *e in ss->enemies) {
+    for (Unit *other in ss->enemies) {
+      if (e != other)
+        checkForAnyDirCombine(e, other, arrDel);
     }
   }
 
-  ss->arrEnemies.removeObjectsInArray(arrTaggedForDeletion);
-  for (Unit *u in arrTaggedForDeletion) {
+  ss->enemies.removeObjectsInArray(arrDel);
+
+  for (Unit *u in arrDel) {
     removeItem(u);
   }
-  arrTaggedForDeletion.removeAllObjects();
+
+  arrDel.removeAllObjects();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::checkForAnyDirectionCombineWithUnit(Unit *first,
-    Unit *other, c::Array *array) {
+void GLayer::checkForAnyDirCombine(Unit *first, Unit *other, c::Array *array) {
+
+  sstr dead="dead";
 
   if (other != first &&
-    !(other->getName() == "dead") &&
-    !(first->getName() == "dead") &&
+    !(other->getName() == dead) &&
+    !(first->getName() == dead) &&
     first->_gridPos.x == other->_gridPos.x &&
     first->_gridPos.y == other->_gridPos.y) {
 
@@ -573,23 +600,22 @@ void GLayer::checkForAnyDirectionCombineWithUnit(Unit *first,
     auto ov = other->_unitValue;
 
     if (first->_isFriendly) {
-      playUnitCombineSoundWithValue(fv+ov);
+      playCombineSound(fv+ov);
     }
 
     if (ov > fv) {
       first->setName("dead");
-      array.addObject(first);
+      array->addObject(first);
       other->_unitValue += fv;
       first->_direction = other->_direction;
       other->updateLabel();
       pulseUnit(other);
     } else {
       other->setName("dead");
-      array.addObject(other);
+      array->addObject(other);
       first->_unitValue += ov;
       other->_direction = first->_direction;
       first->updateLabel();
-
       pulseUnit(first);
     }
   }
@@ -597,43 +623,42 @@ void GLayer::checkForAnyDirectionCombineWithUnit(Unit *first,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::checkForCombineWithUnit(Unit *first, Unit *other, c::Array *array) {
+void GLayer::checkForCombine(Unit *first, Unit *other, c::Array *array) {
+  sstr dead="dead";
   if (other != first &&
-    !(other->getName() == "dead") &&
-    !(first->getName() == "dead") &&
+    !(other->getName() == dead) &&
+    !(first->getName() == dead) &&
     first->_gridPos.x == other->_gridPos.x &&
     first->_gridPos.y == other->_gridPos.y) {
 
     //if the opposite way... or at a wall (but collided just now, so you must've been going the opposite to make that happen)
     if ((first->_direction == DirUp && other->_direction == DirDown) ||
-      (first->_direction == DirDown && other->_direction == DirUp) ||
-      (first->_direction == DirLeft && other->_direction == DirRight) ||
-      (first->_direction == DirRight && other->_direction == DirLeft) ||
-      first->_direction == DirAtWall ||
-      first->_direction == DirStanding) {
+        (first->_direction == DirDown && other->_direction == DirUp) ||
+        (first->_direction == DirLeft && other->_direction == DirRight) ||
+        (first->_direction == DirRight && other->_direction == DirLeft) ||
+        first->_direction == DirAtWall ||
+        first->_direction == DirStanding) {
 
       auto fv = first->_unitValue;
       auto ov = other->_unitValue;
 
       if (first->_isFriendly) {
-        playUnitCombineSoundWithValue(fv+ov);
+        playCombineSound(fv+ov);
       }
 
       if (ov > fv) {
         first->setName("dead");
-        array.addObject(first);
+        array->addObject(first);
         other->_unitValue += fv;
         first->_direction = other->_direction;
         other->updateLabel();
-
         pulseUnit(other);
       } else {
         other->setName("dead");
-        array.addObject(other);
+        array->addObject(other);
         first->_unitValue += ov;
         other->_direction = first->_direction;
         first->updateLabel();
-
         pulseUnit(first);
       }
     }
@@ -643,31 +668,34 @@ void GLayer::checkForCombineWithUnit(Unit *first, Unit *other, c::Array *array) 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::pulseUnit(c::Node *unit) {
+
   auto baseScale = 1.0;
 
-  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+  if (c::ApplicationProtocol::Platform::OS_IPHONE ==
+      XCFG()->getPlatform()) {
     baseScale = 0.8;
   }
 
-  auto scaleUp = c::EaseInOut::create(
-      c::ScaleTo::create(0.15 , baseScale * 1.2), 2);
-  auto scaleDown = c::EaseInOut::create(
-      c::ScaleTo::create(0.15, baseScale * 0.9), 2);
-  auto scaleToFinal = c::EaseInOut::create(
-      c::ScaleTo::create(0.25, baseScale), 2);
-
   unit->stopAllActions();
   unit->runAction(
-      c::Sequence::create(scaleUp, scaleDown, scaleToFinal, CC_NIL));
+      c::Sequence::create(
+        c::EaseInOut::create(
+            c::ScaleTo::create(0.15 , baseScale * 1.2), 2),
+        c::EaseInOut::create(
+            c::ScaleTo::create(0.15, baseScale * 0.9), 2),
+        c::EaseInOut::create(
+            c::ScaleTo::create(0.25, baseScale), 2),
+        CC_NIL));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::checkForDirectionalCollisions() {
-  c::Array arrTaggedForDeletion;
+void GLayer::checkForDirHits() {
 
-  for (Unit *f in ss->arrFriendlies) {
-    for (Unit *e in ss->arrEnemies) {
+  auto arrDel= c::Array::create();
+
+  for (Unit *f in ss->friends) {
+    for (Unit *e in ss->enemies) {
       //at same coordinate...
       if (f->_gridPos.x == e->_gridPos.x &&
         f->_gridPos.y == e->_gridPos.y) {
@@ -678,7 +706,7 @@ void GLayer::checkForDirectionalCollisions() {
           (f->_direction == DirRight && e->_direction == DirLeft) ||
           f->_direction == DirAtWall) {
           //collision!
-          handleCollisionWithFriendly(f, e, arrTaggedForDeletion, true);
+          handleHitWithFriend(f, e, arrDel, true);
           //exit the for so no "bad things" happen
           //goto afterDirCollide;
           break;
@@ -688,23 +716,23 @@ void GLayer::checkForDirectionalCollisions() {
     //afterDirCollide:{}
   }
 
-  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
-  for (Unit *u in arrTaggedForDeletion) {
+  ss->friends.removeObjectsInArray(arrDel);
+  for (Unit *u in arrDel) {
     removeItem(u);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::checkForAllCollisions() {
-  c::Array arrTaggedForDeletion;
-  for (Unit *f in ss->arrFriendlies) {
-    for (Unit *e in ss->arrEnemies) {
+void GLayer::checkForAllHits() {
+  c::Array arrDel;
+  for (Unit *f in ss->friends) {
+    for (Unit *e in ss->enemies) {
       //at same coordinate...
       if (f->_gridPos.x == e->_gridPos.x &&
         f->_gridPos.y == e->_gridPos.y) {
         //collision!
-        handleCollisionWithFriendly(f, e, arrTaggedForDeletion,false);
+        handleHitWithFriend(f, e, arrDel,false);
 
         //exit the for so no "bad things" happen
         //goto afterAllCollide;
@@ -714,43 +742,44 @@ void GLayer::checkForAllCollisions() {
     //afterAllCollide:{}
   }
 
-  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
-  ss->arrEnemies.removeObjectsInArray(arrTaggedForDeletion);
-  for (Unit *u in arrTaggedForDeletion) {
+  ss->friends.removeObjectsInArray(arrDel);
+  ss->enemies.removeObjectsInArray(arrDel);
+  for (Unit *u in arrDel) {
     removeItem(u);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::handleCollisionWithFriendly(Unit *friendly, Unit *enemy,
-    c::Array *array, bool isDirectional) {
+void GLayer::handleHitWithFriend(Unit *f, Unit *e,
+    c::Array &array, bool isDirectional) {
 
-  auto fv = friendly->_unitValue;
-  auto ev = enemy->_unitValue;
+  auto fv = f->_unitValue;
+  auto ev = e->_unitValue;
 
   if (isDirectional) {
-    enemy->_unitValue -= fv;
-    friendly->_unitValue -= (ev+1);
+    e->_unitValue -= fv;
+    f->_unitValue -= (ev+1);
   } else {
-    friendly->_unitValue -= ev;
-    enemy->_unitValue -= fv;
+    f->_unitValue -= ev;
+    e->_unitValue -= fv;
   }
 
-  friendly->updateLabel();
-  enemy->updateLabel();
+  f->updateLabel();
+  e->updateLabel();
 
-  if (friendly->_unitValue <= 0) {
-    array.addObject(friendly);
+  if (f->_unitValue <= 0) {
+    array.addObject(f);
   }
 
-  if ((enemy->_unitValue <= 0 && !isDirectional) ||
-    (enemy->_unitValue < 0 && isDirectional)) {
-    arrEnemies.removeObject(enemy);
-    removeItem(enemy);
-    ++numUnitsKilled;
+  if ((e->_unitValue <= 0 && !isDirectional) ||
+    (e->_unitValue < 0 && isDirectional)) {
+    ss->enemies.removeObject(e);
+    removeItem(e);
+    ++_numUnitsKilled;
 
-    if (_tutorialPhase == 3 || _tutorialPhase == 4) {
+    if (_tutorialPhase == 3 ||
+        _tutorialPhase == 4) {
       advanceTutorial();
     }
   }
@@ -758,7 +787,7 @@ void GLayer::handleCollisionWithFriendly(Unit *friendly, Unit *enemy,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::playUnitCombineSoundWithValue(int total) {
+void GLayer::playCombineSound(int total) {
   auto pitchValue = 1.0 - (total / 100.0); //eg: fv+ov = 20 ... 1.0 - 0.2 = 0.8
   if (total < 50) {
     cx::sfxPlay("unitCombine");
@@ -770,6 +799,7 @@ void GLayer::playUnitCombineSoundWithValue(int total) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int GLayer::saveHighScore() {
+#if 0
   //save top 20 scores
 
   //an array of Dictionaries...
@@ -800,23 +830,8 @@ int GLayer::saveHighScore() {
   }
 
   return index;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-c::Image* GLayer::takeScreenshot() {
-
-  CC_DTOR()->setNextDeltaTimeZero(true);
-
-  auto wz= cx::visSize();
-  c::RenderTexture *rtx =
-    new c::RenderTexture(wz.width, wz.height);
-  rtx->begin();
-  //[startNode visit];
-  CC_DTOR()->getRunningScene()->visit();
-  rtx->end();
-
-  return rtx->getUIImage();
+#endif
+  return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -824,15 +839,6 @@ c::Image* GLayer::takeScreenshot() {
 void GLayer::endGame() {
   //right here:
   auto hsIndex = saveHighScore();
-  auto image = takeScreenshot();
-
-  NSDictionary *scoreData = @{
-DictTotalScore : @(numTotalScore),
-                 DictTurnsSurvived : @(numTurnSurvived),
-                 DictUnitsKilled : @(numUnitsKilled),
-                 DictHighScoreIndex : @(hsIndex),
-                 @"screenshot" : image};
-
   //kenl
   //rubberBandToScene([GameOverScene sceneWithScoreData:scoreData] fromParent:self withDuration:0.5f withDirection:kMoveDirectionUp];
 }
@@ -841,6 +847,21 @@ DictTotalScore : @(numTotalScore),
 //
 void GLayer::rubberBandToScene() {
 }
+
+END_NS_UNAMED
+//////////////////////////////////////////////////////////////////////////////
+//
+void Game::sendMsgEx(const MsgTopic &topic, void *m) {
+  auto y= (GLayer*) getGLayer();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void Game::decoUI() {
+  HUDLayer::reify(this, 3);
+  GLayer::reify(this, 2);
+  play();
+}
+
 
 
 NS_END

@@ -22,13 +22,13 @@ NS_BEGIN(gmath)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Unit*> Unit::friendlyUnit {
+owner<Unit*> Unit::friendly() {
   return [[self alloc] initWithFriendlyUnit];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Unit*> Unit::enemyUnitWithNumber(int num, const c::Vec2 &atGridPosition) {
+owner<Unit*> Unit::enemyWith(int num, const c::Vec2 &atGridPosition) {
   return [[self alloc] initWithEnemyWithNumber:num atPos:pos];
 }
 
@@ -88,7 +88,7 @@ void Unit::updateLabel() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Unit::moveUnitDidIncreaseNumber() {
+bool Unit::didMoveIncNumber() {
   auto didIncrease = true;
   ++self.unitValue;
 
@@ -136,7 +136,7 @@ bool Unit::moveUnitDidIncreaseNumber() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::setDirectionBasedOnWall(int wall) {
+void Unit::setDir(int wall) {
   if (wall == 1)
     _direction = DirDown;
   else if (wall == 2)
@@ -149,7 +149,7 @@ void Unit::setDirectionBasedOnWall(int wall) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::setNewDirectionForEnemy() {
+void Unit::setNewDirForEnemy() {
   auto choice = rand() % 2;
 
   if (_gridPos.x == 4 && _gridPos.y == 5) {
@@ -193,7 +193,7 @@ void Unit::setNewDirectionForEnemy() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::slideUnitWithDistance(const c::Vec2 &dist, int dir) {
+void Unit::slideWithDist(const c::Vec2 &dist, int dir) {
 
   auto origPos = getPosForGridCoord(_gridPos);
   auto newX = this->getPositionX();

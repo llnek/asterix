@@ -15,6 +15,16 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
+#include "UIScale9Sprite.h"
+
+#define KeyFinishedTutorial "keyFinishedTutorial"
+#define KeySound "keySound"
+#define KeyMusic "keyMusic"
+#define DataHighScores "highScores"
+#define DictTotalScore "totalScore"
+#define DictTurnsSurvived "turnsSurvived"
+#define DictUnitsKilled "unitsKilled"
+#define DictHighScoreIndex "hsIndex"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(gmath)

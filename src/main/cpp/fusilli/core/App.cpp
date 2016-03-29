@@ -43,6 +43,7 @@ void App::initGLContextAttrs() {
 //
 bool App::applicationDidFinishLaunching() {
 
+  XCFG()->setPlatform(this->getTargetPlatform());
   auto glview = CC_DTOR()->getOpenGLView();
   auto sz = XCFG()->gameSize();
 

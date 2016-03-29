@@ -37,7 +37,7 @@ enum UnitDirection {
 class CC_DLL Unit : public f::CPixie {
 
   //9x9 grid, 1,1 is top left, 9,9 is bottom right
-  DECL_TD(c::Vec2,_gridPos) 
+  DECL_TD(c::Vec2,_gridPos)
   DECL_PTR(c::Label,_lblValue)
   DECL_TD(c::Vec2,_prevTapAt)
   DECL_IZ(_unitValue)
@@ -51,14 +51,14 @@ class CC_DLL Unit : public f::CPixie {
 
 public:
 
-  static owner<Unit*> enemyUnitWithNumber(int, const c::Vec2&);
-  static owner<Unit*> friendlyUnit();
+  static owner<Unit*> enemyWith(int, const c::Vec2&);
+  static owner<Unit*> friendly();
 
   void updateLabel();
-  bool moveUnitDidIncreaseNumber();
-  void setDirectionBasedOnWall(int);
-  void setNewDirectionForEnemy();
-  void slideUnitWithDistance(float,UnitDirection);
+  bool didMoveIncNumber();
+  void setDir(int);
+  void setNewDirForEnemy();
+  void slideWithDist(float,UnitDirection);
 
 };
 

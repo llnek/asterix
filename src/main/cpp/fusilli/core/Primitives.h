@@ -17,6 +17,7 @@
 #include "aeon/fusilli.h"
 #include "JSON.h"
 #include "cocos2d.h"
+#include "UIScale9Sprite.h"
 #include "Macros.h"
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)

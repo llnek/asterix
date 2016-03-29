@@ -46,7 +46,9 @@ protected:
   DECL_TV(float, _lastSfxVol, 0.5f)
   DECL_TV(float, _scale, 1.0f)
   DECL_BT(_audioState)
-
+    
+    c::ApplicationProtocol::Platform _platform;
+    
   void loadL10NStrings();
   void setCsts();
 
@@ -82,6 +84,12 @@ public:
     _room_id=s;
   }
 
+    void setPlatform(c::ApplicationProtocol::Platform p) {
+        _platform=p;
+    }
+    
+    c::ApplicationProtocol::Platform getPlatform() { return _platform; }
+    
   const sstr getGameId() { return _game_id; }
   const sstr getRoomId() { return _room_id; }
 

@@ -23,6 +23,45 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
+  DECL_PTR(c::Label,_lblTurnsSurvived)
+  DECL_PTR(c::Label,_lblUnitsKilled)
+  DECL_PTR(c::Label,_lblTotalScore)
+  DECL_IZ(_numTurnSurvived)
+  DECL_IZ(_numTotalScore)
+  DECL_IZ(_numUnitsKilled)
+  DECL_IZ(_tutorialPhase)
+void showTutHelp();
+void runFingerArrowActions(c::Sprite *finger);
+void advanceTutorial();
+void removePrevTut();
+Unit* getRandomEnemy();
+void spawnNewEnemy(Unit*);
+void goToMenu();
+void restartGame();
+const c::Vec2 getPosAsGrid(const c::Vec2 &cell);
+void slideAllByDist(float, int);
+void moveUnit(Unit *u);
+void checkForNewFriend();
+void updateLabels();
+void moveAllUnits();
+void checkForAllCombines();
+
+void checkForAnyDirCombine(Unit*, Unit*, c::Array*);
+void checkForCombine(Unit*, Unit*, c::Array*);
+void pulseUnit(c::Node*);
+void checkForDirHits();
+void checkForAllHits();
+void handleHitWithFriend(Unit*, Unit*, c::Array &array, bool isDirectional);
+void playCombineSound(int total);
+int saveHighScore();
+void rubberBandToScene();
+
+
+
+
+
+
+
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
   DECL_PTR(ecs::Node, _shared)
