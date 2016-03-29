@@ -236,546 +236,540 @@ void GLayer::runFingerArrowActionsWithFinger(c::Sprite *finger) {
         c::Delay::create(0.5),
         CC_NIL);
 
-    id fadeOutAndReposition = [CCActionSequence actions:[CCActionDelay actionWithDuration:0.25f], [CCActionEaseInOut actionWithAction:[CCActionFadeOut actionWithDuration:1.0f] rate:2], [CCActionDelay actionWithDuration:0.5f], [CCActionCallBlock actionWithBlock:^{
-      finger.position = [MainScene getPositionForGridCoord:ccp(6,5)];
-    }], nil];
+    auto fadeOutAndReposition = c::Sequence::create(
+        c::Delay::create(0.25),
+        c::EaseInOut::create(
+          c::FadeOut::create(1), 2),
+        c::Delay::create(0.5),
+        c::CallFunc::create([=]() {
+          finger->setPosition(getPosForGridCoord(c::Vec2(6,5)));
+          }),
+        CC_NIL);
 
-    [finger runAction:[CCActionRepeatForever actionWithAction:slideLeft]];
-    [finger runAction:[CCActionRepeatForever actionWithAction:fadeOutAndReposition]];
+    finger->runAction(
+        c::RepeatForever::create(slideLeft));
+    finger->runAction(
+        c::RepeatForever::create(fadeOutAndReposition));
   }
 }
 
--(void)advanceTutorial
-{
-  ++self.tutorialPhase;
-  [self removePreviousTutorialPhase];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::advanceTutorial() {
+  ++_tutorialPhase;
+  removePreviousTutorialPhase();
 
-  if (self.tutorialPhase < 7)
-  {
-    [self showTutorialInstructions];
-  }
-  else
-  {
+  if (_tutorialPhase < 7) {
+    showTutorialInstructions();
+  } else {
     //the tutorial should be marked as "visible"
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:KeyFinishedTutorial];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    CC_APPDB()->setKeyForBool(KeyFinishedTutorial,true);
+    CC_APPDB()->flush();
   }
 }
 
--(void)removePreviousTutorialPhase
-{
-  CCLabelBMFont *lblInstructions = (CCLabelBMFont*)[self getChildByName:@"tutorialText" recursively:NO];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::removePreviousTutorialPhase() {
+  auto lblInstructions = (cc::Label*)getChildByName("tutorialText");
+  lblInstructions->setName("old_instructions");
 
-  lblInstructions.name = @"old_instructions";
+  auto fadeRemoveInstructions = c::Sequence::create(
+      c::EaseInOut::create(
+        c::FadeTo::create(0.5, 0), 2),
+      c::RemoveSelf::create(true),
+      CC_NIL);
+  lblInstructions->runAction(fadeRemoveInstructions);
 
-  id fadeRemoveInstructions = [CCActionSequence actions:[CCActionEaseInOut actionWithAction:[CCActionFadeTo actionWithDuration:0.5f opacity:0] rate:2], [CCActionCallBlock actionWithBlock:^{
-    [self removeChild:lblInstructions];
-  }], nil];
-
-  [lblInstructions runAction:fadeRemoveInstructions];
-
-
-  CCSprite *finger = (CCSprite*)[self getChildByName:@"finger" recursively:NO];
-  finger.name = @"old_finger";
-  id fadeRemoveFinger = [CCActionSequence actions:[CCActionEaseInOut actionWithAction:[CCActionFadeTo actionWithDuration:0.5f opacity:0] rate:2], [CCActionCallBlock actionWithBlock:^{
-    [self removeChild:finger];
-  }], nil];
-  [finger runAction:fadeRemoveFinger];
+  auto finger = (c::Sprite*)getChildByName("finger");
+  finger->setName("old_finger");
+  auto fadeRemoveFinger = c::Sequence::create(
+      c::EaseInOut::create(
+        c::FadeTo::create(0.5,0), 2),
+      c::RemoveSelf::create(true),
+      CC_NIL);
+  finger->runAction(fadeRemoveFinger);
 }
 
--(Unit*)getRandomEnemy
-{
-  NSInteger xPos = 1;
-  NSInteger yPos = 1;
-  NSInteger wall = arc4random() % 4 + 1; //1 is top wall, 2 is right wall, 3 is bottom wall, 4 is left wall
-  if (wall == 1)
-  {
-    xPos = arc4random() % 9 + 1;
+//////////////////////////////////////////////////////////////////////////////
+//
+Unit* GLayer::getRandomEnemy() {
+  auto wall = rand() % 4 + 1; //1 is top wall, 2 is right wall, 3 is bottom wall, 4 is left wall
+  auto xPos = 1;
+  auto yPos = 1;
+  if (wall == 1) {
+    xPos = rand() % 9 + 1;
   }
-  else if (wall == 2)
-  {
+  else if (wall == 2) {
     xPos = 9;
-    yPos = arc4random() % 9 + 1;
+    yPos = rand() % 9 + 1;
   }
-  else if (wall == 3)
-  {
+  else if (wall == 3) {
     yPos = 9;
-    xPos = arc4random() % 9 + 1;
+    xPos = rand() % 9 + 1;
   }
-  else if (wall == 4)
-  {
-    yPos = arc4random() % 9 + 1;
+  else if (wall == 4) {
+    yPos = rand() % 9 + 1;
   }
 
   //base difficulty: 3
-  NSInteger upperBound = 3 + (numTurnSurvived / 17); //up difficulty every 17 turns (15 felt a little harsh, 20 might be too easy)
+  auto upperBound = 3 + (_numTurnSurvived / 17); //up difficulty every 17 turns (15 felt a little harsh, 20 might be too easy)
 
-  NSInteger unitValue = (arc4random() % upperBound) + 1;
+  auto unitValue = (rand() % _upperBound) + 1;
 
-  Unit *newEnemy = [Unit enemyUnitWithNumber:unitValue atGridPosition:ccp(xPos, yPos)];
-  newEnemy.position = [MainScene getPositionForGridCoord:newEnemy.gridPos];
-  [newEnemy setDirectionBasedOnWall:wall];
+  auto newEnemy = Unit::enemyUnitWithNumber(unitValue, c::Vec2(xPos, yPos));
+  newEnemy->setPosition(getPosForGridCoord(newEnemy->_gridPos));
+  newEnemy->setDirectionBasedOnWall(wall);
 
   return newEnemy;
 }
 
--(void)spawnNewEnemy:(Unit*)enemy
-{
-//  Unit *newEnemy = [self getRandomEnemy];
-  [self addChild:enemy];
-  [arrEnemies addObject:enemy];
-
-  enemy.scale = 0;
-  [self pulseUnit:enemy];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::spawnNewEnemy(Unit *enemy) {
+  addAtlasItem("game-pics",enemy);
+  ss->arrEnemies.push_back(enemy);
+  enemy->setScale(0);
+  pulseUnit(enemy);
 }
 
--(void)goToMenu
-{
-  if (isSoundOn)
-    [[OALSimpleAudio sharedInstance] playEffect:@"buttonClick.mp3"];
-
-  [MainScene rubberBandToScene:[MenuScene scene] fromParent:self withDuration:0.5f withDirection:kMoveDirectionDown];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::goToMenu() {
+  cx::sfxPlay("click");
+  rubberBandToScene(this, 0.5, kMoveDirectionDown);
 }
 
--(void)restartGame
-{
-  if (isSoundOn)
-    [[OALSimpleAudio sharedInstance] playEffect:@"buttonClick.mp3"];
-  [[CCDirector sharedDirector] replaceScene:[MainScene scene]];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::restartGame() {
+  cx::sfxPlay("click");
+  cx::runEx(Game::reify(new GameCtx()));
 }
 
-+(CGPoint)getPositionForGridCoord:(CGPoint)pos
-{
-  CGPoint screenPos;
-  Unit *u = [Unit friendlyUnit];
-  CGSize winSize = [[CCDirector sharedDirector] viewSize];
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Vec2 GLayer::getPosForGridCoord(const c::Vec2 &pos) {
+  auto u = Unit::friendlyUnit();
+  auto ux= u->getBoundingBox();
+  auto wz= cx::visSize();
+  auto borderValue = 0.6;
 
-  CGFloat borderValue = .6f;
-  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-    borderValue = 0.75f;
+  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    borderValue = 0.75;
+  }
 
-  screenPos.x = winSize.width * 0.625 + (u.boundingBox.size.width + borderValue) * (pos.x-5);
-  screenPos.y = winSize.height/2 - (u.boundingBox.size.width + borderValue) * (pos.y-5);
-
-  return screenPos;
+  return c::Vec2(
+    wz.width * 0.625 + (ux.size.width + borderValue) * (pos.x-5),
+    wz.height/2 - (ux.size.width + borderValue) * (pos.y-5));
 }
 
--(void)slideAllUnitsWithDistance:(CGFloat)dist withDragDirection:(enum UnitDirection)dir
-{
-  for (Unit *u in arrFriendlies)
-    [u slideUnitWithDistance:dist withDragDirection:dir];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::slideAllUnitsWithDistance(float dist, int dir) {
+  for (Unit* u in ss->arrFriendlies) {
+    u->slideUnitWithDistance(dist, dir);
+  }
 
-  for (Unit *u in arrEnemies)
-    [u slideUnitWithDistance:dist withDragDirection:dir];
+  for (Unit* u in arrEnemies) {
+    u->slideUnitWithDistance(dist, dir);
+  }
 }
 
--(void)moveUnit:(NSNotification*)notif
-{
-  if (self.tutorialPhase == 5 || self.tutorialPhase == 6)
-    [self advanceTutorial];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::moveUnit(NSNotification *notif) {
+
+  if (_tutorialPhase == 5 || _tutorialPhase == 6) {
+    advanceTutorial();
+  }
 
   NSDictionary *userInfo = [notif userInfo];
-  Unit *u = (Unit*)userInfo[@"unit"];
-  u.position = [MainScene getPositionForGridCoord:u.gridPos];
+  auto u = (Unit*)userInfo[@"unit"];
+  u->setPosition(getPosForGridCoord(u->_gridPos));
 
-  if (isSoundOn)
-    [[OALSimpleAudio sharedInstance] playEffect:@"moveUnit.mp3"];
-
+  cx::sfxPlay("moveUnit");
   ++numTurnSurvived;
-  //++numTotalScore;
 
-  [self checkForNewFriendlyUnit];
+  checkForNewFriendlyUnit();
+  moveAllUnits();
 
-  [self moveAllUnits];
+  auto rate = 3; //spawn a unit every 3 turns
 
-  NSInteger rate = 3; //spawn a unit every 3 turns
-
-  if (numTurnSurvived % rate == 0 || [arrEnemies count] == 0)
-  {
-    if (self.tutorialPhase == 4)
-    {
-      Unit *newEnemy = [Unit enemyUnitWithNumber:4 atGridPosition:ccp(5,9)];
-      [newEnemy setDirection:DirUp];
-      newEnemy.position = [MainScene getPositionForGridCoord:ccp(5,9)];
-      [self spawnNewEnemy:newEnemy];
-    }
-    else
-    {
-      if (numTurnSurvived > 200)
-      {
+  if (_numTurnSurvived % rate == 0 || ss->arrEnemies.count() == 0) {
+    if (_tutorialPhase == 4) {
+      auto newEnemy = Unit::enemyUnitWithNumber(4, c::Vec2(5,9));
+      newEnemy->setDirection(DirUp);
+      newEnemy->setPosition(getPosForGridCoord(c::Vec2(5,9)));
+      spawnNewEnemy(newEnemy);
+    } else {
+      if (_numTurnSurvived > 200) {
         //10% chance to spawn a 2nd unit... hehe... and at this level of difficulty? Upper bound of, 18? HAH! Good luck.
-        if (arc4random() % 100 < 10)
-          [self spawnNewEnemy:[self getRandomEnemy]];
+        if (rand() % 100 < 10) {
+          spawnNewEnemy(getRandomEnemy());
+        }
       }
-      [self spawnNewEnemy:[self getRandomEnemy]];
+      spawnNewEnemy(getRandomEnemy());
     }
   }
 
-  [self checkForAllCombines];
-  [self checkForAllCollisions];
+  checkForAllCombines();
+  checkForAllCollisions();
 
-  [self updateLabels];
+  updateLabels();
 
-  BOOL hasUnitAtCenter = NO;
-  for (Unit *u in arrFriendlies)
-    if (u.gridPos.x == 5 && u.gridPos.y == 5)
-      hasUnitAtCenter = YES;
+  auto hasUnitAtCenter = false;
+  for (Unit* u in ss->arrFriendlies) {
+    if (u->_gridPos.x == 5 &&
+        u->_gridPos.y == 5) {
+      hasUnitAtCenter = true;
+    }
+  }
 
-  if (!hasUnitAtCenter)
-  {
+  if (!hasUnitAtCenter) {
     //end game!
-    [self endGame];
+    SENDMSG("/game/player/lose");
     return;
   }
 
-  if (self.tutorialPhase == 1 || self.tutorialPhase == 2)
-    [self advanceTutorial];
+  if (_tutorialPhase == 1 || _tutorialPhase == 2) {
+    advanceTutorial();
+  }
 }
 
--(void)checkForNewFriendlyUnit
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkForNewFriendlyUnit() {
   //if there's a unit standing, that means there's one at the center, so return
   //don't worry about (5,5), as that should be a "combine" case if it ever were to come up...
-  for (Unit *friendly in arrFriendlies)
-  {
-    if (friendly.direction == DirStanding)
-    {
+  for (Unit *friendly in ss->arrFriendlies) {
+    if (friendly->direction == DirStanding) {
       return;
     }
   }
 
-  Unit *newFriendly = [Unit friendlyUnit];
-  newFriendly.position = [MainScene getPositionForGridCoord:newFriendly.gridPos];
-  [self addChild:newFriendly z:1];
-  [arrFriendlies addObject:newFriendly];
+  auto newFriendly = Unit::friendlyUnit();
+  newFriendly->setPosition(getPosForGridCoord(newFriendly->_gridPos));
+  addAtlasItem("game-pics",newFriendly, 1);
+  ss->arrFriendlies.addObject(newFriendly);
   ++numTotalScore;
-  newFriendly.name = @"new";
-  newFriendly.scale = 0;
-  [self pulseUnit:newFriendly];
+  newFriendly->setName("new");
+  newFriendly->setScale(0);
+  pulseUnit(newFriendly);
 }
 
--(void)updateLabels
-{
-  lblTotalScore.string = [NSString stringWithFormat:@"%ld", (long)numTotalScore];
-  lblTurnsSurvived.string = [NSString stringWithFormat:@"%ld", (long)numTurnSurvived];
-  lblUnitsKilled.string = [NSString stringWithFormat:@"%ld", (long)numUnitsKilled];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::updateLabels() {
+  _lblTotalScore->setString(FTOS(numTotalScore));
+  _lblTurnsSurvived->setString(FTOS(numTurnSurvived));
+  _lblUnitsKilled->setString(FTOS(numUnitsKilled));
 }
 
--(void)moveAllUnits
-{
-  //move all friendlies
-  NSMutableArray *arrTaggedForDeletion = [[NSMutableArray alloc] init];
-  for (Unit *friendly in arrFriendlies)
-  {
-    if ([friendly.name isEqualToString:@"new"])
-    {
-      friendly.name = @"";
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::moveAllUnits() {
+
+  c::Array arrTaggedForDeletion;
+
+  for (Unit *friendly in ss->arrFriendlies) {
+
+    if (friendly->getName() == "new") {
+      friendly->setName("");
     }
-    else if ([friendly moveUnitDidIncreaseNumber])
-    {
+    else
+    if (friendly->moveUnitDidIncreaseNumber()) {
       ++numTotalScore;
     }
 
-    friendly.position = [MainScene getPositionForGridCoord:friendly.gridPos];
+    friendly->setPosition(getPosForGridCoord(friendly->_gridPos));
 
-    if (friendly.unitValue == 0)
-    {
-      [arrTaggedForDeletion addObject:friendly];
+    if (friendly->_unitValue == 0) {
+      arrTaggedForDeletion.addObject(friendly);
     }
     //if he's not already dead
-    else if (![friendly.name isEqualToString:@"dead"])
-    {
-      for (Unit *other in arrFriendlies)
-      {
+    else if (! friendly->getName() == "dead") {
+      for (Unit *other in ss->arrFriendlies) {
         //if other unit... and neither are dead... and
-        [self checkForCombineWithUnit:friendly andUnit:other usingDeletionArray:arrTaggedForDeletion];
-
+        checkForCombineWithUnit(friendly, other, arrTaggedForDeletion);
       }
     }
-  }//for (all friendlies)
+  }
 
-  [arrFriendlies removeObjectsInArray:arrTaggedForDeletion];
-  for (Unit *u in arrTaggedForDeletion)
-    [self removeChild:u];
+  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
+  for (Unit *u in arrTaggedForDeletion) {
+    removeItem(u);
+  }
 
-  [arrTaggedForDeletion removeAllObjects];
+  arrTaggedForDeletion.removeAllObjects();
 
-
-
-  [self checkForDirectionalCollisions];
-
-
+  checkForDirectionalCollisions();
 
   //move all enemies
-  for (Unit *enemy in arrEnemies)
-  {
-    [enemy moveUnitDidIncreaseNumber];
-    enemy.position = [MainScene getPositionForGridCoord:enemy.gridPos];
-    [enemy setNewDirectionForEnemy];
+  for (Unit *enemy in arrEnemies) {
+    enemy->moveUnitDidIncreaseNumber();
+    enemy->setPosition(getPosForGridCoord(enemy->_gridPos));
+    enemy->setNewDirectionForEnemy();
 
-    if (![enemy.name isEqualToString:@"dead"])
-    {
-      for (Unit *other in arrEnemies)
-      {
-        [self checkForCombineWithUnit:enemy andUnit:other usingDeletionArray:arrTaggedForDeletion];
+    if (! enemy->getName() == "dead") {
+      for (Unit *other in ss->arrEnemies) {
+        checkForCombineWithUnit(enemy, other, arrTaggedForDeletion);
       }
     }
   }
 
-  [arrEnemies removeObjectsInArray:arrTaggedForDeletion];
-  for (Unit *u in arrTaggedForDeletion)
-    [self removeChild:u];
+  ss->arrEnemies.removeObjectsInArray(arrTaggedForDeletion);
+  for (Unit *u in arrTaggedForDeletion) {
+    removeItem(u);
+  }
 
-  [self checkForAllCollisions];
-
-  [self checkForAllCombines];
+  checkForAllCollisions();
+  checkForAllCombines();
 }
 
--(void)checkForAllCombines
-{
-  NSMutableArray *arrTaggedForDeletion = [[NSMutableArray alloc] init];
-  for (Unit *friendly in arrFriendlies)
-  {
-    for (Unit *otherFriendly in arrFriendlies)
-    {
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkForAllCombines() {
+  c::Array arrTaggedForDeletion;
+  for (Unit *friendly in ss->arrFriendlies) {
+    for (Unit *otherFriendly in ss->arrFriendlies) {
       if (friendly != otherFriendly)
-        //[self checkForCombineWithUnit:friendly andUnit:otherFriendly usingDeletionArray:arrTaggedForDeletion];
-        [self checkForAnyDirectionCombineWithUnit:friendly andUnit:otherFriendly usingDeletionArray:arrTaggedForDeletion];
+        checkForAnyDirectionCombineWithUnit(friendly, otherFriendly, arrTaggedForDeletion);
     }
   }
 
-  [arrFriendlies removeObjectsInArray:arrTaggedForDeletion];
-  for (Unit *u in arrTaggedForDeletion)
-    [self removeChild:u];
-  [arrTaggedForDeletion removeAllObjects];
+  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
+  for (Unit *u in arrTaggedForDeletion) {
+    removeItem(u);
+  }
+  arrTaggedForDeletion.removeAllObjects();
 
-
-  for (Unit *enemy in arrEnemies)
-  {
-    for (Unit *otherEnemy in arrEnemies)
-    {
+  for (Unit *enemy in ss->arrEnemies) {
+    for (Unit *otherEnemy in ss->arrEnemies) {
       if (enemy != otherEnemy)
-        //[self checkForCombineWithUnit:enemy andUnit:otherEnemy usingDeletionArray:arrTaggedForDeletion];
-        [self checkForAnyDirectionCombineWithUnit:enemy andUnit:otherEnemy usingDeletionArray:arrTaggedForDeletion];
+        checkForAnyDirectionCombineWithUnit(enemy, otherEnemy, arrTaggedForDeletion);
     }
   }
 
-  [arrEnemies removeObjectsInArray:arrTaggedForDeletion];
-  for (Unit *u in arrTaggedForDeletion)
-    [self removeChild:u];
-  [arrTaggedForDeletion removeAllObjects];
+  ss->arrEnemies.removeObjectsInArray(arrTaggedForDeletion);
+  for (Unit *u in arrTaggedForDeletion) {
+    removeItem(u);
+  }
+  arrTaggedForDeletion.removeAllObjects();
 }
 
--(void)checkForAnyDirectionCombineWithUnit:(Unit*)first andUnit:(Unit*)other usingDeletionArray:(NSMutableArray*)array
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkForAnyDirectionCombineWithUnit(Unit *first,
+    Unit *other, c::Array *array) {
+
   if (other != first &&
-    ![other.name isEqualToString:@"dead"] &&
-    ![first.name isEqualToString:@"dead"] &&
-    first.gridPos.x == other.gridPos.x &&
-    first.gridPos.y == other.gridPos.y)
-  {
-    NSInteger fv = first.unitValue;
-    NSInteger ov = other.unitValue;
+    !(other->getName() == "dead") &&
+    !(first->getName() == "dead") &&
+    first->_gridPos.x == other->_gridPos.x &&
+    first->_gridPos.y == other->_gridPos.y) {
 
-    if (first.isFriendly)
-      [self playUnitCombineSoundWithValue:fv+ov];
+    auto fv = first->_unitValue;
+    auto ov = other->_unitValue;
 
-    if (ov > fv)
-    {
-      first.name = @"dead";
-      [array addObject:first];
-      other.unitValue += fv;
-      first.direction = other.direction;
-      [other updateLabel];
-
-      [self pulseUnit:other];
+    if (first->_isFriendly) {
+      playUnitCombineSoundWithValue(fv+ov);
     }
-    else
-    {
-      other.name = @"dead";
-      [array addObject:other];
-      first.unitValue += ov;
-      other.direction = first.direction;
-      [first updateLabel];
 
-      [self pulseUnit:first];
+    if (ov > fv) {
+      first->setName("dead");
+      array.addObject(first);
+      other->_unitValue += fv;
+      first->_direction = other->_direction;
+      other->updateLabel();
+      pulseUnit(other);
+    } else {
+      other->setName("dead");
+      array.addObject(other);
+      first->_unitValue += ov;
+      other->_direction = first->_direction;
+      first->updateLabel();
+
+      pulseUnit(first);
     }
   }
 }
 
--(void)checkForCombineWithUnit:(Unit*)first andUnit:(Unit*)other usingDeletionArray:(NSMutableArray*)array
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkForCombineWithUnit(Unit *first, Unit *other, c::Array *array) {
   if (other != first &&
-    ![other.name isEqualToString:@"dead"] &&
-    ![first.name isEqualToString:@"dead"] &&
-    first.gridPos.x == other.gridPos.x &&
-    first.gridPos.y == other.gridPos.y)
-  {
+    !(other->getName() == "dead") &&
+    !(first->getName() == "dead") &&
+    first->_gridPos.x == other->_gridPos.x &&
+    first->_gridPos.y == other->_gridPos.y) {
+
     //if the opposite way... or at a wall (but collided just now, so you must've been going the opposite to make that happen)
-    if ((first.direction == DirUp && other.direction == DirDown) ||
-      (first.direction == DirDown && other.direction == DirUp) ||
-      (first.direction == DirLeft && other.direction == DirRight) ||
-      (first.direction == DirRight && other.direction == DirLeft) ||
-      first.direction == DirAtWall ||
-      first.direction == DirStanding)
-    {
-      NSInteger fv = first.unitValue;
-      NSInteger ov = other.unitValue;
+    if ((first->_direction == DirUp && other->_direction == DirDown) ||
+      (first->_direction == DirDown && other->_direction == DirUp) ||
+      (first->_direction == DirLeft && other->_direction == DirRight) ||
+      (first->_direction == DirRight && other->_direction == DirLeft) ||
+      first->_direction == DirAtWall ||
+      first->_direction == DirStanding) {
 
-      if (first.isFriendly)
-        [self playUnitCombineSoundWithValue:fv+ov];
+      auto fv = first->_unitValue;
+      auto ov = other->_unitValue;
 
-      if (ov > fv)
-      {
-        first.name = @"dead";
-        [array addObject:first];
-        other.unitValue += fv;
-        first.direction = other.direction;
-        [other updateLabel];
-
-        [self pulseUnit:other];
+      if (first->_isFriendly) {
+        playUnitCombineSoundWithValue(fv+ov);
       }
-      else
-      {
-        other.name = @"dead";
-        [array addObject:other];
-        first.unitValue += ov;
-        other.direction = first.direction;
-        [first updateLabel];
 
-        [self pulseUnit:first];
+      if (ov > fv) {
+        first->setName("dead");
+        array.addObject(first);
+        other->_unitValue += fv;
+        first->_direction = other->_direction;
+        other->updateLabel();
+
+        pulseUnit(other);
+      } else {
+        other->setName("dead");
+        array.addObject(other);
+        first->_unitValue += ov;
+        other->_direction = first->_direction;
+        first->updateLabel();
+
+        pulseUnit(first);
       }
     }
   }
 }
 
--(void)pulseUnit:(CCNode*)unit
-{
-  CGFloat baseScale = 1.0f;
-  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    baseScale = 0.8f;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::pulseUnit(c::Node *unit) {
+  auto baseScale = 1.0;
 
-  id scaleUp = [CCActionEaseInOut actionWithAction:[CCActionScaleTo actionWithDuration:0.15f scale:baseScale * 1.2f] rate:2];
-  id scaleDown = [CCActionEaseInOut actionWithAction:[CCActionScaleTo actionWithDuration:0.15f scale:baseScale * 0.9f] rate:2];
-  id scaleToFinal = [CCActionEaseInOut actionWithAction:[CCActionScaleTo actionWithDuration:0.25f scale:baseScale] rate:2];
-  id seq = [CCActionSequence actions:scaleUp, scaleDown, scaleToFinal, nil];
+  if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+    baseScale = 0.8;
+  }
 
-  [unit stopAllActions];
-  [unit runAction:seq];
+  auto scaleUp = c::EaseInOut::create(
+      c::ScaleTo::create(0.15 , baseScale * 1.2), 2);
+  auto scaleDown = c::EaseInOut::create(
+      c::ScaleTo::create(0.15, baseScale * 0.9), 2);
+  auto scaleToFinal = c::EaseInOut::create(
+      c::ScaleTo::create(0.25, baseScale), 2);
+
+  unit->stopAllActions();
+  unit->runAction(
+      c::Sequence::create(scaleUp, scaleDown, scaleToFinal, CC_NIL));
 }
 
--(void)checkForDirectionalCollisions
-{
-  NSMutableArray *arrTaggedForDeletion = [[NSMutableArray alloc] init];
-  for (Unit *f in arrFriendlies)
-  {
-    for (Unit *e in arrEnemies)
-    {
-      //at same coordinate...
-      if (f.gridPos.x == e.gridPos.x &&
-        f.gridPos.y == e.gridPos.y)
-      {
-        //if the opposite way... or at a wall (but collided just now, so you must've been going the opposite to make that happen)
-        if ((f.direction == DirUp && e.direction == DirDown) ||
-          (f.direction == DirDown && e.direction == DirUp) ||
-          (f.direction == DirLeft && e.direction == DirRight) ||
-          (f.direction == DirRight && e.direction == DirLeft) ||
-          f.direction == DirAtWall)
-        {
-          //collision!
-          [self handleCollisionWithFriendly:f andEnemy:e withDeletionArray:arrTaggedForDeletion isFromDirectional:YES];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkForDirectionalCollisions() {
+  c::Array arrTaggedForDeletion;
 
+  for (Unit *f in ss->arrFriendlies) {
+    for (Unit *e in ss->arrEnemies) {
+      //at same coordinate...
+      if (f->_gridPos.x == e->_gridPos.x &&
+        f->_gridPos.y == e->_gridPos.y) {
+        //if the opposite way... or at a wall (but collided just now, so you must've been going the opposite to make that happen)
+        if ((f->_direction == DirUp && e->_direction == DirDown) ||
+          (f->_direction == DirDown && e->_direction == DirUp) ||
+          (f->_direction == DirLeft && e->_direction == DirRight) ||
+          (f->_direction == DirRight && e->_direction == DirLeft) ||
+          f->_direction == DirAtWall) {
+          //collision!
+          handleCollisionWithFriendly(f, e, arrTaggedForDeletion, true);
           //exit the for so no "bad things" happen
-          goto afterDirCollide;
+          //goto afterDirCollide;
+          break;
         }
       }
     }
-    afterDirCollide:{}
+    //afterDirCollide:{}
   }
 
-  [arrFriendlies removeObjectsInArray:arrTaggedForDeletion];
-  for (Unit *u in arrTaggedForDeletion)
-    [self removeChild:u];
+  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
+  for (Unit *u in arrTaggedForDeletion) {
+    removeItem(u);
+  }
 }
 
--(void)checkForAllCollisions
-{
-  NSMutableArray *arrTaggedForDeletion = [[NSMutableArray alloc] init];
-  for (Unit *f in arrFriendlies)
-  {
-    for (Unit *e in arrEnemies)
-    {
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkForAllCollisions() {
+  c::Array arrTaggedForDeletion;
+  for (Unit *f in ss->arrFriendlies) {
+    for (Unit *e in ss->arrEnemies) {
       //at same coordinate...
-      if (f.gridPos.x == e.gridPos.x &&
-        f.gridPos.y == e.gridPos.y)
-      {
+      if (f->_gridPos.x == e->_gridPos.x &&
+        f->_gridPos.y == e->_gridPos.y) {
         //collision!
-        [self handleCollisionWithFriendly:f andEnemy:e withDeletionArray:arrTaggedForDeletion isFromDirectional:NO];
+        handleCollisionWithFriendly(f, e, arrTaggedForDeletion,false);
 
         //exit the for so no "bad things" happen
-        goto afterAllCollide;
-
+        //goto afterAllCollide;
+        break;
       }
     }
-  afterAllCollide:{}
+    //afterAllCollide:{}
   }
 
-  [arrFriendlies removeObjectsInArray:arrTaggedForDeletion];
-  [arrEnemies removeObjectsInArray:arrTaggedForDeletion];
-  for (Unit *u in arrTaggedForDeletion)
-    [self removeChild:u];
+  ss->arrFriendlies.removeObjectsInArray(arrTaggedForDeletion);
+  ss->arrEnemies.removeObjectsInArray(arrTaggedForDeletion);
+  for (Unit *u in arrTaggedForDeletion) {
+    removeItem(u);
+  }
 }
 
--(void)handleCollisionWithFriendly:(Unit*)friendly andEnemy:(Unit*)enemy withDeletionArray:(NSMutableArray*)array isFromDirectional:(BOOL)isDirectional
-{
-  NSInteger fv = friendly.unitValue;
-  NSInteger ev = enemy.unitValue;
-  if (isDirectional)
-  {
-    enemy.unitValue -= fv;
-    friendly.unitValue -= (ev+1);
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleCollisionWithFriendly(Unit *friendly, Unit *enemy,
+    c::Array *array, bool isDirectional) {
+
+  auto fv = friendly->_unitValue;
+  auto ev = enemy->_unitValue;
+
+  if (isDirectional) {
+    enemy->_unitValue -= fv;
+    friendly->_unitValue -= (ev+1);
+  } else {
+    friendly->_unitValue -= ev;
+    enemy->_unitValue -= fv;
   }
-  else
-  {
-    friendly.unitValue -= ev;
-    enemy.unitValue -= fv;
+
+  friendly->updateLabel();
+  enemy->updateLabel();
+
+  if (friendly->_unitValue <= 0) {
+    array.addObject(friendly);
   }
 
-  [friendly updateLabel];
-  [enemy updateLabel];
-
-  if (friendly.unitValue <= 0)
-    [array addObject:friendly];
-
-  if ((enemy.unitValue <= 0 && !isDirectional) ||
-    (enemy.unitValue < 0 && isDirectional))
-  {
-    [arrEnemies removeObject:enemy];
-    [self removeChild:enemy];
+  if ((enemy->_unitValue <= 0 && !isDirectional) ||
+    (enemy->_unitValue < 0 && isDirectional)) {
+    arrEnemies.removeObject(enemy);
+    removeItem(enemy);
     ++numUnitsKilled;
 
-    if (self.tutorialPhase == 3 || self.tutorialPhase == 4)
-      [self advanceTutorial];
+    if (_tutorialPhase == 3 || _tutorialPhase == 4) {
+      advanceTutorial();
+    }
   }
 }
 
--(void)playUnitCombineSoundWithValue:(NSInteger)total
-{
-  CGFloat pitchValue = 1.0 - (total / 100.f); //eg: fv+ov = 20 ... 1.0 - 0.2 = 0.8
-  if (total < 50)
-  {
-    if (isSoundOn)
-      [[OALSimpleAudio sharedInstance] playEffect:@"unitCombine.mp3" volume:1 pitch:pitchValue pan:0 loop:NO];
-  }
-  else
-  {
-    if (isSoundOn)
-      [[OALSimpleAudio sharedInstance] playEffect:@"largeUnitCombine.mp3"];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::playUnitCombineSoundWithValue(int total) {
+  auto pitchValue = 1.0 - (total / 100.0); //eg: fv+ov = 20 ... 1.0 - 0.2 = 0.8
+  if (total < 50) {
+    cx::sfxPlay("unitCombine");
+  } else {
+    cx::sfxPlay("largeUnitCombine");
   }
 }
 
--(NSInteger)saveHighScore
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+int GLayer::saveHighScore() {
   //save top 20 scores
 
   //an array of Dictionaries...
@@ -785,141 +779,71 @@ void GLayer::runFingerArrowActionsWithFinger(c::Sprite *finger) {
   //  [DictUnitsKilled]
   NSMutableArray *arrScores = [[[NSUserDefaults standardUserDefaults] arrayForKey:DataHighScores] mutableCopy];
 
-  NSInteger index = -1;
-  for (NSDictionary *dictHighScore in arrScores)
-  {
-    if (numTotalScore > [dictHighScore[DictTotalScore] integerValue])
-    {
+  auto index = -1;
+  for (NSDictionary *dictHighScore in arrScores) {
+    if (_numTotalScore > [dictHighScore[DictTotalScore] integerValue]) {
       index = [arrScores indexOfObject:dictHighScore];
       break;
     }
   }
 
-  if (index > -1)
-  {
+  if (index > -1) {
     NSDictionary *newHighScore = @{ DictTotalScore : @(numTotalScore),
                     DictTurnsSurvived : @(numTurnSurvived),
                     DictUnitsKilled : @(numUnitsKilled) };
 
-    [arrScores insertObject:newHighScore atIndex:index];
+    arrScores.insertObject(newHighScore, index);
+    arrScores.removeLastObject();
 
-    [arrScores removeLastObject];
-
-    [[NSUserDefaults standardUserDefaults] setObject:arrScores forKey:DataHighScores];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    CC_APPDB()->setObjectForKey(DataHighScores, arrScores);
+    CC_APPDB()->flush();
   }
 
   return index;
 }
 
--(UIImage*)takeScreenshot
-{
-  [CCDirector sharedDirector].nextDeltaTimeZero = YES;
+//////////////////////////////////////////////////////////////////////////////
+//
+c::Image* GLayer::takeScreenshot() {
 
-  //CGSize winSize = [CCDirector sharedDirector].winSize;
-  CCRenderTexture* rtx =
-  [CCRenderTexture renderTextureWithWidth:winSize.width
-                   height:winSize.height];
-  [rtx begin];
+  CC_DTOR()->setNextDeltaTimeZero(true);
+
+  auto wz= cx::visSize();
+  c::RenderTexture *rtx =
+    new c::RenderTexture(wz.width, wz.height);
+  rtx->begin();
   //[startNode visit];
-  [[[CCDirector sharedDirector] runningScene] visit];
-  [rtx end];
+  CC_DTOR()->getRunningScene()->visit();
+  rtx->end();
 
-  return [rtx getUIImage];
+  return rtx->getUIImage();
 }
 
--(void)endGame
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::endGame() {
   //right here:
-  NSInteger hsIndex = [self saveHighScore];
+  auto hsIndex = saveHighScore();
+  auto image = takeScreenshot();
 
-  UIImage *image = [self takeScreenshot];
-
-  NSDictionary *scoreData = @{ DictTotalScore : @(numTotalScore),
+  NSDictionary *scoreData = @{
+DictTotalScore : @(numTotalScore),
                  DictTurnsSurvived : @(numTurnSurvived),
                  DictUnitsKilled : @(numUnitsKilled),
                  DictHighScoreIndex : @(hsIndex),
                  @"screenshot" : image};
 
-  [MainScene rubberBandToScene:[GameOverScene sceneWithScoreData:scoreData] fromParent:self withDuration:0.5f withDirection:kMoveDirectionUp];
-
+  //kenl
+  //rubberBandToScene([GameOverScene sceneWithScoreData:scoreData] fromParent:self withDuration:0.5f withDirection:kMoveDirectionUp];
 }
 
-+(void)rubberBandToScene:(CCScene*)scene fromParent:(CCNode*)parent withDuration:(CGFloat)duration withDirection:(enum kMoveDirection)direction
-{
-  //grab the view size, so we know the width/height of the screen
-  CGSize winSize = [[CCDirector sharedDirector] viewSize];
-
-  //add the new scene to the current scene
-  [parent addChild:scene z:-1];
-
-  //set a distance to "over move" by
-  NSInteger distance = 25;
-
-  //variables for how much to move in each direction
-  CGPoint posBack = ccp(0,0);
-  CGPoint posForward = ccp(0,0);
-
-  //determine the specifics based on which direction the slide is going to go
-  if (direction == kMoveDirectionUp)
-  {
-    posBack.y = -distance;
-    posForward.y = winSize.height + distance*2;
-    scene.position = ccp(0,-winSize.height);
-  }
-  else if (direction == kMoveDirectionDown)
-  {
-    posBack.y = distance;
-    posForward.y = -(winSize.height + distance*2);
-    scene.position = ccp(0,winSize.height);
-  }
-  else if (direction == kMoveDirectionLeft)
-  {
-    posBack.x = distance;
-    posForward.x = -(winSize.width + distance*2);
-    scene.position = ccp(winSize.width, 0);
-  }
-  else if (direction == kMoveDirectionRight)
-  {
-    posBack.x = -distance;
-    posForward.x = winSize.width + distance*2;
-    scene.position = ccp(-winSize.width,0);
-  }
-
-  //declare the slide actions
-  id slideBack = [CCActionEaseInOut actionWithAction:[CCActionMoveBy actionWithDuration:duration/4 position:posBack] rate:2];
-  id slideForward = [CCActionEaseInOut actionWithAction:[CCActionMoveBy actionWithDuration:duration/2 position:posForward] rate:2];
-  id slideBackAgain = [CCActionEaseInOut actionWithAction:[CCActionMoveBy actionWithDuration:duration/4 position:posBack] rate:2];
-  id replaceScene = [CCActionCallBlock actionWithBlock:^{
-
-    //remove the new scene from the current scene (so we can use it in the replace)
-    [parent removeChild:scene cleanup:NO];
-
-    //reset its position to (0,0)
-    scene.position = ccp(0,0);
-
-    //actually replace our scene with the passed-in one
-    [[CCDirector sharedDirector] replaceScene:scene];
-  }];
-
-  //arrange the actions into a sequence (which also includes the replacing)
-  id slideSeq = [CCActionSequence actions:slideBack, slideForward, slideBackAgain, replaceScene, nil];
-
-  //execute the sequence of actions
-  [parent runAction:slideSeq];
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::rubberBandToScene() {
 }
 
-#pragma mark - Touch Methods
 
--(void)touchBegan:(CCTouch *)touch withEvent:(CCTouchEvent *)event
-{
-  //CGPoint pos = [touch locationInNode:self];
-  //NSLog(@"ccp(%f,%f)", pos.x / winSize.width, pos.y / winSize.height);
-}
+NS_END
 
--(void)dealloc
-{
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 
-@end
+
