@@ -33,8 +33,28 @@ NS_BEGIN(gmath)
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-
+  DECL_IZ(tutorial)
+  DECL_TD(c::Size,unitSize)
+  DECL_PTR(c::Array, friends)
+  DECL_PTR(c::Array, enemies)
+  GVars() {
+    friends=c::Array::create();
+    enemies=c::Array::create();
+    CC_KEEP(friends);
+    CC_KEEP(enemies);
+  }
+  virtual ~GVars() {
+    friends->removeAllObjects();
+    enemies->removeAllObjects();
+    CC_DROP(friends);
+    CC_DROP(enemies);
+  }
 };
+
+
+const c::Vec2 getPosAsGrid(GVars*, const f::Cell2I&);
+
+
 
 
 

@@ -16,68 +16,63 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Unit.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(gmath)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Unit*> Unit::friendly() {
-  return [[self alloc] initWithFriendlyUnit];
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-owner<Unit*> Unit::enemyWith(int num, const c::Vec2 &atGridPosition) {
-  return [[self alloc] initWithEnemyWithNumber:num atPos:pos];
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Unit::initWithSpriteFrameName(const sstr &fn) {
-  auto rc= c::Sprite::initWithSpriteFrameName("imgUnit.png");
-  if (!rc) { return false; }
-  auto bx= this->getBoundingBox();
-  if (1) {//}(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-    setScale(0.8);
-  }
-  _lblValue = cx::reifyBmfLabel("dft", "1");
-  //lblValue->setScale(1.5);
-  _lblValue->setPosition(bx.size.width/2, bx.size.height * 0.55);
-  addChild(_lblValue);
-  _dragDirection = DirStanding;
-
-  //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(repositionUnitToGridPos) name:kUnitDragCancel object:nil];
-
-  _gridWidth = bx.size.width + 0.6;
-  return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-owner<Unit*> Unit::initWithFriendlyUnit() {
-  auto z= Unit::create();
-  z->isFriendly = true;
-  z->unitValue = 1;
-  z->direction = DirStanding;
-  z->setColor(c::Color3B(39/255.0, 179/255.0, 97/255.0)); //green for friendly
-  z->gridPos = c::Vec2(5,5);
+owner<Unit*> Unit::friendly(GVars *ss) {
+  auto z= mc_new(Unit);
+  z->initWithSpriteFrameName("imgUnit.png");
+  z->_isFriendly = true;
+  z->ss=ss;
+  z->_unitValue = 1;
+  z->_direction = DirStanding;
+  z->setColor(c::Color3B(39, 179, 97)); //green for friendly
+  z->_gridPos = f::Cell2I(5,5);
   return z;;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Unit*> Unit::initWithEnemyWithNumber(int num, const c::Vec2 &atPos) {
-  auto z= Unit::create();
+owner<Unit*> Unit::enemyWith(GVars *ss, int num, const f::Cell2I &cell) {
+  auto z= mc_new(Unit);
+  z->initWithSpriteFrameName("imgUnit.png");
   z->_isFriendly = false;
+  z->ss=ss;
   z->_unitValue = num;
   z->_lblValue->setString(FTOS(num));
   z->_direction = DirLeft;
   //red for enemy
-  z->setColor(c::Color3B(255/255.0, 91/255.0, 75/255.0));
-  z->_gridPos = p;
-
+  z->setColor(c::Color3B(255, 91, 75));
+  z->_gridPos = cell;
   return z;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Unit::initWithSpriteFrameName(const sstr &fn) {
+  auto rc= c::Sprite::initWithSpriteFrameName(fn);
+  if (!rc) { return false; }
+  auto bx= this->getBoundingBox();
+
+  if (c::ApplicationProtocol::Platform::OS_IPHONE ==
+      XCFG()->getPlatform()) {
+    setScale(0.8);
+  }
+
+  _lblValue = cx::reifyBmfLabel("dft", "1");
+  _lblValue->setPosition(bx.size.width/2, bx.size.height * 0.55);
+  this->addChild(_lblValue);
+
+  c::NotificationCenter::getInstance()->addObserver(
+        this, CC_CALLFUNCO_SELECTOR(Unit::reposToGrid), kUnitDragCancel,CC_NIL);
+
+  _gridWidth = bx.size.width + 0.6;
+  _dragDirection = DirStanding;
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -90,7 +85,7 @@ void Unit::updateLabel() {
 //
 bool Unit::didMoveIncNumber() {
   auto didIncrease = true;
-  ++self.unitValue;
+  ++_unitValue;
 
   auto gridX = _gridPos.x;
   auto gridY = _gridPos.y;
@@ -108,13 +103,12 @@ bool Unit::didMoveIncNumber() {
   //keep within the grid bounds
   if (gridX < 1) gridX = 1;
   if (gridX > 9) gridX = 9;
-
   if (gridY < 1) gridY = 1;
   if (gridY > 9) gridY = 9;
 
   if (_direction == DirAtWall) {
-    _unitValue -= 2;
     didIncrease = false;
+    _unitValue -= 2;
   }
 
   if (_isFriendly) {
@@ -123,12 +117,11 @@ bool Unit::didMoveIncNumber() {
         (gridY == 1 && _direction == DirUp) ||
         (gridY == 9 && _direction == DirDown))  {
       //if didn't move, it's standing
-      self.direction = DirAtWall;
+      _direction = DirAtWall;
     }
   }
 
-  _gridPos = c::Vec2(gridX, gridY);
-
+  _gridPos = f::Cell2I(gridX, gridY);
   updateLabel();
 
   return didIncrease;
@@ -193,9 +186,9 @@ void Unit::setNewDirForEnemy() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::slideWithDist(const c::Vec2 &dist, int dir) {
+void Unit::slideWithDist(float dist, int dir) {
 
-  auto origPos = getPosForGridCoord(_gridPos);
+  auto origPos = getPosAsGrid(ss,_gridPos);
   auto newX = this->getPositionX();
   auto newY = this->getPositionY();
 
@@ -251,22 +244,21 @@ void Unit::slideWithDist(const c::Vec2 &dist, int dir) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::repositionUnitToGridPos() {
-  auto pos= getPositionForGridCoord(_gridPos);
+void Unit::reposToGrid(c::Ref*) {
+  auto pos= getPosAsGrid(ss,_gridPos);
   setPosition(pos);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::touchStart(c::Touch *touch) {
-  _tapAt = touch->getLocation();
+bool Unit::touchStart(const c::Vec2 &tap) {
+  _tapAt = tap;
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::touchMotion(c::Touch *touch) {
-
-  auto tap = touch->getLocation();
+void Unit::touchMotion(const c::Vec2 &tap) {
 
   //if it's not already being dragged and the touch is dragged far enough away...
   if (!_isBeingDragged && c::ccpDistance(tap, _tapAt) > 20) {
@@ -324,7 +316,7 @@ void Unit::touchMotion(c::Touch *touch) {
     }
 
     dist /= 2; //optional
-    slideAllUnitsWithDistance(dist,_dragDirection);
+    slideWithDist(dist,_dragDirection);
     _prevTapAt= tap;;
   }
 
@@ -332,14 +324,14 @@ void Unit::touchMotion(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::touchEnd(c::Touch *touch) {
+void Unit::touchEnd(const c::Vec2 &tap) {
   if (!_isBeingDragged) { return; }
 
   //CGPoint touchPos = [touch locationInNode:self.parent];
   //stop the dragging
   _isBeingDragged = false;
 
-  auto oldSelfPos = getPositionForGridCoord(_gridPos);
+  auto oldSelfPos = getPosAsGrid(ss,_gridPos);
   auto pos= this->getPosition();
   auto dist = c::ccpDistance(oldSelfPos, pos);
 
@@ -364,25 +356,21 @@ void Unit::touchEnd(c::Touch *touch) {
     //keep within the grid bounds
     if (gridX < 1) { gridX = 1; }
     if (gridX > 9) { gridX = 9; }
-
     if (gridY < 1) { gridY = 1; }
     if (gridY > 9) { gridY = 9; }
 
     //if it's not in the same place... aka, a valid move taken
     if (!(gridX == _gridPos.x && gridY == _gridPos.y)) {
       _direction = _dragDirection;
-      //[self updateLabel];
       //pass the unit through to the MainScene
-      postNotificationName(kTurnCompletedNotification,CC_NIL, this);
+      c::NotificationCenter::getInstance()->postNotification( kTurnCompletedNotification, this);
     }
   //else... dist NOT > gridWidth/2
   } else {
-    //[self repositionUnitToGridPos];
-    postNotificationName(kUnitDragCancel,CC_NIL);
+    c::NotificationCenter::getInstance()->postNotification( kUnitDragCancel,CC_NIL);
   }
 
   _dragDirection = DirStanding;
-
 }
 
 

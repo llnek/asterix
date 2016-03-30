@@ -9,28 +9,30 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
-
-#include "ecs/Engine.h"
-#include "n/Unit.h"
-#include "n/C.h"
+#include "C.h"
 
 NS_BEGIN(gmath)
+
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL GEngine  : public ecs::Engine {
+const c::Vec2 getPosAsGrid(GVars *ss, const f::Cell2I &cell) {
+  auto wz= cx::visSize();
+  auto ux= ss->unitSize;
+  auto borderValue = 0.6;
 
-public:
+  if (c::ApplicationProtocol::Platform::OS_IPAD ==
+      XCFG()->getPlatform()) {
+    borderValue = 0.75;
+  }
 
-  virtual void initEntities();
-  virtual void initSystems();
-
-};
-
+  return c::Vec2(
+    wz.width * 0.625 + (ux.width + borderValue) * (cell.x-5),
+    wz.height/2 - (ux.width + borderValue) * (cell.y-5));
+}
 
 
 NS_END
+
 
 
 

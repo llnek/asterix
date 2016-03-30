@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "Splash.h"
+#include "Game.h"
 #include "Config.h"
 NS_BEGIN(gmath)
 
@@ -34,9 +34,8 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  _game_id= "@@GAMEID@@";
+  _game_id= "8f90832f-e0db-47a4-8627-f9957e3d29a2";
   _app_id = "gmath";
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,14 +45,16 @@ void Config::initAssets() {
   addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addImage("game.bg", CC_STR("pics/background.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
+  addEffect("combine", CC_STR("sfx/unitCombine.mp3"));
+  addEffect("move", CC_STR("sfx/moveUnit.mp3"));
+  addEffect("click", CC_STR("sfx/buttonClick.mp3"));
+  addEffect("gameOver", CC_STR("sfx/gameOver.mp3"));
+  addMusic("background", CC_STR("sfx/backgroundMusic.mp3"));
 
-  addEffect("button", CC_STR("sfx/button-click.wav"));
-  addEffect("crash", CC_STR("sfx/crash.wav"));
-  addMusic("background", CC_STR("sfx/music.mp3"));
-
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("score", CC_STR("fon/en/bmScoreFont.fnt"));
+  addFont("title", CC_STR("fon/en/bmTitleFont.fnt"));
+  addFont("text", CC_STR("fon/en/arial.ttf"));
+  addFont("dft", CC_STR("fon/en/bmFont.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +118,7 @@ void Config::runOnce() {
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Splash::reify();
+  return Game::reify(new GameCtx());
 }
 
 
