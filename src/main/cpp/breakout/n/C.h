@@ -24,8 +24,8 @@ struct CC_DLL Brick : public f::CPixie, public f::CStats {
     this->color=color;
     this->value=v;
   }
-  DECL_BF(flipped);
-  DECL_IZ(color);
+  __decl_bf(flipped);
+  __decl_iz(color);
   MDECL_COMP_TPID("n/Brick")
 };
 

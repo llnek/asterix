@@ -23,10 +23,10 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_PTR(c::Label, _timeLabel)
-  DECL_IZ(_score)
-  DECL_IZ(_time)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(c::Label, _timeLabel)
+  __decl_iz(_score)
+  __decl_iz(_time)
 
   int getScore() { return _score; }
   void flashAlert();

@@ -20,8 +20,8 @@ NS_BEGIN(monsters)
 //
 class CC_DLL Resolve : public ecs::System {
 
-  DECL_PTR(ecs::Node,_human)
-  DECL_PTR(ecs::Node,_enemy)
+  __decl_ptr(ecs::Node,_human)
+  __decl_ptr(ecs::Node,_enemy)
   void process(float);
 
 public:

@@ -254,7 +254,7 @@ void XLayer::setMouseEnabled(bool enabled) {
     }
     else {
       _eventDispatcher->removeEventListener(_mouseListener);
-      SNPTR(_mouseListener)
+      S__NIL(_mouseListener)
     }
   }
 }

@@ -27,8 +27,8 @@ class CC_DLL Resolve : public ecs::System {
   void checkBombs();
   void process(float);
 
-  DECL_PTR(ecs::Node, _aliens)
-  DECL_PTR(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _aliens)
+  __decl_ptr(ecs::Node, _player)
 
 public:
 

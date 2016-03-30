@@ -20,7 +20,7 @@ NS_BEGIN(terra)
 //
 class CC_DLL Render : public ecs::System {
 
-    DECL_PTR(ecs::Node,_arena)
+    __decl_ptr(ecs::Node,_arena)
   void process(float);
 
 public:

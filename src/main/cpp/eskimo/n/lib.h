@@ -89,16 +89,16 @@ struct CC_DLL GVars : public ecs::Component {
 
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_PTR(c::ParticleSystem, smoke)
-  DECL_PTR(b2World, world)
-  DECL_TD(c::Vec2, acc)
+  __decl_ptr(c::ParticleSystem, smoke)
+  __decl_ptr(b2World, world)
+  __decl_td(c::Vec2, acc)
 
-  DECL_FZ(tutorialCounter)
-  DECL_IZ(tutorialStep)
+  __decl_fz(tutorialCounter)
+  __decl_iz(tutorialStep)
 
-  DECL_PTR(Igloo, igloo)
-  DECL_IZ(currentLevel)
-  DECL_IZ(gravity)
+  __decl_ptr(Igloo, igloo)
+  __decl_iz(currentLevel)
+  __decl_iz(gravity)
 
   virtual ~GVars() {
   }

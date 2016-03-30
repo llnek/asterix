@@ -29,8 +29,8 @@ struct CC_DLL Enemy : public f::CPixie {
   static owner<Enemy*> create(GVars*);
   virtual void update(float);
 
-  DECL_PTR(PathStep, pathStep)
-  DECL_PTR(GVars,ss)
+  __decl_ptr(PathStep, pathStep)
+  __decl_ptr(GVars,ss)
 
 };
 

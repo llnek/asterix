@@ -24,7 +24,7 @@ NS_BEGIN(terra)
 //
 struct CC_DLL Missile : public f::CPixie {
 
-  DECL_TV(Attacks, attackMode, Attacks::NORMAL)
+  __decl_tv(Attacks, attackMode, Attacks::NORMAL)
   MDECL_COMP_TPID("f/CPixie")
 
   Missile(not_null<c::Sprite*> s, Attacks m)
@@ -40,7 +40,7 @@ struct CC_DLL Missile : public f::CPixie {
 //
 struct CC_DLL Bomb : public f::CPixie {
 
-  DECL_TV(Attacks, attackMode, Attacks::NORMAL)
+  __decl_tv(Attacks, attackMode, Attacks::NORMAL)
   MDECL_COMP_TPID("f/CPixie")
 
   Bomb(not_null<c::Node*> s, Attacks m)
@@ -56,8 +56,8 @@ struct CC_DLL Bomb : public f::CPixie {
 //
 struct CC_DLL Enemy : public f::CStats {
 
-  DECL_TD(EnemyType, enemyType)
-  DECL_FZ(delayTime)
+  __decl_td(EnemyType, enemyType)
+  __decl_fz(delayTime)
   MDECL_COMP_TPID( "n/Enemy")
 
   Enemy(const EnemyType &et)
@@ -72,8 +72,8 @@ struct CC_DLL Enemy : public f::CStats {
 //
 struct CC_DLL Ship : public f::CPixie {
 
-  DECL_PTR(c::Sprite, bornSprite)
-  DECL_BF(canBeAttack)
+  __decl_ptr(c::Sprite, bornSprite)
+  __decl_bf(canBeAttack)
   MDECL_COMP_TPID( "f/CPixie")
 
   Ship(not_null<c::Sprite*> s,
@@ -96,9 +96,9 @@ struct CC_DLL Spark : public f::CPixie {
   virtual void inflate(float, float);
   virtual void deflate();
 
-  DECL_TV(float, duration, 0.7f)
-  DECL_TV(float, scale, 1.2f)
-  DECL_PTR(c::Sprite, sprite2)
+  __decl_tv(float, duration, 0.7f)
+  __decl_tv(float, scale, 1.2f)
+  __decl_ptr(c::Sprite, sprite2)
   MDECL_COMP_TPID( "f/CPixie")
 
 };
@@ -127,7 +127,7 @@ struct CC_DLL HitEffect : public f::CPixie {
     : CPixie(s) {
   }
 
-  DECL_TV(float, scale, 0.75)
+  __decl_tv(float, scale, 0.75)
   MDECL_COMP_TPID("f/CPixie")
 
 };
@@ -136,10 +136,10 @@ struct CC_DLL HitEffect : public f::CPixie {
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID("n/GVars")
-  DECL_IZ(secCount)
-  DECL_PTR(ecs::Node, backSkyRe)
-  DECL_PTR(ecs::Node, backSky)
-  DECL_TD(c::Size, backSkyDim)
+  __decl_iz(secCount)
+  __decl_ptr(ecs::Node, backSkyRe)
+  __decl_ptr(ecs::Node, backSky)
+  __decl_td(c::Size, backSkyDim)
 };
 
 

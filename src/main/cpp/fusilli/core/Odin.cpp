@@ -154,7 +154,7 @@ void netSendMsg(not_null<OdinIO*> wss, j::json msg) {
 //////////////////////////////////////////////////////////////////////////////
 // Listen to this message-type and event
 void OdinIO::listen(OEventFN cb) {
-  SNPTR(cbAll)
+  S__NIL(cbAll)
   listen(MType::ALL , cb);
 }
 
@@ -179,9 +179,9 @@ void OdinIO::listen(MType t, OEventFN cb ) {
 //////////////////////////////////////////////////////////////////////////////
 // Cancel and remove all subscribers
 void OdinIO::cancelAll() {
-  SNPTR(cbNetwork)
-  SNPTR(cbSession)
-  SNPTR(cbAll)
+  S__NIL(cbNetwork)
+  S__NIL(cbSession)
+  S__NIL(cbAll)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,15 +189,15 @@ void OdinIO::cancelAll() {
 void OdinIO::cancel(MType t) {
   switch (t) {
     case MType::SESSION:
-      SNPTR(cbSession)
+      S__NIL(cbSession)
     break;
 
     case MType::NETWORK:
-      SNPTR(cbNetwork)
+      S__NIL(cbNetwork)
     break;
 
     case MType::ALL:
-      SNPTR(cbAll)
+      S__NIL(cbAll)
     break;
   }
 }

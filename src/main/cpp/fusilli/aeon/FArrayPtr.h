@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "fusilli.h"
 NS_BEGIN(fusii)
@@ -19,8 +20,8 @@ NS_BEGIN(fusii)
 template<typename T>
 class FS_DLL FArrayPtr {
 
-  DECL_PTR(T*,_data)
-  DECL_IZ(_sz)
+  __decl_ptr(T*,_data)
+  __decl_iz(_sz)
 
 public:
 
@@ -65,7 +66,7 @@ FArrayPtr<T>& FArrayPtr<T>::operator=(FArrayPtr<T> &&src) {
   mc_del_arr(_data);
   _data=src._data;
   _sz=src._sz;
-  SNPTR(src._data)
+  S__NIL(src._data)
   src._sz=0;
   return *this;
 }
@@ -76,7 +77,7 @@ template<typename T>
 FArrayPtr<T>::FArrayPtr(FArrayPtr<T> &&src) {
   _data=src._data;
   _sz=src._sz;
-  SNPTR(src._data)
+  S__NIL(src._data)
   src._sz=0;
 }
 
@@ -88,7 +89,7 @@ FArrayPtr<T>& FArrayPtr<T>::operator=(const FArrayPtr<T> &src) {
   _sz=src._sz;
   if (_sz > 0) {
     _data= new T* [_sz];
-    for (int i=0; i < _sz; ++i) {
+    for (auto i=0; i < _sz; ++i) {
       _data[i] = src._data[i];
     }
   }
@@ -100,10 +101,10 @@ FArrayPtr<T>& FArrayPtr<T>::operator=(const FArrayPtr<T> &src) {
 template<typename T>
 FArrayPtr<T>::FArrayPtr(const FArrayPtr<T> &src) {
   _sz=src._sz;
-  SNPTR(_data)
+  S__NIL(_data)
   if (_sz > 0) {
     _data= new T* [_sz];
-    for (int i=0; i < _sz; ++i) {
+    for (auto i=0; i < _sz; ++i) {
       _data[i] = src._data[i];
     }
   }
@@ -133,7 +134,7 @@ FArrayPtr<T>::~FArrayPtr() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T* FArrayPtr<T>::swap(int pos, T* np) {
+T* FArrayPtr<T>::swap(int pos, T *np) {
   assert(_sz > 0);
   assert(pos >=0 && pos < _sz);
   auto rc= _data[pos];
@@ -145,7 +146,7 @@ T* FArrayPtr<T>::swap(int pos, T* np) {
 //
 template<typename T>
 void FArrayPtr<T>::map(std::function<T* (T*)> m) {
-  for (int i = 0; i < _sz; ++i) {
+  for (auto i = 0; i < _sz; ++i) {
     _data[i] = m(_data[i]);
   }
 }
@@ -154,7 +155,7 @@ void FArrayPtr<T>::map(std::function<T* (T*)> m) {
 //
 template<typename T>
 int FArrayPtr<T>::find(T *v) {
-  for (int i = 0; i < _sz; ++i) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v == _data[i]) { return i; }
   }
   return -1;
@@ -164,7 +165,7 @@ int FArrayPtr<T>::find(T *v) {
 //
 template<typename T>
 void FArrayPtr<T>::fill(T *v) {
-  for (int i = 0; i < _sz; ++i) {
+  for (auto i = 0; i < _sz; ++i) {
     _data[i]=v;
   }
 }
@@ -173,7 +174,7 @@ void FArrayPtr<T>::fill(T *v) {
 //
 template<typename T>
 bool FArrayPtr<T>::some(T *v) {
-  for (int i = 0; i < _sz; ++i) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v == _data[i]) { return true; }
   }
   return false;
@@ -183,7 +184,7 @@ bool FArrayPtr<T>::some(T *v) {
 //
 template<typename T>
 bool FArrayPtr<T>::notAny(T *v) {
-  for (int i = 0; i < _sz; ++i) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v == _data[i]) { return false; }
   }
   return true;
@@ -193,7 +194,7 @@ bool FArrayPtr<T>::notAny(T *v) {
 //
 template<typename T>
 bool FArrayPtr<T>::all(T *v) {
-  for (int i = 0; i < _sz; ++i) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v != _data[i]) { return false; }
   }
   return _sz > 0 ;
@@ -204,7 +205,7 @@ bool FArrayPtr<T>::all(T *v) {
 template<typename T>
 FArrayPtr<T>* FArrayPtr<T>::clone() {
   auto rc= new FArrayPtr<T>(this->_sz);
-  for (int i=0; i < this->_sz; ++i) {
+  for (auto i=0; i < this->_sz; ++i) {
     rc->_data[i] = this->_data[i];
   }
   return rc;

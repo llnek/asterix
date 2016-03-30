@@ -111,7 +111,7 @@ void Generate::previewNextShape() {
   y += HTV(sz);
 
   disposeShape(_nextShape);
-  SNPTR(_nextShape)
+  S__NIL(_nextShape)
 
   _nextShape= previewShape(info, x, y);
   _nextShapeInfo= info;

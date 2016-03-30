@@ -76,33 +76,33 @@ struct CC_DLL Ufo : public f::CPixie {
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_FZ(difficultyInterval)
-  DECL_FZ(difficultyTimer)
+  __decl_fz(difficultyInterval)
+  __decl_fz(difficultyTimer)
 
-  DECL_FZ(meteorInterval)
-  DECL_FZ(meteorTimer)
-  DECL_FZ(meteorSpeed)
+  __decl_fz(meteorInterval)
+  __decl_fz(meteorTimer)
+  __decl_fz(meteorSpeed)
 
-  DECL_FZ(healthInterval)
-  DECL_FZ(healthTimer)
-  DECL_FZ(healthSpeed)
+  __decl_fz(healthInterval)
+  __decl_fz(healthTimer)
+  __decl_fz(healthSpeed)
 
-  DECL_FZ(ufoInterval)
-  DECL_FZ(ufoTimer)
-  DECL_BF(ufoKilled)
+  __decl_fz(ufoInterval)
+  __decl_fz(ufoTimer)
+  __decl_bf(ufoKilled)
 
-  DECL_IZ(shockwaveHits)
-  DECL_FZ(energy)
+  __decl_iz(shockwaveHits)
+  __decl_fz(energy)
 
-  DECL_PTR(c::RepeatForever,rotateSprite)
-  DECL_PTR(c::RepeatForever,swingHealth)
-  DECL_PTR(c::RepeatForever,blinkRay)
-  DECL_PTR(c::Sequence,shockwaveSequence)
-  DECL_PTR(c::Sequence,groundHit)
-  DECL_PTR(c::Sequence,explosion)
-  DECL_PTR(c::Sprite,shockWave)
-  DECL_PTR(c::ScaleTo,growBomb)
-  DECL_PTR(c::Animate,ufoAnimation)
+  __decl_ptr(c::RepeatForever,rotateSprite)
+  __decl_ptr(c::RepeatForever,swingHealth)
+  __decl_ptr(c::RepeatForever,blinkRay)
+  __decl_ptr(c::Sequence,shockwaveSequence)
+  __decl_ptr(c::Sequence,groundHit)
+  __decl_ptr(c::Sequence,explosion)
+  __decl_ptr(c::Sprite,shockWave)
+  __decl_ptr(c::ScaleTo,growBomb)
+  __decl_ptr(c::Animate,ufoAnimation)
 
   s_map<ecs::Node*,ecs::Node*> fallingObjects;
 };

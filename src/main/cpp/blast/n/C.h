@@ -64,11 +64,11 @@ struct CC_DLL GVars : public ecs::Component {
   s_arr<int,skill6_formations_size> skill6_formations;
   s_arr<int,powerup_frequency_size> powerup_frequency;
 
-  DECL_IZ(enemies_killed_total)
-  DECL_IZ(enemies_killed_combo)
-  DECL_BF(is_popup_active)
-  DECL_IZ(seconds)
-  DECL_IZ(combo_timer)
+  __decl_iz(enemies_killed_total)
+  __decl_iz(enemies_killed_combo)
+  __decl_bf(is_popup_active)
+  __decl_iz(seconds)
+  __decl_iz(combo_timer)
 
   virtual ~GVars() {
     CC_DROP(powerups);
@@ -77,10 +77,10 @@ struct CC_DLL GVars : public ecs::Component {
     CC_DROP(missiles);
   }
 
-  DECL_PTR(c::Array,enemies)
-  DECL_PTR(c::Array,powerups)
-  DECL_PTR(c::Array,blasts)
-  DECL_PTR(c::Array,missiles)
+  __decl_ptr(c::Array,enemies)
+  __decl_ptr(c::Array,powerups)
+  __decl_ptr(c::Array,blasts)
+  __decl_ptr(c::Array,missiles)
 
 };
 

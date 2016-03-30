@@ -50,7 +50,7 @@ void Motions::controlCannon(float dt) {
   else
   if (cx::timerDone(lpr->timer)) {
     cx::undoTimer(lpr->timer);
-    SNPTR(lpr->timer)
+    S__NIL(lpr->timer)
     gun->hasAmmo=true;
   }
   else

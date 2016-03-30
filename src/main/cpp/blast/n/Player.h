@@ -26,7 +26,7 @@ class Shield;
 class Player : public f::CDrawNode {
 protected:
 
-  DECL_PTR(Shield, _shield)
+  __decl_ptr(Shield, _shield)
     Player() {}
     
 public:
@@ -49,9 +49,9 @@ public:
   Shield* getShield() { return _shield; }
   void setShield(Shield*);
 
-  DECL_TV(float, radius,PLAYER_RADIUS)
-  DECL_TV(c::Vec2, speed, CC_ZPT)
-  DECL_BF(isDying)
+  __decl_tv(float, radius,PLAYER_RADIUS)
+  __decl_tv(c::Vec2, speed, CC_ZPT)
+  __decl_bf(isDying)
 
 };
 

@@ -44,9 +44,9 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  DECL_PTR(c::Sprite, _timeBar)
-  DECL_PTR(ecs::Node, _shared)
-  DECL_BF(_touchDown)
+  __decl_ptr(c::Sprite, _timeBar)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_bf(_touchDown)
 };
 
 //////////////////////////////////////////////////////////////////////////////

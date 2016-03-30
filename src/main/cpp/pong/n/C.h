@@ -52,8 +52,8 @@ public:
 
   MDECL_COMP_TPID( "n/Paddle")
   s_arr<KEYCODE,2> kcodes;
-  DECL_IZ(pnum)
-  DECL_TD(sstr, snd)
+  __decl_iz(pnum)
+  __decl_td(sstr, snd)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -75,11 +75,11 @@ struct CC_DLL Player : public f::CStats {
   Player() {}
 
   MDECL_COMP_TPID( "n/Player")
-  DECL_IZ(category)
-  DECL_IZ(pnum)
-  DECL_TD(sstr, color)
-  DECL_TD(sstr, pid)
-  DECL_TD(sstr, pname)
+  __decl_iz(category)
+  __decl_iz(pnum)
+  __decl_td(sstr, color)
+  __decl_td(sstr, pid)
+  __decl_td(sstr, pname)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,21 +105,21 @@ struct CC_DLL Position : public ecs::Component {
     lastP= lp;
   }
 
-  DECL_IZ(lastDir )
-  DECL_FZ(lastP)
+  __decl_iz(lastDir )
+  __decl_fz(lastP)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  DECL_TD(c::Vec2, p2p)
-  DECL_TD(c::Vec2, p1p)
-  DECL_TD(c::Size, pz)
-  DECL_TD(c::Size, bz)
-  DECL_TD(c::Vec2, bp)
-  DECL_BF(poked)
-  DECL_IZ(pnum )
+  __decl_td(c::Vec2, p2p)
+  __decl_td(c::Vec2, p1p)
+  __decl_td(c::Size, pz)
+  __decl_td(c::Size, bz)
+  __decl_td(c::Vec2, bp)
+  __decl_bf(poked)
+  __decl_iz(pnum )
   MDECL_COMP_TPID( "n/GVars")
 };
 

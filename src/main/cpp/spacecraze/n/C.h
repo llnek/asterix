@@ -23,7 +23,7 @@ NS_BEGIN(spacecraze)
 //
 struct CC_DLL Alien : public f::CPixie {
   MDECL_COMP_TPID("f/CPixie")
-  DECL_IZ(type)
+  __decl_iz(type)
   Alien(int n) {
     assert(n > 0 && n < 4);
     node = cx::reifySprite("sfenmy" + FTOS(n));
@@ -65,9 +65,9 @@ struct CC_DLL Ship : public f::CPixie {
 struct CC_DLL AlienSquad : public ecs::Component {
 
   MDECL_COMP_TPID("n/AlienSquad")
-  DECL_FZ(rightEdge)
-  DECL_FZ(leftEdge)
-  DECL_FZ(duration)
+  __decl_fz(rightEdge)
+  __decl_fz(leftEdge)
+  __decl_fz(duration)
 
 };
 

@@ -20,7 +20,7 @@ NS_BEGIN(cocoban)
 //
 class CC_DLL Resolve : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
   void process(float);
 
 public:

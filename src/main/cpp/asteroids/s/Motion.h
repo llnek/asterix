@@ -24,7 +24,7 @@ class CC_DLL Motions : public ecs::System {
   void fireMissile(float);
   void scanInput(f::CGesture*);
 
-  DECL_TD(VOIDFN, scanner)
+  __decl_td(VOIDFN, scanner)
 
 public:
 
@@ -37,8 +37,8 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(ecs::Node, _arena)
-  DECL_PTR(ecs::Node, _ship)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
 
 };
 

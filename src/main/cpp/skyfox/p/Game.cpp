@@ -36,9 +36,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   void createActions();
   void onDone();
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _ufo)
-  DECL_PTR(ecs::Node, _bomb)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _ufo)
+  __decl_ptr(ecs::Node, _bomb)
 
 };
 

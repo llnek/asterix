@@ -19,7 +19,7 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GEngine  : public ecs::Engine {
-  DECL_IZ(mynum)
+  __decl_iz(mynum)
 public:
   GEngine(int pnum) { mynum=pnum; }
   virtual void initEntities();

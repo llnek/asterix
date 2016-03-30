@@ -33,8 +33,8 @@ public:
   MDECL_SYS_PREAMBLE()
   MDECL_SYS_UPDATE()
 
-  DECL_PTR(ecs::Node, _arena)
-  DECL_PTR(ecs::Node, _ship)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
 
   Collide(ecs::Engine *e)
   : System(e)

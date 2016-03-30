@@ -27,9 +27,9 @@ class CC_DLL Move : public ecs::System {
   void processAliens(float);
   void processShip(float);
 
-  DECL_PTR(ecs::Node, _aliens)
-  DECL_PTR(ecs::Node, _arena)
-  DECL_PTR(ecs::Node, _ship)
+  __decl_ptr(ecs::Node, _aliens)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
 
 public:
 

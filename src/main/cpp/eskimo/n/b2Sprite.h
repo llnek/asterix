@@ -27,7 +27,7 @@ struct CC_DLL b2Sprite : public c::Sprite  {
   virtual void hide();
   virtual void reset();
 
-  DECL_PTR(b2Body, _body)
+  __decl_ptr(b2Body, _body)
 
   b2Sprite() {}
 

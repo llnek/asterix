@@ -23,16 +23,16 @@ NS_BEGIN(fusii)
 class CC_DLL XLives : public c::Node {
 protected:
 
-  DECL_TD(c::Size, _lifeSize)
-  DECL_TD(c::Vec2, _refPt)
-  DECL_TD(sstr, _frameId)
+  __decl_td(c::Size, _lifeSize)
+  __decl_td(c::Vec2, _refPt)
+  __decl_td(sstr, _frameId)
 
   s_vec<c::Node*> _icons;
 
-  DECL_IZ(_totalLives)
-  DECL_IZ(_curLives)
-  DECL_TV(int, _dir, 1)
-  DECL_TV(float, _scale, 1.0f)
+  __decl_iz(_totalLives)
+  __decl_iz(_curLives)
+  __decl_tv(int, _dir, 1)
+  __decl_tv(float, _scale, 1.0f)
 
 public:
 
@@ -50,7 +50,7 @@ public:
 
   virtual ~XLives() {}
   XLives() {}
-  NOCPYASS(XLives)
+  __decl_nocpyass(XLives)
 };
 
 

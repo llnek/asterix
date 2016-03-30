@@ -21,7 +21,7 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Clear : public ecs::System {
 
-  DECL_PTR(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _arena)
 
   void clearFilled();
   void clearOneRow( int);

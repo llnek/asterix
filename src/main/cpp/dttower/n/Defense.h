@@ -27,9 +27,9 @@ class GVars;
 class Defense;
 struct CC_DLL Defense  : public f::CPixie {
 
-  DECL_TD(DefenseLevel, defenseLevel)
-  DECL_IZ(attackPoints)
-  DECL_PTR(GVars, ss)
+  __decl_td(DefenseLevel, defenseLevel)
+  __decl_iz(attackPoints)
+  __decl_ptr(GVars, ss)
 
   static owner<Defense*> create(GVars *ss, DefenseLevel);
   virtual void update(float);

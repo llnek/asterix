@@ -47,7 +47,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   const f::Box4 initBlockMap(BlockGrid*, const c::Size&);
   void doCtrl();
 
-  DECL_PTR(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _arena)
 
 };
 

@@ -20,7 +20,7 @@ NS_BEGIN(spacecraze)
 //
 class CC_DLL Aliens : public ecs::System {
 
-  DECL_PTR(ecs::Node,_aliens)
+  __decl_ptr(ecs::Node,_aliens)
   void startEnemies();
 
 public:

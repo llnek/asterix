@@ -28,9 +28,9 @@ struct Blast : public c::DrawNode {
 
   void coolDown();
 
-  DECL_BF(mustBeRemoved)
-  DECL_FZ(radius)
-  DECL_FZ(duration)
+  __decl_bf(mustBeRemoved)
+  __decl_fz(radius)
+  __decl_fz(duration)
 
 };
 

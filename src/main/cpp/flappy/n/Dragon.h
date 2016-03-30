@@ -22,8 +22,8 @@ NS_BEGIN(flappy)
 //
 class CC_DLL Dragon : public f::CPixie {
 
-  DECL_PTR(f::XNode, parentNode)
-  DECL_PTR(GVars,ss)
+  __decl_ptr(f::XNode, parentNode)
+  __decl_ptr(GVars,ss)
 
 public:
 
@@ -39,9 +39,9 @@ public:
   void update(float);
   void init();
 
-  DECL_TV(c::Vec2, dragonPosition, c::Vec2(0,0))
-  DECL_TV(c::Vec2, dragonSpeed, c::Vec2(0,0))
-  DECL_BF(mustApplyGravity)
+  __decl_tv(c::Vec2, dragonPosition, c::Vec2(0,0))
+  __decl_tv(c::Vec2, dragonSpeed, c::Vec2(0,0))
+  __decl_bf(mustApplyGravity)
 
 };
 

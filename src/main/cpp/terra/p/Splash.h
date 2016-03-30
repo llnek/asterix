@@ -23,8 +23,8 @@ struct CC_DLL Splash : public f::XScene {
   MDECL_UPDATE()
   MDECL_DECORATE()
 
-  DECL_PTR(c::Sprite, _flare)
-  DECL_PTR(c::Sprite, _ship)
+  __decl_ptr(c::Sprite, _flare)
+  __decl_ptr(c::Sprite, _ship)
 
 };
 

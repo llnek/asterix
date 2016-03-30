@@ -20,7 +20,7 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL Splash : public f::XScene {
 
-  DECL_PTR(ScrollingBgLayer, _bg)
+  __decl_ptr(ScrollingBgLayer, _bg)
 
   void moveXXX(c::Node*, float);
 

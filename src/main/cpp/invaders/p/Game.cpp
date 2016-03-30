@@ -38,7 +38,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   void showMenu();
   void onEarnScore(int);
 
-  DECL_PTR(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _player)
 
 };
 

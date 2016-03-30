@@ -35,8 +35,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void updateScore(int,int);
   virtual void onInited();
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _puck)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _puck)
   s_vec<ecs::Node*> _mallets;
 
   GLayer() {

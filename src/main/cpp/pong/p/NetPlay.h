@@ -27,8 +27,8 @@ struct CC_DLL NPCX : public f::SCTX {
     this->yes=yes;
     this->no=no;
   }
-  DECL_TD(NPCX_Yes, yes)
-  DECL_TD(VOIDFN, no)
+  __decl_td(NPCX_Yes, yes)
+  __decl_td(VOIDFN, no)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ class CC_DLL NetPlay : public f::XScene {
   void onCancel();
   void onLogin();
 
-  DECL_PTR(ws::OdinIO, _odin)
-  DECL_IZ(_player)
+  __decl_ptr(ws::OdinIO, _odin)
+  __decl_iz(_player)
 
 public:
 

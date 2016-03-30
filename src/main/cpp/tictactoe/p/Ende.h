@@ -20,7 +20,7 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL ECX : public f::SCTX {
 
-  DECL_PTR(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _arena)
   ECX(ecs::Node *n) {
     _arena=n;
   }

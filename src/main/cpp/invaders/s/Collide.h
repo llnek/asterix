@@ -27,8 +27,8 @@ class CC_DLL Collide : public ecs::System {
   void checkShipAliens();
   void process(float);
 
-  DECL_PTR(ecs::Node, _aliens)
-  DECL_PTR(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _aliens)
+  __decl_ptr(ecs::Node, _player)
 
 public:
 

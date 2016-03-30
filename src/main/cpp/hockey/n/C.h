@@ -25,7 +25,7 @@ struct CC_DLL Mallet : public f::CPixie {
   Mallet(not_null<c::Node*> s)
   : CPixie(s) {
   }
-  DECL_PTR(c::Touch, tap)
+  __decl_ptr(c::Touch, tap)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,10 +54,10 @@ struct CC_DLL Players : public ecs::Component {
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_FZ(goalWidth)
-  DECL_FZ(sq_radii)
-  DECL_TD(c::Vec2,ballNextPos)
-  DECL_TD(c::Vec2,ballVec)
+  __decl_fz(goalWidth)
+  __decl_fz(sq_radii)
+  __decl_td(c::Vec2,ballNextPos)
+  __decl_td(c::Vec2,ballVec)
 };
 
 

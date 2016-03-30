@@ -27,7 +27,7 @@ struct CC_DLL BModel {
   virtual int size() = 0;
   virtual ~BModel() {}
 protected:
-  DECL_IZ(_dim)
+  __decl_iz(_dim)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,12 +66,12 @@ struct CC_DLL Brick {
     colliable=false;
   }
 
-  DECL_TV(sstr, frame1, "0.png")
-  DECL_TD(sstr, frame0)
+  __decl_tv(sstr, frame1, "0.png")
+  __decl_td(sstr, frame0)
 
-  DECL_TD(c::Vec2, startPos)
-  DECL_PTR(c::Sprite, node)
-  DECL_BF(colliable)
+  __decl_td(c::Vec2, startPos)
+  __decl_ptr(c::Sprite, node)
+  __decl_bf(colliable)
 
 };
 
@@ -86,9 +86,9 @@ struct CC_DLL ShapeInfo {
     model=m;
     png=p;
   }
-  DECL_PTR(BModel, model)
-  DECL_TD(sstr, png)
-  DECL_IZ(rot)
+  __decl_ptr(BModel, model)
+  __decl_td(sstr, png)
+  __decl_iz(rot)
   ShapeInfo() {}
 };
 
@@ -96,10 +96,10 @@ struct CC_DLL ShapeInfo {
 //
 struct CC_DLL Shape : public ecs::Component {
   Shape(const ShapeInfo& si) { info=si; }
-  DECL_TD(ShapeInfo, info)
+  __decl_td(ShapeInfo, info)
   s_vec<Brick*> bricks;
-  DECL_FZ(x)
-  DECL_FZ(y)
+  __decl_fz(x)
+  __decl_fz(y)
   MDECL_COMP_TPID( "n/Shape")
 };
 
@@ -107,7 +107,7 @@ struct CC_DLL Shape : public ecs::Component {
 //
 struct CC_DLL ShapeShell : public ecs::Component {
   MDECL_COMP_TPID( "n/ShapeShell")
-  DECL_PTR(Shape, shape)
+  __decl_ptr(Shape, shape)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ struct CC_DLL CtrlPad : public ecs::Component {
 // size and location of the game area
 struct CC_DLL GridBox : public ecs::Component {
   MDECL_COMP_TPID( "n/GridBox")
-  DECL_TD(f::Box4, box)
+  __decl_td(f::Box4, box)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -356,9 +356,9 @@ public:
 //
 struct CC_DLL Dropper : public ecs::Component {
   MDECL_COMP_TPID( "n/Dropper")
-  DECL_FZ(dropSpeed)
-  DECL_FZ(dropRate)
-  DECL_PTR(c::DelayTime, timer)
+  __decl_fz(dropSpeed)
+  __decl_fz(dropRate)
+  __decl_ptr(c::DelayTime, timer)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -379,16 +379,16 @@ struct CC_DLL Gesture : public f::CGesture {
     rotl=false;
     down=false;
   }
-  DECL_BF(rotr)
-  DECL_BF(rotl)
+  __decl_bf(rotr)
+  __decl_bf(rotl)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Pauser  : public ecs::Component {
-  DECL_PTR(c::DelayTime, timer)
+  __decl_ptr(c::DelayTime, timer)
   MDECL_COMP_TPID("n/Pauser")
-  DECL_BF(pauseToClear)
+  __decl_bf(pauseToClear)
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -35,8 +35,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   bool onGUI(const c::Vec2 &);
   void findTilesToShift();
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_BF(_busySignal)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_bf(_busySignal)
 
   s_vec<GameTile*> _tileShifted;
   s_vec<GameTile*> _tileSprites;

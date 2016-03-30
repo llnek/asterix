@@ -19,9 +19,9 @@ NS_BEGIN(tetris)
 //
 class CC_DLL HUDLayer : public f::XLayer {
 
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_PTR(c::Label, _status)
-  DECL_IZ(_score)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(c::Label, _status)
+  __decl_iz(_score)
 
 public:
 

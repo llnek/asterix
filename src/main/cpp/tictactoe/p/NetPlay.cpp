@@ -59,7 +59,7 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
   obj["pnum"]= _player; //j::json(player);
 
   io->cancelAll();
-  SNPTR( _odin)
+  S__NIL( _odin)
   SCAST(NPCX*, getCtx())->_yes(io,obj);
 }
 

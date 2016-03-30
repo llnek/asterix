@@ -22,7 +22,7 @@ struct CC_DLL PathStep : public f::CPixie {
 
   static owner<PathStep*> create(const c::Vec2&);
 
-  DECL_PTR(PathStep, next)
+  __decl_ptr(PathStep, next)
 
 };
 

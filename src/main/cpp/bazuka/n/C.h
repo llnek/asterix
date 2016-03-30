@@ -48,12 +48,12 @@ struct CC_DLL Hero : public f::CPixie {
     CC_DROP(boost);
     CC_DROP(idle);
   }
-  DECL_PTR(c::Action,boost);
-  DECL_PTR(c::Action,idle);
-  DECL_IZ(jumpTimer)
-  DECL_IZ(action)
-  DECL_IZ(state)
-  DECL_BF(jump)
+  __decl_ptr(c::Action,boost);
+  __decl_ptr(c::Action,idle);
+  __decl_iz(jumpTimer)
+  __decl_iz(action)
+  __decl_iz(state)
+  __decl_bf(jump)
   void animate() {
     if (state==kPlayerStateBoost) { animXXX(kActionStateBoost,boost);  }
     if (state== kPLayerStateIdle) { animXXX(kActionStateIdle,idle);  }
@@ -70,7 +70,7 @@ struct CC_DLL Hero : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Projectile : public f::CPixie {
-  DECL_IZ(type)
+  __decl_iz(type)
   Projectile(not_null<c::Node*> s, int type)
   : CPixie(s) {
     this->type=type;
@@ -90,8 +90,8 @@ struct CC_DLL Projectile : public f::CPixie {
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_PTR(ScrollingBgLayer, bgLayer)
-  DECL_TD(c::Vec2, gravity)
+  __decl_ptr(ScrollingBgLayer, bgLayer)
+  __decl_td(c::Vec2, gravity)
 
 };
 

@@ -19,8 +19,8 @@ NS_BEGIN(skyfox)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
 
-  DECL_PTR(ecs::Node,_shared)
-  DECL_PTR(ecs::Node,_ufo)
+  __decl_ptr(ecs::Node,_shared)
+  __decl_ptr(ecs::Node,_ufo)
 
   void process(float);
 

@@ -25,7 +25,7 @@ struct CC_DLL GCXX : public f::GCX {
   GCXX(f::GMode m, ws::OdinIO *io, j::json pms) : GCX(m,io) {
     _data=pms;
   }
-  DECL_TD(j::json, _data)
+  __decl_td(j::json, _data)
 };
 
 //////////////////////////////////////////////////////////////////////////////

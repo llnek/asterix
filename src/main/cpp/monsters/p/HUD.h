@@ -23,9 +23,9 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, _stateLabel)
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_IZ(_score)
+  __decl_ptr(c::Label, _stateLabel)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_iz(_score)
 
   s_arr<c::Label*,3> _coinLabels;
   s_arr<int,3> _coins;

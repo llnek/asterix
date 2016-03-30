@@ -102,6 +102,7 @@ typedef std::string sstr;
 #define S__PAIR(T1,T2,v1,v2) std::pair<T1,T2>(v1,v2)
 #define S__COPY(f,t) s::copy(s::begin(f), s::end(f), s::begin(t))
 #define S__ADD(c,n) c.push_back(n)
+#define S__NIL(x) x = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ casting
@@ -111,9 +112,11 @@ typedef std::string sstr;
 
 //////////////////////////////////////////////////////////////////////////////
 // pointer macros
-#define SNPTR(x) x = nullptr;
-#define NNP(p) p != nullptr
-#define ENP(p) p == nullptr
+#define N_NIL(p) (p) != nullptr
+#define NNP(p) (p) != nullptr
+#define ENP(p) (p) == nullptr
+#define E_NIL(p) (p) == nullptr
+#define P_NIL nullptr
 
 //////////////////////////////////////////////////////////////////////////////
 // std collection aliases
@@ -124,36 +127,36 @@ typedef std::string sstr;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-#define DECL_GSMS_IS(varType, v, funName) \
+#define __decl_gsms_is(varType, v, funName) \
 virtual varType is##funName() { return v; } \
 virtual void set##funName(varType p) { v=p; }
 
 /////////////////////////////////////////////////////////////////////////////
 //
-#define DECL_GSMS(varType, v, funName) \
+#define __decl_gsms(varType, v, funName) \
 virtual varType get##funName() { return v; } \
 virtual void set##funName(varType p) { v=p; }
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ constructor stuff
-#define NOCPYASS(T) \
+#define __decl_nocpyass(T) \
   T&operator =(const T&) = delete;  \
   T(const T&) = delete; \
   T(T&&) = delete;  \
   T&operator =(T&&) = delete;
 
-#define NODFT(T) T()=delete;
+#define __decl_nodft(T) T()=delete;
 
 //////////////////////////////////////////////////////////////////////////
 // member decl stuff
-#define DECL_PTR(T,p) T *p=nullptr;
-#define DECL_DZ(d) double d=0;
-#define DECL_FZ(f) float f=0;
-#define DECL_IZ(i) int i=0;
-#define DECL_BF(b) bool b=false;
-#define DECL_BT(b) bool b=true;
-#define DECL_TD(T,m) T m;
-#define DECL_TV(T,m,v) T m=v;
+#define __decl_ptr(T,p) T *p=nullptr;
+#define __decl_dz(d) double d=0;
+#define __decl_fz(f) float f=0;
+#define __decl_iz(i) int i=0;
+#define __decl_bf(b) bool b=false;
+#define __decl_bt(b) bool b=true;
+#define __decl_td(T,m) T m;
+#define __decl_tv(T,m,v) T m=v;
 
 // find length of array
 #define SIZEOFX(var,type) (sizeof(var)/sizeof(type))

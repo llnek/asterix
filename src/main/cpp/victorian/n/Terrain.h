@@ -30,22 +30,22 @@ struct CC_DLL Terrain : public Widget {
   c::Vector<Block*> _blockPool;
   c::Vector<Block*> _blocks;
 
-  DECL_IZ(_blockPoolIndex)
-  DECL_IZ(_lastBlockHeight)
-  DECL_IZ(_lastBlockWidth)
-  DECL_IZ(_minTerrainWidth)
+  __decl_iz(_blockPoolIndex)
+  __decl_iz(_lastBlockHeight)
+  __decl_iz(_lastBlockWidth)
+  __decl_iz(_minTerrainWidth)
 
-  DECL_BF(_showGap)
+  __decl_bf(_showGap)
 
-  DECL_IZ(_currentPatternIndex)
-  DECL_IZ(_currentPatternCnt)
-  DECL_IZ(_currentWidthIndex)
-  DECL_IZ(_currentHeightIndex)
-  DECL_IZ(_currentTypeIndex)
+  __decl_iz(_currentPatternIndex)
+  __decl_iz(_currentPatternCnt)
+  __decl_iz(_currentWidthIndex)
+  __decl_iz(_currentHeightIndex)
+  __decl_iz(_currentTypeIndex)
 
-  DECL_IZ(_increaseGapInterval)
-  DECL_FZ(_increaseGapTimer)
-  DECL_IZ(_gapSize)
+  __decl_iz(_increaseGapInterval)
+  __decl_fz(_increaseGapTimer)
+  __decl_iz(_gapSize)
 
   void initTerrain();
   void addBlocks(int currentWidth);

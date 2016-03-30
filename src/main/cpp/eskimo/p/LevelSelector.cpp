@@ -31,8 +31,8 @@ struct CC_DLL LabelBtn {
     label=a;
     btn=b;
   }
-  DECL_PTR(c::Label, label)
-  DECL_PTR(c::Sprite,btn)
+  __decl_ptr(c::Label, label)
+  __decl_ptr(c::Sprite,btn)
 };
 
 enum {
@@ -52,9 +52,9 @@ struct CC_DLL LLayer : public f::XLayer {
 
   s_vec<LabelBtn> _levelLabels;
 
-  DECL_PTR(c::Menu, _btnNext)
-  DECL_IZ(_levelsCompleted)
-  DECL_IZ(_firstIndex)
+  __decl_ptr(c::Menu, _btnNext)
+  __decl_iz(_levelsCompleted)
+  __decl_iz(_firstIndex)
 
   void createScreen();
   void createMenu();

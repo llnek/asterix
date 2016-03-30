@@ -47,8 +47,8 @@ public:
 
   virtual void onInited();
 
-  DECL_PTR(ecs::Node, _board)
-  DECL_PTR(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _board)
+  __decl_ptr(ecs::Node, _arena)
 
 };
 

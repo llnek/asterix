@@ -29,15 +29,15 @@ public:
   void spawnMunchForEntity(ecs::Node*);
   void spawnZapForEntity(ecs::Node*);
 
-  DECL_PTR(ecs::Node, _enemy)
-  DECL_FZ(humanQuirkValue)
-  DECL_FZ(humanZapValue)
-  DECL_FZ(humanMunchValue)
-  DECL_FZ(humanTotalValue)
-  DECL_FZ(aiQuirkValue)
-  DECL_FZ(aiZapValue)
-  DECL_FZ(aiMunchValue)
-  DECL_FZ(aiTotalValue)
+  __decl_ptr(ecs::Node, _enemy)
+  __decl_fz(humanQuirkValue)
+  __decl_fz(humanZapValue)
+  __decl_fz(humanMunchValue)
+  __decl_fz(humanTotalValue)
+  __decl_fz(aiQuirkValue)
+  __decl_fz(aiZapValue)
+  __decl_fz(aiMunchValue)
+  __decl_fz(aiTotalValue)
 
   MDECL_SYS_TPID("n/AILogic")
   MDECL_SYS_PRIORITY( 60)

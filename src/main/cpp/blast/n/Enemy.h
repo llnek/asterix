@@ -28,8 +28,8 @@ class Enemy : public f::CDrawNode {
 protected:
 
   void generateVertices(c::Vec2 vertices[]);
-  DECL_TV(float, speedMultiplier,0.25)
-  DECL_IZ(timeAlive)
+  __decl_tv(float, speedMultiplier,0.25)
+  __decl_iz(timeAlive)
 
 public:
 
@@ -48,10 +48,10 @@ public:
   void finishSpawn();
   void die();
 
-  DECL_TV(c::Vec2, speed, CC_ZPT)
-  DECL_BF(isSpawning)
-  DECL_BF(isDead)
-  DECL_BF(mustBeRemoved)
+  __decl_tv(c::Vec2, speed, CC_ZPT)
+  __decl_bf(isSpawning)
+  __decl_bf(isDead)
+  __decl_bf(mustBeRemoved)
 
 };
 

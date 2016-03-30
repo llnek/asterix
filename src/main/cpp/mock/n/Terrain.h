@@ -27,23 +27,23 @@ class CC_DLL Terrain : public f::CPixie {
   c::Vector<Block*> _blockPool;
   c::Vector<Block*> _blocks;
 
-  DECL_FZ(_lastBlockHeight)
-  DECL_FZ(_lastBlockWidth)
-  DECL_TD(c::Rect,_visRect)
+  __decl_fz(_lastBlockHeight)
+  __decl_fz(_lastBlockWidth)
+  __decl_td(c::Rect,_visRect)
 
-  DECL_TV(int,_currentPatternCnt,1)
-  DECL_IZ(_currentPatternIndex)
-  DECL_IZ(_blockPoolIndex)
-  DECL_IZ(_currentWidthIndex)
-  DECL_IZ(_currentHeightIndex)
-  DECL_IZ(_currentTypeIndex)
+  __decl_tv(int,_currentPatternCnt,1)
+  __decl_iz(_currentPatternIndex)
+  __decl_iz(_blockPoolIndex)
+  __decl_iz(_currentWidthIndex)
+  __decl_iz(_currentHeightIndex)
+  __decl_iz(_currentTypeIndex)
 
-  DECL_FZ(_minTerrainWidth)
-  DECL_IZ(_gapSize)
-  DECL_BF(_startTerrain)
-  DECL_BF(_showGap)
-  DECL_FZ(_increaseGapInterval)
-  DECL_FZ(_increaseGapTimer)
+  __decl_fz(_minTerrainWidth)
+  __decl_iz(_gapSize)
+  __decl_bf(_startTerrain)
+  __decl_bf(_showGap)
+  __decl_fz(_increaseGapInterval)
+  __decl_fz(_increaseGapTimer)
 
   void addBlocks(float currentWidth);
   void distributeBlocks();
@@ -62,7 +62,7 @@ class CC_DLL Terrain : public f::CPixie {
 
 public:
 
-  DECL_GSMS_IS(bool, _startTerrain, StartTerrain);
+  __decl_gsms_is(bool, _startTerrain, StartTerrain);
   static owner<Terrain*> create();
 
   virtual ~Terrain();

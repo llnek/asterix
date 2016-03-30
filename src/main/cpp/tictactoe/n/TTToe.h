@@ -26,8 +26,8 @@ class CC_DLL TTToe : public ag::GameBoard<BD_SZ>, public f::CAutoma {
 
   bool testWin(const ArrCells& , int actor, const ArrDim&);
 
-  DECL_TD(ArrCells, _grid)
-  DECL_IZ(_nil)
+  __decl_td(ArrCells, _grid)
+  __decl_iz(_nil)
 
   s_vec<ArrDim> _GOALS;
   s_arr<int,3> _actors;

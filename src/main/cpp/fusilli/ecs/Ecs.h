@@ -32,7 +32,7 @@ class Node;
 class FS_DLL Component {
 friend class Node;
   void setNode(not_null<Node*> n) { _compParentNode=n.get(); }
-  DECL_PTR(Node, _compParentNode)
+  __decl_ptr(Node, _compParentNode)
 protected:
   Component() {}
 public:

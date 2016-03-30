@@ -20,8 +20,8 @@ NS_BEGIN(spacecraze)
 //
 class CC_DLL Resolve : public ecs::System {
 
-  DECL_PTR(ecs::Node, _aliens)
-  DECL_PTR(ecs::Node, _ship)
+  __decl_ptr(ecs::Node, _aliens)
+  __decl_ptr(ecs::Node, _ship)
 
   void checkMissiles();
   void checkBombs();

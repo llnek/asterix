@@ -24,8 +24,8 @@ class CC_DLL Motions : public ecs::System {
   void processAlienMotions(float dt);
   void processCannon( float dt);
 
-  DECL_PTR(ecs::Node, _cannon)
-  DECL_PTR(ecs::Node, _aliens)
+  __decl_ptr(ecs::Node, _cannon)
+  __decl_ptr(ecs::Node, _aliens)
 
 public:
 

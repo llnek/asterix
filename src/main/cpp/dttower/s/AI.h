@@ -19,9 +19,9 @@ NS_BEGIN(dttower)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime, _timer2)
-  DECL_PTR(c::DelayTime, _timer1)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(c::DelayTime, _timer2)
+  __decl_ptr(c::DelayTime, _timer1)
+  __decl_ptr(ecs::Node, _shared)
 
   void loadEnemy(float);
   void loadWave(float);

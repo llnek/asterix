@@ -20,7 +20,7 @@ NS_BEGIN(eskimo)
 //
 class CC_DLL Igloo : public c::Sprite {
 
-  DECL_PTR(c::Sprite, _block)
+  __decl_ptr(c::Sprite, _block)
   void addBlock();
   Igloo(GVars*);
 

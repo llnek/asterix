@@ -23,10 +23,10 @@ struct CC_DLL HUDLayer : public f::XLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(3)
 
-  DECL_PTR(c::Label, _lifePointsLabel)
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_PTR(c::Label, _waveLabel)
-  DECL_IZ(_score)
+  __decl_ptr(c::Label, _lifePointsLabel)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(c::Label, _waveLabel)
+  __decl_iz(_score)
 
   int getScore() { return _score; }
 

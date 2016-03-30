@@ -30,9 +30,9 @@ friend class Eskimo;
 
 public:
 
-  DECL_BF(_switchShape)
-  DECL_IZ(_state)
-  DECL_PTR(GVars,ss)
+  __decl_bf(_switchShape)
+  __decl_iz(_state)
+  __decl_ptr(GVars,ss)
 
   virtual void update();
   virtual void reset();

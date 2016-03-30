@@ -19,9 +19,9 @@ NS_BEGIN(colorsmash)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime, _timer)
-  DECL_PTR(ecs::Node, _shared)
-  DECL_IZ(_time)
+  __decl_ptr(c::DelayTime, _timer)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_iz(_time)
 
   void parallex(float);
   void process(float);

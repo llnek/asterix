@@ -19,10 +19,10 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL ScrollingBgLayer : public c::Node {
 
-  DECL_PTR(ScrollingBg, treesNbush)
-  DECL_PTR(ScrollingBg, hills)
-  DECL_PTR(ScrollingBg, ground)
-  DECL_PTR(ScrollingBg, grass)
+  __decl_ptr(ScrollingBg, treesNbush)
+  __decl_ptr(ScrollingBg, hills)
+  __decl_ptr(ScrollingBg, ground)
+  __decl_ptr(ScrollingBg, grass)
 
 public:
 

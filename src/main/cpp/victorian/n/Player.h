@@ -34,14 +34,14 @@ enum PlayerState {
 //
 struct CC_DLL Player : public Widget {
 
-  DECL_PTR(c::Action, _floatAnimation)
-  DECL_PTR(c::Action, _rideAnimation)
+  __decl_ptr(c::Action, _floatAnimation)
+  __decl_ptr(c::Action, _rideAnimation)
 
-  DECL_BF(_hasFloated)
+  __decl_bf(_hasFloated)
 
-  DECL_IZ(_floatingInterval)
-  DECL_IZ(_floatingTimerMax)
-  DECL_FZ(_floatingTimer)
+  __decl_iz(_floatingInterval)
+  __decl_iz(_floatingTimerMax)
+  __decl_fz(_floatingTimer)
 
   void initPlayer();
 

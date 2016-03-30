@@ -30,13 +30,13 @@ protected:
   virtual void decoPost();
   virtual void decoPre();
 
-  DECL_PTR(ecs::Engine, _engine)
+  __decl_ptr(ecs::Engine, _engine)
 
 public:
 
   virtual ~GameLayer();
   GameLayer();
-  NOCPYASS(GameLayer)
+  __decl_nocpyass(GameLayer)
 };
 
 

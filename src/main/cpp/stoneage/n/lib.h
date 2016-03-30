@@ -50,15 +50,15 @@ struct CC_DLL GVars : public ecs::Component {
 
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_PTR(c::Node,gemsContainer)
-  DECL_BF(enabled)
-  DECL_PTR(Gem,selectedGem)
-  DECL_PTR(Gem,targetGem)
-  DECL_TD(f::Cell2I,selectedIndex)
-  DECL_TD(f::Cell2I,targetIndex)
-  DECL_TD(c::Vec2,selectedGemPos)
-  DECL_IZ(combos)
-  DECL_BF(addingCombos)
+  __decl_ptr(c::Node,gemsContainer)
+  __decl_bf(enabled)
+  __decl_ptr(Gem,selectedGem)
+  __decl_ptr(Gem,targetGem)
+  __decl_td(f::Cell2I,selectedIndex)
+  __decl_td(f::Cell2I,targetIndex)
+  __decl_td(c::Vec2,selectedGemPos)
+  __decl_iz(combos)
+  __decl_bf(addingCombos)
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -20,7 +20,7 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL MMenu : public f::XScene {
 
-  DECL_PTR(ScrollingBgLayer,_bgLayer)
+  __decl_ptr(ScrollingBgLayer,_bgLayer)
 
 public:
 

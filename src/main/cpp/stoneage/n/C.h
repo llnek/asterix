@@ -44,9 +44,9 @@ struct CC_DLL GemInfo {
     this->x =x;
     this->gem=g;
   }
-  DECL_PTR(Gem,gem)
-  DECL_IZ(y)
-  DECL_IZ(x)
+  __decl_ptr(Gem,gem)
+  __decl_iz(y)
+  __decl_iz(x)
 };
 
 

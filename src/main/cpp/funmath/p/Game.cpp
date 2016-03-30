@@ -34,22 +34,22 @@ struct CC_DLL GLayer : public f::GameLayer {
   void createNextLevelButton();
   void goToNextLevel();
 
-  DECL_PTR(c::Sprite, _leftNumber)
-  DECL_PTR(c::Sprite, _rightNumber)
-  DECL_PTR(c::Sprite, _operator)
-  DECL_PTR(c::Sprite, _equalsSymbol)
-  DECL_PTR(c::Sprite, _result)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(c::Sprite, _leftNumber)
+  __decl_ptr(c::Sprite, _rightNumber)
+  __decl_ptr(c::Sprite, _operator)
+  __decl_ptr(c::Sprite, _equalsSymbol)
+  __decl_ptr(c::Sprite, _result)
+  __decl_ptr(ecs::Node, _shared)
 
   s_vec<c::Sprite*> _arrayOfOptions;
   GameState _gameState;
 
-  DECL_PTR(c::Label,_tutorialLabel)
-  DECL_PTR(c::DrawNode,_droppableArea)
-  DECL_TD(c::Vec2, _initialNumberPosition)
-  DECL_PTR(c::MenuItem,_buttonCheckSolution)
-  DECL_PTR(c::MenuItem,_buttonNextLevel)
-  DECL_TD(sstr, _solution)
+  __decl_ptr(c::Label,_tutorialLabel)
+  __decl_ptr(c::DrawNode,_droppableArea)
+  __decl_td(c::Vec2, _initialNumberPosition)
+  __decl_ptr(c::MenuItem,_buttonCheckSolution)
+  __decl_ptr(c::MenuItem,_buttonNextLevel)
+  __decl_td(sstr, _solution)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

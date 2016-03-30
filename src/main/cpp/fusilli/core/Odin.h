@@ -55,16 +55,16 @@ public:
   virtual void onClose(n::WebSocket* ) ;
   virtual void onOpen(n::WebSocket*) ;
 
-  DECL_TV(CType, _state, CType::S_NOT_CONNECTED)
-  DECL_PTR(n::WebSocket, _socket)
-  DECL_TD(sstr, _room)
-  DECL_TD(sstr, _game)
-  DECL_TD(sstr, _user)
-  DECL_TD(sstr, _passwd)
+  __decl_tv(CType, _state, CType::S_NOT_CONNECTED)
+  __decl_ptr(n::WebSocket, _socket)
+  __decl_td(sstr, _room)
+  __decl_td(sstr, _game)
+  __decl_td(sstr, _user)
+  __decl_td(sstr, _passwd)
 
   virtual ~OdinIO();
   OdinIO() {}
-  NOCPYASS(OdinIO)
+  __decl_nocpyass(OdinIO)
 };
 
 //////////////////////////////////////////////////////////////////////////////

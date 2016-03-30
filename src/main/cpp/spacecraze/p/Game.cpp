@@ -43,9 +43,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  DECL_PTR(ecs::Node, _aliens)
-  DECL_PTR(ecs::Node,_ship)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _aliens)
+  __decl_ptr(ecs::Node,_ship)
+  __decl_ptr(ecs::Node, _shared)
 
 };
 

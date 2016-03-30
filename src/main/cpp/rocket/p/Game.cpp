@@ -43,9 +43,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   void killPlayer();
   void createStarGrid();
 
-  DECL_PTR(ecs::Node, _drawing)
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _rocket)
+  __decl_ptr(ecs::Node, _drawing)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _rocket)
 
 };
 

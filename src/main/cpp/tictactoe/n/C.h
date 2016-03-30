@@ -30,7 +30,7 @@ struct CC_DLL Grid : public ecs::Component {
     S__COPY(seed,vals);
   }
   MDECL_COMP_TPID("n/Grid")
-  DECL_TD(ArrCells, vals)
+  __decl_td(ArrCells, vals)
   s_vec<ArrDim> GOALS;
 };
 
@@ -60,11 +60,11 @@ struct CC_DLL Player : public f::CStats {
   }
   Player(int pnum) { this->pnum= pnum; }
   Player() {}
-  DECL_TV(int, category, 0)
-  DECL_TV(int, pnum,  -1)
-  DECL_TD(sstr, pidlong)
-  DECL_TD(sstr, pid)
-  DECL_TD(sstr, color)
+  __decl_tv(int, category, 0)
+  __decl_tv(int, pnum,  -1)
+  __decl_td(sstr, pidlong)
+  __decl_td(sstr, pid)
+  __decl_td(sstr, color)
   MDECL_COMP_TPID( "n/Player")
 };
 
@@ -97,9 +97,9 @@ struct CC_DLL CSquare : public f::CPixie {
   void flip() {
     SCAST(c::Sprite*,node)->setSpriteFrame(png + ".i.png");
   }
-  DECL_TD(sstr,png)
-  DECL_IZ(value)
-  DECL_IZ(cell)
+  __decl_td(sstr,png)
+  __decl_iz(value)
+  __decl_iz(cell)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,17 +114,17 @@ struct CC_DLL CSquares  : public ecs::Component {
 //
 struct CC_DLL CellPos  : public ecs::Component {
   MDECL_COMP_TPID( "n/CellPos" )
-  DECL_TV(int, cell,  -1)
-  DECL_TV(int, px, -1)
-  DECL_TV(int, py, -1)
+  __decl_tv(int, cell,  -1)
+  __decl_tv(int, px, -1)
+  __decl_tv(int, py, -1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_IZ(pnum)
-  DECL_IZ(lastWinner)
+  __decl_iz(pnum)
+  __decl_iz(lastWinner)
 };
 
 

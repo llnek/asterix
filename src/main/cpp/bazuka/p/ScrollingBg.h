@@ -22,9 +22,9 @@ class ScrollingBg: public c::Node {
 
   void set(const sstr&, float speed, float yPos);
 
-  DECL_PTR(c::Sprite, head);
-  DECL_PTR(c::Sprite, tail);
-  DECL_FZ(speed)
+  __decl_ptr(c::Sprite, head);
+  __decl_ptr(c::Sprite, tail);
+  __decl_fz(speed)
 
 public:
 

@@ -25,7 +25,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SCTX {
-  DECL_TV(int, count,1)
+  __decl_tv(int, count,1)
   virtual ~SCTX() {}
 };
 
@@ -41,8 +41,8 @@ protected:
   virtual void bind(c::Node* p) { _self = p; }
 
   s_map<sstr, c::SpriteBatchNode*> _atlases;
-  DECL_PTR(c::Node, _self)
-  DECL_PTR(SCTX, _context)
+  __decl_ptr(c::Node, _self)
+  __decl_ptr(SCTX, _context)
 
   XNode() {}
 

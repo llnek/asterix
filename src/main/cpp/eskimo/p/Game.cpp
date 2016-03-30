@@ -30,11 +30,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  DECL_TD(c::ValueVector, _levels)
-  DECL_PTR(b2World, _world)
+  __decl_td(c::ValueVector, _levels)
+  __decl_ptr(b2World, _world)
 
-  DECL_PTR(ecs::Node, _player)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

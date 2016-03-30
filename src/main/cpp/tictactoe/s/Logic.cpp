@@ -68,7 +68,7 @@ void Logic::process(float dt) {
       }
       sync(rc, cp->value, grid);
       cx::undoTimer(botTimer);
-      SNPTR(botTimer)
+      S__NIL(botTimer)
     }
   }
   else

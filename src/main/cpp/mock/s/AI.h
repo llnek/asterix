@@ -19,7 +19,7 @@ NS_BEGIN(mock)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
   void parallex(float);
   void process(float);
 

@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "fusilli.h"
 NS_BEGIN(fusii)
@@ -20,8 +21,8 @@ NS_BEGIN(fusii)
 template<typename T>
 class FS_DLL FArray {
 
-  DECL_PTR(T,_data)
-  DECL_IZ(_sz)
+  __decl_ptr(T,_data)
+  __decl_iz(_sz)
 
 public:
 
@@ -33,23 +34,23 @@ public:
 
   FArray<T>* clone();
 
-  void setFirst(T value);
-  void setLast(T value);
+  void setFirst(const T &value);
+  void setLast(const T &value);
 
-  T getFirst();
-  T getLast();
+  const T& getFirst();
+  const T& getLast();
 
-  void set(int pos, T value);
+  void set(int pos, const T &value);
   int size() { return _sz; }
 
-  bool notAny(T v);
-  bool some(T v);
-  bool all(T v);
-  int find(T v);
-  void fill(T v);
+  bool notAny(const T &v);
+  bool some(const T &v);
+  bool all(const T &v);
+  int find(const T &v);
+  void fill(const T &v);
 
-  T operator[](int pos);
-  T get(int pos);
+  const T& operator[](int pos);
+  const T& get(int pos);
 
   explicit FArray(int z);
   FArray();
@@ -64,7 +65,7 @@ FArray<T>& FArray<T>::operator=(FArray<T> &&src) {
   mc_del_arr(_data);
   _data=src._data;
   _sz=src._sz;
-  SNPTR(src._data)
+  S__NIL(src._data)
   src._sz=0;
   return *this;
 }
@@ -75,7 +76,7 @@ template<typename T>
 FArray<T>::FArray(FArray<T> &&src) {
   _data=src._data;
   _sz=src._sz;
-  SNPTR(src._data)
+  S__NIL(src._data)
   src._sz=0;
 }
 
@@ -87,7 +88,7 @@ FArray<T>& FArray<T>::operator=(const FArray<T> &src) {
   _sz=src._sz;
   if (_sz > 0) {
     _data= new T[_sz];
-    for (int i=0; i < _sz; ++i) {
+    for (auto i=0; i < _sz; ++i) {
       _data[i] = src._data[i];
     }
   }
@@ -98,11 +99,11 @@ FArray<T>& FArray<T>::operator=(const FArray<T> &src) {
 //
 template<typename T>
 FArray<T>::FArray(const FArray<T> &src) {
-  SNPTR(_data)
+  S__NIL(_data)
   _sz=src._sz;
   if (_sz > 0) {
     _data= new T[_sz];
-    for (int i=0; i < _sz; ++i) {
+    for (auto i=0; i < _sz; ++i) {
       _data[i] = src._data[i];
     }
   }
@@ -132,8 +133,8 @@ FArray<T>::~FArray() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-int FArray<T>::find(T v) {
-  for (int i = 0; i < _sz; ++i) {
+int FArray<T>::find(const T &v) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v == _data[i]) { return i; }
   }
   return -1;
@@ -142,8 +143,8 @@ int FArray<T>::find(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::fill(T v) {
-  for (int i = 0; i < _sz; ++i) {
+void FArray<T>::fill(const T &v) {
+  for (auto i = 0; i < _sz; ++i) {
     _data[i]=v;
   }
 }
@@ -151,8 +152,8 @@ void FArray<T>::fill(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-bool FArray<T>::some(T v) {
-  for (int i = 0; i < _sz; ++i) {
+bool FArray<T>::some(const T &v) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v == _data[i]) { return true; }
   }
   return false;
@@ -161,8 +162,8 @@ bool FArray<T>::some(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-bool FArray<T>::notAny(T v) {
-  for (int i = 0; i < _sz; ++i) {
+bool FArray<T>::notAny(const T &v) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v == _data[i]) { return false; }
   }
   return true;
@@ -171,8 +172,8 @@ bool FArray<T>::notAny(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-bool FArray<T>::all(T v) {
-  for (int i = 0; i < _sz; ++i) {
+bool FArray<T>::all(const T &v) {
+  for (auto i = 0; i < _sz; ++i) {
     if (v != _data[i]) { return false; }
   }
   return _sz > 0 ;
@@ -183,7 +184,7 @@ bool FArray<T>::all(T v) {
 template<typename T>
 FArray<T>* FArray<T>::clone() {
   auto rc= new FArray<T>(this->_sz);
-  for (int i=0; i < this->_sz; ++i) {
+  for (auto i=0; i < this->_sz; ++i) {
     rc->_data[i] = this->_data[i];
   }
   return rc;
@@ -192,7 +193,7 @@ FArray<T>* FArray<T>::clone() {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::set(int pos, T v) {
+void FArray<T>::set(int pos, const T &v) {
   assert(pos >= 0 && pos < _sz);
   _data[pos] = v;
 }
@@ -200,7 +201,7 @@ void FArray<T>::set(int pos, T v) {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::getFirst() {
+const T& FArray<T>::getFirst() {
   assert(_sz > 0);
   return _data[0];
 }
@@ -208,7 +209,7 @@ T FArray<T>::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::getLast() {
+const T& FArray<T>::getLast() {
   assert(_sz > 0);
   return _data[_sz-1];
 }
@@ -216,7 +217,7 @@ T FArray<T>::getLast() {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::setFirst(T v) {
+void FArray<T>::setFirst(const T &v) {
   assert(_sz > 0);
   _data[0]= v;
 }
@@ -224,7 +225,7 @@ void FArray<T>::setFirst(T v) {
 //////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-void FArray<T>::setLast(T v) {
+void FArray<T>::setLast(const T &v) {
   assert(_sz > 0);
   _data[_sz-1]=v;
 }
@@ -232,7 +233,7 @@ void FArray<T>::setLast(T v) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::get(int pos) {
+const T& FArray<T>::get(int pos) {
   assert(pos >= 0 && pos < _sz);
   return _data[pos];
 }
@@ -240,14 +241,10 @@ T FArray<T>::get(int pos) {
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
-T FArray<T>::operator[](int pos) {
+const T& FArray<T>::operator[](int pos) {
   assert(pos >= 0 && pos < _sz);
   return _data[pos];
 }
-
-
-
-
 
 
 //////////////////////////////////////////////////////////////////////////

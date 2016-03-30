@@ -38,9 +38,9 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(ecs::Node, _paddle)
-  DECL_PTR(ecs::Node, _ball)
-  DECL_PTR(ecs::Node, _fence)
+  __decl_ptr(ecs::Node, _paddle)
+  __decl_ptr(ecs::Node, _ball)
+  __decl_ptr(ecs::Node, _fence)
 
 };
 

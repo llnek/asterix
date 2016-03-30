@@ -37,16 +37,16 @@ struct CC_DLL RocketMotion : public f::CMove {
     targetRotation= CC_RADIANS_TO_DEGREES(atan2(-vel.y, vel.x));
   }
 
-  DECL_FZ(rotationDamping)
-  DECL_FZ(rotationSpring)
-  DECL_FZ(targetRotation)
-  DECL_FZ(dr)
-  DECL_FZ(ar)
-  DECL_FZ(vr)
+  __decl_fz(rotationDamping)
+  __decl_fz(rotationSpring)
+  __decl_fz(targetRotation)
+  __decl_fz(dr)
+  __decl_fz(ar)
+  __decl_fz(vr)
 
-  DECL_IZ(rotationOrientation)
-  DECL_TD(c::Vec2, pivot)
-  DECL_FZ(angularSpeed)
+  __decl_iz(rotationOrientation)
+  __decl_td(c::Vec2, pivot)
+  __decl_fz(angularSpeed)
 
   static owner<RocketMotion*> create();
   RocketMotion();

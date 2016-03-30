@@ -28,8 +28,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   MDECL_GET_IID(2)
   MDECL_DECORATE()
 
-  DECL_PTR(ecs::Node, _arena)
-  DECL_PTR(ecs::Node, _ship)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
 
   virtual void onInited();
   void spawnPlayer();

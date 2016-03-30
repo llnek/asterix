@@ -21,8 +21,8 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XScene : public XNode, public c::Scene {
-  DECL_BF(_usePhysics)
-  NOCPYASS(XScene)
+  __decl_bf(_usePhysics)
+  __decl_nocpyass(XScene)
 public:
 
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);

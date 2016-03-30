@@ -37,23 +37,23 @@ class GVars;
 class CC_DLL Unit : public f::CPixie {
 
   //9x9 grid, 1,1 is top left, 9,9 is bottom right
-  DECL_PTR(c::Label,_lblValue)
-  DECL_PTR(GVars,ss)
-  DECL_TD(c::Vec2,_prevTapAt)
-  DECL_TD(c::Color3B,_color)
-  DECL_BF(_isBeingDragged)
-  DECL_TD(c::Vec2,_tapAt)
-  DECL_IZ(_dragDirection)
+  __decl_ptr(c::Label,_lblValue)
+  __decl_ptr(GVars,ss)
+  __decl_td(c::Vec2,_prevTapAt)
+  __decl_td(c::Color3B,_color)
+  __decl_bf(_isBeingDragged)
+  __decl_td(c::Vec2,_tapAt)
+  __decl_iz(_dragDirection)
   virtual bool initWithSpriteFrameName(const sstr &);
   void reposToGrid(c::Ref*);
 
 public:
 
-  DECL_BF(_isFriendly)
-  DECL_IZ(_direction)
-  DECL_IZ(_unitValue)
-  DECL_IZ(_gridWidth)
-  DECL_TD(f::Cell2I,_gridPos)
+  __decl_bf(_isFriendly)
+  __decl_iz(_direction)
+  __decl_iz(_unitValue)
+  __decl_iz(_gridWidth)
+  __decl_td(f::Cell2I,_gridPos)
   static owner<Unit*> enemyWith(GVars*, int, const f::Cell2I&);
   static owner<Unit*> friendly(GVars*);
 

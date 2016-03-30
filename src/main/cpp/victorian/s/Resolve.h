@@ -33,9 +33,9 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(ecs::Node, _terrain)
-  DECL_PTR(ecs::Node, _player)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _terrain)
+  __decl_ptr(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _shared)
 
 };
 

@@ -37,7 +37,7 @@ public:
   virtual void runOnce() ;
 
   virtual ~Config() {}
-  NOCPYASS(Config)
+  __decl_nocpyass(Config)
 
   static owner<Config*> reify();
 };

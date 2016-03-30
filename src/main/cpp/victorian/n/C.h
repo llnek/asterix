@@ -60,28 +60,28 @@ struct CC_DLL Widget : public f::CPixie {
     _width = CC_CSIZE(node).width;
   }
 
-  DECL_TD(c::Vec2, nextPos)
-  DECL_TD(c::Vec2, vel)
-  DECL_FZ(maxSpeed)
-  DECL_FZ(speed)
-  DECL_FZ(_height)
-  DECL_FZ(_width)
+  __decl_td(c::Vec2, nextPos)
+  __decl_td(c::Vec2, vel)
+  __decl_fz(maxSpeed)
+  __decl_fz(speed)
+  __decl_fz(_height)
+  __decl_fz(_width)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  DECL_PTR(c::Animate,jamAnimate)
-  DECL_PTR(c::MoveTo,jamMove)
-  DECL_PTR(c::Sprite,jam)
-  DECL_PTR(c::Sprite,hat)
+  __decl_ptr(c::Animate,jamAnimate)
+  __decl_ptr(c::MoveTo,jamMove)
+  __decl_ptr(c::Sprite,jam)
+  __decl_ptr(c::Sprite,hat)
 
-  DECL_PTR(c::Sprite,background)
-  DECL_PTR(c::Sprite,foreground)
-  DECL_IZ(state)
+  __decl_ptr(c::Sprite,background)
+  __decl_ptr(c::Sprite,foreground)
+  __decl_iz(state)
 
-  DECL_IZ(speedIncreaseInterval)
-  DECL_IZ(speedIncreaseTimer)
+  __decl_iz(speedIncreaseInterval)
+  __decl_iz(speedIncreaseTimer)
 
   MDECL_COMP_TPID( "n/GVars" )
 };

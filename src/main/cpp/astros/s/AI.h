@@ -19,8 +19,8 @@ NS_BEGIN(astros)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-    DECL_PTR(c::DelayTime,_astroTimer)
-  DECL_PTR(ecs::Node, _shared)
+    __decl_ptr(c::DelayTime,_astroTimer)
+  __decl_ptr(ecs::Node, _shared)
   void parallex(float);
   void process(float);
     void spawnAstro(float);

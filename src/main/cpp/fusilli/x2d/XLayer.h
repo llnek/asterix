@@ -26,11 +26,11 @@ protected:
 
   //c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
   c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ONE_BY_ONE;
-  DECL_PTR(c::EventListenerMouse ,_mouseListener)
-  DECL_TV(int, _mouseBtn, MOUSE_BUTTON_LEFT)
-  DECL_BF(_mouseEnabled)
-  DECL_BF(_mouseTarget)
-  DECL_BF(_mouseDown)
+  __decl_ptr(c::EventListenerMouse ,_mouseListener)
+  __decl_tv(int, _mouseBtn, MOUSE_BUTTON_LEFT)
+  __decl_bf(_mouseEnabled)
+  __decl_bf(_mouseTarget)
+  __decl_bf(_mouseDown)
   s_arr<bool, 256> _keys;
 
   virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
@@ -77,7 +77,7 @@ public:
   virtual ~XLayer() {}
 
   XLayer();
-  NOCPYASS(XLayer)
+  __decl_nocpyass(XLayer)
 };
 
 

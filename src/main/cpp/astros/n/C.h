@@ -54,18 +54,18 @@ struct CC_DLL Ship : public f::CPixie {
     return z;
   }
   virtual ~Ship() {}
-  DECL_BF(engineOn)
+  __decl_bf(engineOn)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_PTR(ScrollingBG, background)
-  DECL_TV(int,scrollSpeed, 1)
-  DECL_TV(float,gameGravity, -0.05)
-  DECL_TV(float, gameThrust, 0.1)
-  DECL_PTR(c::ParticleSun, emitter)
+  __decl_ptr(ScrollingBG, background)
+  __decl_tv(int,scrollSpeed, 1)
+  __decl_tv(float,gameGravity, -0.05)
+  __decl_tv(float, gameThrust, 0.1)
+  __decl_ptr(c::ParticleSun, emitter)
 
 };
 

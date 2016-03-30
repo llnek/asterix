@@ -20,7 +20,7 @@ NS_BEGIN(flappy)
 class Fairytale;
 struct CC_DLL Splash : public f::XScene {
 
-  DECL_PTR(Fairytale,fairytale)
+  __decl_ptr(Fairytale,fairytale)
   STATIC_REIFY_SCENE(Splash)
   MDECL_DECORATE()
   MDECL_UPDATE()

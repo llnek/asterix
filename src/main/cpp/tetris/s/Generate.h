@@ -21,9 +21,9 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Generate : public ecs::System {
 
-  DECL_TD(ShapeInfo, _nextShapeInfo)
-  DECL_PTR(ecs::Node, _arena)
-  DECL_PTR(Shape, _nextShape)
+  __decl_td(ShapeInfo, _nextShapeInfo)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(Shape, _nextShape)
 
   const ShapeInfo randNextInfo();
   owner<Shape*> reifyNextShape();

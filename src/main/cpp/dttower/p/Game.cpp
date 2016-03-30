@@ -32,8 +32,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void enemyReachedTower();
   void onEnd();
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _player)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

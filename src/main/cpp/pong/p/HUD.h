@@ -21,10 +21,10 @@ NS_BEGIN(pong)
 //
 class CC_DLL HUDLayer : public f::XLayer {
 
-  DECL_PTR(c::Label, _resultMsg)
-  DECL_PTR(c::Label, _score2)
-  DECL_PTR(c::Label, _score1)
-  DECL_PTR(c::Label, _title)
+  __decl_ptr(c::Label, _resultMsg)
+  __decl_ptr(c::Label, _score2)
+  __decl_ptr(c::Label, _score1)
+  __decl_ptr(c::Label, _title)
   s_arr<Player,3> _parr;
   s_arr<int,3> _scores;
 

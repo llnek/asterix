@@ -44,23 +44,23 @@ struct CC_DLL Block : public Widget, public c::Ref {
   c::Vector<c::Sprite*> _wallTiles;
   c::Vector<c::Sprite*> _roofTiles;
 
-  DECL_PTR(c::SpriteFrame,_tile1)
-  DECL_PTR(c::SpriteFrame,_tile2)
-  DECL_PTR(c::SpriteFrame,_tile3)
-  DECL_PTR(c::SpriteFrame,_tile4)
+  __decl_ptr(c::SpriteFrame,_tile1)
+  __decl_ptr(c::SpriteFrame,_tile2)
+  __decl_ptr(c::SpriteFrame,_tile3)
+  __decl_ptr(c::SpriteFrame,_tile4)
 
-  DECL_PTR(c::SpriteFrame, _roof1)
-  DECL_PTR(c::SpriteFrame, _roof2)
+  __decl_ptr(c::SpriteFrame, _roof1)
+  __decl_ptr(c::SpriteFrame, _roof2)
 
-  DECL_PTR(c::Action, _puffAnimation)
-  DECL_PTR(c::Action, _puffSpawn)
-  DECL_PTR(c::Action, _puffMove)
-  DECL_PTR(c::Action, _puffFade)
-  DECL_PTR(c::Action, _puffScale)
+  __decl_ptr(c::Action, _puffAnimation)
+  __decl_ptr(c::Action, _puffSpawn)
+  __decl_ptr(c::Action, _puffMove)
+  __decl_ptr(c::Action, _puffFade)
+  __decl_ptr(c::Action, _puffScale)
 
-  DECL_IZ(_tileHeight)
-  DECL_IZ(_tileWidth)
-  DECL_IZ(_puffIndex)
+  __decl_iz(_tileHeight)
+  __decl_iz(_tileWidth)
+  __decl_iz(_puffIndex)
 
   void createPuff();
   void initBlock();

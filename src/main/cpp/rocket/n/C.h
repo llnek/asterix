@@ -52,21 +52,21 @@ struct CC_DLL Planet : public f::CPixie {
 //
 struct CC_DLL GVars : public ecs::Component {
 
-  DECL_PTR(c::ParticleSystemQuad, pickup)
-  DECL_PTR(c::ParticleSystemQuad, jet)
-  DECL_PTR(c::ParticleSystemQuad, boom)
-  DECL_PTR(c::ParticleSystemQuad, comet)
-  DECL_PTR(c::ParticleSystemQuad, warp)
-  DECL_PTR(c::ParticleSystemQuad, star)
+  __decl_ptr(c::ParticleSystemQuad, pickup)
+  __decl_ptr(c::ParticleSystemQuad, jet)
+  __decl_ptr(c::ParticleSystemQuad, boom)
+  __decl_ptr(c::ParticleSystemQuad, comet)
+  __decl_ptr(c::ParticleSystemQuad, warp)
+  __decl_ptr(c::ParticleSystemQuad, star)
 
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_FZ(minLineLength)
-  DECL_BF(drawing)
-  DECL_IZ(gridPos)
-  DECL_IZ(state)
-  DECL_IZ(cometInterval)
-  DECL_IZ(cometTimer)
-  DECL_FZ(timeBetweenPickups)
+  __decl_fz(minLineLength)
+  __decl_bf(drawing)
+  __decl_iz(gridPos)
+  __decl_iz(state)
+  __decl_iz(cometInterval)
+  __decl_iz(cometTimer)
+  __decl_fz(timeBetweenPickups)
 
   s_vec<c::Vec2> grid;
 };

@@ -26,7 +26,7 @@ NS_BEGIN(blast)
 class MissileLauncher : public PowerUp {
 
   const s_vec<c::Vec2> generateTargets();
-  DECL_PTR(GVars,ss)
+  __decl_ptr(GVars,ss)
 
 public:
 

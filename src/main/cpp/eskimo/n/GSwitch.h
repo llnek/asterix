@@ -28,7 +28,7 @@ public:
   void initGSwitch(int direction, const c::Vec2& );
 
   static owner<GSwitch*> create(not_null<GVars*>);
-  DECL_IZ(direction)
+  __decl_iz(direction)
 
 };
 

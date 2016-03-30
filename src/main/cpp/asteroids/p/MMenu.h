@@ -19,7 +19,7 @@ NS_BEGIN(asteroids)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN v) { back=v; }
-  DECL_TD(VOIDFN, back);
+  __decl_td(VOIDFN, back);
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -26,16 +26,16 @@ friend class Engine;
   //owns all the parts
   s_map<COMType, Component*> _parts;
 
-  DECL_PTR(Engine, _engine)
-  DECL_BF(_dead)
-  DECL_TD(NodeId, _eid)
-  DECL_TD(sstr, _name)
+  __decl_ptr(Engine, _engine)
+  __decl_bf(_dead)
+  __decl_td(NodeId, _eid)
+  __decl_td(sstr, _name)
 
   Node(not_null<Engine*>, const sstr&, NodeId);
   void die() { _dead=true; }
 
-  NOCPYASS(Node)
-  NODFT(Node)
+  __decl_nocpyass(Node)
+  __decl_nodft(Node)
   virtual ~Node();
 
 public:

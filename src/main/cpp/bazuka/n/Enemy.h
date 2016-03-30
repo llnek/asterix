@@ -25,7 +25,7 @@ struct CC_DLL Enemy : public f::CPixie {
 
 public:
 
-  DECL_PTR(c::Action,idle)
+  __decl_ptr(c::Action,idle)
 
   virtual ~Enemy() {
     CC_DROP(idle);

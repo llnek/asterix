@@ -58,7 +58,7 @@ void XNode:: setCtx(SCTX *x, bool clean) {
 //
 SCTX* XNode::ejectCtx() {
   auto x= _context;
-  SNPTR(_context)
+  S__NIL(_context)
   return x;
 }
 

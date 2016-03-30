@@ -38,8 +38,8 @@ struct CC_DLL GCX : public SCTX {
   virtual ~GCX() { mc_del_ptr(odin) }
   GCX(GMode m) { mode=m; }
   GCX() {}
-  DECL_PTR(ws::OdinIO ,odin)
-  DECL_TV(GMode,mode,GMode::ONE)
+  __decl_ptr(ws::OdinIO ,odin)
+  __decl_tv(GMode,mode,GMode::ONE)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -52,9 +52,9 @@ protected:
   s_map<sstr, f::FPool*> _pools;
   s_que<sstr> _msgQ;
 
-  DECL_TV(int, _state, 0)
-  DECL_TV(int, _level, 1)
-  NOCPYASS(GameScene)
+  __decl_tv(int, _state, 0)
+  __decl_tv(int, _level, 1)
+  __decl_nocpyass(GameScene)
 
 public:
 

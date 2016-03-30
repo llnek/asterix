@@ -44,7 +44,7 @@ struct CC_DLL Aliens : public ecs::System {
   ecs::Node* findMinX(AlienSquad* );
   ecs::Node* findMaxX(AlienSquad* );
 
-  DECL_PTR(ecs::Node, _baddies)
+  __decl_ptr(ecs::Node, _baddies)
 
   Aliens(ecs::Engine *e)
   : System(e)

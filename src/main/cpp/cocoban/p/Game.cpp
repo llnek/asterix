@@ -27,8 +27,8 @@ struct CC_DLL GLayer : public f::GameLayer {
     void onSwipe();
     void move(float, float);
 
-  DECL_PTR(ecs::Node, _player)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

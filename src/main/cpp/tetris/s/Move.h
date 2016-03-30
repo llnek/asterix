@@ -24,7 +24,7 @@ class CC_DLL Move : public ecs::System {
   void initKeyOps(ecs::Node*, int);
   void doFall();
 
-  DECL_PTR(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _arena)
   VOIDFN _scanner;
 
 public:

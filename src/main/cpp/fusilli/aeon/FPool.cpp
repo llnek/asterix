@@ -17,7 +17,7 @@ NS_BEGIN(fusii)
 void FPool::preset(s::function<Poolable* ()> f, int count) {
   for (auto n=0; n < count; ++n) {
     auto rc= f();
-    if (NNP(rc)) {
+    if (N_NIL(rc)) {
       _objs.push_back(rc);
     }
   }
@@ -34,14 +34,14 @@ Poolable* FPool::select(s::function<bool (Poolable*)> f) {
       return e;
     }
   }
-  return nullptr;
+  return P_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get a free object from the pool and set it's status to true
 Poolable* FPool::take(bool create) {
   auto rc= get(create);
-  if (NNP(rc)) {
+  if (N_NIL(rc)) {
     rc->take();
   }
   return rc;
@@ -64,7 +64,7 @@ Poolable* FPool::get(bool create) {
     preset(_ctor, _batch);
     return get();
   }
-  return nullptr;
+  return P_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -31,8 +31,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onBtnTapped(int,int);
   void onEnd();
 
-  DECL_PTR(ecs::Node,_human)
-  DECL_PTR(ecs::Node,_enemy)
+  __decl_ptr(ecs::Node,_human)
+  __decl_ptr(ecs::Node,_enemy)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

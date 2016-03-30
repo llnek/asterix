@@ -37,18 +37,18 @@ public:
 
   MDECL_COMP_TPID("n/RPath");
 
-  DECL_FZ(energyDecrement)
-  DECL_FZ(lineAngle)
-  DECL_FZ(energyLineX)
-  DECL_FZ(energyHeight)
-  DECL_IZ(dash)
-  DECL_IZ(dashSpace)
+  __decl_fz(energyDecrement)
+  __decl_fz(lineAngle)
+  __decl_fz(energyLineX)
+  __decl_fz(energyHeight)
+  __decl_iz(dash)
+  __decl_iz(dashSpace)
 
-  DECL_TD(LineType, lineType)
-  DECL_FZ(lineLength)
-  DECL_FZ(energy)
-  DECL_TD(c::Vec2, pivot)
-  DECL_TD(c::Vec2, tip)
+  __decl_td(LineType, lineType)
+  __decl_fz(lineLength)
+  __decl_fz(energy)
+  __decl_td(c::Vec2, pivot)
+  __decl_td(c::Vec2, tip)
 
   void setEnergyDecrement(float);
   void update(float);

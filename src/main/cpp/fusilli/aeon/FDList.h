@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "GSL/gsl.h"
 NS_USING(gsl)
@@ -19,22 +20,22 @@ NS_BEGIN(fusii)
 //
 template<typename T>
 struct FS_DLL FDListItem {
-  DECL_PTR(T , _prev)
-  DECL_PTR(T , _next)
+  __decl_ptr(T , _prev)
+  __decl_ptr(T , _next)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 struct FS_DLL FDListAnchor {
-  DECL_PTR(T , _head)
-  DECL_PTR(T , _tail)
+  __decl_ptr(T , _head)
+  __decl_ptr(T , _tail)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 // owns all items in this list
 template <typename T>
-struct FS_DLL FDList {
+struct FS_DLL FDList  {
 
   virtual bool isEmpty() { return _head==nullptr; }
   virtual void release(not_null<T*>);
@@ -45,37 +46,38 @@ struct FS_DLL FDList {
   void clear() ;
   int size();
 
-  DECL_PTR(T , _head)
-  DECL_PTR(T , _tail)
+  __decl_ptr(T , _head)
+  __decl_ptr(T , _tail)
 
   virtual ~FDList();
   FDList() {}
-  NOCPYASS(FDList)
+  __decl_nocpyass(FDList)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template <typename T>
 void FDList<T>::add(not_null<T*> e) {
-  if (ENP(_head)) {
-    assert(_tail == nullptr);
-    SNPTR(e->_prev)
-    SNPTR(e->_next)
+  if (E_NIL(_head)) {
+    assert(E_NIL(_tail) );
+    e->_prev= P_NIL;
+    e->_next= P_NIL;
     _head = _tail = e;
   } else {
     e->_prev = _tail;
-    SNPTR(e->_next)
+    e->_next= P_NIL;
     _tail->_next = e;
     _tail = e;
   }
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T>
 int FDList<T>::size() {
   auto n= _head;
   int c=0;
-  while (NNP(n)) {
+  while (N_NIL(n)) {
     n = n->_next;
     ++c;
   }
@@ -88,14 +90,14 @@ template <typename T>
 void FDList<T>::release(not_null<T*> e) {
   if (_tail == e) { _tail = _tail->_prev; }
   if (_head == e) { _head = _head->_next; }
-  if (NNP(e->_prev)) {
+  if (N_NIL(e->_prev)) {
     e->_prev->_next = e->_next;
   }
-  if (NNP(e->_next)) {
+  if (N_NIL(e->_next)) {
     e->_next->_prev = e->_prev;
   }
-  SNPTR(e->_prev)
-  SNPTR(e->_next)
+  e->_prev= P_NIL;
+  e->_next= P_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,13 +112,13 @@ void FDList<T>::purge(not_null<T*> e) {
 //
 template <typename T>
 void FDList<T>::clear() {
-  while (NNP(_head)) {
+  while (N_NIL(_head)) {
     auto e= _head;
     _head = _head->_next;
     delete e;
   }
-  SNPTR(_head)
-  SNPTR(_tail)
+  S__NIL(_head)
+  S__NIL(_tail)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -124,7 +126,7 @@ void FDList<T>::clear() {
 template <typename T>
 const s_vec<T*> FDList<T>::list() {
   s_vec<T*> v;
-  for (auto p= _head; NNP(p); p=p->_next) {
+  for (auto p= _head; N_NIL(p); p=p->_next) {
     v.push_back(p);
   }
   return v;

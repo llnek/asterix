@@ -25,8 +25,8 @@ NS_BEGIN(globes)
 class GVars;
 struct CC_DLL GameTile : public f::CPixie {
   static owner<GameTile*> create(GVars *ss, int tile);
-  DECL_TD(sstr, tileColor)
-  DECL_BF(picked)
+  __decl_td(sstr, tileColor)
+  __decl_bf(picked)
 };
 
 typedef f::FArrayPtr<GameTile> TilePtrArray;
@@ -36,12 +36,12 @@ typedef f::FArrayPtr<GameTile> TilePtrArray;
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_PTR(c::DrawNode,arrowsLayer)
-  DECL_PTR(c::Layer,globezLayer)
-  DECL_IZ(tolerance)
-  DECL_TD(sstr,startColor)
-  DECL_IZ(fieldSize)
-  DECL_IZ(tileSize)
+  __decl_ptr(c::DrawNode,arrowsLayer)
+  __decl_ptr(c::Layer,globezLayer)
+  __decl_iz(tolerance)
+  __decl_td(sstr,startColor)
+  __decl_iz(fieldSize)
+  __decl_iz(tileSize)
   s_vec<TilePtrArray*> tiles;
   s_vec<f::Cell2D> visited;
   s_arr<sstr,5> tileTypes= {

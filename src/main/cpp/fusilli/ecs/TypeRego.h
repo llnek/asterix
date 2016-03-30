@@ -21,7 +21,7 @@ NS_BEGIN(ecs)
 class FS_DLL TypeRegistry {
 
   s_map<COMType, CompoCache*> _rego;
-  NOCPYASS(TypeRegistry)
+  __decl_nocpyass(TypeRegistry)
 
 public:
 

@@ -35,8 +35,8 @@ class Engine;
 class FS_DLL System : public f::FDListItem<System> {
 protected:
 
-  DECL_PTR(Engine, _engine)
-  DECL_BT(_active)
+  __decl_ptr(Engine, _engine)
+  __decl_bt(_active)
 
 public:
 
@@ -56,8 +56,8 @@ public:
 
   System(not_null<Engine*> e) { _engine= e; }
   virtual ~System() {}
-  NODFT(System)
-  NOCPYASS(System)
+  __decl_nodft(System)
+  __decl_nocpyass(System)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ struct FS_DLL SystemList  : public f::FDList<System> {
 
   virtual ~SystemList() {}
   SystemList() {}
-  NOCPYASS(SystemList)
+  __decl_nocpyass(SystemList)
 };
 
 

@@ -20,8 +20,8 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL ParticleLayer : public c::Node {
 
-  DECL_PTR(ParticleSpin, enemyDie)
-  DECL_PTR(ParticleSpin, enemyGun)
+  __decl_ptr(ParticleSpin, enemyDie)
+  __decl_ptr(ParticleSpin, enemyGun)
   void removeSelf(float dt);
 
 public:

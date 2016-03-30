@@ -19,7 +19,7 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN b) { back=b; }
-  DECL_TD(VOIDFN, back)
+  __decl_td(VOIDFN, back)
 };
 
 //////////////////////////////////////////////////////////////////////////////

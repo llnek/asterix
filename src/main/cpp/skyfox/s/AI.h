@@ -28,9 +28,9 @@ class CC_DLL AI : public ecs::System {
   void process(float);
   void changeEnergy(float);
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _bomb)
-  DECL_PTR(ecs::Node, _ufo)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _bomb)
+  __decl_ptr(ecs::Node, _ufo)
 
 public:
 

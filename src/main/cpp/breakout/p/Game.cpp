@@ -38,9 +38,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onDone();
   void showMenu();
 
-  DECL_PTR(ecs::Node, _paddle)
-  DECL_PTR(ecs::Node, _ball)
-  DECL_PTR(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _paddle)
+  __decl_ptr(ecs::Node, _ball)
+  __decl_ptr(ecs::Node, _arena)
 
 };
 

@@ -22,7 +22,7 @@ NS_BEGIN(eskimo)
 //
 class CC_DLL GEngine  : public ecs::Engine {
 
-  DECL_PTR(b2World, _world)
+  __decl_ptr(b2World, _world)
 
 public:
 

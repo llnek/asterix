@@ -39,13 +39,13 @@ protected:
   void addCst(const sstr& , c::Ref*);
   void addColor(const sstr& , c::Ref*);
 
-  DECL_PTR(c::Dictionary, _frags)
-  DECL_PTR(c::Dictionary, _l10n)
+  __decl_ptr(c::Dictionary, _frags)
+  __decl_ptr(c::Dictionary, _l10n)
 
-  DECL_TV(float, _lastMusicVol,0.5f)
-  DECL_TV(float, _lastSfxVol, 0.5f)
-  DECL_TV(float, _scale, 1.0f)
-  DECL_BT(_audioState)
+  __decl_tv(float, _lastMusicVol,0.5f)
+  __decl_tv(float, _lastSfxVol, 0.5f)
+  __decl_tv(float, _scale, 1.0f)
+  __decl_bt(_audioState)
     
     c::ApplicationProtocol::Platform _platform;
     
@@ -130,11 +130,11 @@ public:
 
   virtual ~XConfig();
   XConfig();
-  NOCPYASS(XConfig)
+  __decl_nocpyass(XConfig)
 
-  DECL_TD(sstr, _room_id)
-  DECL_TD(sstr, _app_id)
-  DECL_TD(sstr, _game_id)
+  __decl_td(sstr, _room_id)
+  __decl_td(sstr, _app_id)
+  __decl_td(sstr, _game_id)
 
   static XConfig* self();
   static void bind(not_null<XConfig*>);

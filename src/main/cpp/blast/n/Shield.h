@@ -27,8 +27,8 @@ NS_BEGIN(blast)
 class Player;
 class Shield : public PowerUp {
 
-  DECL_PTR(Player, _ship)
-  DECL_IZ(shieldTimeLeft)
+  __decl_ptr(Player, _ship)
+  __decl_iz(shieldTimeLeft)
 
 public:
 

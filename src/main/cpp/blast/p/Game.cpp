@@ -29,9 +29,9 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  DECL_PTR(BackgroundManager, _background)
-  DECL_PTR(ecs::Node, _player)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(BackgroundManager, _background)
+  __decl_ptr(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

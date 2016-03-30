@@ -30,8 +30,8 @@ struct CC_DLL MemoryTile : public f::CPixie {
     z->pvalue=v;
     return z;
   }
-  DECL_BF(inflated)
-  DECL_IZ(pvalue)
+  __decl_bf(inflated)
+  __decl_iz(pvalue)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -40,8 +40,8 @@ struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
   s_vec<MemoryTile*> pickedTiles;
   s_vec<MemoryTile*> tiles;
-  DECL_PTR(c::DelayTime,checkTimer)
-  DECL_IZ(moves)
+  __decl_ptr(c::DelayTime,checkTimer)
+  __decl_iz(moves)
 };
 
 NS_END

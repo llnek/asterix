@@ -27,11 +27,11 @@ class Dragon;
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
 
-  DECL_PTR(Fairytale, fairytale)
-  DECL_PTR(Tower, towers)
-  DECL_PTR(Dragon, dragon)
-  DECL_BF(hasGameStarted)
-  DECL_FZ(castleRoof)
+  __decl_ptr(Fairytale, fairytale)
+  __decl_ptr(Tower, towers)
+  __decl_ptr(Dragon, dragon)
+  __decl_bf(hasGameStarted)
+  __decl_fz(castleRoof)
 
 
 };

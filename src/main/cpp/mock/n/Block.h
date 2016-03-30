@@ -30,14 +30,14 @@ enum  {
 //
 class CC_DLL Block : public c::Sprite {
 
-  DECL_IZ(_type)
+  __decl_iz(_type)
 
 public:
 
   void setupBlock(const c::Rect&, const c::Size&, int type);
   static owner<Block*> create();
 
-  DECL_GSMS(int,_type,Type)
+  __decl_gsms(int,_type,Type)
 };
 
 

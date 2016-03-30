@@ -24,8 +24,8 @@ NS_BEGIN(colorsmash)
 struct CC_DLL GameTile : public f::CPixie {
   GameTile(not_null<c::Node*> n) : CPixie(n) {
   }
-  DECL_TV(int,index,-1)
-  DECL_TV(int,type,-1)
+  __decl_tv(int,index,-1)
+  __decl_tv(int,type,-1)
 };
 
 //////////////////////////////////////////////////////////////////////////////

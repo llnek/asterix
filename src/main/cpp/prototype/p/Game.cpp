@@ -28,9 +28,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   bool onContactBegin(c::PhysicsContact&);
   void setPhysicsWorld(c::PhysicsWorld*);
 
-  DECL_PTR(c::PhysicsWorld, _pWorld);
-  DECL_PTR(ecs::Node, _player)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(c::PhysicsWorld, _pWorld);
+  __decl_ptr(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

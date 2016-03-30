@@ -19,9 +19,9 @@ NS_BEGIN(bunny)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime, _timerB)
-  DECL_PTR(c::DelayTime, _timer)
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(c::DelayTime, _timerB)
+  __decl_ptr(c::DelayTime, _timer)
+  __decl_ptr(ecs::Node, _shared)
 
   void dropBombs(int c, float v);
   void processScore(float);

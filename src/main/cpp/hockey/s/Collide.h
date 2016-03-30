@@ -19,8 +19,8 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
-  DECL_PTR(ecs::Node, _puck)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _puck)
   s_vec<ecs::Node*> _mallets;
 
   void process(float);

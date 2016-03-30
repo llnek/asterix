@@ -30,8 +30,8 @@ struct CC_DLL Move : public ecs::System {
   : System(e)
   {}
 
-  DECL_PTR(ecs::Node, _paddle)
-  DECL_PTR(ecs::Node, _ball)
+  __decl_ptr(ecs::Node, _paddle)
+  __decl_ptr(ecs::Node, _ball)
 
   void processPaddleMotions(float);
   void processBallMotions(float);

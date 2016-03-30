@@ -19,7 +19,7 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
   void process(float);
   void clamp(float);
 

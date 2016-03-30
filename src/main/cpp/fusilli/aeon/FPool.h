@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "fusilli.h"
 NS_ALIAS(s,std)
@@ -21,7 +19,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class FS_DLL Poolable {
-  DECL_BF(_status)
+  __decl_bf(_status)
 protected:
   Poolable() {}
 public:
@@ -37,8 +35,9 @@ class FS_DLL FPool {
 
   s::function<Poolable* ()> _ctor;
   s_vec<Poolable*> _objs;
-  DECL_BF(_ownObjects)
-  DECL_IZ(_batch)
+  __decl_bf(_ownObjects)
+  __decl_iz(_batch)
+  __decl_nocpyass(FPool)
 
 public:
 
@@ -64,7 +63,7 @@ public:
 
   FPool(bool owner) { _ownObjects=owner; }
   virtual ~FPool() {  clearAll(); }
-  NOCPYASS(FPool)
+
 };
 
 

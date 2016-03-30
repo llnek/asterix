@@ -28,9 +28,9 @@ struct CC_DLL HUDLayer : public f::XLayer {
   void updateScore(int n);
   void drawScore();
 
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_PTR(f::XLives, _lives)
-  DECL_IZ(_score)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(f::XLives, _lives)
+  __decl_iz(_score)
 
 };
 

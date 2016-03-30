@@ -33,10 +33,10 @@ NS_BEGIN(gmath)
 //
 struct CC_DLL GVars : public ecs::Component {
   MDECL_COMP_TPID( "n/GVars" )
-  DECL_IZ(tutorial)
-  DECL_TD(c::Size,unitSize)
-  DECL_PTR(c::Array, friends)
-  DECL_PTR(c::Array, enemies)
+  __decl_iz(tutorial)
+  __decl_td(c::Size,unitSize)
+  __decl_ptr(c::Array, friends)
+  __decl_ptr(c::Array, enemies)
   GVars() {
     friends=c::Array::create();
     enemies=c::Array::create();

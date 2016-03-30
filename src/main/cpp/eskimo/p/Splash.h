@@ -23,10 +23,10 @@ class CC_DLL Splash : public f::XScene {
   void showLevels();
   void showHelp();
 
-  DECL_PTR(c::Sprite, _caption2)
-  DECL_PTR(c::Sprite, _caption1)
-  DECL_PTR(c::Sprite, _balloon)
-  DECL_FZ(_msgCntDown)
+  __decl_ptr(c::Sprite, _caption2)
+  __decl_ptr(c::Sprite, _caption1)
+  __decl_ptr(c::Sprite, _balloon)
+  __decl_fz(_msgCntDown)
 
 public:
 

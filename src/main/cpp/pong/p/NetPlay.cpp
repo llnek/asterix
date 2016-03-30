@@ -59,7 +59,7 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
   obj["pnum"]= _player;
 
   SCAST(NPCX*, ctx)->yes(_odin,obj);
-  SNPTR(_odin)
+  S__NIL(_odin)
 }
 
 //////////////////////////////////////////////////////////////////////////////

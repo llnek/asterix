@@ -32,7 +32,7 @@ public:
 
   virtual ~ZLoader() {}
   ZLoader() {}
-  NOCPYASS(ZLoader)
+  __decl_nocpyass(ZLoader)
 };
 
 

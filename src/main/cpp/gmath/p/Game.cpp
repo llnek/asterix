@@ -24,13 +24,13 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  DECL_PTR(c::Label,_lblTurnsSurvived)
-  DECL_PTR(c::Label,_lblUnitsKilled)
-  DECL_PTR(c::Label,_lblTotalScore)
-  DECL_IZ(_numTurnSurvived)
-  DECL_IZ(_numTotalScore)
-  DECL_IZ(_numUnitsKilled)
-  DECL_IZ(_tutorialPhase)
+  __decl_ptr(c::Label,_lblTurnsSurvived)
+  __decl_ptr(c::Label,_lblUnitsKilled)
+  __decl_ptr(c::Label,_lblTotalScore)
+  __decl_iz(_numTurnSurvived)
+  __decl_iz(_numTotalScore)
+  __decl_iz(_numUnitsKilled)
+  __decl_iz(_tutorialPhase)
 
   void showTutHelp(GVars*);
   void runFingerArrowActions(c::Sprite *finger);
@@ -60,7 +60,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()

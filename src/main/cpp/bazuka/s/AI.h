@@ -19,8 +19,8 @@ NS_BEGIN(bazuka)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(c::DelayTime,_enemyTimer)
-  DECL_PTR(ecs::Node,_shared)
+  __decl_ptr(c::DelayTime,_enemyTimer)
+  __decl_ptr(ecs::Node,_shared)
 
   void processEnemies(float);
   void parallex(float);

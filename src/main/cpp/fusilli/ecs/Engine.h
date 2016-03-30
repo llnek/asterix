@@ -25,15 +25,15 @@ NS_BEGIN(ecs)
 class TypeRegistry;
 class FS_DLL Engine {
 
-  DECL_TD(SystemList, _systemList)
-  DECL_TD(NodeCache, _ents)
+  __decl_td(SystemList, _systemList)
+  __decl_td(NodeCache, _ents)
 
-  DECL_PTR(TypeRegistry, _types)
-  DECL_BF(_updating)
-  DECL_IZ(_lastId)
+  __decl_ptr(TypeRegistry, _types)
+  __decl_bf(_updating)
+  __decl_iz(_lastId)
 
   s_vec<Node*> _garbo;
-  NOCPYASS(Engine)
+  __decl_nocpyass(Engine)
 
   NodeId generateEid();
 
@@ -41,7 +41,7 @@ protected:
 
   virtual void initEntities() = 0;
   virtual void initSystems() = 0;
-  DECL_TD(j::json, _config)
+  __decl_td(j::json, _config)
 
 public:
 

@@ -29,8 +29,8 @@ typedef FArrayPtr<c::Node> NodePtrArray;
 //
 template<typename T> class CC_DLL Maybe {
 
-  DECL_TD(T, _value)
-  DECL_BF(_isset)
+  __decl_td(T, _value)
+  __decl_bf(_isset)
 
 public:
   explicit Maybe(T t) { _value=t; _isset=true; }
@@ -98,8 +98,8 @@ void emptyQueue(s_que<T> &q) {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct DLTimer {
-  DECL_PTR(c::DelayTime, timer)
-  DECL_FZ(duration)
+  __decl_ptr(c::DelayTime, timer)
+  __decl_fz(duration)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -130,20 +130,20 @@ struct CC_DLL Box4 {
     cx= (right-left) * 0.5f + left;
     return *this;
   }
-  DECL_FZ(bottom)
-  DECL_FZ(top)
-  DECL_FZ(cx)
-  DECL_FZ(cy)
-  DECL_FZ(right)
-  DECL_FZ(left)
+  __decl_fz(bottom)
+  __decl_fz(top)
+  __decl_fz(cx)
+  __decl_fz(cy)
+  __decl_fz(right)
+  __decl_fz(left)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Val2 : public c::Ref, public c::Clonable {
 
-  DECL_FZ(_x)
-  DECL_FZ(_y)
+  __decl_fz(_x)
+  __decl_fz(_y)
 
 public:
 
@@ -175,8 +175,8 @@ public:
 //
 class CC_DLL Size2 : public c::Ref, public c::Clonable {
 
-  DECL_FZ(_w)
-  DECL_FZ(_h)
+  __decl_fz(_w)
+  __decl_fz(_h)
 
 public:
 
@@ -212,10 +212,10 @@ public:
 //
 class CC_DLL Box4R : public c::Ref, public c::Clonable {
 
-  DECL_FZ(_lf)
-  DECL_FZ(_t)
-  DECL_FZ(_r)
-  DECL_FZ(_b)
+  __decl_fz(_lf)
+  __decl_fz(_t)
+  __decl_fz(_r)
+  __decl_fz(_b)
 
 public:
 
@@ -260,7 +260,7 @@ public:
 //
 class CC_DLL JsonObj : public c::Ref, public c::Clonable {
 
-  DECL_TD(j::json, _obj)
+  __decl_td(j::json, _obj)
 
 public:
 
@@ -303,7 +303,7 @@ public:
 //
 class CC_DLL C3B : public c::Ref, public c::Clonable {
 
-  DECL_TD(c::Color3B, _c)
+  __decl_td(c::Color3B, _c)
 
 public:
 
@@ -335,7 +335,7 @@ public:
 //
 class CC_DLL C4B : public c::Ref, public c::Clonable {
 
-  DECL_TD(c::Color4B, _c)
+  __decl_td(c::Color4B, _c)
 
 public:
 
@@ -367,8 +367,8 @@ public:
 //
 struct CC_DLL Cell2D {
   Cell2D (int r, int c) { row=r; col=c; }
-  DECL_IZ(row)
-  DECL_IZ(col)
+  __decl_iz(row)
+  __decl_iz(col)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -376,8 +376,8 @@ struct CC_DLL Cell2D {
 struct CC_DLL Cell2I {
   Cell2I (int x, int y) { this->x=x; this->y=y; }
     Cell2I() {}
-  DECL_IZ(x)
-  DECL_IZ(y)
+  __decl_iz(x)
+  __decl_iz(y)
 };
 
 

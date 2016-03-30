@@ -23,17 +23,17 @@ class CC_DLL HUDLayer : public f::XLayer {
   s_vec<c::Sprite*> _buttons;
   void createBtns();
 
-  DECL_PTR(c::Label, _tutorialLabel)
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_PTR(c::Label, _messages)
+  __decl_ptr(c::Label, _tutorialLabel)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(c::Label, _messages)
 
-  DECL_PTR(c::Sprite, _btnStart)
-  DECL_PTR(c::Sprite, _btnReset)
-  DECL_PTR(c::Sprite, _btnPause)
-  DECL_PTR(c::Sprite, _btnAgain)
-  DECL_PTR(c::Sprite, _btnMenu)
-  DECL_IZ(_score)
-  DECL_PTR(GVars,ss)
+  __decl_ptr(c::Sprite, _btnStart)
+  __decl_ptr(c::Sprite, _btnReset)
+  __decl_ptr(c::Sprite, _btnPause)
+  __decl_ptr(c::Sprite, _btnAgain)
+  __decl_ptr(c::Sprite, _btnMenu)
+  __decl_iz(_score)
+  __decl_ptr(GVars,ss)
 
 public:
 

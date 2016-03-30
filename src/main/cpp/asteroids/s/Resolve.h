@@ -36,8 +36,8 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(ecs::Node, _arena)
-  DECL_PTR(ecs::Node, _ship)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
 
 };
 

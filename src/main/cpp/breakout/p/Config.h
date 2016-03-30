@@ -39,7 +39,7 @@ public:
   virtual c::Scene* prelude();
 
   virtual ~Config() {}
-  NOCPYASS(Config)
+  __decl_nocpyass(Config)
   static owner<Config*> reify();
 };
 

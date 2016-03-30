@@ -33,7 +33,7 @@ struct CC_DLL GVars : public ecs::Component {
   f::Cell2I playerPos;
   c::Vec2 startTouch;
   c::Vec2 endTouch;
-  DECL_IZ(swipeTolerance)
+  __decl_iz(swipeTolerance)
 
 };
 

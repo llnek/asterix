@@ -36,8 +36,8 @@ public:
   : System(e)
   {}
 
-  DECL_PTR(ecs::Node, _arena);
-  DECL_PTR(ecs::Node, _ball);
+  __decl_ptr(ecs::Node, _arena);
+  __decl_ptr(ecs::Node, _ball);
   s_vec<ecs::Node*> _paddles;
 
 };

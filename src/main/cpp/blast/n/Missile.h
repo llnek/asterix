@@ -24,8 +24,8 @@ NS_BEGIN(blast)
 //
 class Missile : public f::CDrawNode {
 
-  DECL_TV(c::Vec2, prevPos, CC_ZPT)
-  DECL_PTR(GVars,ss)
+  __decl_tv(c::Vec2, prevPos, CC_ZPT)
+  __decl_ptr(GVars,ss)
 
 public:
 
@@ -35,10 +35,10 @@ public:
   virtual bool init();
   void explode(float dt = 0);
 
-  DECL_TV(c::Vec2, target, CC_ZPT)
-  DECL_TV(c::Vec2, speed, CC_ZPT)
-  DECL_BF(mustBeRemoved)
-  DECL_BF(hasExploded)
+  __decl_tv(c::Vec2, target, CC_ZPT)
+  __decl_tv(c::Vec2, speed, CC_ZPT)
+  __decl_bf(mustBeRemoved)
+  __decl_bf(hasExploded)
 
 };
 

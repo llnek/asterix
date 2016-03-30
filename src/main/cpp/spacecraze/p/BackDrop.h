@@ -20,8 +20,8 @@ NS_BEGIN(spacecraze)
 //
 class CC_DLL BackDrop : public f::XLayer {
 
-DECL_TD(s_vec<c::Sprite*>, _stars)
-  DECL_TD(c::Size, _sz)
+__decl_td(s_vec<c::Sprite*>, _stars)
+  __decl_td(c::Size, _sz)
 
 public:
 

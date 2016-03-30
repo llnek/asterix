@@ -24,7 +24,7 @@ friend class Platform;
 
   static PlatformSprite* create(GVars*);
   s_vec<c::Sprite*> _tiles;
-  DECL_PTR(GVars, ss)
+  __decl_ptr(GVars, ss)
 
   void switchTexture();
   void createTiles();

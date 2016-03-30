@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN f) { back=f;  }
-  DECL_TD(VOIDFN, back)
+  __decl_td(VOIDFN, back)
 };
 
 //////////////////////////////////////////////////////////////////////////////

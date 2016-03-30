@@ -27,7 +27,7 @@ struct CC_DLL Move : public ecs::System {
   void moveBombs(float dt);
   void moveMissiles(float dt);
 
-  DECL_PTR(ecs::Node, _player)
+  __decl_ptr(ecs::Node, _player)
 
 public:
 

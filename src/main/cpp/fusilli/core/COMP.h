@@ -20,10 +20,10 @@ NS_BEGIN(fusii)
 //
 struct CC_DLL CGesture : public ecs::Component {
   MDECL_COMP_TPID("f/CGesture")
-  DECL_BF(down)
-  DECL_BF(up)
-  DECL_BF(right)
-  DECL_BF(left)
+  __decl_bf(down)
+  __decl_bf(up)
+  __decl_bf(right)
+  __decl_bf(left)
 };
 
 
@@ -55,9 +55,9 @@ struct CC_DLL CHealth : public ecs::Component {
   void exitGodMode() { godMode=false; }
   bool isGod() { return godMode; }
 
-  DECL_IZ(origHP)
-  DECL_IZ(curHP)
-  DECL_BF(godMode)
+  __decl_iz(origHP)
+  __decl_iz(curHP)
+  __decl_bf(godMode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ struct CC_DLL Looper : public ecs::Component {
   virtual ~Looper() { CC_DROP(tm.timer); }
   Looper() {}
   MDECL_COMP_TPID("f/Looper")
-  DECL_TD(DLTimer, tm)
+  __decl_td(DLTimer, tm)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -99,8 +99,8 @@ struct CC_DLL CHuman : public ecs::Component {
 //
 struct CC_DLL CStats : public ecs::Component {
   MDECL_COMP_TPID("f/CStats")
-  DECL_IZ(state)
-  DECL_IZ(value)
+  __decl_iz(state)
+  __decl_iz(value)
   CStats(int v) { value=v;}
   CStats() {}
 };
@@ -110,9 +110,9 @@ struct CC_DLL CStats : public ecs::Component {
 struct CC_DLL CMelee : public ecs::Component {
   MDECL_COMP_TPID("f/CMelee")
   long long lastDamageTime;
-  DECL_BF(selfDie)
-  DECL_FZ(damage)
-  DECL_FZ(damageRate)
+  __decl_bf(selfDie)
+  __decl_fz(damage)
+  __decl_fz(damageRate)
   CMelee() {}
 };
 
@@ -121,20 +121,20 @@ struct CC_DLL CMelee : public ecs::Component {
 struct CC_DLL CMove : public ecs::Component {
   MDECL_COMP_TPID("f/CMove")
 
-  DECL_TD(c::Vec2, moveTarget)
-  DECL_TD(c::Vec2, lastPos)
-  DECL_TD(c::Vec2, nextPos)
+  __decl_td(c::Vec2, moveTarget)
+  __decl_td(c::Vec2, lastPos)
+  __decl_td(c::Vec2, nextPos)
 
-  DECL_TD(c::Vec2, maxSpeed)
-  DECL_TD(c::Vec2, maxAccel)
-  DECL_TD(c::Vec2, speed)
-  DECL_TD(c::Vec2, accel)
-  DECL_TD(c::Vec2, vel)
-  DECL_TD(c::Vec2, acc)
+  __decl_td(c::Vec2, maxSpeed)
+  __decl_td(c::Vec2, maxAccel)
+  __decl_td(c::Vec2, speed)
+  __decl_td(c::Vec2, accel)
+  __decl_td(c::Vec2, vel)
+  __decl_td(c::Vec2, acc)
 
-  DECL_FZ(interval)//millis
-  DECL_FZ(power)
-  DECL_FZ(angle)
+  __decl_fz(interval)//millis
+  __decl_fz(power)
+  __decl_fz(angle)
 
   CMove(const c::Vec2 &t, float ms, float ma) {
     moveTarget=t;
@@ -161,12 +161,12 @@ protected:
     _auto=true; _node=dynamic_cast<c::Node*>(n);
     CCLOG("ecs called, node= %p", _node);
   }
-  DECL_BF(_auto)
+  __decl_bf(_auto)
   void flipAuto(bool b) { _auto=b; }
 public:
 
   MDECL_COMP_TPID("f/CPixie")
-  DECL_PTR(c::Node, _node)
+  __decl_ptr(c::Node, _node)
 
   UICObj(c::Node *n) { _node=n; }
   UICObj() {

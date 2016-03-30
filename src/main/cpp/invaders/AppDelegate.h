@@ -20,7 +20,7 @@
 struct CC_DLL AppDelegate : public fusii::App {
   virtual ~AppDelegate();
   AppDelegate();
-  NOCPYASS(AppDelegate)
+  __decl_nocpyass(AppDelegate)
 };
 
 

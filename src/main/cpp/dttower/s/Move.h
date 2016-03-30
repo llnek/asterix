@@ -19,7 +19,7 @@ NS_BEGIN(dttower)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
 
   void processDefense(f::FPool *po, float dt);
   void process(float);

@@ -19,9 +19,9 @@ NS_BEGIN(flappy)
 //
 class CC_DLL HUDLayer : public f::XLayer {
 
-  DECL_PTR(c::Sprite, _tutorialSprite)
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_IZ(_score)
+  __decl_ptr(c::Sprite, _tutorialSprite)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_iz(_score)
 
 public:
 

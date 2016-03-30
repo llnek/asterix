@@ -23,9 +23,9 @@ const int PINF = 1000000;
 template<int Z>
 struct FS_DLL FFrame {
   s_arr<int, Z*Z> _state;
-  DECL_IZ(_lastBestMove)
-  DECL_IZ(_other)
-  DECL_IZ(_cur)
+  __decl_iz(_lastBestMove)
+  __decl_iz(_other)
+  __decl_iz(_cur)
 };
 
 //////////////////////////////////////////////////////////////////////////////

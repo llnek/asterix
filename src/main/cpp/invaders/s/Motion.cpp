@@ -49,7 +49,7 @@ void Motions::processCannon(float dt) {
   if (cx::timerDone(t)) {
     gun->hasAmmo=true;
     cx::undoTimer(t);
-    SNPTR(lpr->timer)
+    S__NIL(lpr->timer)
   }
 
   if (!gun->hasAmmo) {

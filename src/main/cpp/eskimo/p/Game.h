@@ -23,8 +23,8 @@ struct CC_DLL GameCtx : public f::GCX {
     levelsCompleted=c;
     level=v;
   }
-  DECL_IZ(levelsCompleted)
-  DECL_IZ(level)
+  __decl_iz(levelsCompleted)
+  __decl_iz(level)
 };
 
 //////////////////////////////////////////////////////////////////////////////
