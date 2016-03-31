@@ -22,13 +22,13 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 //
 Block::~Block () {
-  CC_SAFE_RELEASE(_puffAnimation);
-  CC_SAFE_RELEASE(_puffSpawn);
-  CC_SAFE_RELEASE(_puffMove);
-  CC_SAFE_RELEASE(_puffFade);
-  CC_SAFE_RELEASE(_puffScale);
-  _chimneys.clear();
+  CC_DROP(_puffAnimation);
+  CC_DROP(_puffSpawn);
+  CC_DROP(_puffMove);
+  CC_DROP(_puffFade);
+  CC_DROP(_puffScale);
   _wallTiles.clear();
+  _chimneys.clear();
   _roofTiles.clear();
 }
 
@@ -49,11 +49,11 @@ Block::Block (not_null<c::Node*> s)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Block* Block::create () {
-  auto s= cx::reifySprite("blank.png");
-  auto block = mc_new1(Block,s);
-  block->initBlock();
-  return block;
+owner<Block*> Block::create () {
+  auto b= mc_new(Block);
+  b->initWithSpriteFrameName("blank.png");
+  b->initBlock();
+  return b;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,10 @@ void Block::setupBlock(int w, int h, int type) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Block::initBlock() {
+bool Block::initWithSpriteFrameName(const sstr &fn) {
+
+  auto rc= c::Sprite::initWithSpriteFrameName(n);
+  if (!rc) { return false; }
 
   _tile1 = cx::getSpriteFrame("building_1.png");
   _tile2 = cx::getSpriteFrame("building_2.png");

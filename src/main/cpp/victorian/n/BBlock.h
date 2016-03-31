@@ -35,11 +35,9 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Block : public Widget, public c::Ref {
+struct CC_DLL Block : public c::Sprite {
 
-  Block(not_null<c::Node*> s);
-  virtual ~Block();
-  __decl_comp_tpid("n/Block")
+  virtual bool initWithSpriteFrameName(const sstr&);
 
   c::Vector<c::Sprite*> _wallTiles;
   c::Vector<c::Sprite*> _roofTiles;
@@ -63,29 +61,12 @@ struct CC_DLL Block : public Widget, public c::Ref {
   __decl_iz(_puffIndex)
 
   void createPuff();
-  void initBlock();
 
-  static Block* create();
+  static owner<Block*> create();
 
   void setupBlock(int width, int height, int type);
   void setPuffing(bool value);
   void hidePuffs() { setPuffing(false); }
-
-  virtual float left() {
-    return node->getPositionX();
-  }
-
-  virtual float right() {
-    return node->getPositionX() + _width;
-  }
-
-  virtual float top() {
-    return height();
-  }
-
-  virtual float bottom() {
-    return 0;
-  }
 
   CC_SYNTHESIZE(c::Vector<c::Sprite*>, _chimneys, Chimneys);
   CC_SYNTHESIZE(int, _type, Type);

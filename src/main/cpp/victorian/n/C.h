@@ -21,30 +21,30 @@ NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-enum {
-    kBackground,
-    kMiddleground,
-    kForeground
-};
-
-enum {
-    kSpritePlayer,
-    kSpriteTerrain,
-    kSpriteBlock,
-    kSpriteChimney,
-    kSpritePuff
-};
 
 enum GameState {
-    kGameIntro,
-    kGamePlay,
-    kGameOver,
-    kGameTutorial,
-    kGameTutorialJump,
-    kGameTutorialFloat,
-    kGameTutorialDrop
+  kGameIntro,
+  kGamePlay,
+  kGameOver,
+  kGameTutorial,
+  kGameTutorialJump,
+  kGameTutorialFloat,
+  kGameTutorialDrop
 };
 
+enum {
+  kBackground,
+  kMiddleground,
+  kForeground
+};
+
+enum {
+  kSpritePlayer,
+  kSpriteTerrain,
+  kSpriteBlock,
+  kSpriteChimney,
+  kSpritePuff
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
