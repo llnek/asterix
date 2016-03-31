@@ -26,13 +26,13 @@ struct CC_DLL Brick : public f::CPixie, public f::CStats {
   }
   __decl_bf(flipped);
   __decl_iz(color);
-  MDECL_COMP_TPID("n/Brick")
+  __decl_comp_tpid("n/Brick")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BrickFence : public ecs::Component {
-  MDECL_COMP_TPID("n/BrickFence")
+  __decl_comp_tpid("n/BrickFence")
   s_vec<Brick*> bricks;
   virtual ~BrickFence() {
     F__LOOP(it,bricks)
@@ -43,7 +43,7 @@ struct CC_DLL BrickFence : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID("n/GVars")
+  __decl_comp_tpid("n/GVars")
 
 };
 

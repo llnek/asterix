@@ -32,11 +32,8 @@ XLayer* XScene::getLayer(int tag) {
 //
 bool XScene::init() {
   bool ok= _usePhysics ? c::Scene::initWithPhysics() : c::Scene::init();
-  if (ok) {
-    decoUI();
-    return true;
-  }
-  return false;
+  if (ok) { decoUI(); }
+  return ok;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

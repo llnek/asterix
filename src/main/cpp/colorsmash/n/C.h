@@ -24,14 +24,14 @@ NS_BEGIN(colorsmash)
 struct CC_DLL GameTile : public f::CPixie {
   GameTile(not_null<c::Node*> n) : CPixie(n) {
   }
-  __decl_tv(int,index,-1)
-  __decl_tv(int,type,-1)
+  __decl_mv(int,index,-1)
+  __decl_mv(int,type,-1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 };
 
 

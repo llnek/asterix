@@ -25,7 +25,7 @@ NS_BEGIN(stoneage)
 struct CC_DLL Particle : public f::CPixie {
   Particle(not_null<c::Node*> n)
   : CPixie(n) {}
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ struct CC_DLL Particle : public f::CPixie {
 struct CC_DLL Diamond : public f::CPixie {
   Diamond(not_null<c::Node*> n)
   : CPixie(n) {}
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////

@@ -74,7 +74,7 @@ struct CC_DLL Ufo : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   __decl_fz(difficultyInterval)
   __decl_fz(difficultyTimer)

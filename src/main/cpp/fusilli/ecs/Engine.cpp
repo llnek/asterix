@@ -48,15 +48,15 @@ Engine::Engine() {
 //
 void Engine::getNodes(const s_vec<COMType> &cs, s_vec<Node*> &rc) {
   s_vec<CompoCache*> ccs;
-  bool missed=false;
-  int pmin= INT_MAX;
-  CompoCache *pm= nullptr;
+  auto missed=false;
+  auto pmin= INT_MAX;
+  CompoCache *pm= P_NIL;
 
   //find shortest cache
   F__LOOP(it,cs) {
-    auto cid= *it;
+    auto &cid= *it;
     auto c= _types->getCache(cid);
-    if (!c) {
+    if (E_NIL(c)) {
       //CCLOG("cache missed when looking for intersection on %s", cid.c_str());
       missed=true;
       break;
@@ -113,7 +113,7 @@ const s_vec<Node*> Engine::getNodes(const s_vec<COMType> &cs) {
 //
 void Engine::getNodes(const COMType &c, s_vec<Node*> &rc) {
   auto cc= _types->getCache(c);
-  if (NNP(cc)) F__POOP(it,cc) {
+  if (N_NIL(cc)) F__POOP(it,cc) {
     auto z= it->first;
     auto it2= _ents.find(z);
     if (it2 != _ents.end()) {
@@ -213,7 +213,7 @@ void Engine::purgeSystems() {
 //
 void Engine::update(float time) {
   _updating = true;
-  for (auto s= _systemList._head; NNP(s); s= s->_next) {
+  for (auto s= _systemList._head; N_NIL(s); s= s->_next) {
     if (s->isActive()) {
       if (! s->update(time)) { break; }
     }
@@ -227,7 +227,7 @@ void Engine::update(float time) {
 void Engine::ignite() {
   initEntities();
   initSystems();
-  for (auto s= _systemList._head; NNP(s); s=s->_next) {
+  for (auto s= _systemList._head; N_NIL(s); s=s->_next) {
     s->preamble();
   }
 }

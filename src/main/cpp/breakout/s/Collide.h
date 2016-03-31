@@ -29,10 +29,10 @@ class CC_DLL Collide : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY(ecs::Collide)
-  MDECL_SYS_TPID("s/Collide")
-  MDECL_SYS_UPDATE()
-  MDECL_SYS_PREAMBLE()
+  __decl_sys_priority(ecs::Collide)
+  __decl_sys_tpid("s/Collide")
+  __decl_sys_update()
+  __decl_sys_preamble()
 
   Collide(ecs::Engine *e)
   : System(e)

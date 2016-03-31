@@ -38,7 +38,7 @@ class PathStep;
 class Defense;
 class Enemy;
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   s_vec<c::Sprite*> defensePositions;
   s_vec<PathStep*> pathSteps;

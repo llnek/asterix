@@ -10,9 +10,8 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
+
 #include "Ecs.h"
 NS_BEGIN(ecs)
 
@@ -20,7 +19,7 @@ NS_BEGIN(ecs)
 //
 class FS_DLL TypeRegistry {
 
-  s_map<COMType, CompoCache*> _rego;
+  __decl_map(COMType, CompoCache*, _rego)
   __decl_nocpyass(TypeRegistry)
 
 public:

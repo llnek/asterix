@@ -60,8 +60,8 @@ struct CC_DLL Widget : public f::CPixie {
     _width = CC_CSIZE(node).width;
   }
 
-  __decl_td(c::Vec2, nextPos)
-  __decl_td(c::Vec2, vel)
+  __decl_md(c::Vec2, nextPos)
+  __decl_md(c::Vec2, vel)
   __decl_fz(maxSpeed)
   __decl_fz(speed)
   __decl_fz(_height)
@@ -83,7 +83,7 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_iz(speedIncreaseInterval)
   __decl_iz(speedIncreaseTimer)
 
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 };
 
 

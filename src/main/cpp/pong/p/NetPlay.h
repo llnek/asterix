@@ -27,8 +27,8 @@ struct CC_DLL NPCX : public f::SCTX {
     this->yes=yes;
     this->no=no;
   }
-  __decl_td(NPCX_Yes, yes)
-  __decl_td(VOIDFN, no)
+  __decl_md(NPCX_Yes, yes)
+  __decl_md(VOIDFN, no)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ class CC_DLL NetPlay : public f::XScene {
 public:
 
   STATIC_REIFY_SCENE_CTX(NetPlay)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 
   virtual ~NetPlay() {
     ws::disconnect(_odin);

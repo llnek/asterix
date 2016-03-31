@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "2d/CCScene.h"
 #include "XLayer.h"
@@ -21,8 +19,10 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL XScene : public XNode, public c::Scene {
-  __decl_bf(_usePhysics)
+
   __decl_nocpyass(XScene)
+  __decl_bf(_usePhysics)
+
 public:
 
   XLayer* addLayer(not_null<XLayer*>, int zx = 0);

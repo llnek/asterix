@@ -10,9 +10,8 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
+
 #include "base/CCEventCustom.h"
 #include "JSON.h"
 #include "Primitives.h"
@@ -72,20 +71,26 @@ enum class CC_DLL EType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL OdinEvent : public c::EventCustom {
+class CC_DLL OdinEvent : public c::EventCustom {
 
-  OdinEvent(MType, EType, j::json body);
-  OdinEvent(MType t, EType c);
-  OdinEvent(j::json msg);
-
-  __decl_tv(MType, _type, MType::NICHTS)
-  __decl_tv(EType, _code, EType::NICHTS)
-  __decl_td(j::json, _doco)
+  __decl_mv(MType, _type, MType::NICHTS)
+  __decl_mv(EType, _code, EType::NICHTS)
+  __decl_md(j::json, _doco)
+  __decl_nocpyass(OdinEvent)
   long long _tstamp=0;
+
+public:
+
+  OdinEvent(MType, EType, const j::json &body);
+  OdinEvent(MType, EType);
+  OdinEvent(const j::json &msg);
+
+  __decl_gsms(j::json&,_doco, Doco)
+  __decl_gsms(MType,_type, Type)
+  __decl_gsms(EType,_code, Code)
 
   virtual ~OdinEvent();
   OdinEvent();
-  __decl_nocpyass(OdinEvent)
 };
 
 

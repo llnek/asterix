@@ -98,8 +98,8 @@ struct CC_DLL Player : public Widget {
     return nextPos.y - _height;
   }
 
-  //MDECL_COMP_TPID("n/Player")
-  MDECL_COMP_TPID("f/CPixie")
+  //__decl_comp_tpid("n/Player")
+  __decl_comp_tpid("f/CPixie")
 
   CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
   CC_SYNTHESIZE(PlayerState, _state, State);

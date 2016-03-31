@@ -35,7 +35,7 @@ public:
   }
   RPath() {}
 
-  MDECL_COMP_TPID("n/RPath");
+  __decl_comp_tpid("n/RPath");
 
   __decl_fz(energyDecrement)
   __decl_fz(lineAngle)
@@ -44,11 +44,11 @@ public:
   __decl_iz(dash)
   __decl_iz(dashSpace)
 
-  __decl_td(LineType, lineType)
+  __decl_md(LineType, lineType)
   __decl_fz(lineLength)
   __decl_fz(energy)
-  __decl_td(c::Vec2, pivot)
-  __decl_td(c::Vec2, tip)
+  __decl_md(c::Vec2, pivot)
+  __decl_md(c::Vec2, tip)
 
   void setEnergyDecrement(float);
   void update(float);

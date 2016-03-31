@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "audio/include/SimpleAudioEngine.h"
 #include "CCSX.h"
 #include "XConfig.h"
 NS_ALIAS(den, CocosDenshion)
@@ -37,9 +36,9 @@ XConfig *SGT;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const sstr getXXX(not_null<c::Dictionary*> d, const sstr &key ) {
+const sstr getXXX(not_null<c::Dictionary*> d, const sstr &key) {
   auto r= f::dictVal<cocos2d::String>(d,key);
-  return NNP(r) ? r->getCString() : "";
+  return N_NIL(r) ? r->getCString() : "";
 }
 
 END_NS_UNAMED
@@ -101,12 +100,12 @@ void XConfig::loadL10NStrings() {
   auto b= cx::readXmlAsDict("i18n/base_strings.plist");
   auto d= cx::readXmlAsDict("i18n/strings.plist");
   NS_USING(cocos2d)
-  DictElement *e= nullptr;
+  DictElement *e= CC_NIL;
   CCDICT_FOREACH(d, e) {
     auto langObj = e->getObject();
     auto key= e->getStrKey();
     auto d2= b->objectForKey(key);
-    if (ENP(d2)) {
+    if (E_NIL(d2)) {
       d2= CC_DICT();
       b->setObject(d2, key);
     }
@@ -124,7 +123,7 @@ const sstr XConfig::getL10NStr(const sstr &key, const s_vec<sstr> &pms) {
   auto vs = getL10NStr(key);
   if (pms.size() == 0) { return vs; }
   auto pos= vs.find("{}");
-  int n= 0;
+  auto n= 0;
   while (pos != s::string::npos) {
     vs= vs.substr(0, pos) + pms[n] + vs.substr(pos+2);
     ++n;
@@ -138,10 +137,9 @@ const sstr XConfig::getL10NStr(const sstr &key, const s_vec<sstr> &pms) {
 const sstr XConfig::getL10NStr(const sstr &key) {
   sstr lang= c::Application::getInstance()->getCurrentLanguageCode();
   auto d = dictVal<c::Dictionary>(_l10n, lang);
-  auto obj=NNP(d) ?
-    dictVal<c::String>(d, key) : nullptr;
+  auto obj=N_NIL(d) ? dictVal<c::String>(d, key) : CC_NIL;
 
-  if (NNP(obj)) {
+  if (N_NIL(obj)) {
     return obj->getCString();
   } else {
     return "";
@@ -203,26 +201,26 @@ bool XConfig::hasAudio() {
 //
 void XConfig::setMusicVolume(float v) {
   _lastMusicVol= getMusicVolume();
-  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(v);
+  CC_AUDIO()->setBackgroundMusicVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::setVolume(float v) {
   _lastSfxVol = getVolume();
-  den::SimpleAudioEngine::getInstance()->setEffectsVolume(v);
+  CC_AUDIO()->setEffectsVolume(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float XConfig::getMusicVolume() {
-  return den::SimpleAudioEngine::getInstance()->getBackgroundMusicVolume();
+  return CC_AUDIO()->getBackgroundMusicVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 float XConfig::getVolume() {
-  return den::SimpleAudioEngine::getInstance()->getEffectsVolume();
+  return CC_AUDIO()->getEffectsVolume();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -252,7 +250,7 @@ const filepath XConfig::getTile(const sstr &key) {
 //////////////////////////////////////////////////////////////////////////////
 //
 const c::Color3B XConfig::getColor(const sstr &key) {
-  return cx::colorRGB(  getXXX(getFragment(COLORS), key));
+  return cx::colorRGB(getXXX(getFragment(COLORS), key));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -290,10 +288,10 @@ c::Dictionary* XConfig::getLevel(const sstr &n) {
 //
 f::JsonObj* XConfig::getLevelCfg(const sstr &n) {
   auto r= getLevel(n);
-  if (NNP(r)) {
+  if (N_NIL(r)) {
     return SCAST(f::JsonObj*, r->objectForKey(CFG));
   } else {
-    return nullptr;
+    return CC_NIL;
   }
 }
 
@@ -315,7 +313,7 @@ c::Dictionary* XConfig::addLevel(const sstr &level) {
 //
 c::Dictionary* XConfig::getFragment(const sstr &key) {
   auto obj = _frags->objectForKey(key);
-  return NNP(obj) ? SCAST(c::Dictionary*, obj) : nullptr;
+  return N_NIL(obj) ? SCAST(c::Dictionary*, obj) : CC_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -383,10 +381,10 @@ void XConfig::addXXX(const sstr &frag, const sstr &key, c::Ref *ref) {
 //
 const s_vec<filepath> XConfig::getEffectFiles() {
   NS_USING(cocos2d)
-  DictElement *em = nullptr;
   auto d= getFragment(MUSIC);
   s_vec<filepath> rc;
 
+  DictElement *em = CC_NIL;
   CCDICT_FOREACH(d, em) {
     rc.push_back( static_cast<String*>(em->getObject())->getCString());
   }
@@ -397,10 +395,10 @@ const s_vec<filepath> XConfig::getEffectFiles() {
 //
 const s_vec<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
-  DictElement *em = nullptr;
   auto d= getFragment(EFX);
   s_vec<filepath> rc;
 
+  DictElement *em = CC_NIL;
   CCDICT_FOREACH(d, em) {
     rc.push_back( static_cast<String*>(em->getObject())->getCString());
   }

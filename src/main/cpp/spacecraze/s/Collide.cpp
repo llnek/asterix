@@ -43,7 +43,7 @@ bool Collide::update(float dt) {
 void Collide::checkMissiles() {
   auto po = MGMS()->getPool("Missiles");
   auto pa = MGMS()->getPool("Aliens");
-  cx::testCollisions(po,pa);
+  cx::testCollide(po,pa);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ void Collide::checkBombs() {
   if (h->isGod()) {
   return; }
 
-  cx::testCollisions(
+  cx::testCollide(
       MGMS()->getPool("Bombs"),_ship);
 }
 

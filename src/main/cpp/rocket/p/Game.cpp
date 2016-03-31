@@ -33,8 +33,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onMouseClick(const c::Vec2&);
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
+  __decl_deco_ui()
+  __decl_get_iid(2)
 
   virtual void onInited();
 

@@ -26,8 +26,8 @@ class CC_DLL HUDLayer : public f::XLayer {
 public:
 
   STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_GET_IID(3)
-  MDECL_DECORATE()
+  __decl_get_iid(3)
+  __decl_deco_ui()
 
   void drawStatusText(const sstr&);
   void updateScore(int );

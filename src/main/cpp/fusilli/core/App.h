@@ -23,7 +23,9 @@ protected:
 
   void preLaunch(const c::Size &designSize);
   void initAudio();
-  __decl_td(sstr, _appName)
+
+  __decl_md(sstr, _appName)
+  __decl_nocpyass(App)
 
 public:
 
@@ -50,7 +52,6 @@ public:
 
   App(const sstr &n) { _appName=n; }
   virtual ~App() {}
-  __decl_nocpyass(App)
 };
 
 

@@ -28,12 +28,12 @@ enum MonsterType {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Gun : public ecs::Component {
-  MDECL_COMP_TPID("n/Gun")
+  __decl_comp_tpid("n/Gun")
   __decl_fz(lastDamageTime)
   __decl_fz(range)
   __decl_fz(damage)
   __decl_fz(damageRate)
-  __decl_td(sstr,sound)
+  __decl_md(sstr,sound)
 
   Gun(float range, float damage,
       float damageRate,
@@ -50,14 +50,14 @@ struct CC_DLL Gun : public ecs::Component {
 //
 struct CC_DLL Melee : public f::CMelee {
   __decl_bf(aoe)
-  __decl_td(sstr,sound)
+  __decl_md(sstr,sound)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Monster : public ecs::Component {
-  MDECL_COMP_TPID("n/Monster")
-  __decl_td(MonsterType, type)
+  __decl_comp_tpid("n/Monster")
+  __decl_md(MonsterType, type)
 
   Monster(MonsterType t) {
     this->type = t;
@@ -67,7 +67,7 @@ struct CC_DLL Monster : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Player : public f::CStats {
-  MDECL_COMP_TPID("n/Player")
+  __decl_comp_tpid("n/Player")
   __decl_bf(attacking)
   __decl_iz(coins)
   long long lastCoinDrop;
@@ -76,7 +76,7 @@ struct CC_DLL Player : public f::CStats {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Team : public ecs::Component {
-  MDECL_COMP_TPID("n/Team")
+  __decl_comp_tpid("n/Team")
   __decl_iz(team)
 
   Team(int team) {
@@ -90,7 +90,7 @@ class AILogic;
 class Entity;
 class CC_DLL AIState {
 protected:
-  __decl_tv(sstr, _name, "?");
+  __decl_mv(sstr, _name, "?");
 public:
   virtual void update(ecs::Node*,AILogic*) {}
   virtual void enter() {}
@@ -120,7 +120,7 @@ struct CC_DLL Automa : public f::CAutoma {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
 };
 

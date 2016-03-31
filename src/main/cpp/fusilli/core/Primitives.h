@@ -10,26 +10,23 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "aeon/fusilli.h"
 #include "JSON.h"
 #include "cocos2d.h"
-#include "UIScale9Sprite.h"
 #include "Macros.h"
 NS_ALIAS(c, cocos2d)
 NS_BEGIN(fusii)
 
-typedef FArrayPtr<c::Node> NodePtrArray;
-#define ZEROPT c::ccp(0,0)
+typedef FArrayPtr<c::Sprite> SpritePtrArr;
+typedef FArrayPtr<c::Node> NodePtrArr;
 
 //////////////////////////////////////////////////////////////////////////////
 //
 template<typename T> class CC_DLL Maybe {
 
-  __decl_td(T, _value)
+  __decl_md(T, _value)
   __decl_bf(_isset)
 
 public:
@@ -66,10 +63,10 @@ typedef Maybe<int> MaybeInt;
 template<typename T>
 T* dictVal(not_null<c::Dictionary*> d, const sstr &key) {
   auto v= d->objectForKey(key);
-  if (NNP(v)) {
+  if (N_NIL(v)) {
     return static_cast<T*>(v);
   } else {
-    return nullptr;
+    return CC_NIL;
   }
 }
 
@@ -78,7 +75,7 @@ T* dictVal(not_null<c::Dictionary*> d, const sstr &key) {
 template<typename T>
 T* reifyRefType() {
   T *p = mc_new(T) ;
-  if (NNP(p) && p->init()) {
+  if (N_NIL(p) && p->init()) {
     p->autorelease();
   } else {
     mc_del_ptr(p)
@@ -106,10 +103,9 @@ struct DLTimer {
 //
 struct CC_DLL Box4 {
   Box4(float t, float r, float b, float l)
-    : top(t), right(r), bottom(b), left(l)
-  {
-    cy= (top-bottom) * 0.5f + bottom;
-    cx= (right-left) * 0.5f + left;
+    : top(t), right(r), bottom(b), left(l) {
+    cy= (top-bottom) * 0.5 + bottom;
+    cx= (right-left) * 0.5 + left;
   }
   ~Box4() {}
   Box4() {}
@@ -118,16 +114,16 @@ struct CC_DLL Box4 {
     right=b.right;
     bottom=b.bottom;
     left=b.left;
-    cy= (top-bottom) * 0.5f + bottom;
-    cx= (right-left) * 0.5f + left;
+    cy= (top-bottom) * 0.5 + bottom;
+    cx= (right-left) * 0.5 + left;
   }
   Box4& operator=(const Box4 &b) {
     top=b.top;
     right=b.right;
     bottom=b.bottom;
     left=b.left;
-    cy= (top-bottom) * 0.5f + bottom;
-    cx= (right-left) * 0.5f + left;
+    cy= (top-bottom) * 0.5 + bottom;
+    cx= (right-left) * 0.5 + left;
     return *this;
   }
   __decl_fz(bottom)
@@ -260,7 +256,7 @@ public:
 //
 class CC_DLL JsonObj : public c::Ref, public c::Clonable {
 
-  __decl_td(j::json, _obj)
+  __decl_md(j::json, _obj)
 
 public:
 
@@ -303,7 +299,7 @@ public:
 //
 class CC_DLL C3B : public c::Ref, public c::Clonable {
 
-  __decl_td(c::Color3B, _c)
+  __decl_md(c::Color3B, _c)
 
 public:
 
@@ -335,7 +331,7 @@ public:
 //
 class CC_DLL C4B : public c::Ref, public c::Clonable {
 
-  __decl_td(c::Color4B, _c)
+  __decl_md(c::Color4B, _c)
 
 public:
 
@@ -367,6 +363,7 @@ public:
 //
 struct CC_DLL Cell2D {
   Cell2D (int r, int c) { row=r; col=c; }
+  Cell2D() {}
   __decl_iz(row)
   __decl_iz(col)
 };
@@ -375,7 +372,7 @@ struct CC_DLL Cell2D {
 //
 struct CC_DLL Cell2I {
   Cell2I (int x, int y) { this->x=x; this->y=y; }
-    Cell2I() {}
+  Cell2I() {}
   __decl_iz(x)
   __decl_iz(y)
 };

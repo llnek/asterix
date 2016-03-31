@@ -32,7 +32,7 @@ struct PowerUp : public f::CDrawNode {
   virtual void activate();
   virtual void deactivate();
 
-  __decl_tv(c::Vec2, speed, CC_ZPT)
+  __decl_mv(c::Vec2, speed, CC_ZPT)
   __decl_iz(timeLeft)
   __decl_bf(isActive)
   __decl_bf(mustBeRemoved)

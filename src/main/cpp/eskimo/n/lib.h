@@ -87,11 +87,11 @@ enum {
 class Igloo;
 struct CC_DLL GVars : public ecs::Component {
 
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   __decl_ptr(c::ParticleSystem, smoke)
   __decl_ptr(b2World, world)
-  __decl_td(c::Vec2, acc)
+  __decl_md(c::Vec2, acc)
 
   __decl_fz(tutorialCounter)
   __decl_iz(tutorialStep)

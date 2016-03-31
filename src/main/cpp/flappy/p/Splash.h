@@ -22,8 +22,8 @@ struct CC_DLL Splash : public f::XScene {
 
   __decl_ptr(Fairytale,fairytale)
   STATIC_REIFY_SCENE(Splash)
-  MDECL_DECORATE()
-  MDECL_UPDATE()
+  __decl_deco_ui()
+  __decl_update()
 
 };
 

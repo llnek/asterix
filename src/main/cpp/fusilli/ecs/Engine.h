@@ -10,9 +10,8 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
+
 #include "nlohmann/json.hpp"
 #include "System.h"
 #include "Node.h"
@@ -25,14 +24,14 @@ NS_BEGIN(ecs)
 class TypeRegistry;
 class FS_DLL Engine {
 
-  __decl_td(SystemList, _systemList)
-  __decl_td(NodeCache, _ents)
+  __decl_md(SystemList, _systemList)
+  __decl_md(NodeCache, _ents)
 
   __decl_ptr(TypeRegistry, _types)
   __decl_bf(_updating)
   __decl_iz(_lastId)
 
-  s_vec<Node*> _garbo;
+  __decl_vec(Node*,_garbo)
   __decl_nocpyass(Engine)
 
   NodeId generateEid();
@@ -41,7 +40,7 @@ protected:
 
   virtual void initEntities() = 0;
   virtual void initSystems() = 0;
-  __decl_td(j::json, _config)
+  __decl_md(j::json, _config)
 
 public:
 
@@ -62,12 +61,11 @@ public:
   void purgeNode(not_null<Node*>);
 
   void regoSystem(not_null<System*> );
-
   void doHouseKeeping();
   void ignite();
   void update(float time);
 
-  j::json getCfg() { return _config; }
+  const j::json& getCfg() { return _config; }
 
   Engine(j::json c) : Engine() { _config=c; }
   Engine();

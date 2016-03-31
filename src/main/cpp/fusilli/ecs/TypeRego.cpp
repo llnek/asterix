@@ -28,7 +28,7 @@ CompoCache* TypeRegistry::getCache(const COMType &c) {
   if (it != _rego.end()) {
     return it->second;
   } else {
-    return nullptr;
+    return P_NIL;
   }
 }
 
@@ -55,7 +55,6 @@ void TypeRegistry::unbind(const COMType &cid, not_null<Node*> e) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void TypeRegistry::bind(not_null<Component*> c, not_null<Node*> e) {
-
   auto cid= c->typeId();
   auto eid= e->getEid();
   CompoCache *m;

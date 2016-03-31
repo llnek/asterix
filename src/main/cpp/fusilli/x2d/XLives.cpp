@@ -50,7 +50,7 @@ void XLives::drawLives() {
   float y;
   float x;
 
-  for (int n = 0; n < _curLives; ++n) {
+  for (auto n = 0; n < _curLives; ++n) {
     auto v= cx::reifySprite(_frameId);
     v->setScale(_scale);
     if (n==0) {
@@ -62,9 +62,9 @@ void XLives::drawLives() {
     addChild(v);
     _icons.push_back(v);
     if (this->_dir > 0) {
-      x += _lifeSize.width * 1.2f;
+      x += _lifeSize.width * 1.2;
     } else {
-      x -= _lifeSize.width * 1.2f;
+      x -= _lifeSize.width * 1.2;
     }
   }
 }
@@ -80,7 +80,7 @@ void XLives::decorate(const sstr &frame, int lives,
   _dir = d;
   this->_scale=scale;
 
-  _refPt= c::Vec2(x,y);
+  _refPt= CCT_PT(x,y);
   reset();
   drawLives();
 }

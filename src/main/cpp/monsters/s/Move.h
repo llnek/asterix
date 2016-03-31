@@ -28,10 +28,10 @@ class CC_DLL MoveLogic : public ecs::System {
 
 public:
 
-  MDECL_SYS_TPID("n/MoveLogic")
-  MDECL_SYS_PRIORITY( 20)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid("n/MoveLogic")
+  __decl_sys_priority( 20)
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   MoveLogic(ecs::Engine *e)
   : System(e)

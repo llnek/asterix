@@ -20,8 +20,8 @@ NS_BEGIN(tttoe)
 struct CC_DLL HUDLayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
   __decl_ptr(c::Label, _countDown)
   __decl_ptr(c::Label, _result)
@@ -34,12 +34,12 @@ struct CC_DLL HUDLayer : public f::XLayer {
 
   s_arr<int, 3> _scores;
 
-  __decl_td(sstr, _p2Long)
-  __decl_td(sstr, _p1Long)
-  __decl_td(sstr, _play2)
-  __decl_td(sstr, _play1)
-  __decl_td(sstr, _p2ID)
-  __decl_td(sstr, _p1ID)
+  __decl_md(sstr, _p2Long)
+  __decl_md(sstr, _p1Long)
+  __decl_md(sstr, _play2)
+  __decl_md(sstr, _play1)
+  __decl_md(sstr, _p2ID)
+  __decl_md(sstr, _p1ID)
 
   void regoPlayers(const sstr &color1,
                    const sstr &p1k, const sstr &p1n,

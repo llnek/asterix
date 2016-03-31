@@ -80,11 +80,10 @@ void App::preLaunch(const c::Size &dz) {
 
   auto portrait = XCFG()->isPortrait();
   auto fz = glview->getFrameSize();
-
-  s_vec<sstr> searchPaths;
   c::Size largeSize;
   c::Size medSize;
   c::Size smallSize;
+  float w,h;
   auto spath="rd";
 
   // Set the design resolution
@@ -109,28 +108,27 @@ void App::preLaunch(const c::Size &dz) {
   // if the frame's height is larger than
   // the height of medium size
   if (fz.height > medSize.height) {
-    CC_DTOR()->setContentScaleFactor(
-        MIN(largeSize.height/dz.height, largeSize.width/dz.width));
+    h=largeSize.height;
+    w=largeSize.width;
     spath= "rd";
   }
   // if the frame's height is larger than
   // the height of small size.
   else if (fz.height > smallSize.height) {
-    CC_DTOR()->setContentScaleFactor(
-        MIN(medSize.height/dz.height, medSize.width/dz.width));
+    h=medSize.height;
+    w=medSize.width;
     spath= "hd";
   }
   // if the frame's height is smaller than the height of medium size.
   else {
-    CC_DTOR()->setContentScaleFactor(
-        MIN(smallSize.height/dz.height, smallSize.width/dz.width));
+    h=smallSize.height;
+    w=smallSize.width;
     spath="sd";
   }
 
-  searchPaths.push_back(spath);
-  // for win32
-  searchPaths.push_back("Resources");
-  c::FileUtils::getInstance()->setSearchPaths(searchPaths);
+  CC_DTOR()->setContentScaleFactor(MIN(h/dz.height, w/dz.width));
+  // for win32 add Resources
+  CC_FILER()->setSearchPaths(s_vec<sstr>{spath,"Resources"});
 
   XCFG()->handleResolution(fz);
   XCFG()->runOnce();
@@ -140,6 +138,7 @@ void App::preLaunch(const c::Size &dz) {
   CCLOG("image search path=%s", spath);
   CCLOG("sound search path=%s", "sfx");
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
+  //CCLOG("platform os=%s", )
 
   initAudio();
 }
@@ -147,21 +146,23 @@ void App::preLaunch(const c::Size &dz) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void App::initAudio() {
+  auto inst= den::SimpleAudioEngine::getInstance();
   auto a = XCFG()->getEffectFiles();
+
   F__LOOP(it, a) {
     auto &fp = *it;
     CCLOG("preloading sound effect: %s", fp.c_str());
-    den::SimpleAudioEngine::getInstance()->preloadEffect(fp.c_str());
+    inst->preloadEffect(fp.c_str());
   }
   a= XCFG()->getMusicFiles();
   F__LOOP(it, a) {
     auto &fp = *it;
     CCLOG("preloading music: %s", fp.c_str());
-    den::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(fp.c_str());
+    inst->preloadBackgroundMusic(fp.c_str());
   }
 
-  den::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5f);
-  den::SimpleAudioEngine::getInstance()->setEffectsVolume(0.5f);
+  inst->setBackgroundMusicVolume(0.5);
+  inst->setEffectsVolume(0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////////

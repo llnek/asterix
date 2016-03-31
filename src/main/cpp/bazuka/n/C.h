@@ -88,10 +88,10 @@ struct CC_DLL Projectile : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   __decl_ptr(ScrollingBgLayer, bgLayer)
-  __decl_td(c::Vec2, gravity)
+  __decl_md(c::Vec2, gravity)
 
 };
 

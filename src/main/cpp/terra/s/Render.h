@@ -25,10 +25,10 @@ class CC_DLL Render : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Render)
-  MDECL_SYS_TPID( "n/Render")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority( ecs::Render)
+  __decl_sys_tpid( "n/Render")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Render(ecs::Engine *e)
   : System(e)

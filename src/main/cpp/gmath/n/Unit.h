@@ -39,10 +39,10 @@ class CC_DLL Unit : public f::CPixie {
   //9x9 grid, 1,1 is top left, 9,9 is bottom right
   __decl_ptr(c::Label,_lblValue)
   __decl_ptr(GVars,ss)
-  __decl_td(c::Vec2,_prevTapAt)
-  __decl_td(c::Color3B,_color)
+  __decl_md(c::Vec2,_prevTapAt)
+  __decl_md(c::Color3B,_color)
   __decl_bf(_isBeingDragged)
-  __decl_td(c::Vec2,_tapAt)
+  __decl_md(c::Vec2,_tapAt)
   __decl_iz(_dragDirection)
   virtual bool initWithSpriteFrameName(const sstr &);
   void reposToGrid(c::Ref*);
@@ -53,7 +53,7 @@ public:
   __decl_iz(_direction)
   __decl_iz(_unitValue)
   __decl_iz(_gridWidth)
-  __decl_td(f::Cell2I,_gridPos)
+  __decl_md(f::Cell2I,_gridPos)
   static owner<Unit*> enemyWith(GVars*, int, const f::Cell2I&);
   static owner<Unit*> friendly(GVars*);
 

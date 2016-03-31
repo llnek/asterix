@@ -23,8 +23,8 @@ struct CC_DLL Ende : public f::XLayer {
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
   STATIC_REIFY_LAYER(Ende)
-  MDECL_DECORATE()
-  MDECL_GET_IID(4)
+  __decl_deco_ui()
+  __decl_get_iid(4)
 
 };
 

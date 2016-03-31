@@ -105,6 +105,7 @@ void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
   //for default font, we use 48pt
   _scale = 12.0f/72.0f * rs.width /gz.width;
+    
 }
 
 //////////////////////////////////////////////////////////////////////////////

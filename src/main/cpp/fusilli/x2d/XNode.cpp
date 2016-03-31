@@ -22,17 +22,17 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 // add a toggle for sound on & off
-c::Menu* XNode::addAudioIcons( const s_arr<c::MenuItem*,2> &audios,
-    const c::Vec2 &anchor, const c::Vec2 &pos) {
+c::Menu* XNode::addAudioIcons(const s_arr<c::MenuItem*,2> &audios,
+    const CCT_PT &anchor, const CCT_PT &pos) {
 
   c::Vector<c::MenuItem*> items;
-  items.pushBack( audios[1]);
-  items.pushBack( audios[0]);
+  items.pushBack(audios[1]);
+  items.pushBack(audios[0]);
 
   auto cb = [](c::Ref *r) {
     auto t= SCAST(c::MenuItemToggle*, r);
     auto b= t->getSelectedIndex() == 0;
-    XCFG()->toggleAudio( b);
+    XCFG()->toggleAudio(b);
   };
 
   // the toggle
@@ -82,8 +82,7 @@ const sstr XNode::gets(const sstr &key) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::SpriteBatchNode*
-XNode::regoAtlas( const sstr &name, int zx) {
+c::SpriteBatchNode* XNode::regoAtlas(const sstr &name, int zx) {
   auto a= cx::reifySpriteBatch(name);
   _atlases.insert(S__PAIR(sstr, c::SpriteBatchNode*, name, a));
   _self->addChild(a, zx);
@@ -98,79 +97,78 @@ c::SpriteBatchNode* XNode::getAtlas(const sstr &name) {
   if (it != _atlases.end()) {
     return it->second;
   } else {
-    return nullptr;
+    return CC_NIL;
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add an image chosen from this atlas
 //
-void XNode::addAtlasFrame( const sstr &atlas,
-                           const sstr &frame,
-                           const c::Vec2 &pos, int z, int tag) {
+void XNode::addAtlasFrame(const sstr &atlas,
+                          const sstr &frame,
+                          const CCT_PT &pos, int z, int tag) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  addAtlasItem( atlas, tt, z, tag);
+  addAtlasItem(atlas, tt, z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::addAtlasFrame( const sstr &atlas,
-                           const sstr &frame,
-                           const c::Vec2 &pos) {
-  addAtlasFrame( atlas, frame,pos,0,0);
+void XNode::addAtlasFrame(const sstr &atlas,
+                          const sstr &frame,
+                          const CCT_PT &pos) {
+  addAtlasFrame(atlas, frame,pos,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add an image
-void XNode::addFrame( const sstr &frame, const c::Vec2 &pos, int z, int tag) {
+void XNode::addFrame(const sstr &frame, const CCT_PT &pos, int z, int tag) {
   auto tt= cx::reifySprite(frame);
   tt->setPosition(pos);
-  addItem( tt, z, tag);
+  addItem(tt, z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::addFrame( const sstr &frame, const c::Vec2 &pos) {
-  addFrame( frame, pos,0,0);
+void XNode::addFrame(const sstr &frame, const CCT_PT &pos) {
+  addFrame(frame, pos,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child to this atlas
-void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n, int z, int tag) {
+void XNode::addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag) {
 
   auto ss = DCAST(c::Sprite*, n.get());
   auto p= getAtlas(atlas);
 
-  //CCASSERT(ss != nullptr, "sprite cannot be null");
   CCASSERT(p != nullptr, "atlas cannot be null");
 
-  if (NNP(ss)) { ss->setBatchNode(p); }
+  if (N_NIL(ss)) { ss->setBatchNode(p); }
   p->addChild(n.get(), z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::addAtlasItem( const sstr &atlas, not_null<c::Node*> n) {
-  addAtlasItem( atlas, n, 0,0);
+void XNode::addAtlasItem(const sstr &atlas, not_null<c::Node*> n) {
+  addAtlasItem(atlas, n, 0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
-void XNode::addItem( not_null<c::Node*> n, int z, int tag) {
+void XNode::addItem(not_null<c::Node*> n, int z, int tag) {
   _self->addChild(n.get(), z, tag);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Add a child
-void XNode::addItem( not_null<c::Node*> n) {
-  addItem( n, 0,0);
+void XNode::addItem(not_null<c::Node*> n) {
+  addItem(n, 0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void XNode::centerImage(const sstr &name, int z) {
-  auto t= c::TextureCache::getInstance()->addImage(XCFG()->getImage(name));
+  auto t= CC_TCAC()->addImage(XCFG()->getImage(name));
   auto s= c::Sprite::createWithTexture(t);
   s->setPosition(cx::center());
   _self->addChild(s,z);
@@ -181,7 +179,7 @@ void XNode::centerImage(const sstr &name, int z) {
 //
 void XNode::removeAtlasAll(const sstr &atlas) {
   auto a=getAtlas(atlas);
-  if (NNP(a)) { a->removeAllChildren(); }
+  if (N_NIL(a)) { a->removeAllChildren(); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,11 +193,10 @@ void XNode::removeAll() {
 // Remove a child
 //
 void XNode::removeItem(c::Node *n) {
-  if (NNP(n)) {
+  if (N_NIL(n)) {
     n->removeFromParent();
   }
 }
-
 
 
 NS_END

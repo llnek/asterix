@@ -29,10 +29,10 @@ class CC_DLL Motions : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Motion)
-  MDECL_SYS_TPID( "n/Motions")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority( ecs::Motion)
+  __decl_sys_tpid( "n/Motions")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Motions(ecs::Engine *e)
   : System(e) {}

@@ -28,10 +28,10 @@ class CC_DLL Aliens : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Motion)
-  MDECL_SYS_TPID( "n/Aliens")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority( ecs::Motion)
+  __decl_sys_tpid( "n/Aliens")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Aliens(ecs::Engine *e)
   : System(e)

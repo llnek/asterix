@@ -39,7 +39,7 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissilesBombs() {
-  cx::testCollisions(
+  cx::testCollide(
     MGMS()->getPool("Missiles"),
     MGMS()->getPool("Bombs"));
 }
@@ -47,7 +47,7 @@ void Collide::checkMissilesBombs() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkMissilesAliens() {
-  cx::testCollisions(
+  cx::testCollide(
     MGMS()->getPool("Missiles"),
     MGMS()->getPool("Baddies"));
 }
@@ -57,7 +57,7 @@ void Collide::checkMissilesAliens() {
 void Collide::checkShipBombs() {
   auto sp=CC_GEC(Ship,_ship,"f/CPixie");
   if (sp->canBeAttack)
-  cx::testCollisions(MGMS()->getPool("Bombs"), _ship);
+  cx::testCollide(MGMS()->getPool("Bombs"), _ship);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ void Collide::checkShipBombs() {
 void Collide::checkShipAliens() {
   auto sp=CC_GEC(Ship,_ship,"f/CPixie");
   if (sp->canBeAttack)
-  cx::testCollisions(MGMS()->getPool("Baddies"), _ship);
+  cx::testCollide(MGMS()->getPool("Baddies"), _ship);
 }
 
 

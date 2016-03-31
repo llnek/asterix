@@ -37,7 +37,7 @@ struct CC_DLL MemoryTile : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
   s_vec<MemoryTile*> pickedTiles;
   s_vec<MemoryTile*> tiles;
   __decl_ptr(c::DelayTime,checkTimer)

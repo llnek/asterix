@@ -25,8 +25,8 @@ struct CC_DLL GLayer : public f::GameLayer {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
+  __decl_deco_ui()
+  __decl_get_iid(2)
 
   virtual void onMouseClick(const c::Vec2&);
   virtual bool onTouchStart(c::Touch*);

@@ -20,8 +20,8 @@ NS_BEGIN(terra)
 struct CC_DLL Splash : public f::XScene {
 
   STATIC_REIFY_SCENE(Splash)
-  MDECL_UPDATE()
-  MDECL_DECORATE()
+  __decl_update()
+  __decl_deco_ui()
 
   __decl_ptr(c::Sprite, _flare)
   __decl_ptr(c::Sprite, _ship)

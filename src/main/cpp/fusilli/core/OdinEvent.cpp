@@ -16,7 +16,9 @@ NS_BEGIN(odin)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(MType t, EType c, j::json body) : OdinEvent() {
+OdinEvent::OdinEvent(MType t, EType c, const j::json &body)
+  : OdinEvent() {
+
   this->_doco = j::json( {
     { "type", (int)t },
     { "code", (int)c }
@@ -37,7 +39,9 @@ OdinEvent::OdinEvent(MType t, EType c) : OdinEvent() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-OdinEvent::OdinEvent(j::json full_msg) : OdinEvent() {
+OdinEvent::OdinEvent(const j::json &full_msg)
+  : OdinEvent() {
+
   if (full_msg.is_object()) {
     auto v= full_msg["type"];
     if (v.is_number()) {
@@ -64,6 +68,7 @@ OdinEvent::OdinEvent() : c::EventCustom("odin") {
 //////////////////////////////////////////////////////////////////////////////
 //
 OdinEvent::~OdinEvent() {
+  CCLOG("OdinEvent::dtor() called");
 }
 
 

@@ -30,9 +30,9 @@ public:
 
   static ParticleSpin* create(const sstr&, const c::Vec2&);
 
-  __decl_tv(c::Vec2, gravity, c::Vec2(0,-0.25))
+  __decl_mv(c::Vec2, gravity, c::Vec2(0,-0.25))
   __decl_fz(spinCounter)
-  __decl_td(c::Vec2,speed)
+  __decl_md(c::Vec2,speed)
 
   virtual void update(float dt);
 

@@ -41,13 +41,13 @@ bool XLayer::initEx(XScene *par, int zx) {
 // Remember the parent scene object
 //
 XScene* XLayer::getSceneX() {
-  return (XScene*) getParent();
+  return static_cast<XScene*>( getParent());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 XLayer::XLayer() {
- bind(this);
+  bind(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,22 +72,17 @@ void XLayer::disableListeners() {
 void XLayer::enableListeners() {
   disableListeners();
   try {
-    if (cx::isDesktop())
-    setMouseEnabled(true);
-  } catch (...) {
-    CCLOG("failed to init-mouse");
-  }
-  try {
-    if (cx::isDesktop())
-    setKeyboardEnabled(true);
+    if (cx::isDesktop()) setKeyboardEnabled(true);
   } catch (...) {
     CCLOG("failed to init-keys");
   }
   try {
-    if (!cx::isDesktop()) {
-      //setTouchMode(this->tmode);
-      setTouchEnabled(true);
-    }
+    if (cx::isDesktop()) setMouseEnabled(true);
+  } catch (...) {
+    CCLOG("failed to init-mouse");
+  }
+  try {
+    if (!cx::isDesktop()) setTouchEnabled(true);
   } catch (...) {
     CCLOG("failed to init-touch");
   }
@@ -96,72 +91,71 @@ void XLayer::enableListeners() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchesBegan(const s_vec<c::Touch*> &ts, c::Event*) {
+void XLayer::onTouchesBegan(const VecTouches &ts, c::Event*) {
   if (_tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
-    onTouchStart( ts);
+    onTouchStart(ts);
   } else {
-    onTouchStart( ts[0]);
+    onTouchStart(ts[0]);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchesMoved(const s_vec<c::Touch*> &ts, c::Event*) {
+void XLayer::onTouchesMoved(const VecTouches &ts, c::Event*) {
   if (_tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
-    onTouchMotion( ts);
+    onTouchMotion(ts);
   } else {
-    onTouchMotion( ts[0]);
+    onTouchMotion(ts[0]);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchesEnded(const s_vec<c::Touch*> &ts, c::Event*) {
+void XLayer::onTouchesEnded(const VecTouches &ts, c::Event*) {
   if (_tMode == c::Touch::DispatchMode::ALL_AT_ONCE) {
-    onTouchEnd( ts);
+    onTouchEnd(ts);
   } else {
-    onTouchEnd( ts[0]);
+    onTouchEnd(ts[0]);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onMouseMotion( const c::Vec2 &loc) {
+void XLayer::onMouseMotion(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XLayer::onTouchStart( const s_vec<c::Touch*> &ts) {
+bool XLayer::onTouchStart(const VecTouches &ts) {
   throw "you need to implement this!";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XLayer::onTouchStart( c::Touch *tap) {
+bool XLayer::onTouchStart(c::Touch *tap) {
   return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchEnd( const s_vec<c::Touch*> &ts) {
+void XLayer::onTouchEnd(const VecTouches &ts) {
   throw "you need to implement this!";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchEnd( c::Touch *tap) {
+void XLayer::onTouchEnd(c::Touch *tap) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchMotion( const s_vec<c::Touch*> &ts) {
+void XLayer::onTouchMotion(const VecTouches &ts) {
   throw "you need to implement this!";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onTouchMotion( c::Touch *tap) {
+void XLayer::onTouchMotion(c::Touch *tap) {
   //auto bx= MGMS()->getEnclosureBox();
   //auto loc= tap->getLocation();
   //auto pos= cx::clamp(loc, bx);
@@ -172,7 +166,7 @@ void XLayer::onTouchMotion( c::Touch *tap) {
 //
 void XLayer::onKeyPressed(KEYCODE k, c::Event*) {
   int n= (int)k;
-  if (n >= 0 && n < 256) {
+  if (n >= 0 && n < _keys.size()) {
     this->_keys[n]= true;
   }
 }
@@ -181,7 +175,7 @@ void XLayer::onKeyPressed(KEYCODE k, c::Event*) {
 //
 void XLayer::onKeyReleased(KEYCODE k, c::Event*) {
   int n= (int)k;
-  if (n >= 0 && n < 256) {
+  if (n >= 0 && n < _keys.size()) {
     this->_keys[n]=false;
   }
 }
@@ -211,20 +205,20 @@ void XLayer::onMouseUp(c::Event *event) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool XLayer::onMouseStart( const c::Vec2 &loc) {
+bool XLayer::onMouseStart(const CCT_PT &loc) {
   return true;
   //CCLOG("mouse Down!");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onMouseClick( const c::Vec2 &loc) {
+void XLayer::onMouseClick(const CCT_PT &loc) {
   //CCLOG("mouse Up!");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLayer::onMouseMove(c::Event* event) {
+void XLayer::onMouseMove(c::Event *event) {
   auto e= (c::EventMouse*)event;
   if (_mouseTarget &&
       _mouseBtn == e->getMouseButton()) {
@@ -243,7 +237,7 @@ void XLayer::setMouseEnabled(bool enabled) {
   if (_mouseEnabled != enabled) {
     _mouseEnabled = enabled;
     if (enabled) {
-      if (NNP(_mouseListener)) { return; }
+      if (N_NIL(_mouseListener)) { return; }
       auto n = c::EventListenerMouse::create();
       _mouseListener = n;
       n->onMouseScroll = CC_CALLBACK_1(XLayer::onMouseScroll, this);

@@ -22,7 +22,7 @@ NS_BEGIN(blast)
 struct CC_DLL Splash : public f::XScene {
 
   STATIC_REIFY_SCENE(Splash)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 };
 
 

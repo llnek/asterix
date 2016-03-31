@@ -19,7 +19,7 @@ NS_BEGIN(tttoe)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN b) { back=b; }
-  __decl_td(VOIDFN, back)
+  __decl_md(VOIDFN, back)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ class CC_DLL MMenu : public f::XScene {
 public:
 
   STATIC_REIFY_SCENE_CTX(MMenu)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 
 };
 

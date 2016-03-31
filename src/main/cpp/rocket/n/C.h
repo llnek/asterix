@@ -59,7 +59,7 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_ptr(c::ParticleSystemQuad, warp)
   __decl_ptr(c::ParticleSystemQuad, star)
 
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
   __decl_fz(minLineLength)
   __decl_bf(drawing)
   __decl_iz(gridPos)

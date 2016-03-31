@@ -10,23 +10,21 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "Ecs.h"
 NS_BEGIN(ecs)
 
-#define MDECL_SYS_TPID(x) \
+#define __decl_sys_tpid(x) \
   virtual const ecs::SystemType typeId() { return x; }
 
-#define MDECL_SYS_PRIORITY(x) \
+#define __decl_sys_priority(x) \
   virtual int priority() { return x; }
 
-#define MDECL_SYS_PREAMBLE() \
+#define __decl_sys_preamble() \
   virtual void preamble();
 
-#define MDECL_SYS_UPDATE() \
+#define __decl_sys_update() \
   virtual bool update(float);
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,6 +35,9 @@ protected:
 
   __decl_ptr(Engine, _engine)
   __decl_bt(_active)
+
+  __decl_nocpyass(System)
+  __decl_nodft(System)
 
 public:
 
@@ -51,25 +52,23 @@ public:
     return typeId() == t;
   }
 
-  void restart() { _active=true; }
   void suspend() { _active=false; }
+  void restart() { _active=true; }
 
   System(not_null<Engine*> e) { _engine= e; }
   virtual ~System() {}
-  __decl_nodft(System)
-  __decl_nocpyass(System)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct FS_DLL SystemList  : public f::FDList<System> {
-
+class FS_DLL SystemList  : public f::FDList<System> {
+  __decl_nocpyass(SystemList)
+public:
   virtual void add(not_null<System*> );
   System* get(const SystemType&);
 
   virtual ~SystemList() {}
   SystemList() {}
-  __decl_nocpyass(SystemList)
 };
 
 

@@ -27,7 +27,7 @@ class CC_DLL Gem : public f::CPixie {
     type=t;
   }
 
-  __decl_tv(int,type,-1)
+  __decl_mv(int,type,-1)
   __decl_bf(selected)
 
 public:

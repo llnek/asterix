@@ -37,9 +37,9 @@ public:
 
   virtual int priority() { return ecs::AI + 50; }
 
-  MDECL_SYS_TPID("s/Clear")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid("s/Clear")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Clear(ecs::Engine *e)
   : System(e)

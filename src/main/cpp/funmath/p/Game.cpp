@@ -46,14 +46,14 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   __decl_ptr(c::Label,_tutorialLabel)
   __decl_ptr(c::DrawNode,_droppableArea)
-  __decl_td(c::Vec2, _initialNumberPosition)
+  __decl_md(c::Vec2, _initialNumberPosition)
   __decl_ptr(c::MenuItem,_buttonCheckSolution)
   __decl_ptr(c::MenuItem,_buttonNextLevel)
-  __decl_td(sstr, _solution)
+  __decl_md(sstr, _solution)
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
+  __decl_deco_ui()
+  __decl_get_iid(2)
 
   virtual void onMouseMotion(const c::Vec2&);
   virtual void onMouseClick(const c::Vec2&);

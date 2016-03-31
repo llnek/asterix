@@ -39,10 +39,10 @@ public:
   __decl_fz(aiMunchValue)
   __decl_fz(aiTotalValue)
 
-  MDECL_SYS_TPID("n/AILogic")
-  MDECL_SYS_PRIORITY( 60)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid("n/AILogic")
+  __decl_sys_priority( 60)
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   AILogic(ecs::Engine *e)
   : System(e)

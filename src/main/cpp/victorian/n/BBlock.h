@@ -39,7 +39,7 @@ struct CC_DLL Block : public Widget, public c::Ref {
 
   Block(not_null<c::Node*> s);
   virtual ~Block();
-  MDECL_COMP_TPID("n/Block")
+  __decl_comp_tpid("n/Block")
 
   c::Vector<c::Sprite*> _wallTiles;
   c::Vector<c::Sprite*> _roofTiles;

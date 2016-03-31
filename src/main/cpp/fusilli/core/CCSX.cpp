@@ -9,13 +9,11 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "audio/include/SimpleAudioEngine.h"
 #include "cocos2d.h"
 #include "XConfig.h"
 #include "JSON.h"
 #include "CCSX.h"
 
-NS_ALIAS(den, CocosDenshion)
 NS_BEGIN(fusii)
 NS_BEGIN(ccsx)
 
@@ -24,20 +22,20 @@ NS_BEGIN(ccsx)
 void randomPos(not_null<c::Node*> node) {
   auto wb=visBox();
   node->setPosition(
-        rand() * wb.right,
-        rand() * wb.top);
+        randInt(wb.right),
+        randInt(wb.top));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* mkHMenu(const s_vec<c::MenuItem*> &items, float pad) {
-  return mkMenu(items, false, pad);
+c::Menu* mkHMenu(const s_vec<c::MenuItem*> &v, float pad) {
+  return mkMenu(v, false, pad);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Menu* mkVMenu(const s_vec<c::MenuItem*> &items, float pad) {
-  return mkMenu(items, true, pad);
+c::Menu* mkVMenu(const s_vec<c::MenuItem*> &v, float pad) {
+  return mkMenu(v, true, pad);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,7 +63,7 @@ c::Menu* mkMenu(const s_vec<c::MenuItem*> &items, bool vert, float pad) {
 //
 c::Menu* mkMenu(c::MenuItem *item) {
   auto menu= c::Menu::create();
-  menu->addChild( item);
+  menu->addChild(item);
   menu->setAnchorPoint(anchorBL());
   menu->setPosition(0,0);
   return menu;
@@ -94,7 +92,7 @@ const c::Color3B colorRGB(const sstr &color) {
 void sfxMusic(const sstr &music, bool repeat) {
   auto fp= XCFG()->getMusic(music);
   try {
-    den::SimpleAudioEngine::getInstance()->playBackgroundMusic(fp.c_str(), repeat);
+    CC_AUDIO()->playBackgroundMusic(fp.c_str(), repeat);
   } catch (...) {
     CCLOG("failed to play music: %s", music.c_str());
   }
@@ -105,7 +103,7 @@ void sfxMusic(const sstr &music, bool repeat) {
 void sfxPlay(const sstr &sound) {
   auto fp= XCFG()->getEffect(sound);
   try {
-    den::SimpleAudioEngine::getInstance()->playEffect(fp.c_str());
+    CC_AUDIO()->playEffect(fp.c_str());
   } catch (...) {
     CCLOG("failed to play sound: %s", sound.c_str());
   }
@@ -114,13 +112,13 @@ void sfxPlay(const sstr &sound) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void pauseEffects() {
-  den::SimpleAudioEngine::getInstance()->pauseAllEffects();
+  CC_AUDIO()->pauseAllEffects();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void pauseMusic() {
-  den::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+  CC_AUDIO()->pauseBackgroundMusic();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -133,13 +131,13 @@ void pauseAudio() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void resumeEffects() {
-  den::SimpleAudioEngine::getInstance()->resumeAllEffects();
+  CC_AUDIO()->resumeAllEffects();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void resumeMusic() {
-  den::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+  CC_AUDIO()->resumeBackgroundMusic();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -152,13 +150,13 @@ void resumeAudio() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void stopEffects() {
-  den::SimpleAudioEngine::getInstance()->stopAllEffects();
+  CC_AUDIO()->stopAllEffects();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void stopMusic() {
-  den::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+  CC_AUDIO()->stopBackgroundMusic();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -214,7 +212,7 @@ c::MenuItem* createMenuBtn(const sstr &n) {
 //
 c::MenuItem* createMenuBtn(const sstr &n, const sstr &s) {
   return c::MenuItemImage::create(
-                                  XCFG()->getImage(n), XCFG()->getImage(s));
+           XCFG()->getImage(n), XCFG()->getImage(s));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -226,7 +224,7 @@ bool pointInBox(const Box4 &box, float x, float y) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool pointInBox(const Box4 &box, const c::Vec2& pos) {
+bool pointInBox(const Box4 &box, const CCT_PT& pos) {
   return pointInBox(box, pos.x, pos.y);
 }
 
@@ -242,7 +240,7 @@ const c::Color3B black() { return c::Color3B::BLACK; }
 //
 c::Label* reifyBmfLabel(const sstr &font, const sstr &text) {
   auto f= c::Label::createWithBMFont( XCFG()->getFont(font), text);
-  f->setOpacity(0.9f * 255);
+  f->setOpacity(0.9 * 255);
   return f;
 }
 
@@ -274,13 +272,13 @@ c::Label* reifyLabel(float x, float y,
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 entities using cc-rects
 bool collide(not_null<CPixie*> a, not_null<CPixie*> b) {
-  return (NNP(a) && NNP(b)) ? collideN(a, b) : false;
+  return (N_NIL(a) && N_NIL(b)) ? collideN(a, b) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
 bool collideN(not_null<c::Node*> a, not_null<c::Node*> b) {
-  return (NNP(a) && NNP(b)) ? bbox(a).intersectsRect( bbox(b)) : false;
+  return (N_NIL(a) && N_NIL(b)) ? bbox(a).intersectsRect( bbox(b)) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -291,8 +289,8 @@ void setDevRes(float x, float y, ResolutionPolicy pcy) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool isClicked(not_null<c::Node*> node, const c::Vec2 &tap) {
-  return tap.distance(node->getPosition()) <= node->getBoundingBox().size.width * 0.8f;
+bool isTapped(not_null<c::Node*> node, const CCT_PT &tap) {
+  return tap.distance(node->getPosition()) <= node->getBoundingBox().size.width * 0.8;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -329,14 +327,14 @@ c::Dictionary* readXmlAsDict(const sstr &fpath) {
 //////////////////////////////////////////////////////////////////////////
 //
 j::json readJson(const sstr &fpath) {
-    auto s= c::FileUtils::getInstance()->getStringFromFile(fpath);
+  auto s= CC_FILER()->getStringFromFile(fpath);
   return j::json::parse(s);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool outOfBound(not_null<CPixie*> ent, const Box4 &B) {
-  return NNP(ent) ? outOfBound(bbox4(ent), B) : false;
+  return N_NIL(ent) ? outOfBound(bbox4(ent), B) : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -350,8 +348,8 @@ bool outOfBound(const Box4 &a, const Box4 &B) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size scaleSize(const c::Size &z, float scale) {
-  return c::Size(z.width * scale, z.height * scale);
+const CCT_SZ scaleSize(const CCT_SZ &z, float scale) {
+  return CCT_SZ(z.width * scale, z.height * scale);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -364,7 +362,7 @@ void undoTimer(c::DelayTime* tm) {
 //
 void mergeDict(c::Dictionary *src, c::Dictionary *d2) {
   NS_USING(cocos2d)
-  DictElement *e= nullptr;
+  DictElement *e= CC_NIL;
   CCDICT_FOREACH(d2, e) {
     auto obj = e->getObject();
     auto key= e->getStrKey();
@@ -471,38 +469,40 @@ void push(not_null<c::Scene*> ns) {
 //
 bool isTransitioning() {
   return dynamic_cast<c::TransitionScene*>(
-      CC_DTOR()->getRunningScene()) != nullptr;
+      CC_DTOR()->getRunningScene()) != CC_NIL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Find size of this sprite
 //
-const c::Size calcSize(const sstr &frame) {
-  return reifySprite(frame)->getContentSize();
+const CCT_SZ calcSize(const sstr &frame) {
+  //return reifySprite(frame)->getContentSize();
+  return reifySprite(frame)->boundingBox().size;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size halfHW(not_null<CPixie*> n) {
+const CCT_SZ halfHW(not_null<CPixie*> n) {
   return halfHW(n);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Calculate halves of width and height of this sprite
 //
-const c::Size halfHW(not_null<c::Node*> s) {
-  auto z= s->getContentSize();
-  return c::Size(z.width * 0.5f, z.height * 0.5f);
+const CCT_SZ halfHW(not_null<c::Node*> s) {
+  //auto z= s->getContentSize();
+  auto z= s->getBoundingBox().size;
+  return CCT_SZ(z.width * 0.5, z.height * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Reify a rectangle from this sprite
 //
-const c::Rect bbox(not_null<c::Node*> s) {
+const CCT_RT bbox(not_null<c::Node*> s) {
   return s->getBoundingBox();
   /*
-  return c::Rect(GetLeft(s),
+  return CCT_RT(GetLeft(s),
                  GetBottom(s),
                  GetWidth(s),
                  GetHeight(s)); */
@@ -589,9 +589,9 @@ float centerY() { return center().y; }
 //////////////////////////////////////////////////////////////////////////
 // Get the center of the visible screen
 //
-const c::Vec2 center() {
+const CCT_PT center() {
   auto rc = visRect();
-  return c::Vec2(rc.origin.x + HWZ(rc.size), rc.origin.y + HHZ(rc.size));
+  return CCT_PT(rc.origin.x + HWZ(rc.size), rc.origin.y + HHZ(rc.size));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -607,13 +607,13 @@ float screenWidth() { return screen().width; }
 //////////////////////////////////////////////////////////////////////////
 // Get the visible screen rectangle
 //
-const c::Rect visRect() {
+const CCT_RT visRect() {
   return CC_DTOR()->getOpenGLView()->getVisibleRect();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Size visSize() {
+const CCT_SZ visSize() {
   return CC_DTOR()->getOpenGLView()->getVisibleRect().size;
 }
 
@@ -633,24 +633,24 @@ const Box4 visBox() {
 //////////////////////////////////////////////////////////////////////////
 // Get the actual window/frame size.
 //
-const c::Size screen() {
+const CCT_SZ screen() {
   return CC_DTOR()->getOpenGLView()->getFrameSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the actual screen center.
 //
-const c::Vec2 scenter() {
+const CCT_PT scenter() {
   auto sz = screen();
-  return c::Vec2(HWZ(sz), HHZ(sz));
+  return CCT_PT(HWZ(sz), HHZ(sz));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Get the center of this box.
 //
-const c::Vec2 vboxMID(const Box4 &box) {
-  return c::Vec2(box.left + (box.right-box.left) * 0.5f,
-              box.bottom + (box.top-box.bottom) * 0.5f);
+const CCT_PT vboxMID(const Box4 &box) {
+  return CCT_PT(box.left + (box.right-box.left) * 0.5,
+              box.bottom + (box.top-box.bottom) * 0.5);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -661,13 +661,13 @@ const c::Vec2 vboxMID(const Box4 &box) {
 // are returned
 //
 bool traceEnclosure(float dt, const Box4 &bbox,
-    const Box4 &rect, const c::Vec2 &vel,
-    c::Vec2 &outPos, c::Vec2 &outVel) {
+    const Box4 &rect, const CCT_V2 &vel,
+    CCT_PT &outPos, CCT_V2 &outVel) {
 
   auto sz= rect.top-rect.bottom;//height
   auto sw= rect.right-rect.left;//width
-  auto y = rect.bottom+(sz*0.5f) + dt * vel.y;// new y
-  auto x = rect.left+(sw*0.5f) + dt * vel.x;// new x
+  auto y = rect.bottom+(sz*0.5) + dt * vel.y;// new y
+  auto x = rect.left+(sw*0.5) + dt * vel.x;// new x
   auto vx= vel.x;
   auto vy= vel.y;
   auto hit=false;
@@ -720,7 +720,7 @@ bool isIntersect(const Box4 &a1, const Box4 &a2) {
 //////////////////////////////////////////////////////////////////////////
 // Get the sprite from the frame cache using its id (e.g. #ship)
 //
-c::SpriteFrame* getSpriteFrame(const sstr &frameid, const c::Rect &r) {
+c::SpriteFrame* getSpriteFrame(const sstr &frameid, const CCT_RT &r) {
   auto f= CC_SCAC()->getSpriteFrameByName(frameid);
   f->setRect(r);
   return f;
@@ -735,47 +735,47 @@ c::SpriteFrame* getSpriteFrame(const sstr &frameid) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorC() { return c::Vec2(0.5, 0.5); }
+const CCT_PT anchorC() { return CCT_PT(0.5, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorT() { return c::Vec2(0.5, 1); }
+const CCT_PT anchorT() { return CCT_PT(0.5, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorTR() { return c::Vec2(1, 1); }
+const CCT_PT anchorTR() { return CCT_PT(1, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorR() { return c::Vec2(1, 0.5); }
+const CCT_PT anchorR() { return CCT_PT(1, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorBR() { return c::Vec2(1, 0); }
+const CCT_PT anchorBR() { return CCT_PT(1, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorB() { return c::Vec2(0.5, 0); }
+const CCT_PT anchorB() { return CCT_PT(0.5, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorBL() { return c::Vec2(0, 0); }
+const CCT_PT anchorBL() { return CCT_PT(0, 0); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorL() { return c::Vec2(0, 0.5); }
+const CCT_PT anchorL() { return CCT_PT(0, 0.5); }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 anchorTL() { return c::Vec2(0, 1); }
+const CCT_PT anchorTL() { return CCT_PT(0, 1); }
 
 //////////////////////////////////////////////////////////////////////////
 // not used for now.
 //
 void resolveElastic(
     not_null<CPixie*> obj1,
-    c::Vec2 &vel1,
-    not_null<CPixie*> obj2, c::Vec2 &vel2) {
+    CCT_V2 &vel1,
+    not_null<CPixie*> obj2, CCT_V2 &vel2) {
 
   auto pos2 = obj2->getPosition();
   auto pos1= obj1->getPosition();
@@ -823,7 +823,7 @@ void resolveElastic(
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 clamp(const c::Vec2& loc, const c::Size &sz, const Box4 &world) {
+const CCT_PT clamp(const CCT_PT& loc, const CCT_SZ &sz, const Box4 &world) {
   auto hh = HHZ(sz);
   auto hw = HWZ(sz);
   auto x= loc.x;
@@ -842,13 +842,13 @@ const c::Vec2 clamp(const c::Vec2& loc, const c::Size &sz, const Box4 &world) {
     y = world.top - hh;
   }
 
-  return c::Vec2(x,y);
+  return CCT_PT(x,y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 clamp(const c::Vec2 &cur, const Box4 &bx) {
+const CCT_PT clamp(const CCT_PT &cur, const Box4 &bx) {
   return ccpClamp(cur, c::ccp(bx.left, bx.bottom), c::ccp(bx.right, bx.top));
 }
 
@@ -857,7 +857,7 @@ const c::Vec2 clamp(const c::Vec2 &cur, const Box4 &bx) {
 int randInt(int upper) {
     //auto r=cocos2d::rand_0_1();
     //CCLOG("rand01 ===== %f", r);
-  return (int) floor( cocos2d::rand_0_1()*  upper);
+  return (int) floor( cocos2d::rand_0_1() * upper);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -896,7 +896,7 @@ long long timeInMillis() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 calcXY(float angle, float hypot) {
+const CCT_PT calcXY(float angle, float hypot) {
   // quadrants =  4 | 1
   //             --------
   //              3 | 2
@@ -931,7 +931,7 @@ const c::Vec2 calcXY(float angle, float hypot) {
   else {
   }
 
-  return c::Vec2( x * hypot, y * hypot);
+  return CCT_PT( x * hypot, y * hypot);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -953,29 +953,29 @@ VOIDFN throttle(VOIDFN func, int wait) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void testCollisions(not_null<f::FPool*> p1, not_null<ecs::Node*> node) {
+void testCollide(not_null<f::FPool*> p1, not_null<ecs::Node*> node) {
   if (node->status())
     p1->foreach([=](f::Poolable* _p1) {
       auto e1= (ecs::Node*) _p1;
-      testCollision(e1,node);
+      testCollide(e1,node);
     });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void testCollisions(not_null<f::FPool*> p1, not_null<f::FPool*> p2) {
+void testCollide(not_null<f::FPool*> p1, not_null<f::FPool*> p2) {
   p1->foreach([=](f::Poolable* _p1) {
   p2->foreach([=](f::Poolable* _p2) {
     auto e2= (ecs::Node*) _p2;
     auto e1= (ecs::Node*) _p1;
-    testCollision(e1,e2);
+    testCollide(e1,e2);
   });
   });
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void testCollision(not_null<ecs::Node*> e1, not_null<ecs::Node*> e2) {
+void testCollide(not_null<ecs::Node*> e1, not_null<ecs::Node*> e2) {
   auto s2= CC_GEC(f::CPixie,e2.get(),"f/CPixie");
   auto s1= CC_GEC(f::CPixie,e1.get(),"f/CPixie");
   if (e2->status() &&
@@ -1031,7 +1031,7 @@ void resolveNodes(not_null<f::FPool*> pool) {
   pool->foreach([=](f::Poolable *p) {
     if (p->status()) {
       auto ht=CC_GEC(f::CHealth,p,"f/CHealth");
-      if (ht &&
+      if (N_NIL(ht) &&
           !ht->alive())
         hibernate(PCAST(ecs::Node,p));
     }

@@ -25,8 +25,8 @@ class CC_DLL MMenu : public f::XScene {
 public:
 
   STATIC_REIFY_SCENE(MMenu)
-  MDECL_DECORATE()
-  MDECL_UPDATE()
+  __decl_deco_ui()
+  __decl_update()
 
 };
 

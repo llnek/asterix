@@ -60,11 +60,11 @@ struct CC_DLL Ship : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
   __decl_ptr(ScrollingBG, background)
-  __decl_tv(int,scrollSpeed, 1)
-  __decl_tv(float,gameGravity, -0.05)
-  __decl_tv(float, gameThrust, 0.1)
+  __decl_mv(int,scrollSpeed, 1)
+  __decl_mv(float,gameGravity, -0.05)
+  __decl_mv(float, gameThrust, 0.1)
   __decl_ptr(c::ParticleSun, emitter)
 
 };

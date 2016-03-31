@@ -66,10 +66,10 @@ struct CC_DLL Brick {
     colliable=false;
   }
 
-  __decl_tv(sstr, frame1, "0.png")
-  __decl_td(sstr, frame0)
+  __decl_mv(sstr, frame1, "0.png")
+  __decl_md(sstr, frame0)
 
-  __decl_td(c::Vec2, startPos)
+  __decl_md(c::Vec2, startPos)
   __decl_ptr(c::Sprite, node)
   __decl_bf(colliable)
 
@@ -87,7 +87,7 @@ struct CC_DLL ShapeInfo {
     png=p;
   }
   __decl_ptr(BModel, model)
-  __decl_td(sstr, png)
+  __decl_md(sstr, png)
   __decl_iz(rot)
   ShapeInfo() {}
 };
@@ -96,38 +96,38 @@ struct CC_DLL ShapeInfo {
 //
 struct CC_DLL Shape : public ecs::Component {
   Shape(const ShapeInfo& si) { info=si; }
-  __decl_td(ShapeInfo, info)
+  __decl_md(ShapeInfo, info)
   s_vec<Brick*> bricks;
   __decl_fz(x)
   __decl_fz(y)
-  MDECL_COMP_TPID( "n/Shape")
+  __decl_comp_tpid( "n/Shape")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL ShapeShell : public ecs::Component {
-  MDECL_COMP_TPID( "n/ShapeShell")
+  __decl_comp_tpid( "n/ShapeShell")
   __decl_ptr(Shape, shape)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CtrlPad : public ecs::Component {
-  MDECL_COMP_TPID( "n/CtrlPad")
+  __decl_comp_tpid( "n/CtrlPad")
   s::map<sstr,f::Box4> hotspots;
 };
 
 //////////////////////////////////////////////////////////////////////////
 // size and location of the game area
 struct CC_DLL GridBox : public ecs::Component {
-  MDECL_COMP_TPID( "n/GridBox")
-  __decl_td(f::Box4, box)
+  __decl_comp_tpid( "n/GridBox")
+  __decl_md(f::Box4, box)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 // the game area as a grid
 struct CC_DLL BlockGrid  : public ecs::Component {
-  MDECL_COMP_TPID( "n/BlockGrid")
+  __decl_comp_tpid( "n/BlockGrid")
   s_vec<FArrBrick> grid;
 };
 
@@ -355,7 +355,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Dropper : public ecs::Component {
-  MDECL_COMP_TPID( "n/Dropper")
+  __decl_comp_tpid( "n/Dropper")
   __decl_fz(dropSpeed)
   __decl_fz(dropRate)
   __decl_ptr(c::DelayTime, timer)
@@ -364,14 +364,14 @@ struct CC_DLL Dropper : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL FilledLines : public ecs::Component {
-  MDECL_COMP_TPID( "n/FilledLines")
-  s_vec<int> lines;
+  __decl_comp_tpid( "n/FilledLines")
+  __decl_vec(int, lines)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Gesture : public f::CGesture {
-  MDECL_COMP_TPID( "n/Gesture")
+  __decl_comp_tpid( "n/Gesture")
   void reset() {
     right=false;
     left=false;
@@ -387,14 +387,14 @@ struct CC_DLL Gesture : public f::CGesture {
 //
 struct CC_DLL Pauser  : public ecs::Component {
   __decl_ptr(c::DelayTime, timer)
-  MDECL_COMP_TPID("n/Pauser")
+  __decl_comp_tpid("n/Pauser")
   __decl_bf(pauseToClear)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars  : public ecs::Component {
-  MDECL_COMP_TPID("n/GVars")
+  __decl_comp_tpid("n/GVars")
 
 };
 

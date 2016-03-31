@@ -22,7 +22,7 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Alien : public f::CPixie {
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
   __decl_iz(type)
   Alien(int n) {
     assert(n > 0 && n < 4);
@@ -36,13 +36,13 @@ struct CC_DLL Alien : public f::CPixie {
 struct CC_DLL Missile : public f::CPixie {
   Missile(not_null<c::Node*> s)
   : CPixie(s) {}
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Bomb : public f::CPixie {
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
   Bomb(not_null<c::Node*> s)
   : CPixie(s) {}
   void morph(int type) {
@@ -54,7 +54,7 @@ struct CC_DLL Bomb : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ship : public f::CPixie {
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
   Ship(not_null<c::Node*> s)
   : CPixie(s) {
   }
@@ -64,7 +64,7 @@ struct CC_DLL Ship : public f::CPixie {
 //
 struct CC_DLL AlienSquad : public ecs::Component {
 
-  MDECL_COMP_TPID("n/AlienSquad")
+  __decl_comp_tpid("n/AlienSquad")
   __decl_fz(rightEdge)
   __decl_fz(leftEdge)
   __decl_fz(duration)
@@ -74,7 +74,7 @@ struct CC_DLL AlienSquad : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID("n/GVars")
+  __decl_comp_tpid("n/GVars")
 
 };
 

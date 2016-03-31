@@ -10,12 +10,14 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "nlohmann/json.hpp"
 #include "aeon/fusilli.h"
 NS_ALIAS(j, nlohmann)
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
 #define J__LOOP(it,c) \
     for (j::json::iterator it= c.begin(); it != c.end(); ++it)
 

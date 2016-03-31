@@ -13,6 +13,7 @@
 
 #include "GSL/gsl.h"
 #include <functional>
+#include <algorithm>
 #include <queue>
 #include <vector>
 #include <array>
@@ -21,7 +22,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 //typedef std::string stdstr;
 typedef std::string sstr;
 
@@ -127,15 +127,21 @@ typedef std::string sstr;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-#define __decl_gsms_is(varType, v, funName) \
-virtual varType is##funName() { return v; } \
-virtual void set##funName(varType p) { v=p; }
+#define __decl_gsms_is(v, funName) \
+virtual bool is##funName() { return v; } \
+virtual void set##funName(bool p) { v=p; }
 
 /////////////////////////////////////////////////////////////////////////////
 //
 #define __decl_gsms(varType, v, funName) \
-virtual varType get##funName() { return v; } \
-virtual void set##funName(varType p) { v=p; }
+virtual  varType get##funName() { return v; } \
+virtual void set##funName( varType p) { v=p; }
+
+#define __decl_getr(varType, v, funName) \
+virtual  varType get##funName() { return v; }
+
+#define __decl_setr(varType, v, funName) \
+virtual void set##funName( varType p) { v=p; }
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ constructor stuff
@@ -155,8 +161,12 @@ virtual void set##funName(varType p) { v=p; }
 #define __decl_iz(i) int i=0;
 #define __decl_bf(b) bool b=false;
 #define __decl_bt(b) bool b=true;
-#define __decl_td(T,m) T m;
-#define __decl_tv(T,m,v) T m=v;
+#define __decl_md(T,m) T m;
+#define __decl_mv(T,m,v) T m=v;
+#define __decl_arr(T,e,v) s_arr<T,(e)> v;
+#define __decl_vec(T,v) s_vec<T> v;
+#define __decl_map(K,V,m) s_map<K,V> m;
+#define __decl_que(T,v) s_que<T> v;
 
 // find length of array
 #define SIZEOFX(var,type) (sizeof(var)/sizeof(type))

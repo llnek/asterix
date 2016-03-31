@@ -28,7 +28,7 @@ struct CC_DLL GCXX : public f::GCX {
   GCXX(f::GMode m, j::json msg) : GCX(m) {
     _data=msg;
   }
-  __decl_td(j::json, _data)
+  __decl_md(j::json, _data)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ struct CC_DLL Game : public f::GameScene {
   }
 
   STATIC_REIFY_SCENE_CTX(Game)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 };
 
 

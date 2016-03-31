@@ -28,7 +28,7 @@ struct CC_DLL TowerBody {
 
   __decl_ptr(c::Sprite,lowerSprite)
   __decl_ptr(c::Sprite,upperSprite)
-  __decl_td(c::Vec2,position)
+  __decl_md(c::Vec2,position)
 
 };
 
@@ -38,7 +38,7 @@ class CC_DLL Tower {
 
   void createTower();
 
-  __decl_tv(c::Size, towerSpriteSize, c::Size(0,0))
+  __decl_mv(c::Size, towerSpriteSize, c::Size(0,0))
   __decl_ptr(f::XNode,parentNode)
   s_vec<TowerBody> towers;
   __decl_iz(firstTowerIndex)

@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #define MGMSLIVE() fusii::GameScene::self()->isLive()
 #define MGMS() fusii::GameScene::self()
@@ -39,7 +37,7 @@ struct CC_DLL GCX : public SCTX {
   GCX(GMode m) { mode=m; }
   GCX() {}
   __decl_ptr(ws::OdinIO ,odin)
-  __decl_tv(GMode,mode,GMode::ONE)
+  __decl_mv(GMode,mode,GMode::ONE)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -49,11 +47,11 @@ protected:
 
   static void binds(not_null<GameScene*>);
 
-  s_map<sstr, f::FPool*> _pools;
-  s_que<sstr> _msgQ;
+  __decl_map(sstr, f::FPool*, _pools)
+  __decl_que(sstr, _msgQ)
 
-  __decl_tv(int, _state, 0)
-  __decl_tv(int, _level, 1)
+  __decl_mv(int, _state, 0)
+  __decl_mv(int, _level, 1)
   __decl_nocpyass(GameScene)
 
 public:

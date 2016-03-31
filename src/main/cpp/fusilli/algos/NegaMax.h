@@ -10,9 +10,9 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "aeon/fusilli.h"
-#include <algorithm>
 NS_BEGIN(fusii)
 NS_BEGIN(algos)
 
@@ -22,7 +22,7 @@ const int PINF = 1000000;
 //
 template<int Z>
 struct FS_DLL FFrame {
-  s_arr<int, Z*Z> _state;
+  __decl_arr(int, Z*Z, _state)
   __decl_iz(_lastBestMove)
   __decl_iz(_other)
   __decl_iz(_cur)
@@ -63,14 +63,14 @@ int negaMax(not_null<GameBoard<Z>*> board,
 
   auto openMoves = board->getNextMoves(game);
   auto bestMove = openMoves[0];
-  int bestValue = -PINF;
+  auto bestValue = -PINF;
 
   if (depth == maxDepth) {
     game->_lastBestMove = openMoves[0];
   }
 
   F__LOOP(it, openMoves) {
-    int move = *it;
+    auto move = *it;
     int rc;
     //try a move
     board->makeMove(game, move);

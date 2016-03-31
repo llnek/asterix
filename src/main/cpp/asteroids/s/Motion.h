@@ -24,14 +24,14 @@ class CC_DLL Motions : public ecs::System {
   void fireMissile(float);
   void scanInput(f::CGesture*);
 
-  __decl_td(VOIDFN, scanner)
+  __decl_md(VOIDFN, scanner)
 
 public:
 
-  MDECL_SYS_PRIORITY(ecs::Motion)
-  MDECL_SYS_TPID("s/Motions")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::Motion)
+  __decl_sys_tpid("s/Motions")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Motions(ecs::Engine *e)
   : System(e)

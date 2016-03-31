@@ -118,7 +118,7 @@ bool GameScene::isOnline() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Rect GameScene::getEnclosureRect() {
+const CCT_RT GameScene::getEnclosureRect() {
   return cx::visRect();
 }
 

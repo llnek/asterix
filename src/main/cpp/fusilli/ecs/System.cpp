@@ -16,12 +16,12 @@ NS_BEGIN(ecs)
 //
 void SystemList::add(not_null<System*> sys) {
   auto s = sys.get();
-  if (ENP(_head)) {
-    s->_next = s->_prev = nullptr;
+  if (E_NIL(_head)) {
+    s->_next = s->_prev = P_NIL;
     _head = _tail = s;
   } else {
-    System *node=nullptr;
-    for(node = _tail; NNP(node); node = node->_prev) {
+    System *node= P_NIL;
+    for (node = _tail; N_NIL(node); node = node->_prev) {
       if (node->priority() <= s->priority() ) {
         break;
       }
@@ -29,12 +29,12 @@ void SystemList::add(not_null<System*> sys) {
     if (node == _tail ) {
       _tail->_next = s;
       s->_prev = _tail;
-      s->_next = nullptr;
+      s->_next = P_NIL;
       _tail = s;
     }
     else
     if ( ENP(node )) {
-      s->_prev = nullptr;
+      s->_prev = P_NIL;
       s->_next = _head;
       _head->_prev = s;
       _head = s;
@@ -51,10 +51,10 @@ void SystemList::add(not_null<System*> sys) {
 //////////////////////////////////////////////////////////////////////////////
 //
 System* SystemList::get(const SystemType &type) {
-  for (auto s = _head; NNP(s); s = s->_next) {
+  for (auto s = _head; N_NIL(s); s = s->_next) {
     if (s->isa(type) ) { return s; }
   }
-  return nullptr;
+  return P_NIL;
 }
 
 

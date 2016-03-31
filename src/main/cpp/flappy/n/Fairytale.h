@@ -21,8 +21,8 @@ NS_BEGIN(flappy)
 //
 class CC_DLL Fairytale {
 
-  __decl_tv(c::Size,silhouetteSpriteSize,c::Size(0,0))
-  __decl_tv(c::Size,castleSpriteSize,c::Size(0,0))
+  __decl_mv(c::Size,silhouetteSpriteSize,c::Size(0,0))
+  __decl_mv(c::Size,castleSpriteSize,c::Size(0,0))
   __decl_ptr(f::XNode,parentNode)
   s_vec<c::Sprite*> silhouetteSprites;
   s_vec<c::Sprite*> castleSprites;

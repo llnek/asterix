@@ -24,7 +24,7 @@ struct CC_DLL Asteroid : public f::CStats {
     this->rank= rank;
   }
 
-  MDECL_COMP_TPID("n/Asteroid")
+  __decl_comp_tpid("n/Asteroid")
   __decl_iz(rank)
 };
 
@@ -32,7 +32,7 @@ struct CC_DLL Asteroid : public f::CStats {
 //
 struct CC_DLL Cannon : public ecs::Component {
 
-  MDECL_COMP_TPID("n/Cannon")
+  __decl_comp_tpid("n/Cannon")
   __decl_bt(hasAmmo)
 
 };
@@ -44,10 +44,10 @@ struct CC_DLL Cannon : public ecs::Component {
 //
 struct CC_DLL Ship : public f::CPixie {
 
-  __decl_tv(sstr,frame0,"rship_0.png")
-  __decl_tv(sstr,frame1,"rship_1.png")
-  //MDECL_COMP_TPID("n/Ship")
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_mv(sstr,frame0,"rship_0.png")
+  __decl_mv(sstr,frame1,"rship_1.png")
+  //__decl_comp_tpid("n/Ship")
+  __decl_comp_tpid("f/CPixie")
 
   Ship(not_null<c::Node*> s)
     : CPixie(s) {
@@ -58,12 +58,12 @@ struct CC_DLL Ship : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID("n/GVars")
-  __decl_td(c::Size, playerSize)
-  __decl_td(c::Size, ufoSize)
-  __decl_td(c::Size, astro3)
-  __decl_td(c::Size, astro2)
-  __decl_td(c::Size, astro1)
+  __decl_comp_tpid("n/GVars")
+  __decl_md(c::Size, playerSize)
+  __decl_md(c::Size, ufoSize)
+  __decl_md(c::Size, astro3)
+  __decl_md(c::Size, astro2)
+  __decl_md(c::Size, astro1)
 
 };
 

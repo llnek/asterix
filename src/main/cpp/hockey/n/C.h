@@ -39,25 +39,25 @@ struct CC_DLL Puck : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Player : public f::CStats {
-  MDECL_COMP_TPID("n/Player")
+  __decl_comp_tpid("n/Player")
   Player(int n) : CStats(n) {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public ecs::Component {
-  MDECL_COMP_TPID("n/Players")
+  __decl_comp_tpid("n/Players")
   s_arr<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
   __decl_fz(goalWidth)
   __decl_fz(sq_radii)
-  __decl_td(c::Vec2,ballNextPos)
-  __decl_td(c::Vec2,ballVec)
+  __decl_md(c::Vec2,ballNextPos)
+  __decl_md(c::Vec2,ballVec)
 };
 
 

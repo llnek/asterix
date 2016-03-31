@@ -23,10 +23,10 @@ class CC_DLL GunLogic : public ecs::System {
 
 public:
 
-  MDECL_SYS_TPID("n/GunLogic")
-  MDECL_SYS_PRIORITY( 50)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid("n/GunLogic")
+  __decl_sys_priority( 50)
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   GunLogic(ecs::Engine *e)
   : System(e)

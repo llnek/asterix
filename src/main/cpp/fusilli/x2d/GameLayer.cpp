@@ -9,7 +9,6 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#include "audio/include/SimpleAudioEngine.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCEventListenerMouse.h"
 #include "base/CCEventListenerTouch.h"
@@ -18,7 +17,6 @@
 #include "GameScene.h"
 #include "GameLayer.h"
 
-NS_ALIAS(den, CocosDenshion)
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(fusii)
 
@@ -36,7 +34,7 @@ GameLayer::GameLayer() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GameLayer::decoPost() {
-  if (NNP(_engine)) {
+  if (N_NIL(_engine)) {
     _engine->ignite();
   }
   scheduleUpdate();
@@ -62,7 +60,7 @@ void GameLayer::surcease() {
 void GameLayer::update(float dt) {
   if (!cx::isTransitioning() &&
       MGMS()->isLive() &&
-      NNP(_engine)) {
+      N_NIL(_engine)) {
     _engine->update(dt);
   }
 }

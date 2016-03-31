@@ -20,7 +20,7 @@ NS_BEGIN(prototype)
 struct CC_DLL MMenu : public f::XScene {
 
   STATIC_REIFY_SCENE(MMenu)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 
 };
 

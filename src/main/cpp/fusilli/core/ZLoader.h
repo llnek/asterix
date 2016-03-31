@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "platform/CCCommon.h"
 #include "2d/CCScene.h"
@@ -24,6 +22,7 @@ NS_BEGIN(fusii)
 class CC_DLL ZLoader : public c::Scene {
 
   void startLoad(float delay);
+  __decl_nocpyass(ZLoader)
 
 public:
 
@@ -32,7 +31,6 @@ public:
 
   virtual ~ZLoader() {}
   ZLoader() {}
-  __decl_nocpyass(ZLoader)
 };
 
 

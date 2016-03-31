@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "Ecs.h"
 NS_BEGIN(ecs)
@@ -24,12 +22,11 @@ class FS_DLL Node : public f::Poolable {
 friend class Engine;
 
   //owns all the parts
-  s_map<COMType, Component*> _parts;
-
+  __decl_map(COMType, Component*,_parts)
   __decl_ptr(Engine, _engine)
   __decl_bf(_dead)
-  __decl_td(NodeId, _eid)
-  __decl_td(sstr, _name)
+  __decl_md(NodeId, _eid)
+  __decl_md(sstr, _name)
 
   Node(not_null<Engine*>, const sstr&, NodeId);
   void die() { _dead=true; }
@@ -44,7 +41,7 @@ public:
   void checkin(not_null<Component*>);
   void purge(const COMType&);
 
-  Component* get(const COMType& );
+  Component* get(const COMType&);
   bool has(const COMType&);
 
   NodeId getEid() { return _eid; }

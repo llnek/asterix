@@ -24,8 +24,8 @@ NS_BEGIN(terra)
 //
 struct CC_DLL Missile : public f::CPixie {
 
-  __decl_tv(Attacks, attackMode, Attacks::NORMAL)
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_mv(Attacks, attackMode, Attacks::NORMAL)
+  __decl_comp_tpid("f/CPixie")
 
   Missile(not_null<c::Sprite*> s, Attacks m)
   : CPixie(s) {
@@ -40,8 +40,8 @@ struct CC_DLL Missile : public f::CPixie {
 //
 struct CC_DLL Bomb : public f::CPixie {
 
-  __decl_tv(Attacks, attackMode, Attacks::NORMAL)
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_mv(Attacks, attackMode, Attacks::NORMAL)
+  __decl_comp_tpid("f/CPixie")
 
   Bomb(not_null<c::Node*> s, Attacks m)
   : CPixie(s) {
@@ -56,9 +56,9 @@ struct CC_DLL Bomb : public f::CPixie {
 //
 struct CC_DLL Enemy : public f::CStats {
 
-  __decl_td(EnemyType, enemyType)
+  __decl_md(EnemyType, enemyType)
   __decl_fz(delayTime)
-  MDECL_COMP_TPID( "n/Enemy")
+  __decl_comp_tpid( "n/Enemy")
 
   Enemy(const EnemyType &et)
   : CStats(et.scoreValue) {
@@ -74,7 +74,7 @@ struct CC_DLL Ship : public f::CPixie {
 
   __decl_ptr(c::Sprite, bornSprite)
   __decl_bf(canBeAttack)
-  MDECL_COMP_TPID( "f/CPixie")
+  __decl_comp_tpid( "f/CPixie")
 
   Ship(not_null<c::Sprite*> s,
        not_null<c::Sprite*> x) 
@@ -96,10 +96,10 @@ struct CC_DLL Spark : public f::CPixie {
   virtual void inflate(float, float);
   virtual void deflate();
 
-  __decl_tv(float, duration, 0.7f)
-  __decl_tv(float, scale, 1.2f)
+  __decl_mv(float, duration, 0.7f)
+  __decl_mv(float, scale, 1.2f)
   __decl_ptr(c::Sprite, sprite2)
-  MDECL_COMP_TPID( "f/CPixie")
+  __decl_comp_tpid( "f/CPixie")
 
 };
 
@@ -113,7 +113,7 @@ struct CC_DLL Explosion : public f::CPixie {
     : CPixie(s) {
   }
 
-  MDECL_COMP_TPID( "f/CPixie")
+  __decl_comp_tpid( "f/CPixie")
 
 };
 
@@ -127,19 +127,19 @@ struct CC_DLL HitEffect : public f::CPixie {
     : CPixie(s) {
   }
 
-  __decl_tv(float, scale, 0.75)
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_mv(float, scale, 0.75)
+  __decl_comp_tpid("f/CPixie")
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID("n/GVars")
+  __decl_comp_tpid("n/GVars")
   __decl_iz(secCount)
   __decl_ptr(ecs::Node, backSkyRe)
   __decl_ptr(ecs::Node, backSky)
-  __decl_td(c::Size, backSkyDim)
+  __decl_md(c::Size, backSkyDim)
 };
 
 

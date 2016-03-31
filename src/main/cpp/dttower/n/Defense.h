@@ -27,7 +27,7 @@ class GVars;
 class Defense;
 struct CC_DLL Defense  : public f::CPixie {
 
-  __decl_td(DefenseLevel, defenseLevel)
+  __decl_md(DefenseLevel, defenseLevel)
   __decl_iz(attackPoints)
   __decl_ptr(GVars, ss)
 

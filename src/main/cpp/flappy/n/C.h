@@ -25,7 +25,7 @@ class Fairytale;
 class Tower;
 class Dragon;
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   __decl_ptr(Fairytale, fairytale)
   __decl_ptr(Tower, towers)

@@ -26,7 +26,7 @@ typedef s_arr<int,INTARR_SZ> INTXARR;
 //
 struct CC_DLL GVars : public ecs::Component {
   virtual ~GVars() { F__LOOP(it,crates) { delete *it; } }
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   s_arr<INTXARR,INTARR_SZ> levels;
     s_vec<f::NodePtrArray*> crates;

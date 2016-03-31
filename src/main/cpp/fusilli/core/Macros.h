@@ -10,9 +10,9 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
+
+#define CC_AUDIO() CocosDenshion::SimpleAudioEngine::getInstance()
 #define CC_APPDB() cocos2d::UserDefault::getInstance()
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,6 +55,11 @@
 #define CC_ZSZ  cocos2d::Size(0,0)
 #define CC_ZPT  cocos2d::Vec2(0,0)
 
+#define CCT_PT cocos2d::Vec2
+#define CCT_SZ cocos2d::Size
+#define CCT_V2 cocos2d::Vec2
+#define CCT_RT cocos2d::Rect
+
 #define CC_NIL nullptr
 
 #define CC_GEC(t,e,c) (t*)((ecs::Node*)(e))->get(c)
@@ -68,6 +73,7 @@
 //
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
 typedef cocos2d::BlendFunc BDFUNC;
+typedef s_vec<cocos2d::Touch*> VecTouches;
 
 typedef std::function<void ()> VOIDFN;
 typedef std::string filepath;

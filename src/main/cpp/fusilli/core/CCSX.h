@@ -10,7 +10,9 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
+#include "audio/include/SimpleAudioEngine.h"
 #include "platform/CCCommon.h"
 #include "base/ccTypes.h"
 #include "Primitives.h"
@@ -21,9 +23,9 @@ NS_BEGIN(fusii)
 //
 namespace ccsx {
 
-  void testCollision(not_null<ecs::Node*>, not_null<ecs::Node*>);
-  void testCollisions(not_null<f::FPool*>, not_null<f::FPool*>);
-  void testCollisions(not_null<f::FPool*>, not_null<ecs::Node*>);
+  void testCollide(not_null<ecs::Node*>, not_null<ecs::Node*>);
+  void testCollide(not_null<f::FPool*>, not_null<f::FPool*>);
+  void testCollide(not_null<f::FPool*>, not_null<ecs::Node*>);
 
   void resolveNodes(not_null<f::FPool*>);
 
@@ -33,10 +35,10 @@ namespace ccsx {
   void kumakaze(not_null<ecs::Node*>);
 
   void resolveElastic(not_null<CPixie*> rA,
-      c::Vec2 &velA,
-      not_null<CPixie*> rB, c::Vec2 &velB);
+      CCT_V2 &velA,
+      not_null<CPixie*> rB, CCT_V2 &velB);
 
-  const c::Size scaleSize(const c::Size &z, float scale);
+  const CCT_SZ scaleSize(const CCT_SZ&, float scale);
 
   c::Dictionary* readXmlAsDict(const sstr &fpath);
   c::Array* readXmlAsList(const sstr &fpath);
@@ -72,9 +74,9 @@ namespace ccsx {
   c::MenuItem* reifyMenuBtn(const sstr &n);
   c::MenuItem* reifyMenuBtn( const sstr &n, const sstr &s);
 
-  c::Menu* mkMenu(const s_vec<c::MenuItem*>&, bool vert = false, float padding= 10.0f);
-  c::Menu* mkHMenu(const s_vec<c::MenuItem*>&, float padding= 10.0f);
-  c::Menu* mkVMenu(const s_vec<c::MenuItem*>&, float padding= 10.0f);
+  c::Menu* mkMenu(const s_vec<c::MenuItem*>&, bool vert = false, float pad= 10);
+  c::Menu* mkHMenu(const s_vec<c::MenuItem*>&, float pad= 10);
+  c::Menu* mkVMenu(const s_vec<c::MenuItem*>&, float pad= 10);
   c::Menu* mkMenu(c::MenuItem*);
 
   bool pointInBox(const Box4 &box, float x,  float y);
@@ -89,7 +91,7 @@ namespace ccsx {
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
 
-  bool pointInBox(const Box4 &box, const c::Vec2 &pos);
+  bool pointInBox(const Box4 &box, const CCT_PT &pos);
   bool isIntersect(const Box4&, const Box4&);
   bool isPortrait();
 
@@ -117,7 +119,7 @@ namespace ccsx {
 
   float deltaX(not_null<c::Node*> a, not_null<c::Node*> b);
   float deltaY(not_null<c::Node*> a, not_null<c::Node*> b);
-  bool isClicked(not_null<c::Node*>, const c::Vec2&);
+  bool isTapped(not_null<c::Node*>, const CCT_PT&);
 
   const Box4 bbox4(not_null<c::Node*>);
   inline const Box4 bbox4(not_null<CPixie*> c) {
@@ -135,19 +137,19 @@ namespace ccsx {
   void runEx(not_null<c::Scene*>);
   void prelude();
 
-  const c::Vec2 calcXY(float angle, float hypot);
+  const CCT_PT calcXY(float angle, float hypot);
   float degToRad(float);
 
   VOIDFN throttle(VOIDFN func, int waitMillis);
   long long timeInMillis();
   bool isTransitioning();
 
-  const c::Size calcSize(const sstr &frame);
+  const CCT_SZ calcSize(const sstr &frame);
 
-  const c::Size halfHW(not_null<c::Node*>);
-  const c::Size halfHW(not_null<CPixie*>);
+  const CCT_SZ halfHW(not_null<c::Node*>);
+  const CCT_SZ halfHW(not_null<CPixie*>);
 
-  const c::Rect bbox(not_null<c::Node*>);
+  const CCT_RT bbox(not_null<c::Node*>);
 
   float getContentHeight(not_null<c::Node*>);
   float getContentWidth(not_null<c::Node*>);
@@ -160,24 +162,24 @@ namespace ccsx {
   float getTop(not_null<c::Node*>);
   float getBottom(not_null<c::Node*>);
 
-  const c::Vec2 center();
+  const CCT_PT center();
   float centerX();
   float centerY();
 
   float screenHeight();
   float screenWidth();
 
-  const c::Vec2 vboxMID(const Box4& );
-  const c::Rect visRect();
-  const c::Size visSize();
+  const CCT_PT vboxMID(const Box4&);
+  const CCT_RT visRect();
+  const CCT_SZ visSize();
   const Box4 visBox();
 
-  const c::Vec2 scenter();
-  const c::Size screen();
+  const CCT_PT scenter();
+  const CCT_SZ screen();
 
   bool traceEnclosure(float dt, const Box4 &bbox,
-      const Box4 &rect, const c::Vec2 &vel,
-      c::Vec2 &outPos, c::Vec2 &outVel);
+      const Box4 &rect, const CCT_V2 &vel,
+      CCT_PT &outPos, CCT_V2 &outVel);
 
   void mergeDict(c::Dictionary *src, c::Dictionary *d2);
 
@@ -185,21 +187,21 @@ namespace ccsx {
    * Get the sprite from the frame cache using
    * its id (e.g. ship.png)
    */
-  c::SpriteFrame* getSpriteFrame(const sstr &frameid, const c::Rect&);
+  c::SpriteFrame* getSpriteFrame(const sstr &frameid, const CCT_RT&);
   c::SpriteFrame* getSpriteFrame(const sstr &frameid);
 
-  const c::Vec2 anchorC();
-  const c::Vec2 anchorTL();
-  const c::Vec2 anchorT();
-  const c::Vec2 anchorTR();
-  const c::Vec2 anchorR();
-  const c::Vec2 anchorL();
-  const c::Vec2 anchorBR();
-  const c::Vec2 anchorB();
-  const c::Vec2 anchorBL();
+  const CCT_PT anchorC();
+  const CCT_PT anchorTL();
+  const CCT_PT anchorT();
+  const CCT_PT anchorTR();
+  const CCT_PT anchorR();
+  const CCT_PT anchorL();
+  const CCT_PT anchorBR();
+  const CCT_PT anchorB();
+  const CCT_PT anchorBL();
 
-  const c::Vec2 clamp(const c::Vec2 &loc, const c::Size &sz, const Box4 &world);
-  const c::Vec2 clamp(const c::Vec2 &cur, const Box4&);
+  const CCT_PT clamp(const CCT_PT &loc, const CCT_SZ &sz, const Box4 &world);
+  const CCT_PT clamp(const CCT_PT &cur, const Box4&);
 
   float randFloat(float upper);
   float rand();

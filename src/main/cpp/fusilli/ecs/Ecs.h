@@ -16,7 +16,7 @@
 #include "aeon/fusilli.h"
 NS_BEGIN(ecs)
 
-#define MDECL_COMP_TPID(x) \
+#define __decl_comp_tpid(x) \
     virtual const ecs::COMType typeId() { return x; }
 
 //////////////////////////////////////////////////////////////////////////

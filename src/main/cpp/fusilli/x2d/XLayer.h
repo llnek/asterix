@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "2d/CCLayer.h"
 #include "XNode.h"
@@ -27,32 +25,37 @@ protected:
   //c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
   c::Touch::DispatchMode _tMode= c::Touch::DispatchMode::ONE_BY_ONE;
   __decl_ptr(c::EventListenerMouse ,_mouseListener)
-  __decl_tv(int, _mouseBtn, MOUSE_BUTTON_LEFT)
+  __decl_mv(int, _mouseBtn, MOUSE_BUTTON_LEFT)
   __decl_bf(_mouseEnabled)
   __decl_bf(_mouseTarget)
   __decl_bf(_mouseDown)
-  s_arr<bool, 256> _keys;
 
-  virtual void onTouchesBegan(const s_vec<c::Touch*>&, c::Event*);
-  virtual void onTouchesMoved(const s_vec<c::Touch*>&, c::Event*);
-  virtual void onTouchesEnded(const s_vec<c::Touch*>&, c::Event*);
+  __decl_arr(bool, 256, _keys)
+  __decl_nocpyass(XLayer)
+
+  virtual void onTouchesBegan(const VecTouches&, c::Event*);
+  virtual void onTouchesMoved(const VecTouches&, c::Event*);
+  virtual void onTouchesEnded(const VecTouches&, c::Event*);
+
   virtual void onKeyReleased(KEYCODE k, c::Event*);
   virtual void onKeyPressed(KEYCODE k, c::Event*);
+
   virtual void onMouseScroll(c::Event*);
   virtual void onMouseDown(c::Event*);
   virtual void onMouseUp(c::Event*);
   virtual void onMouseMove(c::Event*);
 
-  virtual bool onTouchStart( const s_vec<c::Touch*>& );
-  virtual bool onTouchStart( c::Touch*);
-  virtual void onTouchMotion( const s_vec<c::Touch*>& );
-  virtual void onTouchMotion( c::Touch*);
-  virtual void onTouchEnd( const s_vec<c::Touch*>& );
-  virtual void onTouchEnd( c::Touch*);
-  virtual void onMouseMotion( const c::Vec2&);
+  virtual bool onTouchStart(const VecTouches&);
+  virtual void onTouchMotion(const VecTouches&);
+  virtual void onTouchEnd(const VecTouches&);
 
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchMotion(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
+
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   void disableListeners();
   void enableListeners();
@@ -75,9 +78,8 @@ public:
   // tag value
   virtual int getIID() { return 1; }
   virtual ~XLayer() {}
-
   XLayer();
-  __decl_nocpyass(XLayer)
+
 };
 
 

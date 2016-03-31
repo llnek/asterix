@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #define XCFG() fusii::XConfig::self()
 #include "platform/CCCommon.h"
@@ -41,14 +39,17 @@ protected:
 
   __decl_ptr(c::Dictionary, _frags)
   __decl_ptr(c::Dictionary, _l10n)
+  __decl_nocpyass(XConfig)
 
-  __decl_tv(float, _lastMusicVol,0.5f)
-  __decl_tv(float, _lastSfxVol, 0.5f)
-  __decl_tv(float, _scale, 1.0f)
+  __decl_md(c::ApplicationProtocol::Platform, _platform)
+  __decl_mv(float, _lastMusicVol,0.5)
+  __decl_mv(float, _lastSfxVol, 0.5)
+  __decl_mv(float, _scale, 1)
+  __decl_md(sstr, _room_id)
+  __decl_md(sstr, _app_id)
+  __decl_md(sstr, _game_id)
   __decl_bt(_audioState)
-    
-    c::ApplicationProtocol::Platform _platform;
-    
+
   void loadL10NStrings();
   void setCsts();
 
@@ -65,12 +66,12 @@ protected:
 
 public:
 
-  virtual void handleResolution(const c::Size& ) {}
+  virtual void handleResolution(const CCT_SZ& ) {}
   virtual float getScale() { return _scale; }
   virtual void runOnce() {}
 
   virtual ResolutionPolicy policy() = 0;
-  virtual const c::Size gameSize() = 0;
+  virtual const CCT_SZ gameSize() = 0;
 
   virtual const sstr getWSUrl() {
     return "";
@@ -80,18 +81,10 @@ public:
 
   virtual bool isPortrait() { return true; }
 
-  void setRoomId(const sstr &s) {
-    _room_id=s;
-  }
-
-    void setPlatform(c::ApplicationProtocol::Platform p) {
-        _platform=p;
-    }
-    
-    c::ApplicationProtocol::Platform getPlatform() { return _platform; }
-    
-  const sstr getGameId() { return _game_id; }
-  const sstr getRoomId() { return _room_id; }
+  __decl_gsms(c::ApplicationProtocol::Platform, _platform, Platform)
+  __decl_gsms(sstr, _room_id, RoomId)
+  __decl_getr(sstr, _app_id, AppId)
+  __decl_getr(sstr, _game_id, GameId)
 
   const filepath getAtlas(const sstr& );
   const filepath getFont(const sstr& );
@@ -130,11 +123,6 @@ public:
 
   virtual ~XConfig();
   XConfig();
-  __decl_nocpyass(XConfig)
-
-  __decl_td(sstr, _room_id)
-  __decl_td(sstr, _app_id)
-  __decl_td(sstr, _game_id)
 
   static XConfig* self();
   static void bind(not_null<XConfig*>);
@@ -144,10 +132,10 @@ public:
 //
 template<typename T> T* cstVal(const sstr &key) {
   auto r= fusii::XConfig::self()->getCst(key);
-  if (NNP(r)) {
+  if (N_NIL(r)) {
     return static_cast<T*>( r);
   } else {
-    return nullptr;
+    return CC_NIL;
   }
 }
 

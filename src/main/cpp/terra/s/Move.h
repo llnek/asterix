@@ -27,10 +27,10 @@ class CC_DLL Move : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Move)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
-  MDECL_SYS_TPID( "n/Move")
+  __decl_sys_priority( ecs::Move)
+  __decl_sys_preamble()
+  __decl_sys_update()
+  __decl_sys_tpid( "n/Move")
 
   Move(ecs::Engine *e)
   : System(e)

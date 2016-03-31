@@ -32,9 +32,9 @@ NS_BEGIN(gmath)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
   __decl_iz(tutorial)
-  __decl_td(c::Size,unitSize)
+  __decl_md(c::Size,unitSize)
   __decl_ptr(c::Array, friends)
   __decl_ptr(c::Array, enemies)
   GVars() {

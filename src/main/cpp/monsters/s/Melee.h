@@ -23,10 +23,10 @@ class CC_DLL MeleeLogic : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( 40)
-  MDECL_SYS_TPID("n/MeleeLogic")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority( 40)
+  __decl_sys_tpid("n/MeleeLogic")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   MeleeLogic(ecs::Engine *e)
   : System(e)

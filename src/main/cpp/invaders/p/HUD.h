@@ -28,8 +28,8 @@ class CC_DLL HUDLayer : public f::XLayer {
 public:
 
   STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
   bool reduceLives(int = 1);
   void updateScore(int);

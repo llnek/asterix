@@ -29,8 +29,8 @@ struct CC_DLL Grid : public ecs::Component {
     GOALS= mapGoalSpace();
     S__COPY(seed,vals);
   }
-  MDECL_COMP_TPID("n/Grid")
-  __decl_td(ArrCells, vals)
+  __decl_comp_tpid("n/Grid")
+  __decl_md(ArrCells, vals)
   s_vec<ArrDim> GOALS;
 };
 
@@ -60,18 +60,18 @@ struct CC_DLL Player : public f::CStats {
   }
   Player(int pnum) { this->pnum= pnum; }
   Player() {}
-  __decl_tv(int, category, 0)
-  __decl_tv(int, pnum,  -1)
-  __decl_td(sstr, pidlong)
-  __decl_td(sstr, pid)
-  __decl_td(sstr, color)
-  MDECL_COMP_TPID( "n/Player")
+  __decl_mv(int, category, 0)
+  __decl_mv(int, pnum,  -1)
+  __decl_md(sstr, pidlong)
+  __decl_md(sstr, pid)
+  __decl_md(sstr, color)
+  __decl_comp_tpid( "n/Player")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public ecs::Component {
-  MDECL_COMP_TPID("n/Players")
+  __decl_comp_tpid("n/Players")
   //~owner
   s_arr<Player*,3> parr;
 };
@@ -97,7 +97,7 @@ struct CC_DLL CSquare : public f::CPixie {
   void flip() {
     SCAST(c::Sprite*,node)->setSpriteFrame(png + ".i.png");
   }
-  __decl_td(sstr,png)
+  __decl_md(sstr,png)
   __decl_iz(value)
   __decl_iz(cell)
 };
@@ -105,7 +105,7 @@ struct CC_DLL CSquare : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CSquares  : public ecs::Component {
-  MDECL_COMP_TPID( "n/CSquares" )
+  __decl_comp_tpid( "n/CSquares" )
   s_arr<f::Box4,GD_SZ> boxes;
   s_arr<CSquare*,GD_SZ> sqs;
 };
@@ -113,16 +113,16 @@ struct CC_DLL CSquares  : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CellPos  : public ecs::Component {
-  MDECL_COMP_TPID( "n/CellPos" )
-  __decl_tv(int, cell,  -1)
-  __decl_tv(int, px, -1)
-  __decl_tv(int, py, -1)
+  __decl_comp_tpid( "n/CellPos" )
+  __decl_mv(int, cell,  -1)
+  __decl_mv(int, px, -1)
+  __decl_mv(int, py, -1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
   __decl_iz(pnum)
   __decl_iz(lastWinner)
 };

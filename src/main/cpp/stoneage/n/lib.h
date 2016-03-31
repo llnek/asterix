@@ -48,15 +48,15 @@ struct CC_DLL GVars : public ecs::Component {
   s_vec<Gem*> allGems;
   s_vec<f::Cell2I> matchArray;
 
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   __decl_ptr(c::Node,gemsContainer)
   __decl_bf(enabled)
   __decl_ptr(Gem,selectedGem)
   __decl_ptr(Gem,targetGem)
-  __decl_td(f::Cell2I,selectedIndex)
-  __decl_td(f::Cell2I,targetIndex)
-  __decl_td(c::Vec2,selectedGemPos)
+  __decl_md(f::Cell2I,selectedIndex)
+  __decl_md(f::Cell2I,targetIndex)
+  __decl_md(c::Vec2,selectedGemPos)
   __decl_iz(combos)
   __decl_bf(addingCombos)
 };

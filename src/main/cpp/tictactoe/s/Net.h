@@ -32,10 +32,10 @@ class CC_DLL Net : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY(ecs::NetPlay)
-  MDECL_SYS_TPID( "n/Net")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::NetPlay)
+  __decl_sys_tpid( "n/Net")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   __decl_ptr(ecs::Node, _board)
   __decl_ptr(ecs::Node, _arena)

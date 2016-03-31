@@ -24,10 +24,10 @@ class CC_DLL HealthLogic : public ecs::System {
 
 public:
 
-  MDECL_SYS_TPID("n/HealthLogic")
-  MDECL_SYS_PRIORITY( 10)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid("n/HealthLogic")
+  __decl_sys_priority( 10)
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   HealthLogic(ecs::Engine *e)
   : System(e)

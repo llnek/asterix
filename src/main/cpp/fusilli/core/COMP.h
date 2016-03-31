@@ -10,6 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
+//////////////////////////////////////////////////////////////////////////////
 
 #include "2d/CCSprite.h"
 #include "Primitives.h"
@@ -19,7 +20,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CGesture : public ecs::Component {
-  MDECL_COMP_TPID("f/CGesture")
+  __decl_comp_tpid("f/CGesture")
   __decl_bf(down)
   __decl_bf(up)
   __decl_bf(right)
@@ -31,7 +32,7 @@ struct CC_DLL CGesture : public ecs::Component {
 //
 struct CC_DLL CHealth : public ecs::Component {
   virtual bool alive() { return curHP > 0; }
-  MDECL_COMP_TPID("f/CHealth")
+  __decl_comp_tpid("f/CHealth")
   CHealth(int h, int c) {
     origHP=h;
     curHP=c;
@@ -65,14 +66,14 @@ struct CC_DLL CHealth : public ecs::Component {
 struct CC_DLL Looper : public ecs::Component {
   virtual ~Looper() { CC_DROP(tm.timer); }
   Looper() {}
-  MDECL_COMP_TPID("f/Looper")
-  __decl_td(DLTimer, tm)
+  __decl_comp_tpid("f/Looper")
+  __decl_md(DLTimer, tm)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Loopers : public ecs::Component {
-  MDECL_COMP_TPID("f/Loopers")
+  __decl_comp_tpid("f/Loopers")
   virtual ~Loopers() {
     F__LOOP(it,tms) {
       auto &z= *it;
@@ -80,25 +81,25 @@ struct CC_DLL Loopers : public ecs::Component {
     }
   }
   Loopers() {}
-  s_vec<DLTimer> tms;
+  __decl_vec(DLTimer,tms)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CAutoma : public ecs::Component {
-  MDECL_COMP_TPID("f/CAutoma")
+  __decl_comp_tpid("f/CAutoma")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CHuman : public ecs::Component {
-  MDECL_COMP_TPID("f/CHuman")
+  __decl_comp_tpid("f/CHuman")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CStats : public ecs::Component {
-  MDECL_COMP_TPID("f/CStats")
+  __decl_comp_tpid("f/CStats")
   __decl_iz(state)
   __decl_iz(value)
   CStats(int v) { value=v;}
@@ -108,7 +109,7 @@ struct CC_DLL CStats : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CMelee : public ecs::Component {
-  MDECL_COMP_TPID("f/CMelee")
+  __decl_comp_tpid("f/CMelee")
   long long lastDamageTime;
   __decl_bf(selfDie)
   __decl_fz(damage)
@@ -119,29 +120,26 @@ struct CC_DLL CMelee : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CMove : public ecs::Component {
-  MDECL_COMP_TPID("f/CMove")
+  __decl_comp_tpid("f/CMove")
 
-  __decl_td(c::Vec2, moveTarget)
-  __decl_td(c::Vec2, lastPos)
-  __decl_td(c::Vec2, nextPos)
+  __decl_md(CCT_PT, moveTarget)
+  __decl_md(CCT_PT, lastPos)
+  __decl_md(CCT_PT, nextPos)
 
-  __decl_td(c::Vec2, maxSpeed)
-  __decl_td(c::Vec2, maxAccel)
-  __decl_td(c::Vec2, speed)
-  __decl_td(c::Vec2, accel)
-  __decl_td(c::Vec2, vel)
-  __decl_td(c::Vec2, acc)
+  __decl_md(CCT_V2, maxSpeed)
+  __decl_md(CCT_V2, maxAccel)
+  __decl_md(CCT_V2, speed)
+  __decl_md(CCT_V2, accel)
+  __decl_md(CCT_V2, vel)
+  __decl_md(CCT_V2, acc)
 
   __decl_fz(interval)//millis
   __decl_fz(power)
   __decl_fz(angle)
 
-  CMove(const c::Vec2 &t, float ms, float ma) {
+  CMove(const CCT_PT &t, float ms, float ma)
+  : CMove(ms, ma) {
     moveTarget=t;
-    maxSpeed.y=ms;
-    maxSpeed.x=ms;
-    maxAccel.y=ma;
-    maxAccel.x=ma;
   }
   CMove(float ms, float ma) {
     maxSpeed.y=ms;
@@ -156,28 +154,30 @@ struct CC_DLL CMove : public ecs::Component {
 //
 class CC_DLL UICObj : public ecs::Component {
 protected:
+
   virtual bool isAuto() { return _auto; }
+  void flipAuto(bool b) { _auto=b; }
   void bindNode(c::Node *n) {
     _auto=true; _node=dynamic_cast<c::Node*>(n);
-    CCLOG("ecs called, node= %p", _node);
+    //CCLOG("ecs called, node= %p", _node);
   }
   __decl_bf(_auto)
-  void flipAuto(bool b) { _auto=b; }
+
 public:
 
-  MDECL_COMP_TPID("f/CPixie")
+  __decl_comp_tpid("f/CPixie")
   __decl_ptr(c::Node, _node)
 
   UICObj(c::Node *n) { _node=n; }
   UICObj() {
-    CCLOG("inside UICObj ctor");
+    //CCLOG("inside UICObj ctor");
   }
   virtual ~UICObj() {
-    CCLOG("Poo! I am dead %p", this);
+    //CCLOG("Poo! I am dead %p", this);
   }
 
-  virtual void hide() { if (_node) _node->setVisible(false); }
-  virtual void show() { if (_node) _node->setVisible(true); }
+  virtual void hide() { CC_HIDE(_node); }
+  virtual void show() { CC_SHOW(_node); }
   virtual void inflate(float x, float y) {
     if (_node) {
       _node->setPosition(x,y);
@@ -199,9 +199,9 @@ public:
   virtual const c::Rect bbox() {
     return _node ? _node->boundingBox() : CC_ZRT; }
   virtual void setPos(float x, float y) { if (_node) _node->setPosition(x,y); }
-  virtual const c::Vec2 pos() {
+  virtual const CCT_PT pos() {
     return _node ? _node->getPosition() : CC_ZPT; }
-  virtual const c::Size csize() {
+  virtual const CCT_SZ csize() {
     return _node ? CC_CSIZE(_node) : CC_ZSZ; }
   virtual float circum() {
     return _node ? CC_CSIZE(_node).width : 0; }
@@ -215,18 +215,20 @@ public:
 //
 class CC_DLL CPixie : public c::Sprite, public UICObj {
 protected:
+
   CPixie() { bindNode(this); }
+
 public:
 
   static owner<CPixie*> reifyFrame(const sstr &n) {
-    auto z= new CPixie();
+    auto z= mc_new(CPixie);
     z->initWithSpriteFrameName(n);
     z->autorelease();
     return z;
   }
 
   static owner<CPixie*> reifyFile(const sstr &n) {
-    auto z= new CPixie();
+    auto z= mc_new(CPixie);
     z->initWithFile(n);
     z->autorelease();
     return z;
@@ -239,11 +241,13 @@ public:
 //
 class CC_DLL CDrawNode : public c::DrawNode, public UICObj {
 protected:
+
   CDrawNode() { bindNode(this); }
+
 public:
 
   static owner<CDrawNode*> reify() {
-    auto z= new CDrawNode();
+    auto z= mc_new(CDrawNode);
     z->init();
     z->autorelease();
     return z;
@@ -256,11 +260,13 @@ public:
 //
 class CC_DLL C2DNode : public c::Node, public UICObj {
 protected:
+
   C2DNode() { bindNode(this); }
+
 public:
 
   static owner<C2DNode*> reify() {
-    auto z= new C2DNode();
+    auto z= mc_new(C2DNode);
     z->init();
     z->autorelease();
     return z;

@@ -51,6 +51,7 @@ public:
 
   const T& operator[](int pos);
   const T& get(int pos);
+  T& getRef(int pos);
 
   explicit FArray(int z);
   FArray();
@@ -228,6 +229,14 @@ template<typename T>
 void FArray<T>::setLast(const T &v) {
   assert(_sz > 0);
   _data[_sz-1]=v;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+template<typename T>
+T& FArray<T>::getRef(int pos) {
+  assert(pos >= 0 && pos < _sz);
+  return _data[pos];
 }
 
 //////////////////////////////////////////////////////////////////////////////

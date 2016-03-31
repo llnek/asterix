@@ -45,7 +45,7 @@ struct CC_DLL RocketMotion : public f::CMove {
   __decl_fz(vr)
 
   __decl_iz(rotationOrientation)
-  __decl_td(c::Vec2, pivot)
+  __decl_md(c::Vec2, pivot)
   __decl_fz(angularSpeed)
 
   static owner<RocketMotion*> create();

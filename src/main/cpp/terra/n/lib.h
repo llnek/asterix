@@ -41,11 +41,11 @@ struct EnemyType {
 
   EnemyType() {}
 
-  __decl_tv(Attacks, attackMode, Attacks::NORMAL)
-  __decl_tv(Moves, moveType,Moves::RUSH)
+  __decl_mv(Attacks, attackMode, Attacks::NORMAL)
+  __decl_mv(Moves, moveType,Moves::RUSH)
   __decl_iz(type)
-  __decl_td(sstr, textureName)
-  __decl_td(sstr, bulletType)
+  __decl_md(sstr, textureName)
+  __decl_md(sstr, bulletType)
   __decl_iz(HP)
   __decl_iz(scoreValue)
 

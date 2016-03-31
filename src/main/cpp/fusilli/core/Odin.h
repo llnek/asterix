@@ -10,9 +10,8 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
+
 #include "network/WebSocket.h"
 #include "OdinEvent.h"
 NS_ALIAS(n, cocos2d::network)
@@ -33,45 +32,53 @@ typedef s::function<void (OdinEvent*)> OEventFN;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL OdinIO : public n::WebSocket::Delegate {
-
 protected:
 
+  __decl_mv(CType, _state, CType::S_NOT_CONNECTED)
+  __decl_ptr(n::WebSocket, _socket)
+  __decl_nocpyass(OdinIO)
+
+  __decl_md(OEventFN, cbNetwork)
+  __decl_md(OEventFN, cbSession)
+  __decl_md(OEventFN, cbAll)
+
+  __decl_md(sstr, _passwd)
+  __decl_md(sstr, _room)
+  __decl_md(sstr, _game)
+  __decl_md(sstr, _user)
+
   void onEvent(OdinEvent*);
-  OEventFN cbSession;
-  OEventFN cbNetwork;
-  OEventFN cbAll;
 
 public:
 
-  void listen(const MType, OEventFN );
+  void listen(MType, OEventFN );
   void listen(OEventFN );
   void reset();
   void cancelAll();
-  void cancel(const MType);
+  void cancel(MType);
 
-  virtual void onError(n::WebSocket* , const n::WebSocket::ErrorCode& ) ;
   virtual void onMessage(n::WebSocket*, const n::WebSocket::Data& ) ;
+  virtual void onError(n::WebSocket* , const n::WebSocket::ErrorCode& ) ;
 
   virtual void onClose(n::WebSocket* ) ;
   virtual void onOpen(n::WebSocket*) ;
 
-  __decl_tv(CType, _state, CType::S_NOT_CONNECTED)
-  __decl_ptr(n::WebSocket, _socket)
-  __decl_td(sstr, _room)
-  __decl_td(sstr, _game)
-  __decl_td(sstr, _user)
-  __decl_td(sstr, _passwd)
+  __decl_gsms(n::WebSocket*, _socket, Socket)
+  __decl_gsms(CType, _state, State)
+  __decl_gsms(sstr, _room, RoomId)
+  __decl_gsms(sstr, _game, GameId)
+  __decl_gsms(sstr, _user, User)
+  __decl_gsms(sstr, _passwd, Passwd)
 
   virtual ~OdinIO();
   OdinIO() {}
-  __decl_nocpyass(OdinIO)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void netSend(not_null<OdinIO*>, const MType, const EType, j::json body);
+void netSend(not_null<OdinIO*>, MType, EType, j::json body);
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
-void netSendMsg(not_null<OdinIO*>, j::json fullmsg);
+void netSendMsg(not_null<OdinIO*>, const j::json &fullmsg);
 
 n::WebSocket* connect(not_null<OdinIO*>, const sstr &url);
 void disconnect(OdinIO*);

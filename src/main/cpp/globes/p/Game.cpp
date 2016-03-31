@@ -28,8 +28,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
+  __decl_deco_ui()
+  __decl_get_iid(2)
 
   void createLevel(GVars*);
   void fallTile(GVars*, int,int,float);

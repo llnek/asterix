@@ -24,7 +24,7 @@ struct CC_DLL Ball : public f::CPixie {
   Ball(not_null<c::Node*> s)
     : CPixie(s) {
   }
-  MDECL_COMP_TPID( "n/Ball")
+  __decl_comp_tpid( "n/Ball")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,10 +50,10 @@ public:
     this->pnum= pnum;
   }
 
-  MDECL_COMP_TPID( "n/Paddle")
+  __decl_comp_tpid( "n/Paddle")
   s_arr<KEYCODE,2> kcodes;
   __decl_iz(pnum)
-  __decl_td(sstr, snd)
+  __decl_md(sstr, snd)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,32 +74,32 @@ struct CC_DLL Player : public f::CStats {
 
   Player() {}
 
-  MDECL_COMP_TPID( "n/Player")
+  __decl_comp_tpid( "n/Player")
   __decl_iz(category)
   __decl_iz(pnum)
-  __decl_td(sstr, color)
-  __decl_td(sstr, pid)
-  __decl_td(sstr, pname)
+  __decl_md(sstr, color)
+  __decl_md(sstr, pid)
+  __decl_md(sstr, pname)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Players : public ecs::Component {
-  MDECL_COMP_TPID( "n/Players")
+  __decl_comp_tpid( "n/Players")
   s_arr<Player,3> parr;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Faux : public f::CAutoma {
-  MDECL_COMP_TPID("n/Faux")
+  __decl_comp_tpid("n/Faux")
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Position : public ecs::Component {
 
-  MDECL_COMP_TPID( "n/Position")
+  __decl_comp_tpid( "n/Position")
 
   Position(float lp) {
     lastP= lp;
@@ -113,14 +113,14 @@ struct CC_DLL Position : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  __decl_td(c::Vec2, p2p)
-  __decl_td(c::Vec2, p1p)
-  __decl_td(c::Size, pz)
-  __decl_td(c::Size, bz)
-  __decl_td(c::Vec2, bp)
+  __decl_md(c::Vec2, p2p)
+  __decl_md(c::Vec2, p1p)
+  __decl_md(c::Size, pz)
+  __decl_md(c::Size, bz)
+  __decl_md(c::Vec2, bp)
   __decl_bf(poked)
   __decl_iz(pnum )
-  MDECL_COMP_TPID( "n/GVars")
+  __decl_comp_tpid( "n/GVars")
 };
 
 

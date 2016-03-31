@@ -25,10 +25,10 @@ class CC_DLL Logic : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Logic)
-  MDECL_SYS_TPID("n/Logic")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority( ecs::Logic)
+  __decl_sys_tpid("n/Logic")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   __decl_ptr(c::DelayTime, botTimer)
   __decl_ptr(ecs::Node, robot)

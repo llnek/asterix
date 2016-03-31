@@ -19,7 +19,7 @@ NS_BEGIN(eskimo)
 //
 struct CC_DLL LevelSelector : public f::XScene {
   STATIC_REIFY_SCENE(LevelSelector)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 };
 
 NS_END

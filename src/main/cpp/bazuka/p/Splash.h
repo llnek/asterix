@@ -27,8 +27,8 @@ class CC_DLL Splash : public f::XScene {
 public:
 
   STATIC_REIFY_SCENE(Splash)
-  MDECL_UPDATE()
-  MDECL_DECORATE()
+  __decl_update()
+  __decl_deco_ui()
 
 };
 

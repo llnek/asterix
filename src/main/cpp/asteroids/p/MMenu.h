@@ -19,14 +19,14 @@ NS_BEGIN(asteroids)
 //
 struct CC_DLL MCX : public f::SCTX {
   MCX(VOIDFN v) { back=v; }
-  __decl_td(VOIDFN, back);
+  __decl_md(VOIDFN, back);
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL MMenu : public f::XScene {
   STATIC_REIFY_SCENE_CTX(MMenu)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 };
 
 

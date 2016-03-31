@@ -23,10 +23,10 @@ class CC_DLL PlayerLogic : public ecs::System {
   void process(float);
 public:
 
-  MDECL_SYS_TPID("n/PlayerLogic")
-  MDECL_SYS_PRIORITY( 30)
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid("n/PlayerLogic")
+  __decl_sys_priority( 30)
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   PlayerLogic(ecs::Engine *e)
   : System(e)

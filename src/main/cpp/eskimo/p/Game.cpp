@@ -30,15 +30,15 @@ struct CC_DLL GLayer : public f::GameLayer {
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  __decl_td(c::ValueVector, _levels)
+  __decl_md(c::ValueVector, _levels)
   __decl_ptr(b2World, _world)
 
   __decl_ptr(ecs::Node, _player)
   __decl_ptr(ecs::Node, _shared)
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
+  __decl_deco_ui()
+  __decl_get_iid(2)
 
   void onAcceleration(c::Acceleration*, c::Event*);
   void clearLayer();

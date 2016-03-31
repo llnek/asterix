@@ -25,7 +25,7 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL BLayer : public f::XLayer {
   STATIC_REIFY_LAYER(BLayer)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 };
 void BLayer::decoUI() {
   regoAtlas("back-tiles", 1);
@@ -46,8 +46,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
-  MDECL_GET_IID(2)
-  MDECL_DECORATE()
+  __decl_get_iid(2)
+  __decl_deco_ui()
 
   __decl_ptr(ecs::Node, _arena)
   __decl_ptr(ecs::Node, _ship)

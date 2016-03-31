@@ -71,7 +71,7 @@ struct CC_DLL Terrain : public Widget {
   void move(float xMove);
   void reset();
 
-  MDECL_COMP_TPID("n/Terrain")
+  __decl_comp_tpid("n/Terrain")
 
   CC_SYNTHESIZE(bool, _startTerrain, StartTerrain);
 };

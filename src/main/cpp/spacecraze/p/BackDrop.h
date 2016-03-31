@@ -20,14 +20,14 @@ NS_BEGIN(spacecraze)
 //
 class CC_DLL BackDrop : public f::XLayer {
 
-__decl_td(s_vec<c::Sprite*>, _stars)
-  __decl_td(c::Size, _sz)
+__decl_md(s_vec<c::Sprite*>, _stars)
+  __decl_md(c::Size, _sz)
 
 public:
 
   STATIC_REIFY_LAYER(BackDrop)
-  MDECL_UPDATE()
-  MDECL_DECORATE()
+  __decl_update()
+  __decl_deco_ui()
 
 };
 

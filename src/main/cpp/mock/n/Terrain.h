@@ -29,9 +29,9 @@ class CC_DLL Terrain : public f::CPixie {
 
   __decl_fz(_lastBlockHeight)
   __decl_fz(_lastBlockWidth)
-  __decl_td(c::Rect,_visRect)
+  __decl_md(c::Rect,_visRect)
 
-  __decl_tv(int,_currentPatternCnt,1)
+  __decl_mv(int,_currentPatternCnt,1)
   __decl_iz(_currentPatternIndex)
   __decl_iz(_blockPoolIndex)
   __decl_iz(_currentWidthIndex)

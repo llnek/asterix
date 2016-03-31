@@ -40,8 +40,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void onEnd();
 
   STATIC_REIFY_LAYER(GLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(2)
+  __decl_deco_ui()
+  __decl_get_iid(2)
 
   __decl_ptr(ecs::Node, _aliens)
   __decl_ptr(ecs::Node,_ship)

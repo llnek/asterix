@@ -39,8 +39,8 @@ public:
   int isDone();
 
   STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
 };
 

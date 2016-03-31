@@ -45,7 +45,7 @@ enum {
 struct CC_DLL LLayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(LLayer)
-  MDECL_DECORATE()
+  __decl_deco_ui()
 
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);

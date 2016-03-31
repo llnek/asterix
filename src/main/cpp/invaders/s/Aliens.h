@@ -21,10 +21,10 @@ NS_BEGIN(invaders)
 //
 struct CC_DLL Aliens : public ecs::System {
 
-  MDECL_SYS_TPID( "n/Aliens")
-  MDECL_SYS_PRIORITY(ecs::AI)
-  MDECL_SYS_UPDATE()
-  MDECL_SYS_PREAMBLE()
+  __decl_sys_tpid( "n/Aliens")
+  __decl_sys_priority(ecs::AI)
+  __decl_sys_update()
+  __decl_sys_preamble()
 
   void forwardOneAlien(ecs::Node*, float delta);
   void shuffleOneAlien(ecs::Node*, int stepx);

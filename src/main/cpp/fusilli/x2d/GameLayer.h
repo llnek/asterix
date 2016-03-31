@@ -10,9 +10,7 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
 
 #include "base/CCEventKeyboard.h"
 #include "ecs/Engine.h"
@@ -24,19 +22,19 @@ NS_BEGIN(fusii)
 class CC_DLL GameLayer : public XLayer {
 protected:
 
+  __decl_ptr(ecs::Engine, _engine)
+  __decl_nocpyass(GameLayer)
+
   virtual void update(float);
   virtual void surcease();
 
   virtual void decoPost();
   virtual void decoPre();
 
-  __decl_ptr(ecs::Engine, _engine)
-
 public:
 
   virtual ~GameLayer();
   GameLayer();
-  __decl_nocpyass(GameLayer)
 };
 
 

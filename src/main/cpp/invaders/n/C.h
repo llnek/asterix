@@ -25,7 +25,7 @@ struct CC_DLL AlienSquad : public ecs::Component {
     this->stepx=step;
   }
 
-  MDECL_COMP_TPID("n/AlienSquad")
+  __decl_comp_tpid("n/AlienSquad")
 
   //not owner of pool
   __decl_ptr(f::FPool, aliens)
@@ -34,7 +34,7 @@ struct CC_DLL AlienSquad : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL Rank : public f::CStats {
-  MDECL_COMP_TPID( "n/Rank")
+  __decl_comp_tpid( "n/Rank")
   __decl_iz(rank)
   Rank(int v, int r)
   : CStats(v) {
@@ -47,7 +47,7 @@ struct CC_DLL Cannon : public ecs::Component {
 
   Cannon(bool b) { hasAmmo=b; }
   Cannon() {}
-  MDECL_COMP_TPID( "n/Cannon")
+  __decl_comp_tpid( "n/Cannon")
   __decl_bt(hasAmmo)
 };
 
@@ -67,7 +67,7 @@ struct CC_DLL Explosion : public f::CPixie {
       c::CallFunc::create([=]() { this->deflate(); })));
   }
 
-  MDECL_COMP_TPID("n/Explosion")
+  __decl_comp_tpid("n/Explosion")
   __decl_fz(frameTime)
 };
 
@@ -82,18 +82,18 @@ struct CC_DLL Ship : public f::CPixie {
     frame1=s1;
   }
 
-  MDECL_COMP_TPID("n/Ship")
-  __decl_td(sstr, frame0)
-  __decl_td(sstr, frame1)
+  __decl_comp_tpid("n/Ship")
+  __decl_md(sstr, frame0)
+  __decl_md(sstr, frame1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars  : public ecs::Component {
 
-  __decl_td(c::Size, alienSize)
-  __decl_td(c::Size, shipSize)
-  MDECL_COMP_TPID("n/GVars")
+  __decl_md(c::Size, alienSize)
+  __decl_md(c::Size, shipSize)
+  __decl_comp_tpid("n/GVars")
 
 };
 

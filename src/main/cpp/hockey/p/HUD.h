@@ -20,8 +20,8 @@ NS_BEGIN(hockey)
 struct CC_DLL HUDLayer : public f::XLayer {
 
   STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
   s_arr<c::Label*,3> _slabels;
   s_arr<int,3> _scores;

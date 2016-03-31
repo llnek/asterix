@@ -49,8 +49,8 @@ public:
   Shield* getShield() { return _shield; }
   void setShield(Shield*);
 
-  __decl_tv(float, radius,PLAYER_RADIUS)
-  __decl_tv(c::Vec2, speed, CC_ZPT)
+  __decl_mv(float, radius,PLAYER_RADIUS)
+  __decl_mv(c::Vec2, speed, CC_ZPT)
   __decl_bf(isDying)
 
 };

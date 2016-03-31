@@ -10,12 +10,11 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-//
-#define MDECL_GET_IID(x) virtual int getIID() { return x; }
-#define MDECL_UPDATE() virtual void update(float);
-#define MDECL_DECORATE() virtual void decoUI();
+
+#define __decl_get_iid(x) virtual int getIID() { return x; }
+#define __decl_update() virtual void update(float);
+#define __decl_deco_ui() virtual void decoUI();
 
 #include "2d/CCSpriteBatchNode.h"
 #include "platform/CCCommon.h"
@@ -25,7 +24,8 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL SCTX {
-  __decl_tv(int, count,1)
+  __decl_mv(int, count,1)
+  SCTX() {}
   virtual ~SCTX() {}
 };
 
@@ -35,12 +35,12 @@ class CC_DLL XNode {
 protected:
 
   virtual c::Menu* addAudioIcons(const s_arr<c::MenuItem*,2>&,
-    const c::Vec2 &anchor, const c::Vec2 &pos);
+    const CCT_PT &anchor, const CCT_PT &pos);
 
-  virtual c::SpriteBatchNode* regoAtlas( const sstr &name, int zx = 0);
+  virtual c::SpriteBatchNode* regoAtlas(const sstr &name, int zx = 0);
   virtual void bind(c::Node* p) { _self = p; }
 
-  s_map<sstr, c::SpriteBatchNode*> _atlases;
+  __decl_map(sstr, c::SpriteBatchNode*, _atlases)
   __decl_ptr(c::Node, _self)
   __decl_ptr(SCTX, _context)
 
@@ -48,14 +48,14 @@ protected:
 
 public:
 
-  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos, int z, int tag=0);
-  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const c::Vec2 &pos);
+  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const CCT_PT &pos, int z, int tag=0);
+  virtual void addAtlasFrame(const sstr &atlas, const sstr &n, const CCT_PT &pos);
 
   virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n, int z, int tag=0);
   virtual void addAtlasItem(const sstr &atlas, not_null<c::Node*> n);
 
-  virtual void addFrame(const sstr &n, const c::Vec2 &pos, int z, int tag=0);
-  virtual void addFrame(const sstr &n, const c::Vec2 &pos);
+  virtual void addFrame(const sstr &n, const CCT_PT &pos, int z, int tag=0);
+  virtual void addFrame(const sstr &n, const CCT_PT &pos);
 
   virtual c::SpriteBatchNode* getAtlas(const sstr &name);
 

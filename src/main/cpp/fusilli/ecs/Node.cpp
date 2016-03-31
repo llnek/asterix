@@ -29,6 +29,8 @@ Node::~Node() {
   F__LOOP(it, _parts) {
     auto c= it->second;
     _engine->rego()->unbind(c,this);
+    // only delete if the object is not a reference-counted
+    // type
     if (!c->isAuto())
     delete c;
   }
@@ -64,7 +66,7 @@ Component* Node::get(const COMType &z) {
   if (it != _parts.end()) {
     return it->second;
   } else {
-    return nullptr;
+    return P_NIL;
   }
 }
 

@@ -29,10 +29,10 @@ class CC_DLL AI : public ecs::System {
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::AI)
-  MDECL_SYS_TPID("n/AI")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority( ecs::AI)
+  __decl_sys_tpid("n/AI")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   AI(ecs::Engine *e)
   : System(e)

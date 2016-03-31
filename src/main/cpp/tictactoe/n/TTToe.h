@@ -26,7 +26,7 @@ class CC_DLL TTToe : public ag::GameBoard<BD_SZ>, public f::CAutoma {
 
   bool testWin(const ArrCells& , int actor, const ArrDim&);
 
-  __decl_td(ArrCells, _grid)
+  __decl_md(ArrCells, _grid)
   __decl_iz(_nil)
 
   s_vec<ArrDim> _GOALS;
@@ -56,7 +56,7 @@ public:
   virtual bool isNil(int cellv);
   virtual int getFirstMove();
 
-  MDECL_COMP_TPID( "n/SmartAI" )
+  __decl_comp_tpid( "n/SmartAI" )
 
 };
 

@@ -21,10 +21,10 @@ NS_BEGIN(breakout)
 //
 struct CC_DLL Move : public ecs::System {
 
-  MDECL_SYS_PRIORITY(ecs::Move)
-  MDECL_SYS_TPID("s/Move")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::Move)
+  __decl_sys_tpid("s/Move")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Move(ecs::Engine *e)
   : System(e)

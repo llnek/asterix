@@ -21,7 +21,7 @@ NS_BEGIN(tetris)
 //
 class CC_DLL Generate : public ecs::System {
 
-  __decl_td(ShapeInfo, _nextShapeInfo)
+  __decl_md(ShapeInfo, _nextShapeInfo)
   __decl_ptr(ecs::Node, _arena)
   __decl_ptr(Shape, _nextShape)
 
@@ -32,9 +32,9 @@ class CC_DLL Generate : public ecs::System {
 public:
 
   virtual int priority() { return ecs::AI + 60; }
-  MDECL_SYS_TPID( "s/Generate")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_tpid( "s/Generate")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Generate(ecs::Engine *e)
   : System(e)

@@ -46,7 +46,7 @@ struct BackgroundManager : public c::Node {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  MDECL_COMP_TPID( "n/GVars" )
+  __decl_comp_tpid( "n/GVars" )
 
   static const int powerup_frequency_size = 10;
   static const int skill6_formations_size = 17;

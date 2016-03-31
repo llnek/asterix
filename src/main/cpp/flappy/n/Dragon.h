@@ -39,8 +39,8 @@ public:
   void update(float);
   void init();
 
-  __decl_tv(c::Vec2, dragonPosition, c::Vec2(0,0))
-  __decl_tv(c::Vec2, dragonSpeed, c::Vec2(0,0))
+  __decl_mv(c::Vec2, dragonPosition, c::Vec2(0,0))
+  __decl_mv(c::Vec2, dragonSpeed, c::Vec2(0,0))
   __decl_bf(mustApplyGravity)
 
 };
