@@ -25,8 +25,8 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::preamble() {
-  _terrain= _engine->getNodes("n/Terrain")[0];
-  _player= _engine->getNodes("f/CPixie")[0];
+  _terrain= _engine->getNodes("f/CAutoma")[0];
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -42,13 +42,14 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
-  auto tn=CC_GEC(Terrain,_terrain,"n/Terrain");
+  auto pm=CC_GEC(PlayerMotion,_player,"f/CMove");
   auto py=CC_GEC(Player,_player,"f/CPixie");
+  auto tn=CC_GEC(Terrain,_terrain,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto wb=cx::visBox();
 
-  if (py->node->getPositionY() < -py->height() ||
-      py->node->getPositionX() < - HTV(py->width()) ) {
+  if (py->getPositionY() < - cx::getHeight(py) ||
+      py->getPositionX() < - HTV(cx::getWidth(py)) ) {
     if (ss->state == kGamePlay) {
       //_running = false;
 
@@ -65,8 +66,7 @@ void Resolve::process(float dt) {
       CC_SHOW(ss->hat);
 
       auto rotate = c::RotateBy::create(2.0, 660);
-      auto jump = c::JumpBy::create(2.0,
-          c::Vec2(0,10), wb.top * 0.8, 1);
+      auto jump = c::JumpBy::create(2.0, CCT_PT(0,10), wb.top * 0.8, 1);
       ss->hat->runAction(rotate);
       ss->hat->runAction(jump);
       cx::pauseMusic();
@@ -75,7 +75,7 @@ void Resolve::process(float dt) {
   }
 
   //update score
-  if (tn->getStartTerrain() && py->vel.x > 0) {
+  if (tn->isStartTerrain() && pm->vel.x > 0) {
     int v= dt * 50;
     auto msg= j::json({
         {"score", v}
@@ -86,7 +86,7 @@ void Resolve::process(float dt) {
     ss->speedIncreaseTimer += dt;
     if (ss->speedIncreaseTimer > ss->speedIncreaseInterval) {
       ss->speedIncreaseTimer = 0;
-      py->maxSpeed=py->maxSpeed +4;
+      pm->maxSpeed.x = pm->maxSpeed.x +4;
     }
   }
 

@@ -14,174 +14,27 @@
 #include "core/CCSX.h"
 #include "Player.h"
 
-#define P_ACCELERATION 0.05
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Player::~Player(){
-  CC_SAFE_RELEASE(_floatAnimation);
-  CC_SAFE_RELEASE(_rideAnimation);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Player::Player(not_null<c::Node*> s)
-  : Widget(s) {
-
+bool Player::initWithSpriteFrameName(const sstr &fn) {
+  auto rc= c::Sprite::initWithSpriteFrameName(fn);
   auto wb=cx::visBox();
+  if (!rc) { return false; }
 
-  maxSpeed = PLAYER_INITIAL_SPEED;
-  speed = PLAYER_INITIAL_SPEED;
-
-  _floatingTimerMax = 2;
-  _floatingTimer = 0;
-  _floating = false;
-  nextPos= c::Vec2(0,0);
-  nextPos.y = wb.top * 0.6;
-  _state = kPlayerMoving;
-  _jumping = false;
-  _hasFloated = false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-Player* Player::create() {
-
-  auto s= cx::reifySprite("player_1.png");
-  auto player = mc_new1(Player,s);
-
-  player->setSize();
-  player->initPlayer();
-  return player;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Player::update (float dt) {
-
-  if (speed + P_ACCELERATION <= maxSpeed) {
-    speed += P_ACCELERATION;
-  } else {
-    speed = maxSpeed;
-  }
-
-  vel.x = speed;
-
-  switch (_state) {
-    case kPlayerMoving:
-      vel.y -= G_FORCE;
-      if (_hasFloated) _hasFloated = false;
-    break;
-
-    case kPlayerFalling:
-      if (_floating ) {
-        vel.y -= FLOATNG_GRAVITY;
-        vel.x *= FLOATING_FRICTION;
-      } else {
-        vel.y -= G_FORCE;
-        vel.x *= AIR_FRICTION;
-        _floatingTimer = 0;
-      }
-    break;
-
-    case kPlayerDying:
-      vel.y -= G_FORCE;
-      vel.x = -speed;
-      node->setPositionX(node->getPositionX() + vel.x);
-    break;
-  }
-
-  if (_jumping) {
-    _state = kPlayerFalling;
-    vel.y += PLAYER_JUMP * 0.25;
-    if (vel.y > PLAYER_JUMP ) _jumping = false;
-  }
-
-  if (vel.y < -TERMINAL_VELOCITY) vel.y = -TERMINAL_VELOCITY;
-
-  nextPos.y = node->getPositionY() + vel.y;
-
-  if (vel.x * vel.x < 0.01) vel.x = 0;
-  if (vel.y * vel.y < 0.01) vel.y = 0;
-
-  if (_floating) {
-    _floatingTimer += dt;
-    if (_floatingTimer > _floatingTimerMax) {
-      cx::sfxPlay("falling");
-      _floatingTimer = 0;
-      this->setFloating(false);
-    }
-  }
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Player::reset () {
-
-  auto wb=cx::visBox();
-
-  maxSpeed = PLAYER_INITIAL_SPEED;
-  speed = PLAYER_INITIAL_SPEED;
-
-  vel = c::Vec2(0,0);
-
-  this->setFloating(false);
-  node->setRotation(0);
-
-  nextPos.y = wb.top * 0.6;
-  node->setPosition(wb.right * 0.2, nextPos.y);
-  _state = kPlayerMoving;
-  _jumping = false;
-  _hasFloated = false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Player::setFloating (bool value) {
-
-  if (_floating == value) {
-  return; }
-  if (value && _hasFloated) {
-  return; }
-
-  _floating = value;
-  node->stopAllActions();
-
-  if (value) {
-    _hasFloated = true;
-    cx::sfxPlay("openUmbrella");
-      SCAST(c::Sprite*,node)->setDisplayFrame(cx::getSpriteFrame("player_float.png"));
-    node->runAction(_floatAnimation);
-    vel.y += HTV(PLAYER_JUMP);
-  } else {
-    node->runAction(_rideAnimation);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Player::initPlayer() {
-
-  auto wb=cx::visBox();
-
-  node->setAnchorPoint(cx::anchorT());
-  node->setPosition(wb.right * 0.2, nextPos.y);
-
-  _height = 252 * 0.95;
-  _width = 184;
+  this->setPosition(wb.right * 0.2, wb.top * 0.6);
+  this->setAnchorPoint(cx::anchorT());
 
   auto anim= c::Animation::create();
-  for (auto i = 1; i <= 3; ++i) {
-    auto f= cx::getSpriteFrame("player_"+s::to_string(i)+".png");
-    anim->addSpriteFrame(f);
-  }
   anim->setRestoreOriginalFrame(false);
   anim->setDelayPerUnit(0.2 / 3.0);
   anim->setLoops(-1);
+  for (auto i = 1; i <= 3; ++i) {
+    anim->addSpriteFrame(
+      cx::getSpriteFrame("player_"+FTOS(i)+".png"));
+  }
   _rideAnimation = c::Animate::create(anim);
   CC_KEEP(_rideAnimation);
 
@@ -192,7 +45,67 @@ void Player::initPlayer() {
   _floatAnimation = c::RepeatForever::create( (c::ActionInterval*) easeSwing );
   CC_KEEP(_floatAnimation);
 
-  node->runAction(_rideAnimation);
+  animateRide();
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Player*> Player::create() {
+  auto p= mc_new(Player);
+  p->initWithSpriteFrameName("player_1.png");
+  p->autorelease();
+  return p;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Player::animateFloat() {
+  this->runAction(_floatAnimation);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Player::animateRide() {
+  this->runAction(_rideAnimation);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+Player::~Player(){
+  CC_DROP(_floatAnimation);
+  CC_DROP(_rideAnimation);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+PlayerMotion::PlayerMotion() {
+  auto wb=cx::visBox();
+  maxSpeed.x = PLAYER_INITIAL_SPEED;
+  speed.x = PLAYER_INITIAL_SPEED;
+  nextPos= CCT_PT(0, wb.top * 0.6);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void PlayerMotion::setFloating(Player *py, bool value) {
+
+  if (_floating == value ||
+      (value && _hasFloated)) {
+  return; }
+
+  py->stopAllActions();
+  _floating = value;
+
+  if (value) {
+    py->setDisplayFrame(cx::getSpriteFrame("player_float.png"));
+    _hasFloated = true;
+    py->animateFloat();
+    vel.y += HTV(PLAYER_JUMP);
+    cx::sfxPlay("openUmbrella");
+  } else {
+    py->animateRide();
+  }
 }
 
 

@@ -14,14 +14,6 @@
 
 #include "C.h"
 
-#define PLAYER_INITIAL_SPEED 8
-#define PLAYER_JUMP 42
-#define G_FORCE 1.5
-#define FLOATNG_GRAVITY 0.4
-#define TERMINAL_VELOCITY 70
-#define FLOATING_FRICTION 0.98f
-#define AIR_FRICTION 0.99f
-
 NS_BEGIN(victorian)
 
 enum PlayerState {
@@ -32,81 +24,58 @@ enum PlayerState {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Player : public Widget {
+class CC_DLL Player : public f::CPixie {
+protected:
+
+  bool initWithSpriteFrameName(const sstr&);
 
   __decl_ptr(c::Action, _floatAnimation)
   __decl_ptr(c::Action, _rideAnimation)
 
-  __decl_bf(_hasFloated)
+  Player() {}
 
-  __decl_iz(_floatingInterval)
-  __decl_iz(_floatingTimerMax)
-  __decl_fz(_floatingTimer)
+public:
 
-  void initPlayer();
-
-  Player(not_null<c::Node*>);
+  static owner<Player*> create();
+  void animateFloat();
+  void animateRide();
   virtual ~Player();
-
-  static Player* create();
-
-  virtual void update (float dt);
-  void setFloating (bool value);
-  void reset();
-
-  virtual void place () {
-    auto wb=cx::visBox();
-    node->setPositionY(nextPos.y);
-    if (vel.x > 0 &&
-        node->getPositionX() < wb.right * 0.2) {
-      node->setPositionX(node->getPositionX() + vel.x);
-      if (node->getPositionX() > wb.right * 0.2) {
-        node->setPositionX(wb.right * 0.2);
-      }
-    }
-  }
-
-  virtual float left() {
-    return node->getPositionX() - HTV(_width);
-  }
-
-  virtual float right() {
-    return node->getPositionX() + HTV(_width);
-  }
-
-  virtual float top() {
-    return node->getPositionY() ;
-  }
-
-  virtual float bottom() {
-    return node->getPositionY() - _height  ;
-  }
-
-  virtual float next_left() {
-    return nextPos.x - HTV(_width);
-  }
-
-  virtual float next_right() {
-    return nextPos.x + HTV(_width);
-  }
-
-  virtual float next_top() {
-    return nextPos.y ;
-  }
-
-  virtual float next_bottom() {
-    return nextPos.y - _height;
-  }
-
-  //__decl_comp_tpid("n/Player")
-  __decl_comp_tpid("f/CPixie")
-
-  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
-  CC_SYNTHESIZE(PlayerState, _state, State);
-  CC_SYNTHESIZE(bool, _inAir, InAir);
-  CC_SYNTHESIZE(bool, _jumping, Jumping);
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL PlayerStats : public f::CStats {
+  void reset() { state = kPlayerMoving; }
+  PlayerStats() {
+    reset();
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL PlayerMotion : public f::CMove {
+
+  __decl_mv(float,_floatingTimerMax, 2)
+  __decl_fz(_floatingTimer)
+  __decl_bf(_floating)
+  __decl_bf(_jumping)
+  __decl_bf(_hasFloated)
+  __decl_bf(_inAir)
+
+public:
+
+  bool isFloating() { return _floating; }
+  void setFloating(Player*, bool);
+
+  __decl_gsms(float,_floatingTimerMax,FloatingTimerMax)
+  __decl_gsms(float,_floatingTimer,FloatingTimer)
+  __decl_gsms(bool,_hasFloated,HasFloated)
+
+  __decl_gsms_is(_jumping, Jumping)
+  __decl_gsms_is(_inAir, InAir)
+
+  PlayerMotion();
+};
 
 
 

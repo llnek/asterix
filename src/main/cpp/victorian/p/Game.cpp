@@ -32,8 +32,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
 
-  virtual void onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onInited();
   void startGame();
@@ -44,8 +44,9 @@ struct CC_DLL GLayer : public f::GameLayer {
 };
 
 //////////////////////////////////////////////////////////////////////////////
+//
 void GLayer::onInited() {
-  _terrain = _engine->getNodes("n/Terrain")[0];
+  _terrain = _engine->getNodes("f/CAutoma")[0];
   _player = _engine->getNodes("f/CGesture")[0];
   _shared = _engine->getNodes("n/GVars")[0];
 
@@ -91,7 +92,7 @@ void GLayer::onInited() {
 
   auto anim= c::Animation::create();
   for (auto i = 1; i <= 3; ++i) {
-    auto f = cx::getSpriteFrame("jam_" + s::to_string(i) + ".png");
+    auto f = cx::getSpriteFrame("jam_" + FTOS(i) + ".png");
     anim->addSpriteFrame(f);
   }
   anim->setRestoreOriginalFrame(false);
@@ -103,7 +104,7 @@ void GLayer::onInited() {
 
   ss->jam->setPosition(wb.right * 0.19, wb.top * 0.47);
   ss->jamMove = c::MoveTo::create(6.0,
-      c::Vec2(-wb.right * 0.3, ss->jam->getPositionY()));
+      CCT_PT(-wb.right * 0.3, ss->jam->getPositionY()));
   CC_KEEP(ss->jamMove);
 
   ss->speedIncreaseInterval = 15;
@@ -117,9 +118,8 @@ void GLayer::onInited() {
   CC_SHOW(ss->jam);
   ss->jam->runAction(ss->jamAnimate);
 
-  cx::pauseMusic();
+  //cx::pauseMusic();
   cx::sfxMusic("background3", true);
-
   startGame();
 }
 
@@ -129,7 +129,7 @@ void GLayer::startGame() {
     //_tutorialLabel->setVisible(false);
     //_intro->setVisible(false);
     //_mainMenu->setVisible(false);
-  auto t=CC_GEC(Terrain, _terrain,"n/Terrain");
+  auto t=CC_GEC(Terrain, _terrain,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
   ss->jam->runAction(ss->jamMove);
   cx::sfxPlay("start");
@@ -147,17 +147,17 @@ void GLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto tap = touch->getLocation();
-  onMouseStart(tap);
-  return true;
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
 
-  auto tn=CC_GEC(Terrain, _terrain,"n/Terrain");
+  auto pm=CC_GEC(PlayerMotion, _player,"f/CMove");
+  auto ps=CC_GEC(PlayerStats, _player,"f/CStats");
   auto py=CC_GEC(Player, _player,"f/CPixie");
+  auto tn=CC_GEC(Terrain, _terrain,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
 
   switch (ss->state) {
@@ -177,15 +177,15 @@ void GLayer::onMouseStart(const c::Vec2 &loc) {
     break;
 
     case kGamePlay:
-      if (py->getState() == kPlayerFalling) {
-        py->setFloating(!py->getFloating());
+      if (ps->state == kPlayerFalling) {
+        pm->setFloating(py, !pm->isFloating());
       } else {
-        if (py->getState() != kPlayerDying) {
-          py->setJumping(true);
+        if (ps->state != kPlayerDying) {
+          pm->setJumping(true);
           cx::sfxPlay("jump");
         }
       }
-      tn->activateChimneysAt(py);
+      tn->activateChimneys();
     break;
 
     case kGameTutorial:
@@ -196,33 +196,36 @@ void GLayer::onMouseStart(const c::Vec2 &loc) {
     break;
 
     case kGameTutorialJump:
-      if (py->getState() == kPlayerMoving) {
-        py->setJumping(true);
+      if (ps->state == kPlayerMoving) {
+        pm->setJumping(true);
         cx::sfxPlay("jump");
       }
     break;
 
     case kGameTutorialFloat:
-      if (!py->getFloating()) {
-        py->setFloating (true);
+      if (!pm->isFloating()) {
+        pm->setFloating (py, true);
         //_running = true;
       }
     break;
 
     case kGameTutorialDrop:
-      py->setFloating (false);
+      pm->setFloating(py, false);
       //_running = true;
     break;
   }
+
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-  auto p=CC_GEC(Player, _player,"f/CPixie");
+void GLayer::onMouseClick(const CCT_PT &loc) {
+  auto pm=CC_GEC(PlayerMotion, _player,"f/CMove");
+  auto py=CC_GEC(Player, _player,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
   if (ss->state == kGamePlay) {
-    p->setJumping(false);
+    pm->setJumping(false);
   }
 }
 
@@ -243,7 +246,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
-  play();
+  //play();
 }
 
 

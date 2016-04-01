@@ -24,7 +24,7 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  _terrain= _engine->getNodes("n/Terrain")[0];
+  _terrain= _engine->getNodes("f/CAutoma")[0];
   _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
@@ -32,31 +32,42 @@ void Move::preamble() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto tn=CC_GEC(Terrain, _terrain,"n/Terrain");
+  auto pm=CC_GEC(PlayerMotion, _player,"f/CMove");
+  auto ps=CC_GEC(PlayerStats, _player,"f/CStats");
+  auto tn=CC_GEC(Terrain, _terrain,"f/CPixie");
   auto py=CC_GEC(Player, _player,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
   auto atlas=MGML()->getAtlas("game-pics");
   auto wb=cx::visBox();
 
-  py->update(dt);
-  tn->move(py->vel.x);
+  processPlayer(dt);
+  tn->
+  move(pm->vel.x);
 
-  if (py->getState() != kPlayerDying) {
-    tn->checkCollision(py);
+  if (ps->state != kPlayerDying) {
+    tn->checkCollision(_player);
   }
 
-  py->place();
+  //place player
+  py->setPositionY(pm->nextPos.y);
+  if (pm->vel.x > 0 &&
+      py->getPositionX() < wb.right * 0.2) {
+    py->setPositionX(py->getPositionX() + pm->vel.x);
+    if (py->getPositionX() > wb.right * 0.2) {
+      py->setPositionX(wb.right * 0.2);
+    }
+  }
 
-  if (py->nextPos.y > wb.top * 0.6) {
-    atlas->setPositionY((wb.top * 0.6 - py->nextPos.y) * 0.8);
+  if (pm->nextPos.y > wb.top * 0.6) {
+    atlas->setPositionY((wb.top * 0.6 - pm->nextPos.y) * 0.8);
   } else {
     atlas->setPositionY(0);
   }
 
     //update parallax
-  if (py->vel.x > 0) {
+  if (pm->vel.x > 0) {
     ss->background->setPositionX(
-        ss->background->getPositionX() - py->vel.x * 0.25);
+        ss->background->getPositionX() - pm->vel.x * 0.25);
 
     float diffx;
     if (ss->background->getPositionX() < - CC_CSIZE(ss->background).width) {
@@ -65,7 +76,7 @@ void Move::process(float dt) {
     }
 
     ss->foreground->setPositionX(
-        ss->foreground->getPositionX() - py->vel.x * 4);
+        ss->foreground->getPositionX() - pm->vel.x * 4);
 
     if (ss->foreground->getPositionX() < - CC_CSIZE(ss->foreground).width * 4) {
       diffx = fabs(ss->foreground->getPositionX()) - CC_CSIZE(ss->foreground).width * 4;
@@ -74,13 +85,13 @@ void Move::process(float dt) {
 
     auto ps=MGMS()->getPool("Clouds")->ls();
     F__LOOP(it,ps) {
-      auto e= (ecs::Node*) *it;
+      auto e= *it;
       auto ui=CC_GEC(f::CPixie,e,"f/CPixie");
-      ui->node->setPositionX(
-          ui->node->getPositionX() - py->vel.x * 0.15);
-      if (ui->node->getPositionX() + HWZ(ui->csize()) < 0 )
-        ui->node->setPositionX(
-            wb.right + HWZ(ui->csize()));
+      auto sz= CC_CSIZE(ui);
+      ui->setPositionX(
+          ui->getPositionX() - pm->vel.x * 0.15);
+      if (ui->getPositionX() + HWZ(sz) < 0 )
+        ui->setPositionX( wb.right + HWZ(sz));
     }
   }
 
@@ -88,6 +99,72 @@ void Move::process(float dt) {
     if (ss->jam->getPositionX() < -wb.right * 0.2) {
       ss->jam->stopAllActions();
       CC_HIDE(ss->jam);
+    }
+  }
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::processPlayer(float dt) {
+  auto pm=CC_GEC(PlayerMotion, _player,"f/CMove");
+  auto ps=CC_GEC(PlayerStats, _player,"f/CStats");
+  auto py=CC_GEC(Player, _player,"f/CPixie");
+  auto ss=CC_GEC(GVars, _shared,"n/GVars");
+  auto wb=cx::visBox();
+
+  if (pm->speed.x + P_ACCELERATION <= pm->maxSpeed.x) {
+    pm->speed.x += P_ACCELERATION;
+  } else {
+    pm->speed.x = pm->maxSpeed.x;
+  }
+
+  pm->vel.x = pm->speed.x;
+
+  switch (ps->state) {
+    case kPlayerMoving:
+      pm->vel.y -= G_FORCE;
+      if (pm->getHasFloated()) pm->setHasFloated(false);
+    break;
+
+    case kPlayerFalling:
+      if (pm->isFloating() ) {
+        pm->vel.x *= FLOATING_FRICTION;
+        pm->vel.y -= FLOATNG_GRAVITY;
+      } else {
+        pm->vel.x *= AIR_FRICTION;
+        pm->vel.y -= G_FORCE;
+        pm->setFloatingTimer(0);
+      }
+    break;
+
+    case kPlayerDying:
+      pm->vel.y -= G_FORCE;
+      pm->vel.x = -pm->speed.x;
+      py->setPositionX(py->getPositionX() + pm->vel.x);
+    break;
+  }
+
+  if (pm->isJumping()) {
+    ps->state = kPlayerFalling;
+    pm->vel.y += PLAYER_JUMP * 0.25;
+    if (pm->vel.y > PLAYER_JUMP ) pm->setJumping(false);
+  }
+
+  if (pm->vel.y < -TERMINAL_VELOCITY) pm->vel.y = -TERMINAL_VELOCITY;
+
+  pm->nextPos.y = py->getPositionY() + pm->vel.y;
+
+  if (pm->vel.x * pm->vel.x < 0.01) pm->vel.x = 0;
+  if (pm->vel.y * pm->vel.y < 0.01) pm->vel.y = 0;
+
+  if (pm->isFloating() ) {
+    pm->setFloatingTimer(pm->getFloatingTimer() + dt);
+    if (pm->getFloatingTimer() > pm->getFloatingTimerMax() ) {
+      pm->setFloating(py, false);
+      pm->setFloatingTimer(0);
+      cx::sfxPlay("falling");
     }
   }
 

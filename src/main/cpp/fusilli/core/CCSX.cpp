@@ -270,14 +270,8 @@ c::Label* reifyLabel(float x, float y,
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Test collision of 2 entities using cc-rects
-bool collide(not_null<CPixie*> a, not_null<CPixie*> b) {
-  return (N_NIL(a) && N_NIL(b)) ? collideN(a, b) : false;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Test collision of 2 sprites
-bool collideN(not_null<c::Node*> a, not_null<c::Node*> b) {
+bool collide(not_null<c::Node*> a, not_null<c::Node*> b) {
   return (N_NIL(a) && N_NIL(b)) ? bbox(a).intersectsRect( bbox(b)) : false;
 }
 
@@ -333,7 +327,7 @@ j::json readJson(const sstr &fpath) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-bool outOfBound(not_null<CPixie*> ent, const Box4 &B) {
+bool outOfBound(not_null<c::Node*> ent, const Box4 &B) {
   return N_NIL(ent) ? outOfBound(bbox4(ent), B) : false;
 }
 
@@ -478,13 +472,6 @@ bool isTransitioning() {
 const CCT_SZ calcSize(const sstr &frame) {
   //return reifySprite(frame)->getContentSize();
   return reifySprite(frame)->boundingBox().size;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Calculate halves of width and height of this sprite
-//
-const CCT_SZ halfHW(not_null<CPixie*> n) {
-  return halfHW(n);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -773,9 +760,9 @@ const CCT_PT anchorTL() { return CCT_PT(0, 1); }
 // not used for now.
 //
 void resolveElastic(
-    not_null<CPixie*> obj1,
+    not_null<c::Node*> obj1,
     CCT_V2 &vel1,
-    not_null<CPixie*> obj2, CCT_V2 &vel2) {
+    not_null<c::Node*> obj2, CCT_V2 &vel2) {
 
   auto pos2 = obj2->getPosition();
   auto pos1= obj1->getPosition();

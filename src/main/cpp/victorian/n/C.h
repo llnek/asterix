@@ -16,6 +16,15 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 
+#define PLAYER_INITIAL_SPEED 8
+#define PLAYER_JUMP 42
+#define G_FORCE 1.5
+#define FLOATNG_GRAVITY 0.4
+#define TERMINAL_VELOCITY 70
+#define FLOATING_FRICTION 0.98f
+#define AIR_FRICTION 0.99f
+#define P_ACCELERATION 0.05
+
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
@@ -48,28 +57,6 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Widget : public f::CPixie {
-
-  virtual float radius() { return HTV(_width); }
-  virtual float height() { return _height; }
-  virtual float width() { return _width; }
-
-  Widget(not_null<c::Node*> s) : CPixie(s) {}
-  void setSize() {
-    _height = CC_CSIZE(node).height;
-    _width = CC_CSIZE(node).width;
-  }
-
-  __decl_md(c::Vec2, nextPos)
-  __decl_md(c::Vec2, vel)
-  __decl_fz(maxSpeed)
-  __decl_fz(speed)
-  __decl_fz(_height)
-  __decl_fz(_width)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL GVars : public ecs::Component {
   __decl_ptr(c::Animate,jamAnimate)
   __decl_ptr(c::MoveTo,jamMove)
@@ -86,7 +73,8 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
 };
 
-
+void resetTerrain(not_null<ecs::Node*>);
+void resetPlayer(not_null<ecs::Node*>);
 
 NS_END
 

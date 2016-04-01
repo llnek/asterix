@@ -103,6 +103,7 @@ typedef std::string sstr;
 #define S__COPY(f,t) s::copy(s::begin(f), s::end(f), s::begin(t))
 #define S__ADD(c,n) c.push_back(n)
 #define S__NIL(x) x = nullptr;
+#define S__MIX(c) std::random_shuffle(c.begin(),c.end())
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ casting

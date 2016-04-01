@@ -34,9 +34,9 @@ namespace ccsx {
   void hibernate(not_null<ecs::Node*>);
   void kumakaze(not_null<ecs::Node*>);
 
-  void resolveElastic(not_null<CPixie*> rA,
+  void resolveElastic(not_null<c::Node*> rA,
       CCT_V2 &velA,
-      not_null<CPixie*> rB, CCT_V2 &velB);
+      not_null<c::Node*> rB, CCT_V2 &velB);
 
   const CCT_SZ scaleSize(const CCT_SZ&, float scale);
 
@@ -85,8 +85,7 @@ namespace ccsx {
 
   void randomPos(not_null<c::Node*>);
 
-  bool collideN(not_null<c::Node*>, not_null<c::Node*> );
-  bool collide(not_null<CPixie*>, not_null<CPixie*>);
+  bool collide(not_null<c::Node*>, not_null<c::Node*> );
 
   void setDevRes(float width, float height,
       ResolutionPolicy pcy = ResolutionPolicy::NO_BORDER);
@@ -95,7 +94,7 @@ namespace ccsx {
   bool isIntersect(const Box4&, const Box4&);
   bool isPortrait();
 
-  bool outOfBound(not_null<CPixie*>, const Box4 &B);
+  bool outOfBound(not_null<c::Node*>, const Box4 &B);
   bool outOfBound(const Box4 &src, const Box4 &B);
 
   c::DelayTime* reifyTimer(not_null<c::Node*>, float millis);
@@ -122,9 +121,6 @@ namespace ccsx {
   bool isTapped(not_null<c::Node*>, const CCT_PT&);
 
   const Box4 bbox4(not_null<c::Node*>);
-  inline const Box4 bbox4(not_null<CPixie*> c) {
-    return bbox4(c);
-  }
 
   void push(not_null<c::Scene*>, float delay);
   void push(not_null<c::Scene*>);
@@ -147,8 +143,6 @@ namespace ccsx {
   const CCT_SZ calcSize(const sstr &frame);
 
   const CCT_SZ halfHW(not_null<c::Node*>);
-  const CCT_SZ halfHW(not_null<CPixie*>);
-
   const CCT_RT bbox(not_null<c::Node*>);
 
   float getContentHeight(not_null<c::Node*>);

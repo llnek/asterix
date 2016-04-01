@@ -35,20 +35,27 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Block : public c::Sprite {
+class CC_DLL Block : public c::Sprite {
+protected:
 
   virtual bool initWithSpriteFrameName(const sstr&);
+
+  __decl_bf(_puffing)
+  __decl_iz(_type)
+
+  c::Vector<c::Sprite*> _chimneys;
+  Block() {}
 
   c::Vector<c::Sprite*> _wallTiles;
   c::Vector<c::Sprite*> _roofTiles;
 
-  __decl_ptr(c::SpriteFrame,_tile1)
-  __decl_ptr(c::SpriteFrame,_tile2)
-  __decl_ptr(c::SpriteFrame,_tile3)
-  __decl_ptr(c::SpriteFrame,_tile4)
-
-  __decl_ptr(c::SpriteFrame, _roof1)
   __decl_ptr(c::SpriteFrame, _roof2)
+  __decl_ptr(c::SpriteFrame, _roof1)
+
+  __decl_ptr(c::SpriteFrame,_tile4)
+  __decl_ptr(c::SpriteFrame,_tile3)
+  __decl_ptr(c::SpriteFrame,_tile2)
+  __decl_ptr(c::SpriteFrame,_tile1)
 
   __decl_ptr(c::Action, _puffAnimation)
   __decl_ptr(c::Action, _puffSpawn)
@@ -56,21 +63,19 @@ struct CC_DLL Block : public c::Sprite {
   __decl_ptr(c::Action, _puffFade)
   __decl_ptr(c::Action, _puffScale)
 
-  __decl_iz(_tileHeight)
-  __decl_iz(_tileWidth)
   __decl_iz(_puffIndex)
 
+public:
+
+  bool isPuffing() { return _puffing; }
+  void setPuffing(bool value);
   void createPuff();
 
+  void setup(const CCT_SZ&, int type);
   static owner<Block*> create();
 
-  void setupBlock(int width, int height, int type);
-  void setPuffing(bool value);
-  void hidePuffs() { setPuffing(false); }
-
-  CC_SYNTHESIZE(c::Vector<c::Sprite*>, _chimneys, Chimneys);
-  CC_SYNTHESIZE(int, _type, Type);
-  CC_SYNTHESIZE_READONLY(bool, _puffing, Puffing);
+  __decl_gsms(int,_type,Type)
+  virtual ~Block();
 
 };
 

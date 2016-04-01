@@ -35,30 +35,31 @@ void GEngine::initEntities() {
   //add clouds
   for (auto i = 0; i < 4; ++i) {
     auto cy = wb.top * (i % 2 == 0 ? 0.7 : 0.8);
-    auto c = cx::reifySprite("cloud.png");
-    auto ui= mc_new1(f::CPixie,c);
-    auto ent= this->reifyNode("Cloud");
-    ent->take();
+    auto ui= f::CPixie::reifyFrame("cloud.png");
+    auto ent= this->reifyNode("Cloud", true);
     ent->checkin(ui);
     ui->inflate(wb.right * 0.15 + i * wb.right * 0.25, cy);
-    MGML()->addAtlasItem("game-pics",c, kBackground);
+    MGML()->addAtlasItem("game-pics",ui, kBackground);
     pool->checkin(ent);
   }
 
-  auto ent=this->reifyNode("Arena");
+  auto ent=this->reifyNode("Arena", true);
   ent->checkin(mc_new(GVars));
 
-  ent=this->reifyNode("Terrain");
+  ent=this->reifyNode("Terrain", true);
+  ent->checkin(mc_new(f::CAutoma));
   ent->checkin(t);
 
-  ent=this->reifyNode("Player");
+  ent=this->reifyNode("Player", true);
+  ent->checkin(mc_new(PlayerMotion));
+  ent->checkin(mc_new(PlayerStats));
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
-  ent->checkin(mc_new(f::CMove));
   ent->checkin(p);
 
-  MGML()->addAtlasItem("game-pics",t->node, kMiddleground);
-  MGML()->addAtlasItem("game-pics",p->node, kBackground);
+  MGML()->addAtlasItem("game-pics",t, kMiddleground);
+  MGML()->addAtlasItem("game-pics",p, kBackground);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

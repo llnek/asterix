@@ -9,40 +9,39 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
-
-#include "ecs/System.h"
-#include "GEngine.h"
+#include "Terrain.h"
+#include "Player.h"
+#include "C.h"
 
 NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Move : public ecs::System {
+//
+void resetTerrain(not_null<ecs::Node*> node) {
+  auto t=CC_GEC(Terrain,node,"f/CPixie");
+  t->reset();
+}
 
-  void processPlayer(float);
-  void process(float);
+//////////////////////////////////////////////////////////////////////////////
+//
+void resetPlayer(not_null<ecs::Node*> node) {
+  auto pm= CC_GEC(PlayerMotion,node,"f/CMove");
+  auto ps= CC_GEC(PlayerStats,node,"f/CStats");
+  auto py= CC_GEC(Player,node,"f/CPixie");
+  auto wb=cx::visBox();
 
-public:
-
-  __decl_sys_priority( ecs::Move)
-  __decl_sys_tpid("n/Move")
-  __decl_sys_preamble()
-  __decl_sys_update()
-
-  Move(ecs::Engine *e)
-  : System(e)
-  {}
-
-  __decl_ptr(ecs::Node, _terrain)
-  __decl_ptr(ecs::Node, _player)
-  __decl_ptr(ecs::Node, _shared)
-
-};
-
+  pm->maxSpeed.x = PLAYER_INITIAL_SPEED;
+  pm->speed.x = PLAYER_INITIAL_SPEED;
+  pm->vel = CC_ZPT;
+  pm->setFloating(py, false);
+  py->setRotation(0);
+  pm->nextPos.y = wb.top * 0.6;
+  py->setPosition(wb.right * 0.2, pm->nextPos.y);
+  ps->state = kPlayerMoving;
+  pm->setJumping(false);
+  pm->setHasFloated(false);
+}
 
 NS_END
-
-
 
 
