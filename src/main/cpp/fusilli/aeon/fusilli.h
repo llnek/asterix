@@ -128,21 +128,41 @@ typedef std::string sstr;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+#define __declapi_gsms_is(v, funName) \
+virtual bool is##funName(); \
+virtual void set##funName(bool p);
+
+#define __declapi_ismx(v, funName) \
+virtual bool is##funName();
+
+#define __decl_ismx(v, funName) \
+virtual bool is##funName() { return v; }
+
 #define __decl_gsms_is(v, funName) \
 virtual bool is##funName() { return v; } \
 virtual void set##funName(bool p) { v=p; }
 
 /////////////////////////////////////////////////////////////////////////////
 //
+#define __declapi_gsms(varType, v, funName) \
+virtual varType get##funName(); \
+virtual void set##funName(varType p);
+
 #define __decl_gsms(varType, v, funName) \
-virtual  varType get##funName() { return v; } \
-virtual void set##funName( varType p) { v=p; }
+virtual varType get##funName() { return v; } \
+virtual void set##funName(varType p) { v=p; }
+
+#define __declapi_getr(varType, v, funName) \
+virtual varType get##funName();
 
 #define __decl_getr(varType, v, funName) \
-virtual  varType get##funName() { return v; }
+virtual varType get##funName() { return v; }
+
+#define __declapi_setr(varType, v, funName) \
+virtual void set##funName(varType p);
 
 #define __decl_setr(varType, v, funName) \
-virtual void set##funName( varType p) { v=p; }
+virtual void set##funName(varType p) { v=p; }
 
 //////////////////////////////////////////////////////////////////////////////
 // c++ constructor stuff

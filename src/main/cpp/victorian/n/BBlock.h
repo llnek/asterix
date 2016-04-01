@@ -12,7 +12,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "C.h"
+#include "core/COMP.h"
 
 #define TILE_H_SIZE 6
 #define TILE_W_SIZE 8
@@ -25,7 +25,7 @@ enum {
   kChimney
 };
 
-enum {
+enum  {
   kBlockGap,
   kBlock1,
   kBlock2,
@@ -36,26 +36,10 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Block : public c::Sprite {
-protected:
 
-  virtual bool initWithSpriteFrameName(const sstr&);
-
-  __decl_bf(_puffing)
-  __decl_iz(_type)
-
-  c::Vector<c::Sprite*> _chimneys;
+  virtual bool initSpriteWithFrameName(const sstr&);
+  void createPuff();
   Block() {}
-
-  c::Vector<c::Sprite*> _wallTiles;
-  c::Vector<c::Sprite*> _roofTiles;
-
-  __decl_ptr(c::SpriteFrame, _roof2)
-  __decl_ptr(c::SpriteFrame, _roof1)
-
-  __decl_ptr(c::SpriteFrame,_tile4)
-  __decl_ptr(c::SpriteFrame,_tile3)
-  __decl_ptr(c::SpriteFrame,_tile2)
-  __decl_ptr(c::SpriteFrame,_tile1)
 
   __decl_ptr(c::Action, _puffAnimation)
   __decl_ptr(c::Action, _puffSpawn)
@@ -63,19 +47,38 @@ protected:
   __decl_ptr(c::Action, _puffFade)
   __decl_ptr(c::Action, _puffScale)
 
+  __decl_ptr(c::SpriteFrame, _tile4)
+  __decl_ptr(c::SpriteFrame, _tile3)
+  __decl_ptr(c::SpriteFrame, _tile2)
+  __decl_ptr(c::SpriteFrame, _tile1)
+  __decl_ptr(c::SpriteFrame, _roof2)
+  __decl_ptr(c::SpriteFrame, _roof1)
+
+  c::Vector<c::Sprite*> _wallTiles;
+  c::Vector<c::Sprite*> _roofTiles;
+  c::Vector<c::Sprite*> _chimneys;
+
   __decl_iz(_puffIndex)
+  __decl_bf(_puffing)
+  __decl_iz(_type)
+
+  __decl_fz(_height)
+  __decl_fz(_width)
+  __decl_fz(_tileH)
+  __decl_fz(_tileW)
 
 public:
 
-  bool isPuffing() { return _puffing; }
-  void setPuffing(bool value);
-  void createPuff();
-
-  void setup(const CCT_SZ&, int type);
+  void setup(float width, float height, int type);
   static owner<Block*> create();
-
-  __decl_gsms(int,_type,Type)
   virtual ~Block();
+
+  __declapi_setr(bool,_puffing,Puffing)
+  __decl_gsms(int, _type, Type)
+  __decl_ismx(_puffing,Puffing)
+
+  __decl_getr(float,_height, Height)
+  __decl_getr(float,_width, Width)
 
 };
 

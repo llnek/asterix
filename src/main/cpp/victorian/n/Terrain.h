@@ -12,27 +12,22 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "BBlock.h"
+#include "Block.h"
 #include "Player.h"
-#include "C.h"
 
-NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Terrain : public f::CPixie {
 
-  virtual bool initWithSpriteFrameName(const sstr&);
-  Terrain();
-
   c::Vector<Block*> _blockPool;
   c::Vector<Block*> _blocks;
 
-  __decl_iz(_minTerrainWidth)
-  __decl_iz(_lastBlockHeight)
-  __decl_iz(_lastBlockWidth)
-
+  __decl_fz(_minTerrainWidth)
+  __decl_iz(_blockPoolIndex)
+  __decl_fz(_lastBlockHeight)
+  __decl_fz(_lastBlockWidth)
   __decl_bf(_showGap)
 
   __decl_iz(_currentPatternIndex)
@@ -40,35 +35,38 @@ class CC_DLL Terrain : public f::CPixie {
   __decl_iz(_currentWidthIndex)
   __decl_iz(_currentHeightIndex)
   __decl_iz(_currentTypeIndex)
-  __decl_iz(_blockPoolIndex)
-
   __decl_iz(_increaseGapInterval)
   __decl_fz(_increaseGapTimer)
   __decl_iz(_gapSize)
-  __decl_bf(_startTerrain)
 
-public:
+  virtual bool initSpriteWithFrameName(const sstr&);
+  void addBlocks(float currentWidth);
 
-  void addBlocks(int currentWidth);
   void distributeBlocks();
   void initBlock(Block*);
 
-  virtual float width() {
-    int w = 0;
-    for (auto b : _blocks) {
-      w += cx::getWidth(b);
+  float totalWidth() {
+    float width = 0;
+    for (auto block : _blocks) {
+      width += block->getWidth();
     }
-    return w;
+    return width;
   }
+
+  __decl_bf(_startTerrain)
+
+  Terrain();
+
+public:
 
   __decl_gsms_is(_startTerrain, StartTerrain);
   static owner<Terrain*> create();
   virtual ~Terrain();
 
   void checkCollision(not_null<ecs::Node*>);
-  void activateChimneys();
+  void activateChimney();
+  void move (float xMove);
   void reset();
-  void move(float xMove);
 
 };
 

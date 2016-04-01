@@ -17,342 +17,330 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
-//////////////////////////////////////////////////////////////////////////////
-//
 static int patterns[] = {1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,3,3,3};
 static int widths[] = {2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4};
 static int heights[] = {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,4};
 static int types[] = {1,2,3,4,1,3,2,4,3,2,1,4,2,3,1,4,2,3,1,2,3,2,3,4,1,2,4,3,1,3,1,4,2,4,2,1,2,3};
 
-static s_vec<int> _blockPattern(patterns,patterns + SIZEOFX(patterns,int));
-static s_vec<int> _blockWidths(widths,widths + SIZEOFX(widths,int));
+static s_vec<int> _blockPattern(patterns, patterns + SIZEOFX(patterns,int));
+static s_vec<int> _blockWidths(widths, widths + SIZEOFX(widths,int));
 static s_vec<int> _blockHeights(heights, heights + SIZEOFX(heights,int));
 static s_vec<int> _blockTypes(types, types + SIZEOFX(types,int));
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Terrain::~Terrain () {
-  _blockPool.clear();
-  _blocks.clear();
+    _blockPool.clear();
+    _blocks.clear();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-Terrain::Terrain() {
-  _currentPatternCnt=1;
+Terrain::Terrain()
+:_startTerrain(false)
+,_blockPoolIndex(0)
+,_currentPatternCnt(1)
+,_currentPatternIndex(0)
+,_currentTypeIndex(0)
+,_currentWidthIndex(0)
+,_currentHeightIndex(0)
+,_blockPool(20)
+,_blocks(20)
+,_showGap(false)
+{
+}
+Terrain * Terrain::create() {
+    auto terrain = new Terrain();
+  if (terrain && terrain->initWithSpriteFrameName("blank.png")) {
+        terrain->initTerrain();
+    terrain->autorelease();
+    return terrain;
+  }
+  CC_SAFE_DELETE(terrain);
+  return nullptr;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-owner<Terrain*> Terrain::create() {
-  auto t= mc_new(Terrain);
-  t->initWithSpriteFrameName("blank.png");
-  t->autorelease();
-  return t;
-}
+void Terrain::initTerrain () {
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Terrain::initWithSpriteFrameName(const sstr &fn) {
+    _screenSize = Director::getInstance()->getWinSize();
 
-  auto rc= c::Sprite::initWithSpriteFrameName(fn);
-  if (!rc) { return false; }
-  auto wz= cx::visSize();
-
-  _minTerrainWidth = wz.width * 1.5;
-  _increaseGapInterval = 5000;
-  _increaseGapTimer = 0;
-  _gapSize = 2;
+    _increaseGapInterval = 5000;
+    _increaseGapTimer = 0;
+    _gapSize = 2;
 
   //init object pools
-  for (auto i = 0; i < 20; ++i) {
-    auto b= Block::create();
-    this->addChild(b);
-    _blockPool.pushBack(b);
+  for (int i = 0; i < 20; i++) {
+    auto block = Block::create();
+    this->addChild(block);
+    _blockPool.pushBack(block);
   }
 
-  S__MIX(_blockPattern);
-  S__MIX(_blockWidths);
-  S__MIX(_blockHeights);
+  _minTerrainWidth = _screenSize.width * 1.5f;
+
+    random_shuffle(_blockPattern.begin(), _blockPattern.end());
+    random_shuffle(_blockWidths.begin(), _blockWidths.end());
+    random_shuffle(_blockHeights.begin(), _blockHeights.end());
 
   this->addBlocks(0);
-
-  return true;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Terrain::activateChimneys() {
 
-  auto spos= this->getPosition();
-  auto wb=cx::visBox();
+void Terrain::activateChimneysAt (Player * player) {
 
-  for (auto i = 0; i < _blocks.size(); ++i) {
+    for (int i = 0; i < _blocks.size(); i++) {
+        auto block = _blocks.at(i);
+        if (block->getType() == kBlockGap) continue;
+        if (block->getPuffing()) continue;
 
-    auto b= _blocks.at(i);
-    auto pos=b->getPosition();
-
-    if (b->getType() == kBlockGap ||
-        b->isPuffing())  {
-    continue; }
-
-    if (spos.x + pos.x >= wb.right * 0.2 &&
-        spos.x + pos.x < wb.right * 0.8) {
-      b->setPuffing(true);
+        if ( this->getPositionX() + block->getPositionX() >= _screenSize.width * 0.2f &&
+            this->getPositionX() + block->getPositionX() < _screenSize.width * 0.8f) {
+            block->setPuffing(true);
+        }
     }
-  }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Terrain::checkCollision(not_null<ecs::Node*> node) {
+void Terrain::checkCollision (Player * player) {
 
-  auto ps= CC_GEC(PlayerStats,node,"f/CStats");
-  auto py= CC_GEC(Player,node,"f/CPixie");
-  auto pm= CC_GEC(PlayerMotion,node,"f/CMove");
+    if (player->getState() == kPlayerDying) return;
 
-  if (ps->state == kPlayerDying) {
-  return; }
-
-  auto spos= this->getPosition();
   bool inAir = true;
-  auto ph= cx::getHeight(py);
-  auto pw= cx::getWidth(py);
-  auto px= cx::bbox4(py);
 
-  for (auto b: _blocks) {
+    for (auto block : _blocks) {
 
-    if (b->getType() == kBlockGap) {
-    continue; }
+    if (block->getType() == kBlockGap) continue;
 
     //if within x, check y (bottom collision)
-    auto bx= cx::bbox4(b);
-    if (px.right >= spos.x + bx.left &&
-        px.left <= spos.x + bx.right) {
+    if (player->right() >= this->getPositionX() + block->left()
+      && player->left() <= this->getPositionX() + block->right()) {
 
-      if (px.bottom >= bx.top &&
-          pm->nextPos.y - ph <= bx.top &&
-          px.top > bx.top) {
-        pm->nextPos.y= bx.top + ph;
-        pm->vel.y= 0;
-        py->setRotation(0);
-        inAir = false;
-        break;
+      if (player->bottom() >= block->top() && player->next_bottom() <= block->top()
+        && player->top() > block->top()) {
+                player->setNextPosition(Vec2(player->getNextPosition().x, block->top() + player->getHeight()));
+        player->setVector ( Vec2(player->getVector().x, 0) );
+                player->setRotation(0.0);
+                inAir = false;
+                break;
       }
+
     }
   }
 
-  spos= this->getPosition();
-  px= cx::bbox4(py);
-  for (auto b : _blocks) {
-
-    if (b->getType() == kBlockGap) {
-    continue; }
+    for (auto block : _blocks) {
+        if (block->getType() == kBlockGap) continue;
 
     //now if within y, check x (side collision)
-    auto bx= cx::bbox4(b);
-    if ((px.bottom < bx.top && px.top > bx.bottom) ||
-        (pm->nextPos.y - ph < bx.top &&
-         pm->nextPos.y > bx.bottom)) {
+    if ((player->bottom() < block->top() && player->top() > block->bottom())
+        || (player->next_bottom() < block->top() && player->next_top() > block->bottom())) {
 
-      if (px.right >= spos.x + b->getPositionX() &&
-          px.left < spos.x + b->getPositionX()) {
+      if (player->right() >= this->getPositionX() + block->getPositionX()
+        && player->left() < this->getPositionX() + block->getPositionX()) {
 
-        py->setPositionX( spos.x + b->getPositionX() - HTV(pw));
-        pm->nextPos.x= spos.x + b->getPositionX() - HTV(pw);
-        pm->vel.x= pm->vel.x * -0.5;
 
-        px= cx::bbox4(py);
-        if (px.bottom + ph * 0.2 < bx.top) {
-          ps->state= kPlayerDying;
-          cx::sfxPlay("hitBuilding");
-          return;
-        }
-        break;
+                player->setPositionX( this->getPositionX() + block->getPositionX() - player->getWidth() * 0.5f );
+                player->setNextPosition(Vec2(this->getPositionX() + block->getPositionX() - player->getWidth() * 0.5f, player->getNextPosition().y));
+        player->setVector ( Vec2(player->getVector().x * -0.5f, player->getVector().y) );
+        if (player->bottom() + player->getHeight() * 0.2f < block->top()) {
+                    player->setState(kPlayerDying);
+                   // SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+                    SimpleAudioEngine::getInstance()->playEffect("hitBuilding.wav");
+                    return;
+
+                }
+
+                break;
       }
     }
   }
 
+
   if (inAir) {
-    ps->state= kPlayerFalling;
+    player->setState(kPlayerFalling);
   } else {
-    if (ps->state != kPlayerMoving) {
-      ps->state=kPlayerMoving;
-      cx::pauseEffects();
-    }
-    pm->setFloating(py,false);
+        if (player->getState() != kPlayerMoving) {
+            player->setState(kPlayerMoving);
+            SimpleAudioEngine::getInstance()->stopAllEffects();
+
+        }
+    player->setFloating (false);
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Terrain::move(float xMove) {
 
-  if (xMove < 0) { return;  }
-  if (_startTerrain) {
-    if (xMove > 0 && _gapSize < 5) {
-      _increaseGapTimer += xMove;
-    }
-    if (_increaseGapTimer > _increaseGapInterval) {
-      _increaseGapTimer = 0;
-      _gapSize += 1;
-    }
-  }
+void Terrain::move (float xMove) {
 
-  this->setPositionX(this->getPositionX() - xMove);
-  auto spos= this->getPosition();
-  auto b= _blocks.at(0);
-  auto bw= cx::getWidth(b);
-  if (spos.x + bw < 0) {
-    _blocks.erase(0);
-    _blocks.pushBack(b);
-    this->setPositionX(spos.x + bw);
-    auto tw = width() - bw - cx::getWidth(_blocks.at(0));
-    this->initBlock(b);
-    this->addBlocks(tw);
+    if (xMove < 0) return;
+
+
+    if (_startTerrain) {
+
+        if (xMove > 0 && _gapSize < 5) _increaseGapTimer += xMove;
+
+        if (_increaseGapTimer > _increaseGapInterval) {
+            _increaseGapTimer = 0;
+            _gapSize += 1;
+        }
+    }
+
+    this->setPositionX(this->getPositionX() - xMove);
+
+    auto  block =  _blocks.at(0);
+
+  if (_position.x + block->getWidth() < 0) {
+        auto firstBlock = _blocks.at(0);
+        _blocks.erase(0);
+        _blocks.pushBack(firstBlock);
+        _position.x +=  block->getWidth();
+
+    float width_cnt = this->getWidth() - block->getWidth() - ( _blocks.at(0))->getWidth();
+    this->initBlock(block);
+    this->addBlocks(width_cnt);
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Terrain::reset() {
 
-  this->setPosition(0,0);
-  _startTerrain = false;
+    this->setPosition(Vec2(0,0));
+    _startTerrain = false;
 
-  auto cw = 0;
-  for (auto b : _blocks) {
-    this->initBlock(b);
-    cw +=  cx::getWidth(b);
-  }
-
-  while (cw < _minTerrainWidth) {
-    auto b= _blockPool.at(_blockPoolIndex);
-    ++_blockPoolIndex;
-    if (_blockPoolIndex == _blockPool.size()) {
-      _blockPoolIndex = 0;
+    int currentWidth = 0;
+    for (auto block : _blocks)
+    {
+        this->initBlock(block);
+    currentWidth +=  block->getWidth();
     }
-    _blocks.pushBack(b);
-    this->initBlock(b);
-    cw += cx::getWidth(b);
+
+  while (currentWidth < _minTerrainWidth) {
+        auto block =  _blockPool.at(_blockPoolIndex);
+        _blockPoolIndex++;
+        if (_blockPoolIndex == _blockPool.size()) {
+            _blockPoolIndex = 0;
+        }
+        _blocks.pushBack(block);
+        this->initBlock(block);
+    currentWidth +=  block->getWidth();
   }
 
   this->distributeBlocks();
-  _increaseGapTimer = 0;
-  _gapSize = 2;
+    _increaseGapTimer = 0;
+    _gapSize = 2;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Terrain::addBlocks(int cw) {
+void Terrain::addBlocks(int currentWidth) {
 
-  while (cw < _minTerrainWidth) {
-    auto b= _blockPool.at(_blockPoolIndex);
-    ++_blockPoolIndex;
+  while (currentWidth < _minTerrainWidth)
+  {
+    auto block = _blockPool.at(_blockPoolIndex);
+    _blockPoolIndex++;
     if (_blockPoolIndex == _blockPool.size()) {
       _blockPoolIndex = 0;
     }
-    this->initBlock(b);
-    cw += cx::getWidth(b);
-    _blocks.pushBack(b);
+    this->initBlock(block);
+    currentWidth +=  block->getWidth();
+    _blocks.pushBack(block);
+
   }
 
   this->distributeBlocks();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
 void Terrain::distributeBlocks() {
 
-  auto count = (int) _blocks.size();
-  for (auto i= 0; i< count; ++i) {
-    auto b= _blocks.at(i);
+    int count = (int) _blocks.size();
+
+    Block * block;
+  Block * prev_block;
+
+  for (int i = 0; i < count; i++) {
+    block =  _blocks.at(i);
     if (i != 0) {
-      auto prev= _blocks.at(i-1);
-      b->setPositionX(
-          prev->getPositionX() + cx::getWidth(prev));
-    } else {
-      b->setPositionX(0);
+      prev_block = _blocks.at(i - 1);
+      block->setPositionX( prev_block->getPositionX() + prev_block->getWidth());
+    }
+    else
+    {
+      block->setPositionX ( 0 );
     }
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Terrain::initBlock(Block *block) {
+void Terrain::initBlock(Block * block) {
 
-  auto type = _blockTypes[_currentTypeIndex];
-  ++_currentTypeIndex;
+    int blockWidth;
+  int blockHeight;
+    block->setPuffing(false);
+
+    int type = _blockTypes[_currentTypeIndex];
+  _currentTypeIndex++;
 
   if (_currentTypeIndex == _blockTypes.size()) {
-    _currentTypeIndex = 0;
-  }
-
-  block->setPuffing(false);
-
-  //terrain is not being changed yet
-  if (!_startTerrain) {
-    _lastBlockWidth = rand() % 2 + 2;
-    _lastBlockHeight = 2;
-    block->setup(CCT_SZ(_lastBlockWidth, _lastBlockHeight), type);
-    return;
+        _currentTypeIndex = 0;
   }
 
   //check if min distance reached;
-  if (_showGap) {
-    auto gap = rand() % _gapSize;
-    if (gap < 2) { gap = 2; }
-    block->setup(CCT_SZ(gap, 0), kBlockGap);
-    _showGap = false;
-    return;
-  }
+  if (_startTerrain) {
 
-  auto blockWidth = _blockWidths[_currentWidthIndex];
-  auto blockHeight=0;
+        if (_showGap) {
 
-  ++_currentWidthIndex;
-  if (_currentWidthIndex == _blockWidths.size()) {
-    _currentWidthIndex = 0;
-    S__MIX(_blockWidths);
-  }
+            int gap = rand() % _gapSize;
+            if (gap < 2) gap = 2;
 
-  if (_blockHeights[_currentHeightIndex] != 0) {
-    //change height of next block
-    blockHeight = _blockHeights[_currentHeightIndex];
-    //if difference too high, decrease it
-    if (blockHeight - _lastBlockHeight > 2 && _gapSize == 2) {
-      blockHeight = 1;
+            block->setupBlock (gap, 0, kBlockGap);
+      _showGap = false;
+
+        } else {
+
+      blockWidth = _blockWidths[_currentWidthIndex];
+
+      _currentWidthIndex++;
+      if (_currentWidthIndex == _blockWidths.size()) {
+                random_shuffle(_blockWidths.begin(), _blockWidths.end());
+        _currentWidthIndex = 0;
+      }
+
+            if (_blockHeights[_currentHeightIndex] != 0) {
+
+        //change height of next block
+        blockHeight = _blockHeights[_currentHeightIndex];
+        //if difference too high, decrease it
+        if (blockHeight - _lastBlockHeight > 2 && _gapSize == 2) {
+          blockHeight = 1;
+        }
+
+      } else {
+                blockHeight = _lastBlockHeight;
+            }
+      _currentHeightIndex++;
+            if (_currentHeightIndex == _blockHeights.size()) {
+                _currentHeightIndex = 0;
+                random_shuffle(_blockHeights.begin(), _blockHeights.end());
+
+            }
+
+      block->setupBlock (blockWidth, blockHeight, type);
+            _lastBlockWidth = blockWidth;
+            _lastBlockHeight = blockHeight;
+
+      //select next block series pattern
+      _currentPatternCnt++;
+      if (_currentPatternCnt > _blockPattern[_currentPatternIndex]) {
+        _showGap = true;
+        //start new pattern
+        _currentPatternIndex++;
+        if (_currentPatternIndex == _blockPattern.size()) {
+                    random_shuffle(_blockPattern.begin(), _blockPattern.end());
+          _currentPatternIndex = 0;
+        }
+        _currentPatternCnt = 1;
+      }
     }
+
+    //terrain is not being changed yet
   } else {
-    blockHeight = _lastBlockHeight;
-  }
-
-  ++_currentHeightIndex;
-  if (_currentHeightIndex == _blockHeights.size()) {
-    _currentHeightIndex = 0;
-      S__MIX(_blockHeights);
-  }
-
-  block->setup(CCT_SZ(blockWidth, blockHeight), type);
-  _lastBlockHeight = blockHeight;
-  _lastBlockWidth = blockWidth;
-
-  //select next block series pattern
-  ++_currentPatternCnt;
-  if (_currentPatternCnt > _blockPattern[_currentPatternIndex]) {
-    ++_currentPatternIndex;
-    _showGap = true;
-    //start new pattern
-    if (_currentPatternIndex == _blockPattern.size()) {
-      _currentPatternIndex = 0;
-        S__MIX(_blockPattern);
-    }
-    _currentPatternCnt = 1;
+    _lastBlockHeight = 2;
+    _lastBlockWidth = rand() % 2 + 2;
+    block->setupBlock (_lastBlockWidth, _lastBlockHeight, type);
   }
 
 }
 
-
 NS_END
+
 
 

@@ -246,7 +246,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 void Game::decoUI() {
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
-  //play();
+  play();
 }
 
 

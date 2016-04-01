@@ -12,7 +12,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "C.h"
+#include "core/COMP.h"
 
 NS_BEGIN(victorian)
 
@@ -25,21 +25,53 @@ enum PlayerState {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Player : public f::CPixie {
-protected:
 
-  bool initWithSpriteFrameName(const sstr&);
+  virtual bool initSpriteWithFrameName(const sstr&);
+  Player();
 
   __decl_ptr(c::Action, _floatAnimation)
   __decl_ptr(c::Action, _rideAnimation)
 
-  Player() {}
-
 public:
 
   static owner<Player*> create();
+  virtual ~Player();
+
   void animateFloat();
   void animateRide();
-  virtual ~Player();
+
+  inline virtual void place () {
+    this->setPositionY( _nextPosition.y );
+        if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
+            this->setPositionX(this->getPositionX() + _vector.x);
+            if (this->getPositionX() > _screenSize.width * 0.2f) {
+                this->setPositionX(_screenSize.width * 0.2f);
+            }
+        }
+  };
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL PlayerMotion : public f::CMove {
+
+  __decl_iz(_floatingTimerMax)
+  __decl_fz(_floatingTimer)
+  __decl_iz(_floatingInterval)
+  __decl_bf(_hasFloated)
+  __decl_bf(_floating)
+  __decl_bf(_jumping)
+  __decl_bf(_inAir)
+
+  PlayerMotion();
+
+public:
+
+  __declapi_setr(bool, _floating, Floating)
+  __decl_gsms_is(_jumping, Jumping)
+  __decl_gsms_is(_inAir, InAir)
+  __decl_ismx(_floating, Floating)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,36 +83,10 @@ struct CC_DLL PlayerStats : public f::CStats {
   }
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL PlayerMotion : public f::CMove {
-
-  __decl_mv(float,_floatingTimerMax, 2)
-  __decl_fz(_floatingTimer)
-  __decl_bf(_floating)
-  __decl_bf(_jumping)
-  __decl_bf(_hasFloated)
-  __decl_bf(_inAir)
-
-public:
-
-  bool isFloating() { return _floating; }
-  void setFloating(Player*, bool);
-
-  __decl_gsms(float,_floatingTimerMax,FloatingTimerMax)
-  __decl_gsms(float,_floatingTimer,FloatingTimer)
-  __decl_gsms(bool,_hasFloated,HasFloated)
-
-  __decl_gsms_is(_jumping, Jumping)
-  __decl_gsms_is(_inAir, InAir)
-
-  PlayerMotion();
-};
-
-
 
 
 NS_END
+
 
 
 
