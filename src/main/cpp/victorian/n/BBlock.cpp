@@ -14,7 +14,6 @@
 #include "core/CCSX.h"
 #include "BBlock.h"
 #include "C.h"
-
 #define TOTAL_PUFFS 3
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -48,13 +47,12 @@ bool Block::initWithSpriteFrameName(const sstr &fn) {
   auto rc= c::Sprite::initWithSpriteFrameName(fn);
   auto wz= cx::visSize();
   if (!rc) { return rc; }
-  _tile1= cx::getSpriteFrame("building_1.png");
-  _tile2= cx::getSpriteFrame("building_2.png");
-  _tile3= cx::getSpriteFrame("building_3.png");
   _tile4= cx::getSpriteFrame("building_4.png");
-  _roof1= cx::getSpriteFrame("roof_1.png");
+  _tile3= cx::getSpriteFrame("building_3.png");
+  _tile2= cx::getSpriteFrame("building_2.png");
+  _tile1= cx::getSpriteFrame("building_1.png");
   _roof2= cx::getSpriteFrame("roof_2.png");
-
+  _roof1= cx::getSpriteFrame("roof_1.png");
   _tileH= wz.height / TILE_H_SIZE;
   _tileW= wz.width / TILE_W_SIZE;
 

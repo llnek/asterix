@@ -44,8 +44,8 @@ void Config::initAssets() {
 
   addAtlas("game-pics",CC_STR("pics/sprite_sheet.plist"));
 
-  addImage("game.bg",CC_STR("pics/bg.png"));
   addImage("game-pics",CC_STR("pics/sprite_sheet.png"));
+  addImage("game.bg",CC_STR("pics/bg.png"));
 
   addFont("text", CC_STR("fon/en/Times.ttf"));
   addFont("dft", CC_STR("fon/en/font.fnt"));
@@ -62,10 +62,10 @@ void Config::initAssets() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto dz= gameSize();
-  sstr p;
-  float h;
+  auto p="sd";
+  auto h=380.0;
 
   if (rs.height > 768) {
     p="rd";

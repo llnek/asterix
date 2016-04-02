@@ -19,7 +19,7 @@ NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Player::~Player(){
+Player::~Player() {
   CC_DROP(_floatAnimation);
   CC_DROP(_rideAnimation);
 }
@@ -76,7 +76,7 @@ bool Player::initWithSpriteFrameName(const sstr &fn) {
   auto rc= c::Sprite::initWithSpriteFrameName(fn);
   auto wb= cx::visBox();
   if (!rc) { return false; }
-  this->setPosition(wb.right * 0.2, wb.top* 0.6);
+  this->setPosition(wb.right * 0.2, wb.top * 0.6);
   this->setAnchorPoint(cx::anchorT());
 
   auto animation= c::Animation::create();
@@ -88,15 +88,15 @@ bool Player::initWithSpriteFrameName(const sstr &fn) {
       cx::getSpriteFrame("player_" + FTOS(i) + ".png"));
   }
   _rideAnimation = c::Animate::create(animation);
-  _rideAnimation->retain();
+  CC_KEEP(_rideAnimation);
 
   _floatAnimation = c::RepeatForever::create(
-                                             (c::ActionInterval*)
+      (c::ActionInterval*)
       c::Sequence::create(
              c::EaseInOut::create(c::RotateTo::create(0.8, -10), 2),
              c::EaseInOut::create(c::RotateTo::create(0.8, 10), 2),
              CC_NIL));
-  _floatAnimation->retain();
+  CC_KEEP(_floatAnimation);
 
   animateRide();
 }

@@ -30,17 +30,19 @@ void resetPlayer(not_null<ecs::Node*> node) {
   auto py= CC_GEC(Player,node,"f/CPixie");
   auto wb=cx::visBox();
 
+  py->setPosition(wb.right * 0.2, wb.top * 0.6);
   pm->maxSpeed.x = PLAYER_INITIAL_SPEED;
   pm->speed.x = PLAYER_INITIAL_SPEED;
+  pm->nextPos.y = wb.top * 0.6;
+  ps->state = kPlayerMoving;
   pm->vel = CC_ZPT;
   pm->setFloating(py, false);
-  py->setRotation(0);
-  pm->nextPos.y = wb.top * 0.6;
-  py->setPosition(wb.right * 0.2, pm->nextPos.y);
-  ps->state = kPlayerMoving;
-  pm->setJumping(false);
   pm->setHasFloated(false);
+  pm->setJumping(false);
+  py->setRotation(0);
+
 }
+
 
 NS_END
 

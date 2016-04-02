@@ -12,6 +12,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
+#include "core/COMP.h"
 #include "BBlock.h"
 #include "Player.h"
 
@@ -29,6 +30,7 @@ class CC_DLL Terrain : public f::CPixie {
   __decl_fz(_lastBlockHeight)
   __decl_fz(_lastBlockWidth)
   __decl_bf(_showGap)
+  __decl_bf(_startTerrain)
 
   __decl_iz(_currentPatternIndex)
   __decl_iz(_currentPatternCnt)
@@ -44,6 +46,7 @@ class CC_DLL Terrain : public f::CPixie {
 
   void distributeBlocks();
   void initBlock(Block*);
+  Terrain();
 
   float totalWidth() {
     float width = 0;
@@ -52,10 +55,6 @@ class CC_DLL Terrain : public f::CPixie {
     }
     return width;
   }
-
-  __decl_bf(_startTerrain)
-
-  Terrain();
 
 public:
 

@@ -69,6 +69,11 @@ class CC_DLL Block : public c::Sprite {
 
 public:
 
+  float getRight() { return getPositionX() + _width; }
+  float getLeft() { return getPositionX(); }
+  float getBottom() { return 0; }
+  float getTop() { return _height; }
+
   void setup(float width, float height, int type);
   static owner<Block*> create();
   virtual ~Block();
@@ -80,10 +85,6 @@ public:
   __decl_getr(float,_height, Height)
   __decl_getr(float,_width, Width)
 
-  float getBottom() { return 0; }
-  float getTop() { return _height; }
-  float getRight() { return getPositionX() + _width; }
-  float getLeft() { return getPositionX(); }
 };
 
 

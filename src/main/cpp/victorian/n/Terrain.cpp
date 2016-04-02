@@ -10,21 +10,20 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Terrain.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
-static int patterns[] = {1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,3,3,3};
-static int widths[] = {2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4};
 static int heights[] = {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,4};
 static int types[] = {1,2,3,4,1,3,2,4,3,2,1,4,2,3,1,4,2,3,1,2,3,2,3,4,1,2,4,3,1,3,1,4,2,4,2,1,2,3};
+static int patterns[] = {1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,3,3,3};
+static int widths[] = {2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4};
 
 static s_vec<int> _blockPattern(patterns, patterns + SIZEOFX(patterns,int));
-static s_vec<int> _blockWidths(widths, widths + SIZEOFX(widths,int));
 static s_vec<int> _blockHeights(heights, heights + SIZEOFX(heights,int));
+static s_vec<int> _blockWidths(widths, widths + SIZEOFX(widths,int));
 static s_vec<int> _blockTypes(types, types + SIZEOFX(types,int));
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,9 +53,7 @@ owner<Terrain*> Terrain::create() {
 bool Terrain::initWithSpriteFrameName(const sstr &fn) {
   auto rc= c::Sprite::initWithSpriteFrameName(fn);
   auto wz= cx::visSize();
-
   if (!rc) { return false; }
-
   _minTerrainWidth = wz.width * 1.5;
   _increaseGapInterval = 5000;
   _increaseGapTimer = 0;
@@ -79,14 +76,15 @@ bool Terrain::initWithSpriteFrameName(const sstr &fn) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Terrain::activateChimneys() {
+  auto mypos= this->getPosition();
+  auto len= (int) _blocks.size();
   auto wb=cx::visBox();
-  for (auto i = 0; i < _blocks.size(); ++i) {
+  for (auto i = 0; i < len; ++i) {
     auto b= _blocks.at(i);
     if (b->getType() == kBlockGap ||
         b->isPuffing()) { continue; }
-
-    if (this->getPositionX() + b->getPositionX() >= wb.right * 0.2 &&
-        this->getPositionX() + b->getPositionX() < wb.right * 0.8) {
+    if (mypos.x + b->getPositionX() >= wb.right * 0.2 &&
+        mypos.x + b->getPositionX() < wb.right * 0.8) {
       b->setPuffing(true);
     }
   }
@@ -104,46 +102,45 @@ void Terrain::checkCollision(not_null<ecs::Node*> node) {
   return; }
 
   auto mypos= this->getPosition();
+  auto len= (int) _blocks.size();
   auto ph= cx::getHeight(py);
   auto pw= cx::getWidth(py);
   bool inAir = true;
 
-  for (auto b : _blocks) {
-
-    if (b->getType() == kBlockGap) {
-    continue; }
-
+  for (auto i = 0; i < len; ++i) {
+    auto b= _blocks.at(i);
+    if (b->getType()
+        == kBlockGap) { continue; }
     //if within x, check y (bottom collision)
     if (cx::getRight(py) >= mypos.x + b->getLeft() &&
         cx::getLeft(py) <= mypos.x + b->getRight()) {
-
       if (cx::getBottom(py) >= b->getTop() &&
           pm->nextPos.y - ph <= b->getTop() &&
           cx::getTop(py) > b->getTop()) {
         pm->nextPos.y = b->getTop() + ph;
         pm->vel.y=0;
-        py->setRotation(0.0);
+        py->setRotation(0);
         inAir = false;
         break;
       }
     }
   }
 
-  for (auto b : _blocks) {
-    if (b->getType() == kBlockGap) {
-    continue; }
+  len= (int) _blocks.size();
+  for (auto i = 0; i < len; ++i) {
+    auto b= _blocks.at(i);
+    if (b->getType()
+        == kBlockGap) { continue; }
     //now if within y, check x (side collision)
     if ((cx::getBottom(py) < b->getTop() &&
          cx::getTop(py) > b->getBottom()) ||
         (pm->nextPos.y - ph < b->getTop() &&
          pm->nextPos.y > b->getBottom())) {
-
       if (cx::getRight(py) >= mypos.x + b->getPositionX() &&
           cx::getLeft(py) < mypos.x + b->getPositionX()) {
-
         py->setPositionX(mypos.x + b->getPositionX() - HTV(pw));
         pm->nextPos.x = mypos.x + b->getPositionX() - HTV(pw);
-        pm->vel.x= pm->vel.x * -0.5;
+        pm->vel.x= - HTV(pm->vel.x);
         if (cx::getBottom(py) + ph * 0.2 < b->getTop()) {
           ps->state= kPlayerDying;
           cx::sfxPlay("hitBuilding");
@@ -153,7 +150,6 @@ void Terrain::checkCollision(not_null<ecs::Node*> node) {
       }
     }
   }
-
 
   if (inAir) {
     ps->state=  kPlayerFalling;
@@ -183,13 +179,12 @@ void Terrain::move (float xMove) {
   this->setPositionX(this->getPositionX() - xMove);
 
   auto mypos= this->getPosition();
-  auto block =  _blocks.at(0);
+  auto block= _blocks.at(0);
   if (mypos.x + block->getWidth() < 0) {
     auto firstBlock = _blocks.at(0);
     _blocks.erase(0);
     _blocks.pushBack(firstBlock);
     this->setPositionX(mypos.x + block->getWidth());
-
     auto width_cnt = totalWidth() - block->getWidth() - (_blocks.at(0))->getWidth();
     this->initBlock(block);
     this->addBlocks(width_cnt);
@@ -227,7 +222,6 @@ void Terrain::addBlocks(float currentWidth) {
     this->initBlock(b);
     currentWidth +=  b->getWidth();
     _blocks.pushBack(b);
-
   }
 
   this->distributeBlocks();

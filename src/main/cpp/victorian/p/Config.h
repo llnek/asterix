@@ -27,14 +27,15 @@ public:
 
   virtual const c::Size gameSize() { return c::Size(2048,1536); }
 
+  virtual void handleResolution(const c::Size &rs);
+
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual void handleResolution(const c::Size &rs);
-  virtual c::Scene* prelude();
-
-  virtual void runOnce();
   static owner<Config*> reify();
+
+  virtual c::Scene* prelude();
+  virtual void runOnce();
 
 };
 
