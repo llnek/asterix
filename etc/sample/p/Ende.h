@@ -19,9 +19,14 @@ NS_BEGIN(@@APPID@@)
 //
 struct CC_DLL Ende : public f::XLayer {
 
+  __decl_ptr(c::Label,_replayBtn)
+
   STATIC_REIFY_LAYER(Ende)
-  MDECL_DECORATE()
-  MDECL_GET_IID(4)
+  __decl_deco_ui()
+  __decl_get_iid(4)
+
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual bool onTouchStart(c::Touch*);
 
 };
 

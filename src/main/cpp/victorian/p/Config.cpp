@@ -47,6 +47,7 @@ void Config::initAssets() {
   addImage("game.bg",CC_STR("pics/bg.png"));
   addImage("game-pics",CC_STR("pics/sprite_sheet.png"));
 
+  addFont("text", CC_STR("fon/en/Times.ttf"));
   addFont("dft", CC_STR("fon/en/font.fnt"));
 
   addMusic("background3",CC_STR("sfx/background3.mp3"));

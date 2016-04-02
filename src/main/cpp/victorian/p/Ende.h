@@ -12,31 +12,26 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
-
+#include "x2d/XLayer.h"
 NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
-  virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer() {
-     return
-       (f::GameLayer*) getLayer(2);
-  }
+struct CC_DLL Ende : public f::XLayer {
 
-  STATIC_REIFY_SCENE_CTX(Game)
+  __decl_ptr(c::Label,_replayBtn)
+
+  STATIC_REIFY_LAYER(Ende)
   __decl_deco_ui()
-};
+  __decl_get_iid(4)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GameCtx : public f::GCX {
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual bool onTouchStart(c::Touch*);
+
 };
 
 
 NS_END
-
 
 
 

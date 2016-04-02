@@ -9,34 +9,47 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Splash.h"
+#include "Game.h"
+#include "Ende.h"
 
-#include "x2d/GameScene.h"
-
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(victorian)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
-  virtual void sendMsgEx(const MsgTopic&, void*);
-  virtual f::GameLayer* getGLayer() {
-     return
-       (f::GameLayer*) getLayer(2);
-  }
+void Ende::decoUI() {
+  auto lbl= cx::reifyLabel("text", 32, "Game Over!");
+  auto wb= cx::visBox();
 
-  STATIC_REIFY_SCENE_CTX(Game)
-  __decl_deco_ui()
-};
+  lbl->setPosition(wb.cx, wb.top * 0.8);
+  addItem(lbl);
+
+  _replayBtn = cx::reifyLabel("text", 32, "Replay");
+  _replayBtn ->setPosition(wb.cx, wb.top * 0.2);
+  addItem(_replayBtn );
+
+    enableListeners();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GameCtx : public f::GCX {
-};
+bool Ende::onTouchStart(c::Touch *t) {
+  return onMouseStart(t->getLocation());
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Ende::onMouseStart(const CCT_PT &tap) {
+  if (cx::isTapped(_replayBtn, tap)) {
+    cx::runEx(Game::reify(new GameCtx()));
+  }
+  return false;
+}
 
 NS_END
-
 
 
 

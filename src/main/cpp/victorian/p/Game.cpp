@@ -14,6 +14,7 @@
 #include "s/GEngine.h"
 #include "n/Terrain.h"
 #include "HUD.h"
+#include "Ende.h"
 #include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -24,6 +25,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
+  void onEnd();
 
   STATIC_REIFY_LAYER(GLayer)
   __decl_deco_ui()
@@ -235,11 +237,24 @@ void GLayer::onTouchEnd(c::Touch *touch) {
   onMouseClick(touch->getLocation());
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onEnd() {
+  this->setOpacity(0.1 * 255);
+  MGMS()->stop();
+  surcease();
+  Ende::reify(MGMS(),4);
+}
+
 END_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic== "/game/player/lose") {
+    y->onEnd();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

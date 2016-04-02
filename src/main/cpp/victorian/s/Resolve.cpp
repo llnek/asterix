@@ -71,6 +71,7 @@ void Resolve::process(float dt) {
       ss->hat->runAction(jump);
       cx::pauseMusic();
       cx::sfxPlay("crashing");
+      SENDMSG("/game/player/lose");
     }
   }
 
