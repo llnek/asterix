@@ -12,7 +12,7 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "Block.h"
+#include "BBlock.h"
 #include "Player.h"
 
 NS_BEGIN(victorian)
@@ -39,7 +39,7 @@ class CC_DLL Terrain : public f::CPixie {
   __decl_fz(_increaseGapTimer)
   __decl_iz(_gapSize)
 
-  virtual bool initSpriteWithFrameName(const sstr&);
+  virtual bool initWithSpriteFrameName(const sstr&);
   void addBlocks(float currentWidth);
 
   void distributeBlocks();
@@ -64,7 +64,7 @@ public:
   virtual ~Terrain();
 
   void checkCollision(not_null<ecs::Node*>);
-  void activateChimney();
+  void activateChimneys();
   void move (float xMove);
   void reset();
 

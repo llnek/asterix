@@ -44,8 +44,8 @@ owner<Block*> Block::create() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Block::initSpriteWithFrameName(const sstr &fn) {
-  auto rc= c::Sprite::initSpriteWithFrameName(fn);
+bool Block::initWithSpriteFrameName(const sstr &fn) {
+  auto rc= c::Sprite::initWithSpriteFrameName(fn);
   auto wz= cx::visSize();
   if (!rc) { return rc; }
   _tile1= cx::getSpriteFrame("building_1.png");
@@ -252,8 +252,7 @@ void Block::createPuff () {
     }
   }
 
-  ++_puffIndex;
-  if (_puffIndex == TOTAL_PUFFS) { _puffIndex = 0; }
+  if (++_puffIndex == TOTAL_PUFFS) { _puffIndex = 0; }
 
 }
 

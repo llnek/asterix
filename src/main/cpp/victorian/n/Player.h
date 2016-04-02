@@ -26,8 +26,8 @@ enum PlayerState {
 //
 class CC_DLL Player : public f::CPixie {
 
-  virtual bool initSpriteWithFrameName(const sstr&);
-  Player();
+  virtual bool initWithSpriteFrameName(const sstr&);
+  Player() {}
 
   __decl_ptr(c::Action, _floatAnimation)
   __decl_ptr(c::Action, _rideAnimation)
@@ -40,15 +40,6 @@ public:
   void animateFloat();
   void animateRide();
 
-  inline virtual void place () {
-    this->setPositionY( _nextPosition.y );
-        if (_vector.x > 0 && this->getPositionX() < _screenSize.width * 0.2f) {
-            this->setPositionX(this->getPositionX() + _vector.x);
-            if (this->getPositionX() > _screenSize.width * 0.2f) {
-                this->setPositionX(_screenSize.width * 0.2f);
-            }
-        }
-  };
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,15 +54,17 @@ class CC_DLL PlayerMotion : public f::CMove {
   __decl_bf(_jumping)
   __decl_bf(_inAir)
 
-  PlayerMotion();
-
 public:
 
-  __declapi_setr(bool, _floating, Floating)
+  __decl_gsms(int,_floatingTimerMax,FloatingTimerMax)
+  __decl_gsms(float,_floatingTimer,FloatingTimer)
+  __decl_gsms(bool,_hasFloated,HasFloated)
   __decl_gsms_is(_jumping, Jumping)
   __decl_gsms_is(_inAir, InAir)
   __decl_ismx(_floating, Floating)
 
+  PlayerMotion();
+  void setFloating(Player*,bool);
 };
 
 //////////////////////////////////////////////////////////////////////////////

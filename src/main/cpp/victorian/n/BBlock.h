@@ -37,7 +37,7 @@ enum  {
 //
 class CC_DLL Block : public c::Sprite {
 
-  virtual bool initSpriteWithFrameName(const sstr&);
+  virtual bool initWithSpriteFrameName(const sstr&);
   void createPuff();
   Block() {}
 
@@ -80,6 +80,10 @@ public:
   __decl_getr(float,_height, Height)
   __decl_getr(float,_width, Width)
 
+  float getBottom() { return 0; }
+  float getTop() { return _height; }
+  float getRight() { return getPositionX() + _width; }
+  float getLeft() { return getPositionX(); }
 };
 
 

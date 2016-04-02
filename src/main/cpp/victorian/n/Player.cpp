@@ -44,71 +44,12 @@ owner<Player*> Player::create() {
   return p;
 }
 
-void Player::update (float dt) {
-
-    if (_speed + P_ACCELERATION <= _maxSpeed) {
-        _speed += P_ACCELERATION;
-    } else {
-        _speed = _maxSpeed;
-    }
-
-    _vector.x = _speed;
-
-  switch (_state) {
-    case kPlayerMoving:
-      _vector.y -= G_FORCE;
-            if (_hasFloated) _hasFloated = false;
-    break;
-
-        case kPlayerFalling:
-            if (_floating ) {
-        _vector.y -= FLOATNG_GRAVITY;
-        _vector.x *= FLOATING_FRICTION;
-
-            } else {
-        _vector.y -= G_FORCE;
-        _vector.x *= AIR_FRICTION;
-        _floatingTimer = 0;
-      }
-    break;
-        case kPlayerDying:
-            _vector.y -= G_FORCE;
-            _vector.x = -_speed;
-            this->setPositionX(this->getPositionX() + _vector.x);
-        break;
-
-  }
-
-    if (_jumping) {
-        _state = kPlayerFalling;
-        _vector.y += PLAYER_JUMP * 0.25f;
-        if (_vector.y > PLAYER_JUMP ) _jumping = false;
-    }
-
-    if (_vector.y < -TERMINAL_VELOCITY) _vector.y = -TERMINAL_VELOCITY;
-
-    _nextPosition.y = this->getPositionY() + _vector.y;
-
-
-  if (_vector.x * _vector.x < 0.01) _vector.x = 0;
-  if (_vector.y * _vector.y < 0.01) _vector.y = 0;
-
-  if (_floating) {
-    _floatingTimer += dt;
-    if (_floatingTimer > _floatingTimerMax) {
-            _floatingTimer = 0;
-            SimpleAudioEngine::getInstance()->playEffect("falling.wav");
-      this->setFloating(false);
-    }
-  }
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void PlayerMotion::setFloating(Player *py, bool value) {
 
   if (_floating == value ||
-      (value && _hasFloated) { return; }
+      (value && _hasFloated)) { return; }
 
   py->stopAllActions();
   _floating = value;
@@ -131,10 +72,10 @@ void Player::animateRide() { this->runAction(_rideAnimation); }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Player::initSpriteWithFrameName(const sstr &fn) {
-  auto rc= c::Sprite::initSpriteWithFrameName(fn);
+bool Player::initWithSpriteFrameName(const sstr &fn) {
+  auto rc= c::Sprite::initWithSpriteFrameName(fn);
   auto wb= cx::visBox();
-  if (!rc) { retutn rc; }
+  if (!rc) { return false; }
   this->setPosition(wb.right * 0.2, wb.top* 0.6);
   this->setAnchorPoint(cx::anchorT());
 
@@ -150,7 +91,7 @@ bool Player::initSpriteWithFrameName(const sstr &fn) {
   _rideAnimation->retain();
 
   _floatAnimation = c::RepeatForever::create(
-      (ActionInterval*)
+                                             (c::ActionInterval*)
       c::Sequence::create(
              c::EaseInOut::create(c::RotateTo::create(0.8, -10), 2),
              c::EaseInOut::create(c::RotateTo::create(0.8, 10), 2),
