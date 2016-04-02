@@ -43,7 +43,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   s_vec<int> _tileBin;
   s_vec<int> _tileData;
 
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 

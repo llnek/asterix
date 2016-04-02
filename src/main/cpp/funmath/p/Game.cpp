@@ -51,7 +51,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_ptr(c::MenuItem,_buttonNextLevel)
   __decl_md(sstr, _solution)
 
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 

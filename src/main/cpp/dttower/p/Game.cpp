@@ -35,7 +35,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_ptr(ecs::Node, _shared)
   __decl_ptr(ecs::Node, _player)
 
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 

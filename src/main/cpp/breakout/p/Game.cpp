@@ -24,7 +24,7 @@ BEGIN_NS_UNAMED
 struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 

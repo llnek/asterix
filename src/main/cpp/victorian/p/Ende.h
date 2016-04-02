@@ -21,7 +21,7 @@ struct CC_DLL Ende : public f::XLayer {
 
   __decl_ptr(c::Label,_replayBtn)
 
-  STATIC_REIFY_LAYER(Ende)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
   __decl_get_iid(4)
 

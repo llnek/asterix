@@ -13,6 +13,12 @@
 #include "Game.h"
 NS_BEGIN(victorian)
 
+  /*
+     resources: (sd) 32pt, 512 png,  507x380 bg
+     resources: (hd) 60pt, 1024 png,  1024x768 bg
+     resources: (rd) 120pt, 2048 png,  2048x1536 bg
+   *
+   * */
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Config*> Config::reify() {
@@ -52,6 +58,7 @@ void Config::initAssets() {
 
   addMusic("background3",CC_STR("sfx/background3.mp3"));
   addEffect("falling",CC_STR("sfx/falling.wav"));
+  addEffect("click",CC_STR("sfx/button-click.wav"));
   addEffect("hitBuilding",CC_STR("sfx/hitBuilding.wav"));
   addEffect("jump",CC_STR("sfx/jump.wav"));
   addEffect("crashing",CC_STR("sfx/crashing.wav"));
@@ -85,15 +92,13 @@ void Config::handleResolution(const CCT_SZ &rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto fp= getAtlas("game-pics");
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Game::reify(mc_new(f::GCX));
+  return Game::reify( mc_new(GameCtx));
 }
 
 

@@ -19,7 +19,7 @@ NS_BEGIN(gmath)
 //
 struct CC_DLL Splash : public f::XScene {
 
-  STATIC_REIFY_SCENE(Splash)
+  __decl_create_scene(Splash)
   __decl_deco_ui()
 };
 

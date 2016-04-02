@@ -20,7 +20,7 @@ class CC_DLL Splash : public f::XScene {
   void decoUIXXX();
   void demo();
 public:
-  STATIC_REIFY_SCENE(Splash)
+  __decl_create_scene(Splash)
   __decl_deco_ui()
 };
 

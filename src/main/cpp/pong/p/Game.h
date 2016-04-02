@@ -38,7 +38,7 @@ struct CC_DLL Game : public f::GameScene {
      return (f::GameLayer*) getLayer(2);
   }
 
-  STATIC_REIFY_SCENE_CTX(Game)
+  __decl_create_scene_ctx(Game)
   __decl_deco_ui()
 
 };

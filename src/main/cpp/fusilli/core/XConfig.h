@@ -50,6 +50,7 @@ protected:
   __decl_md(sstr, _game_id)
   __decl_bt(_audioState)
 
+  void cacheSprites(const sstr &plist);
   void loadL10NStrings();
   void setCsts();
 

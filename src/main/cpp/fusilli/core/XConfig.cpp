@@ -405,7 +405,13 @@ const s_vec<filepath> XConfig::getMusicFiles() {
   return rc;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+//
+void XConfig::cacheSprites(const sstr &plist) {
+  auto fp= getAtlas(plist);
+  CC_SCAC()->addSpriteFramesWithFile( fp);
+  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+}
 
 
 

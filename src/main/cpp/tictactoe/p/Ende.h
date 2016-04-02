@@ -35,7 +35,7 @@ class CC_DLL Ende : public f::XLayer {
 
 public:
 
-  STATIC_REIFY_LAYER_CTX(Ende)
+  __decl_create_layer_ctx(Ende)
   __decl_deco_ui()
   __decl_get_iid(4)
 

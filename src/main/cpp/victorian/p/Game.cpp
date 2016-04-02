@@ -12,7 +12,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
-#include "n/Terrain.h"
 #include "HUD.h"
 #include "Ende.h"
 #include "Game.h"
@@ -25,9 +24,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
-  void onEnd();
 
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
@@ -38,7 +36,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onMouseClick(const CCT_PT&);
 
   virtual void onInited();
+
   void startGame();
+  void onEnd();
 
   __decl_ptr(ecs::Node, _terrain)
   __decl_ptr(ecs::Node, _player)

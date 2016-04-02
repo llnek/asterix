@@ -21,7 +21,7 @@ NS_BEGIN(bunny)
 struct CC_DLL Ende : public f::XLayer {
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  STATIC_REIFY_LAYER(Ende)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
   __decl_get_iid(4)
 

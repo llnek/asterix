@@ -27,7 +27,7 @@ class CC_DLL HUDLayer : public f::XLayer {
 
 public:
 
-  STATIC_REIFY_LAYER(HUDLayer)
+  __decl_create_layer(HUDLayer)
   __decl_deco_ui()
   __decl_get_iid(3)
 

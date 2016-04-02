@@ -21,7 +21,7 @@ class Fairytale;
 struct CC_DLL Splash : public f::XScene {
 
   __decl_ptr(Fairytale,fairytale)
-  STATIC_REIFY_SCENE(Splash)
+  __decl_create_scene(Splash)
   __decl_deco_ui()
   __decl_update()
 

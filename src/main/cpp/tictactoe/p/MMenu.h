@@ -32,7 +32,7 @@ class CC_DLL MMenu : public f::XScene {
 
 public:
 
-  STATIC_REIFY_SCENE_CTX(MMenu)
+  __decl_create_scene_ctx(MMenu)
   __decl_deco_ui()
 
 };

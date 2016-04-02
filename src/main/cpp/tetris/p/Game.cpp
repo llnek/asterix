@@ -33,7 +33,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 

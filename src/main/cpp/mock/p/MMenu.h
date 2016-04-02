@@ -19,7 +19,7 @@ NS_BEGIN(mock)
 //
 struct CC_DLL MMenu : public f::XScene {
 
-  STATIC_REIFY_SCENE(MMenu)
+  __decl_create_scene(MMenu)
   __decl_deco_ui()
 
 };

@@ -49,7 +49,7 @@ class CC_DLL NetPlay : public f::XScene {
 
 public:
 
-  STATIC_REIFY_SCENE_CTX(NetPlay)
+  __decl_create_scene_ctx(NetPlay)
   __decl_deco_ui()
 
   virtual ~NetPlay() {

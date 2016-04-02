@@ -81,10 +81,11 @@ typedef std::string MsgTopic;
 
 //////////////////////////////////////////////////////////////////////////
 //
-#define STATIC_REIFY_SCENE_CTX(__TYPE__) \
+#define __decl_create_scene_ctx(__TYPE__) \
+  \
 static __TYPE__* reify(fusii::SCTX* x) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
-    if (NNP(p)) { \
+    if (N_NIL(p)) { \
       p->setCtx(x); \
       if (p->init()) { \
           p->autorelease(); \
@@ -97,11 +98,11 @@ static __TYPE__* reify(fusii::SCTX* x) {  \
   } \
 }
 
-
-#define STATIC_REIFY_SCENE(__TYPE__) \
+#define __decl_create_scene(__TYPE__) \
+  \
 static __TYPE__* reify() {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
-    if (NNP(p) && p->init()) { \
+    if (N_NIL(p) && p->init()) { \
         p->autorelease(); \
         p->onInited(); \
         return p; \
@@ -111,10 +112,11 @@ static __TYPE__* reify() {  \
     } \
 }
 
-#define STATIC_REIFY_LAYER_CTX(__TYPE__) \
+#define __decl_create_layer_ctx(__TYPE__) \
+  \
   static __TYPE__* reify(fusii::XScene* xs, fusii::SCTX* x, int zx = 0) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
-    if (NNP(p)) { \
+    if (N_NIL(p)) { \
       p->setCtx(x); \
       if (p->initEx(xs, zx)) { \
           p->autorelease(); \
@@ -127,10 +129,11 @@ static __TYPE__* reify() {  \
   } \
 }
 
-#define STATIC_REIFY_LAYER(__TYPE__) \
+#define __decl_create_layer(__TYPE__) \
+  \
 static __TYPE__* reify(fusii::XScene* xs, int zx = 0) {  \
     __TYPE__ *p = mc_new( __TYPE__ ); \
-    if (NNP(p) && p->initEx(xs, zx)) { \
+    if (N_NIL(p) && p->initEx(xs, zx)) { \
         p->autorelease(); \
         p->onInited(); \
         return p; \

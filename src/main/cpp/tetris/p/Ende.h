@@ -24,7 +24,7 @@ class CC_DLL Ende : public f::XLayer {
 
 public:
 
-  STATIC_REIFY_LAYER(Ende)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
 
 };

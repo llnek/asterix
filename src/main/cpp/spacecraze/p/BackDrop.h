@@ -25,7 +25,7 @@ __decl_md(s_vec<c::Sprite*>, _stars)
 
 public:
 
-  STATIC_REIFY_LAYER(BackDrop)
+  __decl_create_layer(BackDrop)
   __decl_update()
   __decl_deco_ui()
 

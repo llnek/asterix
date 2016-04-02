@@ -41,7 +41,7 @@ public:
   void playTimeExpired();
   void showMenu();
 
-  STATIC_REIFY_LAYER(GLayer)
+  __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
