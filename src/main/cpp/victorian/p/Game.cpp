@@ -29,12 +29,10 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual bool onTouchStart(c::Touch*);
-  virtual void onTouchEnd(c::Touch*);
-
   virtual bool onMouseStart(const CCT_PT&);
   virtual void onMouseClick(const CCT_PT&);
-
+  virtual bool onTouchStart(c::Touch*);
+  virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
   void startGame();
@@ -43,6 +41,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_ptr(ecs::Node, _terrain)
   __decl_ptr(ecs::Node, _player)
   __decl_ptr(ecs::Node, _shared)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -54,13 +53,13 @@ void GLayer::onInited() {
 
   auto bg = cx::reifySprite("background.png");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
+  auto rw= CC_CSIZE(bg).width;
   auto wb=cx::visBox();
 
   bg->setAnchorPoint(cx::anchorBL());
   addAtlasItem("game-pics",bg, kBackground);
 
   auto repeat = cx::reifySprite("background.png");
-  auto rw= CC_CSIZE(repeat).width;
   repeat->setAnchorPoint(cx::anchorBL());
   repeat->setPosition(rw - 1, 0);
   bg->addChild(repeat, kBackground);
