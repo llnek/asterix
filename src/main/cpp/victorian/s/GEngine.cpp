@@ -67,6 +67,8 @@ void GEngine::initEntities() {
 void GEngine::initSystems() {
   regoSystem(mc_new1(Resolve,this));
   regoSystem(mc_new1(Move,this));
+  regoSystem(mc_new1(AI,this));
+  regoSystem(mc_new1(Collide,this));
 }
 
 

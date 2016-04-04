@@ -21,17 +21,17 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto lbl= cx::reifyLabel("text", 32, "Game Over!");
+  auto lbl= cx::reifyLabel("text", 60, "Game Over!");
   auto wb= cx::visBox();
 
   lbl->setPosition(wb.cx, wb.top * 0.8);
   addItem(lbl);
 
-  _replayBtn = cx::reifyLabel("text", 32, "Replay");
-  _replayBtn ->setPosition(wb.cx, wb.top * 0.2);
+  _replayBtn = cx::reifySprite("label_tryagain.png");
+  _replayBtn->setPosition(wb.cx, wb.cy);
   addItem(_replayBtn );
 
-    enableListeners();
+  enableListeners();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,8 @@ bool Ende::onTouchStart(c::Touch *t) {
 //
 bool Ende::onMouseStart(const CCT_PT &tap) {
   if (cx::isTapped(_replayBtn, tap)) {
-    cx::runEx(Game::reify(new GameCtx()));
+    auto x= MGMS()->ejectCtx();
+    cx::runEx(Game::reify(x));
   }
   return false;
 }

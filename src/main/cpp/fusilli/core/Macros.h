@@ -37,12 +37,14 @@
 #define CC_DROP(x) if (x) { (x)->release();}
 
 #define CC_CSIZE(s) (s)->getBoundingBox().size
+#define CC_CHT(s) CC_CSIZE(s).height
+#define CC_CWH(s) CC_CSIZE(s).width
 #define CC_CSZ(s) CC_CSIZE(s)
 
 
 #define CC_BBOX(s) s->getBoundingBox()
-#define CC_HIDE(s) s->setVisible(false)
-#define CC_SHOW(s) s->setVisible(true)
+#define CC_HIDE(s) do { if (s) s->setVisible(false); } while (0)
+#define CC_SHOW(s) do { if (s) s->setVisible(true); } while (0)
 #define CC_GCT(s,t) s->getChildByTag(t)
 
 #define CC_DICT() cocos2d::Dictionary::create()

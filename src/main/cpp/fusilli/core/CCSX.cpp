@@ -380,6 +380,18 @@ bool timerDone(c::DelayTime* t) {
   return t ? t->isDone() : false;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<c::Animation*> createAnimation(float dpu, bool restore, int loops) {
+
+  auto a= c::Animation::create();
+  a->setRestoreOriginalFrame(restore);
+  a->setDelayPerUnit(dpu);
+  a->setLoops(loops);
+  return a;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // Reify a sprite from its frame name
 c::Sprite* reifySprite(const sstr &name) {

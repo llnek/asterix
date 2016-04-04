@@ -31,6 +31,10 @@ struct CC_DLL Game : public f::GameScene {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GameCtx : public f::GCX {
+  GameCtx(int aspect) {
+    this->aspect=aspect;
+  }
+  __decl_iz(aspect);
 };
 
 

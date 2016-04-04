@@ -35,6 +35,8 @@ enum GameState {
   kGamePlay,
   kGameOver,
   kGameTutorial,
+  kGameTutorialReady,
+  kGameTutorialEnd,
   kGameTutorialJump,
   kGameTutorialFloat,
   kGameTutorialDrop
@@ -62,6 +64,7 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_ptr(c::Sprite,jam)
   __decl_ptr(c::Sprite,hat)
 
+  __decl_ptr(c::Label,tutorialLabel)
   __decl_ptr(c::Sprite,background)
   __decl_ptr(c::Sprite,foreground)
   __decl_iz(state)

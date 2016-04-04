@@ -66,6 +66,10 @@ namespace ccsx {
 
   bool isDesktop();
 
+  owner<c::Animation*> createAnimation(
+      float dpu,
+      bool restore=false, int loops= -1);
+
   c::SpriteBatchNode* reifySpriteBatch(const sstr &name);
 
   c::MenuItem* createMenuBtn(const sstr &n);

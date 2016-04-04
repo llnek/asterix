@@ -19,7 +19,7 @@ NS_BEGIN(victorian)
 //
 struct CC_DLL Ende : public f::XLayer {
 
-  __decl_ptr(c::Label,_replayBtn)
+  __decl_ptr(c::Node,_replayBtn)
 
   __decl_create_layer(Ende)
   __decl_deco_ui()

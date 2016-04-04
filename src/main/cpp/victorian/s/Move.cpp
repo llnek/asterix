@@ -17,6 +17,7 @@
 #include "n/Terrain.h"
 #include "n/Player.h"
 #include "Move.h"
+#include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(victorian)
@@ -62,37 +63,6 @@ void Move::process(float dt) {
     atlas->setPositionY((wb.top * 0.6 - pm->nextPos.y) * 0.8);
   } else {
     atlas->setPositionY(0);
-  }
-
-    //update parallax
-  if (pm->vel.x > 0) {
-    ss->background->setPositionX(
-        ss->background->getPositionX() - pm->vel.x * 0.25);
-
-    float diffx;
-    if (ss->background->getPositionX() < - CC_CSIZE(ss->background).width) {
-      diffx = fabs(ss->background->getPositionX()) - CC_CSIZE(ss->background).width;
-      ss->background->setPositionX(-diffx);
-    }
-
-    ss->foreground->setPositionX(
-        ss->foreground->getPositionX() - pm->vel.x * 4);
-
-    if (ss->foreground->getPositionX() < - CC_CSIZE(ss->foreground).width * 4) {
-      diffx = fabs(ss->foreground->getPositionX()) - CC_CSIZE(ss->foreground).width * 4;
-      ss->foreground->setPositionX(-diffx);
-    }
-
-    auto ps=MGMS()->getPool("Clouds")->ls();
-    F__LOOP(it,ps) {
-      auto e= *it;
-      auto ui=CC_GEC(f::CPixie,e,"f/CPixie");
-      auto sz= CC_CSIZE(ui);
-      ui->setPositionX(
-          ui->getPositionX() - pm->vel.x * 0.15);
-      if (ui->getPositionX() + HWZ(sz) < 0 )
-        ui->setPositionX( wb.right + HWZ(sz));
-    }
   }
 
   if (ss->jam->isVisible()) {

@@ -20,6 +20,10 @@ NS_BEGIN(victorian)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
+  __decl_ptr(ecs::Node,_shared)
+  __decl_ptr(ecs::Node,_player)
+  void process(float);
+
 public:
 
   __decl_sys_priority( ecs::AI)

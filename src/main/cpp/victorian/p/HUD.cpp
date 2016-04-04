@@ -33,6 +33,13 @@ void HUDLayer::decoUI() {
   _score=0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateScore(int v) {
+  _score += v;
+  _scoreLabel->setString(FTOS(_score));
+}
+
 
 NS_END
 

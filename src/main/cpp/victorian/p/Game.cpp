@@ -35,6 +35,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
+  void showTutorial();
   void startGame();
   void onEnd();
 
@@ -51,15 +52,15 @@ void GLayer::onInited() {
   _player = _engine->getNodes("f/CGesture")[0];
   _shared = _engine->getNodes("n/GVars")[0];
 
+  auto repeat = cx::reifySprite("background.png");
   auto bg = cx::reifySprite("background.png");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
-  auto rw= CC_CSIZE(bg).width;
   auto wb=cx::visBox();
+  auto rw= CC_CWH(bg);
 
-  bg->setAnchorPoint(cx::anchorBL());
   addAtlasItem("game-pics",bg, kBackground);
+  bg->setAnchorPoint(cx::anchorBL());
 
-  auto repeat = cx::reifySprite("background.png");
   repeat->setAnchorPoint(cx::anchorBL());
   repeat->setPosition(rw - 1, 0);
   bg->addChild(repeat, kBackground);
@@ -86,56 +87,71 @@ void GLayer::onInited() {
   ss->background= bg;
   ss->foreground= fg;
 
+  // what is jam, a bunch of bikes?
   ss->jam = cx::reifySprite("jam_1.png");
   ss->hat = cx::reifySprite("hat.png");
   CC_HIDE(ss->hat);
-  addAtlasItem("game-pics", ss->hat, kMiddleground);
 
-  auto anim= c::Animation::create();
+  auto anim= cx::createAnimation(0.2/3.0);
   for (auto i = 1; i <= 3; ++i) {
-    auto f = cx::getSpriteFrame("jam_" + FTOS(i) + ".png");
-    anim->addSpriteFrame(f);
+    anim->addSpriteFrame(
+      cx::getSpriteFrame("jam_" + FTOS(i) + ".png"));
   }
-  anim->setRestoreOriginalFrame(false);
-  anim->setDelayPerUnit(0.2 / 3.0);
-  anim->setLoops(-1);
   ss->jamAnimate = c::Animate::create(anim);
   CC_KEEP(ss->jamAnimate);
-  addAtlasItem("game-pics", ss->jam, kBackground);
 
-  ss->jam->setPosition(wb.right * 0.19, wb.top * 0.47);
   ss->jamMove = c::MoveTo::create(6.0,
       CCT_PT(-wb.right * 0.3, ss->jam->getPositionY()));
   CC_KEEP(ss->jamMove);
 
+  addAtlasItem("game-pics", ss->hat, kMiddleground);
+  addAtlasItem("game-pics", ss->jam, kBackground);
+
+  // this should be part of a level config
   ss->speedIncreaseInterval = 15;
   ss->speedIncreaseTimer = 0;
   ss->state = kGameIntro;
-
-  //_intro->setVisible(true);
-  //_mainMenu->setVisible(true);
 
   ss->jam->setPosition(wb.right * 0.19, wb.top * 0.47);
   CC_SHOW(ss->jam);
   ss->jam->runAction(ss->jamAnimate);
 
-  //cx::pauseMusic();
-  cx::sfxMusic("background3", true);
-  startGame();
+  auto ctx= (GameCtx*) MGMS()->getCtx();
+  cx::sfxPlay("start");
+  if (ctx->aspect == kGameTutorial) {
+    showTutorial();
+  } else {
+    startGame();
+  }
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::showTutorial() {
+
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto wb=cx::visBox();
+
+  ss->tutorialLabel = cx::reifyLabel("text", 60,
+        "Tap the screen to make the player jump.");
+  ss->tutorialLabel->setPosition(wb.cx, wb.top * 0.6);
+  addItem(ss->tutorialLabel, kForeground);
+
+  ss->state = kGameTutorialReady;
+  ss->jam->runAction(ss->jamMove);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::startGame() {
-    //_tutorialLabel->setVisible(false);
-    //_intro->setVisible(false);
-    //_mainMenu->setVisible(false);
   auto t=CC_GEC(Terrain, _terrain,"f/CPixie");
   auto ss=CC_GEC(GVars, _shared,"n/GVars");
+
   ss->jam->runAction(ss->jamMove);
-  cx::sfxPlay("start");
-  t->setStartTerrain (true);
   ss->state = kGamePlay;
+  t->setStartTerrain(true);
+  cx::sfxMusic("background3", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -163,18 +179,26 @@ bool GLayer::onMouseStart(const CCT_PT &loc) {
 
   switch (ss->state) {
 
-    case kGameIntro:
+    case kGameTutorialReady:
+      ss->state = kGameTutorialJump;
     break;
 
-    case kGameOver:/*
-      if (_tryAgain->boundingBox().containsPoint(tap)) {
-          _hat->setVisible(false);
-          _hat->stopAllActions();
-          _tryAgain->setVisible(false);
-          _terrain->reset();
-          _player->reset();
-          resetGame();
-      }*/
+    case kGameTutorialJump:
+      if (ps->state == kPlayerMoving) {
+        pm->setJumping(true);
+        cx::sfxPlay("jump");
+      }
+    break;
+
+    case kGameTutorialFloat:
+      if (!pm->isFloating()) {
+        pm->setFloating (py, true);
+      }
+    break;
+
+    case kGameTutorialDrop:
+      pm->setFloating(py, false);
+      ss->state=kGameTutorialEnd;
     break;
 
     case kGamePlay:
@@ -190,33 +214,12 @@ bool GLayer::onMouseStart(const CCT_PT &loc) {
     break;
 
     case kGameTutorial:
-      //_tutorialLabel->setString("");
-      //_tutorialLabel->setVisible(false);
-      tn->setStartTerrain(true);
-      ss->state = kGamePlay;
+      cx::runEx(Game::reify(new GameCtx(kGamePlay)));
     break;
 
-    case kGameTutorialJump:
-      if (ps->state == kPlayerMoving) {
-        pm->setJumping(true);
-        cx::sfxPlay("jump");
-      }
-    break;
-
-    case kGameTutorialFloat:
-      if (!pm->isFloating()) {
-        pm->setFloating (py, true);
-        //_running = true;
-      }
-    break;
-
-    case kGameTutorialDrop:
-      pm->setFloating(py, false);
-      //_running = true;
-    break;
   }
 
-    return true;
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -251,6 +254,12 @@ END_NS_UNAMED
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
 
+  if (topic == "/game/player/earnscore") {
+    auto msg= (j::json*)m;
+    y->getHUD()->updateScore(
+      JS_INT(msg->operator[]("score")));
+  }
+  else
   if (topic== "/game/player/lose") {
     y->onEnd();
   }
