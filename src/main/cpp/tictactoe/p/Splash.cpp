@@ -12,7 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/lib.h"
+#include "n/C.h"
 #include "MMenu.h"
 #include "Splash.h"
 
@@ -120,8 +120,6 @@ void Splash::decoUIXXX() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
-
-  s::srand(cx::timeInMillis());
 
   centerImage( "game.bg");
   regoAtlas("game-pics");

@@ -13,12 +13,18 @@
 
 //////////////////////////////////////////////////////////////////////////////
 //
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
+#include "core/JSON.h"
 #include "TTToe.h"
-#include "lib.h"
 
+#define GD_SZ BD_SZ * BD_SZ
+#define BD_SZ 3
+
+typedef s_arr<int, GD_SZ> ArrCells;
+typedef s_arr<int, BD_SZ> ArrDim;
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
 
@@ -51,7 +57,7 @@ struct CC_DLL Player : public f::CStats {
     return *this;
   }
   Player(const Player &other)
-    : CStats(other){
+    : CStats(other) {
 
     category= other.category;
     pidlong= other.pidlong;
@@ -60,12 +66,12 @@ struct CC_DLL Player : public f::CStats {
   }
   Player(int pnum) { this->pnum= pnum; }
   Player() {}
-  __decl_mv(int, category, 0)
   __decl_mv(int, pnum,  -1)
   __decl_md(sstr, pidlong)
-  __decl_md(sstr, pid)
   __decl_md(sstr, color)
-  __decl_comp_tpid( "n/Player")
+  __decl_md(sstr, pid)
+  __decl_iz(category)
+  __decl_comp_tpid("n/Player")
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,12 +84,22 @@ struct CC_DLL Players : public ecs::Component {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CSquare : public f::CPixie {
-  CSquare(int cell)
-    : CPixie( cx::reifySprite("z.png")) {
+class CC_DLL CSquare : public f::CPixie {
+
+  CSquare(int cell) {
     this->cell=cell;
     this->png= "z";
   }
+
+public:
+
+  static owner<CSquare*> create(int cell) {
+    auto z= mc_new1(CSquare,cell);
+    z->initWithSpriteFramName("z.png");
+    z->autorelease();
+    return z;
+  }
+
   void toggle(int nv) {
     auto x= CC_CSV(c::Integer,"CV_X");
     auto o= CC_CSV(c::Integer,"CV_O");
@@ -95,8 +111,10 @@ struct CC_DLL CSquare : public f::CPixie {
     }
   }
   void flip() {
+    if (value != 0)
     SCAST(c::Sprite*,node)->setSpriteFrame(png + ".i.png");
   }
+
   __decl_md(sstr,png)
   __decl_iz(value)
   __decl_iz(cell)
@@ -104,7 +122,7 @@ struct CC_DLL CSquare : public f::CPixie {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL CSquares  : public ecs::Component {
+struct CC_DLL CSquares : public ecs::Component {
   __decl_comp_tpid( "n/CSquares" )
   s_arr<f::Box4,GD_SZ> boxes;
   s_arr<CSquare*,GD_SZ> sqs;
@@ -126,6 +144,14 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_iz(pnum)
   __decl_iz(lastWinner)
 };
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_arr<f::Box4, GD_SZ> mapGridPos(float scale = 1);
+const s_vec<ArrDim> mapGoalSpace();
+j::json fmtGameData(f::GMode );
+
 
 
 NS_END

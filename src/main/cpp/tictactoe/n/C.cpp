@@ -10,10 +10,8 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 
-NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(tttoe)
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,7 +33,7 @@ const s_arr<f::Box4,GD_SZ> mapGridPos(float scale) {
   auto y0 = wb.cy + HTV(zh);
   auto x1= x0;
   auto y1= y0;
-  int x2, y2;
+  float x2, y2;
 
   for (auto r=0; r < BD_SZ; ++r) {
     for (auto c= 0; c < BD_SZ; ++c) {
@@ -127,6 +125,8 @@ j::json fmtGameData(f::GMode m) {
 
   throw "bad game mode!";
 }
+
+
 
 NS_END
 

@@ -24,16 +24,15 @@ NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto tile = CC_CSV(c::Integer,"TILE");
+  auto tile = CC_CSV(c::Float,"TILE");
   auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
   auto lb = cx::reifyBmfLabel(
       wb.cx, wb.top * 0.9,
-      "font.JellyBelly", gets("mmenu"));
+      "JellyBelly", gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
 
-  lb->setScale(XCFG()->getScale());
   lb->setColor(c);
   addItem(lb);
 
@@ -73,8 +72,8 @@ void MMenu::decoUI() {
 
   // ctrl btns
   s_vec<c::MenuItem*> ctrl {back, quit};
-  auto sz= CC_CSIZE(back);
   auto m2= cx::mkHMenu(ctrl);
+  auto sz= CC_CSIZE(back);
 
   m2->setPosition(wb.left+tile+sz.width*1.1,
                   wb.bottom+tile+sz.height*0.45);
@@ -87,7 +86,7 @@ void MMenu::decoUI() {
 
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-tile, wb.bottom+tile));
+      CCT_PT(wb.right-tile, wb.bottom+tile));
 }
 
 //////////////////////////////////////////////////////////////////////////

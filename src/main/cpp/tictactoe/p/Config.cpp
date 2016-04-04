@@ -59,11 +59,11 @@ void Config::initAssets() {
   addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
   addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  addImage("gui.edit.orange", CC_STR("pics/orange_edit.png"));
-  addImage("game.bg", CC_STR("pics/bg.png"));
-  addImage("game-pics", CC_STR("pics/images.png"));
-  addImage("lang-pics", CC_STR("l10n/en/images.png"));
   addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
+  addImage("game.bg", CC_STR("pics/bg.png"));
+
+  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
   addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
   addEffect("x_pick", CC_STR("sfx/ElevatorBeep.mp3"));
@@ -79,30 +79,25 @@ void Config::initAssets() {
 
   addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
   addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("font.JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
+  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
   addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
   addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
   addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
+
+  addFont("text", CC_STR("fon/en/Arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
-  //for default font, we use 48pt
   auto gz= gameSize();
-  _scale = 52.0f/256.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("cached sprite-sheet: %s", fp.c_str());
-  fp= getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
-  CCLOG("cached sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("lang-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

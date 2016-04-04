@@ -30,13 +30,12 @@ static int PSWD_TAG = (int) 'p';
 //
 void NetPlay::showWaitOthers() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("waitother"));
+  auto qn= cx::reifyLabel("text", 32, gets("waitother"));
   auto wb = cx::visBox();
 
   //clear layer
   removeAll();
 
-  qn->setScale(XCFG()->getScale() * 0.3);
   qn->setPosition(wb.cx, wb.top * 0.75);
   addItem(qn);
 
@@ -141,13 +140,12 @@ void NetPlay::onLogin() {
 //
 void NetPlay::decoUI() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("signinplay"));
+  auto qn= cx::reifyLabel("text", 32, gets("signinplay"));
   auto wb= cx::visBox();
 
   centerImage("game.bg");
 
   // text msg
-  qn->setScale(XCFG()->getScale() * 0.3);
   qn->setPosition(wb.cx, wb.top * 0.75);
   addItem(qn);
 
@@ -160,8 +158,8 @@ void NetPlay::decoUI() {
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
-  uid->setPosition(c::Vec2(wb.cx, wb.cy+ HHZ(bxz)+2));
-    uid->setTag(USER_TAG);
+  uid->setPosition(CCT_PT(wb.cx, wb.cy+ HHZ(bxz)+2));
+  uid->setTag(USER_TAG);
   addItem(uid);
 
   // editbox for password
@@ -173,8 +171,8 @@ void NetPlay::decoUI() {
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
-  pwd->setPosition(c::Vec2(wb.cx, wb.cy- HHZ(bxz)-2));
-    pwd->setTag(PSWD_TAG);
+  pwd->setPosition(CCT_PT(wb.cx, wb.cy- HHZ(bxz)-2));
+  pwd->setTag(PSWD_TAG);
   addItem(pwd);
 
   // btns

@@ -95,7 +95,7 @@ void TTToe::makeMove(not_null<ag::FFrame<BD_SZ>*> snap, int move) {
   if (isNil(snap->_state[move])) {
     snap->_state[move] = snap->_cur;
   } else {
-    throw "cell [" + s::to_string(move) + "] is not free";
+    throw "cell [" + FTOS(move) + "] is not free";
   }
 }
 
@@ -139,7 +139,8 @@ owner<ag::FFrame<BD_SZ>*>  TTToe::takeFFrame() {
 int TTToe::evalScore(not_null<ag::FFrame<BD_SZ>*> snap) {
   // if we lose, return a nega value
   F__LOOP(it, _GOALS) {
-    if (testWin(snap->_state, snap->_other, *it)) {
+    auto &t= *it;
+    if (testWin(snap->_state, snap->_other, t)) {
       return -100;
     }
   }

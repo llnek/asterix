@@ -15,7 +15,7 @@
 //
 #include "algos/NegaMax.h"
 #include "ecs/Ecs.h"
-#include "lib.h"
+#include "C.h"
 
 NS_ALIAS(ag, fusii::algos)
 NS_BEGIN(tttoe)
