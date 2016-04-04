@@ -15,7 +15,6 @@
 #include "Resolve.h"
 #include "Net.h"
 #include "Logic.h"
-#include "n/lib.h"
 #include "GEngine.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -53,17 +52,17 @@ void GEngine::initEntities() {
   ArrCells seed;
   seed.fill(0);
 
-  arena= this->reifyNode("Arena");
-  board= this->reifyNode("Board");
-  p2 = this->reifyNode("Player2");
-  p1 = this->reifyNode("Player1");
+  p2 = this->reifyNode("Player2", true);
+  p1 = this->reifyNode("Player1", true);
+  arena= this->reifyNode("Arena",true);
+  board= this->reifyNode("Board",true);
 
   // config global vars
   gvs->pnum= mynum;
 
   // the squares
   for (auto i=0; i < css->sqs.size(); ++i) {
-    css->sqs[i] = mc_new1(CSquare, i);
+    css->sqs[i] = CSquare::create(i);
   }
   S__COPY(gps, css->boxes);
 
@@ -79,7 +78,7 @@ void GEngine::initEntities() {
   }
   else
   if (mode == f::GMode::ONE) {
-    p2->checkin( mc_new2(TTToe, xv, ov));
+    p2->checkin(mc_new2(TTToe, xv, ov));
     p2->checkin(mc_new(f::CAutoma));
     p1->checkin(mc_new(f::CHuman));
   }

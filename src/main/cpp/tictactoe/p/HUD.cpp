@@ -23,60 +23,61 @@ void HUDLayer::decoUI() {
 
   auto soff= CC_CSV(c::Float, "S_OFF");
   auto tile= CC_CSV(c::Float, "TILE");
-  auto color = XCFG()->getColor("dft");
-  auto scale= XCFG()->getScale();
+  auto tc= XCFG()->getColor("text");
+  auto c= XCFG()->getColor("dft");
   auto wb= cx::visBox();
 
   regoAtlas("game-pics");
 
   //score1
-  _score1= cx::reifyBmfLabel("font.SmallTypeWriting", "0");
-  _score1->setColor(XCFG()->getColor("text"));
+  _score1= cx::reifyBmfLabel("dft", "0");
+  _score1->setColor(c);
   _score1->setAnchorPoint(cx::anchorTL());
-  _score1->setScale(scale);
+  XCFG()->scaleLabel(_score1, 48);
   _score1->setPosition(tile+soff+2, wb.top-tile-soff);
   addItem(_score1);
 
   //score2
-  _score2= cx::reifyBmfLabel( "font.SmallTypeWriting", "0");
-  _score2->setColor(XCFG()->getColor("text"));
+  _score2= cx::reifyBmfLabel("dft", "0");
+  _score2->setColor(c);
   _score2->setAnchorPoint(cx::anchorTR());
-  _score2->setScale(scale);
+  XCFG()->scaleLabel(_score2, 48);
   _score2->setPosition(wb.right-tile-soff, wb.top-tile-soff);
   addItem(_score2);
 
   // status
-  _status= cx::reifyBmfLabel( "font.CoffeeBuzzed");
-  _status->setColor(XCFG()->getColor("text"));
-  _status->setScale(scale * 0.3);
+  _status= cx::reifyLabel("text",
+      XCFG()->scaleTTF(20),
+      "");
+  _status->setColor(tc);
   _status->setPosition(wb.cx, wb.bottom + tile * 10);
   addItem(_status);
 
   // result
-  _result= cx::reifyBmfLabel( "font.CoffeeBuzzed");
-  _result->setColor(XCFG()->getColor("text"));
-  _result->setScale(scale * 0.3);
+  _result= cx::reifyLabel("text",
+      XCFG()->scaleTTF(20),
+      "");
+  _result->setColor(tc);
   _result->setPosition(wb.cx, wb.bottom + tile * 10);
   _result->setVisible(false);
   addItem(_result);
 
   //title
-  _title = cx::reifyBmfLabel("font.JellyBelly");
-  _title->setScale(scale * 0.6);
+  _title = cx::reifyBmfLabel("dft");
   _title->setAnchorPoint(cx::anchorT());
-  _title->setColor(color);
+  _title->setColor(c);
+  XCFG()->scaleLabel(_title,32);
   _title->setPosition(wb.cx, wb.top - 2*tile);
   addItem(_title);
 
   //menu icon
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = HTV( cx::getHeight(b));
-  auto hw = HTV( cx::getWidth(b));
-  b->setColor(color);
+  auto hh = HTV(cx::getHeight(b));
+  auto hw = HTV(cx::getWidth(b));
+  b->setColor(c);
   b->setCallback(
       [=](c::Ref*) { SENDMSG("/hud/showmenu"); });
   auto menu = cx::mkMenu(b);
-
   menu->setPosition(wb.right-tile-hw, wb.bottom+tile+hh);
   addItem(menu);
 }
@@ -86,28 +87,28 @@ void HUDLayer::decoUI() {
 void HUDLayer::showTimer() {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto ptt= JS_INT(cfg["HUMAN+THINK"]);
-  auto tile= CC_CSV(c::Integer,"TILE");
-  auto scale= XCFG()->getScale();
+  auto tile= CC_CSV(c::Float,"TILE");
+  //auto scale= XCFG()->getScale();
+  auto c= XCFG()->getColor("dft");
   auto wb= cx::visBox();
 
   // timer is already showing, go away
   if (_countDownState) {
-    return;
-  }
+  return; }
 
-  if (ENP(_countDown)) {
-    _countDown= cx::reifyBmfLabel( "font.AutoMission");
+  if (E_NIL(_countDown)) {
+    _countDown= cx::reifyBmfLabel("dft");
     _countDown->setPosition(wb.cx, wb.top - 10*tile);
     _countDown->setAnchorPoint(cx::anchorC());
-    _countDown->setScale(HTV(scale));
-    _countDown->setColor(XCFG()->getColor("text"));
+    XCFG()->scaleLabel(_countDown, 32);
+    _countDown->setColor(c);//XCFG()->getColor("text"));
     addItem(_countDown);
   }
 
   _countDownState= true;
   _countDownValue= ptt;
 
-  showCountDown(s::to_string(ptt));
+  showCountDown(FTOS(ptt));
   schedule(
       CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer), 1);
 }
@@ -122,7 +123,7 @@ void HUDLayer::updateTimer(float dt) {
     killTimer();
     SENDMSG("/player/timer/expired");
   } else {
-    showCountDown(s::to_string(_countDownValue));
+    showCountDown(FTOS(_countDownValue));
   }
 }
 
@@ -141,8 +142,8 @@ void HUDLayer::killTimer() {
     unschedule(CC_SCHEDULE_SELECTOR(HUDLayer::updateTimer));
     showCountDown(" ");
   }
-  _countDownValue=0;
   _countDownState=false;
+  _countDownValue=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -183,8 +184,8 @@ void HUDLayer::drawXXXText(c::Label *obj, const sstr &msg) {
 void HUDLayer::drawScores() {
   auto s2 = _scores[2];
   auto s1 = _scores[1];
-  auto n2 = s::to_string(s2);
-  auto n1 = s::to_string(s1);
+  auto n2 = FTOS(s2);
+  auto n1 = FTOS(s1);
 
   _score1->setString(n1);
   _score2->setString(n2);

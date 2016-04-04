@@ -18,7 +18,6 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "core/JSON.h"
-#include "TTToe.h"
 
 #define GD_SZ BD_SZ * BD_SZ
 #define BD_SZ 3
@@ -27,6 +26,13 @@ typedef s_arr<int, GD_SZ> ArrCells;
 typedef s_arr<int, BD_SZ> ArrDim;
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tttoe)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_arr<f::Box4, GD_SZ> mapGridPos(float scale = 1);
+const s_vec<ArrDim> mapGoalSpace();
+j::json fmtGameData(f::GMode );
+
 
 //////////////////////////////////////////////////////////////////////////////
 // stores the grid values and the set of winning goals
@@ -95,7 +101,7 @@ public:
 
   static owner<CSquare*> create(int cell) {
     auto z= mc_new1(CSquare,cell);
-    z->initWithSpriteFramName("z.png");
+    z->initWithSpriteFrameName("z.png");
     z->autorelease();
     return z;
   }
@@ -107,12 +113,12 @@ public:
       if (nv == x) { png= "x"; }
       if (nv == o) { png= "o"; }
       value=nv;
-        SCAST(c::Sprite*,node)->setSpriteFrame(png + ".png");
+        this->setSpriteFrame(png + ".png");
     }
   }
   void flip() {
     if (value != 0)
-    SCAST(c::Sprite*,node)->setSpriteFrame(png + ".i.png");
+    this->setSpriteFrame(png + ".i.png");
   }
 
   __decl_md(sstr,png)
@@ -144,13 +150,6 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_iz(pnum)
   __decl_iz(lastWinner)
 };
-
-
-//////////////////////////////////////////////////////////////////////////////
-//
-const s_arr<f::Box4, GD_SZ> mapGridPos(float scale = 1);
-const s_vec<ArrDim> mapGoalSpace();
-j::json fmtGameData(f::GMode );
 
 
 

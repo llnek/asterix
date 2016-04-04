@@ -81,16 +81,26 @@ void Config::initAssets() {
   addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
   addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
   addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("font.Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("font.OCR", CC_STR("fon/en/OCR.fnt"));
-
-  addFont("text", CC_STR("fon/en/Arial.ttf"));
+  addFont("dft", CC_STR("fon/en/OCR.fnt"));
+  addFont("text", CC_STR("fon/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt / 256.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::scaleLabel(not_null<c::Label*> n, float sz) {
+  n->setScale( scaleFont(sz));
 }
 
 //////////////////////////////////////////////////////////////////////////////

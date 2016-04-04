@@ -12,7 +12,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "core/Odin.h"
-#include "n/lib.h"
 #include "n/C.h"
 #include "Net.h"
 
@@ -141,7 +140,7 @@ void Net::process() {
 //
 void Net::onNet(ws::OdinEvent *evt) {
 
-  switch (evt->_code) {
+  switch (evt->getCode()) {
     case ws::EType::RESTART:
       CCLOG("restarting a new game...");
       SENDMSG("/net/restart");
@@ -163,7 +162,7 @@ void Net::onSess(ws::OdinEvent *evt) {
   auto ps= CC_GEC(Players, _board, "n/Players");
   auto grid= CC_GEC(Grid, _board, "n/Grid");
   auto ss= CC_GEC(GVars, _arena,"n/GVars");
-  auto src= evt->_doco["source"];
+  auto src= evt->getDoco()["source"];
   auto pnum= JS_INT(src["pnum"]);
   auto cmd= src["cmd"];
   auto snd="";
@@ -185,7 +184,7 @@ void Net::onSess(ws::OdinEvent *evt) {
 
   if (pnum < 1) { return; }
 
-  switch (evt->_code) {
+  switch (evt->getCode()) {
     case ws::EType::POKE_MOVE:
       CCLOG("player %d: my turn to move", pnum);
       SENDMSG("/hud/timer/show");
@@ -203,7 +202,7 @@ void Net::onSess(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Net::onSocket(ws::OdinEvent *evt) {
-  switch (evt->_type) {
+  switch (evt->getType()) {
     case ws::MType::NETWORK:
       onNet(evt);
     break;

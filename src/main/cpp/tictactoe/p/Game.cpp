@@ -12,7 +12,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
-#include "n/lib.h"
 #include "MMenu.h"
 #include "Ende.h"
 #include "HUD.h"
@@ -25,17 +24,20 @@ NS_BEGIN(tttoe)
 BEGIN_NS_UNAMED
 class CC_DLL GLayer : public f::GameLayer {
 
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseClick(const CCT_PT&);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
 
-  void onGUIXXX(const c::Vec2&);
+  void onGUIXXX(const CCT_PT&);
   void showGrid();
 
 public:
 
   HUDLayer* getHUD() {
     return (HUDLayer*)getSceneX()->getLayer(3); }
+
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _board)
 
   void overAndDone(int winner);
   void playTimeExpired();
@@ -46,9 +48,6 @@ public:
   __decl_get_iid(2)
 
   virtual void onInited();
-
-  __decl_ptr(ecs::Node, _board)
-  __decl_ptr(ecs::Node, _arena)
 
 };
 
@@ -94,10 +93,13 @@ void GLayer::playTimeExpired() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::overAndDone(int winner) {
+  this->setOpacity(0.1 * 255);
   getHUD()->endGame(winner);
+  MGMS()->stop();
   surcease();
-  auto x= mc_new1(ECX, _arena);
-  Ende::reify(getSceneX(), x, 4);
+  Ende::reify(getSceneX(),
+    mc_new1(ECX, _arena),
+    4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,13 +124,13 @@ void GLayer::onTouchEnd(c::Touch *t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
   onGUIXXX(loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onGUIXXX(const c::Vec2 &pos) {
+void GLayer::onGUIXXX(const CCT_PT &pos) {
 
   auto css= CC_GEC(CSquares, _arena,"n/CSquares");
   auto sel= CC_GEC(CellPos, _board, "n/CellPos");
@@ -171,15 +173,19 @@ void GLayer::decoUI() {
 
   auto ctx = (GCXX*) getSceneX()->getCtx();
   auto pnum= JS_INT(ctx->_data["pnum"]);
-  auto ppids = ctx->_data["ppids"];
+  auto ppids= ctx->_data["ppids"];
   auto p1c= CC_CSS("P1_COLOR");
   auto p2c= CC_CSS("P2_COLOR");
   sstr p1k;
   sstr p2k;
   sstr p1n;
   sstr p2n;
+
+  CCLOG("seed =\n%s", ctx->_data.dump(2).c_str());
+  _engine = mc_new1(GEngine,pnum);
+
   J__LOOP(it, ppids) {
-    auto &arr= it.value() ;
+    auto &arr= it.value();
     if (JS_INT(arr[0]) == 1) {
       p1n= JS_STR(arr[1]);
       p1k= it.key();
@@ -188,10 +194,6 @@ void GLayer::decoUI() {
       p2k= it.key();
     }
   }
-
-  CCLOG("seed =\n%s", ctx->_data.dump(2).c_str());
-
-  _engine = mc_new1(GEngine,pnum);
 
   getHUD()->regoPlayers(p1c, p1k, p1n, p2c, p2k, p2n);
   CCLOG("init-game - ok");
@@ -206,8 +208,8 @@ void GLayer::showGrid() {
     auto s= css->sqs[i];
     auto &bx= gps[i];
     assert(s->cell == i);
-    s->node->setPosition(cx::vboxMID(bx));
-    addAtlasItem("game-pics", s->node);
+    s->setPosition(cx::vboxMID(bx));
+    addAtlasItem("game-pics", s);
   }
 }
 
@@ -256,7 +258,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
     auto msg= (j::json*) m;
       y->getHUD()->draw(
         JS_BOOL(msg->operator[]("running")),
-                        JS_INT(msg->operator[]("category")),
+        JS_INT(msg->operator[]("category")),
         JS_INT(msg->operator[]("pnum")));
   }
   else

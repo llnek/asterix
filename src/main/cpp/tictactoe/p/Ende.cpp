@@ -37,7 +37,7 @@ void Ende::onQuit() {
 //
 void Ende::decoUI() {
 
-  auto qn= cx::reifyBmfLabel("font.OCR", gets("gameover"));
+  auto qn= cx::reifyBmfLabel("dft", gets("gameover"));
   auto ctx= (ECX*) getCtx();
   auto wb= cx::visBox();
 

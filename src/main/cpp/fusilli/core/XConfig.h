@@ -49,6 +49,7 @@ protected:
   __decl_md(sstr, _app_id)
   __decl_md(sstr, _game_id)
   __decl_bt(_audioState)
+  __decl_md(CCT_SZ, _frame)
 
   void cacheSprites(const sstr &plist);
   void loadL10NStrings();
@@ -67,7 +68,15 @@ protected:
 
 public:
 
+  virtual void scaleLabel(not_null<c::Label*>,float) {}
   virtual void handleResolution(const CCT_SZ& ) {}
+  virtual void setFrameSize(const CCT_SZ&);
+
+  virtual float scaleFont(float pt) = 0;
+
+  virtual float scaleTTF(float pt) {
+    return _scale * pt; }
+
   virtual float getScale() { return _scale; }
   virtual void runOnce() {}
 

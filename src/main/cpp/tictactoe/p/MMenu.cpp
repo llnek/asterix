@@ -15,7 +15,7 @@
 #include "NetPlay.h"
 #include "MMenu.h"
 #include "Game.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -33,6 +33,7 @@ void MMenu::decoUI() {
 
   centerImage("gui.mmenu.menu.bg");
 
+  XCFG()->scaleLabel(lb, 52);
   lb->setColor(c);
   addItem(lb);
 

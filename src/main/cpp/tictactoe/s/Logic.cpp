@@ -15,6 +15,8 @@
 #include "core/Odin.h"
 #include "core/JSON.h"
 #include "Logic.h"
+#include "n/TTToe.h"
+#include "n/C.h"
 
 NS_ALIAS(ag, fusii::algos)
 NS_ALIAS(ws, fusii::odin)

@@ -130,7 +130,7 @@ void App::preLaunch(const c::Size &dz) {
   // for win32 add Resources
   CC_FILER()->setSearchPaths(s_vec<sstr>{spath,"Resources"});
 
-  XCFG()->handleResolution(fz);
+  XCFG()->setFrameSize(fz);
   XCFG()->runOnce();
 
   CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);

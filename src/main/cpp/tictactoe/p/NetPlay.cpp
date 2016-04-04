@@ -17,7 +17,7 @@
 #include "NetPlay.h"
 #include "Game.h"
 #include "MMenu.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
@@ -54,7 +54,7 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
   auto obj= fmtGameData( f::GMode::NET);
   auto io= _odin;
 
-  obj["ppids"] = evt->_doco["source"]["ppids"];
+  obj["ppids"] = evt->getDoco()["source"]["ppids"];
   obj["pnum"]= _player; //j::json(player);
 
   io->cancelAll();
@@ -74,7 +74,7 @@ void NetPlay::onCancel() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onPlayReply(ws::OdinEvent *evt) {
-  _player= JS_INT( evt->_doco["pnum"]);
+  _player= JS_INT( evt->getDoco()["pnum"]);
   CCLOG("player %d: ok", _player);
   showWaitOthers();
 }
@@ -82,7 +82,7 @@ void NetPlay::onPlayReply(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::networkEvent(ws::OdinEvent *evt) {
-  switch (evt->_code) {
+  switch (evt->getCode()) {
     case ws::EType::PLAYER_JOINED:
       //CCLOG("another player joined room: ", evt.source.puid);
     break;
@@ -96,7 +96,7 @@ void NetPlay::networkEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::sessionEvent(ws::OdinEvent *evt) {
-  switch (evt->_code) {
+  switch (evt->getCode()) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
     break;
@@ -107,7 +107,7 @@ void NetPlay::sessionEvent(ws::OdinEvent *evt) {
 //
 void NetPlay::odinEvent(ws::OdinEvent *evt) {
   //CCLOG("odin event = %p", evt);
-  switch (evt->_type) {
+  switch (evt->getType()) {
     case ws::MType::NETWORK:
       networkEvent(evt);
     break;

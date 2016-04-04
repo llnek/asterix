@@ -393,6 +393,14 @@ const s_vec<filepath> XConfig::getEffectFiles() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void XConfig::setFrameSize(const CCT_SZ &sz) {
+  _scale= sz.width / gameSize().width;
+  _frame=sz;
+  handleResolution(sz);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const s_vec<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
   auto d= getFragment(EFX);

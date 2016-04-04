@@ -14,6 +14,7 @@
 
 #include "ecs/Engine.h"
 #include "core/JSON.h"
+#include "n/TTToe.h"
 #include "n/C.h"
 NS_BEGIN(tttoe)
 //////////////////////////////////////////////////////////////////////////////
