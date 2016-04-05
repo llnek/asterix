@@ -46,16 +46,14 @@ void HUDLayer::decoUI() {
   addItem(_score2);
 
   // status
-  _status= cx::reifyLabel("text",
-      XCFG()->scaleTTF(20),
+  _status= cx::reifyLabel("text", 20,
       "");
   _status->setColor(tc);
   _status->setPosition(wb.cx, wb.bottom + tile * 10);
   addItem(_status);
 
   // result
-  _result= cx::reifyLabel("text",
-      XCFG()->scaleTTF(20),
+  _result= cx::reifyLabel("text", 20,
       "");
   _result->setColor(tc);
   _result->setPosition(wb.cx, wb.bottom + tile * 10);
@@ -97,7 +95,7 @@ void HUDLayer::showTimer() {
   return; }
 
   if (E_NIL(_countDown)) {
-    _countDown= cx::reifyBmfLabel("dft");
+    _countDown= cx::reifyBmfLabel("timer");
     _countDown->setPosition(wb.cx, wb.top - 10*tile);
     _countDown->setAnchorPoint(cx::anchorC());
     XCFG()->scaleLabel(_countDown, 32);

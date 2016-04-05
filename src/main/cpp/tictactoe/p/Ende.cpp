@@ -41,6 +41,8 @@ void Ende::decoUI() {
   auto ctx= (ECX*) getCtx();
   auto wb= cx::visBox();
 
+  centerImage("game.bg")->setOpacity(0.8 * 255);
+
   // text msg
   qn->setScale(XCFG()->getScale() * 0.3);
   qn->setPosition(wb.cx, wb.top * 0.75);
@@ -61,6 +63,7 @@ void Ende::decoUI() {
 
   menu->setPosition(wb.cx, wb.cy);
   addItem(menu);
+
 }
 
 

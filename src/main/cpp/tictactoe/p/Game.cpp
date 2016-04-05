@@ -39,7 +39,7 @@ public:
   __decl_ptr(ecs::Node, _arena)
   __decl_ptr(ecs::Node, _board)
 
-  void overAndDone(int winner);
+  void onEnd(int winner);
   void playTimeExpired();
   void showMenu();
 
@@ -92,9 +92,10 @@ void GLayer::playTimeExpired() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::overAndDone(int winner) {
-  this->setOpacity(0.1 * 255);
+void GLayer::onEnd(int winner) {
+  getHUD()->setOpacity(0.1 * 255);
   getHUD()->endGame(winner);
+  this->setOpacity(0.1 *255);
   MGMS()->stop();
   surcease();
   Ende::reify(getSceneX(),
@@ -233,7 +234,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/net/stop" == topic) {
     auto msg= (j::json*) m;
-    y->overAndDone(
+    y->onEnd(
         JS_BOOL(msg->operator[]("status")));
   }
   else
@@ -250,7 +251,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/hud/end" == topic) {
     auto msg = (j::json*) m;
-    y->overAndDone(
+    y->onEnd(
         JS_INT(msg->operator[]("winner")));
   }
   else

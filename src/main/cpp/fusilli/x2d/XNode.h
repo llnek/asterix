@@ -65,7 +65,7 @@ public:
   virtual const sstr gets(const sstr&, const s_vec<sstr>&);
   virtual const sstr gets(const sstr&);
 
-  virtual void centerImage(const sstr &n, int z= -1);
+  virtual c::Sprite* centerImage(const sstr &n, int z= -1);
   virtual void removeAtlasAll(const sstr &atlas) ;
   virtual void removeItem(c::Node*);
   virtual void removeAll();

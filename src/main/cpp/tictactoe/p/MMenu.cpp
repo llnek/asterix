@@ -29,7 +29,7 @@ void MMenu::decoUI() {
   auto wb = cx::visBox();
   auto lb = cx::reifyBmfLabel(
       wb.cx, wb.top * 0.9,
-      "JellyBelly", gets("mmenu"));
+      "title", gets("mmenu"));
 
   centerImage("gui.mmenu.menu.bg");
 

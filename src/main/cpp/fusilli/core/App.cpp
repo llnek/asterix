@@ -138,6 +138,7 @@ void App::preLaunch(const c::Size &dz) {
   CCLOG("image search path=%s", spath);
   CCLOG("sound search path=%s", "sfx");
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
+  CCLOG("_scale =%f", XCFG()->getScale());
   //CCLOG("platform os=%s", )
 
   initAudio();

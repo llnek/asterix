@@ -167,11 +167,12 @@ void XNode::addItem(not_null<c::Node*> n) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XNode::centerImage(const sstr &name, int z) {
+c::Sprite* XNode::centerImage(const sstr &name, int z) {
   auto t= CC_TCAC()->addImage(XCFG()->getImage(name));
   auto s= c::Sprite::createWithTexture(t);
   s->setPosition(cx::center());
   _self->addChild(s,z);
+  return s;
 }
 
 //////////////////////////////////////////////////////////////////////////////

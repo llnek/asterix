@@ -65,24 +65,17 @@ void Config::initAssets() {
   addImage("lang-pics", CC_STR("l10n/en/images.png"));
   addImage("game-pics", CC_STR("pics/images.png"));
 
-  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
-  addEffect("x_pick", CC_STR("sfx/ElevatorBeep.mp3"));
-  addEffect("o_pick", CC_STR("sfx/MineBeep.mp3"));
-  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("game_end", CC_STR("sfx/end.mp3"));
+  addEffect("x_pick", CC_STR("sfx/x_pick.mp3"));
+  addEffect("o_pick", CC_STR("sfx/o_pick.mp3"));
+  addEffect("game_quit", CC_STR("sfx/quit.mp3"));
   addEffect("button", CC_STR("sfx/click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("font.SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("font.AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("font.Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("font.CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
-
-  addFont("font.TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("font.OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("font.AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("dft", CC_STR("fon/en/OCR.fnt"));
-  addFont("text", CC_STR("fon/en/arial.ttf"));
+  addFont("dft", CC_STR("fonts/en/BelshawDonutRobot.fnt"));
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("timer", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -94,7 +87,7 @@ void Config::handleResolution(const c::Size &rs) {
 //////////////////////////////////////////////////////////////////////////////
 //
 float Config::scaleFont(float pt) {
-  return pt / 256.0 * _scale;
+  return pt / 128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
