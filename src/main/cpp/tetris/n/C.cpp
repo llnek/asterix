@@ -10,13 +10,13 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "lib.h"
+#include "C.h"
 
 NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////
 //
-static void reifyBricks(const s_vec<c::Vec2> &bs,
+static void reifyBricks(const s_vec<CCT_PT> &bs,
     const sstr &png,
     s_vec<Brick*> &bricks) {
 
@@ -31,7 +31,7 @@ static void reifyBricks(const s_vec<c::Vec2> &bs,
 //
 static owner<Shape*> mkShape(const ShapeInfo &info,
     float x, float y,
-    const s_vec<c::Vec2> &bbox) {
+    const s_vec<CCT_PT> &bbox) {
 
   Shape *rc= CC_NIL;
 
@@ -62,7 +62,7 @@ static void lockBrick(s_vec<FArrBrick> &emap, Brick *z) {
   auto c= em.get(t.col);
 
   // should be empty
-  assert(ENP(c));
+  assert(E_NIL(c));
 
   // lock the desired brick in place
   em.set(t.col, z);
@@ -135,14 +135,14 @@ void clearOldBricks(s_vec<Brick*> &bs) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
+const s_vec<CCT_PT> findBBox(s_vec<FArrBrick> &emap,
     BModel *model,
     float px, float py,
     int rID, bool skipCollide) {
 
   auto tile = CC_CSV(c::Float, "TILE");
   auto dim= model->dim();
-  s_vec<c::Vec2> bs;
+  s_vec<CCT_PT> bs;
   float x,y;
 
   for (auto r=0; r < dim; ++r) {
@@ -152,9 +152,9 @@ const s_vec<c::Vec2> findBBox(s_vec<FArrBrick> &emap,
       if (model->test(rID,r,c)) {
         if (!skipCollide &&
             maybeCollide(emap, x, y)) {
-          return s_vec<c::Vec2> {};
+          return s_vec<CCT_PT> {};
         }
-        bs.push_back(c::Vec2(x,y));
+        bs.push_back(CCT_PT(x,y));
       }
     }
   }
@@ -193,7 +193,7 @@ bool maybeCollide(s_vec<FArrBrick> &emap,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const f::Cell2D xrefTile(const c::Vec2 &pos) {
+const f::Cell2D xrefTile(const CCT_PT &pos) {
   return xrefTile(pos.x, pos.y);
 }
 

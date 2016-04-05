@@ -34,7 +34,7 @@ protected:
 //
 struct CC_DLL Brick {
 
-  static Brick* reify(const c::Vec2 &pos, const sstr &f0) {
+  static Brick* reify(const CCT_PT &pos, const sstr &f0) {
     auto b = mc_new1(Brick, f0);
     b->node->setAnchorPoint(cx::anchorTL());
     b->node->setPosition(pos);
@@ -69,7 +69,7 @@ struct CC_DLL Brick {
   __decl_mv(sstr, frame1, "0.png")
   __decl_md(sstr, frame0)
 
-  __decl_md(c::Vec2, startPos)
+  __decl_md(CCT_PT, startPos)
   __decl_ptr(c::Sprite, node)
   __decl_bf(colliable)
 
@@ -95,7 +95,7 @@ struct CC_DLL ShapeInfo {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Shape : public ecs::Component {
-  Shape(const ShapeInfo& si) { info=si; }
+  Shape(const ShapeInfo &si) { info=si; }
   __decl_md(ShapeInfo, info)
   s_vec<Brick*> bricks;
   __decl_fz(x)
@@ -371,7 +371,6 @@ struct CC_DLL FilledLines : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Gesture : public f::CGesture {
-  __decl_comp_tpid( "n/Gesture")
   void reset() {
     right=false;
     left=false;
@@ -395,8 +394,51 @@ struct CC_DLL Pauser  : public ecs::Component {
 //
 struct CC_DLL GVars  : public ecs::Component {
   __decl_comp_tpid("n/GVars")
-
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Shape*> previewShape(const ShapeInfo&, float x, float y);
+
+owner<Shape*> reifyShape(s_vec<FArrBrick>& ,
+    float x, float y,
+    const ShapeInfo&);
+
+int topLine(not_null<ecs::Node*>);
+
+void clearOldBricks(s_vec<Brick*>&);
+void disposeShape(Shape*);
+
+const s_vec<CCT_PT>
+findBBox(s_vec<FArrBrick>&, BModel*,
+    float px, float py, int rID, bool skipCollide = false);
+
+bool maybeCollide(s_vec<FArrBrick>&, float tl_x, float tl_y );
+
+const f::Cell2D xrefTile(float x, float y);
+const f::Cell2D xrefTile(const CCT_PT&);
+
+void initDropper(Dropper*);
+
+void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
+
+void lock(not_null<ecs::Node*>, Shape*);
+
+bool testFilledRow(s_vec<FArrBrick>&, int r);
+
+void flashFilled(s_vec<FArrBrick>&,
+    FilledLines*,
+    const s_vec<int>& lines);
+
+void pauseForClearance(not_null<ecs::Node*>, bool b, float delay);
+
+bool moveDown(s_vec<FArrBrick>&, Shape*);
+
+bool shiftRight(s_vec<FArrBrick>&, Shape*);
+bool shiftLeft(s_vec<FArrBrick>&, Shape*);
+
+bool rotateRight(s_vec<FArrBrick>&, Shape*);
+bool rotateLeft(s_vec<FArrBrick>&, Shape*);
 
 
 
