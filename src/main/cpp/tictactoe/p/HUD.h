@@ -46,6 +46,7 @@ struct CC_DLL HUDLayer : public f::XLayer {
                    const sstr &color2,
                    const sstr &p2k, const sstr &p2n);
 
+  void setGridBox(const f::Box4&);
   void resetAsNew();
   void reset();
 

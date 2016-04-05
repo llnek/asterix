@@ -34,15 +34,18 @@ void NetPlay::showWaitOthers() {
   auto wb = cx::visBox();
 
   //clear layer
-  removeAll();
+  removeChildByTag(USER_TAG);
+  removeChildByTag(PSWD_TAG);
+  removeChildByTag(911);
 
-  qn->setPosition(wb.cx, wb.top * 0.75);
+  qn->setAlignment(c::TextHAlignment::CENTER);
+  qn->setPosition(wb.cx, wb.top * 0.8);
   addItem(qn);
 
   auto b1= cx::reifyMenuBtn("cancel.png");
   auto menu = cx::mkMenu(b1);
 
-  menu->setPosition(wb.cx, wb.top * 0.1);
+  menu->setPosition(wb.cx, wb.top * 0.2);
   b1->setCallback(
       [=](c::Ref*) { this->onCancel(); });
   addItem(menu);
@@ -140,13 +143,15 @@ void NetPlay::onLogin() {
 //
 void NetPlay::decoUI() {
 
-  auto qn= cx::reifyLabel("text", 32, gets("signinplay"));
+  auto qn= cx::reifyLabel("text",
+      32,
+      gets("signinplay"));
   auto wb= cx::visBox();
 
   centerImage("game.bg");
 
   // text msg
-  qn->setPosition(wb.cx, wb.top * 0.75);
+  qn->setPosition(wb.cx, wb.top * 0.8);
   addItem(qn);
 
   // editbox for user
@@ -157,9 +162,11 @@ void NetPlay::decoUI() {
   uid->setTouchEnabled(true);
   uid->setFontName( "Arial");
   uid->setFontSize( 18);
+  uid->setPlaceHolderColor(c::Color4B::WHITE);
   uid->setPlaceHolder(gets("userid"));
   uid->setPosition(CCT_PT(wb.cx, wb.cy+ HHZ(bxz)+2));
   uid->setTag(USER_TAG);
+  uid->setTextColor(c::Color4B::WHITE);
   addItem(uid);
 
   // editbox for password
@@ -170,9 +177,11 @@ void NetPlay::decoUI() {
   pwd->setMaxLength(16);
   pwd->setFontName( "Arial");
   pwd->setFontSize( 18);
+  pwd->setPlaceHolderColor(c::Color4B::WHITE);
   pwd->setPlaceHolder( gets("passwd"));
   pwd->setPosition(CCT_PT(wb.cx, wb.cy- HHZ(bxz)-2));
   pwd->setTag(PSWD_TAG);
+  pwd->setTextColor(c::Color4B::WHITE);
   addItem(pwd);
 
   // btns
@@ -181,13 +190,14 @@ void NetPlay::decoUI() {
   s_vec<c::MenuItem*> btns {b1, b2};
   auto menu= cx::mkVMenu(btns);
 
-  menu->setPosition(wb.cx, wb.top * 0.1);
+  menu->setPosition(wb.cx, wb.top * 0.2);
   b1->setCallback(
       [=](c::Ref*) { this->onLogin(); });
 
   b2->setCallback(
       [=](c::Ref*) { this->onCancel(); });
 
+  menu->setTag(911);
   addItem(menu);
 }
 

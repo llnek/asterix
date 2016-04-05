@@ -394,7 +394,7 @@ const s_vec<filepath> XConfig::getEffectFiles() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void XConfig::setFrameSize(const CCT_SZ &sz) {
-  _scale= sz.width / gameSize().width;
+  _scale= CC_DTOR()->getContentScaleFactor();
   _frame=sz;
   handleResolution(sz);
 }

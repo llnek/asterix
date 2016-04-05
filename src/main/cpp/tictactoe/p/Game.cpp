@@ -29,7 +29,7 @@ class CC_DLL GLayer : public f::GameLayer {
   virtual void onTouchEnd(c::Touch*);
 
   void onGUIXXX(const CCT_PT&);
-  void showGrid();
+  const f::Box4 showGrid();
 
 public:
 
@@ -57,13 +57,14 @@ void GLayer::onInited() {
   _arena = _engine->getNodes("n/CSquares")[0];
   _board = _engine->getNodes("n/Grid")[0];
 
-  showGrid();
-
   auto ps = CC_GEC(Players,_board,"n/Players");
   auto ss = CC_GEC(GVars,_arena,"n/GVars");
   auto human= CC_CSV(c::Integer,"HUMAN");
   // random start?
   auto pnum= cx::randSign() > 0 ? 2 : 1;
+  auto box=showGrid();
+
+  getHUD()->setGridBox(box);
 
   if (MGMS()->isOnline()) {
     ss->pnum= 0;
@@ -202,9 +203,12 @@ void GLayer::decoUI() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::showGrid() {
+const f::Box4 GLayer::showGrid() {
   auto css= CC_GEC(CSquares, _arena, "n/CSquares");
   auto gps= mapGridPos(1);
+  auto &b0= gps[0];
+  auto &bN= gps[gps.size()-1];
+
   for (auto i=0; i < gps.size(); ++i) {
     auto s= css->sqs[i];
     auto &bx= gps[i];
@@ -212,6 +216,8 @@ void GLayer::showGrid() {
     s->setPosition(cx::vboxMID(bx));
     addAtlasItem("game-pics", s);
   }
+
+  return f::Box4(b0.top,bN.right,bN.bottom,b0.left);
 }
 
 END_NS_UNAMED

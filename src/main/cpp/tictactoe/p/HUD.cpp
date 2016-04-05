@@ -33,7 +33,7 @@ void HUDLayer::decoUI() {
   _score1= cx::reifyBmfLabel("dft", "0");
   _score1->setColor(c);
   _score1->setAnchorPoint(cx::anchorTL());
-  XCFG()->scaleLabel(_score1, 48);
+  XCFG()->scaleLabel(_score1, 32);
   _score1->setPosition(tile+soff+2, wb.top-tile-soff);
   addItem(_score1);
 
@@ -41,30 +41,15 @@ void HUDLayer::decoUI() {
   _score2= cx::reifyBmfLabel("dft", "0");
   _score2->setColor(c);
   _score2->setAnchorPoint(cx::anchorTR());
-  XCFG()->scaleLabel(_score2, 48);
+  XCFG()->scaleLabel(_score2, 32);
   _score2->setPosition(wb.right-tile-soff, wb.top-tile-soff);
   addItem(_score2);
-
-  // status
-  _status= cx::reifyLabel("text", 20,
-      "");
-  _status->setColor(tc);
-  _status->setPosition(wb.cx, wb.bottom + tile * 10);
-  addItem(_status);
-
-  // result
-  _result= cx::reifyLabel("text", 20,
-      "");
-  _result->setColor(tc);
-  _result->setPosition(wb.cx, wb.bottom + tile * 10);
-  _result->setVisible(false);
-  addItem(_result);
 
   //title
   _title = cx::reifyBmfLabel("dft");
   _title->setAnchorPoint(cx::anchorT());
   _title->setColor(c);
-  XCFG()->scaleLabel(_title,32);
+  XCFG()->scaleLabel(_title,24);
   _title->setPosition(wb.cx, wb.top - 2*tile);
   addItem(_title);
 
@@ -82,6 +67,44 @@ void HUDLayer::decoUI() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void HUDLayer::setGridBox(const f::Box4 &grid) {
+
+  auto tc= XCFG()->getColor("text");
+  auto c= XCFG()->getColor("dft");
+  auto wb= cx::visBox();
+  auto pos= CCT_PT(wb.cx,
+      grid.bottom - (grid.bottom-wb.bottom) * 1/4);
+
+  // status
+  _status= cx::reifyLabel("text", 20,
+      "");
+  _status->setColor(tc);
+  _status->setPosition(pos);
+  //_status->setPosition(wb.cx, wb.bottom + tile * 10);
+  addItem(_status);
+
+  // result
+  _result= cx::reifyLabel("text", 20,
+      "");
+  _result->setColor(tc);
+  _result->setPosition(pos);
+  //_result->setPosition(wb.cx, wb.bottom + tile * 10);
+  CC_HIDE(_result);
+  addItem(_result);
+
+  _countDown= cx::reifyBmfLabel("timer");
+  //_countDown->setPosition(wb.cx, wb.top - 10*tile);
+  _countDown->setPosition(
+      wb.cx, wb.top - (wb.top-grid.top) * 3/4);
+  _countDown->setAnchorPoint(cx::anchorC());
+  XCFG()->scaleLabel(_countDown, 24);
+  _countDown->setColor(c);//XCFG()->getColor("text"));
+  //CC_HIDE(_countDown);
+  addItem(_countDown);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void HUDLayer::showTimer() {
   auto cfg= MGMS()->getLCfg()->getValue();
   auto ptt= JS_INT(cfg["HUMAN+THINK"]);
@@ -94,15 +117,7 @@ void HUDLayer::showTimer() {
   if (_countDownState) {
   return; }
 
-  if (E_NIL(_countDown)) {
-    _countDown= cx::reifyBmfLabel("timer");
-    _countDown->setPosition(wb.cx, wb.top - 10*tile);
-    _countDown->setAnchorPoint(cx::anchorC());
-    XCFG()->scaleLabel(_countDown, 32);
-    _countDown->setColor(c);//XCFG()->getColor("text"));
-    addItem(_countDown);
-  }
-
+  //CC_SHOW(_countDown);
   _countDownState= true;
   _countDownValue= ptt;
 

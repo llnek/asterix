@@ -27,6 +27,7 @@ const s_arr<f::Box4,GD_SZ> mapGridPos(float scale) {
   auto zh= csz.height * BD_SZ + gh * (BD_SZ-1);
   auto zw= csz.width * BD_SZ + gw * (BD_SZ-1);
 
+  //f::Box4 sq(y0,x0 + zw,y0-zh, x0);
   s_arr<f::Box4, GD_SZ> boxes;
   auto wb = cx::visBox();
   auto x0 = wb.cx - HTV(zw);
