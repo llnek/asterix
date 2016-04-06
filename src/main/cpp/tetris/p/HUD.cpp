@@ -21,36 +21,33 @@ NS_BEGIN(tetris)
 //
 void HUDLayer::decoUI() {
 
-  auto tile = CC_CSV(c::Float, "TILE");
-  auto gz= XCFG()->gameSize();
-  auto wz = cx::visRect();
+  auto wz = cx::visSize();
   auto wb = cx::visBox();
+  float t=0;
 
   regoAtlas("game-pics");
   _score=0;
 
-  _scoreLabel = cx::reifyBmfLabel("SmallTypeWriting", "0");
+  _scoreLabel = cx::reifyBmfLabel("score", "0");
   _scoreLabel->setAnchorPoint(cx::anchorTR());
-  _scoreLabel->setScale(XCFG()->getScale());
-  _scoreLabel->setPosition(
-      wb.right - (tile * wz.size.width/gz.width),
-      wb.top - (wz.size.height/gz.height * tile));
+  XCFG()->scaleLabel(_scoreLabel,24);
+  t= CC_CHT(_scoreLabel)/2;
+  CC_POS2(_scoreLabel, wb.right - t, wb.top - t);
   addItem(_scoreLabel);
 
-  _status= cx::reifyBmfLabel("CoffeeBuzzed");
-  _status->setScale( XCFG()->getScale() * 0.5 );
-  _status->setPosition(wb.cx * 1.5, wb.cy);
+  _status= cx::reifyBmfLabel("dft");
+  XCFG()->scaleLabel(_status, 16);
+  CC_POS2(_status, wb.cx * 1.5, wb.cy);
   CC_HIDE(_status);
   addItem(_status);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = HHZ(CC_CSIZE(b));
-  auto hw = HWZ(CC_CSIZE(b));
-  auto menu = cx::mkMenu(b);
+  auto w= CC_CWH(b);
 
   b->setCallback([](c::Ref*) { SENDMSG("/hud/showmenu"); });
-  b->setPosition(wb.right - tile - hw, wb.bottom + tile  + hh);
-  addItem(menu);
+  b->setAnchorPoint(cx::anchorBR());
+  CC_POS2(b, wb.right - w/3, wb.bottom + w/3);
+  addItem(cx::mkMenu(b));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,12 +63,11 @@ void HUDLayer::drawStatusText(const sstr &msg) {
   _status->setString( msg);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
   _score += n;
-  _scoreLabel->setString(s::to_string(_score));
+  _scoreLabel->setString(FTOS(_score));
 }
 
 

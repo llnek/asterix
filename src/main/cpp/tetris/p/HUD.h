@@ -28,6 +28,7 @@ public:
   __decl_create_layer(HUDLayer)
   __decl_get_iid(3)
   __decl_deco_ui()
+  __decl_getr(int,_score,Score)
 
   void drawStatusText(const sstr&);
   void updateScore(int );

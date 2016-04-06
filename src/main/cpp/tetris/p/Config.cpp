@@ -56,15 +56,15 @@ void Config::initAssets() {
   addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
   addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  addImage("gui.mmenu.menu.bg", CC_STR("pics/bg.png"));
   addImage("game.bg", CC_STR("pics/bg.png"));
 
   addImage("lang-pics", CC_STR("l10n/en/images.png"));
   addImage("game-pics", CC_STR("pics/images.png"));
 
-  addEffect("game_end", CC_STR("sfx/MineExplosion.mpg"));
-  addEffect("game_quit", CC_STR("sfx/Death.mpg"));
-  addEffect("button", CC_STR("sfx/click.wav"));
+  addEffect("button", CC_STR("sfx/button-click.wav"));
+  addEffect("game_start", CC_STR("sfx/start.mpg"));
+  addEffect("game_end", CC_STR("sfx/end.mpg"));
+  addEffect("game_quit", CC_STR("sfx/quit.mpg"));
   addMusic("background", CC_STR("sfx/music.mpg"));
 
   addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
@@ -77,8 +77,18 @@ void Config::initAssets() {
   addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
   addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
   addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("score", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/Quicksand.fnt"));
+
+  addFont("text", CC_STR("fonts/en/Verdana.tff"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,23 +113,13 @@ void Config::initLevels() {
 //
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
-  //for default font, we use 48pt
-  _scale = 12.0f/72.0f * rs.width /gz.width;
-    
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-
-  c->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp = getAtlas("lang-pics");
-  c->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("lang-pics");
 }
 
 

@@ -401,6 +401,12 @@ void XConfig::setFrameSize(const CCT_SZ &sz) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+void XConfig::scaleLabel(not_null<c::Label*> n, float sz) {
+  n->setScale( scaleFont(sz));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const s_vec<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
   auto d= getFragment(EFX);

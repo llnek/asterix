@@ -24,8 +24,6 @@ struct CC_DLL GEngine : public ecs::Engine {
   virtual void initEntities();
   virtual void initSystems();
 
-  virtual ~GEngine() {}
-  GEngine() {}
 };
 
 

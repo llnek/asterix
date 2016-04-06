@@ -72,6 +72,8 @@ namespace ccsx {
 
   c::SpriteBatchNode* reifySpriteBatch(const sstr &name);
 
+  const CCT_SZ calcOffsets(const CCT_SZ &sz);
+
   c::MenuItem* createMenuBtn(const sstr &n);
   c::MenuItem* createMenuBtn( const sstr &n, const sstr &s);
 

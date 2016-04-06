@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
-#include "n/lib.h"
 #include "Move.h"
 
 NS_BEGIN(tetris)
@@ -68,16 +67,17 @@ bool Move::update(float dt) {
 void Move::doFall() {
   auto sh= CC_GEC(ShapeShell, _arena, "n/ShapeShell");
   auto bs= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
+    auto ss=CC_GEC(GVars,_arena,"n/GVars");
   auto dp= CC_GEC(Dropper, _arena, "n/Dropper");
   auto pu= CC_GEC(Pauser, _arena, "n/Pauser");
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
   if (NNP(shape) &&
-      ! moveDown(emap, shape)) {
+      ! moveDown(ss->cbox,emap, shape)) {
 
     // lock shape in place
-    lock(_arena, shape);
+    lock(ss->cbox,_arena, shape);
 
     /*
     //TODO: what is this???
@@ -103,7 +103,7 @@ void Move::doFall() {
 //
 void Move::initKeyOps(ecs::Node *node, int w) {
 
-  auto mo = CC_GEC(Gesture,node,"n/Gesture");
+  auto mo = CC_GEC(Gesture,node,"f/CGesture");
 
   _scanner = cx::throttle([=]() {
       scanInput(mo);

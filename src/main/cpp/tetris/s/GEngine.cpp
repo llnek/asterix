@@ -31,7 +31,7 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto ent= this->reifyNode("Arena");
+  auto ent= this->reifyNode("Arena", true);
 
   ent->checkin(mc_new(FilledLines));
   ent->checkin(mc_new(ShapeShell));
@@ -40,7 +40,6 @@ void GEngine::initEntities() {
   ent->checkin(mc_new(GVars));
   ent->checkin(mc_new(Dropper));
   ent->checkin(mc_new(Pauser));
-  ent->checkin(mc_new(GridBox));
   ent->checkin(mc_new(CtrlPad));
 }
 

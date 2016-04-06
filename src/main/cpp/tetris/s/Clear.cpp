@@ -11,7 +11,6 @@
 
 #include "x2d/GameScene.h"
 #include "core/CCSX.h"
-#include "n/lib.h"
 #include "Clear.h"
 
 NS_ALIAS(cx, fusii::ccsx)

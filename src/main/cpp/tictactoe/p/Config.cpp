@@ -92,12 +92,6 @@ float Config::scaleFont(float pt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::scaleLabel(not_null<c::Label*> n, float sz) {
-  n->setScale( scaleFont(sz));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Config::runOnce() {
   cacheSprites("game-pics");
   cacheSprites("lang-pics");

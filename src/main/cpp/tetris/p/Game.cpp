@@ -26,47 +26,49 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
 
-  virtual bool onTouchStart(c::Touch*) { return true; }
-  virtual void onMouseClick(const c::Vec2&);
-  virtual void onTouchEnd(c::Touch*);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
   __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  void onGUI(const c::Vec2&);
+  void onGUI(const CCT_PT&);
   void showMenu();
   void onEnd();
   void deco();
 
   // ----
 
-  const f::Box4 initBlockMap(BlockGrid*, const c::Size&);
+  const f::Box4 initBlockMap(BlockGrid*, const CCT_SZ&);
   void doCtrl();
 
   __decl_ptr(ecs::Node, _arena)
-
 };
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::doCtrl() {
   auto cpad= CC_GEC(CtrlPad, _arena, "n/CtrlPad");
-  auto& hsps= cpad->hotspots;
-  auto wb= cx::visBox();
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto sp= cx::reifySprite("shadedDark09.png");
   //sp= cx::reifySprite("shadedLight09.png");
-  auto cz= CC_CSIZE(sp);
+  auto& hsps= cpad->hotspots;
+  auto wb= cx::visBox();
+  auto cz= CC_CSZ(sp);
+  // view the pad as a 3x3 grid
   auto ch3= cz.height / 3.0;
   auto cw3= cz.width / 3.0;
   //x= cw.x + (wb.right - cw.x) * 0.5,
-  auto x= wb.right * 0.75;
+  //auto x= wb.right * 0.75;
   auto y= wb.top * 0.25;
+    auto x= ss->cbox.right + HTV(wb.right - ss->cbox.right);
 
-  sp->setPosition(x,y);
+  CC_POS2(sp,x,y);
   addAtlasItem("game-pics", sp);
 
   auto cbx= cx::bbox4(sp);
@@ -103,12 +105,14 @@ void GLayer::doCtrl() {
       cbx.right - cw3,
       cbx.top - 2 * ch3,
       cbx.left + cw3 );
+
+  cpad->bbox=sp->getBoundingBox();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Create our own collision map using cells.
 const f::Box4
-GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
+GLayer::initBlockMap(BlockGrid *bks, const CCT_SZ &bz) {
 
   auto wlen= CC_CSV(c::Integer, "FIELD_W") + 2; // 2 side walls
   auto wz= MGMS()->getEnclosureRect();
@@ -124,11 +128,11 @@ GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
     rc.fill(CC_NIL);
     auto y= wb.bottom + r * bz.height;
     auto x= wb.left;
-    auto b= Brick::reify(c::Vec2(x,y), png);
+    auto b= Brick::reify(CCT_PT(x,y), png);
     MGML()->addAtlasItem("game-pics", b->node);
     rc.setFirst(b);
     x += bz.width * (wlen-1);
-    b= Brick::reify(c::Vec2(x,y), png);
+    b= Brick::reify(CCT_PT(x,y), png);
     MGML()->addAtlasItem("game-pics", b->node);
     rc.setLast(b);
 /* test to fill up entire box
@@ -136,7 +140,7 @@ GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
     x= wb.left;
     for (int i=1; i < (wlen-1); ++i) {
       x += bz.width;
-      b= Brick::reify( c::Vec2(x,y), "0.png");
+      b= Brick::reify( CCT_PT(x,y), "0.png");
       MGML()->addAtlasItem("game-pics", b->sprite);
       rc.set(i,b);
     }
@@ -152,7 +156,7 @@ GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
   auto &rc=bks->grid[0];
   for (auto c = 1; c < last; ++c) {
     auto b= Brick::reify(
-        c::Vec2(wb.left + c * bz.width, y), png);
+        CCT_PT(wb.left + c * bz.width, y), png);
     MGML()->addAtlasItem("game-pics", b->node);
     rc.set(c, b);
   }
@@ -166,22 +170,18 @@ GLayer::initBlockMap(BlockGrid *bks, const c::Size &bz) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTouchEnd(c::Touch *t) {
-  onGUI(t->getLocation());
+bool GLayer::onTouchStart(c::Touch *t) {
+  return onMouseStart(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-  onGUI(loc);
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onGUI(const c::Vec2 &pos) {
-  auto motion= CC_GEC(Gesture, _arena, "n/Gesture");
+bool GLayer::onMouseStart(const CCT_PT &pos) {
+  auto motion= CC_GEC(Gesture, _arena, "f/CGesture");
   auto cpad= CC_GEC(CtrlPad, _arena, "n/CtrlPad");
   auto &hsps= cpad->hotspots;
+
+  if (!cpad->bbox.containsPoint(pos)) { return false; }
 
   if (cx::pointInBox(hsps["rr"], pos)) {
     motion->rotr=true;
@@ -203,28 +203,28 @@ void GLayer::onGUI(const c::Vec2 &pos) {
     motion->down=true;
   }
 
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+
   _arena= _engine->getNodes("n/BlockGrid")[0];
 
   auto blocks= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
-  auto gbox= CC_GEC(GridBox, _arena, "n/GridBox");
   auto fld_w = CC_CSV(c::Integer, "FIELD_W");
+  auto ss=CC_GEC(GVars,_arena,"n/GVars");
   auto bz= cx::calcSize("gray.png");
-  auto box= initBlockMap(blocks, bz);
 
-  XCFG()->resetCst("CBOX", f::Box4R::create(box));
   XCFG()->resetCst("TILE", CC_FLOAT( bz.width));
-  gbox->box= box;
+  ss->cbox= initBlockMap(blocks, bz);
 
   CCLOG("brick: w= %d, h= %d", (int)bz.width, (int)bz.height);
   CCLOG("tile size = %f", CC_CSV(c::Float,"TILE"));
   CCLOG("gridbox: t=%d, r=%d, b=%d, l=%d",
-      (int)box.top,(int)box.right,
-      (int)box.bottom,(int)box.left);
+      (int)ss->cbox.top,(int)ss->cbox.right,
+      (int)ss->cbox.bottom,(int)ss->cbox.left);
   CCLOG("collision tiles and blocks init'ed");
 
   doCtrl();
@@ -253,8 +253,8 @@ void GLayer::showMenu() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onEnd() {
-  this->setOpacity(0.1 * 255);
   getHUD()->endGame();
+  MGMS()->stop();
   surcease();
   Ende::reify(MGMS(), 4);
 }

@@ -22,51 +22,50 @@ NS_BEGIN(tetris)
 //
 void MMenu::decoUI() {
 
-  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Float, "TILE");
+  auto tt= cx::reifyBmfLabel("title", gets("mmenu"));
   auto c= XCFG()->getColor("dft");
   auto wb= cx::visBox();
 
-  centerImage("gui.mmenu.menu.bg");
+  centerImage("game.bg");
 
-  tt->setPosition(wb.cx, wb.top * 0.9);
-  tt->setScale(XCFG()->getScale());
+  CC_POS2(tt,wb.cx, wb.top * 0.8);
+XCFG()->scaleLabel(tt,52);
   tt->setColor(c);
   addItem(tt);
 
-  auto b= cx::reifyMenuBtn("player1.png");
-  auto menu= cx::mkMenu(b);
-  b->setCallback(
+  // TODO: should be restart
+  auto p= cx::reifyMenuBtn("player1.png");
+  auto q= cx::reifyMenuBtn("quit.png");
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{p,q}, CC_CHT(p)/3);
+
+  p->setCallback(
       [=](c::Ref*) {
-        cx::runEx( Game::reify(mc_new(f::GCX))); });
-  b->setPosition(wb.cx, wb.cy);
+        cx::runEx( Game::reify(mc_new(GameCtx))); });
+  q->setCallback(
+      [=](c::Ref*) { cx::prelude(); });
+
   addItem(menu);
 
-  // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto quit= cx::reifyMenuBtn("icon_quit.png");
   auto ctx= (MCX*) getCtx();
-  auto sz= CC_CSIZE(back);
+  auto sz= CC_CSZ(back);
 
-  quit->setColor(c);
+  back->setAnchorPoint(cx::anchorBL());
+  CC_POS2(back,wb.left + sz.width/3,
+               wb.bottom + sz.width/3);
+  back->setCallback(
+      [=](c::Ref*) { ctx->back(); });
   back->setColor(c);
-
-  quit->setCallback([=](c::Ref*) { cx::prelude();  });
-  back->setCallback([=](c::Ref*) { ctx->back(); });
-
-  s_vec<c::MenuItem*> btns {back, quit};
-  auto m2= cx::mkHMenu(btns);
-  m2->setPosition(wb.left + tile + sz.width * 1.1,
-                  wb.bottom + tile + sz.height * 0.45);
-  addItem(m2);
+  addItem( cx::mkMenu(back));
 
   auto audios= cx::reifyAudioIcons();
+  sz= CC_CSZ(audios[0]);
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons( audios,
+  addAudioIcons(audios,
     cx::anchorBR(),
-    c::Vec2(wb.right - tile, wb.bottom + tile));
+    CCT_PT(wb.right - sz.width/3, wb.bottom + sz.width/3));
 }
 
 

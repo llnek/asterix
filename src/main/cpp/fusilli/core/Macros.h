@@ -46,6 +46,8 @@
 #define CC_HIDE(s) do { if (s) s->setVisible(false); } while (0)
 #define CC_SHOW(s) do { if (s) s->setVisible(true); } while (0)
 #define CC_GCT(s,t) s->getChildByTag(t)
+#define CC_POS2(n,x,y) n->setPosition((x),(y))
+#define CC_POS1(n,p) n->setPosition(p)
 
 #define CC_DICT() cocos2d::Dictionary::create()
 #define CC_FLOAT(x) cocos2d::Float::create(x)

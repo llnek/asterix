@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
-#include "MMenu.h"
+#include "Game.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(tetris)
@@ -22,19 +22,15 @@ NS_BEGIN(tetris)
 void Splash::decoUI() {
 
   auto b= cx::reifyMenuBtn("play.png");
-  auto f= []() { cx::prelude(); };
-  auto menu= cx::mkMenu(b);
-  auto ctx= mc_new1(MCX,f);
   auto wb = cx::visBox();
 
   centerImage("game.bg");
 
-  b->setCallback(
-      [=](c::Ref*)
-      { cx::runEx( MMenu::reify(ctx)); });
-
-  b->setPosition(wb.cx, wb.top * 0.1);
-  addItem(menu);
+  b->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+  });
+  CC_POS2(b,wb.cx, wb.top * 0.2);
+  addItem(cx::mkMenu(b));
 }
 
 

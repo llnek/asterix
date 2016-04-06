@@ -126,6 +126,10 @@ typedef std::string sstr;
 #define s_arr std::array
 #define s_map std::map
 
+// magic numbers
+// |----a----|--b--| ++  (a+b)/a = a/b = GOLDEN_RATIO
+#define GOLDEN_RATIO 1.6180339887
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 #define __declapi_gsms_is(v, funName) \

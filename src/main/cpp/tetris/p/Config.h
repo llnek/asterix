@@ -32,10 +32,11 @@ public:
     return ResolutionPolicy::FIXED_WIDTH;
   }
 
-  virtual void handleResolution(const c::Size&);
+  virtual void handleResolution(const CCT_SZ&);
   virtual bool isPortrait() { return false; }
   virtual c::Scene* prelude();
   virtual void runOnce();
+  virtual float scaleFont(float pt);
 
   static owner<Config*> reify();
 

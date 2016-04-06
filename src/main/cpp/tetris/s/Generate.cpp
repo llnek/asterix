@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/lib.h"
 #include "Generate.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -60,7 +59,7 @@ bool Generate::update(float dt) {
     auto cfg= MGMS()->getLCfg()->getValue();
     auto sp = sl->shape;
 
-    if (ENP(sp)) {
+    if (E_NIL(sp)) {
       sp = reifyNextShape();
       if (sp) {
         previewNextShape();
@@ -74,6 +73,7 @@ bool Generate::update(float dt) {
       }
     }
   }
+
   return rc;
 }
 
@@ -81,12 +81,12 @@ bool Generate::update(float dt) {
 //
 owner<Shape*> Generate::reifyNextShape() {
   auto bks= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
-  auto gbox= CC_GEC(GridBox, _arena, "n/GridBox");
-  auto tile= CC_CSV(c::Float, "TILE");
-  auto x = gbox->box.left + 5 * tile;
-  auto y = gbox->box.top - tile;
-  auto shape= reifyShape(bks->grid, x,y, _nextShapeInfo);
-  if (ENP(shape)) {
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
+  auto tile= CC_CSV(c::Float,"TILE");
+  auto x = ss->cbox.left + 5 * tile;
+  auto y = ss->cbox.top - tile;
+  auto shape= reifyShape(ss->cbox,bks->grid, x,y, _nextShapeInfo);
+  if (E_NIL(shape)) {
     CCLOG("game over.  you lose.");
     bks->grid.clear();
     SENDMSG("/hud/end");
@@ -98,7 +98,7 @@ owner<Shape*> Generate::reifyNextShape() {
 //////////////////////////////////////////////////////////////////////////
 //
 void Generate::previewNextShape() {
-  auto gbox= CC_GEC(GridBox, _arena, "n/GridBox");
+  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto tile = CC_CSV(c::Float, "TILE");
   auto info = randNextInfo();
   auto wb = cx::visBox();
@@ -113,7 +113,7 @@ void Generate::previewNextShape() {
   disposeShape(_nextShape);
   S__NIL(_nextShape)
 
-  _nextShape= previewShape(info, x, y);
+  _nextShape= previewShape(ss->cbox,info, x, y);
   _nextShapeInfo= info;
 }
 
@@ -125,7 +125,7 @@ const ShapeInfo Generate::randNextInfo() {
   auto proto= ListOfModels[n];
   return ShapeInfo(proto,
       cx::randInt(proto->size()),
-      s::to_string(cx::randInt(bc) + 1) + ".png" );
+      FTOS(cx::randInt(bc) + 1) + ".png" );
 }
 
 

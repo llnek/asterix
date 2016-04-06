@@ -20,39 +20,33 @@ NS_BEGIN(tetris)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Ende::onReplay() {
-  getSceneX()->setCtx(nullptr);
-  cx::runEx(
-      Game::reify(mc_new(f::GCX)));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void Ende::decoUI() {
 
-  auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
-  auto wz= cx::visRect();
+  auto qn= cx::reifyBmfLabel("title", gets("gameover"));
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  // text msg
-  qn->setScale(XCFG()->getScale() * 0.3f);
-  qn->setPosition(wb.cx, wb.top * 0.75f);
+  centerImage("game.bg")->setOpacity(0.8 * 255);
+
   qn->setColor(XCFG()->getColor("text"));
+  // text msg
+  XCFG()->scaleLabel(qn, 64);
+  CC_POS2(qn, wb.cx, wb.top * 0.75);
   addItem(qn);
 
   // btns
   auto b1= cx::reifyMenuBtn("play.png");
   auto b2= cx::reifyMenuBtn("quit.png");
-  s_vec<c::MenuItem*> btns {b1, b2};
-  auto menu= cx::mkVMenu(btns);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{b1, b2},
+      CC_CHT(b1)/GOLDEN_RATIO);
 
   b1->setCallback(
-      [=](c::Ref*) { this->onReplay();  });
+      [=](c::Ref*) { cx::runEx( Game::reify(mc_new(GameCtx))); });
 
   b2->setCallback(
       [](c::Ref*) { cx::prelude(); });
 
-  menu->setPosition(wb.cx, wb.cy);
+  CC_POS2(menu,wb.cx, wb.cy);
   addItem(menu);
 }
 

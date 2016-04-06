@@ -31,7 +31,6 @@ public:
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual void scaleLabel(not_null<c::Label*>,float);
   virtual void handleResolution(const CCT_SZ &rs);
   virtual c::Scene* prelude();
   virtual float scaleFont(float pt);

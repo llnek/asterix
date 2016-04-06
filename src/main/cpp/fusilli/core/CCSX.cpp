@@ -168,6 +168,12 @@ void stopAudio() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const CCT_SZ calcOffsets(const CCT_SZ &sz) {
+  return CCT_SZ(sz.width/GOLDEN_RATIO, sz.height/GOLDEN_RATIO);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 c::SpriteBatchNode* reifySpriteBatch(const sstr &name) {
   return c::SpriteBatchNode::createWithTexture( CC_TCAC()->addImage( XCFG()->getImage(name)));
 }

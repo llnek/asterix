@@ -12,7 +12,6 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/lib.h"
 #include "Resolve.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -42,7 +41,8 @@ void Resolve::process(float dt) {
 
   auto sh = CC_GEC(ShapeShell, _arena, "n/ShapeShell");
   auto bs= CC_GEC(BlockGrid, _arena, "n/BlockGrid");
-  auto mo = CC_GEC(Gesture, _arena, "n/Gesture");
+  auto mo = CC_GEC(Gesture, _arena, "f/CGesture");
+    auto ss=CC_GEC(GVars,_arena,"n/GVars");
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
@@ -51,19 +51,19 @@ void Resolve::process(float dt) {
   }
 
   if ( mo->right) {
-    shiftRight( emap, shape);
+    shiftRight( ss->cbox, emap, shape);
   }
 
   if ( mo->left) {
-    shiftLeft( emap, shape);
+    shiftLeft( ss->cbox, emap, shape);
   }
 
   if ( mo->rotr) {
-    rotateRight( emap, shape);
+    rotateRight( ss->cbox, emap, shape);
   }
 
   if ( mo->rotl) {
-    rotateLeft( emap, shape);
+    rotateLeft(ss->cbox, emap, shape);
   }
 
   if ( mo->down) {

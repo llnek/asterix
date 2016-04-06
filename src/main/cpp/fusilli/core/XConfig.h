@@ -68,7 +68,7 @@ protected:
 
 public:
 
-  virtual void scaleLabel(not_null<c::Label*>,float) {}
+  virtual void scaleLabel(not_null<c::Label*>,float);
   virtual void handleResolution(const CCT_SZ& ) {}
   virtual void setFrameSize(const CCT_SZ&);
 

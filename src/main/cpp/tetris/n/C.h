@@ -113,15 +113,9 @@ struct CC_DLL ShapeShell : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CtrlPad : public ecs::Component {
+  __decl_map(sstr,f::Box4, hotspots)
   __decl_comp_tpid( "n/CtrlPad")
-  s::map<sstr,f::Box4> hotspots;
-};
-
-//////////////////////////////////////////////////////////////////////////
-// size and location of the game area
-struct CC_DLL GridBox : public ecs::Component {
-  __decl_comp_tpid( "n/GridBox")
-  __decl_md(f::Box4, box)
+  __decl_md(CCT_RT, bbox)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -394,13 +388,14 @@ struct CC_DLL Pauser  : public ecs::Component {
 //
 struct CC_DLL GVars  : public ecs::Component {
   __decl_comp_tpid("n/GVars")
+  __decl_md(f::Box4,cbox)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Shape*> previewShape(const ShapeInfo&, float x, float y);
+owner<Shape*> previewShape(const f::Box4&, const ShapeInfo&, float x, float y);
 
-owner<Shape*> reifyShape(s_vec<FArrBrick>& ,
+owner<Shape*> reifyShape(const f::Box4&, s_vec<FArrBrick>& ,
     float x, float y,
     const ShapeInfo&);
 
@@ -410,19 +405,19 @@ void clearOldBricks(s_vec<Brick*>&);
 void disposeShape(Shape*);
 
 const s_vec<CCT_PT>
-findBBox(s_vec<FArrBrick>&, BModel*,
+findBBox(const f::Box4&,s_vec<FArrBrick>&, BModel*,
     float px, float py, int rID, bool skipCollide = false);
 
-bool maybeCollide(s_vec<FArrBrick>&, float tl_x, float tl_y );
+bool maybeCollide(const f::Box4&, s_vec<FArrBrick>&, float tl_x, float tl_y );
 
-const f::Cell2D xrefTile(float x, float y);
-const f::Cell2D xrefTile(const CCT_PT&);
+const f::Cell2D xrefTile(const f::Box4&, float x, float y);
+const f::Cell2D xrefTile(const f::Box4&, const CCT_PT&);
 
 void initDropper(Dropper*);
 
 void setDropper(not_null<c::Node*>, Dropper*, float r, float s);
 
-void lock(not_null<ecs::Node*>, Shape*);
+void lock(const f::Box4&, not_null<ecs::Node*>, Shape*);
 
 bool testFilledRow(s_vec<FArrBrick>&, int r);
 
@@ -432,13 +427,13 @@ void flashFilled(s_vec<FArrBrick>&,
 
 void pauseForClearance(not_null<ecs::Node*>, bool b, float delay);
 
-bool moveDown(s_vec<FArrBrick>&, Shape*);
+bool moveDown(const f::Box4&, s_vec<FArrBrick>&, Shape*);
 
-bool shiftRight(s_vec<FArrBrick>&, Shape*);
-bool shiftLeft(s_vec<FArrBrick>&, Shape*);
+bool shiftRight(const f::Box4&, s_vec<FArrBrick>&, Shape*);
+bool shiftLeft(const f::Box4&, s_vec<FArrBrick>&, Shape*);
 
-bool rotateRight(s_vec<FArrBrick>&, Shape*);
-bool rotateLeft(s_vec<FArrBrick>&, Shape*);
+bool rotateRight(const f::Box4&, s_vec<FArrBrick>&, Shape*);
+bool rotateLeft(const f::Box4&, s_vec<FArrBrick>&, Shape*);
 
 
 
