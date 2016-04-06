@@ -58,9 +58,6 @@ void GLayer::doPreview(GVars *ss) {
   auto wb= cx::visBox();
   auto xc= ss->cbox.right + HTV(wb.right - ss->cbox.right);
   auto yc= wb.top - tile * 5;
-  auto n= c::DrawNode::create(tile/2);
-  n->drawCircle(CCT_PT(xc,yc), tile*4, 0, 100,false,c::Color4F::GRAY);
-  addItem(n);
 }
 
 //////////////////////////////////////////////////////////////////////////
