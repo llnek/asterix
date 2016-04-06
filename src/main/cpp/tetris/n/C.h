@@ -389,6 +389,7 @@ struct CC_DLL Pauser  : public ecs::Component {
 struct CC_DLL GVars  : public ecs::Component {
   __decl_comp_tpid("n/GVars")
   __decl_md(f::Box4,cbox)
+  __decl_iz(hTiles)
 };
 
 //////////////////////////////////////////////////////////////////////////////

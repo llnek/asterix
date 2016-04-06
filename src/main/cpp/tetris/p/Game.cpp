@@ -44,17 +44,29 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   // ----
 
-  const f::Box4 initBlockMap(BlockGrid*, const CCT_SZ&);
-  void doCtrl();
+  void initBlockMap(GVars*, BlockGrid*, const CCT_SZ&);
+  void doPreview(GVars*);
+  void doCtrl(GVars*);
 
   __decl_ptr(ecs::Node, _arena)
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::doPreview(GVars *ss) {
+  auto tile = CC_CSV(c::Float, "TILE");
+  auto wb= cx::visBox();
+  auto xc= ss->cbox.right + HTV(wb.right - ss->cbox.right);
+  auto yc= wb.top - tile * 5;
+  auto n= c::DrawNode::create(tile/2);
+  n->drawCircle(CCT_PT(xc,yc), tile*4, 0, 100,false,c::Color4F::GRAY);
+  addItem(n);
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
-void GLayer::doCtrl() {
+void GLayer::doCtrl(GVars *ss) {
   auto cpad= CC_GEC(CtrlPad, _arena, "n/CtrlPad");
-  auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto sp= cx::reifySprite("shadedDark09.png");
   //sp= cx::reifySprite("shadedLight09.png");
   auto& hsps= cpad->hotspots;
@@ -111,8 +123,7 @@ void GLayer::doCtrl() {
 
 //////////////////////////////////////////////////////////////////////////
 // Create our own collision map using cells.
-const f::Box4
-GLayer::initBlockMap(BlockGrid *bks, const CCT_SZ &bz) {
+void GLayer::initBlockMap(GVars *ss, BlockGrid *bks, const CCT_SZ &bz) {
 
   auto wlen= CC_CSV(c::Integer, "FIELD_W") + 2; // 2 side walls
   auto wz= MGMS()->getEnclosureRect();
@@ -161,11 +172,14 @@ GLayer::initBlockMap(BlockGrid *bks, const CCT_SZ &bz) {
     rc.set(c, b);
   }
 
-  return f::Box4(
+  CCLOG("grid height = %d x tiles", hlen);
+
+  ss->cbox= f::Box4(
     wb.bottom + hlen * bz.height,
     wb.left + wlen * bz.width,
     wb.bottom,
     wb.left);
+  ss->hTiles= hlen;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -218,7 +232,7 @@ void GLayer::onInited() {
   auto bz= cx::calcSize("gray.png");
 
   XCFG()->resetCst("TILE", CC_FLOAT( bz.width));
-  ss->cbox= initBlockMap(blocks, bz);
+  initBlockMap(ss, blocks, bz);
 
   CCLOG("brick: w= %d, h= %d", (int)bz.width, (int)bz.height);
   CCLOG("tile size = %f", CC_CSV(c::Float,"TILE"));
@@ -227,7 +241,8 @@ void GLayer::onInited() {
       (int)ss->cbox.bottom,(int)ss->cbox.left);
   CCLOG("collision tiles and blocks init'ed");
 
-  doCtrl();
+  doPreview(ss);
+  doCtrl(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////

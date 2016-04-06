@@ -62,21 +62,10 @@ void Config::initAssets() {
   addImage("game-pics", CC_STR("pics/images.png"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
-  addEffect("game_start", CC_STR("sfx/start.mpg"));
-  addEffect("game_end", CC_STR("sfx/end.mpg"));
-  addEffect("game_quit", CC_STR("sfx/quit.mpg"));
-  addMusic("background", CC_STR("sfx/music.mpg"));
-
-  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
-
-  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
+  addEffect("game_start", CC_STR("sfx/start.mp3"));
+  addEffect("game_end", CC_STR("sfx/end.mp3"));
+  addEffect("game_quit", CC_STR("sfx/quit.mp3"));
+  addMusic("background", CC_STR("sfx/music.mp3"));
 
   addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
   addFont("score", CC_STR("fonts/en/Hiruko.fnt"));
