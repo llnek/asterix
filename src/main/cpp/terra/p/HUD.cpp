@@ -21,36 +21,32 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decoUI() {
-  auto soff = CC_CSV(c::Float, "S_OFF");
-  auto tile = CC_CSV(c::Float, "TILE");
-  auto wz = cx::visRect();
   auto wb= cx::visBox();
+  float t=0;
 
   regoAtlas("game-pics");
 
-  _scoreLabel= cx::reifyBmfLabel("TinyBoxBB", "0");
-  _scoreLabel->setAnchorPoint(cx::anchorBR());
-  _scoreLabel->setScale(12.0/72.0);
-  _scoreLabel->setPosition(wz.size.width - tile - soff,
-      wz.size.height - tile - soff - cx::getHeight(_scoreLabel));
+  _scoreLabel= cx::reifyBmfLabel("score", "0");
+  _scoreLabel->setAnchorPoint(cx::anchorTR());
+  XCFG()->scaleLabel(_scoreLabel,24);
+  t= CC_CHT(_scoreLabel)/GOLDEN_RATIO;
+  CC_POS2(_scoreLabel, wb.right - t, wb.top - t);
   addItem(_scoreLabel);
 
   _lives = f::reifyRefType<f::XLives>();
   _lives->decorate("ship01.png",3,
-      tile + soff,
-      wz.size.height - tile - soff, 0.4);
+      wb.left + t,
+      wb.top - t,
+      0.4);
   addItem(_lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto hh = HTV(cx::getHeight(b));
-  auto hw = HTV(cx::getWidth(b));
-  auto menu = cx::mkMenu(b);
-
-  b->setPosition(wb.right - tile - hw, wb.bottom + tile + hh);
-  //b->setColor(this->color);
+  t= CC_CWH(b)/GOLDEN_RATIO;
   b->setCallback(
       [=](c::Ref*) { SENDMSG("/hud/showmenu"); });
-  addItem(menu);
+  CC_POS2(b, wb.right - t, wb.bottom + t);
+  //b->setColor(this->color);
+  addItem(cx::mkMenu(b));
 
   _lives->resurrect();
   _score=0;
@@ -67,7 +63,7 @@ bool HUDLayer::reduceLives(int n) {
 //
 void HUDLayer::updateScore(int n) {
   _score += n;
-  _scoreLabel->setString(s::to_string(_score));
+  _scoreLabel->setString(FTOS(_score));
 }
 
 

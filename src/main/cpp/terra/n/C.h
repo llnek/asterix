@@ -22,34 +22,49 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Missile : public f::CPixie {
+enum class Moves { RUSH, VERT, HORZ, OLAP };
+enum class Attacks { TSUIHIKIDAN, NORMAL };
+
+struct CC_DLL EnemyType {
+
+  EnemyType(Attacks attackMode, Moves moveType,
+    int type,
+    const sstr &textureName,
+    const sstr &bulletType, int HP, int scoreValue) {
+
+    this->attackMode = attackMode;
+    this->moveType= moveType;
+    this->type= type;
+    this->textureName = textureName;
+    this->bulletType = bulletType;
+    this->HP= HP;
+    this->scoreValue = scoreValue;
+  }
+
+  EnemyType() {}
 
   __decl_mv(Attacks, attackMode, Attacks::NORMAL)
-  __decl_comp_tpid("f/CPixie")
+  __decl_mv(Moves, moveType,Moves::RUSH)
+  __decl_iz(type)
+  __decl_md(sstr, textureName)
+  __decl_md(sstr, bulletType)
+  __decl_iz(HP)
+  __decl_iz(scoreValue)
 
-  Missile(not_null<c::Sprite*> s, Attacks m)
-  : CPixie(s) {
-    attackMode=m;
-  }
-  Missile(not_null<c::Sprite*> s)
-  : CPixie(s) {
-  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Bomb : public f::CPixie {
-
-  __decl_mv(Attacks, attackMode, Attacks::NORMAL)
-  __decl_comp_tpid("f/CPixie")
-
-  Bomb(not_null<c::Node*> s, Attacks m)
-  : CPixie(s) {
-    attackMode=m;
+class CC_DLL Missile : public f::CPixie {
+  __decl_md(Attacks, _attackMode)
+  Missile(Attacks m) {
+    _attackMode=m;
   }
-  Bomb(not_null<c::Node*> s)
-    : CPixie(s) {
-  }
+public:
+
+  static owner<Missile*> create(const sstr& png, Attacks m= Attacks::NORMAL);
+
+  __decl_getr(Attacks,_attackMode, AttackMode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,7 +77,7 @@ struct CC_DLL Enemy : public f::CStats {
 
   Enemy(const EnemyType &et)
   : CStats(et.scoreValue) {
-    delayTime= 1.2 * c::rand_0_1() + 1.0;
+    delayTime= 1.2 * cx::rand() + 1.0;
     enemyType= et;
   }
 
@@ -70,66 +85,73 @@ struct CC_DLL Enemy : public f::CStats {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ship : public f::CPixie {
+class CC_DLL Ship : public f::CPixie {
 
-  __decl_ptr(c::Sprite, bornSprite)
-  __decl_bf(canBeAttack)
-  __decl_comp_tpid( "f/CPixie")
+  __decl_ptr(c::Sprite, _bornSprite)
+  Ship() {}
 
-  Ship(not_null<c::Sprite*> s,
-       not_null<c::Sprite*> x) 
-    : CPixie(s) {
-    bornSprite = x;
+public:
+
+  __decl_getr(c::Sprite*,_bornSprite,BornSprite)
+  static owner<Ship*> create();
+
+  void hideGhost() { CC_HIDE(_bornSprite); }
+  void showGhost() {
+    _bornSprite->setScale(8);
+    CC_SHOW(_bornSprite);
+    _bornSprite->runAction(
+      c::ScaleTo::create(0.5, 1, 1));
   }
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Spark : public f::CPixie {
+class CC_DLL Spark : public f::CPixie {
 
-  Spark(not_null<c::Sprite*> sp1, not_null<c::Sprite*> sp2)
-    : CPixie(sp1) {
-    sprite2= sp2;
-  }
+  __decl_mv(float, _duration, 0.7)
+  __decl_mv(float, _scale, 1.2)
+  __decl_ptr(c::Sprite, _sprite2)
+
+  Spark() {}
+
+public:
+
+  __decl_getr(float,_duration,Duration)
+  __decl_getr(float,_scale,Scale)
 
   virtual void inflate(float, float);
   virtual void deflate();
 
-  __decl_mv(float, duration, 0.7f)
-  __decl_mv(float, scale, 1.2f)
-  __decl_ptr(c::Sprite, sprite2)
-  __decl_comp_tpid( "f/CPixie")
-
+  static owner<Spark*> create();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Explosion : public f::CPixie {
+class CC_DLL Explosion : public f::CPixie {
+
+  Explosion() {}
+
+public:
 
   virtual void inflate(float x, float y);
 
-  Explosion(not_null<c::Sprite*> s)
-    : CPixie(s) {
-  }
-
-  __decl_comp_tpid( "f/CPixie")
-
+  static owner<Explosion*> create();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HitEffect : public f::CPixie {
+class CC_DLL HitEffect : public f::CPixie {
+
+  __decl_mv(float, _scale, 0.75)
+
+  HitEffect() {}
+
+public:
 
   virtual void inflate(float x, float y);
+  static owner<HitEffect*> create();
 
-  HitEffect(not_null<c::Sprite*> s)
-    : CPixie(s) {
-  }
-
-  __decl_mv(float, scale, 0.75)
-  __decl_comp_tpid("f/CPixie")
-
+  __decl_getr(float,_scale,Scale)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -139,9 +161,18 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_iz(secCount)
   __decl_ptr(ecs::Node, backSkyRe)
   __decl_ptr(ecs::Node, backSky)
-  __decl_md(c::Size, backSkyDim)
+  __decl_md(CCT_SZ, backSkyDim)
 };
 
+void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb);
+
+inline void btnEffect() {  cx::sfxPlay("btnEffect"); }
+
+void fireMissiles(not_null<ecs::Node*> ship, float dt);
+
+void bornShip(not_null<ecs::Node*> ship);
+
+void processTouch(not_null<ecs::Node*> ship);
 
 
 NS_END

@@ -17,14 +17,16 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Splash : public f::XScene {
+class CC_DLL Splash : public f::XScene {
+
+  __decl_ptr(c::Sprite, _flare)
+  __decl_ptr(c::Sprite, _ship)
+
+public:
 
   __decl_create_scene(Splash)
   __decl_update()
   __decl_deco_ui()
-
-  __decl_ptr(c::Sprite, _flare)
-  __decl_ptr(c::Sprite, _ship)
 
 };
 

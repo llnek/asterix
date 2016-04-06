@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "MMenu.h"
 #include "Game.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
@@ -22,53 +22,51 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Float, "TILE");
+
+  auto tt= cx::reifyBmfLabel("title", gets("mmenu"));
   auto c= XCFG()->getColor("text");
+  auto ctx = (MCX*) getCtx();
   auto wb= cx::visBox();
 
-  centerImage("gui.mmenus.menu.bg");
+  centerImage("game.bg");
 
-  tt->setPosition(wb.cx, wb.top * 0.9);
-  tt->setScale(XCFG()->getScale());
+  CC_POS2(tt, wb.cx, wb.top * 0.8);
+  XCFG()->scaleLabel(tt,52);
   tt->setColor(c);
   addItem(tt);
 
-  auto ctx = (MCX*) getCtx();
-  auto b= cx::reifyMenuBtn("player1.png");
-  auto menu= cx::mkMenu(b);
-
-  b->setCallback(
+  auto p= cx::reifyMenuBtn("player1.png");
+  auto q= cx::reifyMenuBtn("quit.png");
+  p->setCallback(
       [=](c::Ref*)
-      { cx::runEx( Game::reify(mc_new(f::GCX))); });
-
-  b->setPosition(wb.cx, wb.cy);
+      { cx::runEx(
+          Game::reify(mc_new(GameCtx))); });
+  q->setCallback([=](c::Ref*) {
+      cx::prelude();
+      });
+  auto menu=cx::mkVMenu(s_vec<c::MenuItem*>{p,q},
+      CC_CHT(p) / GOLDEN_RATIO);
+  CC_POS2(menu,wb.cx,wb.cy);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto sz= CC_CSIZE(back);
-  back->setCallback([=](c::Ref*) { ctx->back(); });
+  auto t= CC_CWH(back)/GOLDEN_RATIO;
+  back->setAnchorPoint(cx::anchorBL());
+  back->setCallback(
+      [=](c::Ref*) { ctx->back(); });
   back->setColor(c);
-
-  auto quit= cx::reifyMenuBtn("icon_quit.png");
-  quit->setColor(c);
-  quit->setCallback(
-      [=](c::Ref*) { cx::prelude(); });
-
-  s_vec<c::MenuItem*> btns {back, quit};
-  auto m2= cx::mkHMenu(btns);
-  m2->setPosition(wb.left + tile + sz.width * 1.1,
-                  wb.bottom + tile + sz.height * 0.45);
-  addItem(m2);
+  CC_POS2(back, wb.left + t, wb.bottom + t);
+  addItem(cx::mkMenu(back));
 
   auto audios = cx::reifyAudioIcons();
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons( audios,
+  t= CC_CWH(audios[0])/GOLDEN_RATIO;
+  addAudioIcons(audios,
     cx::anchorBR(),
-    c::Vec2(wb.right - tile, wb.bottom + tile));
+    CCT_PT(wb.right - t, wb.bottom + t));
 }
 
 

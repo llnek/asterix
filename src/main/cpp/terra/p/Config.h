@@ -25,9 +25,11 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(480,720); }
+  virtual const CCT_SZ gameSize() { return CCT_SZ(480,720); }
 
-  virtual void handleResolution(const c::Size& );
+  virtual void handleResolution(const CCT_SZ& );
+
+  virtual float scaleFloat(float);
 
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_HEIGHT;

@@ -18,7 +18,7 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Config*> Config::reify() {
-  auto c =  mc_new(Config);
+  auto c = mc_new(Config);
   c->initAssets();
   c->initCsts();
   c->initLevels();
@@ -68,7 +68,6 @@ void Config::initAssets() {
   addImage("explosions", CC_STR("pics/explosion.png"));
   addImage("back-tiles", CC_STR("pics/b01.png"));
 
-  addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
   addImage("flare", CC_STR("pics/flare.jpg"));
   addImage("game.bg", CC_STR("pics/bg.png"));
   addImage("explosions", CC_STR("pics/explosion.png"));
@@ -92,7 +91,9 @@ void Config::initAssets() {
   addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
   addFont("OCR", CC_STR("fon/en/OCR.fnt"));
 
-  addFont("arial", CC_STR("fon/en/arial-14.fnt"));
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("dft", CC_STR("fonts/en/Quicksand.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ void Config::initLevels() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size& rs) {
+void Config::handleResolution(const CCT_PT &rs) {
   auto gz= gameSize();
   CC_DTOR()->setContentScaleFactor(0.5);
   //for default font, we use 48pt
@@ -132,37 +133,17 @@ void Config::handleResolution(const c::Size& rs) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto fp= getAtlas("game-pics");
 
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("images-pics");
+  cacheSprites("lang-pics");
+  cacheSprites("op-pics");
+  cacheSprites("explosions");
+  cacheSprites("back-tiles");
 
-  fp = getAtlas("images-pics");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp = getAtlas("lang-pics");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("op-pics");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp = getAtlas("explosions");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp = getAtlas("back-tiles");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  auto anim= c::Animation::create();
-  //WithSpriteFrames(fs,01.f), "ShipAni");
+  auto anim= cx::createAnimation(1);
   anim->addSpriteFrame(cx::getSpriteFrame("ship01.png"));
   anim->addSpriteFrame(cx::getSpriteFrame("ship02.png"));
-  anim->setDelayPerUnit(1);
-  anim->setLoops(-1);
   CC_ACAC()->addAnimation(anim, "ShipAni");
 }
 

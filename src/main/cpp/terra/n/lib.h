@@ -20,37 +20,6 @@ NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-enum class Moves { RUSH, VERT, HORZ, OLAP };
-enum class Attacks { TSUIHIKIDAN, NORMAL };
-class GEngine;
-struct EnemyType {
-
-  EnemyType(Attacks attackMode, Moves moveType,
-    int type,
-    const sstr &textureName,
-    const sstr &bulletType, int HP, int scoreValue) {
-
-    this->attackMode = attackMode;
-    this->moveType= moveType;
-    this->type= type;
-    this->textureName = textureName;
-    this->bulletType = bulletType;
-    this->HP= HP;
-    this->scoreValue = scoreValue;
-  }
-
-  EnemyType() {}
-
-  __decl_mv(Attacks, attackMode, Attacks::NORMAL)
-  __decl_mv(Moves, moveType,Moves::RUSH)
-  __decl_iz(type)
-  __decl_md(sstr, textureName)
-  __decl_md(sstr, bulletType)
-  __decl_iz(HP)
-  __decl_iz(scoreValue)
-
-};
-
 const s::array<EnemyType, 6> EnemyTypes = {
   EnemyType(Attacks::NORMAL, Moves::RUSH, 0, "E0.png", "W2.png", 1, 15),
   EnemyType(Attacks::NORMAL, Moves::RUSH, 1, "E1.png", "W2.png", 2, 40 ),
@@ -61,16 +30,6 @@ const s::array<EnemyType, 6> EnemyTypes = {
 };
 
 //void flareEffect(not_null<c::Sprite*> flare, c::SEL_CallFunc cb, c::Ref* target);
-
-void flareEffect(not_null<c::Sprite*> flare, VOIDFN cb);
-
-inline void btnEffect() {  cx::sfxPlay("btnEffect"); }
-
-void fireMissiles(GEngine*, not_null<ecs::Node*> ship, float dt);
-
-void bornShip(GEngine*, not_null<ecs::Node*> ship);
-
-void processTouch(not_null<ecs::Node*> ship, const c::Vec2& delta);
 
 
 NS_END

@@ -12,8 +12,8 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
-#include "MMenu.h"
-#include "n/lib.h"
+#include "Game.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
@@ -21,31 +21,30 @@ NS_BEGIN(terra)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
-  auto wz = cx::visRect();
+
   auto wb = cx::visBox();
 
   centerImage("game.bg");
 
-  _flare = c::Sprite::create("pics/flare.jpg");
-  CC_HIDE(_flare);
+  _flare = cx::createSprite(XCFG()->getImage("flare"));
   _ship = cx::reifySprite("ship03.png");
-  _ship->setPosition(cx::randFloat(wz.size.width), 0);
-  addChild(_flare, 15, 10);
-  addChild(_ship, 0, 4);
+
+  CC_HIDE(_flare);
+  CC_POS2(_ship, cx::randInt(wb.right), 0);
+
+  addItem(_flare, 15, 10);
+  addItem(_ship, 0, 4);
 
   auto b= cx::reifyMenuBtn("play.png");
-  auto f= []() { cx::prelude(); };
-  auto menu= cx::mkMenu(b);
-  auto x= mc_new1(MCX,f);
+  CC_POS2(b, wb.cx, wb.top * 0.2);
   b->setCallback([=](c::Ref*) {
     btnEffect();
     flareEffect(_flare, [=]() {
-      cx::runEx(MMenu::reify(x));
+      cx::runEx(Game::reify(mc_new(GameCtx)));
     });
   });
 
-  b->setPosition(wb.cx, wb.top * 0.1);
-  addItem(menu);
+  addItem(cx::mkMenu(b));
 
   scheduleOnce(CC_SCHEDULE_SELECTOR(Splash::update),0);
   cx::sfxMusic("mainMusic", true);
@@ -54,15 +53,16 @@ void Splash::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::update(float dt) {
-  auto wz = cx::visRect();
+  auto wb = cx::visBox();
   auto g= [=]() {
-    this->_ship->setPosition( cx::randFloat(wz.size.width), 10);
+    CC_POS2(this->_ship, cx::randInt(wb.right), 10);
     this->update(0);
   };
   this->_ship->runAction(
       c::Sequence::create(
-        c::MoveBy::create(2, c::Vec2(cx::randFloat(wz.size.width),
-            wz.size.height + 100)),
+        c::MoveBy::create(
+          2,
+          CCT_PT(cx::randInt(wb.right), wb.top + 100)),
         c::CallFunc::create(g),
         CC_NIL));
 }

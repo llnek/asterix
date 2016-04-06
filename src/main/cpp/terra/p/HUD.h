@@ -28,6 +28,8 @@ struct CC_DLL HUDLayer : public f::XLayer {
   __decl_ptr(f::XLives, _lives)
   __decl_iz(_score)
 
+  __decl_getr(int,_score,Score)
+
   bool reduceLives(int = 1);
   void updateScore(int);
 

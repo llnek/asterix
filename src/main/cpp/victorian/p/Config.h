@@ -27,6 +27,8 @@ public:
 
   virtual const c::Size gameSize() { return c::Size(2048,1536); }
 
+    virtual float scaleFont(float);
+    
   virtual void handleResolution(const c::Size &rs);
 
   virtual ResolutionPolicy policy() {
