@@ -19,6 +19,15 @@ NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+bool Diamond::initWithSpriteFrameName(const sstr &fn) {
+  bool rc= c::Sprite::initWithSpriteFrameName(fn);
+  if (!rc) { return false; }
+  setLocalZOrder(Z_DIAMOND);
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 static int GEMS_TOTAL= GRID_SIZE_X * GRID_SIZE_Y;
 static int TILE_GRID= TILE_SIZE+GRID_SPACE;
 
@@ -108,6 +117,30 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+static void onCheckMatched(GVars *ss, const sstr &matchType) {
+
+  //animate matched gems
+  if (ss->matchArray.size() > 3) {
+    ss->combos += ss->matchArray.size() - 3;
+  }
+
+  animateMatches(
+      ss,
+      ss->matchArray,
+      [=]() { collapseGrid(ss); });
+
+  showMatchParticle(ss, ss->matchArray);
+  cx::sfxPlay(matchType);
+
+  auto msg= j::json({
+      {"score", (int) ss->matchArray.size() * POINTS },
+      {"type", matchType }
+  });
+  SENDMSGEX("/game/player/earnscore", &msg);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 bool isValidTarget(GVars *ss, int px, int py, const CCT_PT &touch) {
 
   auto offbounds = false;
@@ -175,11 +208,12 @@ GemInfo findGemAtPos(GVars *ss, const CCT_PT &pos) {
 void selectStartGem(GVars *ss, const GemInfo &touched) {
   if (!ss->selectedGem) {
     ss->selectedGem = touched.gem;
-    ss->targetIndex.y= 0;
-    ss->targetIndex.x= 0;
+    ss->targetIndex.y= -1;
+    ss->targetIndex.x= -1;
     ss->targetGem = CC_NIL;
     touched.gem->setLocalZOrder(Z_SWAP_2);
-    ss->selectedIndex = f::Cell2I(touched.x, touched.y);
+    ss->selectedIndex.y = touched.y;
+    ss->selectedIndex.x = touched.x;
     ss->selectedGemPos = touched.gem->getPosition();
     animateSelected(touched.gem);
   }
@@ -190,7 +224,8 @@ void selectStartGem(GVars *ss, const GemInfo &touched) {
 void selectTargetGem(GVars *ss, const GemInfo &touched) {
   if (ss->targetGem != CC_NIL) { return; }
   ss->enabled = false;
-  ss->targetIndex = f::Cell2I(touched.x, touched.y);
+  ss->targetIndex.y = touched.y;
+  ss->targetIndex.x = touched.x;
   ss->targetGem = touched.gem;
   ss->targetGem->setLocalZOrder(Z_SWAP_1);
   swapGemsToNewPosition(ss);
@@ -243,9 +278,10 @@ int getVertUnique(GVars *ss, int col, int row) {
   if (col >= 0 && row > 1 &&
       ss->grid[col]->get(row-1) == t &&
       ss->grid[col]->get(row-2) == t) {
-      t += 1;
-      if (t >= GEMSET_SIZE) { t=0; }
+      if (++t >= GEMSET_SIZE) {
+      t=0; }
   }
+
   return t;
 }
 
@@ -269,13 +305,14 @@ int getVertHorzUnique(GVars *ss, int col, int row) {
       }
     }
   }
+
   return t;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void dropSelectedGem(GVars *ss) {
-  ss->selectedGem->node->setLocalZOrder(Z_GRID);
+  ss->selectedGem->setLocalZOrder(Z_GRID);
   resetSelectedGem(ss);
 }
 
@@ -300,24 +337,7 @@ void onNewSwapComplete(GVars *ss) {
   //check for new matches
   if (checkGridMatches(ss)) {
 
-    //animate matched gems
-    if (ss->matchArray.size() > 3) {
-      ss->combos += ss->matchArray.size() - 3;
-    }
-
-    animateMatches(
-        ss,
-        ss->matchArray,
-        [=]() { collapseGrid(ss); });
-
-    showMatchParticle(ss, ss->matchArray);
-
-    auto msg= j::json({
-        {"score", (int) ss->matchArray.size() * POINTS },
-        {"type", "match2"}
-        });
-    SENDMSGEX("/game/player/earnscore", &msg);
-    cx::sfxPlay("match2");
+    onCheckMatched(ss, "match2");
 
   } else {
 
@@ -348,7 +368,6 @@ void onNewSwapComplete(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void swapGemsToNewPosition(GVars *ss) {
-
   swapGems(
       ss,
       ss->selectedGem,
@@ -373,7 +392,7 @@ void dbgGems(GVars *ss, int c) {
     auto c= g->get(n);
     CCLOG("gem[%d].pos= %d, %d",
         n,
-        (int)c->node->getPositionX(), (int)c->node->getPositionY());
+        (int)c->getPositionX(), (int)c->getPositionY());
   }
 }
 
@@ -382,61 +401,41 @@ void dbgGems(GVars *ss, int c) {
 void onGridCollapseComplete(GVars *ss) {
 
   F__LOOP(it,ss->allGems) {
-    auto gem = *it;
-    auto pos=gem->pos();
+    auto &gem = *it;
+    auto pos=gem->getPosition();
     auto yIndex = ceil((pos.y - HTV(TILE_SIZE))/TILE_GRID);
     auto xIndex = ceil((pos.x - HTV(TILE_SIZE))/TILE_GRID);
     --yIndex;
-    --xIndex;// zero based
-    ss->gemsColMap[xIndex]->set(yIndex, gem);
+    --xIndex;
+    assert(yIndex >=0 && xIndex >= 0);
+
     ss->grid[xIndex]->set(yIndex, gem->getType());
+    ss->gemsColMap[xIndex]->set(yIndex, gem);
   }
 
   if (checkGridMatches(ss)) {
 
-       //animate matched games
-     if (ss->addingCombos) {
-       if (ss->matchArray.size() > 3) {
-         ss->combos += (ss->matchArray.size() - 3);
-       }
-     }
-
-     animateMatches(
-         ss,
-         ss->matchArray,
-         [=]() { collapseGrid(ss); });
-
-     showMatchParticle(ss,ss->matchArray);
-
-     auto msg= j::json({
-         {"score", (int)ss->matchArray.size() * POINTS },
-         {"type", "match"}
-         });
-     SENDMSGEX("/game/player/earnscore",&msg);
-
-     cx::sfxPlay("match");
+    onCheckMatched(ss, "match");
 
   } else {
 
     //no more matches, check for combos
+    //turn random gems into diamonds
     if (ss->combos > 0) {
-      //now turn random gems into diamonds
-      s_vec<f::Cell2I> removeGems;
-      s_vec<ecs::Node*> diamonds;
-      int i = 0;
-
       auto p1=MGMS()->getPool("DiamondParticles");
       auto p2=MGMS()->getPool("Diamonds");
+      s_vec<f::Cell2I> removeGems;
+      s_vec<ecs::Node*> diamonds;
 
       f::randSeed();
 
-      while (i < ss->combos) {
-        ++i;
+      for (auto i=0; i < ss->combos; ++i) {
         Gem *randomGem = CC_NIL;
         int randomY = 0;
         int randomX=0;
 
-        while (!randomGem) {
+        // randomly pick a color, not white
+        while (E_NIL(randomGem)) {
           randomX = cx::randInt(GRID_SIZE_X);
           randomY = cx::randInt(GRID_SIZE_Y);
           randomGem = ss->gemsColMap[randomX]->get(randomY);
@@ -445,12 +444,14 @@ void onGridCollapseComplete(GVars *ss) {
 
         auto diamondPart = p1->take(true);
         auto diamond = p2->take(true);
-        auto s1=CC_GEC(Particle,diamondPart,"f/CPixie");
+        auto s1=CC_GEC(Particle,diamondPart,"n/Particle");
         auto s2=CC_GEC(Diamond,diamond,"f/CPixie");
-        auto pos= randomGem->pos();
+        auto pos= randomGem->getPosition();
 
-        s1->setPos(pos.x, pos.y);
-        s2->setPos(pos.x,pos.y);
+        CC_POS2(s1->node, pos.x, pos.y);
+        CC_SHOW(s1->node);
+        PCAST(c::ParticleSystemQuad,s1->node)->resetSystem();
+        CC_POS2(s2, pos.x,pos.y);
 
         removeGems.push_back(f::Cell2I(randomX, randomY));
         diamonds.push_back((ecs::Node*)diamond);
@@ -467,7 +468,7 @@ void onGridCollapseComplete(GVars *ss) {
           removeGems,
           [=]() { collapseGrid(ss); });
 
-      collectDiamonds( diamonds);
+      collectDiamonds(diamonds);
       ss->combos = 0;
       cx::sfxPlay("diamond");
 
@@ -483,15 +484,17 @@ void onGridCollapseComplete(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void collapseGrid(GVars *ss) {
-
+  // mark all matched gems as blank
   F__LOOP(it, ss->matchArray) {
     auto &z= *it;
     ss->grid[z.x]->set(z.y, -1);
   }
 
+  //for each column, purge all blanks, effectively dropping
+  //all valid gems, leaving empty slots on top
   F__LOOP(it,ss->grid) {
     s_vec<int> nc;
-    auto gc= *it;
+    auto &gc= *it;
     int v;
     for (auto i=0; i < gc->size(); ++i) {
       v=gc->get(i);
@@ -526,10 +529,12 @@ void showMatchParticle(GVars *ss, const s_vec<f::Cell2I> &matches) {
     auto &pos= *it;
     auto gem = ss->gemsColMap[pos.x]->get(pos.y);
     auto part= p->take(true);
-    auto ps= CC_GEC(f::CPixie,part,"f/CPixie");
-    ps->setPos(
-        gem->node->getPositionX() + ss->gemsContainer->getPositionX(),
-        gem->node->getPositionY() + ss->gemsContainer->getPositionY());
+    auto sp=CC_GEC(Particle,part,"n/Particle");
+    CC_SHOW(sp->node);
+    CC_POS2(sp->node,
+        gem->getPositionX() + ss->gemsContainer->getPositionX(),
+        gem->getPositionY() + ss->gemsContainer->getPositionY());
+      PCAST(c::ParticleSystemQuad,sp->node)->resetSystem();
   }
 }
 
@@ -556,21 +561,21 @@ void dropColumn(GVars *ss, int col) {
     }
   };
 
-  float delay = col>0 ? cx::rand() * 1.5f : 0;
+  float delay = col>0 ? cx::rand() * 1.5 : 0;
   auto m= ss->gemsColMap[col];
   Gem *gem;
   for (auto i=0; i < m->size(); ++i) {
     gem = m->get(i);
-    gem->show();
-    auto finalY = gem->node->getPositionY();
-    gem->node->setPositionY(finalY + 800);
-    gem->node->runAction(
+    CC_SHOW(gem);
+    auto finalY = gem->getPositionY();
+    gem->setPositionY(finalY + 800);
+    gem->runAction(
       c::Sequence::create(
         c::DelayTime::create(delay),
         c::EaseBounceOut::create(
           c::MoveTo::create(
             2,
-            CCT_PT(gem->node->getPositionX(), finalY))),
+            CCT_PT(gem->getPositionX(), finalY))),
         c::CallFunc::create(onAnimatedColumn),
         CC_NIL));
   }
@@ -580,8 +585,8 @@ void dropColumn(GVars *ss, int col) {
 //
 void animateSelected(Gem *gem) {
   gem->select();
-  gem->node->stopAllActions();
-  gem->node->runAction(
+  gem->stopAllActions();
+  gem->runAction(
     c::EaseBounceOut::create(
       c::RotateBy::create(0.5, 360)));
 }
@@ -591,7 +596,7 @@ void animateSelected(Gem *gem) {
 void resetSelectedGem(GVars *ss) {
   auto gemPosition = ss->selectedGemPos;
   auto gem = ss->selectedGem;
-  gem->node->runAction(
+  gem->runAction(
       c::EaseElasticOut::create(
         c::MoveTo::create(0.25, gemPosition)));
 }
@@ -600,8 +605,8 @@ void resetSelectedGem(GVars *ss) {
 //
 void swapGems(GVars *ss, Gem *gemOrigin, Gem *gemTarget, VOIDFN onComplete) {
 
+  auto target = gemTarget->getPosition();
   auto origin = ss->selectedGemPos;
-  auto target = gemTarget->pos();
 
   auto moveSelected = c::EaseBackOut::create(
       c::MoveTo::create(0.8, target));
@@ -609,8 +614,8 @@ void swapGems(GVars *ss, Gem *gemOrigin, Gem *gemTarget, VOIDFN onComplete) {
       c::MoveTo::create(0.8, origin) );
 
   gemOrigin->deselect();
-  gemOrigin->node->runAction(moveSelected);
-  gemTarget->node->runAction(
+  gemOrigin->runAction(moveSelected);
+  gemTarget->runAction(
       c::Sequence::create(
         moveTarget,
         c::CallFunc::create(onComplete),
@@ -637,8 +642,8 @@ void animateMatches(
   F__LOOP(it,matches) {
     auto &pt= *it;
     auto gem = ss->gemsColMap[pt.x]->get(pt.y);
-    gem->node->stopAllActions();
-    gem->node->runAction(
+    gem->stopAllActions();
+    gem->runAction(
         c::Sequence::create(
           c::EaseBackOut::create(
             c::ScaleTo::create(0.3, 0)),
@@ -661,20 +666,20 @@ void animateCollapse(GVars *ss, VOIDFN onComplete) {
     auto cm = ss->gemsColMap[c];
     int drop = 1;
     for (auto r = 0; r < cm->size(); ++r) {
-        auto gem = cm->get(r);
+      auto gem = cm->get(r);
       //if this gem has been resized, move it to the top
-      if (gem->node->getScaleX() != 1) {
-        gem->node->setPositionY( (GRID_SIZE_Y+drop) * TILE_GRID);
+      if ((int)gem->getScaleX() != 1) {
+        gem->setPositionY( (GRID_SIZE_Y+drop) * TILE_GRID);
         animatedCollapsedGems += 1;
         gem->setType(getNewGem());
-        gem->show();
+        CC_SHOW(gem);
         auto newY = (GRID_SIZE_Y - (drop - 1)) * TILE_GRID;
         dropGemTo(gem, newY, 0.2, onComplete);
         drop += 1;
       } else {
         if (drop > 1) {
           animatedCollapsedGems += 1;
-          auto newY = gem->node->getPositionY() - (drop-1) * TILE_GRID;
+          auto newY = gem->getPositionY() - (drop-1) * TILE_GRID;
           dropGemTo(gem, newY, 0, onComplete);
         }
       }
@@ -687,7 +692,7 @@ void animateCollapse(GVars *ss, VOIDFN onComplete) {
 //
 void dropGemTo(Gem *gem, float y, float delay, VOIDFN onComplete)  {
 
-  gem->node->stopAllActions();
+  gem->stopAllActions();
   gem->reset();
 
   auto onCompleteMe=[=]() {
@@ -701,25 +706,25 @@ void dropGemTo(Gem *gem, float y, float delay, VOIDFN onComplete)  {
       c::DelayTime::create(delay),
       c::EaseBounceOut::create(
         c::MoveTo::create(
-          0.6, CCT_PT(gem->node->getPositionX(), y))),
+          0.6, CCT_PT(gem->getPositionX(), y))),
       c::CallFunc::create(onCompleteMe),
       CC_NIL);
 
-  gem->node->runAction(action);
+  gem->runAction(action);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void collectDiamonds(const s_vec<ecs::Node*> &diamonds) {
 
-  auto removeDiamond=[=](c::Node *n) {
+  auto removeDiamond= [=](c::Node *n) {
     CC_HIDE(n);
   };
   auto wb=cx::visBox();
   int i=1;
 
   F__LOOP(it,diamonds) {
-    auto d= *it;
+    auto &d= *it;
     auto action = c::Sequence::create(
         c::DelayTime::create(i * 0.05),
         c::EaseBackIn::create(
@@ -728,7 +733,7 @@ void collectDiamonds(const s_vec<ecs::Node*> &diamonds) {
         c::CallFuncN::create(removeDiamond),
         CC_NIL);
     auto sp=CC_GEC(f::CPixie,d,"f/CPixie");
-    sp->node->runAction(action);
+    sp->runAction(action);
     ++i;
   }
 }

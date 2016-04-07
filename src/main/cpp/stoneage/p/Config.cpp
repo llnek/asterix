@@ -40,13 +40,21 @@ void Config::initCsts() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+float Config::scaleFont(float pt) {
+  return pt /128.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Config::initAssets() {
 
-  addAtlas("game-pics",CC_STR("pics/sprite_sheet.plist"));
-  addAtlas("diamonds",CC_STR("pics/diamond.plist"));
-  addAtlas("matches",CC_STR("pics/match.plist"));
+  addAtlas("cc-pics",CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics",CC_STR("pics/dlist.plist"));
+  addAtlas("diamonds",CC_STR("misc/diamond.plist"));
+  addAtlas("matches",CC_STR("misc/match.plist"));
 
-  addImage("game-pics",CC_STR("pics/sprite_sheet.png"));
+  addImage("cc-pics",CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics",CC_STR("pics/dlist.png"));
   addImage("game.bg", CC_STR("pics/background.jpg"));
   addImage("intro.bg", CC_STR("pics/introbg.jpg"));
   addImage("frame", CC_STR("pics/frame.png"));
@@ -57,13 +65,17 @@ void Config::initAssets() {
   addEffect("diamond2", CC_STR("sfx/diamond2.wav"));
   addEffect("wrong", CC_STR("sfx/wrong.wav"));
 
-  addFont("dft", CC_STR("fon/en/myriad-pro.ttf"));
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/Quicksand.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto dz= gameSize();
+  /*
   sstr p;
   int w;
   if (rs.width > 320) {
@@ -76,15 +88,14 @@ void Config::handleResolution(const c::Size &rs) {
 
   CC_FILER()->setSearchPaths(s_vec<sstr> {p});
   CC_DTOR()->setContentScaleFactor(w/dz.width);
+  */
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

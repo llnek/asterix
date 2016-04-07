@@ -24,9 +24,9 @@ NS_BEGIN(stoneage)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  auto po= MGMS()->reifyPool( "DiamondParticles");
+  auto po= MGMS()->reifyPool("DiamondParticles");
   po->preset([=]() -> f::Poolable* {
-    auto p = c::ParticleSystemQuad::create( XCFG()->getAtlas("diamonds"));
+    auto p = c::ParticleSystemQuad::create(XCFG()->getAtlas("diamonds"));
     p->stopSystem();
     CC_HIDE(p);
     MGML()->addItem(p);
@@ -49,16 +49,15 @@ void GEngine::initEntities() {
 
   po= MGMS()->reifyPool( "Diamonds");
   po->preset([=]() -> f::Poolable* {
-    auto p = cx::reifySprite("gem_white.png");
-    p->setLocalZOrder(Z_DIAMOND);
+    auto p = Diamond::create();
     CC_HIDE(p);
     MGML()->addItem(p);
     auto ent= this->reifyNode("Diamond");
-    ent->checkin(mc_new1(Diamond,p));
+    ent->checkin(p);
     return ent;
   },32);
 
-  auto ent= this->reifyNode("Arena");
+  auto ent= this->reifyNode("Arena", true);
   auto ss= mc_new(GVars);
   ent->checkin(ss);
 }

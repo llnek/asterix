@@ -14,8 +14,6 @@
 
 #include "ecs/Engine.h"
 #include "n/C.h"
-#include "n/Gem.h"
-#include "n/lib.h"
 
 NS_BEGIN(stoneage)
 //////////////////////////////////////////////////////////////////////////////

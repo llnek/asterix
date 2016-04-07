@@ -19,6 +19,9 @@ NS_BEGIN(stoneage)
 //
 struct CC_DLL HUDLayer : public f::XLayer {
 
+  __decl_getr(int,_dscore,DScore)
+  __decl_getr(int,_score,Score)
+
   __decl_create_layer(HUDLayer)
   __decl_deco_ui()
   __decl_get_iid(3)
@@ -29,7 +32,6 @@ struct CC_DLL HUDLayer : public f::XLayer {
   __decl_iz(_score)
 
   void updateScore(const sstr&, int);
-
 };
 
 

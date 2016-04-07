@@ -22,24 +22,21 @@ NS_BEGIN(stoneage)
 //
 void Splash::decoUI() {
 
+  auto wz= cx::visSize();
   auto wb=cx::visBox();
 
   centerImage("intro.bg");
 
   //create pterodactyl animation
   auto p= cx::reifySprite("ptero_frame1.png");
-  p->setPosition(wb.right + 100, wb.top * 0.8);
+  CC_POS2(p, wb.right + 100, wb.top * 0.8);
   addItem(p);
 
-  auto anim= c::Animation::create();
+  auto anim= cx::createAnimation(0.5/3.0,true,-1);
   for (auto i=1; i < 4; ++i) {
-    auto name = "ptero_frame"+s::to_string(i)+".png";
     anim->addSpriteFrame(
-        cx::getSpriteFrame(name));
+        cx::getSpriteFrame("ptero_frame"+FTOS(i)+".png"));
   }
-  anim->setDelayPerUnit(0.5 / 3.0);
-  anim->setRestoreOriginalFrame(true);
-  anim->setLoops(-1);
 
   auto animate = c::Animate::create(anim);
   p->runAction(animate);
@@ -47,29 +44,32 @@ void Splash::decoUI() {
   p->runAction(c::RepeatForever::create(
         c::Sequence::create(
           c::MoveTo::create(0,
-              c::Vec2(wb.right + 100, wb.top * 0.8)),
+              CCT_PT(wb.right + 100, wb.top * 0.8)),
           c::MoveTo::create(4.0,
-              c::Vec2(-100, wb.top * 0.8)),
+              CCT_PT(-100, wb.top * 0.8)),
           c::DelayTime::create(2.5),
           CC_NIL)));
 
   auto ch= cx::reifySprite("introCharacter.png");
-  ch->setPosition(wb.cx, wb.cy + 110);
+  CC_POS2(ch, wb.cx, wb.cy + 110);
   addItem(ch);
 
-  auto frame = cx::loadSprite("frame.png");
-  frame->setPosition(wb.cx, wb.cy);
+  auto frame = cx::createSprite("frame");
+  auto sz= CC_CSIZE(frame);
+  frame->setScale(wz.width/sz.width);
+  CC_POS2(frame, wb.cx, wb.cy);
   addItem(frame);
 
   auto btn = cx::reifyMenuBtn("playBtn.png",
                               "playBtnOver.png");
-  btn->setPosition(wb.cx, wb.top * 0.2);
+  CC_POS2(btn, wb.cx, wb.top * 0.2);
   btn->setCallback([=](c::Ref*) {
     cx::sfxMusic("background",true);
-    cx::runEx(Game::reify(mc_new(f::GCX)));
+    cx::runEx(Game::reify(mc_new(GameCtx)));
   });
-  auto menu  = cx::mkMenu(btn);
-  addItem(menu);
+
+  addItem(cx::mkMenu(btn));
+
 }
 
 

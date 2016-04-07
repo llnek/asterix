@@ -13,7 +13,6 @@
 #include "core/CCSX.h"
 #include "s/GEngine.h"
 #include "HUD.h"
-#include "n/lib.h"
 #include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -29,9 +28,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onTouchEnd(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
 
   void buildGrid(GVars*);
   void addToScore();
@@ -47,6 +46,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_ptr(c::Sprite, _timeBar)
   __decl_ptr(ecs::Node, _shared)
   __decl_bf(_touchDown)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,29 +57,33 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
 
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
 
-  this->_touchDown = true;
-  if (!ss->enabled ) { return false; }
+  if (!ss->enabled ) {
+    return false;
+  } else {
+    this->_touchDown = true;
+  }
 
-  auto touched= findGemAtPos(ss, loc);
-  if (touched.gem != CC_NIL ) {
-    if (!ss->selectedGem) {
-      selectStartGem(ss,touched);
+  auto touched= findGemAtPos(ss, tap);
+  if (touched.gem) {
+
+    if (E_NIL(ss->selectedGem)) {
+      selectStartGem(ss, touched);
     } else {
-      if (isValidTarget(ss, touched.x, touched.y, loc)) {
-        selectTargetGem(ss,touched);
-      }
-      else {
-        if (ss->selectedGem != CC_NIL) {
+      if (isValidTarget(ss, touched.x, touched.y, tap)) {
+        selectTargetGem(ss, touched);
+      } else {
+        if (ss->selectedGem) {
           ss->selectedGem->deselect();
         }
         ss->selectedGem = CC_NIL;
         selectStartGem (ss,touched);
       }
     }
+
   }
 
   return true;
@@ -87,12 +91,12 @@ bool GLayer::onMouseStart(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  if (!MGMS()->isLive()) { return; }
+void GLayer::onMouseClick(const CCT_PT &tap) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   this->_touchDown = false;
+  if (!MGMS()->isLive()) { return; }
   if (!ss->enabled) { return; }
-  if (ss->selectedGem != CC_NIL) { dropSelectedGem(ss); }
+  if (ss->selectedGem) { dropSelectedGem(ss); }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -109,9 +113,9 @@ void GLayer::onTouchMotion(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &tap) {
 
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
 
   if (!MGMS()->isLive() ||
       !ss->enabled ) {
@@ -119,15 +123,16 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 
   //track to see if we have a valid target
   if (ss->selectedGem != CC_NIL && this->_touchDown ) {
-    ss->selectedGem->setPos(
-      loc.x - ss->gemsContainer->getPositionX(),
-      loc.y - ss->gemsContainer->getPositionY());
-    auto touched= findGemAtPos(ss, loc);
+    CC_POS2(ss->selectedGem,
+      tap.x - ss->gemsContainer->getPositionX(),
+      tap.y - ss->gemsContainer->getPositionY());
+    auto touched= findGemAtPos(ss, tap);
     if (touched.gem != CC_NIL &&
-        isValidTarget(ss, touched.x, touched.y, loc)) {
+        isValidTarget(ss, touched.x, touched.y, tap)) {
       selectTargetGem(ss,touched);
     }
   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,23 +141,26 @@ void GLayer::onInited() {
 
   _shared=_engine->getNodes("n/GVars")[0];
 
-  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   ss->gemsContainer = c::Node::create();
-  ss->selectedGemPos = c::Vec2(0,0);
-  ss->selectedIndex = f::Cell2I();
-  ss->targetIndex = f::Cell2I();
-  ss->selectedGem = CC_NIL;
-  ss->targetGem = CC_NIL;
-  ss->combos = 0;
-  ss->addingCombos = false;
+  //ss->selectedGemPos = CC_ZPT;
+  //ss->selectedIndex = f::Cell2I();
+  //ss->targetIndex = f::Cell2I();
+  //ss->selectedGem = CC_NIL;
+  //ss->targetGem = CC_NIL;
+  //ss->combos = 0;
+  //ss->addingCombos = false;
 
-  ss->gemsContainer->setPosition(25, 80);
+  CC_POS2(ss->gemsContainer, 25, 80);
   addItem(ss->gemsContainer);
 
   auto frame = cx::createSprite("frame");
-  frame->setPosition(wb.cx, wb.cy);
+  auto sz= CC_CSIZE(frame);
+  frame->setScale(wz.width/sz.width);
+  CC_POS2(frame, wb.cx, wb.cy);
   addItem(frame);
 
   buildGrid(ss);
@@ -164,6 +172,7 @@ void GLayer::decoUI() {
   _engine= mc_new(GEngine);
   centerImage("game.bg");
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,7 +198,7 @@ void GLayer::buildGrid(GVars *ss) {
       g->set(r-1,t); // zero based
       gem->inflate(c*TILE_GRID, r*TILE_GRID);
 
-      ss->gemsContainer->addChild(gem->node);
+      ss->gemsContainer->addChild(gem);
       m->set(r-1,gem); // zero based
       ss->allGems.push_back(gem);
     }
@@ -218,12 +227,12 @@ void GLayer::startTimer() {
   auto timeBarBg = cx::reifySprite("timeBarBg.png");
   auto wb = cx::visBox();
 
-  timeBarBg->setPosition(wb.cx, 40);
+  CC_POS2(timeBarBg, wb.cx, 40);
   addItem(timeBarBg);
 
   _timeBar = cx::reifySprite("timeBar.png");
   _timeBar->setAnchorPoint(cx::anchorL());
-  _timeBar->setPosition(wb.cx - 290, 40);
+  CC_POS2(_timeBar, wb.cx - 290, 40);
   addItem(_timeBar);
 
   this->schedule(CC_SCHEDULE_SELECTOR(GLayer::tick), 1);
@@ -246,7 +255,7 @@ void GLayer::tick(float dt) {
     MGMS()->stop();
     // show game over
     auto gameOver = cx::reifySprite("gameOver.png");
-    gameOver->setPosition(wb.cx, wb.cy);
+    CC_POS2(gameOver, wb.cx, wb.cy);
     addItem(gameOver);
   }
 }

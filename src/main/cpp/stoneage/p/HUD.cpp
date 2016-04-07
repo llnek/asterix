@@ -25,22 +25,22 @@ void HUDLayer::decoUI() {
   auto scoreBg = cx::reifySprite("gemsScore.png");
   auto wb= cx::visBox();
 
-  diamondScoreBg->setPosition(100, wb.top - 30);
+  CC_POS2(diamondScoreBg, 100, wb.top - 30);
   addItem(diamondScoreBg);
 
-  scoreBg->setPosition(280, wb.top - 30);
+  CC_POS2(scoreBg, 280, wb.top - 30);
   addItem(scoreBg);
 
-  _dscoreLabel = cx::reifyLabel("dft", 20, "0");
+  _dscoreLabel = cx::reifyLabel("text", 20, "0");
   _dscoreLabel->setAlignment(c::TextHAlignment::RIGHT);
   _dscoreLabel->setMaxLineWidth(150);
-  _dscoreLabel->setPosition (140, wb.top - 30);
+  CC_POS2(_dscoreLabel, 140, wb.top - 30);
   addItem(_dscoreLabel);
 
-  _scoreLabel = cx::reifyLabel("dft", 20, "0");
+  _scoreLabel = cx::reifyLabel("text", 20, "0");
   _scoreLabel->setAlignment(c::TextHAlignment::RIGHT);
   _scoreLabel->setMaxLineWidth(150);
-  _scoreLabel->setPosition (330, wb.top - 30);
+  CC_POS2(_scoreLabel, 330, wb.top - 30);
   addItem(_scoreLabel);
 
   _dscore=0;
@@ -52,12 +52,14 @@ void HUDLayer::decoUI() {
 void HUDLayer::updateScore(const sstr &type, int value) {
   if ("diamond" == type) {
     _dscore += value;
-    _dscoreLabel->setString(s::to_string(_dscore));
+    _dscoreLabel->setString(FTOS(_dscore));
   } else {
     _score += value;
-    _scoreLabel->setString(s::to_string(_score));
+    _scoreLabel->setString(FTOS(_score));
   }
 }
+
+
 
 NS_END
 

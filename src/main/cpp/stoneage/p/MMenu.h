@@ -17,9 +17,7 @@ NS_BEGIN(stoneage)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL MMenu : public f::XScene {
-
-public:
+struct CC_DLL MMenu : public f::XScene {
 
   __decl_create_scene(MMenu)
   __decl_deco_ui()

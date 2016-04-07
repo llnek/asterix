@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "Gem.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
@@ -46,15 +45,36 @@ enum Points {
 #define Z_SWAP_2  3
 #define Z_DIAMOND  4
 
+const sstr getGemPng(int type);
+int getGemType(int pos);
+int getNewGem();
+
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Particle : public f::CPixie {
+struct CC_DLL Particle : public ecs::Component {
+  __decl_comp_tpid("n/Particle")
+  __decl_ptr(c::Node,node)
+  Particle(not_null<c::Node*> n) {
+    node=n;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Diamond : public f::CPixie {
+class CC_DLL Diamond : public f::CPixie {
+
+  virtual bool initWithSpriteFrameName(const sstr&);
+
+public:
+
+  static owner<Diamond*> create() {
+    auto z=mc_new(Diamond);
+    z->initWithSpriteFrameName("gem_white.png");
+    z->autorelease();
+    return z;
+  }
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -77,8 +97,8 @@ public:
     return z;
   }
 
-  void deselect() {selected=false; }
-  void select() { selected=true; }
+  void deselect() { _selected=false; }
+  void select() { _selected=true; }
 
   void reset() {
     this->setRotation(0);
@@ -141,9 +161,6 @@ bool checkGridMatches(GVars*);
 void selectStartGem(GVars*, const GemInfo&);
 void selectTargetGem(GVars*, const GemInfo&);
 
-const sstr getGemPng(int type);
-int getGemType(int pos);
-int getNewGem();
 
 int getVertHorzUnique(GVars*, int col, int row);
 int getVertUnique(GVars*, int col, int row);
