@@ -12,9 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "C.h"
-#include "Gem.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(stoneage)
@@ -35,11 +33,11 @@ static s_arr<sstr,GEMSET_SIZE> SKINS = {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-static bool find (const f::Cell2I &np, const s_vec<f::Cell2I> &arr) {
+static bool find(const f::Cell2I &np, const s_vec<f::Cell2I> &arr) {
   F__LOOP(it, arr) {
     auto &a= *it;
     if (a.x == np.x &&
-        a.y == np.y) return true;
+        a.y == np.y) { return true; }
   }
   return false;
 }
@@ -65,7 +63,8 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
   auto stepR = r;
 
   //check top
-  while (stepR-1 >= 0 &&
+  //while (stepR-1 >= 0 &&
+  while (stepR > 0 &&
     ss->grid[c]->get(stepR-1) == type) {
     --stepR;
     temp.push_back(f::Cell2I(c, stepR));
@@ -86,7 +85,8 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
 
   //check left
   temp.clear();
-  while (stepC-1 >= 0 &&
+  //while (stepC-1 >= 0 &&
+  while (stepC > 0 &&
          ss->grid[stepC-1]->get(r) == type) {
     --stepC;
     temp.push_back(f::Cell2I(stepC, r));
@@ -108,7 +108,7 @@ static void checkTypeMatch(GVars *ss, int c, int r) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool isValidTarget(GVars *ss, int px, int py, const c::Vec2 &touch) {
+bool isValidTarget(GVars *ss, int px, int py, const CCT_PT &touch) {
 
   auto offbounds = false;
   auto rc=true;
@@ -119,9 +119,10 @@ bool isValidTarget(GVars *ss, int px, int py, const c::Vec2 &touch) {
       py < ss->selectedIndex.y - 1) {
   offbounds = true; }
 
+  // this is to check diagonals
   auto cell = sin(atan2(pow(ss->selectedIndex.x - px, 2),
         pow(ss->selectedIndex.y- py, 2)));
-
+  // dont want diagonals
   if (cell != 0 && cell != 1) {
     offbounds = true;
   }
@@ -129,8 +130,8 @@ bool isValidTarget(GVars *ss, int px, int py, const c::Vec2 &touch) {
   if (offbounds ) {
   return false; }
 
-  auto touchedGem = ss->gemsColMap[px]->get(py);
-  if (touchedGem == ss->selectedGem ||
+  auto touched= ss->gemsColMap[px]->get(py);
+  if (touched== ss->selectedGem ||
       (px == ss->selectedIndex.x &&
        py == ss->selectedIndex.y)) {
     ss->targetGem = CC_NIL;
@@ -142,7 +143,7 @@ bool isValidTarget(GVars *ss, int px, int py, const c::Vec2 &touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GemInfo findGemAtPos(GVars *ss, const c::Vec2 &pos) {
+GemInfo findGemAtPos(GVars *ss, const CCT_PT &pos) {
 
   auto mx = pos.x - ss->gemsContainer->getPositionX();
   auto my = pos.y - ss->gemsContainer->getPositionY();
@@ -174,11 +175,12 @@ GemInfo findGemAtPos(GVars *ss, const c::Vec2 &pos) {
 void selectStartGem(GVars *ss, const GemInfo &touched) {
   if (!ss->selectedGem) {
     ss->selectedGem = touched.gem;
-    ss->targetIndex = f::Cell2I();
+    ss->targetIndex.y= 0;
+    ss->targetIndex.x= 0;
     ss->targetGem = CC_NIL;
-    touched.gem->node->setLocalZOrder(Z_SWAP_2);
+    touched.gem->setLocalZOrder(Z_SWAP_2);
     ss->selectedIndex = f::Cell2I(touched.x, touched.y);
-    ss->selectedGemPos = touched.gem->pos();
+    ss->selectedGemPos = touched.gem->getPosition();
     animateSelected(touched.gem);
   }
 }
@@ -190,7 +192,7 @@ void selectTargetGem(GVars *ss, const GemInfo &touched) {
   ss->enabled = false;
   ss->targetIndex = f::Cell2I(touched.x, touched.y);
   ss->targetGem = touched.gem;
-  ss->targetGem->node->setLocalZOrder(Z_SWAP_1);
+  ss->targetGem->setLocalZOrder(Z_SWAP_1);
   swapGemsToNewPosition(ss);
 }
 
@@ -211,7 +213,7 @@ bool checkGridMatches(GVars *ss) {
     SENDMSG("/game/player/addscore");
     rc= true;
   } else {
-    CCLOG("no matches");
+    //CCLOG("no matches");
   }
 
   return rc;
@@ -568,7 +570,7 @@ void dropColumn(GVars *ss, int col) {
         c::EaseBounceOut::create(
           c::MoveTo::create(
             2,
-            c::Vec2(gem->node->getPositionX(), finalY))),
+            CCT_PT(gem->node->getPositionX(), finalY))),
         c::CallFunc::create(onAnimatedColumn),
         CC_NIL));
   }
@@ -699,7 +701,7 @@ void dropGemTo(Gem *gem, float y, float delay, VOIDFN onComplete)  {
       c::DelayTime::create(delay),
       c::EaseBounceOut::create(
         c::MoveTo::create(
-          0.6, c::Vec2(gem->node->getPositionX(), y))),
+          0.6, CCT_PT(gem->node->getPositionX(), y))),
       c::CallFunc::create(onCompleteMe),
       CC_NIL);
 
@@ -722,7 +724,7 @@ void collectDiamonds(const s_vec<ecs::Node*> &diamonds) {
         c::DelayTime::create(i * 0.05),
         c::EaseBackIn::create(
           c::MoveTo::create(
-            0.8, c::Vec2(50, wb.top - 50))),
+            0.8, CCT_PT(50, wb.top - 50))),
         c::CallFuncN::create(removeDiamond),
         CC_NIL);
     auto sp=CC_GEC(f::CPixie,d,"f/CPixie");
