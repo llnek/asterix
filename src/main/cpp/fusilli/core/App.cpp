@@ -84,7 +84,7 @@ void App::preLaunch(const c::Size &dz) {
   c::Size medSize;
   c::Size smallSize;
   float w,h;
-  auto spath="rd";
+  s_vec<sstr> spaths;
 
   // Set the design resolution
   cx::setDevRes(dz.width, dz.height, XCFG()->policy());
@@ -110,33 +110,45 @@ void App::preLaunch(const c::Size &dz) {
   if (fz.height > medSize.height) {
     h=largeSize.height;
     w=largeSize.width;
-    spath= "rd";
+    spaths.push_back("rd");
+    spaths.push_back("hd");
+    spaths.push_back("sd");
   }
   // if the frame's height is larger than
   // the height of small size.
   else if (fz.height > smallSize.height) {
     h=medSize.height;
     w=medSize.width;
-    spath= "hd";
+    spaths.push_back("hd");
+    spaths.push_back("sd");
+    spaths.push_back("rd");
   }
   // if the frame's height is smaller than the height of medium size.
   else {
     h=smallSize.height;
     w=smallSize.width;
-    spath="sd";
+    spaths.push_back("sd");
+    spaths.push_back("hd");
+    spaths.push_back("rd");
   }
 
   CC_DTOR()->setContentScaleFactor(MIN(h/dz.height, w/dz.width));
   // for win32 add Resources
-  CC_FILER()->setSearchPaths(s_vec<sstr>{spath,"Resources"});
+  spaths.push_back("Resources");
+  CC_FILER()->setSearchPaths(spaths);
 
   XCFG()->setFrameSize(fz);
   XCFG()->runOnce();
 
   CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
   CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
-  CCLOG("image search path=%s", spath);
-  CCLOG("sound search path=%s", "sfx");
+  sstr dbgs;
+  F__LOOP(it,spaths) {
+    auto &s= *it;
+    if (dbgs.length() > 0) { dbgs += " > "; }
+    dbgs += s;
+  }
+  CCLOG("image search path=%s", dbgs.c_str());
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
   CCLOG("_scale =%f", XCFG()->getScale());
   //CCLOG("platform os=%s", )

@@ -24,10 +24,12 @@ void Splash::decoUI() {
 
   auto wb = cx::visBox();
 
-  centerImage("game.bg");
+  centerImage("gui.xxx.bg");
+  regoAtlas("game-pics");
 
-  _flare = cx::createSprite(XCFG()->getImage("flare"));
   _ship = cx::reifySprite("ship03.png");
+  _ship->setScale(XCFG()->getScale());
+  _flare = cx::createSprite("flare");
 
   CC_HIDE(_flare);
   CC_POS2(_ship, cx::randInt(wb.right), 0);
@@ -35,7 +37,7 @@ void Splash::decoUI() {
   addItem(_flare, 15, 10);
   addItem(_ship, 0, 4);
 
-  auto b= cx::reifyMenuBtn("play.png");
+  auto b= cx::reifyMenuText("btns", "PLAY!");
   CC_POS2(b, wb.cx, wb.top * 0.2);
   b->setCallback([=](c::Ref*) {
     btnEffect();
@@ -53,6 +55,7 @@ void Splash::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::update(float dt) {
+  auto h= CC_CHT(_ship) * 3;
   auto wb = cx::visBox();
   auto g= [=]() {
     CC_POS2(this->_ship, cx::randInt(wb.right), 10);
@@ -62,7 +65,7 @@ void Splash::update(float dt) {
       c::Sequence::create(
         c::MoveBy::create(
           2,
-          CCT_PT(cx::randInt(wb.right), wb.top + 100)),
+          CCT_PT(cx::randInt(wb.right), wb.top + h)),
         c::CallFunc::create(g),
         CC_NIL));
 }

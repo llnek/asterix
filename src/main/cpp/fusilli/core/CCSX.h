@@ -74,6 +74,9 @@ namespace ccsx {
 
   const CCT_SZ calcOffsets(const CCT_SZ &sz);
 
+  c::MenuItem* reifyMenuText(const sstr &fnt, float pt, const sstr &txt);
+  c::MenuItem* reifyMenuText(const sstr &fnt, const sstr &txt);
+
   c::MenuItem* createMenuBtn(const sstr &n);
   c::MenuItem* createMenuBtn( const sstr &n, const sstr &s);
 

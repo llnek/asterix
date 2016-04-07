@@ -62,38 +62,23 @@ void GEngine::initSystems() {
 //
 void GEngine::createArena() {
   auto ent= this->reifyNode("Arena",true);
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createShip() {
-  auto ani= CC_ACAC()->getAnimation("ShipAni");
-  auto bs = cx::reifySprite("ship03.png");
-  auto sp= cx::reifySprite("ship01.png");
-  auto zx= CC_CSV(c::Integer,"SHIP+ZX");
   auto ent= this->reifyNode("Ship", true);
-  auto sz= CC_CSIZE(sp);
-  auto wb= cx::visBox();
+  auto zx= CC_CSV(c::Integer,"SHIP+ZX");
+  auto sp= Ship::create();
 
   MGML()->addAtlasItem("game-pics", sp, zx);
 
-  // ship sprite
-  sp->setPosition(wb.cx, sz.height);
-  sp->runAction(
-      c::RepeatForever::create(
-        c::Animate::create(ani)));
-
-  //born sprite
-  bs->setBlendFunc(BDFUNC::ADDITIVE);
-  bs->setPosition(HWZ(sz), 12);
-  CC_HIDE(bs);
-  sp->addChild(bs, zx, 911);
-
-  ent->checkin(mc_new2(Ship, sp, bs));
-  ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new1(f::CHealth,5));
+  ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CMove));
+  ent->checkin(sp);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -102,15 +87,15 @@ void GEngine::createMissiles(int count) {
   auto speed= CC_CSV(c::Float, "MISSILE+SPEED");
   auto zx = CC_CSV(c::Integer, "SHIP+ZX");
   auto po = MGMS()->getPool("Missiles");
+
   po->preset([=]() -> f::Poolable* {
-    auto sp= cx::reifySprite("W1.png");
-    auto ui= mc_new1(Missile, sp);
+    auto ui= Missile::create("W1.png");
     auto mv= mc_new(f::CMove);
     auto ent=this->reifyNode("Missile");
 
-    MGML()->addAtlasItem("op-pics", sp, zx);
-    sp->setBlendFunc(BDFUNC::ADDITIVE);
-    CC_HIDE(sp);
+    MGML()->addAtlasItem("op-pics", ui, zx);
+    ui->setBlendFunc(BDFUNC::ADDITIVE);
+    CC_HIDE(ui);
 
     mv->speed.y= speed;
     mv->vel.y= speed;
@@ -132,14 +117,13 @@ void GEngine::createBombs(int count) {
   auto po = MGMS()->getPool("Bombs");
 
   po->preset([=]() -> f::Poolable* {
-    auto sp= cx::reifySprite("W2.png");
-    auto ui= mc_new1(Bomb, sp);
+    auto ui= Missile::create("W2.png");
     auto mv= mc_new(f::CMove);
     auto ent=this->reifyNode("Bomb");
 
-    MGML()->addAtlasItem("op-pics", sp, zx);
-    sp->setBlendFunc(BDFUNC::ADDITIVE);
-    CC_HIDE(sp);
+    MGML()->addAtlasItem("op-pics", ui, zx);
+    ui->setBlendFunc(BDFUNC::ADDITIVE);
+    CC_HIDE(ui);
 
     mv->speed.y= -speed;
     mv->vel.y= -speed;
@@ -147,6 +131,7 @@ void GEngine::createBombs(int count) {
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(ui);
     ent->checkin(mv);
+
     return ent;
 
   }, count);
@@ -159,14 +144,14 @@ void GEngine::createExplosions(int count) {
   auto po = MGMS()->getPool("Explosions");
 
   po->preset([=]() -> f::Poolable* {
-    auto sp = cx::reifySprite("explosion_01.png");
+    auto sp = Explosion::create("explosion_01.png");
     auto ent= this->reifyNode("Explosion");
 
     MGML()->addAtlasItem("explosions", sp);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
 
-    ent->checkin(mc_new1(Explosion, sp));
+    ent->checkin(sp);
     return ent;
 
   }, count);
@@ -179,13 +164,13 @@ void GEngine::createHitEffects(int count) {
   auto po = MGMS()->getPool("HitEffects");
 
   po->preset([=]() -> f::Poolable* {
-    auto sp = cx::reifySprite("hit.png");
+    auto sp = HitEffect::create("hit.png");
     auto ent= this->reifyNode("HitEffect");
     MGML()->addAtlasItem("op-pics", sp);
     sp->setBlendFunc(BDFUNC::ADDITIVE);
     CC_HIDE(sp);
 
-    ent->checkin(mc_new1(HitEffect, sp));
+    ent->checkin(sp);
     return ent;
   }, count);
 }
@@ -197,16 +182,11 @@ void GEngine::createSparks(int count) {
   auto po = MGMS()->getPool("Sparks");
 
   po->preset([=]() -> f::Poolable* {
-    auto sp2 = cx::reifySprite("explode2.png");
-    auto sp3 = cx::reifySprite("explode3.png");
+    auto sp= Spark::create("explode2.png");
     auto ent= this->reifyNode("Spark");
-    MGML()->addAtlasItem("op-pics", sp2);
-    MGML()->addAtlasItem("op-pics", sp3);
-    sp2->setBlendFunc(BDFUNC::ADDITIVE);
-    CC_HIDE(sp2);
-    sp3->setBlendFunc(BDFUNC::ADDITIVE);
-    CC_HIDE(sp3);
-    ent->checkin(mc_new2(Spark, sp2, sp3));
+    MGML()->addAtlasItem("op-pics", sp);
+    MGML()->addAtlasItem("op-pics", sp->getGhost());
+    ent->checkin(sp);
     return ent;
 
   }, count);
@@ -219,18 +199,18 @@ void GEngine::createEnemies(int count) {
   auto po = MGMS()->getPool("Baddies");
   auto cr= [=](const EnemyType& arg)
     -> f::Poolable* {
-    auto sp= cx::reifySprite(arg.textureName);
+    auto sp= f::CPixie::reifyFrame(arg.textureName);
     auto ent= this->reifyNode("Enemy");
     MGML()->addAtlasItem("game-pics", sp,zx);
     CC_HIDE(sp);
     ent->checkin(mc_new1(f::CHealth,arg.HP));
-    ent->checkin(mc_new1(f::CPixie, sp));
+    ent->checkin(sp);
     ent->checkin(mc_new(f::CMove));
     ent->checkin(mc_new1(Enemy, arg));
     return ent;
   };
 
-  F__LOOP(it, EnemyTypes) {
+  F__LOOP(it, EnemyTypes()) {
     auto &arg = *it;
     po->preset([=]() -> f::Poolable* {
       return cr(arg);
@@ -246,12 +226,13 @@ void GEngine::createBackSkies() {
   auto layer= MGMS()->getLayer(1);
 
   po->preset([=]() -> f::Poolable* {
-    auto bg = cx::reifySprite("bg01.png");
+    auto bg = f::CPixie::reifyFrame("bg01.png");
     auto ent= this->reifyNode("BackSky");
     layer->addAtlasItem("game-pics", bg, -10);
     bg->setAnchorPoint(cx::anchorBL());
+    bg->setScale(XCFG()->getScale());
     CC_HIDE(bg);
-    ent->checkin(mc_new1(f::CPixie, bg));
+    ent->checkin(bg);
     return ent;
   }, 2);
 }
@@ -262,12 +243,12 @@ void GEngine::createBackTiles(int count) {
   auto po = MGMS()->getPool("BackTiles");
   auto layer= MGMS()->getLayer(1);
   auto cr= [=](const sstr &name) -> f::Poolable* {
-    auto sp = cx::reifySprite(name);
+    auto sp = f::CPixie::reifyFrame(name);
     auto ent= this->reifyNode("BackTile");
     layer->addAtlasItem("back-tiles", sp, -9);
     sp->setAnchorPoint(cx::anchorL());
     CC_HIDE(sp);
-    ent->checkin(mc_new1(f::CPixie, sp));
+    ent->checkin(sp);
     return ent;
   };
 

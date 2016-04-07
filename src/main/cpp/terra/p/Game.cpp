@@ -12,10 +12,11 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
+#include "MMenu.h"
 #include "HUD.h"
 #include "Game.h"
-//#include "Ende.h"
-#include "n/lib.h"
+#include "Ende.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
@@ -36,12 +37,13 @@ void BLayer::decoUI() {
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
 
   __decl_create_layer(GLayer)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
@@ -59,73 +61,68 @@ struct CC_DLL GLayer : public f::GameLayer {
   void initBackTiles();
   void initBackSkies();
   void showMenu();
-  void onDone();
+  void onEnd();
   void deco();
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
   auto ui=CC_GEC(Ship,_ship,"f/CPixie");
-  return ui->bbox().containsPoint(tap);
+  return ui->boundingBox().containsPoint(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &tap) {
-  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
-  return ui->node->setPosition(tap);
+void GLayer::onMouseMotion(const CCT_PT &tap) {
+  processTouch(_ship,tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *t) {
-  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
-  return ui->node->setPosition(t->getLocation());
+  onMouseMotion(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *t) {
-  auto ui=CC_GEC(Ship,_ship,"f/CPixie");
-  return ui->bbox().containsPoint(
-                t->getLocation());
+  return onMouseStart(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::showMenu() {
+    auto b= []() { cx::pop(); };
+  cx::pushEx(MMenu::reify(mc_new1(MCX,b)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::initBackTiles() {
   moveBackTiles(0);
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::moveBackTiles), 5.0);
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::moveBackTiles), 5);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::moveBackTiles(float) {
   auto po= MGMS()->getPool("BackTiles");
-  auto wz= cx::visRect();
-  auto tm = po->take(true);
+  auto tm = (ecs::Node*)po->take(true);
+  auto wz= cx::visSize();
+  auto wb= cx::visBox();
   auto ui= CC_GEC(f::CPixie, tm, "f/CPixie");
-/*
-  if (ENP(tm)) {
-    SCAST(GEngine*,engine)->createBackTiles();
-    tm= ps->get();
-  }
-*/
-  ui->inflate(cx::randFloat(wz.size.width), wz.size.height);
 
-  auto fun = c::CallFunc::create([=]() { ui->deflate(); });
-  auto move = c::MoveBy::create(
-      cx::randInt(2) + 10,
-      c::Vec2(0, -wz.size.height - HHZ(wz.size)));
-
-  ui->node->runAction(c::Sequence::create(move,fun,CC_NIL));
+  cx::resurrect(tm, cx::randInt(wb.right), wb.top);
+  ui->runAction(
+      c::Sequence::create(
+        c::MoveBy::create(
+          cx::randInt(2) + 10,
+          CCT_PT(0, -wz.height - HTV(wz.height))),
+        c::CallFunc::create([=]() {
+          cx::hibernate(tm); }),
+        CC_NIL));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,46 +130,47 @@ void GLayer::moveBackTiles(float) {
 void GLayer::initBackSkies() {
   auto ss=CC_GEC(GVars,_arena,"n/GVars");
   auto p = MGMS()->getPool("BackSkies");
-  auto bs = p->take(true);
+  auto bs = (ecs::Node*)p->take(true);
   auto ui= CC_GEC(f::CPixie, bs, "f/CPixie");
-  ui->inflate(0, 0);
-  ss->backSkyDim = ui->csize();
+
+  ss->backSkyDim = CC_CSIZE(ui);
   ss->backSkyRe = CC_NIL;
-  ss->backSky = PCAST(ecs::Node,bs);
+  ss->backSky = bs;
+
+  cx::resurrect(bs,0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void GLayer::sharedExplosion() {
-  auto a = c::Animation::create();//WithSpriteFrames(fs, 0.04);
-  sstr str;
+  auto a = cx::createAnimation(0.04,false,0);
   for (auto n = 1; n < 35; ++n) {
-    auto ns= s::to_string(n);
-    if (n < 10 ) { str= "0" + ns; } else { str= ns; }
+    auto ns= FTOS(n);
+    auto s= n < 10 ? "0" + ns : ns;
     a->addSpriteFrame(
-      cx::getSpriteFrame("explosion_" + str + ".png"));
+      cx::getSpriteFrame("explosion_" + s + ".png"));
   }
-  a->setDelayPerUnit(0.04);
   CC_ACAC()->addAnimation(a, "Explosion");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+
   _ship = _engine->getNodes("f/CGesture")[0];
   _arena = _engine->getNodes("n/GVars")[0];
 
-  bornShip(SCAST(GEngine*,_engine), _ship);
   sharedExplosion();
   initBackSkies();
   initBackTiles();
+  bornShip(_ship);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decoUI() {
 
-  schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1.0);
+  schedule(CC_SCHEDULE_SELECTOR(GLayer::incSecCount), 1);
   _engine= mc_new(GEngine);
 
   auto a= regoAtlas("explosions");
@@ -181,6 +179,7 @@ void GLayer::decoUI() {
   a= regoAtlas("op-pics");
   a->setBlendFunc(BDFUNC::ADDITIVE);
 
+  regoAtlas("cc-pics");
   cx::sfxMusic("bgMusic", true);
 }
 
@@ -197,19 +196,18 @@ void GLayer::incSecCount(float) {
 void GLayer::onPlayerKilled() {
   cx::sfxPlay("explodeEffect");
   if ( getHUD()->reduceLives(1)) {
-    onDone();
+    onEnd();
   } else {
-    bornShip(SCAST(GEngine*,_engine), _ship);
+    bornShip(_ship);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onDone() {
-  this->setOpacity(0.1 * 255);
+void GLayer::onEnd() {
   MGMS()->stop();
   surcease();
-  //Ende::reify(MGMS(), 4);
+  Ende::reify(MGMS(), 4);
 }
 
 

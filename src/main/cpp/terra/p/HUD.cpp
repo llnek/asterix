@@ -25,6 +25,7 @@ void HUDLayer::decoUI() {
   float t=0;
 
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 
   _scoreLabel= cx::reifyBmfLabel("score", "0");
   _scoreLabel->setAnchorPoint(cx::anchorTR());
@@ -34,7 +35,7 @@ void HUDLayer::decoUI() {
   addItem(_scoreLabel);
 
   _lives = f::reifyRefType<f::XLives>();
-  _lives->decorate("ship01.png",3,
+  _lives->initLives("ship01.png",3,
       wb.left + t,
       wb.top - t,
       0.4);
@@ -55,8 +56,7 @@ void HUDLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  _lives->reduce(n);
-  return _lives->isDead();
+  return _lives->reduce(n)->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////

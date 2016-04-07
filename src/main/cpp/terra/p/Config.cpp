@@ -50,26 +50,31 @@ void Config::initCsts() {
   addColor("text", CC_STR("#ffffff"));
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
 
   addAtlas("game-pics", CC_STR("pics/textureTransparentPack.plist"));
-  addAtlas("images-pics", CC_STR("pics/images.plist"));
-  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("op-pics", CC_STR("pics/textureOpaquePack.plist"));
   addAtlas("explosions", CC_STR("pics/explosion.plist"));
   addAtlas("back-tiles", CC_STR("pics/b01.plist"));
 
   addImage("game-pics", CC_STR("pics/textureTransparentPack.png"));
-  addImage("images-pics", CC_STR("pics/images.png"));
-  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("op-pics", CC_STR("pics/textureOpaquePack.png"));
   addImage("explosions", CC_STR("pics/explosion.png"));
   addImage("back-tiles", CC_STR("pics/b01.png"));
 
   addImage("flare", CC_STR("pics/flare.jpg"));
   addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("gui.xxx.bg", CC_STR("pics/gui.png"));
   addImage("explosions", CC_STR("pics/explosion.png"));
 
   addEffect("shipDestroyEffect", CC_STR("sfx/shipDestroyEffect.mp3"));
@@ -79,19 +84,9 @@ void Config::initAssets() {
   addEffect("fireEffect", CC_STR("sfx/fireEffect.mp3"));
   addMusic("mainMusic", CC_STR("sfx/mainMainMusic.mp3"));
 
-  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
-
-  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
-
   addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("score", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
   addFont("dft", CC_STR("fonts/en/Quicksand.fnt"));
   addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
@@ -123,11 +118,11 @@ void Config::initLevels() {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const CCT_PT &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto gz= gameSize();
-  CC_DTOR()->setContentScaleFactor(0.5);
+//  CC_DTOR()->setContentScaleFactor(0.5);
   //for default font, we use 48pt
-  _scale = 52.0f/256.0f * rs.width / gz.width;
+//  _scale = 52.0f/256.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -135,8 +130,7 @@ void Config::handleResolution(const CCT_PT &rs) {
 void Config::runOnce() {
 
   cacheSprites("game-pics");
-  cacheSprites("images-pics");
-  cacheSprites("lang-pics");
+  cacheSprites("cc-pics");
   cacheSprites("op-pics");
   cacheSprites("explosions");
   cacheSprites("back-tiles");

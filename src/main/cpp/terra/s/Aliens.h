@@ -26,6 +26,9 @@ class CC_DLL Aliens : public ecs::System {
   void dropBombs(ecs::Node*);
   void process(float);
 
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
+
 public:
 
   __decl_sys_priority( ecs::Motion)
@@ -36,9 +39,6 @@ public:
   Aliens(ecs::Engine *e)
   : System(e)
   {}
-
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ship)
 
 };
 

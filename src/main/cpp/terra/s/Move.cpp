@@ -38,44 +38,47 @@ bool Move::update(float dt) {
 //
 void Move::onKeys(float dt) {
   auto sp = CC_GEC(Ship, _ship, "f/CPixie");
-  auto ssp = CC_CSV(c::Float, "SHIP+SPEED");
+  auto p = CC_CSV(c::Float, "SHIP+SPEED");
+  auto pos = sp->getPosition();
   auto wb= cx::visBox();
-  auto pos = sp->pos();
   auto x = pos.x;
   auto y = pos.y;
   auto ok = false;
 
+  p= p * dt;
+
   if (MGML()->keyPoll(KEYCODE::KEY_RIGHT_ARROW) &&
       pos.x <= wb.right) {
-    x = pos.x + dt * ssp;
+    x = pos.x + p;
     ok= true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_LEFT_ARROW) &&
       pos.x >= wb.left) {
-    x = pos.x - dt * ssp;
+    x = pos.x - p;
     ok= true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_DOWN_ARROW) &&
       pos.y >= wb.bottom) {
-    y = pos.y - dt * ssp;
+    y = pos.y - p;
     ok= true;
   }
   if (MGML()->keyPoll(KEYCODE::KEY_UP_ARROW) &&
       pos.y <= wb.top) {
-    y = pos.y + dt * ssp;
+    y = pos.y + p;
     ok= true;
   }
 
-  if (ok) { sp->setPos(x,y); }
+  if (ok) { CC_POS2(sp,x,y); }
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::moveOneBomb(ecs::Node *bomb, float dt) {
   auto mv=CC_GEC(f::CMove,bomb,"f/CMove");
-  auto ui=CC_GEC(Bomb,bomb,"f/CPixie");
-  auto pos = ui->pos();
-  ui->setPos(pos.x + mv->vel.x * dt,
+  auto ui=CC_GEC(Missile,bomb,"f/CPixie");
+  auto pos = ui->getPosition();
+
+  CC_POS2(ui,pos.x + mv->vel.x * dt,
              pos.y + mv->vel.y * dt);
 }
 
@@ -85,7 +88,7 @@ void Move::move(float dt) {
   auto po = MGMS()->getPool("Bombs");
   po->foreach([=](f::Poolable* p) {
     if (p->status()) {
-    this->moveOneBomb((ecs::Node*)p,dt);
+      this->moveOneBomb((ecs::Node*)p,dt);
     }
   });
 }
@@ -95,8 +98,8 @@ void Move::move(float dt) {
 void Move::moveOneMissile(ecs::Node *m, float dt) {
   auto ui=CC_GEC(Missile,m,"f/CPixie");
   auto mv=CC_GEC(f::CMove,m,"f/CMove");
-  auto pos = ui->pos();
-  ui->setPos(pos.x + mv->vel.x * dt,
+  auto pos = ui->getPosition();
+  CC_POS2(ui,pos.x + mv->vel.x * dt,
              pos.y + mv->vel.y * dt);
 }
 

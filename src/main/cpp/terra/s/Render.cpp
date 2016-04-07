@@ -41,14 +41,14 @@ void Render::process(float dt) {
   auto locBackSkyRe = ss->backSkyRe;
   auto locBackSky = ss->backSky;
   auto ui= CC_GEC(f::CPixie,locBackSky,"f/CPixie");
-  auto posy= ui->node->getPositionY();
+  auto posy= ui->getPositionY();
   auto movingDist = 16.0 * dt;
-  auto wz = cx::visRect();
+  auto wz = cx::visSize();
   auto currPosY = posy - movingDist;
 
-  if (locSkyHeight + currPosY <= wz.size.height) {
+  if (locSkyHeight + currPosY <= wz.height) {
 
-    if (NNP(locBackSkyRe)) {
+    if (locBackSkyRe) {
       throw "The memory is leaking at moving background";
     }
 
@@ -56,23 +56,23 @@ void Render::process(float dt) {
     locBackSkyRe = ss->backSky;
 
     //create a new background
-      ss->backSky = (ecs::Node*)MGMS()->getPool("BackSkies")->take();
+    ss->backSky = (ecs::Node*)
+      MGMS()->getPool("BackSkies")->take();
     locBackSky = ss->backSky;
-      ui=CC_GEC(f::CPixie,locBackSky,"f/CPixie");
-    ui->inflate(0, currPosY + locSkyHeight - 2);
+
+    cx::resurrect(locBackSky, 0, currPosY + locSkyHeight - 2);
   } else {
-    ui->node->setPositionY(currPosY);
+    ui->setPositionY(currPosY);
   }
 
   if (locBackSkyRe) {
     ui=CC_GEC(f::CPixie,locBackSkyRe,"f/CPixie");
-    currPosY = ui->node->getPositionY() - movingDist;
+    currPosY = ui->getPositionY() - movingDist;
     if (currPosY + locSkyHeight < 0.0) {
       ss->backSkyRe = CC_NIL;
-      ui->deflate();
-      locBackSkyRe->yield();
+      cx::hibernate(locBackSkyRe);
     } else {
-      ui->node->setPositionY(currPosY);
+      ui->setPositionY(currPosY);
     }
   }
 }

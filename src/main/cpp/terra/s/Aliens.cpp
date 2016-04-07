@@ -84,13 +84,13 @@ void Aliens::dropBombs(ecs::Node *enemy) {
   auto ui= CC_GEC(f::CPixie, enemy, "f/CPixie");
   auto et= CC_GEC(Enemy, enemy, "n/Enemy");
   auto bombs= MGMS()->getPool("Bombs");
-  auto b = bombs->take(true);
-  auto sz= ui->csize();
-  auto pos= ui->pos();
-  auto bs= CC_GEC(Bomb, b, "f/CPixie");
-    cx::resurrect((ecs::Node*)b);
-  bs->attackMode= et->enemyType.attackMode;
-  bs->inflate(pos.x, pos.y - sz.height * 0.2);
+  auto b = (ecs::Node*)bombs->take(true);
+  auto pos= ui->getPosition();
+  auto sz= CC_CSIZE(ui);
+  auto bs= CC_GEC(Missile, b, "f/CPixie");
+
+  bs->setAttackMode( et->enemyType.attackMode);
+  cx::resurrect(b, pos.x, pos.y - sz.height * 0.2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,6 @@ void Aliens::dropBombs(ecs::Node *enemy) {
 ecs::Node* Aliens::getB(const EnemyType &arg) {
   auto ens = MGMS()->getPool("Baddies");
   auto pred= [=](f::Poolable *p) -> bool {
-    auto ui= CC_GEC(f::CPixie, p, "f/CPixie");
     auto et= CC_GEC(Enemy, p, "n/Enemy");
     return (et->enemyType.type == arg.type &&
             p->status() == false);
@@ -107,22 +106,19 @@ ecs::Node* Aliens::getB(const EnemyType &arg) {
   auto en= ens->select(pred);
   ecs::Node *y= CC_NIL;
 
-  if (! en) {
+  if (E_NIL(en)) {
     SCAST(GEngine*, _engine)->createEnemies(1);
     en= ens->select(pred);
   }
 
-  if (en) {
-    y = PCAST(ecs::Node,en);
-    auto h= CC_GEC(f::CHealth, y, "f/CHealth");
+  y = PCAST(ecs::Node,en);
+  if (y) {
     auto ui= CC_GEC(f::CPixie, y, "f/CPixie");
     auto et= CC_GEC(Enemy, y, "n/Enemy");
-    ui->node->schedule([=](float) {
+    ui->schedule([=](float) {
       this->dropBombs(y);
     }, et->delayTime, "dropBombs");
-    ui->inflate();
-    h->reset();
-    y->take();
+    cx::resurrect(y);
   }
 
   return y;
@@ -132,36 +128,35 @@ ecs::Node* Aliens::getB(const EnemyType &arg) {
 //
 void Aliens::addEnemyToGame(int enemyType) {
   auto sp= CC_GEC(Ship, _ship, "f/CPixie");
-  auto &arg = EnemyTypes[enemyType];
-  auto wz = cx::visRect();
+  auto &arg = EnemyTypes()[enemyType];
+  auto wz = cx::visSize();
   auto en = getB(arg);
   if (! en) { return; }
   auto ens= CC_GEC(f::CPixie, en, "f/CPixie");
   auto et= CC_GEC(Enemy, en, "n/Enemy");
-  auto sz= ens->csize();
-  auto epos= ens->pos();
-  auto pos= sp->pos();
+  auto sz= CC_CSIZE(ens);
+  auto epos= ens->getPosition();
+  auto pos= sp->getPosition();
   c::Action *act;
 
-  ens->setPos(cx::randFloat(HWZ(wz.size) + 80.0),
-              wz.size.height);
+  CC_POS2(ens,cx::randInt(HWZ(wz) + 80), wz.height);
 
   switch (et->enemyType.moveType) {
     case Moves::RUSH:
-      act = c::MoveTo::create(1, c::Vec2(pos.x, pos.y));
+      act = c::MoveTo::create(1, CCT_PT(pos.x, pos.y));
     break;
 
     case Moves::VERT:
-      act = c::MoveBy::create(4, c::Vec2(0, -wz.size.height - sz.height));
+      act = c::MoveBy::create(4, CCT_PT(0, -wz.height - sz.height));
     break;
 
     case Moves::HORZ: {
-      auto a0 = c::MoveBy::create(0.5, c::Vec2(0, -100 - cx::randInt(200)));
-      auto a1 = c::MoveBy::create(1, c::Vec2(-50 - cx::randInt(100), 0));
+      auto a0 = c::MoveBy::create(0.5, CCT_PT(0, -100 - cx::randInt(200)));
+      auto a1 = c::MoveBy::create(1, CCT_PT(-50 - cx::randInt(100), 0));
       auto cb = [=]() {
         auto a2 = c::DelayTime::create(1);
-        auto a3 = c::MoveBy::create(1, c::Vec2(100 + cx::randInt(100), 0));
-        ens->node->runAction(
+        auto a3 = c::MoveBy::create(1, CCT_PT(100 + cx::randInt(100), 0));
+        ens->runAction(
             c::RepeatForever::create(
               c::Sequence::create(a2, a3,
                 a2->clone(), a3->reverse(), CC_NIL)));
@@ -172,15 +167,15 @@ void Aliens::addEnemyToGame(int enemyType) {
     break;
 
     case Moves::OLAP: {
-      auto newX = pos.x <= HWZ(wz.size) ? wz.size.width : -wz.size.width;
-      auto a4 = c::MoveBy::create(4, c::Vec2(newX, -wz.size.width * 0.75));
-      auto a5 = c::MoveBy::create(4, c::Vec2(-newX, -wz.size.width));
+      auto newX = pos.x <= HWZ(wz) ? wz.width : -wz.width;
+      auto a4 = c::MoveBy::create(4, CCT_PT(newX, -wz.width * 0.75));
+      auto a5 = c::MoveBy::create(4, CCT_PT(-newX, -wz.width));
       act = c::Sequence::create(a4,a5, CC_NIL);
     }
     break;
   }
 
-  ens->node->runAction(act);
+  ens->runAction(act);
 }
 
 

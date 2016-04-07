@@ -28,15 +28,16 @@ void MMenu::decoUI() {
   auto ctx = (MCX*) getCtx();
   auto wb= cx::visBox();
 
-  centerImage("game.bg");
+  centerImage("gui.xxx.bg");
+  regoAtlas("cc-pics");
 
   CC_POS2(tt, wb.cx, wb.top * 0.8);
   XCFG()->scaleLabel(tt,52);
   tt->setColor(c);
   addItem(tt);
 
-  auto p= cx::reifyMenuBtn("player1.png");
-  auto q= cx::reifyMenuBtn("quit.png");
+  auto p= cx::reifyMenuText("btns", "Restart");
+  auto q= cx::reifyMenuText("btns", "Quit");
   p->setCallback(
       [=](c::Ref*)
       { cx::runEx(

@@ -17,7 +17,7 @@ NS_BEGIN(terra)
 BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 //
-static s::arr<EnemyType, 6> EnemyTypes = {
+s_arr<EnemyType, 6> _EnemyTypes = {
   EnemyType(Attacks::NORMAL, Moves::RUSH, 0, "E0.png", "W2.png", 1, 15),
   EnemyType(Attacks::NORMAL, Moves::RUSH, 1, "E1.png", "W2.png", 2, 40 ),
   EnemyType(Attacks::TSUIHIKIDAN, Moves::HORZ, 2, "E2.png", "W2.png", 4, 60),
@@ -25,13 +25,18 @@ static s::arr<EnemyType, 6> EnemyTypes = {
   EnemyType(Attacks::TSUIHIKIDAN, Moves::HORZ, 4, "E4.png", "W2.png", 10, 150 ),
   EnemyType(Attacks::NORMAL, Moves::HORZ, 5, "E5.png", "W2.png", 15, 200 )
 };
-
 END_NS_UNAMED
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const s_arr<EnemyType,6>& EnemyTypes() { return _EnemyTypes; }
+
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Missile*> Missile::create(const sstr &png, Attacks m) {
   auto z= mc_new1(Missile,m);
   z->initWithSpriteFrameName(png);
+  z->setScale(XCFG()->getScale());
   z->autorelease();
   return z;
 }
@@ -39,25 +44,86 @@ owner<Missile*> Missile::create(const sstr &png, Attacks m) {
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Ship*> Ship::create() {
-
+  auto ship= mc_new(Ship);
+  ship->initWithSpriteFrameName("ship01.png");
+  ship->autorelease();
+  return ship;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Spark*> Spark::create() {
+bool Ship::initWithSpriteFrameName(const sstr &fn) {
+  bool rc= c::Sprite::initWithSpriteFrameName(fn);
+  if (!rc) { return false; }
+  auto ani= CC_ACAC()->getAnimation("ShipAni");
+  auto zx= CC_CSV(c::Integer,"SHIP+ZX");
+  auto sz= CC_CSIZE(this);
+  auto wb= cx::visBox();
 
+  _bornSprite = cx::reifySprite("ship03.png");
+  _bornSprite->setBlendFunc(BDFUNC::ADDITIVE);
+  _bornSprite->setScale(XCFG()->getScale());
+
+  this->setScale(XCFG()->getScale());
+  // ship sprite
+  CC_POS2(this,wb.cx, sz.height);
+  this->runAction(
+      c::RepeatForever::create(
+        c::Animate::create(ani)));
+
+  //born sprite
+  CC_POS2(_bornSprite, HWZ(sz), 12);
+  CC_HIDE(_bornSprite);
+  this->addChild(_bornSprite, zx, 911);
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Explosion*> Explosion::create() {
-
+owner<Spark*> Spark::create(const sstr &fn) {
+  auto z= mc_new(Spark);
+  z->initWithSpriteFrameName(fn);
+  z->autorelease();
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<HitEffect*> HitEffect::create() {
+bool Spark::initWithSpriteFrameName(const sstr &fn) {
+  auto rc= c::Sprite::initWithSpriteFrameName(fn);
+  if (!rc) { return false; }
 
+  this->setBlendFunc(BDFUNC::ADDITIVE);
+  this->setScale(XCFG()->getScale());
+  CC_HIDE(this);
+
+  _sprite2 = cx::reifySprite("explode3.png");
+  _sprite2->setBlendFunc(BDFUNC::ADDITIVE);
+  _sprite2->setScale(XCFG()->getScale());
+  CC_HIDE(_sprite2);
+
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Explosion*> Explosion::create(const sstr &fn) {
+  auto z= mc_new(Explosion);
+  z->initWithSpriteFrameName(fn);
+  z->setScale(XCFG()->getScale());
+  z->autorelease();
+  return z;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<HitEffect*> HitEffect::create(const sstr &fn) {
+  auto z= mc_new(HitEffect);
+  z->initWithSpriteFrameName(fn);
+  z->setScale(XCFG()->getScale());
+  z->autorelease();
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -79,7 +145,7 @@ void Spark::inflate(float x, float y) {
   _sprite2->runAction(seq->clone());
 
   this->setOpacity(255);
-  this->setScale(scale);
+  this->setScale(_scale);
   this->runAction(right);
   this->runAction(scaleBy);
   this->runAction(seq);
@@ -99,7 +165,7 @@ void Spark::deflate() {
 //
 void Explosion::inflate(float x, float y) {
   auto ani= CC_ACAC()->getAnimation("Explosion");
-  node->runAction(c::Sequence::create(
+  this->runAction(c::Sequence::create(
         c::Animate::create(ani),
         c::CallFunc::create([=]() {
           this->deflate();
@@ -110,15 +176,15 @@ void Explosion::inflate(float x, float y) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HitEffect::inflate(float x, float y) {
-  node->runAction(c::ScaleBy::create(0.3, 2, 2));
-  node->runAction(
+  this->runAction(c::ScaleBy::create(0.3, 2, 2));
+  this->runAction(
       c::Sequence::create(
         c::FadeOut::create(0.3),
         c::CallFunc::create(
           [=]() { this->deflate(); }),
         CC_NIL));
-  node->setRotation(cx::randInt(360));
-  node->setScale(_scale);
+  this->setRotation(cx::randInt(360));
+  this->setScale(_scale);
   f::CPixie::inflate(x,y);
 }
 

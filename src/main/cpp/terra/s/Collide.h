@@ -25,6 +25,9 @@ class CC_DLL Collide : public ecs::System {
   void checkShipAliens();
   void checkShipBombs();
 
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
+
 public:
 
   __decl_sys_priority( ecs::Collide)
@@ -35,9 +38,6 @@ public:
   Collide(ecs::Engine *e)
   : System(e)
   {}
-
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ship)
 
 };
 

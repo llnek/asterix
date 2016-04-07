@@ -29,10 +29,10 @@ public:
 
   virtual void handleResolution(const CCT_SZ& );
 
-  virtual float scaleFloat(float);
+  virtual float scaleFont(float);
 
   virtual ResolutionPolicy policy() {
-    return ResolutionPolicy::FIXED_HEIGHT;
+    return ResolutionPolicy::FIXED_WIDTH;
   }
 
   virtual c::Scene* prelude();

@@ -12,30 +12,21 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(terra)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
+struct CC_DLL Ende : public f::XLayer {
 
-  virtual void sendMsgEx(const MsgTopic &topic, void *msg);
-  virtual const f::Box4 getEnclosureBox();
-
-  virtual f::GameLayer* getGLayer() {
-    return (f::GameLayer*) getLayer(2);
-  }
-
-  __decl_create_scene_ctx(Game)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
+  __decl_get_iid(4)
 
 };
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GameCtx : public f::GCX {
-};
 
 NS_END
+
 
 

@@ -25,6 +25,9 @@ class CC_DLL Move : public ecs::System {
   void move(float);
   void moveMissiles(float);
 
+  //__decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
+
 public:
 
   __decl_sys_priority( ecs::Move)
@@ -35,9 +38,6 @@ public:
   Move(ecs::Engine *e)
   : System(e)
   {}
-
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ship)
 
 };
 

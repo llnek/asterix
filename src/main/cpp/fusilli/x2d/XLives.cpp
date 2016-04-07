@@ -17,7 +17,7 @@ NS_BEGIN(fusii)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::reduce(int x) {
+XLives* XLives::reduce(int x) {
   while (x > 0) {
     if (_icons.size() > 0) {
       auto it= _icons.back();
@@ -27,6 +27,8 @@ void XLives::reduce(int x) {
     --x;
     --_curLives;
   }
+
+  return this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,7 +73,7 @@ void XLives::drawLives() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void XLives::decorate(const sstr &frame, int lives,
+void XLives::initLives(const sstr &frame, int lives,
     float x, float y, float scale, int d) {
 
   _totalLives = lives;

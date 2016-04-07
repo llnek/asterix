@@ -27,6 +27,9 @@ class CC_DLL Resolve : public ecs::System {
   void checkAliens();
   void checkShip();
 
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ship)
+
 public:
 
   __decl_sys_priority( ecs::Resolve)
@@ -37,9 +40,6 @@ public:
   Resolve(ecs::Engine *e)
   : System(e)
   {}
-
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ship)
 
 };
 

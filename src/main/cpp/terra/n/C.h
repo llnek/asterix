@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(terra)
@@ -64,7 +63,7 @@ public:
 
   static owner<Missile*> create(const sstr& png, Attacks m= Attacks::NORMAL);
 
-  __decl_getr(Attacks,_attackMode, AttackMode)
+  __decl_gsms(Attacks,_attackMode, AttackMode)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,6 +86,8 @@ struct CC_DLL Enemy : public f::CStats {
 //
 class CC_DLL Ship : public f::CPixie {
 
+  virtual bool initWithSpriteFrameName(const sstr&);
+
   __decl_ptr(c::Sprite, _bornSprite)
   Ship() {}
 
@@ -102,6 +103,7 @@ public:
     _bornSprite->runAction(
       c::ScaleTo::create(0.5, 1, 1));
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -112,17 +114,19 @@ class CC_DLL Spark : public f::CPixie {
   __decl_mv(float, _scale, 1.2)
   __decl_ptr(c::Sprite, _sprite2)
 
+    virtual bool initWithSpriteFrameName(const sstr&);
   Spark() {}
 
 public:
 
+  __decl_getr(c::Sprite*,_sprite2,Ghost)
   __decl_getr(float,_duration,Duration)
   __decl_getr(float,_scale,Scale)
 
   virtual void inflate(float, float);
   virtual void deflate();
 
-  static owner<Spark*> create();
+  static owner<Spark*> create(const sstr&);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,7 +139,7 @@ public:
 
   virtual void inflate(float x, float y);
 
-  static owner<Explosion*> create();
+  static owner<Explosion*> create(const sstr&);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -149,7 +153,7 @@ class CC_DLL HitEffect : public f::CPixie {
 public:
 
   virtual void inflate(float x, float y);
-  static owner<HitEffect*> create();
+  static owner<HitEffect*> create(const sstr&);
 
   __decl_getr(float,_scale,Scale)
 };
@@ -172,8 +176,9 @@ void fireMissiles(not_null<ecs::Node*> ship, float dt);
 
 void bornShip(not_null<ecs::Node*> ship);
 
-void processTouch(not_null<ecs::Node*> ship);
+void processTouch(not_null<ecs::Node*> ship, const CCT_PT&);
 
+const s_arr<EnemyType,6>& EnemyTypes();
 
 NS_END
 

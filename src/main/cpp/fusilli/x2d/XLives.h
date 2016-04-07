@@ -35,14 +35,14 @@ protected:
 
 public:
 
-  virtual void decorate(const sstr &frame, int lives,
+  virtual void initLives(const sstr &frame, int lives,
       float x, float y,
       float scale=1, int dir= 1);
 
   bool isDead() { return _curLives <= 0; }
   int getLives() { return _curLives; }
 
-  void reduce(int cnt = 1);
+  XLives* reduce(int cnt = 1);
   void reset();
   void resurrect();
   void drawLives();
