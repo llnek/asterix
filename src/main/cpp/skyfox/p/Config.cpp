@@ -51,40 +51,36 @@ void Config::initAssets() {
   addEffect("pew", CC_STR("sfx/pew.wav"));
   addMusic("bg", CC_STR("sfx/background.mp3"));
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics", CC_STR("pics/dlist.plist"));
 
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-  addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics", CC_STR("pics/dlist.png"));
+  addImage("game.bg", CC_STR("pics/bg.jpg"));
 
-  addFont("dft", CC_STR("fon/en/font.fnt"));
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
+  addFont("dft", CC_STR("fonts/en/SFJuggernaut.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &fs) {
+void Config::handleResolution(const CCT_SZ &fs) {
   auto gz= gameSize();
-  sstr p;
-  if (fs.height > 768) {
-    p="rd";
-    CC_DTOR()->setContentScaleFactor(1536/gz.height);
-  } else if (fs.height > 320) {
-    p= "hd";
-    CC_DTOR()->setContentScaleFactor(768/gz.height);
-  } else {
-    p="sd";
-    CC_DTOR()->setContentScaleFactor(380/gz.height);
-  }
+}
 
-  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprite("game-pics");
+  cacheSprite("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

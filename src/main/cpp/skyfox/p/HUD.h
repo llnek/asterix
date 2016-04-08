@@ -17,15 +17,17 @@ NS_BEGIN(skyfox)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
-
-  __decl_create_layer(HUDLayer)
-  __decl_deco_ui()
-  __decl_get_iid(3)
+class CC_DLL HUDLayer : public f::XLayer {
 
   __decl_ptr(c::Label, _energyLabel)
   __decl_ptr(c::Label, _scoreLabel)
   __decl_iz(_score)
+
+public:
+
+  __decl_create_layer(HUDLayer)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
   void updateEnergy(float);
   void updateScore(int);

@@ -39,41 +39,111 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Cloud : public f::CPixie {
-  Cloud(not_null<c::Node*> s)
-  : CPixie(s) {}
+
+  Cloud() {}
+
+public:
+
+  static owner<Cloud*> create() {
+    auto z= mc_new(Cloud);
+    z->initWithSpriteFrameName("cloud.png");
+    z->autorelease();
+    return z;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Meteor : public f::CPixie {
-  Meteor(not_null<c::Node*> s)
-  : CPixie(s) {}
+class CC_DLL Meteor : public f::CPixie {
+
+  Meteor() {}
+
+public:
+
+  static owner<Meteor*> create() {
+    auto z= mc_new(Meteor);
+    z->initWithSpriteFrameName("meteor.png");
+    z->autorelease();
+    return z;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Health : public f::CPixie {
-  Health(not_null<c::Node*> s)
-  : CPixie(s) {}
+class CC_DLL Health : public f::CPixie {
+
+  Health() {}
+
+public:
+
+  static owner<Health*> create() {
+    auto z= mc_new(Health);
+    z->initWithSpriteFrameName("health.png");
+    z->autorelease();
+    return z;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Bomb : public f::CPixie {
-  Bomb(not_null<c::Node*> s)
-  : CPixie(s) {}
+class CC_DLL Bomb : public f::CPixie {
+
+  Bomb() {}
+
+public:
+
+  static owner<Bomb*> create() {
+    auto sparkle = cx::reifySprite("sparkle.png");
+    auto halo = cx::reifySprite("halo.png");
+    auto sp = mc_new(Bomb);
+    sp->initWithSpriteFrameName("bomb.png");
+    sp->getTexture()->generateMipmap();
+
+    auto sz = CC_CSIZE(sp);
+    CC_POS2(sparkle, CC_ZW(sz) * 0.72, CC_ZH(sz) * 0.72);
+    CC_POS2(halo, CC_ZW(sz) * 0.4, CC_ZH(sz) * 0.4);
+    sp->addChild(sparkle, kMiddleground, kSpriteSparkle);
+    sp->addChild(halo, 1, kSpriteHalo);
+    sp->autorelease();
+    CC_HIDE(sp);
+
+    return sp;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ufo : public f::CPixie {
-  Ufo(not_null<c::Node*> s)
-  : CPixie(s) {}
+
+  Ufo() {}
+
+public:
+
+  static owner<Ufo*> create() {
+    auto ray = cx::reifySprite("ray.png");
+    auto sp= mc_new(Ufo);
+    sp->initWithSpriteFrameName("ufo_1.png");
+    auto sz= CC_CSIZE(sp);
+    ray->setAnchorPoint(cx::anchorT());
+    CC_POS2(ray, CC_ZW(sz) * 0.52, CC_ZH(sz) * 0.5);
+    sp->addChild(ray, -1, kSpriteRay);
+    CC_HIDE(sp);
+    sp->autorelease();
+
+    return sp;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
+
+  __decl_map(ecs::Node*,ecs::Node*, fallingObjects)
   __decl_comp_tpid( "n/GVars" )
 
   __decl_fz(difficultyInterval)
@@ -104,7 +174,6 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_ptr(c::ScaleTo,growBomb)
   __decl_ptr(c::Animate,ufoAnimation)
 
-  s_map<ecs::Node*,ecs::Node*> fallingObjects;
 };
 
 

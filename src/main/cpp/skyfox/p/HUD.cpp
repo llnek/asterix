@@ -38,19 +38,22 @@ void HUDLayer::decoUI() {
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   _scoreLabel->setAnchorPoint(cx::anchorR());
-  _scoreLabel->setPosition(wb.right * 0.8, wb.top * 0.94);
+  XCFG()->scaleNode(_scoreLabel, 72);
+  CC_POS2(_scoreLabel, wb.right * 0.8, wb.top * 0.94);
   addItem(_scoreLabel);
 
   _energyLabel = cx::reifyBmfLabel("dft", "100%");
   _energyLabel->setAlignment(c::TextHAlignment::RIGHT);
-  _energyLabel->setPosition(wb.right * 0.3, wb.top * 0.94);
+  XCFG()->scaleNode(_energyLabel, 72);
+  CC_POS2(_energyLabel, wb.right * 0.3, wb.top * 0.94);
   addItem(_energyLabel);
 
   auto icon = cx::reifySprite("health_icon.png");
-  icon->setPosition(wb.right * 0.15, wb.top * 0.94);
+  CC_POS2(icon, wb.right * 0.15, wb.top * 0.94);
   addAtlasItem("game-pics",icon, kBackground);
 
   _score=0;

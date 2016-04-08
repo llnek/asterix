@@ -70,14 +70,14 @@ void AI::process(float dt) {
   }
 
   if (bomb->isOvert() &&
-      bomb->node->getScale() > 0.3) {
-    if (bomb->node->getOpacity() != 255) {
-      bomb->node->setOpacity(255);
+      bomb->getScale() > 0.3) {
+    if ((int)bomb->getOpacity() != 255) {
+      bomb->setOpacity(255);
     }
   }
 
-  auto ray = CC_GCT(ufo->node,kSpriteRay);
-  auto pos=ufo->pos();
+  auto ray = CC_GCT(ufo,kSpriteRay);
+  auto pos=ufo->getPosition();
   if (ufo->isOvert() &&
       ray->isVisible()) {
     if (pos.x > wb.right * 0.1 &&
@@ -95,28 +95,30 @@ void AI::resetMeteor() {
   auto mtx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
   auto mx = cx::randFloat(wb.right * 0.8) + wb.right * 0.1;
   auto ss = CC_GEC(GVars,_shared,"n/GVars");
-    if (ss->fallingObjects.size() > 30) {
-        return; }
-  auto po= MGMS()->getPool("Meteors");
-    auto e = (ecs::Node*)po->take(true);
-  auto meteor=CC_GEC(Meteor,e,"f/CPixie");
-  auto sz= meteor->csize();
 
-  meteor->node->setPosition(mx, wb.top + HHZ(sz));
-  meteor->node->stopAllActions();
+  if (ss->fallingObjects.size() > 30) {
+  return; }
+
+  auto po= MGMS()->getPool("Meteors");
+  auto e = (ecs::Node*)po->take(true);
+  auto meteor=CC_GEC(Meteor,e,"f/CPixie");
+  auto sz= CC_CSIZE(meteor);
+
+  CC_POS2(meteor, mx, wb.top + HHZ(sz));
+  meteor->stopAllActions();
 
   auto rr = c::RepeatForever::create(
       c::RotateBy::create(0.5 , -90));
   auto seq= c::Sequence::create(
       c::MoveTo::create(ss->meteorSpeed,
-        c::Vec2(mtx, wb.top * 0.15)),
+        CCT_PT(mtx, wb.top * 0.15)),
       c::CallFunc::create(
         [=]() { this->fallingObjectDone(e); }),
       CC_NIL);
 
-  meteor->show();
-  meteor->node->runAction(rr);
-  meteor->node->runAction(seq);
+  CC_SHOW(meteor);
+  meteor->runAction(rr);
+  meteor->runAction(seq);
 
   ss->fallingObjects.insert(
       S__PAIR(ecs::Node*,ecs::Node*,e,e));
@@ -139,11 +141,11 @@ void AI::resetUfo(ecs::Node *node) {
     newY = wb.top * 0.7;
   }
 
-  ufo->node->stopAllActions();
-  ufo->setPos(newX, newY);
-  ufo->node->runAction(ss->ufoAnimation->clone());
+  ufo->stopAllActions();
+  CC_POS2(ufo, newX, newY);
+  ufo->runAction(ss->ufoAnimation->clone());
 
-  auto ray = CC_GCT(ufo->node,kSpriteRay);
+  auto ray = CC_GCT(ufo,kSpriteRay);
   CC_HIDE(ray);
   ray->stopAllActions();
   ray->runAction(ss->blinkRay->clone());
@@ -153,7 +155,7 @@ void AI::resetUfo(ecs::Node *node) {
     seq= c::Sequence::create(
         c::MoveTo::create(
           UFO_SPEED,
-          c::Vec2(wb.right * 1.1, newY)),
+          CCT_PT(wb.right * 1.1, newY)),
         c::CallFuncN::create(
           [](c::Node *p) { CC_HIDE(p); }),
         CC_NIL);
@@ -161,15 +163,15 @@ void AI::resetUfo(ecs::Node *node) {
     seq= c::Sequence::create(
         c::MoveTo::create(
           UFO_SPEED,
-          c::Vec2(-wb.right * 0.1, newY)),
+          CCT_PT(-wb.right * 0.1, newY)),
         c::CallFuncN::create(
           [](c::Node *p) { CC_HIDE(p); }),
         CC_NIL);
   }
 
-  ufo->show();
-  ufo->node->runAction(seq);
   ss->ufoKilled = false;
+  CC_SHOW(ufo);
+  ufo->runAction(seq);
   cx::sfxPlay("pew");
 }
 
@@ -190,19 +192,19 @@ void AI::resetHealth() {
   auto health=CC_GEC(Health,e,"f/CPixie");
   auto sz= health->csize();
 
-  health->setPos(hx, wb.top + HHZ(sz));
-  health->node->stopAllActions();
+  CC_POS2(health, hx, wb.top + HHZ(sz));
+  health->stopAllActions();
 
   auto seq = c::Sequence::create(
          c::MoveTo::create(ss->healthSpeed,
-           c::Vec2(htx, wb.top * 0.15)),
+           CCT_PT(htx, wb.top * 0.15)),
          c::CallFunc::create(
            [=]() { this->fallingObjectDone(e); }),
          CC_NIL);
 
-  health->show();
-  health->node->runAction( ss->swingHealth->clone());
-  health->node->runAction(seq);
+  CC_SHOW(health);
+  health->runAction(ss->swingHealth->clone());
+  health->runAction(seq);
 
   ss->fallingObjects.insert(
       S__PAIR(ecs::Node*,ecs::Node*,e,e));
@@ -262,16 +264,16 @@ void AI::fallingObjectDone(ecs::Node *node) {
 
   ss->fallingObjects.erase(node);
 
-  ui->node->stopAllActions();
-  ui->node->setRotation(0);
+  ui->stopAllActions();
+  ui->setRotation(0);
 
-  if (ui->node->getTag() == kSpriteMeteor) {
+  if (ui->getTag() == kSpriteMeteor) {
     changeEnergy(-15);
-    ui->node->runAction(ss->groundHit->clone() );
+    ui->runAction(ss->groundHit->clone() );
     //play explosion sound
     cx::sfxPlay("boom");
   } else {
-    ui->hide();
+    CC_HIDE(ui);
     if ((int)ss->energy == 100) {
       auto msg= j::json({
           {"score", 25}

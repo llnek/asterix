@@ -30,7 +30,7 @@ void Ende::decoUI() {
 
   qn->setColor(XCFG()->getColor("text"));
   // text msg
-  XCFG()->scaleLabel(qn, 64);
+  XCFG()->scaleNode(qn, 64);
   CC_POS2(qn, wb.cx, wb.top * 0.75);
   addItem(qn);
 

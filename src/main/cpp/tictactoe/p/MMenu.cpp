@@ -33,7 +33,7 @@ void MMenu::decoUI() {
 
   centerImage("gui.mmenu.menu.bg");
 
-  XCFG()->scaleLabel(lb, 52);
+  XCFG()->scaleNode(lb, 52);
   lb->setColor(c);
   addItem(lb);
 

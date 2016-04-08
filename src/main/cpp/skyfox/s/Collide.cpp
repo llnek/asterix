@@ -39,13 +39,14 @@ bool Collide::update(float dt) {
 //
 void Collide::process(float dt) {
 
-
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto ufo= CC_GEC(Ufo,_ufo,"f/CPixie");
-  auto ray = CC_GCT(ufo->node,kSpriteRay);
+  auto ray = CC_GCT(ufo,kSpriteRay);
   auto sz= CC_CSIZE(ss->shockWave);
   s_vec<ecs::Node*> dead;
-    if (!ss->shockWave->isVisible()) { return; }
+
+  if (!ss->shockWave->isVisible()) {
+  return; }
 
   F__LOOP(it,ss->fallingObjects) {
     auto e= it->second;
@@ -55,10 +56,10 @@ void Collide::process(float dt) {
     auto dy = ss->shockWave->getPositionY() - pos.y;
 
     if (pow(dx, 2) + pow(dy, 2) <= pow(HWZ(sz), 2)) {
-      co->node->stopAllActions();
-      co->node->runAction( ss->explosion->clone());
+      co->stopAllActions();
+      co->runAction( ss->explosion->clone());
       cx::sfxPlay("boom");
-      if (co->node->getTag() == kSpriteMeteor) {
+      if (co->getTag() == kSpriteMeteor) {
         ++ss->shockwaveHits;
         auto msg= j::json({
             {"score" , (int) (ss->shockwaveHits * 13 + ss->shockwaveHits * 2 )}});
@@ -69,8 +70,9 @@ void Collide::process(float dt) {
   }
 
   F__LOOP(it,dead) {
-    ss->fallingObjects.erase(*it);
-    cx::hibernate(*it);
+    auto &n= *it;
+    ss->fallingObjects.erase(n);
+    cx::hibernate(n);
   }
 
   if (ufo->isOvert() && ! ss->ufoKilled) {
@@ -80,10 +82,10 @@ void Collide::process(float dt) {
     if (pow(dx, 2) + pow(dy, 2) <= pow(CC_CSIZE(ss->shockWave).width * 0.6, 2)) {
       ss->ufoKilled = true;
       cx::pauseEffects();
-      ufo->node->stopAllActions();
+      ufo->stopAllActions();
       ray->stopAllActions();
       CC_HIDE(ray);
-      ufo->node->runAction( ss->explosion->clone());
+      ufo->runAction( ss->explosion->clone());
       cx::sfxPlay("boom");
       ++ss->shockwaveHits;
       auto msg = j::json({

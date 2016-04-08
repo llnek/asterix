@@ -22,17 +22,16 @@ NS_BEGIN(skyfox)
 //
 void Splash::decoUI() {
   auto b = cx::reifyMenuBtn("logo.png");
-  auto menu=cx::mkMenu(b);
   auto wb=cx::visBox();
 
   centerImage("game.bg");
 
-  b->setPosition(wb.cx,wb.top * 0.6);
+  CC_POS2(b, wb.cx,wb.top * 0.6);
   b->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify(mc_new(f::GCX)));
+      cx::runEx(Game::reify(mc_new(GameCtx)));
   });
 
-  addItem(menu);
+  addItem(cx::mkMenu(b));
 }
 
 

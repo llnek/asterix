@@ -42,12 +42,12 @@ void Move::process(float dt) {
   auto c= po->ls();
 
   F__LOOP(it,c) {
-    auto e= *it;
+    auto &e= *it;
     auto co=CC_GEC(Cloud,e,"f/CPixie");
     auto z= co->csize();
-    co->node->setPositionX(co->node->getPositionX() + dt * 20);
-    if (co->node->getPositionX() > wb.right + HWZ(z)) {
-      co->node->setPositionX(- HWZ(z));
+    co->setPositionX(co->getPositionX() + dt * 20);
+    if (co->getPositionX() > wb.right + HWZ(z)) {
+      co->setPositionX(- HWZ(z));
     }
   }
 }

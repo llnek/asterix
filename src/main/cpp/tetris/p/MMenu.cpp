@@ -29,7 +29,7 @@ void MMenu::decoUI() {
   centerImage("game.bg");
 
   CC_POS2(tt,wb.cx, wb.top * 0.8);
-XCFG()->scaleLabel(tt,52);
+XCFG()->scaleNode(tt,52);
   tt->setColor(c);
   addItem(tt);
 

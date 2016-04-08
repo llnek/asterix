@@ -25,13 +25,14 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(2048,1536); }
+  virtual const CCT_SZ gameSize() { return c::Size(2048,1536); }
   virtual bool isPortrait() { return false; }
 
   virtual ResolutionPolicy policy() {
     return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual void handleResolution(const c::Size &rs);
+  virtual void handleResolution(const CCT_SZ &rs);
+  virtual float scaleFont(float);
   virtual c::Scene* prelude();
 
   virtual void runOnce();

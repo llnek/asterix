@@ -33,7 +33,7 @@ void HUDLayer::decoUI() {
   _score1= cx::reifyBmfLabel("dft", "0");
   _score1->setColor(c);
   _score1->setAnchorPoint(cx::anchorTL());
-  XCFG()->scaleLabel(_score1, 32);
+  XCFG()->scaleNode(_score1, 32);
   _score1->setPosition(tile+soff+2, wb.top-tile-soff);
   addItem(_score1);
 
@@ -41,7 +41,7 @@ void HUDLayer::decoUI() {
   _score2= cx::reifyBmfLabel("dft", "0");
   _score2->setColor(c);
   _score2->setAnchorPoint(cx::anchorTR());
-  XCFG()->scaleLabel(_score2, 32);
+  XCFG()->scaleNode(_score2, 32);
   _score2->setPosition(wb.right-tile-soff, wb.top-tile-soff);
   addItem(_score2);
 
@@ -49,7 +49,7 @@ void HUDLayer::decoUI() {
   _title = cx::reifyBmfLabel("dft");
   _title->setAnchorPoint(cx::anchorT());
   _title->setColor(c);
-  XCFG()->scaleLabel(_title,24);
+  XCFG()->scaleNode(_title,24);
   _title->setPosition(wb.cx, wb.top - 2*tile);
   addItem(_title);
 
@@ -97,7 +97,7 @@ void HUDLayer::setGridBox(const f::Box4 &grid) {
   _countDown->setPosition(
       wb.cx, wb.top - (wb.top-grid.top) * 3/4);
   _countDown->setAnchorPoint(cx::anchorC());
-  XCFG()->scaleLabel(_countDown, 24);
+  XCFG()->scaleNode(_countDown, 24);
   _countDown->setColor(c);//XCFG()->getColor("text"));
   //CC_HIDE(_countDown);
   addItem(_countDown);

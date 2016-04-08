@@ -27,7 +27,7 @@ void Ende::decoUI() {
   centerImage("gui.xxx.bg")->setOpacity(0.8 * 255);
 
   lbl->setPosition(wb.cx, wb.top * 0.8);
-  XCFG()->scaleLabel(lbl,52);
+  XCFG()->scaleNode(lbl,52);
   addItem(lbl);
 
   auto t=cx::reifyMenuText("btns", "Try Again?");
