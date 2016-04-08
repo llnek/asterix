@@ -13,9 +13,9 @@
 #include "core/CCSX.h"
 #include "s/GEngine.h"
 #include "BackDrop.h"
-//#include "MMenu.h"
-#include "n/lib.h"
+#include "MMenu.h"
 #include "HUD.h"
+#include "Ende.h"
 #include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -26,8 +26,8 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
@@ -51,10 +51,9 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
   auto ui= CC_GEC(Ship,_ship,"f/CPixie");
-  auto bx= ui->bbox();
-  return bx.containsPoint(tap);
+  return ui->boundingBox().containsPoint(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,12 +64,12 @@ bool GLayer::onTouchStart(c::Touch *t) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &tap) {
+void GLayer::onMouseMotion(const CCT_PT &tap) {
   auto ui= CC_GEC(Ship,_ship,"f/CPixie");
   auto bx= MGMS()->getEnclosureBox();
-  auto pos= ui->pos();
-  auto loc= cx::clamp(tap, ui->csize(), bx);
-  ui->setPos(loc.x, pos.y);
+  auto pos= ui->getPosition();
+  auto loc= cx::clamp(tap, CC_CSIZE(ui), bx);
+  CC_POS2(ui, loc.x, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,10 +81,9 @@ void GLayer::onTouchMotion(c::Touch *t) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onEnd() {
-  this->setOpacity(0.1 * 255);
   MGMS()->stop();
   surcease();
-  //Ende::reify(MGMS(),4);
+  Ende::reify(MGMS(),4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +105,7 @@ void GLayer::onPlayerKilled() {
     });
   }
 
-  sp->node->runAction(
+  sp->runAction(
       c::Sequence::create(
         c::Spawn::create(
           c::FadeOut::create(0.5),
@@ -117,14 +115,13 @@ void GLayer::onPlayerKilled() {
         d2,
         CC_NIL));
 
-  auto explosion =
-    c::ParticleSystemQuad::create(
+  auto exp= c::ParticleSystemQuad::create(
         XCFG()->getAtlas("explosions"));
-  auto pos= sp->pos();
+  auto pos= sp->getPosition();
 
-  explosion->setAutoRemoveOnFinish(true);
-  explosion->setPosition(pos);
-  MGML()->addItem(explosion);
+  exp->setAutoRemoveOnFinish(true);
+  exp->setPosition(pos);
+  MGML()->addItem(exp);
 
   cx::sfxPlay("blast_player");
 }
@@ -135,20 +132,21 @@ void GLayer::onAlienKilled(ecs::Node *node) {
 
   auto cs=CC_GEC(f::CStats,node,"f/CStats");
   auto ui=CC_GEC(Alien,node,"f/CPixie");
+  auto pos= ui->getPosition();
 
   node->yield();
-  ui->node->stopAllActions();
-  ui->node->runAction(
+  ui->stopAllActions();
+  ui->runAction(
       c::Sequence::create(
         c::ScaleTo::create(0.25, 0.0),
         c::CallFunc::create(
           [=]() { cx::hibernate(node); }),
         CC_NIL));
 
-  auto exp = c::ParticleSystemQuad::create( XCFG()->getAtlas("explosions"));
   auto pc= c::ccc4f(0.9569, 0.2471, 0.3373, 1);
+  auto exp = c::ParticleSystemQuad::create( XCFG()->getAtlas("explosions"));
   exp->setAutoRemoveOnFinish(true);
-  exp->setPosition(ui->pos());
+  CC_POS1(exp, pos);
   exp->setStartColor(pc);
   exp->setEndColor(pc);
   MGML()->addItem(exp);
@@ -168,13 +166,14 @@ void GLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+
   _aliens = _engine->getNodes("n/AlienSquad")[0];
   _ship= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 
   spawnPlayer(_ship);
 
-    auto lpr= CC_GEC(f::Loopers,_shared,"f/Loopers");
+  auto lpr= CC_GEC(f::Loopers,_shared,"f/Loopers");
   // timers for bullets
   lpr->tms[0].timer= cx::reifyTimer(MGML(), 1000);
   lpr->tms[0].duration= 1000;
@@ -195,6 +194,12 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if ("/game/alien/killed" == topic) {
     y->onAlienKilled((ecs::Node*) m);
+  }
+  else
+  if ("/game/hud/earnscore" == topic) {
+    auto msg= (j::json*) m;
+    y->getHUD()->updateScore(
+      JS_INT(msg->operator[]("score")));
   }
 
 }

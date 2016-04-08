@@ -25,6 +25,7 @@ NS_BEGIN(spacecraze)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
+
   MGMS()->reifyPools(
       s_vec<sstr>{"Missiles", "Bombs", "Aliens"});
 
@@ -67,19 +68,20 @@ void GEngine::createMissiles(int cnt) {
   auto g= this->getCfg()["player"];
   auto d= JS_INT(g["speed"]);
   po->preset([=]() {
-    auto sp=cx::reifySprite("sfbullet");
-    auto c= mc_new1(Missile,sp);
+    auto sp= Missile::create("sfbullet");
     auto mv=mc_new(f::CMove);
     auto ent= this->reifyNode("Missile");
 
     MGML()->addAtlasItem("game-pics", sp);
+    CC_HIDE(sp);
+
     mv->speed.y=d;
     mv->vel.y=d;
-    c->hide();
 
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(mv);
-    ent->checkin(c);
+    ent->checkin(sp);
+
     return ent;
 
   },cnt);
@@ -92,19 +94,20 @@ void GEngine::createBombs(int cnt) {
   auto g= this->getCfg()["enemy"];
   auto d= JS_INT(g["speed"]);
   po->preset([=]() {
-    auto sp=cx::reifySprite("sfbullet1");
-    auto c= mc_new1(Bomb,sp);
+    auto sp= Missile::create("sfbullet1");
     auto mv=mc_new(f::CMove);
     auto ent=this->reifyNode("Bomb");
 
     MGML()->addAtlasItem("game-pics", sp);
+    CC_HIDE(sp);
+
     mv->speed.y=d;
     mv->vel.y=d;
-    c->hide();
 
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(mv);
-    ent->checkin(c);
+    ent->checkin(sp);
+
     return ent;
 
   },cnt);
@@ -125,8 +128,7 @@ void GEngine::initSystems() {
 void GEngine::createShip() {
 
   auto ent= this->reifyNode("Ship",true);
-  auto s= cx::reifySprite("sfgun");
-  auto c= mc_new1(Ship,s);
+  auto s= Ship::create();
   auto mv= mc_new(f::CMove);
 
   MGML()->addAtlasItem("game-pics", s, 999);
@@ -136,7 +138,7 @@ void GEngine::createShip() {
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
   ent->checkin(mv);
-  ent->checkin(c);
+  ent->checkin(s);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ void GEngine::createAliens() {
   auto pool= MGMS()->getPool("Aliens");
   auto mez = cx::calcSize("sfenmy3");
   auto map= this->getCfg();
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
   auto top = wb.top * 0.8;
   auto ees= map["enemy"];
@@ -155,47 +157,55 @@ void GEngine::createAliens() {
   auto minLeft=wb.right;
 
   J__LOOP(it,layout) {
-    auto obj = *it;
     float height_t=0;
     float width_t=0;
+    auto &obj = *it;
     j::json fmt= JS_ARR(obj["fmt"]);
     auto gap= JS_FLOAT(obj["gap"]);
     s_vec<Alien*> aliens;
+
     J__LOOP(it2, fmt) {
-      auto n = *it2;
-      auto a = new Alien(JS_INT(n));
-      auto sz= a->csize();
-      width_t += sz.width;
-      height_t= MAX(sz.height, height_t);
+      auto &n = *it2;
+      auto a = Alien::create(JS_INT(n));
+      auto sz= CC_CSIZE(a);
+      width_t += CC_ZW(sz);
+      height_t= MAX( CC_ZH(sz), height_t);
       aliens.push_back(a);
     }
     width_t += gap * (aliens.size()-1);
 
-    auto lf= wb.left + 0.5 * (wb.right - wb.left - width_t);
+    auto lf= wb.left + HTV(wb.right - wb.left - width_t);
     auto rt= lf + width_t;
+
     maxRight=MAX(maxRight, rt);
     minLeft=MIN(minLeft,lf);
+
     F__LOOP(it,aliens) {
       auto e= this->reifyNode("Alien",true);
-      auto a= *it;
-      auto sz= a->csize();
-      MGML()->addAtlasItem("game-pics", a->node);
+      auto &a= *it;
+      auto sz= CC_CSIZE(a);
+      auto ts= FTOS(a->getType());
+      auto v= JS_INT(scores[ts]);
+
+      MGML()->addAtlasItem("game-pics", a);
       a->inflate(lf + HWZ(sz), top);
       lf += sz.width + gap;
-      e->checkin(mc_new1(f::CStats, 10));
+
+      e->checkin(mc_new1(f::CStats, v));
       e->checkin(mc_new(f::CHealth));
       e->checkin(mc_new(f::CMove));
       e->checkin(a);
+
       pool->checkin(e);
     }
     top -= height_t * 1.5;
   }
 
-  auto ent= this->reifyNode("AlienSquad");
+  auto ent= this->reifyNode("AlienSquad", true);
   auto q= mc_new(AlienSquad);
-  q->rightEdge= maxRight;
-  q->leftEdge= minLeft;
-  q->duration= JS_FLOAT(ees["moveDuration"]);
+  q->setRightEdge( maxRight);
+  q->setLeftEdge( minLeft);
+  q->setDuration( JS_FLOAT(ees["moveDuration"]));
 
   ent->checkin(q);
 }

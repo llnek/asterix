@@ -23,38 +23,40 @@ NS_BEGIN(spacecraze)
 void Splash::decoUI() {
 
   auto title = cx::reifySprite("sftitle");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   BackDrop::reify(this, -1);
 
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 
-  title->setPosition(wb.cx, wb.top * 1.2);
+  CC_POS2(title, wb.cx, wb.top * 1.2);
   title->runAction(
       c::Sequence::create(
         c::DelayTime::create(0.5),
         c::EaseBackOut::create(
           c::MoveBy::create(0.5,
-            c::Vec2(wb.left, wb.top * -0.5))),
+            CCT_PT(wb.left, -HTV(wb.top)))),
         CC_NIL));
   addAtlasItem("game-pics", title);
 
-  auto b= cx::reifyMenuBtn("play");
-  auto menu= cx::mkMenu(b);
-  auto ctx= mc_new(f::GCX);
-
-  b->setPosition(wb.cx, wb.top * -0.15);
+  auto b= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleNode(b, 64);
+  CC_POS2(b, wb.cx, wb.top * -0.15);
   b->runAction(
       c::Sequence::create(
         c::DelayTime::create(1),
         c::EaseBackOut::create(
           c::MoveBy::create(0.5,
-            c::Vec2(wb.left, HTV(wb.top)))),
+            CCT_PT(wb.left, HTV(wb.top)))),
         CC_NIL));
+
   b->setCallback(
-      [=](c::Ref*) { cx::runEx(Game::reify(ctx)); });
-  addItem(menu);
+      [=](c::Ref*)
+      { cx::runEx(Game::reify(mc_new(GameCtx))); });
+
+  addItem(cx::mkMenu(b));
 
   demo(0);
   schedule(CC_SCHEDULE_SELECTOR(Splash::demo), 0.5);
@@ -66,8 +68,8 @@ void Splash::demo(float dt) {
 
   auto duration = cx::randInt(4);
   auto wb = cx::visBox();
-  c::Vec2 dist;
-  c::Vec2 src;
+  CCT_PT dist;
+  CCT_PT src;
 
   if (cx::randSign() > 0) {
     // left-to-right
@@ -84,12 +86,12 @@ void Splash::demo(float dt) {
   }
 
   // choose an enemy ship 1 <= x <= 3
-  int type = 1 + (int)floor(cx::rand() * 3);
-  auto png = "sfenmy" + s::to_string(type);
+  auto type = 1 + (int)floor(cx::rand() * 3);
+  auto png = "sfenmy" + FTOS(type);
   auto enemy = cx::reifySprite(png);
 
   addAtlasItem("game-pics", enemy);
-  enemy->setPosition(src);
+  CC_POS1(enemy, src);
 
   // create & run sequence of move & remove
   enemy->runAction(

@@ -34,7 +34,7 @@ c::Scene* Config::prelude() {
 //
 void Config::initCsts() {
   _game_id= "f86694e1-5604-4d53-b684-eae696894546";
-  _app_id= "space craze";
+  _app_id= "spacecraze";
 
   addCst("star+speed+inc", CC_FLOAT(0.5f));
   addCst("star+speed", CC_FLOAT(10.0f));
@@ -48,16 +48,21 @@ void Config::initCsts() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Config::initAssets() {
 
-  addAtlas("explosions", CC_STR("pics/explosion.plist"));
-  //addAtlas("game-pics", CC_STR("pics/sprites.plist"));
+  addAtlas("explosions", CC_STR("misc/explosion.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("game-pics", CC_STR("pics/spacetex.plist"));
 
-  //addImage("lang-pics",  CC_STR("l10n/en/images.png"));
-  //addImage("game-pics", CC_STR("pics/sprites.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game-pics", CC_STR("pics/spacetex.png"));
-  addImage("game.bg", CC_STR("pics/sfbg.png"));
+  addImage("game.bg", CC_STR("pics/sfbg.jpg"));
 
   addEffect("level_complete", CC_STR("sfx/level_complete.wav"));
   addEffect("blast_brick", CC_STR("sfx/blast_brick.wav"));
@@ -67,7 +72,11 @@ void Config::initAssets() {
   addEffect("shoot_enemy", CC_STR("sfx/shoot_enemy.wav"));
   addEffect("shoot_player", CC_STR("sfx/shoot_player.wav"));
 
-  addFont("sftext", CC_STR("fon/en/sftext.fnt"));
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("sftext", CC_STR("fonts/en/sftext.fnt"));
+  addFont("score", CC_STR("fonts/en/sftext.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,18 +93,15 @@ void Config::initLevels() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto gz= gameSize();
-  //for default font, we use 48pt
-  _scale = 48.0f * rs.width / gz.width;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto fp= getAtlas("game-pics");
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 

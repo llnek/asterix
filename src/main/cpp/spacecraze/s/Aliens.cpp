@@ -36,23 +36,23 @@ void Aliens::startEnemies() {
   auto maxSz= cx::calcSize("sfenmy3");
   auto stepx = HWZ(maxSz);
   auto wb= cx::visBox();
-  auto deltaRt = wb.right - squad->rightEdge;
-  auto deltaLf= squad->leftEdge - wb.left;
+  auto deltaRt = wb.right - squad->getRightEdge();
+  auto deltaLf= squad->getLeftEdge() - wb.left;
   auto maxright = (int) floor(deltaRt/stepx);
   auto maxleft = (int) floor(deltaLf/stepx);
 
   auto moveleft = c::Sequence::create(
-      c::DelayTime::create(squad->duration),
+      c::DelayTime::create(squad->getDuration()),
       c::EaseSineOut::create(
         c::MoveBy::create(
-          0.25, c::Vec2(stepx*-1, 0))),
+          0.25, CCT_PT(stepx*-1, 0))),
       CC_NIL);
 
   auto moveright = c::Sequence::create(
-      c::DelayTime::create(squad->duration),
+      c::DelayTime::create(squad->getDuration()),
       c::EaseSineOut::create(
         c::MoveBy::create(
-          0.25, c::Vec2(stepx, 0))),
+          0.25, CCT_PT(stepx, 0))),
       CC_NIL);
 
   auto moveseq= c::Sequence::create(
@@ -65,7 +65,7 @@ void Aliens::startEnemies() {
   auto po= MGMS()->getPool("Aliens");
   po->foreach([=](f::Poolable *p) {
     auto ui=CC_GEC(Alien,p,"f/CPixie");
-    ui->node->runAction(
+    ui->runAction(
         c::RepeatForever::create(
           (c::ActionInterval*) moveseq->clone() ));
   });

@@ -10,19 +10,24 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
-
 //////////////////////////////////////////////////////////////////////////////
-#include "core/JSON.h"
-#include "C.h"
 
+#include "x2d/XLayer.h"
 NS_BEGIN(spacecraze)
 
-void spawnPlayer(not_null<ecs::Node*>);
-j::json loadLevel(int n);
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL Ende : public f::XLayer {
+
+  __decl_create_layer(Ende)
+  __decl_deco_ui()
+  __decl_get_iid(4)
 
 
+};
 
 
 NS_END
+
 
 

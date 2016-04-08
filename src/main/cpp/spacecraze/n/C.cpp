@@ -10,10 +10,37 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(spacecraze)
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Missile*> Missile::create(const sstr &fn) {
+  auto z= mc_new(Missile);
+  z->initWithSpriteFrameName(fn);
+  z->autorelease();
+  return z;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Alien*> Alien::create(int t) {
+  auto z= mc_new1(Alien,t);
+  z->initWithSpriteFrameName("sfenmy" + FTOS(t));
+  z->autorelease();
+  return z;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+owner<Ship*> Ship::create() {
+  auto z= mc_new(Ship);
+  z->initWithSpriteFrameName("sfgun");
+  z->autorelease();
+  return z;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -24,14 +51,14 @@ void spawnPlayer(not_null<ecs::Node*> node) {
   auto wb = cx::visBox();
 
   cx::resurrect(node,wb.cx, wb.top * -0.1);
-  s->node->setOpacity(255);
-  s->node->setScale(1);
+  s->setOpacity(255);
+  s->setScale(1);
   h->enterGodMode();
-  s->node->runAction(
+  s->runAction(
       c::Sequence::create(
         c::EaseBackOut::create(
           c::MoveTo::create(1,
-            c::Vec2(wb.cx, wb.top * 0.1))),
+            CCT_PT(wb.cx, wb.top * 0.1))),
         c::CallFunc::create(
           [=]() { h->exitGodMode(); }),
         CC_NIL));
@@ -42,7 +69,7 @@ void spawnPlayer(not_null<ecs::Node*> node) {
 j::json loadLevel(int n) {
   //char level_file[64] = {0}; //::sprintf(level_file, "Level%02d.xml", MGMS()->getLevel());
   sstr fp = n < 10 ? "0" : "";
-  return cx::readJson("pics/Level"+fp+FTOS(n)+".json");
+  return cx::readJson("misc/Level"+fp+FTOS(n)+".json");
 }
 
 

@@ -26,41 +26,39 @@ void HUDLayer::decoUI() {
   float x=0;
 
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 
-  s->setPosition(wb.right * 0.15, y);
+  CC_POS2(s, wb.right * 0.15, y);
   addAtlasItem("game-pics", s);
 
   s= cx::reifySprite("sflives");
-  s->setPosition(wb.right*0.7, y);
+  CC_POS2(s, wb.right*0.7, y);
   addAtlasItem("game-pics", s);
 
   x += s->getPositionX() + CC_ZW(CC_CSIZE(s));
   y += HHZ(lfsz);
 
   _lives= f::reifyRefType<f::XLives>();
-  _lives->decorate("sflifei", 3, x, y);
+  _lives->initLives("sflifei", 3, x, y);
   addItem(_lives);
 
   y= wb.top*0.925;
 
-  _scoreLabel= cx::reifyBmfLabel("sftext", "0");
-  _scoreLabel->setPosition(wb.right * 0.3, y);
+  _scoreLabel= cx::reifyBmfLabel("score", "0");
+  CC_POS2(_scoreLabel, wb.right * 0.3, y);
   addItem(_scoreLabel);
 
   auto b= cx::reifyMenuBtn("sfpause");
-  auto menu = cx::mkMenu(b);
-
-  b->setPosition(wb.right*0.95, y);
+  CC_POS2(b, wb.right*0.95, y);
   b->setCallback([=](c::Ref*) {
       });
-  addItem(menu);
+  addItem(cx::mkMenu(b));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  _lives->reduce(n);
-  return _lives->isDead();
+  return _lives->reduce(n)->isDead();
 }
 
 //////////////////////////////////////////////////////////////////////////////

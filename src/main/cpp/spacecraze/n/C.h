@@ -21,53 +21,56 @@ NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Alien : public f::CPixie {
-  __decl_comp_tpid("f/CPixie")
-  __decl_iz(type)
+class CC_DLL Alien : public f::CPixie {
+
   Alien(int n) {
     assert(n > 0 && n < 4);
-    node = cx::reifySprite("sfenmy" + FTOS(n));
-    type=n;
+    _type=n;
   }
+
+  __decl_iz(_type)
+
+public:
+
+  static owner<Alien*> create(int);
+  __decl_getr(int,_type,Type)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Missile : public f::CPixie {
-  Missile(not_null<c::Node*> s)
-  : CPixie(s) {}
-  __decl_comp_tpid("f/CPixie")
-};
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL Bomb : public f::CPixie {
-  __decl_comp_tpid("f/CPixie")
-  Bomb(not_null<c::Node*> s)
-  : CPixie(s) {}
+  static owner<Missile*> create(const sstr&);
+
   void morph(int type) {
     assert(type > 0 && type < 4);
-      SCAST(c::Sprite*,node)->setSpriteFrame("sfbullet" + FTOS(type));
+    this->setSpriteFrame("sfbullet" + FTOS(type));
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ship : public f::CPixie {
-  __decl_comp_tpid("f/CPixie")
-  Ship(not_null<c::Node*> s)
-  : CPixie(s) {
-  }
+
+  static owner<Ship*> create();
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL AlienSquad : public ecs::Component {
-
+class CC_DLL AlienSquad : public ecs::Component {
   __decl_comp_tpid("n/AlienSquad")
-  __decl_fz(rightEdge)
-  __decl_fz(leftEdge)
-  __decl_fz(duration)
+  __decl_fz(_rightEdge)
+  __decl_fz(_leftEdge)
+  __decl_fz(_duration)
+
+public:
+
+  __decl_gsms(float,_rightEdge,RightEdge)
+  __decl_gsms(float,_leftEdge,LeftEdge)
+  __decl_gsms(float,_duration,Duration)
 
 };
 
@@ -77,6 +80,13 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid("n/GVars")
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void spawnPlayer(not_null<ecs::Node*>);
+j::json loadLevel(int n);
+
+
 
 
 NS_END

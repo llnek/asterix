@@ -59,8 +59,10 @@ void Resolve::checkAliens() {
   po->foreach([=](f::Poolable *p) {
     if (p->status()) {
       auto ht=CC_GEC(f::CHealth,p,"f/CHealth");
+      auto s=CC_GEC(f::CStats,p,"f/CStats");
       if (!ht->alive()) {
         SENDMSGEX("/game/alien/killed", p);
+        p->yield();
       }
     }
   });

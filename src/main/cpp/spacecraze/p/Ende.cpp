@@ -9,32 +9,41 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Splash.h"
+#include "Game.h"
+#include "Ende.h"
 
-//////////////////////////////////////////////////////////////////////////////
-
-#include "x2d/GameScene.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(spacecraze)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
+void Ende::decoUI() {
+  auto lbl= cx::reifyBmfLabel("title", "Game Over!");
+  auto wb= cx::visBox();
 
-  virtual void sendMsgEx(const MsgTopic&, void*);
+  centerImage("game.bg")->setOpacity(0.8 * 255);
 
-  virtual f::GameLayer* getGLayer() {
-    return (f::GameLayer*) getLayer(2);
-  }
+  CC_POS2(lbl, wb.cx, wb.top * 0.8);
+  XCFG()->scaleNode(lbl,52);
+  addItem(lbl);
 
-  __decl_create_scene_ctx(Game)
-  __decl_deco_ui()
+  auto p = cx::reifyMenuText("btns", "Try Again?");
+  auto q = cx::reifyMenuText("btns", "Quit");
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{p,q},
+      CC_CHT(p)/GOLDEN_RATIO);
 
-};
+  XCFG()->scaleNode(p, 64);
+  XCFG()->scaleNode(q,64);
+  q->setCallback([=](c::Ref*) { cx::prelude();  });
+  p->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
 
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GameCtx : public f::GCX {
-};
+  addItem(menu);
+}
 
 
 NS_END

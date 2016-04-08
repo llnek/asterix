@@ -38,12 +38,12 @@ void Move::processAliens(float dt) {
   auto po=MGMS()->getPool("Aliens");
   auto pa= po->actives();
   if (pa.size() == 0) { return; }
-  auto idx = cx::randInt(pa.size());
-    auto a= (ecs::Node*)pa[idx];
 
+  auto idx = cx::randInt(pa.size());
+  auto a= pa[idx];
   if (cx::timerDone(lpr->tms[1].timer)) {
     cx::undoTimer(lpr->tms[1].timer);
-    fireBombs(a);
+    fireBombs((ecs::Node*)a);
     lpr->tms[1].timer=
       cx::reifyTimer(MGML(), lpr->tms[1].duration);
   }
@@ -54,19 +54,17 @@ void Move::processAliens(float dt) {
 //
 void Move::fireBombs(ecs::Node *node) {
 
-  auto scale_up = c::ScaleTo::create(0.25, 1.0);
+  auto scale_up = c::ScaleTo::create(0.25, 1);
   auto ui=CC_GEC(Alien,node,"f/CPixie");
-  auto pos = c::ccpSub(ui->pos(),
-      c::Vec2(0, CC_ZH(ui->csize()) * 0.3));
+  auto pos = c::ccpSub(ui->getPosition(),
+      CCT_PT(0, CC_ZH(ui->csize()) * 0.3));
   auto po= MGMS()->getPool("Bombs");
-  auto e= po->take(true);
-  auto h=CC_GEC(f::CHealth,e,"f/CHealth");
-  auto b=CC_GEC(Bomb,e,"f/CPixie");
-  b->morph(ui->type);
-  b->inflate(pos.x, pos.y);
-  h->reset();
-  b->node->setScale(0.5);
-  b->node->runAction(scale_up);
+  auto e= (ecs::Node*)po->take(true);
+  auto b=CC_GEC(Missile,e,"f/CPixie");
+  b->morph(ui->getType());
+  b->setScale(0.5);
+  b->runAction(scale_up);
+  cx::resurrect(e, pos.x, pos.y);
 
   cx::sfxPlay("shoot_enemy");
 }
@@ -76,10 +74,10 @@ void Move::fireBombs(ecs::Node *node) {
 void Move::processShip(float dt) {
   auto lpr = CC_GEC(f::Loopers,_arena,"f/Loopers");
   auto mv = CC_GEC(f::CMove,_ship,"f/CMove");
-    auto ht=CC_GEC(f::CHealth,_ship,"f/CHealth");
+  auto ht=CC_GEC(f::CHealth,_ship,"f/CHealth");
   auto sp = CC_GEC(Ship,_ship,"f/CPixie");
   auto bx= MGMS()->getEnclosureBox();
-  auto pos = sp->pos();
+  auto pos = sp->getPosition();
   auto dirty=false;
   auto x= pos.x;
   auto y= pos.y;
@@ -112,15 +110,15 @@ void Move::processShip(float dt) {
 //
 void Move::firePlayerBullet(Ship *sp, float dt) {
 
-  auto pos = c::ccpAdd(sp->pos(), c::Vec2(0, sp->csize().height * 0.3));
+  auto pos = c::ccpAdd(sp->getPosition(), CCT_PT(0, CC_CHT(sp) * 0.3));
   auto po= MGMS()->getPool("Missiles");
-    auto m = (ecs::Node*)po->take(true);
+  auto m = (ecs::Node*)po->take(true);
   auto ui=CC_GEC(f::CPixie,m,"f/CPixie");
 
-  ui->node->setScale(0.5);
-  ui->node->runAction(c::CCScaleTo::create(0.25, 1.0));
+  ui->setScale(0.5);
+  ui->runAction(c::CCScaleTo::create(0.25, 1));
 
-  cx::resurrect(m,pos.x,pos.y);
+  cx::resurrect(m, pos.x,pos.y);
   cx::sfxPlay("shoot_player");
 }
 
@@ -132,19 +130,19 @@ void Move::processMissiles(float dt) {
   auto ms= p->ls();
 
   F__LOOP(it,ms) {
-    auto m = *it;
+    auto &m = *it;
     if (m->status()) {
       auto ui=CC_GEC(f::CPixie,m,"f/CPixie");
       auto mv=CC_GEC(f::CMove,m,"f/CMove");
-      auto pos= ui->pos();
+      auto pos= ui->getPosition();
       pos.y += mv->vel.y * dt;
       if (pos.y > world.top) {
-          cx::hibernate((ecs::Node*)m);
+        cx::hibernate((ecs::Node*)m);
       } else {
-        ui->setPos(pos.x,pos.y);
+        CC_POS2(ui, pos.x,pos.y);
       }
     }
-  };
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -155,19 +153,19 @@ void Move::processBombs(float dt) {
   auto bs= po->ls();
 
   F__LOOP(it,bs) {
-    auto b = *it;
+    auto &b = *it;
     if (b->status()) {
       auto ui=CC_GEC(f::CPixie,b,"f/CPixie");
       auto mv=CC_GEC(f::CMove,b,"f/CMove");
-      auto pos= ui->pos();
+      auto pos= ui->getPosition();
       pos.y -= mv->vel.y * dt;
       if (pos.y < world.bottom) {
-          cx::hibernate((ecs::Node*)b);
+        cx::hibernate((ecs::Node*)b);
       } else {
-        ui->setPos(pos.x,pos.y);
+        CC_POS2(ui, pos.x,pos.y);
       }
     }
-  };
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////

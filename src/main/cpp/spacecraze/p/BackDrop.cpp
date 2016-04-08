@@ -47,10 +47,10 @@ void BackDrop::update(float dt) {
   auto wb = cx::visBox();
 
   F__LOOP(it, _stars) {
-    auto s= *it;
+    auto &s= *it;
     auto y= s->getPositionY() - d;
 
-    if(y < CC_ZH(_sz) * -0.5) {
+    if(y < -HHZ(_sz)) {
       y = wb.top + HHZ(_sz);
     }
 

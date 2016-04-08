@@ -27,9 +27,10 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(1280,800);  }
+  virtual const CCT_SZ gameSize() { return c::Size(1280,800);  }
 
-  virtual void handleResolution(const c::Size&);
+  virtual void handleResolution(const CCT_SZ&);
+  virtual float scaleFont(float);
   virtual void runOnce();
 
   virtual ResolutionPolicy policy() {
@@ -40,7 +41,6 @@ public:
   virtual c::Scene* prelude();
 
   static owner<Config*> reify();
-
 
 };
 
