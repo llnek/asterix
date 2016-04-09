@@ -28,45 +28,48 @@ void GEngine::initEntities() {
   auto wb= cx::visBox();
 
   po->preset([=]() -> f::Poolable* {
-    auto png = "asteroid_" + FTOS(1 + (rand() % 3)) + ".png";
-      auto tmp = f::CPixie::reifyFrame(png);
+    auto png = "Asteroid_" + FTOS(1 + (rand() % 3)) + ".png";
+    auto tmp = f::CPixie::reifyFrame(png);
     auto sz= tmp->csize();
-    tmp->hide();
-    MGML()->addItem(tmp,-1);
+    CC_HIDE(tmp);
+    MGML()->addItem(tmp, -1);
     auto body = c::PhysicsBody::createCircle(HWZ(sz));
     body->setContactTestBitmask(true);
     body->setDynamic(true);
     body->setEnabled(false);
     tmp->setPhysicsBody(body);
-    auto ent=this->reifyNode("Asteroid");
+    auto ent= this->reifyNode("Asteroid");
     ent->checkin(tmp);
     return ent;
   }, 10);
 
+  auto s= f::CPixie::reifyFrame("Space_Pod.png");
+  auto ship= this->reifyNode("Ship", true);
   auto v= CC_CSV(c::Integer,"SHIP+SPEED");
-    auto s= f::CPixie::reifyFrame("player.png");
   auto sz= s->csize();
   auto body = c::PhysicsBody::createCircle(HWZ(sz));
   body->setContactTestBitmask(true);
   body->setDynamic(true);
   s->setPhysicsBody(body);
 
-  auto ship= this->reifyNode("Ship", true);
   MGML()->addItem(s,-1);
   s->inflate(wb.cx, wb.cy);
+
   auto mo= mc_new(f::CGesture);
   auto mv= mc_new(f::CMove);
   mv->maxSpeed.y=v;
   mv->maxSpeed.x=v;
   mv->speed.y=v;
   mv->speed.x=v;
-  ship->checkin(s);
   ship->checkin(mo);
+  ship->checkin(s);
   ship->checkin(mv);
 
   // global
   auto ent= this->reifyNode("Shared",true);
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

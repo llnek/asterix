@@ -23,7 +23,8 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   bool onContactBegin(c::PhysicsContact&);
   void setPhysicsWorld(c::PhysicsWorld*);
@@ -36,19 +37,15 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
-  virtual void onTouchEnd(c::Touch*);
+
   virtual void onInited();
 
-  virtual ~GLayer();
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -58,15 +55,13 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   for (auto n = 0; n < 2;  ++n) {
     auto s = cx::createSprite("game.bg");
     ss->bgSprites[n]=s;
-    s->setPosition(
-        wb.cx,
-        (-1 * CC_ZH(wz.size) * n) + wb.cy);
+    CC_POS2(s, wb.cx, -n * CC_ZH(wz) + wb.cy);
     addItem(s, -2);
   }
 
@@ -82,13 +77,12 @@ void GLayer::onInited() {
 //
 void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
   _pWorld = world;
-  _pWorld->setGravity(c::Vec2(0, 0));
+  _pWorld->setGravity(CC_ZPT);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onContactBegin(c::PhysicsContact&) {
-  this->setOpacity(0.1 * 255);
   cx::sfxPlay("crash");
   MGMS()->stop();
   surcease();
@@ -98,48 +92,45 @@ bool GLayer::onContactBegin(c::PhysicsContact&) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
-  r->setPos(loc.x,loc.y);
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+    auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
+  return cx::isTapped(r,tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  auto r= CC_GEC(c::Node,_player,"f/CPixie");
-  auto loc= touch->getLocation();
-  return cx::isClicked(r,loc);
+  return onMouseStart(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const CCT_PT &loc) {
+  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
+  CC_POS2(r, loc.x, loc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
-  auto r= CC_GEC(f::CPixie,_player,"f/CPixie");
-  auto loc= touch->getLocation();
-  r->setPos(loc.x, loc.y);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseMotion(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
-  auto btn= cx::reifyMenuBtn("pause-std.png","pause-sel.png");
+  auto btn= cx::reifyMenuBtn("Pause_Button.png", "Pause_Button_Sel.png");
   auto sz= CC_CSIZE(btn);
-  auto gap= sz.width / 4;
-  auto wz= cx::visRect();
+  auto gap= sz.width / GOLDEN_RATIO;
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
-  btn->setPosition(
+  CC_POS2(btn,
       wb.left + sz.width - gap,
       wb.top - sz.height + gap);
   btn->setCallback([=](c::Ref*){
     cx::sfxPlay("button");
     cx::pushEx(MMenu::reify());
   });
-  auto menu = cx::mkMenu(btn);
-  addItem(menu);
+  addItem( cx::mkMenu(btn));
 
   _engine = mc_new(GEngine);
   cx::sfxMusic("background", true);
@@ -164,6 +155,8 @@ void Game::decoUI() {
 Game::Game()
   : f::GameScene(true) {
 }
+
+
 
 NS_END
 

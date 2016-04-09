@@ -21,15 +21,13 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto wz= cx::visRect();
+  auto resume = cx::reifyMenuBtn("Resume_Button.png", "Resume_Button_Sel.png");
+  auto retry = cx::reifyMenuBtn("Retry_Button.png", "Retry_Button_Sel.png");
+  auto splash = cx::reifyMenuBtn("Menu_Button.png", "Menu_Button_Sel.png");
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
-  }, wz.size.height/4);
+  centerImage("gui.bg");
 
   resume->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
@@ -45,7 +43,7 @@ void MMenu::decoUI() {
     if (XCFG()->hasAudio()) {
       cx::stopMusic();
     }
-    cx::runEx(Game::reify( new GameCtx() ));
+    cx::runEx(Game::reify(mc_new(GameCtx)));
   });
 
   splash->setCallback([=](c::Ref*) {
@@ -57,14 +55,17 @@ void MMenu::decoUI() {
     cx::runEx(Splash::reify());
   });
 
-  menu->setPosition(wb.cx,wb.cy);
-  centerImage("gui.bg");
+  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
+      resume,retry,splash
+  }, CC_CHT(resume)/GOLDEN_RATIO);
+
+  CC_POS2(menu, wb.cx,wb.cy);
   addItem(menu);
 
   // audio
   auto audios= cx::reifyAudioIcons();
   auto sz= CC_CSIZE(audios[0]);
-  auto gap= sz.width /4;
+  auto gap= sz.width / GOLDEN_RATIO;
   auto c= cx::white();
 
   audios[0]->setColor(c);
@@ -72,7 +73,7 @@ void MMenu::decoUI() {
 
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
+      CCT_PT(wb.right-gap, wb.bottom+gap));
 
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();

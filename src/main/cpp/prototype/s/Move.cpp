@@ -42,17 +42,16 @@ void Move::process(float dt) {
   auto ss= CC_GEC(GVars, _shared, "n/GVars");
   auto po= MGMS()->getPool("Asteroids");
   auto c=po->ls();
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   F__LOOP(it,c) {
-    auto a= *it;
+    auto &a= *it;
     if (!a->status()) { continue; }
-      auto r= (c::Sprite*)CC_GEC(f::CPixie,a,"f/CPixie");
-
-    r->setPosition(
+    auto r= CC_GEC(f::CPixie,a,"f/CPixie");
+    CC_POS2(r,
         r->getPositionX(),
-        r->getPositionY() - (0.75 * CC_ZH(wz.size) * dt));
+        r->getPositionY() - (0.75 * CC_ZH(wz) * dt));
 
     if (r->getPositionY() < wb.bottom) {
       if (r->getPositionY() <
@@ -89,7 +88,7 @@ void Move::onKeys(float dt) {
     y = pos.y - dt * m->speed.y;
   }
 
-  r->setPos(x,y);
+  CC_POS2(r, x,y);
 }
 
 

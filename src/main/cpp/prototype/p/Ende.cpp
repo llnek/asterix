@@ -21,23 +21,23 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto wz= cx::visRect();
+  auto splash = cx::reifyMenuBtn("Menu_Button.png", "Menu_Button_Sel.png");
+  auto retry = cx::reifyMenuBtn("Retry_Button.png", "Retry_Button_Sel.png");
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      retry,splash
-  }, wz.size.height/4);
+  centerImage("gui.bg");
 
-  menu->setPosition(wb.cx,wb.cy);
+  auto title= cx::reifySprite("Game_Over.png");
+  CC_POS2(title, wb.cx, wb.top * 0.8);
+  addItem(title);
 
   retry->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     if (XCFG()->hasAudio()) {
       cx::stopMusic();
     }
-    cx::runEx(Game::reify( new GameCtx() ));
+    cx::runEx(Game::reify(mc_new(GameCtx)));
   });
 
   splash->setCallback([=](c::Ref*) {
@@ -48,12 +48,11 @@ void Ende::decoUI() {
     cx::runEx(Splash::reify());
   });
 
-  auto title= cx::reifySprite("game-over.png");
-  title->setPosition(wb.cx, wb.top * 0.8);
+  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
+      retry,splash
+  }, CC_CHT(splash)/GOLDEN_RATIO);
 
-  centerImage("gui.bg");
-
-  addItem(title);
+  CC_POS2(menu, wb.cx,wb.cy);
   addItem(menu);
 }
 

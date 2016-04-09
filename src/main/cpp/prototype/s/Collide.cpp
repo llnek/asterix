@@ -40,7 +40,7 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::clamp(float dt) {
-    auto py= (c::Sprite*) CC_GEC(f::CPixie, _player, "f/CPixie");
+  auto py= CC_GEC(f::CPixie, _player, "f/CPixie");
   auto loc= py->getPosition();
   auto sz= CC_CSIZE(py);
   auto wb= cx::visBox();

@@ -19,6 +19,7 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
+
   virtual void sendMsgEx(const MsgTopic&, void*);
   virtual f::GameLayer* getGLayer() {
     return
@@ -28,15 +29,14 @@ struct CC_DLL Game : public f::GameScene {
   __decl_create_scene_ctx(Game)
   __decl_deco_ui()
 
-  virtual ~Game() {}
   Game();
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GameCtx : public f::GCX {
 };
+
 
 
 NS_END

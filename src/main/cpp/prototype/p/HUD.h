@@ -19,12 +19,12 @@ NS_BEGIN(prototype)
 //
 struct CC_DLL HUDLayer : public f::XLayer {
 
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_iz(_score)
+
   __decl_create_layer(HUDLayer)
   __decl_deco_ui()
   __decl_get_iid(3)
-
-  __decl_ptr(c::Label, _scoreLabel)
-  __decl_iz(_score)
 
   void updateScore(int);
 };

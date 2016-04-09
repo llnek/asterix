@@ -22,8 +22,8 @@ NS_BEGIN(prototype)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
+  __decl_arr(c::Sprite*,2, bgSprites)
   __decl_comp_tpid( "n/GVars" )
-  s_arr<c::Sprite*,2> bgSprites;
 };
 
 
