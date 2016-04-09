@@ -22,22 +22,20 @@ NS_BEGIN(rocket)
 //
 void Splash::decoUI() {
   auto play = cx::reifyMenuBtn("label_play.png");
-  auto intro = cx::reifySprite("logo.png");
-  auto menu= cx::mkMenu(play);
+  auto intro= cx::reifySprite("logo.png");
   auto wb=cx::visBox();
 
   centerImage("game.bg");
   regoAtlas("game-pics");
 
-  intro->setPosition(wb.cx, wb.top * 0.55);
-
-  play->setPosition(wb.cx, wb.top * 0.2);
+  CC_POS2(intro, wb.cx, wb.top * 0.55);
+  CC_POS2(play, wb.cx, wb.top * 0.2);
   play->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify(mc_new(f::GCX)));
+    cx::runEx(Game::reify(mc_new(GameCtx)));
   });
 
   addAtlasItem("game-pics",intro);
-  addItem(menu);
+  addItem(cx::mkMenu(play));
 }
 
 

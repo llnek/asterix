@@ -20,15 +20,14 @@ NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-RocketMotion::RocketMotion()
-  : CMove() {
+RocketMotion::RocketMotion() {
   targetRotation=0;
   dr=0;
   ar=0;
   vr=0;
   rotationSpring= 0.1;
   rotationDamping= 0.8;
-  pivot= c::Vec2(-1,-1);
+  pivot= CCT_PT(-1,-1);
   rotationOrientation= ROTATE_NONE;
 }
 
@@ -38,19 +37,19 @@ void rocketReset(not_null<Rocket*> r, not_null<RocketMotion*> m) {
 
   m->rotationOrientation = ROTATE_NONE;
   m->targetRotation = -90;
-  m->pivot = c::Vec2(-1,1);
+  m->pivot = CCT_PT(-1,1);
   m->speed.x = 80;
   m->speed.y = 80;
   r->node->setRotation(-90);
   auto angle = CC_DEGREES_TO_RADIANS(r->node->getRotation());
-  m->vel = c::Vec2(m->speed.x * cos(angle), -m->speed.y * sin(angle));
+  m->vel = CCT_PT(m->speed.x * cos(angle), -m->speed.y * sin(angle));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void rocketSelect(not_null<Rocket*> r, bool flag) {
   auto f= flag ? "rocket_on.png" : "rocket.png";
-    SCAST(c::Sprite*,r->node)->setDisplayFrame(cx::getSpriteFrame(f));
+  r->setDisplayFrame(cx::getSpriteFrame(f));
 }
 
 

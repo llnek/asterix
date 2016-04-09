@@ -9,20 +9,41 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Splash.h"
+#include "Game.h"
+#include "Ende.h"
 
-#include "x2d/GameScene.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MMenu : public f::XScene {
+void Ende::decoUI() {
+  auto gameOver = cx::reifySprite("gameOver.png");
+  auto wb= cx::visBox();
 
-  __decl_create_scene(MMenu)
-  __decl_deco_ui()
+  centerImage("game.bg")->setOpacity(0.8 * 255);
+  regoAtlas("game-pics");
 
-};
+  CC_POS2(gameOver, wb.cx, wb.top * 0.55);
+  addAtlasItem("game-pics",gameOver, kForeground);
+
+  auto t=cx::reifyMenuText("btns", "Try Again?");
+  auto q=cx::reifyMenuText("btns", "Quit");
+
+  q->setCallback([=](c::Ref*) { cx::prelude(); });
+  t->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+
+  auto menu=cx::mkVMenu(s_vec<c::MenuItem*>{t,q},
+      CC_CHT(t)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
+  addItem(menu);
+
+}
 
 
 NS_END

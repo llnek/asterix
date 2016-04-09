@@ -42,53 +42,45 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics", CC_STR("pics/dlist.plist"));
 
-  addAtlas("jet", CC_STR("pics/jet.plist"));
-  addAtlas("plink", CC_STR("pics/plink.plist"));
-  addAtlas("star", CC_STR("pics/star.plist"));
-  addAtlas("warp", CC_STR("pics/warp.plist"));
-  addAtlas("boom", CC_STR("pics/boom.plist"));
-  addAtlas("comet", CC_STR("pics/comet.plist"));
+  addAtlas("jet", CC_STR("misc/jet.plist"));
+  addAtlas("plink", CC_STR("misc/plink.plist"));
+  addAtlas("star", CC_STR("misc/star.plist"));
+  addAtlas("warp", CC_STR("misc/warp.plist"));
+  addAtlas("boom", CC_STR("misc/boom.plist"));
+  addAtlas("comet", CC_STR("misc/comet.plist"));
 
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-  addImage("game.bg",  CC_STR("pics/bg.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics", CC_STR("pics/dlist.png"));
+  addImage("game.bg",  CC_STR("pics/bg.jpg"));
 
   addEffect("rocket", CC_STR("sfx/rocket.wav"));
   addMusic("bg", CC_STR("sfx/background.mp3"));
 
-  addFont("dft", CC_STR("fon/en/font.fnt"));
+  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SFCollegiate.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto dz= gameSize();
-  sstr p;
-  float w;
-
-  if (rs.width > 768) {
-    p= "rd";
-    w=1536;
-  } else if (rs.width > 320) {
-    p="hd";
-    w=768;
-  } else {
-    p="sd";
-    w=380;
-  }
-
-  CC_DTOR()->setContentScaleFactor(w/dz.width);
-  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////

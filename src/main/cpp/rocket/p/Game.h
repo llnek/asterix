@@ -29,6 +29,11 @@ struct CC_DLL Game : public f::GameScene {
   __decl_deco_ui()
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GameCtx : public f::GCX {
+};
+
 
 
 NS_END

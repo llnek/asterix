@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
+#include "Ende.h"
 #include "HUD.h"
 #include "Game.h"
 
@@ -28,9 +29,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   __decl_create_layer(GLayer)
   __decl_deco_ui()
@@ -49,19 +50,20 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 };
 
-static s_arr<c::Vec2,7> PPOS = {
-  c::Vec2(0.25,0.8),
-  c::Vec2(0.8,0.45),
-  c::Vec2(0.75,0.8),
-  c::Vec2(0.5,0.5),
-  c::Vec2(0.18,0.45),
-  c::Vec2(0.8,0.15),
-  c::Vec2(0.18,0.1)
+static s_arr<CCT_PT,7> PPOS = {
+  CCT_PT(0.25,0.8),
+  CCT_PT(0.8,0.45),
+  CCT_PT(0.75,0.8),
+  CCT_PT(0.5,0.5),
+  CCT_PT(0.18,0.45),
+  CCT_PT(0.8,0.15),
+  CCT_PT(0.18,0.1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+
   _rocket= _engine->getNodes("f/CGesture")[0];
   _drawing= _engine->getNodes("n/RPath")[0];
   _shared = _engine->getNodes("n/GVars")[0];
@@ -71,29 +73,30 @@ void GLayer::onInited() {
   auto dw= CC_GEC(RPath,_drawing,"n/RPath");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto po= MGMS()->getPool("Planets");
+  auto wz=cx::visSize();
   auto wb=cx::visBox();
 
-  ss->minLineLength = wb.right * 0.07;
+  ss->minLineLength = wz.width * 0.07;
   ss->drawing = false;
   ss->state = kGamePlay;//kGameIntro;
 
   //add planets
   for (auto i=0; i < PPOS.size(); ++i) {
-    auto s= cx::reifySprite("planet_"+FTOS(i+1)+".png");
+    auto s= Planet::create(i+1);
     auto &pos= PPOS[i];
-    auto e=_engine->reifyNode("Planet", true);
-    s->setPosition(wb.right * pos.x, wb.top * pos.y);
+    auto e= _engine->reifyNode("Planet", true);
+    CC_POS2(s, wb.right * pos.x, wb.top * pos.y);
     addAtlasItem("game-pics",s,kBackground,kSpritePlanet);
-    e->checkin(mc_new1(Planet,s));
+    e->checkin(s);
     po->checkin(e);
   }
 
   createParticles();
   createStarGrid();
 
-  rock->setPos(wb.cx, wb.top * 0.1);
-  rock->node->setOpacity(255);
-  rock->show();
+  CC_POS2(rock, wb.cx, wb.top * 0.1);
+  rock->setOpacity(255);
+  CC_SHOW(rock);
   rocketReset(rock, mv);
 
   ss->timeBetweenPickups = 0.0;
@@ -105,11 +108,10 @@ void GLayer::onInited() {
   dw->reset();
 
   //shuffle grid cells
-  s::random_shuffle(ss->grid.begin(), ss->grid.end());
+  S__MIX(ss->grid);
   ss->gridPos = 0;
 
   resetStar();
-
   ss->warp->stopSystem();
 
   cx::sfxPlay("rocket");
@@ -124,12 +126,12 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
-    auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+  auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
   auto dw=CC_GEC(RPath,_drawing,"n/RPath");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto rpos=rock->pos();
+  auto rpos=rock->getPosition();
   auto dx = rpos.x - tap.x;
   auto dy = rpos.y - tap.y;
 
@@ -150,12 +152,12 @@ void GLayer::onTouchMotion(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &tap) {
+void GLayer::onMouseMotion(const CCT_PT &tap) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   if (ss->drawing) {
     auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
     auto dw=CC_GEC(RPath,_drawing,"n/RPath");
-    auto rpos=rock->pos();
+    auto rpos=rock->getPosition();
     auto dx = rpos.x - tap.x;
     auto dy = rpos.y - tap.y;
 
@@ -178,7 +180,7 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &tap) {
+void GLayer::onMouseClick(const CCT_PT &tap) {
   auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
   auto dw= CC_GEC(RPath,_drawing,"n/RPath");
@@ -192,7 +194,7 @@ void GLayer::onMouseClick(const c::Vec2 &tap) {
   if (dw->lineType == LINE_TEMP) {
     //set up dashed line
     dw->pivot= tap;
-    dw->lineLength= rock->pos().distance(tap);
+    dw->lineLength= rock->getPosition().distance(tap);
 
     //set up rocket
     auto circlelen = dw->lineLength * 2 * M_PI;
@@ -200,21 +202,20 @@ void GLayer::onMouseClick(const c::Vec2 &tap) {
     mv->pivot=tap;
     mv->angularSpeed= 2 * M_PI / iters;
 
-    auto diff = rock->pos();
+    auto diff = rock->getPosition();
     diff.subtract(mv->pivot);
     auto clkwise = diff.getRPerp();
     auto dot =clkwise.dot(mv->vel);
 
     if (dot > 0) {
-      mv->angularSpeed= mv->angularSpeed * -1;
       mv->rotationOrientation= ROTATE_CLOCKWISE;
+      mv->angularSpeed= - mv->angularSpeed;
       mv->targetRotation=
         CC_RADIANS_TO_DEGREES(atan2(clkwise.y, clkwise.x));
     } else {
       mv->rotationOrientation= ROTATE_COUNTER;
       mv->targetRotation=
-        CC_RADIANS_TO_DEGREES(atan2(-1 * clkwise.y,
-              -1 * clkwise.x));
+        CC_RADIANS_TO_DEGREES(atan2(-clkwise.y, -clkwise.x));
     }
     dw->lineType= LINE_DASHED;
   }
@@ -227,6 +228,7 @@ void GLayer::decoUI() {
   _engine = mc_new(GEngine);
   centerImage("game.bg");
   regoAtlas("game-pics");
+  //regoAtlas("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -238,7 +240,7 @@ void GLayer::createParticles() {
 
   ss->jet = c::ParticleSystemQuad::create(
       XCFG()->getAtlas("jet"));
-  ss->jet->setSourcePosition(c::Vec2(-rock->radius() * 0.8,0));
+  ss->jet->setSourcePosition(CCT_PT(-rock->radius() * 0.8,0));
   ss->jet->setAngle(180);
   ss->jet->stopSystem();
   addItem(ss->jet, kBackground);
@@ -251,7 +253,7 @@ void GLayer::createParticles() {
   ss->comet = c::ParticleSystemQuad::create(
       XCFG()->getAtlas("comet"));
   ss->comet->stopSystem();
-  ss->comet->setPosition(c::Vec2(0, wb.top * 0.6));
+  ss->comet->setPosition(CCT_PT(0, wb.top * 0.6));
   CC_HIDE(ss->comet);
   addItem(ss->comet, kForeground);
 
@@ -277,21 +279,21 @@ void GLayer::createParticles() {
 void GLayer::createStarGrid() {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto po=MGMS()->getPool("Planets");
-  auto wz=cx::visRect();
+  auto wz=cx::visSize();
   auto ps= po->ls();
   auto tile = 32;
-  auto gridFrame = CC_ZW(wz.size) * 0.1;
-  auto rows = (CC_ZH(wz.size) - 4 * gridFrame)/tile;
-  auto cols = (CC_ZW(wz.size) - 2 * gridFrame)/tile;
+  auto gridFrame = CC_ZW(wz) * 0.1;
+  auto rows = (CC_ZH(wz) - 4 * gridFrame)/tile;
+  auto cols = (CC_ZW(wz) - 2 * gridFrame)/tile;
 
   for (auto r = 0; r < rows; ++r) {
     for (auto c = 0; c < cols; ++c) {
-      auto cell = c::Vec2(gridFrame + c * tile, 2 * gridFrame + r * tile);
+      auto cell = CCT_PT(gridFrame + c * tile, 2 * gridFrame + r * tile);
       auto overlaps = false;
       F__LOOP(it,ps) {
         auto e= *it;
         auto pt=CC_GEC(Planet,e,"f/CPixie");
-        auto pos= pt->pos();
+        auto pos= pt->getPosition();
         if (pow(pos.x - cell.x, 2) + pow(pos.y - cell.y, 2) <=
             pow(pt->radius() * 1.2, 2)) {
           overlaps = true;
@@ -309,15 +311,15 @@ void GLayer::createStarGrid() {
 void GLayer::resetStar() {
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto rpos=rock->pos();
+  auto rpos=rock->getPosition();
 
   while (true) {
     auto pos= ss->grid[ss->gridPos];
-    ++ss->gridPos;
-    if (ss->gridPos >= ss->grid.size()) { ss->gridPos=0; }
+    if (++ss->gridPos >= ss->grid.size()) {
+    ss->gridPos=0; }
     if (pow(pos.x - rpos.x, 2) +
         pow(pos.y - rpos.y, 2) > rock->radius() * 6) {
-      ss->star->setPosition(pos);
+      CC_POS1(ss->star, pos);
       CC_SHOW(ss->star);
       ss->star->resetSystem();
       return;
@@ -336,20 +338,16 @@ void GLayer::killPlayer() {
   cx::pauseAudio();
   cx::sfxPlay("shipBoom");
 
-  ss->boom->setPosition(rock->pos());
+  CC_POS1(ss->boom, rock->getPosition());
   ss->boom->resetSystem();
-  rock->hide();
+  CC_HIDE(rock);
   ss->jet->stopSystem();
   dw->lineType= LINE_NONE;
 
-  auto gameOver = cx::reifySprite("gameOver.png");
-  gameOver->setPosition(wb.cx, wb.top * 0.55);
-  addAtlasItem("game-pics",gameOver, kForeground);
-
-  this->setOpacity(0.1 * 255);
   ss->state = kGameOver;
   MGMS()->stop();
   surcease();
+  Ende::reify(MGMS(), 4);
 }
 
 END_NS_UNAMED

@@ -24,16 +24,18 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Rocket : public f::CPixie {
-  Rocket(not_null<c::Node*> s)
-  : CPixie(s)
-  {}
+  static owner<Rocket*> create();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL RocketMotion : public f::CMove {
+class CC_DLL RocketMotion : public f::CMove {
 
-  void setRotationFromVector () {
+  RocketMotion();
+
+public:
+
+  void setRotationFromVector() {
     targetRotation= CC_RADIANS_TO_DEGREES(atan2(-vel.y, vel.x));
   }
 
@@ -45,11 +47,10 @@ struct CC_DLL RocketMotion : public f::CMove {
   __decl_fz(vr)
 
   __decl_iz(rotationOrientation)
-  __decl_md(c::Vec2, pivot)
+  __decl_md(CCT_PT, pivot)
   __decl_fz(angularSpeed)
 
   static owner<RocketMotion*> create();
-  RocketMotion();
 };
 
 void rocketReset(not_null<Rocket*>, not_null<RocketMotion*>);

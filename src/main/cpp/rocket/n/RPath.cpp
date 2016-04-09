@@ -20,18 +20,18 @@ NS_BEGIN(rocket)
 //
 bool RPath::init() {
 
-  if (!DrawNode::init()) {
+  if (!c::DrawNode::init()) {
   return false; }
 
-  auto wz=cx::visRect();
+  auto wz=cx::visSize();
   dash = 10;
   dashSpace = 10;
   lineType = LINE_NONE;
-  energyHeight = CC_ZH(wz.size) * 0.8;
-  energyLineX = CC_ZW(wz.size) * 0.96;
+  energyHeight = CC_ZH(wz) * 0.8;
+  energyLineX = CC_ZW(wz) * 0.96;
 
-  this->reset();
   this->scheduleUpdate();
+  this->reset();
 
   return true;
 }
@@ -46,7 +46,7 @@ void RPath::reset() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void RPath::update(float dt) {
-  auto c4= c::Color4F(c::Color3B::WHITE);
+  auto c4= c::Color4F::WHITE;
   auto wb=cx::visBox();
 
   energy -= dt * energyDecrement;
@@ -82,12 +82,12 @@ void RPath::update(float dt) {
   }
 
   //draw energy bar
-  drawLine(c::Vec2(energyLineX, wb.top * 0.1),
-      c::Vec2(energyLineX, wb.top * 0.9),
+  drawLine(CCT_PT(energyLineX, wb.top * 0.1),
+      CCT_PT(energyLineX, wb.top * 0.9),
       c::Color4F(0.0, 0.0, 0.0, 1.0));
 
-  drawLine(c::Vec2(energyLineX, wb.top * 0.1),
-      c::Vec2(energyLineX, wb.top * 0.1 + energy * energyHeight),
+  drawLine(CCT_PT(energyLineX, wb.top * 0.1),
+      CCT_PT(energyLineX, wb.top * 0.1 + energy * energyHeight),
       c::Color4F(1.0, 0.5, 0.0, 1.0));
 }
 

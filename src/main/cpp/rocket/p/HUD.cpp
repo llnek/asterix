@@ -21,28 +21,30 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decoUI() {
-  auto wz=cx::visRect();
+
+  auto wz=cx::visSize();
   auto wb=cx::visBox();
 
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   _scoreLabel->setAlignment(c::TextHAlignment::LEFT);
   _scoreLabel->setAnchorPoint(cx::anchorL());
-  _scoreLabel->setWidth(HWZ(wz.size));
-  _scoreLabel->setPosition(wb.right * 0.48, wb.top * 0.95);
+  _scoreLabel->setWidth(HWZ(wz));
+  CC_POS2(_scoreLabel, wb.right * 0.48, wb.top * 0.95);
   addItem(_scoreLabel,kBackground);
 
   auto btn = cx::reifyMenuBtn("btn_pause_off.png");
   auto mnu= cx::mkMenu(btn);
-  btn->setPosition(wb.right * 0.06, wb.top* 0.95);
+  CC_POS2(btn, wb.right * 0.06, wb.top* 0.95);
   CC_HIDE(mnu);
   addItem(mnu, kBackground);
 
   _paused = cx::reifySprite("label_paused.png");
-  _paused->setPosition(wb.cx, wb.top * 0.55);
+  CC_POS2(_paused, wb.cx, wb.top * 0.55);
   CC_HIDE(_paused);
-  addAtlasItem("game-pics",_paused, kForeground);
+  addAtlasItem("game-pics", _paused, kForeground);
 
   _score=0;
 }

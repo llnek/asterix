@@ -25,15 +25,19 @@ enum LineType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL RPath : public c::DrawNode, public ecs::Component {
+class CC_DLL RPath : public f::CDrawNode {
 
+  virtual bool init();
+  RPath() {}
 
 public:
 
   static owner<RPath*> create() {
-    return f::reifyRefType<RPath>();
+    auto z= mc_new(RPath);
+    z->init();
+    z->autorelease();
+    return z;
   }
-  RPath() {}
 
   __decl_comp_tpid("n/RPath");
 
@@ -47,14 +51,12 @@ public:
   __decl_md(LineType, lineType)
   __decl_fz(lineLength)
   __decl_fz(energy)
-  __decl_md(c::Vec2, pivot)
-  __decl_md(c::Vec2, tip)
+  __decl_md(CCT_PT, pivot)
+  __decl_md(CCT_PT, tip)
 
   void setEnergyDecrement(float);
   void update(float);
   void reset();
-
-  virtual bool init();
 
 };
 

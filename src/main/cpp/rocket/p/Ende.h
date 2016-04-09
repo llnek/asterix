@@ -12,15 +12,16 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(rocket)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL MMenu : public f::XScene {
+struct CC_DLL Ende : public f::XLayer {
 
-  __decl_create_scene(MMenu)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
+  __decl_get_iid(4)
 
 };
 

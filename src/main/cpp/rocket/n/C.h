@@ -43,9 +43,15 @@ enum GameState {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Planet : public f::CPixie {
-  Planet(not_null<c::Node*> s)
-  : CPixie(s) {}
+class CC_DLL Planet : public f::CPixie {
+  Planet() {}
+public:
+  static owner<Planet*> create(int t) {
+    auto s= mc_new(Planet);
+    s->initWithSpriteFrameName("planet_"+FTOS(t)+".png");
+    s->autorelease();
+    return s;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,15 +66,16 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_ptr(c::ParticleSystemQuad, star)
 
   __decl_comp_tpid( "n/GVars" )
+  __decl_vec(CCT_PT, grid)
+
+  __decl_fz(timeBetweenPickups)
   __decl_fz(minLineLength)
   __decl_bf(drawing)
   __decl_iz(gridPos)
   __decl_iz(state)
   __decl_iz(cometInterval)
   __decl_iz(cometTimer)
-  __decl_fz(timeBetweenPickups)
 
-  s_vec<c::Vec2> grid;
 };
 
 
