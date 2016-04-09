@@ -80,10 +80,9 @@ void App::preLaunch(const c::Size &dz) {
 
   auto portrait = XCFG()->isPortrait();
   auto fz = glview->getFrameSize();
-  //auto wz= CC_DTOR()->getWinSize();
-  c::Size largeSize;
-  c::Size medSize;
-  c::Size smallSize;
+  CCT_SZ largeSize;
+  CCT_SZ medSize;
+  CCT_SZ smallSize;
   float w,h;
   s_vec<sstr> spaths;
 

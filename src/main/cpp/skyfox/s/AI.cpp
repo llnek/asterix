@@ -69,7 +69,7 @@ void AI::process(float dt) {
     increaseDifficulty();
   }
 
-  if (bomb->isOvert() &&
+  if (bomb->isVisible() &&
       bomb->getScale() > 0.3) {
     if ((int)bomb->getOpacity() != 255) {
       bomb->setOpacity(255);
@@ -78,7 +78,7 @@ void AI::process(float dt) {
 
   auto ray = CC_GCT(ufo,kSpriteRay);
   auto pos=ufo->getPosition();
-  if (ufo->isOvert() &&
+  if (ufo->isVisible() &&
       ray->isVisible()) {
     if (pos.x > wb.right * 0.1 &&
         pos.x <= wb.right * 0.9) {
@@ -135,7 +135,7 @@ void AI::resetUfo(ecs::Node *node) {
   auto newY = cx::randFloat(wb.top * 0.3) + wb.top * 0.3;
   auto newX= cx::randSign() > 0 ? 0 : wb.right;
 
-  if (ufo->isOvert()) { return; }
+  if (ufo->isVisible()) { return; }
 
   if (newY > wb.top * 0.7) {
     newY = wb.top * 0.7;

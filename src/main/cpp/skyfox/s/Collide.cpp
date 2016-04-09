@@ -75,7 +75,7 @@ void Collide::process(float dt) {
     cx::hibernate(n);
   }
 
-  if (ufo->isOvert() && ! ss->ufoKilled) {
+  if (ufo->isVisible() && ! ss->ufoKilled) {
     auto pos= ufo->pos();
     auto dx = ss->shockWave->getPositionX() - pos.x;
     auto dy = ss->shockWave->getPositionY() - pos.y;

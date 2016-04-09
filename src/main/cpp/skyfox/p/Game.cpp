@@ -14,6 +14,7 @@
 #include "s/GEngine.h"
 #include "HUD.h"
 #include "Game.h"
+#include "Ende.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(skyfox)
@@ -56,7 +57,7 @@ bool GLayer::onMouseStart(const CCT_PT &tap) {
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto pos= co->getPosition();
 
-  if (co->isOvert()) {
+  if (co->isVisible()) {
 
     CC_GCT(co,kSpriteSparkle)->stopAllActions();
     CC_GCT(co,kSpriteHalo)->stopAllActions();
@@ -119,7 +120,7 @@ void GLayer::onEnd() {
 
   ss->fallingObjects.clear();
 
-  if (bomb->isOvert()) {
+  if (bomb->isVisible()) {
     CC_GCT(bomb,kSpriteSparkle)->stopAllActions();
     CC_GCT(bomb,kSpriteHalo)->stopAllActions();
     bomb->stopAllActions();
@@ -131,20 +132,13 @@ void GLayer::onEnd() {
     CC_HIDE(ss->shockWave);
   }
 
-  if (ufo->isOvert()) {
+  if (ufo->isVisible()) {
     CC_GCT(ufo,kSpriteRay)->stopAllActions();
     ufo->stopAllActions();
     CC_HIDE(ufo);
   }
-/*
-  auto btn=cx::reifyMenuBtn("gameover.png");
-  auto mnu=cx::mkMenu(btn);
-  btn->setPosition(wb.cx,wb.top*0.65);
-  btn->setCallback([=](c::Ref*){
-    cx::runEx(Game::reify(mc_new(f::GCX)));
-  });
-  addItem(mnu);
-  */
+
+  Ende::reify(MGMS(),4);
 }
 
 //////////////////////////////////////////////////////////////////////////////
