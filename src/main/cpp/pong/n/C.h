@@ -51,7 +51,7 @@ public:
   }
 
   __decl_comp_tpid( "n/Paddle")
-  s_arr<KEYCODE,2> kcodes;
+  __decl_arr(KEYCODE,2, kcodes)
   __decl_iz(pnum)
   __decl_md(sstr, snd)
 };
@@ -113,15 +113,23 @@ struct CC_DLL Position : public ecs::Component {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-  __decl_md(c::Vec2, p2p)
-  __decl_md(c::Vec2, p1p)
-  __decl_md(c::Size, pz)
-  __decl_md(c::Size, bz)
-  __decl_md(c::Vec2, bp)
+  __decl_md(CCT_PT, p2p)
+  __decl_md(CCT_PT, p1p)
+  __decl_md(CCT_SZ, pz)
+  __decl_md(CCT_SZ, bz)
+  __decl_md(CCT_PT, bp)
   __decl_bf(poked)
   __decl_iz(pnum )
   __decl_comp_tpid( "n/GVars")
 };
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+j::json fmtGameData(fusii::GMode );
+
+
 
 
 NS_END

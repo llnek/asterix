@@ -21,20 +21,23 @@ NS_BEGIN(pong)
 //
 void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
 
-  auto tile= CC_CSV(c::Float, "TILE");
-  auto wb= cx::visBox();
-  float tw2;
-
   _title->setString(p1.pid + " / " + p2.pid);
-  tw2= cx::getScaledWidth(_title) * 0.5;
+  _title->setAnchorPoint(cx::anchorT());
+  XCFG()->scaleNode(_title, 52);
+
+  auto sz= CC_CSIZE(_title);
+  auto gap= sz.height/2;
+  auto wb= cx::visBox();
+
   _parr[2]= p2;
   _parr[1]= p1;
 
-  _score1->setPosition(wb.cx - tw2 - cx::getScaledWidth(_score1) * 0.5 - 10,
-      wb.top - tile * 6 /2 - 2);
-  _score2->setPosition(wb.cx + tw2 + cx::getScaledWidth(_score2) * 0.5 + 6,
-      wb.top - tile * 6 /2 - 2);
+  _score2->setAnchorPoint(cx::anchorR());
+  _score1->setAnchorPoint(cx::anchorL());
 
+  CC_POS2(_score2, wb.right - gap, wb.top-gap);
+  CC_POS2(_score1, wb.left + gap, wb.top-gap);
+  CC_POS2(_title, wb.cx, wb.top - gap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,26 +49,24 @@ void HUDLayer::endGame() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decoUI() {
-  auto tile = CC_CSV(c::Float, "TILE");
+
   auto wb= cx::visBox();
 
-  _title= cx::reifyBmfLabel("TinyBoxBB");
-  _title->setScale(XCFG()->getScale() * 0.3);
-  _title->setPosition(wb.cx, wb.top - tile * 6 /2 );
+  _title= cx::reifyBmfLabel("title");
   addItem(_title);
 
-  _score1= cx::reifyBmfLabel("OCR", "8");
-  _score1->setScale(XCFG()->getScale() * 0.25);
+  _score1= cx::reifyBmfLabel("dft", "8");
+  XCFG()->scaleNode(_score1, 24);
   addItem(_score1);
 
-  _score2= cx::reifyBmfLabel("OCR", "8");
-  _score2->setScale(XCFG()->getScale() * 0.25);
+  _score2= cx::reifyBmfLabel("dft", "8");
+  XCFG()->scaleNode(_score2, 24);
   addItem(_score2);
 
-  _resultMsg = cx::reifyBmfLabel("CoffeeBuzzed");
+  _resultMsg = cx::reifyBmfLabel("dft","?");
+  XCFG()->scaleNode(_resultMsg, 32);
   CC_HIDE(_resultMsg);
-  _resultMsg->setPosition(wb.cx, 100);
-  _resultMsg->setScale(XCFG()->getScale() * 0.15);
+  CC_POS2(_resultMsg, wb.cx, 100);
   addItem(_resultMsg);
 
   _scores.fill(0);
@@ -109,8 +110,8 @@ void HUDLayer::updateScore(const sstr &color, int pnum, int value) {
 void HUDLayer::drawScores() {
   auto s2 = _scores[2];
   auto s1 = _scores[1];
-  _score1->setString(s::to_string(s1));
-  _score2->setString(s::to_string(s2));
+  _score1->setString(FTOS(s1));
+  _score2->setString(FTOS(s2));
 }
 
 //////////////////////////////////////////////////////////////////////////////

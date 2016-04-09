@@ -25,8 +25,8 @@ class CC_DLL HUDLayer : public f::XLayer {
   __decl_ptr(c::Label, _score2)
   __decl_ptr(c::Label, _score1)
   __decl_ptr(c::Label, _title)
-  s_arr<Player,3> _parr;
-  s_arr<int,3> _scores;
+  __decl_arr(Player,3, _parr)
+  __decl_arr(int,3, _scores)
 
 public:
 

@@ -16,7 +16,6 @@
 #include "MMenu.h"
 #include "Game.h"
 #include "n/C.h"
-#include "n/lib.h"
 
 NS_ALIAS(ws, fusii::odin)
 NS_ALIAS(cx, fusii::ccsx)
@@ -25,61 +24,59 @@ NS_BEGIN(pong)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto tile = CC_CSV(c::Float,"TILE");
   auto c = XCFG()->getColor("dft");
   auto wb = cx::visBox();
   auto lb = cx::reifyBmfLabel(
-      wb.cx, wb.top * 0.9,
-      "JellyBelly", gets("mmenu"));
+      wb.cx, wb.top * 0.8,
+      "title", gets("mmenu"));
 
-  centerImage("gui.mmenu.menu.bg");
+  centerImage("game.bg");
 
-  lb->setScale(XCFG()->getScale());
+  XCFG()->scaleNode(lb, 52);
   lb->setColor(c);
   addItem(lb);
 
-  auto b1 = cx::reifyMenuBtn("online.png");
+  auto b1 = cx::reifyMenuText("btns", "Online");
   b1->setCallback(
       [=](c::Ref*) { this->onPlay3();  });
 
-  auto b3 = cx::reifyMenuBtn("player1.png");
-  b3->setCallback(
+  auto b2 = cx::reifyMenuText("btns", "Play");
+  b2->setCallback(
       [=](c::Ref*) { this->onPlay1();  } );
 
-  s_vec<c::MenuItem*> btns {b1,b3};
-  auto menu= cx::mkVMenu( btns);
-  menu->setPosition(wb.cx, wb.cy);
+  auto b3 = cx::reifyMenuText("btns", "Quit");
+  b3->setCallback(
+      [=](c::Ref*) { cx::prelude();  } );
+
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1,b2,b3},
+      CC_CHT(b1)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto quit= cx::reifyMenuBtn("icon_quit.png");
-  s_vec<c::MenuItem*> bns {back, quit} ;
-  auto ctx = getCtx();
   auto sz= CC_CSIZE(back);
-  auto m2= cx::mkHMenu(bns);
-
-  quit->setColor(c);
-  back->setColor(c);
+  auto gap= sz.width/GOLDEN_RATIO;
+  auto ctx = getCtx();
 
   back->setCallback(
       [=](c::Ref*) { SCAST(MCX*,ctx)->back(); });
+  back->setColor(c);
 
-  quit->setCallback(
-      [=](c::Ref*) { cx::prelude();  });
-
-  m2->setPosition(wb.left+tile+sz.width*1.1,
-                  wb.bottom+tile+sz.height*0.45);
-  addItem(m2);
+  CC_POS2(back,wb.left+gap+sz.width*1.1,
+               wb.bottom+gap+sz.height*0.45);
+  addItem(cx::mkMenu(back));
 
   // audio
   auto audios= cx::reifyAudioIcons();
+  sz=CC_CSIZE(audios[0]);
+  gap=sz.width/GOLDEN_RATIO;
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
-  addAudioIcons( audios,
+  addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-tile, wb.bottom+tile));
+      CCT_PT(wb.right-gap, wb.bottom+gap));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,6 +107,7 @@ void MMenu::onPlayXXX(f::GMode mode, ws::OdinIO *io, j::json obj) {
       Game::reify(
         mc_new3(GCXX, mode, io, obj)));
 }
+
 
 
 NS_END

@@ -22,21 +22,23 @@ NS_BEGIN(pong)
 //
 void Splash::decoUI() {
 
+  auto title= cx::reifySprite("title.png");
   auto wb = cx::visBox();
 
   centerImage("game.bg");
-  addFrame("title.png", c::Vec2(wb.cx, wb.top * 0.9));
+
+  CC_POS2(title, wb.cx, wb.top * 0.8);
+  addAtlasItem("game-pics", title);
 
   auto b = cx::reifyMenuBtn("play.png");
   auto f = []() { cx::prelude(); };
-  auto menu = cx::mkMenu(b);
   auto x= mc_new1(MCX, f);
 
   b->setCallback(
       [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
 
-  b->setPosition(wb.cx, wb.top * 0.1);
-  addItem(menu);
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  addItem(cx::mkMenu(b));
 
 }
 

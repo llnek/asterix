@@ -30,30 +30,30 @@ void Ende::onReplay() {
 //
 void Ende::decoUI() {
 
-  auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
-  auto wz= cx::visRect();
+  auto qn= cx::reifyBmfLabel("title", gets("gameover"));
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  // text msg
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(wb.cx, wb.top * 0.75);
   qn->setColor(XCFG()->getColor("text"));
+  XCFG()->scaleNode(qn, 52);
+  CC_POS2(qn, wb.cx, wb.top * 0.8);
   addItem(qn);
 
   // btns
-  auto b1= cx::reifyMenuBtn("play.png");
-  auto b2= cx::reifyMenuBtn("quit.png");
-  s_vec<c::MenuItem*> btns {b1, b2} ;
-  auto menu= cx::mkVMenu( btns);
+  auto t= cx::reifyMenuText("btns", "Try Again?");
+  auto q= cx::reifyMenuText("btns", "Quit");
 
-  b1->setCallback(
+  t->setCallback(
       [=](c::Ref*) { this->onReplay();  });
 
-  b2->setCallback(
+  q->setCallback(
       [=](c::Ref*) { cx::prelude();  });
 
-  menu->setPosition(wb.cx, wb.cy);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {t,q},
+      CC_CHT(t)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
+
 }
 
 
