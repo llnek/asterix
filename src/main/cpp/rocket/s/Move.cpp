@@ -52,11 +52,11 @@ void Move::process(float dt) {
   if (!ss->jet->isActive()) {
     ss->jet->resetSystem();
   }
-  ss->jet->setRotation(rock->node->getRotation());
+  ss->jet->setRotation(rock->getRotation());
   ss->jet->setPosition(rock->pos());
 
   dw->update(dt);
-  rock->node->setOpacity(dw->energy * 255);
+  rock->setOpacity(dw->energy * 255);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ void Move::processRocket(float dt) {
     auto clockwise = diff.getRPerp();
     float rotatedAngle;
     if (mv->rotationOrientation == ROTATE_COUNTER) {
-      rotatedAngle = atan2 (-1 * clockwise.y, -1 * clockwise.x);
+      rotatedAngle = atan2 (-clockwise.y, -clockwise.x);
     } else {
       rotatedAngle = atan2 (clockwise.y, clockwise.x);
     }
@@ -96,32 +96,32 @@ void Move::processRocket(float dt) {
     mv->setRotationFromVector();
 
     //wrap rotation values to 0-360 degrees
-    if (rock->node->getRotation() > 0) {
+    if (rock->getRotation() > 0) {
       angle= 360;
     } else {
       angle= -360;
     }
-    rock->node->setRotation(
-        fmodf(rock->node->getRotation(), angle));
+    rock->setRotation(
+        fmodf(rock->getRotation(), angle));
   }
 
-  if (mv->targetRotation > rock->node->getRotation() + 180) {
+  if (mv->targetRotation > rock->getRotation() + 180) {
     mv->targetRotation -= 360;
   }
-  if (mv->targetRotation < rock->node->getRotation() - 180) {
+  if (mv->targetRotation < rock->getRotation() - 180) {
     mv->targetRotation += 360;
   }
 
-  rock->node->setPosition(pos);
+  CC_POS1(rock, pos);
 
-  mv->dr = mv->targetRotation - rock->node->getRotation() ;
+  mv->dr = mv->targetRotation - rock->getRotation() ;
   mv->ar = mv->dr * mv->rotationSpring;
   mv->vr += mv->ar ;
   mv->vr *= mv->rotationDamping;
 
-  auto rotationNow = rock->node->getRotation();
+  auto rotationNow = rock->getRotation();
   rotationNow += mv->vr;
-  rock->node->setRotation(rotationNow);
+  rock->setRotation(rotationNow);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -130,39 +130,39 @@ bool Move::collidedWithSides() {
 
   auto mv=CC_GEC(RocketMotion,_rocket,"f/CMove");
   auto rock=CC_GEC(Rocket,_rocket,"f/CPixie");
-  auto pos= rock->pos();
   auto r= rock->radius();
-  auto wz = cx::visRect();
+  auto pos= rock->pos();
+  auto wz = cx::visSize();
   auto wb=cx::visBox();
 
   if (pos.x > wb.right - r) {
-    mv->vel = c::Vec2(mv->vel.x * -1, mv->vel.y);
+    mv->vel = CCT_PT(-mv->vel.x, mv->vel.y);
     mv->rotationOrientation = ROTATE_NONE;
-    rock->node->setPositionX(wb.right-r);
+    rock->setPositionX(wb.right-r);
     mv->setRotationFromVector();
     return true;
   }
 
   if (pos.x < r) {
-    mv->vel = c::Vec2(mv->vel.x * -1, mv->vel.y);
+    mv->vel = CCT_PT(-mv->vel.x, mv->vel.y);
     mv->rotationOrientation = ROTATE_NONE;
-    rock->node->setPositionX(r);
+    rock->setPositionX(r);
     mv->setRotationFromVector();
     return true;
   }
 
   if (pos.y < r) {
-    mv->vel = c::Vec2(mv->vel.x, mv->vel.y * -1);
+    mv->vel = CCT_PT(mv->vel.x, -mv->vel.y);
     mv->rotationOrientation = ROTATE_NONE;
-    rock->node->setPositionY(r);
+    rock->setPositionY(r);
     mv->setRotationFromVector();
     return true;
   }
 
   if (pos.y > wb.top - r) {
-    mv->vel = c::Vec2(mv->vel.x, mv->vel.y * -1);
+    mv->vel = CCT_PT(mv->vel.x, -mv->vel.y );
     mv->rotationOrientation = ROTATE_NONE;
-    rock->node->setPositionY(wb.top - r);
+    rock->setPositionY(wb.top - r);
     mv->setRotationFromVector();
     return true;
   }

@@ -49,13 +49,13 @@ void Collide::process(float dt) {
 
   //collision with planets
   F__LOOP(it,ps) {
-    auto e= *it;
+    auto &e= *it;
     auto p= CC_GEC(Planet,e,"f/CPixie");
     auto pos=p->pos();
-    if (pow(pos.x - rock->node->getPositionX(), 2)
-        + pow(pos.y - rock->node->getPositionY(), 2) <=
+    if (pow(pos.x - rock->getPositionX(), 2) +
+        pow(pos.y - rock->getPositionY(), 2) <=
         pow(rock->radius() * 0.8 + p->radius() * 0.65, 2)) {
-      if (rock->isOvert()) {
+      if (rock->isVisible()) {
         SENDMSG("/game/player/killed");
       }
       break;
@@ -64,25 +64,25 @@ void Collide::process(float dt) {
 
   //collision with comet
   if (ss->comet->isVisible()) {
-    if (pow(ss->comet->getPositionX() - rock->node->getPositionX(), 2) +
-        pow(ss->comet->getPositionY() - rock->node->getPositionY(), 2) <= pow (rock->radius() , 2)) {
-      if (rock->isOvert()) {
+    if (pow(ss->comet->getPositionX() - rock->getPositionX(), 2) +
+        pow(ss->comet->getPositionY() - rock->getPositionY(), 2) <= pow (rock->radius() , 2)) {
+      if (rock->isVisible()) {
         SENDMSG("/game/player/killed");
       }
     }
     ss->comet->setPositionX(ss->comet->getPositionX() + 50 * dt);
-    if (ss->comet->getPositionX() > wb.right * 1.5f) {
+    if (ss->comet->getPositionX() > wb.right * 1.5) {
       ss->comet->stopSystem();
       CC_HIDE(ss->comet);
     }
   }
 
   //collision with star
-  if (pow(ss->star->getPositionX() - rock->node->getPositionX(), 2)
-      + pow(ss->star->getPositionY() - rock->node->getPositionY(), 2) <=
+  if (pow(ss->star->getPositionX() - rock->getPositionX(), 2) +
+      pow(ss->star->getPositionY() - rock->getPositionY(), 2) <=
       pow(rock->radius() * 1.2, 2)) {
 
-    ss->pickup->setPosition(ss->star->getPosition());
+    CC_POS1(ss->pickup, ss->star->getPosition());
     ss->pickup->resetSystem();
     if (dw->energy + 0.25 < 1) {
       dw->energy= dw->energy + 0.25;
@@ -106,7 +106,7 @@ void Collide::process(float dt) {
 
   ss->timeBetweenPickups += dt;
   if (dw->energy == 0) {
-    if (rock->isOvert()) {
+    if (rock->isVisible()) {
       SENDMSG("/game/player/killed");
     }
   }

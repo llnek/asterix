@@ -14,7 +14,7 @@
 #include "Splash.h"
 #include "Game.h"
 #include "Ende.h"
-
+#include "C.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(rocket)
 

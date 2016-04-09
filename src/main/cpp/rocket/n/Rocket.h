@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/COMP.h"
+
 NS_BEGIN(rocket)
 
 enum {
@@ -23,17 +24,23 @@ enum {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Rocket : public f::CPixie {
-  static owner<Rocket*> create();
+class CC_DLL Rocket : public f::CPixie {
+
+  Rocket() {}
+
+public:
+
+  static owner<Rocket*> create() {
+    auto z=mc_new(Rocket);
+    z->initWithSpriteFrameName("rocket.png");
+    z->autorelease();
+    return z;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL RocketMotion : public f::CMove {
-
-  RocketMotion();
-
-public:
+struct CC_DLL RocketMotion : public f::CMove {
 
   void setRotationFromVector() {
     targetRotation= CC_RADIANS_TO_DEGREES(atan2(-vel.y, vel.x));
@@ -50,7 +57,7 @@ public:
   __decl_md(CCT_PT, pivot)
   __decl_fz(angularSpeed)
 
-  static owner<RocketMotion*> create();
+  RocketMotion();
 };
 
 void rocketReset(not_null<Rocket*>, not_null<RocketMotion*>);

@@ -40,8 +40,8 @@ void rocketReset(not_null<Rocket*> r, not_null<RocketMotion*> m) {
   m->pivot = CCT_PT(-1,1);
   m->speed.x = 80;
   m->speed.y = 80;
-  r->node->setRotation(-90);
-  auto angle = CC_DEGREES_TO_RADIANS(r->node->getRotation());
+  r->setRotation(-90);
+  auto angle = CC_DEGREES_TO_RADIANS(r->getRotation());
   m->vel = CCT_PT(m->speed.x * cos(angle), -m->speed.y * sin(angle));
 }
 

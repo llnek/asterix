@@ -19,9 +19,9 @@ NS_BEGIN(rocket)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
+  __decl_ptr(ecs::Node, _drawing)
   __decl_ptr(ecs::Node, _rocket)
   __decl_ptr(ecs::Node, _shared)
-  __decl_ptr(ecs::Node, _drawing)
 
   void processRocket(float);
   bool collidedWithSides();

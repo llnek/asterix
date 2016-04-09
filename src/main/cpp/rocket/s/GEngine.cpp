@@ -26,21 +26,22 @@ NS_BEGIN(rocket)
 void GEngine::initEntities() {
   auto ent= this->reifyNode("Shared", true);
   auto wb=cx::visBox();
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 
   ent= this->reifyNode("RPath", true);
   auto c= RPath::create();
-  ent->checkin(c);
   MGML()->addItem(c,1);
+  ent->checkin(c);
 
-  auto r= new Rocket(cx::reifySprite("rocket.png"));
+  ent= this->reifyNode("Rocket", true);
   auto mv= mc_new(RocketMotion);
-  r->setPos(wb.cx, wb.top * 0.1);
+  auto r= Rocket::create();
+  CC_POS2(r, wb.cx, wb.top * 0.1);
   rocketReset(r,mv);
   MGML()->addAtlasItem(
       "game-pics",
-      r->node, kForeground, kSpriteRocket);
-  ent= this->reifyNode("Rocket", true);
+      r, kForeground, kSpriteRocket);
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
   ent->checkin(mv);
