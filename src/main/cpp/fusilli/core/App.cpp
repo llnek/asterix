@@ -80,6 +80,7 @@ void App::preLaunch(const c::Size &dz) {
 
   auto portrait = XCFG()->isPortrait();
   auto fz = glview->getFrameSize();
+  //auto wz= CC_DTOR()->getWinSize();
   c::Size largeSize;
   c::Size medSize;
   c::Size smallSize;
@@ -140,18 +141,35 @@ void App::preLaunch(const c::Size &dz) {
   XCFG()->setFrameSize(fz);
   XCFG()->runOnce();
 
-  CCLOG("frame size, width=%d, height=%d", (int)fz.width, (int)fz.height);
-  CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
+  // == design size
+  auto wz= CC_DTOR()->getWinSize();
   sstr dbgs;
+
   F__LOOP(it,spaths) {
     auto &s= *it;
     if (dbgs.length() > 0) { dbgs += " > "; }
     dbgs += s;
   }
+
+  CCLOG("screen size, width=%d, height=%d", (int)fz.width, (int)fz.height);
+  CCLOG("win size, width=%d, height=%d", (int)wz.width, (int)wz.height);
+  CCLOG("game size, width=%d, height=%d", (int)dz.width, (int)dz.height);
+
   CCLOG("image search path=%s", dbgs.c_str());
+
+  CCLOG("glview::content scale factor: %f",
+      CC_DTOR()->getOpenGLView()->getContentScaleFactor());
+
+  CCLOG("glview::scale x: %f",
+      CC_DTOR()->getOpenGLView()->getScaleX());
+
+  CCLOG("glview::scale y: %f",
+      CC_DTOR()->getOpenGLView()->getScaleY());
+
   CCLOG("content scale factor=%f", CC_DTOR()->getContentScaleFactor());
   CCLOG("_scale =%f", XCFG()->getScale());
   //CCLOG("platform os=%s", )
+
 
   initAudio();
 }

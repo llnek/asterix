@@ -34,6 +34,10 @@ static const sstr GNP() {
 static c::Sprite* mkIcon(const sstr &png) {
   auto sp= cx::reifySprite(png);
   sp->setScale(SCALEZ);
+  //auto s1= sp->getContentSize();//actual image size
+  //auto s2= sp->getTexture()->getContentSize(); // the png file size
+  //auto s3= sp->getTexture()->getContentSizeInPixels();
+  //auto s4= sp->getBoundingBox().size;
   return sp;
 }
 

@@ -754,39 +754,39 @@ c::SpriteFrame* getSpriteFrame(const sstr &frameid) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorC() { return CCT_PT(0.5, 0.5); }
+const CCT_PT anchorC() { return c::Vec2::ANCHOR_MIDDLE;}
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorT() { return CCT_PT(0.5, 1); }
+const CCT_PT anchorT() { return c::Vec2::ANCHOR_MIDDLE_TOP;}
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorTR() { return CCT_PT(1, 1); }
+const CCT_PT anchorTR() { return c::Vec2::ANCHOR_TOP_RIGHT; }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorR() { return CCT_PT(1, 0.5); }
+const CCT_PT anchorR() { return c::Vec2::ANCHOR_MIDDLE_RIGHT;}
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorBR() { return CCT_PT(1, 0); }
+const CCT_PT anchorBR() { return c::Vec2::ANCHOR_BOTTOM_RIGHT; }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorB() { return CCT_PT(0.5, 0); }
+const CCT_PT anchorB() { return c::Vec2::ANCHOR_MIDDLE_BOTTOM; }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorBL() { return CCT_PT(0, 0); }
+const CCT_PT anchorBL() { return c::Vec2::ANCHOR_BOTTOM_LEFT; }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorL() { return CCT_PT(0, 0.5); }
+const CCT_PT anchorL() { return c::Vec2::ANCHOR_MIDDLE_LEFT; }
 
 //////////////////////////////////////////////////////////////////////////
 //
-const CCT_PT anchorTL() { return CCT_PT(0, 1); }
+const CCT_PT anchorTL() { return c::Vec2::ANCHOR_TOP_LEFT; }
 
 //////////////////////////////////////////////////////////////////////////
 // not used for now.
