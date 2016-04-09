@@ -21,15 +21,6 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GCXX : public f::GCX {
-  GCXX(f::GMode m, ws::OdinIO *io, j::json pms) : GCX(m,io) {
-    _data=pms;
-  }
-  __decl_md(j::json, _data)
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
 struct CC_DLL Game : public f::GameScene {
 
   virtual void sendMsgEx(const MsgTopic&, void*);
@@ -41,6 +32,15 @@ struct CC_DLL Game : public f::GameScene {
   __decl_create_scene_ctx(Game)
   __decl_deco_ui()
 
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GCXX : public f::GCX {
+  GCXX(f::GMode m, ws::OdinIO *io, j::json pms) : GCX(m,io) {
+    _data=pms;
+  }
+  __decl_md(j::json, _data)
 };
 
 

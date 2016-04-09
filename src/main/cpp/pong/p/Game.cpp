@@ -29,13 +29,13 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  void onMotion(const c::Vec2&, bool isTouch);
-
-  virtual void onMouseMotion(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
   virtual void onTouchMotion(c::Touch*);
   virtual void onInited();
 
-  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
+
   __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
@@ -50,11 +50,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   void updatePoints(j::json);
 
   void showMenu();
-  void doDone(int);
+  void onEnd(int);
 
+  __decl_vec(ecs::Node*, _paddles)
   __decl_ptr(ecs::Node, _arena)
   __decl_ptr(ecs::Node, _ball)
-  s_vec<ecs::Node*> _paddles;
 
 };
 
@@ -76,24 +76,18 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *t) {
-  onMotion(t->getLocation(), true);
+  onMouseMotion(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  onMotion(loc,false);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onMotion(const c::Vec2 &loc, bool isTouch) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
 
   auto box= MGMS()->getEnclosureBox();
   auto wb= cx::visBox();
 
   F__LOOP(it, _paddles) {
-    auto e= *it;
+    auto &e= *it;
     if (! e->has("f/CGesture")) {
     continue; }
     auto p= CC_GEC(Paddle,e,"n/Paddle");
@@ -107,9 +101,8 @@ void GLayer::onMotion(const c::Vec2 &loc, bool isTouch) {
       if (loc.y < y) { break; }
     }
     x=loc.x;
-    auto cur= cx::clamp(c::Vec2(x,y), box);
+    auto cur= cx::clamp(CCT_PT(x,y), box);
     p->setPos(cur.x, cur.y);
-    break;
   }
 
 }
@@ -207,10 +200,10 @@ void GLayer::onInited() {
 
   ss->pz= c::Size( ps.width, ps.height);
   ss->bz= c::Size( bs.width, bs.height);
-  ss->bp= c::Vec2( wb.cx, wb.cy);
+  ss->bp= CCT_PT( wb.cx, wb.cy);
 
-  ss->p1p= c::Vec2(wb.cx, p1y);
-  ss->p2p= c::Vec2(wb.cx, p2y);
+  ss->p1p= CCT_PT(wb.cx, p1y);
+  ss->p2p= CCT_PT(wb.cx, p2y);
 
   auto ball=CC_GEC(Ball, _ball, "n/Ball");
   ball->inflate(ss->bp.x, ss->bp.y);
