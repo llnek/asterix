@@ -38,9 +38,9 @@ struct CC_DLL Game : public f::GameScene {
 //
 struct CC_DLL GCXX : public f::GCX {
   GCXX(f::GMode m, ws::OdinIO *io, j::json pms) : GCX(m,io) {
-    _data=pms;
+    data=pms;
   }
-  __decl_md(j::json, _data)
+  __decl_md(j::json, data)
 };
 
 

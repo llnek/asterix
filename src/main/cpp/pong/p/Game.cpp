@@ -111,21 +111,19 @@ void GLayer::onMouseMotion(const CCT_PT &loc) {
 //
 void GLayer::decoUI() {
 
-  centerImage("game.bg");
-
-  regoAtlas("game-pics");
-  regoAtlas("lang-pics");
-
   auto ctx = (GCXX*) MGMS()->getCtx();
-  auto pnum= JS_INT(ctx->_data["pnum"]);
-  auto ppids = ctx->_data["ppids"];
+  auto pnum= JS_INT(ctx->data["pnum"]);
+  auto ppids = ctx->data["ppids"];
   sstr p2k;
   sstr p1k;
   sstr p2n;
   sstr p1n;
 
+  centerImage("game.bg");
+  regoAtlas("game-pics");
+
   J__LOOP(it, ppids) {
-    auto &arr=  it.value();
+    auto &arr= it.value();
     auto n= JS_INT(arr[0]);
     auto s= JS_STR(arr[1]);
     switch (n) {
@@ -140,13 +138,13 @@ void GLayer::decoUI() {
       break;
 
       default:
-      throw "bad pnum " + s::to_string(n);
+      throw "bad pnum " + FTOS(n);
     }
   }
 
   deco(pnum, p1k, p1n, p2k, p2n);
 
-  CCLOG("seed =\n%s", ctx->_data.dump(2).c_str());
+  CCLOG("seed =\n%s", ctx->data.dump(2).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -176,16 +174,18 @@ void GLayer::deco(int cur, const sstr &p1k, const sstr &p1n,
   p2.setName(p2k,p2n);
   p1.setName(p1k,p1n);
 
-  this->_engine= mc_new3(GEngine, cur, p1, p2);
+  _engine= mc_new3(GEngine, cur, p1, p2);
   getHUD()->regoPlayers(p1,p2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+
   _arena= _engine->getNodes("n/Players")[0];
   _ball= _engine->getNodes("n/Ball")[0];
   _engine->getNodes("n/Paddle", _paddles);
+
   //
   auto ss= CC_GEC(GVars, _arena, "n/GVars");
   auto world = MGMS()->getEnclosureBox();
@@ -198,8 +198,8 @@ void GLayer::onInited() {
   auto p2y = world.top * 0.9 - bs.height - HHZ(ps);
   auto p1y = world.top * 0.1 + bs.height + HHZ(ps);
 
-  ss->pz= c::Size( ps.width, ps.height);
-  ss->bz= c::Size( bs.width, bs.height);
+  ss->pz= CCT_SZ( ps.width, ps.height);
+  ss->bz= CCT_SZ( bs.width, bs.height);
   ss->bp= CCT_PT( wb.cx, wb.cy);
 
   ss->p1p= CCT_PT(wb.cx, p1y);
@@ -215,7 +215,7 @@ void GLayer::onInited() {
 //
 void GLayer::initPaddles(GVars *ss) {
   F__LOOP(it, _paddles) {
-    auto e = *it;
+    auto &e = *it;
     auto p= CC_GEC(Paddle,e,"n/Paddle");
     if (p->pnum == 2) { p->inflate(ss->p2p.x, ss->p2p.y); }
     if (p->pnum == 1) { p->inflate(ss->p1p.x, ss->p1p.y); }
@@ -234,16 +234,16 @@ void GLayer::onWinner(const sstr &color, int pnum, int score) {
   getHUD()->updateScore(color, pnum, score);
   int win= getHUD()->isDone();
   if (win > 0) {
-    doDone(win);
+    onEnd(win);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::doDone(int p) {
-  this->setOpacity(0.1 * 255);
+void GLayer::onEnd(int p) {
   getHUD()->drawResult(p);
   getHUD()->endGame();
+  MGMS()->stop();
   surcease();
   Ende::reify(MGMS(), 4);
 }
@@ -290,7 +290,7 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   else
   if (topic == "/hud/end") {
     auto msg= (j::json*) m;
-    y->doDone(
+    y->onEnd(
         //JS_STR(msg->operator[]("winner")),
         JS_INT(msg->operator[]("winner")));
   }
