@@ -76,7 +76,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void netSend(not_null<OdinIO*>, MType, EType, j::json body);
+void netSend(not_null<OdinIO*>, MType, EType, const j::json &body);
 void netSend(not_null<OdinIO*>, not_null<OdinEvent*>);
 void netSendMsg(not_null<OdinIO*>, const j::json &fullmsg);
 

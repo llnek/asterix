@@ -26,14 +26,17 @@ void Splash::decoUI() {
   auto wb = cx::visBox();
 
   centerImage("game.bg");
+  regoAtlas("game-pics");
 
   CC_POS2(title, wb.cx, wb.top * 0.8);
   addAtlasItem("game-pics", title);
 
-  auto b = cx::reifyMenuBtn("play.png");
+    auto b = cx::reifyMenuText("btns","PLAY");
   auto f = []() { cx::prelude(); };
   auto x= mc_new1(MCX, f);
 
+  b->setColor(c::Color3B::WHITE);
+  XCFG()->scaleNode(b,36);
   b->setCallback(
       [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
 

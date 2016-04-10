@@ -31,20 +31,27 @@ void MMenu::decoUI() {
       "title", gets("mmenu"));
 
   centerImage("game.bg");
+  regoAtlas("cc-pics");
 
   XCFG()->scaleNode(lb, 52);
   lb->setColor(c);
   addItem(lb);
 
   auto b1 = cx::reifyMenuText("btns", "Online");
+  b1->setColor(c::Color3B::WHITE);
+  XCFG()->scaleNode(b1,36);
   b1->setCallback(
       [=](c::Ref*) { this->onPlay3();  });
 
   auto b2 = cx::reifyMenuText("btns", "Play");
+  b2->setColor(c::Color3B::WHITE);
+  XCFG()->scaleNode(b2,36);
   b2->setCallback(
       [=](c::Ref*) { this->onPlay1();  } );
 
   auto b3 = cx::reifyMenuText("btns", "Quit");
+  b3->setColor(c::Color3B::WHITE);
+  XCFG()->scaleNode(b3,36);
   b3->setCallback(
       [=](c::Ref*) { cx::prelude();  } );
 
@@ -63,8 +70,9 @@ void MMenu::decoUI() {
       [=](c::Ref*) { SCAST(MCX*,ctx)->back(); });
   back->setColor(c);
 
-  CC_POS2(back,wb.left+gap+sz.width*1.1,
-               wb.bottom+gap+sz.height*0.45);
+  back->setAnchorPoint(cx::anchorBL());
+  CC_POS2(back,wb.left+gap,
+               wb.bottom+gap);
   addItem(cx::mkMenu(back));
 
   // audio

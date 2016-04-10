@@ -60,11 +60,19 @@ void Config::initLevels() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
   addImage("game.bg", CC_STR("pics/bg.jpg"));
 
   addEffect("game_end", CC_STR("sfx/end.mp3"));
@@ -74,16 +82,10 @@ void Config::initAssets() {
   addEffect("click", CC_STR("sfx/click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));
+  addFont("title", CC_STR("fonts/en/Foo.fnt"));
   addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
-  addFont("dft", CC_STR("fonts/en/Quicksand.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
   addFont("text", CC_STR("fonts/en/Verdana.ttf"));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-float Config::scaleFont(float pt) {
-  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,6 +98,7 @@ void Config::handleResolution(const CCT_SZ &rs) {
 //
 void Config::runOnce() {
   cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 

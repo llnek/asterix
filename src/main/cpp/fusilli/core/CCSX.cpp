@@ -198,15 +198,17 @@ const s_arr<c::MenuItem*,2> reifyAudioIcons() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuText(const sstr &fnt, float pt, const sstr &txt) {
+c::MenuItem* reifyMenuText(const sstr &fnt, float pt, const sstr &txt, const c::Color3B &c) {
   auto z= reifyLabel(fnt, pt, txt);
+    z->setColor(c);
   return c::MenuItemLabel::create(z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::MenuItem* reifyMenuText(const sstr &fnt, const sstr &txt) {
+c::MenuItem* reifyMenuText(const sstr &fnt, const sstr &txt, const c::Color3B &c) {
   auto z= reifyBmfLabel(fnt,txt);
+    z->setColor(c);
   return c::MenuItemLabel::create(z);
 }
 

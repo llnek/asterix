@@ -19,7 +19,7 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Paddle*> Paddle:create(nt pnum) {
+owner<Paddle*> Paddle::create(int pnum) {
   auto z= mc_new1(Paddle, pnum);
   auto res="";
   if (pnum == 2) {
