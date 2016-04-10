@@ -41,7 +41,7 @@ bool Collide::update(float dt) {
 void Collide::process(float dt) {
   auto ba = CC_GEC(Ball, _ball, "n/Ball");
   F__LOOP(it, _paddles) {
-    auto e= *it;
+    auto &e= *it;
     auto p= CC_GEC(Paddle,e, "n/Paddle");
     if (cx::collide(p, ba)) {
       check(e, _ball);
@@ -55,8 +55,8 @@ void Collide::check(ecs::Node *p, ecs::Node *ball) {
   auto pad= CC_GEC(Paddle, p, "n/Paddle");
   auto ba = CC_GEC(Ball, ball, "n/Ball");
   auto bm= CC_GEC(f::CMove, ball, "f/CMove");
-  auto hw2= cx::halfHW(ba->node);
-  auto bb4 = cx::bbox4(pad->node);
+  auto hw2= cx::halfHW(ba);
+  auto bb4 = cx::bbox4(pad);
   auto pos = ba->pos();
   auto x= pos.x;
   auto y= pos.y;
@@ -71,7 +71,7 @@ void Collide::check(ecs::Node *p, ecs::Node *ball) {
     y = bb4.bottom - hw2.height - 1;
   }
 
-  ba->setPos(x,y);
+  CC_POS2(ba, x,y);
   cx::sfxPlay(pad->snd);
 }
 

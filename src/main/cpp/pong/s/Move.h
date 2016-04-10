@@ -26,8 +26,13 @@ class CC_DLL Move : public ecs::System {
   void doit(ecs::Node*, float);
   void notifyServer(ecs::Node*, int);
   void clamp(c::Node*);
-    void process(float);
-    
+  void process(float);
+
+  __decl_vec(ecs::Node*, _paddles)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ball)
+
+
 public:
 
   __decl_sys_priority( ecs::Move)
@@ -39,9 +44,6 @@ public:
   : System(e)
   {}
 
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ball)
-  s_vec<ecs::Node*> _paddles;
 };
 
 

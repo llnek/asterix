@@ -19,6 +19,21 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+owner<Paddle*> Paddle:create(nt pnum) {
+  auto z= mc_new1(Paddle, pnum);
+  auto res="";
+  if (pnum == 2) {
+    res= "green_paddle.png";
+  } else {
+    res= "red_paddle.png";
+  }
+  z->initWithSpriteFrameName(res);
+  z->autorelease();
+  return z;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 j::json fmtGameData(f::GMode m) {
 
   if (m == f::GMode::TWO) {

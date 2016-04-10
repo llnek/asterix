@@ -34,6 +34,10 @@ class CC_DLL Net : public ecs::System {
   void reposPaddles();
   void reposNodes();
 
+  __decl_vec(ecs::Node*, _paddles)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ball)
+
 public:
 
   __decl_sys_priority( ecs::NetPlay)
@@ -45,9 +49,6 @@ public:
   : System(e)
   {}
 
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ball)
-  s_vec<ecs::Node*> _paddles;
 
 };
 

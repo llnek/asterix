@@ -50,7 +50,7 @@ void GEngine::initEntities() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::mkArena() {
-  auto ent= this->reifyNode("Arena");
+  auto ent= this->reifyNode("Arena", true);
   auto ps= mc_new(Players);
   auto ss= mc_new(GVars);
 
@@ -70,7 +70,7 @@ void GEngine::mkArena() {
 void GEngine::mkBall() {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["BALL+SPEED"]);
-  auto ent = this->reifyNode("Ball");
+  auto ent = this->reifyNode("Ball", true);
   auto vy = sd * cx::randSign();
   auto vx = sd * cx::randSign();
 
@@ -79,11 +79,10 @@ void GEngine::mkBall() {
     vx = 0;
   }
 
-  auto sp= cx::reifySprite("pongball.png");
-  auto b= mc_new1(Ball, sp);
   auto m= mc_new(f::CMove);
+  auto b= Ball::create();
 
-  MGML()->addAtlasItem("game-pics", sp);
+  MGML()->addAtlasItem("game-pics", b);
   m->vel.x=vx;
   m->vel.y=vy;
 
@@ -95,26 +94,20 @@ void GEngine::mkBall() {
 //
 void GEngine::mkOnePaddle(const Player &p) {
 
+  auto ent = this->reifyNode("Paddle", true);
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sd= JS_FLOAT(cfg["PADDLE+SPEED"]);
-  auto ent = this->reifyNode("Paddle");
   auto cur= _parr[0].pnum;
   float lp=0;
   sstr res;
 
-  if (p.pnum == 2) {
-    res= "green_paddle.png";
-  } else {
-    res= "red_paddle.png";
-  }
-
-  auto sp = cx::reifySprite(res);
+  auto sp = Paddle::create(p.pnum);
   auto m= mc_new(f::CMove);
 
-  ent->checkin(mc_new2(Paddle, sp, p.pnum));
   ent->checkin(mc_new1(Position, lp));
-  ent->checkin(m);
   ent->checkin(mc_new1(Player, p));
+  ent->checkin(sp);
+  ent->checkin(m);
 
   MGML()->addAtlasItem("game-pics", sp);
   m->speed.x=sd;

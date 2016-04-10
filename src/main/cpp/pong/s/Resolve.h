@@ -25,6 +25,10 @@ class CC_DLL Resolve : public ecs::System {
   void onWin(int);
   void process(float);
 
+  __decl_vec(ecs::Node*, _paddles)
+  __decl_ptr(ecs::Node, _arena);
+  __decl_ptr(ecs::Node, _ball);
+
 public:
 
   __decl_sys_priority( ecs::Resolve)
@@ -36,9 +40,6 @@ public:
   : System(e)
   {}
 
-  __decl_ptr(ecs::Node, _arena);
-  __decl_ptr(ecs::Node, _ball);
-  s_vec<ecs::Node*> _paddles;
 
 };
 

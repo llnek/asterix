@@ -49,7 +49,7 @@ void Resolve::process(float dt) {
 //
 int Resolve::checkNodes() {
   F__LOOP(it, _paddles) {
-    auto e= *it;
+    auto &e= *it;
     auto winner = check(e);
     if (winner > 0) {
       return winner;
@@ -73,7 +73,7 @@ void Resolve::onWin(int winner) {
 
   bm->vel.x = speed * cx::randSign();
   bm->vel.y = speed * cx::randSign();
-  ba->setPos(ss->bp.x, ss->bp.y);
+  CC_POS2(ba, ss->bp.x, ss->bp.y);
 
   auto msg= j::json({
         {"score", 1},
@@ -93,14 +93,16 @@ int Resolve::check(ecs::Node *node) {
   auto bp= b->pos();
 
   if (pc == 1) {
-    return bp.y < cx::getBottom(pd->node) ? 2 : 0;
+    return bp.y < cx::getBottom(pd) ? 2 : 0;
   }
 
   if (pc == 2) {
-    return bp.y > cx::getTop(pd->node) ? 1 : 0;
+    return bp.y > cx::getTop(pd) ? 1 : 0;
   }
 
 }
+
+
 
 NS_END
 

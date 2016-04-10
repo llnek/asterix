@@ -40,7 +40,7 @@ void Move::process(float dt) {
   auto ps = CC_GEC(Players, _arena,"n/Players");
 
   F__LOOP(it, _paddles) {
-    auto e= *it;
+    auto &e= *it;
     auto p = CC_GEC(Paddle,e,"n/Paddle");
     auto f = CC_GEC(Faux,e,"n/Faux");
     auto &y= ps->parr[p->pnum];
@@ -69,7 +69,7 @@ void Move::simuMove(ecs::Node *node, float dt) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto delta= dt * JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto world= MGMS()->getEnclosureBox();
-  auto hw2 = cx::halfHW(pad->node);
+  auto hw2 = cx::halfHW(pad);
   auto pos = pad->pos();
   f::MaybeFloat x;
   f::MaybeFloat y;
@@ -83,12 +83,12 @@ void Move::simuMove(ecs::Node *node, float dt) {
   }
 
   if (! x.isNone()) {
-    pad->setPos(x.get(), pos.y);
-    clamp(pad->node);
+    CC_POS2(pad, x.get(), pos.y);
+    clamp(pad);
   }
   if (! y.isNone()) {
-    pad->setPos(pos.x, y.get());
-    clamp(pad->node);
+    CC_POS2(pad, pos.x, y.get());
+    clamp(pad);
   }
 }
 
@@ -98,7 +98,7 @@ void Move::simuMove(ecs::Node *node, float dt) {
 void Move::moveRobot(ecs::Node *node, float dt) {
   auto pad= CC_GEC(Paddle,node, "n/Paddle");
   auto ba= CC_GEC(Ball, _ball,"n/Ball");
-    auto bm=CC_GEC(f::CMove, _ball, "f/CMove");
+  auto bm=CC_GEC(f::CMove, _ball, "f/CMove");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto speed= JS_FLOAT(cfg["PADDLE+SPEED"]);
   auto pos = pad->pos();
@@ -117,13 +117,13 @@ void Move::moveRobot(ecs::Node *node, float dt) {
   }
 
   if (! x.isNone()) {
-    pad->setPos(x.get(),pos.y);
-    clamp(pad->node);
+    CC_POS2(pad, x.get(),pos.y);
+    clamp(pad);
   }
 
   if (! y.isNone()) {
-    pad->setPos(pos.x, y.get());
-    clamp(pad->node);
+    CC_POS2(pad, pos.x, y.get());
+    clamp(pad);
   }
 }
 
@@ -133,15 +133,15 @@ void Move::processBall(float dt) {
   auto m= CC_GEC(f::CMove, _ball, "f/CMove");
   auto b= CC_GEC(Ball, _ball, "n/Ball");
   auto world= MGMS()->getEnclosureBox();
-  c::Vec2 outPos;
-  c::Vec2 outVel;
+  CCT_PT outPos;
+  CCT_PT outVel;
   auto rc= cx::traceEnclosure(
-      dt,world, cx::bbox4(b->node),
+      dt,world, cx::bbox4(b),
       m->vel, outPos, outVel);
 
+  CC_POS2(b, outPos.x,outPos.y);
   m->vel.x = outVel.x;
   m->vel.y = outVel.y;
-  b->setPos(outPos.x,outPos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,16 +160,16 @@ void Move::doit(ecs::Node *node, float dt) {
   if (MGML()->keyPoll(cs[1])) {
     x = pos.x + s;
     y = pos.y;
-    p->setPos(x,y);
+    CC_POS2(p,x,y);
   }
 
   if (MGML()->keyPoll(cs[0])) {
     x = pos.x - s;
     y = pos.y;
-    p->setPos(x,y);
+    CC_POS2(p, x,y);
   }
 
-  clamp(p->node);
+  clamp(p);
 
   // below is really for wsock stuff
   if (! MGMS()->isOnline()) {
@@ -242,12 +242,12 @@ void Move::clamp(c::Node *sprite) {
 
   if (!x.isNone()) {
     auto pos= sprite->getPosition();
-    sprite->setPosition(x.get(), pos.y);
+    CC_POS2(sprite, x.get(), pos.y);
   }
 
   if (!y.isNone()) {
     auto pos= sprite->getPosition();
-    sprite->setPosition(pos.x, y.get());
+    CC_POS2(sprite, pos.x, y.get());
   }
 }
 

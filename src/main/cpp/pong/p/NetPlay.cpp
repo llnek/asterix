@@ -17,7 +17,7 @@
 #include "NetPlay.h"
 #include "Game.h"
 #include "MMenu.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(ws, fusii::odin)
@@ -30,22 +30,21 @@ static int PASSTAG= (int) 'p';
 //
 void NetPlay::showWaitOthers() {
 
-  auto qn= cx::reifyBmfLabel("OCR", gets("waitother"));
-  auto b1= cx::reifyMenuBtn("cancel.png");
-  auto menu = cx::mkMenu(b1);
+  auto qn= cx::reifyLabel("text", 16, gets("waitother"));
+  auto b1= cx::reifyMenuText("btns", "Cancel");
   auto wb = cx::visBox();
 
   removeAll();
 
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(wb.cx, wb.top * 0.75);
+  CC_POS2(qn, wb.cx, wb.top * 0.8);
   addItem(qn);
 
+  XCFG()->scaleNode(b1,24);
   b1->setCallback(
       [=](c::Ref*) { this->onCancel(); });
 
-  b1->setPosition(wb.cx, wb.top * 0.1);
-  addItem(menu);
+  CC_POS2(b1, wb.cx, wb.top * 0.2);
+  addItem(cx::mkMenu(b1));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,7 +54,7 @@ void NetPlay::onStart(ws::OdinEvent *evt) {
   auto obj= fmtGameData(f::GMode::NET);
   auto ctx = getCtx();
 
-  obj["ppids"] = evt->_doco["source"]["ppids"];
+  obj["ppids"] = evt->getDoco()["source"]["ppids"];
   obj["pnum"]= _player;
 
   SCAST(NPCX*, ctx)->yes(_odin,obj);
@@ -74,7 +73,7 @@ void NetPlay::onCancel() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onPlayReply(ws::OdinEvent *evt) {
-  _player= JS_INT( evt->_doco["pnum"]);
+  _player= JS_INT( evt->getDoco()["pnum"]);
   assert(_player > 0);
   CCLOG("player %d: ok", _player);
   showWaitOthers();
@@ -83,7 +82,7 @@ void NetPlay::onPlayReply(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::networkEvent(ws::OdinEvent *evt) {
-  switch (evt->_code) {
+  switch (evt->getCode()) {
     case ws::EType::PLAYER_JOINED:
       //TODO
       //CCLOG("another player joined room: ", evt.source.puid);
@@ -99,7 +98,7 @@ void NetPlay::networkEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::sessionEvent(ws::OdinEvent *evt) {
-  switch (evt->_code) {
+  switch (evt->getCode()) {
     case ws::EType::PLAYREQ_OK:
       onPlayReply(evt);
     break;
@@ -109,8 +108,8 @@ void NetPlay::sessionEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::odinEvent(ws::OdinEvent *evt) {
-  CCLOG("odin event = %s", evt->_doco.dump(2).c_str());
-  switch (evt->_type) {
+  CCLOG("odin event = %s", evt->getDoco().dump(2).c_str());
+  switch (evt->getType()) {
     case ws::MType::NETWORK:
       networkEvent(evt);
     break;
@@ -123,8 +122,8 @@ void NetPlay::odinEvent(ws::OdinEvent *evt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::onLogin() {
-  auto u= (c::ui::TextField*) getChildByTag( USERTAG);
-  auto p= (c::ui::TextField*) getChildByTag( PASSTAG);
+  auto u= (c::ui::TextField*) CC_GCT(this,USERTAG);
+  auto p= (c::ui::TextField*) CC_GCT(this,PASSTAG);
   auto uid= u->getString();
   auto pwd= p->getString();
 
@@ -142,14 +141,12 @@ void NetPlay::onLogin() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void NetPlay::decoUI() {
-  auto qn= cx::reifyBmfLabel("OCR", gets("signinplay"));
+  auto qn= cx::reifyLabel("text", 24, gets("signinplay"));
   auto wb= cx::visBox();
 
-  centerImage("gui.mmenu.menu.bg");
+  centerImage("game.bg");
 
-  // text msg
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(wb.cx, wb.top * 0.75);
+  CC_POS2(qn, wb.cx, wb.top * 0.8);
   addItem(qn);
 
   // editbox for user
@@ -158,10 +155,10 @@ void NetPlay::decoUI() {
   uid->setMaxLengthEnabled(true);
   uid->setMaxLength(16);
   uid->setTouchEnabled(true);
-  uid->setFontName( "Arial");
+  uid->setFontName("Verdana");
   uid->setFontSize( 18);
   uid->setPlaceHolder(gets("userid"));
-  uid->setPosition(c::Vec2(wb.cx, wb.cy+HHZ(bxz)+2));
+  uid->setPosition(CCT_PT(wb.cx, wb.cy+HHZ(bxz)+2));
   addItem(uid, 0, USERTAG);
 
   // editbox for password
@@ -170,17 +167,15 @@ void NetPlay::decoUI() {
   pwd->setPasswordStyleText("*");
   pwd->setTouchEnabled(true);
   pwd->setMaxLength(16);
-  pwd->setFontName( "Arial");
+  pwd->setFontName("Verdana");
   pwd->setFontSize( 18);
   pwd->setPlaceHolder( gets("passwd"));
-  pwd->setPosition(c::Vec2(wb.cx, wb.cy-HHZ(bxz)-2));
+  pwd->setPosition(CCT_PT(wb.cx, wb.cy-HHZ(bxz)-2));
   addItem(pwd, 0, PASSTAG);
 
   // btns
-  auto b1= cx::reifyMenuBtn("continue.png");
-  auto b2= cx::reifyMenuBtn("cancel.png");
-  s::vector<c::MenuItem*> btns {b1, b2};
-  auto menu= cx::mkVMenu(btns);
+  auto b1= cx::reifyMenuText("btns", "Continue");
+  auto b2= cx::reifyMenuText("btns", "Cancel");
 
   b1->setCallback(
       [=](c::Ref*) { this->onLogin(); });
@@ -188,7 +183,9 @@ void NetPlay::decoUI() {
   b2->setCallback(
       [=](c::Ref*) { this->onCancel(); });
 
-  menu->setPosition(wb.cx, wb.top * 0.1);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1, b2},
+      CC_CHT(b1)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.top * 0.2);
   addItem(menu);
 }
 

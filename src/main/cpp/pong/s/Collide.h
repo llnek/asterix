@@ -21,8 +21,13 @@ NS_BEGIN(pong)
 //
 class CC_DLL Collide : public ecs::System {
 
-    void check(ecs::Node*, ecs::Node*);
+  void check(ecs::Node*, ecs::Node*);
   void process(float);
+
+  __decl_vec(ecs::Node*, _paddles)
+  __decl_ptr(ecs::Node, _arena)
+  __decl_ptr(ecs::Node, _ball)
+
 
 public:
 
@@ -35,9 +40,6 @@ public:
   : System(e)
   {}
 
-  __decl_ptr(ecs::Node, _arena)
-  __decl_ptr(ecs::Node, _ball)
-  s_vec<ecs::Node*> _paddles;
 
 };
 

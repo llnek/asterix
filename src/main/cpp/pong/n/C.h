@@ -20,9 +20,14 @@ NS_BEGIN(pong)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Ball : public f::CPixie {
-  Ball(not_null<c::Node*> s)
-    : CPixie(s) {
+class CC_DLL Ball : public f::CPixie {
+  Ball() {}
+public:
+  static owner<Ball*> create() {
+    auto z= mc_new(Ball);
+    z->initWithSpriteFrameName("pongball.png");
+    z->autorelease();
+    return z;
   }
   __decl_comp_tpid( "n/Ball")
 };
@@ -41,14 +46,15 @@ class CC_DLL Paddle : public f::CPixie {
       KEYCODE::KEY_RIGHT_ARROW };
   }
 
-public:
-
-  Paddle(not_null<c::Node*> s, int pnum)
-    : CPixie(s) {
+  Paddle(int pnum) {
     this->kcodes = pnum == 1 ? p1Keys() : p2Keys();
     this->snd = pnum == 1 ? "x_hit" : "o_hit";
     this->pnum= pnum;
   }
+
+public:
+
+  static owner<Paddle*> create(int);
 
   __decl_comp_tpid( "n/Paddle")
   __decl_arr(KEYCODE,2, kcodes)

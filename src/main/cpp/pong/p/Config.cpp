@@ -67,11 +67,11 @@ void Config::initAssets() {
   addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game.bg", CC_STR("pics/bg.jpg"));
 
-  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
-  addEffect("x_hit", CC_STR("sfx/ElevatorBeep.mp3"));
-  addEffect("o_hit", CC_STR("sfx/MineBeep.mp3"));
-  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
-  addEffect("click", CC_STR("sfx/button-click.wav"));
+  addEffect("game_end", CC_STR("sfx/end.mp3"));
+  addEffect("x_hit", CC_STR("sfx/x_hit.mp3"));
+  addEffect("o_hit", CC_STR("sfx/o_hit.mp3"));
+  addEffect("game_quit", CC_STR("sfx/quit.mp3"));
+  addEffect("click", CC_STR("sfx/click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
   addFont("title", CC_STR("fonts/en/ChunkyBlocks.fnt"));

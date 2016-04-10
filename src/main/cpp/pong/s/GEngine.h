@@ -24,7 +24,8 @@ class CC_DLL GEngine : public ecs::Engine {
   void mkOnePaddle(const Player&);
   void mkBall();
   void mkArena();
-  s_arr<Player,3> _parr;
+
+  __decl_arr(Player,3, _parr)
 
 public:
 
