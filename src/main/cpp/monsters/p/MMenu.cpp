@@ -21,23 +21,12 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto wz= cx::visRect();
+  auto retry = cx::reifyMenuText("btns", "Restart");
+  auto quit = cx::reifyMenuText("btns", "Quit");
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-      resume,retry,splash
-  }, CC_ZH(wz.size)/4);
-
-  resume->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::resumeMusic();
-    }
-  });
+  centerImage("game.bg");
 
   retry->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
@@ -45,34 +34,36 @@ void MMenu::decoUI() {
     if (XCFG()->hasAudio()) {
       cx::stopMusic();
     }
-    cx::runEx(Game::reify( new GameCtx() ));
+    cx::runEx(Game::reify(mc_new(GameCtx)));
   });
 
-  splash->setCallback([=](c::Ref*) {
+  quit->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     cx::pop();
     if (XCFG()->hasAudio()) {
       cx::stopMusic();
     }
-    cx::runEx(Splash::reify());
+    cx::prelude();
   });
 
-  menu->setPosition(wb.cx,wb.cy);
-  centerImage("gui.bg");
+  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
+      retry,quit
+  }, CC_CHT(quit)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx,wb.cy);
   addItem(menu);
 
   // audio
   auto audios= cx::reifyAudioIcons();
   auto sz= CC_CSIZE(audios[0]);
-  auto gap= CC_ZW(sz) /4;
   auto c= cx::white();
 
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
+  auto gap= CC_CHT(audios[0])/GOLDEN_RATIO;
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
+      CCT_PT(wb.right-gap, wb.bottom+gap));
 
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();

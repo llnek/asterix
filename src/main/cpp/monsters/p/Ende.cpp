@@ -22,23 +22,24 @@ NS_BEGIN(monsters)
 //
 void Ende::decoUI() {
 
-  auto label= cx::reifyBmfLabel("dft", "Game Over");
+  auto label= cx::reifyBmfLabel("title", "Game Over");
   auto wb= cx::visBox();
 
-  label->setPosition(wb.cx, wb.top * 0.6);
+  CC_POS2(label, wb.cx, wb.top * 0.6);
   addItem(label);
 
   auto replay = c::MenuItemLabel::create(
-      cx::reifyBmfLabel("dft", "Replay"),
+      cx::reifyBmfLabel("btns", "Try Again?"),
       [=](c::Ref*) {
       });
   auto quit = c::MenuItemLabel::create(
-      cx::reifyBmfLabel("dft", "Quit"),
+      cx::reifyBmfLabel("btns", "Quit"),
       [=](c::Ref*) {
       });
 
-  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{replay, quit}, CC_CSIZE(replay).height/4);
-  menu->setPosition(wb.cx, wb.cy);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{replay, quit},
+      CC_CHT(replay)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu, 10);
 
     //[restartItem runAction:[CCScaleTo actionWithDuration:0.5 scale:1.0]];

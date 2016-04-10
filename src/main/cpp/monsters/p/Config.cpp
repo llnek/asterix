@@ -45,7 +45,10 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("game-pics", CC_STR("pics/Sprites.plist"));
+
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game-pics", CC_STR("pics/Sprites.png"));
 
   addImage("game.bg", CC_STR("pics/background.png"));
@@ -63,26 +66,28 @@ void Config::initAssets() {
   addEffect("spawn", CC_STR("sfx/spawn.wav"));
   addMusic("background", CC_STR("sfx/Latin_Industries.mp3"));
 
-
-  addFont("dft", CC_STR("fon/en/Courier.fnt"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Config::handleResolution(const CCT_SZ &rs) {
   auto gz= gameSize();
-  if (rs.width == gz.width) {
-    CC_DTOR()->setContentScaleFactor(1);
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

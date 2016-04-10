@@ -20,11 +20,11 @@ NS_BEGIN(monsters)
 s_vec<ecs::Node*> getEntsOnTeam(
     ecs::Engine *engine, int team,  const ecs::COMType &ct) {
 
-  auto ents= SCAST(GEngine*,engine)->getNodes(ct);
+  auto ents= engine->getNodes(ct);
   s_vec<ecs::Node*> out;
 
   F__LOOP(it, ents) {
-    auto e = *it;
+    auto &e= *it;
     auto cur = CC_GEC(Team,e,"n/Team");
     if (cur && cur->team == team) {
       out.push_back(e);
@@ -48,12 +48,13 @@ ecs::Node* closestEntOnTeam(
   auto others = getEntsOnTeam(engine, team, "f/CPixie");
   auto pos= me->pos();
   F__LOOP(it, others) {
-    auto e= *it;
+    auto &e= *it;
     auto r2= CC_GEC(f::CPixie,e,"f/CPixie");
     auto dist= c::ccpDistance(pos, r2->pos());
-    if (dist < closestDist || closestDist == -1) {
-      closestEnt= e;
+    if (dist < closestDist ||
+        closestDist == -1) {
       closestDist = dist;
+      closestEnt= e;
     }
   }
 
@@ -64,10 +65,10 @@ ecs::Node* closestEntOnTeam(
 //
 static void cfgMonster(ecs::Node *node) {
   auto c = CC_GEC(f::CPixie,node,"f/CPixie");
-  auto wz=cx::visRect();
+  auto wz=cx::visSize();
   auto wb=cx::visBox();
-  auto r= CCRANDOM_X_Y(-CC_ZH(wz.size) * 0.25, CC_ZH(wz.size) * 0.25);
-  c->setPos(wb.right * 0.25, wb.cy  + r);
+  auto r= CCRANDOM_X_Y(-CC_ZH(wz) * 0.25, CC_ZH(wz) * 0.25);
+  CC_POS2(c, wb.right * 0.25, wb.cy  + r);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +108,7 @@ s_vec<ecs::Node*> entsWithinRange(ecs::Engine *engine, ecs::Node *ent, float ran
     auto all= getEntsOnTeam(engine,team,"f/CPixie");
     auto pos= me->pos();
     F__LOOP(it,all) {
-      auto e = *it;
+      auto &e = *it;
       auto other= CC_GEC(f::CPixie,e,"f/CPixie");
       auto dist = c::ccpDistance(pos, other->pos());
       if (dist < range) {

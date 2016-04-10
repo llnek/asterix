@@ -19,6 +19,14 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(monsters)
 
+#define CCRANDOM_X_Y(__X__, __Y__) (((__Y__) - (__X__)) * (rand() / (float)0xffffffff) + (__X__))
+#define OTHER_TEAM(__X__) (__X__ == 1 ? 2 : 1)
+
+#define COST_QUIRK  10
+#define COST_ZAP    25
+#define COST_MUNCH  50
+
+
 enum MonsterType {
   eMonsterTypeQuirk = 0,
   eMonsterTypeZap,
@@ -123,6 +131,20 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
 
 };
+
+
+class Engine;
+//////////////////////////////////////////////////////////////////////////////
+//
+s_vec<ecs::Node*> getEntsOnTeam(ecs::Engine*, int team,  const ecs::COMType&);
+
+ecs::Node* closestEntOnTeam(ecs::Engine*, ecs::Node*, int team);
+
+s_vec<ecs::Node*> entsWithinRange(ecs::Engine*, ecs::Node*, float range, int team);
+
+ecs::Node* playerForTeam(ecs::Engine*, int team);
+
+void createMonsters(ecs::Engine*, int cost, int team, int count);
 
 
 

@@ -33,11 +33,12 @@ void AIStateDefend::update(ecs::Node *e, AILogic *sys) {
   auto team = CC_GEC(Team,e,"n/Team");
   auto ai = CC_GEC(Automa,e,"f/CAutoma");
 
-  if (!team || !player || !ai ) {
+  if (E_NIL(team) ||
+      E_NIL(player) || E_NIL(ai)) {
   return; }
 
   auto enemies = entsWithinRange(
-      sys->getEngine(),e,200, OTHER_TEAM(team->team));
+      sys->getEngine(), e, 200, OTHER_TEAM(team->team));
 
   if (enemies.size() == 0) {
     sys->changeStateForEntity(e, mc_new(AIStateRush));
@@ -48,12 +49,15 @@ void AIStateDefend::update(ecs::Node *e, AILogic *sys) {
 
   if (sys->aiQuirkValue < sys->humanZapValue &&
       player->coins > COST_QUIRK) {
+
     sys->spawnQuirkForEntity(e);
   } else if (sys->aiZapValue < sys->humanMunchValue &&
       player->coins > COST_ZAP) {
+
     sys->spawnZapForEntity(e);
   } else if (sys->aiMunchValue < sys->humanQuirkValue &&
       player->coins > COST_MUNCH) {
+
     sys->spawnMunchForEntity(e);
   } else if (sys->humanTotalValue == 0) {
     while (player->coins > COST_ZAP + COST_QUIRK) {

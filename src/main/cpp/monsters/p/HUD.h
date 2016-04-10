@@ -19,6 +19,9 @@ NS_BEGIN(monsters)
 //
 struct CC_DLL HUDLayer : public f::XLayer {
 
+  __decl_arr(c::Label*,3, _coinLabels)
+  __decl_arr(int,3, _coins)
+
   __decl_create_layer(HUDLayer)
   __decl_deco_ui()
   __decl_get_iid(3)
@@ -27,13 +30,11 @@ struct CC_DLL HUDLayer : public f::XLayer {
   __decl_ptr(c::Label, _scoreLabel)
   __decl_iz(_score)
 
-  s_arr<c::Label*,3> _coinLabels;
-  s_arr<int,3> _coins;
+  __decl_getr(int,_score,Score)
 
   void updateCoins(int player, int score);
   void updateAIState(const sstr&);
   void updateScore(int);
-  int getScore() { return _score; }
 
 };
 

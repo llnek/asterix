@@ -27,9 +27,11 @@ public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual const c::Size gameSize() { return c::Size(640,360); }
+  virtual const CCT_SZ gameSize() { return CCT_SZ(640,360); }
 
-  virtual void handleResolution(const c::Size &rs);
+  virtual void handleResolution(const CCT_SZ &rs);
+  virtual float scaleFont(float);
+
   virtual c::Scene* prelude();
 
   virtual void runOnce();

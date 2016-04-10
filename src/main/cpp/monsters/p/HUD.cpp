@@ -27,39 +27,39 @@ void HUDLayer::decoUI() {
   auto wb= cx::visBox();
 
   _stateLabel = cx::reifyBmfLabel("dft", "Idle");
-  _stateLabel->setPosition(wb.cx, wb.top * 0.25);
+  CC_POS2(_stateLabel, wb.cx, wb.top * 0.25);
   addItem(_stateLabel);
 
-  coin1->setPosition(
+  CC_POS2(coin1,
       MARGIN + HWZ(CC_CSIZE(coin1)),
       wb.top - MARGIN - HHZ(CC_CSIZE(coin1)));
   addItem(coin1);
 
-  coin2->setPosition(
+  CC_POS2(coin2,
       wb.right - MARGIN - HWZ(CC_CSIZE(coin2)),
       wb.top - MARGIN - HHZ(CC_CSIZE(coin2)));
   addItem(coin2);
 
-  auto coin1Label = cx::reifyBmfLabel("dft","10");
+  auto coin1Label = cx::reifyBmfLabel("btns","10");
   _coinLabels[1]= coin1Label;
 
   coin1Label->setAlignment(c::TextHAlignment::LEFT);
-  coin1Label->setPosition(
+  CC_POS2(coin1Label,
       coin1->getPositionX() + HWZ(CC_CSIZE(coin1)) + MARGIN/2 +
       HWZ(CC_CSIZE(coin1Label)),
       wb.top - MARGIN*1.6);
   addItem(coin1Label);
 
-  auto coin2Label = cx::reifyBmfLabel("dft", "10");
+  auto coin2Label = cx::reifyBmfLabel("btns", "10");
   _coinLabels[2]= coin2Label;
   coin2Label->setAlignment(c::TextHAlignment::RIGHT);
-  coin2Label->setPosition(coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
+  CC_POS2(coin2Label, coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
       HWZ(CC_CSIZE(coin2Label)),
       wb.top - MARGIN*1.6);
   addItem(coin2Label);
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.9);
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.9);
   addItem(_scoreLabel);
 
   _coins.fill(10);
