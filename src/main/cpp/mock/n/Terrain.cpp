@@ -92,6 +92,14 @@ void Terrain::checkCollision(ecs::Node *node) {
 
   for (auto b: _blocks) {
     if (b->getType() == kBlockGap) { continue; }
+      /*
+      auto w=cx::getWidth(b);
+      auto h=cx::getHeight(b);
+      auto l=cx::getLeft(b);
+      auto r=cx::getRight(b);
+      auto t=cx::getTop(b);
+      auto bt=cx::getBottom(b);
+      */
     //if within x, check y (bottom collision)
     if (cx::getRight(py) >= this->getPositionX() + cx::getLeft(b) &&
         cx::getLeft(py) <= this->getPositionX() + cx::getRight(b)) {
