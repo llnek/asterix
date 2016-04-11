@@ -23,7 +23,6 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void PlayerLogic::preamble() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,7 +34,7 @@ bool PlayerLogic::update(float dt) {
   return true;
 }
 
-static float COIN_DROP_INTERVAL = 1.5;
+static float COIN_DROP_INTERVAL = 1500;
 static float COINS_PER_INTERVAL = 5;
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -43,7 +42,7 @@ void PlayerLogic::process(float dt) {
   auto ents = _engine->getNodes("n/Player");
   auto time = cx::timeInMillis();
   F__LOOP(it,ents) {
-    auto e = *it;
+    auto &e = *it;
     auto player = CC_GEC(Player,e,"n/Player");
     auto team = CC_GEC(Team,e,"n/Team");
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
@@ -60,14 +59,14 @@ void PlayerLogic::process(float dt) {
         "castle"+FTOS(team->team)+"_atk.png"
         :
         "castle"+FTOS(team->team)+"_def.png";
-        SCAST(c::Sprite*,render->node)->setDisplayFrame(cx::getSpriteFrame(png));
+        render->setDisplayFrame(cx::getSpriteFrame(png));
     }
 
     // Update monster movement orders
     if (team) {
       auto movers = getEntsOnTeam(_engine,team->team,"f/CMove");
       F__LOOP(it,movers) {
-        auto m= *it;
+        auto &m= *it;
         handleMover(m,player->attacking);
       }
     }
@@ -82,7 +81,8 @@ void PlayerLogic::handleMover(ecs::Node *mover, bool attacking) {
   auto moverTeam = CC_GEC(Team,mover,"n/Team");
   auto moverMove = CC_GEC(f::CMove,mover,"f/CMove");
 
-  if (!moverTeam || !moverRender || !moverMove) {
+  if (E_NIL(moverTeam) ||
+      E_NIL(moverRender) || E_NIL(moverMove)) {
   return; }
 
   if (attacking) {
@@ -98,7 +98,7 @@ void PlayerLogic::handleMover(ecs::Node *mover, bool attacking) {
 
     auto gun = CC_GEC(Gun,mover,"n/Gun");
     if (gun) {
-      auto vector = c::ccpNormalize(c::ccpSub(moverRender->pos(), enemyRender->pos()));
+      auto vector = cx::normalize(enemyRender,moverRender);
       moverMove->moveTarget = c::ccpAdd(enemyRender->pos(), c::ccpMult(vector, gun->range));
     }
 

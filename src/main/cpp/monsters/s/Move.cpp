@@ -23,7 +23,6 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MoveLogic::preamble() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -44,16 +43,16 @@ void MoveLogic::process(float dt) {
 
   auto ents = _engine->getNodes(
       s_vec<ecs::COMType>{"f/CMove","f/CPixie","n/Team"});
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
 
   F__LOOP(it,ents) {
-    auto e= *it;
+    auto &e= *it;
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto move = CC_GEC(f::CMove,e,"f/CMove");
     auto team = CC_GEC(Team,e,"n/Team");
 
-    auto arrivePt = arrive(e,move,render);
     auto sepPt = separate(e,move,render,team);
+    auto arrivePt = arrive(e,move,render);
     auto newAccel= c::ccpAdd(arrivePt, sepPt);
 
     // Update current acceleration based on the above, and clamp
@@ -70,16 +69,16 @@ void MoveLogic::process(float dt) {
 
     // Update position based on velocity
     auto newPos= c::ccpAdd(render->pos(), c::ccpMult(move->vel, dt));
-    newPos.y = MAX(MIN(newPos.y, wz.size.height), 0);
-    newPos.x = MAX(MIN(newPos.x, wz.size.width), 0);
-    render->node->setPosition(newPos);
+    newPos.y = MAX(MIN(newPos.y, wz.height), 0);
+    newPos.x = MAX(MIN(newPos.x, wz.width), 0);
+    CC_POS1(render, newPos);
   }
 }
 
 static float timeToTarget = 0.1;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::arrive(ecs::Node *entity, f::CMove *move, f::CPixie *render) {
+const CCT_PT MoveLogic::arrive(ecs::Node *entity, f::CMove *move, f::CPixie *render) {
 
   auto vector = c::ccpSub(move->moveTarget, render->pos());
   auto dist = c::ccpLength(vector);
@@ -88,7 +87,7 @@ c::Vec2 MoveLogic::arrive(ecs::Node *entity, f::CMove *move, f::CPixie *render) 
   float slowRadius = targetRadius + 25;
 
   if (dist < targetRadius) {
-    return c::Vec2(0,0);
+    return CC_ZPT;
   }
 
   float targetSpeed;
@@ -98,24 +97,23 @@ c::Vec2 MoveLogic::arrive(ecs::Node *entity, f::CMove *move, f::CPixie *render) 
     targetSpeed = move->maxSpeed.x * dist / slowRadius;
   }
 
-  auto targetVelocity = c::ccpMult(c::ccpNormalize(vector), targetSpeed);
-
-  auto acceleration = c::ccpMult(c::ccpSub(targetVelocity, move->vel), 1/timeToTarget);
-  if (c::ccpLength(acceleration) > move->maxAccel.x) {
-    acceleration = c::ccpMult(c::ccpNormalize(acceleration), move->maxAccel.x);
+  auto target= c::ccpMult(c::ccpNormalize(vector), targetSpeed);
+  auto acc = c::ccpMult(c::ccpSub(target, move->vel), 1/timeToTarget);
+  if (c::ccpLength(acc) > move->maxAccel.x) {
+    acc = c::ccpMult(c::ccpNormalize(acc), move->maxAccel.x);
   }
-  return acceleration;
+  return acc;
 }
 
 static float SEPARATE_THRESHHOLD = 20;
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 MoveLogic::separate(ecs::Node *entity, f::CMove *move, f::CPixie *render, Team *team) {
+const CCT_PT MoveLogic::separate(ecs::Node *entity, f::CMove *move, f::CPixie *render, Team *team) {
 
   auto ents = getEntsOnTeam(_engine,team->team,"f/CMove");
-  auto steering = c::Vec2(0,0);
+  auto steering = CC_ZPT;
   F__LOOP(it,ents) {
-    auto otherEntity = *it;
+    auto &otherEntity = *it;
 
     if (otherEntity->getEid() == entity->getEid()) {
     continue; }
@@ -123,12 +121,12 @@ c::Vec2 MoveLogic::separate(ecs::Node *entity, f::CMove *move, f::CPixie *render
     auto otherRender = CC_GEC(f::CPixie,otherEntity,"f/CPixie");
     if (!otherRender) { continue; }
 
-    auto direction = c::ccpSub(render->pos(), otherRender->pos());
-    auto dist = c::ccpLength(direction);
+    auto dir= c::ccpSub(render->pos(), otherRender->pos());
+    auto dist = c::ccpLength(dir);
 
     if (dist < SEPARATE_THRESHHOLD) {
-      direction = c::ccpNormalize(direction);
-      steering = c::ccpAdd(steering, c::ccpMult(direction, move->maxAccel.x));
+      dir= c::ccpNormalize(dir);
+      steering = c::ccpAdd(steering, c::ccpMult(dir, move->maxAccel.x));
     }
   }
 

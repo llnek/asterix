@@ -21,7 +21,6 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MeleeLogic::preamble() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -42,16 +41,16 @@ void MeleeLogic::process(float dt) {
       s_vec<ecs::COMType>{"n/Team","f/CMelee","f/CPixie"});
 
   F__LOOP(it,ents) {
-    auto e = *it;
+    auto &e = *it;
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto melee = CC_GEC(Melee,e,"f/CMelee");
     auto team = CC_GEC(Team,e,"n/Team");
     auto aoeDamageCaused = false;
     auto enemies = getEntsOnTeam(_engine,OTHER_TEAM(team->team),"f/CPixie");
     F__LOOP(it2,enemies) {
-      auto enemy= *it2;
-      auto enemyRender = CC_GEC(f::CPixie,enemy,"f/CPixie");
+      auto &enemy= *it2;
       auto enemyHealth = CC_GEC(f::CHealth,enemy,"f/CHealth");
+      auto enemyRender = CC_GEC(f::CPixie,enemy,"f/CPixie");
       if (!enemyHealth) { continue; }
 
       if (render->bbox().intersectsRect(enemyRender->bbox())) {
@@ -69,7 +68,7 @@ void MeleeLogic::process(float dt) {
             enemyHealth->curHP = 0;
           }
           if (melee->selfDie) {
-            render->removeNode();
+            render->removeFromParent();
             _engine->purgeNode(e);
           }
         }

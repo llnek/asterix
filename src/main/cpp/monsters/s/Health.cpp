@@ -47,12 +47,11 @@ void HealthLogic::process(float dt) {
       cx::sfxPlay("boom");
 
       if (render) {
-        render->node->runAction(
+        render->runAction(
            c::Sequence::create(
             c::FadeOut::create(0.5),
             c::RemoveSelf::create(),
             CC_NIL));
-        render->ejectNode();
       }
 
       _engine->purgeNode(e);
@@ -72,9 +71,9 @@ void HealthLogic::draw() {
     auto e= *it;
     auto health = CC_GEC(f::CHealth,e,"f/CHealth");
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
-    auto sX = render->node->getPositionX() - HWZ(CC_CSIZE(render->node));
-    auto eX = render->node->getPositionX() + HWZ(CC_CSIZE(render->node));
-    auto actualY = render->node->getPositionY() + HHZ(CC_CSIZE(render->node));
+    auto sX = render->getPositionX() - HWZ(CC_CSIZE(render));
+    auto eX = render->getPositionX() + HWZ(CC_CSIZE(render));
+    auto actualY = render->getPositionY() + HHZ(CC_CSIZE(render));
 
     auto percentage = (float)health->curHP / (float)health->origHP;
     auto actualX = ((eX-sX) * percentage) + sX;

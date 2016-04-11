@@ -198,6 +198,19 @@ const s_arr<c::MenuItem*,2> reifyAudioIcons() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+float calcDist(not_null<c::Node*> a, not_null<c::Node*> b) {
+  return c::ccpDistance(a->getPosition(), b->getPosition());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const CCT_PT normalize(not_null<c::Node*> a, not_null<c::Node*> b) {
+  return c::ccpNormalize(
+          c::ccpSub(b->getPosition(), a->getPosition()));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 c::MenuItem* reifyMenuText(const sstr &fnt, float pt, const sstr &txt, const c::Color3B &c) {
   auto z= reifyLabel(fnt, pt, txt);
     z->setColor(c);

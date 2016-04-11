@@ -30,15 +30,16 @@ NS_BEGIN(monsters)
 void GEngine::initEntities() {
   auto ent= this->reifyNode("Shared", true);
   auto wb= cx::visBox();
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 
-  auto s= cx::reifySprite("castle1_def.png");
-  s->setPosition(HWZ(CC_CSIZE(s)), wb.cy);
+  auto s= f::CPixie::reifyFrame("castle1_def.png");
+  CC_POS2(s, HWZ(CC_CSIZE(s)), wb.cy);
   MGML()->addAtlasItem("game-pics",s);
   // human
   ent= this->reifyNode("Human", true);
   ent->checkin(mc_new1(f::CHealth,200));
-  ent->checkin(mc_new1(f::CPixie,s));
+  ent->checkin(s);
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHuman));
   ent->checkin(mc_new1(Team,1));
@@ -46,12 +47,12 @@ void GEngine::initEntities() {
   ent->checkin(mc_new4(Gun,200,5,2,"pew"));
 
   // enemy
-  s= cx::reifySprite("castle2_def.png");
-  s->setPosition(wb.right - HWZ(CC_CSIZE(s)), wb.cy);
+  s= f::CPixie::reifyFrame("castle2_def.png");
+  CC_POS2(s, wb.right - HWZ(CC_CSIZE(s)), wb.cy);
   MGML()->addAtlasItem("game-pics",s);
   ent= this->reifyNode("Enemy", true);
   ent->checkin(mc_new1(f::CHealth,200));
-  ent->checkin(mc_new1(f::CPixie,s));
+  ent->checkin(s);
   ent->checkin(mc_new1(Team,2));
   ent->checkin(mc_new(Player));
   ent->checkin(mc_new4(Gun,200,5,2,"pew"));
@@ -83,8 +84,8 @@ void GEngine::initSystems() {
 //////////////////////////////////////////////////////////////////////////////
 //
 ecs::Node* GEngine::createQuirkMonster(int team) {
-  auto s= cx::reifySprite("quirk"+FTOS(team)+".png");
-  auto ent = this->reifyNode("Quirk",true);
+    auto s= f::CPixie::reifyFrame("quirk"+FTOS(team)+".png");
+  auto ent = this->reifyNode("Quirk", true);
   auto m= mc_new(Melee);
 
   MGML()->addAtlasItem("game-pics",s);
@@ -92,8 +93,8 @@ ecs::Node* GEngine::createQuirkMonster(int team) {
   m->damage=1.25;
   m->sound="smallHit";
   ent->checkin(m);
-  ent->checkin(mc_new3(f::CMove,c::Vec2(200, 200), 100, 100));
-  ent->checkin(mc_new1(f::CPixie,s));
+  ent->checkin(mc_new3(f::CMove,CCT_PT(200, 200), 100, 100));
+  ent->checkin(s);
   ent->checkin(mc_new1(f::CHealth,5));
   ent->checkin(mc_new1(Team,team));
   ent->checkin(mc_new1(Monster, eMonsterTypeQuirk));
@@ -104,13 +105,13 @@ ecs::Node* GEngine::createQuirkMonster(int team) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ecs::Node* GEngine::createZapMonster(int team) {
-  auto s= cx::reifySprite("zap"+FTOS(team)+".png");
+    auto s= f::CPixie::reifyFrame("zap"+FTOS(team)+".png");
   auto ent= this->reifyNode("Zap", true);
 
   MGML()->addAtlasItem("game-pics",s);
-  ent->checkin(mc_new3(f::CMove,c::Vec2(200, 200), 50, 50));
+  ent->checkin(mc_new3(f::CMove, CCT_PT(200, 200), 50, 50));
   ent->checkin(mc_new1(f::CHealth,10));
-  ent->checkin(mc_new1(f::CPixie,s));
+  ent->checkin(s);
   ent->checkin(mc_new1(Team,team));
   ent->checkin(mc_new4(Gun,100, 5, 1.5,"pew"));
   ent->checkin(mc_new1(Monster, eMonsterTypeZap));
@@ -121,7 +122,7 @@ ecs::Node* GEngine::createZapMonster(int team) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ecs::Node* GEngine::createMunchMonster(int team) {
-  auto s= cx::reifySprite("munch"+FTOS(team)+".png");
+    auto s= f::CPixie::reifyFrame("munch"+FTOS(team)+".png");
   auto ent= this->reifyNode("Munch", true);
   auto m= mc_new(Melee);
 
@@ -131,9 +132,9 @@ ecs::Node* GEngine::createMunchMonster(int team) {
   m->aoe=true;
   m->sound="bigHit";
   ent->checkin(m);
-  ent->checkin(mc_new1(f::CPixie,s));
+  ent->checkin(s);
   ent->checkin(mc_new1(f::CHealth,50));
-  ent->checkin(mc_new3(f::CMove,c::Vec2(200, 200), 25, 25));
+  ent->checkin(mc_new3(f::CMove, CCT_PT(200, 200), 25, 25));
   ent->checkin(mc_new1(Team,team));
   ent->checkin(mc_new1(Monster,eMonsterTypeMunch));
 
@@ -143,7 +144,7 @@ ecs::Node* GEngine::createMunchMonster(int team) {
 //////////////////////////////////////////////////////////////////////////////
 //
 ecs::Node* GEngine::createLaser(int team) {
-  auto s= cx::reifySprite("laser"+FTOS(team)+".png");
+    auto s= f::CPixie::reifyFrame("laser"+FTOS(team)+".png");
   auto ent= this->reifyNode("Laser", true);
   auto m= mc_new(Melee);
 
@@ -153,7 +154,7 @@ ecs::Node* GEngine::createLaser(int team) {
   m->selfDie=true;
   m->sound="smallHit";
   ent->checkin(m);
-  ent->checkin(mc_new1(f::CPixie,s));
+  ent->checkin(s);
   ent->checkin(mc_new1(Team,team));
 
   return ent;

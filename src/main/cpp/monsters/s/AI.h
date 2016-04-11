@@ -19,6 +19,7 @@ NS_BEGIN(monsters)
 //
 class CC_DLL AILogic : public ecs::System {
 
+  __decl_ptr(ecs::Node, _enemy)
   void process(float);
 
 public:
@@ -29,7 +30,6 @@ public:
   void spawnMunchForEntity(ecs::Node*);
   void spawnZapForEntity(ecs::Node*);
 
-  __decl_ptr(ecs::Node, _enemy)
   __decl_fz(humanQuirkValue)
   __decl_fz(humanZapValue)
   __decl_fz(humanMunchValue)

@@ -25,18 +25,23 @@ void Splash::decoUI() {
   auto txt= cx::reifyBmfLabel("btns", "PLAY");
   auto btn= cx::reifyMenuBtn("button.png");
   auto sz= CC_CSIZE(btn);
+  auto tz= CC_CSIZE(txt);
   auto wb= cx::visBox();
 
   centerImage("game.bg");
 
   CC_POS2(btn, wb.cx, wb.cy);
+  txt->setColor(c::Color3B::ORANGE);
+  XCFG()->scaleNode(txt,36);
+  tz= CC_CSIZE(txt);
   btn->addChild(txt);
   btn->setCallback(
       [=](c::Ref*) {
         cx::sfxPlay("button");
         cx::runEx(Game::reify(mc_new(GameCtx)));
       });
-  txt->setPosition(sz.width/2, sz.height/2);
+  //need to do this to align txt to center, find better way
+  CC_POS2(txt, sz.width/2, sz.height/2- tz.height/2/4);
   addItem(cx::mkMenu(btn));
 
 }

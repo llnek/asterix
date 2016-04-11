@@ -66,6 +66,9 @@ namespace ccsx {
 
   bool isDesktop();
 
+  const CCT_PT normalize(not_null<c::Node*>, not_null<c::Node*> );
+  float calcDist(not_null<c::Node*>,not_null<c::Node*>);
+
   owner<c::Animation*> createAnimation(
       float dpu,
       bool restore=false, int loops= -1);

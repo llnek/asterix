@@ -89,7 +89,7 @@ public:
 
   virtual c::Scene* prelude() = 0;
 
-  virtual bool isPortrait() { return true; }
+  virtual bool isPortrait() { return gameSize().height > gameSize().width; }
 
   __decl_gsms(c::ApplicationProtocol::Platform, _platform, Platform)
   __decl_gsms(sstr, _room_id, RoomId)

@@ -22,7 +22,6 @@ NS_BEGIN(monsters)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GunLogic::preamble() {
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,7 +42,7 @@ void GunLogic::process(float dt) {
   auto ents = _engine->getNodes(
       s_vec<ecs::COMType>{"n/Team", "n/Gun", "f/CPixie"});
   F__LOOP(it,ents) {
-    auto e= *it;
+    auto &e= *it;
     auto render = CC_GEC(f::CPixie,e,"f/CPixie");
     auto team = CC_GEC(Team,e,"n/Team");
     auto gun = CC_GEC(Gun,e,"n/Gun");
@@ -51,7 +50,7 @@ void GunLogic::process(float dt) {
     if (!other) { return; }
 
     auto otherRender = CC_GEC(f::CPixie,other,"f/CPixie");
-    auto dist = c::ccpDistance(render->pos(), otherRender->pos());
+    auto dist = cx::calcDist(render, otherRender);
 
     if (abs(dist) <= (gun->range + WIGGLE_ROOM) &&
         (cx::timeInMillis() - gun->lastDamageTime) > gun->damageRate) {
@@ -63,23 +62,20 @@ void GunLogic::process(float dt) {
       auto laserRender = CC_GEC(f::CPixie,laser,"f/CPixie");
       auto laserMelee = CC_GEC(Melee,laser,"f/CMelee");
 
-      laserRender->node->setPosition(render->pos());
+      CC_POS1(laserRender, render->pos());
       laserMelee->damage = gun->damage;
 
-      auto direction = c::ccpNormalize(
-          c::ccpSub(otherRender->pos(), render->pos()));
-
       auto duration = laserDistance / laserPointsPerSecond;
-      auto target = c::ccpMult(direction, laserDistance);
+      auto dir= cx::normalize(render,otherRender);
+      auto target = c::ccpMult(dir, laserDistance);
 
-      laserRender->node->setRotation( -1 * CC_RADIANS_TO_DEGREES(c::ccpToAngle(direction)));
-      laserRender->node->setZOrder(1);
+      laserRender->setRotation( - CC_RAD_TO_DEG(c::ccpToAngle(dir)));
+      laserRender->setZOrder(1);
 
-      laserRender->node->runAction(
+      laserRender->runAction(
          c::Sequence::create(
           c::MoveBy::create(duration, target),
           c::CallFunc::create([=](){
-            laserRender->ejectNode();
             _engine->purgeNode(laser);
             }),
           c::RemoveSelf::create(),

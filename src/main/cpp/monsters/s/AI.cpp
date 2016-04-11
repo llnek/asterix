@@ -47,7 +47,7 @@ void AILogic::process(float dt) {
   //get human soldiers
   auto mons = getEntsOnTeam(_engine, OTHER_TEAM(aiTeam->team), "n/Monster");
   F__LOOP(it,mons) {
-    auto m= *it;
+    auto &m= *it;
     auto c= CC_GEC(Monster,m,"n/Monster");
     if (c->type == eMonsterTypeQuirk) {
       this->humanQuirkValue += COST_QUIRK;
@@ -65,7 +65,7 @@ void AILogic::process(float dt) {
 
   mons= getEntsOnTeam(_engine, aiTeam->team, "n/Monster");
   F__LOOP(it, mons) {
-    auto m= *it;
+    auto &m= *it;
     auto c= CC_GEC(Monster,m,"n/Monster");
     if (c->type == eMonsterTypeQuirk) {
       this->aiQuirkValue += COST_QUIRK;
@@ -75,6 +75,7 @@ void AILogic::process(float dt) {
       this->aiMunchValue += COST_MUNCH;
     }
   }
+
   aiTotalValue = aiQuirkValue + aiZapValue + aiMunchValue;
   ai->state->update(_enemy,this);
 }
@@ -92,10 +93,10 @@ void AILogic::changeStateForEntity(ecs::Node *ent, AIState *state) {
 //
 static void cfgMonster(ecs::Node *m) {
   auto render = CC_GEC(f::CPixie,m,"f/CPixie");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
-  auto r= CCRANDOM_X_Y(-CC_ZH(wz.size) * 0.25, CC_ZH(wz.size) * 0.25);
-  render->setPos(wb.right * 0.75, wb.cy + r);
+  auto r= CCRANDOM_X_Y(-CC_ZH(wz) * 0.25, CC_ZH(wz) * 0.25);
+  CC_POS2(render, wb.right * 0.75, wb.cy + r);
 }
 
 //////////////////////////////////////////////////////////////////////////////

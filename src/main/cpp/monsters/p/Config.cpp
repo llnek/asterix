@@ -51,7 +51,7 @@ void Config::initAssets() {
   addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game-pics", CC_STR("pics/Sprites.png"));
 
-  addImage("game.bg", CC_STR("pics/background.png"));
+  addImage("game.bg", CC_STR("pics/background.jpg"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("attack", CC_STR("sfx/attack.wav"));

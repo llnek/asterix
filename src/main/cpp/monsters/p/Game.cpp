@@ -23,10 +23,11 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   c::MenuItem* mkBtn();
-  void cfgBtn(c::MenuItem*, const sstr&);
+  void cfgBtn(c::MenuItem*, const sstr&, float scale=1);
   void lblBtn(c::MenuItem*, const sstr&);
   void onBtnTapped(int,int);
   void onEnd();
@@ -38,7 +39,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual bool onMouseStart(const c::Vec2&);
+  virtual bool onMouseStart(const CCT_PT&);
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
@@ -82,7 +83,7 @@ void GLayer::onInited() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto render= CC_GEC(f::CPixie,_human,"f/CPixie");
   auto player= CC_GEC(Player,_human,"n/Player");
   if (render->bbox().containsPoint(loc)) {
@@ -105,9 +106,10 @@ c::MenuItem* GLayer::mkBtn() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::cfgBtn(c::MenuItem *b, const sstr &png) {
+void GLayer::cfgBtn(c::MenuItem *b, const sstr &png, float scale) {
   auto s = cx::reifySprite(png);
-  s->setPosition(CC_ZW(CC_CSIZE(b)) * 0.25, HHZ(CC_CSIZE(b)));
+  CC_POS2(s, CC_ZW(CC_CSIZE(b)) * 0.25, HHZ(CC_CSIZE(b)));
+  s->setScale(scale);
   b->addChild(s);
 }
 
@@ -116,7 +118,9 @@ void GLayer::cfgBtn(c::MenuItem *b, const sstr &png) {
 void GLayer::lblBtn(c::MenuItem *b, const sstr &msg) {
 
   auto txt = cx::reifyBmfLabel("dft", msg);
-  txt->setPosition(CC_ZW(CC_CSIZE(b)) * 0.75, HHZ(CC_CSIZE(b)));
+  txt->setColor(c::Color3B::ORANGE);
+  XCFG()->scaleNode(txt,32);
+  CC_POS2(txt, CC_ZW(CC_CSIZE(b)) * 0.75, HHZ(CC_CSIZE(b)));
    // txt->setVerticalAlignment(c::TextVAlignment::TOP);
   b->addChild(txt);
 }
@@ -135,7 +139,7 @@ void GLayer::decoUI() {
   s_vec<c::MenuItem*> btns {mkBtn(),mkBtn(),mkBtn()};
   auto bz= CC_CSIZE(btns[0]);
   auto menu= cx::mkHMenu(btns, CC_ZW(bz)/4);
-  menu->setPosition(wb.cx, MARGIN + HHZ(bz));
+  CC_POS2(menu, wb.cx, MARGIN + HHZ(bz));
   btns[0]->setCallback([=](c::Ref*){
       this->onBtnTapped(COST_QUIRK,2); });
   btns[1]->setCallback([=](c::Ref*){
@@ -144,7 +148,7 @@ void GLayer::decoUI() {
       this->onBtnTapped(COST_MUNCH,1); });
   cfgBtn(btns[0], "quirk1.png");
   cfgBtn(btns[1], "zap1.png");
-  cfgBtn(btns[2], "munch1.png");
+  cfgBtn(btns[2], "munch1.png", 0.6);
 
   ///////
   lblBtn(btns[0], "10");

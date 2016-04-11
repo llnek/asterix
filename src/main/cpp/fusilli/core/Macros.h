@@ -36,11 +36,11 @@
 #define CC_KEEP(x) if (x) { (x)->retain();}
 #define CC_DROP(x) if (x) { (x)->release();}
 
+#define CC_RAD_TO_DEG(x) CC_RADIANS_TO_DEGREES(x)
 #define CC_CSIZE(s) (s)->getBoundingBox().size
 #define CC_CHT(s) CC_CSIZE(s).height
 #define CC_CWH(s) CC_CSIZE(s).width
 #define CC_CSZ(s) CC_CSIZE(s)
-
 
 #define CC_BBOX(s) s->getBoundingBox()
 #define CC_HIDE(s) do { if (s) s->setVisible(false); } while (0)
