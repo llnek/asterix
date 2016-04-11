@@ -62,7 +62,7 @@ class CC_DLL Terrain : public f::CPixie {
 
 public:
 
-  __decl_gsms_is(bool, _startTerrain, StartTerrain);
+  __decl_gsms_is(_startTerrain, StartTerrain);
   static owner<Terrain*> create();
 
   virtual ~Terrain();

@@ -54,8 +54,15 @@ void Config::initAssets() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Config::handleResolution(const c::Size &rs) {
   auto gz= gameSize();
+  /*
   float h;
   sstr d="sd";
 
@@ -73,6 +80,7 @@ void Config::handleResolution(const c::Size &rs) {
 
   CC_DTOR()->setContentScaleFactor(h/gz.height);
   CC_FILER()->setSearchPaths(s_vec<sstr>{d,"sfx"});
+  */
 }
 
 //////////////////////////////////////////////////////////////////////////////
