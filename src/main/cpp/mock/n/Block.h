@@ -34,7 +34,7 @@ class CC_DLL Block : public c::Sprite {
 
 public:
 
-  void setupBlock(const c::Rect&, const c::Size&, int type);
+  void setupBlock(float w, float h, int type);
   static owner<Block*> create();
 
   __decl_gsms(int,_type,Type)

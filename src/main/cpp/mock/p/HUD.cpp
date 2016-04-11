@@ -24,7 +24,7 @@ void HUDLayer::decoUI() {
   auto wb= cx::visBox();
 
   _scoreLabel= cx::reifyLabel("dft", 24, "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.2);
   addItem(_scoreLabel);
 
   _score=0;

@@ -29,7 +29,7 @@ class CC_DLL Terrain : public f::CPixie {
 
   __decl_fz(_lastBlockHeight)
   __decl_fz(_lastBlockWidth)
-  __decl_md(c::Rect,_visRect)
+  __decl_md(CCT_SZ,_visSize)
 
   __decl_mv(int,_currentPatternCnt,1)
   __decl_iz(_currentPatternIndex)
@@ -70,6 +70,7 @@ public:
   void checkCollision(ecs::Node* player);
   void move (float xMove);
   void reset();
+
 };
 
 

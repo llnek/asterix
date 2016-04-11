@@ -49,8 +49,8 @@ void Move::process(float dt) {
   auto batch=MGML()->getAtlas("blank");
   auto wz= cx::visSize();
   auto wb= cx::visBox();
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
-    
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+    //auto pos= py->pos();
   if (py->getPositionY() < - cx::getHeight(py) ||
       py->getPositionX() < - HTV(cx::getWidth(py))) {
     SENDMSG("/game/stop");
@@ -108,18 +108,18 @@ void Move::processPlayer(float dt) {
   switch (ps->state) {
     case kPlayerMoving: {
       pm->vel.y -= FORCE_GRAVITY;
-      if (pm->_hasFloated) { pm->_hasFloated = false; }
+      if (pm->isHasFloated()) { pm->setHasFloated(false); }
     }
     break;
 
     case kPlayerFalling: {
-      if (pm->getFloating()) {
+      if (pm->isFloating()) {
         pm->vel.x *= FLOATING_FRICTION;
         pm->vel.y -= FLOATNG_GRAVITY;
       } else {
         pm->vel.y -= FORCE_GRAVITY;
         pm->vel.x *= AIR_FRICTION;
-        pm->_floatingTimer = 0;
+        pm->setFloatingTimer( 0);
       }
     }
     break;
@@ -133,7 +133,7 @@ void Move::processPlayer(float dt) {
 
   }
 
-  if (pm->getJumping()) {
+  if (pm->isJumping()) {
     ps->state = kPlayerFalling;
     pm->vel.y += PLAYER_JUMP * 0.25;
     if (pm->vel.y > PLAYER_JUMP) { pm->setJumping(false); }
@@ -145,10 +145,10 @@ void Move::processPlayer(float dt) {
 
   pm->nextPos.y = py->getPositionY() + pm->vel.y;
 
-  if (pm->getFloating()) {
-    pm->_floatingTimer += dt;
-    if (pm->_floatingTimer > pm->_floatingTimerMax) {
-      pm->_floatingTimer = 0;
+  if (pm->isFloating()) {
+    pm->setFloatingTimer(pm->getFloatingTimer() + dt);
+    if (pm->getFloatingTimer() > pm->getFloatingTimerMax()) {
+      pm->setFloatingTimer(0);
       pm->setFloating(false);
     }
   }

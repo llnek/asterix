@@ -48,8 +48,8 @@ void Config::initAssets() {
 
   addImage("blank", CC_STR("pics/blank.png"));
 
-  addFont("text", CC_STR("fon/en/arial.ttf"));
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("text", CC_STR("fonts/en/arial.ttf"));
+  addFont("dft", CC_STR("fonts/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ float Config::scaleFont(float pt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto gz= gameSize();
   /*
   float h;

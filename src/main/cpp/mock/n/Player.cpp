@@ -44,8 +44,8 @@ bool Player::initWithFile(const sstr &fn) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Player::reset() {
-  auto wz= cx::visRect();
-  this->setPosition(wz.size.width * 0.2, wz.size.height * 0.6);
+  auto wb= cx::visBox();
+  this->setPosition(wb.right * 0.2, wb.top * 0.6);
   this->setRotation(0);
 }
 
@@ -53,12 +53,12 @@ void Player::reset() {
 //
 PlayerMotion::PlayerMotion() {
 
-  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
   _floatingTimerMax = 2;
   _floatingTimer = 0;
 
-  nextPos= c::Vec2(0, wz.size.height * 0.6);
+  nextPos= CCT_PT(0, wb.top * 0.6);
   maxSpeed.x = PLAYER_INITIAL_SPEED;
   speed.x = PLAYER_INITIAL_SPEED;
 
@@ -71,7 +71,7 @@ PlayerMotion::PlayerMotion() {
 //
 void PlayerMotion::reset() {
 
-  auto wz= cx::visRect();
+  auto wb= cx::visBox();
 
   maxSpeed.x = PLAYER_INITIAL_SPEED;
   speed.x = PLAYER_INITIAL_SPEED;
@@ -80,7 +80,7 @@ void PlayerMotion::reset() {
 
   this->setFloating(false);
 
-  nextPos.y = wz.size.height * 0.6;
+  nextPos.y = wb.top * 0.6;
   _jumping = false;
   _hasFloated = false;
 }

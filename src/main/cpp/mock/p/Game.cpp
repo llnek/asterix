@@ -23,7 +23,8 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   __decl_ptr(ecs::Node, _terrain)
   __decl_ptr(ecs::Node, _player)
@@ -35,9 +36,9 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   void reset();
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -45,13 +46,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -62,7 +58,7 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   reset();
@@ -70,21 +66,21 @@ void GLayer::onInited() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
   auto mv=CC_GEC(PlayerMotion,_player,"f/CMove");
   mv->setJumping(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
 
-    auto pm=CC_GEC(PlayerMotion,_player,"f/CMove");
+  auto pm=CC_GEC(PlayerMotion,_player,"f/CMove");
   auto ps=CC_GEC(PlayerStats,_player,"f/CStats");
   auto py=CC_GEC(Player,_player,"f/CPixie");
   auto te=CC_GEC(Terrain,_terrain,"f/CPixie");
@@ -106,7 +102,7 @@ bool GLayer::onMouseStart(const c::Vec2 &tap) {
   }
 
   if (ps->state == kPlayerFalling) {
-    pm->setFloating(!pm->getFloating());
+    pm->setFloating(!pm->isFloating());
   }
   else
   if (ps->state !=  kPlayerDying) {

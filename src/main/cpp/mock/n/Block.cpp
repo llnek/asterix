@@ -21,7 +21,8 @@ NS_BEGIN(mock)
 //
 owner<Block*> Block::create() {
   auto b= mc_new(Block);
-  b->initWithFile("pics/blank.png");
+  b->initWithFile(
+      "pics/blank.png");
   CC_HIDE(b);
   b->autorelease();
   return b;
@@ -29,12 +30,12 @@ owner<Block*> Block::create() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Block::setupBlock(const c::Rect &wz, const c::Size &sz, int type) {
+void Block::setupBlock(float width, float height, int type) {
+  auto wz= cx::visSize();
+  auto h= height * wz.height / TILE_H_SIZE;
+  auto w= width * wz.width / TILE_W_SIZE;
 
-  auto h= sz.height * wz.size.height / TILE_H_SIZE;
-  auto w= sz.width * wz.size.width / TILE_W_SIZE;
-
-  this->setTextureRect(c::Rect(0, 0, w, h));
+  this->setTextureRect(CCT_RT(0, 0, w, h));
   this->setAnchorPoint(cx::anchorBL());
   _type = type;
 

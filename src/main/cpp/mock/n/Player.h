@@ -39,16 +39,27 @@ enum PlayerState {
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL PlayerMotion : public f::CMove {
+
+  __decl_iz(_floatingTimerMax)
+  __decl_fz(_floatingTimer)
+  __decl_iz(_floatingInterval)
+  __decl_bf(_hasFloated)
+  __decl_bf(_floating)
+  __decl_bf(_inAir)
+  __decl_bf(_jumping)
+
 public:
-int _floatingTimerMax;
-float _floatingTimer;
-int _floatingInterval;
-bool _hasFloated;
+  __decl_gsms(float,_floatingTimerMax, FloatingTimerMax)
+  __decl_gsms(float,_floatingTimer, FloatingTimer)
+  __decl_gsms_is(_hasFloated,HasFloated)
+
+  __decl_gsms_is(_jumping, Jumping)
+  __decl_gsms_is(_inAir, InAir)
+  __decl_ismx(_floating, Floating)
+
   void setFloating(bool value);
-  CC_SYNTHESIZE(bool, _inAir, InAir);
-  CC_SYNTHESIZE_READONLY(bool, _floating, Floating);
-  CC_SYNTHESIZE(bool, _jumping, Jumping);
-void reset();
+  void reset();
+
   PlayerMotion();
 
 };
