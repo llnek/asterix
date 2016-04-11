@@ -22,5 +22,6 @@ struct CC_DLL Splash : public f::XScene {
   __decl_deco_ui()
 };
 
+
 NS_END
 

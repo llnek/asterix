@@ -23,50 +23,50 @@ NS_BEGIN(invaders)
 //
 void MMenu::decoUI() {
 
-  auto tile = CC_CSV(c::Float, "TILE");
   auto dfc= XCFG()->getColor("dft");
   auto ctx = (MCX*) getCtx();
   auto wb = cx::visBox();
 
-  centerImage("mmenus.bg");
+  centerImage("game.bg");
+  regoAtlas("cc-pics");
 
   // title
-  auto lb= cx::reifyBmfLabel(wb.cx, wb.top * 0.9, "JellyBelly", gets("mmenu"));
+  auto lb= cx::reifyBmfLabel(wb.cx, wb.top * 0.8,
+      "title",
+      gets("mmenu"));
   lb->setColor(XCFG()->getColor("text"));
-  lb->setScale(XCFG()->getScale());
+  XCFG()->scaleNode(lb, 52);
   addItem(lb);
 
   // play button
-  auto b1= cx::reifyMenuBtn("play.png");
-  auto menu= cx::mkMenu(b1);
-  auto x= mc_new(f::GCX);
+  auto b1= cx::reifyMenuText("btns", "Restart");
+  auto b2= cx::reifyMenuText("btns", "Quit");
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{b1,b2},
+      CC_CHT(b1)/GOLDEN_RATIO);
 
-  b1->setCallback(
-      [=](c::Ref*) { cx::runEx(Game::reify(x)); });
-  b1->setPosition(wb.cx, wb.cy);
+  b2->setCallback([=](c::Ref*) { cx::prelude(); });
+  b1->setCallback([=](c::Ref*)
+      { cx::runEx(Game::reify(mc_new(GameCtx))); });
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
 
-  // back-quit buttons
   auto b= cx::reifyMenuBtn("icon_back.png");
-  auto q= cx::reifyMenuBtn("icon_quit.png");
-  auto sz= CC_CSIZE(b);
+  auto gap= CC_CWH(b)/GOLDEN_RATIO;
 
-  q->setCallback([](c::Ref*) { cx::prelude();  });
   b->setCallback([=](c::Ref*) { ctx->back(); });
-
-  s_vec<c::MenuItem*> btns {b, q};
-  auto m2= cx::mkHMenu(btns);
-  m2->setPosition(wb.left + tile + sz.width * 1.1f,
-                  wb.bottom + tile + sz.height * 0.45f);
-  addItem(m2);
+  b->setAnchorPoint(cx::anchorBL());
+  CC_POS2(b, wb.left + gap,
+             wb.bottom + gap);
+  addItem(cx::mkMenu(b));
 
   auto audios = cx::reifyAudioIcons();
   audios[0]->setColor(dfc);
   audios[1]->setColor(dfc);
 
+  gap= CC_CWH(audios[0])/GOLDEN_RATIO;
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right - tile, wb.bottom + tile));
+      CCT_PT(wb.right - gap, wb.bottom + gap));
 }
 
 

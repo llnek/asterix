@@ -48,10 +48,10 @@ float Config::scaleFont(float pt) {
 //
 void Config::runOnce() {
   auto anim= cx::createAnimation(0.1,false,0);
-  anim->addSpriteFrame(cx::getSpriteFrame("boom_0.png"));
-  anim->addSpriteFrame(cx::getSpriteFrame("boom_1.png"));
-  anim->addSpriteFrame(cx::getSpriteFrame("boom_2.png"));
-  anim->addSpriteFrame(cx::getSpriteFrame("boom_3.png"));
+  for (auto i=0; i < 4; ++i) {
+    anim->addSpriteFrame(
+        cx::getSpriteFrame("boom_"+FTOS(i)+".png"));
+  }
   CC_ACAC()->addAnimation(anim, "boom!");
   cacheSprites("game-pics");
   cacheSprites("cc-pics");
@@ -73,12 +73,11 @@ void Config::initLevels() {
 //
 void Config::initAssets() {
 
-  addAtlas("lang-pics", CC_STR("l10n/en/images.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  addImage("mmenus.bg", CC_STR("pics/bg.png"));
-  addImage("game.bg", CC_STR("pics/bg.png"));
-  addImage("lang-pics", CC_STR("l10n/en/images.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game.bg", CC_STR("pics/bg.jpg"));
   addImage("game-pics", CC_STR("pics/images.png"));
 
   addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
@@ -89,17 +88,8 @@ void Config::initAssets() {
   addEffect("click", CC_STR("sfx/button-click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
 
-  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("Hiruko", CC_STR("fonts/en/Hiruko.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,6 +112,7 @@ void Config::initCsts() {
   addCst("OFF_Y", CC_INT(2));
 
 }
+
 
 NS_END
 

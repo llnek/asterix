@@ -23,20 +23,21 @@ NS_BEGIN(invaders)
 //
 void Splash::decoUI() {
 
-  auto b1 = cx::reifyMenuBtn("play.png");
-  auto f= []() { cx::prelude(); };
-  auto menu = cx::mkMenu(b1);
+  auto b1 = cx::reifyMenuText("btns", "PLAY");
+  auto tt= cx::reifySprite("title.png");
   auto wb = cx::visBox();
-  auto x = mc_new1(MCX, f);
 
   centerImage("game.bg");
+  regoAtlas("game-pics");
 
-  addFrame( "title.png", c::Vec2(wb.cx, wb.top * 0.9));
+  CC_POS2(tt, wb.cx, wb.top * 0.8);
+  addAtlasItem("game-pics", tt);
 
-  b1->setCallback(
-      [=](c::Ref*) { cx::runEx(MMenu::reify(x)); });
-  b1->setPosition( wb.cx, wb.top * 0.1);
-  addItem(menu);
+  b1->setCallback([=](c::Ref*)
+      { cx::runEx(Game::reify(mc_new(GameCtx))); });
+  CC_POS2(b1, wb.cx, wb.top * 0.2);
+  XCFG()->scaleNode(b1, 36);
+  addItem(cx::mkMenu(b1));
 }
 
 
