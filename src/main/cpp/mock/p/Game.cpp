@@ -91,9 +91,11 @@ bool GLayer::onMouseStart(const CCT_PT &tap) {
       te->reset();
       py->reset();
       reset();
+      MGMS()->play();
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   if (!te->isStartTerrain()) {
@@ -135,7 +137,7 @@ void GLayer::reset() {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->speedIncreaseInterval = 15;
   ss->speedIncreaseTimer = 0;
-  MGMS()->play();
+  //MGMS()->play();
 }
 
 //////////////////////////////////////////////////////////////////////////////

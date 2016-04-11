@@ -52,9 +52,9 @@ bool Terrain::initWithFile(const sstr &fn) {
 
   if (!rc) { return false; }
 
+  S__MIX(_blockHeights);
   S__MIX(_blockPattern);
   S__MIX(_blockWidths);
-  S__MIX(_blockHeights);
 
   _minTerrainWidth = wz.width * 1.5;
   setAnchorPoint(cx::anchorBL());
@@ -145,7 +145,7 @@ void Terrain::checkCollision(ecs::Node *node) {
     ps->state= kPlayerFalling;
   } else {
     ps->state= kPlayerMoving;
-    pm->setFloating (false);
+    pm->setFloating(false);
   }
 
 }

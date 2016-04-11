@@ -38,7 +38,7 @@ struct CC_DLL Rank : public f::CStats {
   __decl_iz(rank)
   Rank(int v, int r)
   : CStats(v) {
-   rank=r;
+    rank=r;
   }
 };
 
@@ -56,7 +56,7 @@ struct CC_DLL Cannon : public ecs::Component {
 struct CC_DLL Explosion : public f::CPixie {
 
   Explosion(not_null<c::Node*> s) : CPixie(s) {
-    frameTime=0.1f ;
+    frameTime=0.1;
   }
 
   virtual void inflate(float x, float y) {
@@ -82,7 +82,6 @@ struct CC_DLL Ship : public f::CPixie {
     frame1=s1;
   }
 
-  __decl_comp_tpid("n/Ship")
   __decl_md(sstr, frame0)
   __decl_md(sstr, frame1)
 };

@@ -34,31 +34,27 @@ owner<Config*> Config::reify() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size& rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto z= this->gameSize();
-  //for default font, we use 48pt
-  _scale = 52/256.0f * rs.width / z.width;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto anim= c::Animation::create();
-  auto fp= getAtlas("game-pics");
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("lang-pics");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
+  auto anim= cx::createAnimation(0.1,false,0);
   anim->addSpriteFrame(cx::getSpriteFrame("boom_0.png"));
   anim->addSpriteFrame(cx::getSpriteFrame("boom_1.png"));
   anim->addSpriteFrame(cx::getSpriteFrame("boom_2.png"));
   anim->addSpriteFrame(cx::getSpriteFrame("boom_3.png"));
-  anim->setRestoreOriginalFrame(true);
-  anim->setDelayPerUnit(0.1);
   CC_ACAC()->addAnimation(anim, "boom!");
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
