@@ -32,6 +32,10 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onTouchMotion(const s_vec<c::Touch*>& );
   virtual void onTouchEnd(const s_vec<c::Touch*>& );
 
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
+
   void updateScore(int,int);
   virtual void onInited();
 
@@ -43,6 +47,71 @@ struct CC_DLL GLayer : public f::GameLayer {
     _tMode= c::Touch::DispatchMode::ALL_AT_ONCE;
   }
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseMotion(const CCT_PT &tap) {
+  auto wb= cx::visBox();
+  F__LOOP(it2, _mallets) {
+    auto &e2= *it2;
+    auto mv=CC_GEC(f::CMove,e2,"f/CMove");
+    auto m=CC_GEC(Mallet,e2,"f/CPixie");
+    if (m->bbox().containsPoint(tap)) {
+      auto r= m->radius();
+      auto cp= m->pos();
+      CCT_PT npos(tap);
+      //clamp
+      if (npos.y < r) { npos.y  = r; }
+      if (npos.x < r) { npos.x = r; }
+      if (npos.x > wb.right - r) { npos.x = wb.right - r; }
+      if (npos.y > wb.top - r) { npos.y = wb.top - r; }
+      //keep player inside its court
+      if (cp.y < wb.cy) {
+        if (npos.y > wb.cy - r) {
+          npos.y = wb.cy - r;
+        }
+      } else {
+        if (npos.y < wb.cy + r) {
+          npos.y = wb.cy + r;
+        }
+      }
+
+      mv->vel= CCT_PT(tap.x - cp.x, tap.y - cp.y);
+      mv->moveTarget= npos;
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+  auto rc=false;
+
+  F__LOOP(it2, _mallets) {
+    auto &e2= *it2;
+    auto m=CC_GEC(Mallet,e2,"f/CPixie");
+    if (m->bbox().containsPoint(tap)) {
+      rc=true;
+    }
+  }
+
+  return rc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseClick(const CCT_PT &tap) {
+
+  F__LOOP(it2,_mallets) {
+    auto &e2= *it2;
+    auto mv=CC_GEC(f::CMove,e2,"f/CMove");
+    auto m=CC_GEC(Mallet,e2,"f/CPixie");
+    if (m->bbox().containsPoint(tap)) {
+      mv->vel= CC_ZPT;
+      m->tap= CC_NIL;
+    }
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -143,7 +212,7 @@ void GLayer::updateScore(int player, int score) {
     auto e= *it;
     auto mv= CC_GEC(f::CMove,e,"f/CMove");
     auto m= CC_GEC(Mallet,e,"f/CPixie");
-    auto p= CC_GEC(Player,e,"n/Player");
+    auto p= CC_GEC(Player,e,"f/CStats");
     auto mc= m->circum();
     if (p->value == 1) {
       setPos(e, wb.cx, mc);
