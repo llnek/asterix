@@ -22,9 +22,9 @@ NS_BEGIN(invaders)
 class CC_DLL Motions : public ecs::System {
 
   void processAlienMotions(float dt);
-  void processCannon( float dt);
+  void processCannon(float dt);
 
-  __decl_ptr(ecs::Node, _cannon)
+  __decl_ptr(ecs::Node, _ship)
   __decl_ptr(ecs::Node, _aliens)
 
 public:

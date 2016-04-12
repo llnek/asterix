@@ -20,7 +20,7 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////
 //
 void Move::preamble() {
-  _player = _engine->getNodes("n/Ship")[0];
+  _player = _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ void Move::process(float dt) {
 void Move::processShipMotions( float dt) {
 
   auto mv= CC_GEC(f::CMove, _player,"f/CMove");
-  auto sp= CC_GEC(Ship, _player,"n/Ship");
+  auto sp= CC_GEC(Ship, _player,"f/CPixie");
   auto pos = sp->pos();
   auto x= pos.x;
   auto y= pos.y;
@@ -58,7 +58,7 @@ void Move::processShipMotions( float dt) {
     x = pos.x - dt * mv->speed.x;
   }
 
-  sp->setPos(x,y);
+  CC_POS2(sp, x,y);
   clamp(sp);
 }
 
@@ -66,16 +66,15 @@ void Move::processShipMotions( float dt) {
 //
 void Move::clamp(Ship *ship) {
 
-  auto tile= CC_CSV(c::Float,"TILE");
-  auto wz = cx::visRect();
-  auto sz= ship->csize();
+  auto wb= cx::visBox();
+  auto sz= CC_CSIZE(ship);
   auto pos= ship->pos();
 
-  if (cx::getRight(ship->node) > wz.size.width - tile) {
-    ship->setPos(wz.size.width - tile - HWZ(sz), pos.y);
+  if (cx::getRight(ship) > wb.right) {
+    ship->setPositionX(wb.right - HWZ(sz));
   }
-  if (cx::getLeft(ship->node) < tile) {
-    ship->setPos(tile + HWZ(sz), pos.y);
+  if (cx::getLeft(ship) < wb.left) {
+    ship->setPositionX(wb.left + HWZ(sz));
   }
 }
 
@@ -84,16 +83,16 @@ void Move::clamp(Ship *ship) {
 void Move::moveBombs(float dt) {
 
   auto bbs= MGMS()->getPool("Bombs");
-  auto c= bbs->ls();
+  auto &c= bbs->ls();
 
   F__LOOP(it, c) {
-    auto b = (ecs::Node*) *it;
+    auto &b = *it;
     if (b->status()) {
-      auto mv= CC_GEC(f::CMove,b,"f/CMove");
       auto s= CC_GEC(f::CPixie,b,"f/CPixie");
+      auto mv= CC_GEC(f::CMove,b,"f/CMove");
       auto pos= s->pos();
       auto y = pos.y + dt * mv->speed.y;
-      s->setPos(pos.x, y);
+      s->setPositionY(y);
     }
   }
 }
@@ -103,16 +102,16 @@ void Move::moveBombs(float dt) {
 void Move::moveMissiles(float dt) {
 
   auto mss= MGMS()->getPool("Missiles");
-  auto c= mss->ls();
+  auto &c= mss->ls();
 
   F__LOOP(it, c) {
-    auto e = (ecs::Node*) *it;
+    auto &e = *it;
     if (e->status()) {
-      auto mv= CC_GEC(f::CMove,e,"f/CMove");
       auto s= CC_GEC(f::CPixie,e,"f/CPixie");
+      auto mv= CC_GEC(f::CMove,e,"f/CMove");
       auto pos= s->pos();
       auto y = pos.y + dt * mv->speed.y;
-      s->setPos(pos.x, y);
+      s->setPositionY(y);
     }
   }
 }

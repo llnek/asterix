@@ -17,15 +17,12 @@ NS_BEGIN(invaders)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Ende : public f::XLayer {
-
-  void onReplay();
-
-public:
+struct CC_DLL Ende : public f::XLayer {
 
   __decl_create_layer(Ende)
   __decl_deco_ui()
 };
+
 
 NS_END
 

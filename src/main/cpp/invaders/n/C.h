@@ -43,11 +43,7 @@ struct CC_DLL Rank : public f::CStats {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-struct CC_DLL Cannon : public ecs::Component {
-
-  Cannon(bool b) { hasAmmo=b; }
-  Cannon() {}
-  __decl_comp_tpid( "n/Cannon")
+struct CC_DLL ShipStats : public f::CStats {
   __decl_bt(hasAmmo)
 };
 
@@ -55,31 +51,38 @@ struct CC_DLL Cannon : public ecs::Component {
 //
 struct CC_DLL Explosion : public f::CPixie {
 
-  Explosion(not_null<c::Node*> s) : CPixie(s) {
-    frameTime=0.1;
+  static owner<Explosion*> create() {
+    auto z= mc_new(Explosion);
+    z->initWithSpriteFrameName("boom_0.png");
+    z->autorelease();
+    return z;
   }
 
   virtual void inflate(float x, float y) {
     auto anim= CC_ACAC()->getAnimation("boom!");
     f::CPixie::inflate(x,y);
-    node->runAction(
-      c::Sequence::createWithTwoActions(c::Animate::create(anim),
-      c::CallFunc::create([=]() { this->deflate(); })));
+    this->runAction(
+      c::Sequence::create(
+        c::Animate::create(anim),
+        c::CallFunc::create([=]() { this->deflate(); }),
+        CC_NIL));
   }
 
   __decl_comp_tpid("n/Explosion")
-  __decl_fz(frameTime)
+  __decl_mv(float,frameTime,0.1)
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Ship : public f::CPixie {
 
-  Ship(not_null<c::Node*> s,
-      const sstr& s0, const sstr& s1)
-    : CPixie(s) {
-    frame0=s0;
-    frame1=s1;
+  static owner<Ship*> create() {
+    auto z= mc_new(Ship);
+    z->initWithSpriteFrameName("ship_1.png");
+    z->frame1= "ship_1.png";
+    z->frame0= "ship_0.png";
+    z->autorelease();
+    return z;
   }
 
   __decl_md(sstr, frame0)
@@ -90,8 +93,12 @@ struct CC_DLL Ship : public f::CPixie {
 //
 struct CC_DLL GVars  : public ecs::Component {
 
-  __decl_md(c::Size, alienSize)
-  __decl_md(c::Size, shipSize)
+  __decl_md(CCT_SZ, alienSize)
+  __decl_md(CCT_SZ, shipSize)
+  __decl_md(CCT_SZ, purple)
+  __decl_md(CCT_SZ, green)
+  __decl_md(CCT_SZ, blue)
+
   __decl_comp_tpid("n/GVars")
 
 };

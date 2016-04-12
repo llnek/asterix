@@ -80,16 +80,18 @@ void Config::initAssets() {
   addImage("game.bg", CC_STR("pics/bg.jpg"));
   addImage("game-pics", CC_STR("pics/images.png"));
 
-  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
-  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("game_end", CC_STR("sfx/end.mp3"));
+  addEffect("game_quit", CC_STR("sfx/quit.mp3"));
   addEffect("ship-missile", CC_STR("sfx/missile.mp3"));
   addEffect("bugs-march", CC_STR("sfx/march.mp3"));
   addEffect("xxx-explode", CC_STR("sfx/explode.mp3"));
   addEffect("click", CC_STR("sfx/button-click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-
-  addFont("Hiruko", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

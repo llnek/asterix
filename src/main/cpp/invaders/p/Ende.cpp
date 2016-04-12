@@ -17,37 +17,35 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(invaders)
 
-//////////////////////////////////////////////////////////////////////////////
-//
-void Ende::onReplay() {
-  auto x= (f::GCX*)getSceneX()->ejectCtx();
-  cx::runEx(Game::reify(x));
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
 
-  auto qn= cx::reifyBmfLabel("OCR", gets("gameover"));
+  auto qn= cx::reifyBmfLabel("title", gets("gameover"));
   auto wb= cx::visBox();
 
-  // text msg
-  qn->setScale(XCFG()->getScale() * 0.3);
-  qn->setPosition(wb.cx, wb.top * 0.75);
+  centerImage("game.bg")->setOpacity(0.8 * 255);
+
   qn->setColor(XCFG()->getColor("text"));
+  CC_POS2(qn, wb.cx, wb.top * 0.8);
+  XCFG()->scaleNode(qn,52);
   addItem(qn);
 
   // btns
-  auto b1= cx::reifyMenuBtn("play.png");
-  auto b2= cx::reifyMenuBtn("quit.png");
+  auto b1= cx::reifyMenuText("btns", "TryAgain?");
+  auto b2= cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleNode(b2,36);
+  XCFG()->scaleNode(b1,36);
   s_vec<c::MenuItem*> btns {b1, b2};
-  auto menu= cx::mkVMenu(btns);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1,b2},
+      CC_CHT(b1)/GOLDEN_RATIO);
 
+  b1->setCallback([=](c::Ref*)
+      { cx::runEx(Game::reify(mc_new(GameCtx))); });
   b2->setCallback([](c::Ref*) { cx::prelude(); });
-  b1->setCallback(
-      [=](c::Ref*) { this->onReplay(); });
 
-  menu->setPosition(wb.cx, wb.top * 0.5);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
 }
 

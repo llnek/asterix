@@ -30,6 +30,10 @@ struct CC_DLL Game : public f::GameScene {
 
 };
 
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL GameCtx : public f::GCX {
+};
 
 NS_END
 

@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 void Motions::preamble() {
   _aliens = _engine->getNodes("n/AlienSquad")[0];
-  _cannon = _engine->getNodes("n/Cannon")[0];
+  _ship = _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,16 +40,16 @@ bool Motions::update(float dt) {
 //
 void Motions::processCannon(float dt) {
 
-  auto lpr= CC_GEC(f::Looper, _cannon, "f/Looper");
-  auto gun = CC_GEC(Cannon, _cannon, "n/Cannon");
-  auto ship= CC_GEC(Ship, _cannon, "n/Ship");
-  auto t= lpr->timer;
+  auto lpr= CC_GEC(f::Looper, _ship, "f/Looper");
+  auto gun = CC_GEC(ShipStats, _ship, "f/CStats");
+  auto ship= CC_GEC(Ship, _ship, "f/CPixie");
+  auto &t= lpr->tm;
 
   //throttle the cannon with timer
-  if (cx::timerDone(t)) {
+  if (cx::timerDone(t.timer)) {
     gun->hasAmmo=true;
-    cx::undoTimer(t);
-    S__NIL(lpr->timer)
+    cx::undoTimer(t.timer);
+      t.timer=CC_NIL;
   }
 
   if (!gun->hasAmmo) {
@@ -58,15 +58,13 @@ void Motions::processCannon(float dt) {
   // release a missile
   auto cfg= MGMS()->getLCfg()->getValue();
   auto p= MGMS()->getPool("Missiles");
-  auto top= cx::getTop(ship->node);
+  auto top= cx::getTop(ship);
   auto pos= ship->pos();
-  auto ent= (ecs::Node*) p->take(true);
-  auto h= CC_GEC(f::CHealth, ent, "f/CHealth");
-  auto sp= CC_GEC(f::CPixie, ent, "f/CPixie");
-  lpr->timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
-  sp->inflate(pos.x, top+4);
-  h->reset();
+  auto ent= p->take(true);
+
+  t.timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWindow"]));
   gun->hasAmmo=false;
+  cx::resurrect((ecs::Node*)ent, pos.x, top+4);
 
   cx::sfxPlay("ship-missile");
 }
@@ -79,12 +77,14 @@ void Motions::processAlienMotions(float) {
   auto lpr = CC_GEC(f::Loopers, _aliens, "f/Loopers");
   auto cfg= MGMS()->getLCfg()->getValue();
 
-  if (ENP(lpr->timers[0])) {
-    lpr->timers[0]= cx::reifyTimer(MGML(), JS_FLOAT(cfg["marching"]));
+  auto &t1= lpr->tms[0];
+  if (E_NIL(t1.timer)) {
+    t1.timer= cx::reifyTimer(MGML(), JS_FLOAT(cfg["marching"]));
   }
 
-  if (ENP(lpr->timers[1])) {
-    lpr->timers[1]= cx::reifyTimer(MGML(), JS_FLOAT(cfg["bombing"]));
+  auto &t2= lpr->tms[1];
+  if (E_NIL(t2.timer)) {
+    t2.timer= cx::reifyTimer(MGML(), JS_FLOAT(cfg["bombing"]));
   }
 }
 

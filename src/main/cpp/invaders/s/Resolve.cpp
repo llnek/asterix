@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 void Resolve::preamble() {
   _aliens= _engine->getNodes("n/AlienSquad")[0];
-  _player= _engine->getNodes("n/Ship")[0];
+  _player= _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,17 +48,16 @@ void Resolve::checkMissiles() {
 
   auto mss = MGMS()->getPool("Missiles");
   auto wb = cx::visBox();
-  auto c = mss->ls();
+  auto &c = mss->ls();
 
   F__LOOP(it, c) {
-    auto e = (ecs::Node*) *it;
+    auto &e = *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
     auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
-      if (s->pos().y >= wb.top ||
+      if (s->getPositionY() >= wb.top ||
           !h->alive()) {
-        s->deflate();
-        e->yield();
+        cx::hibernate((ecs::Node*)e);
       }
     }
   }
@@ -69,18 +68,17 @@ void Resolve::checkMissiles() {
 void Resolve::checkBombs() {
 
   auto bbs = MGMS()->getPool("Bombs");
-  auto c = bbs->ls();
+  auto &c = bbs->ls();
   auto wb= cx::visBox();
 
   F__LOOP(it, c) {
-    auto e = (ecs::Node*) *it;
+    auto &e = *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
     auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       if (!h->alive() ||
-          s->pos().y <= wb.bottom) {
-        s->deflate();
-        e->yield();
+          s->getPositionY() <= wb.bottom) {
+        cx::hibernate((ecs::Node*)e);
       }
     }
   }
@@ -90,10 +88,10 @@ void Resolve::checkBombs() {
 //
 void Resolve::checkAliens() {
   auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
-  auto c= sqad->aliens->ls();
+  auto &c= sqad->aliens->ls();
 
   F__LOOP(it, c) {
-    auto e= (ecs::Node*) *it;
+    auto &e= *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
     auto s= CC_GEC(f::CPixie,e,"f/CPixie");
     auto r= CC_GEC(Rank,e,"n/Rank");
@@ -104,8 +102,7 @@ void Resolve::checkAliens() {
               {"score", r->value }
             });
         SENDMSGEX("/game/player/earnscore", &msg);
-        s->deflate();
-        e->yield();
+        cx::hibernate((ecs::Node*)e);
       }
     }
   }
@@ -115,11 +112,10 @@ void Resolve::checkAliens() {
 //
 void Resolve::checkShip() {
   auto h = CC_GEC(f::CHealth, _player, "f/CHealth");
-  auto s = CC_GEC(Ship, _player, "n/Ship");
+  auto s = CC_GEC(Ship, _player, "f/CPixie");
 
   if (_player->status() && !h->alive()) {
-    s->deflate();
-    _player->yield();
+    cx::hibernate((ecs::Node*)_player);
     SENDMSG("/game/player/killed");
   }
 }

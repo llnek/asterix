@@ -21,7 +21,7 @@ NS_BEGIN(invaders)
 //
 void Collide::preamble() {
   _aliens= _engine->getNodes("n/AlienSquad")[0];
-  _player= _engine->getNodes("n/Ship")[0];
+  _player= _engine->getNodes("f/CGesture")[0];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,25 +53,8 @@ void Collide::checkMissilesBombs() {
 
   auto mss = MGMS()->getPool("Missiles");
   auto bbs = MGMS()->getPool("Bombs");
-  auto m = mss->ls();
-  auto b= bbs->ls();
 
-  F__LOOP(it, m) {
-    auto e= (ecs::Node*) *it;
-    auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
-    if (e->status())
-      F__LOOP(it2, b) {
-        auto e2 = (ecs::Node*) *it2;
-        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto s2= CC_GEC(f::CPixie,e2,"f/CPixie");
-        if (e2->status() && cx::collide(s2,s)) {
-          h2->hurt();
-          h->hurt();
-          break;
-        }
-      }
-  }
+  cx::testCollide(mss, bbs);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,49 +63,16 @@ void Collide::checkMissilesAliens() {
 
   auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
   auto mss = MGMS()->getPool("Missiles");
-  auto c = sqad->aliens->ls();
-  auto c2 = mss->ls();
 
-  F__LOOP(it, c2) {
-    auto e = (ecs::Node*) *it;
-    auto h= CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s= CC_GEC(f::CPixie,e,"f/CPixie");
-    if (e->status())
-      F__LOOP(it2, c) {
-        auto e2= (ecs::Node*) *it2;
-        auto h2= CC_GEC(f::CHealth,e2,"f/CHealth");
-        auto s2= CC_GEC(f::CPixie,e2,"f/CPixie");
-        if (e2->status() &&
-            cx::collide(s,s2)) {
-          h2->hurt();
-          h->hurt();
-          break;
-        }
-      }
-  }
+  cx::testCollide(mss, sqad->aliens);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkShipBombs() {
 
-  auto h2= CC_GEC(f::CHealth,_player,"f/CHealth");
-  auto p= CC_GEC(f::CPixie, _player, "n/Ship");
   auto bbs= MGMS()->getPool("Bombs");
-  auto c= bbs->ls();
-
-  if (_player->status())
-    F__LOOP(it, c) {
-      auto b = (ecs::Node*) *it;
-      auto h= CC_GEC(f::CHealth,b,"f/CHealth");
-      auto bs= CC_GEC(f::CPixie, b, "f/CPixie");
-      if (b->status() &&
-          cx::collide(p, bs)) {
-        h2->hurt();
-        h->hurt();
-        break;
-      }
-    }
+  cx::testCollide(bbs, _player);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,13 +81,13 @@ void Collide::checkShipAliens() {
 
   auto sqad= CC_GEC(AlienSquad, _aliens, "n/AlienSquad");
   auto h2= CC_GEC(f::CHealth,_player,"f/CHealth");
-  auto p = CC_GEC(f::CPixie, _player, "n/Ship");
-  auto c = sqad->aliens->ls();
+  auto p = CC_GEC(f::CPixie, _player, "f/CPixie");
+  auto &c = sqad->aliens->ls();
   auto sz= c.size();
 
   if (_player->status())
     F__LOOP(it, c) {
-      auto a = (ecs::Node*) *it;
+      auto &a = *it;
       auto h= CC_GEC(f::CHealth,a,"f/CHealth");
       auto s= CC_GEC(f::CPixie,a,"f/CPixie");
       if (a->status() &&

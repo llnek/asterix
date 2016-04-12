@@ -24,8 +24,8 @@ void Aliens::preamble() {
   _baddies = _engine->getNodes("n/AlienSquad")[0];
   auto lpr = CC_GEC(f::Loopers, _baddies, "f/Loopers");
   // 2 timers, 1 for moves, 1 for bombs
-  lpr->timers.push_back(CC_NIL);
-  lpr->timers.push_back(CC_NIL);
+  lpr->tms.push_back(f::DLTimer());
+  lpr->tms.push_back(f::DLTimer());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,11 +44,11 @@ void Aliens::processMovement(float dt) {
 
   auto sqad= CC_GEC(AlienSquad, _baddies, "n/AlienSquad");
   auto lpr = CC_GEC(f::Loopers, _baddies, "f/Loopers");
-  auto tm= lpr->timers[0];
+  auto &tm= lpr->tms[0];
 
-  if (cx::timerDone(tm)) {
-    lpr->timers[0]= CC_NIL;
-    cx::undoTimer(tm);
+  if (cx::timerDone(tm.timer)) {
+    cx::undoTimer(tm.timer);
+    tm.timer= CC_NIL;
     maybeShuffleAliens(sqad);
   }
 }
@@ -59,11 +59,11 @@ void Aliens::processBombs(float dt) {
 
   auto sqad= CC_GEC(AlienSquad, _baddies, "n/AlienSquad");
   auto lpr = CC_GEC(f::Loopers, _baddies, "f/Loopers");
-  auto tm= lpr->timers[1];
+  auto &tm= lpr->tms[1];
 
-  if (cx::timerDone(tm)) {
-    lpr->timers[1]= CC_NIL;
-    cx::undoTimer(tm);
+  if (cx::timerDone(tm.timer)) {
+    cx::undoTimer(tm.timer);
+    tm.timer= CC_NIL;
     checkBomb(sqad);
   }
 }
@@ -71,13 +71,13 @@ void Aliens::processBombs(float dt) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::checkBomb(AlienSquad *sqad) {
-  auto c= sqad->aliens->ls();
+  auto &c= sqad->aliens->ls();
   auto sz= c.size();
   s_vec<int> rc;
   int idx=0;
 
   F__LOOP(it, c) {
-    auto a= *it;
+    auto &a= *it;
     if (a->status()) { rc.push_back(idx); }
     ++idx;
   }
@@ -87,7 +87,7 @@ void Aliens::checkBomb(AlienSquad *sqad) {
   if (sz > 0) {
     idx = sz == 1 ? 0 : cx::randInt(sz);
     auto n=rc[idx];
-    auto e= (ecs::Node*) sqad->aliens->getAt(n);
+    auto e= sqad->aliens->getAt(n);
     auto s= CC_GEC(f::CPixie, e, "f/CPixie");
     auto v= s->pos();
     dropBomb(v.x, v.y-4);
@@ -98,13 +98,12 @@ void Aliens::checkBomb(AlienSquad *sqad) {
 //
 void Aliens::dropBomb(float x, float y) {
   auto bbs = MGMS()->getPool("Bombs");
-    auto e = (ecs::Node*) bbs->take(true);
-    if (e) {
-      auto h= CC_GEC(f::CHealth,e, "f/CHealth");
-      auto s= CC_GEC(f::CPixie,e, "f/CPixie");
-      s->inflate(x,y);
-      h->reset();
-    }
+  auto e = bbs->take(true);
+  if (e) {
+    auto h= CC_GEC(f::CHealth,e, "f/CHealth");
+    auto s= CC_GEC(f::CPixie,e, "f/CPixie");
+    cx::resurrect((ecs::Node*)e, x,y);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,7 +112,7 @@ void Aliens::maybeShuffleAliens(AlienSquad *sqad) {
   auto b = sqad->stepx > 0 ? findMaxX(sqad) : findMinX(sqad);
   bool ok;
 
-  if (NNP(b) && b->status()) {
+  if (N_NIL(b) && b->status()) {
     ok = testDirX(b, sqad->stepx) ? doShuffle(sqad) : doForward(sqad);
     if (ok) {
       cx::sfxPlay("bugs-march");
@@ -124,11 +123,10 @@ void Aliens::maybeShuffleAliens(AlienSquad *sqad) {
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::testDirX(ecs::Node *b, int stepx) {
-  auto cd= CC_GEC(f::CPixie,b,"f/CPixie");
-  auto wz= cx::visRect();
+  auto sp= CC_GEC(f::CPixie,b,"f/CPixie");
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
-  auto sp= cd->node;
-  auto delta= 2/40.0 * wz.size.width;
+  auto delta= 2/40.0 * wz.width;
 
   if (stepx > 0) {
     return cx::getRight(sp) + stepx < wb.right - delta;
@@ -140,34 +138,33 @@ bool Aliens::testDirX(ecs::Node *b, int stepx) {
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::shuffleOneAlien(ecs::Node *a, int stepx) {
-  auto cd= CC_GEC(f::CPixie,a,"f/CPixie");
-  auto sp= cd->node;
+  auto sp= CC_GEC(f::CPixie,a,"f/CPixie");
   auto pos= sp->getPosition();
-  sp->setPosition(pos.x + stepx, pos.y);
+  CC_POS2(sp, pos.x + stepx, pos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 void Aliens::forwardOneAlien(ecs::Node *a, float delta) {
-  auto cd= CC_GEC(f::CPixie,a,"f/CPixie");
-  auto sp= cd->node;
+  auto sp= CC_GEC(f::CPixie,a,"f/CPixie");
   auto pos= sp->getPosition();
-  sp->setPosition(pos.x, pos.y - delta);
+  CC_POS2(sp, pos.x, pos.y - delta);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 bool Aliens::doShuffle(AlienSquad *sqad) {
-  auto c= sqad->aliens->ls();
+  auto &c= sqad->aliens->ls();
   auto found=false;
 
   F__LOOP(it, c) {
-    auto e= (ecs::Node*) *it;
+    auto &e=  *it;
     if (e->status()) {
-      shuffleOneAlien(e, sqad->stepx);
+        shuffleOneAlien((ecs::Node*)e, sqad->stepx);
       found=true;
     }
   }
+
   return found;
 }
 
@@ -175,13 +172,13 @@ bool Aliens::doShuffle(AlienSquad *sqad) {
 //
 bool Aliens::doForward(AlienSquad *sqad) {
   auto delta= abs(sqad->stepx);
-  auto c= sqad->aliens->ls();
+  auto &c= sqad->aliens->ls();
   auto found= false;
 
   F__LOOP(it, c) {
-    auto e= (ecs::Node*) *it;
+    auto &e=  *it;
     if (e->status()) {
-      forwardOneAlien(e, delta);
+        forwardOneAlien((ecs::Node*)e, delta);
       found=true;
     }
   }
@@ -193,18 +190,18 @@ bool Aliens::doForward(AlienSquad *sqad) {
 //
 ecs::Node* Aliens::findMinX(AlienSquad *sqad) {
   auto cur= (float) INT32_MAX;
-  auto co= sqad->aliens->ls();
-  ecs::Node *rc= nullptr;
+  auto &co= sqad->aliens->ls();
+  ecs::Node *rc= CC_NIL;
   float v;
 
   F__LOOP(it, co) {
-    auto e= (ecs::Node*) *it;
+    auto &e= *it;
     auto c=CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
-      v= cx::getLeft(c->node);
+      v= cx::getLeft(c);
       if (v < cur) {
         cur=v;
-        rc=e;
+        rc= (ecs::Node*)e;
       }
     }
   }
@@ -216,24 +213,25 @@ ecs::Node* Aliens::findMinX(AlienSquad *sqad) {
 //
 ecs::Node* Aliens::findMaxX(AlienSquad *sqad) {
   auto cur= (float) INT32_MIN;
-  auto co= sqad->aliens->ls();
-  ecs::Node* rc= nullptr;
+  auto &co= sqad->aliens->ls();
+  ecs::Node* rc= CC_NIL;
   float v;
 
   F__LOOP(it, co) {
-    auto e= (ecs::Node*) *it;
+    auto &e= *it;
     auto c= CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
-      v= cx::getRight(c->node);
+      v= cx::getRight(c);
       if (v > cur) {
         cur = v;
-        rc=e;
+        rc= (ecs::Node*) e;
       }
     }
   }
 
   return rc;
 }
+
 
 
 NS_END

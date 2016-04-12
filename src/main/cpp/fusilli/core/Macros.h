@@ -18,6 +18,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 #define CC_GDS(d,f) fusii::dictVal<cocos2d::String>(d,f)->getCString()
+#define CC_GDF(d,f) fusii::dictVal<cocos2d::Float>(d,f)->getValue()
+#define CC_GDI(d,f) fusii::dictVal<cocos2d::Integer>(d,f)->getValue()
+
 #define CC_CSS(f) fusii::cstVal<cocos2d::String>(f)->getCString()
 
 #define CC_GDV(t,d,f) fusii::dictVal<t>(d,f)->getValue()

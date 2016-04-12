@@ -20,8 +20,12 @@ NS_BEGIN(invaders)
 //
 class CC_DLL GEngine : public ecs::Engine {
 
-  const c::Size getRankInfo(int r, c::Dictionary*);
-  void fillSquad(f::FPool* );
+  const CCT_SZ getRankInfo(GVars*, int r, c::Dictionary*);
+  void fillSquad(GVars*, f::FPool* );
+
+  ecs::Node* reifyAliens(GVars*);
+  ecs::Node* reifyShip(GVars*);
+  GVars* reifyArena();
 
 public:
 
@@ -32,9 +36,6 @@ public:
   virtual void initEntities();
   virtual void initSystems();
 
-  ecs::Node* reifyAliens();
-  ecs::Node* reifyShip();
-  ecs::Node* reifyArena();
 
 };
 

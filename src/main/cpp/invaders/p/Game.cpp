@@ -25,16 +25,23 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
+
   __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onTouchStart(c::Touch*);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+
   virtual void onTouchMotion(c::Touch*);
+  virtual bool onTouchStart(c::Touch*);
+
   virtual void onInited();
+
   void onPlayerKilled();
+  void onEnd();
   void showMenu();
   void onEarnScore(int);
 
@@ -44,42 +51,39 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
-  auto sp= CC_GEC(f::CPixie,_player,"n/Ship");
-  auto pos= sp->node->getPosition();
+void GLayer::onMouseMotion(const CCT_PT &loc) {
+  auto sp= CC_GEC(Ship, _player,"f/CPixie");
+  auto pos= sp->getPosition();
   if (loc.y <= pos.y) {
-    sp->node->setPosition(loc.x, pos.y);
+    sp->setPositionX(loc.x);
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+  auto sp= CC_GEC(Ship, _player,"f/CPixie");
+  auto y= sp->getPositionY();
+  return tap.y <= y;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *t) {
-  auto sp= CC_GEC(f::CPixie,_player,"n/Ship");
-  auto y= sp->node->getPositionY();
-  auto loc= t->getLocation();
-  return loc.y <= y;
+  return onMouseStart(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *t) {
-  auto sp= CC_GEC(f::CPixie,_player,"n/Ship");
-  auto y= sp->node->getPositionY();
-  auto loc= t->getLocation();
-  if ( loc.y <= y) {
-    onMouseMotion(loc);
-  }
+  onMouseMotion(t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  _player = _engine->getNodes("n/Ship")[0];
-  // pre-population objects in pools
-  SCAST(GEngine*,_engine)->reifyExplosions();
-  SCAST(GEngine*,_engine)->reifyMissiles();
-  SCAST(GEngine*,_engine)->reifyBombs();
+  _player = _engine->getNodes("f/CGesture")[0];
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,7 +101,7 @@ void GLayer::decoUI() {
   centerImage("game.bg");
 
   regoAtlas("game-pics");
-  regoAtlas("lang-pics");
+  regoAtlas("cc-pics");
 
 }
 
@@ -106,15 +110,19 @@ void GLayer::decoUI() {
 void GLayer::onPlayerKilled() {
   cx::sfxPlay("xxx-explode");
   if (getHUD()->reduceLives(1)) {
-    MGMS()->stop();
-    Ende::reify(MGMS(),4);
+    onEnd();
   } else {
-    auto h= CC_GEC(f::CHealth,_player,"f/CHealth");
-    auto sp= CC_GEC(Ship,_player,"n/Ship");
-    _player->take();
-    sp->inflate();
-    h->reset();
+    cx::resurrect(_player);
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onEnd() {
+
+  MGMS()->stop();
+  surcease();
+  Ende::reify(MGMS(),4);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,14 +160,8 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 //
 void Game::decoUI() {
 
-  MGMS()->reifyPool("Explosions");
-  MGMS()->reifyPool("Aliens");
-  MGMS()->reifyPool("Missiles");
-  MGMS()->reifyPool("Bombs");
-
   HUDLayer::reify(this, 3);
   GLayer::reify(this, 2);
-
   play();
 }
 

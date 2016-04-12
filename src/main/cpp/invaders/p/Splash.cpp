@@ -13,7 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "x2d/XLayer.h"
-#include "MMenu.h"
+#include "Game.h"
 #include "Splash.h"
 
 NS_ALIAS(cx, fusii::ccsx)

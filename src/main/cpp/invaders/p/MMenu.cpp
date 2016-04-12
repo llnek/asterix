@@ -38,9 +38,10 @@ void MMenu::decoUI() {
   XCFG()->scaleNode(lb, 52);
   addItem(lb);
 
-  // play button
   auto b1= cx::reifyMenuText("btns", "Restart");
   auto b2= cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleNode(b2,36);
+  XCFG()->scaleNode(b1,36);
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{b1,b2},
       CC_CHT(b1)/GOLDEN_RATIO);
 

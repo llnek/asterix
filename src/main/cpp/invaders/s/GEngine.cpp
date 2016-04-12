@@ -26,9 +26,18 @@ NS_BEGIN(invaders)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  reifyArena();
-  reifyAliens();
-  reifyShip();
+
+  MGMS()->reifyPools(
+      s_vec<sstr> {"Explosions", "Aliens",
+                   "Missiles", "Bombs"});
+
+  auto ss=reifyArena();
+  reifyAliens(ss);
+  reifyShip(ss);
+
+  reifyExplosions();
+  reifyMissiles();
+  reifyBombs();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,16 +52,58 @@ void GEngine::initSystems() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ecs::Node* GEngine::reifyArena() {
-  //pick purple since it is the largest
-  auto z0= cx::calcSize("purple_bug_0.png");
-  auto s0= cx::calcSize("ship_0.png");
-  auto ent= this->reifyNode("Arena");
+GVars* GEngine::reifyArena() {
+  auto ent= this->reifyNode("Arena", true);
   auto ss = mc_new(GVars);
 
-  ss->alienSize = z0;
-  ss->shipSize = s0;
+  ss->purple = cx::calcSize("purple_bug_0.png");
+  ss->blue = cx::calcSize("blue_bug_0.png");
+  ss->green = cx::calcSize("green_bug_0.png");
+  ss->shipSize = cx::calcSize("ship_0.png");
+
   ent->checkin(ss);
+  return ss;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+ecs::Node* GEngine::reifyAliens(GVars *ss) {
+  //pick purple since it is the largest
+  //use the largest one to calc size
+  auto ent= this->reifyNode("AlienSquad", true);
+  auto stepx= ss->purple.width / 3.0;
+  auto p = MGMS()->getPool("Aliens");
+
+  fillSquad(ss,p);
+
+  ent->checkin(mc_new2(AlienSquad, p, stepx));
+  ent->checkin(mc_new(f::Loopers));
+  return ent;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+ecs::Node* GEngine::reifyShip(GVars *ss) {
+
+  auto ent= this->reifyNode("Ship", true);
+  auto s= Ship::create();
+  auto sz= CC_CSIZE(s);
+  auto wz= cx::visSize();
+  auto wb= cx::visBox();
+
+  auto y = 2 * sz.height + wb.bottom;
+  auto mv= mc_new(f::CMove);
+
+  MGML()->addAtlasItem("game-pics", s);
+  s->inflate(wb.cx,y);
+  mv->speed.x =150;
+
+  ent->checkin(mc_new(f::CGesture));
+  ent->checkin(mc_new(f::CHealth));
+  ent->checkin(mc_new(ShipStats));
+  ent->checkin(mc_new(f::Looper));
+  ent->checkin(s);
+  ent->checkin(mv);
 
   return ent;
 }
@@ -62,19 +113,21 @@ ecs::Node* GEngine::reifyArena() {
 void GEngine::reifyMissiles(int count) {
   auto p= MGMS()->getPool("Missiles");
   auto gz= XCFG()->gameSize();
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
+
   p->preset([=]() -> f::Poolable* {
-    auto sp = cx::reifySprite("missile.png");
+    auto sp = f::CPixie::reifyFrame("missile.png");
     auto mv= mc_new(f::CMove);
     CC_HIDE(sp);
-    mv->speed.y = 150.0 * wz.size.height / gz.height;
+    mv->speed.y = 150.0 * wz.height / gz.height;
     MGML()->addAtlasItem("game-pics", sp);
     auto ent= this->reifyNode("Missile");
-    ent->checkin(mc_new1(f::CPixie, sp));
     ent->checkin(mc_new(f::CHealth));
+    ent->checkin(sp);
     ent->checkin(mv);
     return ent;
   }, count);
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,11 +135,11 @@ void GEngine::reifyMissiles(int count) {
 void GEngine::reifyExplosions(int count) {
   auto p= MGMS()->getPool("Explosions");
   p->preset([=]() -> f::Poolable* {
-    auto sp = cx::reifySprite("boom_0.png");
     auto ent= this->reifyNode("Explosion");
+    auto sp = Explosion::create();
     CC_HIDE(sp);
     MGML()->addAtlasItem("game-pics", sp);
-    ent->checkin(mc_new1(Explosion, sp));
+    ent->checkin(sp);
     return ent;
   }, count);
 }
@@ -96,14 +149,15 @@ void GEngine::reifyExplosions(int count) {
 void GEngine::reifyBombs(int count) {
   auto p= MGMS()->getPool("Bombs");
   auto gz= XCFG()->gameSize();
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
+
   p->preset([=]() -> f::Poolable* {
-    auto c = new f::CPixie(cx::reifySprite("bomb.png"));
+    auto c = f::CPixie::reifyFrame("bomb.png");
     auto mv= mc_new(f::CMove);
     auto ent= this->reifyNode("Bomb");
-    c->hide();
-    mv->speed.y= -50.0 * wz.size.height / gz.height;
-    MGML()->addAtlasItem("game-pics", c->node);
+    CC_HIDE(c);
+    mv->speed.y= -50.0 * wz.height / gz.height;
+    MGML()->addAtlasItem("game-pics", c);
     ent->checkin(mc_new(f::CHealth));
     ent->checkin(mv);
     ent->checkin(c);
@@ -113,24 +167,29 @@ void GEngine::reifyBombs(int count) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-const c::Size GEngine::getRankInfo(int r, c::Dictionary *out) {
-  c::Size z= cx::calcSize("purple_bug_0.png");
+const CCT_SZ GEngine::getRankInfo(GVars *ss, int r, c::Dictionary *out) {
   sstr s0 = "purple_bug_0.png";
   sstr s1= "purple_bug_1.png";
-  int v= 30;
+  int v;
+  CCT_SZ z;
 
   if (r < 3) {
     v= 100;
     s0 = "blue_bug_0.png";
     s1 = "blue_bug_1.png";
-    z= cx::calcSize("blue_bug_0.png");
+    z= ss->blue;
   }
   else
   if (r < 5) {
     v= 50;
     s0 = "green_bug_0.png";
     s1= "green_bug_1.png";
-    z = cx::calcSize("green_bug_0.png");
+    z = ss->green;
+  } else {
+    //s0 = "purple_bug_0.png";
+    //s1= "purple_bug_1.png";
+    z= ss->purple;
+    v=30;
   }
 
   out->setObject(f::Size2::create(z), "size");
@@ -143,88 +202,41 @@ const c::Size GEngine::getRankInfo(int r, c::Dictionary *out) {
 
 //////////////////////////////////////////////////////////////////////////
 //
-void GEngine::fillSquad(f::FPool *pool) {
+void GEngine::fillSquad(GVars *ss, f::FPool *pool) {
 
   auto rows = CC_CSV(c::Integer, "ROWS");
   auto cols = CC_CSV(c::Integer, "COLS");
   auto gz= XCFG()->gameSize();
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
   auto info= CC_DICT();
   float x,y;
 
   for (auto r=0; r < rows; ++r) {
-    auto az = getRankInfo(r, info);
-    auto v = CC_GDV(c::Integer, info, "value");
+    auto az = getRankInfo(ss, r, info);
+    auto v = CC_GDI(info, "value");
     y = (r == 0) ? wb.top * 0.9
-         : y - az.height - wz.size.height * 4/gz.height;
-    x = wb.left + (8/gz.width * wz.size.width) + HWZ(az);
+         : y - az.height - wz.height * 4/gz.height;
+    x = wb.left + (8/gz.width * wz.width) + HWZ(az);
     for (auto c=0; c < cols; ++c) {
-      auto aa = new f::CPixie(cx::reifySprite(CC_GDS(info, "img0")));
-      auto anim= c::Animation::create();
-      auto f1= CC_GDS(info, "img0");
-      auto f2= CC_GDS(info, "img1");
-      auto ent= this->reifyNode("Alien");
-      anim->addSpriteFrame( cx::getSpriteFrame(f1));
-      anim->addSpriteFrame( cx::getSpriteFrame(f2));
-      anim->setDelayPerUnit(1);
-      aa->node->runAction(
+      auto aa = f::CPixie::reifyFrame(CC_GDS(info, "img0"));
+      auto anim= cx::createAnimation(1,false,0);
+      auto ent= this->reifyNode("Alien", true);
+      anim->addSpriteFrame(
+          cx::getSpriteFrame(CC_GDS(info, "img0")));
+      anim->addSpriteFrame(
+          cx::getSpriteFrame(CC_GDS(info, "img1")));
+      aa->runAction(
           c::RepeatForever::create(c::Animate::create(anim)));
-      MGML()->addAtlasItem("game-pics", aa->node);
+      MGML()->addAtlasItem("game-pics", aa);
       ent->checkin(mc_new2(Rank, v, r));
       ent->checkin(mc_new(f::CHealth));
       ent->checkin(aa);
       aa->inflate(x + HWZ(az), y - HHZ(az));
-      ent->take();
       pool->checkin(ent);
-      x += az.width + (8/gz.width * wz.size.width);
+      x += az.width + (8/gz.width * wz.width);
     }
   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-ecs::Node* GEngine::reifyAliens() {
-  // use the largest one to calc size
-  auto z0= cx::calcSize("purple_bug_0.png");
-  auto stepx= z0.width / 3.0;
-  auto ent= this->reifyNode("AlienSquad");
-  auto p = MGMS()->getPool("Aliens");
-
-  fillSquad(p);
-
-  ent->checkin(mc_new2(AlienSquad, p, stepx));
-  ent->checkin(mc_new(f::Loopers));
-  return ent;
-}
-
-//////////////////////////////////////////////////////////////////////////
-//
-ecs::Node* GEngine::reifyShip() {
-
-  auto s= cx::reifySprite("ship_1.png");
-  auto sz= cx::calcSize("ship_0.png");
-  auto ent= this->reifyNode("Ship");
-  auto wz= cx::visRect();
-  auto wb= cx::visBox();
-
-  //TODO: why 60
-  auto y = sz.height + wb.bottom + (5/60.0 * wz.size.height);
-  auto ship = mc_new3(Ship, s, "ship_0.png", "ship_1.png");
-  auto mv= mc_new(f::CMove);
-
-  MGML()->addAtlasItem("game-pics", s);
-  ship->inflate(wb.cx,y);
-  mv->speed.x =150;
-
-  ent->checkin(mc_new1(Cannon,true));
-  ent->checkin(mc_new(f::CHealth));
-  ent->checkin(mc_new(f::Looper));
-  ent->checkin(ship);
-  ent->checkin(mv);
-  ent->take();
-
-  return ent;
 }
 
 
