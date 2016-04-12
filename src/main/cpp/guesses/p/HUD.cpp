@@ -22,14 +22,18 @@ NS_BEGIN(guesses)
 void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
+  float gap;
 
-  _scoreLabel = cx::reifyLabel("text", 32, "");
+  _scoreLabel = cx::reifyBmfLabel("dft", "0");
+  _moves=0;
+
+  XCFG()->scaleNode(_scoreLabel,24);
+  gap= CC_CHT(_scoreLabel)/GOLDEN_RATIO;
   _scoreLabel->setAlignment(c::TextHAlignment::CENTER);
-  _scoreLabel->setPosition(90,50);
+  _scoreLabel->setAnchorPoint(cx::anchorBL());
+  CC_POS2(_scoreLabel, wb.left + gap, wb.bottom + gap);
   updateMoves(0);
   addItem(_scoreLabel);
-
-  _moves=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

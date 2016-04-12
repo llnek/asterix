@@ -21,6 +21,7 @@ struct CC_DLL Splash : public f::XScene {
 
   __decl_create_scene(Splash)
   __decl_deco_ui()
+
 };
 
 

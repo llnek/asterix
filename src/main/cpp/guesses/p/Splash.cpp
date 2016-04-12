@@ -22,6 +22,24 @@ NS_BEGIN(guesses)
 //
 void Splash::decoUI() {
 
+  auto bg = c::LayerGradient::create(
+      c::Color4B(0,0,0,255),
+      c::Color4B(0x46,0x82,0xB4,255));
+    auto wb= cx::visBox();
+  addItem(bg,-1);
+
+  auto title= cx::reifyBmfLabel("title", "Match!");
+  XCFG()->scaleNode(title,52);
+  CC_POS2(title, wb.cx, wb.top * 0.8);
+  addItem(title);
+
+  auto p= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleNode(p, 36);
+  CC_POS2(p, wb.cx, wb.top * 0.2);
+  p->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  addItem(cx::mkMenu(p));
 
 }
 

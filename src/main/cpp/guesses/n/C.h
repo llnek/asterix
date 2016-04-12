@@ -34,15 +34,18 @@ struct CC_DLL MemoryTile : public f::CPixie {
   __decl_iz(pvalue)
 };
 
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
-  s_vec<MemoryTile*> pickedTiles;
-  s_vec<MemoryTile*> tiles;
+  __decl_vec(MemoryTile*, pickedTiles)
+  __decl_vec(MemoryTile*, tiles)
   __decl_ptr(c::DelayTime,checkTimer)
   __decl_iz(moves)
 };
+
+
 
 NS_END
 
