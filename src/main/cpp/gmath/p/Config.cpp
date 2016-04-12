@@ -54,8 +54,8 @@ void Config::initAssets() {
   addEffect("gameOver", CC_STR("sfx/gameOver.mp3"));
   addMusic("background", CC_STR("sfx/backgroundMusic.mp3"));
 
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
   addFont("score", CC_STR("fonts/en/bmScoreFont.fnt"));
-  addFont("title", CC_STR("fonts/en/bmTitleFont.fnt"));
   addFont("text", CC_STR("fonts/en/Verdana.ttf"));
   addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
   addFont("dft", CC_STR("fonts/en/bmFont.fnt"));

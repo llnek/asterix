@@ -24,15 +24,21 @@ void Splash::decoUI() {
 
   auto wz= cx::visSize();
   auto wb= cx::visBox();
-  auto bg= c::LayerColor::create(c::Color4B::WHITE,
+  auto bg= c::LayerColor::create(c::Color4B::BLACK,
                          wz.width*5, wz.height*5);
-  addItem(bg, -1);
 
-  auto title= cx::reifyBmfLabel("title", "G/Math");
+  addItem(bg, -1);
+  regoAtlas("game-pics");
+
+  auto title= cx::reifyBmfLabel("title", "GMath");
   CC_POS2(title, wb.cx, wb.top * 0.8);
   addItem(title);
 
-  auto b= cx::reifyMeuText("btns", "PLAY");
+  auto board= cx::reifySprite("imgBoard.png");
+  CC_POS2(board, wb.cx, wb.cy);
+  addAtlasItem("game-pics", board);
+
+  auto b= cx::reifyMenuText("btns", "PLAY");
   XCFG()->scaleNode(b, 36);
   CC_POS2(b, wb.cx, wb.top * 0.2);
   b->setCallback([=](c::Ref*) {

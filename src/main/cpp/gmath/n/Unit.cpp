@@ -328,6 +328,7 @@ void Unit::touchMotion(const CCT_PT &tap) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Unit::touchEnd(const CCT_PT &tap) {
+
   if (!_isBeingDragged) { return; }
 
   //CGPoint touchPos = [touch locationInNode:self.parent];

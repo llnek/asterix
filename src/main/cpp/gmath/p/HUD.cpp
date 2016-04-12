@@ -24,10 +24,11 @@ void HUDLayer::decoUI() {
   auto wb= cx::visBox();
 
   _scoreLabel= cx::reifyBmfLabel("score", "0");
-  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.2);
-  addItem(_scoreLabel);
-
   _score=0;
+
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.2);
+  CC_HIDE(_scoreLabel);
+  addItem(_scoreLabel);
 }
 
 //////////////////////////////////////////////////////////////////////////////

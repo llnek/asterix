@@ -96,33 +96,36 @@ void GLayer::decoUI() {
   regoAtlas("cc-pics");
 
   auto desc = cx::reifyBmfLabel("dft", "Turns Survived:");
-  CC_POS2(desc, wb.right * 0.125, wb.top * 0.8);
-  desc->setColor(c);
+  CC_POS2(desc, wb.right * 0.125, wb.top * 0.9);
+  XCFG()->scaleNode(desc,64);
+  //desc->setColor(c);
   addItem(desc);
 
   _lblTurnsSurvived= cx::reifyBmfLabel("dft","0");
   CC_POS2(_lblTurnsSurvived, wb.right * 0.125, wb.top * 0.82);
-  _lblTurnsSurvived->setColor(c);
+  //_lblTurnsSurvived->setColor(c);
   addItem(_lblTurnsSurvived);
 
   desc= cx::reifyBmfLabel("dft","Units Killed:");
+  XCFG()->scaleNode(desc,64);
   CC_POS2(desc, wb.right * 0.125, wb.top * 0.7);
-  desc->setColor(c);
+  //desc->setColor(c);
   addItem(desc);
 
   _lblUnitsKilled= cx::reifyBmfLabel("dft","0");
   CC_POS2(_lblUnitsKilled, wb.right * 0.125, wb.top * 0.62);
-  _lblUnitsKilled->setColor(c);
+  //_lblUnitsKilled->setColor(c);
   addItem(_lblUnitsKilled);
 
   desc= cx::reifyBmfLabel("dft","Total Score:");
   CC_POS2(desc, wb.right * 0.125, wb.cy);
-  desc->setColor(c);
+  XCFG()->scaleNode(desc,64);
+  //desc->setColor(c);
   addItem(desc);
 
   _lblTotalScore= cx::reifyBmfLabel("dft","1");
   CC_POS2(_lblTotalScore, wb.right * 0.125, wb.top * 0.42);
-  _lblTotalScore->setColor(c);
+  //_lblTotalScore->setColor(c);
   addItem(_lblTotalScore);
 
   auto btnR= cx::reifyMenuBtn("btnRestart.png");

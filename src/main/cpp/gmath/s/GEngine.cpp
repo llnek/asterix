@@ -24,7 +24,7 @@ NS_BEGIN(gmath)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  // global
+
   auto ent= this->reifyNode("Shared",true);
   auto ss= mc_new(GVars);
   ent->checkin(ss);
