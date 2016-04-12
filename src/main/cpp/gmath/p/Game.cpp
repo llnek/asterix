@@ -58,7 +58,8 @@ struct CC_DLL GLayer : public f::GameLayer {
   void rubberBandToScene();
   void endGame();
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   __decl_ptr(ecs::Node, _shared)
 
@@ -66,9 +67,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -84,42 +85,43 @@ struct CC_DLL GLayer : public f::GameLayer {
 void GLayer::decoUI() {
 
   c::Color3B c(52/255.0, 73/255.0, 94/255.0);
-    auto wz=cx::visSize();
+  auto wz=cx::visSize();
   auto wb=cx::visBox();
-    auto bg= c::LayerColor::create(c::Color4B::WHITE,
+  auto bg= c::LayerColor::create(c::Color4B::WHITE,
                          wz.width*5, wz.height*5);
-  bg->setPosition(wb.cx, wb.cy);
+  CC_POS2(bg, wb.cx, wb.cy);
   addItem(bg, -2);
 
   regoAtlas("game-pics");
+  regoAtlas("cc-pics");
 
   auto desc = cx::reifyBmfLabel("dft", "Turns Survived:");
-  desc->setPosition(wb.right * 0.125, wb.top * 0.9);
+  CC_POS2(desc, wb.right * 0.125, wb.top * 0.8);
   desc->setColor(c);
   addItem(desc);
 
   _lblTurnsSurvived= cx::reifyBmfLabel("dft","0");
-  _lblTurnsSurvived->setPosition(wb.right * 0.125, wb.top * 0.82);
+  CC_POS2(_lblTurnsSurvived, wb.right * 0.125, wb.top * 0.82);
   _lblTurnsSurvived->setColor(c);
   addItem(_lblTurnsSurvived);
 
   desc= cx::reifyBmfLabel("dft","Units Killed:");
-  desc->setPosition(wb.right * 0.125, wb.top * 0.7);
+  CC_POS2(desc, wb.right * 0.125, wb.top * 0.7);
   desc->setColor(c);
   addItem(desc);
 
   _lblUnitsKilled= cx::reifyBmfLabel("dft","0");
-  _lblUnitsKilled->setPosition(wb.right * 0.125, wb.top * 0.62);
+  CC_POS2(_lblUnitsKilled, wb.right * 0.125, wb.top * 0.62);
   _lblUnitsKilled->setColor(c);
   addItem(_lblUnitsKilled);
 
   desc= cx::reifyBmfLabel("dft","Total Score:");
-  desc->setPosition(wb.right * 0.125, wb.cy);
+  CC_POS2(desc, wb.right * 0.125, wb.cy);
   desc->setColor(c);
   addItem(desc);
 
   _lblTotalScore= cx::reifyBmfLabel("dft","1");
-  _lblTotalScore->setPosition(wb.right * 0.125, wb.top * 0.42);
+  CC_POS2(_lblTotalScore, wb.right * 0.125, wb.top * 0.42);
   _lblTotalScore->setColor(c);
   addItem(_lblTotalScore);
 
@@ -133,11 +135,11 @@ void GLayer::decoUI() {
       });
 
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{btnR,btnM});
-  menu->setPosition(wb.right * 0.125, wb.top * 0.15);
+  CC_POS2(menu, wb.right * 0.125, wb.top * 0.15);
   addItem(menu);
 
   auto board= cx::reifySprite("imgBoard.png");
-  board->setPosition(wb.right * 0.625, wb.cy);
+  CC_POS2(board, wb.right * 0.625, wb.cy);
   addAtlasItem("game-pics", board);
 
   if (c::ApplicationProtocol::Platform::OS_IPHONE ==
@@ -151,12 +153,12 @@ void GLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
+  _shared=_engine->getNodes("n/GVars")[0];
 
-    _shared=_engine->getNodes("n/GVars")[0];
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto fu = Unit::friendly(ss);
-  ss->unitSize= fu->boundingBox().size;
-  fu->setPosition(getPosAsGrid(ss,fu->_gridPos));
+  ss->unitSize= CC_CSIZE(fu);
+  CC_POS1(fu, getPosAsGrid(ss,fu->_gridPos));
   addAtlasItem("game-pics", fu);
 
   //ss->enemies.removeAllObjects();
@@ -167,7 +169,9 @@ void GLayer::onInited() {
   _numUnitsKilled = 0;
 
   c::NotificationCenter::getInstance()->addObserver(
-      this, CC_CALLFUNCO_SELECTOR(GLayer::moveUnit), kTurnCompletedNotification, CC_NIL);
+      this,
+      CC_CALLFUNCO_SELECTOR(GLayer::moveUnit),
+      kTurnCompletedNotification, CC_NIL);
 
   if (CC_APPDB()->getBoolForKey(KeyFinishedTutorial)) {
     spawnNewEnemy(getRandomEnemy());
@@ -175,7 +179,7 @@ void GLayer::onInited() {
   } else {
       //spawn enemy on far right with value of 1
     auto enemy= Unit::enemyWith(ss, 1, f::Cell2I(9, 5));
-    enemy->setPosition(getPosAsGrid(ss,enemy->_gridPos));
+    CC_POS1(enemy, getPosAsGrid(ss,enemy->_gridPos));
     enemy->setDir(DirLeft); //2 is right wall
     spawnNewEnemy(enemy);
     _tutorialPhase = 1;
@@ -191,7 +195,7 @@ void GLayer::showTutHelp(GVars *ss) {
   auto tutString = "";
   if (_tutorialPhase == 1) {
     auto lbl= cx::reifyBmfLabel("dft", "How to Play:");
-    lbl->setPosition(getPosAsGrid(ss,f::Cell2I(5,1)));
+    CC_POS1(lbl, getPosAsGrid(ss,f::Cell2I(5,1)));
     lbl->setColor(c::Color3B(52, 73, 94));
     lbl->setName("lblHowToPlay");
     lbl->setScale(0.8);
@@ -202,7 +206,7 @@ void GLayer::showTutHelp(GVars *ss) {
     //bgHowTo->setMargin(0.2);
     bgHowTo->setPosition(0.5,0.4);
     //bgHowTo->setPositionType(c::PositionTypeNormalized);
-    bgHowTo->setContentSize(c::Size(1.05,1.2));
+    bgHowTo->setContentSize(CCT_SZ(1.05,1.2));
     //bgHowTo.contentSizeType = CCSizeTypeNormalized;
     lbl->addChild(bgHowTo,-1);
 
@@ -230,14 +234,14 @@ void GLayer::showTutHelp(GVars *ss) {
   }
 
   auto lbl= cx::reifyBmfLabel("dft", tutString);
-  lbl->setPosition(getPosAsGrid(ss, f::Cell2I(5,2)));
+  CC_POS1(lbl, getPosAsGrid(ss, f::Cell2I(5,2)));
   lbl->setColor(c::Color3B(52,73,94));
   lbl->setName("tutorialText");
   addItem(lbl,2);
 
   auto bg =
     cui::Scale9Sprite::createWithSpriteFrameName("imgUnit.png");
-  bg->setContentSize(c::Size(1.05, 1.2));
+  bg->setContentSize(CCT_SZ(1.05, 1.2));
   //bg->setMargin(0.2);
   bg->setPosition(0.5,0.4);
   //background.positionType = CCPositionTypeNormalized;
@@ -245,8 +249,8 @@ void GLayer::showTutHelp(GVars *ss) {
   lbl->addChild(bg,-1);
 
   auto finger = cx::reifySprite("imgFinger.png");
-  finger->setPosition(getPosAsGrid(ss, f::Cell2I(5,5)));
-  finger->setAnchorPoint(c::Vec2(0.4,1));
+  CC_POS1(finger, getPosAsGrid(ss, f::Cell2I(5,5)));
+  finger->setAnchorPoint(CCT_PT(0.4,1));
   finger->setName("finger");
   finger->setOpacity(0);
   addAtlasItem("game-pics",finger,2);
@@ -256,8 +260,9 @@ void GLayer::showTutHelp(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::runFingerArrowActions(c::Sprite *finger) {
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto u = Unit::friendly(ss);
+
   if (_tutorialPhase == 1 ||
       _tutorialPhase == 3) {
 
@@ -266,7 +271,7 @@ void GLayer::runFingerArrowActions(c::Sprite *finger) {
           c::Sequence::create(
             c::EaseIn::create(c::FadeIn::create(0.25),2),
             c::EaseInOut::create(
-              c::MoveBy::create(1, c::Vec2(u->_gridWidth*2, 0)), 2),
+              c::MoveBy::create(1, CCT_PT(u->_gridWidth*2, 0)), 2),
             c::DelayTime::create(0.5),
             CC_NIL)));
 
@@ -278,13 +283,13 @@ void GLayer::runFingerArrowActions(c::Sprite *finger) {
                 c::FadeOut::create(1), 2),
               c::DelayTime::create(0.5),
               c::CallFunc::create([=]() {
-                finger->setPosition(getPosAsGrid(ss, f::Cell2I(5,5)));
+                CC_POS1(finger,getPosAsGrid(ss, f::Cell2I(5,5)));
                 }),
               CC_NIL)));
   }
   else if (_tutorialPhase == 2) {
 
-    finger->setPosition(getPosAsGrid(ss, f::Cell2I(6,5)));
+    CC_POS1(finger, getPosAsGrid(ss, f::Cell2I(6,5)));
 
     finger->runAction(
         c::RepeatForever::create(
@@ -292,7 +297,7 @@ void GLayer::runFingerArrowActions(c::Sprite *finger) {
               c::EaseIn::create(
                 c::FadeIn::create(0.25), 2),
               c::EaseInOut::create(
-                c::MoveBy::create(1, c::Vec2(-u->_gridWidth*2, 0)), 2),
+                c::MoveBy::create(1, CCT_PT(-u->_gridWidth*2, 0)), 2),
               c::DelayTime::create(0.5),
               CC_NIL)));
 
@@ -304,7 +309,7 @@ void GLayer::runFingerArrowActions(c::Sprite *finger) {
                 c::FadeOut::create(1), 2),
               c::DelayTime::create(0.5),
               c::CallFunc::create([=]() {
-                finger->setPosition(getPosAsGrid(ss, f::Cell2I(6,5)));
+                CC_POS1(finger, getPosAsGrid(ss, f::Cell2I(6,5)));
                 }),
               CC_NIL)));
   }
@@ -376,9 +381,9 @@ Unit* GLayer::getRandomEnemy() {
   auto upperBound = 3 + (_numTurnSurvived / 17); //up difficulty every 17 turns (15 felt a little harsh, 20 might be too easy)
 
   auto unitValue = (rand() % upperBound) + 1;
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto e = Unit::enemyWith(ss, unitValue, f::Cell2I(xPos, yPos));
-  e->setPosition(getPosAsGrid(ss, e->_gridPos));
+  CC_POS1(e, getPosAsGrid(ss, e->_gridPos));
   e->setDir(wall);
 
   return e;
@@ -387,7 +392,7 @@ Unit* GLayer::getRandomEnemy() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnNewEnemy(Unit *enemy) {
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
 
   addAtlasItem("game-pics",enemy);
   ss->enemies->addObject(enemy);
@@ -406,7 +411,7 @@ void GLayer::gotoMenu() {
 //
 void GLayer::restartGame() {
   cx::sfxPlay("click");
-  cx::runEx(Game::reify(new GameCtx()));
+  cx::runEx(Game::reify(mc_new(GameCtx)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -428,7 +433,7 @@ void GLayer::slideAllByDist(float dist, int dir) {
 //
 void GLayer::moveUnit(c::Ref *r) {
 
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto u= static_cast<Unit*>(r);
 
   if (_tutorialPhase == 5 ||
@@ -437,7 +442,7 @@ void GLayer::moveUnit(c::Ref *r) {
     advanceTutorial();
   }
 
-  u->setPosition(getPosAsGrid(ss, u->_gridPos));
+  CC_POS1(u, getPosAsGrid(ss, u->_gridPos));
   cx::sfxPlay("moveUnit");
   ++_numTurnSurvived;
 
@@ -453,7 +458,7 @@ void GLayer::moveUnit(c::Ref *r) {
     if (_tutorialPhase == 4) {
       auto e = Unit::enemyWith(ss, 4, f::Cell2I(5,9));
       e->setDir(DirUp);
-      e->setPosition(getPosAsGrid(ss, f::Cell2I(5,9)));
+      CC_POS1(e, getPosAsGrid(ss, f::Cell2I(5,9)));
       spawnNewEnemy(e);
     } else {
       if (_numTurnSurvived > 200) {
@@ -508,7 +513,7 @@ void GLayer::checkForNewFriend() {
   }
 
   auto f = Unit::friendly(ss);
-  f->setPosition(getPosAsGrid(ss, f->_gridPos));
+  CC_POS1(f, getPosAsGrid(ss, f->_gridPos));
   addAtlasItem("game-pics",f, 1);
   ss->friends->addObject(f);
   ++_numTotalScore;
@@ -544,7 +549,7 @@ void GLayer::moveAllUnits() {
       ++_numTotalScore;
     }
 
-    f->setPosition(getPosAsGrid(ss, f->_gridPos));
+    CC_POS1(f, getPosAsGrid(ss, f->_gridPos));
 
     if (f->_unitValue == 0) {
       arrDel->addObject(f);
@@ -576,7 +581,7 @@ void GLayer::moveAllUnits() {
   CCARRAY_FOREACH(ss->enemies,r) {
     auto e=SCAST(Unit*,r);
     e->didMoveIncNumber();
-    e->setPosition(getPosAsGrid(ss, e->_gridPos));
+    CC_POS1(e, getPosAsGrid(ss, e->_gridPos));
     e->setNewDirForEnemy();
 
     if (! (dead == e->getName() )) {
@@ -603,7 +608,7 @@ void GLayer::moveAllUnits() {
 //
 void GLayer::checkForAllCombines() {
 
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto arrDel= c::Array::create();
 
   c::Ref *r=CC_NIL;
@@ -754,7 +759,7 @@ void GLayer::pulseUnit(c::Node *unit) {
 //
 void GLayer::checkForDirHits() {
 
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto arrDel= c::Array::create();
   c::Ref *r=CC_NIL;
 
@@ -832,7 +837,7 @@ void GLayer::checkForAllHits() {
 void GLayer::handleHitWithFriend(Unit *f, Unit *e,
     c::Array *array, bool isDirectional) {
 
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto fv = f->_unitValue;
   auto ev = e->_unitValue;
 
@@ -929,7 +934,7 @@ void GLayer::rubberBandToScene() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
 
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   c::Ref *r=CC_NIL;
@@ -944,7 +949,7 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   c::Ref *r=CC_NIL;
   CCARRAY_FOREACH(ss->friends,r) {
@@ -958,7 +963,7 @@ void GLayer::onMouseMotion(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   c::Ref *r=CC_NIL;
   CCARRAY_FOREACH(ss->friends,r) {

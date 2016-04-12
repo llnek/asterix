@@ -15,7 +15,7 @@ NS_BEGIN(gmath)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 getPosAsGrid(GVars *ss, const f::Cell2I &cell) {
+const CCT_PT getPosAsGrid(GVars *ss, const f::Cell2I &cell) {
   auto wz= cx::visSize();
   auto ux= ss->unitSize;
   auto borderValue = 0.6;
@@ -25,7 +25,7 @@ const c::Vec2 getPosAsGrid(GVars *ss, const f::Cell2I &cell) {
     borderValue = 0.75;
   }
 
-  return c::Vec2(
+  return CCT_PT(
     wz.width * 0.625 + (ux.width + borderValue) * (cell.x-5),
     wz.height/2 - (ux.width + borderValue) * (cell.y-5));
 }

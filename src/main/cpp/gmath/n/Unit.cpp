@@ -32,7 +32,7 @@ owner<Unit*> Unit::friendly(GVars *ss) {
   z->_direction = DirStanding;
   z->setColor(c::Color3B(39, 179, 97)); //green for friendly
   z->_gridPos = f::Cell2I(5,5);
-  return z;;
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ owner<Unit*> Unit::enemyWith(GVars *ss, int num, const f::Cell2I &cell) {
 bool Unit::initWithSpriteFrameName(const sstr &fn) {
   auto rc= c::Sprite::initWithSpriteFrameName(fn);
   if (!rc) { return false; }
-  auto bx= this->getBoundingBox();
+  auto sz= CC_CSIZE(this);
 
   if (c::ApplicationProtocol::Platform::OS_IPHONE ==
       XCFG()->getPlatform()) {
@@ -64,14 +64,17 @@ bool Unit::initWithSpriteFrameName(const sstr &fn) {
   }
 
   _lblValue = cx::reifyBmfLabel("dft", "1");
-  _lblValue->setPosition(bx.size.width/2, bx.size.height * 0.55);
+  CC_POS2(_lblValue, sz.width/2, sz.height * 0.55);
   this->addChild(_lblValue);
 
   c::NotificationCenter::getInstance()->addObserver(
-        this, CC_CALLFUNCO_SELECTOR(Unit::reposToGrid), kUnitDragCancel,CC_NIL);
+        this,
+        CC_CALLFUNCO_SELECTOR(Unit::reposToGrid),
+        kUnitDragCancel,CC_NIL);
 
-  _gridWidth = bx.size.width + 0.6;
   _dragDirection = DirStanding;
+  _gridWidth = sz.width + 0.6;
+
   return true;
 }
 
@@ -251,14 +254,14 @@ void Unit::reposToGrid(c::Ref*) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Unit::touchStart(const c::Vec2 &tap) {
+bool Unit::touchStart(const CCT_PT &tap) {
   _tapAt = tap;
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::touchMotion(const c::Vec2 &tap) {
+void Unit::touchMotion(const CCT_PT &tap) {
 
   //if it's not already being dragged and the touch is dragged far enough away...
   if (!_isBeingDragged && c::ccpDistance(tap, _tapAt) > 20) {
@@ -266,7 +269,7 @@ void Unit::touchMotion(const c::Vec2 &tap) {
     //add it here:
     _prevTapAt = _tapAt;
 
-    auto diff = c::Vec2(tap.x - _tapAt.x, tap.y - _tapAt.y);
+    auto diff = CCT_PT(tap.x - _tapAt.x, tap.y - _tapAt.y);
     //determine direction
     if (diff.x > 0) {
       if (diff.x > abs(diff.y)) {
@@ -324,7 +327,7 @@ void Unit::touchMotion(const c::Vec2 &tap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Unit::touchEnd(const c::Vec2 &tap) {
+void Unit::touchEnd(const CCT_PT &tap) {
   if (!_isBeingDragged) { return; }
 
   //CGPoint touchPos = [touch locationInNode:self.parent];
