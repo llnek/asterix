@@ -22,8 +22,11 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Mallet : public f::CPixie {
-  Mallet(not_null<c::Node*> s)
-  : CPixie(s) {
+  static owner<Mallet*> create() {
+    auto z= mc_new(Mallet);
+    z->initWithSpriteFrameName("mallet.png");
+    z->autorelease();
+    return z;
   }
   __decl_ptr(c::Touch, tap)
 };
@@ -31,15 +34,17 @@ struct CC_DLL Mallet : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Puck : public f::CPixie {
-  Puck(not_null<c::Node*> s)
-  : CPixie(s) {
+  static owner<Puck*> create() {
+    auto z= mc_new(Puck);
+    z->initWithSpriteFrameName("puck.png");
+    z->autorelease();
+    return z;
   }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Player : public f::CStats {
-  __decl_comp_tpid("n/Player")
   Player(int n) : CStats(n) {}
 };
 
@@ -47,7 +52,7 @@ struct CC_DLL Player : public f::CStats {
 //
 struct CC_DLL Players : public ecs::Component {
   __decl_comp_tpid("n/Players")
-  s_arr<Player,3> parr;
+  __decl_arr(Player,3, parr)
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -56,13 +61,16 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
   __decl_fz(goalWidth)
   __decl_fz(sq_radii)
-  __decl_md(c::Vec2,ballNextPos)
-  __decl_md(c::Vec2,ballVec)
+  __decl_md(CCT_PT,ballNextPos)
+  __decl_md(CCT_PT,ballVec)
 };
 
 
-class Node;
+//////////////////////////////////////////////////////////////////////////////
+//
 void setPos(not_null<ecs::Node*>, float x, float y);
+void readyPt(const s_vec<ecs::Node*>&, ecs::Node*);
+
 
 NS_END
 

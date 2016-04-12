@@ -17,11 +17,11 @@ NS_BEGIN(hockey)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Splash : public f::XScene {
+struct CC_DLL Splash : public f::XScene {
 
-public:
   __decl_create_scene(Splash)
   __decl_deco_ui()
+
 };
 
 

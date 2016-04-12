@@ -22,7 +22,6 @@ class CC_DLL GEngine  : public ecs::Engine {
 
 public:
 
-  void readyPt(const s_vec<ecs::Node*>&, ecs::Node*);
   virtual void initEntities();
   virtual void initSystems();
 

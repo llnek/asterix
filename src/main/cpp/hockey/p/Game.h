@@ -18,7 +18,9 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
+
   virtual void sendMsgEx(const MsgTopic&, void*);
+
   virtual f::GameLayer* getGLayer() {
      return
        (f::GameLayer*) getLayer(2);
@@ -26,9 +28,12 @@ struct CC_DLL Game : public f::GameScene {
 
   __decl_create_scene_ctx(Game)
   __decl_deco_ui()
+
 };
 
 
+struct CC_DLL GameCtx : public f::GCX {
+};
 
 NS_END
 

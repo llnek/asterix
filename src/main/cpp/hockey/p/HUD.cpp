@@ -21,14 +21,19 @@ NS_BEGIN(hockey)
 //
 void HUDLayer::decoUI() {
 
+  auto b= cx::reifyBmfLabel("dft", "000");
   auto wb= cx::visBox();
-  auto b= cx::reifyLabel(wb.right-60, HTV(wb.top) + 80, "arial", 60, "888");
+
+  CC_POS2(b, wb.right-60, wb.cy + 80);
+  XCFG()->scaleNode(b,36);
   b->setRotation(90);
   addItem(b);
   _slabels[2]=b;
   _scores[2]=0;
 
-  b= cx::reifyLabel(wb.right-60, HTV(wb.top) - 80, "arial", 60, "888");
+  b= cx::reifyBmfLabel("dft","000");
+  CC_POS2(b, wb.right-60, wb.cy - 80);
+  XCFG()->scaleNode(b,36);
   b->setRotation(90);
   addItem(b);
   _slabels[1]=b;

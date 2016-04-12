@@ -64,12 +64,12 @@ void Resolve::process() {
 
   //move pieces to next position
 
-  puck->node->setPosition(pv->moveTarget);
+  CC_POS1(puck, pv->moveTarget);
   F__LOOP(it,_mallets) {
-      auto node= *it;
+    auto &node= *it;
     auto mv=CC_GEC(f::CMove,node,"f/CMove");
     auto m=CC_GEC(Mallet,node,"f/CPixie");
-    m->node->setPosition(mv->moveTarget);
+    CC_POS1(m, mv->moveTarget);
   }
 
 }

@@ -10,8 +10,9 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "Config.h"
-#include "Game.h"
+#include "Splash.h"
 NS_BEGIN(hockey)
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -42,43 +43,43 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-  addImage("game.bg", CC_STR("pics/court.png"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
 
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
-  addFont("arial", CC_STR("fon/en/arial.ttf"));
+  addImage("game.bg", CC_STR("pics/court.jpg"));
+
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &fz) {
+void Config::handleResolution(const CCT_SZ &fz) {
   auto gz= gameSize();
-  sstr p;
-
-  if (fz.width > gz.width) {
-    CC_DTOR()->setContentScaleFactor(1);
-    p="sd";
-  } else {
-    CC_DTOR()->setContentScaleFactor(2);
-    p="hd";
-  }
-
-  CC_FILER()->setSearchPaths(s_vec<sstr> {p});
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto fp= getAtlas("game-pics");
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  return Game::reify(mc_new(f::GCX));
+  return Splash::reify();
 }
 
 

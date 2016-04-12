@@ -51,7 +51,7 @@ void Move::process(float dt) {
   bnpos.y += bv.y;
 
   F__LOOP(it,_mallets) {
-    auto node= *it;
+    auto &node= *it;
     auto mv=CC_GEC(f::CMove,node,"f/CMove");
     auto m=CC_GEC(Mallet,node,"f/CPixie");
     auto pnpos = mv->moveTarget;

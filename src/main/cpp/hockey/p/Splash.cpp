@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
+#include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(hockey)
@@ -20,6 +21,22 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
+  auto wb= cx::visBox();
+
+  centerImage("game.bg");
+  regoAtlas("game-pics");
+
+  auto title= cx::reifySprite("logo.png");
+  CC_POS2(title, wb.cx, wb.top * 0.8);
+  addAtlasItem("game-pics", title);
+
+  auto p= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleNode(p, 36);
+  CC_POS2(p, wb.cx, wb.top * 0.2);
+  p->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  addItem(cx::mkMenu(p));
 
 }
 

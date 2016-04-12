@@ -42,7 +42,7 @@ void Collide::process(float dt) {
   auto mv = CC_GEC(f::CMove,_puck,"f/CMove");
   auto ss = CC_GEC(GVars,_shared,"n/GVars");
   auto puck = CC_GEC(Puck,_puck,"f/CPixie");
-    auto gw2= HTV(ss->goalWidth);
+  auto gw2= HTV(ss->goalWidth);
   auto br= puck->radius();
   auto bps= puck->pos();
   auto wb= cx::visBox();

@@ -47,17 +47,21 @@ struct CC_DLL GLayer : public f::GameLayer {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(const s_vec<c::Touch*> &touches) {
+  auto rc=false;
+
   F__LOOP(it2, _mallets) {
-    auto e2= *it2;
+    auto &e2= *it2;
     auto m=CC_GEC(Mallet,e2,"f/CPixie");
     F__LOOP(it,touches) {
-      auto t = *it;
+      auto &t = *it;
       if (m->bbox().containsPoint(t->getLocation())) {
         m->tap= t;
+        rc=true;
       }
     }
   }
-  return true;
+
+  return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,11 +69,11 @@ bool GLayer::onTouchStart(const s_vec<c::Touch*> &touches) {
 void GLayer::onTouchMotion(const s_vec<c::Touch*> &touches) {
   auto wb= cx::visBox();
   F__LOOP(it2, _mallets) {
-    auto e2= *it2;
+    auto &e2= *it2;
     auto mv=CC_GEC(f::CMove,e2,"f/CMove");
     auto m=CC_GEC(Mallet,e2,"f/CPixie");
     F__LOOP(it,touches) {
-      auto t = *it;
+      auto &t = *it;
       auto tap = t->getLocation();
       if (m->tap == t) {
         auto r= m->radius();
@@ -91,8 +95,8 @@ void GLayer::onTouchMotion(const s_vec<c::Touch*> &touches) {
           }
         }
 
+        mv->vel= CCT_PT(tap.x - cp.x, tap.y - cp.y);
         mv->moveTarget= npos;
-        mv->vel= c::Vec2(tap.x - cp.x, tap.y - cp.y);
       }
     }
   }
@@ -102,11 +106,11 @@ void GLayer::onTouchMotion(const s_vec<c::Touch*> &touches) {
 //
 void GLayer::onTouchEnd(const s_vec<c::Touch*> &touches) {
   F__LOOP(it2,_mallets) {
-    auto e2= *it2;
+    auto &e2= *it2;
     auto mv=CC_GEC(f::CMove,e2,"f/CMove");
     auto m=CC_GEC(Mallet,e2,"f/CPixie");
     F__LOOP(it,touches) {
-      auto t= *it;
+      auto &t= *it;
       if (m->tap == t) {
         mv->vel= CC_ZPT;
         m->tap= CC_NIL;
@@ -129,10 +133,10 @@ void GLayer::updateScore(int player, int score) {
 
   if (player == 1) {
         //move ball to player 2 court
-    bv->moveTarget= c::Vec2(wb.cx, wb.cy + bc);
+    bv->moveTarget= CCT_PT(wb.cx, wb.cy + bc);
   } else {
       //move ball to player 1 court
-    bv->moveTarget = c::Vec2(wb.cx, wb.cy - bc);
+    bv->moveTarget = CCT_PT(wb.cx, wb.cy - bc);
   }
 
   F__LOOP(it,_mallets) {
@@ -149,7 +153,7 @@ void GLayer::updateScore(int player, int score) {
     m->tap=CC_NIL;
   }
 
-  SCAST(GEngine*,_engine)->readyPt(_mallets,_puck);
+  readyPt(_mallets,_puck);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -167,7 +171,7 @@ void GLayer::onInited() {
   ss->sq_radii = pow(mr+br, 2);
   ss->goalWidth= 400;
 
-  SCAST(GEngine*,_engine)->readyPt(_mallets, _puck);
+  readyPt(_mallets, _puck);
 }
 
 //////////////////////////////////////////////////////////////////////////////

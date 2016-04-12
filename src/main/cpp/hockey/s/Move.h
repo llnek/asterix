@@ -19,9 +19,9 @@ NS_BEGIN(hockey)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
+  __decl_vec(ecs::Node*, _mallets)
   __decl_ptr(ecs::Node, _shared)
   __decl_ptr(ecs::Node, _puck)
-  s_vec<ecs::Node*> _mallets;
 
   void process(float);
 

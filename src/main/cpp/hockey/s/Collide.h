@@ -21,7 +21,7 @@ class CC_DLL Collide : public ecs::System {
 
   __decl_ptr(ecs::Node, _shared)
   __decl_ptr(ecs::Node, _puck)
-  s_vec<ecs::Node*> _mallets;
+  __decl_vec(ecs::Node*, _mallets)
 
   void process(float);
 

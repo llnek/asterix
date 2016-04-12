@@ -23,8 +23,8 @@ struct CC_DLL HUDLayer : public f::XLayer {
   __decl_deco_ui()
   __decl_get_iid(3)
 
-  s_arr<c::Label*,3> _slabels;
-  s_arr<int,3> _scores;
+  __decl_arr(c::Label*,3, _slabels)
+  __decl_arr(int,3, _scores)
 
   void updateScore(int pnum, int v);
 
