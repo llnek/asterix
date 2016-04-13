@@ -11,7 +11,7 @@
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
-
+#include "x2d/XNode.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"

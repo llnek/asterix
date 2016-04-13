@@ -37,7 +37,7 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-    _game_id= "516c557d-4402-4698-9fa5-72ad3ad34a3f";
+  _game_id= "516c557d-4402-4698-9fa5-72ad3ad34a3f";
   _app_id = "flappy";
 
   addCst("SHIP+SPEED", CC_INT(200));
@@ -58,34 +58,37 @@ void Config::initAssets() {
   addEffect("flap", CC_STR("sfx/flap.mp3"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
 
-  fp= getAtlas("dhtex");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("dhtex");
 
-  auto anim = c::Animation::create();
+  auto anim = cx::createAnimation(0.1,false,0);
   anim->addSpriteFrame(cx::getSpriteFrame("dhch_1"));
   anim->addSpriteFrame(cx::getSpriteFrame("dhch_2"));
   anim->addSpriteFrame(cx::getSpriteFrame("dhch_3"));
   anim->addSpriteFrame(cx::getSpriteFrame("dhch_2"));
   anim->addSpriteFrame(cx::getSpriteFrame("dhch_1"));
-  anim->setDelayPerUnit(0.1);
-  c::AnimationCache::getInstance()->addAnimation(anim, "dragonFlying");
+  CC_ACAC()->addAnimation(anim, "dragonFlying");
 
 }
 

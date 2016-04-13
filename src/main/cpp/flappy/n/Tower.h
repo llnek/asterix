@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XNode.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_BEGIN(flappy)
 
@@ -21,14 +21,14 @@ NS_BEGIN(flappy)
 //
 struct CC_DLL TowerBody {
 
-  TowerBody(const c::Vec2 &p) {
+  TowerBody(const CCT_PT &p) {
     position=p;
   }
   TowerBody() {}
 
   __decl_ptr(c::Sprite,lowerSprite)
   __decl_ptr(c::Sprite,upperSprite)
-  __decl_md(c::Vec2,position)
+  __decl_md(CCT_PT,position)
 
 };
 
@@ -36,21 +36,21 @@ struct CC_DLL TowerBody {
 //
 class CC_DLL Tower {
 
-  void createTower();
-
-  __decl_mv(c::Size, towerSpriteSize, c::Size(0,0))
+  __decl_md(CCT_SZ, towerSpriteSize)
   __decl_ptr(f::XNode,parentNode)
-  s_vec<TowerBody> towers;
+  __decl_vec(TowerBody, towers)
   __decl_iz(firstTowerIndex)
   __decl_iz(lastTowerIndex)
+
+  void createTower();
 
 public:
 
   Tower(f::XNode *n) { parentNode=n; }
   void init();
 
-  void createTower(const c::Vec2&);
-  c::Vec2 getNextTowerPosition();
+  const CCT_PT getNextTowerPosition();
+  void createTower(const CCT_PT&);
   void update(float);
   void repositionTower(int);
   TowerBody& getFrontTower();

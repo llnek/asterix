@@ -15,8 +15,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
-#include "n/Dragon.h"
-#include "n/Tower.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -44,12 +42,12 @@ void Collide::process(float dt) {
   // first find out which tower is right in front
   auto frontTower = ss->towers->getFrontTower();
   // fetch the bounding boxes of the respective sprites
-  auto dragonAABB = CC_BBOX(ss->dragon->node);
+  auto dragonAABB = CC_BBOX(ss->dragon);
   auto lowerTowerAABB = CC_BBOX(frontTower.lowerSprite);
   auto upperTowerAABB = CC_BBOX(frontTower.upperSprite);
 
   // if the respective rects intersect, we have a collision
-  if (dragonAABB.intersectsRect( lowerTowerAABB) ||
+  if (dragonAABB.intersectsRect(lowerTowerAABB) ||
       dragonAABB.intersectsRect(upperTowerAABB)) {
     // dragon must die
     ss->dragon->dragonDeath();

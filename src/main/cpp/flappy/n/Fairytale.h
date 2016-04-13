@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "x2d/XNode.h"
-#include "lib.h"
+#include "C.h"
 
 NS_BEGIN(flappy)
 
@@ -21,12 +21,12 @@ NS_BEGIN(flappy)
 //
 class CC_DLL Fairytale {
 
-  __decl_mv(c::Size,silhouetteSpriteSize,c::Size(0,0))
-  __decl_mv(c::Size,castleSpriteSize,c::Size(0,0))
-  __decl_ptr(f::XNode,parentNode)
-  s_vec<c::Sprite*> silhouetteSprites;
-  s_vec<c::Sprite*> castleSprites;
+  __decl_vec(c::Sprite*, silhouetteSprites)
+  __decl_vec(c::Sprite*, castleSprites)
 
+  __decl_md(CCT_SZ,silhouetteSpriteSize)
+  __decl_md(CCT_SZ,castleSpriteSize)
+  __decl_ptr(f::XNode,parentNode)
   __decl_iz(lastSilhouetteIndex)
   __decl_iz(lastCastleIndex)
 

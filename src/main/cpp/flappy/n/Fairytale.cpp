@@ -14,7 +14,6 @@
 #include "core/CCSX.h"
 #include "Fairytale.h"
 
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(flappy)
 
@@ -35,21 +34,24 @@ void Fairytale::init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Fairytale::createCastle() {
-    // record size of the castle wall sprite
-  castleSpriteSize = cx::getSpriteFrame("dhbase")->getOriginalSize();
-    // initial position
+
+  auto sz = cx::getSpriteFrame("dhbase")->getOriginalSize();
+  castleSpriteSize= XCFG()->fit(sz);
+
+  // initial position
   auto nextPosition = HWZ(castleSpriteSize);
-  auto wz= cx::visRect();
-  auto len= CC_ZW(wz.size) * 1.5;
+  auto wz= cx::visSize();
+  auto len= CC_ZW(wz) * 1.5;
 
     // fill up one & a half screen
   while (nextPosition < len) {
-    // create castle wall sprite and add it to the parent's batch node
-    auto castleSprite = cx::reifySprite("dhbase");
-    castleSprite->setPosition(nextPosition, CASTLE_SPRITE_Y);
-    parentNode->addAtlasItem("dhtex",castleSprite, E_LAYER_CASTLE);
+    // create castle wall sprite and add it to the parent
+    auto sp = cx::reifySprite("dhbase");
+    XCFG()->fit(sp);
+    CC_POS2(sp, nextPosition, CASTLE_SPRITE_Y);
+    parentNode->addAtlasItem("dhtex",sp, E_LAYER_CASTLE);
     // store this sprite...we need to update it
-    castleSprites.push_back(castleSprite);
+    castleSprites.push_back(sp);
     // the next wall depends on this variable
     nextPosition += CC_ZW(castleSpriteSize);
   }
@@ -61,21 +63,23 @@ void Fairytale::createCastle() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Fairytale::createSilhouette() {
-    // record size of the silhouette sprite
-  silhouetteSpriteSize = cx::getSpriteFrame("dhbush")->getOriginalSize();
+  auto sz = cx::getSpriteFrame("dhbush")->getOriginalSize();
+  silhouetteSpriteSize = XCFG()->fit(sz);
+
     // initial position
   auto nextPosition = 0;
-  auto wz= cx::visRect();
-  auto len= CC_ZW(wz.size) * 1.5;
+  auto wz= cx::visSize();
+  auto len= CC_ZW(wz) * 1.5;
 
     // fill up one & a half screen
   while (nextPosition < len) {
-    // create silhouette sprite and add it to the parent's batch node
-    auto silhouetteSprite = cx::reifySprite("dhbush");
-    silhouetteSprite->setPosition(nextPosition, SILHOUETTE_SPRITE_Y);
-    parentNode->addAtlasItem("dhtex", silhouetteSprite, E_LAYER_SILHOUETTE);
+    // create silhouette sprite and add it to the parent
+    auto sp = cx::reifySprite("dhbush");
+    XCFG()->fit(sp);
+    CC_POS2(sp, nextPosition, SILHOUETTE_SPRITE_Y);
+    parentNode->addAtlasItem("dhtex", sp, E_LAYER_SILHOUETTE);
     // store this sprite...we need to update it
-    silhouetteSprites.push_back(silhouetteSprite);
+    silhouetteSprites.push_back(sp);
     // the next silhouette depends on this variable
     nextPosition += CC_ZW(silhouetteSpriteSize);
   }
@@ -88,15 +92,17 @@ void Fairytale::createSilhouette() {
 //
 void Fairytale::createStars() {
     // random number of stars...this night sky always changes
-  auto numStars = MAX_STARS + floor(cx::rand() * MAX_STARS);
-  auto wz=cx::visRect();
+  auto numStars = MAX_STARS + (int)floor(cx::randInt(MAX_STARS));
+  auto wb=cx::visBox();
 
   for (auto i = 0; i < numStars; ++i) {
-      auto png= cx::rand() > 0.5 ? "dhstar1" : "dhstar2";
+    auto png= cx::rand() > 0.5 ? "dhstar1" : "dhstar2";
     auto star = cx::reifySprite(png);
+    XCFG()->fit(star);
     // either big star or small
     // random position
-    star->setPosition(cx::rand() * CC_ZW(wz.size), cx::rand() * CC_ZH(wz.size));
+    CC_POS2(star, cx::randInt(wb.right),
+                  cx::randInt(wb.top));
     // twinkle twinkle randomly star
     auto duration = 1 + cx::rand() * 2;
     auto action = c::RepeatForever::create(
@@ -123,15 +129,14 @@ void Fairytale::updateCastle() {
   auto n=0;
   F__LOOP(it,castleSprites) {
     // first update the position based on the scroll speed
-    auto castleSprite = *it;
-    castleSprite->setPosition(
-        castleSprite->getPositionX() - MAX_SCROLLING_SPEED, castleSprite->getPositionY());
-
+    auto &sp = *it;
+    CC_POS2(sp, sp->getPositionX() - MAX_SCROLLING_SPEED,
+                sp->getPositionY());
     // check if the sprite has gone completely out of the left edge of the screen
-    if (castleSprite->getPositionX() < (castleSpriteSize.width * -0.5)) {
+    if (sp->getPositionX() < -HWZ(castleSpriteSize)) {
       // reposition it after the last wall sprite
-      auto positionX = castleSprites[lastCastleIndex]->getPositionX() + CC_ZW(castleSpriteSize) - MAX_SCROLLING_SPEED;
-      castleSprite->setPosition(positionX, castleSprite->getPositionY());
+      auto x = castleSprites[lastCastleIndex]->getPositionX() + CC_ZW(castleSpriteSize) - MAX_SCROLLING_SPEED;
+      CC_POS2(sp, x, sp->getPositionY());
       // this sprite now becomes the new last wall
       lastCastleIndex = n;
     }
@@ -145,14 +150,14 @@ void Fairytale::updateSilhouette() {
   auto n=0;
   F__LOOP(it,silhouetteSprites) {
       // first update the position based on the scroll speed
-    auto silhouetteSprite = *it;
-    silhouetteSprite->setPosition(silhouetteSprite->getPositionX() - MAX_SCROLLING_SPEED*0.3, silhouetteSprite->getPositionY());
-
+    auto &sp = *it;
+    CC_POS2(sp, sp->getPositionX() - MAX_SCROLLING_SPEED*0.3,
+                sp->getPositionY());
     // check if the sprite has gone completely out of the left edge of the screen
-    if (silhouetteSprite->getPositionX() < -HWZ(silhouetteSpriteSize)) {
+    if (sp->getPositionX() < -HWZ(silhouetteSpriteSize)) {
         // reposition it after the last silhouette sprite
-      auto positionX = silhouetteSprites[lastSilhouetteIndex]->getPositionX() + CC_ZW(silhouetteSpriteSize) - MAX_SCROLLING_SPEED*0.3;
-      silhouetteSprite->setPosition(positionX, silhouetteSprite->getPositionY());
+      auto x = silhouetteSprites[lastSilhouetteIndex]->getPositionX() + CC_ZW(silhouetteSpriteSize) - MAX_SCROLLING_SPEED*0.3;
+      CC_POS2(sp, x, sp->getPositionY());
       // this sprite now becomes the new last silhouette
       lastSilhouetteIndex = n;
     }
