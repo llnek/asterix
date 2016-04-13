@@ -19,6 +19,33 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(flappy)
 
+#define MAX_DRAGON_SPEED  -40
+#define FLAP_FORCE  13
+#define ANIMATION_ACTION_TAG  123
+#define MOVEMENT_ACTION_TAG  121
+
+#define SILHOUETTE_SPRITE_Y  100
+#define MAX_SCROLLING_SPEED  6
+#define CASTLE_SPRITE_Y  -50
+#define MAX_STARS  15
+#define HIGHSCORE_KEY  "DragonDashHighScore"
+#define GRAVITY  -0.75
+
+#define VERT_GAP_BWN_TOWERS  300
+
+enum E_ZORDER {
+
+  E_LAYER_BG=0,
+  E_LAYER_STARS=2,
+  E_LAYER_SILHOUETTE=4,
+  E_LAYER_CASTLE=6,
+  E_LAYER_TOWER=8,
+  E_LAYER_PLAYER=10,
+  E_LAYER_HUD=12,
+  E_LAYER_POPUPS=14
+
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class Fairytale;
@@ -35,6 +62,12 @@ struct CC_DLL GVars : public ecs::Component {
 
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void addDragon(f::XNode*);
+
+
 
 
 

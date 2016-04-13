@@ -22,25 +22,32 @@ NS_BEGIN(flappy)
 //
 class CC_DLL Dragon : public f::CPixie {
 
+  virtual bool initWithSpriteFrameName(const sstr&);
+
   __decl_ptr(f::XNode, parentNode)
   __decl_ptr(GVars,ss)
-
-public:
-
-  void dragonDeath();
-  void dragonFlap();
 
   Dragon(GVars *ss, f::XNode *n) {
     this->ss=ss;
     parentNode=n;
   }
 
+public:
+
+  static owner<Dragon*> create(GVars *ss, f::XNode *n) {
+    auto z= mc_new2(Dragon,ss, n);
+    z->initWithSpriteFrameName("dhch_1");
+    z->autorelease();
+    return z;
+  }
+  void dragonDeath();
+  void dragonFlap();
+
   void onGameStart();
   void update(float);
-  void init();
 
-  __decl_mv(c::Vec2, dragonPosition, c::Vec2(0,0))
-  __decl_mv(c::Vec2, dragonSpeed, c::Vec2(0,0))
+  __decl_md(CCT_PT, dragonPosition)
+  __decl_md(CCT_PT, dragonSpeed)
   __decl_bf(mustApplyGravity)
 
 };

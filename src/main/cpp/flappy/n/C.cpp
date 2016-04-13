@@ -21,9 +21,10 @@ NS_BEGIN(flappy)
 //
 void addDragon(f::XNode *node) {
   auto sp = cx::reifySprite("dhch_1");
+  XCFG()->fit(sp);
   auto wb= cx::visBox();
 
-  sp->setPosition(wb.right * 0.2, HTV(wb.top));
+  CC_POS2(sp, wb.right * 0.2, wb.cy);
   node->addAtlasItem("dhtex", sp, E_LAYER_PLAYER);
 
   auto anim= CC_ACAC()->getAnimation("dragonFlying");
@@ -33,10 +34,10 @@ void addDragon(f::XNode *node) {
   auto seq = c::Sequence::create(
       c::EaseSineOut::create(
         c::MoveBy::create(
-          anim->getDuration()/2, c::Vec2(0, 10))),
+          anim->getDuration()/2, CCT_PT(0, 10))),
       c::EaseSineOut::create(
         c::MoveBy::create(
-          anim->getDuration()/2, c::Vec2(0, -10))),
+          anim->getDuration()/2, CCT_PT(0, -10))),
       CC_NIL);
 
   sp->runAction(c::RepeatForever::create(seq));

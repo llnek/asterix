@@ -21,37 +21,37 @@ NS_BEGIN(flappy)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Dragon::init() {
-  auto wb=cx::visBox();
-  // create sprite and add to GameWorld's sprite batch node
-  node = cx::reifySprite("dhch_1");
-  dragonPosition = c::Vec2(wb.right * 0.2, wb.cy);
-  node->setPosition(dragonPosition);
-  parentNode->addAtlasItem("dhtex", node, E_LAYER_PLAYER);
+bool Dragon::initWithSpriteFrameName(const sstr &fn) {
+  auto rc= c::Sprite::initWithSpriteFrameName(fn);
+  auto wb= cx::visBox();
+  if (!rc) { return false; }
+  XCFG()->fit(this);
+  dragonPosition = CCT_PT(wb.right * 0.2, wb.cy);
+  CC_POS1(this, dragonPosition);
+  parentNode->addAtlasItem("dhtex", this, E_LAYER_PLAYER);
 
-  // fetch flying animation from cache & repeat it on the dragon's  sprite
   auto anim= CC_ACAC()->getAnimation("dragonFlying");
   auto a= c::RepeatForever::create(c::Animate::create(anim));
   a->setTag(ANIMATION_ACTION_TAG);
-  node->runAction(a);
+  this->runAction(a);
 
-  // create a hover movement and repeat it on the dragon's sprite
+  // create a hover movement and repeat it
   auto seq = c::Sequence::create(
       c::EaseSineOut::create(
-        c::MoveBy::create(anim->getDuration()/2, c::Vec2(0, 10))),
+        c::MoveBy::create(anim->getDuration()/2, CCT_PT(0, 10))),
       c::EaseSineOut::create(
-        c::MoveBy::create(anim->getDuration()/2, c::Vec2(0, -10))),
+        c::MoveBy::create(anim->getDuration()/2, CCT_PT(0, -10))),
       CC_NIL);
   a = c::RepeatForever::create(seq);
   a->setTag(MOVEMENT_ACTION_TAG);
-  node->runAction(a);
+  this->runAction(a);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Dragon::onGameStart() {
   // hover should stop once the game has started
-  node->stopActionByTag(MOVEMENT_ACTION_TAG);
+  this->stopActionByTag(MOVEMENT_ACTION_TAG);
   // gravity should be applied once the game has started
   mustApplyGravity = true;
 }
@@ -60,27 +60,23 @@ void Dragon::onGameStart() {
 //
 void Dragon::update(float dt) {
   // calculate bounding box after applying gravity
-  auto newAABB = CC_BBOX(node);
+  auto newAABB = CC_BBOX(this);
   newAABB.origin.y= newAABB.origin.y + dragonSpeed.y;
 
   // check if the dragon has touched the roof of the castle
   if (newAABB.origin.y <= ss->castleRoof) {
-    // stop downward movement and set position to the roof of the castle
     dragonSpeed.y = 0;
     dragonPosition.y = ss->castleRoof + HHZ(newAABB.size);
-
-    // dragon must die
     dragonDeath();
   }
-  // apply gravity only if game has started
   else if (mustApplyGravity) {
-    // clamp gravity to a maximum of MAX_DRAGON_SPEED & add it
+    // clamp speed
     dragonSpeed.y = ((dragonSpeed.y + GRAVITY) < MAX_DRAGON_SPEED ) ? MAX_DRAGON_SPEED : (dragonSpeed.y + GRAVITY);
   }
 
   // update position
   dragonPosition.y += dragonSpeed.y;
-  node->setPosition(dragonPosition);
+  CC_POS1(this, dragonPosition);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -100,13 +96,12 @@ void Dragon::dragonFlap() {
 //
 void Dragon::dragonDeath() {
   auto wb=cx::visBox();
-  // stop the frame based animation...dragon can't fly once its dead
-  node->stopAllActions();
-  node->runAction(
+  this->stopAllActions();
+  this->runAction(
       c::Sequence::create(
         c::EaseSineOut::create(
-            c::MoveBy::create(0.25, c::Vec2(0, node->getContentSize().height))),
-        c::EaseSineIn::create(c::MoveTo::create(0.5, c::Vec2(wb.right * 0.2, ss->castleRoof))),
+            c::MoveBy::create(0.25, CCT_PT(0, CC_CHT(this)))),
+        c::EaseSineIn::create(c::MoveTo::create(0.5, CCT_PT(wb.right * 0.2, ss->castleRoof))),
         c::CallFunc::create([=]() {
             SENDMSG("/game/player/lose");
         }),
