@@ -113,6 +113,7 @@ public:
   void resetCst(const sstr&, c::Ref*);
   c::Ref* getCst(const sstr& );
 
+  void fit(not_null<c::Node*> n) { n->setScale(_scale); }
   int getBtnPadding();
 
   void toggleAudio(bool s);
