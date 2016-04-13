@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
@@ -23,11 +23,13 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  _scoreLabel= cx::reifyLabel("dft", 24, "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
+  _scoreLabel= cx::reifyBmfLabel("dft", "0");
+  _score=0;
+
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.9);
+  XCFG()->scaleNode(_scoreLabel, 36);
   addItem(_scoreLabel);
 
-  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

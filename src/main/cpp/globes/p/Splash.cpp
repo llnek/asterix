@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
@@ -22,7 +22,19 @@ NS_BEGIN(globes)
 //
 void Splash::decoUI() {
 
+  auto bg= c::LayerGradient::create(c::Color4B(0x00,0x22,0x22,255),
+      c::Color4B(0x22,0x00,0x44,255));
+  auto wb= cx::visBox();
 
+  addItem(bg,-1);
+
+  auto b= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleNode(b,36);
+  b->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  addItem(cx::mkMenu(b));
 }
 
 

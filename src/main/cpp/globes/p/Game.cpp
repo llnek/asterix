@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
@@ -23,7 +23,8 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   __decl_ptr(ecs::Node, _shared)
 
@@ -34,11 +35,10 @@ struct CC_DLL GLayer : public f::GameLayer {
   void createLevel(GVars*);
   void fallTile(GVars*, int,int,float);
   void drawPath(GVars*);
-  void addTile(GVars*,TilePtrArray*,int, int);
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -46,13 +46,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -61,7 +56,7 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   ss->arrowsLayer = c::DrawNode::create();
@@ -75,20 +70,20 @@ void GLayer::onInited() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+void GLayer::onMouseClick(const CCT_PT &loc) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->arrowsLayer->clear();
   ss->startColor= "";
 
-  for (auto i = 0; i < ss->visited.size(); ++i){
-    auto &vt= ss->visited[i];
-      auto sp= (GameTile*)ss->tiles[vt.row]->get(vt.col);
+  F__LOOP(it, ss->visited) {
+    auto &vt= *it;
+    auto sp= (GameTile*)ss->tiles[vt.row]->get(vt.col);
     if (ss->visited.size() < 3) {
       sp->setOpacity(255);
       sp->picked=false;
     } else {
-      ss->globezLayer->removeChild(sp);
       ss->tiles[vt.row]->set(vt.col,CC_NIL);
+      ss->globezLayer->removeChild(sp);
     }
   }
 
@@ -100,14 +95,14 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
           auto holesBelow = 0;
           for (auto k = i-1; k >= 0; --k) {
             if (ss->tiles[k]->get(j) == CC_NIL) {
-             ++holesBelow;
+              ++holesBelow;
             }
           }
-          if (holesBelow>0) {
+          if (holesBelow > 0) {
             cur->runAction(
                 c::MoveTo::create(0.5,
-                  c::Vec2(cur->getPositionX(),
-                          cur->getPositionY()-holesBelow* ss->tileSize)));
+                  CCT_PT(cur->getPositionX(),
+                         cur->getPositionY()-holesBelow * ss->tileSize)));
              ss->tiles[i - holesBelow]->set(j,cur);
              ss->tiles[i]->set(j,CC_NIL);
           }
@@ -136,23 +131,25 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
+void GLayer::onMouseMotion(const CCT_PT &loc) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   if (ss->startColor == "") {
   return;}
 
+  auto pt= translatePt(ss, loc);
   auto vsz= ss->visited.size();
   auto tsz=ss->tileSize;
-  auto tsz2= tsz/2;
+  auto tsz2= HTV(tsz);
 
-  auto cur_r = floor(loc.y / tsz);
-  auto cur_c = floor(loc.x / tsz);
-  auto cx = cur_c * tsz + tsz2;
-  auto cy = cur_r * tsz + tsz2;
+  auto cur_r = (int) floor(pt.y / tsz);
+  auto cur_c = (int) floor(pt.x / tsz);
+  auto cy = ss->grid.bottom + (cur_r * tsz + tsz2);
+  auto cx = ss->grid.left + cur_c * tsz + tsz2;
   auto dx = loc.x - cx;
   auto dy = loc.y - cy;
 
   if (dx*dx + dy*dy >= ss->tolerance) {
+      //CCLOG("ignore!!!!, dx = %f, dy = %f", dx, dy);
   return;}
 
   if ( ! ss->tiles[cur_r]->get(cur_c)->picked) {
@@ -185,13 +182,18 @@ void GLayer::fallTile(GVars *ss, int row, int col, float height) {
   auto rtile = cx::randInt(ss->tileTypes.size());
   auto sp = GameTile::create(ss, rtile);
   auto tsz=ss->tileSize;
-  auto tsz2=tsz/2;
+  auto tsz2= HTV(tsz);
+  auto y0= ss->grid.bottom;
+  auto x0= ss->grid.left;
 
   ss->globezLayer->addChild(sp,0);
-  sp->setPosition(col*tsz+tsz2, (ss->fieldSize+height)*tsz);
+  CC_POS2(sp, x0 + col*tsz+tsz2,
+              (ss->fieldSize+height)*tsz);
+
   sp->runAction(
       c::MoveTo::create(0.5,
-        c::Vec2(col*tsz+tsz2, row*tsz+tsz2)));
+        CCT_PT(x0 + col*tsz+tsz2, y0 + (row*tsz+tsz2))));
+
   ss->tiles[row]->set(col,sp);
 }
 
@@ -202,24 +204,33 @@ void GLayer::drawPath(GVars *ss) {
   if (ss->visited.size() ==0) { return; }
   auto tsz=ss->tileSize;
   auto tsz2=tsz/2;
+  auto y0= ss->grid.bottom;
+  auto x0= ss->grid.left;
   for (auto i=1; i < ss->visited.size(); ++i) {
     ss->arrowsLayer->drawSegment(
-        c::Vec2(ss->visited[i-1].col*tsz+tsz2,
-                ss->visited[i-1].row*tsz+tsz2),
-        c::Vec2(ss->visited[i].col*tsz+tsz2,
-                ss->visited[i].row*tsz+tsz2),
+        CCT_PT(x0 + ss->visited[i-1].col*tsz+tsz2,
+               y0 + (ss->visited[i-1].row*tsz+tsz2)),
+        CCT_PT(x0 + ss->visited[i].col*tsz+tsz2,
+               y0 + (ss->visited[i].row*tsz+tsz2)),
         4,
-                                 c::Color4F(c::Color4B(255, 255, 255, 255)));
+        c::Color4F(c::Color4B(255, 255, 255, 255)));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
-    auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto r = floor(loc.y / ss->tileSize);
-  auto c = floor(loc.x / ss->tileSize);
+bool GLayer::onMouseStart(const CCT_PT &loc) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+
+  if (!cx::pointInBox(ss->grid, loc.x, loc.y)) {
+    return false;
+  }
+
+  auto pt= translatePt(ss, loc);
+  auto r = (int) floor(pt.y / ss->tileSize);
+  auto c = (int) floor(pt.x / ss->tileSize);
   auto sp= ss->tiles[r]->get(c);
+    CCLOG("row = %d, col = %d", r, c);
   sp->setOpacity(128);
   sp->picked = true;
   ss->startColor = sp->tileColor;
@@ -249,24 +260,26 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 //
 void GLayer::createLevel(GVars* ss) {
   auto len= ss->fieldSize;
-  for (auto i = 0; i < len;  ++i) {
+  auto sw= ss->tileSize;
+  auto wb=cx::visBox();
+  auto y= ss->grid.bottom;
+  auto x0= ss->grid.left;
+  auto x=x0;
+
+  for (auto i =0; i < len; ++i) {
     auto arr= new TilePtrArray(len);
     ss->tiles.push_back(arr);
     for (auto j = 0; j < len; ++j) {
-      addTile(ss, arr, i, j);
+      auto r= cx::randInt(ss->tileTypes.size());
+      auto sp= GameTile::create(ss,r);
+      CC_POS2(sp, x+ HTV(sw), y + HTV(sw));
+      arr->set(j,sp);
+      ss->globezLayer->addChild(sp,0);
+      x += sw;
     }
+    y += sw;
+    x= x0;
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::addTile(GVars *ss, TilePtrArray *arr, int row, int col) {
-  auto r= cx::randInt(ss->tileTypes.size());
-  auto sp= GameTile::create(ss,r);
-  ss->globezLayer->addChild(sp,0);
-  sp->setPosition(col*ss->tileSize+ ss->tileSize/2,
-  row* ss->tileSize + ss->tileSize/2);
-  arr->set(col,sp);
 }
 
 //////////////////////////////////////////////////////////////////////////////

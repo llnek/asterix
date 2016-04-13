@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
@@ -42,8 +42,9 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_md(sstr,startColor)
   __decl_iz(fieldSize)
   __decl_iz(tileSize)
-  s_vec<TilePtrArray*> tiles;
-  s_vec<f::Cell2D> visited;
+  __decl_md(f::Box4, grid);
+  __decl_vec(TilePtrArray*, tiles)
+  __decl_vec(f::Cell2D, visited)
   s_arr<sstr,5> tileTypes= {
     "red",
     "green",
@@ -53,6 +54,12 @@ struct CC_DLL GVars : public ecs::Component {
   };
 
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const CCT_PT translatePt(GVars*, const CCT_PT &pos);
+
+
 
 
 NS_END

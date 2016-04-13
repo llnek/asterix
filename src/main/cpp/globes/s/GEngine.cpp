@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
@@ -26,13 +26,24 @@ NS_BEGIN(globes)
 void GEngine::initEntities() {
   // global
   auto ent= this->reifyNode("Shared",true);
+  auto sp= cx::reifySprite("red");
+  sp->setScale(XCFG()->getScale());
   auto ss= mc_new(GVars);
+  auto wb=cx::visBox();
+
   ent->checkin(ss);
 
+  ss->tileSize = CC_CWH(sp);
+  ss->fieldSize = 6;
   ss->startColor = "";
   ss->tolerance = 400;
-  ss->fieldSize = 6;
-  ss->tileSize = 50;
+
+  auto w= ss->fieldSize * ss->tileSize;
+  auto h= ss->fieldSize * ss->tileSize;
+  ss->grid.left = wb.cx - HTV(w);
+  ss->grid.top = wb.cy + HTV(h);
+  ss->grid.right = ss->grid.left + w;
+  ss->grid.bottom = ss->grid.top - h;
 
 }
 

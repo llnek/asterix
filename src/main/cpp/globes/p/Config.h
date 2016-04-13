@@ -7,7 +7,7 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
+// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
@@ -27,9 +27,10 @@ public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual const c::Size gameSize() { return c::Size(300,300); }
+  virtual const CCT_SZ gameSize() { return CCT_SZ(320,480); }
 
-  virtual void handleResolution(const c::Size &rs);
+  virtual void handleResolution(const CCT_SZ &rs);
+  virtual float scaleFont(float);
   virtual c::Scene* prelude();
 
   virtual void runOnce();
