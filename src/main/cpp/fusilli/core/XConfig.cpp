@@ -407,6 +407,13 @@ void XConfig::scaleNode(not_null<c::Node*> n, float sz) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+const CCT_SZ XConfig::fit(const CCT_SZ &z) {
+  return CCT_SZ(z.width * _scale,
+                z.height * _scale);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 const s_vec<filepath> XConfig::getMusicFiles() {
   NS_USING(cocos2d)
   auto d= getFragment(EFX);

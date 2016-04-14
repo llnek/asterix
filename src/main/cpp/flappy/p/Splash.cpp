@@ -15,6 +15,7 @@
 #include "Splash.h"
 #include "Game.h"
 #include "n/Fairytale.h"
+#include "n/Dragon.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -23,28 +24,29 @@ NS_BEGIN(flappy)
 //
 void Splash::decoUI() {
 
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   regoAtlas("game-pics", 1+E_LAYER_BG);
   regoAtlas("dhtex", 1+E_LAYER_BG);
 
-  fairytale= new Fairytale(this);
+  fairytale= mc_new1(Fairytale, this);
   fairytale->init();
 
-  addDragon(this);
+  Dragon::create(CC_NIL, this);
 
   auto title= cx::reifySprite("dhtitle");
-  title->setPosition(wb.cx, wb.top * 0.75);
+  XCFG()->fit(title);
+  CC_POS2(title, wb.cx, wb.top * 0.75);
   addAtlasItem("dhtex", title,1);
 
   auto btn = cx::reifyMenuBtn("dhplay");
-  auto menu= cx::mkMenu(btn);
+  XCFG()->fit(btn);
   btn->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify( new f::GCX() ));
+      cx::runEx(Game::reify(mc_new(GameCtx)));
   });
-  btn->setPosition(wb.cx, wb.top * 0.25);
-  addItem(menu, 1);
+  CC_POS2(btn, wb.cx, wb.top * 0.25);
+  addItem(cx::mkMenu(btn), 1);
 
   scheduleUpdate();
 }

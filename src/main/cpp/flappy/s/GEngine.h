@@ -12,6 +12,9 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 #include "ecs/Engine.h"
+#include "n/Fairytale.h"
+#include "n/Tower.h"
+#include "n/Dragon.h"
 #include "n/C.h"
 
 NS_BEGIN(flappy)

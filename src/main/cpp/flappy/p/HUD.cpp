@@ -13,7 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -23,16 +23,21 @@ NS_BEGIN(flappy)
 void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
+
+  regoAtlas("dhtex");
+
+  _scoreLabel= cx::reifyBmfLabel("dft", "0");
   _score=0;
 
-  _scoreLabel= cx::reifyLabel("dft", 120, "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.875);
+  XCFG()->scaleNode(_scoreLabel, 120);
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.875);
   addItem(_scoreLabel, E_LAYER_HUD);
 
   // create the tutorial sprite and add it to the batch node
   _tutorialSprite = cx::reifySprite("dhtap");
-  _tutorialSprite->setPosition(wb.cx, wb.cy);
-  addItem(_tutorialSprite,E_LAYER_HUD);
+  XCFG()->fit(_tutorialSprite);
+  CC_POS2(_tutorialSprite, wb.cx, wb.cy);
+  addAtlasItem("dhtex", _tutorialSprite,E_LAYER_HUD);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -63,6 +68,7 @@ void HUDLayer::updateScore(int n) {
         c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
         CC_NIL));
 }
+
 
 
 NS_END

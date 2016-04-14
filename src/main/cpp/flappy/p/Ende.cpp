@@ -15,7 +15,7 @@
 #include "Game.h"
 #include "Ende.h"
 #include "HUD.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(flappy)
@@ -24,32 +24,37 @@ NS_BEGIN(flappy)
 //
 void Ende::decoUI() {
 
-  auto wz=cx::visRect();
+  auto wz=cx::visSize();
   auto wb=cx::visBox();
   auto popup = c::LayerColor::create(
       c::Color4B(0, 0, 0, 196),
-      CC_ZW(wz.size), CC_ZH(wz.size));
-
+      CC_ZW(wz), CC_ZH(wz));
   popup->setOpacity(0);
   popup->runAction(c::FadeTo::create(0.25, 196));
   addItem(popup);
 
   auto gameOverSprite = cx::reifySprite("dhgover");
-  gameOverSprite->setPosition(wb.cx, wb.top * 0.75);
+  XCFG()->fit(gameOverSprite);
+  CC_POS2(gameOverSprite, wb.cx, wb.top * 0.75);
   addItem(gameOverSprite);
 
-  auto restart= cx::reifyMenuBtn("dhplay");
-  restart->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify( new f::GCX() ));
+  auto r= cx::reifyMenuText("btns", "Try Again?");
+  auto q= cx::reifyMenuText("btns", "Quit");
+  r->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
       });
-
-  auto menu = cx::mkMenu(restart);
-  menu->setPosition(wb.cx, wb.cy);
+  q->setCallback([=](c::Ref*) {
+      cx::prelude();
+      });
+  auto menu = cx::mkVMenu(s_vec<c::MenuItem*>{r,q},
+      CC_CHT(r)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
 
   auto score= getHUD()->getScore();
-  auto scoreLabel = cx::reifyLabel("dft", 60, "Score: " + FTOS(score));
-  scoreLabel->setPosition(wb.cx, wb.top * 0.6);
+  auto scoreLabel = cx::reifyBmfLabel("dft", "Score: " + FTOS(score));
+  XCFG()->scaleNode(scoreLabel,64);
+  CC_POS2(scoreLabel, wb.cx, wb.top * 0.6);
   scoreLabel->runAction(
       c::Sequence::create(
         c::DelayTime::create(0.5),
@@ -58,22 +63,23 @@ void Ende::decoUI() {
         CC_NIL));
   addItem(scoreLabel);
 
-  auto oldHighScore = CC_APPDB()->getIntegerForKey(HIGHSCORE_KEY);
-  auto highScoreLabel = cx::reifyLabel("dft", 60, "Your Best: " + FTOS(oldHighScore));
-  highScoreLabel->setPosition(wb.cx, wb.cy);
-  addItem(highScoreLabel);
+  auto oldScore = CC_APPDB()->getIntegerForKey(HIGHSCORE_KEY);
+  auto hsLabel = cx::reifyBmfLabel("dft",
+      "Your Best: " + FTOS(oldScore));
+  XCFG()->scaleNode(hsLabel,64);
+  CC_POS2(hsLabel, wb.cx, wb.cy);
+  addItem(hsLabel);
 
-  // check if new high score has been achieved
-  if (score > oldHighScore) {
+  if (score > oldScore) {
     // save the new high score
     CC_APPDB()->setIntegerForKey(HIGHSCORE_KEY, score);
     CC_APPDB()->flush();
-    highScoreLabel->runAction(
+    hsLabel->runAction(
         c::Sequence::create(
           c::DelayTime::create(1),
           c::EaseSineIn::create(c::ScaleTo::create(0.25, 1.1)),
           c::CallFunc::create([=]() {
-             highScoreLabel->setString("Your Best: " + FTOS(score));
+             hsLabel->setString("Your Best: " + FTOS(score));
             }),
           c::EaseSineOut::create(c::ScaleTo::create(0.25, 1)),
           CC_NIL));

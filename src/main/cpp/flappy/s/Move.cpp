@@ -15,9 +15,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
-#include "n/Dragon.h"
-#include "n/Tower.h"
-#include "n/Fairytale.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
@@ -48,7 +45,7 @@ void Move::process(float dt) {
 
   // update towers only after game has started
   if (ss->hasGameStarted) {
-      ss->towers->update(dt);
+    ss->towers->update(dt);
   }
 
   // update environment

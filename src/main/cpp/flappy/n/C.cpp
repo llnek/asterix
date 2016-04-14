@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(flappy)
@@ -41,6 +41,7 @@ void addDragon(f::XNode *node) {
       CC_NIL);
 
   sp->runAction(c::RepeatForever::create(seq));
+
 }
 
 

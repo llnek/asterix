@@ -45,6 +45,8 @@ bool Dragon::initWithSpriteFrameName(const sstr &fn) {
   a = c::RepeatForever::create(seq);
   a->setTag(MOVEMENT_ACTION_TAG);
   this->runAction(a);
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////

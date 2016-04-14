@@ -17,36 +17,29 @@
 #include "Ende.h"
 #include "Game.h"
 
-#include "n/Fairytale.h"
-#include "n/Tower.h"
-#include "n/Dragon.h"
-
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(flappy)
 BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+
   void onEnd();
 
   __decl_ptr(ecs::Node, _shared)
-
   __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual bool onMouseStart(const c::Vec2&);
+  virtual bool onMouseStart(const CCT_PT&);
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
-  virtual ~GLayer();
-};
+  virtual ~GLayer() {}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -54,26 +47,23 @@ void GLayer::onInited() {
   _shared = _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  // set the roof of the castle
   ss->castleRoof = 100;
 
-  // create & init all managers
-  ss->towers= new Tower(this);
+  ss->towers= mc_new1(Tower, this);
   ss->towers->init();
 
-  ss->dragon= new Dragon(ss,this);
-  ss->dragon->init();
+  ss->dragon= Dragon::create(ss,this);
 
-  ss->fairytale= new Fairytale(this);
+  ss->fairytale= mc_new1(Fairytale, this);
   ss->fairytale->init();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
 
   ss->hasGameStarted = true;
@@ -97,7 +87,6 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onEnd() {
-  this->setOpacity(255 * 0.1);
   MGMS()->stop();
   surcease();
   Ende::reify(MGMS(),4);
@@ -105,7 +94,7 @@ void GLayer::onEnd() {
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   regoAtlas("game-pics", E_LAYER_BG + 1);
@@ -126,16 +115,9 @@ void Game::sendMsgEx(const MsgTopic &topic, void *m) {
 
   if ("/game/player/earnscore"==topic) {
     auto msg= (j::json*) m;
-    y->getHUD()->updateScore(JS_INT(msg->operator[]("score")));
+    y->getHUD()->updateScore(
+        JS_INT(msg->operator[]("score")));
   }
-
-  if (""==topic) {
-  }
-
-
-  if (""==topic) {
-  }
-
 
 }
 

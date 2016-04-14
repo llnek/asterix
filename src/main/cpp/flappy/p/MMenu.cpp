@@ -21,58 +21,61 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto resume = cx::reifyMenuBtn("resume-std.png", "resume-sel.png");
-  auto retry = cx::reifyMenuBtn("replay-std.png", "replay-sel.png");
-  auto splash = cx::reifyMenuBtn("splash-std.png", "splash-sel.png");
-  auto wz= cx::visRect();
+  auto r= cx::reifyMenuText("btns", "Restart");
+  auto q= cx::reifyMenuText("btns", "Quit");
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {
-    resume,retry,splash
-  }, CC_ZH(wz.size)/4);
+  centerImage("game.bg");
+  regoAtlas("game-pics");
 
-  resume->setCallback([=](c::Ref*) {
+  r->setCallback([=](c::Ref*) {
+    cx::sfxPlay("button");
+    cx::pop();
+    if (XCFG()->hasAudio()) {
+      cx::stopMusic();
+    }
+    cx::runEx(Game::reify(mc_new(GameCtx)));
+  });
+
+  q->setCallback([=](c::Ref*) {
+    cx::sfxPlay("button");
+    cx::pop();
+    if (XCFG()->hasAudio()) {
+      cx::stopMusic();
+    }
+    cx::prelude();
+  });
+
+  auto menu = cx::mkVMenu(s_vec<c::MenuItem*> {r,q},
+      CC_CHT(r)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx,wb.cy);
+  addItem(menu);
+
+  auto back= cx::reifyMenuBtn("icon_back.png");
+  auto gap= CC_CHT(back)/GOLDEN_RATIO;
+  back->setAnchorPoint(cx::anchorBL());
+  back->setCallback([=](c::Ref*) {
     cx::sfxPlay("button");
     cx::pop();
     if (XCFG()->hasAudio()) {
       cx::resumeMusic();
     }
   });
-
-  retry->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Game::reify( new GameCtx() ));
-  });
-
-  splash->setCallback([=](c::Ref*) {
-    cx::sfxPlay("button");
-    cx::pop();
-    if (XCFG()->hasAudio()) {
-      cx::stopMusic();
-    }
-    cx::runEx(Splash::reify());
-  });
-
-  menu->setPosition(wb.cx,wb.cy);
-  centerImage("gui.bg");
-  addItem(menu);
+  CC_POS2(back, wb.left+gap, wb.bottom+gap);
+  addAtlasItem("game-pics", back);
 
   // audio
   auto audios= cx::reifyAudioIcons();
-  auto sz= CC_CSIZE(audios[0]);
-  auto gap= CC_ZW(sz)/4;
   auto c= cx::white();
 
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
+  gap= CC_CWH(audios[0]) /GOLDEN_RATIO;
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
+      CCT_PT(wb.right-gap, wb.bottom+gap));
 
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();

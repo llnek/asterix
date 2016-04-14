@@ -20,13 +20,13 @@ NS_BEGIN(flappy)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Tower::init() {
-    // record size of the tower's sprite
-  towerSpriteSize = cx::getSpriteFrame("opst_02")->getOriginalSize();
-  auto wz= cx::visRect();
+  auto sz= cx::getSpriteFrame("opst_02")->getOriginalSize();
+  towerSpriteSize = XCFG()->fit(sz);
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
   // create the first pair of towers
   // they should be two whole screens away from the dragon
-  auto initialPosition = c::Vec2(CC_ZW(wz.size)*2, wb.cy);
+  auto initialPosition = CCT_PT(CC_ZW(wz)*2, wb.cy);
   firstTowerIndex = 0;
   createTower(initialPosition);
   // create the remaining towers
@@ -39,13 +39,14 @@ void Tower::init() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Tower::createTower(const c::Vec2 &position) {
+void Tower::createTower(const CCT_PT &position) {
   // create a new tower and add it to the array
   TowerBody tower(position);
 
   // create lower tower sprite & add it to GameWorld's batch node
   tower.lowerSprite = cx::reifySprite("opst_02");
-  tower.lowerSprite->setPosition(
+  XCFG()->fit(tower.lowerSprite);
+  CC_POS2(tower.lowerSprite,
       position.x,
       position.y - HTV(VERT_GAP_BWN_TOWERS) - HHZ(towerSpriteSize));
 
@@ -53,7 +54,8 @@ void Tower::createTower(const c::Vec2 &position) {
 
   // create upper tower sprite & add it to GameWorld's batch node
   tower.upperSprite = cx::reifySprite("opst_01");
-  tower.upperSprite->setPosition(
+  XCFG()->fit(tower.upperSprite);
+  CC_POS2(tower.upperSprite,
       position.x,
       position.y + HTV(VERT_GAP_BWN_TOWERS) + HHZ(towerSpriteSize));
   parentNode->addAtlasItem("dhtex", tower.upperSprite, E_LAYER_TOWER);
@@ -69,11 +71,11 @@ void Tower::update(float dt) {
     auto &tower = *it;
     // first update the position of the tower
     tower.position.x -= MAX_SCROLLING_SPEED;
-    tower.lowerSprite->setPosition(tower.position.x, tower.lowerSprite->getPositionY());
-    tower.upperSprite->setPosition(tower.position.x, tower.upperSprite->getPositionY());
+    CC_POS2(tower.lowerSprite, tower.position.x, tower.lowerSprite->getPositionY());
+    CC_POS2(tower.upperSprite, tower.position.x, tower.upperSprite->getPositionY());
 
     // if the tower has moved out of the screen, reposition them at the end
-    if (tower.position.x < towerSpriteSize.width * -0.5) {
+    if (tower.position.x <  -HWZ(towerSpriteSize)) {
       repositionTower(n);
       // this tower now becomes the tower at the end
       lastTowerIndex = n;
@@ -91,29 +93,29 @@ void Tower::repositionTower(int index) {
   auto &tower = towers[index];
   // update tower's position and sprites
   tower.position = getNextTowerPosition();
-  tower.lowerSprite->setPosition(
+  CC_POS2(tower.lowerSprite,
       tower.position.x,
       tower.position.y - HTV(VERT_GAP_BWN_TOWERS) - HHZ(towerSpriteSize));
-  tower.upperSprite->setPosition(
+  CC_POS2(tower.upperSprite,
       tower.position.x,
       tower.position.y + HTV(VERT_GAP_BWN_TOWERS)+ HHZ(towerSpriteSize));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 Tower::getNextTowerPosition() {
+const CCT_PT Tower::getNextTowerPosition() {
   // randomly select either above or below last tower
   auto r=  cx::rand();
   auto offset = r * VERT_GAP_BWN_TOWERS * 0.75;
   auto isAbove = r > 0.5;
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   offset *= (isAbove) ? 1 : -1;
 
   auto &tower = towers[lastTowerIndex];
   // new position calculated by adding to last tower's position
-  auto newPositionX = tower.position.x + HWZ(wz.size);
+  auto newPositionX = tower.position.x + HWZ(wz);
   auto newPositionY = tower.position.y + offset;
 
   // limit the point to stay within 30-80% of the screen
@@ -125,7 +127,7 @@ c::Vec2 Tower::getNextTowerPosition() {
   }
 
   // return the new tower position
-  return c::Vec2(newPositionX, newPositionY);
+  return CCT_PT(newPositionX, newPositionY);
 }
 
 //////////////////////////////////////////////////////////////////////////////

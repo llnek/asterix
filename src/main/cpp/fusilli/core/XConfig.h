@@ -114,6 +114,7 @@ public:
   c::Ref* getCst(const sstr& );
 
   void fit(not_null<c::Node*> n) { n->setScale(_scale); }
+  const CCT_SZ fit(const CCT_SZ &z);
   int getBtnPadding();
 
   void toggleAudio(bool s);
