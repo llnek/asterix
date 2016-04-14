@@ -144,12 +144,11 @@ void GLayer::loadLevel(int level) {
     auto e= po->take(true);
     auto pm = CC_GEC(Platform,e,"f/CPixie");
     auto data = pData.asValueMap();
-    auto ps= (PlatformSprite*) pm->node;
-    ps->initPlatform (
+    pm->initPlatform (
                       data.at("width").asInt() * TILE,
                       data.at("angle").asFloat(),
-                      c::Vec2(data.at("x").asFloat() * TILE,
-                           data.at("y").asFloat() * TILE));
+                      CCT_PT(data.at("x").asFloat() * TILE,
+                             data.at("y").asFloat() * TILE));
   }
 }
 
@@ -162,10 +161,8 @@ void GLayer::resetLevel() {
    need to be taken when loading a new level AND resetting the level (when user presses
    play again or the reset level button)
    */
-
-  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto player= CC_GEC(Eskimo,_player,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto player= (EskimoSprite*) py->node;
   auto levelData =
     _levels.at(ss->currentLevel).asValueMap();
   float x=0;
@@ -199,29 +196,29 @@ void GLayer::resetLevel() {
     if (n < switches.size()) {
       gs->initGSwitch(
                      data.at("gravity").asInt(),
-                     c::Vec2(data.at("x").asFloat() * TILE,
-                          data.at("y").asFloat() * TILE));
+                     CCT_PT(data.at("x").asFloat() * TILE,
+                            data.at("y").asFloat() * TILE));
     } else {
-        cx::hibernate((ecs::Node*)e);
+      cx::hibernate((ecs::Node*)e);
     }
     //++n;
   }
 
   //reset player to level start position
-  player->setSpritePosition(
-      c::Vec2(levelData.at("startx").asFloat() * TILE,
+  player->setPosition(
+      CCT_PT(levelData.at("startx").asFloat() * TILE,
               levelData.at("starty").asFloat() * TILE));
   CC_SHOW(player);
   player->reset();
 
   //reset igloo to level end position
   ss->igloo->initIgloo(ss->gravity,
-      c::Vec2(levelData.at("endx").asFloat() * TILE,
-              levelData.at("endy").asFloat() * TILE));
+      CCT_PT(levelData.at("endx").asFloat() * TILE,
+             levelData.at("endy").asFloat() * TILE));
 
   //reset smoke particle to match igloo position
-  ss->smoke->setPosition(ss->igloo->getPositionX() + TILE,
-                         ss->igloo->getPositionY() + HTV(TILE));
+  CC_POS2(ss->smoke, ss->igloo->getPositionX() + TILE,
+                     ss->igloo->getPositionY() + HTV(TILE));
   //hide smoke. only shown when level is completed
   CC_HIDE(ss->smoke);
   ss->smoke->stopSystem();
@@ -232,13 +229,13 @@ void GLayer::resetLevel() {
   } else {
     getHUD()->showMsg("tutorial");
     ss->tutorialStep = 0;
-    ss->tutorialCounter = 0.0;
+    ss->tutorialCounter = 0;
   }
 
   getHUD()->toggleTutorial(false);
   getHUD()->showMenu();
 
-  ss->acc= c::Vec2(0,0);
+  ss->acc= CC_ZPT;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -247,10 +244,9 @@ void GLayer::resetLevel() {
 void GLayer::clearLayer() {
   auto po=MGMS()->getPool("Platforms");
 
-  po->foreach([=](f::Poolable *p) {
-    auto pf=CC_GEC(Platform,p,"f/CPixie");
-    auto s= (b2Sprite*) pf->node;
-    s->_body->SetActive(false);
+  po->foreach([=] (f::Poolable *p) {
+    auto s=CC_GEC(Platform,p,"f/CPixie");
+    s->getBody()->SetActive(false);
     cx::hibernate((ecs::Node*)p);
   });
 
@@ -265,15 +261,15 @@ void GLayer::clearLayer() {
 //
 void GLayer::onAcceleration(c::Acceleration *acc, c::Event *event) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  ss->acc= c::Vec2(acc->x * ACCELEROMETER_MULTIPLIER,
-                   acc->y * ACCELEROMETER_MULTIPLIER);
+  ss->acc= CCT_PT(acc->x * ACCELEROMETER_MULTIPLIER,
+                  acc->y * ACCELEROMETER_MULTIPLIER);
   //CCLOG("oh yeah! %f,%f", ss->acc.x, ss->acc.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
 
-  b2Vec2 gravity; gravity.Set(0.0f, -FORCE_GRAVITY);
+  b2Vec2 gravity; gravity.Set(0, -FORCE_GRAVITY);
 
   _world = new b2World(gravity);
   _world->SetAllowSleeping(true);
