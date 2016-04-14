@@ -12,46 +12,36 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/COMP.h"
 #include "b2Sprite.h"
 
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL PlatformSprite : public b2Sprite {
-friend class Platform;
+class CC_DLL Platform : public b2Sprite {
 
-  static PlatformSprite* create(GVars*);
-  s_vec<c::Sprite*> _tiles;
+  virtual bool initWithSpriteFrameName(const sstr&);
+
+  __decl_vec(c::Sprite*, _tiles)
   __decl_ptr(GVars, ss)
 
   void switchTexture();
   void createTiles();
-    void bind(GVars*);
-public:
 
-  void initPlatform(int width, float angle, const c::Vec2&);
-
-  virtual ~PlatformSprite();
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL Platform : public f::CPixie {
-
-  Platform(not_null<c::Node*> n)
-    : CPixie(n) {
+  Platform(GVars *ss) {
+    this->ss=ss;
   }
 
 public:
 
-  static owner<Platform*> create(not_null<GVars*> ss) {
-    return new Platform(PlatformSprite::create(ss));
-  }
+  void initPlatform(int width, float angle, const CCT_PT&);
+
+  static owner<Platform*> create(not_null<GVars*>);
+
+  virtual ~Platform();
 
 };
+
 
 
 

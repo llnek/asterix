@@ -11,24 +11,26 @@
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
+
 #include "core/COMP.h"
-#include "lib.h"
+#include "C.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL GSwitch : public f::CPixie {
 
-  GSwitch(GVars*, c::Node *n)
-  : CPixie(n) {
+  __decl_iz(_direction)
+
+  GSwitch(GVars *ss) {
+    this->ss=ss;
   }
 
 public:
 
-  void initGSwitch(int direction, const c::Vec2& );
-
   static owner<GSwitch*> create(not_null<GVars*>);
-  __decl_iz(direction)
+
+  void initGSwitch(int dir, const CCT_PT&);
 
 };
 

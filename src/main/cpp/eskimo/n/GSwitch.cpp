@@ -20,20 +20,21 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<GSwitch*> GSwitch::create(not_null<GVars*> ss) {
-  auto s= cx::reifySprite("blank.png");
-  CC_HIDE(s);
-  return mc_new2(GSwitch,ss.get(), s);
+  auto z= mc_new(GSwitch, ss);
+  z->initWithSpriteFrameName("blank.png");
+  CC_HIDE(z);
+  z->autorelease();
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GSwitch::initGSwitch(int direction, const c::Vec2 &position) {
-  SCAST(c::Sprite*,node)->setDisplayFrame(
-        cx::getSpriteFrame(
-        fmtPng("switch_" ,direction)));
-  node->setPosition(position);
-  CC_SHOW(node);
-  this->direction = direction;
+void GSwitch::initGSwitch(int dir, const CCT_PT &pos) {
+  this->setDisplayFrame(
+        cx::getSpriteFrame(fmtPng("switch_" , dir)));
+  CC_POS1(this,pos);
+  CC_SHOW(this);
+  this->_direction = dir;
 }
 
 

@@ -12,50 +12,36 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/COMP.h"
 #include "b2Sprite.h"
 
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL EskimoSprite : public b2Sprite {
-friend class Eskimo;
+class CC_DLL Eskimo : public b2Sprite {
 
-  static EskimoSprite* create(GVars*);
-  void bind(GVars*);
-
-  void makeCircleShape();
-  void makeBoxShape();
-
-public:
+  virtual bool initWithSpriteFrameName(const sstr&);
 
   __decl_bf(_switchShape)
   __decl_iz(_state)
   __decl_ptr(GVars,ss)
+
+  void makeCircleShape();
+  void makeBoxShape();
+
+  Eskimo(GVars *ss) {
+    this->ss=ss;
+  }
+
+public:
+
+  static owner<Eskimo*> create(not_null<GVars*>);
 
   virtual void update();
   virtual void reset();
 
 };
 
-
-//////////////////////////////////////////////////////////////////////////////
-//
-class CC_DLL Eskimo : public f::CPixie {
-
-  Eskimo(not_null<c::Node*> n)
-  : CPixie(n) {
-    MGML()->addAtlasItem("game-pics", node, kMiddleground);
-  }
-
-public:
-
-  static owner<Eskimo*> create(not_null<GVars*> ss) {
-    return new Eskimo(EskimoSprite::create(ss));
-  }
-
-};
 
 
 

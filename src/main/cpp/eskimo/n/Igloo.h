@@ -13,12 +13,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "2d/CCSprite.h"
-#include "lib.h"
+#include "C.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Igloo : public c::Sprite {
+class CC_DLL Igloo : public f::CPixie {
 
   __decl_ptr(c::Sprite, _block)
   void addBlock();
@@ -27,7 +27,7 @@ class CC_DLL Igloo : public c::Sprite {
 public:
 
   static owner<Igloo*> create(not_null<GVars*>);
-  void initIgloo(int gravity, const c::Vec2&);
+  void initIgloo(int gravity, const CCT_PT&);
   virtual ~Igloo();
 
 };

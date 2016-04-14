@@ -9,7 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
 
-#include "lib.h"
+#include "C.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////

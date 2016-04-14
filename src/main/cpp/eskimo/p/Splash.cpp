@@ -12,7 +12,7 @@
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "n/lib.h"
+#include "n/C.h"
 #include "LevelSelector.h"
 #include "Splash.h"
 
@@ -86,18 +86,18 @@ void Splash::createScreen() {
       XCFG()->getAtlas("snow"));
   auto wb= cx::visBox();
 
-  snow->setPosition(c::Vec2(wb.cx, wb.top));
+  CC_POS2(snow, wb.cx, wb.top);
   addItem(snow, kBackground);
 
   regoAtlas("game-pics", kMiddleground);
 
   auto ground = cx::reifySprite("intro_igloo.png");
-  ground->setAnchorPoint(c::Vec2(0.5, 0.05));
-  ground->setPosition(HTV(wb.right), 0.0);
+  ground->setAnchorPoint(CCT_PT(0.5, 0.05));
+  CC_POS2(ground, HTV(wb.right), 0);
   addAtlasItem("game-pics", ground);
 
   auto logo = cx::reifySprite("logo.png");
-  logo->setPosition(wb.cx, wb.top * 0.75);
+  CC_POS2(logo, wb.cx, wb.top * 0.75);
   addAtlasItem("game-pics", logo);
 
   //create menu
@@ -111,13 +111,15 @@ void Splash::createScreen() {
   help->setCallback(
       [=](c::Ref*){ this->showHelp(); });
 
-  auto mainMenu= cx::mkVMenu(s_vec<c::MenuItem*> {play,help});
-  mainMenu->setPosition(wb.cx, wb.cy);
+  auto mainMenu= cx::mkVMenu(
+      s_vec<c::MenuItem*> {play,help},
+      CC_CHT(play)/GOLDEN_RATIO);
+  CC_POS2(mainMenu, wb.cx, wb.cy);
   addItem(mainMenu, kForeground);
 
   //add balloon caption
   _balloon = cx::reifySprite("cap.png");
-  _balloon->setPosition(wb.right * 0.36, wb.top * 0.25);
+  CC_POS2(_balloon, wb.right * 0.36, wb.top * 0.25);
   addAtlasItem("game-pics", _balloon, kForeground);
   CC_HIDE(_balloon);
 
@@ -128,9 +130,9 @@ void Splash::createScreen() {
   _balloon->addChild(_caption1);
   _balloon->addChild(_caption2);
 
-  auto rect = _balloon->getTextureRect();
-  _caption1->setPosition(rect.size.width * 0.42, rect.size.height * 0.45);
-  _caption2->setPosition(rect.size.width * 0.42, rect.size.height * 0.45);
+  auto rect = _balloon->getTextureRect().size;
+  CC_POS2(_caption1, rect.width * 0.42, rect.height * 0.45);
+  CC_POS2(_caption2, rect.width * 0.42, rect.height * 0.45);
 
 }
 

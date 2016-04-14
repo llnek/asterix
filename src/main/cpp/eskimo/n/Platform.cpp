@@ -11,7 +11,6 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "Platform.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -19,8 +18,9 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlatformSprite::bind(GVars *ss) {
-
+bool Platform::initWithSpriteFrameName(const sstr &fn) {
+  bool rc= c::Sprite::initWithSpriteFrameName(fn);
+  if (!rc) { return false; }
   //create body
   b2BodyDef bodyDef; bodyDef.type = b2_staticBody;
   _body = ss->world->CreateBody(&bodyDef);
@@ -34,31 +34,30 @@ void PlatformSprite::bind(GVars *ss) {
     }
   };
 
-  ADD_NOTIFICATION(this, NOTIFY_GSWITCH, onGravityChanged);
-  this->ss = ss;
+  ADD_NOTIFY(this, NOTIFY_GSWITCH, onGravityChanged);
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-PlatformSprite::~PlatformSprite() {
+Platform::~Platform() {
   EVENT_DISPATCHER->removeCustomEventListeners(NOTIFY_GSWITCH);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-PlatformSprite* PlatformSprite::create(GVars *ss) {
-  auto sprite = mc_new(PlatformSprite);
+owner<Platform*> Platform::create(not_null<GVars*> ss) {
+  auto sprite = mc_new1(Platform, ss);
   sprite->initWithSpriteFrameName("blank.png");
-  sprite->autorelease();
-  sprite->bind(ss);
-  sprite->createTiles();
   //CC_HIDE(sprite);
+  sprite->createTiles();
+  sprite->autorelease();
   return sprite;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &position) {
+void Platform::initPlatform(int width, float angle, const CCT_PT &pos) {
 
   //Define fixture
   //Define shape
@@ -76,7 +75,7 @@ void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &positio
 
   _body->CreateFixture(&fixtureDef);
   _body->SetTransform(
-      b2Vec2(position.x / PTM_RATIO, position.y / PTM_RATIO),
+      b2Vec2(pos.x / PTM_RATIO, pos.y / PTM_RATIO),
       CC_DEGREES_TO_RADIANS(-angle));
   _body->SetActive(true);
 
@@ -84,37 +83,37 @@ void PlatformSprite::initPlatform(int width, float angle, const c::Vec2 &positio
   auto startX = -HTV(width) + HTV(TILE);
   int i=0;
   F__LOOP(it,_tiles) {
-    auto block = *it;
+    auto &block = *it;
     if (i >= width/TILE) { CC_HIDE(block); } else {
       CC_SHOW(block);
       block->setPosition(startX + i * TILE, 0);
       block->setFlippedX(false);
       block->setFlippedY(false);
       if ((int)angle == 0) {
-        if (position.y >= TILE * 13) block->setFlippedY(true);
+        if (pos.y >= TILE * 13) block->setFlippedY(true);
       }
       if ((int)angle == 90) {
-        if (position.x > TILE * 5) block->setFlippedX(true);
+        if (pos.x > TILE * 5) block->setFlippedX(true);
       }
     }
     ++i;
   }
   switchTexture();
 
-  this->setPosition(position);
   this->setRotation(angle);
+  CC_POS1(this, pos);
   setVisible(true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 //texture platform with tiles
-void PlatformSprite::switchTexture() {
+void Platform::switchTexture() {
   F__LOOP(it, _tiles) {
-    auto block= *it;
+    auto &block= *it;
     if (block->isVisible()) {
       block->setSpriteFrame(
-          cx::getSpriteFrame( fmtPng("block_",ss->gravity)));
+          cx::getSpriteFrame(fmtPng("block_",ss->gravity)));
     }
   }
 }
@@ -122,7 +121,7 @@ void PlatformSprite::switchTexture() {
 //////////////////////////////////////////////////////////////////////////////
 //
 //create platform with maximum number of tiles a platform can have (larger side / tile size).
-void PlatformSprite::createTiles() {
+void Platform::createTiles() {
   for (auto i = 0; i < TILES_PER_PLATFORM; ++i) {
     auto block = cx::reifySprite("block_1.png");
     CC_HIDE(block);

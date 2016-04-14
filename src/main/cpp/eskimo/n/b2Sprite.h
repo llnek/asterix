@@ -14,22 +14,24 @@
 
 #include "x2d/GameScene.h"
 #include "2d/CCSprite.h"
-#include "Box2D/Box2D.h"
-#include "lib.h"
+#include "C.h"
 NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL b2Sprite : public c::Sprite  {
+class CC_DLL b2Sprite : public f::CPixie  {
 
-  virtual void setSpritePosition (const c::Vec2& );
+  __decl_ptr(b2Body, _body)
+  b2Sprite() {}
+
+public:
+
+  virtual void setPosition (const CCT_PT&);
   virtual void update();
   virtual void hide();
   virtual void reset();
 
-  __decl_ptr(b2Body, _body)
-
-  b2Sprite() {}
+  __decl_getr(b2Body,_body,Body)
 
 };
 

@@ -28,7 +28,8 @@ Igloo::Igloo(GVars *ss) {
 
   auto onGravityChanged = [=](c::EventCustom*) {
     _block->setSpriteFrame(
-                           cx::getSpriteFrame(fmtPng("block_large_",ss->gravity)));
+        cx::getSpriteFrame(
+          fmtPng("block_large_",ss->gravity)));
   };
 
   auto onLevelCompleted = [=](c::EventCustom*) {
@@ -36,37 +37,39 @@ Igloo::Igloo(GVars *ss) {
   };
 
     //register game notifications
-  ADD_NOTIFICATION(this, NOTIFY_LEVEL_DONE, onLevelCompleted);
-  ADD_NOTIFICATION(this, NOTIFY_GSWITCH, onGravityChanged);
+  ADD_NOTIFY(this, NOTIFY_LEVEL_DONE, onLevelCompleted);
+  ADD_NOTIFY(this, NOTIFY_GSWITCH, onGravityChanged);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<Igloo*> Igloo::create(not_null<GVars*> ss) {
-  auto sprite = mc_new1(Igloo, ss.get());
+  auto sprite = mc_new1(Igloo, ss);
   sprite->initWithSpriteFrameName("igloo_off.png");
-  sprite->autorelease();
   sprite->addBlock();
+  sprite->autorelease();
   return sprite;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Igloo::initIgloo(int gravity, const c::Vec2 &pos) {
+void Igloo::initIgloo(int gravity, const CCT_PT &pos) {
 
   _block->setDisplayFrame(
-                          cx::getSpriteFrame(fmtPng("block_large_",gravity)));
-  this->setPosition(pos);
+      cx::getSpriteFrame(
+        fmtPng("block_large_",gravity)));
+
   this->setDisplayFrame(cx::getSpriteFrame("igloo_off.png"));
+  CC_POS1(this, pos);
   setVisible(true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Igloo::addBlock () {
+void Igloo::addBlock() {
   _block = cx::reifySprite("block_large_1.png");
   _block->setAnchorPoint(cx::anchorBL());
-  _block->setPosition(0, -TILE * 0.75f);
+  CC_POS2(_block, 0, -TILE * 0.75f);
   this->addChild(_block, kBackground);
 }
 

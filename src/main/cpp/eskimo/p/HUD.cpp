@@ -13,7 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
-#include "n/lib.h"
+#include "n/C.h"
 #include "Splash.h"
 
 NS_ALIAS(cx,fusii::ccsx)
@@ -23,7 +23,7 @@ NS_BEGIN(eskimo)
 //
 void HUDLayer::toggleBtn(int tag, bool b) {
   F__LOOP(it, _buttons) {
-    auto btn= *it;
+    auto &btn= *it;
     if (btn->getTag() == tag) {
        btn->setVisible(b);
     }
@@ -61,10 +61,9 @@ void HUDLayer::toggleTutorial(bool b) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::touchEnd(c::Touch *touch) {
-  auto tap = touch->getLocation();
+void HUDLayer::touchEnd(const CCT_PT &tap) {
   F__LOOP(it, _buttons) {
-    auto btn= *it;
+    auto &btn= *it;
     if (!btn->isVisible() ||
         !btn->boundingBox().containsPoint(tap)) {
       continue; }
@@ -108,7 +107,7 @@ void HUDLayer::touchEnd(c::Touch *touch) {
         cx::pauseMusic();
         SENDMSG("/game/unschedule");
         CC_DTOR()->replaceScene(
-          c::TransitionMoveInL::create(0.2f, Splash::reify()));
+          c::TransitionMoveInL::create(0.2, Splash::reify()));
       break;
     }
     return;
@@ -120,10 +119,9 @@ void HUDLayer::touchEnd(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool HUDLayer::touchStart(c::Touch *touch) {
-  auto tap = touch->getLocation();
+bool HUDLayer::touchStart(const CCT_PT &tap) {
   F__LOOP(it,_buttons) {
-    auto btn = *it;
+    auto &btn = *it;
     if (btn->isVisible()) {
       if (btn->boundingBox().containsPoint(tap)) {
         CC_SHOW(CC_GCT(btn,kSpriteBtnOn));
@@ -131,19 +129,19 @@ bool HUDLayer::touchStart(c::Touch *touch) {
       }
     }
   }
-  return true;
+  return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::createBtns() {
 
+  auto wz=cx::visSize();
   auto wb= cx::visBox();
-  auto wz=cx::visRect();
   c::Sprite *bOn;
 
   _btnStart = cx::reifySprite("btn_start_off.png");
-  _btnStart->setPosition(wb.cx, wb.top * 0.45f);
+  CC_POS2(_btnStart, wb.cx, wb.top * 0.45);
   CC_HIDE(_btnStart);
   addAtlasItem("game-pics", _btnStart, kForeground, kSpriteBtnStart);
   //+
@@ -155,7 +153,7 @@ void HUDLayer::createBtns() {
 
   _btnReset = cx::reifySprite("btn_reset_off.png");
   _btnReset->setAnchorPoint(cx::anchorT());
-  _btnReset->setPosition(wb.right * 0.9f, wb.top);
+  CC_POS2(_btnReset, wb.right * 0.9, wb.top);
   CC_HIDE(_btnReset);
   addAtlasItem("game-pics", _btnReset, kForeground, kSpriteBtnReset);
   //+
@@ -167,7 +165,7 @@ void HUDLayer::createBtns() {
 
   _btnPause = cx::reifySprite("btn_pause_off.png");
   _btnPause->setAnchorPoint(cx::anchorT());
-  _btnPause->setPosition(wb.right * 0.1f, wb.top);
+  CC_POS2(_btnPause, wb.right * 0.1, wb.top);
   CC_HIDE(_btnPause);
   addAtlasItem("game-pics", _btnPause, kForeground, kSpriteBtnPause);
   //+
@@ -178,7 +176,7 @@ void HUDLayer::createBtns() {
   _buttons.push_back(_btnPause);
 
   _btnAgain = cx::reifySprite("btn_again_off.png");
-  _btnAgain->setPosition(wb.cx, wb.top * 0.45f);
+  CC_POS2(_btnAgain, wb.cx, wb.top * 0.45);
   CC_HIDE(_btnAgain);
   addAtlasItem("game-pics", _btnAgain, kForeground, kSpriteBtnAgain);
   //+
@@ -189,7 +187,7 @@ void HUDLayer::createBtns() {
   _buttons.push_back(_btnAgain);
 
   _btnMenu = cx::reifySprite("btn_menu_off.png");
-  _btnMenu->setPosition(wb.cx, wb.top * 0.3f);
+  CC_POS2(_btnMenu, wb.cx, wb.top * 0.3);
   CC_HIDE(_btnMenu);
   addAtlasItem("game-pics", _btnMenu, kForeground, kSpriteBtnMenu);
   //+
@@ -201,15 +199,15 @@ void HUDLayer::createBtns() {
 
   _messages = cx::reifyBmfLabel("font_msgs", "level");
   _messages->setAlignment(c::TextHAlignment::CENTER);
-  _messages->setPosition(wb.cx, wb.top * 0.6f);
+  CC_POS2(_messages, wb.cx, wb.top * 0.6);
   CC_HIDE(_messages);
   addItem(_messages, kForeground);
 
   _tutorialLabel = cx::reifyLabel("dft", 25, TUTORIAL_1);
   _tutorialLabel->setAlignment(c::TextHAlignment::CENTER);
-  _tutorialLabel->setPosition(wb.cx, wb.top * 0.2f);
-  _tutorialLabel->setHeight(wz.size.height * 0.4f);
-  _tutorialLabel->setWidth(wz.size.width * 0.7f);
+  CC_POS2(_tutorialLabel, wb.cx, wb.top * 0.2);
+  _tutorialLabel->setHeight(wz.height * 0.4);
+  _tutorialLabel->setWidth(wz.width * 0.7);
   CC_HIDE(_tutorialLabel);
   addItem(_tutorialLabel, kForeground);
 

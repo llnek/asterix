@@ -18,9 +18,13 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL LevelSelector : public f::XScene {
+
   __decl_create_scene(LevelSelector)
   __decl_deco_ui()
+
 };
+
+
 
 NS_END
 

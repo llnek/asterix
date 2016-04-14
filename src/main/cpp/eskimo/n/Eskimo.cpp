@@ -19,33 +19,31 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EskimoSprite* EskimoSprite::create(GVars *ss) {
-  auto sp = new EskimoSprite();
+owner<Eskimo*> Eskimo::create(not_null<GVars*> ss) {
+  auto sp = mc_new1(Eskimo, ss);
   sp->initWithSpriteFrameName("player_circle.png");
   sp->autorelease();
-  sp->bind(ss);
+  MGML()->addAtlasItem("game-pics", sp, kMiddleground);
   return sp;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EskimoSprite::bind(GVars *ss) {
-
-  this->_switchShape = false;
-  this->ss = ss;
-
+bool Eskimo::initWithSpriteFrameName(const sstr &fn) {
+  bool rc= c::Sprite::initWithSpriteFrameName(fn);
+  if (!rc) { return false; }
   //create body
   b2BodyDef bodyDef; bodyDef.type = b2_dynamicBody;
   _body = ss->world->CreateBody(&bodyDef);
   _body->SetSleepingAllowed(false);
   _body->SetUserData(this);
-
   makeCircleShape();
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EskimoSprite::reset() {
+void Eskimo::reset() {
 
   if (_state != kStateCircle) {
     makeCircleShape();
@@ -60,7 +58,7 @@ void EskimoSprite::reset() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EskimoSprite::update() {
+void Eskimo::update() {
 
   if (_switchShape) {
     cx::sfxPlay("shape");
@@ -79,7 +77,7 @@ void EskimoSprite::update() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EskimoSprite::makeCircleShape() {
+void Eskimo::makeCircleShape() {
 
   //Define fixture
   //Define shape
@@ -102,7 +100,7 @@ void EskimoSprite::makeCircleShape() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void EskimoSprite::makeBoxShape() {
+void Eskimo::makeBoxShape() {
 
   //Define fixture
   //Define shape
@@ -123,6 +121,7 @@ void EskimoSprite::makeBoxShape() {
 
   this->setDisplayFrame(cx::getSpriteFrame("player_box.png"));
 }
+
 
 
 NS_END

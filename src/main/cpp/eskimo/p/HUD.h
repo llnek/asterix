@@ -37,8 +37,8 @@ class CC_DLL HUDLayer : public f::XLayer {
 
 public:
 
-  bool touchStart(c::Touch *touch);
-  void touchEnd(c::Touch *touch);
+  bool touchStart(const CCT_PT&);
+  void touchEnd(const CCT_PT&);
 
   void toggleTutorial(bool);
   void toggleBtn(int , bool );

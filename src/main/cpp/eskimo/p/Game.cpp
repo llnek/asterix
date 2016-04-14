@@ -47,8 +47,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   void loadLevel(int);
   void readyNewLevel();
 
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
+
   virtual void onInited();
 
   void createScreen(GVars*);
@@ -64,20 +67,31 @@ struct CC_DLL GLayer : public f::GameLayer {
 //
 void GLayer::switchShape(bool t) {
   auto py= CC_GEC(Eskimo,_player,"f/CPixie");
-  auto player= (EskimoSprite*) py->node;
-  player->_switchShape= t;
+  py->setSwitchShape( t);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+  return getHUD()->touchStart(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  return getHUD()->touchStart(touch);
+  return onMouseStart(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onMouseClick(const CCT_PT &tap) {
+  getHUD()->touchEnd(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
-  getHUD()->touchEnd(touch);
+  onMouseClick(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -89,7 +103,7 @@ void GLayer::initPhysics(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
-  _levels = CC_FILER()->getValueVectorFromFile("pics/levels.plist");
+  _levels = CC_FILER()->getValueVectorFromFile("misc/levels.plist");
   _player = _engine->getNodes("f/CGesture")[0];
   _shared = _engine->getNodes("n/GVars")[0];
 

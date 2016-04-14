@@ -19,9 +19,9 @@ NS_BEGIN(eskimo)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void b2Sprite::setSpritePosition(const c::Vec2 &pos) {
+void b2Sprite::setPosition(const CCT_PT &pos) {
 
-  setPosition(pos);
+  c::Sprite::setPosition(pos);
 
   if (_body) {
     _body->SetTransform(b2Vec2(
@@ -37,7 +37,7 @@ void b2Sprite::update() {
   if (_body) {
     setPositionX(_body->GetPosition().x * PTM_RATIO);
     setPositionY(_body->GetPosition().y * PTM_RATIO);
-    setRotation(CC_RADIANS_TO_DEGREES(-1 * _body->GetAngle()));
+    setRotation(CC_RADIANS_TO_DEGREES(- _body->GetAngle()));
   }
 }
 
@@ -56,6 +56,7 @@ void b2Sprite::hide() {
 //
 void b2Sprite::reset() {
 }
+
 
 
 NS_END
