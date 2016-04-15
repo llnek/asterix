@@ -17,9 +17,6 @@
 #include "Move.h"
 #include "AI.h"
 #include "GEngine.h"
-#include "n/Defense.h"
-#include "n/Enemy.h"
-#include "n/PathStep.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(dttower)
@@ -76,7 +73,6 @@ void GEngine::initEntities() {
   ent= this->reifyNode("Tower", true);
   tower->setPosition(pos);
   MGML()->addAtlasItem("game-pics", tower, 2);
-  //CC_HIDE(tower);
   ent->checkin(mc_new1(f::CHealth,10));
   ent->checkin(mc_new(f::CHuman));
   ent->checkin(tower);
@@ -87,17 +83,17 @@ void GEngine::initEntities() {
 //
 void GEngine::loadPathSteps(GVars *ss) {
   auto wb= cx::visBox();
-  s_arr<c::Vec2,10> pts = {
-    c::Vec2(-50, wb.top - ss->squareSize * 3.30),
-    c::Vec2(ss->squareSize * 2.5, wb.top - ss->squareSize * 3.3),
-    c::Vec2(ss->squareSize * 2.5, ss->squareSize * 2),
-    c::Vec2(ss->squareSize * 5.2, ss->squareSize * 2),
-    c::Vec2(ss->squareSize * 5.2, wb.top - ss->squareSize*2),
-    c::Vec2(ss->squareSize * 7.8, wb.top - ss->squareSize*2),
-    c::Vec2(ss->squareSize * 7.8, ss->squareSize * 3.5),
-    c::Vec2(ss->squareSize * 10.5, ss->squareSize * 3.5),
-    c::Vec2(ss->squareSize * 10.5, wb.top - ss->squareSize*2),
-    c::Vec2(wb.right - ss->squareSize * 1.2, wb.top - ss->squareSize * 2)
+  s_arr<CCT_PT,10> pts = {
+    CCT_PT(-50, wb.top - ss->squareSize * 3.30),
+    CCT_PT(ss->squareSize * 2.5, wb.top - ss->squareSize * 3.3),
+    CCT_PT(ss->squareSize * 2.5, ss->squareSize * 2),
+    CCT_PT(ss->squareSize * 5.2, ss->squareSize * 2),
+    CCT_PT(ss->squareSize * 5.2, wb.top - ss->squareSize*2),
+    CCT_PT(ss->squareSize * 7.8, wb.top - ss->squareSize*2),
+    CCT_PT(ss->squareSize * 7.8, ss->squareSize * 3.5),
+    CCT_PT(ss->squareSize * 10.5, ss->squareSize * 3.5),
+    CCT_PT(ss->squareSize * 10.5, wb.top - ss->squareSize*2),
+    CCT_PT(wb.right - ss->squareSize * 1.2, wb.top - ss->squareSize * 2)
   };
 
   ss->pathSteps.clear();

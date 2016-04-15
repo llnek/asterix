@@ -21,11 +21,10 @@ NS_BEGIN(dttower)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Defense*> Defense::create(GVars *ss, DefenseLevel level) {
+owner<Defense*> Defense::create(not_null<GVars*> ss, DefenseLevel level) {
 
-  auto rc= mc_new(Defense);
-  sstr fn;
   int pts=1;
+  sstr fn;
   switch (level) {
     case levelOne:
       fn = "defense_level_1.png";
@@ -38,13 +37,10 @@ owner<Defense*> Defense::create(GVars *ss, DefenseLevel level) {
     break;
   }
 
+  auto rc= mc_new3(Defense, ss, level, pts);
   rc->initWithSpriteFrameName(fn);
+  XCFG()->fit(rc);
   rc->autorelease();
-
-  rc->defenseLevel = level;
-  rc->attackPoints = pts;
-  rc->ss= ss;
-
   return rc;
 }
 
@@ -52,9 +48,9 @@ owner<Defense*> Defense::create(GVars *ss, DefenseLevel level) {
 //
 void Defense::update(float dt) {
   auto po= MGMS()->getPool("Enemies");
-  auto ps= po->ls();
+  auto &ps= po->ls();
   F__LOOP(it, ps) {
-    auto p= *it;
+    auto &p= *it;
     if (!p->status()) { continue; }
     auto e=CC_GEC(Enemy,p,"f/CPixie");
     if (detectEnemy(e)) {
@@ -67,29 +63,29 @@ void Defense::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool Defense::detectEnemy(Enemy *e) {
+bool Defense::detectEnemy(not_null<Enemy*> e) {
 
-  auto defenseRadius= 1.5 * CC_CSZ(this).width;
-  auto enemyRadius= CC_CSZ(e).width;
+  auto defenseRadius= 1.5 * CC_CWH(this);
+  auto enemyRadius= CC_CWH(e);
   auto enemyPos= e->getPosition();
   auto pos= this->getPosition();
-  auto distanceX = pos.x - enemyPos.x;
-  auto distanceY = pos.y - enemyPos.y;
-  auto distance = sqrt(distanceX * distanceX + distanceY * distanceY);
-
-  return (distance <= defenseRadius + enemyRadius);
+  auto dx = pos.x - enemyPos.x;
+  auto dy = pos.y - enemyPos.y;
+  auto dist= sqrt(dx * dx + dy * dy);
+  return dist <= (defenseRadius + enemyRadius);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Defense::attackEnemy(ecs::Node *node) {
+void Defense::attackEnemy(not_null<ecs::Node*> node) {
 
   auto bullet = cx::reifySprite("bullet.png");
+  XCFG()->fit(bullet);
   auto e=CC_GEC(Enemy,node,"f/CPixie");
   auto pos= getPosition();
 
   MGML()->addAtlasItem("game-pics", bullet, 2);
-  bullet->setPosition(pos.x, pos.y);
+  CC_POS2(bullet, pos.x, pos.y);
   bullet->runAction(
       c::Sequence::create(
         c::MoveTo::create(0.2, e->getPosition()),
@@ -102,12 +98,12 @@ void Defense::attackEnemy(ecs::Node *node) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Defense::checkEnemy(ecs::Node *node, c::Sprite *bullet) {
+void Defense::checkEnemy(not_null<ecs::Node*> node, not_null<c::Sprite*> bullet) {
   auto h=CC_GEC(f::CHealth,node,"f/CHealth");
   auto e=CC_GEC(Enemy,node,"f/CPixie");
 
-  if (cx::collideN(e,bullet)) {
-    h->hurt(attackPoints);
+  if (cx::collide(e,bullet)) {
+    h->hurt(_attackPoints);
   }
 
   if (!h->alive()) {

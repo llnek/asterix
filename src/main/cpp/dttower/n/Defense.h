@@ -24,18 +24,27 @@ enum DefenseLevel {
 //
 class Enemy;
 class GVars;
-class Defense;
-struct CC_DLL Defense  : public f::CPixie {
+class CC_DLL Defense  : public f::CPixie {
 
-  __decl_md(DefenseLevel, defenseLevel)
-  __decl_iz(attackPoints)
+  Defense(GVars *ss, DefenseLevel d, int pts) {
+    _attackPoints=pts;
+    _defenseLevel=d;
+    this->ss = ss;
+  }
+
+  __decl_md(DefenseLevel, _defenseLevel)
+  __decl_iz(_attackPoints)
   __decl_ptr(GVars, ss)
 
-  static owner<Defense*> create(GVars *ss, DefenseLevel);
+public:
+
+  static owner<Defense*> create(not_null<GVars*>, DefenseLevel);
+  void checkEnemy(not_null<ecs::Node*>, not_null<c::Sprite*>);
+  void attackEnemy(not_null<ecs::Node*>);
+  bool detectEnemy(not_null<Enemy*>);
+
+  __decl_getr(int, _attackPoints, AttackPoints)
   virtual void update(float);
-  bool detectEnemy(Enemy*);
-  void checkEnemy(ecs::Node *node, c::Sprite *bullet);
-  void attackEnemy(ecs::Node *node);
 
 };
 

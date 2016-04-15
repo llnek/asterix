@@ -18,9 +18,10 @@ NS_BEGIN(dttower)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL PathStep : public f::CPixie {
-
-  static owner<PathStep*> create(const c::Vec2&);
+class CC_DLL PathStep : public f::CPixie {
+  PathStep() {}
+public:
+  static owner<PathStep*> create(const CCT_PT&);
 
   __decl_ptr(PathStep, next)
 

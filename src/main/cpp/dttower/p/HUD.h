@@ -17,21 +17,22 @@ NS_BEGIN(dttower)
 
 //////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
-
-  __decl_create_layer(HUDLayer)
-  __decl_deco_ui()
-  __decl_get_iid(3)
+class CC_DLL HUDLayer : public f::XLayer {
 
   __decl_ptr(c::Label, _lifePointsLabel)
   __decl_ptr(c::Label, _scoreLabel)
   __decl_ptr(c::Label, _waveLabel)
   __decl_iz(_score)
 
-  int getScore() { return _score; }
+public:
+
+  __decl_getr(int, _score, Score)
+  __decl_create_layer(HUDLayer)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
   void updateLifePts(int );
-  void updateWave(int w);
+  void updateWave(int);
   void updateScore(int);
 
 };

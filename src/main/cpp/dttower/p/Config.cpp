@@ -45,41 +45,47 @@ void Config::initAssets() {
 
   addAtlas("defenses", CC_STR("misc/DefensePositions.plist"));
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-  addImage("game.bg", CC_STR("pics/background.png"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
+
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
+
+  addImage("game.bg", CC_STR("pics/background.jpg"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("text", CC_STR("fon/en/arial.ttf"));
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto gz= gameSize();
-  if (gz.width==rs.width) {
-    CC_DTOR()->setContentScaleFactor(1);
-  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 c::Scene* Config::prelude() {
-  //return Splash::reify();
-  return Game::reify(new GameCtx());
+  return Splash::reify();
 }
 
 

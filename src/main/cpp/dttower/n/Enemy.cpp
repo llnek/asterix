@@ -23,12 +23,10 @@ NS_BEGIN(dttower)
 //
 owner<Enemy*> Enemy::create(GVars *ss) {
 
-  auto rc= mc_new(Enemy);
-
+  auto rc= mc_new1(Enemy, ss);
   rc->initWithSpriteFrameName("enemy.png");
+  XCFG()->fit(rc);
   rc->autorelease();
-  rc->ss=ss;
-
   return rc;
 }
 
@@ -36,14 +34,14 @@ owner<Enemy*> Enemy::create(GVars *ss) {
 //
 void Enemy::set(not_null<PathStep*> p) {
   setPosition(p->getPosition());
-  pathStep = p;
+  _pathStep = p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::update(float dt) {
 
-  auto ppos= pathStep->next->getPosition();
+  auto ppos= _pathStep->next->getPosition();
   auto pos= getPosition();
   auto speed= SPEED;
 
@@ -66,15 +64,16 @@ void Enemy::update(float dt) {
         // right
       setPosition(pos.x + speed, pos.y);
     }
-  } else if (pathStep->next->next != CC_NIL) {
+  } else if (_pathStep->next->next != CC_NIL) {
       // Look for next step
-    pathStep = pathStep->next;
+    _pathStep = _pathStep->next;
   } else {
     SENDMSGEX("/game/player/enemyreachedtower", this);
     cx::hibernate(this->getNode());
   }
 
 }
+
 
 NS_END
 

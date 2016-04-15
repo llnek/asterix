@@ -47,9 +47,9 @@ void Move::process(float dt) {
   processDefense(po,dt);
 
   po= MGMS()->getPool("Enemies");
-  auto p1= po->ls();
+  auto &p1= po->ls();
   F__LOOP(it,p1) {
-    auto e= *it;
+    auto &e= *it;
     auto n= CC_GEC(Enemy,e,"f/CPixie");
     if (e->status()) {
       n->update(dt);
@@ -60,9 +60,9 @@ void Move::process(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::processDefense(f::FPool *po, float dt) {
-  auto p1= po->ls();
+  auto &p1= po->ls();
   F__LOOP(it,p1) {
-    auto e= *it;
+    auto &e= *it;
     auto d= CC_GEC(Defense,e,"f/CPixie");
     if (e->status()) {
       d->update(dt);

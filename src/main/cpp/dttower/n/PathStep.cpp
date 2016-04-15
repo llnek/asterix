@@ -18,11 +18,12 @@ NS_BEGIN(dttower)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<PathStep*> PathStep::create(const c::Vec2 &pos) {
+owner<PathStep*> PathStep::create(const CCT_PT &pos) {
   auto rc= mc_new(PathStep);
   rc->initWithSpriteFrameName("path_step.png");
-  rc->autorelease();
+  XCFG()->fit(rc);
   rc->setPosition(pos);
+  rc->autorelease();
   return rc;
 }
 

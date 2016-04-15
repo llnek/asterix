@@ -12,13 +12,10 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "s/GEngine.h"
-#include "HUD.h"
 #include "MMenu.h"
 #include "Ende.h"
 #include "Game.h"
-#include "n/PathStep.h"
-#include "n/Defense.h"
-#include "n/Enemy.h"
+#include "HUD.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(dttower)
@@ -26,7 +23,8 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   void loadDefensePositions();
   void enemyReachedTower();
@@ -39,9 +37,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -49,13 +47,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -87,11 +80,12 @@ void GLayer::loadDefensePositions() {
 
   for (auto i=0; i < cnt; ++i) {
     auto s = cx::reifySprite("defense_position.png");
+    XCFG()->fit(s);
     auto d= (c::Dictionary*) arr->objectAtIndex(i);
     auto mX = f::dictVal<c::String>(d,"x")->floatValue();
     auto mY = f::dictVal<c::String>(d,"y")->floatValue();
 
-    s->setPosition(sw * mX + gap, sw * mY);
+    CC_POS2(s, sw * mX + gap, sw * mY);
     addAtlasItem("game-pics",s);
     ss->defensePositions.push_back(s);
   }
@@ -100,12 +94,12 @@ void GLayer::loadDefensePositions() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -116,16 +110,15 @@ bool GLayer::onTouchStart(c::Touch *touch) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   F__LOOP(it,ss->defensePositions) {
-    auto dp= *it;
+    auto &dp= *it;
     if (dp->boundingBox().containsPoint(tap)) {
       auto po=MGMS()->getPool("Defense1");
       auto e= po->take(true);
-      auto d= CC_GEC(Defense,e,"f/CPixie");
       auto pos= dp->getPosition();
-      d->inflate(pos.x, pos.y);
+      cx::resurrect((ecs::Node*)e, pos.x, pos.y);
     }
   }
 }
@@ -143,7 +136,6 @@ void GLayer::onTouchEnd(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onEnd() {
-  this->setOpacity(255 * 0.1);
   MGMS()->stop();
   surcease();
   Ende::reify(MGMS(), 4);
@@ -154,7 +146,7 @@ void GLayer::onEnd() {
 void GLayer::enemyReachedTower() {
   auto h = CC_GEC(f::CHealth,_player,"f/CHealth");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  h->hurt(1);
+  h->hurt();
   getHUD()->updateLifePts(h->curHP);
 
   if (!h->alive()) { onEnd(); }

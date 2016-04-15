@@ -23,23 +23,25 @@ void HUDLayer::decoUI() {
 
   auto wb= cx::visBox();
 
-  _scoreLabel= cx::reifyLabel("dft", 24, "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
+  _score=0;
+
+  _scoreLabel= cx::reifyBmfLabel("dft", "0");
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.9);
+  XCFG()->scaleNode(_scoreLabel, 24);
   addItem(_scoreLabel);
 
-  _waveLabel = cx::reifyLabel("text",15, "Wave " + FTOS(0));
-  _waveLabel->setPosition(40 , wb.top - 25);
+  _waveLabel = cx::reifyBmfLabel("dft", "Wave " + FTOS(0));
+  XCFG()->scaleNode(_waveLabel, 24);
+  CC_POS2(_waveLabel, 40 , wb.top - 25);
   _waveLabel->setColor(cx::black());
   addItem(_waveLabel);
 
-  _lifePointsLabel = cx::reifyLabel(
-      "text",15,
-      "Life: " + FTOS(10) + " ");
-  _lifePointsLabel->setPosition(wb.right - 50 , 20);
+  _lifePointsLabel = cx::reifyBmfLabel("dft", "Life: " + FTOS(10) + " ");
+  CC_POS2(_lifePointsLabel, wb.right - 50 , 20);
+  XCFG()->scaleNode(_lifePointsLabel, 24);
   _lifePointsLabel->setColor(cx::black());
   addItem(_lifePointsLabel);
 
-  _score=0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

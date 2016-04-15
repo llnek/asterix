@@ -22,6 +22,20 @@ NS_BEGIN(dttower)
 //
 void Splash::decoUI() {
 
+  auto t= cx::reifyBmfLabel("title", "Tower\nDefense");
+  auto wb= cx::visBox();
+
+  CC_POS2(t, wb.cx, wb.top * 0.8);
+  centerImage("game.bg");
+  addItem(t);
+
+  auto btn= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleNode(btn, 36);
+  btn->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  CC_POS2(btn, wb.cx, wb.top * 0.2);
+  addItem(cx::mkMenu(btn));
 
 }
 

@@ -19,6 +19,7 @@ NS_BEGIN(dttower)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Game : public f::GameScene {
+
   virtual void sendMsgEx(const MsgTopic&, void*);
   virtual f::GameLayer* getGLayer() {
     return

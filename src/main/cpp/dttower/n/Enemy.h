@@ -21,16 +21,21 @@ NS_BEGIN(dttower)
 //////////////////////////////////////////////////////////////////////////////
 //
 class PathStep;
-class Defense;
 class GVars;
-struct CC_DLL Enemy : public f::CPixie {
+class CC_DLL Enemy : public f::CPixie {
 
-  void set(not_null<PathStep*>);
-  static owner<Enemy*> create(GVars*);
-  virtual void update(float);
-
-  __decl_ptr(PathStep, pathStep)
+  __decl_ptr(PathStep, _pathStep)
   __decl_ptr(GVars,ss)
+
+  Enemy(GVars *ss) {
+    this->ss =ss;
+  }
+
+public:
+
+  static owner<Enemy*> create(GVars*);
+  void set(not_null<PathStep*>);
+  virtual void update(float);
 
 };
 

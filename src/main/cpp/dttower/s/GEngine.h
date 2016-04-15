@@ -13,6 +13,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ecs/Engine.h"
+#include "n/PathStep.h"
+#include "n/Defense.h"
+#include "n/Enemy.h"
 #include "n/C.h"
 
 NS_BEGIN(dttower)
