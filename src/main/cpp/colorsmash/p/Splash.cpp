@@ -14,7 +14,7 @@
 #include "core/CCSX.h"
 #include "Splash.h"
 #include "Game.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(colorsmash)
@@ -61,7 +61,7 @@ void Splash::doAnimation(float) {
     XCFG()->fit(tile);
     tile->setColor(getColorForTile(1 + cx::randInt(MAX_COLORS)));
     CC_POS1(tile, getRandomPositionForTile());
-    tile->setOpactiy(0);
+    tile->setOpacity(0);
     addAtlasItem("game-pics", tile);
 
     tile->runAction(c::Sequence::create(

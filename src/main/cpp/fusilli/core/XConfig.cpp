@@ -401,7 +401,7 @@ void XConfig::setFrameSize(const CCT_SZ &sz) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float XConfig::scaleBmfont(not_null<c::Label*> n, float sz) {
+float XConfig::scaleBmfont(not_null<c::Node*> n, float sz) {
   auto pt= scaleFont(sz);
   n->setScale(pt);
   return pt;

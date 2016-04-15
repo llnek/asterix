@@ -50,9 +50,9 @@ void Ende::decoUI() {
 
   auto t = cx::reifyMenuText("btns", "Try Again?");
   auto q = cx::reifyMenuText("btns", "Quit");
-  XCFG()->scaleBmfont(t,"36");
-  XCFG()->scaleBmfont(q,"36");
-  t->setCallbacl([=](c::Ref*) {
+  XCFG()->scaleBmfont(t,36);
+  XCFG()->scaleBmfont(q,36);
+  t->setCallback([=](c::Ref*) {
         cx::runEx(Game::reify(mc_new(GameCtx)));
       });
   q->setCallback([=](c::Ref*) {

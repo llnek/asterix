@@ -83,6 +83,7 @@ void GLayer::onInited() {
   labels[0]->setString("3");
 
   for (auto i = 0; i < 4; ++i) {
+      auto k= labels[i]->getScale();
       // since the labels should appear one after the other,
       // we give them increasing delays before they appear
     auto countdownAnimation = c::Sequence::create(
@@ -250,13 +251,10 @@ void GLayer::removeTilesWithAnimation() {
     _tileData[pos] = E_COLOR_NONE;
     // the tile should scale down with easing and then remove itself
     auto ptr= _tileSprites[pos];
-    ptr->node->runAction(
+    ptr->runAction(
         c::Sequence::create(
           c::EaseBackIn::create(c::ScaleTo::create(0.25, 0.0)),
           c::RemoveSelf::create(true),
-          c::CallFunc::create([=]() {
-            delete ptr;
-            }),
           CC_NIL));
     // nullify the tile's sprite
     _tileSprites[pos] = CC_NIL;
@@ -278,7 +276,7 @@ void GLayer::bringDownTiles() {
     auto &t= *it;
     auto id = t->getIndex();
     // the tiles should move to their new positions with an awesome looking bounce
-    t->node->runAction(
+    t->runAction(
         c::EaseBounceOut::create(
           c::MoveTo::create(0.25, getPositionForTile(id))));
   }
@@ -319,7 +317,7 @@ void GLayer::addNewTiles() {
     // set the scale to 0
     _tileSprites[pos]->setScale(0);
     // scale the sprite up with a neat easing effect
-    _tileSprites[pos]->node->runAction(
+    _tileSprites[pos]->runAction(
         c::EaseBackOut::create(c::ScaleTo::create(0.125, k)));
   }
 

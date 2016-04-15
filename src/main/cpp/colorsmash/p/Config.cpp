@@ -75,7 +75,7 @@ void Config::handleResolution(const CCT_SZ &rs) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-float Config::scaleBmfont(float pt) {
+float Config::scaleFont(float pt) {
   return pt/128.0 * _scale;
 }
 
