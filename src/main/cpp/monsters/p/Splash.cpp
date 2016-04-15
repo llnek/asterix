@@ -32,7 +32,7 @@ void Splash::decoUI() {
 
   CC_POS2(btn, wb.cx, wb.cy);
   txt->setColor(c::Color3B::ORANGE);
-  XCFG()->scaleNode(txt,36);
+  XCFG()->scaleBmfont(txt,36);
   tz= CC_CSIZE(txt);
   btn->addChild(txt);
   btn->setCallback(

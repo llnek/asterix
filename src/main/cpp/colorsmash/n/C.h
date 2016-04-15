@@ -19,13 +19,60 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(colorsmash)
 
+enum Constants {
+  MAX_COLORS = 4,   // maximum number of colours we can use
+  TILE_SIZE = 32,   // size in points of each tile (same as tile.png)
+  NUM_COLS = 14,    // maximum number of columns
+  NUM_ROWS = 20,    // maximum number of rows
+  SCORE_PER_TILE = 10         // score when a tile is cleared
+};
+
+// colour types
+enum E_COLOR_TYPE  {
+    E_COLOR_NONE=0,
+    E_COLOR_RED,
+    E_COLOR_GREEN,
+    E_COLOR_BLUE,
+    E_COLOR_YELLOW
+};
+
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL GameTile : public f::CPixie {
-  GameTile(not_null<c::Node*> n) : CPixie(n) {
+void findTilesToRemove(const s_vec<int> &tiles,
+    s_vec<int>&,
+    int col, int row, int tileColor);
+
+c::Color3B getColorForTile(int colorData);
+
+const CCT_PT getRandomPositionForTile();
+
+const CCT_PT getPositionForTile(int);
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL GameTile : public f::CPixie {
+
+  __decl_mv(int, _index,-1)
+  __decl_mv(int, _type,-1)
+
+  GameTile(int t, int x) {
+    _index=x;
+    _type=t;
   }
-  __decl_mv(int,index,-1)
-  __decl_mv(int,type,-1)
+
+public:
+
+  static owner<GameTile*> create(int type, int index) {
+    auto z= mc_new2(GameTile, type, index);
+    z->initWithSpriteFrameName("tile.png");
+    XCFG()->fit(z);
+    z->setColor(getColorForTile(type));
+    z->autorelease();
+    return z;
+  }
+
+  __decl_gsms(int,_index,Index)
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,6 +80,7 @@ struct CC_DLL GameTile : public f::CPixie {
 struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
 };
+
 
 
 

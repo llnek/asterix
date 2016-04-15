@@ -27,7 +27,7 @@ void HUDLayer::decoUI() {
   _scoreLabel = cx::reifyBmfLabel("dft", "0");
   _moves=0;
 
-  XCFG()->scaleNode(_scoreLabel,24);
+  XCFG()->scaleBmfont(_scoreLabel,24);
   gap= CC_CHT(_scoreLabel)/GOLDEN_RATIO;
   _scoreLabel->setAlignment(c::TextHAlignment::CENTER);
   _scoreLabel->setAnchorPoint(cx::anchorBL());

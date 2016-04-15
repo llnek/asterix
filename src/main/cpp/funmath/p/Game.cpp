@@ -121,7 +121,7 @@ void GLayer::initializeGameTutorial() {
 
   _tutorialLabel = cx::reifyBmfLabel("dft",
       "Choose the correct number \nfrom those available");
-  XCFG()->scaleNode(_tutorialLabel, 24);
+  XCFG()->scaleBmfont(_tutorialLabel, 24);
   _tutorialLabel->setColor(cx::white());
   CC_POS2(_tutorialLabel, wb.cx, wb.top-CC_CHT(_tutorialLabel));
   addItem(_tutorialLabel);
@@ -210,7 +210,7 @@ void GLayer::onMouseMotion(const CCT_PT &tap) {
     fz=32;
   }
 
-  XCFG()->scaleNode(_tutorialLabel, fz);
+  XCFG()->scaleBmfont(_tutorialLabel, fz);
   CC_POS1(_rightNumber, tap);
 }
 
@@ -348,7 +348,7 @@ void GLayer::checkSolution() {
     CC_HIDE(_buttonCheckSolution);
   }
 
-  XCFG()->scaleNode(_tutorialLabel, fz);
+  XCFG()->scaleBmfont(_tutorialLabel, fz);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -455,7 +455,7 @@ void GLayer::onInited() {
     }
 
     _tutorialLabel = cx::reifyBmfLabel("dft", "Level " + FTOS(cur));
-    XCFG()->scaleNode(_tutorialLabel, 24);
+    XCFG()->scaleBmfont(_tutorialLabel, 24);
     _tutorialLabel->setColor(cx::white());
     CC_POS2(_tutorialLabel, wb.cx, wb.top - 2* CC_CHT(_tutorialLabel));
     addItem(_tutorialLabel);

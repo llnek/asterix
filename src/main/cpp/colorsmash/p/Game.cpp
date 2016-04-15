@@ -16,7 +16,7 @@
 #include "MMenu.h"
 #include "Ende.h"
 #include "Game.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(colorsmash)
@@ -24,68 +24,63 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
-  void updateScore(const c::Vec2 &);
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+  void updateScore(const CCT_PT&);
   void removeTilesWithAnimation();
   void bringDownTiles();
   void addNewTiles();
   void cleanUpAfterMove();
   void onEnd();
   void createTileSprite(int);
-  bool onGUI(const c::Vec2 &);
+  bool onGUI(const CCT_PT&);
   void findTilesToShift();
 
   __decl_ptr(ecs::Node, _shared)
   __decl_bf(_busySignal)
 
-  s_vec<GameTile*> _tileShifted;
-  s_vec<GameTile*> _tileSprites;
-  s_vec<int> _tileBin;
-  s_vec<int> _tileData;
+  __decl_vec(GameTile*, _tileShifted)
+  __decl_vec(GameTile*, _tileSprites)
+  __decl_vec(int, _tileBin)
+  __decl_vec(int, _tileData)
 
   __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseClick(const c::Vec2&);
-
-  virtual void onTouchMotion(c::Touch*);
+  virtual bool onMouseStart(const CCT_PT&);
   virtual bool onTouchStart(c::Touch*);
-  virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
-  virtual ~GLayer();
-};
+  virtual ~GLayer() {}
 
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
   _shared = _engine->getNodes("n/GVars")[0];
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   this->_busySignal=true;
 
   s_vec<c::Label*> labels;
   for (auto i = 0; i < 4; ++i) {
-    auto b= cx::reifyLabel("dft",52,"");
-    b->setPosition(wb.cx, wb.cy);
+    auto b= cx::reifyBmfLabel("dft","0");
+    auto k= XCFG()->scaleBmfont(b,52);
+    CC_POS2(b, wb.cx, wb.cy);
     b->setOpacity(0);
-    b->setScale(3);
+    b->setScale(3*k);
     addItem(b);
     labels.push_back(b);
   }
 
-  labels[0]->setString("3");
-  labels[1]->setString("2");
-  labels[2]->setString("1");
   labels[3]->setString("Start");
+  labels[2]->setString("1");
+  labels[1]->setString("2");
+  labels[0]->setString("3");
 
   for (auto i = 0; i < 4; ++i) {
       // since the labels should appear one after the other,
@@ -93,7 +88,7 @@ void GLayer::onInited() {
     auto countdownAnimation = c::Sequence::create(
         c::DelayTime::create(i),
         c::Spawn::create( c::FadeIn::create(0.25),
-          c::EaseBackOut::create(c::ScaleTo::create(0.25, 1)),CC_NIL),
+          c::EaseBackOut::create(c::ScaleTo::create(0.25, k)),CC_NIL),
         c::DelayTime::create(0.75),
         c::RemoveSelf::create(true),
         CC_NIL);
@@ -114,21 +109,22 @@ void GLayer::decoUI() {
 
   auto offX= CC_CSV(c::Float, "GAMEPLAY+OFFSET+X");
   auto offY= CC_CSV(c::Float, "GAMEPLAY+OFFSET+Y");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
   auto bg = c::LayerColor::create(
       c::Color4B(25, 0, 51, 255),
-      CC_ZW(wz.size),
-      CC_ZH(wz.size));
-  addItem(bg);
+      CC_ZW(wz),
+      CC_ZH(wz));
+
+  addItem(bg,-2);
 
   // generate vertices for the gameplay frame
-  c::Vec2 offset(offX,offY);
-  c::Vec2 vs[4];
-  vs[0] = c::ccpAdd(offset, c::Vec2(-1, -1));
-  vs[1] = c::ccpAdd(offset, c::Vec2(-1, (NUM_ROWS * TILE_SIZE)+1));
-  vs[2] = c::ccpAdd(offset, c::Vec2((NUM_COLS * TILE_SIZE)+1, (NUM_ROWS * TILE_SIZE)+1));
-  vs[3] = c::ccpAdd(offset, c::Vec2((NUM_COLS * TILE_SIZE)+1, -1));
+  CCT_PT offset(offX,offY);
+  CCT_PT vs[4];
+  vs[0] = c::ccpAdd(offset, CCT_PT(-1, -1));
+  vs[1] = c::ccpAdd(offset, CCT_PT(-1, (NUM_ROWS * TILE_SIZE)+1));
+  vs[2] = c::ccpAdd(offset, CCT_PT((NUM_COLS * TILE_SIZE)+1, (NUM_ROWS * TILE_SIZE)+1));
+  vs[3] = c::ccpAdd(offset, CCT_PT((NUM_COLS * TILE_SIZE)+1, -1));
 
   // pass vertices, fill colour,
   // border width and border colour to get a nice bordered, coloured rectangle
@@ -138,34 +134,28 @@ void GLayer::decoUI() {
       c::Color4F(0.375, 0.375, 0.375, 1), 2, c::Color4F(0.4, 0, 0, 1));
   addItem(gamePlayFrame);
 
-  auto titleLabel = cx::reifyLabel("dft", 52, "Color-Smash");
-  titleLabel->setPosition(wb.cx, wb.top * 0.95);
+  auto titleLabel = cx::reifyBmfLabel("title", "Color-Smash");
+  XCFG()->scaleBmfont(titleLabel,64);
+  CC_POS2(titleLabel, wb.cx, wb.top * 0.95);
   addItem(titleLabel);
 
   // generate tile data randomly
   auto len= NUM_COLS * NUM_ROWS;
   for (auto i = 0;  i < len; ++i) {
-    _tileData.push_back(1 + floor(cx::rand() * MAX_COLORS));
+    _tileData.push_back(1 + cx::randInt(MAX_COLORS));
   }
 
-  regoAtlas("game-pics");
+  regoAtlas("game-pics",1);
 
   auto n=0;
   F__LOOP(it, _tileData) {
-    auto s= cx::reifySprite("tile.png");
-    auto type = *it;
-    auto co= mc_new1(GameTile,s);
     auto pos= getPositionForTile(n);
-
-    s->setColor(getColorForTile(type));
-    MGML()->addAtlasItem("game-pics", s);
-
-    co->type= type;
-    co->index=n;
-    ++n;
-
-    co->inflate(pos.x, pos.y);
+    auto &type = *it;
+    auto co= GameTile::create(type,n);
+    MGML()->addAtlasItem("game-pics", co);
+    CC_POS1(co, pos);
     _tileSprites.push_back(co);
+    ++n;
   }
 
   _engine = mc_new(GEngine);
@@ -174,27 +164,21 @@ void GLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  return onGUI(touch->getLocation());
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
-  onGUI(loc);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool GLayer::onGUI(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto x=CC_CSV(c::Float,"GAMEPLAY+OFFSET+X");
   auto y=CC_CSV(c::Float,"GAMEPLAY+OFFSET+Y");
 
   if (_busySignal) { return false; }
 
   // calculate touch within the grid
-  auto touchWithinGrid = c::ccpSub(loc, c::Vec2(x,y));
-  auto col = floor(touchWithinGrid.x / TILE_SIZE);
-  auto row = floor(touchWithinGrid.y / TILE_SIZE);
+  auto touchWithinGrid = c::ccpSub(loc, CCT_PT(x,y));
+  auto col = (int) floor(touchWithinGrid.x / TILE_SIZE);
+  auto row = (int) floor(touchWithinGrid.y / TILE_SIZE);
   auto touchedTile = row * NUM_COLS + col;
 
   // simple bounds checking to ignore touches outside of the grid
@@ -209,6 +193,8 @@ bool GLayer::onGUI(const c::Vec2 &loc) {
   updateScore(loc);
   removeTilesWithAnimation();
   findTilesToShift();
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -225,9 +211,9 @@ void GLayer::findTilesToShift() {
   // belonging to the same column that are above the current tile
   auto i=0;
   F__LOOP(it, _tileBin) {
-    auto z= *it;
-    auto col = floor(z % NUM_COLS);
-    auto row = floor(z / NUM_COLS);
+    auto &z= *it;
+    auto col = (int) floor(z % NUM_COLS);
+    auto row = (int) floor(z / NUM_COLS);
     // iterate through each row above the current tile
     for (auto j = row+1; j < NUM_ROWS; ++j) {
       // each tile gets the data of the tile exactly above it
@@ -239,7 +225,7 @@ void GLayer::findTilesToShift() {
       // null checking...this sprite may have already been nullified by removeTilesWithAnimation
       if (_tileSprites[cjm1]) {
         // save the new index as user data
-        _tileSprites[cjm1]->index= cjm1;
+        _tileSprites[cjm1]->setIndex( cjm1);
         // save this tile's sprite so that it is animated, but only if it hasn't already been saved
         if (s::find(_tileShifted.begin(),
                     _tileShifted.end(), _tileSprites[cjm1]) == _tileShifted.end()) {
@@ -259,7 +245,7 @@ void GLayer::findTilesToShift() {
 //
 void GLayer::removeTilesWithAnimation() {
   F__LOOP(it, _tileBin) {
-    auto pos= *it;
+    auto &pos= *it;
     // first clear the tile's data
     _tileData[pos] = E_COLOR_NONE;
     // the tile should scale down with easing and then remove itself
@@ -289,8 +275,8 @@ void GLayer::removeTilesWithAnimation() {
 //
 void GLayer::bringDownTiles() {
   F__LOOP(it, _tileShifted) {
-    auto t= *it;
-    auto id = t->index;
+    auto &t= *it;
+    auto id = t->getIndex();
     // the tiles should move to their new positions with an awesome looking bounce
     t->node->runAction(
         c::EaseBounceOut::create(
@@ -312,28 +298,29 @@ void GLayer::addNewTiles() {
   s_vec<int> empty;
   auto n = 0;
   F__LOOP(it, _tileData) {
-    auto v= *it;
+    auto &v= *it;
     if (v < 0) { empty.push_back(n); }
     ++n;
   }
 
   // now create tile data and sprites
   F__LOOP(it, empty) {
-    auto pos= *it;
+    auto &pos= *it;
     // generate tile data randomly
-    _tileData[pos] = 1 + floor(cx::rand() * MAX_COLORS);
+    _tileData[pos] = 1 + cx::randInt(MAX_COLORS);
     // create tile sprite based on tile data
     createTileSprite(pos);
   }
 
   // animate the entry of the sprites
   F__LOOP(it, empty) {
-    auto pos = *it;
+    auto &pos = *it;
+    auto k= _tileSprites[pos]->getScale();
     // set the scale to 0
-    _tileSprites[pos]->node->setScale(0);
+    _tileSprites[pos]->setScale(0);
     // scale the sprite up with a neat easing effect
     _tileSprites[pos]->node->runAction(
-        c::EaseBackOut::create(c::ScaleTo::create(0.125, 1)));
+        c::EaseBackOut::create(c::ScaleTo::create(0.125, k)));
   }
 
   // the move has finally finished, do some cleanup
@@ -352,23 +339,18 @@ void GLayer::cleanUpAfterMove() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createTileSprite(int tileId) {
-  auto s= cx::reifySprite("tile.png");
-  auto co= mc_new1(GameTile,s);
-  auto t= _tileData[tileId];
   auto pos= getPositionForTile(tileId);
-
-  s->setColor(getColorForTile(t));
-  co->index= tileId;
-  co->type= t;
+  auto t= _tileData[tileId];
+  auto co= GameTile::create(t, tileId);
   _tileSprites[tileId] = co;
-  MGML()->addAtlasItem("game-pics", s);
-  co->inflate(pos.x, pos.y);
+  MGML()->addAtlasItem("game-pics", co);
+  CC_POS1(co, pos);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::updateScore(const c::Vec2 &point) {
+void GLayer::updateScore(const CCT_PT &point) {
 
   // count the number of tiles the user just removed
   auto numTiles= _tileBin.size();
@@ -388,16 +370,6 @@ void GLayer::updateScore(const c::Vec2 &point) {
   }
 
   getHUD()->updateScore(scoreToAdd);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchMotion(c::Touch *touch) {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onTouchEnd(c::Touch *touch) {
 }
 
 //////////////////////////////////////////////////////////////////////////////

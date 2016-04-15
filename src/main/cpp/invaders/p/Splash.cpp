@@ -36,7 +36,7 @@ void Splash::decoUI() {
   b1->setCallback([=](c::Ref*)
       { cx::runEx(Game::reify(mc_new(GameCtx))); });
   CC_POS2(b1, wb.cx, wb.top * 0.2);
-  XCFG()->scaleNode(b1, 36);
+  XCFG()->scaleBmfont(b1, 36);
   addItem(cx::mkMenu(b1));
 }
 

@@ -30,13 +30,13 @@ void HUDLayer::decoUI() {
 
   _scoreLabel = cx::reifyBmfLabel("score", "0");
   _scoreLabel->setAnchorPoint(cx::anchorTR());
-  XCFG()->scaleNode(_scoreLabel,24);
+  XCFG()->scaleBmfont(_scoreLabel,24);
   t= CC_CHT(_scoreLabel)/2;
   CC_POS2(_scoreLabel, wb.right - t, wb.top - t);
   addItem(_scoreLabel);
 
   _status= cx::reifyBmfLabel("dft");
-  XCFG()->scaleNode(_status, 16);
+  XCFG()->scaleBmfont(_status, 16);
   CC_POS2(_status, wb.cx * 1.5, wb.cy);
   CC_HIDE(_status);
   addItem(_status);

@@ -22,57 +22,60 @@ NS_BEGIN(colorsmash)
 //
 void MMenu::decoUI() {
 
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   auto bg = c::LayerColor::create(
       c::Color4B(25, 0, 51, 255),
-      CC_ZW(wz.size),
-      CC_ZH(wz.size));
-  addItem(bg);
+      CC_ZW(wz),
+      CC_ZH(wz));
+  addItem(bg, -1);
 
-  auto title = cx::reifyLabel("dft",52, "Options");
-  title->setPosition(wb.cx, wb.top * 0.75);
+  auto title = cx::reifyBmfLabel("title", "Options");
+  XCFG()->scaleBmfont(title, 64);
+  CC_POS2(title, wb.cx, wb.top * 0.75);
   addItem(title);
 
-  auto b1 = c::MenuItemLabel::create(
-      cx::reifyLabel("dft",32,"Restart"),
-      [=](c::Ref*) {
+  auto b1 = cx::reifyMenuText("btns", "Restart");
+  auto b3 = cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleBmfont(b1, 32);
+  XCFG()->scaleBmfont(b3, 32);
+  b1->setCallback([=](c::Ref*) {
       cx::pop();
       cx::runEx(Game::reify( new f::GCX() ));
       });
-  auto b2 = c::MenuItemLabel::create(
-      cx::reifyLabel("dft",32,"Back"),
-      [=](c::Ref*) {
+  b3->setCallback([=](c::Ref*) {
+        cx::pop();
+        cx::prelude();
+      });
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{ b1, b3 },
+      CC_CHT(b1)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
+  addItem(menu);
+
+  auto b2= cx::reifyMenuBtn("icon_back.png");
+  auto gap= CC_CHT(b2)/GOLDEN_RATIO;
+  b2->setAnchorPoint(cx::anchorBL());
+  b2->setCallback([=](c::Ref*) {
         if (XCFG()->hasAudio()) {
           cx::resumeMusic();
         }
         cx::pop();
       });
-  auto b3 = c::MenuItemLabel::create(
-      cx::reifyLabel("dft",32,"Quit"),
-      [=](c::Ref*) {
-        cx::pop();
-        cx::runEx(Splash::reify());
-      });
-  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{
-      b1,b2,b3
-      }, CC_ZW(CC_CSIZE(b1))/4);
-  menu->setPosition(wb.cx, wb.cy);
-  addItem(menu);
+  CC_POS2(b2, wb.left + gap, wb.bottom + gap);
+  addItem(cx::mkMenu(b2));
 
   // audio
   auto audios= cx::reifyAudioIcons();
-  auto sz= CC_CSIZE(audios[0]);
-  auto gap= CC_ZW(sz)/4;
   auto c= cx::white();
 
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
+  gap= CC_CHT(audios[0])/GOLDEN_RATIO;
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
+      CCT_PT(wb.right-gap, wb.bottom+gap));
 
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();

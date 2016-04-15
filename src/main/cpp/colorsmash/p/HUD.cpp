@@ -27,12 +27,14 @@ void HUDLayer::decoUI() {
   _time = 0;
   _score=0;
 
-  _scoreLabel = cx::reifyLabel("dft", 18, "");
-  _scoreLabel->setPosition(wb.right * 0.33, wb.top * 0.875);
+  _scoreLabel = cx::reifyBmfLabel("dft", "0");
+  XCFG()->scaleBmfont(_scoreLabel, 24);
+  CC_POS2(_scoreLabel, wb.right * 0.33, wb.top * 0.875);
   addItem(_scoreLabel);
 
-  _timeLabel = cx::reifyLabel("dft", 18, "");
-  _timeLabel->setPosition(wb.right * 0.66, wb.top * 0.875);
+  _timeLabel = cx::reifyBmfLabel("dft", "0");
+  XCFG()->scaleBmfont(_timeLabel, 24);
+  CC_POS2(_timeLabel, wb.right * 0.66, wb.top * 0.875);
   addItem(_timeLabel);
 
   auto pause= cx::reifyMenuBtn("pause_button.png");
@@ -40,9 +42,8 @@ void HUDLayer::decoUI() {
       cx::sfxPlay("button");
       cx::pushEx(MMenu::reify());
   });
-  pause->setPosition(wb.right * 0.9, wb.top * 0.95);
-  auto menu= cx::mkMenu(pause);
-  addItem(menu,1);
+  CC_POS2(pause, wb.right * 0.9, wb.top * 0.95);
+  addItem(cx::mkMenu(pause),1);
 
   updateTimer(0);
   updateScore(0);
@@ -51,9 +52,10 @@ void HUDLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::flashAlert() {
+  auto k= _timeLabel->getScale();
   auto seq= c::Sequence::create(
-      c::EaseSineIn::create(c::ScaleTo::create(0.125, 1.1)),
-      c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
+      c::EaseSineIn::create(c::ScaleTo::create(0.125, 1.1*k)),
+      c::EaseSineOut::create(c::ScaleTo::create(0.125, k)),
                                 CC_NIL);
   _timeLabel->runAction(c::RepeatForever::create(seq));
 }
@@ -74,12 +76,13 @@ void HUDLayer::updateTimer(int n) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::updateScore(int n) {
+  auto k= _scoreLabel->getScale();
   _score += n;
   _scoreLabel->setString("Score: " + FTOS(_score));
   _scoreLabel->runAction(
       c::Sequence::create(
-        c::EaseSineIn::create( c::ScaleTo::create(0.125, 1.1)),
-        c::EaseSineOut::create(c::ScaleTo::create(0.125, 1)),
+        c::EaseSineIn::create( c::ScaleTo::create(0.125, 1.1*k)),
+        c::EaseSineOut::create(c::ScaleTo::create(0.125, k)),
         CC_NIL));
 }
 

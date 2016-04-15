@@ -28,7 +28,7 @@ void HUDLayer::decoUI() {
 
   _stateLabel = cx::reifyBmfLabel("dft", "Idle");
   _stateLabel->setColor(c::Color3B::BLUE);
-  XCFG()->scaleNode(_stateLabel,36);
+  XCFG()->scaleBmfont(_stateLabel,36);
   CC_POS2(_stateLabel, wb.cx, wb.top * 0.25);
   addItem(_stateLabel);
 
@@ -44,7 +44,7 @@ void HUDLayer::decoUI() {
 
   auto coin1Label = cx::reifyBmfLabel("btns","0000");
   coin1Label->setColor(c::Color3B::BLACK);
-  XCFG()->scaleNode(coin1Label, 36);
+  XCFG()->scaleBmfont(coin1Label, 36);
   _coinLabels[1]= coin1Label;
 
   coin1Label->setAlignment(c::TextHAlignment::LEFT);
@@ -57,7 +57,7 @@ void HUDLayer::decoUI() {
 
   auto coin2Label = cx::reifyBmfLabel("btns", "0000");
   coin2Label->setColor(c::Color3B::BLACK);
-  XCFG()->scaleNode(coin2Label, 36);
+  XCFG()->scaleBmfont(coin2Label, 36);
   _coinLabels[2]= coin2Label;
   coin2Label->setAlignment(c::TextHAlignment::RIGHT);
   CC_POS2(coin2Label, coin2->getPositionX() - HWZ(CC_CSIZE(coin1)) - MARGIN/2 -
@@ -68,7 +68,7 @@ void HUDLayer::decoUI() {
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   _scoreLabel->setColor(c::Color3B::BLUE);
-  XCFG()->scaleNode(_scoreLabel,64);
+  XCFG()->scaleBmfont(_scoreLabel,64);
   CC_POS2(_scoreLabel, wb.cx, wb.top * 0.9);
   addItem(_scoreLabel);
 

@@ -30,7 +30,7 @@ void Splash::decoUI() {
   addItem(t);
 
   auto btn= cx::reifyMenuText("btns", "PLAY");
-  XCFG()->scaleNode(btn, 36);
+  XCFG()->scaleBmfont(btn, 36);
   btn->setCallback([=](c::Ref*) {
       cx::runEx(Game::reify(mc_new(GameCtx)));
       });

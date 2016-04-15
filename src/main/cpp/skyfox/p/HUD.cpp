@@ -42,13 +42,13 @@ void HUDLayer::decoUI() {
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   _scoreLabel->setAnchorPoint(cx::anchorR());
-  XCFG()->scaleNode(_scoreLabel, 72);
+  XCFG()->scaleBmfont(_scoreLabel, 72);
   CC_POS2(_scoreLabel, wb.right * 0.8, wb.top * 0.94);
   addItem(_scoreLabel);
 
   _energyLabel = cx::reifyBmfLabel("dft", "100%");
   _energyLabel->setAlignment(c::TextHAlignment::RIGHT);
-  XCFG()->scaleNode(_energyLabel, 72);
+  XCFG()->scaleBmfont(_energyLabel, 72);
   CC_POS2(_energyLabel, wb.right * 0.3, wb.top * 0.94);
   addItem(_energyLabel);
 

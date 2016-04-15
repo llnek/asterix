@@ -29,14 +29,14 @@ void Ende::decoUI() {
 
   qn->setColor(XCFG()->getColor("text"));
   CC_POS2(qn, wb.cx, wb.top * 0.8);
-  XCFG()->scaleNode(qn,52);
+  XCFG()->scaleBmfont(qn,52);
   addItem(qn);
 
   // btns
   auto b1= cx::reifyMenuText("btns", "TryAgain?");
   auto b2= cx::reifyMenuText("btns", "Quit");
-  XCFG()->scaleNode(b2,36);
-  XCFG()->scaleNode(b1,36);
+  XCFG()->scaleBmfont(b2,36);
+  XCFG()->scaleBmfont(b1,36);
   s_vec<c::MenuItem*> btns {b1, b2};
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {b1,b2},
       CC_CHT(b1)/GOLDEN_RATIO);

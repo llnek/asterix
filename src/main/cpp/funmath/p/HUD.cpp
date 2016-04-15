@@ -27,7 +27,7 @@ void HUDLayer::decoUI() {
   _score=0;
 
   CC_POS2(_scoreLabel, wb.cx, wb.top * 0.1);
-  XCFG()->scaleNode(_scoreLabel, 36);
+  XCFG()->scaleBmfont(_scoreLabel, 36);
   CC_HIDE(_scoreLabel);
   addItem(_scoreLabel);
 

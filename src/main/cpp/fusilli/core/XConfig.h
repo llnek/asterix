@@ -68,7 +68,7 @@ protected:
 
 public:
 
-  virtual void scaleNode(not_null<c::Node*>,float);
+  virtual float scaleBmfont(not_null<c::Label*>,float);
   virtual void handleResolution(const CCT_SZ& ) {}
   virtual void setFrameSize(const CCT_SZ&);
 
@@ -113,7 +113,9 @@ public:
   void resetCst(const sstr&, c::Ref*);
   c::Ref* getCst(const sstr& );
 
-  void fit(not_null<c::Node*> n) { n->setScale(_scale); }
+  float fit(not_null<c::Node*> n) {
+    n->setScale(_scale); return _scale;}
+
   const CCT_SZ fit(const CCT_SZ &z);
   int getBtnPadding();
 

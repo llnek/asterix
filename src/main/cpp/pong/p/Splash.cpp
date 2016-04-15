@@ -36,7 +36,7 @@ void Splash::decoUI() {
   auto x= mc_new1(MCX, f);
 
   b->setColor(c::Color3B::WHITE);
-  XCFG()->scaleNode(b,36);
+  XCFG()->scaleBmfont(b,36);
   b->setCallback(
       [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
 

@@ -22,43 +22,45 @@ NS_BEGIN(colorsmash)
 //
 void Ende::decoUI() {
 
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   auto popup = c::LayerColor::create(
-      c::Color4B(0, 0, 0, 196), CC_ZW(wz.size), CC_ZH(wz.size));
+      c::Color4B(0, 0, 0, 196), CC_ZW(wz), CC_ZH(wz));
   //popup->setOpacity(0);
   //popup->runAction(c::FadeTo::create(0.25, 196));
   addItem(popup, 10);
 
-  auto title = cx::reifyLabel("dft", 52,"Game Over");
-  title->setPosition(wb.cx, wb.top * 0.75);
+  auto title = cx::reifyBmfLabel("title", "Game Over");
+  XCFG()->scaleBmfont(title,64);
+  CC_POS2(title, wb.cx, wb.top * 0.8);
   addItem(title);
 
   auto score = getHUD()->getScore();
-  auto scoreLabel = cx::reifyLabel("dft", 48, "Score: " + FTOS(score));
-  scoreLabel->setPosition(wb.cx, wb.top * 0.6);
+  auto scoreLabel = cx::reifyBmfLabel("dft", "Score: " + FTOS(score));
+  auto k= XCFG()->scaleBmfont(scoreLabel, 48);
+  CC_POS2(scoreLabel, wb.cx, wb.top * 0.6);
   scoreLabel->runAction(
       c::Sequence::create(
         c::DelayTime::create(0.5),
-        c::EaseSineIn::create(c::ScaleTo::create(0.25, 1.1)),
-        c::EaseSineOut::create(c::ScaleTo::create(0.25, 1)),
+        c::EaseSineIn::create(c::ScaleTo::create(0.25, 1.1*k)),
+        c::EaseSineOut::create(c::ScaleTo::create(0.25, k)),
                           CC_NIL));
   addItem(scoreLabel);
 
-  auto b1 = c::MenuItemLabel::create(
-      cx::reifyLabel("dft", 32, "Replay"),
-      [=](c::Ref*) {
-        cx::runEx(Game::reify( new f::GCX() ));
+  auto t = cx::reifyMenuText("btns", "Try Again?");
+  auto q = cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleBmfont(t,"36");
+  XCFG()->scaleBmfont(q,"36");
+  t->setCallbacl([=](c::Ref*) {
+        cx::runEx(Game::reify(mc_new(GameCtx)));
       });
-  auto b2 = c::MenuItemLabel::create(
-      cx::reifyLabel("dft", 32, "Quit"),
-      [=](c::Ref*) {
-        cx::runEx(Splash::reify());
+  q->setCallback([=](c::Ref*) {
+        cx::prelude();
       });
-
-  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{ b1, b2 }, CC_CSIZE(b1).width/4);
-  menu->setPosition(wb.cx, wb.cy);
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{ t, q},
+      CC_CHT(t)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
 
 }

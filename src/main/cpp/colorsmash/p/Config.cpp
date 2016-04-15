@@ -11,7 +11,7 @@
 
 #include "Splash.h"
 #include "Config.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_BEGIN(colorsmash)
 
@@ -52,28 +52,38 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleBmfont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

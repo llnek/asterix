@@ -25,7 +25,7 @@ void HUDLayer::decoUI() {
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   CC_POS2(_scoreLabel, wb.cx, wb.top * 0.2);
-  XCFG()->scaleNode(_scoreLabel, 24);
+  XCFG()->scaleBmfont(_scoreLabel, 24);
   addItem(_scoreLabel);
 
   _score=0;

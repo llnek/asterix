@@ -27,18 +27,18 @@ void HUDLayer::decoUI() {
 
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   CC_POS2(_scoreLabel, wb.cx, wb.top * 0.9);
-  XCFG()->scaleNode(_scoreLabel, 24);
+  XCFG()->scaleBmfont(_scoreLabel, 24);
   addItem(_scoreLabel);
 
   _waveLabel = cx::reifyBmfLabel("dft", "Wave " + FTOS(0));
-  XCFG()->scaleNode(_waveLabel, 24);
+  XCFG()->scaleBmfont(_waveLabel, 24);
   CC_POS2(_waveLabel, 40 , wb.top - 25);
   _waveLabel->setColor(cx::black());
   addItem(_waveLabel);
 
   _lifePointsLabel = cx::reifyBmfLabel("dft", "Life: " + FTOS(10) + " ");
   CC_POS2(_lifePointsLabel, wb.right - 50 , 20);
-  XCFG()->scaleNode(_lifePointsLabel, 24);
+  XCFG()->scaleBmfont(_lifePointsLabel, 24);
   _lifePointsLabel->setColor(cx::black());
   addItem(_lifePointsLabel);
 

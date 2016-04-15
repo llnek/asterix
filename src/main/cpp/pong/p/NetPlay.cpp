@@ -39,7 +39,7 @@ void NetPlay::showWaitOthers() {
   CC_POS2(qn, wb.cx, wb.top * 0.8);
   addItem(qn);
 
-  XCFG()->scaleNode(b1,24);
+  XCFG()->scaleBmfont(b1,24);
   b1->setCallback(
       [=](c::Ref*) { this->onCancel(); });
 

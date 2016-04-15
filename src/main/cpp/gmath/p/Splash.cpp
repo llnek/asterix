@@ -39,7 +39,7 @@ void Splash::decoUI() {
   addAtlasItem("game-pics", board);
 
   auto b= cx::reifyMenuText("btns", "PLAY");
-  XCFG()->scaleNode(b, 36);
+  XCFG()->scaleBmfont(b, 36);
   CC_POS2(b, wb.cx, wb.top * 0.2);
   b->setCallback([=](c::Ref*) {
       cx::runEx(Game::reify(mc_new(GameCtx)));

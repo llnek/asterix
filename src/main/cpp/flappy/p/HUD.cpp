@@ -29,7 +29,7 @@ void HUDLayer::decoUI() {
   _scoreLabel= cx::reifyBmfLabel("dft", "0");
   _score=0;
 
-  XCFG()->scaleNode(_scoreLabel, 120);
+  XCFG()->scaleBmfont(_scoreLabel, 120);
   CC_POS2(_scoreLabel, wb.cx, wb.top * 0.875);
   addItem(_scoreLabel, E_LAYER_HUD);
 

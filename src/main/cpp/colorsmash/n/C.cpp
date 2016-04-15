@@ -11,7 +11,7 @@
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(colorsmash)
 
@@ -54,23 +54,23 @@ void findTilesToRemove(const s_vec<int> &tiles,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 getRandomPositionForTile() {
-  return c::Vec2(floor(1 + cx::rand() * NUM_COLS) * TILE_SIZE,
-      floor(1 + cx::rand() * (NUM_ROWS+5)) * TILE_SIZE );
+const CCT_PT getRandomPositionForTile() {
+  return CCT_PT(floor(1 + cx::randInt( NUM_COLS)) * TILE_SIZE,
+                floor(1 + cx::randInt(NUM_ROWS+5)) * TILE_SIZE );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-c::Vec2 getPositionForTile(int id) {
+const CCT_PT getPositionForTile(int id) {
   // calculate column and row for given tile id
-  auto col = floor(id % NUM_COLS);
-  auto row = floor(id / NUM_COLS);
+  auto col = (int) floor(id % NUM_COLS);
+  auto row = (int) floor(id / NUM_COLS);
   auto x=CC_CSV(c::Float, "GAMEPLAY+OFFSET+X");
   auto y=CC_CSV(c::Float, "GAMEPLAY+OFFSET+Y");
   // return point based on the column and row of the tile
   return c::ccpAdd(
-      c::Vec2(x,y),
-      c::Vec2(col * TILE_SIZE + TILE_SIZE/2, row * TILE_SIZE + TILE_SIZE/2));
+      CCT_PT(x,y),
+      CCT_PT(col * TILE_SIZE + TILE_SIZE/2, row * TILE_SIZE + TILE_SIZE/2));
 }
 
 //////////////////////////////////////////////////////////////////////////////

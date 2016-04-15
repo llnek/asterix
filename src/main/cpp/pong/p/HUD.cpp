@@ -23,7 +23,7 @@ void HUDLayer::regoPlayers(const Player &p1, const Player &p2) {
 
   _title->setString(p1.pid + " / " + p2.pid);
   _title->setAnchorPoint(cx::anchorT());
-  XCFG()->scaleNode(_title, 52);
+  XCFG()->scaleBmfont(_title, 52);
 
   auto sz= CC_CSIZE(_title);
   auto gap= sz.height/2;
@@ -56,15 +56,15 @@ void HUDLayer::decoUI() {
   addItem(_title);
 
   _score1= cx::reifyBmfLabel("dft", "8");
-  XCFG()->scaleNode(_score1, 24);
+  XCFG()->scaleBmfont(_score1, 24);
   addItem(_score1);
 
   _score2= cx::reifyBmfLabel("dft", "8");
-  XCFG()->scaleNode(_score2, 24);
+  XCFG()->scaleBmfont(_score2, 24);
   addItem(_score2);
 
   _resultMsg = cx::reifyBmfLabel("dft","?");
-  XCFG()->scaleNode(_resultMsg, 32);
+  XCFG()->scaleBmfont(_resultMsg, 32);
   CC_HIDE(_resultMsg);
   CC_POS2(_resultMsg, wb.cx, 100);
   addItem(_resultMsg);

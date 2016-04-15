@@ -25,7 +25,7 @@ void HUDLayer::decoUI() {
   auto wb= cx::visBox();
 
   CC_POS2(b, wb.right-60, wb.cy + 80);
-  XCFG()->scaleNode(b,36);
+  XCFG()->scaleBmfont(b,36);
   b->setRotation(90);
   addItem(b);
   _slabels[2]=b;
@@ -33,7 +33,7 @@ void HUDLayer::decoUI() {
 
   b= cx::reifyBmfLabel("dft","000");
   CC_POS2(b, wb.right-60, wb.cy - 80);
-  XCFG()->scaleNode(b,36);
+  XCFG()->scaleBmfont(b,36);
   b->setRotation(90);
   addItem(b);
   _slabels[1]=b;

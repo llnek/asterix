@@ -30,7 +30,7 @@ void HUDLayer::decoUI() {
 
   _scoreLabel = cx::reifyBmfLabel("dft", "0");
   _scoreLabel->setAnchorPoint(cx::anchorTR());
-  XCFG()->scaleNode(_scoreLabel, 36);
+  XCFG()->scaleBmfont(_scoreLabel, 36);
   gap= CC_CHT(_scoreLabel)/GOLDEN_RATIO;
   CC_POS2(_scoreLabel, wb.right-gap, wb.top-gap);
   addItem(_scoreLabel);

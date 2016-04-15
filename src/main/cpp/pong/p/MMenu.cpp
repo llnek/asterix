@@ -33,25 +33,25 @@ void MMenu::decoUI() {
   centerImage("game.bg");
   regoAtlas("cc-pics");
 
-  XCFG()->scaleNode(lb, 52);
+  XCFG()->scaleBmfont(lb, 52);
   lb->setColor(c);
   addItem(lb);
 
   auto b1 = cx::reifyMenuText("btns", "Online");
   b1->setColor(c::Color3B::WHITE);
-  XCFG()->scaleNode(b1,36);
+  XCFG()->scaleBmfont(b1,36);
   b1->setCallback(
       [=](c::Ref*) { this->onPlay3();  });
 
   auto b2 = cx::reifyMenuText("btns", "Play");
   b2->setColor(c::Color3B::WHITE);
-  XCFG()->scaleNode(b2,36);
+  XCFG()->scaleBmfont(b2,36);
   b2->setCallback(
       [=](c::Ref*) { this->onPlay1();  } );
 
   auto b3 = cx::reifyMenuText("btns", "Quit");
   b3->setColor(c::Color3B::WHITE);
-  XCFG()->scaleNode(b3,36);
+  XCFG()->scaleBmfont(b3,36);
   b3->setCallback(
       [=](c::Ref*) { cx::prelude();  } );
 

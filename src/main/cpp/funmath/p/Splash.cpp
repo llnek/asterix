@@ -24,12 +24,12 @@ void Splash::decoUI() {
   auto t= cx::reifyBmfLabel("title", "FunMath");
   auto wb= cx::visBox();
 
-  XCFG()->scaleNode(t, 52);
+  XCFG()->scaleBmfont(t, 52);
   CC_POS2(t, wb.cx, wb.top * 0.8);
   addItem(t);
 
   auto b= cx::reifyMenuText("btns", "PLAY");
-  XCFG()->scaleNode(t, 36);
+  XCFG()->scaleBmfont(t, 36);
   b->setCallback([=](c::Ref*) {
       cx::runEx(Game::reify(mc_new(GameCtx)));
       });

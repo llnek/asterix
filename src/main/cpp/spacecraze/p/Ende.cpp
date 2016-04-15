@@ -27,7 +27,7 @@ void Ende::decoUI() {
   centerImage("game.bg")->setOpacity(0.8 * 255);
 
   CC_POS2(lbl, wb.cx, wb.top * 0.8);
-  XCFG()->scaleNode(lbl,52);
+  XCFG()->scaleBmfont(lbl,52);
   addItem(lbl);
 
   auto p = cx::reifyMenuText("btns", "Try Again?");
@@ -35,8 +35,8 @@ void Ende::decoUI() {
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{p,q},
       CC_CHT(p)/GOLDEN_RATIO);
 
-  XCFG()->scaleNode(p, 64);
-  XCFG()->scaleNode(q,64);
+  XCFG()->scaleBmfont(p, 64);
+  XCFG()->scaleBmfont(q,64);
   q->setCallback([=](c::Ref*) { cx::prelude();  });
   p->setCallback([=](c::Ref*) {
       cx::runEx(Game::reify(mc_new(GameCtx)));

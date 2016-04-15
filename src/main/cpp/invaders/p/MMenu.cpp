@@ -35,13 +35,13 @@ void MMenu::decoUI() {
       "title",
       gets("mmenu"));
   lb->setColor(XCFG()->getColor("text"));
-  XCFG()->scaleNode(lb, 52);
+  XCFG()->scaleBmfont(lb, 52);
   addItem(lb);
 
   auto b1= cx::reifyMenuText("btns", "Restart");
   auto b2= cx::reifyMenuText("btns", "Quit");
-  XCFG()->scaleNode(b2,36);
-  XCFG()->scaleNode(b1,36);
+  XCFG()->scaleBmfont(b2,36);
+  XCFG()->scaleBmfont(b1,36);
   auto menu= cx::mkVMenu(s_vec<c::MenuItem*>{b1,b2},
       CC_CHT(b1)/GOLDEN_RATIO);
 

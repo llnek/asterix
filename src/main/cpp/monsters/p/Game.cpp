@@ -119,7 +119,7 @@ void GLayer::lblBtn(c::MenuItem *b, const sstr &msg) {
 
   auto txt = cx::reifyBmfLabel("dft", msg);
   txt->setColor(c::Color3B::ORANGE);
-  XCFG()->scaleNode(txt,32);
+  XCFG()->scaleBmfont(txt,32);
   CC_POS2(txt, CC_ZW(CC_CSIZE(b)) * 0.75, HHZ(CC_CSIZE(b)));
    // txt->setVerticalAlignment(c::TextVAlignment::TOP);
   b->addChild(txt);

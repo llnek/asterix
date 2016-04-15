@@ -53,7 +53,7 @@ void Ende::decoUI() {
 
   auto score= getHUD()->getScore();
   auto scoreLabel = cx::reifyBmfLabel("dft", "Score: " + FTOS(score));
-  XCFG()->scaleNode(scoreLabel,64);
+  XCFG()->scaleBmfont(scoreLabel,64);
   CC_POS2(scoreLabel, wb.cx, wb.top * 0.6);
   scoreLabel->runAction(
       c::Sequence::create(
@@ -66,7 +66,7 @@ void Ende::decoUI() {
   auto oldScore = CC_APPDB()->getIntegerForKey(HIGHSCORE_KEY);
   auto hsLabel = cx::reifyBmfLabel("dft",
       "Your Best: " + FTOS(oldScore));
-  XCFG()->scaleNode(hsLabel,64);
+  XCFG()->scaleBmfont(hsLabel,64);
   CC_POS2(hsLabel, wb.cx, wb.cy);
   addItem(hsLabel);
 

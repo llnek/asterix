@@ -23,51 +23,54 @@ NS_BEGIN(colorsmash)
 //
 void Splash::decoUI() {
 
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   // create a coloured layer as background
   auto background = c::LayerColor::create(
       c::Color4B(25, 0, 51, 255),
-      CC_ZW(wz.size),
-      CC_ZH(wz.size));
-  addItem(background);
+      CC_ZW(wz),
+      CC_ZH(wz));
+  addItem(background, -1);
+  regoAtlas("game-pics");
 
   // create a label to display the name of the game
-  auto titleLabel = cx::reifyLabel("dft", 64, "Color-Smash");
-  titleLabel->setPosition(wb.cx, wb.top * 0.8);
+  auto titleLabel = cx::reifyBmfLabel("title", "Color-Smash");
+  XCFG()->scaleBmfont(titleLabel,64);
+  CC_POS2(titleLabel, wb.cx, wb.top * 0.8);
   addItem(titleLabel, 1);
 
   // create a play button to move to the game world
-  auto playButton = cx::reifyMenuBtn("play_button.png");
-  auto menu=cx::mkMenu(playButton);
-  playButton->setCallback([=](c::Ref*) {
-      cx::runEx(Game::reify(new f::GCX() ));
+  auto b = cx::reifyMenuBtn("play_button.png");
+  b->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
       });
-  playButton->setPosition(wb.cx,wb.cy);
-  addItem(menu, 1);
+  CC_POS2(b, wb.cx,wb.cy);
+  addItem(cx::mkMenu(b), 1);
 
-  this->schedule(CC_SCHEDULE_SELECTOR(Splash::doAnimation), 2);
   doAnimation(0);
+  this->schedule(CC_SCHEDULE_SELECTOR(Splash::doAnimation), 2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::doAnimation(float) {
-  auto numTiles = floor(cx::rand() * 30);
+  auto numTiles = cx::randInt(30);
   for (auto i = 0;  i < numTiles; ++i) {
     auto tile = cx::reifySprite("tile.png");
-    tile->setColor(getColorForTile(1 + floor(cx::rand() * MAX_COLORS)));
-    tile->setPosition(getRandomPositionForTile());
-    tile->setScale(0);
-    addItem(tile);
+    XCFG()->fit(tile);
+    tile->setColor(getColorForTile(1 + cx::randInt(MAX_COLORS)));
+    CC_POS1(tile, getRandomPositionForTile());
+    tile->setOpactiy(0);
+    addAtlasItem("game-pics", tile);
 
     tile->runAction(c::Sequence::create(
-          c::DelayTime::create(cx::rand() * 5),
-          c::EaseBackOut::create(c::ScaleTo::create(0.125, 1)),
-          c::DelayTime::create(cx::rand() * 5),
-          c::EaseBackIn::create(c::ScaleTo::create(0.125, 0)),
-          c::RemoveSelf::create(true), CC_NIL));
+          c::DelayTime::create(cx::randInt(5)),
+          c::EaseBackOut::create(c::FadeTo::create(0.125, 255)),
+          c::DelayTime::create(cx::randInt(5)),
+          c::EaseBackIn::create(c::FadeTo::create(0.125, 0)),
+          c::RemoveSelf::create(true),
+          CC_NIL));
   }
 }
 

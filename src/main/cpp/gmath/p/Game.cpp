@@ -97,7 +97,7 @@ void GLayer::decoUI() {
 
   auto desc = cx::reifyBmfLabel("dft", "Turns Survived:");
   CC_POS2(desc, wb.right * 0.125, wb.top * 0.9);
-  XCFG()->scaleNode(desc,64);
+  XCFG()->scaleBmfont(desc,64);
   //desc->setColor(c);
   addItem(desc);
 
@@ -107,7 +107,7 @@ void GLayer::decoUI() {
   addItem(_lblTurnsSurvived);
 
   desc= cx::reifyBmfLabel("dft","Units Killed:");
-  XCFG()->scaleNode(desc,64);
+  XCFG()->scaleBmfont(desc,64);
   CC_POS2(desc, wb.right * 0.125, wb.top * 0.7);
   //desc->setColor(c);
   addItem(desc);
@@ -119,7 +119,7 @@ void GLayer::decoUI() {
 
   desc= cx::reifyBmfLabel("dft","Total Score:");
   CC_POS2(desc, wb.right * 0.125, wb.cy);
-  XCFG()->scaleNode(desc,64);
+  XCFG()->scaleBmfont(desc,64);
   //desc->setColor(c);
   addItem(desc);
 

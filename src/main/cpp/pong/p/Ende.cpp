@@ -35,7 +35,7 @@ void Ende::decoUI() {
   auto wb= cx::visBox();
 
   qn->setColor(XCFG()->getColor("text"));
-  XCFG()->scaleNode(qn, 52);
+  XCFG()->scaleBmfont(qn, 52);
   CC_POS2(qn, wb.cx, wb.top * 0.8);
   addItem(qn);
 

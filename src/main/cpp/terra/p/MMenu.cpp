@@ -32,7 +32,7 @@ void MMenu::decoUI() {
   regoAtlas("cc-pics");
 
   CC_POS2(tt, wb.cx, wb.top * 0.8);
-  XCFG()->scaleNode(tt,52);
+  XCFG()->scaleBmfont(tt,52);
   tt->setColor(c);
   addItem(tt);
 
