@@ -47,6 +47,7 @@ void AI::parallex(float dt) {
 void AI::process(float dt) {
   if (!cx::timerDone(_timer)) { return; }  else {
     cx::undoTimer(_timer);
+    _timer=CC_NIL;
   }
   --_time;
   auto msg= j::json({

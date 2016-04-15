@@ -360,7 +360,7 @@ void GLayer::updateScore(const CCT_PT &point) {
   auto bonus= cfg["BONUS"];
 
   J__LOOP(it,bonus) {
-    auto z= *it;
+    auto &z= *it;
     auto n=JS_INT(z);
     if (numTiles >= n) {
         // add the bonus to the score for this move
@@ -375,10 +375,9 @@ void GLayer::updateScore(const CCT_PT &point) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onEnd() {
-  this->setOpacity(255 * 0.1);
+  getHUD()->pause();
   MGMS()->stop();
   surcease();
-  getHUD()->pause();
   Ende::reify(MGMS(),4);
 }
 
@@ -414,6 +413,7 @@ void Game::decoUI() {
   GLayer::reify(this, 2);
   play();
 }
+
 
 NS_END
 
