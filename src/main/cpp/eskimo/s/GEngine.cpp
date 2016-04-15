@@ -28,9 +28,9 @@ NS_BEGIN(eskimo)
 //
 void GEngine::initEntities() {
 
+  auto ent= this->reifyNode("Shared", true);
   auto pp= MGMS()->reifyPool("Platforms");
   auto ps= MGMS()->reifyPool("Switches");
-  auto ent= this->reifyNode("Shared", true);
   auto ss= mc_new(GVars);
   ss->world= this->_world;
   ent->checkin(ss);
@@ -38,7 +38,7 @@ void GEngine::initEntities() {
   pp->preset([=]() -> f::Poolable* {
     auto e= this->reifyNode("Platform");
     auto p= Platform::create(ss);
-    MGML()->addAtlasItem("game-pics",p->node);
+    MGML()->addAtlasItem("game-pics",p);
     e->checkin(p);
     return e;
   }, 50);
@@ -46,7 +46,7 @@ void GEngine::initEntities() {
   ps->preset([=]() -> f::Poolable* {
     auto e= this->reifyNode("GSwitch");
     auto s= GSwitch::create(ss);
-    MGML()->addAtlasItem("game-pics", s->node);
+    MGML()->addAtlasItem("game-pics", s);
     e->checkin(s);
     return e;
   }, 30);

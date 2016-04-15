@@ -20,6 +20,7 @@ NS_BEGIN(eskimo)
 //
 class CC_DLL GSwitch : public f::CPixie {
 
+    __decl_ptr(GVars,ss)
   __decl_iz(_direction)
 
   GSwitch(GVars *ss) {
@@ -29,6 +30,7 @@ class CC_DLL GSwitch : public f::CPixie {
 public:
 
   static owner<GSwitch*> create(not_null<GVars*>);
+  __decl_getr(int,_direction,Direction)
 
   void initGSwitch(int dir, const CCT_PT&);
 

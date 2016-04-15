@@ -41,14 +41,15 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
-  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto player= CC_GEC(Eskimo,_player,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto player= (EskimoSprite*) py->node;
   auto wb= cx::visBox();
-  auto pos= py->pos();
+  auto pos= player->getPosition();
 
   //check for game over. player is off screen
-  if (pos.y > wb.top || pos.y < 0 || pos.x > wb.right || pos.x < 0) {
+  if (pos.y > wb.top ||
+      pos.y < wb.bottom ||
+      pos.x > wb.right || pos.x < wb.left) {
 
     cx::sfxPlay("oops");
     MGMS()->stop();

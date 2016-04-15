@@ -18,7 +18,7 @@
 #include "core/CCSX.h"
 
 NS_ALIAS(cx, fusii::ccsx)
-NS_BEGIN(eskimo
+NS_BEGIN(eskimo)
 
 enum {
   kBackground,
@@ -59,11 +59,6 @@ enum {
   kSpriteBtnMenu,
   kSpriteBtnAgain
 };
-
-#define EVENT_DISPATCHER CC_DTOR()->getEventDispatcher()
-#define ADD_NOTIFY(t, n, h) \
-  EVENT_DISPATCHER->addEventListenerWithSceneGraphPriority( \
-      cocos2d::EventListenerCustom::create (n, h), t)
 
 #define NOTIFY_LEVEL_DONE  "NOTIFICATION_LEVEL_COMPLETED"
 #define NOTIFY_GSWITCH  "NOTIFICATION_GRAVITY_SWITCH"

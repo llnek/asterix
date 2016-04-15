@@ -203,7 +203,8 @@ void HUDLayer::createBtns() {
   CC_HIDE(_messages);
   addItem(_messages, kForeground);
 
-  _tutorialLabel = cx::reifyLabel("dft", 25, TUTORIAL_1);
+  _tutorialLabel = cx::reifyBmfLabel("dft", TUTORIAL_1);
+    XCFG()->scaleNode(_tutorialLabel, 24);
   _tutorialLabel->setAlignment(c::TextHAlignment::CENTER);
   CC_POS2(_tutorialLabel, wb.cx, wb.top * 0.2);
   _tutorialLabel->setHeight(wz.height * 0.4);

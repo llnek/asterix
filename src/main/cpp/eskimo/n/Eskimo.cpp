@@ -45,7 +45,7 @@ bool Eskimo::initWithSpriteFrameName(const sstr &fn) {
 //
 void Eskimo::reset() {
 
-  if (_state != kStateCircle) {
+  if (_shape != kStateCircle) {
     makeCircleShape();
   }
 
@@ -62,7 +62,7 @@ void Eskimo::update() {
 
   if (_switchShape) {
     cx::sfxPlay("shape");
-    if (_state == kStateBox) {
+    if (_shape == kStateBox) {
       //switch to circle
       makeCircleShape();
     } else {
@@ -93,7 +93,7 @@ void Eskimo::makeCircleShape() {
     _body->DestroyFixture(tmp); }
 
   _body->CreateFixture(&fixtureDef);
-  _state = kStateCircle;
+  _shape = kStateCircle;
 
   this->setDisplayFrame(cx::getSpriteFrame("player_circle.png"));
 }
@@ -117,7 +117,7 @@ void Eskimo::makeBoxShape() {
     _body->DestroyFixture(tmp); }
 
   _body->CreateFixture(&fixtureDef);
-  _state = kStateBox;
+  _shape = kStateBox;
 
   this->setDisplayFrame(cx::getSpriteFrame("player_box.png"));
 }

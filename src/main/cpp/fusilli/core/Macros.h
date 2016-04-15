@@ -15,6 +15,12 @@
 #define CC_AUDIO() CocosDenshion::SimpleAudioEngine::getInstance()
 #define CC_APPDB() cocos2d::UserDefault::getInstance()
 
+#define CC_SCAC() cocos2d::SpriteFrameCache::getInstance()
+#define CC_ACAC() cocos2d::AnimationCache::getInstance()
+#define CC_TCAC() cocos2d::TextureCache::getInstance()
+#define CC_FILER() cocos2d::FileUtils::getInstance()
+#define CC_DTOR() cocos2d::Director::getInstance()
+
 //////////////////////////////////////////////////////////////////////////////
 //
 #define CC_GDS(d,f) fusii::dictVal<cocos2d::String>(d,f)->getCString()
@@ -26,15 +32,17 @@
 #define CC_GDV(t,d,f) fusii::dictVal<t>(d,f)->getValue()
 #define CC_CSV(t,f) fusii::cstVal<t>(f)->getValue()
 
-#define CC_DISPEVENT2(a,b) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a,b)
-#define CC_DISPEVENT1(a) cocos2d::Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(a)
+#define CC_EDISP() CC_DTOR()->getEventDispatcher()
+#define CC_ADD_ELX(t, x) \
+  CC_EDISP()->addEventListenerWithSceneGraphPriority(x,t)
 
-#define CC_SCAC() cocos2d::SpriteFrameCache::getInstance()
-#define CC_ACAC() cocos2d::AnimationCache::getInstance()
-#define CC_TCAC() cocos2d::TextureCache::getInstance()
+#define CC_ADD_ELC(t, n, h) \
+  CC_EDISP()->addEventListenerWithSceneGraphPriority( \
+    cocos2d::EventListenerCustom::create(n, h), t)
 
-#define CC_FILER() cocos2d::FileUtils::getInstance()
-#define CC_DTOR() cocos2d::Director::getInstance()
+#define CC_DISP_CE2(a,b) CC_EDISP()->dispatchCustomEvent(a,b)
+#define CC_DISP_CE1(a) CC_EDISP()->dispatchCustomEvent(a)
+
 #define CC_PCAST(T) static_cast<T>(getParent())
 #define CC_KEEP(x) if (x) { (x)->retain();}
 #define CC_DROP(x) if (x) { (x)->release();}

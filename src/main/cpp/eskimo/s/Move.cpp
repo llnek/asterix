@@ -71,33 +71,32 @@ bool Move::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::process(float dt) {
-  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto player= CC_GEC(Eskimo,_player,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto player= (EskimoSprite*) py->node;
 
   player->update();
 
   //if player is touching something,
   //update it with accelerometer data
 
-  if (player->_body->GetContactList()) {
+  if (player->getBody()->GetContactList()) {
     switch (ss->gravity) {
     //update X axis
       case kDirectionDown:
       case kDirectionUp:
-        if (player->_state == kStateCircle) {
-          applyForce(player->_body,ss->acc.x,CIRCLE_MULTIPLIER,true);
+        if (player->getShape() == kStateCircle) {
+          applyForce(player->getBody(), ss->acc.x,CIRCLE_MULTIPLIER,true);
         } else {
-          applyLinearImpulse(player->_body,ss->acc.x,BOX_MULTIPLIER, true);
+          applyLinearImpulse(player->getBody(), ss->acc.x,BOX_MULTIPLIER, true);
         }
       break;
       //update Y axis
       case kDirectionRight:
       case kDirectionLeft:
-        if (player->_state == kStateCircle) {
-          applyForce(player->_body,ss->acc.y, CIRCLE_MULTIPLIER, false);
+        if (player->getShape() == kStateCircle) {
+          applyForce(player->getBody(), ss->acc.y, CIRCLE_MULTIPLIER, false);
         } else {
-          applyLinearImpulse(player->_body, ss->acc.y, BOX_MULTIPLIER, false);
+          applyLinearImpulse(player->getBody(), ss->acc.y, BOX_MULTIPLIER, false);
         }
       break;
     }

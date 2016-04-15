@@ -14,8 +14,11 @@
 
 #include "Box2D/Box2D.h"
 #include "ecs/Engine.h"
+#include "n/Platform.h"
+#include "n/GSwitch.h"
+#include "n/Igloo.h"
+#include "n/Eskimo.h"
 #include "n/C.h"
-#include "n/lib.h"
 
 NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////

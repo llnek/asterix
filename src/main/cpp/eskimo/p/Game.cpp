@@ -115,10 +115,9 @@ void GLayer::onInited() {
   initPhysics(ss);
 
   c::Device::setAccelerometerEnabled(true);
-  _eventDispatcher->addEventListenerWithSceneGraphPriority(
+  CC_ADD_ELX(this,
       c::EventListenerAcceleration::create(
-        CC_CALLBACK_2(GLayer::onAcceleration, this)),
-      this);
+        CC_CALLBACK_2(GLayer::onAcceleration, this)));
 
   loadLevel(ctx->level);
   cx::sfxMusic("background", true);
@@ -175,7 +174,7 @@ void GLayer::resetLevel() {
   ss->gravity = levelData.at("gravity").asInt();
 
   int i = 1;
-  CC_DISPEVENT2(NOTIFY_GSWITCH, &i);
+  CC_DISP_CE2(NOTIFY_GSWITCH, &i);
 
   switch (ss->gravity) {
     case kDirectionUp: y= FORCE_GRAVITY; break;
@@ -205,9 +204,9 @@ void GLayer::resetLevel() {
   }
 
   //reset player to level start position
-  player->setPosition(
-      CCT_PT(levelData.at("startx").asFloat() * TILE,
-              levelData.at("starty").asFloat() * TILE));
+  CC_POS2(player,
+     levelData.at("startx").asFloat() * TILE,
+      levelData.at("starty").asFloat() * TILE);
   CC_SHOW(player);
   player->reset();
 

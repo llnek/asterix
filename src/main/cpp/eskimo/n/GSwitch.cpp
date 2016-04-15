@@ -20,7 +20,7 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 owner<GSwitch*> GSwitch::create(not_null<GVars*> ss) {
-  auto z= mc_new(GSwitch, ss);
+  auto z= mc_new1(GSwitch, ss);
   z->initWithSpriteFrameName("blank.png");
   CC_HIDE(z);
   z->autorelease();

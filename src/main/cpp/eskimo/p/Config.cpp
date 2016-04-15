@@ -45,9 +45,9 @@ void Config::initAssets() {
   addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
   addAtlas("game-pics", CC_STR("pics/images.plist"));
 
-  addAtlas("levels",CC_STR("pics/levels.plist"));
-  addAtlas("smoke",CC_STR("pics/smoke.plist"));
-  addAtlas("snow",CC_STR("pics/snow.plist"));
+  addAtlas("levels",CC_STR("misc/levels.plist"));
+  addAtlas("smoke",CC_STR("misc/smoke.plist"));
+  addAtlas("snow",CC_STR("misc/snow.plist"));
 
   addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
   addImage("game-pics", CC_STR("pics/images.png"));
@@ -65,6 +65,7 @@ void Config::initAssets() {
   addFont("font_levels", CC_STR("fonts/en/font_levels.fnt"));
   addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
   addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
   addFont("text", CC_STR("fon/en/Verdana.ttf"));
 }
 

@@ -43,25 +43,24 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::process(float dt) {
-  auto sws = MGMS()->getPool("Switches")->ls();
-  auto py= CC_GEC(Eskimo,_player,"f/CPixie");
+  auto &sws = MGMS()->getPool("Switches")->ls();
+  auto player= CC_GEC(Eskimo,_player,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto player= (EskimoSprite*) py->node;
   float dx,dy;
   float x,y;
   F__LOOP(it, sws) {
-    auto e= *it;
+    auto &e= *it;
     auto gw= CC_GEC(GSwitch,e,"f/CPixie");
-    if (!gw->isOvert()) {
+    if (!gw->isVisible()) {
     continue; }
-    dx = cx::deltaX(gw->node,player);
-    dy = cx::deltaY(gw->node,player);
+    dx = cx::deltaX(gw,player);
+    dy = cx::deltaY(gw,player);
     if (pow(dx,2) + pow (dy,2) < PLAYER_SWITCH_RADII) {
-      ss->gravity = gw->direction;
-      gw->hide();
+      ss->gravity = gw->getDirection();
+      CC_HIDE(gw);
       cx::sfxPlay("switch");
       //notify of collision
-      CC_DISPEVENT1(NOTIFY_GSWITCH);
+      CC_DISP_CE1(NOTIFY_GSWITCH);
       x=0;
       y=0;
       //change world gravity
@@ -88,7 +87,7 @@ void Collide::process(float dt) {
     SENDMSGEX("/game/hud/togglebutton->off", &m1);
 
     //notify of Level Completed. Igloo will listen to this and change its texture.
-    CC_DISPEVENT1(NOTIFY_LEVEL_DONE);
+    CC_DISP_CE1(NOTIFY_LEVEL_DONE);
 
     //run smoke particle
     CC_SHOW(ss->smoke);

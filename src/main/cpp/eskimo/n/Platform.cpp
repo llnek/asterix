@@ -34,14 +34,14 @@ bool Platform::initWithSpriteFrameName(const sstr &fn) {
     }
   };
 
-  ADD_NOTIFY(this, NOTIFY_GSWITCH, onGravityChanged);
+    CC_ADD_ELC(this, NOTIFY_GSWITCH, onGravityChanged);
   return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 Platform::~Platform() {
-  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFY_GSWITCH);
+  CC_EDISP()->removeCustomEventListeners(NOTIFY_GSWITCH);
 }
 
 //////////////////////////////////////////////////////////////////////////////

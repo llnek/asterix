@@ -20,18 +20,18 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL b2Sprite : public f::CPixie  {
-
+protected:
   __decl_ptr(b2Body, _body)
   b2Sprite() {}
 
 public:
-
+  virtual void setPosition (float x, float y);
   virtual void setPosition (const CCT_PT&);
   virtual void update();
   virtual void hide();
   virtual void reset();
 
-  __decl_getr(b2Body,_body,Body)
+  __decl_getr(b2Body*,_body,Body)
 
 };
 

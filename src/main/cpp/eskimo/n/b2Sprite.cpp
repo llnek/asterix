@@ -20,13 +20,18 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 void b2Sprite::setPosition(const CCT_PT &pos) {
+  this->setPosition(pos.x, pos.y);
+}
 
-  c::Sprite::setPosition(pos);
+//////////////////////////////////////////////////////////////////////////////
+//
+void b2Sprite::setPosition(float x, float y) {
+  c::Sprite::setPosition(x,y);
 
   if (_body) {
     _body->SetTransform(b2Vec2(
-                          pos.x / PTM_RATIO,
-                          pos.y/ PTM_RATIO),
+                          x / PTM_RATIO,
+                          y/ PTM_RATIO),
                           _body->GetAngle());
   }
 }

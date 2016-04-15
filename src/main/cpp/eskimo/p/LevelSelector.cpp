@@ -87,7 +87,7 @@ bool LLayer::onMouseStart(const CCT_PT &tap) {
 
   F__LOOP(it,_levelLabels) {
     auto &z= *it;
-    if (cx::isClicked(z.btn, tap)) {
+    if (cx::isTapped(z.btn, tap)) {
       if (z.btn->getTag() == kTagButtonOff) {
          z.btn->setDisplayFrame(cx::getSpriteFrame("btn_num_on.png"));
          break;
@@ -111,7 +111,7 @@ void LLayer::onMouseClick(const CCT_PT &tap) {
   auto i=0;
   F__LOOP(it, _levelLabels) {
     auto &z= *it;
-    if (cx::isClicked(z.btn,tap)) {
+    if (cx::isTapped(z.btn,tap)) {
       if (z.btn->getTag() == kTagButtonOff) {
         cx::sfxPlay("button");
         z.btn->setDisplayFrame(cx::getSpriteFrame("btn_num_off.png"));

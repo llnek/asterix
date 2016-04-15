@@ -23,7 +23,7 @@ class CC_DLL Eskimo : public b2Sprite {
   virtual bool initWithSpriteFrameName(const sstr&);
 
   __decl_bf(_switchShape)
-  __decl_iz(_state)
+  __decl_iz(_shape)
   __decl_ptr(GVars,ss)
 
   void makeCircleShape();
@@ -36,6 +36,8 @@ class CC_DLL Eskimo : public b2Sprite {
 public:
 
   static owner<Eskimo*> create(not_null<GVars*>);
+  __decl_getr(int,_shape,Shape)
+  __decl_gsms(bool,_switchShape, SwitchShape)
 
   virtual void update();
   virtual void reset();

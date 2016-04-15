@@ -18,8 +18,8 @@ NS_BEGIN(eskimo)
 //////////////////////////////////////////////////////////////////////////////
 //
 Igloo::~Igloo() {
-  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFY_LEVEL_DONE);
-  EVENT_DISPATCHER->removeCustomEventListeners(NOTIFY_GSWITCH);
+  CC_EDISP()->removeCustomEventListeners(NOTIFY_LEVEL_DONE);
+  CC_EDISP()->removeCustomEventListeners(NOTIFY_GSWITCH);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,8 +37,8 @@ Igloo::Igloo(GVars *ss) {
   };
 
     //register game notifications
-  ADD_NOTIFY(this, NOTIFY_LEVEL_DONE, onLevelCompleted);
-  ADD_NOTIFY(this, NOTIFY_GSWITCH, onGravityChanged);
+  CC_ADD_ELC(this, NOTIFY_LEVEL_DONE, onLevelCompleted);
+  CC_ADD_ELC(this, NOTIFY_GSWITCH, onGravityChanged);
 }
 
 //////////////////////////////////////////////////////////////////////////////
