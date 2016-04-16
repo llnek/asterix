@@ -15,11 +15,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
-#include "n/Player.h"
-#include "n/Enemy.h"
-#include "n/Blast.h"
-#include "n/Missile.h"
-#include "n/PowerUp.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
@@ -47,17 +42,15 @@ bool Collide::update(float dt) {
 void Collide::process(float dt) {
   auto player= CC_GEC(Player,_player,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-  auto py= PCAST(f::UICObj, player);
-  auto player_position = py->pos();
-  auto player_radius = py->radius();
-    USING_NS_CC;
+  auto player_position = player->pos();
+  auto player_radius = player->radius();
+  USING_NS_CC;
   // iterate through all enemies
   c::Object *object = CC_NIL;
   CCARRAY_FOREACH(ss->enemies, object) {
     auto enemy = (Enemy*)object;
-    auto uic = PCAST(c::Node,enemy);
     if(enemy) {
-      auto enemy_position = uic->getPosition();
+      auto enemy_position = enemy->getPosition();
       // check with Player
       if (CIRCLE_INTERSECTS_CIRCLE(player_position, player_radius, enemy_position, ENEMY_RADIUS)) {
         // if shield is enabled, kill enemy
@@ -74,9 +67,8 @@ void Collide::process(float dt) {
       c::Object *object2 = CC_NIL;
       CCARRAY_FOREACH(ss->blasts, object2) {
         auto blast = (Blast*)object2;
-        auto uic= PCAST(c::Node,blast);
         if(blast) {
-          if (CIRCLE_INTERSECTS_CIRCLE(uic->getPosition(), blast->radius, enemy_position, ENEMY_RADIUS*1.5)) {
+          if (CIRCLE_INTERSECTS_CIRCLE(blast->getPosition(), blast->radius, enemy_position, ENEMY_RADIUS*1.5)) {
             enemyKilled(ss,enemy);
           }
         }
@@ -86,9 +78,8 @@ void Collide::process(float dt) {
       object2 = NULL;
       CCARRAY_FOREACH(ss->missiles, object2) {
         auto missile = (Missile*)object2;
-        auto uic= PCAST(c::Node,missile);
         if(missile) {
-          if (CIRCLE_INTERSECTS_CIRCLE(uic->getPosition(), MISSILE_RADIUS, enemy_position, ENEMY_RADIUS*1.5)) {
+          if (CIRCLE_INTERSECTS_CIRCLE(missile->getPosition(), MISSILE_RADIUS, enemy_position, ENEMY_RADIUS*1.5)) {
             missile->explode();
           }
         }
@@ -101,9 +92,8 @@ void Collide::process(float dt) {
   object = CC_NIL;
   CCARRAY_FOREACH(ss->powerups, object) {
     auto powerup = (PowerUp*)object;
-    auto uic= PCAST(c::Node,powerup);
     if (powerup && !powerup->isActive) {
-      if (CIRCLE_INTERSECTS_CIRCLE(player_position, player_radius, uic->getPosition(), POWERUP_ICON_OUTER_RADIUS)) {
+      if (CIRCLE_INTERSECTS_CIRCLE(player_position, player_radius, powerup->getPosition(), POWERUP_ICON_OUTER_RADIUS)) {
         powerup->activate();
       }
     }

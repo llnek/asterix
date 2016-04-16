@@ -63,7 +63,7 @@ void addEnemyFormation(not_null<GVars*> ss, not_null<Player*> player) {
   auto box=MGMS()->getEnclosureRect();
   // fetch a list of positions for the given formation
   auto formation =
-    getEnemyFormation(type, box, py->getPosition());
+    getEnemyFormation(type, box, player->getPosition());
   auto num_enemies_on_screen = ss->enemies->count();
   auto num_enemies_to_create = formation.size();
   // limit enemies to MAX_ENEMIES
@@ -85,7 +85,7 @@ void addEnemyFormation(not_null<GVars*> ss, not_null<Player*> player) {
 EEnemyFormation getEnemyFormationType(not_null<GVars*> ss) {
   // return a formation type from a list of formation types, based on time user has been playing
   // the longer the user has survived, the more difficult the formations will be
-  auto rc= E_FORMATION_RANDOM_EASY;
+  int rc= E_FORMATION_RANDOM_EASY;
 
   if (ss->seconds > E_SKILL6) {
     auto i = cx::randInt( GVars::skill6_formations_size);

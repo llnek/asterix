@@ -34,7 +34,7 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  _game_id= "@@GAMEID@@";
+  _game_id= "3e03d4f6-c393-4364-b96a-53380a006b84";
   _app_id = "blast";
 
   addCst("SHIP+SPEED", CC_INT(200));
@@ -61,25 +61,28 @@ void Config::initAssets() {
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fon/en/infont.fnt"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/MicroGrammad.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float p) {
+  return p/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto fp= getAtlas("game-pics");
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("iutexure");
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("iutexure");
 }
 
 //////////////////////////////////////////////////////////////////////////////

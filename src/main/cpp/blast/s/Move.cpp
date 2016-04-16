@@ -15,13 +15,9 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Move.h"
-#include "n/PowerUp.h"
-#include "n/Enemy.h"
-#include "n/Player.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -44,16 +40,15 @@ bool Move::update(float dt) {
 void Move::process(float dt) {
   auto player= CC_GEC(Player, _player, "f/CPixie");
   auto ss= CC_GEC(GVars, _shared, "n/GVars");
-  auto py= PCAST(c::Node,player);
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
-    USING_NS_CC;
+  USING_NS_CC;
   // update each enemy
   c::Object *object = CC_NIL;
   CCARRAY_FOREACH(ss->enemies, object) {
     auto enemy = (Enemy*)object;
     if(enemy) {
-      enemy->update(py->getPosition(), player->getShield() == CC_NIL);
+      enemy->update(player->getPosition(), player->getShield() == CC_NIL);
     }
   }
 

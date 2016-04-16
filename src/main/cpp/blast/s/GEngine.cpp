@@ -17,7 +17,6 @@
 #include "Move.h"
 #include "AI.h"
 #include "GEngine.h"
-#include "n/Player.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
@@ -26,14 +25,15 @@ NS_BEGIN(blast)
 //
 void GEngine::initEntities() {
 
-  auto ent= this->reifyNode("Shared",true);
+  auto ent= this->reifyNode("Shared", true);
   auto sp = Player::create();
   auto ss= mc_new(GVars);
-    auto wb= cx::visBox();
+  auto wb= cx::visBox();
+
   init(ss);
   ent->checkin(ss);
 
-  SCAST(c::Node*,sp)->setPosition(wb.cx, wb.cy);
+  CC_POS2(sp, wb.cx, wb.cy);
   MGML()->addItem(sp, E_LAYER_PLAYER);
 
   ent= this->reifyNode("Player",true);

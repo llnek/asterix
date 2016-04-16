@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 #include "Player.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -26,11 +26,11 @@ bool Player::init() {
   return false; }
 
   // generate vertices for the player
-  c::Vec2 vs[] = {
-    c::Vec2(PLAYER_RADIUS * 1.75, 0),
-    c::Vec2(PLAYER_RADIUS * -0.875, PLAYER_RADIUS),
-    c::Vec2(PLAYER_RADIUS * -1.75, 0),
-    c::Vec2(PLAYER_RADIUS * -0.875, PLAYER_RADIUS * -1)
+  CCT_PT vs[] = {
+    CCT_PT(PLAYER_RADIUS * 1.75, 0),
+    CCT_PT(PLAYER_RADIUS * -0.875, PLAYER_RADIUS),
+    CCT_PT(PLAYER_RADIUS * -1.75, 0),
+    CCT_PT(PLAYER_RADIUS * -0.875, PLAYER_RADIUS * -1)
   };
 
   // draw a green coloured player
@@ -52,7 +52,7 @@ void Player::update(float dt) {
 //
 void Player::updatePosition() {
   auto box= MGMS()->getEnclosureRect();
-    auto pt= getPosition();
+  auto pt= getPosition();
   // don't move if speed is too low
   if (c::ccpLength(speed) > 0.75) {
     // add speed but limit movement within the boundary
@@ -61,11 +61,11 @@ void Player::updatePosition() {
       setPosition(nextpos);
     }
     else
-    if (RECT_CONTAINS_CIRCLE(box, c::Vec2(nextpos.x - speed.x, nextpos.y), PLAYER_RADIUS)) {
+    if (RECT_CONTAINS_CIRCLE(box, CCT_PT(nextpos.x - speed.x, nextpos.y), PLAYER_RADIUS)) {
       setPosition(nextpos.x - speed.x, nextpos.y);
     }
     else
-    if (RECT_CONTAINS_CIRCLE(box, c::Vec2(nextpos.x, nextpos.y - speed.y), PLAYER_RADIUS)) {
+    if (RECT_CONTAINS_CIRCLE(box, CCT_PT(nextpos.x, nextpos.y - speed.y), PLAYER_RADIUS)) {
       setPosition(nextpos.x, nextpos.y - speed.y);
     }
   }
@@ -73,8 +73,8 @@ void Player::updatePosition() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Player::updateRotation(const c::Vec2 &prev) {
-    auto pt= getPosition();
+void Player::updateRotation(const CCT_PT &prev) {
+  auto pt= getPosition();
   // don't rotate if speed is too low
   if (c::ccpLength(speed) > 1) {
     auto prevrot= getRotation();
@@ -150,7 +150,7 @@ void Player::dead() {
 void Player::setShield(Shield *s) {
   _shield = s;
   // with shield enabled, the collision radius must be increased to the size of the shield
-  radius = _shield ? PLAYER_RADIUS * 3 : PLAYER_RADIUS;
+  _radius = _shield ? PLAYER_RADIUS * 3 : PLAYER_RADIUS;
 }
 
 

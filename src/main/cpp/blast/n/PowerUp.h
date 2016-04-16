@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -23,7 +22,7 @@ NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct PowerUp : public f::CDrawNode {
+struct CC_DLL PowerUp : public f::CDrawNode {
 
   virtual bool init();
   virtual void update();
@@ -32,7 +31,7 @@ struct PowerUp : public f::CDrawNode {
   virtual void activate();
   virtual void deactivate();
 
-  __decl_mv(c::Vec2, speed, CC_ZPT)
+  __decl_md(CCT_PT, speed)
   __decl_iz(timeLeft)
   __decl_bf(isActive)
   __decl_bf(mustBeRemoved)

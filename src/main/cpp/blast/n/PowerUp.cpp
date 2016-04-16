@@ -25,7 +25,7 @@ bool PowerUp::init() {
   // calculate how much time the power-up should wait on screen before activation
   timeLeft = MAX_POWERUP_WAIT_ON_SCREEN / 2 + cx::randInt(MAX_POWERUP_WAIT_ON_SCREEN / 2);
   // calculate speed
-  speed = c::Vec2(CCRANDOM_MINUS1_1() * 2, CCRANDOM_MINUS1_1() * 2);
+  speed = CCT_PT(CCRANDOM_MINUS1_1() * 2, CCRANDOM_MINUS1_1() * 2);
 
   // draw the brown coloured ring
   drawDot(CC_ZPT, POWERUP_ICON_OUTER_RADIUS,
@@ -42,7 +42,7 @@ bool PowerUp::init() {
 //
 void PowerUp::update() {
   auto box= MGMS()->getEnclosureRect();
-    auto pt= getPosition();
+  auto pt= getPosition();
   // bounce within the boundary
   if (!RECT_CONTAINS_CIRCLE(box, pt, POWERUP_ICON_OUTER_RADIUS)) {
     // bounce off the left & right edge

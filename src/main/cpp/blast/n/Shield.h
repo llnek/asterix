@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "C.h"
 #include "PowerUp.h"
 

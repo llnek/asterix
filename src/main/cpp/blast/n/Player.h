@@ -15,7 +15,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
@@ -27,21 +27,17 @@ class Player : public f::CDrawNode {
 protected:
 
   __decl_ptr(Shield, _shield)
-    Player() {}
-    
+
 public:
 
   static owner<Player*> create() {
-    auto z= new Player();
-    z->init();
-    z->autorelease();
-    return z;
+    return f::reifyRefType<Player>();
   }
 
   virtual void update(float dt);
   virtual bool init();
 
-  void updateRotation(const c::Vec2& prev);
+  void updateRotation(const CCT_PT&);
   void updatePosition();
   void dead();
   void die();
@@ -49,8 +45,8 @@ public:
   Shield* getShield() { return _shield; }
   void setShield(Shield*);
 
-  __decl_mv(float, radius,PLAYER_RADIUS)
-  __decl_mv(c::Vec2, speed, CC_ZPT)
+  __decl_mv(float, _radius,PLAYER_RADIUS)
+  __decl_md(CCT_PT, speed)
   __decl_bf(isDying)
 
 };

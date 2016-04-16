@@ -14,6 +14,14 @@
 
 #include "ecs/Engine.h"
 #include "n/C.h"
+#include "n/Blast.h"
+#include "n/Enemy.h"
+#include "n/Player.h"
+#include "n/Missile.h"
+#include "n/Bomb.h"
+#include "n/PowerUp.h"
+#include "n/Shield.h"
+#include "n/MissileLauncher.h"
 
 NS_BEGIN(blast)
 //////////////////////////////////////////////////////////////////////////////

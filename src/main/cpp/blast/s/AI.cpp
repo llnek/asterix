@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "AI.h"
-#include "n/Player.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)

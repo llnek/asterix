@@ -13,7 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
-#include "n/lib.h"
+#include "n/C.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
@@ -26,26 +26,25 @@ void HUDLayer::decoUI() {
   _score=0;
 
   _scoreLabel= cx::reifyBmfLabel("dft", "Score: 0");
+  XCFG()->scaleBmfont(_scoreLabel,24);
   _scoreLabel->setAnchorPoint(cx::anchorBL());
-  _scoreLabel->setPosition(wb.right * 0.1, wb.top * 0.9);
-
+  CC_POS2(_scoreLabel, wb.right * 0.1, wb.top * 0.9);
   addItem(_scoreLabel, E_LAYER_HUD);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void HUDLayer::flashCombo(int n, const c::Vec2 &pos) {
+void HUDLayer::flashCombo(int n, const CCT_PT &pos) {
 
-  auto msg= "X"+ FTOS(n);
-
-  auto label = cx::reifyBmfLabel("dft", msg);
-  label->setPosition(pos.x, pos.y + CC_ZH(CC_CSIZE(label)));
-  label->setScale(0.6);
+  auto label = cx::reifyBmfLabel("dft", "X"+ FTOS(n));
+  auto k= XCFG()->scaleBmfont(label, 24);
+  CC_POS2(label, pos.x, pos.y + CC_CHT(label));
+  label->setScale(0.6 * k);
 
   // animate it to move upwards then remove it
   label->runAction(
       c::Sequence::create(
-        c::MoveBy::create(1, c::Vec2(0, 50)),
+        c::MoveBy::create(1, CCT_PT(0, 50)),
         c::DelayTime::create(0.5),
         c::RemoveSelf::create(true),
         CC_NIL));

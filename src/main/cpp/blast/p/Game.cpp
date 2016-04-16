@@ -16,10 +16,6 @@
 #include "MMenu.h"
 #include "Ende.h"
 #include "Game.h"
-#include "n/Player.h"
-#include "n/Enemy.h"
-#include "n/PowerUp.h"
-
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
@@ -27,7 +23,8 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   __decl_ptr(BackgroundManager, _background)
   __decl_ptr(ecs::Node, _player)
@@ -37,29 +34,25 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-    void  comboTimeUp(GVars *ss, Player *sp) ;
+  void  comboTimeUp(GVars *ss, Player *sp) ;
 
-    virtual bool onMouseStart(const c::Vec2&);
-    virtual void onMouseClick(const c::Vec2&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
+  virtual void onMouseMotion(const CCT_PT&);
 
-  virtual void onMouseMotion(const c::Vec2&);
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
-    void tick(float);
-    void  handleInput(const c::Vec2 &tap);
-    void pauseGame();
-    virtual void onAcceleration(c::Acceleration* acc, c::Event*);
+
+  void tick(float);
+  void  handleInput(const CCT_PT &tap);
+  void pauseGame();
+  virtual void onAcceleration(c::Acceleration* acc, c::Event*);
 
   void createBoundary();
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -69,7 +62,7 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   setAccelerometerEnabled(true);
@@ -78,7 +71,7 @@ void GLayer::onInited() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::handleInput(const c::Vec2 &tap) {
+void GLayer::handleInput(const CCT_PT &tap) {
 
   auto mv= CC_GEC(f::CMove,_player,"f/CMove");
   auto py= CC_GEC(Player,_player,"f/CPixie");
@@ -86,7 +79,7 @@ void GLayer::handleInput(const c::Vec2 &tap) {
   if (!MGMS()->isLive() ||
       py->isDying) { return;  }
 
-  auto input_abs = c::Vec2(fabs(tap.x), fabs(tap.y));
+  auto input_abs = CCT_PT(fabs(tap.x), fabs(tap.y));
 
   // calculate player speed based on how much device has tilted
   // greater speed multipliers for greater tilt values
@@ -94,20 +87,20 @@ void GLayer::handleInput(const c::Vec2 &tap) {
   mv->speed.y = tap.y * ((input_abs.y > 0.3) ? 36 : ((input_abs.y > 0.2) ? 28 : 20 ) );
 
   // update the background
-  _background->setPosition(tap.x * -30, tap.y * -30);
+  CC_POS2(_background, tap.x * -30, tap.y * -30);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onAcceleration(c::Acceleration* acc, c::Event*) {
-  handleInput(c::Vec2(acc->x, acc->y));
+  handleInput(CCT_PT(acc->x, acc->y));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
   auto box= MGMS()->getEnclosureRect();
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
 
   if(!box.containsPoint(tap)) {
     pauseGame();
@@ -115,25 +108,26 @@ bool GLayer::onMouseStart(const c::Vec2 &tap) {
   }
 
   auto input = CC_ZPT;
-  input.x = (tap.x - HWZ(wz.size)) / CC_ZW(wz.size);
-  input.y = (tap.y - HHZ(wz.size)) / CC_ZH(wz.size);
+  input.x = (tap.x - HWZ(wz)) / CC_ZW(wz);
+  input.y = (tap.y - HHZ(wz)) / CC_ZH(wz);
   handleInput(input);
-    return true;
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &tap) {
-  auto wz= cx::visRect();
+void GLayer::onMouseMotion(const CCT_PT &tap) {
+  auto wz= cx::visSize();
   auto input = CC_ZPT;
-  input.x = (tap.x - HWZ(wz.size)) / CC_ZW(wz.size);
-  input.y = (tap.y - HHZ(wz.size)) / CC_ZH(wz.size);
+  input.x = (tap.x - HWZ(wz)) / CC_ZW(wz);
+  input.y = (tap.y - HHZ(wz)) / CC_ZH(wz);
   handleInput(input);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &tap) {
+void GLayer::onMouseClick(const CCT_PT &tap) {
   handleInput(CC_ZPT);
 }
 
@@ -177,11 +171,11 @@ void GLayer::decoUI() {
 void GLayer::createBoundary() {
   // generate vertices for the boundary
   auto box= MGMS()->getEnclosureBox();
-  c::Vec2 vs[4] = {
-    c::Vec2(box.left, box.bottom),
-    c::Vec2(box.left, box.top),
-    c::Vec2(box.right, box.top),
-    c::Vec2(box.right, box.bottom)
+  CCT_PT vs[4] = {
+    CCT_PT(box.left, box.bottom),
+    CCT_PT(box.left, box.top),
+    CCT_PT(box.right, box.top),
+    CCT_PT(box.right, box.bottom)
   };
 
   // draw the boundary
@@ -200,8 +194,8 @@ void GLayer::tick(float dt) {
   if(py->isDying) {
   return; }
 
-  ss->seconds += 1;
   ss->combo_timer -= 1;
+  ss->seconds += 1;
 
   // show the combo achieved if time is up
   if(ss->combo_timer < 0) {
@@ -251,7 +245,7 @@ void GLayer::comboTimeUp(GVars *ss, Player *sp) {
   // add combo to score and update the label
   getHUD()->updateScore(ss->enemies_killed_combo * 10);
   getHUD()->flashCombo(ss->enemies_killed_combo,
-      PCAST(c::Node,sp)->getPosition());
+                       PCAST(c::Node,sp)->getPosition());
 
   // reset combo kill counter
   ss->enemies_killed_combo = 0;
@@ -283,7 +277,7 @@ const c::Rect Game::getEnclosureRect() {
   auto h= wb.top - wb.top * offset * 4;
 
   // calculate the position & dimension of the game's boundary
-  return c::Rect(x,y,w,h);
+  return CCT_RT(x,y,w,h);
 }
 
 //////////////////////////////////////////////////////////////////////////////

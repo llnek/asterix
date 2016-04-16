@@ -16,14 +16,8 @@
 #include "core/CCSX.h"
 #include "Resolve.h"
 
-#include "n/Missile.h"
-#include "n/Enemy.h"
-#include "n/Blast.h"
-#include "n/Bomb.h"
-
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(blast)
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -44,7 +38,7 @@ bool Resolve::update(float dt) {
 //
 void Resolve::process(float dt) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
-    USING_NS_CC;
+  USING_NS_CC;
   c::Object *object = CC_NIL;
   CCARRAY_FOREACH(ss->enemies, object) {
     auto enemy = (Enemy*)object;

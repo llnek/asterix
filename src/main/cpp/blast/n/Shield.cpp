@@ -25,7 +25,7 @@ bool Shield::init() {
   return false; }
 
   // generate vertices for a hexagon
-  s_vec<c::Vec2> vs;
+  s_vec<CCT_PT> vs;
   getRegularPolygonVertices(vs, 6, POWERUP_ICON_INNER_RADIUS, M_PI/6);
   // draw a hexagon with cyan border
   drawPolygon(
@@ -39,14 +39,12 @@ bool Shield::init() {
 //
 void Shield::update() {
 
-  auto s= PCAST(c::Node,_ship);
-
   if (! isActive) {
     PowerUp::update();
   } else {
     // after activation, shield will follow the player
-    setPosition(s->getPosition());
-    setRotation(s->getRotation());
+    setPosition(_ship->getPosition());
+    setRotation(_ship->getRotation());
   }
 }
 
@@ -97,7 +95,7 @@ void Shield::activate() {
     setScale(0);
 
     // generate & draw a bigger cyan hexagon
-    s_vec<c::Vec2> vs;
+    s_vec<CCT_PT> vs;
     getRegularPolygonVertices(vs, 6, PLAYER_RADIUS * 2.5);
     drawPolygon(&vs[0], 6,
         c::ccc4f(0, 0, 0, 0), 4, c::ccc4f(0, 0.96862, 1, 1));
