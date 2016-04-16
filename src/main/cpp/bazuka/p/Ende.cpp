@@ -42,11 +42,12 @@ void Ende::decoUI() {
 
   auto high = CC_APPDB()->getIntegerForKey("GameHighScore");
   auto score= getHUD()->getScore();
+    float k;
   if (score > high) {
     CC_APPDB()->setIntegerForKey("GameHighScore", score);
     CC_APPDB()->flush();
     text = cx::reifyBmfLabel("pixel", "NEW HIGH SCORE");
-    auto k= XCFG()->scaleBmfont(text,50);
+    k= XCFG()->scaleBmfont(text,50);
     CC_POS2(text, wb.cx, wb.cy);
     text->setScale(k * 0.75);
     addItem(text, 10);

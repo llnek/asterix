@@ -32,7 +32,6 @@ owner<Enemy*> Enemy::create() {
   auto anim = cx::createAnimation(0.25,false,0);
   for (auto i = 1; i <= 4; ++i) {
     auto s= cx::getSpriteFrame("enemy_idle_"+ FTOS(i)+".png");
-    XCFG()->fit(s);
     anim->addSpriteFrame(s);
   }
   z->idle= c::RepeatForever::create(c::Animate::create(anim));

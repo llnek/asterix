@@ -13,26 +13,26 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/Primitives.h"
+#include "core/COMP.h"
 #include "2d/CCSprite.h"
 
 NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL ParticleSpin : public c::Sprite {
+class CC_DLL ParticleSpin : public c::Sprite , public f::CMove {
+
+  __decl_mv(CCT_PT, _gravity, c::Vec2(0,-0.25))
+  __decl_fz(_spinCounter)
 
   ParticleSpin() {
-    speed.x= CCRANDOM_MINUS1_1() * 2.0f;
+    speed.x= CCRANDOM_MINUS1_1() * 2.0;
     speed.y= (rand()% 3) + 1;
   }
 
 public:
 
-  static ParticleSpin* create(const sstr&, const c::Vec2&);
-
-  __decl_mv(c::Vec2, gravity, c::Vec2(0,-0.25))
-  __decl_fz(spinCounter)
-  __decl_md(c::Vec2,speed)
+  static owner<ParticleSpin*> create(const sstr&, const CCT_PT&);
 
   virtual void update(float dt);
 

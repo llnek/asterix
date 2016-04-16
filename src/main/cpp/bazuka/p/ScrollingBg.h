@@ -22,13 +22,13 @@ class ScrollingBg: public c::Node {
 
   void set(const sstr&, float speed, float yPos);
 
-  __decl_ptr(c::Sprite, head);
-  __decl_ptr(c::Sprite, tail);
-  __decl_fz(speed)
+  __decl_ptr(c::Sprite, _head);
+  __decl_ptr(c::Sprite, _tail);
+  __decl_fz(_speed)
 
 public:
 
-  static ScrollingBg* create(const sstr&, float speed, float yPos);
+  static owner<ScrollingBg*> create(const sstr&, float speed, float yPos);
   void sync();
 
 };

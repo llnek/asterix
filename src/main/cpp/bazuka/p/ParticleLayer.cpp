@@ -17,12 +17,12 @@ NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ParticleLayer::ParticleLayer(const c::Vec2 &p) {
-  enemyDie = ParticleSpin::create("EnemyDie.png", p);
-  addChild(enemyDie);
+ParticleLayer::ParticleLayer(const CCT_PT &p) {
+  _enemyDie = ParticleSpin::create("EnemyDie.png", p);
+  addChild(_enemyDie);
 
-  enemyGun = ParticleSpin::create("EnemyGun.png", p);
-  addChild(enemyGun);
+  _enemyGun = ParticleSpin::create("EnemyGun.png", p);
+  addChild(_enemyGun);
 
   scheduleOnce( schedule_selector(ParticleLayer::removeSelf),2.0);
   scheduleUpdate();
@@ -31,8 +31,8 @@ ParticleLayer::ParticleLayer(const c::Vec2 &p) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void ParticleLayer::update(float dt) {
-  enemyDie->update(dt);
-  enemyGun->update(dt);
+  _enemyDie->update(dt);
+  _enemyGun->update(dt);
 }
 
 //////////////////////////////////////////////////////////////////////////////

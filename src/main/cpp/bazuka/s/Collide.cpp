@@ -11,12 +11,11 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
+#include "p/ParticleLayer.h"
 #include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Collide.h"
-#include "n/Enemy.h"
-#include "p/ParticleLayer.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -46,18 +45,18 @@ void Collide::process(float dt) {
   auto pr= MGMS()->getPool("Rockets");
   auto pe= MGMS()->getPool("Enemies");
   auto pb= MGMS()->getPool("Bullets");
-  auto rs= pr->ls();
-  auto es= pe->ls();
-  auto bs= pb->ls();
+  auto &rs= pr->ls();
+  auto &es= pe->ls();
+  auto &bs= pb->ls();
   bool gameOver=false;
 
   F__LOOP(it, rs) {
-    auto pe= *it;
+    auto &pe= *it;
     if (!pe->status()) { continue;  }
     auto h= CC_GEC(f::CHealth,pe,"f/CHealth");
     auto r= CC_GEC(Projectile,pe,"f/CPixie");
     F__LOOP(it2, es) {
-      auto e2= *it2;
+      auto &e2= *it2;
       auto h2 = CC_GEC(f::CHealth,e2,"f/CHealth");
       auto e = CC_GEC(Enemy,e2,"f/CPixie");
       if (e2->status() && cx::collide(r,e)) {
@@ -79,7 +78,7 @@ void Collide::process(float dt) {
   }
 
   F__LOOP(it, bs) {
-    auto e= *it;
+    auto &e= *it;
     auto h= CC_GEC(f::CHealth,e,"f/CHealth");
     auto b= CC_GEC(Projectile,e,"f/CPixie");
     if (e->status() && cx::collide(b, hero)) {

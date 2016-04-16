@@ -45,7 +45,10 @@ class CC_DLL Hero : public f::CPixie {
 public:
 
   static owner<Hero*> create() {
-
+    auto z= mc_new(Hero);
+    z->initWithSpriteFrameName("player.png");
+    z->autorelease();
+    return z;
   }
 
   virtual ~Hero() {
@@ -85,7 +88,20 @@ public:
   __decl_iz(type)
 
   static owner<Projectile*> create( int type) {
-
+    auto z= mc_new1(Projectile, type);
+    auto png="";
+    if (type == kTypeRocket) {
+       png= "rocket.png" ;
+    }
+    else if (type == kTypeBullet) {
+      png="bullet.png";
+    }
+    else {
+       throw "bad projectile type";
+    }
+    z->initWithSpriteFrameName(png);
+    z->autorelease();
+    return z;
   }
 
   void sync() {

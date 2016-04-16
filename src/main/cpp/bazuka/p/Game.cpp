@@ -24,7 +24,9 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+
   void fireRocket(Hero*);
   void onStop();
 
@@ -36,26 +38,22 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchEnd(c::Touch*);
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GLayer::~GLayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::onStop() {
-  this->setOpacity(255 * 0.1);
   MGMS()->stop();
   surcease();
   Ende::reify(MGMS(), 4);
@@ -69,39 +67,33 @@ void GLayer::onInited() {
 
   auto hero=CC_GEC(Hero,_player,"f/CPixie");
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   // player setup
   hero->inflate(wb.right * 0.125, HTV(wb.top));
-  addItem(hero->node, 5);
+  addItem(hero, 5);
 
   // player idle
-  auto anim = c::Animation::create();
+  auto anim = cx::createAnimation(0.25,false,0);
   for (auto n=1; n <= 4; ++n) {
-    anim->addSpriteFrame(
-        cx::getSpriteFrame("player_idle_"+FTOS(n)+".png"));
+    auto s= cx::getSpriteFrame("player_idle_"+FTOS(n)+".png");
+        anim->addSpriteFrame(s);
   }
-  anim->setDelayPerUnit(0.25);
-
   hero->idle= c::RepeatForever::create(c::Animate::create(anim));
   CC_KEEP(hero->idle);
 
   // player boost
-  anim = c::Animation::create();
+  anim = cx::createAnimation(0.25, false, 0);
   for (auto n=1; n <= 4; ++n) {
-    anim->addSpriteFrame(
-        cx::getSpriteFrame("player_boost_"+FTOS(n)+".png"));
+    auto s= cx::getSpriteFrame("player_boost_"+FTOS(n)+".png");
+    anim->addSpriteFrame(s);
   }
-  anim->setDelayPerUnit(0.25);
-
   hero->boost= c::RepeatForever::create(c::Animate::create(anim));
   CC_KEEP(hero->boost);
 
-  hero->node->runAction(hero->boost->clone());
-
-
-  ss->gravity = c::Vec2(0, -5);
+  hero->runAction(hero->boost->clone());
+  ss->gravity = CCT_PT(0, -5);
   ss->bgLayer=this->_bgLayer;
 }
 
@@ -109,7 +101,7 @@ void GLayer::onInited() {
 void GLayer::decoUI() {
 
   auto roll= CC_CSV(c::Float, "BG+SCROLL");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   _bgLayer = f::reifyRefType<ScrollingBgLayer>();
@@ -122,7 +114,7 @@ void GLayer::decoUI() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
 
   auto hero= CC_GEC(Hero,_player,"f/CPixie");
   auto wb= cx::visBox();
@@ -139,15 +131,19 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
+  return onMouseStart( touch->getLocation());
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto hero= CC_GEC(Hero,_player,"f/CPixie");
-  auto loc= touch->getLocation();
   auto wb= cx::visBox();
 
   if (MGMS()->isLive()) {
@@ -169,14 +165,12 @@ void GLayer::fireRocket(Hero *hero) {
   auto po= MGMS()->getPool("Rockets");
   auto sz= hero->csize();
   auto pos = hero->pos();
-  auto e= po->take(true);
-  auto r= CC_GEC(Projectile,e,"f/CPixie");
-
-  r->inflate( pos.x + HWZ(sz), pos.y - CC_ZH(sz) * 0.05);
+  auto e= (ecs::Node*)po->take(true);
+  cx::resurrect(e, pos.x + HWZ(sz), pos.y - CC_ZH(sz) * 0.05);
   cx::sfxPlay("fireRocket");
 
   auto emitter = c::ParticleExplosion::create();
-  emitter->setPosition(c::ccpAdd(pos, c::Vec2(HWZ(sz) ,0 )));
+  emitter->setPosition(c::ccpAdd(pos, CCT_PT(HWZ(sz) ,0 )));
   emitter->setStartColor(c::ccc4f(1.0, 1.0, 1.0, 1.0));
   emitter->setEndColor(c::ccc4f(0.0, 0.0, 0.0, 0.0));
   emitter->setTotalParticles(10);
@@ -195,6 +189,7 @@ void GLayer::onTouchMotion(c::Touch *touch) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
 }
 
 END_NS_UNAMED

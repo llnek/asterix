@@ -37,7 +37,7 @@ void HUDLayer::decoUI() {
     cx::sfxPlay("pop");
     cx::pushEx(MMenu::reify());
   });
-  addItem(mnu);
+    addItem(cx::mkMenu(pause));
 
   _score=0;
 }

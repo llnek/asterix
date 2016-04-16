@@ -49,7 +49,7 @@ void Resolve::process(float dt) {
   float minY = HHZ(sz);
   float newY = MIN(MAX(pos.y, minY), maxY);
 
-  hero->setPos(pos.x, newY);
+  CC_POS2(hero, pos.x, newY);
 
   if (hero->jump) {
     hero->jumpTimer = 10;
@@ -61,11 +61,11 @@ void Resolve::process(float dt) {
   if (hero->jumpTimer>0) {
     hero->state = kPlayerStateBoost;
     --hero->jumpTimer;
-    hero->node->setPosition( c::ccpAdd(pos, c::Vec2(0,7)));
+    CC_POS1(hero, c::ccpAdd(pos, CCT_PT(0,7)));
   } else {
     hero->state = kPLayerStateIdle;
     hero->jumpTimer = 0;
-    hero->node->setPosition(c::ccpAdd(pos, ss->gravity));
+    CC_POS1(hero, c::ccpAdd(pos, ss->gravity));
   }
 
 }

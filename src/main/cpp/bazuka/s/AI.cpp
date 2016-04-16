@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "AI.h"
-#include "n/Enemy.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -60,16 +59,15 @@ void AI::processEnemies(float dt) {
   }
 
   auto po= MGMS()->getPool("Enemies");
-  auto m= (Enemy*)po->take(true);
+  auto m= (ecs::Node*)po->take(true);
   auto e= CC_GEC(Enemy,m,"f/CPixie");
   auto mrand = 1 + (rand()%3);
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
   auto sz= e->csize();
 
-  e->inflate(wb.right + HWZ(sz), CC_ZH(wz.size) * mrand * 0.25);
+  cx::resurrect(m, wb.right + HWZ(sz), CC_ZH(wz) * mrand * 0.25);
   e->lockAndLoad();
-
   spawnEnemyTimer();
 }
 

@@ -49,13 +49,13 @@ void Move::process(float dt) {
 
   //enemies
   auto po= MGMS()->getPool("Enemies");
-  auto es= po->ls();
+  auto &es= po->ls();
   F__LOOP(it, es) {
-    auto n= *it;
+    auto &n= *it;
     auto e= CC_GEC(Enemy,n,"f/CPixie");
     if (n->status()) {
       e->sync();
-      if (e->node->getPositionX() + HWZ(e->csize()) < 0) {
+      if (e->getPositionX() + HWZ(e->csize()) < 0) {
         gameOver=true;
         break;
       }
@@ -69,25 +69,24 @@ void Move::process(float dt) {
 
   //enemy bullets
   po = MGMS()->getPool("Bullets");
-  auto bs= po->ls();
+  auto &bs= po->ls();
   F__LOOP(it, bs) {
-    auto b= *it;
+    auto &b= *it;
     auto p= CC_GEC(Projectile,b,"f/CPixie");
     p->sync();
-    if (p->node->getPositionX() <= wb.left ) {
+    if (p->getPositionX() <= wb.left ) {
       cx::hibernate((ecs::Node*)b);
     }
   }
 
   //player bullets
   po = MGMS()->getPool("Rockets");
-  auto rs= po->ls();
+  auto &rs= po->ls();
   F__LOOP(it, rs) {
-    auto r= *it;
+    auto &r= *it;
     auto p = CC_GEC(Projectile,r,"f/CPixie");
     p->sync();
-    if (p->node->getPositionX() >= wb.right) {
-      p->deflate();
+    if (p->getPositionX() >= wb.right) {
       cx::hibernate((ecs::Node*)r);
     }
   }

@@ -17,7 +17,6 @@
 #include "Move.h"
 #include "AI.h"
 #include "GEngine.h"
-#include "n/Enemy.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(bazuka)
@@ -28,32 +27,24 @@ void GEngine::initEntities() {
 
   auto po= MGMS()->reifyPool("Rockets");
   po->preset([=]() -> f::Poolable* {
+    auto sp= Projectile::create(kTypeRocket);
     auto ent= this->reifyNode("Rocket");
-    auto sp= cx::reifySprite("rocket.png");
-    auto c= mc_new2(Projectile,sp,kTypeRocket);
-
     MGML()->addAtlasItem("game-pics", sp);
     CC_HIDE(sp);
-
     ent->checkin(mc_new(f::CHealth));
-    ent->checkin(c);
+    ent->checkin(sp);
     return ent;
-
   }, 32);
 
   po= MGMS()->reifyPool("Bullets");
   po->preset([=]() -> f::Poolable* {
+    auto sp= Projectile::create(kTypeBullet);
     auto ent= this->reifyNode("Bullet");
-    auto sp= cx::reifySprite("bullet.png");
-    auto c= mc_new2(Projectile,sp,kTypeBullet);
-
     MGML()->addAtlasItem("game-pics", sp);
     CC_HIDE(sp);
-
     ent->checkin(mc_new(f::CHealth));
-    ent->checkin(c);
+    ent->checkin(sp);
     return ent;
-
   }, 32);
 
   po= MGMS()->reifyPool("Enemies");
@@ -64,9 +55,8 @@ void GEngine::initEntities() {
     return ent;
   }, 32);
 
-  auto sp = cx::reifySprite("player.png");
-  auto ent= this->reifyNode("Hero");
-  auto py= mc_new1(Hero,sp);
+  auto ent= this->reifyNode("Hero", true);
+  auto py= Hero::create();
   auto wb= cx::visBox();
 
   ent->checkin(mc_new(f::CGesture));
@@ -74,7 +64,8 @@ void GEngine::initEntities() {
   ent->checkin(py);
 
   ent=this->reifyNode("Shared",true);
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////

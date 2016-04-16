@@ -18,11 +18,11 @@ NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ParticleSpin* ParticleSpin::create(const sstr &name, const c::Vec2 &pos) {
+owner<ParticleSpin*> ParticleSpin::create(const sstr &png, const CCT_PT &pos) {
   auto pc = mc_new(ParticleSpin);
-  pc->initWithSpriteFrameName(name);
-  pc->autorelease();
+  pc->initWithSpriteFrameName(png);
   pc->setPosition(pos);
+  pc->autorelease();
   return pc;
 }
 
@@ -31,16 +31,16 @@ ParticleSpin* ParticleSpin::create(const sstr &name, const c::Vec2 &pos) {
 void ParticleSpin::update(float dt) {
 
   auto initpos = this->getPosition();
-  c::Vec2 finalpos;
+  auto finalpos= initpos;
 
-  spinCounter += dt*4;
+  _spinCounter += dt*4;
 
   finalpos.x = initpos.x + speed.x;
-  speed.y += gravity.y;
-  finalpos.y = initpos.y + speed.y + gravity.y;
+  speed.y += _gravity.y;
+  finalpos.y = initpos.y + speed.y + _gravity.y;
 
   this->setPosition(finalpos);
-  this->setRotation(CC_RADIANS_TO_DEGREES(spinCounter * speed.x));
+  this->setRotation(CC_RADIANS_TO_DEGREES(_spinCounter * speed.x));
 }
 
 

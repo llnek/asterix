@@ -21,7 +21,7 @@ NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-ScrollingBg* ScrollingBg::create(const sstr &png, float speed, float yPos) {
+owner<ScrollingBg*> ScrollingBg::create(const sstr &png, float speed, float yPos) {
   auto ob = f::reifyRefType<ScrollingBg>();
   ob->set(png,speed,yPos);
   return ob;
@@ -33,20 +33,22 @@ void ScrollingBg::set(const sstr &png, float speed, float yPos) {
   auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  head = cx::reifySprite(png);
-  tail = cx::reifySprite(png);
+  _head = cx::reifySprite(png);
+  _tail = cx::reifySprite(png);
+  XCFG()->fit(_head);
+  XCFG()->fit(_tail);
 
-  CC_POS2(head, wb.cx, yPos);
-  head->setAnchorPoint(cx::anchorB());
-  head->setScaleX(1.01);
-  addChild(head);
+  _head->setAnchorPoint(cx::anchorB());
+  _head->setScaleX(1.01);
+  CC_POS2(_head, wb.cx, yPos);
+  addChild(_head);
 
-  CC_POS2(tail, wb.cx + wz.size.width,yPos);
-  tail->setAnchorPoint(cx::anchorL());
-  tail->setScaleX(1.01);
-  addChild(tail);
+  CC_POS2(_tail, wb.cx + wz.width, yPos);
+  _tail->setAnchorPoint(cx::anchorL());
+  _tail->setScaleX(1.01);
+  addChild(_tail);
 
-  this->speed = speed;
+  this->_speed = speed;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -58,21 +60,24 @@ void ScrollingBg::sync() {
 
     // scroll bg left or right
 
-  if (head->getPositionX() < wb.left - HWZ(wz)) {
-    CC_POS2(head, wb.right + HWZ(wz), head->getPositionY());
+  if (_head->getPositionX() < wb.left - HWZ(wz)) {
+    CC_POS2(_head, wb.right + HWZ(wz), _head->getPositionY());
   }
 
-  if (tail->getPositionX() < wb.left - HWZ(wz)) {
-    CC_POS2(tail, wb.right + HWZ(wz), head->getPositionY());
+  if (_tail->getPositionX() < wb.left - HWZ(wz)) {
+    CC_POS2(_tail, wb.right + HWZ(wz), _head->getPositionY());
   }
 
-  auto pos1 = head->getPosition();
-  auto pos2 = tail->getPosition();
+  auto pos1 = _head->getPosition();
+  auto pos2 = _tail->getPosition();
 
-  head->setPosition(pos1.x - speed, pos1.y);
-  tail->setPosition(pos2.x - speed, pos2.y);
+  CC_POS2(_head, pos1.x - _speed, pos1.y);
+  CC_POS2(_tail, pos2.x - _speed, pos2.y);
 
 }
+
+
+
 
 NS_END
 
