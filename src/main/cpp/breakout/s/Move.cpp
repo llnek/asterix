@@ -49,9 +49,9 @@ void Move::processBallMotions(float dt) {
                          mv->vel,
                          outPos, outVel);
 
+  CC_POS2(ba, outPos.x, outPos.y);
   mv->vel.x = outVel.x;
   mv->vel.y = outVel.y;
-  ba->setPos(outPos.x, outPos.y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ void Move::processPaddleMotions(float dt) {
     x = pos.x - dt * mv->speed.x;
   }
 
-  pad->setPos(x,y);
+  CC_POS2(pad, x,y);
   clamp(pad);
 
 }
@@ -82,14 +82,14 @@ void Move::clamp(f::CPixie *pad) {
   auto tile = CC_CSV(c::Float, "TILE");
   auto sz= pad->csize();
   auto pos= pad->pos();
-  auto wz = cx::visRect();
+  auto wb = cx::visBox();
 
-  if (cx::getRight(pad->node) > wz.size.width - tile) {
-    pad->setPos(wz.size.width - tile - HWZ(sz), pos.y);
+  if (cx::getRight(pad) > wb.right - tile) {
+    CC_POS2(pad, wb.right - tile - HWZ(sz), pos.y);
   }
 
-  if (cx::getLeft(pad->node) < tile) {
-    pad->setPos(tile + HWZ(sz), pos.y);
+  if (cx::getLeft(pad) < tile) {
+    CC_POS2(pad, tile + HWZ(sz), pos.y);
   }
 }
 

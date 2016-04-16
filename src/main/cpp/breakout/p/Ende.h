@@ -7,32 +7,21 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/XLives.h"
 #include "x2d/XLayer.h"
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL HUDLayer : public f::XLayer {
+struct CC_DLL Ende : public f::XLayer {
 
-  __decl_ptr(c::Label, _scoreLabel)
-  __decl_ptr(f::XLives, _lives)
-  __decl_iz(_score)
-
-public:
-
-  __decl_create_layer(HUDLayer)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
-  __decl_get_iid(3)
-
-  bool reduceLives(int n= 1);
-  void updateScore(int n);
-  void drawScore();
+  __decl_get_iid(4)
 
 };
 

@@ -27,33 +27,30 @@ void HUDLayer::updateScore(int n) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decoUI() {
-  auto soff = CC_CSV(c::Float, "S_OFF");
-  auto tile = CC_CSV(c::Float, "TILE");
-  auto wz = cx::visRect();
+  auto wz = cx::visSize();
   auto wb = cx::visBox();
 
   regoAtlas("game-pics");
 
-  _scoreLabel = cx::reifyBmfLabel("TinyBoxBB", "0");
-  _scoreLabel->setAnchorPoint(cx::anchorBR());
-  _scoreLabel->setScale(12/72.0f);
-  _scoreLabel->setPosition( wz.size.width - tile - soff,
-    wz.size.height - tile - soff - cx::getScaledHeight(_scoreLabel));
+  _scoreLabel = cx::reifyBmfLabel("dft", "0");
+  _scoreLabel->setAnchorPoint(cx::anchorTR());
+  XCFG()->scaleBmfont(_scoreLabel, 24);
+  auto gap= CC_CHT(_scoreLabel)/GOLDEN_RATIO;
+  CC_POS2(_scoreLabel,  wb.right - gap, wb.top - gap);
   addItem(_scoreLabel);
 
   _lives= f::reifyRefType<f::XLives>();
-  _lives->decorate("paddle.png", 3,
-      tile + soff,
-      wb.top - tile - soff, 0.5f);
+  _lives->initLives("paddle.png", 3,
+      gap,
+      wb.top - gap, 0.5f);
   addItem(_lives);
 
   auto b = cx::reifyMenuBtn("icon_menu.png");
-  auto menu = cx::mkMenu(b);
-  auto z2= cx::halfHW(b);
+  gap= CC_CHT(b)/GOLDEN_RATIO;
 
   b->setCallback([=](c::Ref*) { SENDMSG("/hud/showmenu"); });
-  b->setPosition(wb.right-tile-z2.width, wb.bottom + tile + z2.height);
-  addItem(menu);
+  CC_POS2(b, wb.right-gap, wb.bottom + gap);
+  addItem(cx::mkMenu(b));
 
   _lives->resurrect();
   _score=0;
@@ -62,14 +59,13 @@ void HUDLayer::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::drawScore() {
-  _scoreLabel->setString(s::to_string(_score));
+  _scoreLabel->setString(FTOS(_score));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool HUDLayer::reduceLives(int n) {
-  _lives->reduce(n);
-  return _lives->isDead();
+  return _lives->reduce(n)->isDead();
 }
 
 

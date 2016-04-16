@@ -18,26 +18,36 @@ NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Brick : public f::CPixie, public f::CStats {
-  Brick(not_null<c::Node*> s, int v, int color)
-  : CPixie(s) {
-    this->color=color;
-    this->value=v;
+class CC_DLL Brick : public f::CPixie {
+    Brick(int v, int color) {
+    this->_color=color;
+    this->_value=v;
   }
-  __decl_bf(flipped);
-  __decl_iz(color);
-  __decl_comp_tpid("n/Brick")
+  __decl_bf(_flipped);
+  __decl_iz(_color);
+  __decl_iz(_value);
+
+public:
+
+  __decl_gsms_is(_flipped, Flipped)
+  __decl_getr(int, _value, Value)
+
+  static owner<Brick*> create(const sstr &n, int v, int c) {
+    auto z= mc_new2(Brick, v, c);
+    z->initWithSpriteFrameName(n);
+    XCFG()->fit(z);
+    z->autorelease();
+    return z;
+  }
+
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL BrickFence : public ecs::Component {
   __decl_comp_tpid("n/BrickFence")
-  s_vec<Brick*> bricks;
-  virtual ~BrickFence() {
-    F__LOOP(it,bricks)
-    { delete *it; };
-  }
+  __decl_vec(Brick*, bricks)
 };
 
 //////////////////////////////////////////////////////////////////////////////

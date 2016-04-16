@@ -23,7 +23,7 @@ struct CC_DLL GEngine : public ecs::Engine {
   virtual void initEntities();
   virtual void initSystems();
 
-  void bornPaddle(ecs::Node*, ecs::Node*);
+  void bornPaddle(not_null<ecs::Node*>, not_null<ecs::Node*>);
   void createBricks();
   void createPaddle();
   void createBall();

@@ -20,48 +20,44 @@ NS_BEGIN(breakout)
 //////////////////////////////////////////////////////////////////////////////
 //
 void MMenu::decoUI() {
-  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Float,"TILE");
+  auto tt= cx::reifyBmfLabel("title", gets("mmenu"));
+  XCFG()->scaleBmfont(tt, 64);
   auto dfc = XCFG()->getColor("dft");
   auto wb=cx::visBox();
 
-  centerImage("gui.mmenus.menu.bg");
+  centerImage("game.bg");
 
-  tt->setPosition(wb.cx, wb.top * 0.9);
   tt->setColor(XCFG()->getColor("dft"));
-  tt->setScale(XCFG()->getScale());
+  CC_POS2(tt, wb.cx, wb.top * 0.8);
   addItem(tt);
 
-  auto btn= cx::reifyMenuBtn("play.png");
-  auto menu= cx::mkMenu(btn);
-  auto x= mc_new(f::GCX);
-  btn->setCallback(
-      [=](c::Ref*){ cx::runEx(Game::reify(x)); });
-  btn->setPosition(wb.cx, wb.cy);
+  auto r= cx::reifyMenuText("btns", "Restart");
+  auto q= cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleBmfont(r,36);
+  XCFG()->scaleBmfont(q,36);
+  r->setCallback([=](c::Ref*){
+      cx::runEx(Game::reify(mc_new(GameCtx))); });
+  q->setCallback([=](c::Ref*){ cx::prelude(); });
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {r,q},
+      CC_CHT(r)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu);
 
   // back-quit buttons
   auto b= cx::reifyMenuBtn("icon_back.png");
-  auto q= cx::reifyMenuBtn("icon_quit.png");
-  auto sz= CC_CSIZE(b);
-  auto ctx = (MCX*) getCtx();
-
-  q->setCallback([=](c::Ref*) { cx::prelude(); });
+  auto gap= CC_CHT(b)/GOLDEN_RATIO;
+    auto ctx= (MCX*) getCtx();
   b->setCallback([=](c::Ref*) { ctx->back(); });
-
-  s_vec<c::MenuItem*> bqs {b, q} ;
-  auto m2= cx::mkHMenu(bqs);
-  m2->setPosition(wb.left + tile + sz.width * 1.1,
-                  wb.bottom + tile + sz.height * 0.45);
-  addItem(m2);
+  CC_POS2(b, wb.left + gap, wb.bottom + gap);
+  addItem(cx::mkMenu(b));
 
   auto audios = cx::reifyAudioIcons();
   audios[0]->setColor(dfc);
   audios[1]->setColor(dfc);
-
+  gap = CC_CHT(audios[0])/GOLDEN_RATIO;
   addAudioIcons( audios,
       cx::anchorBR(),
-      c::Vec2(wb.right - tile, wb.bottom + tile));
+      CCT_PT(wb.right - gap, wb.bottom + gap));
 }
 
 

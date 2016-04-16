@@ -13,8 +13,9 @@
 #include "core/CCSX.h"
 #include "s/GEngine.h"
 #include "Game.h"
+#include "MMenu.h"
 #include "HUD.h"
-//#include "Ende.h"
+#include "Ende.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(breakout)
@@ -23,19 +24,22 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
+
   __decl_create_layer(GLayer)
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
   virtual void onInited();
   virtual bool onTouchStart(c::Touch*);
   virtual void onTouchMotion(c::Touch*);
 
   void onPlayerKilled();
   void spawnPlayer();
-  void onDone();
+  void onEnd();
   void showMenu();
 
   __decl_ptr(ecs::Node, _paddle)
@@ -46,21 +50,26 @@ struct CC_DLL GLayer : public f::GameLayer {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
   auto p= CC_GEC(f::CPixie, _paddle,"f/CPixie");
-  auto pos= p->pos();
+  auto pos= p->getPosition();
   if (loc.y <= pos.y) {
-    p->setPos(loc.x, pos.y);
+    CC_POS2(p, loc.x, pos.y);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onTouchStart(c::Touch *t) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
   auto p= CC_GEC(f::CPixie, _paddle,"f/CPixie");
-  auto y= p->node->getPositionY();
-  auto loc= t->getLocation();
-  return loc.y <= y;
+  auto y= p->getPositionY();
+  return tap.y <= y;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onTouchStart(c::Touch *t) {
+  return onMouseStart( t->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -80,20 +89,21 @@ void GLayer::onInited() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::showMenu() {
-
+  auto x= new MCX([=]() { cx::pop(); });
+  cx::pushEx(MMenu::reify(x));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::decoUI() {
   _engine = mc_new(GEngine);
+  centerImage("game.bg");
   regoAtlas("game-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnPlayer() {
-
   SCAST(GEngine*, _engine)->bornPaddle(_paddle,_ball);
 }
 
@@ -101,7 +111,7 @@ void GLayer::spawnPlayer() {
 //
 void GLayer::onPlayerKilled() {
   if (getHUD()->reduceLives(1)) {
-    onDone();
+    onEnd();
   } else {
     spawnPlayer();
   }
@@ -109,11 +119,10 @@ void GLayer::onPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onDone() {
-  this->setOpacity(0.1 * 255);
+void GLayer::onEnd() {
   MGMS()->stop();
   surcease();
-  //Ende::reify(this, 4);
+  Ende::reify(MGMS(), 4);
 }
 
 END_NS_UNAMED

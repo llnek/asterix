@@ -44,7 +44,7 @@ bool Collide::onPlayerKilled() {
   auto ba= CC_GEC(f::CPixie, _ball, "f/CPixie");
   auto pos= ba->pos();
 
-  if (pos.y < cx::getBottom(pad->node)) {
+  if (pos.y < cx::getBottom(pad)) {
     SENDMSG("/game/players/killed");
     return true;
   } else {
@@ -72,9 +72,9 @@ void Collide::check() {
   auto sz= ba->csize();
   auto hh= HHZ(sz);
   auto pos= ba->pos();
-  auto top= cx::getTop(pad->node);
+  auto top= cx::getTop(pad);
 
-  ba->setPos(pos.x, top+hh);
+  CC_POS2(ba, pos.x, top+hh);
   mv->vel.y = - mv->vel.y;
 }
 
@@ -87,7 +87,7 @@ void Collide::checkBricks() {
 
   F__LOOP(it,bss) {
     auto e= *it;
-    if (!e->flipped &&
+    if (!e->isFlipped() &&
         cx::collide(ba, e)) {
       onBrick(e);
       break;
@@ -131,10 +131,10 @@ void Collide::onBrick(Brick *brick) {
   }
 
   auto msg= j::json({
-      {"value", brick->value }
+      {"value", brick->getValue() }
       });
   SENDMSGEX("/game/players/earnscore", &msg);
-  brick->flipped=true;
+  brick->setFlipped(true);
   brick->deflate();
 }
 

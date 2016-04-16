@@ -19,6 +19,8 @@ NS_BEGIN(breakout)
 //
 class CC_DLL Config : public f::XConfig {
 
+  __decl_nocpyass(Config)
+
   void initAssets();
   void initCsts();
   void initLevels();
@@ -26,20 +28,20 @@ class CC_DLL Config : public f::XConfig {
 
 public:
 
-  virtual const c::Size gameSize() { return c::Size(320,480); }
+  virtual const CCT_SZ gameSize() { return CCT_SZ(320,480); }
   virtual ResolutionPolicy policy() {
     return
     ResolutionPolicy::FIXED_WIDTH;
   }
 
-  virtual void handleResolution(const c::Size&);
+  virtual void handleResolution(const CCT_SZ&);
+  virtual float scaleFont(float);
   virtual void runOnce();
 
   const sstr getCandy(int pos);
   virtual c::Scene* prelude();
 
   virtual ~Config() {}
-  __decl_nocpyass(Config)
   static owner<Config*> reify();
 };
 

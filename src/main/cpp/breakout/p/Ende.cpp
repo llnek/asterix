@@ -7,37 +7,44 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
 #include "core/CCSX.h"
-#include "Game.h"
 #include "Splash.h"
+#include "Game.h"
+#include "Ende.h"
 
-NS_ALIAS(cx,fusii::ccsx)
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(breakout)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Splash::decoUI() {
-  auto t= cx::reifyBmfLabel("title", "Breakout");
-  XCFG()->scaleBmfont(t, 64);
-  auto wb = cx::visBox();
+void Ende::decoUI() {
+  auto lbl= cx::reifyBmfLabel("title", "Game Over!");
+  XCFG()->scaleBmfont(lbl,64);
+  auto wb= cx::visBox();
 
-  centerImage("game.bg");
-  CC_POS2(t, wb.cx, wb.top * 0.8);
-  addItem(t);
+  CC_POS2(lbl, wb.cx, wb.top * 0.8);
+  addItem(lbl);
 
-  auto b= cx::reifyMenuText("btns", "PLAY");
-  XCFG()->scaleBmfont(b,36);
-  b->setCallback(
-      [=](c::Ref*) { cx::runEx( Game::reify(mc_new(GameCtx))); });
-  CC_POS2(b, wb.cx, wb.top * 0.2);
-  addItem(cx::mkMenu(b));
+  auto t= cx::reifyMenuText("btns", "Try Again?");
+  auto q= cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleBmfont(t,36);
+  XCFG()->scaleBmfont(q,36);
+  t->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  q->setCallback([=](c::Ref*) { cx::prelude(); });
+
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {t,q},
+      CC_CHT(t)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
+  addItem(menu);
 
 }
 
-
 NS_END
+
 
 
