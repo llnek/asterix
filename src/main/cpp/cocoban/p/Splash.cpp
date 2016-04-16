@@ -22,6 +22,21 @@ NS_BEGIN(cocoban)
 //
 void Splash::decoUI() {
 
+  auto tt= cx::reifyBmfLabel("title", "Cocoban");
+  auto wb= cx::visBox();
+
+  XCFG()->scaleBmfont(tt, 64);
+  CC_POS2(tt, wb.cx, wb.top * 0.8);
+  addItem(tt);
+
+  auto b= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleBmfont(b, 36);
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  b->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  addItem(cx::mkMenu(b));
+
 
 }
 

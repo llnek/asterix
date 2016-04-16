@@ -27,10 +27,11 @@ public:
 
   virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
 
-  virtual const c::Size gameSize() { return c::Size(480,320); }
-  virtual bool isPortrait() { return false; }
-  virtual void handleResolution(const c::Size &rs);
+  virtual const CCT_SZ gameSize() { return CCT_SZ(480,320); }
+  virtual void handleResolution(const CCT_SZ &rs);
+  virtual float scaleFont(float);
   virtual c::Scene* prelude();
+  virtual float fit(not_null<c::Node*> n);
 
   virtual void runOnce();
   static owner<Config*> reify();

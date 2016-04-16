@@ -23,9 +23,11 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
-    void onSwipe();
-    void move(float, float);
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+
+  void move(int, int);
+  void onSwipe();
 
   __decl_ptr(ecs::Node, _player)
   __decl_ptr(ecs::Node, _shared)
@@ -34,9 +36,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -44,13 +46,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -59,7 +56,7 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
 }
@@ -70,9 +67,11 @@ void GLayer::onSwipe() {
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   auto dx = ss->startTouch.x - ss->endTouch.x;
   auto dy = ss->startTouch.y - ss->endTouch.y;
+  auto DX= abs(dx);
+  auto DY= abs(dy);
 
-  if (abs(dx)+abs(dy)> ss->swipeTolerance) {
-    if (abs(dx) > abs(dy)) {
+  if (DX + DY  > ss->swipeTolerance) {
+    if (DX > DY) {
       if (dx > 0){
         move(-1,0);
       } else {
@@ -90,7 +89,7 @@ void GLayer::onSwipe() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::move(float dx, float dy) {
+void GLayer::move(int dx, int dy) {
   auto py=CC_GEC(f::CPixie,_player,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto pos= ss->playerPos;
@@ -102,7 +101,8 @@ void GLayer::move(float dx, float dy) {
       ss->playerPos.x += dx;
       ss->playerPos.y += dy;
       ss->levels[ss->playerPos.y][ss->playerPos.x] += 4;
-      py->setPosition(165+25*ss->playerPos.x, 185-25*ss->playerPos.y);
+      CC_POS2(py, 165+25*ss->playerPos.x,
+                  185-25*ss->playerPos.y);
     break;
     case 3:
     case 5:
@@ -112,12 +112,13 @@ void GLayer::move(float dx, float dy) {
         ss->playerPos.x += dx;
         ss->playerPos.y += dy;
         ss->levels[ss->playerPos.y][ss->playerPos.x] += 1;
-        py->setPosition(165+25*ss->playerPos.x,185-25*ss->playerPos.y);
+        CC_POS2(py, 165+25*ss->playerPos.x,
+                    185-25*ss->playerPos.y);
         ss->levels[ss->playerPos.y+dy][ss->playerPos.x+dx] += 3;
         auto movingCrate =
           ss->crates[ss->playerPos.y]->get(ss->playerPos.x);
-        movingCrate->setPosition(movingCrate->getPositionX()+25*dx,
-            movingCrate->getPositionY()-25*dy);
+        CC_POS2(movingCrate, movingCrate->getPositionX()+25*dx,
+                             movingCrate->getPositionY()-25*dy);
         ss->crates[ss->playerPos.y+dy]->set(ss->playerPos.x+dx,movingCrate);
         ss->crates[ss->playerPos.y]->set(ss->playerPos.x,CC_NIL);
       }
@@ -127,7 +128,7 @@ void GLayer::move(float dx, float dy) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->endTouch=loc;
   onSwipe();
@@ -135,12 +136,12 @@ void GLayer::onMouseClick(const c::Vec2 &loc) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   ss->startTouch=loc;
   return true;
@@ -171,13 +172,13 @@ void GLayer::decoUI() {
   regoAtlas("game-pics");
 
   bg->getTexture()->setAliasTexParameters();
-  bg->setPosition(wb.cx,wb.cy);
-  bg->setScale(5);
+  CC_POS2(bg, wb.cx,wb.cy);
+  XCFG()->fit(bg);
   addAtlasItem("game-pics",bg);
 
-  auto level=  cx::reifySprite("level.png");
-  level->setPosition(wb.cx, wb.cy);
-  level->setScale(5);
+  auto level= cx::reifySprite("level.png");
+  CC_POS2(level, wb.cx, wb.cy);
+  XCFG()->fit(level);
   addAtlasItem("game-pics",level);
 
   _engine = mc_new(GEngine);

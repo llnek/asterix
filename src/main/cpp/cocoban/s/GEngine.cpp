@@ -37,7 +37,7 @@ void GEngine::initLevels(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  // global
+
   auto ent= this->reifyNode("Shared",true);
   auto ss=mc_new(GVars);
   initLevels(ss);
@@ -47,34 +47,34 @@ void GEngine::initEntities() {
   for (auto i=0; i < ss->levels.size(); ++i) {
     auto &row= ss->levels[i];
     for (auto j=0; j < row.size(); ++j) {
-      auto arr= new f::NodePtrArray( row.size());
+      auto arr= new f::NodePtrArr( row.size());
       auto levelValue= row[j];
       arr->fill(CC_NIL);
       ss->crates.push_back(arr);
       switch (levelValue) {
         case 4:
-          case 6: {
-          auto ent=this->reifyNode("Player");
+        case 6: {
           auto ps = f::CPixie::reifyFrame("player.png");
-          ps->setPosition(165+25*j,185-25*i);
-          ps->setScale(5);
+          auto ent=this->reifyNode("Player", true);
+          CC_POS2(ps, 165+25*j,185-25*i);
+          XCFG()->fit(ps);
           MGML()->addAtlasItem("game-pics",ps);
           ent->checkin(ps);
           ent->checkin(mc_new(f::CGesture));
           ss->playerPos= f::Cell2I(j,i);
           assert(!has_player);
           has_player=true;
-          }
+        }
         break;
 
         case 3:
-          case 5: {
+        case 5: {
           auto cs = cx::reifySprite("crate.png");
-          cs->setPosition(165+25*j,185-25*i);
-          cs->setScale(5);
+          CC_POS2(cs, 165+25*j,185-25*i);
+          XCFG()->fit(cs);
           MGML()->addAtlasItem("game-pics",cs);
           arr->set(j,cs);
-          }
+        }
         break;
       }
     }

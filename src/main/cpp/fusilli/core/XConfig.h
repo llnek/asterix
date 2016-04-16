@@ -90,6 +90,7 @@ public:
   virtual c::Scene* prelude() = 0;
 
   virtual bool isPortrait() { return gameSize().height > gameSize().width; }
+  virtual const CCT_SZ fit(const CCT_SZ &z);
 
   __decl_gsms(c::ApplicationProtocol::Platform, _platform, Platform)
   __decl_gsms(sstr, _room_id, RoomId)
@@ -113,10 +114,9 @@ public:
   void resetCst(const sstr&, c::Ref*);
   c::Ref* getCst(const sstr& );
 
-  float fit(not_null<c::Node*> n) {
+  virtual float fit(not_null<c::Node*> n) {
     n->setScale(_scale); return _scale;}
 
-  const CCT_SZ fit(const CCT_SZ &z);
   int getBtnPadding();
 
   void toggleAudio(bool s);

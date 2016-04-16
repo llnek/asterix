@@ -28,11 +28,11 @@ struct CC_DLL GVars : public ecs::Component {
   virtual ~GVars() { F__LOOP(it,crates) { delete *it; } }
   __decl_comp_tpid( "n/GVars" )
 
-  s_arr<INTXARR,INTARR_SZ> levels;
-    s_vec<f::NodePtrArray*> crates;
-  f::Cell2I playerPos;
-  c::Vec2 startTouch;
-  c::Vec2 endTouch;
+  __decl_arr(INTXARR,INTARR_SZ, levels)
+  __decl_vec(f::NodePtrArr*, crates)
+  __decl_md(f::Cell2I, playerPos)
+  __decl_md(CCT_PT, startTouch)
+  __decl_md(CCT_PT, endTouch)
   __decl_iz(swipeTolerance)
 
 };
