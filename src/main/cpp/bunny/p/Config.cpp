@@ -44,56 +44,44 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
 
   addAtlas("explosion", CC_STR("misc/explosion.plist"));
   addAtlas("fire", CC_STR("misc/fire.plist"));
   addAtlas("shadow", CC_STR("misc/shadow.plist"));
 
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-  addImage("game.bg", CC_STR("pics/background.png"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
+  addImage("game-pics", CC_STR("pics/images.png"));
+  addImage("game.bg", CC_STR("pics/background.jpg"));
 
   addEffect("uh", CC_STR("sfx/uh.wav"));
   addEffect("bomb", CC_STR("sfx/bomb.mp3"));
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("text", CC_STR("misc/MarkerFelt.ttf"));
-  addFont("dft", CC_STR("fon/en/font.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
+  addFont("dft", CC_STR("fonts/en/font.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
-  s_vec<sstr> searchPaths;
-  auto gz= gameSize();
-  float h=320;
+void Config::handleResolution(const CCT_SZ &rs) {
+}
 
-  if (rs.height > 800){
-    //High Resolution
-    searchPaths.push_back("rd");
-    h=1280;
-  }
-  else if (rs.height > 600){
-    //Mid resolution
-    searchPaths.push_back("hd");
-    h=800;
-  }
-  else{
-    //Low resolution
-    searchPaths.push_back("sd");
-  }
-  CC_DTOR()->setContentScaleFactor(h / gz.height);
-  CC_FILER()->setSearchPaths(searchPaths);
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

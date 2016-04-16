@@ -23,16 +23,17 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  void movePlayerIfPossible(const c::Vec2 &tap);
-  void movePlayerByTouch(const c::Vec2 &tap);
-  void explodeBombs(const c::Vec2 &tap);
+  void movePlayerIfPossible(const CCT_PT &tap);
+  void movePlayerByTouch(const CCT_PT &tap);
+  void explodeBombs(const CCT_PT &tap);
 
   bool onContactBegin(c::PhysicsContact&);
   void setPhysicsWorld(c::PhysicsWorld*);
   void onEnd();
-    void onPause();
+  void onPause();
 
   __decl_ptr(c::PhysicsWorld, _pWorld);
   __decl_ptr(ecs::Node, _player)
@@ -43,20 +44,15 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_get_iid(2)
 
   virtual void onAcceleration(c::Acceleration *acc, c::Event*);
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -66,7 +62,7 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   setPhysicsWorld(MGMS()->getPhysicsWorld());
@@ -81,22 +77,21 @@ void GLayer::onInited() {
 //
 void GLayer::setPhysicsWorld(c::PhysicsWorld *world) {
   //enable debug draw
-  #if COCOS2D_DEBUG
+#if COCOS2D_DEBUG
   world->setDebugDrawMask(c::PhysicsWorld::DEBUGDRAW_ALL);
-  #endif
+#endif
   _pWorld = world;
-  _pWorld->setGravity(c::Vec2(0, 0));
+  _pWorld->setGravity(CCT_PT(0, 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onContactBegin(c::PhysicsContact &ct) {
-  auto py= CC_GEC(f::CPixie,_player,"f/CPixie");
-  auto sp= PCAST(c::Sprite,py);
-    auto playerShape = sp->getPhysicsBody()->getShapes().front();
+  auto sp= CC_GEC(f::CPixie,_player,"f/CPixie");
+  auto playerShape = sp->getPhysicsBody()->getShapes().front();
   if (playerShape != ct.getShapeA() &&
-      playerShape != ct.getShapeB()) {}
-  else {
+      playerShape != ct.getShapeB()) {
+  } else {
     onEnd();
   }
   return false;
@@ -108,13 +103,11 @@ void GLayer::onEnd() {
 
   auto po= MGMS()->getPool("Bombs");
   po->foreach([=](f::Poolable *p) {
-      auto px=CC_GEC(f::CPixie,p,"f/CPixie");
-      auto sp=PCAST(c::Sprite,px);
+      auto sp=CC_GEC(f::CPixie,p,"f/CPixie");
       sp->getPhysicsBody()->setEnabled(false);
       cx::hibernate((ecs::Node*)p);
   });
 
-  this->setOpacity(0.1 * 255);
   cx::sfxPlay("uh");
   MGMS()->stop();
   surcease();
@@ -123,9 +116,8 @@ void GLayer::onEnd() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::movePlayerIfPossible(const c::Vec2 &tap) {
-  auto py=CC_GEC(f::CPixie,_player,"f/CPixie");
-  auto sp=PCAST(c::Sprite,py);
+void GLayer::movePlayerIfPossible(const CCT_PT &tap) {
+  auto sp=CC_GEC(f::CPixie,_player,"f/CPixie");
   auto w2 = HWZ(CC_CSIZE(sp));
   auto wb= cx::visBox();
 
@@ -140,18 +132,17 @@ void GLayer::movePlayerIfPossible(const c::Vec2 &tap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::movePlayerByTouch(const c::Vec2 &tap) {
+void GLayer::movePlayerByTouch(const CCT_PT &tap) {
   movePlayerIfPossible(tap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::explodeBombs(const c::Vec2 &tap) {
+void GLayer::explodeBombs(const CCT_PT &tap) {
   auto po= MGMS()->getPool("Bombs");
   po->foreach([=](f::Poolable *p) {
     if (!p->status()) { return; }
-    auto b=CC_GEC(f::CPixie,p,"f/CPixie");
-    auto s=PCAST(c::Sprite,b);
+    auto s=CC_GEC(f::CPixie,p,"f/CPixie");
     if(s->getBoundingBox().containsPoint(tap)){
       cx::sfxPlay("bomb");
       auto exp= c::ParticleExplosion::create();
@@ -162,8 +153,7 @@ void GLayer::explodeBombs(const c::Vec2 &tap) {
       explosion->setSpeed(3.5f);
       explosion->setLife(300.0f);  */
       s->getPhysicsBody()->setEnabled(false);
-      b->deflate();
-      p->yield();
+      cx::hibernate((ecs::Node*)p);
     }
 
   });
@@ -173,13 +163,13 @@ void GLayer::explodeBombs(const c::Vec2 &tap) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
   movePlayerByTouch(loc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &tap) {
+bool GLayer::onMouseStart(const CCT_PT &tap) {
   explodeBombs(tap);
   return true;
 }
@@ -201,24 +191,23 @@ void GLayer::decoUI() {
 
   auto btn = cx::reifyMenuBtn("pause.png", "pause_pressed.png");
   auto sz= CC_CSIZE(btn);
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   centerImage("game.bg");
   regoAtlas("game-pics");
 
   btn->setCallback([=](c::Ref*) { this->onPause(); });
-  btn->setPosition(wb.right - HWZ(sz), HHZ(sz));
-  auto menu = cx::mkMenu(btn);
-  addItem(menu, 1);
+  CC_POS2(btn, wb.right - HWZ(sz), HHZ(sz));
+  addItem(cx::mkMenu(btn), 1);
 
-  #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
   setKeepScreenOnJni(true);
-  #endif
+#endif
 
-  #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
   JniBridge::showToast("Hello Java");
-  #endif
+#endif
 
   setAccelerometerEnabled(true);
   _engine = mc_new(GEngine);
@@ -233,11 +222,10 @@ void GLayer::onPause() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onAcceleration(c::Acceleration *acc, c::Event*) {
-  auto py=CC_GEC(f::CPixie,_player,"f/CPixie");
-  auto sp=PCAST(c::Sprite,py);
+  auto sp=CC_GEC(f::CPixie,_player,"f/CPixie");
   movePlayerIfPossible(
-      c::Vec2(sp->getPositionX() + (acc->x * 10),
-        sp->getPositionY()));
+      CCT_PT(sp->getPositionX() + (acc->x * 10),
+             sp->getPositionY()));
 }
 
 

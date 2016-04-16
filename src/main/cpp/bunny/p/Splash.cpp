@@ -22,23 +22,23 @@ NS_BEGIN(bunny)
 //
 void Splash::decoUI() {
 
-  auto title= cx::reifyLabel("text", 96, "Happ Bunny");
+  auto title= cx::reifyBmfLabel("title", "Happ Bunny");
+  XCFG()->scaleBmfont(title, 96);
   auto play= cx::reifyMenuBtn("play.png");
-  auto menu= cx::mkMenu(play);
   auto wb= cx::visBox();
 
   // background, title
-  title->setPosition(wb.cx, wb.top * 0.9);
+  CC_POS2(title, wb.cx, wb.top * 0.8);
   centerImage("game.bg");
   addItem(title);
 
   // one play button
-  play->setPosition(wb.cx, wb.top * 0.2);
+  CC_POS2(play, wb.cx, wb.top * 0.2);
   play->setCallback([=](c::Ref*){
     cx::sfxPlay("button");
-    cx::runEx(Game::reify(new GameCtx() ));
+    cx::runEx(Game::reify(mc_new(GameCtx)));
   });
-  addItem(menu);
+  addItem(cx::mkMenu(play));
 
 }
 

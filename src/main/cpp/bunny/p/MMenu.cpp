@@ -26,11 +26,11 @@ void MMenu::decoUI() {
   auto on= cx::reifyMenuBtn("mute.png");
   auto sz= CC_CSIZE(off);
   auto wb= cx::visBox();
-  auto tile= CC_ZW(sz)/4;
+  auto tile= CC_CHT(off)/GOLDEN_RATIO;
 
   addAudioIcons(s_arr<c::MenuItem*,2>{off,on},
       cx::anchorTR(),
-      c::Vec2(wb.right-tile, wb.top-tile));
+      CCT_PT(wb.right-tile, wb.top-tile));
 
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();

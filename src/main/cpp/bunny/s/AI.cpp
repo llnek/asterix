@@ -45,6 +45,7 @@ void AI::processScore(float dt) {
   if (!cx::timerDone(_timer)) { return; }
   else {
     cx::undoTimer(_timer);
+    _timer=CC_NIL;
   }
 
   SENDMSG("/game/hud/updatescore");
@@ -59,6 +60,7 @@ void AI::processBombs(float dt) {
   if (!cx::timerDone(_timerB)) { return; }
   else {
     cx::undoTimer(_timerB);
+    _timerB=CC_NIL;
   }
 
   dropBombs(3,-250);
@@ -74,13 +76,13 @@ void AI::dropBombs(int count, float v) {
 
   for (auto i = 0 ; i < count ; ++i) {
     auto p= po->take(true);
-      auto b=CC_GEC(f::CPixie,p,"f/CPixie");
-    auto sp= PCAST(c::Sprite,b);
+    auto sp=CC_GEC(f::CPixie,p,"f/CPixie");
     auto sz= CC_CSIZE(sp);
     auto pb= sp->getPhysicsBody();
-    pb->setVelocity(c::Vec2(0, (cx::rand() + 0.2) * v));
+    pb->setVelocity(CCT_PT(0, (cx::rand() + 0.2) * v));
     pb->setEnabled(true);
-    b->inflate(cx::randInt(wb.right), wb.top + HHZ(sz));
+    cx::resurrect((ecs::Node*)p,
+        cx::randInt(wb.right), wb.top + HHZ(sz));
   }
 
 }

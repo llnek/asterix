@@ -21,28 +21,29 @@ NS_BEGIN(bunny)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto label = cx::reifyLabel("text", 96, "Game Over");
-  auto wz= cx::visRect();
+  auto label = cx::reifyBmfLabel("title", "Game Over");
+  XCFG()->scaleBmfont(label,96);
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   label->enableOutline(c::Color4B(255, 0, 0, 100),6);
   label->enableGlow(c::Color4B(255, 0, 0, 255));
   label->enableShadow();
-  label->setPosition(wb.cx, wb.top * 0.6);
+  CC_POS2(label, wb.cx, wb.top * 0.6);
   addItem(label, 1);
 
   auto score = getHUD()->getScore();
-  label = cx::reifyLabel("text",48,"Your score: " + FTOS(score));
-  label->setPosition(wb.cx, wb.top * 0.5);
+  label = cx::reifyBmfLabel("dft", "Your score: " + FTOS(score));
+  XCFG()->scaleBmfont(label,48);
+  CC_POS2(label, wb.cx, wb.top * 0.5);
   addItem(label, 1);
 
   auto play = cx::reifyMenuBtn("play.png", "play_pressed.png");
-  play->setPosition(wb.cx, wb.top * 0.2);
+  CC_POS2(play, wb.cx, wb.top * 0.2);
   play->setCallback([=](c::Ref*){
-      cx::runEx(Game::reify(new GameCtx()));
+      cx::runEx(Game::reify(mc_new(GameCtx)));
       });
-  auto menu = cx::mkMenu(play);
-  addItem(menu, 1);
+  addItem(cx::mkMenu(play), 1);
 }
 
 

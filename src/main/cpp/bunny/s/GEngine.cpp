@@ -28,35 +28,32 @@ void GEngine::initEntities() {
   auto wb= cx::visBox();
 
   po->preset([=]() -> f::Poolable* {
-    auto bomb = f::CPixie::reifyFrame("bomb.png");
+    auto sp = f::CPixie::reifyFrame("bomb.png");
     auto ent= this->reifyNode("Bomb");
-    auto sp= PCAST(c::Sprite,bomb);
     auto sz= CC_CSIZE(sp);
     setPhysicsBody(sp);
     MGML()->addAtlasItem("game-pics", sp,1);
-    ent->checkin(bomb);
     sp->getPhysicsBody()->setEnabled(false);
+    ent->checkin(sp);
     return ent;
   }, 16);
 
-  auto py= f::CPixie::reifyFrame("player.png");
+  auto sp= f::CPixie::reifyFrame("player.png");
   auto ent= this->reifyNode("Player", true);
-  auto sp= PCAST(c::Sprite,py);
   auto sz = CC_CSIZE(sp);
-  sp->setPosition(wb.cx, wb.top * 0.23);
+  CC_POS2(sp, wb.cx, wb.top * 0.23);
   setPhysicsBody(sp);
   MGML()->addAtlasItem("game-pics", sp, 0);
 
-  auto rt= c::Rect(0, 0, CC_ZW(sz),CC_ZH(sz));
-  auto anim= c::Animation::create();
+  auto rt= CCT_RT(0, 0, CC_ZW(sz),CC_ZH(sz));
+  auto anim= cx::createAnimation(0.2,false,0);
   auto f1= cx::getSpriteFrame("player.png", rt);
   auto f2= cx::getSpriteFrame("player2.png", rt);
   anim->addSpriteFrame(f1);
   anim->addSpriteFrame(f2);
-  anim->setDelayPerUnit(0.2);
   sp->runAction(
       c::RepeatForever::create( c::Animate::create(anim)));
-  ent->checkin(py);
+  ent->checkin(sp);
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHuman));
   ent->checkin(mc_new(f::CMove));
@@ -64,13 +61,14 @@ void GEngine::initEntities() {
 
   // global
   ent= this->reifyNode("Shared",true);
-  ent->checkin(mc_new(GVars));
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::setPhysicsBody(c::Sprite *sprite) {
-  auto body = c::PhysicsBody::createCircle(sprite->getContentSize().width/2);
+  auto body = c::PhysicsBody::createCircle(HWZ(CC_CSIZE(sprite)));
   body->setContactTestBitmask(true);
   body->setDynamic(true);
   sprite->setPhysicsBody(body);
