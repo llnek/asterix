@@ -24,19 +24,20 @@ NS_BEGIN(bazuka)
 void Ende::decoUI() {
 
   auto btn = cx::reifyMenuBtn("mainmenu.png");
-  auto wz= cx::visRect();
+  XCFG()->fit(btn);
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
-  auto mnu= cx::mkMenu(btn);
 
   btn->setCallback([=](c::Ref*) {
       cx::sfxPlay("pop");
-      cx::runEx(Splash::reify());
+      cx::prelude();
       });
-  btn->setPosition(wb.cx, wb.cy);
-  addItem(mnu);
+  CC_POS2(btn, wb.cx, wb.cy);
+  addItem(cx::mkMenu(btn));
 
-  auto text = cx::reifyBmfLabel("pixel", "GAMEOVER");
-  text->setPosition(wb.cx, wb.top * 0.6);
+  auto text = cx::reifyBmfLabel("title", "Game Over!");
+  XCFG()->scaleBmfont(text,64);
+  CC_POS2(text, wb.cx, wb.top * 0.6);
   addItem(text, 10);
 
   auto high = CC_APPDB()->getIntegerForKey("GameHighScore");
@@ -45,22 +46,29 @@ void Ende::decoUI() {
     CC_APPDB()->setIntegerForKey("GameHighScore", score);
     CC_APPDB()->flush();
     text = cx::reifyBmfLabel("pixel", "NEW HIGH SCORE");
-    text->setPosition(wb.cx, wb.cy);
-    text->setScale(0.75);
+    auto k= XCFG()->scaleBmfont(text,50);
+    CC_POS2(text, wb.cx, wb.cy);
+    text->setScale(k * 0.75);
     addItem(text, 10);
 
     text = cx::reifyBmfLabel("pixel", FTOS(score));
-    text->setPosition(wb.cx, wb.top * 0.4);
-    text->setScale(0.75);
+    k= XCFG()->scaleBmfont(text,50);
+    CC_POS2(text, wb.cx, wb.top * 0.4);
+    text->setScale(k * 0.75);
     addItem(text, 10);
   } else {
     text = cx::reifyBmfLabel("pixel", "BETTER LUCK NEXT TIME");
-    text->setPosition(wb.cx, wb.cy);
-    text->setScale(0.75);
+    k= XCFG()->scaleBmfont(text,50);
+    CC_POS2(text, wb.cx, wb.cy);
+    text->setScale(k * 0.75);
     addItem(text, 10);
   }
 
 }
+
+
+
+
 
 NS_END
 

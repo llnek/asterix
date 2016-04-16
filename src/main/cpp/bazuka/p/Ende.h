@@ -21,7 +21,8 @@ NS_BEGIN(bazuka)
 class HUDLayer;
 struct CC_DLL Ende : public f::XLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
   __decl_create_layer(Ende)
   __decl_deco_ui()

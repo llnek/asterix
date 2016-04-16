@@ -19,22 +19,20 @@ NS_BEGIN(bazuka)
 //
 struct CC_DLL Enemy : public f::CPixie {
 
-  Enemy(not_null<c::Node*> s)
-  : CPixie(s) {
-  }
+  __decl_ptr(c::Action,idle)
+  Enemy() {}
 
 public:
-
-  __decl_ptr(c::Action,idle)
 
   virtual ~Enemy() {
     CC_DROP(idle);
   }
 
-  static Enemy* create();
+  static owner<Enemy*> create();
   void shoot(float dt);
   void lockAndLoad();
   void sync();
+
 };
 
 

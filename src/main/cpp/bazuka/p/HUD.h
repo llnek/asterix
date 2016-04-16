@@ -28,8 +28,8 @@ public:
   __decl_deco_ui()
   __decl_get_iid(3)
 
+  __decl_getr(int, _score, Score)
   void updateScore(int);
-  int getScore() { return _score; }
 
 };
 

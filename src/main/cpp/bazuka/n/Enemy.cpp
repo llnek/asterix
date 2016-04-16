@@ -20,45 +20,42 @@ NS_BEGIN(bazuka)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Enemy* Enemy::create() {
+owner<Enemy*> Enemy::create() {
 
-  auto sp= cx::reifySprite("enemy.png");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
-
-  CC_HIDE(sp);
-  MGML()->addAtlasItem("game-pics", sp);
-
-  auto anim = c::Animation::create();
-  auto enemy= mc_new1(Enemy,sp);
-
+  auto z= mc_new(Enemy);
+  z->initWithSpriteFrameName("enemy.png");
+  XCFG()->fit(z);
+  CC_HIDE(z);
+  MGML()->addAtlasItem("game-pics", z);
+  auto anim = cx::createAnimation(0.25,false,0);
   for (auto i = 1; i <= 4; ++i) {
-    anim->addSpriteFrame(
-        cx::getSpriteFrame("enemy_idle_"+ FTOS(i)+".png"));
+    auto s= cx::getSpriteFrame("enemy_idle_"+ FTOS(i)+".png");
+    XCFG()->fit(s);
+    anim->addSpriteFrame(s);
   }
-  anim->setDelayPerUnit(0.25);
-
-  enemy->idle= c::RepeatForever::create(c::Animate::create(anim));
-  CC_KEEP(enemy->idle);
-
-  return enemy;
+  z->idle= c::RepeatForever::create(c::Animate::create(anim));
+  CC_KEEP(z->idle);
+  z->autorelease();
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::lockAndLoad() {
-  node->schedule([=](float dt) {
+  this->schedule([=](float dt) {
       this->shoot(dt);
       },
       CC_CSV(c::Float, "ENEMY+FIRE+DELAY"),
       "Enemy::shoot");
-  node->runAction(this->idle->clone());
+  this->runAction(this->idle->clone());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::sync() {
-  node->setPositionX(node->getPositionX() - 3);
+  this->setPositionX(this->getPositionX() - 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,7 +67,7 @@ void Enemy::shoot(float dt) {
   auto pos= this->pos();
   auto sz= b->csize();
 
-  b->inflate(pos.x - HWZ(sz), pos.y - CC_ZH(sz) * 0.05);
+  cx::resurrect((ecs::Node*)e, pos.x - HWZ(sz), pos.y - CC_ZH(sz) * 0.05);
   cx::sfxPlay("gunshot");
 }
 

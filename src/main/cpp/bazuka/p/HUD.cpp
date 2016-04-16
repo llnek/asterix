@@ -24,14 +24,15 @@ void HUDLayer::decoUI() {
   auto wb= cx::visBox();
 
   _scoreLabel = cx::reifyBmfLabel("pixel", "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.9);
-  _scoreLabel->setScale(0.5);
+  auto k= XCFG()->scaleBmfont(_scoreLabel, 50);
+  CC_POS2(_scoreLabel, wb.cx, wb.top * 0.9);
+  _scoreLabel->setScale(k * 0.5);
   addItem(_scoreLabel, 10);
 
   auto pause = cx::reifyMenuBtn("pause.png");
-  auto mnu = cx::mkMenu(pause);
-  auto sz= CC_CSIZE(pause);
-  pause->setPosition(wb.right- HWZ(sz), wb.top - HHZ(sz));
+  XCFG()->fit(pause);
+  auto gap= CC_CHT(pause)/GOLDEN_RATIO;
+  CC_POS2(pause, wb.right- gap, wb.top - gap);
   pause->setCallback([=](c::Ref*){
     cx::sfxPlay("pop");
     cx::pushEx(MMenu::reify());

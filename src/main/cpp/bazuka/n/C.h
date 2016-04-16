@@ -40,10 +40,14 @@ enum ProjectileType {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Hero : public f::CPixie {
-  Hero(not_null<c::Node*> s)
-  : CPixie(s) {
+class CC_DLL Hero : public f::CPixie {
+  Hero() {}
+public:
+
+  static owner<Hero*> create() {
+
   }
+
   virtual ~Hero() {
     CC_DROP(boost);
     CC_DROP(idle);
@@ -54,33 +58,42 @@ struct CC_DLL Hero : public f::CPixie {
   __decl_iz(action)
   __decl_iz(state)
   __decl_bf(jump)
+
   void animate() {
     if (state==kPlayerStateBoost) { animXXX(kActionStateBoost,boost);  }
     if (state== kPLayerStateIdle) { animXXX(kActionStateIdle,idle);  }
   }
+
   void animXXX(int a, c::Action *act) {
     if (action != a) {
       action = a;
-      node->stopAllActions();
-      node->runAction(act->clone());
+      this->stopAllActions();
+      this->runAction(act->clone());
     }
   }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Projectile : public f::CPixie {
-  __decl_iz(type)
-  Projectile(not_null<c::Node*> s, int type)
-  : CPixie(s) {
-    this->type=type;
+  Projectile(int t) {
+    type = t;
   }
+public:
+
+  __decl_iz(type)
+
+  static owner<Projectile*> create( int type) {
+
+  }
+
   void sync() {
     if (type == kTypeBullet) {
-      node->setPositionX(node->getPositionX() - 7);
+      this->setPositionX(this->getPositionX() - 7);
     }
     if (type == kTypeRocket) {
-      node->setPositionX(node->getPositionX() + 7);
+      this->setPositionX(this->getPositionX() + 7);
     }
   }
 };
@@ -91,7 +104,7 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
 
   __decl_ptr(ScrollingBgLayer, bgLayer)
-  __decl_md(c::Vec2, gravity)
+  __decl_md(CCT_PT, gravity)
 
 };
 

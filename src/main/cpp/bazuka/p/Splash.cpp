@@ -36,8 +36,9 @@ void Splash::decoUI() {
   _bg->set(roll);
   addItem(_bg);
 
-  auto nameLabel = cx::reifyBmfLabel("pixel", "Ms.tinyBazooka");
-  nameLabel->setPosition(wb.cx, wb.top * 0.8);
+  auto nameLabel = cx::reifyBmfLabel("title", "Ms.tinyBazooka");
+  XCFG()->scaleBmfont(nameLabel, 64);
+  CC_POS2(nameLabel, wb.cx, wb.top * 0.8);
   addItem(nameLabel);
 
   // jiggle the label
@@ -46,30 +47,32 @@ void Splash::decoUI() {
   auto skeletonNode = spine::SkeletonAnimation::createWithFile(
       "pics/player.json", "pics/player.atlas", 1.0f);
   skeletonNode->addAnimation(0,"runCycle",true,0);
-  skeletonNode->setPosition(
+  XCFG()->fit(skeletonNode);
+  CC_POS2(skeletonNode,
       wb.right * .125 ,
       wb.top * 0.2 - HHZ(CC_CSIZE(skeletonNode)));
   addItem(skeletonNode);
 
   auto play= cx::reifyMenuBtn("play.png");
+  XCFG()->fit(play);
   auto sz=CC_CSIZE(play);
-  auto menu = cx::mkMenu(play);
-  play->setCallback(
-    [=](c::Ref*) {
+  play->setCallback([=](c::Ref*) {
       cx::sfxPlay("pop");
-      cx::runEx(Game::reify( new GameCtx() ));
+      cx::runEx(Game::reify(mc_new(GameCtx)));
     });
-  play->setPosition(wb.cx, wb.cy);
-  addItem(menu, 10);
+  CC_POS2(play, wb.cx, wb.cy);
+  addItem(cx::mkMenu(play), 10);
 
   auto newHighScoreLabel = cx::reifyBmfLabel("pixel", "CURRENT HIGH SCORE");
-  newHighScoreLabel->setPosition(wb.cx, wb.top * 0.15);
-  newHighScoreLabel->setScale(0.5);
+  auto k= XCFG()->scaleBmfont(newHighScoreLabel,50);
+  CC_POS2(newHighScoreLabel, wb.cx, wb.top * 0.15);
+  newHighScoreLabel->setScale(0.5 * k);
   addItem(newHighScoreLabel, 10);
 
   auto highScoreLabel = cx::reifyBmfLabel("pixel", "0");
-  highScoreLabel->setPosition(wb.cx, wb.top * 0.1);
-  highScoreLabel->setScale(0.5);
+  k= XCFG()->scaleBmfont(highScoreLabel, 50);
+  CC_POS2(highScoreLabel, wb.cx, wb.top * 0.1);
+  highScoreLabel->setScale(0.5 * k);
   addItem(highScoreLabel, 10);
 
   auto highScore = CC_APPDB()->getIntegerForKey("GameHighScore");
@@ -81,8 +84,8 @@ void Splash::decoUI() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::moveXXX(c::Node *ref, float delta) {
-  auto actionMove = c::MoveTo::create(1.0,
-      c::Vec2(ref->getPosition().x, ref->getPosition().y + delta));
+  auto actionMove = c::MoveTo::create(1,
+      CCT_PT(ref->getPositionX(), ref->getPositionY() + delta));
   ref->runAction(
       c::Sequence::create(
         c::EaseSineInOut::create((c::ActionInterval*)actionMove),

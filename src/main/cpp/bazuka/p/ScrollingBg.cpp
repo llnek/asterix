@@ -30,18 +30,18 @@ ScrollingBg* ScrollingBg::create(const sstr &png, float speed, float yPos) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void ScrollingBg::set(const sstr &png, float speed, float yPos) {
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   head = cx::reifySprite(png);
   tail = cx::reifySprite(png);
 
-  head->setPosition(wb.cx, yPos);
+  CC_POS2(head, wb.cx, yPos);
   head->setAnchorPoint(cx::anchorB());
   head->setScaleX(1.01);
   addChild(head);
 
-  tail->setPosition(wb.cx + wz.size.width,yPos);
+  CC_POS2(tail, wb.cx + wz.size.width,yPos);
   tail->setAnchorPoint(cx::anchorL());
   tail->setScaleX(1.01);
   addChild(tail);
@@ -53,17 +53,17 @@ void ScrollingBg::set(const sstr &png, float speed, float yPos) {
 //
 void ScrollingBg::sync() {
 
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
     // scroll bg left or right
 
-  if (head->getPosition().x < wb.left - HWZ(wz.size)) {
-    head->setPosition(wb.right + HWZ(wz.size), head->getPosition().y);
+  if (head->getPositionX() < wb.left - HWZ(wz)) {
+    CC_POS2(head, wb.right + HWZ(wz), head->getPositionY());
   }
 
-  if (tail->getPosition().x < wb.left - HWZ(wz.size)) {
-    tail->setPosition(wb.right + HWZ(wz.size), head->getPosition().y);
+  if (tail->getPositionX() < wb.left - HWZ(wz)) {
+    CC_POS2(tail, wb.right + HWZ(wz), head->getPositionY());
   }
 
   auto pos1 = head->getPosition();

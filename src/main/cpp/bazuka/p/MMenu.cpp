@@ -26,46 +26,48 @@ void MMenu::decoUI() {
   _bgLayer->set(3);
   addItem(_bgLayer);
 
-  auto nameLabel = cx::reifyBmfLabel("pixel", "Options Menu");
-  auto wz= cx::visRect();
+  auto nameLabel = cx::reifyBmfLabel("title", "Options Menu");
+  XCFG()->scaleBmfont(nameLabel,64);
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  nameLabel->setPosition(wb.cx, wb.top * 0.8);
+  CC_POS2(nameLabel, wb.cx, wb.top * 0.8);
   addItem(nameLabel);
 
   auto splash = cx::reifyMenuBtn("mainmenu.png");
   auto back = cx::reifyMenuBtn("resume.png");
-  auto menu = cx::mkHMenu(
-      s_vec<c::MenuItem*>{splash,back},
-      CC_ZW(CC_CSIZE(splash))/4);
-
+  XCFG()->fit(splash);
+  XCFG()->fit(back);
   splash->setCallback([=](c::Ref*) {
     cx::sfxPlay("pop");
     cx::pop();
-    cx::runEx(Splash::reify());
+    cx::prelude();
   });
   back->setCallback([=](c::Ref*) {
       cx::sfxPlay("pop");
       cx::pop();
       if (XCFG()->hasAudio()) { cx::resumeMusic(); }
   });
-  menu->setPosition(wb.cx, wb.cy);
+  auto menu = cx::mkHMenu( s_vec<c::MenuItem*>{splash,back},
+      CC_CHT(splash)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.cy);
   addItem(menu, 10);
 
   // audio
   auto n3= "soundOFF.png";
   auto n2= "soundON.png";
   s_arr<c::MenuItem*,2> audios= { cx::reifyMenuBtn(n3,n3), cx::reifyMenuBtn(n2,n2) };
-  auto sz= CC_CSIZE(audios[0]);
-  auto gap= CC_ZW(sz) /4;
+  XCFG()->fit(audios[0]);
+  XCFG()->fit(audios[1]);
   auto c= cx::white();
 
   audios[0]->setColor(c);
   audios[1]->setColor(c);
 
+  auto gap= CC_CHT(audios[0])/GOLDEN_RATIO;
   addAudioIcons(audios,
       cx::anchorBR(),
-      c::Vec2(wb.right-gap, wb.bottom+gap));
+      CCT_PT(wb.right-gap, wb.bottom+gap));
 
   if (XCFG()->hasAudio()) {
     cx::pauseMusic();
@@ -79,6 +81,8 @@ void MMenu::decoUI() {
 void MMenu::update(float ) {
   _bgLayer->sync();
 }
+
+
 
 NS_END
 

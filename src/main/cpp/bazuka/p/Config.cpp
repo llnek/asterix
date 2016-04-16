@@ -47,12 +47,13 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addImage("game.bg", CC_STR("pics/bg.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
+  addImage("game.bg", CC_STR("pics/bg.jpg"));
 
   addEffect("enemyKill", CC_STR("sfx/enemyKill.wav"));
   addEffect("fireRocket", CC_STR("sfx/fireRocket.wav"));
@@ -63,23 +64,28 @@ void Config::initAssets() {
 
   addMusic("background", CC_STR("sfx/bgMusic.wav"));
 
-  addFont("pixel", CC_STR("fon/en/PixelFont.fnt"));
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("pixel", CC_STR("fonts/en/04b30.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float p) {
+  return p/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
