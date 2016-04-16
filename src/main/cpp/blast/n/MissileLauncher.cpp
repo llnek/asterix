@@ -25,9 +25,9 @@ bool MissileLauncher::init() {
   if (!PowerUp::init()) {
   return false; }
 
-  s_vec<c::Vec2> vertices1;
-  s_vec<c::Vec2> vertices2;
-  s_vec<c::Vec2> vertices;
+  s_vec<CCT_PT> vertices1;
+  s_vec<CCT_PT> vertices2;
+  s_vec<CCT_PT> vertices;
 
   // get two regular pentagons, one smaller than the other and with a slightly advance rotation
   getRegularPolygonVertices(vertices1, 5, POWERUP_ICON_INNER_RADIUS - 6, M_PI * -2/20);
@@ -64,19 +64,19 @@ void MissileLauncher::activate() {
   PowerUp::activate();
 
   // generate a target for each missile
-  s_vec<c::Vec2> initial_direction;
+  s_vec<CCT_PT> initial_direction;
   auto target = generateTargets();
-  auto wz= cx::visRect();
-    auto pt=getPosition();
+  auto wz= cx::visSize();
+  auto pt=getPosition();
   // generate an initial direction vertor for each missile
-  getRegularPolygonVertices(initial_direction, 5, CC_ZW(wz.size)/4, M_PI * 2/20);
+  getRegularPolygonVertices(initial_direction, 5, CC_ZW(wz)/4, M_PI * 2/20);
 
   for (auto i = 0; i < 5; ++i) {
     // create a missile with a target, initial direction & speed
     auto missile = Missile::create(ss, target[i],
         c::ccpMult(initial_direction[i].getNormalized(), MISSILE_SPEED));
     // position the missile over the launcher
-    missile->setPosition(pt);
+    CC_POS1(missile, pt);
     addMissile(ss, missile);
   }
 
@@ -86,10 +86,10 @@ void MissileLauncher::activate() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<c::Vec2> MissileLauncher::generateTargets() {
+const s_vec<CCT_PT> MissileLauncher::generateTargets() {
   auto num_enemies = ss->enemies->count();
   auto box=MGMS()->getEnclosureRect();
-  s_vec<c::Vec2> target_points;
+  s_vec<CCT_PT> target_points;
   auto targets_found = 0;
 
   // loop through the first 5 enemies within GameWorld & save their positions
@@ -101,8 +101,9 @@ const s_vec<c::Vec2> MissileLauncher::generateTargets() {
 
   // if less than 5 enemies were found, fill up with random positions within the boundary
   while (targets_found < 5) {
-    target_points.push_back(c::Vec2(cx::randInt(box.origin.x + box.size.width),
-          cx::randInt(box.origin.y + box.size.height)));
+    target_points.push_back(
+        CCT_PT(cx::randInt(box.origin.x + box.size.width),
+        cx::randInt(box.origin.y + box.size.height)));
     ++targets_found;
   }
 

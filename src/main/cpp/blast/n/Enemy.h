@@ -15,7 +15,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 
 #define NUM_SPIKES 10
 
@@ -27,28 +27,25 @@ NS_BEGIN(blast)
 class Enemy : public f::CDrawNode {
 protected:
 
-  void generateVertices(c::Vec2 vertices[]);
+  void generateVertices(CCT_PT vertices[]);
   __decl_mv(float, speedMultiplier,0.25)
   __decl_iz(timeAlive)
 
 public:
 
   static owner<Enemy*> create() {
-    auto z= new Enemy();
-    z->init();
-    z->autorelease();
-    return z;
+    return f::reifyRefType<Enemy>();
   }
 
   virtual bool init();
 
-  void update(const c::Vec2 &player, bool towards_player);
+  void update(const CCT_PT &player, bool towards_player);
   void tick();
   void spawn(float delay);
   void finishSpawn();
   void die();
 
-  __decl_mv(c::Vec2, speed, CC_ZPT)
+  __decl_md(CCT_PT, speed)
   __decl_bf(isSpawning)
   __decl_bf(isDead)
   __decl_bf(mustBeRemoved)

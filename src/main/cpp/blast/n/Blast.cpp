@@ -12,7 +12,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "Blast.h"
 
 NS_ALIAS(cx, fusii::ccsx)

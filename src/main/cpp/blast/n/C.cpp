@@ -13,7 +13,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "C.h"
 #include "Enemy.h"
 #include "Missile.h"
@@ -28,7 +27,7 @@ NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void init(GVars *ss) {
+void init(not_null<GVars*> ss) {
 
   // arrays to store the frequency of formations for each skill level
   ss->skill1_formations = {0, 4};
@@ -59,24 +58,22 @@ void init(GVars *ss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void addEnemyFormation(GVars *ss, Player *player) {
-    auto box=MGMS()->getEnclosureRect();
-  // fetch an enemy formation formation
+void addEnemyFormation(not_null<GVars*> ss, not_null<Player*> player) {
   auto type = getEnemyFormationType(ss);
-  auto py= PCAST(c::Node,player);
+  auto box=MGMS()->getEnclosureRect();
   // fetch a list of positions for the given formation
   auto formation =
     getEnemyFormation(type, box, py->getPosition());
   auto num_enemies_on_screen = ss->enemies->count();
   auto num_enemies_to_create = formation.size();
-  // limit the total number of enemies to MAX_ENEMIES
+  // limit enemies to MAX_ENEMIES
   if (num_enemies_on_screen + num_enemies_to_create >= MAX_ENEMIES) {
     num_enemies_to_create = MAX_ENEMIES - num_enemies_on_screen;
   }
   // create, add & position enemies based on the formation
   for (auto i = 0; i < num_enemies_to_create; ++i) {
     auto enemy = Enemy::create();
-    enemy->setPosition(formation[i]);
+    CC_POS1(enemy, formation[i]);
     enemy->spawn(i * ENEMY_SPAWN_DELAY);
     MGML()->addItem(enemy, E_LAYER_ENEMIES);
     ss->enemies->addObject(enemy);
@@ -85,33 +82,33 @@ void addEnemyFormation(GVars *ss, Player *player) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-EEnemyFormation getEnemyFormationType(GVars *ss) {
+EEnemyFormation getEnemyFormationType(not_null<GVars*> ss) {
   // return a formation type from a list of formation types, based on time user has been playing
   // the longer the user has survived, the more difficult the formations will be
-  int rc= E_FORMATION_RANDOM_EASY;
+  auto rc= E_FORMATION_RANDOM_EASY;
 
   if (ss->seconds > E_SKILL6) {
-    auto i = cx::rand() * GVars::skill6_formations_size;
+    auto i = cx::randInt( GVars::skill6_formations_size);
     rc= ss->skill6_formations[i];
   }
   else if (ss->seconds > E_SKILL5) {
-    auto i = cx::rand() * GVars::skill5_formations_size;
+    auto i = cx::randInt( GVars::skill5_formations_size);
     rc= ss->skill5_formations[i];
   }
   else if (ss->seconds > E_SKILL4) {
-    auto i = cx::rand() * GVars::skill4_formations_size;
+    auto i = cx::randInt( GVars::skill4_formations_size);
     rc= ss->skill4_formations[i];
   }
   else if (ss->seconds > E_SKILL3) {
-    auto i = cx::rand() * GVars::skill3_formations_size;
+    auto i = cx::randInt( GVars::skill3_formations_size);
     rc= ss->skill3_formations[i];
   }
   else if (ss->seconds > E_SKILL2) {
-    auto i = cx::rand() * GVars::skill2_formations_size;
+    auto i = cx::randInt( GVars::skill2_formations_size);
     rc= ss->skill2_formations[i];
   }
   else if (ss->seconds > E_SKILL1) {
-    auto i = cx::rand() * GVars::skill1_formations_size;
+    auto i = cx::randInt( GVars::skill1_formations_size);
     rc= ss->skill1_formations[i];
   }
 
@@ -120,13 +117,11 @@ EEnemyFormation getEnemyFormationType(GVars *ss) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void enemyKilled(GVars *ss, Enemy *e) {
+void enemyKilled(not_null<GVars*> ss, not_null<Enemy*> e) {
   e->die();
 
-  // increment counters
   ss->enemies_killed_total += 1;
   ss->enemies_killed_combo += 1;
-  // reset combo time
   ss->combo_timer = COMBO_TIME;
 
   auto msg= j::json({
@@ -137,14 +132,13 @@ void enemyKilled(GVars *ss, Enemy *e) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void addPowerUp(GVars *ss, Player *py) {
-  // limit the number of power-ups on screen
+void addPowerUp(not_null<GVars*> ss, not_null<Player*> py) {
+
   if (ss->powerups->count() >= MAX_POWERUPS) {
   return; }
 
-    auto box= MGMS()->getEnclosureRect();
-  // randomly pick a type of power-up from the power-up frequency array
   auto i = cx::randInt(ss->powerup_frequency_size);
+  auto box= MGMS()->getEnclosureRect();
   auto ptype = (EPowerUpType)ss->powerup_frequency[i];
   PowerUp *powerup;
 
@@ -163,8 +157,8 @@ void addPowerUp(GVars *ss, Player *py) {
   }
 
   // position it within the boundary & add it
-  powerup->setPosition(box.origin.x + cx::randInt(CC_ZW(box.size)),
-      box.origin.y + cx::randInt(CC_ZH(box.size)));
+  CC_POS2(powerup, box.origin.x + cx::randInt(CC_ZW(box.size)),
+                   box.origin.y + cx::randInt(CC_ZH(box.size)));
   powerup->spawn();
   MGML()->addItem(powerup, E_LAYER_POWERUPS);
   ss->powerups->addObject(powerup);
@@ -172,16 +166,14 @@ void addPowerUp(GVars *ss, Player *py) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void addBlast(GVars *ss, Blast *blast) {
-  // add Blast to screen & respective container
+void addBlast(not_null<GVars*> ss, not_null<Blast*> blast) {
   MGML()->addItem(blast, E_LAYER_BLASTS);
   ss->blasts->addObject(blast);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void addMissile(GVars *ss, Missile *missile) {
-  // add Missile to screen & respective container
+void addMissile(not_null<GVars*> ss, not_null<Missile*> missile) {
   MGML()->addItem(missile, E_LAYER_MISSILES);
   ss->missiles->addObject(missile);
 }
@@ -189,14 +181,14 @@ void addMissile(GVars *ss, Missile *missile) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void getRegularPolygonVertices(
-    s_vec<c::Vec2> &vertices, int num_vertices, float circum_radius) {
+    s_vec<CCT_PT> &vertices, int num_vertices, float circum_radius) {
   getRegularPolygonVertices(vertices, num_vertices, circum_radius, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void getRegularPolygonVertices(
-    s_vec<c::Vec2> &vertices, int num_vertices, float circum_radius, float start_angle) {
+    s_vec<CCT_PT> &vertices, int num_vertices, float circum_radius, float start_angle) {
 
   auto delta_theta = 2 * M_PI / num_vertices;
   auto theta = start_angle;
@@ -204,8 +196,8 @@ void getRegularPolygonVertices(
 
   for (auto i = 0; i < num_vertices; ++i, theta += delta_theta) {
     vertices.push_back(
-        c::Vec2(circum_radius * cosf(theta),
-          circum_radius * sinf(theta)));
+        CCT_PT(circum_radius * cosf(theta),
+               circum_radius * sinf(theta)));
   }
 }
 
@@ -233,10 +225,10 @@ int getNumVerticesForFormation(EEnemyFormation type) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const s_vec<c::Vec2> getEnemyFormation(EEnemyFormation type, const c::Rect &boundary, const c::Vec2 &anchor_point) {
+const s_vec<CCT_PT> getEnemyFormation(EEnemyFormation type, const CCT_RT &boundary, const CCT_PT &anchor_point) {
 
   int num_vertices = getNumVerticesForFormation(type);
-  s_vec<c::Vec2> vertices;
+  s_vec<CCT_PT> vertices;
 
   switch(type) {
     case E_FORMATION_RANDOM_EASY:
@@ -266,78 +258,80 @@ const s_vec<c::Vec2> getEnemyFormation(EEnemyFormation type, const c::Rect &boun
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void generateRandomFormation(s_vec<c::Vec2> &vertices, int num_vertices, const c::Rect &boundary) {
+void generateRandomFormation(s_vec<CCT_PT> &vertices, int num_vertices, const CCT_RT &boundary) {
 
   // return random positions within the game's boundary
   for (auto i = 0; i < num_vertices; ++i) {
-      auto vertex = c::Vec2(0,0);
-    vertex.x = boundary.origin.x + ENEMY_RADIUS*2 + (cx::rand() * (CC_ZW(boundary.size) - ENEMY_RADIUS*4));
-    vertex.y = boundary.origin.y + ENEMY_RADIUS*2 + (cx::rand() * (CC_ZH(boundary.size) - ENEMY_RADIUS*4));
+    auto vertex = CC_ZPT;
+    vertex.x = boundary.origin.x + ENEMY_RADIUS*2 +
+      (cx::rand() * (CC_ZW(boundary.size) - ENEMY_RADIUS*4));
+    vertex.y = boundary.origin.y + ENEMY_RADIUS*2 +
+      (cx::rand() * (CC_ZH(boundary.size) - ENEMY_RADIUS*4));
     vertices.push_back(vertex);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void generateVerticalFormation(s_vec<c::Vec2> &vertices, int num_vertices, const c::Rect &boundary) {
+void generateVerticalFormation(s_vec<CCT_PT> &vertices, int num_vertices, const CCT_RT &boundary) {
   // choose between left & right edge of screen
   auto start_x = (CCRANDOM_MINUS1_1() > 0)
     ? boundary.origin.x + ENEMY_RADIUS*2
     : boundary.origin.x + CC_ZW(boundary.size) - ENEMY_RADIUS*2;
 
-  auto start_point = c::Vec2(start_x, boundary.origin.y + ENEMY_RADIUS*2);
+  auto start_point = CCT_PT(start_x, boundary.origin.y + ENEMY_RADIUS*2);
   // calculate vertical distance between adjacent enemies
   auto vertical_gap = CC_ZH(boundary.size) / num_vertices;
 
   for (auto i = 0; i < num_vertices; ++i) {
-    vertices.push_back(c::Vec2(start_point.x, start_point.y + i * vertical_gap));
+    vertices.push_back(CCT_PT(start_point.x, start_point.y + i * vertical_gap));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void generateHorizontalFormation(s_vec<c::Vec2> &vertices, int num_vertices, const c::Rect &boundary) {
+void generateHorizontalFormation(s_vec<CCT_PT> &vertices, int num_vertices, const CCT_RT &boundary) {
   // choose between top & bottom edge of screen
   auto start_y = (CCRANDOM_MINUS1_1() > 0)
     ? boundary.origin.y + ENEMY_RADIUS*2
     : boundary.origin.y + CC_ZH(boundary.size) - ENEMY_RADIUS*2;
-  auto start_point = c::Vec2(boundary.origin.x + ENEMY_RADIUS*2, start_y);
+  auto start_point = CCT_PT(boundary.origin.x + ENEMY_RADIUS*2, start_y);
   // calculate horizontal distance between adjacent enemies
   auto horizontal_gap = CC_ZW(boundary.size) / num_vertices;
 
   for (auto i = 0; i < num_vertices; ++i) {
-    vertices.push_back(c::Vec2(start_point.x + i * horizontal_gap, start_point.y));
+    vertices.push_back(CCT_PT(start_point.x + i * horizontal_gap, start_point.y));
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void generatePolygonFormation(
-    EEnemyFormation type, s_vec<c::Vec2> &vertices,
-    int num_vertices, const c::Rect &boundary, const c::Vec2 &anchor_point) {
+    EEnemyFormation type, s_vec<CCT_PT> &vertices,
+    int num_vertices, const CCT_RT &boundary, const CCT_PT &anchor_point) {
 
-  auto wz= cx::visRect();
-  int num_polygons = 1;
-  auto polygon_radius = CC_ZW(wz.size)/6;
+  auto wz= cx::visSize();
+  auto num_polygons = 1;
+  auto polygon_radius = CC_ZW(wz)/6;
   // formations contain more polygons and are smaller as they increase in difficulty
   switch (type) {
     case E_FORMATION_POLYGON_EASY:
       num_polygons = 1;
-      polygon_radius = CC_ZW(wz.size)/6;
+      polygon_radius = CC_ZW(wz)/6;
       break;
     case E_FORMATION_POLYGON_MEDIUM:
       num_polygons = 2;
-      polygon_radius = CC_ZW(wz.size)/7;
+      polygon_radius = CC_ZW(wz)/7;
       break;
     case E_FORMATION_POLYGON_HARD:
       num_polygons = 3;
-      polygon_radius = CC_ZW(wz.size)/8;
+      polygon_radius = CC_ZW(wz)/8;
       break;
   }
 
   // calculate number of vertices for a single polygon
   auto num_vertices_per_polygon = (int)(num_vertices/num_polygons);
-  s_vec<c::Vec2> vertices_per_polygon;
+  s_vec<CCT_PT> vertices_per_polygon;
 
   for (auto i = 0; i < num_polygons; ++i) {
     // get the vertices of a single polygon

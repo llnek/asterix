@@ -15,7 +15,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 #include "PowerUp.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -25,21 +25,18 @@ NS_BEGIN(blast)
 //
 class MissileLauncher : public PowerUp {
 
-  const s_vec<c::Vec2> generateTargets();
+  const s_vec<CCT_PT> generateTargets();
   __decl_ptr(GVars,ss)
 
 public:
 
-  static MissileLauncher* create(GVars *ss) {
-    auto r= new MissileLauncher();
+  static MissileLauncher* create(not_null<GVars*> ss) {
+    auto r= f::reifyRefType<MissileLauncher>();
     r->ss=ss;
-    r->init();
-    r->autorelease();
     return r;
   }
 
   virtual bool init();
-
   virtual void update();
   virtual void activate();
 

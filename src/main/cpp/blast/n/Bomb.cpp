@@ -15,7 +15,6 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
 #include "Bomb.h"
 #include "Blast.h"
 
@@ -31,7 +30,7 @@ bool Bomb::init() {
 
   // draw a triangle with a green border
   // get vertices for a triangle
-  s_vec<c::Vec2> vs;
+  s_vec<CCT_PT> vs;
   getRegularPolygonVertices(vs, 3, POWERUP_ICON_INNER_RADIUS);
   drawPolygon(&vs[0], 3,
       c::ccc4f(0, 0, 0, 0), 3, c::ccc4f(0, 1, 0, 1));
@@ -60,7 +59,7 @@ void Bomb::activate() {
   // create a blast 8 times the size of the player that should last for 2 seconds
   auto blast = Blast::create(PLAYER_RADIUS * 8, 2);
   // position blast over bomb
-  blast->setPosition(getPosition());
+  CC_POS1(blast, getPosition());
   addBlast(ss, blast);
   cx::sfxPlay("big_blast");
 

@@ -22,7 +22,7 @@ bool Enemy::init() {
   if (! c::DrawNode::init()) {
   return false; }
 
-  c::Vec2 vertices[NUM_SPIKES*2];
+  CCT_PT vertices[NUM_SPIKES*2];
   generateVertices(vertices);
 
   // draw the star shaped polygon filled with red colour
@@ -38,9 +38,9 @@ bool Enemy::init() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Enemy::generateVertices(c::Vec2 vertices[]) {
-  s_vec<c::Vec2> inner_vertices;
-  s_vec<c::Vec2> outer_vertices;
+void Enemy::generateVertices(CCT_PT vertices[]) {
+  s_vec<CCT_PT> inner_vertices;
+  s_vec<CCT_PT> outer_vertices;
 
   // get two regular polygons, one smaller than the other and with a slightly advance rotation
   getRegularPolygonVertices(inner_vertices, NUM_SPIKES, ENEMY_RADIUS);
@@ -50,19 +50,20 @@ void Enemy::generateVertices(c::Vec2 vertices[]) {
 
   // run a loop to splice the polygons together to form a star
   for (auto i = 0; i < NUM_SPIKES; ++i) {
-    vertices[i*2] = inner_vertices[i];
     vertices[i*2 + 1] = outer_vertices[i];
+    vertices[i*2] = inner_vertices[i];
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Enemy::update(const c::Vec2 &playerpos, bool towards_player) {
+void Enemy::update(const CCT_PT &playerpos, bool towards_player) {
   // no movement while spawning
   if (isSpawning) {
   return; }
-    auto box=MGMS()->getEnclosureRect();
-    auto pt=getPosition();
+
+  auto box=MGMS()->getEnclosureRect();
+  auto pt=getPosition();
   // first find a vector pointing to the player
   auto dir= c::ccpSub(playerpos, pt);
   // normalize direction then multiply with the speed_multiplier_
@@ -74,11 +75,11 @@ void Enemy::update(const c::Vec2 &playerpos, bool towards_player) {
     setPosition(nextpos);
   }
   else if (RECT_CONTAINS_CIRCLE(box,
-        c::Vec2(nextpos.x - speed.x, nextpos.y), ENEMY_RADIUS * 1.5)) {
+        CCT_PT(nextpos.x - speed.x, nextpos.y), ENEMY_RADIUS * 1.5)) {
     setPosition(nextpos.x - speed.x, nextpos.y);
   }
   else if (RECT_CONTAINS_CIRCLE(box,
-        c::Vec2(nextpos.x, nextpos.y - speed.y), ENEMY_RADIUS * 1.5)) {
+        CCT_PT(nextpos.x, nextpos.y - speed.y), ENEMY_RADIUS * 1.5)) {
     setPosition(nextpos.x, nextpos.y - speed.y);
   }
 }

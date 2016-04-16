@@ -15,7 +15,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 #include "PowerUp.h"
 
 NS_ALIAS(cx, fusii::ccsx)
@@ -25,7 +25,7 @@ NS_BEGIN(blast)
 //
 struct Bomb : public PowerUp {
 
-  static owner<Bomb*> create(GVars *ss) {
+  static owner<Bomb*> create(not_null<GVars*> ss) {
     auto z= f::reifyRefType<Bomb>();
     z->ss=ss;
     return z;

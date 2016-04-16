@@ -15,7 +15,7 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
-#include "lib.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(blast)
@@ -24,19 +24,19 @@ NS_BEGIN(blast)
 //
 class Missile : public f::CDrawNode {
 
-  __decl_mv(c::Vec2, prevPos, CC_ZPT)
+  __decl_md(CCT_PT, prevPos)
   __decl_ptr(GVars,ss)
 
 public:
 
-  static owner<Missile*> create(GVars*, const c::Vec2 &target, const c::Vec2 &speed);
+  static owner<Missile*> create(not_null<GVars*>, const CCT_PT &target, const CCT_PT &speed);
 
   virtual void update(float dt);
   virtual bool init();
   void explode(float dt = 0);
 
-  __decl_mv(c::Vec2, target, CC_ZPT)
-  __decl_mv(c::Vec2, speed, CC_ZPT)
+  __decl_md(CCT_PT, target)
+  __decl_md(CCT_PT, speed)
   __decl_bf(mustBeRemoved)
   __decl_bf(hasExploded)
 

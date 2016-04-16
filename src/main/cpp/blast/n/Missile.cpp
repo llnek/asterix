@@ -17,13 +17,11 @@ NS_BEGIN(blast)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Missile*> Missile::create(GVars *ss, const c::Vec2 &target, const c::Vec2 &speed) {
-  auto missile = new Missile();
+owner<Missile*> Missile::create(not_null<GVars*> ss, const CCT_PT &target, const CCT_PT &speed) {
+  auto missile = f::reifyRefType<Missile>();
   missile->target = target;
   missile->speed = speed;
   missile->ss=ss;
-  missile->init();
-  missile->autorelease();
   return missile;
 }
 
@@ -31,11 +29,11 @@ owner<Missile*> Missile::create(GVars *ss, const c::Vec2 &target, const c::Vec2 
 //
 bool Missile::init() {
   // generate vertices for the missile
-  c::Vec2 vertices[] = {
-    c::Vec2(MISSILE_RADIUS * 1.75, 0),
-    c::Vec2(MISSILE_RADIUS * -0.875, MISSILE_RADIUS),
-    c::Vec2(MISSILE_RADIUS * -1.75, 0),
-    c::Vec2(MISSILE_RADIUS * -0.875, MISSILE_RADIUS * -1)
+  CCT_PT vertices[] = {
+    CCT_PT(MISSILE_RADIUS * 1.75, 0),
+    CCT_PT(MISSILE_RADIUS * -0.875, MISSILE_RADIUS),
+    CCT_PT(MISSILE_RADIUS * -1.75, 0),
+    CCT_PT(MISSILE_RADIUS * -0.875, MISSILE_RADIUS * -1)
   };
   // draw a yellow coloured missile
   drawPolygon(vertices, 4,
@@ -50,7 +48,7 @@ bool Missile::init() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Missile::update(float dt) {
-    auto pt=getPosition();
+  auto pt=getPosition();
   // find a vector pointing to the target
   auto direction = c::ccpSub(target, pt).getNormalized();
   // add the direction to the speed for smooth curved movement
@@ -79,7 +77,7 @@ void Missile::explode(float dt) {
   if (hasExploded) {
   return; }
 
-    auto pt=getPosition();
+  auto pt=getPosition();
   hasExploded = true;
   // create three blasts on explosion
   for (auto i = 0; i < 3; ++i) {
@@ -87,7 +85,7 @@ void Missile::explode(float dt) {
     auto blast = Blast::create(PLAYER_RADIUS * 2, 0.25);
     // position it randomly around the missile
     blast->setPosition(c::ccpAdd(pt,
-          c::Vec2(cx::randInt(PLAYER_RADIUS * 2 * i),
+          CCT_PT(cx::randInt(PLAYER_RADIUS * 2 * i),
             cx::randInt(PLAYER_RADIUS * 2 * i))));
     addBlast(ss, blast);
   }
