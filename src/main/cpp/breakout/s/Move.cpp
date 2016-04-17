@@ -42,8 +42,8 @@ void Move::processBallMotions(float dt) {
   auto B = MGMS()->getEnclosureBox();
   auto pos= ba->pos();
   auto rect= cx::bbox4(ba);
-  c::Vec2 outPos;
-  c::Vec2 outVel;
+  CCT_PT outPos;
+  CCT_PT outVel;
   bool rc=cx::traceEnclosure(dt, B,
                          rect,
                          mv->vel,

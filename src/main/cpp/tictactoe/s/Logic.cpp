@@ -55,7 +55,7 @@ void Logic::process(float dt) {
   auto cp= ps->parr[ss->pnum];
 
   if (cp->category == bot) {
-    if (ENP(botTimer)) {
+    if (E_NIL(botTimer)) {
       botTimer = cx::reifyTimer(
           MGML(),
           JS_FLOAT(cfg["ROBOT+DELAY"]));

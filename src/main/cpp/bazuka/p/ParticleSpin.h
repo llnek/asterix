@@ -22,7 +22,7 @@ NS_BEGIN(bazuka)
 //
 class CC_DLL ParticleSpin : public c::Sprite , public f::CMove {
 
-  __decl_mv(CCT_PT, _gravity, c::Vec2(0,-0.25))
+  __decl_mv(CCT_PT, _gravity, CCT_PT(0,-0.25))
   __decl_fz(_spinCounter)
 
   ParticleSpin() {

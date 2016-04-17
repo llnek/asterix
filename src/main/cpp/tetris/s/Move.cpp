@@ -52,7 +52,7 @@ bool Move::update(float dt) {
     _scanner();
 
     if (cx::timerDone(dp->timer) &&
-        NNP(sh->shape)) {
+        N_NIL(sh->shape)) {
       cx::undoTimer(dp->timer);
       dp->timer= CC_NIL;
       doFall();
@@ -73,7 +73,7 @@ void Move::doFall() {
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
-  if (NNP(shape) &&
+  if (N_NIL(shape) &&
       ! moveDown(ss->cbox,emap, shape)) {
 
     // lock shape in place
@@ -81,7 +81,7 @@ void Move::doFall() {
 
     /*
     //TODO: what is this???
-    if (ENP(pu->timer)) {
+    if (E_NIL(pu->timer)) {
       sh->shape=nullptr;
       shape->bricks.clear();
       delete shape;

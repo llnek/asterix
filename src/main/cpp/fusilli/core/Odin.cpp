@@ -278,12 +278,12 @@ void OdinIO::onError(n::WebSocket *ws, const n::WebSocket::ErrorCode &error) {
 void OdinIO::onEvent(OdinEvent *evt) {
   switch (evt->getType()) {
     case MType::NETWORK:
-      if (NNP(cbNetwork)) { cbNetwork(evt); }
-      if (NNP(cbAll)) { cbAll(evt); }
+      if (cbNetwork) { cbNetwork(evt); }
+      if (cbAll) { cbAll(evt); }
       break;
     case MType::SESSION:
-      if (NNP(cbSession)) { cbSession(evt); }
-      if (NNP(cbAll)) { cbAll(evt); }
+      if (cbSession) { cbSession(evt); }
+      if (cbAll) { cbAll(evt); }
       break;
   }
 }

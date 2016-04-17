@@ -33,7 +33,7 @@ void SystemList::add(not_null<System*> sys) {
       _tail = s;
     }
     else
-    if ( ENP(node )) {
+    if ( E_NIL(node )) {
       s->_prev = P_NIL;
       s->_next = _head;
       _head->_prev = s;

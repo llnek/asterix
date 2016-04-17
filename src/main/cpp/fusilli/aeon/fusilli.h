@@ -114,8 +114,6 @@ typedef std::string sstr;
 //////////////////////////////////////////////////////////////////////////////
 // pointer macros
 #define N_NIL(p) (p) != nullptr
-#define NNP(p) (p) != nullptr
-#define ENP(p) (p) == nullptr
 #define E_NIL(p) (p) == nullptr
 #define P_NIL nullptr
 

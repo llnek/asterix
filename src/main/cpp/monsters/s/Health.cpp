@@ -82,7 +82,7 @@ void HealthLogic::draw() {
 
     //glLineWidth(7);
     //c::ccDrawColor4B(amtRed,amtGreen,0,255);
-    //c::ccDrawLine(c::Vec2(sX, actualY), c::Vec2(actualX, actualY));
+    //c::ccDrawLine(CCT_PT(sX, actualY), CCT_PT(actualX, actualY));
   }
 }
 

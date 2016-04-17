@@ -143,7 +143,7 @@ void HUDLayer::updateTimer(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::showCountDown(const sstr &msg) {
-  if (NNP(_countDown)) {
+  if (_countDown) {
     _countDown->setString(msg);
   }
 }

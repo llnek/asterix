@@ -46,7 +46,7 @@ void Resolve::process(float dt) {
   auto shape= sh->shape;
   auto &emap= bs->grid;
 
-  if (ENP(shape)) {
+  if (E_NIL(shape)) {
     return;
   }
 

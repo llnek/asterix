@@ -78,7 +78,7 @@ float Move::rotateShip(float cur, float deg) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-const c::Vec2 Move::thrust(float angle, float power) {
+const CCT_PT Move::thrust(float angle, float power) {
   return cx::calcXY(angle, power);
 }
 

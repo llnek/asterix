@@ -95,8 +95,7 @@ void Move::processShip(float dt) {
   }
 
   if (dirty) {
-    sp->setPos(cx::clamp(
-          c::Vec2(x,y), sp->csize(), bx).x, pos.y);
+    sp->setPos(cx::clamp(CCT_PT(x,y), sp->csize(), bx).x, pos.y);
   }
 
   if (cx::timerDone(lpr->tms[0].timer)) {

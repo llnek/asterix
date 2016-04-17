@@ -116,7 +116,7 @@ void Splash::decoUIXXX() {
         c::DelayTime::create(0.3),
         c::EaseBackOut::create(
           c::MoveTo::create(0.5,
-            c::Vec2(wb.cx, wb.top * 0.1)))));
+            CCT_PT(wb.cx, wb.top * 0.1)))));
 
   addItem(menu);
 }

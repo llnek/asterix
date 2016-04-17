@@ -153,7 +153,7 @@ public:
   : _x(x), _y(y)
   {}
 
-  c::Vec2 getValue() const {return c::Vec2(_x,_y); }
+  CCT_PT getValue() const { return CCT_PT(_x,_y); }
 
   virtual ~Val2() {
     CCLOGINFO("deallocing ~Val2: %p", this);

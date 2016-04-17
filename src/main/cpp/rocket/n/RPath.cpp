@@ -75,7 +75,7 @@ void RPath::update(float dt) {
       for (auto i = 0; i < segments + 1; ++i) {
         x_ = pivot.x + t * (tip.x - pivot.x);
         y_ = pivot.y + t * (tip.y - pivot.y);
-        drawDot(c::Vec2(x_, y_), 5, c4);
+        drawDot(CCT_PT(x_, y_), 5, c4);
         t += (float) 1 / segments;
       }
     break;
