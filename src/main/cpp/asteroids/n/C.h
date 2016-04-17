@@ -17,24 +17,32 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Asteroid : public f::CStats {
+class CC_DLL Asteroid : public f::CPixie {
 
-  Asteroid(int value, int rank)
-    : CStats(value) {
-    this->rank= rank;
+    Asteroid(int rank) {
+    this->_rank= rank;
   }
 
-  __decl_comp_tpid("n/Asteroid")
-  __decl_iz(rank)
+  __decl_iz(_rank)
+
+public:
+
+  __decl_getr(int, _rank,Rank)
+
+  static owner<Asteroid*> create(const sstr &img, int rank) {
+    auto z= mc_new1(Asteroid, rank);
+    z->initWithSpriteFrameName(img);
+    XCFG()->fit(z);
+    z->autorelease();
+    return z;
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Cannon : public ecs::Component {
-
-  __decl_comp_tpid("n/Cannon")
+struct CC_DLL ShipStats : public f::CStats {
   __decl_bt(hasAmmo)
-
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,11 +54,13 @@ struct CC_DLL Ship : public f::CPixie {
 
   __decl_mv(sstr,frame0,"rship_0.png")
   __decl_mv(sstr,frame1,"rship_1.png")
-  //__decl_comp_tpid("n/Ship")
-  __decl_comp_tpid("f/CPixie")
 
-  Ship(not_null<c::Node*> s)
-    : CPixie(s) {
+  static owner<Ship*> create() {
+    auto z= mc_new(Ship);
+    z->initWithSpriteFrameName("rship_0.png");
+    XCFG()->fit(z);
+    z->autorelease();
+    return z;
   }
 
 };
@@ -59,11 +69,11 @@ struct CC_DLL Ship : public f::CPixie {
 //
 struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid("n/GVars")
-  __decl_md(c::Size, playerSize)
-  __decl_md(c::Size, ufoSize)
-  __decl_md(c::Size, astro3)
-  __decl_md(c::Size, astro2)
-  __decl_md(c::Size, astro1)
+  __decl_md(CCT_SZ, playerSize)
+  __decl_md(CCT_SZ, ufoSize)
+  __decl_md(CCT_SZ, astro3)
+  __decl_md(CCT_SZ, astro2)
+  __decl_md(CCT_SZ, astro1)
 
 };
 

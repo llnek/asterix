@@ -22,8 +22,8 @@ NS_BEGIN(asteroids)
 class CC_DLL GEngine : public ecs::Engine {
 
   bool maybeOverlap(const f::Box4&);
-  s_arr<c::Size, 4> astroSizes;
-  s_arr<sstr, 4> astroPools;
+  __decl_arr(CCT_SZ, 4, astroSizes)
+  __decl_arr(sstr, 4, astroPools)
 
 public:
 
@@ -33,7 +33,7 @@ public:
   void createMissiles(int count=16);
   void createLasers(int count=16);
   void createShip();
-  void bornShip(ecs::Node*);
+  void bornShip(not_null<ecs::Node*>);
   void createAsteroids(int rank);
 
 };

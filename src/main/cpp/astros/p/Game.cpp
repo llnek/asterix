@@ -23,7 +23,9 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
+
   void onEnd();
 
   __decl_ptr(ecs::Node, _player)
@@ -33,9 +35,9 @@ struct CC_DLL GLayer : public f::GameLayer {
   __decl_deco_ui()
   __decl_get_iid(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -43,18 +45,12 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GLayer::~GLayer() {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void GLayer::onEnd() {
-  this->setOpacity(255 * 0.1);
   MGMS()->stop();
   surcease();
   Ende::reify(MGMS(),4);
@@ -68,31 +64,30 @@ void GLayer::onInited() {
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
   ss->background = ScrollingBG::create();
-  ss->background->setPosition(wb.right,wb.cy);
+  CC_POS2(ss->background, wb.right,wb.cy);
   addItem(ss->background,-1);
-
 
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &loc) {
   auto ship=CC_GEC(Ship,_player,"f/CPixie");
   ship->engineOn=false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &loc) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
+bool GLayer::onMouseStart(const CCT_PT &loc) {
   auto ship=CC_GEC(Ship,_player,"f/CPixie");
   ship->engineOn=true;
   return true;

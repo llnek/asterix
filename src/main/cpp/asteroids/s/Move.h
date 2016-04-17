@@ -20,7 +20,7 @@ NS_BEGIN(asteroids)
 //
 class CC_DLL Move : public ecs::System {
 
-  const c::Vec2 thrust(float angle, float power);
+  const CCT_PT thrust(float angle, float power);
   float rotateShip(float cur, float deg);
   void processShipMotions(float dt);
   void moveShip(float);

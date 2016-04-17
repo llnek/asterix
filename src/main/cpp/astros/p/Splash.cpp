@@ -22,6 +22,22 @@ NS_BEGIN(astros)
 //
 void Splash::decoUI() {
 
+  auto t= cx::reifyBmfLabel("title", "Astros");
+  auto wb= cx::visBox();
+
+  centerImage("game.bg");
+
+  XCFG()->scaleBmfont(t, 64);
+  CC_POS2(t, wb.cx, wb.top * 0.8);
+  addItem(t);
+
+  auto b= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleBmfont(b, 36);
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  b->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  addItem(cx::mkMenu(b));
 
 }
 

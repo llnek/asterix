@@ -14,7 +14,7 @@
 #include "s/GEngine.h"
 #include "HUD.h"
 #include "Game.h"
-//#include "Ende.h"
+#include "Ende.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
@@ -23,7 +23,9 @@ BEGIN_NS_UNAMED
 //
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*) getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*) getSceneX()->getLayer(3); }
+
   __decl_create_layer(GLayer)
   __decl_get_iid(2)
   __decl_deco_ui()
@@ -34,7 +36,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   virtual void onInited();
   void spawnPlayer();
   void showMenu();
-  void onDone();
+  void onEnd();
   void onPlayerKilled();
 
 };
@@ -71,7 +73,7 @@ void GLayer::spawnPlayer() {
 //
 void GLayer::onPlayerKilled() {
   if ( getHUD()->reduceLives(1)) {
-    onDone();
+    onEnd();
   } else {
     spawnPlayer();
   }
@@ -79,11 +81,10 @@ void GLayer::onPlayerKilled() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onDone() {
-  this->setOpacity(0.1 * 255);
+void GLayer::onEnd() {
   MGMS()->stop();
   surcease();
-  //Ende::reify(MGMS(), 4);
+  Ende::reify(MGMS(), 4);
 }
 
 END_NS_UNAMED

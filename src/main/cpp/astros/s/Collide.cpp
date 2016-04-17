@@ -45,11 +45,11 @@ void Collide::process(float dt) {
   auto ship=CC_GEC(Ship,_player,"f/CPixie");
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   auto po= MGMS()->getPool("Astros");
-  auto ps= po->ls();
+  auto &ps= po->ls();
   auto wb= cx::visBox();
 
   F__LOOP(it,ps) {
-    auto e= *it;
+    auto &e= *it;
     if (!e->status()) { continue; }
     auto a=CC_GEC(Asteroid,e,"f/CPixie");
     auto h2=CC_GEC(f::CHealth,e,"f/CHealth");
@@ -64,6 +64,7 @@ void Collide::process(float dt) {
   }
 
 }
+
 
 NS_END
 

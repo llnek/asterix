@@ -21,53 +21,50 @@ NS_BEGIN(asteroids)
 //
 void MMenu::decoUI() {
 
-  auto tt= cx::reifyBmfLabel("JellyBelly", gets("mmenu"));
-  auto tile = CC_CSV(c::Float, "TILE");
+  auto tt= cx::reifyBmfLabel("title", gets("mmenu"));
+  XCFG()->scaleBmfont(tt, 64);
   auto c= XCFG()->getColor("dft");
   auto wb=cx::visBox();
 
-  centerImage("gui.mmenus.menu.bg");
-
-  tt->setPosition(wb.cx, wb.top * 0.9);
-  tt->setScale(XCFG()->getScale());
+  CC_POS2(tt, wb.cx, wb.top * 0.8);
   tt->setColor(c);
+
+  centerImage("game.bg");
   addItem(tt);
 
-  auto b= cx::reifyMenuBtn("play.png");
-  auto menu= cx::mkMenu(b);
-  auto x= mc_new(f::GCX);
-
-  b->setCallback(
-      [=](c::Ref*){ cx::runEx(Game::reify(x)); });
-  b->setPosition(wb.cx, wb.cy);
+  auto r= cx::reifyMenuText("btns", "Restart");
+  auto q= cx::reifyMenuText("btns", "Quit");
+  XCFG()->scaleBmfont(r, 36);
+  XCFG()->scaleBmfont(q, 36);
+  r->setCallback([=](c::Ref*){
+      cx::runEx(Game::reify(mc_new(GameCtx))); });
+  q->setCallback([=](c::Ref*){ cx::prelude(); });
+  auto menu= cx::mkVMenu(s_vec<c::MenuItem*> {r,q},
+      CC_CHT(r)/GOLDEN_RATIO);
+  CC_POS2(menu, wb.cx, wb.top);
   addItem(menu);
 
   // back-quit button
   auto back= cx::reifyMenuBtn("icon_back.png");
-  auto quit= cx::reifyMenuBtn("icon_quit.png");
+  XCFG()->fit(back);
+  back->setAnchorPoint(cx::anchorBL());
   auto ctx= (MCX*) getCtx();
-  auto sz= CC_CSIZE(back);
-
+  auto gap= CC_CHT(back)/GOLDEN_RATIO;
   back->setColor(c);
-  quit->setColor(c);
-
-  quit->setCallback([=](c::Ref*) { cx::prelude(); });
   back->setCallback([=](c::Ref*) { ctx->back(); });
-
-  s_vec<c::MenuItem*> btns {back, quit};
-  auto m2= cx::mkHMenu(btns);
-
-  m2->setPosition(wb.left + tile + sz.width * 1.1,
-                  wb.bottom + tile + sz.height * 0.45);
-  addItem(m2);
+  CC_POS2(back, wb.left + gap,
+                wb.bottom + gap);
+  addItem(cx::mkMenu(back));
 
   // audio btns
   auto audios= cx::reifyAudioIcons();
   audios[0]->setColor(c);
   audios[1]->setColor(c);
+  gap = CC_CHT(audios[0])/GOLDEN_RATIO;
   addAudioIcons( audios,
     cx::anchorBR(),
-    c::Vec2(wb.right - tile, wb.bottom + tile));
+    CCT_PT(wb.right - gap, wb.bottom + gap));
+
 }
 
 

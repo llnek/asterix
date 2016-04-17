@@ -40,19 +40,7 @@ bool Collide::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::checkXXX(f::FPool *po, ecs::Node *z) {
-  po->foreach([=](f::Poolable *p) {
-      auto e= (ecs::Node*) p;
-      auto h1=CC_GEC(f::CHealth,e,"f/CHealth");
-      auto h2=CC_GEC(f::CHealth,z,"f/CHealth");
-      auto s1=CC_GEC(f::CPixie,e,"f/CPixie");
-      auto s2=CC_GEC(f::CPixie,z,"f/CPixie");
-    if (z->status() && e->status() &&
-        h1->alive() && h2->alive() &&
-        cx::collide(s1,s2)) {
-      h2->hurt();
-      h1->hurt();
-    }
-  });
+  cx::testCollide(po, z);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,7 +48,7 @@ void Collide::checkXXX(f::FPool *po, ecs::Node *z) {
 void Collide::checkMissilesRocks() {
   auto po= MGMS()->getPool("Missiles");
   po->foreach([=](f::Poolable *p) {
-      auto e= (ecs::Node*) p;
+    auto e= (ecs::Node*) p;
     this->checkXXX(MGMS()->getPool("Astros3"), e);
     this->checkXXX(MGMS()->getPool("Astros2"), e);
     this->checkXXX(MGMS()->getPool("Astros1"), e);

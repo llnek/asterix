@@ -45,14 +45,13 @@ bool Resolve::update(float dt) {
 void Resolve::checkXXX(f::FPool *po) {
   auto B= MGMS()->getEnclosureBox();
   po->foreach([=](f::Poolable *b) {
-      auto e= (ecs::Node*)b;
-      auto h=CC_GEC(f::CHealth,e,"f/CHealth");
-      auto s=CC_GEC(f::CPixie,e,"f/CPixie");
+    auto e= (ecs::Node*)b;
+    auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+    auto s=CC_GEC(f::CPixie,e,"f/CPixie");
     if (e->status()) {
       if (!h->alive() ||
           cx::outOfBound(cx::bbox4(s), B)) {
-      s->deflate();
-      e->yield();
+      cx::hibernate(e);
     }}
   });
 }
@@ -63,16 +62,15 @@ void Resolve::checkAstrosXXX(f::FPool *po, bool cr) {
   po->foreach([=](f::Poolable *p) {
     auto e= (ecs::Node*)p;
     auto h=CC_GEC(f::CHealth,e,"f/CHealth");
-    auto s=CC_GEC(f::CPixie,e,"f/CPixie");
-    auto a=CC_GEC(Asteroid,e,"n/Asteroid");
+    auto s=CC_GEC(Asteroid,e,"f/CPixie");
+      auto a=CC_GEC(f::CStats,e,"f/CStats");
     if (e->status() && !h->alive()) {
       auto msg= j::json({ {"score", a->value} });
       SENDMSGEX("/game/players/earnscore", &msg);
       if (cr) {
-        SCAST(GEngine*,_engine)->createAsteroids(a->rank +1);
+        SCAST(GEngine*,_engine)->createAsteroids(s->getRank() +1);
       }
-      s->deflate();
-      e->yield();
+      cx::hibernate(e);
     }
   });
 }
@@ -83,8 +81,7 @@ void Resolve::checkShip() {
   auto h = CC_GEC(f::CHealth, _ship,"f/CHealth");
   auto s= CC_GEC(Ship, _ship,"f/CPixie");
   if (_ship->status() && !h->alive()) {
-    _ship->yield();
-    s->deflate();
+    cx::hibernate(_ship);
     SENDMSG("/game/players/killed");
   }
 }

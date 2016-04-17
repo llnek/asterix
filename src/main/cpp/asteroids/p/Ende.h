@@ -7,36 +7,26 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "x2d/GameScene.h"
+#include "x2d/XLayer.h"
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
+struct CC_DLL Ende : public f::XLayer {
 
-  virtual void sendMsgEx(const MsgTopic&, void*);
-
-  virtual f::GameLayer* getGLayer() {
-    return (f::GameLayer*) getLayer(2);
-  }
-
-  __decl_create_scene_ctx(Game)
+  __decl_create_layer(Ende)
   __decl_deco_ui()
+  __decl_get_iid(4)
 
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GameCtx : public f::GCX {
-};
-
 
 
 NS_END
+
 
 

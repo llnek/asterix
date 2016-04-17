@@ -7,36 +7,31 @@
 // By using this software in any  fashion, you are agreeing to be bound by the
 // terms of this license. You  must not remove this notice, or any other, from
 // this software.
-// Copyright (c) 2013-2016, Kenneth Leung. All rights reserved.
+// Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
+#include "core/XConfig.h"
+#include "core/CCSX.h"
+#include "Splash.h"
+#include "Game.h"
+#include "Ende.h"
 
-#include "x2d/GameScene.h"
+NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Game : public f::GameScene {
+void Ende::decoUI() {
+  auto lbl= cx::reifyBmfLabel("title", "Game Over!");
+  XCFG()->scaleBmfont(lbl,64);
+  auto wb= cx::visBox();
 
-  virtual void sendMsgEx(const MsgTopic&, void*);
+  CC_POS2(lbl, wb.cx, wb.top * 0.8);
+  addItem(lbl);
 
-  virtual f::GameLayer* getGLayer() {
-    return (f::GameLayer*) getLayer(2);
-  }
-
-  __decl_create_scene_ctx(Game)
-  __decl_deco_ui()
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//
-struct CC_DLL GameCtx : public f::GCX {
-};
-
+}
 
 
 NS_END
+
 
 

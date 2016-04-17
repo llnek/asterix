@@ -43,9 +43,9 @@ void AI::parallex(float dt) {
   auto bg= ss->background;
   auto wb= cx::visBox();
 
-  bg->setPosition(bg->getPositionX() - ss->scrollSpeed, bg->getPositionY());
+  CC_POS2(bg, bg->getPositionX() - ss->scrollSpeed, bg->getPositionY());
   if(bg->getPositionX() < wb.left) {
-    bg->setPosition(bg->getPositionX()+480,bg->getPositionY());
+    CC_POS2(bg, bg->getPositionX()+480,bg->getPositionY());
   }
 }
 
@@ -72,7 +72,7 @@ void AI::spawnAstro(float dt) {
   cx::resurrect(e,600, cx::randInt(wb.top));
   a->runAction(
       c::MoveTo::create(2.5,
-        c::Vec2(wb.left -100, cx::randInt(wb.top))));
+        CCT_PT(wb.left -100, cx::randInt(wb.top))));
 
   _astroTimer=cx::reifyTimer(MGML(),800);
 }

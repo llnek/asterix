@@ -55,31 +55,21 @@ void Config::initCsts() {
 //
 void Config::initAssets() {
 
-  addAtlas("lang-pics",  CC_STR("l10n/en/images.plist"));
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addAtlas("img-pics", CC_STR("pics/images.plist"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addImage("lang-pics",  CC_STR("l10n/en/images.png"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
-  addImage("img-pics", CC_STR("pics/images.png"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
+  addImage("game-pics", CC_STR("pics/images.png"));
 
-  addImage("gui.mmenus.menu.bg", CC_STR("pics/bg.png"));
-  addImage("game.bg", CC_STR("pics/bg.png"));
+  addImage("game.bg", CC_STR("pics/bg.jpg"));
 
-  addEffect("game_end", CC_STR("sfx/MineExplosion.mp3"));
-  addEffect("game_quit", CC_STR("sfx/Death.mp3"));
+  addEffect("game_quit", CC_STR("sfx/quit.mp3"));
+  addEffect("game_end", CC_STR("sfx/end.mp3"));
 
-  addFont("SmallTypeWriting", CC_STR("fon/en/SmallTypeWriting.fnt"));
-  addFont("AutoMission", CC_STR("fon/en/AutoMission.fnt"));
-  addFont("Subito", CC_STR("fon/en/Subito.fnt"));
-  addFont("CoffeeBuzzed", CC_STR("fon/en/CoffeeBuzzed.fnt"));
-
-  addFont("TinyBoxBB", CC_STR("fon/en/TinyBoxBlackBitA8.fnt"));
-  addFont("OogieBoogie", CC_STR("fon/en/OogieBoogie.fnt"));
-  addFont("JellyBelly", CC_STR("fon/en/JellyBelly.fnt"));
-  addFont("AgentOrange", CC_STR("fon/en/AgentOrange.fnt"));
-  addFont("Hiruko", CC_STR("fon/en/Hiruko.fnt"));
-  addFont("OCR", CC_STR("fon/en/OCR.fnt"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 
 }
 
@@ -118,23 +108,21 @@ void Config::initLevels() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
   auto gz= gameSize();
-  //for default font, we use 48pt
-  _scale = 52/256.0f * rs.width / gz.width;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float p) {
+  return p/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto fp= getAtlas("game-pics");
-
-  CC_SCAC()->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
-
-  fp= getAtlas("lang-pics");
-  CC_SCAC()->addSpriteFramesWithFile(fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 

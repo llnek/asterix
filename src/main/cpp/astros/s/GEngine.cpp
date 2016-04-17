@@ -24,7 +24,7 @@ NS_BEGIN(astros)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  // global
+
   auto ent= this->reifyNode("Shared",true);
   auto ss= mc_new(GVars);
   ent->checkin(ss);
@@ -46,20 +46,20 @@ void GEngine::initEntities() {
   auto wb=cx::visBox();
   auto sz=CC_CSZ(ship);
   MGML()->addAtlasItem("game-pics",ship);
-  ship->setPosition(wb.right * 0.1,wb.cy);
-  //auto box= cx::bbox4((c::Sprite*)ship);
+  CC_POS2(ship, wb.right * 0.1,wb.cy);
   ent->checkin(mc_new1(f::CHealth,1));
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CMove));
   ent->checkin(ship);
 
   auto sp= cx::reifySprite("particle.png");
+  XCFG()->fit(sp);
   ss->emitter = c::ParticleSun::create();
   MGML()->addItem(ss->emitter);
   ss->emitter->setTexture(sp->getTexture());
   ss->emitter->setStartSize(2);
   ss->emitter->setEndSize(4);
-  ss->emitter->setPosition(wb.left - 100,ship->getPositionY());
+  CC_POS2(ss->emitter, wb.left - 100,ship->getPositionY());
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -32,17 +32,17 @@ void GEngine::initEntities() {
     "Astros1"
   });
 
-  astroSizes[3]= cx::calcSize("rock_small.png");
-  astroSizes[2]= cx::calcSize("rock_med.png");
-  astroSizes[1]= cx::calcSize("rock_large.png");
+  astroSizes[3]= XCFG()->fit(cx::calcSize("rock_small.png"));
+  astroSizes[2]= XCFG()->fit(cx::calcSize("rock_med.png"));
+  astroSizes[1]= XCFG()->fit(cx::calcSize("rock_large.png"));
 
   astroPools[3]= "Astros3";
   astroPools[2]= "Astros2";
   astroPools[1]= "Astros1";
 
-  auto ent= this->reifyNode("Arena");
-  ent->take();
-  ent->checkin(mc_new(GVars));
+  auto ent= this->reifyNode("Arena", true);
+  auto ss= mc_new(GVars);
+  ent->checkin(ss);
 
   createAsteroids(1);
   createShip();
@@ -65,7 +65,7 @@ void GEngine::initSystems() {
 void GEngine::createMissiles(int count) {
   auto po= MGMS()->getPool("Missiles");
   po->preset([=]() -> f::Poolable* {
-    auto sp = cx::reifySprite("laserGreen.png");
+    auto sp = f::CPixie::reifyFrame("laserGreen.png");
     CC_HIDE(sp);
     auto e= this->reifyNode("Missile");
     auto mv= mc_new(f::CMove);
@@ -74,7 +74,7 @@ void GEngine::createMissiles(int count) {
     MGML()->addAtlasItem("game-pics", sp);
     e->checkin(mc_new(f::CHealth));
     e->checkin(mv);
-    e->checkin(mc_new1(f::CPixie,sp));
+    e->checkin(sp);
     return e;
   }, count);
 }
@@ -84,7 +84,7 @@ void GEngine::createMissiles(int count) {
 void GEngine::createLasers(int count) {
   auto po= MGMS()->getPool("Lasers");
   po->preset([=]() -> f::Poolable* {
-    auto sp = cx::reifySprite("laserRed.png");
+    auto sp = f::CPixie::reifyFrame("laserRed.png");
     CC_HIDE(sp);
     auto e= this->reifyNode("Laser");
     auto mv= mc_new(f::CMove);
@@ -93,7 +93,7 @@ void GEngine::createLasers(int count) {
     MGML()->addAtlasItem("game-pics", sp);
     e->checkin(mc_new(f::CHealth));
     e->checkin(mv);
-    e->checkin(mc_new1(f::CPixie,sp));
+    e->checkin(sp);
     return e;
   }, count);
 }
@@ -101,9 +101,8 @@ void GEngine::createLasers(int count) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::createShip() {
-  auto sp= cx::reifySprite("rship_0.png");
-  auto ent= this->reifyNode("Ship");
-  auto s= mc_new1(Ship, sp);
+  auto ent= this->reifyNode("Ship", true);
+  auto sp= Ship::create();
   auto mv= mc_new(f::CMove);
   MGML()->addAtlasItem("game-pics", sp);
   sp->setRotation(90);
@@ -111,35 +110,34 @@ void GEngine::createShip() {
   mv->maxSpeed.y= 150;
   mv->power=25;
   mv->angle=90;
-  ent->take();
   ent->checkin(mv);
-  ent->checkin(s);
+  ent->checkin(sp);
   ent->checkin(mc_new(f::CGesture));
   ent->checkin(mc_new(f::CHealth));
-  ent->checkin(mc_new(Cannon));
+  ent->checkin(mc_new(ShipStats));
   ent->checkin(mc_new(f::Looper));
   bornShip(ent);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GEngine::bornShip(ecs::Node *node) {
+void GEngine::bornShip(not_null<ecs::Node*> node) {
   auto ship= CC_GEC(Ship,node,"f/CPixie");
   auto B= MGMS()->getEnclosureBox();
   auto sz = ship->csize();
-  auto wz = cx::visRect();
+  auto wz = cx::visSize();
   auto pos= ship->pos();
   auto h= sz.height;
   auto w = sz.width;
   auto test=true;
   auto x= pos.x;
   auto y= pos.y;
-  f::Box4 r(0,0,0,0);
+  f::Box4 r;
 
   while (test) {
 
-    r.right= cx::randFloat(wz.size.width);
-    r.top= cx::randFloat(wz.size.height);
+    r.right= cx::randFloat(wz.width);
+    r.top= cx::randFloat(wz.height);
     r.bottom = r.top - h ;
     r.left= r.right - w ;
 
@@ -163,46 +161,43 @@ void GEngine::createAsteroids(int rank) {
   auto cfg = MGMS()->getLCfg()->getValue();
   auto sz= astroSizes[rank];
   auto pn= astroPools[rank];
-  auto wz = cx::visRect();
+  auto wz = cx::visSize();
 
   auto pool= MGMS()->getPool(pn);
   auto obj= JS_OBJ(cfg[pn]);
   auto value= JS_INT(obj["value"]);
   auto speed= JS_INT(obj["speed"]);
-  auto cnt= JS_INT(obj["num"]);
+  int cnt= JS_INT(obj["num"]);
   auto img= JS_STR(obj["img"]);
   int n=0;
-  //float x,y;
-  f::Box4 r(0,0,0,0);
+  f::Box4 r;
 
   while (n < cnt) {
-    r.right= cx::randFloat(wz.size.width);
-    r.top= cx::randFloat(wz.size.height);
+    r.right= cx::randFloat(wz.width);
+    r.top= cx::randFloat(wz.height);
     r.bottom = r.top - sz.height;
     r.left = r.right - sz.width;
     if ( !cx::outOfBound(r,B)) {
       pool->preset([=]() -> f::Poolable* {
+        auto ent=this->reifyNode("Asteroid", true);
         auto deg = cx::randFloat(360);
         auto x = r.left + HWZ(sz);
         auto y = r.top - HHZ(sz);
-        auto sp= cx::reifySprite(img);
+        auto sp= Asteroid::create(img, rank);
         sp->setRotation(deg);
         MGML()->addAtlasItem("game-pics", sp);
-        auto a= new Asteroid(value, rank);
-        auto ent=this->reifyNode("Asteroid");
+        auto a= mc_new1(f::CStats,value);
         auto mv=mc_new(f::CMove);
         mv->vel.y= speed * cx::randSign();
         mv->vel.x= speed * cx::randSign();
         mv->speed.x= speed;
         mv->speed.y= speed;
         mv->angle=deg;
-          auto dw=mc_new1(f::CPixie,sp);
-        ent->checkin(dw);
         ent->checkin(mc_new(f::CHealth));
+        ent->checkin(sp);
         ent->checkin(mv);
         ent->checkin(a);
-        dw->inflate(x, y);
-        ent->take();
+        sp->inflate(x, y);
         return ent;
       }, 1);
       ++n;

@@ -18,7 +18,13 @@ NS_BEGIN(asteroids)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL HUDLayer : public f::XLayer {
+class CC_DLL HUDLayer : public f::XLayer {
+
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(f::XLives, _lives)
+  __decl_iz(_score)
+
+public:
 
   __decl_create_layer(HUDLayer)
   __decl_deco_ui()
@@ -27,10 +33,6 @@ struct CC_DLL HUDLayer : public f::XLayer {
   bool reduceLives(int =1);
   void updateScore(int n);
   void drawScore();
-
-  __decl_ptr(c::Label, _scoreLabel)
-  __decl_ptr(f::XLives, _lives)
-  __decl_iz(_score)
 
 };
 

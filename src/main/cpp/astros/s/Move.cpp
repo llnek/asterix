@@ -58,10 +58,11 @@ void Move::processShip(float dt) {
   } else {
     sx=wb.left - 100;
   }
-  ss->emitter->setPosition(sx,ship->getPositionY());
+
+  CC_POS2(ss->emitter, sx,ship->getPositionY());
 
   ship->setOpacity(255 - ship->getOpacity());
-  ship->setPosition(ship->getPositionX(), ship->getPositionY()+mv->vel.y);
+  CC_POS2(ship, ship->getPositionX(), ship->getPositionY()+mv->vel.y);
   mv->vel.y += ss->gameGravity;
 
   if (ship->getPositionY() < wb.bottom ||

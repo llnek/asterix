@@ -42,15 +42,16 @@ bool Motions::update(float dt) {
 //
 void Motions::controlCannon(float dt) {
   auto lpr= CC_GEC(f::Looper, _ship, "f/Looper");
-  auto gun = CC_GEC(Cannon, _ship,"n/Cannon");
-
+  auto gun = CC_GEC(ShipStats, _ship,"f/CStats");
+   auto &tm= lpr->tm;
+    
   if (gun->hasAmmo) {
     fireMissile(dt);
   }
   else
-  if (cx::timerDone(lpr->timer)) {
-    cx::undoTimer(lpr->timer);
-    S__NIL(lpr->timer)
+  if (cx::timerDone(tm.timer)) {
+    cx::undoTimer(tm.timer);
+    S__NIL(tm.timer)
     gun->hasAmmo=true;
   }
   else
@@ -63,26 +64,25 @@ void Motions::controlCannon(float dt) {
 //
 void Motions::fireMissile(float dt) {
   auto lpr= CC_GEC(f::Looper, _ship,"f/Looper");
-  auto gun= CC_GEC(Cannon, _ship,"n/Cannon");
+  auto gun= CC_GEC(ShipStats, _ship,"f/CStats");
   auto sp= CC_GEC(Ship, _ship, "f/CPixie");
   auto p= MGMS()->getPool("Missiles");
   auto cfg= MGMS()->getLCfg()->getValue();
   auto sz= sp->csize();
-  auto deg= sp->node->getRotation();
-  auto top= cx::getTop(sp->node);
+  auto deg= sp->getRotation();
+  auto top= cx::getTop(sp);
   auto pos= sp->pos();
   auto ent= (ecs::Node*)p->take(true);
   auto mv= CC_GEC(f::CMove,ent,"f/CMove");
   auto dw= CC_GEC(f::CPixie,ent,"f/CPixie");
-  auto h= CC_GEC(f::CHealth,ent,"f/CHealth");
   auto rc= cx::calcXY(deg, HHZ(sz));
+    auto &tm=lpr->tm;
   mv->vel.x = rc.x;
   mv->vel.y = rc.y;
-  h->reset();
-  dw->inflate(pos.x + rc.x, pos.y + rc.y);
-  dw->node->setRotation(deg);
+  dw->setRotation(deg);
+  cx::resurrect((ecs::Node*)ent, pos.x + rc.x, pos.y + rc.y);
 
-  lpr->timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWnd"]));
+  tm.timer = cx::reifyTimer(MGML(), JS_FLOAT(cfg["coolDownWnd"]));
   gun->hasAmmo=false;
 }
 

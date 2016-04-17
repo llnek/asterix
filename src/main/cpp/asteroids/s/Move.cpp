@@ -28,7 +28,7 @@ void Move::preamble() {
 //
 void Move::moveXXX(f::FPool *p, float dt) {
   p->foreach([=](f::Poolable *a) {
-      auto e= (ecs::Node*) a;
+    auto e= (ecs::Node*) a;
     if (e->status()) { this->moveAstros(e, dt); }
   });
 }
@@ -37,14 +37,14 @@ void Move::moveXXX(f::FPool *p, float dt) {
 //
 void Move::moveBBB(f::FPool *po, float dt) {
   po->foreach([=](f::Poolable *p) {
-      auto e= (ecs::Node*)p;
+    auto e= (ecs::Node*)p;
     if (e->status()) {
       auto sp=CC_GEC(f::CPixie,e,"f/CPixie");
       auto mv=CC_GEC(f::CMove,e,"f/CMove");
       auto pos= sp->pos();
       auto y = pos.y + dt * mv->vel.y * mv->speed.y;
       auto x = pos.x + dt * mv->vel.x * mv->speed.x;
-      sp->setPos(x, y);
+      CC_POS2(sp, x, y);
     }
   });
 }
@@ -94,21 +94,21 @@ void Move::processShipMotions(float dt) {
 
   if (mo->right) {
     mv->angle= rotateShip(mv->angle, 3);
-    sp->node->setRotation(mv->angle);
+    sp->setRotation(mv->angle);
   }
 
   if (mo->left) {
     mv->angle= rotateShip(mv->angle, -3);
-    sp->node->setRotation(mv->angle);
+    sp->setRotation(mv->angle);
   }
 
   if (mo->up) {
     auto acc= thrust(mv->angle, mv->power);
-    SCAST(c::Sprite*,sp->node)->setSpriteFrame(sp->frame1);
+    sp->setSpriteFrame(sp->frame1);
     mv->acc.x= acc.x;
     mv->acc.y= acc.y;
   } else {
-    SCAST(c::Sprite*,sp->node)->setSpriteFrame(sp->frame0);
+    sp->setSpriteFrame(sp->frame0);
   }
   moveShip(dt);
 }
@@ -145,7 +145,7 @@ void Move::moveShip(float dt) {
   y = pos.y + dt * mv->vel.y;
   x = pos.x + dt * mv->vel.x;
 
-  sp->setPos(x,y);
+  CC_POS2(sp, x,y);
 
   //wrap?
   auto r= cx::bbox4(sp);
@@ -174,8 +174,8 @@ void Move::moveShip(float dt) {
     }
   }
 
-  sp->node->setRotation(mv->angle);
-  sp->setPos(x,y);
+  sp->setRotation(mv->angle);
+  CC_POS2(sp, x,y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -193,9 +193,9 @@ void Move::moveAstros(ecs::Node *astro, float dt) {
   rot += 0.1f;
   if (rot > 360) { rot -= 360; }
 
-  sp->node->setRotation(rot);
+  sp->setRotation(rot);
   mv->angle = rot;
-  sp->setPos(x,y);
+  CC_POS2(sp, x,y);
 
   //wrap?
   auto r= cx::bbox4(sp);
@@ -224,7 +224,7 @@ void Move::moveAstros(ecs::Node *astro, float dt) {
     }
   }
 
-  sp->setPos(x,y);
+  CC_POS2(sp, x,y);
 }
 
 

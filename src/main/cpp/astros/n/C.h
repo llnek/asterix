@@ -24,11 +24,10 @@ NS_BEGIN(astros)
 struct CC_DLL ScrollingBG : public f::CPixie {
   static owner<ScrollingBG*> create() {
     auto z= mc_new(ScrollingBG);
-    z->initWithFile("pics/background.png");
+    z->initWithFile("pics/background.jpg");
     z->autorelease();
     return z;
   }
-  virtual ~ScrollingBG() {}
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -37,10 +36,10 @@ struct CC_DLL Asteroid : public f::CPixie {
   static owner<Asteroid*> create() {
     auto z= mc_new(Asteroid);
     z->initWithSpriteFrameName("asteroid.png");
+    XCFG()->fit(z);
     z->autorelease();
     return z;
   }
-  virtual ~Asteroid() {}
 };
 
 
@@ -50,10 +49,10 @@ struct CC_DLL Ship : public f::CPixie {
   static owner<Ship*> create() {
     auto z= mc_new(Ship);
     z->initWithSpriteFrameName("ship.png");
+    XCFG()->fit(z);
     z->autorelease();
     return z;
   }
-  virtual ~Ship() {}
   __decl_bf(engineOn)
 };
 

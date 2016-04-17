@@ -12,7 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Splash.h"
-#include "MMenu.h"
+#include "Game.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(asteroids)
@@ -20,18 +20,22 @@ NS_BEGIN(asteroids)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
-  auto b= cx::reifyMenuBtn("play.png");
-  auto f= []() { cx::prelude(); };
-  auto menu= cx::mkMenu(b);
+  auto t= cx::reifyBmfLabel("title", "Asteroids");
   auto wb= cx::visBox();
-  auto x= mc_new1(MCX, f);
+
+  CC_POS2(t, wb.cx, wb.top * 0.8);
+  XCFG()->scaleBmfont(t,64);
 
   centerImage("game.bg");
+  addItem(t);
 
-  b->setCallback(
-      [=](c::Ref*) { cx::runEx( MMenu::reify(x)); });
-  b->setPosition(wb.cx, wb.top * 0.1);
-  addItem(menu);
+  auto b= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleBmfont(b, 36);
+  b->setCallback([=](c::Ref*)
+      { cx::runEx(Game::reify(mc_new(GameCtx))); });
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  addItem(cx::mkMenu(b));
+
 }
 
 
