@@ -189,23 +189,28 @@ void Enemy::die() {
 //
 void Enemy::takeSpeedDamage(float speed_damage, float speed_damage_duration) {
   // reduce the walking speed
-  is_slowed_ = true;
-  CCSpeed* walk_action = (CCSpeed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
-  if(walk_action != NULL)
-  {
-    walk_action->setSpeed(speed_damage);
+  _isSlowed = true;
+  auto walkact= (CCSpeed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
+  if (walkact) {
+    walkact->setSpeed(speed_damage);
     // walking speed must return back to normal after certain duration
     scheduleOnce(schedule_selector(Enemy::ResetSpeed), speed_damage_duration);
   }
 }
 
-void Enemy::ResetSpeed(float dt)
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void Enemy::resetSpeed(float dt) {
   // walking speed must return back to normal after certain duration
-  is_slowed_ = false;
-  CCSpeed* walk_action = (CCSpeed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
-  if(walk_action != NULL)
-  {
-    walk_action->setSpeed(1.0f);
+  _isSlowed = false;
+  auto walkact= (CCSpeed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
+  if (walkact) {
+    walkact->setSpeed(1);
   }
 }
+
+
+
+NS_END
+
+

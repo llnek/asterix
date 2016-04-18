@@ -22,6 +22,16 @@ NS_BEGIN(pumpkins)
 //
 void Splash::decoUI() {
 
+  auto b = cx::reifyMenuBtn("TWplaybtn.png");
+  XCFG()->fit(b);
+  auto wb= cx::visBox();
+
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  b->setCallback([=](c::Ref*){
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  centerImage("title.bg");
+  addItem(cx::mkMenu(b));
 
 }
 
