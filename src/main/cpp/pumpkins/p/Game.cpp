@@ -102,6 +102,9 @@ void GLayer::onInited() {
   createWaves();
   createPumpkin();
 
+  getHUD()->updateLabels(ss);
+  getHUD()->createMenu();
+
   // create & add the tower placement & maaintenance menus
   ss->towerMenu = TowerMenu::create(ss);
   addChild(ss->towerMenu, E_LAYER_HUD + 1);
@@ -214,7 +217,7 @@ void GLayer::createTiledMap() {
   auto sz= CC_CSIZE(ss->tiledMap);
   CC_POS2(ss->tiledMap, wb.cx - HWZ(sz), wb.cy - HHZ(sz));
   ss->tmxLayer = ss->tiledMap->layerNamed("EnemyPath");
-    
+
     CCLOG("tmx loaded");
 }
 
