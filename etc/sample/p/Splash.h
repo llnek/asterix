@@ -19,8 +19,8 @@ NS_BEGIN(@@APPID@@)
 //
 struct CC_DLL Splash : public f::XScene {
 
-  STATIC_REIFY_SCENE(Splash)
-  MDECL_DECORATE()
+  __decl_create_scene(Splash)
+  __decl_deco_ui()
 };
 
 

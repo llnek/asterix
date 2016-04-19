@@ -19,9 +19,8 @@ NS_BEGIN(@@APPID@@)
 //
 struct CC_DLL MMenu : public f::XScene {
 
-  STATIC_REIFY_SCENE(MMenu)
-  MDECL_DECORATE()
-
+  __decl_create_scene(MMenu)
+  __decl_deco_ui()
 };
 
 

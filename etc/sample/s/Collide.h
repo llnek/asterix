@@ -19,17 +19,17 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
 
   void process(float);
   void clamp(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Collide)
-  MDECL_SYS_TPID("n/Collide")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::Collide)
+  __decl_sys_tpid("s/Collide")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Collide(ecs::Engine *e)
   : System(e)

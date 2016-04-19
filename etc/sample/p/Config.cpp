@@ -53,12 +53,12 @@ void Config::initAssets() {
   addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("dft", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
+void Config::handleResolution(const CCT_SZ &rs) {
 #if defined(BLAH)
   // retina iPad
   if (2048 == rs.width || 2048 == rs.height ) {
@@ -107,11 +107,14 @@ void Config::handleResolution(const c::Size &rs) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
+float Config::scaleFont(float pt) {
+  return pt/128.0 * _scale;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -19,17 +19,17 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Move : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
 
   void process(float);
   void onKeys(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Move)
-  MDECL_SYS_TPID("n/Move")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::Move)
+  __decl_sys_tpid("s/Move")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   Move(ecs::Engine *e)
   : System(e)

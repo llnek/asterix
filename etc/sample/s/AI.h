@@ -19,16 +19,16 @@ NS_BEGIN(@@APPID@@)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
   void parallex(float);
   void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::AI)
-  MDECL_SYS_TPID("n/AI")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::AI)
+  __decl_sys_tpid("s/AI")
+  __decl_sys_preamble()
+  __decl_sys_update()
 
   AI(ecs::Engine *e)
   : System(e)

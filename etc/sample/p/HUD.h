@@ -19,14 +19,14 @@ NS_BEGIN(@@APPID@@)
 //
 struct CC_DLL HUDLayer : public f::XLayer {
 
-  STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
+  __decl_create_layer(HUDLayer)
+  __decl_deco_ui()
+  __decl_get_iid(3)
 
-  DECL_PTR(c::Label, _scoreLabel)
-  DECL_IZ(_score)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_iz(_score)
 
-  int getScore() { return _score; }
+  __decl_getr(int,_score,Score)
   void updateScore(int);
 };
 
