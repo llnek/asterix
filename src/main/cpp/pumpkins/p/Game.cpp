@@ -39,7 +39,7 @@ struct CC_DLL GLayer : public f::GameLayer {
   towers_.clear();
   num_waves_ = 0;
   curr_wave_index_ = 0;
-  is_wave_starting_ = false;
+  _wave_starting_ = false;
   curr_wave_ = NULL;
   waves_.clear();
   waves_label_ = NULL;
@@ -322,7 +322,7 @@ void GLayer::placeTower(int type, const CCT_PT &position) {
 
   // debit cash
   updateCash(- tower->getCost());
-  updateHUD();
+  getHUD()->updateLabels();
   // show the range for this tower
   tower->showRange();
 
@@ -365,7 +365,7 @@ void GLayer::startNextWave(float dt) {
     // start the next wave in a few seconds
     _currWave = _waves[_currWaveIndex];
     schedule(schedule_selector(GLayer::spawnEnemy), _currWave.spawnDelay);
-    updateHUD();
+    getHUD()->updateLabels();
     scaleLabel(_wavesLabel);
   }
 }
@@ -414,13 +414,13 @@ void GLayer::reduceLives(int amount) {
   switch (_livesLeft) {
   // change the pumpkin's appearance based on how many lives are left
   case 15:
-    _pumpkin->initWithFile("TD_pumkin_02.png");
+    _pumpkin->setSpriteFrame("TD_pumkin_02.png");
     break;
   case 10:
-    _pumpkin->initWithFile("TD_pumkin_03.png");
+    _pumpkin->setSpriteFrame("TD_pumkin_03.png");
     break;
   case 5:
-    _pumpkin->initWithFile("TD_pumkin_04.png");
+    _pumpkin->setSpriteFrame("TD_pumkin_04.png");
     break;
   case 0:
     // all lives over...level failed
@@ -437,300 +437,285 @@ void GLayer::reduceLives(int amount) {
 //
 void GLayer::updateCash(int amount) {
   _cash += amount;
-  updateHUD();
+  getHUD()->updateLabels();
   scaleLabel(_cashLabel);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GameWorld::update(float dt)
-{
-  // check if current wave has completed
-  CheckWaveCompletion();
+void GLayer::update(float dt) {
 
-  // update all towers
-  for(int i = 0; i < num_towers_; ++i)
-  {
-    towers_[i]->Update();
+  checkWaveCompletion();
+
+  for (auto i = 0; i < _numTowers; ++i) {
+    _towers[i]->update();
   }
 }
 
-void GameWorld::UpdateHUD()
-{
-  char buf[64] = {0};
-  // update cash label
-  sprintf(buf, "%d", cash_);
-  cash_label_->setString(buf);
-
-  // update waves label
-  sprintf(buf, "%d/%d", curr_wave_index_+1, num_waves_);
-  waves_label_->setString(buf);
-}
-
-void GameWorld::CheckWaveCompletion()
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::checkWaveCompletion() {
   // wave has completed when all enemies have been spawned AND
   // when there are no enemies walking (cuz they're all dead!)
-  if(!is_wave_starting_ && curr_wave_ && curr_wave_->num_enemies_spawned_ >= curr_wave_->num_enemies_ && curr_wave_->num_enemies_walking_ <= 0)
-  {
+  if (!_waveStarting &&
+      _currWave &&
+      _currWave.numEnemiesSpawned >= _currWave.numEnemies &&
+      _currWave.numEnemiesWalking <= 0) {
     // start the next wave
-    is_wave_starting_ = true;
-    scheduleOnce(schedule_selector(GameWorld::StartNextWave), 2.0f);
+    _wave_starting = true;
+    scheduleOnce(schedule_selector(GLayer::startNextWave), 2);
   }
 }
 
-void GameWorld::OnGestureReceived(CCObject* sender)
-{
-  GestureLayer* gesture_layer = (GestureLayer*)sender;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onGestureReceived(c::Node *sender) {
+  auto gesture_layer = (GestureLayer*)sender;
   // call the respective gesture's handler
-  switch(gesture_layer->GetGestureType())
-  {
-  case E_GESTURE_TAP:
-    HandleTap(gesture_layer->GetTouchStart());
+  switch (gesture_layer->getGestureType()) {
+    case E_GESTURE_TAP:
+      handleTap(gesture_layer->getTouchStart());
     break;
 
-  case E_GESTURE_SWIPE_UP:
-    HandleSwipeUp();
+    case E_GESTURE_SWIPE_UP:
+      handleSwipeUp();
     break;
 
-  case E_GESTURE_SWIPE_DOWN:
-    HandleSwipeDown();
+    case E_GESTURE_SWIPE_DOWN:
+      handleSwipeDown();
     break;
 
-  case E_GESTURE_SWIPE_LEFT:
-    HandleSwipeLeft();
+    case E_GESTURE_SWIPE_LEFT:
+      handleSwipeLeft();
     break;
 
-  case E_GESTURE_SWIPE_RIGHT:
-    HandleSwipeRight();
+    case E_GESTURE_SWIPE_RIGHT:
+      handleSwipeRight();
     break;
   }
 }
 
-void GameWorld::HandleTap(CCPoint position)
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleTap(const CCT_PT &position) {
   // get the touch coordinates with respect to the tile map
-  CCPoint touch_point = tiled_map_->convertToNodeSpace(position);
-  CCPoint tile_coord = ccp(GET_COL_FOR_X(touch_point.x), GET_ROW_FOR_Y(touch_point.y, MAX_ROWS));
-  touch_point = ccpMult(tile_coord, TILE_SIZE);
-  touch_point.y = SCREEN_SIZE.height - touch_point.y;
+  auto touch_point = _tiledMap->convertToNodeSpace(position);
+  auto wb= cx::visBox();
+  auto tile_coord = CCT_PT(GET_COL_FOR_X(touch_point.x),
+                           GET_ROW_FOR_Y(touch_point.y, MAX_ROWS));
+  touch_point = c::ccpMult(tile_coord, TILE_SIZE);
+  touch_point.y = wb.top - touch_point.y;
 
   // check if the touched tile is empty
-  int tile_GID = tmx_layer_->tileGIDAt(tile_coord);
+  auto tile_GID = _tmxLayer->tileGIDAt(tile_coord);
   // if the touched tile is empty, show the tower placement menu
-  if(tile_GID == 0)
-  {
+  if (tile_GID == 0) {
     // check to ensure only one menu is visible at a time
-    if(tower_menu_->placement_node_->isVisible() == false && tower_menu_->maintenance_node_->isVisible() == false)
-    {
-      tower_menu_->ShowPlacementMenu(touch_point);
+    if (!_towerMenu->placementNode->isVisible() &&
+        !_towerMenu->maintenanceNode->isVisible() ) {
+      _towerMenu->showPlacementMenu(touch_point);
       // show the grid
-      grid_node_->setVisible(true);
+      CC_SHOW(_gridNode);
     }
   }
   // a tower exists on the touched tile
-  else if(tile_GID >= TOWER_GID)
-  {
-    int tower_index = tile_GID - TOWER_GID;
+  else if(tile_GID >= TOWER_GID) {
+    auto tower_index = tile_GID - TOWER_GID;
     // first check bounds and then check to ensure only one menu is visible at a time
-    if(tower_index >= 0 && tower_index < num_towers_ && tower_menu_->maintenance_node_->isVisible() == false && tower_menu_->placement_node_->isVisible() == false)
-    {
+    if(tower_index >= 0 &&
+        tower_index < _numTowers &&
+        !_towerMenu->maintenanceNode->isVisible() &&
+        !_towerMenu->placementNode->isVisible() ) {
       // show the tower's current range
-      towers_[tower_index]->ShowRange();
-      tower_menu_->ShowMaintenanceMenu(touch_point, tower_index, towers_[tower_index]->GetType(), towers_[tower_index]->GetLevel());
+      _towers[tower_index]->showRange();
+      _towerMenu->showMaintenanceMenu(touch_point, tower_index,
+          _towers[tower_index]->getType(),
+          _towers[tower_index]->getLevel());
     }
   }
 
   // hide the tower placement menu if it is visible
-  if(tower_menu_->placement_node_->isVisible())
-  {
-    tower_menu_->HidePlacementMenu();
-    grid_node_->setVisible(false);
+  if (_towerMenu->placementNode->isVisible()) {
+    _towerMenu->hidePlacementMenu();
+    CC_HIDE(_grid_node);
   }
   // hide the tower maintenance menu if it is visible
-  if(tower_menu_->maintenance_node_->isVisible())
-  {
-    tower_menu_->HideMaintenanceMenu();
+  if(_towerMenu->maintenanceNode->isVisible()) {
+    _towerMenu->hideMaintenanceMenu();
   }
 }
 
-void GameWorld::HandleSwipeUp()
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleSwipeUp() {
   // return if the tower placement menu is not active
-  if(tower_menu_->placement_node_->isVisible() == false)
-  {
-    return;
-  }
+  if (!_towerMenu->placementNode->isVisible() ) {
+  return; }
 
   // place the tower with specified type at specified position
-  PlaceTower(1, tower_menu_->placement_node_->getPosition());
-  tower_menu_->HidePlacementMenu();
-  grid_node_->setVisible(false);
+  placeTower(1, _towerMenu->placementNode->getPosition());
+  _towerMenu->hidePlacementMenu();
+  CC_HIDE(_gridNode);
 }
 
-void GameWorld::HandleSwipeDown()
-{}
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleSwipeDown() {
+}
 
-void GameWorld::HandleSwipeLeft()
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleSwipeLeft() {
   // return if the tower placement menu is not active
-  if(tower_menu_->placement_node_->isVisible() == false)
-  {
-    return;
-  }
+  if (!_towerMenu->placementNode->isVisible() ) {
+  return; }
 
   // place the tower with specified type at specified position
-  PlaceTower(0, tower_menu_->placement_node_->getPosition());
-  tower_menu_->HidePlacementMenu();
-  grid_node_->setVisible(false);
+  placeTower(0, _towerMenu->placementNode->getPosition());
+  _towerMenu->hidePlacementMenu();
+  CC_HIDE(_gridNode);
 }
 
-void GameWorld::HandleSwipeRight()
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleSwipeRight() {
   // return if the tower placement menu is not active
-  if(tower_menu_->placement_node_->isVisible() == false)
-  {
-    return;
-  }
+  if (!_towerMenu->placementNode->isVisible() ) {
+  return; }
 
   // place the tower with specified type at specified position
-  PlaceTower(2, tower_menu_->placement_node_->getPosition());
-  tower_menu_->HidePlacementMenu();
-  grid_node_->setVisible(false);
+  placeTower(2, _towerMenu->placementNode->getPosition());
+  _towerMenu->hidePlacementMenu();
+  CC_HIDE(_gridNode);
 }
 
-void GameWorld::OnTowerButtonClicked(CCObject* sender)
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onTowerButtonClicked(c::Node *sender) {
   // place the appropriate tower based on which button was pressed
-  int tag = ((CCNode*)sender)->getTag();
-  PlaceTower(tag, tower_menu_->placement_node_->getPosition());
-  tower_menu_->HidePlacementMenu();
-  grid_node_->setVisible(false);
+  auto tag = sender->getTag();
+  placeTower(tag, _towerMenu->placementNode->getPosition());
+  _towerMenu->hidePlacementMenu();
+  CC_HIDE(_gridNode);
 }
 
-void GameWorld::OnUpgradeTowerClicked(CCObject* sender)
-{
-  int index = ((CCNode*)sender)->getTag();
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onUpgradeTowerClicked(c::Node *sender) {
+  auto index = sender->getTag();
   // check bounds and upgrade the tower
-  if(index >= 0 && index < num_towers_)
-  {
-    towers_[index]->Upgrade();
+  if (index >= 0 && index < _numTowers) {
+    _towers[index]->upgrade();
   }
-  tower_menu_->HideMaintenanceMenu();
+  _towerMenu->hideMaintenanceMenu();
 }
 
-void GameWorld::OnSellTowerClicked(CCObject* sender)
-{
-  int index = ((CCNode*)sender)->getTag();
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onSellTowerClicked(c::Node *sender) {
+  auto index = sender->getTag();
   // check bounds and sell the tower
-  if(index >= 0 && index < num_towers_)
-  {
-    SellTower(index);
+  if (index >= 0 && index < _numTowers) {
+    sellTower(index);
   }
-  tower_menu_->HideMaintenanceMenu();
+  _towerMenu->hideMaintenanceMenu();
 }
 
-void GameWorld::OnToggleSpeedClicked(CCObject* sender)
-{
-  time_scale_ = time_scale_ == 1.0f ? 2.0f : 1.0f;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onToggleSpeedClicked(c::Node *sender) {
+  _timeScale = ((int)_timeScale == 1) ? 2 : 1;
   // toggle the scheduler's time scale
-  CCDirector::sharedDirector()->getScheduler()->setTimeScale(time_scale_);
+  CC_DTOR()->getScheduler()->setTimeScale(_timeScale);
 }
 
-void GameWorld::OnPauseClicked(CCObject* sender)
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onPauseClicked(c::Node *sender) {
   // this prevents multiple pause popups
-  if(is_popup_active_)
-    return;
+  if (_popupActive) {
+  return; }
 
   // reset the scheduler's time scale to what it was
-  CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f);
-  gesture_layer_->setTouchEnabled(false);
-  hud_menu_->setEnabled(false);
+  CC_DTOR()->getScheduler()->setTimeScale(1);
+  _gestureLayer->setTouchEnabled(false);
+  //kenl
+  //hud_menu_->setEnabled(false);
   pauseSchedulerAndActions();
 
   // pause game elements here
-  if(curr_wave_)
-  {
-    for(int i = 0; i < curr_wave_->num_enemies_; ++i)
-    {
-      curr_wave_->enemies_[i]->pauseSchedulerAndActions();
+  if (_currWave) {
+    for (auto i = 0; i < _currWave.numEnemies; ++i) {
+      _currWave.enemies[i]->pauseSchedulerAndActions();
     }
   }
 
-  for(int i = 0; i < num_towers_; ++i)
-  {
-    towers_[i]->pauseSchedulerAndActions();
+  for (auto i = 0; i < _numTowers; ++i) {
+    _towers[i]->pauseSchedulerAndActions();
   }
 
   // create & add the pause popup
-  PausePopup* pause_popup = PausePopup::create(this);
+  auto pause_popup = PausePopup::create(this);
   addChild(pause_popup, E_LAYER_POPUP);
 }
 
-void GameWorld::ResumeGame()
-{
-  is_popup_active_ = false;
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::resumeGame() {
+  _popupActive = false;
 
   // set the scheduler's time scale to what it was
-  CCDirector::sharedDirector()->getScheduler()->setTimeScale(time_scale_);
-  gesture_layer_->setTouchEnabled(true);
-  hud_menu_->setEnabled(true);
+  CC_DTOR()->getScheduler()->setTimeScale(_timeScale);
+  _gestureLayer->setTouchEnabled(true);
+  //kenl
+  //hud_menu_->setEnabled(true);
   resumeSchedulerAndActions();
 
   // resume game elements here
-  if(curr_wave_)
-  {
-    for(int i = 0; i < curr_wave_->num_enemies_; ++i)
-    {
-      curr_wave_->enemies_[i]->resumeSchedulerAndActions();
+  if (_currWave) {
+    for (auto i = 0; i < _currWave.numEnemies; ++i) {
+      _currWave.enemies[i]->resumeSchedulerAndActions();
     }
   }
 
-  for(int i = 0; i < num_towers_; ++i)
-  {
-    towers_[i]->resumeSchedulerAndActions();
+  for (auto i = 0; i < _numTowers; ++i) {
+    _towers[i]->resumeSchedulerAndActions();
   }
 }
 
-void GameWorld::GameOver(bool is_level_complete)
-{
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::gameOver(bool is_level_complete) {
   // this prevents multiple pause popups
-  if(is_popup_active_)
-    return;
+  if (_popupActive) {
+  return; }
 
-  is_popup_active_ = true;
+  _popupActive = true;
 
   // reset the scheduler's time scale
-  CCDirector::sharedDirector()->getScheduler()->setTimeScale(1.0f);
+  CC_DTOR()->getScheduler()->setTimeScale(1);
   // stop GameWorld update
   unscheduleAllSelectors();
-  gesture_layer_->setTouchEnabled(false);
+  _gestureLayer->setTouchEnabled(false);
 
   // stop game elements here
-  if(curr_wave_)
-  {
-    for(int i = 0; i < curr_wave_->num_enemies_; ++i)
-    {
-      curr_wave_->enemies_[i]->stopAllActions();
-      curr_wave_->enemies_[i]->unscheduleAllSelectors();
+  if (_currWave) {
+    for (auto i = 0; i < _currWave.numEnemies; ++i) {
+      _currWave.enemies[i]->stopAllActions();
+      _currWave.enemies[i]->unscheduleAllSelectors();
     }
   }
 
-  for(int i = 0; i < num_towers_; ++i)
-  {
-    towers_[i]->stopAllActions();
-    towers_[i]->unscheduleAllSelectors();
+  for (auto i = 0; i < _numTowers; ++i) {
+    _towers[i]->stopAllActions();
+    _towers[i]->unscheduleAllSelectors();
   }
 
-  Popup* popup = NULL;
   // show the respective popup
-  if(is_level_complete)
-  {
+  Popup *popup;
+  if (is_level_complete) {
     popup = LevelCompletePopup::create(this);
-  }
-  else
-  {
+  } else {
     popup = GameOverPopup::create(this);
   }
   addChild(popup, E_LAYER_POPUP);

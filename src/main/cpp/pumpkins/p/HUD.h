@@ -29,6 +29,8 @@ struct CC_DLL HUDLayer : public f::XLayer {
 
   int getScore() { return _score; }
   void updateScore(int);
+  void updateLabels();
+
 };
 
 

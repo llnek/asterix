@@ -17,18 +17,6 @@
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pumpkins)
 
-//////////////////////////////////////////////////////////////////////////
-//
-void HUDLayer::decoUI() {
-
-  auto wb= cx::visBox();
-
-  _scoreLabel= cx::reifyLabel("dft", 24, "0");
-  _scoreLabel->setPosition(wb.cx, wb.top * 0.1);
-  addItem(_scoreLabel);
-
-  _score=0;
-}
 //////////////////////////////////////////////////////////////////////////////
 //
 void HUDLayer::decoUI() {
@@ -84,6 +72,13 @@ void HUDLayer::decoUI() {
       });
   CC_POS2(button, 1220, 755);
   addItem(cx::mkMenu(button));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void HUDLayer::updateLabels() {
+  _wavesLabel->setString(FTOS(_currWaveIndex+1) + "/" + FTOS(_numWaves));
+  _cashLabel->setString(FTOS(_cash));
 }
 
 //////////////////////////////////////////////////////////////////////////////

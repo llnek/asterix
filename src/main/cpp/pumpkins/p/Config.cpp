@@ -34,84 +34,49 @@ void Config::initLevels() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initCsts() {
-  _game_id= "@@GAMEID@@";
+  _game_id= "f6bccf8c-3ff3-4844-b8eb-6c13b0324716";
   _app_id = "pumpkins";
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::initAssets() {
 
-  addAtlas("game-pics", CC_STR("pics/sprite_sheet.plist"));
-  addImage("game-pics", CC_STR("pics/sprite_sheet.png"));
+  addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
+  addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addImage("game.bg", CC_STR("pics/background.png"));
-  addImage("gui.bg", CC_STR("pics/bg.png"));
+  addAtlas("game-pics", CC_STR("pics/images.plist"));
+  addImage("game-pics", CC_STR("pics/images.png"));
+
+  addImage("gui.bg", CC_STR("pics/TWtitle.jpg"));
+  addImage("game.bg", CC_STR("pics/bg.jpg"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
   addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fon/en/arial.ttf"));
+  addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
+  addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
+  addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Config::handleResolution(const c::Size &rs) {
-#if defined(BLAH)
-  // retina iPad
-  if (2048 == rs.width || 2048 == rs.height ) {
-    resDirOrders.push_back("ipadhd");
-    resDirOrders.push_back("ipad");
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(1536, 2048, ResolutionPolicy::NO_BORDER);
-  }
-  else // non retina iPad
-  if (1024 == rs.width || 1024 == rs.height ) {
-    resDirOrders.push_back("ipad");
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(768, 1024, ResolutionPolicy::NO_BORDER);
-  }
-  else // retina iPhone (5 and 5S)
-  if (1136 == rs.width || 1136 == rs.height ) {
-    resDirOrders.push_back("iphonehd5");
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(640, 1136, ResolutionPolicy::NO_BORDER);
-  }
-  else // retina iPhone (4 and 4S)
-  if ( 960 == rs.width || 960 == rs.height ) {
-    resDirOrders.push_back("iphonehd");
-    resDirOrders.push_back("iphone");
-    glview->setDesignResolutionSize(640, 960, ResolutionPolicy::NO_BORDER);
-  }
-  else { // non retina iPhone and Android devices
-    if (1080 < screenSize.width ) { // android devices that have a high resolution
-      resDirOrders.push_back("iphonehd");
-      resDirOrders.push_back("iphone");
-      glview->setDesignResolutionSize(640, 960, ResolutionPolicy::NO_BORDER);
-    } else { // non retina iPhone and Android devices with lower resolutions
-      resDirOrders.push_back("iphone");
-      glview->setDesignResolutionSize(320, 480, ResolutionPolicy::NO_BORDER);
-    }
-  }
+void Config::handleResolution(const CCT_SZ &rs) {
+}
 
-  fileUtils->setSearchPaths(resDirOrders);
-#endif
+//////////////////////////////////////////////////////////////////////////////
+//
+float Config::scaleFont(float p) {
+  return p/128.0 * _scale;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  auto c= c::SpriteFrameCache::getInstance();
-  auto fp= getAtlas("game-pics");
-  c->addSpriteFramesWithFile( fp);
-  CCLOG("loaded sprite-sheet: %s", fp.c_str());
+  cacheSprites("game-pics");
+  cacheSprites("cc-pics");
 }
 
 //////////////////////////////////////////////////////////////////////////////
