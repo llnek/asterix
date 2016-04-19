@@ -14,7 +14,9 @@
 
 #include "ecs/Engine.h"
 #include "n/C.h"
-
+#include "n/Tower.h"
+#include "n/Enemy.h"
+#include "n/Lightning.h"
 NS_BEGIN(pumpkins)
 //////////////////////////////////////////////////////////////////////////////
 //

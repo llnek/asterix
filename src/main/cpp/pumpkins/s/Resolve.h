@@ -20,15 +20,15 @@ NS_BEGIN(pumpkins)
 //
 class CC_DLL Resolve : public ecs::System {
 
-  DECL_PTR(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _shared)
   void process(float);
 
 public:
 
-  MDECL_SYS_PRIORITY( ecs::Resolve)
-  MDECL_SYS_TPID("n/Resolve")
-  MDECL_SYS_PREAMBLE()
-  MDECL_SYS_UPDATE()
+  __decl_sys_priority(ecs::Resolve)
+  __decl_sys_tpid("n/Resolve")
+    __decl_sys_preamble()
+    __decl_sys_update()
 
   Resolve(ecs::Engine *e)
   : System(e)

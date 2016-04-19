@@ -48,7 +48,7 @@ void Config::initAssets() {
   addAtlas("game-pics", CC_STR("pics/images.plist"));
   addImage("game-pics", CC_STR("pics/images.png"));
 
-  addImage("gui.bg", CC_STR("pics/TWtitle.jpg"));
+  addImage("title.bg", CC_STR("pics/TWtitle.jpg"));
   addImage("game.bg", CC_STR("pics/bg.jpg"));
 
   addEffect("button", CC_STR("sfx/button-click.wav"));
@@ -64,6 +64,7 @@ void Config::initAssets() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const CCT_SZ &rs) {
+  CC_DTOR()->setContentScaleFactor(1);
 }
 
 //////////////////////////////////////////////////////////////////////////////

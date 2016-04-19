@@ -9,6 +9,7 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Tower.h"
@@ -58,7 +59,7 @@ void Tower::setProps() {
   // tower properties are set from the TowerDataSet & TowerData structs
   setBulletName(ss->towerDataSets[_type].bullet);
   setLightning(ss->towerDataSets[_type].lightning);
-  setRotating(ss->towerDataSets[_type].rotating);
+  setIsRotating(ss->towerDataSets[_type].rotating);
   setSpriteName(ss->towerDataSets[_type].towerData[_curLevel].sprite);
   setRange(ss->towerDataSets[_type].towerData[_curLevel].range);
   setPhysicalDamage(ss->towerDataSets[_type].towerData[_curLevel].physicalDamage);
@@ -149,7 +150,7 @@ void Tower::checkForEnemies() {
       // save this enemy as a target it if it still alive and if it is within range
       if (!curr_enemy->getHasDied() &&
           c::ccpDistance(pos, curr_enemy->getPosition()) <= (_range + curr_enemy->radius())) {
-        setTarget(curr_enemy);
+        setEnemy(curr_enemy);
         break;
       }
     }
@@ -160,14 +161,14 @@ void Tower::checkForEnemies() {
     // a target is still valid if it is alive and if it is within range
     if (_target->getHasDied() ||
         c::ccpDistance(pos, _target->getPosition()) > (_range + _target->radius())) {
-      setTarget(CC_NIL);
+      setEnemy(CC_NIL);
     }
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Tower::setTarget(Enemy *enemy) {
+void Tower::setEnemy(Enemy *enemy) {
   _target = enemy;
 
   if (_target) {
@@ -203,7 +204,9 @@ void Tower::shootBullet() {
   // damage the enemy
   auto damage_enemy = c::Sequence::create(
       c::DelayTime::create(bullet_move_duration),
-      c::CallFuncO::create(_target, callfuncO_selector(Enemy::takeDamage), this),
+      c::CallFunc::create([=]() {
+        _target->takeDamage(this);
+        }),
       CC_NIL);
   _target->runAction(damage_enemy);
 
@@ -231,13 +234,15 @@ void Tower::shootLightning() {
   // damage the enemy
   auto damage_enemy = c::Sequence::create(
       c::DelayTime::create(HTV(LIGHTNING_DURATION) ),
-      c::CallFuncO::create(_target, callfuncO_selector(Enemy::takeDamage), this),
+      c::CallFunc::create([=](){
+        _target->takeDamage(this);
+        }),
       CC_NIL);
   _target->runAction(damage_enemy);
 
   // create the lightning without animation
-  auto lightning = Lightning::create(getPosition(), _target->getPosition(), ccc4f(0.1098f, 0.87059f, 0.92157f, 1.0f), false);
-  MGML()->addAtlasItem("game-pics", lightning, E_LAYER_TOWER - 1);
+    auto lightning = Lightning::create(getPosition(), _target->getPosition(), c::ccc4f(0.1098f, 0.87059f, 0.92157f, 1.0f), false);
+  MGML()->addItem( lightning, E_LAYER_TOWER - 1);
 
   // animate the lightning
   auto shake = c::Sequence::create(
@@ -295,7 +300,7 @@ void Tower::createRangeNode() {
   auto sz= CC_CSIZE(this);
   // draw a semi transparent green circle with a border
   _rangeNode = c::DrawNode::create();
-  _rangeNode->drawPolygon(vertices, num_vertices, ccc4f(0.0f, 1.0f, 0.0f, 0.15f), 2, ccc4f(0.0f, 1.0f, 0.0f, 0.25f));
+    _rangeNode->drawPolygon(vertices, num_vertices, c::ccc4f(0.0f, 1.0f, 0.0f, 0.15f), 2, c::ccc4f(0.0f, 1.0f, 0.0f, 0.25f));
   CC_HIDE(_rangeNode);
   CC_POS2(_rangeNode, HWZ(sz), HHZ(sz));
   addChild(_rangeNode);

@@ -16,19 +16,19 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 
-#define TILE_SIZE 90
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pumpkins)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+class GVars;
 class CC_DLL TowerMenu : public c::Node {
 
-  __decl_ptr(c::Node, _maintenanceNode)
-  __decl_ptr(c::Node, _placementNode)
+  __decl_ptr(GVars, ss)
 
-  c::MenuItem* createButton(const sstr&, const CCT_PT&, int tag, VOIDFN);
+  c::MenuItem* createButton(
+      const sstr&, const CCT_PT&, int tag, BTNCB);
+
   c::Label* createLabel(int content,
       const sstr&, float size, const CCT_PT&);
 
@@ -42,9 +42,11 @@ class CC_DLL TowerMenu : public c::Node {
   void createPlacementMenu();
   virtual bool init();
 
+  TowerMenu(GVars* ss) { this->ss=ss; }
+
 public:
 
-  static owner<TowerMenu*> create(GVars*);
+  static owner<TowerMenu*> create(not_null<GVars*>);
 
   void showPlacementMenu(const CCT_PT&);
   void hidePlacementMenu();
@@ -54,6 +56,8 @@ public:
   void hideMaintenanceMenu();
   void enableMaintenanceButtons(int tower_type, int tower_level);
 
+  __decl_ptr(c::Node, _maintenanceNode)
+  __decl_ptr(c::Node, _placementNode)
 };
 
 

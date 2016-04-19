@@ -44,6 +44,7 @@ void AI::parallex(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::process(float dt) {
+  SENDMSG("/game/logic/update");
 }
 
 

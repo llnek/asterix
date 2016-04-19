@@ -71,6 +71,7 @@ struct CC_DLL TowerData {
 
 };
 
+class Enemy;
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL TowerDataSet {
@@ -102,13 +103,11 @@ struct CC_DLL Wave {
   __decl_fz(spawnDelay)
 };
 
+class TowerMenu;
+class Tower;
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
-
-  virtual ~GVars() {
-    delete playerHealth;
-  }
   __decl_comp_tpid( "n/GVars" )
 
   __decl_vec(TowerDataSet, towerDataSets)
@@ -129,12 +128,14 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_iz(cash)
   __decl_ptr(c::Label,cashLabel)
   __decl_md(CCT_PT,pumpkinPosition)
-  __decl_ptr(c::Node,pumpkin)
+  __decl_ptr(c::Sprite,pumpkin)
   __decl_ptr(c::Label,livesLabel)
   __decl_ptr(TowerMenu,towerMenu)
-  __decl_ptr(c::Node,gridNode)
-  __decl_ptr(hudMenu)
+  __decl_ptr(c::DrawNode,gridNode)
   __decl_bf(popupActive)
+  __decl_vec(CCT_PT,enemyWalkPoints)
+  __decl_vec(Tower*,towers)
+  __decl_vec(Wave,waves)
 
 };
 

@@ -14,23 +14,26 @@
 
 #include "x2d/XLayer.h"
 NS_BEGIN(pumpkins)
-
+class GVars;
 //////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL HUDLayer : public f::XLayer {
 
-  STATIC_REIFY_LAYER(HUDLayer)
-  MDECL_DECORATE()
-  MDECL_GET_IID(3)
-
-  DECL_PTR(c::Label, _wavesLabel)
-  DECL_PTR(c::Label, _cashLabel)
-  DECL_IZ(_score)
+    __decl_create_layer(HUDLayer)
+    __decl_deco_ui()
+    __decl_get_iid(3)
+  __decl_ptr(c::Label, _scoreLabel)
+  __decl_ptr(c::Label, _wavesLabel)
+  __decl_ptr(c::Label, _cashLabel)
+  __decl_ptr(c::Menu, _hudMenu)
+  __decl_iz(_score)
 
   __decl_getr(int,_score,Score)
   void updateScore(int);
   void updateLabels(not_null<GVars*>);
   void toggleMenu(bool);
+  void createMenu();
+
 };
 
 

@@ -16,11 +16,10 @@
 #include "core/COMP.h"
 #include "core/CCSX.h"
 
-#define TILE_SIZE 90
-
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pumpkins)
 
+class GVars;
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Popup : public c::LayerColor {
@@ -31,13 +30,15 @@ protected:
 
   virtual c::MenuItem* addLabelButton(const sstr &text, const sstr &font, const CCT_PT&, BTNCB);
   virtual c::MenuItem* addSpriteButton(const sstr&, const CCT_PT&, BTNCB);
-  void resumeGame(c::Ref* sender);
-  void restartGame(c::Ref* sender);
-  void nextLevel(c::Ref* sender);
-  void quitToMainMenu(c::Ref* sender);
+  void resumeGame();
+  void restartGame();
+  void nextLevel();
+  void quitToMainMenu();
 
   __decl_ptr(c::Menu, _menu)
-  Popup();
+  __decl_ptr(GVars, ss)
+
+  Popup(GVars*);
 
 public:
 
@@ -47,11 +48,12 @@ public:
 //
 class CC_DLL PausePopup : public Popup {
 
-  PausePopup() {}
+  PausePopup(GVars* ss) : Popup(ss) {}
+  bool inix(c::Color4B);
 
 public:
 
-  static owner<PausePopup*> create();
+  static owner<PausePopup*> create(not_null<GVars*>);
 
 };
 
@@ -59,11 +61,11 @@ public:
 //
 class CC_DLL LevelCompletePopup : public Popup {
 
-  LevelCompletePopup() {}
-
+  LevelCompletePopup(GVars* ss) : Popup(ss) {}
+  bool inix(c::Color4B);
 public:
 
-  static owner<LevelCompletePopup*> create();
+  static owner<LevelCompletePopup*> create(not_null<GVars*>);
 
 };
 
@@ -71,11 +73,12 @@ public:
 //
 class CC_DLL GameOverPopup : public Popup {
 
-  GameOverPopup() {}
+  GameOverPopup(GVars* ss) : Popup(ss) {}
+  bool inix(c::Color4B);
 
 public:
 
-  static owner<GameOverPopup*> create();
+  static owner<GameOverPopup*> create(not_null<GVars*>);
 };
 
 

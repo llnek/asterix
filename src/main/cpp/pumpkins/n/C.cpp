@@ -13,19 +13,13 @@
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
+#include "tinyxml2/tinyxml2.h"
 #include "C.h"
+#include "Enemy.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_ALIAS(tx, tinyxml2)
 NS_BEGIN(pumpkins)
-
-//////////////////////////////////////////////////////////////////////////////
-//
-static void loadData(GVars *ss) {
-  loadAnimations(ss);
-  loadTowerData(ss);
-  loadEnemyData(ss);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -45,8 +39,8 @@ static void loadAnimations(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void loadTowerData(GVars *ss) {
-  unsigned long size;
-  auto data = (char*) CC_FILER()->getFileData("tower_data.xml", "rb", &size);
+  ssize_t size;
+  auto data = (char*) CC_FILER()->getFileData("misc/tower_data.xml", "rb", &size);
   tx::XMLDocument xdoc;
   tx::XMLError rc = xdoc.Parse(data, size);
 
@@ -94,8 +88,8 @@ void loadTowerData(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void loadEnemyData(GVars *ss) {
-  unsigned long size;
-  auto data = (char*) CC_FILER()->getFileData("enemy_data.xml", "rb", &size);
+  ssize_t size;
+  auto data = (char*) CC_FILER()->getFileData("misc/enemy_data.xml", "rb", &size);
 
   tx::XMLDocument xdoc;
   tx::XMLError rc = xdoc.Parse(data, size);
@@ -126,6 +120,15 @@ void loadEnemyData(GVars *ss) {
     ss->numEnemyData++;
   }
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+static void loadData(GVars *ss) {
+    loadAnimations(ss);
+    loadTowerData(ss);
+    loadEnemyData(ss);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -187,7 +190,7 @@ void reduceLives(not_null<GVars*> ss, int amount) {
 void enemyAtTheGates(not_null<Enemy*> enemy) {
   // this is called when the enemy has reached the pumpkin
   auto ss= enemy->getGVars();
-  reduceLives(enemy->getDamage());
+  reduceLives(ss,enemy->getDamage());
   ss->currWave.numEnemiesWalking -= 1;
 }
 

@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "core/COMP.h"
+#include "C.h"
 
 NS_BEGIN(pumpkins)
 
@@ -60,7 +61,7 @@ public:
 
   // basic tower behaviour
   void checkForEnemies();
-  void setTarget(not_null<Enemy*>);
+  void setEnemy(Enemy*);
   void shoot(float dt);
   void shootBullet();
   void shootLightning();

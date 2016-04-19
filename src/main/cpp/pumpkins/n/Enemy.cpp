@@ -79,7 +79,7 @@ void Enemy::createHealthBar() {
   auto gb= cx::reifySprite("green_bar.png");
   XCFG()->fit(gb);
   _healthBar = c::ProgressTimer::create(gb);
-  _healthBar->setType(kCCProgressTimerTypeBar);
+    _healthBar->setType(c::kCCProgressTimerTypeBar);
   _healthBar->setPercentage( _healthLeft / _health * 100);
   _healthBar->setMidpoint(CCT_PT(0, 1));
   _healthBar->setBarChangeRate(CCT_PT(1, 0));
@@ -138,7 +138,7 @@ void Enemy::finishWalking() {
 //
 void Enemy::doDamage() {
   this->stopAllActions();
-  enemyAtTheGates(ss);
+  enemyAtTheGates(this);
   setVisible(false);
 }
 

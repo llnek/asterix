@@ -17,7 +17,7 @@
 NS_BEGIN(pumpkins)
 
 //////////////////////////////////////////////////////////////////////////////
-class CC_DLL Lightning : public f::DrawNode {
+class CC_DLL Lightning : public f::CDrawNode {
 
   bool inix(const CCT_PT&, const CCT_PT&, c::Color4F, bool);
   void generateKeyPoints(const CCT_PT&, const CCT_PT&);

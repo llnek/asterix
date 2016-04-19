@@ -9,10 +9,12 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "TowerMenu.h"
+#include "n/C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pumpkins)
@@ -21,8 +23,8 @@ NS_BEGIN(pumpkins)
 //
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<TowerMenu*> TowerMenu::create() {
-  auto z = mc_new(TowerMenu);
+owner<TowerMenu*> TowerMenu::create(not_null<GVars*> ss) {
+  auto z = mc_new1(TowerMenu, ss);
   z->init();
   z->autorelease();
   return z;
@@ -51,14 +53,14 @@ void TowerMenu::createPlacementMenu() {
   addChild(_placementNode);
 
   auto placement_menu = c::Menu::create();
-  placement_menu->setPosition(CC_ZPT);
+  CC_POS1(placement_menu, CC_ZPT);
   _placementNode->addChild(placement_menu);
 
   // create a button to place the tower
   auto tower_btn = createButton("TD_tw updateicon_01.png",
       CCT_PT(-150, 50), 0,
-      [=]() {
-        this->onTowerButtonClicked();
+      [=](c::Ref *rr) {
+        SENDMSGEX("/game/menu/tower", rr);
       });
   placement_menu->addChild(tower_btn);
   _placementButtons.push_back(tower_btn);
@@ -73,9 +75,7 @@ void TowerMenu::createPlacementMenu() {
   // create a button to place the tower
   tower_btn = createButton("TD_tw updateicon_02.png",
       CCT_PT(0, 150), 1,
-      [=]() {
-        this->onTowerButtonClicked();
-      });
+      [=](c::Ref *rr) { SENDMSGEX("/game/menu/tower", rr); });
   placement_menu->addChild(tower_btn);
   _placementButtons.push_back(tower_btn);
   _placementNode->addChild(createLabel(ss->towerDataSets[1].towerData[0].cost, "dft", 24, CCT_PT(0, 125)));
@@ -89,9 +89,7 @@ void TowerMenu::createPlacementMenu() {
   // create a button to place the tower
   tower_btn = createButton("TD_tw updateicon_03.png",
       CCT_PT(150, 50), 2,
-      [=]() {
-        this->onTowerButtonClicked();
-        });
+      [=](c::Ref *rr) { SENDMSGEX("/game/menu/tower", rr); });
   placement_menu->addChild(tower_btn);
   _placementButtons.push_back(tower_btn);
   _placementNode->addChild(createLabel(ss->towerDataSets[2].towerData[0].cost, "dft", 24, CCT_PT(150, 20)));
@@ -125,17 +123,16 @@ void TowerMenu::createMaintenanceMenu() {
   // create a button to upgrade the tower
   _upgradeButton = createButton("TD_tupdate01.png",
       CCT_PT(0, 100), 0,
-      [=]() {
-      this->onUpgradeTowerClicked();
-      });
+      [=](c::Ref *rr) { SENDMSGEX("/game/menu/upgrade", rr); });
   maintenance_menu->addChild(_upgradeButton);
   _upgradeLabel = createLabel(0, "dft", 24, CCT_PT(0, 70));
   _maintenanceNode->addChild(_upgradeLabel);
 
   // create a button to sell the tower
   _sellButton = createButton("TD_tucancel02.png",
-      CCT_PT(0, -100), 0, [=](){
-        this->onSellTowerClicked();
+      CCT_PT(0, -100), 0,
+      [=](c::Ref *rr){
+        SENDMSGEX("/game/tower/sell", rr);
         });
   maintenance_menu->addChild(_sellButton);
   _sellLabel = createLabel(0, "dft", 24, CCT_PT(0, -130));
@@ -172,7 +169,7 @@ void TowerMenu::hidePlacementMenu() {
 void TowerMenu::enablePlacementButtons() {
   // check if a tower button should be enabled based on whether the player can afford it
   for (auto i = 0; i < 3; ++i) {
-    bool enabled = getCash(ss) >= ss->towerDataSets[i].towerData[0].cost;
+    bool enabled = ss->cash >= ss->towerDataSets[i].towerData[0].cost;
     _placementButtons[i]->setEnabled(enabled);
     // change colour since we don't have a different sprite for disabled state
     _placementButtons[i]->setColor(
@@ -184,7 +181,7 @@ void TowerMenu::enablePlacementButtons() {
 //
 void TowerMenu::showMaintenanceMenu(
     const CCT_PT &position, int tower_index, int tower_type, int tower_level) {
-  auto buf= "-";
+  sstr buf= "-";
   // set the appropriate price into the upgrade label
   if (tower_level < NUM_TOWER_UPGRADES - 1) {
     buf=FTOS(ss->towerDataSets[tower_type].towerData[tower_level + 1].cost);
@@ -233,7 +230,7 @@ void TowerMenu::enableMaintenanceButtons(
     int tower_type, int tower_level) {
 
   // check if the upgrade button should be enabled based on whether the player can afford it
-  bool enabled = getCash(ss) >= ss->towerDataSets[tower_type].towerData[tower_level + 1].cost;
+  bool enabled = ss->cash >= ss->towerDataSets[tower_type].towerData[tower_level + 1].cost;
   _upgradeButton->setEnabled(enabled);
   _upgradeButton->setColor(
       enabled ? c::ccc3(255, 255, 255) : c::ccc3(128, 128, 128));
@@ -242,7 +239,7 @@ void TowerMenu::enableMaintenanceButtons(
 //////////////////////////////////////////////////////////////////////////////
 //
 c::MenuItem* TowerMenu::createButton(const sstr &sprite,
-    const CCT_PT &position, int tag, VOIDFN handler) {
+    const CCT_PT &position, int tag, BTNCB handler) {
   auto button = cx::reifyMenuBtn(sprite);
   XCFG()->fit(button);
   button->setCallback(handler);

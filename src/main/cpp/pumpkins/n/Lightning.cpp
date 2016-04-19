@@ -12,6 +12,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "Lightning.h"
+#include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pumpkins)
@@ -29,7 +30,7 @@ owner<Lightning*> Lightning::create(
 //////////////////////////////////////////////////////////////////////////////
 //
 bool Lightning::inix(const CCT_PT &from,
-    cont CCT_PT &to, c::Color4F color, bool is_animated) {
+    const CCT_PT &to, c::Color4F color, bool is_animated) {
 
   if ( ! c::DrawNode::init()) {
   return false; }

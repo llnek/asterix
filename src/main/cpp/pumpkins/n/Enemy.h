@@ -77,7 +77,7 @@ public:
   __decl_getr(bool, _isSlowed,IsSlowed)
   __decl_getr(bool,_hasDied,HasDied)
 
-  void setWalkPoints(int num_walk_points, const s_vec<CCT_PT>&) {
+  void setWalkPoints(int num_walk_points, const s_vec<CCT_PT> &walk_points) {
     _numWalkPoints = num_walk_points;
     _walkPoints = walk_points;
   }

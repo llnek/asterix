@@ -13,6 +13,7 @@
 #include "core/XConfig.h"
 #include "core/CCSX.h"
 #include "HUD.h"
+#include "n/C.h"
 
 NS_ALIAS(cx,fusii::ccsx)
 NS_BEGIN(pumpkins)
@@ -102,7 +103,7 @@ void HUDLayer::updateLabels(not_null<GVars*> ss) {
 //
 void HUDLayer::updateScore(int n) {
   _score += n;
-  _scoreLabel->setString(FTOS(_score));
+//  _scoreLabel->setString(FTOS(_score));
 }
 
 

@@ -9,18 +9,21 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Popups.h"
 #include "Splash.h"
-
+#include "Game.h"
+#include "n/C.h"
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pumpkins)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-Popup::Popup() {
+Popup::Popup(GVars *ss) {
+  this->ss = ss;
   setScale(0);
   runAction(c::EaseBackOut::create(c::ScaleTo::create(0.25, 1)));
 }
@@ -31,8 +34,8 @@ c::Menu* Popup::addMenu() {
 
   if (E_NIL(_menu)) {
     _menu = c::Menu::create();
-    _menu->setAnchorPoint(cx::anchotBL());
-    _menu->setPosition(CC_ZPT);
+    _menu->setAnchorPoint(cx::anchorBL());
+    CC_POS1(_menu, CC_ZPT);
     addChild(_menu);
   }
 
@@ -46,8 +49,7 @@ c::MenuItem* Popup::addButton(c::MenuItem *button, const CCT_PT &position) {
   if ( addMenu() == CC_NIL || button == CC_NIL ) {
   return CC_NIL; }
 
-  // position the button & add to menu_
-  button->setPosition(position);
+  CC_POS1(button, position);
   _menu->addChild(button);
   return button;
 }
@@ -84,42 +86,45 @@ c::MenuItem* Popup::addSpriteButton(const sstr &frame,
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Popup::resumeGame(c::Node *sender) {
-  //game_world_->ResumeGame();
+void Popup::resumeGame() {
   this->runAction(
       c::Sequence::create(
         c::EaseBackIn::create(
           c::ScaleTo::create(0.25, 0)),
         c::RemoveSelf::create(true),
         CC_NIL));
+  SENDMSG("/game/hud/resume");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Popup::restartGame(c::Node *sender) {
+void Popup::restartGame() {
   removeFromParentAndCleanup(true);
   cx::runEx(Game::reify(mc_new(GameCtx)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Popup::nextLevel(c::Node *sender) {
-  ++ss->levelNumber;
+void Popup::nextLevel() {
+  auto ctx= (GameCtx*)MGMS()->getCtx();
+  auto n= ctx->level+1;
   removeFromParentAndCleanup(true);
-  cx::runEx(Game::reify(mc_new(GameCtx)));
+  cx::runEx(Game::reify(mc_new1(GameCtx, n)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Popup::quitToMainMenu(c::Node *sender) {
+void Popup::quitToMainMenu() {
   removeFromParentAndCleanup(true);
   cx::prelude();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-PausePopup::PausePopup() {
-  ss->popupActive = true;
+bool PausePopup::inix(c::Color4B color) {
+
+  this->ss->popupActive = true;
+  if (!initWithColor(color)) { return false; }
 
   // add the title/message of the popup
   auto label = cx::reifyBmfLabel("title", "Game Paused");
@@ -136,23 +141,27 @@ PausePopup::PausePopup() {
       [=](c::Ref*) { this->restartGame(); });
   addLabelButton("Main Menu", CCT_PT(wb.cx, wb.top*0.4),
       [=](c::Ref*) { this->quitToMainMenu(); });
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<PausePopup*> PausePopup::create() {
-  auto pause_popup = mc_new(PausePopup);
-  pause_popup->initWithColor(c::ccc4(0, 0, 0, 128));
-  pause_popup->autorelease();
-  return pause_popup;
+owner<PausePopup*> PausePopup::create(not_null<GVars*> ss) {
+  auto z = mc_new1(PausePopup, ss);
+  z->inix(c::ccc4(0, 0, 0, 128));
+  z->autorelease();
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-LevelCompletePopup::LevelCompletePopup() {
+bool LevelCompletePopup::inix(c::Color4B color) {
+  if ( !this->initWithColor(color)) { return false; }
   ss->popupActive = true;
   // add the title/message of the popup
   auto label = cx::reifyBmfLabel("title", "Stage Complete!");
+    auto wb=cx::visBox();
   XCFG()->scaleBmfont(label, 52);
   CC_POS2(label, wb.cx, wb.top*0.75);
   addChild(label);
@@ -161,28 +170,32 @@ LevelCompletePopup::LevelCompletePopup() {
   addLabelButton("Restart", CCT_PT(wb.cx, wb.top*0.4),
       [=](c::Ref*) { this->restartGame(); });
   addLabelButton("Main Menu", CCT_PT(wb.cx, wb.top*0.3),
-      [=](c::Ref*) { this->QuitToMainMenu(); });
+      [=](c::Ref*) { this->quitToMainMenu(); });
   addLabelButton("Next Level", CCT_PT(wb.cx, wb.cy),
       [=](c::Ref*) { this->nextLevel(); });
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<LevelCompletePopup*> LevelCompletePopup::create() {
-  auto level_complete_popup = mc_new(LevelCompletePopup);
-  level_complete_popup->initWithColor(c::ccc4(0, 0, 0, 128));
-  level_complete_popup->autorelease();
-  return level_complete_popup;
+owner<LevelCompletePopup*> LevelCompletePopup::create(not_null<GVars*> ss) {
+  auto z = mc_new1(LevelCompletePopup,ss);
+  z->inix(c::ccc4(0, 0, 0, 128));
+  z->autorelease();
+  return z;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-GameOverPopup::GameOverPopup() {
+bool GameOverPopup::inix(c::Color4B color) {
+  if ( !this->initWithColor(color)) { return false; }
   ss->popupActive = true;
 
   // add the title/message of the popup
   auto label = cx::reifyBmfLabel("title", "Game Over!");
-  XCFG()->fit(label, 52);
+    auto wb= cx::visBox();
+  XCFG()->scaleBmfont(label, 52);
   CC_POS2(label, wb.cx, wb.top*0.75);
   addChild(label);
 
@@ -191,15 +204,17 @@ GameOverPopup::GameOverPopup() {
       [=](c::Ref*) { this->restartGame(); });
   addLabelButton("Main Menu", CCT_PT(wb.cx, wb.top*0.4),
       [=](c::Ref*) { this->quitToMainMenu(); });
+
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<GameOverPopup*> GameOverPopup::create() {
-  auto game_over_popup = mc_new(GameOverPopup);
-  game_over_popup->initWithColor(c::ccc4(0, 0, 0, 128));
-  game_over_popup->autorelease();
-  return game_over_popup;
+owner<GameOverPopup*> GameOverPopup::create(not_null<GVars*> ss) {
+  auto z = mc_new1(GameOverPopup, ss);
+  z->inix(c::ccc4(0, 0, 0, 128));
+  z->autorelease();
+  return z;
 }
 
 

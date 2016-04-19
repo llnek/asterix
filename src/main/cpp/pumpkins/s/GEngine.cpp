@@ -24,16 +24,13 @@ NS_BEGIN(pumpkins)
 //////////////////////////////////////////////////////////////////////////////
 //
 void GEngine::initEntities() {
-  // global
   auto ent= this->reifyNode("Shared",true);
+  auto h=mc_new1(f::CHealth, 20);
   auto ss= mc_new(GVars);
-  ent->checkin(ss);
-
-  ent= this->reifyNode("Player", true);
-  auto h=mc_new(f::CHealth, 20);
+  ss->playerHealth=h;
   ent->checkin(mc_new(f::CHuman));
+  ent->checkin(ss);
   ent->checkin(h);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
