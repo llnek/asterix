@@ -89,8 +89,10 @@
 typedef cocos2d::EventKeyboard::KeyCode KEYCODE;
 typedef cocos2d::BlendFunc BDFUNC;
 typedef s_vec<cocos2d::Touch*> VecTouches;
+typedef s_vec<cocos2d::Vec2> VecPts;
+typedef s_vec<cocos2d::Size> VecSzs;
 
-typedef std::function<void ()> VOIDFN;
+typedef std::function<void (cocos2d::Ref*)> BTNCB;
 typedef std::string filepath;
 typedef std::string MsgTopic;
 

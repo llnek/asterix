@@ -118,6 +118,7 @@ typedef std::string sstr;
 #define P_NIL nullptr
 
 //////////////////////////////////////////////////////////////////////////////
+typedef std::function<void ()> VOIDFN;
 // std collection aliases
 #define s_vec std::vector
 #define s_que std::queue
