@@ -606,7 +606,7 @@ void GLayer::onSellTowerClicked(c::Ref *sender) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onToggleSpeedClicked(c::Ref *sender) {
+void GLayer::onToggleSpeedClicked() {
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
   ss->timeScale = ((int)ss->timeScale == 1) ? 2 : 1;
   // toggle the scheduler's time scale
@@ -615,7 +615,7 @@ void GLayer::onToggleSpeedClicked(c::Ref *sender) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onPauseClicked(c::Ref *sender) {
+void GLayer::onPauseClicked() {
   auto ss=CC_GEC(GVars,_shared,"n/GVars");
   // this prevents multiple pause popups
   if (ss->popupActive) {
@@ -710,6 +710,17 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic=="/game/hud/togglespeed") {
+    y->onToggleSpeedClicked();
+  }
+  if (topic=="/game/hud/pause") {
+     y->onPauseClicked();
+  }
+  if (topic=="/game/player/lose") {
+     y->gameOver();
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

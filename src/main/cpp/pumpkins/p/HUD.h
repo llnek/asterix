@@ -27,10 +27,10 @@ struct CC_DLL HUDLayer : public f::XLayer {
   DECL_PTR(c::Label, _cashLabel)
   DECL_IZ(_score)
 
-  int getScore() { return _score; }
+  __decl_getr(int,_score,Score)
   void updateScore(int);
-  void updateLabels();
-
+  void updateLabels(not_null<GVars*>);
+  void toggleMenu(bool);
 };
 
 

@@ -21,33 +21,8 @@ NS_BEGIN(pumpkins)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Ende::decoUI() {
-  auto lbl= cx::reifyLabel("text", 32, "Game Over!");
-  auto wb= cx::visBox();
-
-  lbl->setPosition(wb.cx, wb.top * 0.8);
-  addItem(lbl);
-
-  _replayBtn = cx::reifyLabel("text", 32, "Replay");
-  _replayBtn ->setPosition(wb.cx, wb.top * 0.2);
-  addItem(_replayBtn );
-
-  enableListeners();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Ende::onTouchStart(c::Touch *t) {
-  return onMouseStart(t->getLocation());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-bool Ende::onMouseStart(const CCT_PT &tap) {
-  if (cx::isTapped(_replayBtn, tap)) {
-    cx::runEx(Game::reify(new GameCtx()));
-  }
-  return false;
-}
 
 NS_END
 
