@@ -12,14 +12,12 @@
 #pragma once
 //////////////////////////////////////////////////////////////////////////////
 
-#include "core/XConfig.h"
 #include "core/COMP.h"
-#include "core/CCSX.h"
 
-NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(pumpkins)
 
 class Enemy;
+class GVars;
 class CC_DLL Tower : public f::CPixie {
 
   // these take values straight from the TowerDataSet &
@@ -39,20 +37,21 @@ class CC_DLL Tower : public f::CPixie {
   // the level of upgrade the tower is currently at
   __decl_iz(_curLevel)
   __decl_ptr(Enemy, _target)
-
+  __decl_ptr(GVars, ss)
   __decl_ptr(c::Sprite, _base)
   // a node to draw the circular range for this tower
   __decl_ptr(c::DrawNode, _rangeNode)
 
   bool inix(int type, const CCT_PT&);
-  Tower() {}
+  void setProps();
+  Tower(GVars *ss) { this->ss = ss; }
 
 public:
 
-  static owner<Tower*> create(int type, const CCT_PT&);
+  static owner<Tower*> create(not_null<GVars*>, int type, const CCT_PT&);
 
+  GVars *getGVars() { return ss; }
   void updateRotation();
-  void setProperties();
   void update();
 
   // functions that take care of upgradation & resale
@@ -61,7 +60,7 @@ public:
 
   // basic tower behaviour
   void checkForEnemies();
-  void setTarget(Enemy* enemy);
+  void setTarget(not_null<Enemy*>);
   void shoot(float dt);
   void shootBullet();
   void shootLightning();

@@ -29,6 +29,11 @@ void GEngine::initEntities() {
   auto ss= mc_new(GVars);
   ent->checkin(ss);
 
+  ent= this->reifyNode("Player", true);
+  auto h=mc_new(f::CHealth, 20);
+  ent->checkin(mc_new(f::CHuman));
+  ent->checkin(h);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

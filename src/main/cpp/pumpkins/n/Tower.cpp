@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Tower.h"
 #include "Enemy.h"
@@ -21,8 +20,8 @@ NS_BEGIN(pumpkins)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Tower*> Tower::create(int type, const CCT_PT &position) {
-  auto z = mc_new(Tower);
+owner<Tower*> Tower::create(not_null<GVars*> ss, int type, const CCT_PT &position) {
+  auto z = mc_new1(Tower, ss);
   z->inix(type, position);
   z->autorelease();
   return z;
@@ -39,7 +38,7 @@ bool Tower::inix(int type, const CCT_PT &position) {
 
   setPosition(position);
   setScale(0);
-  setProperties();
+  setProps();
 
   // animate the tower's spawning
   if (_base) {
@@ -55,19 +54,19 @@ bool Tower::inix(int type, const CCT_PT &position) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Tower::setProperties() {
+void Tower::setProps() {
   // tower properties are set from the TowerDataSet & TowerData structs
-  setBulletName(ss->tower_data_sets[_type_]->bullet);
-  setLightning(ss->tower_data_sets[_type]->lightning);
-  setRotating(ss->tower_data_sets[_type]-rotating);
-  setSpriteName(ss->tower_data_sets[_type]->tower_data[_curLevel]->sprite);
-  setRange(ss->tower_data_sets[_type]->tower_data[_curLevel]->range);
-  setPhysicalDamage(ss->tower_data_sets[_type]->tower_data[_curLevel]->physicalDamage);
-  setMagicalDamage(ss->tower_data_sets[_type]->tower_data[_curLevel]->magicalDamage);
-  setSpeedDamage(ss->tower_data_sets[_type]->tower_data[_curLevel]->speedDamage);
-  setSpeedDamageDuration(ss->tower_data_sets[_type]->tower_data[_curLevel]->speedDamageDuration);
-  setFireRate(ss->tower_data_sets[_type]->tower_data[_curLevel_]->fireRate);
-  setCost(ss->tower_data_sets[_type]->tower_data[_curLevel]->cost);
+  setBulletName(ss->towerDataSets[_type].bullet);
+  setLightning(ss->towerDataSets[_type].lightning);
+  setRotating(ss->towerDataSets[_type].rotating);
+  setSpriteName(ss->towerDataSets[_type].towerData[_curLevel].sprite);
+  setRange(ss->towerDataSets[_type].towerData[_curLevel].range);
+  setPhysicalDamage(ss->towerDataSets[_type].towerData[_curLevel].physicalDamage);
+  setMagicalDamage(ss->towerDataSets[_type].towerData[_curLevel].magicalDamage);
+  setSpeedDamage(ss->towerDataSets[_type].towerData[_curLevel].speedDamage);
+  setSpeedDamageDuration(ss->towerDataSets[_type].towerData[_curLevel].speedDamageDuration);
+  setFireRate(ss->towerDataSets[_type].towerData[_curLevel].fireRate);
+  setCost(ss->towerDataSets[_type].towerData[_curLevel].cost);
 
 }
 
@@ -100,9 +99,9 @@ void Tower::upgrade() {
 
   // increment upgrade level and reset tower properties
   ++_curLevel;
-  setProperties();
+  setProps();
   // debit cash
-  updateCash(- _cost);
+  updateCash(ss, -_cost);
 
   // reset the range
   _rangeNode->removeFromParentAndCleanup(true);
@@ -136,17 +135,17 @@ void Tower::sell() {
 //
 void Tower::checkForEnemies() {
   // only check the current wave for enemies
-  auto curr_wave = getCurrentWave();
+  auto &curr_wave = ss->currWave;
 
-  if (curr_wave == CC_NIL) {
+  if (curr_wave.numEnemies <= 0) {
   return; }
 
   // search for a target only when there isn't one already
   auto pos= getPosition();
   if (_target == CC_NIL) {
     // loop through each enemy in the current wave
-    for (auto i = 0; i < curr_wave->numEnemies; ++i) {
-      auto curr_enemy = curr_wave->enemies[i];
+    for (auto i = 0; i < curr_wave.numEnemies; ++i) {
+      auto curr_enemy = curr_wave.enemies[i];
       // save this enemy as a target it if it still alive and if it is within range
       if (!curr_enemy->getHasDied() &&
           c::ccpDistance(pos, curr_enemy->getPosition()) <= (_range + curr_enemy->radius())) {
@@ -174,10 +173,10 @@ void Tower::setTarget(Enemy *enemy) {
   if (_target) {
     // shoot as soon as you get a target
     shoot(0);
-    schedule(schedule_selector(Tower::Shoot), _fireRate);
+    schedule(schedule_selector(Tower::shoot), _fireRate);
   } else {
     // stop shooting when you lose a target
-    unschedule(schedule_selector(Tower::Shoot));
+    unschedule(schedule_selector(Tower::shoot));
   }
 }
 
@@ -209,7 +208,7 @@ void Tower::shootBullet() {
   _target->runAction(damage_enemy);
 
   // create the bullet
-  auto bullet = cx::reifySprite(bulletName);
+  auto bullet = cx::reifySprite(_bulletName);
   auto k= XCFG()->fit(bullet);
   bullet->setScale(0);
   CC_POS1(bullet, getPosition());

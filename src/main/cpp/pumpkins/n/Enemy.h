@@ -23,11 +23,11 @@ class GVars;
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Enemy: public f::CPixie {
 
+  __decl_iz(_magicResistance)
   __decl_md(sstr, _animation)
   __decl_iz(_type)
   __decl_iz(_health)
   __decl_iz(_armor)
-  __decl_iz(_magicResistance)
   __decl_fz(_speed)
   __decl_iz(_damage)
   __decl_iz(_reward)
@@ -44,51 +44,43 @@ class CC_DLL Enemy: public f::CPixie {
   __decl_ptr(GVars, ss)
 
   bool inix(int type);
-  Enemy() {}
+  void setProps();
+  void createHealthBar();
+
+  Enemy(GVars *ss) { this->ss =ss; }
 
 public:
 
-  static owner<Enemy*> create(int type);
+  static owner<Enemy*> create(not_null<GVars*>, int type);
 
   virtual float radius();
 
-  void setProperties();
-  void createHealthBar();
+  GVars* getGVars() { return ss; }
   void updateHealthBar();
-
   void startWalking();
   void finishWalking();
   void doDamage();
-  void takeDamage(CCObject* object);
+  void takeDamage(not_null<c::Node*>);
   void die();
-  void takeSpeedDamage(float speed_damage, float speed_damage_duration);
+  void takeSpeedDamage(float damage, float duration);
   void resetSpeed(float dt);
 
-  void setAnimationName(const char* animation_name) { animation_name_ = animation_name; }
+  __decl_gsms(sstr, _animation, AnimationName)
 
-  void setHealth(int health) { health_ = health; }
-  int getHealth() { return health_; }
+  __decl_gsms(int,_health,Health)
+  __decl_gsms(int,_armor,Armor)
+  __decl_gsms(int,_magicResistance,MagicResistance)
+  __decl_gsms(int,_speed,Speed)
+  __decl_gsms(int,_damage,Damage)
+  __decl_gsms(int,_reward,Reward)
 
-  void setArmor(int armor) { armor_ = armor; }
-  int getArmor() { return armor_; }
+  __decl_getr(bool, _isSlowed,IsSlowed)
+  __decl_getr(bool,_hasDied,HasDied)
 
-  void setMagicResistance(int magic_resistance) { magic_resistance_ = magic_resistance; }
-  int getMagicResistance() { return magic_resistance_; }
-
-  void setSpeed(float speed) { speed_ = speed; }
-  float getSpeed() { return speed_; }
-
-  void setDamage(int damage) { damage_ = damage; }
-  int getDamage() { return damage_; }
-
-  void setReward(int reward) { reward_ = reward; }
-  int getReward() { return reward_; }
-
-  float getRadius() { return radius_; }
-  bool getHasDied() { return has_died_; }
-  bool getIsSlowed() { return is_slowed_; }
-
-  void setWalkPoints(int num_walk_points, vector<CCPoint> walk_points) { num_walk_points_ = num_walk_points; walk_points_ = walk_points; }
+  void setWalkPoints(int num_walk_points, const s_vec<CCT_PT>&) {
+    _numWalkPoints = num_walk_points;
+    _walkPoints = walk_points;
+  }
 
 };
 

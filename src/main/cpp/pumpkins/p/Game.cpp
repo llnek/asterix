@@ -26,42 +26,25 @@ BEGIN_NS_UNAMED
 //////////////////////////////////////////////////////////////////////////////
 struct CC_DLL GLayer : public f::GameLayer {
 
-  HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
+  HUDLayer* getHUD() {
+    return (HUDLayer*)getSceneX()->getLayer(3); }
 
-  DECL_PTR(ecs::Node, _shared)
+  void handleTouch();
 
-  time_scale_ = 0.0f;
-  tiled_map_ = NULL;
-  tmx_layer_ = NULL;
-  num_enemy_walk_points_ = 0;
-  enemy_walk_points_.clear();
-  num_towers_ = 0;
-  towers_.clear();
-  num_waves_ = 0;
-  curr_wave_index_ = 0;
-  _wave_starting_ = false;
-  curr_wave_ = NULL;
-  waves_.clear();
-  waves_label_ = NULL;
-  cash_ = 0;
-  cash_label_ = NULL;
-  lives_left_ = 0;
-  pumpkin_position_ = CCPointZero;
-  pumpkin_ = NULL;
-  lives_label_ = NULL;
-  tower_menu_ = NULL;
-  grid_node_ = NULL;
-  hud_menu_ = NULL;
-  gesture_layer_ = NULL;
-  is_popup_active_ = false;
+  __decl_mv(EGestureType, _gestureType, E_GESTURE_NONE)
+  __decl_md(CCT_PT, _touchStart)
+  __decl_bf(_touchActive)
+  __decl_md(CCT_PT, _touchEnd)
+  __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _player)
 
   STATIC_REIFY_LAYER(GLayer)
   MDECL_DECORATE()
   MDECL_GET_IID(2)
 
-  virtual void onMouseMotion(const c::Vec2&);
-  virtual bool onMouseStart(const c::Vec2&);
-  virtual void onMouseClick(const c::Vec2&);
+  virtual void onMouseMotion(const CCT_PT&);
+  virtual bool onMouseStart(const CCT_PT&);
+  virtual void onMouseClick(const CCT_PT&);
 
   virtual void onTouchMotion(c::Touch*);
   virtual bool onTouchStart(c::Touch*);
@@ -69,29 +52,22 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onInited() {
 
   _shared= _engine->getNodes("n/GVars")[0];
+  _player= _engine->getNodes("f/CHuman")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
-  auto wz= cx::visRect();
+  auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  ss->levelNumber = 0;
-
-  _currWaveIndex = -1;
-  _timeScale = 1;
-  _livesLeft = 20;
+  ss->currWaveIndex = -1;
+  ss->timeScale = 1;
 
   createTiledMap();
   createGrid();
@@ -100,88 +76,131 @@ void GLayer::onInited() {
   createPumpkin();
 
   // create & add the tower placement & maaintenance menus
-  _towerMenu = TowerMenu::create(this);
-  addChild(_towerMenu, E_LAYER_HUD + 1);
-
-  // create & add the gesture layer
-  _gestureLayer = GestureLayer::create(this,
-      callfuncO_selector(GLayer::onGestureReceived));
-  addChild(_gestureLayer);
+  ss->towerMenu = TowerMenu::create(ss);
+  addChild(ss->towerMenu, E_LAYER_HUD + 1);
 
   // start the first wave in a few seconds
   scheduleOnce(schedule_selector(GLayer::startNextWave), 2);
   scheduleUpdate();
 
   // reset the scheduler's time scale
-  CC_DTOR()->getScheduler()->setTimeScale(_timeScale);
+  CC_DTOR()->getScheduler()->setTimeScale(ss->timeScale);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const c::Vec2 &loc) {
+void GLayer::onMouseClick(const CCT_PT &tap) {
+  _touchEnd = tap;
+  handleTouch();
+  _touchActive = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const c::Vec2 &loc) {
+void GLayer::onMouseMotion(const CCT_PT &tap) {
+  _touchEnd = tap;
+  handleTouch();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const c::Vec2 &loc) {
-  return true;
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+  _gestureType = E_GESTURE_NONE;
+  _touchStart = tap;
+  _touchEnd = CC_ZPT;
+  _touchActive = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  return true;
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
+  onMouseMotion(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::handleTouch() {
+
+  if (!_touchActive) {
+  return; }
+
+  // check for a single tap
+  if (c::ccpFuzzyEqual(_touchStart, _touchEnd, 1)) {
+    onGesture(E_GESTURE_TAP);
+    _touchActive = false;
+    return;
+  }
+
+  // calculate distance between first and last touch
+  auto touch_difference = c::ccpSub(_touchEnd, _touchStart);
+  // horizontal swipe
+  if (fabs(touch_difference.x) > MIN_GESTURE_DISTANCE) {
+    onGesture( ((int)touch_difference.x > 0)
+        ? E_GESTURE_SWIPE_RIGHT : E_GESTURE_SWIPE_LEFT);
+    _touchActive = false;
+    return;
+  }
+
+  // vertical swipe
+  if (fabs(touch_difference.y) > MIN_GESTURE_DISTANCE) {
+    onGesture( ((int)touch_difference.y > 0)
+        ? E_GESTURE_SWIPE_UP : E_GESTURE_SWIPE_DOWN);
+    _touchActive = false;
+    return;
+  }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
   centerImage("game.bg", E_LAYER_BACKGROUND);
   _engine = mc_new(GEngine);
-  cx::sfxMusic("background", true);
+  //cx::sfxMusic("background", true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createTiledMap() {
-  auto level= ss->levelNumber + 1;
-  auto fn = "level_" + (level < 10 ? "0" : "") + FTOS(level) + ".tmx";
-  _tiledMap = c::TMXTiledMap::create(fn);
-  addChild(_tiledMap, E_LAYER_BACKGROUND+1);
+  auto ctx= (GameCtx*)getCtx();
+  auto fn= c::StringUtils::format("level_%02d.tmx", ctx->level+1);
 
-  auto sz= CC_CSIZE(_tiledMap);
-  CC_POS2(_tiledMap, wb.cx - HWZ(sz), wb.cy - HHZ(sz));
-  _tmxLayer = _tiledMap->layerNamed("EnemyPath");
+  ss->tiledMap = c::TMXTiledMap::create(fn);
+  //kenl - check if needed
+  //XCFG()->fit(ss->tiledMap);
+  addChild(ss->tiledMap, E_LAYER_BACKGROUND+1);
+
+  auto sz= CC_CSIZE(ss->tiledMap);
+  CC_POS2(ss->tiledMap, wb.cx - HWZ(sz), wb.cy - HHZ(sz));
+  ss->tmxLayer = ss->tiledMap->layerNamed("EnemyPath");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createGrid() {
   // create a node to draw the grid
-  _gridNode = c::DrawNode::create();
-  CC_HIDE(_gridNode);
+  ss->gridNode = c::DrawNode::create();
+  CC_HIDE(ss->gridNode);
   // position it relative to the tiled map
-  CC_POS1(_gridNode,
-      c::ccpAdd(_tiledMap->getPosition(), CCT_PT(0, 100)));
-  addChild(_gridNode, E_LAYER_BACKGROUND);
+  CC_POS1(ss->gridNode,
+      c::ccpAdd(ss->tiledMap->getPosition(), CCT_PT(0, 100)));
+  addChild(ss->gridNode, E_LAYER_BACKGROUND);
 
-  auto map_size = _tiledMap->getMapSize();
+  auto map_size = ss->tiledMap->getMapSize();
   auto counter = 0;
-  // run a loop to alternatively draw a semi-transparent black square indicating a tile
+  // run a loop to alternatively draw a
+  // semi-transparent black square indicating a tile
   for (auto i = 0; i < ((int)map_size.width); ++i) {
     for(auto j = 0; j < ((int)map_size.height); ++j) {
       ++counter;
@@ -195,7 +214,7 @@ void GLayer::createGrid() {
         CCT_PT((i+1) * TILE_SIZE - 2, wb.top - (j+1) * TILE_SIZE + 2 ),
         CCT_PT(i * TILE_SIZE + 2, wb.top - (j+1) * TILE_SIZE + 2 )
       };
-      _gridNode->drawPolygon(vertices, 4,
+      ss->gridNode->drawPolygon(vertices, 4,
           c::ccc4f(0.0f, 0.0f, 0.0f, 0.12f), 0,
           c::ccc4f(0.0f, 0.0f, 0.0f, 0.0f));
     }
@@ -206,34 +225,31 @@ void GLayer::createGrid() {
 //
 void GLayer::createWalkPoints() {
   // parse the list of objects
-  auto object_group = _tiledMap->objectGroupNamed("PathObjects");
+  auto object_group = ss->tiledMap->objectGroupNamed("PathObjects");
   auto objects = object_group->getObjects();
   auto num_objects = objects->count();
-  CCDictionary *object = CC_NIL;
 
   for (auto i = 0; i < num_objects; ++i) {
-    object = (CCDictionary*) objects->objectAtIndex(i);
+    auto object = (c::Dictionary*) objects->objectAtIndex(i);
     // save each WalkPoint's position for enemies to use
     if (strstr(object->valueForKey("name")->getCString(), "WalkPoint") != CC_NIL) {
-      _enemyWalkPoints.push_back(
+      ss->enemyWalkPoints.push_back(
           CCT_PT(object->valueForKey("x")->floatValue(), object->valueForKey("y")->floatValue()));
     }
   }
-  _numEnemyWalkPoints = _enemyWalkPoints.size();
+  ss->numEnemyWalkPoints = ss->enemyWalkPoints.size();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::createWaves() {
-  auto level= ss->levelNumber + 1;
-  auto fn= "level_" + (level< 10 ? "0" : "") + FTOS(level) + ".xml";
+  auto ctx = (GameCtx*) getCtx();
+  auto fn= c::StringUtils::format("level_%02d.xml", ctx->level + 1);
   unsigned long size;
   auto data = (char*)CC_FILER()->getFileData(fn, "rb", &size);
 
-  // parse file
   tinyxml2::XMLDocument xml_document;
   tinyxml2::XMLError xml_result = xml_document.Parse(data, size);
-
   CC_SAFE_DELETE(data);
 
   // print the error if parsing was unsuccessful
@@ -243,8 +259,10 @@ void GLayer::createWaves() {
   }
 
   tinyxml2::XMLNode *level_node = xml_document.FirstChild();
+  auto ss= CC_GEC(GVars, _shared, "n/GVars");
+
   // save the initial cash for this level
-  _cash = level_node->ToElement()->IntAttribute("cash");
+  ss->cash = level_node->ToElement()->IntAttribute("cash");
 
   tinyxml2::XMLElement *wave_element = CC_NIL;
   // loop through each Wave tag
@@ -258,14 +276,14 @@ void GLayer::createWaves() {
     wave.numEnemies = enemy_list.size();
     wave.spawnDelay = wave_element->FloatAttribute("spawn_delay");
     // create all enemies in advance
-    for (auto i = 0; i < wave->numEnemies; ++i) {
-      auto enemy = Enemy::create(enemy_list[i]);
+    for (auto i = 0; i < wave.numEnemies; ++i) {
+      auto enemy = Enemy::create(ss, enemy_list[i]);
       wave.enemies.push_back(enemy);
       addAtlasItem("game-pics", enemy, E_LAYER_ENEMY);
     }
 
-    _waves.push_back(wave);
-    ++_numWaves;
+    ss->waves.push_back(wave);
+    ++ss->numWaves;
   }
 }
 
@@ -273,208 +291,167 @@ void GLayer::createWaves() {
 //
 void GLayer::createPumpkin() {
   // fetch the Pumpkin object from the tiled map
-  auto object_group = _tiledMap->objectGroupNamed("PathObjects");
+  auto ss= CC_GEC(GVars, _shared, "n/GVars");
+  auto object_group = ss->tiledMap->objectGroupNamed("PathObjects");
   auto pumpkin_object = object_group->objectNamed("Pumpkin");
 
   if (E_NIL(pumpkin_object)) { return; }
 
   // create the sprite for the pumpkin
-  _pumpkin = cx::reifySprite("TD_pumkin_01.png");
-  CC_POS2(_pumpkin, pumpkin_object->valueForKey("x")->floatValue(), pumpkin_object->valueForKey("y")->floatValue());
-  addAtlasItem("game-pics", _pumpkin, E_LAYER_TOWER);
+  ss->pumpkin = f::CPixie::reifyFrame("TD_pumkin_01.png");
+  XCFG()->fit(ss->pumpkin);
+  CC_POS2(ss->pumpkin, pumpkin_object->valueForKey("x")->floatValue(), pumpkin_object->valueForKey("y")->floatValue());
+  addAtlasItem("game-pics", ss->pumpkin, E_LAYER_TOWER);
 
   // create the sprite for the lives
   auto life_frame = cx::reifySprite("TD_livebg.png");
-  auto psz= CC_CSIZE(_pumpkin);
-  CC_POS2(life_frame, _pumpkin->getPositionX() -
-      HWZ(psz), _pumpkin->getPositionY() +
-      HHZ(psz));
+  XCFG()->fit(life_frame);
+  auto psz= CC_CSIZE(ss->pumpkin);
+  CC_POS2(life_frame,
+      ss->pumpkin->getPositionX() - HWZ(psz),
+      ss->pumpkin->getPositionY() + HHZ(psz));
   addAtlasItem("game-pics", life_frame, E_LAYER_TOWER);
 
+  auto ph= CC_GEC(f::CHealth,_player, "f/CHealth");
   // create the label for the lives
-  lives_label_ = cx::reifyBmfLabel("dft",
-    "" + (_livesLeft < 10 ? "0" : "") + FTOS(_livesLeft));
-  XCFG()->scaleBmfont(_livesLabel, 32);
-  _livesLabel->setAnchorPoint(CCT_PT(0.15, 0.5));
-  _livesLabel->setColor(c::ccc3(255, 255, 189));
-  CC_POS1(_livesLabel, life_frame->getPosition());
-  addItem(_livesLabel, E_LAYER_TOWER);
+  ss->livesLabel = cx::reifyBmfLabel("dft",
+      c::StringUtils::format("%02d", ph->curHP));
+  XCFG()->scaleBmfont(ss->livesLabel, 32);
+  ss->livesLabel->setAnchorPoint(CCT_PT(0.15, 0.5));
+  ss->livesLabel->setColor(c::ccc3(255, 255, 189));
+  CC_POS1(ss->livesLabel, life_frame->getPosition());
+  addItem(ss->livesLabel, E_LAYER_TOWER);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::placeTower(int type, const CCT_PT &position) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+
   // can the player afford this tower?
-  if (_cash < ss->towerDataSets[type].towerData[0].cost) {
-    return;
-  }
+  if (ss->cash < ss->towerDataSets[type].towerData[0].cost) {
+  return; }
 
   // create a new Tower object & add it into the vector of towers
-  auto tower = Tower::create(type, position);
+  auto tower = Tower::create(ss, type, position);
   addAtlasItem("game-pics", tower, E_LAYER_TOWER);
-  ++_numTowers;
-  _towers.push_back(tower);
+  ++ss->numTowers;
+  ss->towers.push_back(tower);
 
   // save tower's information into the tile map
-  auto pos= _tiledMap->convertToNodeSpace(position);
-  auto tile_coord = CCT_PT(GET_COL_FOR_X(pos.x), GET_ROW_FOR_Y(pos.y, MAX_ROWS));
-  _tmxLayer->setTileGID(TOWER_GID + (_numTowers - 1), tile_coord);
+  auto pos= ss->tiledMap->convertToNodeSpace(position);
+  auto tile_coord = CCT_PT(GET_COL_FOR_X(pos.x),
+                           GET_ROW_FOR_Y(pos.y, MAX_ROWS));
+  ss->tmxLayer->setTileGID(TOWER_GID + (ss->numTowers - 1), tile_coord);
 
   // debit cash
   updateCash(- tower->getCost());
-  getHUD()->updateLabels();
+  getHUD()->updateLabels(ss);
+
   // show the range for this tower
   tower->showRange();
 
   // hide the grid now that the tower has been placed
-  CC_HIDE(_gridNode);
+  CC_HIDE(ss->gridNode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::sellTower(int index) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   // calculate the net worth of this tower
   auto total_cost = 0;
-  for (auto i = 0; i <= _towers[index]->getLevel(); ++i) {
+  for (auto i = 0; i <= ss->towers[index]->getLevel(); ++i) {
     total_cost +=
-      ss->towerDataSets[_towers[index]->getType()].towerData[i].cost;
+      ss->towerDataSets[ss->towers[index]->getType()].towerData[i].cost;
   }
   // credit cash
-  updateCash((int)(total_cost / 2));
+  updateCash(total_cost / 2);
 
   // erase tower's information from the tile map
-  auto position = _tiledMap->convertToNodeSpace(_towers[index]->getPosition());
-  auto tile_coord = CCT_PT(GET_COL_FOR_X(position.x), GET_ROW_FOR_Y(position.y, MAX_ROWS));
-  _tmxLayer->setTileGID(0, tile_coord);
+  auto position = ss->tiledMap->convertToNodeSpace(ss->towers[index]->getPosition());
+  auto tile_coord = CCT_PT(GET_COL_FOR_X(position.x),
+                           GET_ROW_FOR_Y(position.y, MAX_ROWS));
+  ss->tmxLayer->setTileGID(0, tile_coord);
 
   // sell the tower & erase it from the vector
-  _towers[index]->sell();
-  _towers.erase(_towers.begin() + index);
-  --_numTowers;
+  ss->towers[index]->sell();
+  ss->towers.erase(ss->towers.begin() + index);
+  --ss->numTowers;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::startNextWave(float dt) {
-  ++_currWaveIndex;
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  ++ss->currWaveIndex;
   // are there any waves left?
-  if (_currWaveIndex >= _numWaves) {
+  if (ss->currWaveIndex >= ss->numWaves) {
     // level has completed
     gameOver(true);
   } else {
     // start the next wave in a few seconds
-    _currWave = _waves[_currWaveIndex];
-    schedule(schedule_selector(GLayer::spawnEnemy), _currWave.spawnDelay);
-    getHUD()->updateLabels();
-    scaleLabel(_wavesLabel);
+    ss->currWave = ss->waves[ss->currWaveIndex];
+    schedule(schedule_selector(GLayer::spawnEnemy), ss->currWave.spawnDelay);
+    getHUD()->updateLabels(ss);
+    scaleLabel(ss->wavesLabel);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::spawnEnemy(float dt) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   // have all enemies of this wave been spawned?
-  if (_currWave.numEnemiesSpawned >= _currWave.numEnemies) {
+  if (ss->currWave.numEnemiesSpawned >= ss->currWave.numEnemies) {
     // wave has finished starting
-    _waveStarting = false;
+    ss->waveStarting = false;
     // stop spawning enemies
     unschedule(schedule_selector(GLayer::spawnEnemy));
     return;
   }
   // fetch the next enemy in the list
-  auto enemy = _currWave.enemies[_currWave.numEnemiesSpawned++];
+  auto enemy = ss->currWave.enemies[ss->currWave.numEnemiesSpawned++];
   // tell the enemy where to go
-  enemy->setWalkPoints(_numEnemyWalkPoints, _enemyWalkPoints);
+  enemy->setWalkPoints(ss->numEnemyWalkPoints, ss->enemyWalkPoints);
   // tell the enemy to start walking
   enemy->startWalking();
-  ++_currWave.numEnemiesWalking;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::enemyAtTheGates(Enemy *enemy) {
-  // this is called when the enemy has reached the pumpkin
-  reduceLives(enemy->getDamage());
-  --_currWave.numEnemiesWalking;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::enemyDown(Enemy *enemy) {
-  // this is called when the enemy
-  updateCash(enemy->getReward());
-  --_currWave.numEnemiesWalking;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::reduceLives(int amount) {
-  // reduce lives
-  --_livesLeft;
-  switch (_livesLeft) {
-  // change the pumpkin's appearance based on how many lives are left
-  case 15:
-    _pumpkin->setSpriteFrame("TD_pumkin_02.png");
-    break;
-  case 10:
-    _pumpkin->setSpriteFrame("TD_pumkin_03.png");
-    break;
-  case 5:
-    _pumpkin->setSpriteFrame("TD_pumkin_04.png");
-    break;
-  case 0:
-    // all lives over...level failed
-    gameOver(false);
-    break;
-  }
-
-  // update the lives label
-  _livesLabel->setString(FTOS(_livesLeft));
-  scaleLabel(_livesLabel);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::updateCash(int amount) {
-  _cash += amount;
-  getHUD()->updateLabels();
-  scaleLabel(_cashLabel);
+  ++ss->currWave.numEnemiesWalking;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::update(float dt) {
-
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   checkWaveCompletion();
-
-  for (auto i = 0; i < _numTowers; ++i) {
-    _towers[i]->update();
+  for (auto i = 0; i < ss->numTowers; ++i) {
+    ss->towers[i]->update();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::checkWaveCompletion() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   // wave has completed when all enemies have been spawned AND
   // when there are no enemies walking (cuz they're all dead!)
-  if (!_waveStarting &&
-      _currWave &&
-      _currWave.numEnemiesSpawned >= _currWave.numEnemies &&
-      _currWave.numEnemiesWalking <= 0) {
+  if (!ss->waveStarting &&
+      ss->currWave &&
+      ss->currWave.numEnemiesSpawned >= ss->currWave.numEnemies &&
+      ss->currWave.numEnemiesWalking <= 0) {
     // start the next wave
-    _wave_starting = true;
+    ss->waveStarting = true;
     scheduleOnce(schedule_selector(GLayer::startNextWave), 2);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onGestureReceived(c::Node *sender) {
-  auto gesture_layer = (GestureLayer*)sender;
-  // call the respective gesture's handler
-  switch (gesture_layer->getGestureType()) {
+void GLayer::onGesture(EGestureType gtype) {
+  _gestureType = gtype;
+  switch (gtype) {
     case E_GESTURE_TAP:
-      handleTap(gesture_layer->getTouchStart());
+      handleTap(_touchStart);
     break;
 
     case E_GESTURE_SWIPE_UP:
@@ -498,8 +475,9 @@ void GLayer::onGestureReceived(c::Node *sender) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::handleTap(const CCT_PT &position) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   // get the touch coordinates with respect to the tile map
-  auto touch_point = _tiledMap->convertToNodeSpace(position);
+  auto touch_point = ss->tiledMap->convertToNodeSpace(position);
   auto wb= cx::visBox();
   auto tile_coord = CCT_PT(GET_COL_FOR_X(touch_point.x),
                            GET_ROW_FOR_Y(touch_point.y, MAX_ROWS));
@@ -507,15 +485,15 @@ void GLayer::handleTap(const CCT_PT &position) {
   touch_point.y = wb.top - touch_point.y;
 
   // check if the touched tile is empty
-  auto tile_GID = _tmxLayer->tileGIDAt(tile_coord);
+  auto tile_GID = ss->tmxLayer->tileGIDAt(tile_coord);
   // if the touched tile is empty, show the tower placement menu
   if (tile_GID == 0) {
     // check to ensure only one menu is visible at a time
-    if (!_towerMenu->placementNode->isVisible() &&
-        !_towerMenu->maintenanceNode->isVisible() ) {
-      _towerMenu->showPlacementMenu(touch_point);
+    if (!ss->towerMenu->placementNode->isVisible() &&
+        !ss->towerMenu->maintenanceNode->isVisible() ) {
+      ss->towerMenu->showPlacementMenu(touch_point);
       // show the grid
-      CC_SHOW(_gridNode);
+      CC_SHOW(ss->gridNode);
     }
   }
   // a tower exists on the touched tile
@@ -523,25 +501,25 @@ void GLayer::handleTap(const CCT_PT &position) {
     auto tower_index = tile_GID - TOWER_GID;
     // first check bounds and then check to ensure only one menu is visible at a time
     if(tower_index >= 0 &&
-        tower_index < _numTowers &&
-        !_towerMenu->maintenanceNode->isVisible() &&
-        !_towerMenu->placementNode->isVisible() ) {
+        tower_index < ss->numTowers &&
+        !ss->towerMenu->maintenanceNode->isVisible() &&
+        !ss->towerMenu->placementNode->isVisible() ) {
       // show the tower's current range
-      _towers[tower_index]->showRange();
-      _towerMenu->showMaintenanceMenu(touch_point, tower_index,
-          _towers[tower_index]->getType(),
-          _towers[tower_index]->getLevel());
+      ss->towers[tower_index]->showRange();
+      ss->towerMenu->showMaintenanceMenu(touch_point, tower_index,
+          ss->towers[tower_index]->getType(),
+          ss->towers[tower_index]->getLevel());
     }
   }
 
   // hide the tower placement menu if it is visible
-  if (_towerMenu->placementNode->isVisible()) {
-    _towerMenu->hidePlacementMenu();
-    CC_HIDE(_grid_node);
+  if (ss->towerMenu->placementNode->isVisible()) {
+    ss->towerMenu->hidePlacementMenu();
+    CC_HIDE(ss->grid_node);
   }
   // hide the tower maintenance menu if it is visible
-  if(_towerMenu->maintenanceNode->isVisible()) {
-    _towerMenu->hideMaintenanceMenu();
+  if (ss->towerMenu->maintenanceNode->isVisible()) {
+    ss->towerMenu->hideMaintenanceMenu();
   }
 }
 
@@ -549,13 +527,13 @@ void GLayer::handleTap(const CCT_PT &position) {
 //
 void GLayer::handleSwipeUp() {
   // return if the tower placement menu is not active
-  if (!_towerMenu->placementNode->isVisible() ) {
+  if (!ss->towerMenu->placementNode->isVisible() ) {
   return; }
 
   // place the tower with specified type at specified position
-  placeTower(1, _towerMenu->placementNode->getPosition());
-  _towerMenu->hidePlacementMenu();
-  CC_HIDE(_gridNode);
+  placeTower(1, ss->towerMenu->placementNode->getPosition());
+  ss->towerMenu->hidePlacementMenu();
+  CC_HIDE(ss->gridNode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -566,92 +544,98 @@ void GLayer::handleSwipeDown() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::handleSwipeLeft() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   // return if the tower placement menu is not active
-  if (!_towerMenu->placementNode->isVisible() ) {
+  if (!ss->towerMenu->placementNode->isVisible() ) {
   return; }
 
   // place the tower with specified type at specified position
-  placeTower(0, _towerMenu->placementNode->getPosition());
-  _towerMenu->hidePlacementMenu();
-  CC_HIDE(_gridNode);
+  placeTower(0, ss->towerMenu->placementNode->getPosition());
+  ss->towerMenu->hidePlacementMenu();
+  CC_HIDE(ss->gridNode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::handleSwipeRight() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   // return if the tower placement menu is not active
-  if (!_towerMenu->placementNode->isVisible() ) {
+  if (!ss->towerMenu->placementNode->isVisible() ) {
   return; }
 
   // place the tower with specified type at specified position
-  placeTower(2, _towerMenu->placementNode->getPosition());
-  _towerMenu->hidePlacementMenu();
-  CC_HIDE(_gridNode);
+  placeTower(2, ss->towerMenu->placementNode->getPosition());
+  ss->towerMenu->hidePlacementMenu();
+  CC_HIDE(ss->gridNode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onTowerButtonClicked(c::Node *sender) {
+void GLayer::onTowerButtonClicked(c::Ref *sender) {
   // place the appropriate tower based on which button was pressed
-  auto tag = sender->getTag();
-  placeTower(tag, _towerMenu->placementNode->getPosition());
-  _towerMenu->hidePlacementMenu();
-  CC_HIDE(_gridNode);
+  auto tag = ((c::Node*)sender)->getTag();
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  placeTower(tag, ss->towerMenu->placementNode->getPosition());
+  ss->towerMenu->hidePlacementMenu();
+  CC_HIDE(ss->gridNode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onUpgradeTowerClicked(c::Node *sender) {
-  auto index = sender->getTag();
+void GLayer::onUpgradeTowerClicked(c::Ref *sender) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto index = ((c::Node*)sender)->getTag();
   // check bounds and upgrade the tower
-  if (index >= 0 && index < _numTowers) {
-    _towers[index]->upgrade();
+  if (index >= 0 && index < ss->numTowers) {
+    ss->towers[index]->upgrade();
   }
-  _towerMenu->hideMaintenanceMenu();
+  ss->towerMenu->hideMaintenanceMenu();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onSellTowerClicked(c::Node *sender) {
-  auto index = sender->getTag();
+void GLayer::onSellTowerClicked(c::Ref *sender) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  auto index = ((c::Node*)sender)->getTag();
   // check bounds and sell the tower
-  if (index >= 0 && index < _numTowers) {
+  if (index >= 0 && index < ss->numTowers) {
     sellTower(index);
   }
-  _towerMenu->hideMaintenanceMenu();
+  ss->towerMenu->hideMaintenanceMenu();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onToggleSpeedClicked(c::Node *sender) {
-  _timeScale = ((int)_timeScale == 1) ? 2 : 1;
+void GLayer::onToggleSpeedClicked(c::Ref *sender) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
+  ss->timeScale = ((int)ss->timeScale == 1) ? 2 : 1;
   // toggle the scheduler's time scale
-  CC_DTOR()->getScheduler()->setTimeScale(_timeScale);
+  CC_DTOR()->getScheduler()->setTimeScale(ss->timeScale);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onPauseClicked(c::Node *sender) {
+void GLayer::onPauseClicked(c::Ref *sender) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   // this prevents multiple pause popups
-  if (_popupActive) {
+  if (ss->popupActive) {
   return; }
 
   // reset the scheduler's time scale to what it was
   CC_DTOR()->getScheduler()->setTimeScale(1);
-  _gestureLayer->setTouchEnabled(false);
   //kenl
   //hud_menu_->setEnabled(false);
   pauseSchedulerAndActions();
 
   // pause game elements here
-  if (_currWave) {
-    for (auto i = 0; i < _currWave.numEnemies; ++i) {
-      _currWave.enemies[i]->pauseSchedulerAndActions();
+  if (ss->currWave) {
+    for (auto i = 0; i < ss->currWave.numEnemies; ++i) {
+      ss->currWave.enemies[i]->pauseSchedulerAndActions();
     }
   }
 
-  for (auto i = 0; i < _numTowers; ++i) {
-    _towers[i]->pauseSchedulerAndActions();
+  for (auto i = 0; i < ss->numTowers; ++i) {
+    ss->towers[i]->pauseSchedulerAndActions();
   }
 
   // create & add the pause popup
@@ -662,61 +646,61 @@ void GLayer::onPauseClicked(c::Node *sender) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::resumeGame() {
-  _popupActive = false;
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  ss->popupActive = false;
 
   // set the scheduler's time scale to what it was
-  CC_DTOR()->getScheduler()->setTimeScale(_timeScale);
-  _gestureLayer->setTouchEnabled(true);
+  CC_DTOR()->getScheduler()->setTimeScale(ss->timeScale);
   //kenl
   //hud_menu_->setEnabled(true);
   resumeSchedulerAndActions();
 
   // resume game elements here
-  if (_currWave) {
-    for (auto i = 0; i < _currWave.numEnemies; ++i) {
-      _currWave.enemies[i]->resumeSchedulerAndActions();
+  if (ss->currWave) {
+    for (auto i = 0; i < ss->currWave.numEnemies; ++i) {
+      ss->currWave.enemies[i]->resumeSchedulerAndActions();
     }
   }
 
-  for (auto i = 0; i < _numTowers; ++i) {
-    _towers[i]->resumeSchedulerAndActions();
+  for (auto i = 0; i < ss->numTowers; ++i) {
+    ss->towers[i]->resumeSchedulerAndActions();
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::gameOver(bool is_level_complete) {
+  auto ss= CC_GEC(GVars,_shared,"n/GVars");
   // this prevents multiple pause popups
-  if (_popupActive) {
+  if (ss->popupActive) {
   return; }
 
-  _popupActive = true;
+  ss->popupActive = true;
 
   // reset the scheduler's time scale
   CC_DTOR()->getScheduler()->setTimeScale(1);
   // stop GameWorld update
   unscheduleAllSelectors();
-  _gestureLayer->setTouchEnabled(false);
 
   // stop game elements here
-  if (_currWave) {
-    for (auto i = 0; i < _currWave.numEnemies; ++i) {
-      _currWave.enemies[i]->stopAllActions();
-      _currWave.enemies[i]->unscheduleAllSelectors();
+  if (ss->currWave) {
+    for (auto i = 0; i < ss->currWave.numEnemies; ++i) {
+      ss->currWave.enemies[i]->stopAllActions();
+      ss->currWave.enemies[i]->unscheduleAllSelectors();
     }
   }
 
-  for (auto i = 0; i < _numTowers; ++i) {
-    _towers[i]->stopAllActions();
-    _towers[i]->unscheduleAllSelectors();
+  for (auto i = 0; i < ss->numTowers; ++i) {
+    ss->towers[i]->stopAllActions();
+    ss->towers[i]->unscheduleAllSelectors();
   }
 
   // show the respective popup
   Popup *popup;
   if (is_level_complete) {
-    popup = LevelCompletePopup::create(this);
+    popup = LevelCompletePopup::create(ss);
   } else {
-    popup = GameOverPopup::create(this);
+    popup = GameOverPopup::create(ss);
   }
   addChild(popup, E_LAYER_POPUP);
 }

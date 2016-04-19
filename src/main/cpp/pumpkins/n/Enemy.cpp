@@ -20,8 +20,8 @@ NS_BEGIN(pumpkins)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-owner<Enemy*> Enemy::create(int type) {
-  auto z = mc_new(Enemy);
+owner<Enemy*> Enemy::create(not_null<GVars*> ss, int type) {
+  auto z = mc_new1(Enemy, ss);
   z->inix(type);
   z->autorelease();
   return z;
@@ -35,11 +35,11 @@ bool Enemy::inix( int type) {
   return false; }
 
   _type = type;
-  setEnemyProperties();
+  setProps();
 
-  auto anim= CC_ACAC()->getAnimation(_animationName);
+  auto anim= CC_ACAC()->getAnimation(_animation);
   auto &fs= anim->getFrames();
-  _size= XCFG()->fit(fs.at(0)->getSpriteFrame()->getOriginalSize());
+  _size= fs.at(0)->getSpriteFrame()->getOriginalSize();
   // hide the enemy till it starts walking
   setVisible(false);
   createHealthBar();
@@ -49,15 +49,15 @@ bool Enemy::inix( int type) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Enemy::setProperties() {
+void Enemy::setProps() {
   // properties are from the EnemyData struct
-  setAnimationName(this->ss->enemy_data[_type]->animation);
-  setHealth(this->ss->enemy_data[_type]->health);
-  setArmor(this->ss->enemy_data[_type]->armor);
-  setMagicResistance(this->ss->enemy_data[_type]->magicResistance);
-  setSpeed(this->ss->enemy_data[_type]->speed);
-  setDamage(this->ss->enemy_data[_type]->damage);
-  setReward(this->ss->enemy_data[_type]->reward);
+  setAnimationName(this->ss->enemyData[_type].animation);
+  setHealth(this->ss->enemyData[_type].health);
+  setArmor(this->ss->enemyData[_type].armor);
+  setMagicResistance(this->ss->enemyData[_type].magicResistance);
+  setSpeed(this->ss->enemyData[_type].speed);
+  setDamage(this->ss->enemyData[_type].damage);
+  setReward(this->ss->enemyData[_type].reward);
   _healthLeft = _health;
 }
 
@@ -97,7 +97,7 @@ void Enemy::startWalking() {
   // calculate duration in terms of time taken to walk a single tile
   auto duration = _speed * ENEMY_MOVE_DURATION *
     c::ccpDistance(_walkPoints[_currWalkPoint + 1],
-                    _walkPoints[_currWalkPoint]) / TILE_SIZE;
+                   _walkPoints[_currWalkPoint]) / TILE_SIZE;
 
   // walk to the subsequent walk point
   auto walk = c::MoveTo::create(duration, _walkPoints[_currWalkPoint + 1]);
@@ -137,21 +137,20 @@ void Enemy::finishWalking() {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::doDamage() {
-
-  enemyAtTheGates(this);
-
   this->stopAllActions();
+  enemyAtTheGates(ss);
   setVisible(false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Enemy::takeDamage(c::Node *object) {
+void Enemy::takeDamage(not_null<c::Node*> object) {
+
   if (_hasDied) {
   return; }
 
   // calculate total damage taken by this enemy from a given tower
-  auto tower = (Tower*)object;
+  auto tower = (Tower*)object.get();
   auto physical_damage = tower->getPhysicalDamage() - _armor;
   auto magical_damage = tower->getMagicalDamage() - _magicResistance;
   auto total_damage = (physical_damage > 0 ? physical_damage : 0) + (magical_damage > 0 ? magical_damage : 0);
@@ -173,11 +172,9 @@ void Enemy::takeDamage(c::Node *object) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Enemy::die() {
-  // inform GameWorld that an enemy has died
+  this->stopAllActions();
   _hasDied = true;
   enemyDown(this);
-
-  this->stopAllActions();
   this->runAction(
       c::Sequence::create(
         c::EaseBackIn::create(c::ScaleTo::create(0.2, 0)),
@@ -187,14 +184,14 @@ void Enemy::die() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Enemy::takeSpeedDamage(float speed_damage, float speed_damage_duration) {
+void Enemy::takeSpeedDamage(float damage, float duration) {
   // reduce the walking speed
   _isSlowed = true;
-  auto walkact= (CCSpeed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
+  auto walkact= (c::Speed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
   if (walkact) {
-    walkact->setSpeed(speed_damage);
+    walkact->setSpeed(damage);
     // walking speed must return back to normal after certain duration
-    scheduleOnce(schedule_selector(Enemy::ResetSpeed), speed_damage_duration);
+    scheduleOnce(schedule_selector(Enemy::resetSpeed), duration);
   }
 }
 
@@ -203,7 +200,7 @@ void Enemy::takeSpeedDamage(float speed_damage, float speed_damage_duration) {
 void Enemy::resetSpeed(float dt) {
   // walking speed must return back to normal after certain duration
   _isSlowed = false;
-  auto walkact= (CCSpeed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
+  auto walkact= (c::Speed*)getActionByTag(ENEMY_MOVE_ACTION_TAG);
   if (walkact) {
     walkact->setSpeed(1);
   }

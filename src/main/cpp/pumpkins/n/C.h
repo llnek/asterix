@@ -105,22 +105,51 @@ struct CC_DLL Wave {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
+
+  virtual ~GVars() {
+    delete playerHealth;
+  }
   __decl_comp_tpid( "n/GVars" )
-  __decl_iz(levelNumber)
-  // tower & enemy data libraries
-  __decl_iz(numTowerDataSets)
+
   __decl_vec(TowerDataSet, towerDataSets)
+  __decl_iz(numTowerDataSets)
   __decl_iz(numEnemyData)
   __decl_vec(EnemyData, enemyData)
+  __decl_ptr(f::CHealth, playerHealth)
+  __decl_fz(timeScale)
+  __decl_ptr(c::TMXTiledMap, tiledMap)
+  __decl_ptr(c::TMXLayer,tmxLayer)
+  __decl_iz(numEnemyWalkPoints)
+  __decl_iz(numTowers)
+  __decl_iz(numWaves)
+  __decl_iz(currWaveIndex)
+  __decl_bf(waveStarting)
+  __decl_md(Wave,currWave)
+  __decl_ptr(c::Label, wavesLabel)
+  __decl_iz(cash)
+  __decl_ptr(c::Label,cashLabel)
+  __decl_md(CCT_PT,pumpkinPosition)
+  __decl_ptr(c::Node,pumpkin)
+  __decl_ptr(c::Label,livesLabel)
+  __decl_ptr(TowerMenu,towerMenu)
+  __decl_ptr(c::Node,gridNode)
+  __decl_ptr(hudMenu)
+  __decl_bf(popupActive)
 
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void scaleLabel(c::Label*);
-// function takes comma separated string & returns vector of values
-s_vec<int> getIntListFromString(const sstr&);
+void scaleLabel(not_null<c::Label*>);
+void initOnce(not_null<GVars*>);
+// function takes comma separated string &
+// returns vector of values
+const s_vec<int> getIntListFromString(const sstr&);
 
+void enemyAtTheGates(not_null<Enemy*>);
+void reduceLives(not_null<GVars*>, int amount);
+void enemyDown(not_null<Enemy*>);
+void updateCash(not_null<GVars*>, int amount);
 
 
 

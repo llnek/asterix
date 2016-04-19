@@ -34,6 +34,10 @@ struct CC_DLL Game : public f::GameScene {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GameCtx : public f::GCX {
+  GameCtx(int level=0) {
+    this->level=level;
+  }
+  __decl_iz(level)
 };
 
 

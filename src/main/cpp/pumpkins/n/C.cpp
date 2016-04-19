@@ -9,36 +9,32 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
+#include "x2d/GameScene.h"
 #include "core/XConfig.h"
 #include "core/COMP.h"
 #include "core/CCSX.h"
 #include "C.h"
 
 NS_ALIAS(cx, fusii::ccsx)
+NS_ALIAS(tx, tinyxml2)
 NS_BEGIN(pumpkins)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void initOnce() {
-  loadData();
+static void loadData(GVars *ss) {
+  loadAnimations(ss);
+  loadTowerData(ss);
+  loadEnemyData(ss);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void loadData() {
-  loadAnimations();
-  loadTowerData();
-  loadEnemyData();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void loadAnimations() {
+static void loadAnimations(GVars *ss) {
   for (auto i=1; i <= 8; ++i) {
     auto anim= cx::createAnimation(0.25);
     for (auto j=1; j <=2; ++j) {
-      auto png= "enemy_0" + FTOS(i) + "000" + FTOS(j) + ".png";
-      auto sp= cx::reifySprite(png);
+      auto sp= cx::reifySprite(
+          c::StringUtils::format("enemy_0%d000%d.png", i, j));
       XCFG()->fit(sp);
       anim->addSpriteFrame(sp->displayFrame());
     }
@@ -51,34 +47,32 @@ void loadAnimations() {
 void loadTowerData(GVars *ss) {
   unsigned long size;
   auto data = (char*) CC_FILER()->getFileData("tower_data.xml", "rb", &size);
-
-  // parse file
-  tinyxml2::XMLDocument xml_document;
-  tinyxml2::XMLError xml_result = xml_document.Parse(data, size);
+  tx::XMLDocument xdoc;
+  tx::XMLError rc = xdoc.Parse(data, size);
 
   CC_SAFE_DELETE(data);
 
-  // print the error if parsing was unsuccessful
-  if (xml_result != tinyxml2::XML_SUCCESS) {
-    CCLOGERROR("Error:%d while reading tower_data.xml", xml_result);
+  if (rc != tx::XML_SUCCESS) {
+    CCLOGERROR("Error:%d while reading tower_data.xml", rc);
     return;
   }
 
-  tinyxml2::XMLNode *tower_data_set_list = xml_document.FirstChild();
-  tinyxml2::XMLElement *tower_data_set_element = CC_NIL;
-  tinyxml2::XMLElement *tower_data_element = CC_NIL;
+  auto tower_data_set_list = xdoc.FirstChild();
+  tx::XMLElement *tower_data_set_element = CC_NIL;
+  tx::XMLElement *tower_data_element = CC_NIL;
   // loop through each TowerDataSet tag
-  for (tinyxml2::XMLNode *tower_data_set_node = tower_data_set_list->FirstChild(); tower_data_set_node != CC_NIL; tower_data_set_node = tower_data_set_node->NextSibling())
-  {
+  for (auto tower_data_set_node = tower_data_set_list->FirstChild();
+       tower_data_set_node != CC_NIL;
+       tower_data_set_node = tower_data_set_node->NextSibling()) {
     tower_data_set_element = tower_data_set_node->ToElement();
     TowerDataSet tdset;
     tdset.bullet= tower_data_set_element->Attribute("bullet_name");
     tdset.lightning = tower_data_set_element->BoolAttribute("is_lightning");
     tdset.rotating = tower_data_set_element->BoolAttribute("is_rotating");
-
     // loop through each TowerData tag
-    for (tinyxml2::XMLNode *tower_data_node = tower_data_set_node->FirstChild(); tower_data_node != CC_NIL; tower_data_node = tower_data_node->NextSibling())
-    {
+    for (auto tower_data_node = tower_data_set_node->FirstChild();
+         tower_data_node != CC_NIL;
+         tower_data_node = tower_data_node->NextSibling()) {
       tower_data_element = tower_data_node->ToElement();
       TowerData tdata;
       tdata.sprite= tower_data_element->Attribute("sprite_name");
@@ -103,24 +97,23 @@ void loadEnemyData(GVars *ss) {
   unsigned long size;
   auto data = (char*) CC_FILER()->getFileData("enemy_data.xml", "rb", &size);
 
-  tinyxml2::XMLDocument xml_document;
-  tinyxml2::XMLError xml_result = xml_document.Parse(data, size);
+  tx::XMLDocument xdoc;
+  tx::XMLError rc = xdoc.Parse(data, size);
 
   CC_SAFE_DELETE(data);
 
-  // print the error if parsing was unsuccessful
-  if (xml_result != tinyxml2::XML_SUCCESS) {
-    CCLOGERROR("Error:%d while reading enemy_data.xml", xml_result);
+  if (rc != tx::XML_SUCCESS) {
+    CCLOGERROR("Error:%d while reading enemy_data.xml", rc);
     return;
   }
 
-  tinyxml2::XMLNode *enemy_data_list = xml_document.FirstChild();
-  tinyxml2::XMLElement *enemy_data_element = CC_NIL;
+  auto enemy_data_list = xdoc.FirstChild();
+  tx::XMLElement *enemy_data_element = CC_NIL;
   // loop through each EnemyData tag
-  for (tinyxml2::XMLNode *enemy_data_node = enemy_data_list->FirstChild(); enemy_data_node != CC_NIL; enemy_data_node = enemy_data_node->NextSibling())
-  {
+  for (auto enemy_data_node = enemy_data_list->FirstChild();
+       enemy_data_node != CC_NIL;
+       enemy_data_node = enemy_data_node->NextSibling()) {
     enemy_data_element = enemy_data_node->ToElement();
-
     EnemyData edata;
     edata.animation= enemy_data_element->Attribute("animation");
     edata.health= enemy_data_element->IntAttribute("health");
@@ -150,7 +143,7 @@ void scaleLabel(not_null<c::Label*> label) {
 //////////////////////////////////////////////////////////////////////////////
 //
 // function takes comma separated string & returns vector of values
-s_vec<int> getIntListFromString(const sstr &input) {
+const s_vec<int> getIntListFromString(const sstr &input) {
   s_vec<int> result;
 
   if (input.length() == 0) {
@@ -164,6 +157,60 @@ s_vec<int> getIntListFromString(const sstr &input) {
       ssm.ignore();
   }
   return result;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void reduceLives(not_null<GVars*> ss, int amount) {
+  auto ph= ss->playerHealth;
+  ph->hurt();
+  switch (ph->curHP) {
+    case 15:
+      ss->pumpkin->setSpriteFrame("TD_pumkin_02.png");
+    break;
+    case 10:
+      ss->pumpkin->setSpriteFrame("TD_pumkin_03.png");
+    break;
+    case 5:
+      ss->pumpkin->setSpriteFrame("TD_pumkin_04.png");
+    break;
+  }
+  ss->livesLabel->setString(FTOS(ph->curHP));
+  scaleLabel(ss->livesLabel);
+  if (!ph->alive()) {
+    SENDMSG("/game/player/lose");
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void enemyAtTheGates(not_null<Enemy*> enemy) {
+  // this is called when the enemy has reached the pumpkin
+  auto ss= enemy->getGVars();
+  reduceLives(enemy->getDamage());
+  ss->currWave.numEnemiesWalking -= 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void enemyDown(not_null<Enemy*> enemy) {
+  auto ss= enemy->getGVars();
+  updateCash(ss, enemy->getReward());
+  ss->currWave.numEnemiesWalking -= 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void updateCash(not_null<GVars*> ss, int amount) {
+  ss->cash += amount;
+  SENDMSG("/game/hud/updatelabels");
+  scaleLabel(ss->cashLabel);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void initOnce(not_null<GVars*> ss) {
+  loadData(ss);
 }
 
 

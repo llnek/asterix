@@ -10,7 +10,6 @@
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
 #include "core/XConfig.h"
-#include "core/COMP.h"
 #include "core/CCSX.h"
 #include "Lightning.h"
 
@@ -33,8 +32,7 @@ bool Lightning::inix(const CCT_PT &from,
     cont CCT_PT &to, c::Color4F color, bool is_animated) {
 
   if ( ! c::DrawNode::init()) {
-  return false;
-  }
+  return false; }
 
   _color = color;
   generateKeyPoints(from , to);
