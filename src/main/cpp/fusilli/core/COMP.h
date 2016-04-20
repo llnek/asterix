@@ -54,8 +54,13 @@ struct CC_DLL CHealth : public ecs::Component {
 
   void enterGodMode() { godMode=true; }
   void exitGodMode() { godMode=false; }
+  void setHealth(int h) {
+    origHP=h;
+    curHP=h;
+  }
+  float percent() { return 100.0f * curHP/origHP; }
+  float ratio() { return curHP/origHP; }
   bool isGod() { return godMode; }
-
   __decl_iz(origHP)
   __decl_iz(curHP)
   __decl_bf(godMode)

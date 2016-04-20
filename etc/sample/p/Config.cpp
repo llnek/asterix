@@ -53,7 +53,7 @@ void Config::initAssets() {
   addEffect("crash", CC_STR("sfx/crash.wav"));
   addMusic("background", CC_STR("sfx/music.mp3"));
 
-  addFont("dft", CC_STR("fonts/en/Verdana.ttf"));
+  addFont("dft", CC_STR("fonts/en/arial.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

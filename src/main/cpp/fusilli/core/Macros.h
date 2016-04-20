@@ -77,6 +77,7 @@
 
 #define CC_NIL nullptr
 
+#define CC_ANCHOR(n,x,y) (n)->setAnchorPoint(CCT_PT((x),(y)))
 #define CC_GEC(t,e,c) (t*)((ecs::Node*)(e))->get(c)
 
 #define HHZ(z) (z).height * 0.5
