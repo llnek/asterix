@@ -19,10 +19,13 @@ NS_BEGIN(cuteness)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL Collide : public ecs::System {
 
+  __decl_ptr(ecs::Node, _enemies)
+  __decl_ptr(ecs::Node, _planet)
   __decl_ptr(ecs::Node, _shared)
 
+  void planetDamage(Planet*, f::CHealth*);
+  void hitPlanet(ecs::Node*, bool);
   void process(float);
-  void clamp(float);
 
 public:
 

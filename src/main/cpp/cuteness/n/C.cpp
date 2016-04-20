@@ -9,37 +9,41 @@
 // this software.
 // Copyright (c) 2013-2016, Ken Leung. All rights reserved.
 
-#pragma once
-//////////////////////////////////////////////////////////////////////////////
+#include "x2d/GameScene.h"
+#include "C.h"
 
-#include "core/XConfig.h"
 NS_BEGIN(cuteness)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Config : public f::XConfig {
-
-  void initAssets();
-  void initLevels();
-  void initCsts();
-
-public:
-
-  virtual ResolutionPolicy policy() { return ResolutionPolicy::FIXED_WIDTH; }
-
-  virtual const CCT_SZ gameSize() { return CCT_SZ(640,480); }
-
-  virtual void handleResolution(const CCT_SZ &rs);
-  virtual float scaleFont(float pt);
-  virtual c::Scene* prelude();
-
-  virtual void runOnce();
-  static owner<Config*> reify();
-
-};
+void scanAndSmash(EnemySquad *sq, const CCT_PT &tap) {
+  auto &ps= sq->getPools();
+  F__LOOP(it, ps) {
+    auto &p= *it;
+    auto &objs= p->ls();
+    F__LOOP(it2, objs) {
+      auto &e = *it2;
+      if (!e->status()) { continue; }
+      auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+      auto sp=CC_GEC(Enemy,e,"f/CPixie");
+      if (sp->boundingBox().containsPoint(tap)) {
+        h->hurt();
+      }
+      if (!h->alive()) {
+        auto msg= j::json({
+            {"score", 10}
+            });
+        cx::hibernate((ecs::Node*)e);
+        cx::sfxPlay("sndKill");
+        SENDMSGEX("/game/player/earnscore", &msg);
+      }
+    }
+  }
+}
 
 
 NS_END
+
 
 
 

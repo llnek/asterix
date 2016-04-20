@@ -23,6 +23,8 @@ NS_BEGIN(cuteness)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Collide::preamble() {
+  _enemies= _engine->getNodes("n/ESquad")[0];
+  _planet= _engine->getNodes("f/CHuman")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 }
 
@@ -30,7 +32,6 @@ void Collide::preamble() {
 //
 bool Collide::update(float dt) {
   if (MGMS()->isLive()) {
-    clamp(dt);
     process(dt);
   }
   return true;
@@ -38,13 +39,56 @@ bool Collide::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::clamp(float dt) {
+void Collide::process(float dt) {
+  auto sq= CC_GEC(EnemySquad, _enemies, "n/ESquad");
+  auto pt= CC_GEC(Planet, _planet, "f/CPixie");
+  auto ph= CC_GEC(f::CHealth, _planet, "f/CHealth");
+  auto &ps= sq->getPools();
+  F__LOOP(it, ps) {
+    auto &p= *it;
+    auto &objs= p->ls();
+    F__LOOP(it2, objs) {
+      auto &e = *it2;
+      if (!e->status()) { continue; }
+      auto h=CC_GEC(f::CHealth,e,"f/CHealth");
+      auto sp=CC_GEC(Enemy,e,"f/CPixie");
+      if (cx::collide(pt,sp)) {
+        cx::sfxPlay("sndBlast");
+        ph->hurt();
+        h->hurt();
+        cx::hibernate((ecs::Node*)e);
+        planetDamage(pt, ph);
+      }
+      if (!ph->alive()) { return; }
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Collide::process(float dt) {
+void Collide::planetDamage(Planet *pt, f::CHealth *ph) {
+  pt->setOpacity(255 * ph->ratio());
+  auto co= pt->getOpacity();
+  if (!ph->alive()) {
+    cx::sfxPlay("sndLose");
+    pt->setOpacity(0);
+    SENDMSG("/game/player/lose");
+  } else {
+    pt->runAction(c::Spawn::create(
+          c::FadeTo::create(200,1),
+          c::Sequence::create(
+            c::ScaleTo::create(200, 1.2),
+            c::CallFunc::create([=](){
+              pt->setOpacity(co);
+              pt->setScale(1);
+              }),
+            CC_NIL
+            ),
+          CC_NIL
+          ));
+  }
 }
+
 
 NS_END
 

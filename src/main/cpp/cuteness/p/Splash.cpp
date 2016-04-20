@@ -21,8 +21,50 @@ NS_BEGIN(cuteness)
 //////////////////////////////////////////////////////////////////////////////
 //
 void Splash::decoUI() {
+  auto bg= centerImage("game.bg");
+  bg->setOpacity(0);
+  bg->runAction(
+      c::Sequence::create(
+        c::FadeIn::create(1),
+        c::CallFunc::create([=]() { this->deco2(); }),
+        CC_NIL));
+  //regoAtlas("gpics");
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//
+void Splash::deco2() {
+  auto t = cx::reifySprite("gametitle.png");
+  auto wb= cx::visBox();
 
+  CC_POS2(t, wb.cx, wb.top * 0.8);
+  t->setOpacity(0);
+  t->setScale(4);
+  t->runAction(c::Spawn::create(
+        c::FadeIn::create(0.5) ,
+        c::ScaleTo::create(0.5,1),
+        CC_NIL
+        ));
+  addItem(t);
+
+  auto p= cx::reifySprite("planet.png");
+  CC_POS2(p, wb.cx, wb.cy);
+  p->setScale(2);
+  p->runAction(
+      c::Sequence::create(
+        c::ScaleTo::create(1,1),
+        c::ScaleTo::create(0.5,1.5),
+        c::ScaleTo::create(0.5,1),
+        CC_NIL));
+  addItem(p);
+
+  auto b= cx::reifyMenuText("btns", "PLAY");
+  XCFG()->scaleBmfont(b, 36);
+  CC_POS2(b, wb.cx, wb.top * 0.2);
+  b->setCallback([=](c::Ref*) {
+      cx::runEx(Game::reify(mc_new(GameCtx)));
+      });
+  addItem(cx::mkMenu(b));
 }
 
 

@@ -19,8 +19,10 @@ NS_BEGIN(cuteness)
 //////////////////////////////////////////////////////////////////////////////
 class CC_DLL AI : public ecs::System {
 
+  __decl_ptr(c::DelayTime, _timer)
+  __decl_ptr(ecs::Node, _enemies)
   __decl_ptr(ecs::Node, _shared)
-  void parallex(float);
+  __decl_ptr(ecs::Node, _planet)
   void process(float);
 
 public:

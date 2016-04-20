@@ -59,7 +59,7 @@ struct CC_DLL CHealth : public ecs::Component {
     curHP=h;
   }
   float percent() { return 100.0f * curHP/origHP; }
-  float ratio() { return curHP/origHP; }
+  float ratio() { return (float)curHP/(float)origHP; }
   bool isGod() { return godMode; }
   __decl_iz(origHP)
   __decl_iz(curHP)
@@ -99,6 +99,12 @@ struct CC_DLL CAutoma : public ecs::Component {
 //
 struct CC_DLL CHuman : public ecs::Component {
   __decl_comp_tpid("f/CHuman")
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+struct CC_DLL CTarget : public ecs::Component {
+  __decl_comp_tpid("f/CTarget")
 };
 
 //////////////////////////////////////////////////////////////////////////////

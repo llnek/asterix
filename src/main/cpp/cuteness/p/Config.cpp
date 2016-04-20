@@ -45,8 +45,8 @@ void Config::initAssets() {
   addAtlas("cc-pics", CC_STR("pics/sprite_sheet.plist"));
   addImage("cc-pics", CC_STR("pics/sprite_sheet.png"));
 
-  addAtlas("game-pics", CC_STR("pics/images.plist"));
-  addImage("game-pics", CC_STR("pics/images.png"));
+  addAtlas("gpics", CC_STR("pics/images.plist"));
+  addImage("gpics", CC_STR("pics/images.png"));
 
   addImage("game.bg", CC_STR("pics/background.jpg"));
 
@@ -59,12 +59,13 @@ void Config::initAssets() {
   addFont("title", CC_STR("fonts/en/SFCollegiate.fnt"));
   addFont("btns", CC_STR("fonts/en/Hiruko.fnt"));
   addFont("dft", CC_STR("fonts/en/SVBasicManual.fnt"));
-  addFont("dft", CC_STR("fonts/en/Verdana.ttf"));
+  addFont("text", CC_STR("fonts/en/Verdana.ttf"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::handleResolution(const CCT_SZ &rs) {
+    CC_DTOR()->setContentScaleFactor(1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,8 +77,8 @@ float Config::scaleFont(float pt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Config::runOnce() {
-  cacheSprites("game-pics");
   cacheSprites("cc-pics");
+  cacheSprites("gpics");
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -22,14 +22,16 @@ NS_BEGIN(cuteness)
 //////////////////////////////////////////////////////////////////////////////
 //
 void AI::preamble() {
+  _enemies= _engine->getNodes("n/ESquad")[0];
+  _planet= _engine->getNodes("f/CHuman")[0];
   _shared= _engine->getNodes("n/GVars")[0];
+  _timer= cx::reifyTimer(MGML(), 1000);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool AI::update(float dt) {
   if (MGMS()->isLive()) {
-    parallex(dt);
     process(dt);
   }
   return true;
@@ -37,13 +39,27 @@ bool AI::update(float dt) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void AI::parallex(float dt) {
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 void AI::process(float dt) {
+  auto ss=CC_GEC(GVars, _shared, "n/GVars");
+  if (! ss->enabled) { return; }
+  if (!cx::timerDone(_timer)) { return;}
+  cx::undoTimer(_timer);
+  _timer=CC_NIL;
+  auto sq= CC_GEC(EnemySquad,_enemies,"n/ESquad");
+  auto pt= CC_GEC(Planet,_planet,"f/CPixie");
+  float x= c::random(10,100) * cx::randSign();
+  auto wb= cx::visBox();
+  float y = cx::randInt(wb.top);
+  auto po= sq->randGet();
+  auto e= po->take(true);
+  auto sp= CC_GEC(Enemy,e,"f/CPixie");
+  if (x > 0) { x += wb.right; }
+  cx::resurrect((ecs::Node*)e, x, y);
+  auto t= c::random(2500-ss->speedBump, 4500-ss->speedBump) / 1000;
+  sp->runAction(
+      c::MoveTo::create(t, pt->getPosition()));
+  ss->speedBump += 50;
+  _timer=cx::reifyTimer(MGML(), 1000);
 }
 
 

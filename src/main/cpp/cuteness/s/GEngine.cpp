@@ -23,20 +23,47 @@ NS_BEGIN(cuteness)
 
 //////////////////////////////////////////////////////////////////////////////
 //
+static s_arr<sstr,3> ENEMYPICS = {
+  "beetleship.png",
+  "octopus.png",
+  "rocketship.png"
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
 void GEngine::initEntities() {
   // global
   auto ent= this->reifyNode("Shared",true);
   auto ss= mc_new(GVars);
-    auto wb=cx::visBox();
-    
+  auto wb=cx::visBox();
+
   ent->checkin(ss);
 
   //planet
   ent= this->reifyNode("Planet", true);
   auto p= Planet::create();
-  CC_POS2(p, wb.cx, wb.top + 60);
+  CC_POS2(p, wb.cx, wb.cy);
   MGML()->addAtlasItem("gpics",p);
   ent->checkin(p);
+  ent->checkin(mc_new(f::CHealth));
+  ent->checkin(mc_new(f::CHuman));
+
+  auto sq= mc_new(EnemySquad);
+  F__LOOP(it,ENEMYPICS) {
+    auto &n= *it;
+    auto p= MGMS()->reifyPool(n);
+    p->preset([=]() -> f::Poolable* {
+      auto e= this->reifyNode(n);
+      auto z= Enemy::create(n);
+      MGML()->addAtlasItem("gpics", z);
+      CC_HIDE(z);
+      e->checkin(z);
+      e->checkin(mc_new(f::CHealth));
+      return e;
+    }, 16);
+    sq->add(p);
+  }
+  ent->checkin(sq);
 }
 
 //////////////////////////////////////////////////////////////////////////////

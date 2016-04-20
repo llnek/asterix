@@ -17,8 +17,9 @@ NS_BEGIN(cuteness)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-struct CC_DLL Splash : public f::XScene {
-
+class CC_DLL Splash : public f::XScene {
+    void deco2();
+public:
   __decl_create_scene(Splash)
   __decl_deco_ui()
 };

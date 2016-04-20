@@ -33,7 +33,12 @@ struct CC_DLL Planet : public f::CPixie {
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL Enemy : public f::CPixie {
-
+  static owner<Enemy*> create(const sstr &png) {
+    auto z= mc_new(Enemy);
+    z->initWithSpriteFrameName(png);
+    z->autorelease();
+    return z;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,6 +51,10 @@ public:
     auto n= cx::randInt(_pools.size());
     return _pools[n];
   }
+  void add(f::FPool *p) {
+    _pools.push_back(p);
+  }
+  const s_vec<f::FPool*>& getPools() { return _pools; }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,7 +62,14 @@ public:
 struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
   __decl_fz(speedBump)
+  __decl_bf(enabled)
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void scanAndSmash(EnemySquad *sq, const CCT_PT &tap);
+
+
 
 
 
