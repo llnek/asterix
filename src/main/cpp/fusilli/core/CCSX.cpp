@@ -903,11 +903,14 @@ float randFloat(float upper) {
 //////////////////////////////////////////////////////////////////////////////
 //
 int randSign() {
+    return (::rand() % 2) == 1 ? 1 : -1;
+  /*
   int n=  cocos2d::rand_0_1() * 10;
   switch (n) {
     case 0: case 2: case 4: case 6: case 8: return 1;
     default: return -1;
   }
+  */
 }
 
 //////////////////////////////////////////////////////////////////////////////
