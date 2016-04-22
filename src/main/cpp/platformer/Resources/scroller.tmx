@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="1000" height="20" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="Default" tilewidth="16" tileheight="16" spacing="1" margin="1">
+  <image source="Default.png" width="320" height="480"/>
+ </tileset>
+ <objectgroup name="Collision" width="1000" height="20">
+  <object x="-3" y="162" width="648" height="155"/>
+  <object x="690" y="216" width="615" height="102"/>
+ </objectgroup>
+ <layer name="Tile Layer 1" width="1000" height="20">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2aWW7sMAwEJ4fIGd79b/iQDyOCYVsbl2ZcBegnY5NtrWwhnw8AAAAAAAAAwN/iX9Oi8kTlzCbze+/6W6H/R7UpaT5TTe9BT4/qvMhGSds5r5K2llaDiqYeqn15RxWdGaj2jZqeHxQ0KZ+jTzqyz4Kn36K1qdS8579FcpVTYRyy1xCs4zF+vbkRNW+i9v1ebO/vXfmu6DVskSPbF+30bxYzGqI1j+RROPdnf4vW8vS8ik6FtXDHyDgr6O5pUdQZNQ9Hzt9oRmuCbG3nv2XoGHlGYR/bfdaC1TrEi6w1Nzp3Iuhpye6P7P0G9rD0Twp7x+h6ifSMHt9qFdNr/XrG9MRat2rt4/Gud/zss+7quQg9u+8r9JlSjZC9d48y02cKOnu/Z50HEf2y+n2R4zZSx2dq8HgvIr7KHmv53k5cr71ebd+eie+pJ0OHyln+FnbOlp1xsvbLK3M14kyt4PkqrF0v/1xJcy+PShyvuGr6smuRyFh38WefzzrflWvwcy6VuWiZz2K/XT1/PbCuX7xQ8DWK/WS5F6mdS+cYFqys9+icu+95xlWoE6zm0/dmDJhnZOw86qudczvyjiC6rvCI4RW/Sg3bvh+Np5fzWI9viGe5Li01WaJ6hxDp1dX3Xqsc1fpzxd+v5rJEeU/bjamiwzveW77ziJUR4y/Vy5XvSqzeP97Dn+dwdW5G11EzXjlq/WXXo2r9v/q8JSv3Opl62/wVvI1FDi+NSmdlG0+xr47YlrGU413Ft4zlNZ8tY3nOowytKmurSt9a9JeVDi8Uvu8utpq33IkZvfbU7iWOOCqxMu+njnfw57mseB+v3FctKv/nY59T3QNH1UyWPM2PzLl8x44W1fmw+84su33oger9m7o/qRTXci/x/m6Pb7emp1OlVlff09oYFlQ4o3Y8hier60/pHIj0pJ71meq6V6gTZn3IAf4csvHeM0ZiZ3nKEb+rjKInv2JGY+a3zGqM0qlW/7Q5MuogzzwVvIlnvLv4FTyMxdhH+wbvu5XZNRqF2r3jbA0ffUapjuORT+18H/XKUXmV7iQs37WMHz0mvefw5/AGnuoFFW9ZxetW5ql/Vfr9aq6u1rvWmkafjaTXN+r9tfPOKlbzSG2sr56NZnWdZoy9ypxTGKuZ571Q8peruRX0qZybT5qi80awkid6/1n9PSP/jz//KtAALMEHvxuFc7sivfpaoR+VxnZUg0LtuPJuNmq1+BXKdwlZqI1VT0fGPcbT75ko3rOADop3km2+c86MO5PRvx/+XBl1fQAAb0HZC6mi7iNnNCnprobq+MMvCuPT88AqKPQV6KF8H6kwZ0c14M8BAACgBS8JkA9rECqifB9dhWr+PPv/7PkffAAAAAAAAPCgoj9XRFUXAAAAAAAA1AB/boOqLgAAAAAAAKgB/twGVV0AAAAAAABQA/y5Daq6AAAAAAAAoAb4cxtUdQEAAAAAAEANDn9Oo9FoNBqNRqPRaDQaLbf9B8TDP3CAOAEA
+  </data>
+ </layer>
+</map>

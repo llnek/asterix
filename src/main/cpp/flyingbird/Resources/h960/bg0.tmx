@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="60" height="30" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="ground" tilewidth="32" tileheight="32">
+  <image source="ground.png" width="128" height="152"/>
+ </tileset>
+ <tileset firstgid="17" name="cloud" tilewidth="172" tileheight="114">
+  <image source="cloud.png" width="172" height="114"/>
+ </tileset>
+ <layer name="background" width="60" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztk7kRgEAMxI7/PaD/alEBpIxnzgoUKF3ZtZRywQ0P1MZ9gx0OOBN49N721b1n79m+9rVv+x69t33ta1/72te+9m3fo/e2r33ta1/7fnsHPQwwJvAJZlhgTeDR/+T//usvfYtUJQ==
+  </data>
+ </layer>
+ <objectgroup name="center" width="60" height="30">
+  <object x="960" y="416"/>
+  <object x="1344" y="416"/>
+  <object x="1728" y="505"/>
+ </objectgroup>
+ <layer name="cloud" width="60" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt1jEBAAAIw7BZwL9ZPMDBQaKgZxMAPqrrAAAAGPCxAACw11U2ACM=
+  </data>
+ </layer>
+</map>
