@@ -19,13 +19,13 @@ Scene* GameScene::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
-    
+
     // 'layer' is an autorelease object
     auto layer = GameScene::create();
-    
+
     // add layer as a child to scene
     scene->addChild(layer);
-    
+
     // return the scene
     return scene;
 }
@@ -33,7 +33,7 @@ Scene* GameScene::createScene()
 GameScene::~GameScene()
 {
     delete recognizer;
-    
+
     HighScore::destroyInstance();
 }
 
@@ -44,42 +44,42 @@ bool GameScene::init()
     {
         return false;
     }
-    
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
     //Point origin = Director::getInstance()->getVisibleOrigin();
-    
+
     //加入游戏背景
     auto layerColorBG = LayerColor::create(Color4B(180, 170, 160, 255));
     this->addChild(layerColorBG);
-    
+
 
     //pause
     MenuItemFont::setFontName("Consolas");
     MenuItemFont::setFontSize(80);
     auto menuItemPause = MenuItemFont::create("PAUSE", CC_CALLBACK_1(GameScene::onPause, this));
-    
-    
+
+
     auto menu = Menu::create(menuItemPause, NULL);
     addChild(menu);
     menu->setPosition(Point(200, visibleSize.height - 200));
-    
+
     //创建分数
     auto cardNumberTitle = Label::createWithSystemFont("SCORE","Consolas",80);
     cardNumberTitle->setPosition(Point(200, visibleSize.height - 100));
     addChild(cardNumberTitle);
-    
+
     score = 0;
     cardNumberTTF = Label::createWithSystemFont("0", "Consolas", 70);
     cardNumberTTF->setPosition(Point(400, visibleSize.height - 100));
     addChild(cardNumberTTF);
-    
+
     //设置触摸事件监听
     auto touchListener = EventListenerTouchOneByOne::create();
     touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
     touchListener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
     touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-    
+
     //创建4X4卡片
     createCardSprite(visibleSize);
     if (UserDefault::getInstance()->getBoolForKey("history")) {
@@ -91,9 +91,9 @@ bool GameScene::init()
         createCardNumber(false);
         createCardNumber(false);
     }
-    
+
     recognizer = new SimpleRecognizer();
-    
+
     return true;
 }
 
@@ -106,7 +106,7 @@ void GameScene::onPause(Ref* pSender)
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	Point beginPoint = touch->getLocation();
+  Point beginPoint = touch->getLocation();
     recognizer->beginPoint(beginPoint);
     return true;
 }
@@ -121,7 +121,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
     Point pos = touch->getLocation();
     SimpleGestures rtn = recognizer->endPoint(pos);
-    
+
     switch (rtn) {
         case SimpleGesturesLeft:
             doLeft();
@@ -143,12 +143,12 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
             doCheck();
             setScore(score);
             break;
-            
+
         case SimpleGesturesNotSupport:
         case SimpleGesturesError:
             log("not support or error touch,use geometricRecognizer!!");
             break;
-            
+
         default:
             break;
     }
@@ -160,8 +160,8 @@ void GameScene::createCardSprite(Size size)
     //求出单元格的宽和高
     //左右边距 cellSpace
     cellSize = (size.width - 3*cellSpace - 40)/4;
-    
-    
+
+
     //绘制出4X4的单元格
     for (int i = 0; i < 4; i++)
     {
@@ -182,9 +182,9 @@ void GameScene::createCardNumber(bool animation)
     while (1) {
         int i = CCRANDOM_0_1() * 4;        //生成0~3随机数
         int j = CCRANDOM_0_1() * 4;
-        
+
         log("[%d][%d]",i,j);
-        
+
         if (cardArr[i][j]->getNumber() == 0)
         {
             //2和4的生成率为9:1
@@ -195,7 +195,7 @@ void GameScene::createCardNumber(bool animation)
             }
             break;
         }
-        
+
         if (!shouldCreateCardNumber()) {
             break;
         }
@@ -216,7 +216,7 @@ bool GameScene::shouldCreateCardNumber()
             }
         }
     }
-    
+
     return isCreate;
 }
 
@@ -234,7 +234,7 @@ bool GameScene::isWin()
             }
         }
     }
-    
+
     return win;
 }
 
@@ -262,7 +262,7 @@ bool GameScene::doLeft()
                     {
                         cardArr[x][y]->setNumber(cardArr[x][y]->getNumber() * 2);
                         cardArr[x1][y]->setNumber(0);
-                        
+
                         //改变分数
                         score += cardArr[x][y]->getNumber();
                         isMove = true;
@@ -272,7 +272,7 @@ bool GameScene::doLeft()
             }
         }
     }
-    
+
     return isMove;
 }
 
@@ -309,7 +309,7 @@ bool GameScene::doRight()
             }
         }
     }
-    
+
     return isMove;
 }
 
@@ -346,7 +346,7 @@ bool GameScene::doUp()
             }
         }
     }
-    
+
     return isMove;
 }
 
@@ -383,7 +383,7 @@ bool GameScene::doDown()
             }
         }
     }
-    
+
     return isMove;
 }
 
@@ -415,20 +415,20 @@ void GameScene::doCheck()
     }
 
     if (isWin()) {
-        
+
         successLayer = LayerColor::create(Color4B(0, 0, 0, 180));
         Size winSize = Director::getInstance()->getWinSize();
         Point centerPos = Point(winSize.width / 2, winSize.height / 2);
         auto gameOverTitle = Label::createWithSystemFont("YOU WIN","Consolas",80);
         gameOverTitle->setPosition(centerPos);
         successLayer->addChild(gameOverTitle);
-        
+
         getParent()->addChild(successLayer,1);
-        
+
         scheduleOnce(SEL_SCHEDULE(&GameScene::removeSuccessLayer), 2);
         return;
     }
-    
+
     //isGameOver = true;
     if (isGameOver)
     {
@@ -438,25 +438,25 @@ void GameScene::doCheck()
         HighScore::getInstance()->setScore(score);
         GameOverLayer *gameoverLayer = GameOverLayer::create(Color4B(0, 0, 0, 180));
         getParent()->addChild(gameoverLayer,1);
-        
+
         Director::getInstance()->pause();
     }
     else
     {
         if (shouldCreateCardNumber()) {
             createCardNumber();
-            
+
             saveStatus();
         }
     }
-    
+
 }
 
 Point GameScene::getPosition(int i, int j)
 {
     float pX = 20 + cellSpace/2 + i*(cellSize+cellSpace);
     float pY = cellSize/2 + j*(cellSize+cellSpace);
-    
+
     return Point(pX,pY);
 }
 
@@ -472,9 +472,9 @@ void GameScene::saveStatus()
             UserDefault::getInstance()->setIntegerForKey(temp, cardArr[i][j]->getNumber());
         }
     }
-    
+
     UserDefault::getInstance()->setIntegerForKey("score", score);
-    
+
     UserDefault::getInstance()->setBoolForKey("history", true);
 }
 
@@ -490,10 +490,10 @@ void GameScene::resumeStatus()
             cardArr[i][j]->setNumber(number);
         }
     }
-    
+
     score = UserDefault::getInstance()->getIntegerForKey("score");
     setScore(score);
-    
+
     UserDefault::getInstance()->setBoolForKey("history", false);
 }
 
