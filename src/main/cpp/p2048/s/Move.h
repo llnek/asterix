@@ -21,8 +21,8 @@ class CC_DLL Move : public ecs::System {
 
   __decl_ptr(ecs::Node, _shared)
 
+  void onKeys(f::Gesture*, float);
   void process(float);
-  void onKeys(float);
 
 public:
 

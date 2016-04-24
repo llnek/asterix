@@ -19,6 +19,8 @@
 NS_ALIAS(cx, fusii::ccsx)
 NS_BEGIN(p2048)
 
+#define CELL_SPACE 10
+
 //////////////////////////////////////////////////////////////////////////////
 //
 class CC_DLL Card : public f::CPixie {
@@ -39,11 +41,18 @@ public:
 
 };
 
+typedef f::FArrayPtr<Card> CardArr;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL GVars : public ecs::Component {
   __decl_comp_tpid( "n/GVars" )
-
+  __decl_vec(CardArr*, cardArr)
+  __decl_fz(cellSize)
+  __decl_bf(enabled)
+  virtual ~GVars() {
+     F__LOOP(it, cardArr) { delete *it; }
+  }
 };
 
 

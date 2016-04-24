@@ -20,6 +20,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CGesture : public ecs::Component {
+  void reset() { down=up=right=left=false; }
   __decl_comp_tpid("f/CGesture")
   __decl_bf(down)
   __decl_bf(up)

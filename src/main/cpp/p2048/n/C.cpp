@@ -29,7 +29,7 @@ owner<Card*> Card::create(int value, const CCT_SZ &sz, const CCT_PT &pos) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Card::runNewNumberAction() {
-  auto a= c::ScaleBy::create(0.05,0.99),
+    auto a= c::ScaleBy::create(0.05,0.99);
   this->runAction( c::Sequence::create( a, a->reverse(), CC_NIL));
 }
 
@@ -42,7 +42,7 @@ void Card::setNumber(int num) {
   if (num > 0) {
     _numLabel->setString(FTOS(num));
   } else {
-    _numbLabel->setString("");
+    _numLabel->setString("");
   }
 
   if (num >= 0) {
@@ -118,12 +118,12 @@ bool Card::inix(const CCT_SZ &sz, const CCT_PT &pos) {
   if (! c::Sprite::init()) {
   return false; }
 
-  _bg = c::LayerColor::create(c::Color3B(200,190,180),
+  _bg = c::LayerColor::create(c::Color4B(200,190,180,255),
       sz.width -15, sz.height -15);
   CC_POS1(_bg, pos);
 
   auto bz= CC_CSIZE(_bg);
-  auto vs= "";
+  sstr vs= "";
   if (_value > 0) {
     vs= FTOS(_value);
   }

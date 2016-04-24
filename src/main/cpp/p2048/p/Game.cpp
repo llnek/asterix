@@ -24,7 +24,10 @@ BEGIN_NS_UNAMED
 struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
-
+  void drawCard(GVars*, bool);
+  bool hasBlanks(GVars*);
+  void layoutCards(GVars*);
+  const CCT_PT getPosition(GVars*, int, int);
   __decl_ptr(ecs::Node, _shared)
 
   __decl_create_layer(GLayer)
@@ -41,13 +44,8 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   virtual void onInited();
 
-  virtual ~GLayer();
+  virtual ~GLayer() {}
 };
-
-//////////////////////////////////////////////////////////////////////////////
-//
-GLayer::~GLayer() {
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -59,45 +57,89 @@ void GLayer::onInited() {
   auto wz= cx::visSize();
   auto wb= cx::visBox();
 
-  layoutCards();
+  layoutCards(ss);
   //start with 2 random numbers
-  createCardNumber(false);
-  createCardNumber(false);
+  drawCard(ss, false);
+  drawCard(ss, false);
+
+  ss->enabled=true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseClick(const CCT_PT &loc) {
+void GLayer::onMouseClick(const CCT_PT &tap) {
+  auto g=CC_GEC(f::CGesture,_player,"f/CGesture");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  ss->enabled=true;
+  _tpts.push_back(tap);
+  g->reset();
+  if (_tpts.size() < 3) { return; }
+
+  auto last = _tpts.size() -1;
+  auto dx = _tpts[last].x - _tpts[0].x;
+  auto dy = _tpts[last].y - _tpts[0].y;
+
+  if (abs(dx) > abs(dy)) {
+    if (dx > 0) {
+      g->right=true;
+    } else {
+      g->left=true;
+    }
+  } else {
+    if (dy > 0) {
+      g->up=true;
+    } else {
+      g->down=true;
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::onMouseMotion(const CCT_PT &loc) {
+void GLayer::onSwipe(f::Gesture *g) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::onMouseStart(const CCT_PT &loc) {
-  return true;
+void GLayer::onMouseMotion(const CCT_PT &tap) {
+  _tpts.push_back(tap);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool GLayer::onMouseStart(const CCT_PT &tap) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  if (ss->enabled) {
+    ss->enabled=false;
+    _tpts.clear();
+    _tpts.push_back(tap);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 bool GLayer::onTouchStart(c::Touch *touch) {
-  return true;
+  return onMouseStart(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchMotion(c::Touch *touch) {
+  onMouseMotion(touch->getLocation());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::onTouchEnd(c::Touch *touch) {
+  onMouseClick(touch->getLocation());
 }
 
-void GLayer::createCardNumber(bool animation) {
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::drawCard(GVars *ss, bool animation) {
   while (true) {
     auto i = cx::randInt(4);
     auto j = cx::randInt(4);
@@ -105,11 +147,11 @@ void GLayer::createCardNumber(bool animation) {
     if (c->getNumber() == 0) {
       c->setNumber(cx::randSign() > 0 ? 4 : 2);
       if (animation) {
-        c->->runNewNumberAction();
+        c->runNewNumberAction();
       }
       break;
     }
-    if (!shouldCreateCardNumber()) {
+    if (!hasBlanks(ss)) {
         break;
     }
   }
@@ -117,25 +159,51 @@ void GLayer::createCardNumber(bool animation) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-#define CELL_SPACE 10
-void GLayer::layoutCards() {
+bool GLayer::hasBlanks(GVars *ss) {
+  auto hasZero = false;
+  for (auto i = 0; i < ss->cardArr.size(); ++i) {
+    auto arr= ss->cardArr[i];
+    for (auto j = 0; j < arr->size(); ++j) {
+      if( 0 == arr->get(j)->getNumber() ) {
+        hasZero = true;
+        break;
+      }
+    }
+  }
+  return hasZero;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+const CCT_PT GLayer::getPosition(GVars *ss, int row, int col) {
+  float pX = 20 + CELL_SPACE/2 + row*(ss->cellSize+CELL_SPACE);
+  float pY = ss->cellSize/2 + col*(ss->cellSize+CELL_SPACE);
+  return CCT_PT(pX,pY);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::layoutCards(GVars *ss) {
   auto wz= cx::visSize();
   ss->cellSize = (wz.width - 3*CELL_SPACE-40)/4;
-  auto sz= CCT_SZ(cellSize, cellSize);
+  auto sz= CCT_SZ(ss->cellSize, ss->cellSize);
   for (auto i = 0; i < 4; ++i) {
-    for (auto j = 0; j < 4; ++j) {
-      auto card = Card::create(0, sz, getPosition(i, j));
-      ss->cardArr[i]->set(j, card);
-      addAtlasItem("gpics", card);
+    auto arr= mc_new1(CardArr,4);
+    for (auto j = 0; j < arr->size(); ++j) {
+      auto card = Card::create(0, sz, getPosition(ss, i, j));
+      arr->set(j, card);
+      addItem(card);
     }
+    ss->cardArr.push_back(arr);
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void GLayer::decoUI() {
 
-  auto bg = c::LayerColor::create(c::Color3B(180, 170, 160));
+  auto bg = c::LayerColor::create(c::Color4B(180, 170, 160,255));
   addItem(bg);
+  regoAtlas("gpics");
   _engine = mc_new(GEngine);
 }
 
