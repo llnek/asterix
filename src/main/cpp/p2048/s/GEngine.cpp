@@ -29,6 +29,8 @@ void GEngine::initEntities() {
   auto ss= mc_new(GVars);
   ent->checkin(ss);
 
+  ent= this->reifyNode("Player", true);
+  ent->checkin(mc_new(f::CGesture));
 }
 
 //////////////////////////////////////////////////////////////////////////////

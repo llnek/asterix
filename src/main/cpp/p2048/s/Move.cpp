@@ -40,61 +40,66 @@ bool Move::update(float dt) {
 //
 void Move::process(float dt) {
   auto g=CC_GEC(f::CGesture,_player,"f/CGesture");
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
   onKeys(g, dt);
-  if (g->right) { swipeRight(); }
-  if (g->left) { swipeLeft(); }
-  if (g->up) { swipeUp(); }
-  if (g->down) { swipeDown(); }
-  postSwipe();
+  if (g->right) { swipeRight(ss); }
+  if (g->left) { swipeLeft(ss); }
+  if (g->up) { swipeUp(ss); }
+  if (g->down) { swipeDown(ss); }
+  postSwipe(ss);
+  if (!ss->enabled) {
+     ss->enabled=true;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void GLayer::swipeRight(GVars *ss) {
+void Move::postSwipe(GVars *ss) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::swipeDown(GVars *ss) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::swipeUp(GVars *ss) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::swipeRight(GVars *ss) {
   for (auto r= 0; r < ss->cardArr.size(); ++r) {
-    swipeRight( ss->cardArr[r], true);
+    swipeRight( ss->cardArr[r] );
   }
 }
 
-void GLayer::swipeRight(CardArr *arr) {
-
-  auto lastPos= arr.size()-1;
-  for (auto i=arr.size()-1; i >= 0; --i) {
-    auto v= arr->get(i)->getNumber();
-    if (v > 0)
-    for (auto n=i+1; n <= lastPos; ++n) {
-      auto v2=arr->get(n)->getNumber();
-    }
-  }
-
-
-  auto canMerge= true;
-  auto lastZ= -1;
-  for (auto i=arr.size()-2; i >= 0; --i) {
-    auto rv= arr->get(i+1);
-    auto lv= arr->get(i);
-    // where is the lastZ
-    if (lastZ < 0) {
-      if (rv== 0) { lastZ=i+1;}
-      else if (lv==0) { lastZ=i;}
-    }
-    if (lv > 0) {
-      if (rv > 0) {
-        if (lv==rv && canMerge) {
-          arr->set(i+1, rv+lv);
-          arr->set(i,0);
-          lastZ= i;
-          canMerge=false;
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::swipeRight(CardArr *arr) {
+  int tmp[4] = { 1,1,1,1 };
+  auto last= arr->size() - 1;
+  for (auto i=last; i >= 0; --i) {
+    auto c= arr->get(i);
+    auto v= c->getNumber();
+    if (v ==0) { continue; }
+    for (auto n=i+1; n <= last; ++n) {
+      auto c2=arr->get(n);
+      auto v2=c2->getNumber();
+      if (v2 > 0) {
+        c->setNumber(0);
+        if (v==v2 && tmp[n]>0) {
+          c2->setNumber(v+v2);
+          tmp[n]=0;
+        } else {
+          arr->get(n-1)->setNumber(v);
         }
-      } else {
-        if (lastZ >= 0) {
-          arr->set(lastZ,lv);
-          arr->set(i,0);
-          --lastZ;
-          if (arr->get(lastZ)->getNumber() > 0) {
-            lastZ=i;
-          }
-        }
+        break;
+      } else if (n== last){
+        c->setNumber(0);
+        c2->setNumber(v);
+        break;
       }
     }
   }
@@ -102,154 +107,45 @@ void GLayer::swipeRight(CardArr *arr) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-bool GLayer::swipeLeft() {
-    bool isMove = false;
-    for (int y = 0; y < 4; y++)
-    {
-        for (int x = 0; x < 4; x++)
-        {
-            for (int x1 = x+1; x1<4; x1++)
-            {
-                if (cardArr[x1][y]->getNumber() > 0)
-                {
-                    if (cardArr[x][y]->getNumber() <= 0)
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x1][y]->getNumber());
-                        cardArr[x1][y]->setNumber(0);
-                        x--;
-                        isMove = true;
-                    }
-                    else if(cardArr[x][y]->getNumber() == cardArr[x1][y]->getNumber())
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x][y]->getNumber() * 2);
-                        cardArr[x1][y]->setNumber(0);
-
-                        //改变分数
-                        score += cardArr[x][y]->getNumber();
-                        isMove = true;
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    return isMove;
+void Move::swipeLeft(GVars *ss) {
+  for (auto r= 0; r < ss->cardArr.size(); ++r) {
+    swipeLeft( ss->cardArr[r] );
+  }
 }
 
-//右滑动
-bool GameScene::doRight()
-{
-    //判断有没有发生移动
-    bool isMove = false;
-    for (int y = 0; y < 4; y++)
-    {
-        for (int x = 3; x >= 0; x--)
-        {
-            for (int x1 = x-1; x1>=0; x1--)
-            {
-                if (cardArr[x1][y]->getNumber() > 0)
-                {
-                    if (cardArr[x][y]->getNumber() <= 0)
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x1][y]->getNumber());
-                        cardArr[x1][y]->setNumber(0);
-                        x++;
-                        isMove = true;
-                    }
-                    else if(cardArr[x][y]->getNumber() == cardArr[x1][y]->getNumber())
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x][y]->getNumber() * 2);
-                        cardArr[x1][y]->setNumber(0);
-                        //改变分数
-                        score += cardArr[x][y]->getNumber();
-                        isMove = true;
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    return isMove;
-}
-
-//上滑动
-bool GameScene::doUp()
-{
-    //判断有没有发生移动
-    bool isMove = false;
-    for (int x = 0; x < 4; x++)
-    {
-        for (int y = 3; y >= 0; y--)
-        {
-            for (int y1 = y-1; y1>=0; y1--)
-            {
-                if (cardArr[x][y1]->getNumber() > 0)
-                {
-                    if (cardArr[x][y]->getNumber() <= 0)
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x][y1]->getNumber());
-                        cardArr[x][y1]->setNumber(0);
-                        y++;
-                        isMove = true;
-                    }
-                    else if(cardArr[x][y]->getNumber() == cardArr[x][y1]->getNumber())
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x][y]->getNumber() * 2);
-                        cardArr[x][y1]->setNumber(0);
-                        //改变分数
-                        score += cardArr[x][y]->getNumber();
-                        isMove = true;
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    return isMove;
-}
-
-//下滑动
-bool GameScene::doDown()
-{
-    //判断有没有发生移动
-    bool isMove = false;
-    for (int x = 0; x < 4; x++)
-    {
-        for (int y = 0; y <4; y++)
-        {
-            for (int y1 = y+1; y1<4; y1++)
-            {
-                if (cardArr[x][y1]->getNumber() > 0)
-                {
-                    if (cardArr[x][y]->getNumber() <= 0)
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x][y1]->getNumber());
-                        cardArr[x][y1]->setNumber(0);
-                        y--;
-                        isMove = true;
-                    }
-                    else if(cardArr[x][y]->getNumber() == cardArr[x][y1]->getNumber())
-                    {
-                        cardArr[x][y]->setNumber(cardArr[x][y]->getNumber() * 2);
-                        cardArr[x][y1]->setNumber(0);
-                        //改变分数
-                        score += cardArr[x][y]->getNumber();
-                        isMove = true;
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    return isMove;
-}
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::onKeys(f::Gesture *g, float dt) {
+void Move::swipeLeft(CardArr *arr) {
+  int tmp[4] = { 1,1,1,1 };
+  auto last= arr->size() - 1;
+  for (auto i=0; i <= last; ++i) {
+    auto c= arr->get(i);
+    auto v= c->getNumber();
+    if (v ==0) { continue; }
+    for (auto n=i-1; n >= 0; --n) {
+      auto c2=arr->get(n);
+      auto v2=c2->getNumber();
+      if (v2 > 0) {
+        c->setNumber(0);
+        if (v==v2 && tmp[n]>0) {
+          c2->setNumber(v+v2);
+          tmp[n]=0;
+        } else {
+          arr->get(n+1)->setNumber(v);
+        }
+        break;
+      } else if (n== 0){
+        c->setNumber(0);
+        c2->setNumber(v);
+        break;
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::onKeys(f::CGesture *g, float dt) {
 }
 
 

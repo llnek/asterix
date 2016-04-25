@@ -29,10 +29,11 @@ struct CC_DLL GLayer : public f::GameLayer {
   void layoutCards(GVars*);
   const CCT_PT getPosition(GVars*, int, int);
   __decl_ptr(ecs::Node, _shared)
-
+  __decl_ptr(ecs::Node, _player)
   __decl_create_layer(GLayer)
   __decl_get_iid(2)
   __decl_deco_ui()
+  __decl_vec(CCT_PT,_tpts)
 
   virtual void onMouseMotion(const CCT_PT&);
   virtual bool onMouseStart(const CCT_PT&);
@@ -51,6 +52,7 @@ struct CC_DLL GLayer : public f::GameLayer {
 //
 void GLayer::onInited() {
 
+  _player= _engine->getNodes("f/CGesture")[0];
   _shared= _engine->getNodes("n/GVars")[0];
 
   auto ss= CC_GEC(GVars,_shared,"n/GVars");
@@ -92,11 +94,6 @@ void GLayer::onMouseClick(const CCT_PT &tap) {
       g->down=true;
     }
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void GLayer::onSwipe(f::Gesture *g) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -196,6 +193,7 @@ void GLayer::layoutCards(GVars *ss) {
     }
     ss->cardArr.push_back(arr);
   }
+  
 }
 
 //////////////////////////////////////////////////////////////////////////////

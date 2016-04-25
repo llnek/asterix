@@ -20,9 +20,18 @@ NS_BEGIN(p2048)
 class CC_DLL Move : public ecs::System {
 
   __decl_ptr(ecs::Node, _shared)
+  __decl_ptr(ecs::Node, _player)
 
-  void onKeys(f::Gesture*, float);
+  void onKeys(f::CGesture*, float);
   void process(float);
+  void swipeRight(GVars*);
+  void swipeRight(CardArr*);
+  void swipeLeft(GVars*);
+  void swipeLeft(CardArr*);
+  void swipeDown(GVars*);
+  void swipeUp(GVars*);
+  void postSwipe(GVars*);
+
 
 public:
 
