@@ -173,27 +173,26 @@ bool GLayer::hasBlanks(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 const CCT_PT GLayer::getPosition(GVars *ss, int row, int col) {
-  float pX = 20 + CELL_SPACE/2 + row*(ss->cellSize+CELL_SPACE);
-  float pY = ss->cellSize/2 + col*(ss->cellSize+CELL_SPACE);
-  return CCT_PT(pX,pY);
+  auto y= 20 + row * ss->cellSize + HTV(ss->cellSize);
+  auto x= 20 + col * (ss->cellSize + CELL_SPACE) + HTV(ss->cellSize);
+  return CCT_PT(x,y);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void GLayer::layoutCards(GVars *ss) {
   auto wz= cx::visSize();
-  ss->cellSize = (wz.width - 3*CELL_SPACE-40)/4;
+  ss->cellSize = (wz.width - 3*CELL_SPACE-40) /4;
   auto sz= CCT_SZ(ss->cellSize, ss->cellSize);
-  for (auto i = 0; i < 4; ++i) {
+  for (auto r = 0; r < 4; ++r) {
     auto arr= mc_new1(CardArr,4);
-    for (auto j = 0; j < arr->size(); ++j) {
-      auto card = Card::create(0, sz, getPosition(ss, i, j));
-      arr->set(j, card);
+    for (auto c = 0; c < arr->size(); ++c) {
+      auto card = Card::create(0, sz, getPosition(ss, r, c));
+      arr->set(c, card);
       addItem(card);
     }
     ss->cardArr.push_back(arr);
   }
-  
 }
 
 //////////////////////////////////////////////////////////////////////////////
