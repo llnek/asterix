@@ -22,6 +22,8 @@ class CC_DLL Resolve : public ecs::System {
 
   __decl_ptr(ecs::Node, _shared)
   void process(float);
+  void postSwipe(GVars*);
+  bool maybeGameOver(GVars*);
 
 public:
 

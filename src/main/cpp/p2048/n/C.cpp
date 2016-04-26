@@ -62,51 +62,51 @@ void Card::setNumber(int num) {
   }
 
   if(num == 0){
-    _bg->setColor(c::Color3B(200,190,180));
+    setColor(c::Color3B(200,190,180));
   }
 
   if (num== 2) {
-    _bg->setColor(c::Color3B(240,230,220));
+    setColor(c::Color3B(240,230,220));
   }
 
   if (num == 4) {
-    _bg->setColor(c::Color3B(240,220,200));
+    setColor(c::Color3B(240,220,200));
   }
 
   if (num == 8) {
-    _bg->setColor(c::Color3B(240,180,120));
+    setColor(c::Color3B(240,180,120));
   }
 
   if (num == 16) {
-    _bg->setColor(c::Color3B(240,140,90));
+    setColor(c::Color3B(240,140,90));
   }
 
   if (num == 32) {
-    _bg->setColor(c::Color3B(240,120,90));
+    setColor(c::Color3B(240,120,90));
   }
 
   if (num == 64) {
-    _bg->setColor(c::Color3B(240,90,60));
+    setColor(c::Color3B(240,90,60));
   }
 
   if (num == 128) {
-    _bg->setColor(c::Color3B(240,90,60));
+    setColor(c::Color3B(240,90,60));
   }
 
   if (num == 256) {
-    _bg->setColor(c::Color3B(240,200,70));
+    setColor(c::Color3B(240,200,70));
   }
 
   if (num == 512) {
-    _bg->setColor(c::Color3B(240,200,70));
+    setColor(c::Color3B(240,200,70));
   }
 
   if (num == 1024) {
-    _bg->setColor(c::Color3B(0,130,0));
+    setColor(c::Color3B(0,130,0));
   }
 
   if (num == 2048) {
-    _bg->setColor(c::Color3B(0,130,0));
+    setColor(c::Color3B(0,130,0));
   }
 
 }
@@ -115,14 +115,15 @@ void Card::setNumber(int num) {
 //
 bool Card::inix(const CCT_SZ &sz, const CCT_PT &pos) {
 
-  if (! c::Sprite::init()) {
+  if (! c::LayerColor::initWithColor(
+        c::Color4B(200,190,180,255)
+        )) {
   return false; }
 
-  _bg = c::LayerColor::create(c::Color4B(200,190,180,255),
-      sz.width -15, sz.height -15);
-  CC_POS1(_bg, pos);
+  setContentSize(CCT_SZ(sz.width-15,sz.height-15));
+  setContentSize(sz);
+  CC_POS1(this, pos);
 
-  auto bz= CC_CSIZE(_bg);
   sstr vs= "";
   if (_value > 0) {
     vs= FTOS(_value);
@@ -131,10 +132,9 @@ bool Card::inix(const CCT_SZ &sz, const CCT_PT &pos) {
       vs,
       "Consolas", XCFG()->scaleFont(100));
 
-  CC_POS2(_numLabel, HWZ(bz), HHZ(bz));
+  CC_POS2(_numLabel, HWZ(sz), HHZ(sz));
   _numLabel->setTag(8);
-  _bg->addChild(_numLabel);
-  this->addChild(_bg);
+  addChild(_numLabel);
 }
 
 

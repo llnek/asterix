@@ -23,13 +23,12 @@ NS_BEGIN(p2048)
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL Card : public f::CPixie {
+class CC_DLL Card : public f::ColorLayer {
 
   bool inix(const CCT_SZ&, const CCT_PT&);
   Card(int v) { _value=v; }
 
   __decl_ptr(c::Label, _numLabel)
-  __decl_ptr(c::LayerColor, _bg)
   __decl_iz(_value)
 
 public:
@@ -50,6 +49,7 @@ struct CC_DLL GVars : public ecs::Component {
   __decl_vec(CardArr*, cardArr)
   __decl_fz(cellSize)
   __decl_bf(enabled)
+  __decl_bf(swiped)
   virtual ~GVars() {
      F__LOOP(it, cardArr) { delete *it; }
   }

@@ -21,14 +21,14 @@ NS_BEGIN(p2048)
 //
 void HUDLayer::decoUI() {
 
-  _scoreLabel = cx::reifyBmfLabel("dft", "SCORE: 0");
+  _scoreLabel = cx::reifyBmfLabel("dft", "0");
   _score=0;
   XCFG()->scaleBmfont(_scoreLabel,80);
 
-  auto margin= 16 * XCFG()->getScale();
+  auto margin= CC_CHT(_scoreLabel)/GOLDEN_RATIO;
   auto wb= cx::visBox();
-  CC_POS2(_scoreLabel, wb.left + margin,
-                       wb.top - margin);
+  CC_ANCHOR(_scoreLabel,0.5, 1);
+  CC_POS2(_scoreLabel, wb.cx, wb.top - margin);
   addItem(_scoreLabel);
 
 }

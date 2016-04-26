@@ -38,6 +38,51 @@ bool Resolve::update(float dt) {
 //////////////////////////////////////////////////////////////////////////////
 //
 void Resolve::process(float dt) {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  if (maybeGameOver(ss)) {
+    SENDMSG("/game/player/lose");
+  }
+  else if (ss->swiped) {
+    postSwipe(ss);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Resolve::postSwipe(GVars *ss) {
+  SENDMSG("/game/state/newnumber");
+  ss->enabled=true;
+  ss->swiped=false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+bool Resolve::maybeGameOver(GVars *ss) {
+  auto last=3;
+  F__LOOP(it,ss->cardArr) {
+    auto &arr= *it;
+    for (auto i=0; i <= last; ++i) {
+      if (arr->get(i)->getNumber() == 0) {
+        return false;
+      }
+      if (i < last) {
+        if (arr->get(i+1)->getNumber()==
+            arr->get(i)->getNumber()) {
+          return false;
+        }
+      }
+    }
+  }
+  for (auto c=0; c < 4; ++c) {
+    for (auto r=0; r < last; ++r) {
+      if (ss->cardArr[r+1]->get(c)->getNumber()==
+          ss->cardArr[r]->get(c)->getNumber()) {
+         return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 NS_END

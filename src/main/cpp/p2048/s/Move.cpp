@@ -46,38 +46,51 @@ void Move::process(float dt) {
   if (g->left) { swipeLeft(ss); }
   if (g->up) { swipeUp(ss); }
   if (g->down) { swipeDown(ss); }
-  postSwipe(ss);
-  if (!ss->enabled) {
-     ss->enabled=true;
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-void Move::postSwipe(GVars *ss) {
+  ss->swiped= g->hasMoved();
+  g->reset();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::swipeDown(GVars *ss) {
+  CardArr tmp(4);
+  for (auto c= 0; c < 4; ++c) {
+    for (auto r= 0; r < ss->cardArr.size(); ++r) {
+      tmp.set(r,ss->cardArr[r]->get(c));
+    }
+    handleDec(&tmp);
+    for (auto i=0; i < 4; ++i) {
+      ss->cardArr[i]->set(c, tmp[i]);
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::swipeUp(GVars *ss) {
+  CardArr tmp(4);
+  for (auto c= 0; c < 4; ++c) {
+    for (auto r= 0; r < ss->cardArr.size(); ++r) {
+      tmp.set(r,ss->cardArr[r]->get(c));
+    }
+    handleInc(&tmp);
+    for (auto i=0; i < 4; ++i) {
+      ss->cardArr[i]->set(c, tmp[i]);
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::swipeRight(GVars *ss) {
   for (auto r= 0; r < ss->cardArr.size(); ++r) {
-    swipeRight( ss->cardArr[r] );
+    handleInc( ss->cardArr[r] );
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::swipeRight(CardArr *arr) {
+void Move::handleInc(CardArr *arr) {
   int tmp[4] = { 1,1,1,1 };
   auto last= arr->size() - 1;
   for (auto i=last; i >= 0; --i) {
@@ -91,6 +104,7 @@ void Move::swipeRight(CardArr *arr) {
         c->setNumber(0);
         if (v==v2 && tmp[n]>0) {
           c2->setNumber(v+v2);
+          setScore(v+v2);
           tmp[n]=0;
         } else {
           arr->get(n-1)->setNumber(v);
@@ -103,19 +117,24 @@ void Move::swipeRight(CardArr *arr) {
       }
     }
   }
+/*
+  for (int i=0; i < arr->size(); ++i) {
+    CCLOG("v[%d] = %d", i, arr->get(i)->getNumber());
+  }
+  */
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 void Move::swipeLeft(GVars *ss) {
   for (auto r= 0; r < ss->cardArr.size(); ++r) {
-    swipeLeft( ss->cardArr[r] );
+    handleDec( ss->cardArr[r] );
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
-void Move::swipeLeft(CardArr *arr) {
+void Move::handleDec(CardArr *arr) {
   int tmp[4] = { 1,1,1,1 };
   auto last= arr->size() - 1;
   for (auto i=0; i <= last; ++i) {
@@ -129,6 +148,7 @@ void Move::swipeLeft(CardArr *arr) {
         c->setNumber(0);
         if (v==v2 && tmp[n]>0) {
           c2->setNumber(v+v2);
+          setScore(v+v2);
           tmp[n]=0;
         } else {
           arr->get(n+1)->setNumber(v);
@@ -141,6 +161,15 @@ void Move::swipeLeft(CardArr *arr) {
       }
     }
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void Move::setScore(int v) {
+  auto msg= j::json({
+      {"score", v}
+      });
+  SENDMSGEX("/game/hud/earnscore", &msg);
 }
 
 //////////////////////////////////////////////////////////////////////////////

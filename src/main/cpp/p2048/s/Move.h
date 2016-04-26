@@ -30,8 +30,10 @@ class CC_DLL Move : public ecs::System {
   void swipeLeft(CardArr*);
   void swipeDown(GVars*);
   void swipeUp(GVars*);
-  void postSwipe(GVars*);
 
+  void handleInc(CardArr*);
+  void handleDec(CardArr*);
+  void setScore(int);
 
 public:
 

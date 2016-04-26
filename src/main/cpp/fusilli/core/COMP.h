@@ -20,6 +20,7 @@ NS_BEGIN(fusii)
 //////////////////////////////////////////////////////////////////////////////
 //
 struct CC_DLL CGesture : public ecs::Component {
+  bool hasMoved() { return down || up || right || left; }
   void reset() { down=up=right=left=false; }
   __decl_comp_tpid("f/CGesture")
   __decl_bf(down)
@@ -270,22 +271,34 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 //
-class CC_DLL C2DNode : public c::Node, public UICObj {
+class CC_DLL CNode : public c::Node, public UICObj {
 protected:
-
-  C2DNode() { bindNode(this); }
-
+  CNode() { bindNode(this); }
 public:
-
-  static owner<C2DNode*> reify() {
-    auto z= mc_new(C2DNode);
-    z->init();
-    z->autorelease();
-    return z;
-  }
-
-  virtual ~C2DNode() {}
+  virtual ~CNode() {}
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL CLayer : public c::Layer, public UICObj {
+protected:
+  CLayer() { bindNode(this); }
+public:
+  virtual ~CLayer() {}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//
+class CC_DLL ColorLayer : public c::LayerColor, public UICObj {
+protected:
+  ColorLayer() { bindNode(this); }
+public:
+  virtual ~ColorLayer() {}
+};
+
+
+
+
 
 
 NS_END

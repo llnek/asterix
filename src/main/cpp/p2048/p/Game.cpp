@@ -25,8 +25,10 @@ struct CC_DLL GLayer : public f::GameLayer {
 
   HUDLayer* getHUD() { return (HUDLayer*)getSceneX()->getLayer(3); }
   void drawCard(GVars*, bool);
+  void newCard();
   bool hasBlanks(GVars*);
   void layoutCards(GVars*);
+  void onEnd();
   const CCT_PT getPosition(GVars*, int, int);
   __decl_ptr(ecs::Node, _shared)
   __decl_ptr(ecs::Node, _player)
@@ -65,6 +67,21 @@ void GLayer::onInited() {
   drawCard(ss, false);
 
   ss->enabled=true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::onEnd() {
+  MGMS()->stop();
+  surcease();
+  Ende::reify(getSceneX(), 4);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+void GLayer::newCard() {
+  auto ss=CC_GEC(GVars,_shared,"n/GVars");
+  drawCard(ss,true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -173,8 +190,8 @@ bool GLayer::hasBlanks(GVars *ss) {
 //////////////////////////////////////////////////////////////////////////////
 //
 const CCT_PT GLayer::getPosition(GVars *ss, int row, int col) {
-  auto y= 20 + row * ss->cellSize + HTV(ss->cellSize);
-  auto x= 20 + col * (ss->cellSize + CELL_SPACE) + HTV(ss->cellSize);
+  auto y= 20 + row * (ss->cellSize + CELL_SPACE);
+  auto x= 20 + col * (ss->cellSize + CELL_SPACE);
   return CCT_PT(x,y);
 }
 
@@ -187,7 +204,8 @@ void GLayer::layoutCards(GVars *ss) {
   for (auto r = 0; r < 4; ++r) {
     auto arr= mc_new1(CardArr,4);
     for (auto c = 0; c < arr->size(); ++c) {
-      auto card = Card::create(0, sz, getPosition(ss, r, c));
+      auto card = Card::create(0, sz,
+                      getPosition(ss, r, c));
       arr->set(c, card);
       addItem(card);
     }
@@ -210,6 +228,20 @@ END_NS_UNAMED
 //
 void Game::sendMsgEx(const MsgTopic &topic, void *m) {
   auto y= (GLayer*) getGLayer();
+
+  if (topic== "/game/state/newnumber") {
+    y->newCard();
+  }
+  else
+  if (topic== "/game/hud/earnscore") {
+    auto msg= (j::json*)m;
+    y->getHUD()->updateScore(
+      JS_INT(msg->operator[]("score")));
+  }
+  else
+  if (topic == "/game/player/lose") {
+    y->onEnd();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
