@@ -78,7 +78,7 @@ T* reifyRefType() {
   if (N_NIL(p) && p->init()) {
     p->autorelease();
   } else {
-    mc_del_ptr(p)
+      mc_del_ptr(p);
   }
   return p;
 }

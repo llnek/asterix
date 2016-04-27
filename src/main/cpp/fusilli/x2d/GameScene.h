@@ -33,7 +33,7 @@ enum GMode { ONE = 1, TWO, NET, NICHTS = -1 };
 //
 struct CC_DLL GCX : public SCTX {
   GCX(GMode m, ws::OdinIO *io) { mode=m; odin=io; }
-  virtual ~GCX() { mc_del_ptr(odin) }
+    virtual ~GCX() { mc_del_ptr(odin) ; }
   GCX(GMode m) { mode=m; }
   GCX() {}
   __decl_ptr(ws::OdinIO ,odin)
