@@ -1,0 +1,148 @@
+
+(ns ^{:doc ""
+      :author "Kenneth Leung"}
+  czlab.cocos2d.nodes
+
+  (:require ["../ccsx" :as cx]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(const BD_SZ 3)
+(const GD_SZ (* BD_SZ BD_SZ))
+;typedef s_arr<int, GD_SZ> ArrCells;
+;typedef s_arr<int, BD_SZ> ArrDim;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createGrid
+  "Stores the grid values and the set of winning goals"
+  [seed]
+  (atom
+    {:typeId ::Grid
+     :vals (slice seed)
+     :goals (mapGoalSpace) }))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createPlayer "" [category value id]
+  (atom {:typeId ::Player
+         :value value
+         :pidlong ""
+         :color ""
+         :pid ""
+         :category category :pnum id}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn copyPlayer "" [otherPlayer]
+  (atom (merge {} @otherPlayer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createPlayers "" []
+  (atom {:typeId ::Players :parr []}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createSquare "" [cell]
+  (atom {:cell cell :png "z" :value 0
+         :pix (new cc.Sprite "#z.png")}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn toggleSquare "" [square cfg nv]
+  (var x (k/get-in @cfg [:csts :CV_X])
+       o (k/get-in @cfg [:csts :CV_O]))
+  (var~ png)
+  (when (zero? (get @square :value))
+    (set! png
+          (cond (= nv x) "x"
+                (= nv o) "o" :else "z"))
+    (swap! sqaure
+           (fn [m]
+             (assoc! m :value nv :png png)
+             (.setSpriteFrame (get m :pix)
+                              (str "#" png ".png")) m))) square)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn flipSquare "" [square]
+  (var {:keys [png pix value]} @square)
+  (if (not= value 0)
+    (.setSpriteFrame pix (str png ".i.png"))) square)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createSquares "" []
+  (atom {:typeId ::CSquares :boxes [] :sqs[]}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createCellPos "" []
+  (atom {:typeId ::CellPos :cell -1 :px -1 :py -1}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn createGVars "" []
+  (atom {:typeId ::GVars :pnum 0 :lastWinner 0}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;EOF
+
+(defn mapGridPos "" [scale]
+
+  "Calculate position of each individual cells in the grid,
+  so that we can detect when a user clicks on the cell
+  memorize the co-ordinates of each cell on the board, so
+  we know which cell the user has clicked on"
+
+  (var csz (cx/scaleSize (cx/calcSize "z.png") scale)
+       ro (* (/ 8.0 72.0) scale)
+       boxes (map #(do {}) (range GD_SZ))
+       gh (* ro csz.height)
+       gw (* ro csz.width)
+       zh (+ (* gh (-1 BD_SZ))
+             (* BD_SZ csz.height))
+       zw (+ (* gw (-1 BD_SZ))
+             (* BD_SZ csz.width))
+       wb (cx/visBox)
+       x0 (- wb.cx (HTV zw))
+       y0 (+ wb.cy (HTV zh))
+       x1 x0
+       y1 y0)
+  (var~ x2 y2)
+  (for [r 0 :while (< r BD_SZ) :recur (+1 r)]
+    (for [c 0 :while (< c BD_SZ) :recur (+1 c)]
+      (set! y2 (- y1 csz.height)
+            x2 (+ x1 csz.width))
+      (set-in! boxes
+               (+ c (* r BD_SZ))
+               {:top y1 :right x2 :bottom y2 :left x1})
+      (set! x1 (+ x2 gw)))
+    (set! y1 (- y2 gh) x1 x0))
+  boxes)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn mapGoalSpace "" []
+  (var goals []
+       r3 (range BD_SZ)
+       dx (map #({}) r3)
+       dy (map #({}) r3))
+  (var~ h v)
+  (for [r 0 :while (< r BD_SZ) :recur (+1 r)]
+    (set! h (map #({}) r3)
+          v (map #({}) r3))
+    (for [c 0 :while (< c BD_SZ) :recur (+1 c)]
+      (set-in! h c (+ c (* r BD_SZ)))
+      (set-in! v c (+ r (* c BD_SZ))))
+    (conj! goals h v)
+    (set-in! dx r (+ r (* r BD_S)))
+    (set-in! dy r (+ r (* BD_SZ (- BD_SZ r 1)))))
+  (conj! goals dx dy))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn fmtGameData "" [mode]
+  (cond
+    (= mode *GMode-TWO*)
+    {:ppids {:p1 [1 "player1"] :p2 [2 "player2"] } :pnum 1 }
+    (= mode *GMode-ONE*)
+    {:ppids {:cpu [2 "computer"] :p1 [1 "player1"] }  :pnum 1}
+    (= mode *GMode-NET*)
+    {:ppids {} :pnum 0}
+    :else
+    (trap! "bad game mode!")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;EOF
+
+
+
