@@ -1,0 +1,93 @@
+(ns ^{}
+  czlab.fusilli.ttt.C
+  (:require
+    ;["ccsx" :as cx]
+            ;["" :as ecs]
+            ["kirby"
+             :as k
+             :refer [merge]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(const BD_SZ 3)
+(const GD_SZ (* BD_SZ BD_SZ))
+;typedef s_arr<int, GD_SZ> ArrCells;
+;typedef s_arr<int, BD_SZ> ArrDim;
+;const s_arr<f::Box4, GD_SZ> mapGridPos(float scale = 1);
+;const s_vec<ArrDim> mapGoalSpace();
+;j::json fmtGameData(f::GMode );
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype Grid [ecs/Component]
+  "Stores the grid values and the set of winning goals"
+  (constructor [seed]
+    (assoc! this
+            :goals (mapGoalSpace)
+            :tpid ::Grid
+            :vals (slice seed))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype Player [ecs/CStats]
+  ""
+  (constructor [category value id]
+    (super value)
+    (assoc! this
+            :tpid ::Player
+            :color ""
+            :pidlong "" :pid "" :id 0
+            :category category :pnum id)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype Players [ecs/Component]
+  ""
+  (constructor []
+    (assoc! this
+            :parr [nil nil nil]
+            :tpid ::Players)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype CSquare [ecs/CPixie]
+  ""
+  (constructor [cell]
+    (assoc! this :cell cell :png "z" :value 0))
+
+  (create ^:static [cell]
+    (doto (new CSquare cell)
+      (.initWithSpriteFrameName "z.png")))
+
+  (toggle [nv]
+    (var x (XConfig.cstVal :CV_X)
+         o (XConfig.cstVal :CV_O))
+    (when (= this.value 0)
+      (if (= nv x) (assoc! this :png "x"))
+      (if (= nv o) (assoc! this :png "o"))
+      (assoc! this :value nv)
+      (.setSpriteFrame this (str png ".png"))))
+
+  (flip []
+    (if (not= this.value 0)
+      (.setSpriteFrame this (str png ".i.png")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype CSquares [ecs/Component]
+  ""
+  (constructor []
+    ;s_arr<f::Box4,GD_SZ> boxes;
+    ;s_arr<CSquare*,GD_SZ> sqs;
+    (assoc! this :boxes [] :sqs [] :tpid ::CSquares)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype CellPos [ecs/Component]
+  ""
+  (constructor []
+    (assoc! this :cell -1 :px -1 :py -1 :tpid ::CellPos)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype GVars [ecs/Component]
+  ""
+  (constructor []
+    (assoc! this :pnum -1 :lastWinner -1 :tpid ::GVars)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;EOF
+
