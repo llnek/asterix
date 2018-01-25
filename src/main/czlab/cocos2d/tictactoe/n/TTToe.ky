@@ -1,0 +1,142 @@
+(ns ^{:doc ""
+      :author "Kenneth Leung"}
+
+  czlab.fusilli.ttt.TTToe
+
+  (:require ;["./C" :as C]
+            ["kirby"
+             :as K
+             :refer [conj!]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn- notAnyCell? "" [arr v]
+  (var sz (n# arr)
+       ret (> sz 0))
+  (for [i 0 :while (< i sz) :recur (+1 i)]
+    (when (= v (nth arr i))
+      (false! ret)
+      (break-out-of-loop!))) ret)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn- everyCell? "" [arr v]
+  (var sz (n# arr)
+       ret (> sz 0))
+  (for [i 0 :while (< i sz) :recur (+1 i)]
+    (when (not= v (nth arr i))
+      (false! ret)
+      (break-out-of-loop!))) ret)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftype TTToe [ag/GameBoard];<BD_SZ>, public f::CAutoma {
+  "A Tic Tac Toe board"
+  (constructor "" [p1v p2v]
+    (assoc! this
+            :actors [0 p1v p2v]
+            :tpid ::TTTBoard
+            :grid (ArrCells)
+            :goals (C/mapGoalSpace)))
+
+  (isNil? "" [cellv] (= cellv 0))
+
+  (getFirstMove "If brand new game,
+                just make a random move" []
+    (var sz (n# this.grid))
+    (if (and (> sz 0)
+             (everyCell? this.grid 0)) (cx/randInt sz) -1))
+
+  (syncState "" [seed actor]
+    (set! this.grid (slice seed))
+    (aset this.actors 0 actor))
+
+  (getNextMoves "Find set of empty slots" [snap]
+    (var sz (n# snap.state) rc [])
+    (for [pos 0 :while (< pos sz) :recur (+1 pos)]
+      (if (this.isNil? (nth snap.state pos))
+        (conj! rc pos)))
+    rc)
+
+  (undoMove "" [snap move]
+    (assert (and (>= move 0)
+                 (< move (n# snap.state))) "index outofbound")
+    (aset snap.state move 0))
+
+  (makeMove "" [snap move]
+    (assert (and (>= move 0)
+                 (< move (n# snap.state))) "index outofbound")
+    (if (this.isNil? (nth snap.state move))
+      (aset snap.state move snap.cur)
+      (raise! "cell [" move "] is not free")))
+
+  (switchPlayer "" [snap]
+    (var t snap.cur)
+    (assoc! snap
+            :cur (get snap :other) :other t))
+
+  (getOtherPlayer "" [pv]
+    (cond
+      (= pv (nth this.actors 1))
+      (nth this.actors 2)
+      (= pv (nth this.actors 2))
+      (nth this.actors 1)
+      :else 0))
+
+  (takeFFrame "" []
+    (var ff (new ag/FFrame BD_SZ))
+    (assoc! ff
+            :other (this.getOtherPlayer (1st this.actors))
+            :cur (1st this.actors)
+            :lastBestMove -1)
+    (map (fn [v i]
+           (aset ff.state i v)) this.grid)
+    ff)
+
+  (evalScore "" [snap]
+    ;;if we lose, return a nega value
+    (var ret 0)
+    (for [i 0 sz (n# this.goals)
+          :while (< i sz) :recur (+1 i)]
+      (when (this.testWin snap.state
+                          snap.other
+                          (.@i this.goals))
+        (set! ret -100)
+        (break-out-of-loop!)))
+    ret)
+
+  (isOver "" [snap]
+    (var ret #f t nil)
+    (for [i 0 sz (n# this.goals)
+          :while (< i sz) :recur (+1 i)]
+      (set! t (.@i this.goals))
+      (when (or (this.testWin snap.state snap.other t)
+                (this.testWin snap.state snap.cur t))
+        (true! ret)
+        (break-out-of-loop!)))
+    (if-not ret (this.isStalemate? snap) ret))
+
+  (isStalemate? "" [snap] (notAnyCell? snap.state 0))
+
+  (getWinner "" [snap combo]
+    (var t nil win -1)
+    (for [i 0 sz (n# this.goals)
+          :while (< i sz) :recur (+1 i)]
+      (set! t (.@i this.goals))
+      (cond
+        (this.testWin snap.state snap.other t)
+        (set! win snap.other)
+        (this.testWin snap.state snap.cur t)
+        (set! win snap.cur))
+      (when (> win 0)
+        (map (fn [v i] (aset combo i v)) t)
+        (break-out-of-loop!)))
+    win)
+
+  (testWin "" [vs actor g]
+    (var cnt (n# g))
+    (for [n 0 sz cnt
+          :while (< n sz) :recur (+1 n)]
+      (if (= actor (nth vs (nth g n))) (-- cnt))) (= cnt 0)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;EOF
+
+
